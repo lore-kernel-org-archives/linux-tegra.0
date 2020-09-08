@@ -2,121 +2,86 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FD0C43461
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7ABC433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6DD62145D
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:42:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHBZfPNk"
+	by mail.kernel.org (Postfix) with ESMTP id B22F0207DE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599594453;
+	bh=IjecBUMNsGMpOyrwu++8aLByHfqCkW2ag00jaPPJmvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ss0erv6krPYeyyiMGkoJkbBS9HU/2NmJh71KViOOLweQ5PfBCS2L/F+Kx4MMq/9hk
+	 qfgxJUeS5r0GClO6+eGJ8uoYbAUCk0HtUCu105Gjarlih1SLlNvMUZCMV1szwRAeQJ
+	 RsvRJiuquFtrCAv7POkVEWcE1szEjyT1qGxuIGQ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbgIHTma (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:42:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730878AbgIHPws (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:52:48 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EECC06125C;
-        Tue,  8 Sep 2020 06:16:29 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id r24so1067221ljm.3;
-        Tue, 08 Sep 2020 06:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2ob3Uu2PIV7nT5SLsDGzmqre4E7eymr6wADbftdvJ7s=;
-        b=sHBZfPNkDu7qQ/ABlj/tJmyO+hyuIaD0i7Otp2n/gRkNQXppwriHIudfwvuTMV/eU8
-         Reh+27n+d9CkUCqKE+iTP24S5cZ8Jodfl7NrIDEOE6mnSrxsb8emFOicItGzrxJIeHEO
-         WzP9rNy+KrTZp2z0UYcfKlD+Km8COYz58aY1v1W4anzE4R1DqRcAZ/d5VqM/jGXujFSW
-         yl2B+8AB55zFoHuI0nvit09zP6ula0J2xQ1Pr2qgeE10wU0YrqYUY4cS9jL99NTrLUkX
-         UxkL54VXWhJVcNkkD+kH2WEJBeK4dZkl8tblMgYgzCjVQ8iZU1yfOJAojwxQxFsdI9Bg
-         uoxQ==
+        id S1731981AbgIHTrZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 15:47:25 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:41278 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732466AbgIHTqZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 15:46:25 -0400
+Received: by mail-il1-f195.google.com with SMTP id w8so64366ilj.8;
+        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2ob3Uu2PIV7nT5SLsDGzmqre4E7eymr6wADbftdvJ7s=;
-        b=MvpCaly9u0GWd0UaI/uGvZtpHm1VN+S+u5iz3Mg8ocPjgQ7mmfT/RbiMEJawoWSiN6
-         N+TNV9NSFAvhaSv6dC1GZkiAJdsISlr+SmmolC9fDP3ZPHa+Z/nl1VYTmlHt9w0D5YNE
-         nyUx+dwD96Dg+6AGBakqXDatEtPqCmWjCuL8vaAXpeoUsDsEeaIljICY8uW+eVm+Aw8G
-         oQr/Jnfk/zclxEEdudvDAsZDpSokEYEPSLVGbm3BBSfasFOAsgd3lEHW242ZsDF/n5Aq
-         b1fdX/tW19ztlr8FB30fiEhxPjRyiuHcPyOBoolmc6bbZwoaDsPB345XSsJkBp+/eMaO
-         DhXg==
-X-Gm-Message-State: AOAM533ymPDVLNr+3H5V1WtjN4bLGLjInamfL/oAr8bXxzlz06U6maRv
-        q280J6Ml2uNhCnLjJ9sR4ng3NP6wNNk=
-X-Google-Smtp-Source: ABdhPJzdTI4rNxCjoKspr+yIbdJopN0tD13+QHFV+10jpjX4FDTBXbZoVi61q9LPhPcSEiMzvq9XTQ==
-X-Received: by 2002:a2e:8782:: with SMTP id n2mr10169705lji.262.1599570987442;
-        Tue, 08 Sep 2020 06:16:27 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id 25sm10448215lji.130.2020.09.08.06.16.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 06:16:26 -0700 (PDT)
-Subject: Re: [PATCH v6 14/35] i2c: tegra: Clean up probe function
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200908021021.9123-1-digetx@gmail.com>
- <20200908021021.9123-15-digetx@gmail.com>
- <CAHp75Vc9srPR1BYes9ZEo46gxV2BAhZ71ov_JZ_sHrmtgdAr-g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <dd51a8eb-5b8d-0b63-3130-428980cfe7ff@gmail.com>
-Date:   Tue, 8 Sep 2020 16:16:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mxfloW/du0FtuXMc7fb1vC2lzA6jvn4y8s0XgOBsOH8=;
+        b=joOjemVdVg0rGYRBaxijCTLyXC1ABGQPRe2gGbBUAEeW+XdFTLbfsLdUrHUAMbqeHa
+         oANjBrc104blQkYAqloN0iea2d/qzIolkNLff/850DXgQqsWxBWc4IJltjG8eJtdFJnr
+         r2ujezMXMyzaIX2441IwVKZADWUpknZb1nzX/FhKUZ0kEZC21ZfwsqXhNAZ56z87SRrf
+         5OLc3+muMIirACPQfYHEIdXptd7YkCBrlMP4TZCLmd7LK2Be+aSPMy0bk7Qorm6r2Qvi
+         5lUIYdMA+4HtZpjmgLTkKZIoKjZ3g2jSrCUyoYwbz2XC5w5vz81wSDG4aJAPtwFXX5Z+
+         t2kQ==
+X-Gm-Message-State: AOAM531BCW2pmni1AlM7C/nchenW/oiYV+XC2M3LTPBLTN4NkzS9kRmQ
+        PCLP2GLl9vlSj2/KfFoyBw==
+X-Google-Smtp-Source: ABdhPJwfXlbhewMkiRkSXUg2HnOofi1QqFbxJeOtWC0GyonQWdvBxG98pU6ZFKLbPgzI9eeJYtTL3A==
+X-Received: by 2002:a92:6b04:: with SMTP id g4mr376411ilc.192.1599594384637;
+        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
+Received: from xps15 ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id t10sm135379iog.49.2020.09.08.12.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
+Received: (nullmailer pid 788543 invoked by uid 1000);
+        Tue, 08 Sep 2020 19:46:22 -0000
+Date:   Tue, 8 Sep 2020 13:46:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        linux-leds@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 1/5] dt-bindings: mfd: Add ENE KB930 Embedded
+ Controller binding
+Message-ID: <20200908194622.GA788479@bogus>
+References: <20200906195103.1347-1-digetx@gmail.com>
+ <20200906195103.1347-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc9srPR1BYes9ZEo46gxV2BAhZ71ov_JZ_sHrmtgdAr-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200906195103.1347-2-digetx@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-08.09.2020 11:40, Andy Shevchenko пишет:
-> On Tue, Sep 8, 2020 at 5:11 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> The driver's probe function code is a bit difficult to read. This patch
->> reorders code of the probe function, forming groups of code that are easy
->> to work with.
->>
->> The probe tear-down order now matches the driver-removal order.
+On Sun, 06 Sep 2020 22:50:59 +0300, Dmitry Osipenko wrote:
+> Add binding document for the ENE KB930 Embedded Controller.
 > 
->> All dev/&pdev->dev are replaced with i2c_dev->dev in order to have uniform
->> code style across the driver.
-> 
-> You see, below is my point why leaving a temporary variable can reduce a churn.
-> 
->> The "ret" variable renamed to "err" since it only carries error code and
->> the new name clearly shows that.
-> 
-> Overall it sounds like you need to split this into a few patches.
-> 
-> ...
-> 
->> -       struct device *dev = &pdev->dev;
-> 
->> -       i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
-> 
->> +       i2c_dev->rst = devm_reset_control_get_exclusive(i2c_dev->dev, "i2c");
-> 
-> You see, if it had been simple 'dev', this line would have not been changed.
-> 
-> And so on.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
 > 
 
-Alright, I'll move all the renamings into the "Clean up variable names"
-patch, thanks.
+Reviewed-by: Rob Herring <robh@kernel.org>
