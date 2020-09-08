@@ -2,104 +2,140 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C818CC2D0E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 16:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD2AC43461
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 723342074B
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 16:40:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oqb+Elph"
+	by mail.kernel.org (Postfix) with ESMTP id 449A3218AC
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599585009;
+	bh=6NFe0ymOhoqmib9dZ3TJK/YVGzpwyBIPD6QNXwYX8UY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WtLD/SKl8+BMgsYoCsbXfxr6yIGic6wXNsZG89hSLHLIVM8eaAOckqOx18cYVq0/X
+	 qvMMoSpHUz94NCNxzoVVJD7SYUlpjszLLS9z/2zM7c5A00qBgHU6haIep7fIAwbk1V
+	 68+fdRI7h3d1ES2LDZ8pRIaXes04jHm+IA4iXdH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbgIHQik (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 12:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732077AbgIHQhb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 12:37:31 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12151C06123C;
-        Tue,  8 Sep 2020 06:29:43 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id a15so20117945ljk.2;
-        Tue, 08 Sep 2020 06:29:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Cq1prsdRfOht5c05daVafBXnW9LTyhWABmk1e7DFMIM=;
-        b=Oqb+Elphm0C2XxnZ9roaes0ld62J43TA45pqI7VsaHTAJ+AQ56X1jVAcE4hejh+V7D
-         x/pabrk7aD2myGe7XhaiRF6lRUpol3RpZlWzio7FPgLTWGphNd+nmHihC5FjM/HwcUmz
-         9xIWUMJ0FHG6lc/clAQa1WH8XXXjb/+QElA2InDqxdy9E4XNWuHLSnatBA7x3GFCsw4R
-         lZqH14bh83SeEVAQ4GpOZscGxrjOb9CPbPCtuUHQJ2WFum9WprPa/yFxCXQzR+IKavX/
-         K+1TojMS1JgGhD8QC7y0GZAaGjhyGtIyUKu4El9vUIDNo1yNnB57LlJlJkfveif+sDZ9
-         IoMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Cq1prsdRfOht5c05daVafBXnW9LTyhWABmk1e7DFMIM=;
-        b=Q8rxzUWnNslIZd8RRvfmiJQtAfb2P4aNhB5sBW+TOGOaKA2B+1V9IS3eacZKG8hoK5
-         kRfg0ET1irvLuFnoNrqCdSQgZU28KZuEhSfRoEAGyby6XNgIRfA2GdY0RvxqN5Ll569J
-         l8yWPKQaujf3YMecTbaD5M7fVOZOrGAirP/I4c2ExAJByYtv9pYI8WsYuCDKwHUxusbP
-         dD512BB2Fc68xnEsk8Br1uKQb7Jz+zGHgjfLF0YR5PMhlM/1dqE3sVkGgzFdsAvVhM6L
-         ut/kRaiTk768BaHHVl3ZWEiTiygKRLzv/18JSaxCxhzvCWJ7KFUzmDOHKidptuKoSAL4
-         mhlA==
-X-Gm-Message-State: AOAM531Zm3vCnwpTSCEFr0TVAyw8rTfkwJn0JXlfK1YzPB8mCe9VtsNA
-        uDK7mEf7VwoJEuG1LkwtYG4cN3UIopk=
-X-Google-Smtp-Source: ABdhPJy4vXFbbvEAcQndwdyrgn+ypU1IspP4I4QXUV1yNMXljRxJ+3oDr7pn8zcrYWvgXKdn7tlNzw==
-X-Received: by 2002:a2e:9b02:: with SMTP id u2mr4559039lji.303.1599571781360;
-        Tue, 08 Sep 2020 06:29:41 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id w4sm10392751lfq.75.2020.09.08.06.29.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 06:29:40 -0700 (PDT)
-Subject: Re: [PATCH v6 25/35] i2c: tegra: Factor out error recovery from
- tegra_i2c_xfer_msg()
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200908021021.9123-1-digetx@gmail.com>
- <20200908021021.9123-26-digetx@gmail.com>
- <CAHp75Vehn_19KA3DyshXd8ASWZN2CbyFdDiUHLMnB=qd7YpTaA@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7aba3e7c-e641-acbd-07e9-e4d02c7ecf8b@gmail.com>
-Date:   Tue, 8 Sep 2020 16:29:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1731985AbgIHRJu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:09:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731812AbgIHRJo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 8 Sep 2020 13:09:44 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75B6421924;
+        Tue,  8 Sep 2020 17:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599584983;
+        bh=6NFe0ymOhoqmib9dZ3TJK/YVGzpwyBIPD6QNXwYX8UY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mEOZY60QPhE7P0G9fDleoicJlosE0kdMqazDE59cEpI3AaF6rOo+YSIy/7T94gwnn
+         ivR9jr/Ak+vHTJ5zLH7ZzWDIrqU30dceu/CPIMczpsa19WzNYdlxNgFDhPIBZ9qp6n
+         x2t59Sv1jfj1flMANuF+WxRHwsDvoi3XRzbx8fW4=
+Received: by mail-ot1-f46.google.com with SMTP id a65so15477445otc.8;
+        Tue, 08 Sep 2020 10:09:43 -0700 (PDT)
+X-Gm-Message-State: AOAM530iJ/UlHgWO6be21zDy72njzyuihZGKsSti0OHrB1BGXmw0Ttkr
+        CFDfkPSiTPfMkHIgM0JDy34OzLYvmN+eoKkVlw==
+X-Google-Smtp-Source: ABdhPJwHvRobpy4sNP5E9Yg1dDeCFskCK1HpqEtpykR12ltq7YM6SYurKbQYjTYNf+T1ZSWapNAMuvoOnGPsoD0q7yw=
+X-Received: by 2002:a9d:411:: with SMTP id 17mr45450otc.192.1599584982696;
+ Tue, 08 Sep 2020 10:09:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vehn_19KA3DyshXd8ASWZN2CbyFdDiUHLMnB=qd7YpTaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200830185356.5365-1-digetx@gmail.com> <20200830185356.5365-2-digetx@gmail.com>
+ <20200903161022.GA2707794@bogus> <790dbb23-7422-887a-3f11-5ae55bb916fa@gmail.com>
+ <CAL_Jsq+Ue72jJ9gurcG0f_R+gGVC77dErhgbKpB_p40buUewLg@mail.gmail.com> <40e34696-5af8-a3da-35f2-483a0dacd835@gmail.com>
+In-Reply-To: <40e34696-5af8-a3da-35f2-483a0dacd835@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 8 Sep 2020 11:09:31 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+mE5gv6srBQgoNFehMx2RdxTpxeE9+y2uhfNGZAT_yFw@mail.gmail.com>
+Message-ID: <CAL_Jsq+mE5gv6srBQgoNFehMx2RdxTpxeE9+y2uhfNGZAT_yFw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
+ Controller binding
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-08.09.2020 11:49, Andy Shevchenko пишет:
-> On Tue, Sep 8, 2020 at 5:11 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Factor out error recovery code from tegra_i2c_xfer_msg() in order to
->> make this function easier to read and follow.
-> 
-> Ordering issue.
-> You have a patch that replaces int -> unsigned int or so, which
-> obviously has less impact (severity) than this one.
+On Fri, Sep 4, 2020 at 9:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 04.09.2020 18:40, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, Sep 4, 2020 at 6:07 AM Dmitry Osipenko <digetx@gmail.com> wrote=
+:
+> >>
+> >> 03.09.2020 19:10, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
+> >>>> Add binding document for the ENE KB930 Embedded Controller.
+> >>>>
+> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>> ---
+> >>>>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 ++++++++++++++++=
++++
+> >>>>  1 file changed, 66 insertions(+)
+> >>>>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.=
+yaml
+> >>>>
+> >>>
+> >>>
+> >>> My bot found errors running 'make dt_binding_check' on your patch:
+> >>>
+> >>> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/=
+mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does=
+ not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9=
+]+'
+> >>>       From schema: /builds/robherring/linux-dt-review/Documentation/d=
+evicetree/bindings/power/supply/battery.yaml
+> >>>
+> >>>
+> >>> See https://patchwork.ozlabs.org/patch/1354004
+> >>>
+> >>> If you already ran 'make dt_binding_check' and didn't see the above
+> >>> error(s), then make sure dt-schema is up to date:
+> >>>
+> >>> pip3 install git+https://github.com/devicetree-org/dt-schema.git@mast=
+er --upgrade
+> >>>
+> >>> Please check and re-submit.
+> >>>
+> >>
+> >> Apparently bot uses outdated kernel.
+> >
+> > It's on v5.9-rc2. The scripts don't know your base/dependencies and
+> > neither did I because you didn't mention anything here. I do review
+> > the errors before spamming people.
+>
+> The patches are based on the linux-next, hence nothing special here. My
+> expectation is that the bot should use the linux-next as well in order
+> to prevent such warnings. Is there any reason to why bot not using
+> linux-next?
 
-I guess you meant s/less/more/.
+What the bot uses is not the issue. The issue is not stating what your
+dependencies are. linux-next is not a stable base. No patches to be
+applied should be based on linux-next because there's no maintainer
+that can take them if you consider anything in linux-next could be a
+dependency. Of course, you're probably just dependent on one
+maintainer's tree usually, but whose tree? Am I supposed to figure
+that out?
 
-> Can you revisit the entire series and rethink ordering one more time?
-> 
+linux-next is frequently broken with respect to binding checks, so it
+really doesn't work for the bot. I need a known good base.
 
-I'll try to improve the ordering a bit more, thanks.
+Rob
