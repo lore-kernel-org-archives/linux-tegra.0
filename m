@@ -2,161 +2,128 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8EDC43461
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE477C2BC11
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92A1120768
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA2020768
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:58:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohS68j1Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbgIHT57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1732482AbgIHT57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 8 Sep 2020 15:57:59 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44128 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730316AbgIHPfq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:35:46 -0400
-IronPort-SDR: Vk1a8Xp01oHqi3a6rxgficaRMRGr8uTq6Dp/08L+148x0hEhYgnTroXXPB0ja9+tz03LOoCo35
- xddhQ16YHyvw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="159124946"
-X-IronPort-AV: E=Sophos;i="5.76,406,1592895600"; 
-   d="scan'208";a="159124946"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2020 08:28:50 -0700
-IronPort-SDR: OqiPE0Cn/mbaoFglvyhAf2rWnLm6JquwW+AKzi6KXAQYqzMCNSFdbI9D+UGi2vd+sJzRv/8Kvj
- Oe6qN0U8cxmQ==
-X-IronPort-AV: E=Sophos;i="5.76,406,1592895600"; 
-   d="scan'208";a="480068519"
-Received: from sderix-mobl1.ger.corp.intel.com (HELO [10.214.213.131]) ([10.214.213.131])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2020 08:28:38 -0700
-Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
- dma-iommu api
-To:     Logan Gunthorpe <logang@deltatee.com>, Tom Murphy <murphyt7@tcd.ie>
-Cc:     kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730223AbgIHPfq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:35:46 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8372C0612EF;
+        Tue,  8 Sep 2020 05:55:34 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id u21so9639277ljl.6;
+        Tue, 08 Sep 2020 05:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2ehLwXNK3WBwCU+2CN9jFbvN8+npPBE1XX1ZSoVrUTA=;
+        b=ohS68j1Qosw8sk+DbiaADlMklzrZcqzn+IrJkLUf5OKRiKa6DdhU0QJxMHJV2Xu4d1
+         3YEV8DE5gN07uNXvfX+YuIigPks3hFtW5ZFFVB8w0ZpiIQqHxI3Q8xbbXrorA8zVp58m
+         XpDpv9QTXT3XEeyLDikG1rG4DzZ9sJHbR+zzkfiehV1WRjfuDu3/UypVIMIpK3+OrPAO
+         jNqQPdRbatlNKaUvClzx5+aSFofLgubH8Bidc0fAVZJpQ4K8PmU2n2vh16AFKW9uXSbB
+         Qvnk79kTMAmkNbl6jdABjNXLGdmZleuoS11k5CoE7bXVxO0fhxGISkiNnw1PBHRRjs20
+         3Wmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2ehLwXNK3WBwCU+2CN9jFbvN8+npPBE1XX1ZSoVrUTA=;
+        b=Wh4Pq1TZvJY1QWZih8YDpO4q+cHdex90CVkXO5wjlpYo3wG81O2sofGcFCdSYB4ZYj
+         1rKYzqLB2sa8lAN4OH7CM1ssjlje4Qeejs7jMLK1pKVgArdqF4VRXp82LEstertX+fLL
+         jQjBPNsBE/P1MRW8m0jstX5Gtto+MswutXkiJ8p1eOzdT02EiFaV/EGrhDihLURQMlaF
+         XMk3JhzvE713nIl6IVo/N2sJio0bPIg95rgvD4wAkffBR6DUX4lyjM2wlEobJp11B0Ko
+         MKk5MMfi4TZwItilFoN4lyMQa25ZGwRjJI6bs2i+/pRKCIkr3mxxnj4PFq9FUVkkR5f5
+         g0CA==
+X-Gm-Message-State: AOAM531ECdHdIRIR/aEXpCkDWMtJmNcnMxa23lPzS2J1PSvThz1R1Aib
+        nFpLcqOaErKHxl1uwh5VyuopN7y4g9w=
+X-Google-Smtp-Source: ABdhPJy25Zmvv8ZSp1nEAFAtHswk2JSRcw6OzDPS5ICaqEVMzyPELa9Qi30aAs4QWFaZHKS3aReLxw==
+X-Received: by 2002:a2e:4e09:: with SMTP id c9mr13415557ljb.283.1599569732057;
+        Tue, 08 Sep 2020 05:55:32 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id n20sm10553687lfh.1.2020.09.08.05.55.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 05:55:31 -0700 (PDT)
+Subject: Re: [PATCH v6 16/35] i2c: tegra: Reorder location of functions in the
+ code
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org>
- <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
- <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
- <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
-Date:   Tue, 8 Sep 2020 16:28:35 +0100
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200908021021.9123-1-digetx@gmail.com>
+ <20200908021021.9123-17-digetx@gmail.com>
+ <CAHp75VefU+iXpngPnzQRBfrg3OgLUBqhOCJpPo8natfCBr6Q5w@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3fce58d0-eac6-bbea-74e3-098cb079e9b5@gmail.com>
+Date:   Tue, 8 Sep 2020 15:55:30 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAHp75VefU+iXpngPnzQRBfrg3OgLUBqhOCJpPo8natfCBr6Q5w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-Hi,
-
-On 27/08/2020 22:36, Logan Gunthorpe wrote:
-> On 2020-08-23 6:04 p.m., Tom Murphy wrote:
->> I have added a check for the sg_dma_len == 0 :
->> """
->>   } __sgt_iter(struct scatterlist *sgl, bool dma) {
->>          struct sgt_iter s = { .sgp = sgl };
+08.09.2020 11:43, Andy Shevchenko пишет:
+> On Tue, Sep 8, 2020 at 5:11 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >>
->> +       if (sgl && sg_dma_len(sgl) == 0)
->> +           s.sgp = NULL;
->>
->>          if (s.sgp) {
->>              .....
->> """
->> at location [1].
->> but it doens't fix the problem.
+>> Reorder location of functions in the code in order to have definition
+>> of functions closer to the place of the invocation. This change makes
+>> easier to navigate around the code and removes the need to have a
+>> prototype for tegra_i2c_init().
 > 
-> Based on my read of the code, it looks like we also need to change usage
-> of sgl->length... Something like the rough patch below, maybe?
+> Still seems to have ordering issues (it moves pieces you actually
+> change in the next patches).
 
-This thread was brought to my attention and I initially missed this 
-reply. Essentially I came to the same conclusion about the need to use 
-sg_dma_len. One small correction below:
+It's unavoidable that this patch either touches previous or next
+changes. You actually had an opposite complaint to v5.
 
-> Also, Tom, do you have an updated version of the patchset to convert the
-> Intel IOMMU to dma-iommu available? The last one I've found doesn't
-> apply cleanly (I'm assuming parts of it have been merged in slightly
-> modified forms).
+This diver has a long overdue for the refactoring. I think it's a good
+time to do it right now because driver works stable and it's quite
+unlikely that there will ever be fixes for the older code. Hence it
+should be good to have the code reordered now, so that we could have a
+nicer code base for the future changes.
+
+> Have you considered which one looks neat this variant or if you move
+> it closer to the end of the series?
 > 
-> Thanks,
-> 
-> Logan
-> 
-> --
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-> b/drivers/gpu/drm/i915/i915
-> index b7b59328cb76..9367ac801f0c 100644
-> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
-> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
->   } __sgt_iter(struct scatterlist *sgl, bool dma) {
->          struct sgt_iter s = { .sgp = sgl };
-> 
-> +       if (sgl && !sg_dma_len(s.sgp))
 
-I'd extend the condition to be, just to be safe:
+This variant should be more logical because changes have this order:
 
-	if (dma && sgl && !sg_dma_len(s.sgp))
+1. fixes
+2. features
+3. code reorder
+4. more important cleanups
+5. less important cleanups
 
-> +               s.sgp = NULL;
-> +
->          if (s.sgp) {
->                  s.max = s.curr = s.sgp->offset;
-> -               s.max += s.sgp->length;
-> -               if (dma)
-> +
-> +               if (dma) {
-> +                       s.max += sg_dma_len(s.sgp);
->                          s.dma = sg_dma_address(s.sgp);
-> -               else
-> +               } else {
-> +                       s.max += s.sgp->length;
->                          s.pfn = page_to_pfn(sg_page(s.sgp));
-> +               }
+The 3 merely shuffles code around without any changes to the code, hence
+it's a safe change.
 
-Otherwise has this been tested or alternatively how to test it? (How to 
-repro the issue.)
-
-Regards,
-
-Tvrtko
+The 4 has a potential danger since there are cleanups of the outdated
+features and some changes may change semantic in a case of a bug. Hence,
+if in the future we'll happen to find a problem in one of the 4 patches,
+then there is a better chance that the problem could be fixed with a
+simple revert. If 3 is placed after 4, then the chance is completely gone.
