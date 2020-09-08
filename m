@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A1FC2D0E1
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 22:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668BEC433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 22:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53EA0207DE
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 22:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD3220757
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 22:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BReUNAOT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoEWJ739"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbgIHWm4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 18:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33104 "EHLO
+        id S1729397AbgIHWmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 18:42:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbgIHWlC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 18:41:02 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F71C061797;
-        Tue,  8 Sep 2020 15:40:55 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id k25so952902ljg.9;
-        Tue, 08 Sep 2020 15:40:55 -0700 (PDT)
+        with ESMTP id S1730116AbgIHWlI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 18:41:08 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C43C06179F;
+        Tue,  8 Sep 2020 15:40:59 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id k25so1014409ljk.0;
+        Tue, 08 Sep 2020 15:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=S+lQblIYfMC0xoCVoTRie/3/bKbUPeIIfvh4Qt7sKEM=;
-        b=BReUNAOTlJ4hBKM8LA0UIHTP/4IFUyCKrrkLbmFXhldyy98NTypenEo9AFp3kr4Ey5
-         aAmsLKaR2esoCEqYRMOtqYmXPx2DvFloqQozmnYQzZ2LHWhCZvrWZsW6xRZx/HtvZBHY
-         0DgOEhvyR7t1+BhRRwb4sIQfYWO0shB/wSj9Co6omVM8n99qN+GG8P/uKzUoUxiW4/Ai
-         AiifHlyL7oeOVMlGO0iFxbAXyCQdgtPMAfTDPPC8N6MjKUjkzS63P5G7d8hj6cnrbeAR
-         e4Pl4GSmb+UE6xZIz2oMTDiBz2Z63GJg1tVnP/u3LCsZdowKfiAp3y6OM3UDtsb9NXqY
-         DgnQ==
+        bh=GqX7EAitDfk5FuQKkylcPiJFZGC8+mAMTNK0jlhGt/k=;
+        b=FoEWJ7390BbRlvcaxx+i8uqgVVPIXVQ0CotoZFM8erHl+zQj2H6BFIdQ4Z1VC3/OYr
+         2lJ66/nw8F9iM/U+cKvs/a/6r7c3ElNHdrTlpfc6/oBP+PqfGOiavY/Y8ZIGOab2yWBd
+         Rr6/i89dm9rlrNeayLLKst0F+wgvEP0l2UM2UX2UNnOSs1vtRRQUMVeAN2x42QnlixQu
+         /hFc8XRCygrM8/VyxL6M+jgEHuX6Ou++zvL9fzYqfKM9HdtF9e1ubMrHeCUPHozhUUJ3
+         LGXWWoNqQmUPyDfPR1evURvudAIuuJ2WjGGECZGYlpM+CVDF4yNvoR5rOpZ3VY3tuMhk
+         uVNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=S+lQblIYfMC0xoCVoTRie/3/bKbUPeIIfvh4Qt7sKEM=;
-        b=Gpt6LjkIgZzNyJOlX4+/ilVELw71iRqpHrz82fMKZ3rTtaW2p3Klh1FDja5SKZw/Ou
-         fnAjYKmKWzKCJZhmzQJLzUo2ruciiyNwZKTN5vN1jpDdPnIDO1WmeFVb3ktUos7tI4it
-         ixcB2AzZM/ibrY+dw+m0YQdA4r9V7IyEp9SIPu2nZMyLwZV8mEH13euCtv8LrcoC0FQw
-         EnEquXYW35g11/vdog5MavM/teyojdBaYigOjIg27Etqw7+1CM2tsaCgpcs4iPwv/tUY
-         miSrF9odp5FwKf+iuVLagM4h+r7WVmuy/DYPKgKezTtFUR0WcDIAB2PdrM4vecIfOHfg
-         9RDQ==
-X-Gm-Message-State: AOAM530Xl10Zg1JeCthCiOC30nt05D0HRim4+Zm2oF6H81kEBHFVbgCp
-        VRgv1tN0BkbXGvJ3AX8OafM=
-X-Google-Smtp-Source: ABdhPJzHj/rYs+ujEiyukjCmncUFWTHbyN0yNFjNW+CTHM1nEdl7kZi7vOkIIJT8+GB/YseJbVJwYQ==
-X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr337450ljc.254.1599604853524;
-        Tue, 08 Sep 2020 15:40:53 -0700 (PDT)
+        bh=GqX7EAitDfk5FuQKkylcPiJFZGC8+mAMTNK0jlhGt/k=;
+        b=MS/ztXmTjYtC8HnchAWaiWT1926mmDDewIT67LTK5M6cBi0oNTwcpVdfB91/wD28S+
+         zrlr2hLNUynOVPCe8O5f500lYzS7aflLKlEV2w1W7aLEVBWDth7vos/CJ7rNSui9vQJ1
+         bVTv4STn2ExYHvEx6jQYCsdEAZTr6s3++cpTvfFXZEgZfH0Ei97Bh3ufmRk0usG97LhS
+         33KgX1DzEUZW9Qkj1bDoNY3E2wkXEiIfFbM+AoA+xGFTbLRssyyk4g2jdLhuZRIwYQF0
+         jRLIdbNoDRNhCVAmEqDMVoU+/UlBzLPk7LBGdiMZ5IrG9KxCW9aayNCaOjBzRIS8BRtC
+         0yog==
+X-Gm-Message-State: AOAM530mDkzs6275SHUst2kPMbVIR/FR4Dfh/TqOQ6bR093xzaJxamCm
+        Mds1nBtifOF6OT8fMj2vWEA=
+X-Google-Smtp-Source: ABdhPJzsFKsmzTgpqHw5CIoFQtYWLen0Gt3lYLM+RSGhqdtYLnyDUaC40Mcxbf5ZwZoEHWXAL4wGHQ==
+X-Received: by 2002:a2e:9919:: with SMTP id v25mr359031lji.167.1599604857958;
+        Tue, 08 Sep 2020 15:40:57 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id s15sm268311ljp.25.2020.09.08.15.40.52
+        by smtp.gmail.com with ESMTPSA id s15sm268311ljp.25.2020.09.08.15.40.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 15:40:53 -0700 (PDT)
+        Tue, 08 Sep 2020 15:40:57 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 23/34] i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
-Date:   Wed,  9 Sep 2020 01:39:55 +0300
-Message-Id: <20200908224006.25636-24-digetx@gmail.com>
+Subject: [PATCH v7 28/34] i2c: tegra: Consolidate error handling in tegra_i2c_xfer_msg()
+Date:   Wed,  9 Sep 2020 01:40:00 +0300
+Message-Id: <20200908224006.25636-29-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200908224006.25636-1-digetx@gmail.com>
 References: <20200908224006.25636-1-digetx@gmail.com>
@@ -81,78 +81,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Factor out error recovery code from tegra_i2c_xfer_msg() in order to
-make this function easier to read and follow.
+Consolidate error handling in tegra_i2c_xfer_msg() into a common code
+path in order to make code cleaner.
 
 Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 102d26c01dff..1ec2490d06ac 100644
+index fe672cfebe12..ac40c87f1c21 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1104,6 +1104,32 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- 	return -EAGAIN;
- }
+@@ -1293,8 +1293,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
  
-+static int tegra_i2c_error_recover(struct tegra_i2c_dev *i2c_dev,
-+				   struct i2c_msg *msg)
-+{
-+	if (i2c_dev->msg_err == I2C_ERR_NONE)
-+		return 0;
+ 		if (!time_left && !completion_done(&i2c_dev->dma_complete)) {
+ 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
+-			tegra_i2c_init(i2c_dev);
+-			return -ETIMEDOUT;
++			err = -ETIMEDOUT;
++			goto reset_hardware;
+ 		}
+ 
+ 		if (i2c_dev->msg_read && i2c_dev->msg_err == I2C_ERR_NONE) {
+@@ -1314,8 +1314,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 
+ 	if (time_left == 0) {
+ 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
+-		tegra_i2c_init(i2c_dev);
+-		return -ETIMEDOUT;
++		err = -ETIMEDOUT;
++		goto reset_hardware;
+ 	}
+ 
+ 	dev_dbg(i2c_dev->dev, "transfer complete: %lu %d %d\n",
+@@ -1329,6 +1329,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return err;
+ 
+ 	return 0;
 +
++reset_hardware:
 +	tegra_i2c_init(i2c_dev);
 +
-+	/* start recovery upon arbitration loss in single master mode */
-+	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-+		if (!i2c_dev->is_multimaster_mode)
-+			return i2c_recover_bus(&i2c_dev->adapter);
-+
-+		return -EAGAIN;
-+	}
-+
-+	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
-+		if (msg->flags & I2C_M_IGNORE_NAK)
-+			return 0;
-+
-+		return -EREMOTEIO;
-+	}
-+
-+	return -EIO;
-+}
-+
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 			      struct i2c_msg *msg,
- 			      enum msg_end_type end_state)
-@@ -1290,24 +1316,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		i2c_dev->msg_err);
- 
- 	i2c_dev->is_curr_dma_xfer = false;
--	if (i2c_dev->msg_err == I2C_ERR_NONE)
--		return 0;
- 
--	tegra_i2c_init(i2c_dev);
--	/* start recovery upon arbitration loss in single master mode */
--	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
--		if (!i2c_dev->is_multimaster_mode)
--			return i2c_recover_bus(&i2c_dev->adapter);
--		return -EAGAIN;
--	}
--
--	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
--		if (msg->flags & I2C_M_IGNORE_NAK)
--			return 0;
--		return -EREMOTEIO;
--	}
-+	err = tegra_i2c_error_recover(i2c_dev, msg);
-+	if (err)
-+		return err;
- 
--	return -EIO;
-+	return 0;
++	return err;
  }
  
  static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
