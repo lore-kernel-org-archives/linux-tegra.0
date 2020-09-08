@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A174C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B23C2BB84
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2D792068D
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E1D21D1A
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njGalvId"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQQ5yRgT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbgIHCMA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 22:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
+        id S1728517AbgIHCP4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 22:15:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728252AbgIHCLj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 22:11:39 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F47C061755;
-        Mon,  7 Sep 2020 19:11:38 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y4so18006973ljk.8;
-        Mon, 07 Sep 2020 19:11:38 -0700 (PDT)
+        with ESMTP id S1728275AbgIHCLq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 22:11:46 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20176C061755;
+        Mon,  7 Sep 2020 19:11:45 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id b19so17986470lji.11;
+        Mon, 07 Sep 2020 19:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Lmosp0zHTCuESLy5/lSjNc1iMwH+IzUsdjaB+ieXAnU=;
-        b=njGalvIdcm6ut/39tvF1ZFtPfjvs52Rky4wNb5FqTwhfXWfNO031Nllgei/KMWivpb
-         QLEyQ7WV1pIWZ4ZeogfXEC6JaQQDeF1nZ91oufJOpgI7O6a9dX7YP5FyBcpuiQ1+Wujz
-         Nusvsywu9fLKk8L93SxEfjnlf9n6l0wG/nJvwjstMI0EOIViu7aV0B2TgVau083vrV5h
-         zrpGvWgUa52Zl0hVD4k1m6RlFLzOHqvQTtJ6gzrwPfwrjSThPzOyWiga3PorW8EIXZVk
-         GDyiENV+9LNalbYocFTO5pgR3OQyIkp+fgA63m3Cy0UrqhWiVHDAEgYQZ08qqETmTkYK
-         NwMw==
+        bh=9wL/ufnc3lNtiNLFNRaxPcM6Cg+5dtTmA95pTCa3ATE=;
+        b=kQQ5yRgToSqKZtbeM1mLp+n9KNsuxWn8CPgaSZSBNnkTnjcxBW25gTCORF3AW/8VCz
+         +rU+8hLtyUBf5IZA5FP8yRTocyEZ7UHGbL8q34S8GiggB/eWGx8oKrRmGvgxA8UJ6a9F
+         +XG4aN1EaytABjB42SYZm8QbyPxjUXAjQRc2haYJKV8iYb+uWcfmTOsnVEzrLSeqhVex
+         ALhV06lKDdQxR8THA1IGXHcJ80T6RHd5JdfVf+nL7Qjd8RZ3YbeectWhhM8k6w5c52TP
+         afCyvBLvaeLf4PLswFTw885EpWztfCotnFuyZLCSGStN58DYfRA6uR6uvlimk4unseDm
+         fC7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Lmosp0zHTCuESLy5/lSjNc1iMwH+IzUsdjaB+ieXAnU=;
-        b=SM10G8xurhbJw4RmrRIWmOsx9fXhRO3iKaX9rMx4LBkgWuHznpKv5vqBdXjiYGWGXq
-         +jjX4bNK95Ja2XP0GGutcEDnaRfWp2SksmxQ1qH+kEB2hio6EQkpCHWUq2q6AlR5pe4U
-         PUk+W3SixI2zgQWdscdN9pqpfCp2oCedDiTAvy+RVSytsEDQVy0zk1YDqOxfP2gX0OKB
-         FZ9FlYW4KPLXoNEp0SOxqCIBP2XHrlw9+wXjJO/Rnj3yEGcehubP30cgPPEmd6oLrNM/
-         6jsQ7n5hop53undFAIeR7LA3RXeVV4JhEANrFKQEY3I+SdHA1HuMFJOhCqW5+fSbBq+q
-         B/8w==
-X-Gm-Message-State: AOAM530AP63qJgMhP3uDbFfmwWg/ki5fvI/62eSkDsWx2r0pLqKxQdHk
-        9BCrUG8vH5QgjIPReNoB21U=
-X-Google-Smtp-Source: ABdhPJxjCcvuwQ6ZDiRBXEciJzc2XrhENUGOgLk87wPQP/VE9K86UYQR9oq+wW1kpzFqyZk15Difog==
-X-Received: by 2002:a2e:9785:: with SMTP id y5mr5919782lji.452.1599531097413;
-        Mon, 07 Sep 2020 19:11:37 -0700 (PDT)
+        bh=9wL/ufnc3lNtiNLFNRaxPcM6Cg+5dtTmA95pTCa3ATE=;
+        b=QwlyUCSN0zvwkU8BTum5OnNPatl/jj0Zv5TpHnsdIAnojyj+gFtLCCQvVr5/25q/5v
+         wnvSmzQa/fDRvSyD1OE1t7ElUqzwAh+dHu1Zi4fSEQ6NVkA3UxPdQkIXKDgWOFxdi16+
+         3LTlyU+w9/cUGpXU3iWO54LC+5nJjd/r1VR3wCGnOTi1Ok4A1EEmwsoAdt3eJcq0UFom
+         Uva1Shd2TBYAboBNTf9rDnYULByfZ/bW6hw35qU+HXFBzPo96SWyW5LbqqOV2IJnPXKv
+         51yOB0lTF4Zxv4TtGElIR4mpkkGi3jajYY9/Dd/HBpJ+bD8Y/ckDkhtvyG6D00fzKRiI
+         SLPw==
+X-Gm-Message-State: AOAM5306cj6PUdHZqZXGuyytCr/E4N3+JXbwR5a1P3pNC0b7h2D1qBp4
+        bCgsQcICNsI7hZ1HvcBA4PY=
+X-Google-Smtp-Source: ABdhPJwaDffkzdplR7onoD0M9OXTT8yaHwzKdXcUTIu4i54uPl9TI2+3gvjT9F51anR+Zlh8qZNf6A==
+X-Received: by 2002:a2e:8e30:: with SMTP id r16mr10630255ljk.304.1599531103607;
+        Mon, 07 Sep 2020 19:11:43 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id j12sm9070085lfj.5.2020.09.07.19.11.36
+        by smtp.gmail.com with ESMTPSA id j12sm9070085lfj.5.2020.09.07.19.11.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2020 19:11:36 -0700 (PDT)
+        Mon, 07 Sep 2020 19:11:43 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,59 +67,61 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 02/35] i2c: tegra: Add missing runtime PM put
-Date:   Tue,  8 Sep 2020 05:09:48 +0300
-Message-Id: <20200908021021.9123-3-digetx@gmail.com>
+Subject: [PATCH v6 09/35] i2c: tegra: Use reset_control_reset()
+Date:   Tue,  8 Sep 2020 05:09:55 +0300
+Message-Id: <20200908021021.9123-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200908021021.9123-1-digetx@gmail.com>
 References: <20200908021021.9123-1-digetx@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The pm_runtime_get_sync() always bumps refcount regardless of whether it
-succeeds or fails. Hence driver is responsible for restoring of the RPM
-refcounting. This patch adds missing RPM puts which restore refcounting
-in a case of pm_runtime_get_sync() error.
+Use a single reset_control_reset() instead of assert/deasset couple in
+order to make code cleaner a tad. Note that the reset_control_reset()
+uses 1 microsecond delay instead of 2 that was used previously, but this
+shouldn't matter because one microsecond is a default reset time for most
+of Tegra peripherals and TRM doesn't mention anything special in regards
+to I2C controller's reset propagation time.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+In addition don't ignore potential error of the reset control by emitting
+a noisy warning if it fails, which will indicate an existence of a severe
+problem, while still allow machine to boot up.
+
+Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ab88cdd70376..4e7d0eec0dd3 100644
+index b813c0976c10..90ba2f5327c5 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1375,6 +1375,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
-+		pm_runtime_put_noidle(i2c_dev->dev);
- 		return ret;
- 	}
+@@ -785,9 +785,16 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	u32 tsu_thd;
+ 	u8 tlow, thigh;
  
-@@ -1786,7 +1787,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		ret = pm_runtime_get_sync(i2c_dev->dev);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "runtime resume failed\n");
--			goto disable_rpm;
-+			goto put_rpm;
- 		}
- 	}
+-	reset_control_assert(i2c_dev->rst);
+-	udelay(2);
+-	reset_control_deassert(i2c_dev->rst);
++	/*
++	 * The reset shouldn't ever fail in practice. The failure will be a
++	 * sign of a severe problem that needs to be resolved. Still we don't
++	 * want to fail the initialization completely because this may break
++	 * kernel boot up since voltage regulators use I2C. Hence, we will
++	 * emit a noisy warning on error, which won't stay unnoticed and
++	 * won't hose machine entirely.
++	 */
++	err = reset_control_reset(i2c_dev->rst);
++	WARN_ON_ONCE(err);
  
-@@ -1851,7 +1852,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	else
- 		tegra_i2c_runtime_suspend(&pdev->dev);
- 
--disable_rpm:
- 	if (pm_runtime_enabled(&pdev->dev))
- 		pm_runtime_disable(&pdev->dev);
- 
+ 	if (i2c_dev->is_dvc)
+ 		tegra_dvc_init(i2c_dev);
 -- 
 2.27.0
 
