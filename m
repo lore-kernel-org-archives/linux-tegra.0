@@ -7,59 +7,61 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA83C43461
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 08:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3CBC433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 08:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38069215A4
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 08:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BE5421741
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 08:51:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzIgARw0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6fK6CUz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbgIHItz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 04:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
+        id S1730214AbgIHIv4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 04:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbgIHIty (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 04:49:54 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF0DC061573;
-        Tue,  8 Sep 2020 01:49:54 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id k15so10377178pfc.12;
-        Tue, 08 Sep 2020 01:49:54 -0700 (PDT)
+        with ESMTP id S1730054AbgIHIv4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 04:51:56 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8275C061573;
+        Tue,  8 Sep 2020 01:51:55 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id d9so4117785pfd.3;
+        Tue, 08 Sep 2020 01:51:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3r9LzOgZvLPGhR01bi3/V4T//sW9SnWvvRP9YTkAmXI=;
-        b=gzIgARw0PImrLpbOmnZv4pm10Co9clgvk2tYt8tfrWJdq69L9EeuYThFVfbk4L4VDw
-         Ft+aKhD0K7cNlSHUz3/lEINgZi7sOz9zZt8QcVrpppEHKblhnR3298MuvLlkSCgVf2dU
-         QYZZZmK0cK5vK934MGyb5fDB9yI5jEvAF0JYjtc2rB6rP9o6xNi2zWUrDaHzR7p5k9fw
-         aJh5j7lgqZAot+IU+bZIFJ+vwGzq1PodlMUinKbbscv5FJqosXAHLvDy0wq3H5I8+Wa4
-         2RgNupIPpTOKkWoRivgmBVHrKON4uWGXVmGXHiEe9YjrulSz/K8pJ7rWnfQBNv8yJspl
-         ch6g==
+        bh=rbIICoIBBZ5GNj9XF7FvYyv62Fc59HG0vpn/olGWwH4=;
+        b=G6fK6CUzeTZ4EOsL2aQLd7TiWXtS19culOtXYNIy5V2cg/RT4hS+92jOKdhafB9kjG
+         pOZ7O8xnirjsXoUjdqeTJVvA6kVXaGY6Nvn8csW7nMsqJI3+zTZYrwqDGAkC9HGsmiAF
+         3yCTI/ahUgKoi94Coa05G1lr9yM4bk6vsYTWEQuCUAfKJmyh7DyN/ObeR7hA5CSAUQE0
+         DEYxBKAYBd0zNk1Qea59f8IqxiN72cydOyYqwKYbShGuSWWCo2MiHQB47r1tjyRTvaT0
+         qmDw2AGfS1XC2cR5yp88ZC5lh6q17LePP0bE0F3AEUc/AcspGPgIUSqZymOXVJkYOX/v
+         RyVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3r9LzOgZvLPGhR01bi3/V4T//sW9SnWvvRP9YTkAmXI=;
-        b=KH95Lv/OT/DDzMqGHeIXC5XBiOs7ZqrooINXf5sDvgdoVjckIVUZqVYE3U9kgHfmQs
-         KEVqyn387z8qQ4Norj0VmQvflfcMFnPB2ji8Ujaqpys6BikVJzoitpLlzUwlANAPx6CI
-         mSwOmYai4xbiBEYj9IE0uqgTRYsBzrQKE8GsfcEw8+/uGbEeZBna+VmxADWBnzz1Q5Ok
-         c3Mdk9sZOIiCQTUqhGIcN1NhagxZ3HCQcDO+slzoHN3yh677/QRI7WnT5i3NKUMxIIV2
-         SRF3WmgakW753+645PafroFmYezwHePv7L70j7o8uJaKhBhOOpfRh7Quqaw4h3eT+fnG
-         eddQ==
-X-Gm-Message-State: AOAM5312ZX4a0r7+JoUIra6GCI+RJQB0koQ0zd3sEnp/na9XIg79Q1kq
-        9J5diTtDmORE2VwsHSxwF/EYLRhcqojbz4GRsiE=
-X-Google-Smtp-Source: ABdhPJxOIHDvJCbLQ1a6HPQ0ujVbg1sElZig16a+Dtzxy7FqHOSIaNj8VQoJPmXAgVr2q4eYbzuQvvHyeBAQlHNC7/U=
-X-Received: by 2002:a17:902:d312:: with SMTP id b18mr2266961plc.0.1599554994025;
- Tue, 08 Sep 2020 01:49:54 -0700 (PDT)
+        bh=rbIICoIBBZ5GNj9XF7FvYyv62Fc59HG0vpn/olGWwH4=;
+        b=CL2nzLbXwXRBGnB9vpCI9Fj9EtZDAxkEC7bW7nuqBDA05ZbmKuAJf3wCg4rDh/Adr0
+         7D57Sr1LhF7q8AmqDEYBI6KTp630iWNyFyvlyrw+caJndMbIz8YefYtD2hUz5doaFPvP
+         O+QR0Pw/3vn8vCC8ZN++dYmVdPDuNg3jhe+FchjfIa9M0I26zfqW7MqFHeXmFwta5NhF
+         MK1zyGUIDLt4zsmXu1yXGhC5rkmv5kXyp794e7xBpDcin3sWwOPk14nhVQHoWfwsVQ1x
+         eaJ13OrS+1UsJULThFWiJfMCuJVH052V5ZZKujS8DZ19SAVNuzhs3gP0fXhAzLk+xGhZ
+         4cOA==
+X-Gm-Message-State: AOAM5336VJ+0jZMndclc6t+nQm11xJf8Zya+feZw507WcNp09EF1tjws
+        uN01icj422niwoq1KcsFFnW9g8A5tSJGd3znESE=
+X-Google-Smtp-Source: ABdhPJyO2SAle5+IZyYDqfFOgNEwCXJ4lPQkEuklkNnNAIux8iHnnhoHlYtGoxZ1/EJONsStIacrzU1LrXQMi8aUcoE=
+X-Received: by 2002:a17:902:6bc1:b029:d0:cbe1:e76e with SMTP id
+ m1-20020a1709026bc1b02900d0cbe1e76emr226751plt.21.1599555115180; Tue, 08 Sep
+ 2020 01:51:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200908021021.9123-1-digetx@gmail.com> <20200908021021.9123-26-digetx@gmail.com>
-In-Reply-To: <20200908021021.9123-26-digetx@gmail.com>
+References: <20200908021021.9123-1-digetx@gmail.com> <20200908021021.9123-28-digetx@gmail.com>
+In-Reply-To: <20200908021021.9123-28-digetx@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 8 Sep 2020 11:49:36 +0300
-Message-ID: <CAHp75Vehn_19KA3DyshXd8ASWZN2CbyFdDiUHLMnB=qd7YpTaA@mail.gmail.com>
-Subject: Re: [PATCH v6 25/35] i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
+Date:   Tue, 8 Sep 2020 11:51:38 +0300
+Message-ID: <CAHp75VeMZhVvysVHZawutvPpO4MPeTit5OqOJQxqRW3RL_iE-Q@mail.gmail.com>
+Subject: Re: [PATCH v6 27/35] i2c: tegra: Factor out register polling into
+ separate function
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -75,15 +77,13 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 5:11 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Tue, Sep 8, 2020 at 5:12 AM Dmitry Osipenko <digetx@gmail.com> wrote:
 >
-> Factor out error recovery code from tegra_i2c_xfer_msg() in order to
-> make this function easier to read and follow.
+> Factor out register polling into a separate function in order to remove
+> boilerplate code and make code cleaner.
 
-Ordering issue.
-You have a patch that replaces int -> unsigned int or so, which
-obviously has less impact (severity) than this one.
-Can you revisit the entire series and rethink ordering one more time?
+I'm wondering if you can make it before the patch that touches one of
+these conditionals.
 
 -- 
 With Best Regards,
