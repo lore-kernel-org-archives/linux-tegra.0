@@ -2,86 +2,145 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7ABC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98305C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B22F0207DE
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599594453;
-	bh=IjecBUMNsGMpOyrwu++8aLByHfqCkW2ag00jaPPJmvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ss0erv6krPYeyyiMGkoJkbBS9HU/2NmJh71KViOOLweQ5PfBCS2L/F+Kx4MMq/9hk
-	 qfgxJUeS5r0GClO6+eGJ8uoYbAUCk0HtUCu105Gjarlih1SLlNvMUZCMV1szwRAeQJ
-	 RsvRJiuquFtrCAv7POkVEWcE1szEjyT1qGxuIGQ4=
+	by mail.kernel.org (Postfix) with ESMTP id 590CE20768
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="dbg0PtMP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731981AbgIHTrZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:47:25 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:41278 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732466AbgIHTqZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 15:46:25 -0400
-Received: by mail-il1-f195.google.com with SMTP id w8so64366ilj.8;
-        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mxfloW/du0FtuXMc7fb1vC2lzA6jvn4y8s0XgOBsOH8=;
-        b=joOjemVdVg0rGYRBaxijCTLyXC1ABGQPRe2gGbBUAEeW+XdFTLbfsLdUrHUAMbqeHa
-         oANjBrc104blQkYAqloN0iea2d/qzIolkNLff/850DXgQqsWxBWc4IJltjG8eJtdFJnr
-         r2ujezMXMyzaIX2441IwVKZADWUpknZb1nzX/FhKUZ0kEZC21ZfwsqXhNAZ56z87SRrf
-         5OLc3+muMIirACPQfYHEIdXptd7YkCBrlMP4TZCLmd7LK2Be+aSPMy0bk7Qorm6r2Qvi
-         5lUIYdMA+4HtZpjmgLTkKZIoKjZ3g2jSrCUyoYwbz2XC5w5vz81wSDG4aJAPtwFXX5Z+
-         t2kQ==
-X-Gm-Message-State: AOAM531BCW2pmni1AlM7C/nchenW/oiYV+XC2M3LTPBLTN4NkzS9kRmQ
-        PCLP2GLl9vlSj2/KfFoyBw==
-X-Google-Smtp-Source: ABdhPJwfXlbhewMkiRkSXUg2HnOofi1QqFbxJeOtWC0GyonQWdvBxG98pU6ZFKLbPgzI9eeJYtTL3A==
-X-Received: by 2002:a92:6b04:: with SMTP id g4mr376411ilc.192.1599594384637;
-        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
-Received: from xps15 ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id t10sm135379iog.49.2020.09.08.12.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 12:46:24 -0700 (PDT)
-Received: (nullmailer pid 788543 invoked by uid 1000);
-        Tue, 08 Sep 2020 19:46:22 -0000
-Date:   Tue, 8 Sep 2020 13:46:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        linux-leds@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-Message-ID: <20200908194622.GA788479@bogus>
-References: <20200906195103.1347-1-digetx@gmail.com>
- <20200906195103.1347-2-digetx@gmail.com>
+        id S1731072AbgIHTvr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 15:51:47 -0400
+Received: from ale.deltatee.com ([204.191.154.188]:51884 "EHLO
+        ale.deltatee.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730192AbgIHPt5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:49:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deltatee.com; s=20200525; h=Subject:Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Sender:
+        Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+        :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=DvSiEr2JCy+2h9dy7CIecEenG2gQsa0A5OP2d9PI/p0=; b=dbg0PtMPK+HbvI6GMZzh/J5E8Z
+        Q/TWc7UsDFhg1cOVJt/pysWKo3QQRWraF1mqHM6mdRGQ6y0rj+OXqZUSgbgyS5kW1MF22xpb3bm/M
+        J9Rf7mpjgRlZVOcx1SZJ6EJp7lFy55R6nqk8PsS8AEsD0hf0g4vJC65mDtFEAYzf7cE0mQHAAVUlU
+        S7bbDUQqTHtHsrq5f8RHYZU0yCa5rG3lpeqMLTKlNXStV+C6+vhM0UL/8Wjc5CgLnNZYF3jPybjc/
+        ulyb1L7dumDVfTJQeMlSwf7IyaVvWKGWBe0b9ikUV9lDLMezAf5m+fY9DJk+AU+8aTTS01s/mCgwR
+        I5zJe2Ew==;
+Received: from s01060023bee90a7d.cg.shawcable.net ([24.64.145.4] helo=[192.168.0.10])
+        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1kFfnI-0008Go-Gj; Tue, 08 Sep 2020 09:44:29 -0600
+To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Tom Murphy <murphyt7@tcd.ie>
+Cc:     kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+ <20200529124523.GA11817@infradead.org>
+ <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
+ <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
+ <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
+ <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
+ <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+ <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
+ <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com>
+Date:   Tue, 8 Sep 2020 09:44:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200906195103.1347-2-digetx@gmail.com>
+In-Reply-To: <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 24.64.145.4
+X-SA-Exim-Rcpt-To: robin.murphy@arm.com, kgene@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, cohuck@redhat.com, dwmw2@infradead.org, gerald.schaefer@de.ibm.com, virtualization@lists.linux-foundation.org, tglx@linutronix.de, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org, agross@kernel.org, linux-rockchip@lists.infradead.org, hch@infradead.org, jonathanh@nvidia.com, krzk@kernel.org, maz@kernel.org, linux-samsung-soc@vger.kernel.org, jean-philippe@linaro.org, m.szyprowski@samsung.com, will@kernel.org, julien.grall@arm.com, linux-tegra@vger.kernel.org, bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org, airlied@linux.ie, kvm@vger.kernel.org, murphyt7@tcd.ie, tvrtko.ursulin@linux.intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
+ dma-iommu api
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 06 Sep 2020 22:50:59 +0300, Dmitry Osipenko wrote:
-> Add binding document for the ENE KB930 Embedded Controller.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
+>>
+>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
+>> b/drivers/gpu/drm/i915/i915
+>> index b7b59328cb76..9367ac801f0c 100644
+>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
+>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
+>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
+>>   } __sgt_iter(struct scatterlist *sgl, bool dma) {
+>>          struct sgt_iter s = { .sgp = sgl };
+>>
+>> +       if (sgl && !sg_dma_len(s.sgp))
+> 
+> I'd extend the condition to be, just to be safe:
+>     if (dma && sgl && !sg_dma_len(s.sgp))
+>
+
+Right, good catch, that's definitely necessary.
+
+>> +               s.sgp = NULL;
+>> +
+>>          if (s.sgp) {
+>>                  s.max = s.curr = s.sgp->offset;
+>> -               s.max += s.sgp->length;
+>> -               if (dma)
+>> +
+>> +               if (dma) {
+>> +                       s.max += sg_dma_len(s.sgp);
+>>                          s.dma = sg_dma_address(s.sgp);
+>> -               else
+>> +               } else {
+>> +                       s.max += s.sgp->length;
+>>                          s.pfn = page_to_pfn(sg_page(s.sgp));
+>> +               }
+> 
+> Otherwise has this been tested or alternatively how to test it? (How to
+> repro the issue.)
+
+It has not been tested. To test it, you need Tom's patch set without the
+last "DO NOT MERGE" patch:
+
+https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
+
+Thanks,
+
+Logan
