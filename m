@@ -2,162 +2,179 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37C1C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5514FC43461
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EA27206E7
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66B42074B
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:57:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="pWgWvsnM"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TRI4o8zL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731602AbgIHRxx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:53:53 -0400
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:37246 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731585AbgIHQNJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:13:09 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 088DqRUJ027924;
-        Tue, 8 Sep 2020 15:53:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=STMicroelectronics;
- bh=6w3g6tB8aZNlO4rCM3lm4/rbYpN+ADaXzbOYDVLkgaI=;
- b=pWgWvsnMGafLwoGVVukmZPlvMeHb5hGxiAQvNskUz1uGBWJpQNT+u8wuqg3yS+ExTZQj
- JztgosFabJsoAT5WG53dfkVPTTrH0wpUMSmfsrTd6o82n50vWEHHnN8j1pbQ3cUob20l
- 4PKYjvtd6nn18oiyAq/YgEHo0Y7ipXmVpR0wBUyreHuAREWapa8O8yGtLOvt4sK7wd0v
- ZyYSw6o9MQosgbHP11GX7Wy1pIEPns3vxmTgQGFVzrKUBjDa6g+c9jlgks+X33Kn52Tt
- fkygIqb3XwgmfNhzzl8MAGM8wZ9cQJVmTMgK27KQKHh2IHtcQaS8qD38+598osPus9LK QA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 33c0euqfqb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Sep 2020 15:53:41 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F204210002A;
-        Tue,  8 Sep 2020 15:53:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (gpxdag3node5.st.com [10.75.127.72])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BE56D2BC7B5;
-        Tue,  8 Sep 2020 15:53:35 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.75.127.50) by GPXDAG3NODE5.st.com
- (10.75.127.72) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 8 Sep
- 2020 15:53:35 +0200
-Date:   Tue, 8 Sep 2020 15:53:33 +0200
-From:   Alain Volmat <alain.volmat@st.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
+        id S1732193AbgIHRxr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:53:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731602AbgIHQNo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 12:13:44 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99018C0613ED
+        for <linux-tegra@vger.kernel.org>; Tue,  8 Sep 2020 04:37:16 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id c18so18709766wrm.9
+        for <linux-tegra@vger.kernel.org>; Tue, 08 Sep 2020 04:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=I/sh0hf7RWpKTkHRG2sXo6X29i3mK1fyatkLVFjwPyY=;
+        b=TRI4o8zL814YHGA/D/zYMJIAaCIYqFZ0mIpUDMLZUZN87cVGkWukeoAQibFqRSdTi0
+         6pbezBxBfFFSAjRUKWB8QJP5CHgs93NHYtFiS1nIDp648nb0kIv2ZVQ/RTs1fTwlNaec
+         GPg0wCc5jkN3j+ma2gtmxo4nY/EYhDvIrUWKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=I/sh0hf7RWpKTkHRG2sXo6X29i3mK1fyatkLVFjwPyY=;
+        b=c/ETLbJPQacM2vlW2UMLPGQJCrAKEjSnTuLlJ01/rVCy3i6nOlg1uVJtTiNnBgPwgC
+         2IC0DdOjNONDAfTjKk8MOo2dHB7hip6fDs2HtbQ2J4Seu/Xa6KxF9jzgoKsbU6QgXmtE
+         IvNAncZBj//L1/iOmpFDDswQQDkVi9Lb0L7PSlGivLqW/AtjA4qrWVPow9Ge5bvY9jCZ
+         fUda7HJlaOARDbxLkK3YBSBD7jQhjN7w/EaEso/2m/rL0R53iy/cVO2b0rA1ZrolGlN1
+         5FinnYMe9zbzWRTTvJn0xBVE/VJt1EZF9GGUctSGS79HmF2q8RFd1q33VCdIbMJN48BJ
+         TxIQ==
+X-Gm-Message-State: AOAM530Q+/drS31Z0F+AYLPEy9McBjJDx41pUAFRVufVXjI5wfu8t7GW
+        b1gMoytbCa+8dEttMp4frEg9ZQ==
+X-Google-Smtp-Source: ABdhPJyF2qwliIvI/LNW3ilYwO975TKwRXyUs29RK60LvcJNYZwaiKnp5x/7ZaLEGFTKwLjPhYZ/og==
+X-Received: by 2002:adf:fd01:: with SMTP id e1mr24749831wrr.44.1599565035147;
+        Tue, 08 Sep 2020 04:37:15 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id e18sm39103291wra.36.2020.09.08.04.37.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 04:37:14 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 13:37:12 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        "open list:RADEON and AMDGPU DRM DRIVERS" 
+        <amd-gfx@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" 
+        <etnaviv@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <nouveau@lists.freedesktop.org>,
+        "moderated list:ARM/Rockchip SoC support" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 08/11] spi: stm32: Simplify with dev_err_probe()
-Message-ID: <20200908135333.GE6329@gnbcxd0016.gnb.st.com>
-Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        "bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        "open list:DRM DRIVERS FOR NVIDIA TEGRA" 
+        <linux-tegra@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH v4 1/1] drm: allow limiting the scatter list size.
+Message-ID: <20200908113712.GL2352366@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>, Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20200901152713.18629-1-krzk@kernel.org>
- <20200901152713.18629-8-krzk@kernel.org>
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" <etnaviv@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" <freedreno@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" <nouveau@lists.freedesktop.org>,
+        "moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+        "open list:DRM DRIVERS FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>
+References: <20200907112425.15610-1-kraxel@redhat.com>
+ <20200907112425.15610-2-kraxel@redhat.com>
+ <CAKMK7uGjT73rh=9iuCKAXvC_CaOuygm8PgOQgofkTgH7wRysFw@mail.gmail.com>
+ <20200908054858.um34wojjv6uhi7d3@sirius.home.kraxel.org>
+ <20200908085544.GI2352366@phenom.ffwll.local>
+ <20200908100253.b22sff23737l77bo@sirius.home.kraxel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200901152713.18629-8-krzk@kernel.org>
-X-Disclaimer: ce message est personnel / this message is private
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To GPXDAG3NODE5.st.com
- (10.75.127.72)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-08_07:2020-09-08,2020-09-08 signatures=0
+In-Reply-To: <20200908100253.b22sff23737l77bo@sirius.home.kraxel.org>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 03:27:10PM +0000, Krzysztof Kozlowski wrote:
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and the error value gets printed.
+On Tue, Sep 08, 2020 at 12:02:53PM +0200, Gerd Hoffmann wrote:
+> > > > The comments I've found suggest very much not ... Or is that all very
+> > > > old stuff only that no one cares about anymore?
+> > > 
+> > > I think these days it is possible to override dma_ops per device, which
+> > > in turn allows virtio to deal with the quirks without the rest of the
+> > > kernel knowing about these details.
+> > > 
+> > > I also think virtio-gpu can drop the virtio_has_dma_quirk() checks, just
+> > > use the dma api path unconditionally and depend on virtio core having
+> > > setup dma_ops in a way that it JustWorks[tm].  I'll look into that next.
+> > 
+> > The comment above vring_use_dma_api() suggests that this has not yet
+> > happened, that's why I'm asking.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Hmm, wading through the code, seems it indeed happen yet, even though my
+> testing didn't show any issues.  Probably pure luck because devices and
+> cpus have the same memory view on x86.  Guess I need to try this on
+> ppc64 to see it actually failing ...
+> 
+> So dropping the virtio_has_dma_quirk() checks isn't going to fly.
+> 
+> Using dma_max_mapping_size() should be fine though.  It might use a
+> lower limit than needed for virtio, but it should not break things.
 
-Reviewed-by: Alain Volmat <alain.volmat@st.com>
+Makes sense. On this patch here:
 
-> ---
->  drivers/spi/spi-stm32.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-> index d4b33b358a31..f0e594b2fee4 100644
-> --- a/drivers/spi/spi-stm32.c
-> +++ b/drivers/spi/spi-stm32.c
-> @@ -1857,9 +1857,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
->  
->  	spi->irq = platform_get_irq(pdev, 0);
->  	if (spi->irq <= 0) {
-> -		ret = spi->irq;
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(&pdev->dev, "failed to get irq: %d\n", ret);
-> +		ret = dev_err_probe(&pdev->dev, spi->irq, "failed to get irq\n");
->  		goto err_master_put;
->  	}
->  	ret = devm_request_threaded_irq(&pdev->dev, spi->irq,
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+And I guess would be good if virtio pushes a bit more towards using the
+dma api abstraction fully so we can get rid of these hacks. Virtio feels
+like a driver that really should be using dma-api and not dig around
+behind it because "it' makes stuff 0.5% faster" or so, since being
+virtualized it's already not the king of speed anyway :-)
+
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
