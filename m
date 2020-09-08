@@ -2,127 +2,103 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A7BC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 10:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2226C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 13:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B01921D7A
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 10:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C24222C8
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 13:48:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKsYAW9s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8NaJgMD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbgIHKDD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 06:03:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42395 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729053AbgIHKDC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:03:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599559380;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Al+jB21s8k4aRrKK14DGG1BWv7CsWudzcU2+kAwpAVw=;
-        b=GKsYAW9sCH8vs23An5AC3MGF/99uxsMlmOcc2JGUp0M8vUokYYtTjz+omsnbYtVOJf+99A
-        sNJoR+6K7Lo82SV2cGeAL/p8jq1Zse344iPblh9PGvjWSmvOBIUHLmt+DExCAS7jTQUSV9
-        o3sLmmy8tGzXbbbrVAP1m1+QidT28yU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-37-22mgQBftORuwdHZCpB_IfA-1; Tue, 08 Sep 2020 06:02:59 -0400
-X-MC-Unique: 22mgQBftORuwdHZCpB_IfA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA3531091060;
-        Tue,  8 Sep 2020 10:02:55 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-112-56.ams2.redhat.com [10.36.112.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C75B1002388;
-        Tue,  8 Sep 2020 10:02:54 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id ACCE89D78; Tue,  8 Sep 2020 12:02:53 +0200 (CEST)
-Date:   Tue, 8 Sep 2020 12:02:53 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        id S1729781AbgIHNrK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 09:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730239AbgIHNmM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 09:42:12 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C5FBC0611E9;
+        Tue,  8 Sep 2020 06:33:58 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id a15so20138001ljk.2;
+        Tue, 08 Sep 2020 06:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QZWTB3VoqxONYeg+u/6O0/g9cj96hp9jdyxHkms9hEo=;
+        b=J8NaJgMDwnJ3iwEeoWg6wr/bSGJKwvn5Fzl2g1HdMx97jMD+CXaJd+doxMKq/2xQU/
+         0kIVbHvICiG/YxCdoWxmaiZ/w6gb5YHj21+j5CxudImmkRg5Sau6kVPtFsRULoVtxYLb
+         8mKeIF+fft+ga2We20/0q8K33CathTa+odSpHttuJQwf2N+oMTMOEoO2VQDBHrxKrbY5
+         b9+z8xXICn15ZjGrf/I31gVHqMKPFwsDEHZwBczpRL9jZF1P0pZ7h+6K+q4VBJ8z72Ss
+         kxl7gB2G2YrrOWSu30wdkxHs+bw9ZxXVi+QupPItqFMKwas6jrxsbVnrDODRBcIkIDK3
+         1UOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QZWTB3VoqxONYeg+u/6O0/g9cj96hp9jdyxHkms9hEo=;
+        b=GaIiffcLi0KE47D1q0mgitGaTS2Se2rU2OJw++7g/PneKRVegK50ALpd1+0VbD3qpL
+         oxztcsHYTtVy/Gc7gwyAv5day/oZtUWND/rjIjvPz30ubjGANzIKjbEn+4vC0O0sKKCY
+         HjhvDuyhOMMMr7hGlzmtWxOn7SfomjHijyAX/uImlC09wugqsdEM8RCGfh6Khwgwx4cp
+         w2Mqwj+Mb00Cy40dWsHtP/cXFvUtpObZEDuMaCPMIemHdU0jZeQMVO7wZHHsCZP7XDGw
+         d071edCRdbBWsxUOUojD+nf25nI//0mn/QxghED2rnyd68W9LqhhoU80qBns1s8ERLDw
+         D+pg==
+X-Gm-Message-State: AOAM531sD5uEe9Xnh9Z8PBqCJv8Wezk8BORcXgT9DKlDME9nla/ZZDoi
+        Dxd38Rt2mA6pgvA52XG+s1r7k1YhOkY=
+X-Google-Smtp-Source: ABdhPJy+Mwl0COSdXYkiXrRrTna4fxanXVeyC3dD9okOxhZk5nXlGIS5LjH+7jAHHExHuSaQmK+a/g==
+X-Received: by 2002:a2e:82c5:: with SMTP id n5mr11905021ljh.195.1599572036669;
+        Tue, 08 Sep 2020 06:33:56 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id d10sm10063287ljg.87.2020.09.08.06.33.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 06:33:56 -0700 (PDT)
+Subject: Re: [PATCH v6 27/35] i2c: tegra: Factor out register polling into
+ separate function
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        "open list:RADEON and AMDGPU DRM DRIVERS" 
-        <amd-gfx@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" 
-        <etnaviv@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <nouveau@lists.freedesktop.org>,
-        "moderated list:ARM/Rockchip SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC support" 
-        <linux-rockchip@lists.infradead.org>,
-        "open list:DRM DRIVERS FOR NVIDIA TEGRA" 
-        <linux-tegra@vger.kernel.org>,
-        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>
-Subject: Re: [PATCH v4 1/1] drm: allow limiting the scatter list size.
-Message-ID: <20200908100253.b22sff23737l77bo@sirius.home.kraxel.org>
-References: <20200907112425.15610-1-kraxel@redhat.com>
- <20200907112425.15610-2-kraxel@redhat.com>
- <CAKMK7uGjT73rh=9iuCKAXvC_CaOuygm8PgOQgofkTgH7wRysFw@mail.gmail.com>
- <20200908054858.um34wojjv6uhi7d3@sirius.home.kraxel.org>
- <20200908085544.GI2352366@phenom.ffwll.local>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200908021021.9123-1-digetx@gmail.com>
+ <20200908021021.9123-28-digetx@gmail.com>
+ <CAHp75VeMZhVvysVHZawutvPpO4MPeTit5OqOJQxqRW3RL_iE-Q@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8b1db9d5-2b4c-97ae-f7f6-c750e76491d0@gmail.com>
+Date:   Tue, 8 Sep 2020 16:33:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200908085544.GI2352366@phenom.ffwll.local>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <CAHp75VeMZhVvysVHZawutvPpO4MPeTit5OqOJQxqRW3RL_iE-Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-> > > The comments I've found suggest very much not ... Or is that all very
-> > > old stuff only that no one cares about anymore?
-> > 
-> > I think these days it is possible to override dma_ops per device, which
-> > in turn allows virtio to deal with the quirks without the rest of the
-> > kernel knowing about these details.
-> > 
-> > I also think virtio-gpu can drop the virtio_has_dma_quirk() checks, just
-> > use the dma api path unconditionally and depend on virtio core having
-> > setup dma_ops in a way that it JustWorks[tm].  I'll look into that next.
+08.09.2020 11:51, Andy Shevchenko пишет:
+> On Tue, Sep 8, 2020 at 5:12 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> Factor out register polling into a separate function in order to remove
+>> boilerplate code and make code cleaner.
 > 
-> The comment above vring_use_dma_api() suggests that this has not yet
-> happened, that's why I'm asking.
+> I'm wondering if you can make it before the patch that touches one of
+> these conditionals.
+> 
 
-Hmm, wading through the code, seems it indeed happen yet, even though my
-testing didn't show any issues.  Probably pure luck because devices and
-cpus have the same memory view on x86.  Guess I need to try this on
-ppc64 to see it actually failing ...
+I guess you're meaning the "Improve coding style of
+tegra_i2c_wait_for_config_load()" patch.
 
-So dropping the virtio_has_dma_quirk() checks isn't going to fly.
-
-Using dma_max_mapping_size() should be fine though.  It might use a
-lower limit than needed for virtio, but it should not break things.
-
-take care,
-  Gerd
-
+If yes, then it should be fine to swap the order. Although, I'm not sure
+what's benefit.
