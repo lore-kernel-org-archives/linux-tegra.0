@@ -2,140 +2,128 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD2AC43461
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B65C43461
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 449A3218AC
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3997D20936
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599585009;
-	bh=6NFe0ymOhoqmib9dZ3TJK/YVGzpwyBIPD6QNXwYX8UY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WtLD/SKl8+BMgsYoCsbXfxr6yIGic6wXNsZG89hSLHLIVM8eaAOckqOx18cYVq0/X
-	 qvMMoSpHUz94NCNxzoVVJD7SYUlpjszLLS9z/2zM7c5A00qBgHU6haIep7fIAwbk1V
-	 68+fdRI7h3d1ES2LDZ8pRIaXes04jHm+IA4iXdH8=
+	s=default; t=1599585733;
+	bh=Gzymf03QZheR0rew1DGzIq4ZxNN09MkNkW/PUkupiCs=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
+	b=MWXZgtdeSwRF5Q4uW0Xbg0SExRFZbvAreCLBS5I20uP1Wj19dCjf0kcfyOJyIGQWW
+	 LSYnNZjGIAOua3KBQDJhVPCWNvjoNK6TnCcSv9qa89lWTBXstzWKR92vvEbAgk6rsF
+	 fTUyAX9Z0z0KCfSXrjgzNK5Xwmx8PZP2yVFWV1vE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbgIHRJu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:09:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
+        id S1731833AbgIHRV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:21:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731812AbgIHRJo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Sep 2020 13:09:44 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726694AbgIHRV5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 8 Sep 2020 13:21:57 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75B6421924;
-        Tue,  8 Sep 2020 17:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8321E206B5;
+        Tue,  8 Sep 2020 17:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599584983;
-        bh=6NFe0ymOhoqmib9dZ3TJK/YVGzpwyBIPD6QNXwYX8UY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mEOZY60QPhE7P0G9fDleoicJlosE0kdMqazDE59cEpI3AaF6rOo+YSIy/7T94gwnn
-         ivR9jr/Ak+vHTJ5zLH7ZzWDIrqU30dceu/CPIMczpsa19WzNYdlxNgFDhPIBZ9qp6n
-         x2t59Sv1jfj1flMANuF+WxRHwsDvoi3XRzbx8fW4=
-Received: by mail-ot1-f46.google.com with SMTP id a65so15477445otc.8;
-        Tue, 08 Sep 2020 10:09:43 -0700 (PDT)
-X-Gm-Message-State: AOAM530iJ/UlHgWO6be21zDy72njzyuihZGKsSti0OHrB1BGXmw0Ttkr
-        CFDfkPSiTPfMkHIgM0JDy34OzLYvmN+eoKkVlw==
-X-Google-Smtp-Source: ABdhPJwHvRobpy4sNP5E9Yg1dDeCFskCK1HpqEtpykR12ltq7YM6SYurKbQYjTYNf+T1ZSWapNAMuvoOnGPsoD0q7yw=
-X-Received: by 2002:a9d:411:: with SMTP id 17mr45450otc.192.1599584982696;
- Tue, 08 Sep 2020 10:09:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200830185356.5365-1-digetx@gmail.com> <20200830185356.5365-2-digetx@gmail.com>
- <20200903161022.GA2707794@bogus> <790dbb23-7422-887a-3f11-5ae55bb916fa@gmail.com>
- <CAL_Jsq+Ue72jJ9gurcG0f_R+gGVC77dErhgbKpB_p40buUewLg@mail.gmail.com> <40e34696-5af8-a3da-35f2-483a0dacd835@gmail.com>
-In-Reply-To: <40e34696-5af8-a3da-35f2-483a0dacd835@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 8 Sep 2020 11:09:31 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+mE5gv6srBQgoNFehMx2RdxTpxeE9+y2uhfNGZAT_yFw@mail.gmail.com>
-Message-ID: <CAL_Jsq+mE5gv6srBQgoNFehMx2RdxTpxeE9+y2uhfNGZAT_yFw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        s=default; t=1599585717;
+        bh=Gzymf03QZheR0rew1DGzIq4ZxNN09MkNkW/PUkupiCs=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=hBlFCGvWNlYoIili+fAT+BAHvvkNeiySEFqKt+wzNdniqoH7NDLQp1Lzk62eO6cNt
+         yVQGQj6zdyDJq1KsECcf8mPUwo0WiXO2hT2iQgatu/PhxqBwELKJVlAc3QWfAcl9bB
+         HFKGE1nxCrPMAqCH6vN+fBomMO37QMGbUrR3+a0o=
+Date:   Tue, 08 Sep 2020 18:21:13 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org,
+        Masahisa Kojima <masahisa.kojima@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        linux-tegra@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Scott Branden <sbranden@broadcom.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        linux-spi@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     stable@vger.kernel.org
+In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
+References: <20200901152713.18629-1-krzk@kernel.org>
+Subject: Re: [PATCH 01/11] spi: sprd: Release DMA channel also on probe deferral
+Message-Id: <159958565716.16771.12447755739031265902.b4-ty@kernel.org>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 4, 2020 at 9:54 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 04.09.2020 18:40, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Sep 4, 2020 at 6:07 AM Dmitry Osipenko <digetx@gmail.com> wrote=
-:
-> >>
-> >> 03.09.2020 19:10, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> On Sun, 30 Aug 2020 21:53:51 +0300, Dmitry Osipenko wrote:
-> >>>> Add binding document for the ENE KB930 Embedded Controller.
-> >>>>
-> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>>> ---
-> >>>>  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 ++++++++++++++++=
-+++
-> >>>>  1 file changed, 66 insertions(+)
-> >>>>  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.=
-yaml
-> >>>>
-> >>>
-> >>>
-> >>> My bot found errors running 'make dt_binding_check' on your patch:
-> >>>
-> >>> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/=
-mfd/ene-kb930.example.dt.yaml: battery-cell: 'operating-range-celsius' does=
- not match any of the regexes: '^ocv-capacity-table-[0-9]+$', 'pinctrl-[0-9=
-]+'
-> >>>       From schema: /builds/robherring/linux-dt-review/Documentation/d=
-evicetree/bindings/power/supply/battery.yaml
-> >>>
-> >>>
-> >>> See https://patchwork.ozlabs.org/patch/1354004
-> >>>
-> >>> If you already ran 'make dt_binding_check' and didn't see the above
-> >>> error(s), then make sure dt-schema is up to date:
-> >>>
-> >>> pip3 install git+https://github.com/devicetree-org/dt-schema.git@mast=
-er --upgrade
-> >>>
-> >>> Please check and re-submit.
-> >>>
-> >>
-> >> Apparently bot uses outdated kernel.
-> >
-> > It's on v5.9-rc2. The scripts don't know your base/dependencies and
-> > neither did I because you didn't mention anything here. I do review
-> > the errors before spamming people.
->
-> The patches are based on the linux-next, hence nothing special here. My
-> expectation is that the bot should use the linux-next as well in order
-> to prevent such warnings. Is there any reason to why bot not using
-> linux-next?
+On Tue, 1 Sep 2020 17:27:03 +0200, Krzysztof Kozlowski wrote:
+> If dma_request_chan() for TX channel fails with EPROBE_DEFER, the RX
+> channel would not be released and on next re-probe it would be requested
+> second time.
 
-What the bot uses is not the issue. The issue is not stating what your
-dependencies are. linux-next is not a stable base. No patches to be
-applied should be based on linux-next because there's no maintainer
-that can take them if you consider anything in linux-next could be a
-dependency. Of course, you're probably just dependent on one
-maintainer's tree usually, but whose tree? Am I supposed to figure
-that out?
+Applied to
 
-linux-next is frequently broken with respect to binding checks, so it
-really doesn't work for the bot. I need a known good base.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Rob
+Thanks!
+
+[01/11] spi: sprd: Release DMA channel also on probe deferral
+        commit: 687a2e76186dcfa42f22c14b655c3fb159839e79
+[02/11] spi: sprd: Simplify with dev_err_probe()
+        (no commit info)
+[03/11] spi: atmel: Simplify with dev_err_probe()
+        commit: 96189475820835d7176171492640a58c600aca42
+[04/11] spi: bcm2835: Simplify with dev_err_probe()
+        commit: 65acd82c4eb7f08747922ed3afb2d099a1b25d3f
+[05/11] spi: cadence-quadspi: Simplify with dev_err_probe()
+        commit: 436a5c208037a71f64f35312969e27a05d6d7c53
+[06/11] spi: spi-mux: Simplify with dev_err_probe()
+        commit: 2d9bdf645584d15ed1d4aae6204cb6ea8b673d48
+[07/11] spi: qcom-qspi: Simplify with dev_err_probe()
+        commit: 034532681c56cfffaea169a59155fe11e9172d9c
+[08/11] spi: stm32: Simplify with dev_err_probe()
+        commit: a05cec2dc2df1e5d25addb7aba398f3eb451e163
+[09/11] spi: synquacer: Simplify with dev_err_probe()
+        commit: 74ee6dc1257edf5fcfba67fd8075b766d11c42a0
+[10/11] spi: tegra114: Simplify with dev_err_probe()
+        commit: 68fffc191ed19ea5618285b128e6048d1536e680
+[11/11] spi: tegra20: Simplify with dev_err_probe()
+        commit: 7708aff1e2ebc8fdccdd61cf9ab8576a66989166
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
