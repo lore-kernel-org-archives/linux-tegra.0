@@ -2,128 +2,115 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE477C2BC11
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8C7C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 20:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEA2020768
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 19:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C792166E
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 20:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohS68j1Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQQ5gfR5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732482AbgIHT57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
+        id S1730170AbgIHUOo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 16:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730223AbgIHPfq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:35:46 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8372C0612EF;
-        Tue,  8 Sep 2020 05:55:34 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id u21so9639277ljl.6;
-        Tue, 08 Sep 2020 05:55:33 -0700 (PDT)
+        with ESMTP id S1729971AbgIHPLL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:11:11 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FDF0C0068C6
+        for <linux-tegra@vger.kernel.org>; Tue,  8 Sep 2020 08:01:41 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id q10so2197143qvs.1
+        for <linux-tegra@vger.kernel.org>; Tue, 08 Sep 2020 08:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2ehLwXNK3WBwCU+2CN9jFbvN8+npPBE1XX1ZSoVrUTA=;
-        b=ohS68j1Qosw8sk+DbiaADlMklzrZcqzn+IrJkLUf5OKRiKa6DdhU0QJxMHJV2Xu4d1
-         3YEV8DE5gN07uNXvfX+YuIigPks3hFtW5ZFFVB8w0ZpiIQqHxI3Q8xbbXrorA8zVp58m
-         XpDpv9QTXT3XEeyLDikG1rG4DzZ9sJHbR+zzkfiehV1WRjfuDu3/UypVIMIpK3+OrPAO
-         jNqQPdRbatlNKaUvClzx5+aSFofLgubH8Bidc0fAVZJpQ4K8PmU2n2vh16AFKW9uXSbB
-         Qvnk79kTMAmkNbl6jdABjNXLGdmZleuoS11k5CoE7bXVxO0fhxGISkiNnw1PBHRRjs20
-         3Wmg==
+        h=from:to:cc:subject:date:message-id;
+        bh=jX/oUhvQ6rppkjSjuwDLk72A8u6aXMfjXLIcv0mZ0V8=;
+        b=jQQ5gfR5VPftZ/qA/pYe9P4cnnvCC08gGQlp52hJt8TvBXCO3N6mrOR4UBBItazpUT
+         /2cyb9Bfr+9oKphd7lc0Bs6usHeOch98OONEvpJR2h9i27auGv/AXdOlRV5xmtaoplVv
+         NANIMgstLgl/+KXFk8cidXAN2OGw3Rk4ozWr2+PJf2xeunGgicFqhMdm1hk+lgSkzH9x
+         qVU4CfYB5fZ/ex6igd/Cq5KuCtcFG3A7Z2KzdAlU+yZ5SPARuBoUROG327hJ1LihEXt+
+         n5MVgmKytjD6Jbbi4qTOwv74DiRN0no+qrzUHWRSAK88J1pWOGly7JaMSDxINtniNE66
+         +y2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2ehLwXNK3WBwCU+2CN9jFbvN8+npPBE1XX1ZSoVrUTA=;
-        b=Wh4Pq1TZvJY1QWZih8YDpO4q+cHdex90CVkXO5wjlpYo3wG81O2sofGcFCdSYB4ZYj
-         1rKYzqLB2sa8lAN4OH7CM1ssjlje4Qeejs7jMLK1pKVgArdqF4VRXp82LEstertX+fLL
-         jQjBPNsBE/P1MRW8m0jstX5Gtto+MswutXkiJ8p1eOzdT02EiFaV/EGrhDihLURQMlaF
-         XMk3JhzvE713nIl6IVo/N2sJio0bPIg95rgvD4wAkffBR6DUX4lyjM2wlEobJp11B0Ko
-         MKk5MMfi4TZwItilFoN4lyMQa25ZGwRjJI6bs2i+/pRKCIkr3mxxnj4PFq9FUVkkR5f5
-         g0CA==
-X-Gm-Message-State: AOAM531ECdHdIRIR/aEXpCkDWMtJmNcnMxa23lPzS2J1PSvThz1R1Aib
-        nFpLcqOaErKHxl1uwh5VyuopN7y4g9w=
-X-Google-Smtp-Source: ABdhPJy25Zmvv8ZSp1nEAFAtHswk2JSRcw6OzDPS5ICaqEVMzyPELa9Qi30aAs4QWFaZHKS3aReLxw==
-X-Received: by 2002:a2e:4e09:: with SMTP id c9mr13415557ljb.283.1599569732057;
-        Tue, 08 Sep 2020 05:55:32 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id n20sm10553687lfh.1.2020.09.08.05.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 05:55:31 -0700 (PDT)
-Subject: Re: [PATCH v6 16/35] i2c: tegra: Reorder location of functions in the
- code
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200908021021.9123-1-digetx@gmail.com>
- <20200908021021.9123-17-digetx@gmail.com>
- <CAHp75VefU+iXpngPnzQRBfrg3OgLUBqhOCJpPo8natfCBr6Q5w@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3fce58d0-eac6-bbea-74e3-098cb079e9b5@gmail.com>
-Date:   Tue, 8 Sep 2020 15:55:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VefU+iXpngPnzQRBfrg3OgLUBqhOCJpPo8natfCBr6Q5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jX/oUhvQ6rppkjSjuwDLk72A8u6aXMfjXLIcv0mZ0V8=;
+        b=PLQOEd0X5yVAw3xzyagX+aJBv8auMibi5mTj9+2x7gPzf8S/fYRGJRs9TkDBqxFmh7
+         8s0SqaM19HzwEiY/tqMFO3EHWNOd0jJ+UgaifDeEpCBU4TpoITSYD35iqWAK4z7vMgRu
+         1sFNyMQ6Gt/vL1RrvokEvWbColgUjvhBx3SjG7Io0+tGiQ5HCI/dKLofcqJgl6kjCUtF
+         Kj73bxUEoM1T7VrDiMxNps1isXZXF52JL1pm/7Mv6fPRlErgFDHH/radzqsUjTpazivt
+         wdFSCiU6TDdZBrY/DGeFBQYP0Ocj2nFAGucNrJE7UH4HdsYcc654cPH5rnS+UmU7dEct
+         YQJg==
+X-Gm-Message-State: AOAM5331dZKhV0Q2TQai7U3UUR+Q26x3BrNQXefyjZZxWqJqzGeqRWvn
+        wVCwVUBKzPfPGQaUoKcwpT+0ZSoj+qRFgBlJ
+X-Google-Smtp-Source: ABdhPJx2y+5MfUQS/16k7eYrnjKuVFUZ2TqaIy/qV9W7ZzDIdCw+l28rRM8gaZ5RlPifTDhRUlHnCw==
+X-Received: by 2002:a0c:b2d4:: with SMTP id d20mr483674qvf.1.1599577299563;
+        Tue, 08 Sep 2020 08:01:39 -0700 (PDT)
+Received: from Master-WinVM.sparksnet ([2601:153:900:7730:1418:cbe9:1543:1190])
+        by smtp.gmail.com with ESMTPSA id o72sm14034704qka.113.2020.09.08.08.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 08:01:38 -0700 (PDT)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     linux-tegra@vger.kernel.org
+Cc:     Nagarjuna Kristam <nkristam@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Matias Zuniga <matias.nicolas.zc@gmail.com>,
+        JC Kuo <jckuo@nvidia.com>, Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH] phy: tegra: xusb: fix xusb backwards compatibility
+Date:   Tue,  8 Sep 2020 11:01:24 -0400
+Message-Id: <20200908150124.31336-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-08.09.2020 11:43, Andy Shevchenko пишет:
-> On Tue, Sep 8, 2020 at 5:11 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Reorder location of functions in the code in order to have definition
->> of functions closer to the place of the invocation. This change makes
->> easier to navigate around the code and removes the need to have a
->> prototype for tegra_i2c_init().
-> 
-> Still seems to have ordering issues (it moves pieces you actually
-> change in the next patches).
+Prior to implementing role switch support, all enabled ports enumerated
+as host devices.
+With role switch support enabled, device trees with otg ports which have
+not been updated with usb-role-switch support now bail out during
+enumeration.
+This disables all xhci ports tied to the affected phy.
 
-It's unavoidable that this patch either touches previous or next
-changes. You actually had an opposite complaint to v5.
+Retain backwards compatibility by forcing host mode on otg ports which
+are missing the usb-role-switch flag.
+Disable ports explicitly defined as peripheral mode that are missing the
+usb-role-switch flag.
 
-This diver has a long overdue for the refactoring. I think it's a good
-time to do it right now because driver works stable and it's quite
-unlikely that there will ever be fixes for the older code. Hence it
-should be good to have the code reordered now, so that we could have a
-nicer code base for the future changes.
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+Reported-by: Matias Zuniga <matias.nicolas.zc@gmail.com>
 
-> Have you considered which one looks neat this variant or if you move
-> it closer to the end of the series?
-> 
+Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+---
+ drivers/phy/tegra/xusb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-This variant should be more logical because changes have this order:
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index de4a46fe1763..c36dce13e0c6 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -734,10 +734,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+ 			err = tegra_xusb_setup_usb_role_switch(port);
+ 			if (err < 0)
+ 				return err;
++		} else if (usb2->mode == USB_DR_MODE_PERIPHERAL) {
++			dev_err(&port->dev, "mandatory usb-role-switch not found for %s mode, disabling port\n", modes[usb2->mode]);
++			usb2->mode = USB_DR_MODE_UNKNOWN;
+ 		} else {
+-			dev_err(&port->dev, "usb-role-switch not found for %s mode",
+-				modes[usb2->mode]);
+-			return -EINVAL;
++			dev_warn(&port->dev, "usb-role-switch not found for %s mode, forcing host\n", modes[usb2->mode]);
++			usb2->mode = USB_DR_MODE_HOST;
+ 		}
+ 	}
+ 
+-- 
+2.17.1
 
-1. fixes
-2. features
-3. code reorder
-4. more important cleanups
-5. less important cleanups
-
-The 3 merely shuffles code around without any changes to the code, hence
-it's a safe change.
-
-The 4 has a potential danger since there are cleanups of the outdated
-features and some changes may change semantic in a case of a bug. Hence,
-if in the future we'll happen to find a problem in one of the 4 patches,
-then there is a better chance that the problem could be fixed with a
-simple revert. If 3 is placed after 4, then the chance is completely gone.
