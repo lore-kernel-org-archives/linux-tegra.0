@@ -2,86 +2,135 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAAFC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8739EC2D0A7
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 05:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50DD72193E
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53201218AC
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 05:49:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="HxTl8UVe"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gc+2TIyk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbgIHCmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 22:42:55 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13690 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728188AbgIHCmy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 22:42:54 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f56efa00000>; Mon, 07 Sep 2020 19:42:40 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 07 Sep 2020 19:42:54 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 07 Sep 2020 19:42:54 -0700
-Received: from [10.19.100.126] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 8 Sep
- 2020 02:42:49 +0000
-Subject: Re: [PATCH v2 12/12] xhci: tegra: enable ELPG for runtime/system PM
-To:     Dmitry Osipenko <digetx@gmail.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <robh@kernel.org>,
-        <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>
-References: <20200831044043.1561074-1-jckuo@nvidia.com>
- <20200831044043.1561074-13-jckuo@nvidia.com>
- <68b57be4-a924-6b0a-a853-9cced2eead60@gmail.com>
-From:   JC Kuo <jckuo@nvidia.com>
-Message-ID: <ca14cfd6-1f11-63ee-22c3-3744c46d0601@nvidia.com>
-Date:   Tue, 8 Sep 2020 10:42:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728776AbgIHFtP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 01:49:15 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58695 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728740AbgIHFtN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 8 Sep 2020 01:49:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599544152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eQK1NPwmSWOx8INcFCnwK3inQ46y12Ng6QHkYnvGe3I=;
+        b=Gc+2TIykCGSTYmg/VTO38VIQKxaAnP2JyTrv+RT58qEbzNWfNmgjZoQSzr0tF+v2LNKnaS
+        zG+n6JgBGe/NBssKync4aG0OY/8uIIaW3vnQOh+hZ1XF62MYE9Bb+QxO9Iq++3CjV4bAe2
+        /JC5NCzGp1akOJ8OZlYR+lwatDO8HQw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-r-VulFGYMA-fjnnBfjljEg-1; Tue, 08 Sep 2020 01:49:07 -0400
+X-MC-Unique: r-VulFGYMA-fjnnBfjljEg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E448D425D1;
+        Tue,  8 Sep 2020 05:49:02 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-112-56.ams2.redhat.com [10.36.112.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C936811BE;
+        Tue,  8 Sep 2020 05:48:58 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 0FDF617538; Tue,  8 Sep 2020 07:48:58 +0200 (CEST)
+Date:   Tue, 8 Sep 2020 07:48:58 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        "open list:RADEON and AMDGPU DRM DRIVERS" 
+        <amd-gfx@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR VIVANTE GPU IP" 
+        <etnaviv@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <nouveau@lists.freedesktop.org>,
+        "moderated list:ARM/Rockchip SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC support" 
+        <linux-rockchip@lists.infradead.org>,
+        "open list:DRM DRIVERS FOR NVIDIA TEGRA" 
+        <linux-tegra@vger.kernel.org>,
+        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH v4 1/1] drm: allow limiting the scatter list size.
+Message-ID: <20200908054858.um34wojjv6uhi7d3@sirius.home.kraxel.org>
+References: <20200907112425.15610-1-kraxel@redhat.com>
+ <20200907112425.15610-2-kraxel@redhat.com>
+ <CAKMK7uGjT73rh=9iuCKAXvC_CaOuygm8PgOQgofkTgH7wRysFw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <68b57be4-a924-6b0a-a853-9cced2eead60@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1599532960; bh=kWE3woWpx6MGq6bYQJbbbwah3eZkYRMFTLtfytrK/5U=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=HxTl8UVey9gxRrb203aUGW2USFkMorh25fwL0LFKmUvLIUDnhIpKLeZ7pcbN6sARS
-         sSf9KLHg7AdP2iMqkkztTXNsKCJGsBTFJ1Z6U8BgY5L1BgGAN/cBcADqdM11Rgk8Vv
-         oPSTyNsOAD9lb8AFFdzz52qLPJmF+CIUacwv/u6JSdgw/tMP0q34Lh3VNJ6hIo/2BD
-         B+UTm0xbQ5QTrdWlWgceeWzf9ZLC+mMF8CdEZGpKCNTRl3Ev68oVmKjpS8PbbWEQ9D
-         phAOHuv98tLnCb7zxmP1FG7vjgtmJXAAov/yWUddiDjwtfdIGfW/XxXc1hPmePV2wD
-         AzAAj0H8FEoWA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uGjT73rh=9iuCKAXvC_CaOuygm8PgOQgofkTgH7wRysFw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thanks Dmitry. I will remove this.
+On Mon, Sep 07, 2020 at 03:53:02PM +0200, Daniel Vetter wrote:
+> On Mon, Sep 7, 2020 at 1:24 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> > Add drm_device argument to drm_prime_pages_to_sg(), so we can
+> > call dma_max_mapping_size() to figure the segment size limit
+> > and call into __sg_alloc_table_from_pages() with the correct
+> > limit.
+> >
+> > This fixes virtio-gpu with sev.  Possibly it'll fix other bugs
+> > too given that drm seems to totaly ignore segment size limits
+> > so far ...
+> >
+> > v2: place max_segment in drm driver not gem object.
+> > v3: move max_segment next to the other gem fields.
+> > v4: just use dma_max_mapping_size().
+> >
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> 
+> Uh, are you sure this works in all cases for virtio?
 
-On 9/2/20 4:33 AM, Dmitry Osipenko wrote:
-> 31.08.2020 07:40, JC Kuo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> +	err =3D devm_request_threaded_irq(&pdev->dev, tegra->padctl_irq,
->> +		NULL,
->> +		tegra_xusb_padctl_irq,
->> +		IRQF_ONESHOT |
->=20
->> +		IRQF_TRIGGER_HIGH,
->=20
-> Specifying trigger levels is meaningless for interrupts coming from a
-> device-tree because DT levels always take precedence.
->=20
+Sure, I've tested it ;)
+
+> The comments I've found suggest very much not ... Or is that all very
+> old stuff only that no one cares about anymore?
+
+I think these days it is possible to override dma_ops per device, which
+in turn allows virtio to deal with the quirks without the rest of the
+kernel knowing about these details.
+
+I also think virtio-gpu can drop the virtio_has_dma_quirk() checks, just
+use the dma api path unconditionally and depend on virtio core having
+setup dma_ops in a way that it JustWorks[tm].  I'll look into that next.
+
+take care,
+  Gerd
+
