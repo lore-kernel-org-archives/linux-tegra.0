@@ -2,128 +2,122 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B65C43461
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B69C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3997D20936
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599585733;
-	bh=Gzymf03QZheR0rew1DGzIq4ZxNN09MkNkW/PUkupiCs=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=MWXZgtdeSwRF5Q4uW0Xbg0SExRFZbvAreCLBS5I20uP1Wj19dCjf0kcfyOJyIGQWW
-	 LSYnNZjGIAOua3KBQDJhVPCWNvjoNK6TnCcSv9qa89lWTBXstzWKR92vvEbAgk6rsF
-	 fTUyAX9Z0z0KCfSXrjgzNK5Xwmx8PZP2yVFWV1vE=
+	by mail.kernel.org (Postfix) with ESMTP id 23E05206E7
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 17:55:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3aS2dqg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731833AbgIHRV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:21:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbgIHRV5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 8 Sep 2020 13:21:57 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8321E206B5;
-        Tue,  8 Sep 2020 17:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599585717;
-        bh=Gzymf03QZheR0rew1DGzIq4ZxNN09MkNkW/PUkupiCs=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=hBlFCGvWNlYoIili+fAT+BAHvvkNeiySEFqKt+wzNdniqoH7NDLQp1Lzk62eO6cNt
-         yVQGQj6zdyDJq1KsECcf8mPUwo0WiXO2hT2iQgatu/PhxqBwELKJVlAc3QWfAcl9bB
-         HFKGE1nxCrPMAqCH6vN+fBomMO37QMGbUrR3+a0o=
-Date:   Tue, 08 Sep 2020 18:21:13 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Masahisa Kojima <masahisa.kojima@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+        id S1732076AbgIHRxy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:53:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731575AbgIHQMs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 12:12:48 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BDF9C0612A0;
+        Tue,  8 Sep 2020 06:02:31 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id x77so9136842lfa.0;
+        Tue, 08 Sep 2020 06:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sXdYuavoSim9Tcuk44WZc9LhOUgtTFe2gPoDBIPVjng=;
+        b=k3aS2dqgVxh8tukyJeMOiUKibIP2o5EK1HbLTyoj1EIHk7TXBXfx91plVBpAbo35qy
+         NaXcni2JH8medKewgjiZU/CwZhuyyzDFlI/Z9xpUeCU0lkCyZD45E5ZPHdBEouYyaXdg
+         xlEfoR8jczhnh9u9zzBkqeqjV3Blq31P2SC6AssPsVcuDQqHqKt7eow30dWh3i1Cr3vV
+         dG7WT7DbQUgb+vMjiIpI8zjM+S5d5DWAK86VF9S+L70rvooQyCzTJanbXzRP6oXzAFbn
+         QrqjtwB0bL4Bj4ik0lsOJeVFZjAvfnQ/X+Qw1d8e+ajyQj5kGEZOGd7OE2CvQF5FS4D5
+         aDeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sXdYuavoSim9Tcuk44WZc9LhOUgtTFe2gPoDBIPVjng=;
+        b=VmCVc9rfIotMPNgc37q0ACxdPm+ZjfxTFqzUhdwQTVxR0l88OWaUkGIfGgxBUm7Enq
+         ZcsVgLFG5JeQzPSI+jsxGwX1xtfHXH0FljM7Ed57/FDJQ6pK1SIfqLyCylwqNW7wbDsT
+         KOCzGwRgVaHBa3ezLpBmv6z1AaP+39cxt75Z271BL8Z8qPiDfDVi1xfQlMCLwDHJR4eO
+         SGL3zUiFdKKidb29xW/63ls1KZSvyviW26w8eq3pIjy0GoLrdBNzkpxfUKPRmpYDw4rA
+         B7sUcqk7Wn9fJQnPz4vK2AN/GI5Lr1EmCqKvdeo5HQvZEYqCzvJi7locVQnNH9VplIhb
+         zdaA==
+X-Gm-Message-State: AOAM530sOEJdPd6P2q5jg517yPWD6P/f/W8yDBG58AYlChQUwGbBZe3p
+        T1RxsP3TcdF2yi+R60NVoNsynQ/IWh4=
+X-Google-Smtp-Source: ABdhPJyW70T/kdnCb/1pV8W77Azb/IMUM2E4AXoICzEHT0yIVQzTbi8wqv56HWe91+MN1H6JJWYFWw==
+X-Received: by 2002:a19:8446:: with SMTP id g67mr12202070lfd.87.1599570149663;
+        Tue, 08 Sep 2020 06:02:29 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id x11sm10286424ljh.106.2020.09.08.06.02.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 06:02:28 -0700 (PDT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        linux-tegra@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Scott Branden <sbranden@broadcom.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-spi@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     stable@vger.kernel.org
-In-Reply-To: <20200901152713.18629-1-krzk@kernel.org>
-References: <20200901152713.18629-1-krzk@kernel.org>
-Subject: Re: [PATCH 01/11] spi: sprd: Release DMA channel also on probe deferral
-Message-Id: <159958565716.16771.12447755739031265902.b4-ty@kernel.org>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20200908072557.GC294938@mwanda>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0d7fd969-8957-5db0-8c4d-2077e924181b@gmail.com>
+Date:   Tue, 8 Sep 2020 16:02:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200908072557.GC294938@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 1 Sep 2020 17:27:03 +0200, Krzysztof Kozlowski wrote:
-> If dma_request_chan() for TX channel fails with EPROBE_DEFER, the RX
-> channel would not be released and on next re-probe it would be requested
-> second time.
+08.09.2020 10:25, Dan Carpenter пишет:
+> This error path needs to call clk_disable_unprepare().
+> 
+> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index e94a27804c20..dedd39de7367 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>  	if (rate < 0) {
+>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+> -		return rate;
+> +		err = rate;
+> +		goto disable_clk;
+>  	}
+>  
+>  	tegra->max_freq = rate / KHZ;
+> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>  
+>  	reset_control_reset(tegra->reset);
+> +disable_clk:
+>  	clk_disable_unprepare(tegra->clock);
+>  
+>  	return err;
+> 
 
-Applied to
+Hello, Dan! Thank you for the patch!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[01/11] spi: sprd: Release DMA channel also on probe deferral
-        commit: 687a2e76186dcfa42f22c14b655c3fb159839e79
-[02/11] spi: sprd: Simplify with dev_err_probe()
-        (no commit info)
-[03/11] spi: atmel: Simplify with dev_err_probe()
-        commit: 96189475820835d7176171492640a58c600aca42
-[04/11] spi: bcm2835: Simplify with dev_err_probe()
-        commit: 65acd82c4eb7f08747922ed3afb2d099a1b25d3f
-[05/11] spi: cadence-quadspi: Simplify with dev_err_probe()
-        commit: 436a5c208037a71f64f35312969e27a05d6d7c53
-[06/11] spi: spi-mux: Simplify with dev_err_probe()
-        commit: 2d9bdf645584d15ed1d4aae6204cb6ea8b673d48
-[07/11] spi: qcom-qspi: Simplify with dev_err_probe()
-        commit: 034532681c56cfffaea169a59155fe11e9172d9c
-[08/11] spi: stm32: Simplify with dev_err_probe()
-        commit: a05cec2dc2df1e5d25addb7aba398f3eb451e163
-[09/11] spi: synquacer: Simplify with dev_err_probe()
-        commit: 74ee6dc1257edf5fcfba67fd8075b766d11c42a0
-[10/11] spi: tegra114: Simplify with dev_err_probe()
-        commit: 68fffc191ed19ea5618285b128e6048d1536e680
-[11/11] spi: tegra20: Simplify with dev_err_probe()
-        commit: 7708aff1e2ebc8fdccdd61cf9ab8576a66989166
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
