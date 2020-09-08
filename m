@@ -2,196 +2,203 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3D0C2BC11
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD32FC433E2
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A167021D24
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:16:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7316521481
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 02:19:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGyBGppr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="byDU+17H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbgIHCQT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Sep 2020 22:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728245AbgIHCLn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 22:11:43 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3C2C061575;
-        Mon,  7 Sep 2020 19:11:42 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id w3so18002414ljo.5;
-        Mon, 07 Sep 2020 19:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z3/ictLAUjgwyR6p93PByXq4qxQ+4mmKUUiuuNtvitg=;
-        b=IGyBGppr0Ur4wEoimgG2Y8yso+JEvaxd1/v1p6aljcMlYcSrY0lzokZ3ODIbOkTwdk
-         ue8AhRfE5CFCA7sdSgujCDehkLS78lfPBDTySfN1ljnvAS2YuX7+V5AsoHBawC2iIHCx
-         gV2qQUH6OipuGqRSbdxitzbLwxJQ/bnmEFeJjpns/qJNBh3CA62eENrR82yr5n70ltvz
-         BNfJVsaF0gZLcyyr0AwPHkaMBSwt5ieSt0vb0kfnetLOupo1Wchzzvrm0qe3u9RK4cSm
-         I/mrF2RGUOCdoO4P3MyGhygEK2SDibjrZ0YJCSj+Rng+mgr4a9UitJBBKZ39Wp7UZkAL
-         /OHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z3/ictLAUjgwyR6p93PByXq4qxQ+4mmKUUiuuNtvitg=;
-        b=R3h7bON+DlKlHM45qOUFyEjhB84b5NOnX77RX5k7tLgaR58RZapCmOi36HV25aI8tL
-         DicSS551AeyFVXlDgKlN+X+2StrqnhTCMAQIRkgf6hcnb9K1VNInTVHx9pCIrSEh7fl2
-         Mv30rPJS9+KkQeb+k2hUcZO27mSYv/SOoqBj9eWSk7HHyM38WZhC9OloJhtXSiY8Ar0o
-         N6yW1mIEmPIh6phU0B3EpCp0TSKyr+AezvRcMc07FIeJvd7tedeCoPqi84ftdk9nSauX
-         vznT49dO20XqlqaekfB4dX8kigFX7Ls5c5kIppDtN1DwSoubnqdvAOnaCwtj/U6eqCLm
-         ubDw==
-X-Gm-Message-State: AOAM53107fcOlXGnxvKEMzUw5aGkYBkNLS9Wf2YX6fHS2zhLRNhI8Hiz
-        8DCEkwXeOeHatapX0nx6NZs=
-X-Google-Smtp-Source: ABdhPJz2bvj2HaDgoVHtbxK+WdOY9T6KsP82co81kDPofesEu6z9qwFDIGREYAtXgoVtKPsKvQi0mg==
-X-Received: by 2002:a2e:9d8a:: with SMTP id c10mr6965071ljj.83.1599531100977;
-        Mon, 07 Sep 2020 19:11:40 -0700 (PDT)
-Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id j12sm9070085lfj.5.2020.09.07.19.11.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2020 19:11:40 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 06/35] i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
-Date:   Tue,  8 Sep 2020 05:09:52 +0300
-Message-Id: <20200908021021.9123-7-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200908021021.9123-1-digetx@gmail.com>
-References: <20200908021021.9123-1-digetx@gmail.com>
+        id S1728185AbgIHCT1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Sep 2020 22:19:27 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9674 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728158AbgIHCTZ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Sep 2020 22:19:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f56e9a60000>; Mon, 07 Sep 2020 19:17:11 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 07 Sep 2020 19:19:24 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 07 Sep 2020 19:19:24 -0700
+Received: from [10.19.100.126] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 8 Sep
+ 2020 02:19:17 +0000
+Subject: Re: [PATCH v2 11/12] usb: host: xhci-tegra: unlink power domain
+ devices
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <gregkh@linuxfoundation.org>, <robh@kernel.org>,
+        <jonathanh@nvidia.com>, <kishon@ti.com>,
+        <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nkristam@nvidia.com>
+References: <20200831044043.1561074-1-jckuo@nvidia.com>
+ <20200831044043.1561074-12-jckuo@nvidia.com> <20200831124214.GG1689119@ulmo>
+X-Nvconfidentiality: public
+From:   JC Kuo <jckuo@nvidia.com>
+Message-ID: <a05503a2-f904-d3ca-fb79-31e97f8e6630@nvidia.com>
+Date:   Tue, 8 Sep 2020 10:19:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200831124214.GG1689119@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1599531431; bh=u8KgNCAXAoUbdHuK5OzrRoXywcCujwYAMhAAkLqoZ6I=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=byDU+17H2hl6TC36CMM5n987u45GdJqX+rM27XA5pgzVxZP4tm1lgBXhNCtdE0Ax/
+         TNDB6X/TlAI27sS64i6R1P6e/awMZKvYf/9KkswbJt1MQUugOJeeNhT3Z98pnFHSnA
+         PFmCtk0ZMVd+ewPIUq2JhQvvDVFdrS9xdMR9lLXnrqeC3lX0KoIZkvYpXnV3vfdou1
+         Vjvtmy5F78oWHv57pE++EWeo8h5F31zIiPpOyaH0paT/4xmdGcHku/DxV14379ulGC
+         onDC0d7jeJU1ogL0LzvhWok9pmEcx17mtEXrNGyyxoq8R5fDkE+VnHbbVrHkR7e6Oq
+         Gj4H09dSe6ziA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The "non_hs_mode" divisor value is fixed, thus there is no need to have
-the variable i2c_dev.clk_divisor_non_hs_mode struct member. Let's remove
-it and move the mode selection into tegra_i2c_init() where it can be
-united with the timing selection.
-
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 720a75439e91..85ed0e02d48c 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -250,7 +250,6 @@ struct tegra_i2c_hw_feature {
-  * @msg_buf_remaining: size of unsent data in the message buffer
-  * @msg_read: identifies read transfers
-  * @bus_clk_rate: current I2C bus clock rate
-- * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-  * @tx_dma_chan: DMA transmit channel
-  * @rx_dma_chan: DMA receive channel
-@@ -281,7 +280,6 @@ struct tegra_i2c_dev {
- 	size_t msg_buf_remaining;
- 	int msg_read;
- 	u32 bus_clk_rate;
--	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
-@@ -783,6 +781,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	u32 val;
- 	int err;
- 	u32 clk_divisor, clk_multiplier;
-+	u32 non_hs_mode;
- 	u32 tsu_thd;
- 	u8 tlow, thigh;
- 
-@@ -805,24 +804,33 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->is_vi)
- 		tegra_i2c_vi_init(i2c_dev);
- 
--	/* Make sure clock divisor programmed correctly */
--	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
--				 i2c_dev->hw->clk_divisor_hs_mode) |
--		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE,
--				 i2c_dev->clk_divisor_non_hs_mode);
--	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
--
--	if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
--	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ) {
-+	switch (i2c_dev->bus_clk_rate) {
-+	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
-+	default:
- 		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
- 		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
- 		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
--	} else {
-+
-+		if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ)
-+			non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
-+		else
-+			non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
-+		break;
-+
-+	case 0 ... I2C_MAX_STANDARD_MODE_FREQ:
- 		tlow = i2c_dev->hw->tlow_std_mode;
- 		thigh = i2c_dev->hw->thigh_std_mode;
- 		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
-+		non_hs_mode = i2c_dev->hw->clk_divisor_std_mode;
-+		break;
- 	}
- 
-+	/* Make sure clock divisor programmed correctly */
-+	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
-+				 i2c_dev->hw->clk_divisor_hs_mode) |
-+		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE, non_hs_mode);
-+	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
-+
- 	if (i2c_dev->hw->has_interface_timing_reg) {
- 		val = FIELD_PREP(I2C_INTERFACE_TIMING_THIGH, thigh) |
- 		      FIELD_PREP(I2C_INTERFACE_TIMING_TLOW, tlow);
-@@ -837,7 +845,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
- 
- 	clk_multiplier  = tlow + thigh + 2;
--	clk_multiplier *= i2c_dev->clk_divisor_non_hs_mode + 1;
-+	clk_multiplier *= non_hs_mode + 1;
- 
- 	err = clk_set_rate(i2c_dev->div_clk,
- 			   i2c_dev->bus_clk_rate * clk_multiplier);
-@@ -1751,18 +1759,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_fast_clk;
- 	}
- 
--	if (i2c_dev->bus_clk_rate > I2C_MAX_FAST_MODE_FREQ &&
--	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_plus_mode;
--	else if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
--		 i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_FREQ)
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_fast_mode;
--	else
--		i2c_dev->clk_divisor_non_hs_mode =
--				i2c_dev->hw->clk_divisor_std_mode;
--
- 	ret = clk_prepare(i2c_dev->div_clk);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
--- 
-2.27.0
-
+On 8/31/20 8:42 PM, Thierry Reding wrote:
+> On Mon, Aug 31, 2020 at 12:40:42PM +0800, JC Kuo wrote:
+>> This commit unlinks xhci-tegra platform device with ss/host power
+>> domain devices. Reasons for this change is - at elpg entry, phy
+>> sleepwalk and wake configuration need to be done before powering
+>> down ss/host partitions, and phy need be powered off after powering
+>> down ss/host partitions. Sequence looks like roughly below:
+>>
+>>   tegra_xusb_enter_elpg() -> xhci_suspend()
+>>                           -> enable phy sleepwalk and wake if needed
+>>                           -> power down ss/host partitions
+>>                           -> power down phy
+>>
+>> If ss/host power domains are linked to xhci-tegra platform device, we
+>> are not able to perform the sequence like above.
+>>
+>> This commit introduces:
+>>   1. tegra_xusb_unpowergate_partitions() to power up ss and host
+>>      partitions together. If ss/host power domain devices are
+>>      available, it invokes pm_runtime_get_sync() to request power
+>>      driver to power up partitions; If power domain devices are not
+>>      available, tegra_powergate_sequence_power_up() will be used to
+>>      power up partitions.
+>>
+>>   2. tegra_xusb_powergate_partitions() to power down ss and host
+>>      partitions together. If ss/host power domain devices are
+>>      available, it invokes pm_runtime_put_sync() to request power
+>>      driver to power down partitions; If power domain devices are not
+>>      available, tegra_powergate_power_off() will be used to power down
+>>      partitions.
+>>
+>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+>> ---
+>>  drivers/usb/host/xhci-tegra.c | 202 +++++++++++++++++++---------------
+>>  1 file changed, 111 insertions(+), 91 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+>> index 934be1686352..ce6526c2caf6 100644
+>> --- a/drivers/usb/host/xhci-tegra.c
+>> +++ b/drivers/usb/host/xhci-tegra.c
+>> @@ -249,8 +249,6 @@ struct tegra_xusb {
+>>  
+>>  	struct device *genpd_dev_host;
+>>  	struct device *genpd_dev_ss;
+>> -	struct device_link *genpd_dl_host;
+>> -	struct device_link *genpd_dl_ss;
+>>  
+>>  	struct phy **phys;
+>>  	unsigned int num_phys;
+>> @@ -814,36 +812,12 @@ static void tegra_xusb_phy_disable(struct tegra_xusb *tegra)
+>>  
+>>  static int tegra_xusb_runtime_suspend(struct device *dev)
+>>  {
+>> -	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+>> -
+>> -	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+>> -	tegra_xusb_clk_disable(tegra);
+>> -
+>>  	return 0;
+>>  }
+>>  
+>>  static int tegra_xusb_runtime_resume(struct device *dev)
+>>  {
+>> -	struct tegra_xusb *tegra = dev_get_drvdata(dev);
+>> -	int err;
+>> -
+>> -	err = tegra_xusb_clk_enable(tegra);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to enable clocks: %d\n", err);
+>> -		return err;
+>> -	}
+>> -
+>> -	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to enable regulators: %d\n", err);
+>> -		goto disable_clk;
+>> -	}
+>> -
+>>  	return 0;
+>> -
+>> -disable_clk:
+>> -	tegra_xusb_clk_disable(tegra);
+>> -	return err;
+>>  }
+>>  
+>>  #ifdef CONFIG_PM_SLEEP
+>> @@ -1019,10 +993,6 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+>>  static void tegra_xusb_powerdomain_remove(struct device *dev,
+>>  					  struct tegra_xusb *tegra)
+>>  {
+>> -	if (tegra->genpd_dl_ss)
+>> -		device_link_del(tegra->genpd_dl_ss);
+>> -	if (tegra->genpd_dl_host)
+>> -		device_link_del(tegra->genpd_dl_host);
+>>  	if (!IS_ERR_OR_NULL(tegra->genpd_dev_ss))
+>>  		dev_pm_domain_detach(tegra->genpd_dev_ss, true);
+>>  	if (!IS_ERR_OR_NULL(tegra->genpd_dev_host))
+>> @@ -1048,20 +1018,88 @@ static int tegra_xusb_powerdomain_init(struct device *dev,
+>>  		return err;
+>>  	}
+>>  
+>> -	tegra->genpd_dl_host = device_link_add(dev, tegra->genpd_dev_host,
+>> -					       DL_FLAG_PM_RUNTIME |
+>> -					       DL_FLAG_STATELESS);
+>> -	if (!tegra->genpd_dl_host) {
+>> -		dev_err(dev, "adding host device link failed!\n");
+>> -		return -ENODEV;
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
+>> +{
+>> +	struct device *dev = tegra->dev;
+>> +	bool use_genpd;
+>> +	int rc;
+>> +
+>> +	use_genpd = of_property_read_bool(dev->of_node, "power-domains");
+> 
+> I don't think that's technically correct. Just because a "power-domains"
+> property exists in DT doesn't mean any power domains are necessarily
+> attached to the device. I think you'll need to check for something like
+> 
+> 	if (dev->pm_domain)
+> 
+> here.
+> 
+Thanks Thierry. I will do so in the next revision.
+> Thierry
+> 
