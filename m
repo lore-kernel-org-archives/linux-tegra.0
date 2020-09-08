@@ -2,115 +2,153 @@ Return-Path: <SRS0=mK2W=CR=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8C7C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 20:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BC0C2D0E1
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 21:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3C792166E
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 20:14:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQQ5gfR5"
+	by mail.kernel.org (Postfix) with ESMTP id 25DD52137B
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Sep 2020 21:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599602042;
+	bh=sfvm274C1Tz6nYEHQDlYeKRgwYTGtjxgvO4OaIbh6ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qiprVioRCK0IKRWgkZNpTcSV6h8mqQFpU3I7c+B9X10hrCXcrh7BL/mUuHCB2p8Gt
+	 157cVRplndBniSP6uyXKNa8iIS2fOTV6NzbcecaRqZVqrr0WZrKYZkUd7Kahs2aKBz
+	 5hbH8J1A934WNVeQrDtQH576GbkI2fczKhm0xmzw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbgIHUOo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Sep 2020 16:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729971AbgIHPLL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 11:11:11 -0400
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FDF0C0068C6
-        for <linux-tegra@vger.kernel.org>; Tue,  8 Sep 2020 08:01:41 -0700 (PDT)
-Received: by mail-qv1-xf44.google.com with SMTP id q10so2197143qvs.1
-        for <linux-tegra@vger.kernel.org>; Tue, 08 Sep 2020 08:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jX/oUhvQ6rppkjSjuwDLk72A8u6aXMfjXLIcv0mZ0V8=;
-        b=jQQ5gfR5VPftZ/qA/pYe9P4cnnvCC08gGQlp52hJt8TvBXCO3N6mrOR4UBBItazpUT
-         /2cyb9Bfr+9oKphd7lc0Bs6usHeOch98OONEvpJR2h9i27auGv/AXdOlRV5xmtaoplVv
-         NANIMgstLgl/+KXFk8cidXAN2OGw3Rk4ozWr2+PJf2xeunGgicFqhMdm1hk+lgSkzH9x
-         qVU4CfYB5fZ/ex6igd/Cq5KuCtcFG3A7Z2KzdAlU+yZ5SPARuBoUROG327hJ1LihEXt+
-         n5MVgmKytjD6Jbbi4qTOwv74DiRN0no+qrzUHWRSAK88J1pWOGly7JaMSDxINtniNE66
-         +y2Q==
+        id S1728248AbgIHVx5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Sep 2020 17:53:57 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40547 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbgIHVx4 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Sep 2020 17:53:56 -0400
+Received: by mail-io1-f66.google.com with SMTP id j2so998828ioj.7;
+        Tue, 08 Sep 2020 14:53:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jX/oUhvQ6rppkjSjuwDLk72A8u6aXMfjXLIcv0mZ0V8=;
-        b=PLQOEd0X5yVAw3xzyagX+aJBv8auMibi5mTj9+2x7gPzf8S/fYRGJRs9TkDBqxFmh7
-         8s0SqaM19HzwEiY/tqMFO3EHWNOd0jJ+UgaifDeEpCBU4TpoITSYD35iqWAK4z7vMgRu
-         1sFNyMQ6Gt/vL1RrvokEvWbColgUjvhBx3SjG7Io0+tGiQ5HCI/dKLofcqJgl6kjCUtF
-         Kj73bxUEoM1T7VrDiMxNps1isXZXF52JL1pm/7Mv6fPRlErgFDHH/radzqsUjTpazivt
-         wdFSCiU6TDdZBrY/DGeFBQYP0Ocj2nFAGucNrJE7UH4HdsYcc654cPH5rnS+UmU7dEct
-         YQJg==
-X-Gm-Message-State: AOAM5331dZKhV0Q2TQai7U3UUR+Q26x3BrNQXefyjZZxWqJqzGeqRWvn
-        wVCwVUBKzPfPGQaUoKcwpT+0ZSoj+qRFgBlJ
-X-Google-Smtp-Source: ABdhPJx2y+5MfUQS/16k7eYrnjKuVFUZ2TqaIy/qV9W7ZzDIdCw+l28rRM8gaZ5RlPifTDhRUlHnCw==
-X-Received: by 2002:a0c:b2d4:: with SMTP id d20mr483674qvf.1.1599577299563;
-        Tue, 08 Sep 2020 08:01:39 -0700 (PDT)
-Received: from Master-WinVM.sparksnet ([2601:153:900:7730:1418:cbe9:1543:1190])
-        by smtp.gmail.com with ESMTPSA id o72sm14034704qka.113.2020.09.08.08.01.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=wiPcYtXUmUOhYk2NP+zdXxVU6WZbJLZv+xg4idR2sPs=;
+        b=NZD0FdOVuldf3/HVH7XxcuDnX+3RM9gRK8/2OMElQADDboO8pCTVnwSFBuSZGi/kGe
+         Ik1PQqb3Wh2Tb7dfGZ968dCZJs2FNDYdnd4U5/wRPX2nFZ0VEmCA8XWTq025kb7mpMwR
+         GtCbfyMHlz61sCSf6vlOAKLUpDGUCeLOkcr2vY1NbRgnWwZFKc/v4++wHDMYfZL3EO09
+         xYcWSZLqG90D0K7wVbrnrMA0Nwlg8slBegmsrd7Nrz+WCI6F67wyTOE21s85qslDOCLi
+         BD/2Yfu0V9dZf93kqF90OmPd9gSD6/UH+MQwbfOQclhcoW/pNVPvNet5yVe4Gi1GlcVB
+         JGYQ==
+X-Gm-Message-State: AOAM531tYKMoSnNPw3RdhlF3GHNvoe+R5vE/6QwjmnyaLRZGbNG3Nhy1
+        WFWqk9tWWWiF1WLY+kLISw==
+X-Google-Smtp-Source: ABdhPJwVWjjp5FxJlVlmFFdvHZsCnIqr88iEcaRkpM6x7dcQaMo4X89epeMAF5S/GKo8UmohORtsuA==
+X-Received: by 2002:a05:6602:2e81:: with SMTP id m1mr893664iow.64.1599602034449;
+        Tue, 08 Sep 2020 14:53:54 -0700 (PDT)
+Received: from xps15 ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id e14sm232699ilr.42.2020.09.08.14.53.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 08:01:38 -0700 (PDT)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     linux-tegra@vger.kernel.org
-Cc:     Nagarjuna Kristam <nkristam@nvidia.com>,
+        Tue, 08 Sep 2020 14:53:53 -0700 (PDT)
+Received: (nullmailer pid 995501 invoked by uid 1000);
+        Tue, 08 Sep 2020 21:53:52 -0000
+Date:   Tue, 8 Sep 2020 15:53:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Lee Jones <lee.jones@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Matias Zuniga <matias.nicolas.zc@gmail.com>,
-        JC Kuo <jckuo@nvidia.com>, Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH] phy: tegra: xusb: fix xusb backwards compatibility
-Date:   Tue,  8 Sep 2020 11:01:24 -0400
-Message-Id: <20200908150124.31336-1-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] dt-bindings: mfd: ene-kb3930: Add compatibles for
+ KB930 and Acer A500
+Message-ID: <20200908215352.GA989862@bogus>
+References: <20200823140846.19299-1-digetx@gmail.com>
+ <20200823140846.19299-5-digetx@gmail.com>
+ <20200823182050.GA210632@demiurge.local>
+ <b91b96d2-89e1-feb7-a4d0-6fd19a173ab4@gmail.com>
+ <20200823211629.GA240555@demiurge.local>
+ <c536557c-de42-d6bd-890c-ef71ca0e3116@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c536557c-de42-d6bd-890c-ef71ca0e3116@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Prior to implementing role switch support, all enabled ports enumerated
-as host devices.
-With role switch support enabled, device trees with otg ports which have
-not been updated with usb-role-switch support now bail out during
-enumeration.
-This disables all xhci ports tied to the affected phy.
+On Mon, Aug 24, 2020 at 01:09:22PM +0300, Dmitry Osipenko wrote:
+> 24.08.2020 00:16, Lubomir Rintel пишет:
+> > Hello,
+> > 
+> > On Sun, Aug 23, 2020 at 10:31:36PM +0300, Dmitry Osipenko wrote:
+> >> 23.08.2020 21:20, Lubomir Rintel пишет:
+> >>> On Sun, Aug 23, 2020 at 05:08:44PM +0300, Dmitry Osipenko wrote:
+> >>>> The ENE KB930 hardware is compatible with KB3930.
+> >>>>
+> >>>> Acer A500 Iconia Tab is Android tablet device, it has KB930 controller
+> >>>> that is running firmware specifically customized for the needs of the
+> >>>> Acer A500 hardware. This means that firmware interface isn't re-usable
+> >>>> by other non-Acer devices. Some akin models of Acer tablets should be
+> >>>> able to re-use the FW interface of A500 model, like A200 for example.
+> >>>>
+> >>>> This patch adds the new compatibles to the binding.
+> >>>
+> >>> I've responded to patch 5/6 with what should've been said here [1].
+> >>> Sorry for the confusion.
+> >>>
+> >>> In any case please consider adding a new binding file instead of
+> >>> modifying the kb3930 binding doc. It would also remove a dependency on
+> >>> my patch set which should have slipped out of maintainers' radar.
+> >>>
+> >>> [1] https://lore.kernel.org/lkml/20200823180041.GB209852@demiurge.local/
+> >>
+> >> Hello, Lubomir! I was doing some research about the differences of
+> >> KB3930 and KB930 before created this patch and my understanding is that
+> >> the controllers are mostly identical. I've seen posts from people who
+> >> replaced KB3930 with KB930 (and vice versa) on various notebooks and it
+> >> worked, although not always.
+> >>
+> >> It's a very common practice to re-use binding in a case of a sibling
+> >> hardware. Do you know what are the exact differences between KB3930 and
+> >> KB930 which could justify having separate bindings?
+> >>
+> >> The firmware implementation varies a lot from device to device,
+> > 
+> > It sometimes does. The ENE's downstream driver suggests there are parts
+> > that run more-or-less stock firmware that are comatible with each other.
+> > That is why I grabbed the generic kb3930 name.
+> > 
+> >> and
+> >> thus, each device needs to have its own driver in order to talk to the
+> >> firmware, but hardware description (i.e. DT binding) should be common
+> >> for all devices.
+> > 
+> > Note the DT is not the hardware description. It's the description of how
+> > the hardware presents itself, from the software's perspective. As far as
+> > that is concerned, the devices don't seem to have anything in common at
+> > all (other than the bus address). The fact that you need an entirely
+> > different driver implies this.
+> > 
+> > This would be the case even if the A500 EC was based directly on a KB3930.
+> > 
+> > A good reason to keep bindings for different yet somewhat similar devices in
+> > a single document is to avoid duplication. Yet here there's very little to
+> > share here. If you've done your bindings correctly, you'd need to
+> > conditionalize the monitored-battery and power-supplies properties for
+> > acer,a500-iconia-ec, complicating the binding too much. It makes more
+> > sense to just add a new document.
+> 
+> Alright, I don't mind to separate the bindings. Although, before doing
+> that, I'd want to get opinion from the device-tree experts, i.e. from
+> Rob Herring :)
+> 
+> Rob, will it be fine to have separate bindings for each firmware version
+> of the ENE controller given that firmware is individual for every device
+> and given that FW has no compatibility with other devices?
 
-Retain backwards compatibility by forcing host mode on otg ports which
-are missing the usb-role-switch flag.
-Disable ports explicitly defined as peripheral mode that are missing the
-usb-role-switch flag.
+Seems like separate bindings makes sense here.
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-Reported-by: Matias Zuniga <matias.nicolas.zc@gmail.com>
-
-Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
----
- drivers/phy/tegra/xusb.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index de4a46fe1763..c36dce13e0c6 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -734,10 +734,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- 			err = tegra_xusb_setup_usb_role_switch(port);
- 			if (err < 0)
- 				return err;
-+		} else if (usb2->mode == USB_DR_MODE_PERIPHERAL) {
-+			dev_err(&port->dev, "mandatory usb-role-switch not found for %s mode, disabling port\n", modes[usb2->mode]);
-+			usb2->mode = USB_DR_MODE_UNKNOWN;
- 		} else {
--			dev_err(&port->dev, "usb-role-switch not found for %s mode",
--				modes[usb2->mode]);
--			return -EINVAL;
-+			dev_warn(&port->dev, "usb-role-switch not found for %s mode, forcing host\n", modes[usb2->mode]);
-+			usb2->mode = USB_DR_MODE_HOST;
- 		}
- 	}
- 
--- 
-2.17.1
-
+Rob
