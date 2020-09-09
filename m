@@ -2,112 +2,97 @@ Return-Path: <SRS0=dOwp=CS=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2686EC43461
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 17:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D672FC433E2
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 18:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1CA421D46
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 17:39:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cr6m9MJH"
+	by mail.kernel.org (Postfix) with ESMTP id 880A921D7F
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 18:00:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599674443;
+	bh=MWAfud2kNi/Tty1GPyaCTV1pW2bCQRmFqT2AAwVvnUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tKHbLD8fu84LjqTahqCEGjm+7KJOFFKEEGynt5Iz/pqo1qzQfWQnKI/Taz+N6M8Vy
+	 ulE68OQX6yxk5uRC1zv8hJs8rRf9jrY5s8WlVhXaCeGI41SozGpDlD3kvmWRKh3Ese
+	 OugFlrJ0WslBn7H6yPTSmqlnQm0Md6rKdSbi4LGM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbgIIRjY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 13:39:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgIIRjX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 13:39:23 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE963C061573;
-        Wed,  9 Sep 2020 10:39:22 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id q8so2049537lfb.6;
-        Wed, 09 Sep 2020 10:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=wJ7AD2/0apSNq4BNZ5BqSlm+lNAtw2qPg5r1WqAx3mk=;
-        b=Cr6m9MJHxCltV3nifhUbaQFHRLf2OhP4i4BF/IW38Ny14u6U7hSVDvih7OGEK9I3kY
-         1c2eKx1YcHZUbp2ZIeeiZ5qSC0o98V0GiaRNuVMpu7zlhXsOqOX1nbNbK6ufePUqyP/+
-         jIzcaIukw7OwuC5CzgB5HO4kx3Ws5/8A03/z2kqYRMl1aJqu3P9yuVDN90ZhhDoIg9vj
-         wtJpK36NrFJkOzFWR8niGIzIOTkbjmabQeRKcI3ki+knsoC73+lGHPNbsbspr42Q3mim
-         Cl3VhnjxiVWUX0Dc1hIcGV1wyr2GEnMyFkbnDDfCa5C4u63IAIAonviOfVjtUgqxhSoe
-         Sg3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wJ7AD2/0apSNq4BNZ5BqSlm+lNAtw2qPg5r1WqAx3mk=;
-        b=sbf78EH+hqA48vJSViOoBMj969ImhlJirTvgFDffvGGKx1xxDAZ1eO17rHE0QVrMYW
-         VQLA7bujxT48VnB55mnYW5512FazSKmKY04CLcRB0aGvCRUZvj18SApW7b8H9qiRMePK
-         qHoFQ8w0e6wZ5BCcpYXLQbgnqWZhRG5+7RWKgPRidIannxQSw4rpCUrvf8WZXuIZY0Ih
-         DTDZm4d4PaHBW6VgpPh/NapBRAv7695lmmZAQFYnRTXckggzBw2LSDBBF/oHaAdQmYmg
-         bc2NPJq6t9ZFxl3fFDn+GbVjw50AdVlGuww1JqFvPZWnuxdL+oyMoe8y06BWGMNqiIIv
-         +sFg==
-X-Gm-Message-State: AOAM5308AWLyB1C53l5XueTCtyORAMGfuFvbgZzgy8MsJyIzd1IIpgZl
-        hVhqka+KnICaLVVSQMDE6uW32ibcPQ4=
-X-Google-Smtp-Source: ABdhPJyiotiHC1n0q0b4xrsMxdqsFRVd0JTajIfEkfdX7fgRjdauDJ8heFaU7/xysBBfxxYePKy+vg==
-X-Received: by 2002:a19:4402:: with SMTP id r2mr2324395lfa.111.1599673160958;
-        Wed, 09 Sep 2020 10:39:20 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id j127sm718232lfd.6.2020.09.09.10.39.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 10:39:20 -0700 (PDT)
-Subject: Re: [PATCH v7 00/34] Improvements for Tegra I2C driver
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200908224006.25636-1-digetx@gmail.com>
- <CAHp75Vdh6bErqeO-ki2xsS9jEeoy4mKF1h0Jw_HM6UpukqH_BQ@mail.gmail.com>
- <854a0ed8-35dd-0b25-6c53-4915be0e33e9@gmail.com> <20200909154902.GA916@kunai>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0f912266-1727-c18a-69e6-e978af2a18c9@gmail.com>
-Date:   Wed, 9 Sep 2020 20:39:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728207AbgIISAm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 14:00:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726408AbgIISAi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Sep 2020 14:00:38 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEEAB21D7D;
+        Wed,  9 Sep 2020 18:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599674437;
+        bh=MWAfud2kNi/Tty1GPyaCTV1pW2bCQRmFqT2AAwVvnUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nNpzTIqnilsQgLCL/iuqmCXAj/lVzvSB6JR7XzsCIW46xyGiRai/VTGS83LUeTomc
+         eJZTVgZ7fTX20V+pe3016avwuol6aZm3zBR+yo4yepQP6yoj5rS064FinOd2OnqBEQ
+         z3P8adgY+Q3bywyfUGm8lFVaOglsSGyXwcjA3qlE=
+Date:   Wed, 9 Sep 2020 20:00:47 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.8 000/186] 5.8.8-rc1 review
+Message-ID: <20200909180047.GC1003763@kroah.com>
+References: <20200908152241.646390211@linuxfoundation.org>
+ <71fefa0c8e26421ba1ae3619108bf836@HQMAIL105.nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20200909154902.GA916@kunai>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71fefa0c8e26421ba1ae3619108bf836@HQMAIL105.nvidia.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.09.2020 18:49, Wolfram Sang пишет:
-> On Wed, Sep 09, 2020 at 06:36:50PM +0300, Dmitry Osipenko wrote:
->> 09.09.2020 12:11, Andy Shevchenko пишет:
->>> On Wed, Sep 9, 2020 at 1:40 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>>
->>>> Hello!
->>>>
->>>> This series performs refactoring of the Tegra I2C driver code and hardens
->>>> the atomic-transfer mode.
->>>
->>> I think there is still room for improvement, but let not block it, FWIW,
->>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>
->> Thank you and Michał for helping with the review! Very appreciate this!
+On Wed, Sep 09, 2020 at 07:03:41AM +0000, Jon Hunter wrote:
+> On Tue, 08 Sep 2020 17:22:22 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.8.8 release.
+> > There are 186 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 10 Sep 2020 15:21:57 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.8-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Yes, thanks everyone so far!
+> All tests passing for Tegra ...
 > 
-> Is there some internal testfarm where this should be regression tested?
-> Otherwise, I'd trust Dmitry, Andy, and Michał here and would apply it
-> this week after some generic high-level review.
+> Test results for stable-v5.8:
+>     14 builds:	14 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     60 tests:	60 pass, 0 fail
 > 
+> Linux version:	5.8.8-rc1-g456fe9607f8f
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thierry and Jon, would be awesome if you could give this series a test
-on T210+. Thanks in advance!
+Great, thanks for testing and letting me know.
+
+greg k-h
