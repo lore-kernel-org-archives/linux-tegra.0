@@ -2,189 +2,107 @@ Return-Path: <SRS0=dOwp=CS=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D49C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B25C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 15:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D6F02145D
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7C19218AC
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 15:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgIIJRK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 05:17:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62578 "EHLO mga18.intel.com"
+        id S1730578AbgIIPtk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 11:49:40 -0400
+Received: from sauhun.de ([88.99.104.3]:50122 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbgIIJRI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Sep 2020 05:17:08 -0400
-IronPort-SDR: 4UfoviER+163ZOfzvllxRS/M+W5Ldi8Ryv0yri+p+qHvLJVmuHgWLSYY5x76tEdwZa0KKFqs3/
- diG40ofYg8CQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="146013094"
-X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
-   d="scan'208";a="146013094"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:52 -0700
-IronPort-SDR: Eu5LFEF7mQvPvjaKgHiNi+EAI6twzANJVXLRWHJjqt2BIA4DKeAAOOzWigLRgh7pJRkcZk2JZB
- paZ/kvhmY5KQ==
-X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
-   d="scan'208";a="480390735"
-Received: from vdc-station-04.ger.corp.intel.com (HELO [10.251.165.91]) ([10.251.165.91])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:41 -0700
-Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
- dma-iommu api
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        id S1730187AbgIIPtW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Sep 2020 11:49:22 -0400
+Received: from localhost (p54b33098.dip0.t-ipconnect.de [84.179.48.152])
+        by pokefinder.org (Postfix) with ESMTPSA id 584A92C082B;
+        Wed,  9 Sep 2020 17:49:05 +0200 (CEST)
+Date:   Wed, 9 Sep 2020 17:49:02 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org>
- <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
- <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
- <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
- <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
- <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com>
- <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
- <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <7106602a-9964-851e-9c4e-d8acf4033b89@linux.intel.com>
-Date:   Wed, 9 Sep 2020 10:16:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 00/34] Improvements for Tegra I2C driver
+Message-ID: <20200909154902.GA916@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200908224006.25636-1-digetx@gmail.com>
+ <CAHp75Vdh6bErqeO-ki2xsS9jEeoy4mKF1h0Jw_HM6UpukqH_BQ@mail.gmail.com>
+ <854a0ed8-35dd-0b25-6c53-4915be0e33e9@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <854a0ed8-35dd-0b25-6c53-4915be0e33e9@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 08/09/2020 23:43, Tom Murphy wrote:
-> On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
-> <tvrtko.ursulin@linux.intel.com> wrote:
->>
->>
->> On 08/09/2020 16:44, Logan Gunthorpe wrote:
->>> On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
->>>>>
->>>>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> b/drivers/gpu/drm/i915/i915
->>>>> index b7b59328cb76..9367ac801f0c 100644
->>>>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
->>>>>     } __sgt_iter(struct scatterlist *sgl, bool dma) {
->>>>>            struct sgt_iter s = { .sgp = sgl };
->>>>>
->>>>> +       if (sgl && !sg_dma_len(s.sgp))
->>>>
->>>> I'd extend the condition to be, just to be safe:
->>>>       if (dma && sgl && !sg_dma_len(s.sgp))
->>>>
->>>
->>> Right, good catch, that's definitely necessary.
->>>
->>>>> +               s.sgp = NULL;
->>>>> +
->>>>>            if (s.sgp) {
->>>>>                    s.max = s.curr = s.sgp->offset;
->>>>> -               s.max += s.sgp->length;
->>>>> -               if (dma)
->>>>> +
->>>>> +               if (dma) {
->>>>> +                       s.max += sg_dma_len(s.sgp);
->>>>>                            s.dma = sg_dma_address(s.sgp);
->>>>> -               else
->>>>> +               } else {
->>>>> +                       s.max += s.sgp->length;
->>>>>                            s.pfn = page_to_pfn(sg_page(s.sgp));
->>>>> +               }
->>>>
->>>> Otherwise has this been tested or alternatively how to test it? (How to
->>>> repro the issue.)
->>>
->>> It has not been tested. To test it, you need Tom's patch set without the
->>> last "DO NOT MERGE" patch:
->>>
->>> https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
->>
->> Tom, do you have a branch somewhere I could pull from? (Just being lazy
->> about downloading a bunch of messages from the archives.)
-> 
-> I don't unfortunately. I'm working locally with poor internet.
-> 
->>
->> What GPU is in your Lenovo x1 carbon 5th generation and what
->> graphical/desktop setup I need to repro?
-> 
-> 
-> Is this enough info?:
-> 
-> $ lspci -vnn | grep VGA -A 12
-> 00:02.0 VGA compatible controller [0300]: Intel Corporation HD
-> Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
->      Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
->      Flags: bus master, fast devsel, latency 0, IRQ 148
->      Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
->      Memory at 60000000 (64-bit, prefetchable) [size=256M]
->      I/O ports at e000 [size=64]
->      [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
->      Capabilities: [40] Vendor Specific Information: Len=0c <?>
->      Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
->      Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
->      Capabilities: [d0] Power Management version 2
->      Capabilities: [100] Process Address Space ID (PASID)
->      Capabilities: [200] Address Translation Service (ATS)
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Works for a start. What about the steps to repro? Any desktop 
-environment and it is just visual corruption, no hangs/stalls or such?
+On Wed, Sep 09, 2020 at 06:36:50PM +0300, Dmitry Osipenko wrote:
+> 09.09.2020 12:11, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Sep 9, 2020 at 1:40 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+> >>
+> >> Hello!
+> >>
+> >> This series performs refactoring of the Tegra I2C driver code and hard=
+ens
+> >> the atomic-transfer mode.
+> >=20
+> > I think there is still room for improvement, but let not block it, FWIW,
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>=20
+> Thank you and Micha=C5=82 for helping with the review! Very appreciate th=
+is!
 
-I've submitted a series consisting of what I understood are the patches 
-needed to repro the issue to our automated CI here:
+Yes, thanks everyone so far!
 
-https://patchwork.freedesktop.org/series/81489/
+Is there some internal testfarm where this should be regression tested?
+Otherwise, I'd trust Dmitry, Andy, and Micha=C5=82 here and would apply it
+this week after some generic high-level review.
 
-So will see if it will catch something, or more targeted testing will be 
-required. Hopefully it does trip over in which case I can add the patch 
-suggested by Logan on top and see if that fixes it. Or I'll need to 
-write a new test case.
 
-If you could glance over my series to check I identified the patches 
-correctly it would be appreciated.
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-Tvrtko
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9Y+WoACgkQFA3kzBSg
+KbYhUg//dp6m9B+pSWdeinWM7HM7oTSzKB+tjzuCz29yuhxYd4foiCYNTU6viTaH
+QL538Q+1El/Vhd4BbUKLtUHZ3gdjVfLJqDROUn9w67trlwFGz++c9KP8B2DuiZAF
+bgaf56yQfyjuHOTD1B3MMQXCcazfbYVoUFnYlwgpHYa/Ma/CI1pJFp5mt1VieWtE
+XqhzCJaoNUjHGxakTWwFPet2lX0RvpaaumKJQvkSO1bNY1r1+fsIOWI4injEE8W8
+0rjP4Tvf3ACzKZ1L6xnTmT2+d2Y2SyK1wlaa2T6erznL7K/0lp36BhE6z/o4uXZ4
+WrBiuONIvNbMPQVt58IXQ7/7ODoO+tXxRQoGe8KL/CsUvo6WTzfb+Ji9JRyshndS
+cRSjp0nsEHjGVYVY+LhI6BrwSaqKZJg1hpbdbRkw6Lqj1H7eHCzrATce0w4AFJIa
+xRXOWz1KrtrVm62yi28iuZ0cpL0L1zDTNCB3haS94/JWYHRKMuXYyPqlNUDkIhHD
+NRATRfQX01adeiYoYay4SEPi2ygGzmlAl4Y1EUnMi71NNAe+3RyZFfHWQVLPzKwB
+DU7NEGcTetrFvDm3/0Ne3cgVHMsGtEjDOFQGg7WmaHGgHeFUhYHxo6UbzA/96YwW
+X3AKfaWv7ijuvDYX0cK522QWtUrhy+g4fXyD7ELj7Cg/2unQSkk=
+=+bLv
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
