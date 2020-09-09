@@ -2,126 +2,91 @@ Return-Path: <SRS0=dOwp=CS=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE43C43461
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF460C43461
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4254A21D7F
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92DB120757
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KCbBZSDo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="bApV+Th1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbgIIILV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 04:11:21 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14097 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbgIIILS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:11:18 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f588d9f0001>; Wed, 09 Sep 2020 01:09:03 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 09 Sep 2020 01:11:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 09 Sep 2020 01:11:17 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 9 Sep
- 2020 08:11:15 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 9 Sep 2020 08:11:15 +0000
-Received: from jckuo-lt.nvidia.com (Not Verified[10.19.100.126]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f588e210000>; Wed, 09 Sep 2020 01:11:14 -0700
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 13/15] arm64: tegra210/tegra186/tegra194: XUSB PADCTL irq
-Date:   Wed, 9 Sep 2020 16:10:39 +0800
-Message-ID: <20200909081041.3190157-14-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200909081041.3190157-1-jckuo@nvidia.com>
-References: <20200909081041.3190157-1-jckuo@nvidia.com>
+        id S1729135AbgIIILh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 04:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbgIIILf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:11:35 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FDBC061573
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Sep 2020 01:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vUmzQQRqobyqrwRy6tA9315+Sg0mrSxJ+NZ1ELHv0yw=; b=bApV+Th1hY1NtsLvxwyxdqL/6P
+        ynSUl0SGVwP0UMbQjlZCs6BOzPSWH7BxKjynlDJZZ/qqrLIsOs0autVqBzwco5JeBWN2/W2lVeu15
+        5OiDTK14y5KuBp+vD1O7dJNcUTj3AqHvbndOAPQhstn8Deu3R4A+KlgaPeFDU8v80/3DuwJP5S9+Y
+        zGjWCplxS1fGUPFLh+dhC9/450rOv/azlVZDI2IEQHeYRJV+y98RoDQR3qZzWLFIVOJ25Ec1NdyHx
+        56EcSLOHpaakBmAOI1juGBNElt3rmvszpX/GpdbBZ1StMANTFZpV0vAsB9OIzGXlM1I3sSp1LD6nh
+        K873YhyA==;
+Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1kFvCW-0002rO-3c; Wed, 09 Sep 2020 11:11:32 +0300
+Subject: Re: [RFC PATCH v2 15/17] drm/tegra: Add power_on/power_off engine
+ callbacks
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com
+References: <20200905103420.3021852-1-mperttunen@nvidia.com>
+ <20200905103420.3021852-16-mperttunen@nvidia.com>
+ <2ddaf2ef-e232-7d44-0b08-e190f20297b2@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <1b6676a2-0de9-e2ef-61ce-ce8e5ad83e1a@kapsi.fi>
+Date:   Wed, 9 Sep 2020 11:11:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1599638943; bh=oDC4yPdy37oGy9BSmyfaPGrZWufuOeN2Ylkno1BVa5A=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=KCbBZSDo3VEuNENxCx2uPEoP2STgZM0kL5ZtD9ZuN6xLLl+F+oVa8HXdKC2i8dKod
-         g51ZlkmLwE/mbG8igWtK5BErEKCyjqSO5xbxInfDvKA07Qrpj1KpPBn3cpQRQAASB9
-         ISndhbdbV2l98kpuVhTMoGom4+0eGiyI6aTynsBGYf8bqrlyUAvUuOmPNnvm7JtwOD
-         Z8KhkkRSGtBnuny5XnvAprKkWElSySoA1VKKa4NK9bM1I9osW6kN6pZuh2Tel2d/ve
-         PMhqP8LkXpMxFWo9U6+4+d4auUAzGEsD0clXAzMjIxgC+/ZmScKcq8M9zFeIybPBPL
-         PN+ftsDMg3r+w==
+In-Reply-To: <2ddaf2ef-e232-7d44-0b08-e190f20297b2@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.250.171.65
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit adds "interrupts" property to Tegra210/Tegra186/Tegra194
-XUSB PADCTL node. XUSB PADCTL interrupt will be raised when USB wake
-event happens. This is required for supporting XUSB host controller
-ELPG.
+On 9/9/20 3:16 AM, Dmitry Osipenko wrote:
+> 05.09.2020 13:34, Mikko Perttunen пишет:
+> ...
+>> +static int vic_power_on(struct tegra_drm_client *client)
+>> +{
+>> +	struct vic *vic = to_vic(client);
+>> +
+>> +	return pm_runtime_get_sync(vic->dev);
+> 
+> Please keep in mind that RPM needs to be put in a case of error.
+> 
+> Maybe it would be better if driver-core could take care of
+> resuming/suspending client's RPM instead of putting that burden on each
+> client individually?
+> 
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
-v3:
-   no change
+Good point, we should be able to just make RPM calls from the core code. 
+I'll change it so (and fix the refcounting).
 
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra186.dtsi
-index 34d249d85da7..454a857e5e56 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -466,6 +466,7 @@ padctl: padctl@3520000 {
- 		reg =3D <0x0 0x03520000 0x0 0x1000>,
- 		      <0x0 0x03540000 0x0 0x1000>;
- 		reg-names =3D "padctl", "ao";
-+		interrupts =3D <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 		resets =3D <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
- 		reset-names =3D "padctl";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra194.dtsi
-index 48160f48003a..2b5216a34c06 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -561,6 +561,7 @@ xusb_padctl: padctl@3520000 {
- 			reg =3D <0x03520000 0x1000>,
- 			      <0x03540000 0x1000>;
- 			reg-names =3D "padctl", "ao";
-+			interrupts =3D <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 			resets =3D <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
- 			reset-names =3D "padctl";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra210.dtsi
-index 67c90a0ea32e..2ba526779ee5 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1041,6 +1041,7 @@ padctl: padctl@7009f000 {
- 		resets =3D <&tegra_car 142>;
- 		reset-names =3D "padctl";
- 		nvidia,pmc =3D  <&tegra_pmc>;
-+		interrupts =3D <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 		status =3D "disabled";
-=20
---=20
-2.25.1
-
+Mikko
