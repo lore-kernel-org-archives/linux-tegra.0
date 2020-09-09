@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F065C43461
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C74C43461
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D494E21D80
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8BA21532
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:32:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VGLUq9nd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJhRk3GI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbgIIIcY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 04:32:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39032 "EHLO
+        id S1728458AbgIIIcg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 04:32:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727935AbgIIIcJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:32:09 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364B4C061756
-        for <linux-tegra@vger.kernel.org>; Wed,  9 Sep 2020 01:32:08 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id m6so1991761wrn.0
-        for <linux-tegra@vger.kernel.org>; Wed, 09 Sep 2020 01:32:08 -0700 (PDT)
+        with ESMTP id S1727975AbgIIIcR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:32:17 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6419C061786
+        for <linux-tegra@vger.kernel.org>; Wed,  9 Sep 2020 01:32:14 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id a65so1409096wme.5
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Sep 2020 01:32:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=U8AMXqG5zAHaXdikAoNoWpDEHgynd16DZ3dfucAxOiY=;
-        b=VGLUq9ndE7uuaBORiFcPHnd5vhovkRbty0XDj7Brco0i7kzaDZttYgC+Qp9zBE3tfS
-         IIikpqp0XlHd9u71w7YLT57BpKkBTz8pDxuVe94wvLsUo/8b1Szxm4T8d4DqlUqaSgNR
-         cerbiXsnecywdnTJZnuOtwBLiZDI2wUZA4U457F3Xn5AhpX7fIeNMjH0mQ6J8LEr61Or
-         xn9ELLCYnRv2S9wAQvLGiBPHBTsP8PM+zsOWy/rxUbSgHUjX1z6zmRejkc+25u4D+yQt
-         NZh4bOusjVbpHBPxIiRakWORWF1yC2tAPu9o5PN9JvNj4USnd1cuEFXxbS3uG+kIOiic
-         6C6w==
+        bh=5IJCSjrEn+K5BXTvQyEYOcEg4gKAR761WPsWlnOts1w=;
+        b=PJhRk3GI8VIBMF78GGQCdbyNVhkQoDOI6HF3H/7gTqVx9S37ttnKpWFMNxXrPG/ExG
+         uXB3dgBtBe7cqGfk3Yeu9Nr75rOZLfa9OajnMb8Z8yYV5uREO4xbQOi3bqYQdh7v1u/X
+         BkOyAGiqxyLwLJgKMnYucJ1+3bpDMXe8eK5hrcKvGHu6EKiPiC+YPoS4LS38mkX3ylA9
+         8fQ2vFCFkf71a1NQcEbPtp+InerT+xexlC0SeZIfPhlC1iwu/jlCH//GR0bYsQqJ2zgR
+         cnPrnY+EnxV6jazS8JkaTMr/LMIHxmCj4NtP5rVX67+MDoz8o9ZuK0RCwdXr9EwpeD0X
+         EoZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=U8AMXqG5zAHaXdikAoNoWpDEHgynd16DZ3dfucAxOiY=;
-        b=HDbYWVeBw4fX5H5MLmMsdTjrlzY7kON9IzHBgY7yj2A2XHt0DqM5Gb5uuuBX+FTZvT
-         /dnXqDyemZ3Sd+u1l00O/jRJFu6ceyI9W14rhx1cxMcsKcgDtXr6mp47kpT3Wo6dvu2s
-         WCaO5aOEL05h390gQSL3FiAkvSQpt2EUolFatLn02sT2kvYuO8fWR+/1nTlIpc9q/Waz
-         SOAEgL3DxEMV5FSAwthqcYOT9/7rudF2VY7M+tjX8KIHGQva6pRHZ/PZhUTg5zEi0dMg
-         plaV7KWtu8JNIKQhZAbSJOH459fl0+DCfgxmsMlXHDUaKISjwJyxhN3A6TqWUUleuWp9
-         vDHQ==
-X-Gm-Message-State: AOAM530tRQiaHASaGRuMc0xrFZ+iQg/9w+PZ8z23adguEg1uGUxerdcA
-        J4tSM8e2XwH2MS0XBO6sbk/Vkg==
-X-Google-Smtp-Source: ABdhPJyYWpfKckcqkSDupRC7mtTr58cvL3RkhMr74MJs8/Rw/jFJ+pzf/kZM0m4mlAvlUxV3NOJMog==
-X-Received: by 2002:a05:6000:1c8:: with SMTP id t8mr2618180wrx.3.1599640326860;
-        Wed, 09 Sep 2020 01:32:06 -0700 (PDT)
+        bh=5IJCSjrEn+K5BXTvQyEYOcEg4gKAR761WPsWlnOts1w=;
+        b=H/G0QSE4hWBHJpAmh2EXv+nWHJNmC6C93Sp1pHehzauVG72S5UZimzTBr4Y8BFj6Az
+         A/DonwwA7SkE5GiRM2vrcMIS2hotxHHxe26d+OSuB0uvirtO+YZG6JGTSftosYYC0JgR
+         ylZ9PPAXwj+CV3dsymgOw+PCKjpy5AZbeRFSVQnYZ7W6NzMy5RfFCE68+49a/kIykwj9
+         rCqzK+rDxIv8yIIn7yJ9TbOuEaLVllI4VoZ7dZc0A7PFxnJtzQDE3UVQxKWLpBhJvGGx
+         Y+Cm/IxuIhPewRehy1AUNQm1uxwD4GZaw+l8vvYquNYOtpQTvCY7AyS/lFhhTtC2ubsU
+         bkmw==
+X-Gm-Message-State: AOAM530VGcXIbZdpLGQCNaLT1GNV0xhDVFIfKod6HJ7Y+eaQoY6VB2jG
+        GiZcXTqNubiH547G8o6Yl/HfMQ==
+X-Google-Smtp-Source: ABdhPJwSyTMGp2lVRmcfrT9lC3qRBNvHbvfXboIB2MMpAJIXrQ+CTdseGHFKRbiUALEmofcFeMUsjw==
+X-Received: by 2002:a1c:6a11:: with SMTP id f17mr2240814wmc.143.1599640333594;
+        Wed, 09 Sep 2020 01:32:13 -0700 (PDT)
 Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id b76sm2848976wme.45.2020.09.09.01.32.05
+        by smtp.googlemail.com with ESMTPSA id 8sm3298743wrl.7.2020.09.09.01.32.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 01:32:06 -0700 (PDT)
-Subject: Re: [PATCH v5 30/36] memory: tegra20-emc: Register as interconnect
+        Wed, 09 Sep 2020 01:32:13 -0700 (PDT)
+Subject: Re: [PATCH v5 33/36] memory: tegra30-emc: Register as interconnect
  provider
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -75,7 +75,7 @@ Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
 References: <20200814000621.8415-1-digetx@gmail.com>
- <20200814000621.8415-31-digetx@gmail.com>
+ <20200814000621.8415-34-digetx@gmail.com>
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
@@ -120,10 +120,10 @@ Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
  E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
  KEmKjLDvB0pePJkdTw==
-Message-ID: <0fe69608-8fb9-9346-1c71-f37cc6f4193b@linaro.org>
-Date:   Wed, 9 Sep 2020 11:32:03 +0300
+Message-ID: <afe7866b-26a3-8372-ed60-48740283f037@linaro.org>
+Date:   Wed, 9 Sep 2020 11:32:10 +0300
 MIME-Version: 1.0
-In-Reply-To: <20200814000621.8415-31-digetx@gmail.com>
+In-Reply-To: <20200814000621.8415-34-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -133,8 +133,8 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 8/14/20 03:06, Dmitry Osipenko wrote:
-> Now memory controller is a memory interconnection provider. This allows us
-> to use interconnect API in order to change memory configuration.
+> Now external memory controller is a memory interconnection provider.
+> This allows us to use interconnect API to change memory configuration.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
