@@ -2,294 +2,189 @@ Return-Path: <SRS0=dOwp=CS=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 009D2C433E2
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D49C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B20152145D
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:11:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSlgv/rz"
+	by mail.kernel.org (Postfix) with ESMTP id 3D6F02145D
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbgIIJLl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 05:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45204 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgIIJLl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 05:11:41 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0F0C061573;
-        Wed,  9 Sep 2020 02:11:40 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id c196so1745454pfc.0;
-        Wed, 09 Sep 2020 02:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UdhXGGjmL8NBGezSBYtuMby3MN847qFHmnMYU3bZb0U=;
-        b=qSlgv/rz8fwOcXX/321k0NADun5Hhu6KIKc7OlaqYfc4eLoXvTvHDVLYDtCRYfMzIB
-         f0B/sMbBlEWJBllvqQIjR3wWSLexC2sqfvrN435mAGKFFtTuvam9ktIXSAivUvBLuuxs
-         6o0fTkh9N83o9eVw/A56TSmR5QPGtRBBH6SlwxMz821trnak17bSOnUEpeJlp1VEZBiJ
-         tJh/JxC7GEB/E2Qm9koUlZq6kZhFGq23gML4A5C1aIPqKYDRZ4vTV6rTcbnPFnhghDOq
-         oTPkSk6tC4s4Rx1JSIqNzr6mWPn+Erdhy5QU27fGxAWJ6XrZgOpdKBEyeGaJpCGzwC0+
-         gUzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UdhXGGjmL8NBGezSBYtuMby3MN847qFHmnMYU3bZb0U=;
-        b=BEeY8xkUSLGHTCrf6ji+qxh6sPUHE3RnEzLnHZ0JkYDwrm6w6sigQTnxTaEXu0Kc4/
-         GFuE0Suy5Tc2yHWJbs9Gj//4sDX2ElBqCsC6kZDKsOv4K7gJ35d3OXZCZVTZDujUyI22
-         /Yb68NoqmFtBiSd5DMNpSkvpquqvVzpR4ds2TUaLUx7Fvvs44ZQQSYnrLgcUJiF2K9wc
-         45DWhtu2FxnP9NlNiAj7AoCK22beOmL2i7e5UkkRJPt4s9wAmuqWNvuZceewtvvUNtql
-         b4aP6anFjTd/6rC81nfxRoPg/VCQ4TcDDnDjg+AdDIHissecvIQWw6UjFk693XBjrh0x
-         Snbw==
-X-Gm-Message-State: AOAM530JL22AclqeLufMY6P3tE3lGL8Lhj9C11FBrIZq2C9ZVXxMxhV0
-        M+9YaHHakoq62OPyz4PMDJqnYhhhP0yjns79V2s=
-X-Google-Smtp-Source: ABdhPJzZoADQ4rrH1HSmn5c+kiBBYH0HmNXud2sbj2Bs2mVz2jIMcCxyETNDqZgT21j87e/8y9U8h3qo3MhNGKBbIZA=
-X-Received: by 2002:aa7:9517:: with SMTP id b23mr2704286pfp.21.1599642699529;
- Wed, 09 Sep 2020 02:11:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200908224006.25636-1-digetx@gmail.com>
-In-Reply-To: <20200908224006.25636-1-digetx@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 9 Sep 2020 12:11:22 +0300
-Message-ID: <CAHp75Vdh6bErqeO-ki2xsS9jEeoy4mKF1h0Jw_HM6UpukqH_BQ@mail.gmail.com>
-Subject: Re: [PATCH v7 00/34] Improvements for Tegra I2C driver
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1726726AbgIIJRK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 05:17:10 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62578 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725826AbgIIJRI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Sep 2020 05:17:08 -0400
+IronPort-SDR: 4UfoviER+163ZOfzvllxRS/M+W5Ldi8Ryv0yri+p+qHvLJVmuHgWLSYY5x76tEdwZa0KKFqs3/
+ diG40ofYg8CQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="146013094"
+X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
+   d="scan'208";a="146013094"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:52 -0700
+IronPort-SDR: Eu5LFEF7mQvPvjaKgHiNi+EAI6twzANJVXLRWHJjqt2BIA4DKeAAOOzWigLRgh7pJRkcZk2JZB
+ paZ/kvhmY5KQ==
+X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
+   d="scan'208";a="480390735"
+Received: from vdc-station-04.ger.corp.intel.com (HELO [10.251.165.91]) ([10.251.165.91])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:41 -0700
+Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
+ dma-iommu api
+To:     Tom Murphy <murphyt7@tcd.ie>
+Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Christoph Hellwig <hch@infradead.org>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+ <20200529124523.GA11817@infradead.org>
+ <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
+ <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
+ <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
+ <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
+ <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+ <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
+ <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
+ <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com>
+ <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
+ <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+Message-ID: <7106602a-9964-851e-9c4e-d8acf4033b89@linux.intel.com>
+Date:   Wed, 9 Sep 2020 10:16:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 9, 2020 at 1:40 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> Hello!
->
-> This series performs refactoring of the Tegra I2C driver code and hardens
-> the atomic-transfer mode.
 
-I think there is still room for improvement, but let not block it, FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+On 08/09/2020 23:43, Tom Murphy wrote:
+> On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
+> <tvrtko.ursulin@linux.intel.com> wrote:
+>>
+>>
+>> On 08/09/2020 16:44, Logan Gunthorpe wrote:
+>>> On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
+>>>>> b/drivers/gpu/drm/i915/i915
+>>>>> index b7b59328cb76..9367ac801f0c 100644
+>>>>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
+>>>>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
+>>>>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
+>>>>>     } __sgt_iter(struct scatterlist *sgl, bool dma) {
+>>>>>            struct sgt_iter s = { .sgp = sgl };
+>>>>>
+>>>>> +       if (sgl && !sg_dma_len(s.sgp))
+>>>>
+>>>> I'd extend the condition to be, just to be safe:
+>>>>       if (dma && sgl && !sg_dma_len(s.sgp))
+>>>>
+>>>
+>>> Right, good catch, that's definitely necessary.
+>>>
+>>>>> +               s.sgp = NULL;
+>>>>> +
+>>>>>            if (s.sgp) {
+>>>>>                    s.max = s.curr = s.sgp->offset;
+>>>>> -               s.max += s.sgp->length;
+>>>>> -               if (dma)
+>>>>> +
+>>>>> +               if (dma) {
+>>>>> +                       s.max += sg_dma_len(s.sgp);
+>>>>>                            s.dma = sg_dma_address(s.sgp);
+>>>>> -               else
+>>>>> +               } else {
+>>>>> +                       s.max += s.sgp->length;
+>>>>>                            s.pfn = page_to_pfn(sg_page(s.sgp));
+>>>>> +               }
+>>>>
+>>>> Otherwise has this been tested or alternatively how to test it? (How to
+>>>> repro the issue.)
+>>>
+>>> It has not been tested. To test it, you need Tom's patch set without the
+>>> last "DO NOT MERGE" patch:
+>>>
+>>> https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
+>>
+>> Tom, do you have a branch somewhere I could pull from? (Just being lazy
+>> about downloading a bunch of messages from the archives.)
+> 
+> I don't unfortunately. I'm working locally with poor internet.
+> 
+>>
+>> What GPU is in your Lenovo x1 carbon 5th generation and what
+>> graphical/desktop setup I need to repro?
+> 
+> 
+> Is this enough info?:
+> 
+> $ lspci -vnn | grep VGA -A 12
+> 00:02.0 VGA compatible controller [0300]: Intel Corporation HD
+> Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
+>      Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
+>      Flags: bus master, fast devsel, latency 0, IRQ 148
+>      Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
+>      Memory at 60000000 (64-bit, prefetchable) [size=256M]
+>      I/O ports at e000 [size=64]
+>      [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
+>      Capabilities: [40] Vendor Specific Information: Len=0c <?>
+>      Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
+>      Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
+>      Capabilities: [d0] Power Management version 2
+>      Capabilities: [100] Process Address Space ID (PASID)
+>      Capabilities: [200] Address Translation Service (ATS)
 
-> Changelog:
->
-> v7: - Reworked the "Clean up probe function" patch by moving out all
->       variable renamings into the "Clean up variable names" patch.
->       This results in a nicer diff, which was asked by Andy Shevchenko.
->
->     - Squashed "Improve coding style of tegra_i2c_wait_for_config_load()"
->       patch into "Factor out register polling into separate function" in
->       order avoid unnecessary ping-pong changes, which was asked by
->       Andy Shevchenko.
->
->     - Added more indentation improvements, it should be ideal now.
->
->     - I haven't changed order of the "Clean up variable types" patch,
->       which was suggested by Andy Shevchenko, because I already moved
->       that patch multiple times and we decided to sort patches starting
->       with more important cleanups and down to less important. The type
->       changes are more important than shuffling code around, IMO.
->
-> v6: - Added new patch that adds missing RPM puts, thanks to Andy Shevchen=
-ko
->       for the suggestion.
->
->     - Improved commit messages by extending them with more a more detaile=
-d
->       explanation of the changes.
->
->     - Added clarifying comment to the "Use reset_control_reset()" change,
->       which was asked by Andy Shevchenko.
->
->     - Refactored the "Clean up probe function" patch by moving the
->       dev_err_probe() change into the "Use clk-bulk helpers" patch,
->       which was suggested by Andy Shevchenko.
->
->     - Improved ordering of the patches like it was suggested by
->       Andy Shevchenko.
->
->     - Added Andy Shevchenko to suggested-by of the "Use clk-bulk helpers"
->       patch.
->
->     - Improved "Remove i2c_dev.clk_divisor_non_hs_mode member" patch by
->       making the case-switch to use "fast plus mode" timing if clock rate
->       is out-of-range. Just to make it more consistent.
->
->     - The "Improve tegra_i2c_dev structure" patch is squashed into
->      "Improve formatting of variables" and "Clean up types/names" patches=
-.
->
->     - All variable-renaming changes are squashed into a single "Clean up
->       variable names" patch.
->
->     - Made extra minor improvement to various patches, like more comments
->       and indentations improved.
->
-> v5: - Dropped the "Factor out runtime PM and hardware initialization"
->       patch, like it was suggested by Micha=C5=82 Miros=C5=82aw. Instead =
-a less
->       invasive "Factor out hardware initialization into separate function=
-"
->       patch added, it doesn't touch the RPM initialization.
->
->     - The "Remove outdated barrier()" patch now removes outdated comments=
-.
->
->     - Updated commit description of the "Remove "dma" variable" patch,
->       saying that the transfer mode may be changed by a callee. This was
->       suggested by Micha=C5=82 Miros=C5=82aw.
->
->     - Reworked the "Clean up and improve comments" patch. Couple more
->       comments are corrected and reworded now.
->
->     - Added r-b's from Micha=C5=82 Miros=C5=82aw.
->
->     - New patches:
->
->         i2c: tegra: Mask interrupt in tegra_i2c_issue_bus_clear()
->         i2c: tegra: Remove redundant check in tegra_i2c_issue_bus_clear()
->         i2c: tegra: Don't fall back to PIO mode if DMA configuration fail=
-s
->         i2c: tegra: Clean up variable types
->         i2c: tegra: Improve tegra_i2c_dev structure
->
-> v4: - Reordered patches in the fixes/features/cleanups order like it was
->       suggested by Andy Shevchenko.
->
->     - Now using clk-bulk API, which was suggested by Andy Shevchenko.
->
->     - Reworked "Make tegra_i2c_flush_fifos() usable in atomic transfer"
->       patch to use iopoll API, which was suggested by Andy Shevchenko.
->
->     - Separated "Clean up probe function" into several smaller patches.
->
->     - Squashed "Add missing newline before returns" patch into
->       "Clean up whitespaces, newlines and indentation".
->
->     - The "Drop '_timeout' from wait/poll function names" is renamed to
->       "Rename wait/poll functions".
->
->     - The "Use reset_control_reset()" is changed to not fail tegra_i2c_in=
-it(),
->       but only emit warning. This should be more friendly behaviour in op=
-pose
->       to having a non-bootable machine if reset-control fails.
->
->     - New patches:
->
->         i2c: tegra: Remove error message used for devm_request_irq() fail=
-ure
->         i2c: tegra: Use devm_platform_get_and_ioremap_resource()
->         i2c: tegra: Use platform_get_irq()
->         i2c: tegra: Use clk-bulk helpers
->         i2c: tegra: Remove bogus barrier()
->         i2c: tegra: Factor out register polling into separate function
->         i2c: tegra: Consolidate error handling in tegra_i2c_xfer_msg()
->         i2c: tegra: Clean up and improve comments
->         i2c: tegra: Rename couple "ret" variables to "err"
->
-> v3: - Optimized "Make tegra_i2c_flush_fifos() usable in atomic transfer"
->       patch by pre-checking FIFO state before starting to poll using
->       ktime API, which may be expensive under some circumstances.
->
->     - The "Clean up messages in the code" patch now makes all messages
->       to use proper capitalization of abbreviations. Thanks to Andy Shevc=
-henko
->       and Micha=C5=82 Miros=C5=82aw for the suggestion.
->
->     - The "Remove unnecessary whitespaces and newlines" patch is transfor=
-med
->       into "Clean up whitespaces and newlines", it now also adds missing
->       newlines and spaces.
->
->     - Reworked the "Clean up probe function" patch in accordance to
->       suggestion from Micha=C5=82 Miros=C5=82aw by factoring out only par=
-ts of
->       the code that make error unwinding cleaner.
->
->     - Added r-b from Micha=C5=82 Miros=C5=82aw.
->
->     - Added more patches:
->
->         i2c: tegra: Reorder location of functions in the code
->         i2c: tegra: Factor out packet header setup from tegra_i2c_xfer_ms=
-g()
->         i2c: tegra: Remove "dma" variable
->         i2c: tegra: Initialization div-clk rate unconditionally
->         i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
->
-> v2: - Cleaned more messages in the "Clean up messages in the code" patch.
->
->     - The error code of reset_control_reset() is checked now.
->
->     - Added these new patches to clean up couple more things:
->
->         i2c: tegra: Check errors for both positive and negative values
->         i2c: tegra: Improve coding style of tegra_i2c_wait_for_config_loa=
-d()
->         i2c: tegra: Remove unnecessary whitespaces and newlines
->         i2c: tegra: Rename variable in tegra_i2c_issue_bus_clear()
->         i2c: tegra: Improve driver module description
->
-> Dmitry Osipenko (34):
->   i2c: tegra: Make tegra_i2c_flush_fifos() usable in atomic transfer
->   i2c: tegra: Add missing pm_runtime_put()
->   i2c: tegra: Handle potential error of tegra_i2c_flush_fifos()
->   i2c: tegra: Mask interrupt in tegra_i2c_issue_bus_clear()
->   i2c: tegra: Initialize div-clk rate unconditionally
->   i2c: tegra: Remove i2c_dev.clk_divisor_non_hs_mode member
->   i2c: tegra: Runtime PM always available on Tegra
->   i2c: tegra: Remove error message used for devm_request_irq() failure
->   i2c: tegra: Use reset_control_reset()
->   i2c: tegra: Use devm_platform_get_and_ioremap_resource()
->   i2c: tegra: Use platform_get_irq()
->   i2c: tegra: Use clk-bulk helpers
->   i2c: tegra: Move out all device-tree parsing into tegra_i2c_parse_dt()
->   i2c: tegra: Clean up probe function
->   i2c: tegra: Reorder location of functions in the code
->   i2c: tegra: Clean up variable types
->   i2c: tegra: Remove outdated barrier()
->   i2c: tegra: Remove likely/unlikely from the code
->   i2c: tegra: Remove redundant check in tegra_i2c_issue_bus_clear()
->   i2c: tegra: Remove "dma" variable from tegra_i2c_xfer_msg()
->   i2c: tegra: Don't fall back to PIO mode if DMA configuration fails
->   i2c: tegra: Rename wait/poll functions
->   i2c: tegra: Factor out error recovery from tegra_i2c_xfer_msg()
->   i2c: tegra: Factor out packet header setup from tegra_i2c_xfer_msg()
->   i2c: tegra: Factor out register polling into separate function
->   i2c: tegra: Factor out hardware initialization into separate function
->   i2c: tegra: Check errors for both positive and negative values
->   i2c: tegra: Consolidate error handling in tegra_i2c_xfer_msg()
->   i2c: tegra: Improve formatting of variables
->   i2c: tegra: Clean up variable names
->   i2c: tegra: Clean up printk messages
->   i2c: tegra: Clean up and improve comments
->   i2c: tegra: Clean up whitespaces, newlines and indentation
->   i2c: tegra: Improve driver module description
->
->  drivers/i2c/busses/i2c-tegra.c | 1435 ++++++++++++++++----------------
->  1 file changed, 701 insertions(+), 734 deletions(-)
->
-> --
-> 2.27.0
->
+Works for a start. What about the steps to repro? Any desktop 
+environment and it is just visual corruption, no hangs/stalls or such?
 
+I've submitted a series consisting of what I understood are the patches 
+needed to repro the issue to our automated CI here:
 
---=20
-With Best Regards,
-Andy Shevchenko
+https://patchwork.freedesktop.org/series/81489/
+
+So will see if it will catch something, or more targeted testing will be 
+required. Hopefully it does trip over in which case I can add the patch 
+suggested by Logan on top and see if that fixes it. Or I'll need to 
+write a new test case.
+
+If you could glance over my series to check I identified the patches 
+correctly it would be appreciated.
+
+Regards,
+
+Tvrtko
