@@ -5,47 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D8EC433E2
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079D1C43461
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D40662087C
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB9CD2087C
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 08:11:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XhuVPjNQ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Y4QZgBmV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbgIIIKx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 04:10:53 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11975 "EHLO
+        id S1727920AbgIIILL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 04:11:11 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12042 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729129AbgIIIKv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:10:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f588dfd0000>; Wed, 09 Sep 2020 01:10:37 -0700
+        with ESMTP id S1726111AbgIIILK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 04:11:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f588e100001>; Wed, 09 Sep 2020 01:10:56 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 09 Sep 2020 01:10:50 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 09 Sep 2020 01:11:10 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 09 Sep 2020 01:10:50 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 9 Sep
- 2020 08:10:47 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 9 Sep 2020 08:10:47 +0000
+        by hqpgpgate102.nvidia.com on Wed, 09 Sep 2020 01:11:10 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 9 Sep
+ 2020 08:11:06 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 9 Sep 2020 08:11:05 +0000
 Received: from jckuo-lt.nvidia.com (Not Verified[10.19.100.126]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f588e050000>; Wed, 09 Sep 2020 01:10:47 -0700
+        id <B5f588e170001>; Wed, 09 Sep 2020 01:11:05 -0700
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
 CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 01/15] clk: tegra: Add PLLE HW power sequencer control
-Date:   Wed, 9 Sep 2020 16:10:27 +0800
-Message-ID: <20200909081041.3190157-2-jckuo@nvidia.com>
+Subject: [PATCH v3 09/15] arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
+Date:   Wed, 9 Sep 2020 16:10:35 +0800
+Message-ID: <20200909081041.3190157-10-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200909081041.3190157-1-jckuo@nvidia.com>
 References: <20200909081041.3190157-1-jckuo@nvidia.com>
@@ -54,138 +53,46 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1599639037; bh=IAEzbl+SzvO/z/0Woj6WCtxnqj0JWqFlSliqV8z6ucM=;
+        t=1599639056; bh=m3Cdc5/GSc4ONWxwYZqZQ6NdctE2cX0a3T7Y+15Oxyo=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=XhuVPjNQrGuhfDRLwGlKo7g/gAbi0rt4lcMOBKC3Peh+mzh0EuMAcm9n08C45j9yx
-         xx50twvIOIOCkEkwp9DdiLr/JkxIjdNPcD7CAy4GpjzKfeQ6xMMpUvOlEEW4EQY2yY
-         RzECSedd2N1nR329eV/MaBJzjSm49XiEEuvCf4saML7c/rNbsTCg1phcsEYvoC5/wh
-         jjW6vTCN2DJsgQj8JA3Z+oF37hWiXCVpaTIrh96LqKBJs5s0fkg2fMrPSNzoA1RItd
-         A3uz+beIsAt6u/fVEjM7orZ04VZvPFH4LVEa6Aw+C+a6ruVEZ0ZVc0MTHeRoCS7OKf
-         SFX+1h78oSbjA==
+        b=Y4QZgBmVPq40yBZuoRX7A6DOSQ7BUYEJiSNCUeuLHFA2DDcPxZUsczw9bZFjSY0vW
+         I1cs3IjKNHFTyylxsdtmrFi0tHuvCTTBgKO+VPbOaz8t6Z5EfSMuRAwV6THpMM79Nj
+         YpXQTGcIdOtxPJwz1up2Qj4t25aQLBfgyO74Dm2Jsutj65Ei2iYwqDRI7oZD96cQe1
+         NbZ6Af60Kua7vPqkk+2xSeipJ2879CiD0fmrmqTc2TWR+jVMUwJ9FLe6GSjB0Zm9dd
+         np7ezUXeyiuVVXitQhpX1djBC3VMJu+7oifLFjsq/mrNsCYLpH1jakFgg9zMA5zzpf
+         YWjN9rIrX+uBQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PLLE has a hardware power sequencer logic which is a state machine
-that can power on/off PLLE without any software intervention. The
-sequencer has two inputs, one from XUSB UPHY PLL and the other from
-SATA UPHY PLL. PLLE provides reference clock to XUSB and SATA UPHY
-PLLs. When both of the downstream PLLs are powered-off, PLLE hardware
-power sequencer will automatically power off PLLE for power saving.
-
-XUSB and SATA UPHY PLLs also have their own hardware power sequencer
-logic. XUSB UPHY PLL is shared between XUSB SuperSpeed ports and PCIE
-controllers. The XUSB UPHY PLL hardware power sequencer has inputs
-from XUSB and PCIE. When all of the XUSB SuperSpeed ports and PCIE
-controllers are in low power state, XUSB UPHY PLL hardware power
-sequencer automatically power off PLL and flags idle to PLLE hardware
-power sequencer. Similar applies to SATA UPHY PLL.
-
-PLLE hardware power sequencer has to be enabled after both downstream
-sequencers are enabled.
-
-This commit adds two helper functions:
-1. tegra210_plle_hw_sequence_start() for XUSB PADCTL driver to enable
-   PLLE hardware sequencer at proper time.
-
-2. tegra210_plle_hw_sequence_is_enabled() for XUSB PADCTL driver to
-   check whether PLLE hardware sequencer has been enabled or not.
+PMC driver provides USB sleepwalk registers access to XUSB PADCTL
+driver. This commit adds a "nvidia,pmc" property which points to
+PMC node to XUSB PADCTL device node.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
 v3:
-   rename 'val' with 'value
+   no change
 
- drivers/clk/tegra/clk-tegra210.c | 51 ++++++++++++++++++++++++++++++++
- include/linux/clk/tegra.h        |  2 ++
- 2 files changed, 53 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra=
-210.c
-index 68cbb98af567..a91bf9b9be7a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -403,6 +403,14 @@ static unsigned long tegra210_input_freq[] =3D {
- #define PLLRE_BASE_DEFAULT_MASK		0x1c000000
- #define PLLRE_MISC0_WRITE_MASK		0x67ffffff
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts=
+/nvidia/tegra210.dtsi
+index 829f786af133..67c90a0ea32e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1040,6 +1040,7 @@ padctl: padctl@7009f000 {
+ 		reg =3D <0x0 0x7009f000 0x0 0x1000>;
+ 		resets =3D <&tegra_car 142>;
+ 		reset-names =3D "padctl";
++		nvidia,pmc =3D  <&tegra_pmc>;
 =20
-+/* PLLE */
-+#define PLLE_MISC_IDDQ_SW_CTRL		(1 << 14)
-+#define PLLE_AUX_USE_LOCKDET		(1 << 3)
-+#define PLLE_AUX_SS_SEQ_INCLUDE		(1 << 31)
-+#define PLLE_AUX_ENABLE_SWCTL		(1 << 4)
-+#define PLLE_AUX_SS_SWCTL		(1 << 6)
-+#define PLLE_AUX_SEQ_ENABLE		(1 << 24)
-+
- /* PLLX */
- #define PLLX_USE_DYN_RAMP		1
- #define PLLX_BASE_LOCK			(1 << 27)
-@@ -489,6 +497,49 @@ static unsigned long tegra210_input_freq[] =3D {
- #define PLLU_MISC0_WRITE_MASK		0xbfffffff
- #define PLLU_MISC1_WRITE_MASK		0x00000007
+ 		status =3D "disabled";
 =20
-+bool tegra210_plle_hw_sequence_is_enabled(void)
-+{
-+	u32 value;
-+
-+	value =3D readl_relaxed(clk_base + PLLE_AUX);
-+	if (value & PLLE_AUX_SEQ_ENABLE)
-+		return true;
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tegra210_plle_hw_sequence_is_enabled);
-+
-+int tegra210_plle_hw_sequence_start(void)
-+{
-+	u32 value;
-+
-+	if (tegra210_plle_hw_sequence_is_enabled())
-+		return 0;
-+
-+	/* skip if PLLE is not enabled yet */
-+	value =3D readl_relaxed(clk_base + PLLE_MISC0);
-+	if (!(value & PLLE_MISC_LOCK))
-+		return -EIO;
-+
-+	value &=3D ~PLLE_MISC_IDDQ_SW_CTRL;
-+	writel_relaxed(value, clk_base + PLLE_MISC0);
-+
-+	value =3D readl_relaxed(clk_base + PLLE_AUX);
-+	value |=3D (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SS_SEQ_INCLUDE);
-+	value &=3D ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
-+	writel_relaxed(value, clk_base + PLLE_AUX);
-+
-+	fence_udelay(1, clk_base);
-+
-+	value |=3D PLLE_AUX_SEQ_ENABLE;
-+	writel_relaxed(value, clk_base + PLLE_AUX);
-+
-+	fence_udelay(1, clk_base);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra210_plle_hw_sequence_start);
-+
- void tegra210_xusb_pll_hw_control_enable(void)
- {
- 	u32 val;
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 3f01d43f0598..7a6b29ca3040 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -123,6 +123,8 @@ static inline void tegra_cpu_clock_resume(void)
- }
- #endif
-=20
-+extern int tegra210_plle_hw_sequence_start(void);
-+extern bool tegra210_plle_hw_sequence_is_enabled(void);
- extern void tegra210_xusb_pll_hw_control_enable(void);
- extern void tegra210_xusb_pll_hw_sequence_start(void);
- extern void tegra210_sata_pll_hw_control_enable(void);
 --=20
 2.25.1
 
