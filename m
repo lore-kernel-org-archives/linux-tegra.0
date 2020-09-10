@@ -1,108 +1,122 @@
-Return-Path: <SRS0=dOwp=CS=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=wB+u=CT=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7239FC2D0E0
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 21:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EB4C43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 02:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A32C21D46
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Sep 2020 21:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B53620BED
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 02:21:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AEMv6CEc"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FGEuZKaL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbgIIVQH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Sep 2020 17:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728617AbgIIVPz (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 17:15:55 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50ADAC061573;
-        Wed,  9 Sep 2020 14:15:55 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id u21so5417672ljl.6;
-        Wed, 09 Sep 2020 14:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HnVKigTPD0SFBmS6CufvtEE5hp82hUFW+McOGmr8ObQ=;
-        b=AEMv6CEcQnDBpdKHTGDMpkqWbBkkyC3XIxDghgAq6QwSz0FWI1czP7m0rAzo79YaUO
-         HhSPr/YEjsCxhLZNISf2Be4NR3orDy7ZMU3ziy+PCzsbiOvedaK+eULC3/znoKwQpZQN
-         yEFMKl+0lLsRF885mZeeYpXmXqdzwu2hriKD0arnoUdoFgdQq/W7VbK0tMmb4llhPzLH
-         mylxshFdjPd7CFrrJjAFAcdxxmHgEZQUtW8vDl46F6E2AS+0y0rImqP+AIcfI+PYsOlt
-         0lsDcTyRVia/TrfsxcEeguz4Au8Zcsz1oZXSrbyLfaWKtThupylDm5rqOR7ozYYE3wOt
-         ou7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HnVKigTPD0SFBmS6CufvtEE5hp82hUFW+McOGmr8ObQ=;
-        b=j6YOlfc+i9nYu4BbHNVQbikoz3VLtx3rKUbGHci6QejzkdvPQtYnom1IAI18aKAspo
-         HiHJLVYkLp4Q8n5vBO7Q+e24u5HM+H7z9me9Bqa8Pn95esVHwCSgL/WmWSnRzeUB+gKp
-         u0tBOHrEy8iIaCcI9RqJuyr57FrHZ1lhdi9kNbfTpftF3stT+SfP69ECRb7WX19qiiD6
-         2pIpVYB6NGMsXwYXVl72YbOYJmlF9vU+0HceaCTcp1miAQpbH1FZeqJCjKwwyeDI9EHg
-         o5vebFgTAxU5RFjI0A8TdaGEyCDG75CywStqg+0LPX5XwtAfYp8IMOsM79AFdl3Cgga3
-         sT8A==
-X-Gm-Message-State: AOAM530NuBi/HUzoz2zhQPZS4csxmEaW8rqw/WjWoEr6i4sj6lXLQ5N4
-        6fMvbysnFNdhHhvLdR/N5tYO6ALxong=
-X-Google-Smtp-Source: ABdhPJxp8VYmLXdjWwfoDoXk3NH/mFiHKjQmDtqVaj5hvvbbW+sEPnZMlMfqd4r/5YSVXyKy5zLhqw==
-X-Received: by 2002:a2e:3c08:: with SMTP id j8mr2597735lja.358.1599686153003;
-        Wed, 09 Sep 2020 14:15:53 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id j7sm821561lfb.41.2020.09.09.14.15.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 14:15:52 -0700 (PDT)
-Subject: Re: [PATCH v5 27/36] memory: tegra-mc: Register as interconnect
- provider
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        id S1730729AbgIJCVb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Sep 2020 22:21:31 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1881 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730784AbgIJCSJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Sep 2020 22:18:09 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f598cb20000>; Wed, 09 Sep 2020 19:17:22 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 09 Sep 2020 19:18:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 09 Sep 2020 19:18:06 -0700
+Received: from [10.19.100.126] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 10 Sep
+ 2020 02:18:04 +0000
+Subject: Re: [PATCH] phy: tegra: xusb: fix xusb backwards compatibility
+To:     Peter Geis <pgwipeout@gmail.com>, <linux-tegra@vger.kernel.org>
+CC:     Nagarjuna Kristam <nkristam@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-References: <20200814000621.8415-1-digetx@gmail.com>
- <20200814000621.8415-28-digetx@gmail.com>
- <923b6801-5194-b936-13c6-0972761c29b8@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <01996606-84cd-909d-8dfc-4f33bdf8f3cc@gmail.com>
-Date:   Thu, 10 Sep 2020 00:15:51 +0300
+        Matias Zuniga <matias.nicolas.zc@gmail.com>
+References: <20200908150124.31336-1-pgwipeout@gmail.com>
+From:   JC Kuo <jckuo@nvidia.com>
+Message-ID: <91d24891-6e89-a075-8dd8-d6a55797c3c2@nvidia.com>
+Date:   Thu, 10 Sep 2020 10:18:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <923b6801-5194-b936-13c6-0972761c29b8@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200908150124.31336-1-pgwipeout@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1599704242; bh=l63OBdrfOIPwsU4M2Po3yz9vGED7sqTfmAdCuBGG8cU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=FGEuZKaLGk/WyNuzgoA56GOZjNpMTZ/STb9/AY9/bKIMdY2NK3qmdWCl7FPm+L81I
+         hNs2xMOdsKS8K+XEvDYZi4j9q7x9x/eElvdzrRydWEYEQrpqBTzHG+YecoXcHO17Q7
+         dLWhPwII7jUcGD0mtcRN1g6PvOjBKTOsyQ6hCTvADndZBsI4ZVjSGhaKV1SHhJf1Sq
+         Vj62+frgQVnKy0RsVls0mloDNwfbyMc0OLDHjgsdFhrTyipGN09LGVRf3pk/ZGdcCx
+         N5pm8vopBsQUSrx1DRqmbV4duxYfWG9dx8GyoJvBz6KOm5x83XdiQquGQycQvnLTCv
+         QlsVX99zd/3tQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.09.2020 11:31, Georgi Djakov пишет:
-> On 8/14/20 03:06, Dmitry Osipenko wrote:
->> Now memory controller is a memory interconnection provider. This allows us
->> to use interconnect API in order to change memory configuration.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Thanks Dmitry! Looks good to me.
-> 
-> Acked-by: Georgi Djakov <georgi.djakov@linaro.org>
-> 
+Hi Peter,
+Thanks for your patch. If an OTG capable port doesn't have a way to detect its
+initial role based on cable detection, I think it's somehow dangerous to give
+the port to host controller. When the port is enabled for host role, platform
+starts supplying VBUS to the connector. If the connector happens to be connected
+to a host role port which is supplying VBUS as well, there could be some damage
+to the board which doesn't have proper protection.
 
-Thanks you!
+Thanks,
+JC
+
+On 9/8/20 11:01 PM, Peter Geis wrote:
+> Prior to implementing role switch support, all enabled ports enumerated
+> as host devices.
+> With role switch support enabled, device trees with otg ports which have
+> not been updated with usb-role-switch support now bail out during
+> enumeration.
+> This disables all xhci ports tied to the affected phy.
+> 
+> Retain backwards compatibility by forcing host mode on otg ports which
+> are missing the usb-role-switch flag.
+> Disable ports explicitly defined as peripheral mode that are missing the
+> usb-role-switch flag.
+> 
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> Reported-by: Matias Zuniga <matias.nicolas.zc@gmail.com>
+> 
+> Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+> ---
+>  drivers/phy/tegra/xusb.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index de4a46fe1763..c36dce13e0c6 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -734,10 +734,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+>  			err = tegra_xusb_setup_usb_role_switch(port);
+>  			if (err < 0)
+>  				return err;
+> +		} else if (usb2->mode == USB_DR_MODE_PERIPHERAL) {
+> +			dev_err(&port->dev, "mandatory usb-role-switch not found for %s mode, disabling port\n", modes[usb2->mode]);
+> +			usb2->mode = USB_DR_MODE_UNKNOWN;
+>  		} else {
+> -			dev_err(&port->dev, "usb-role-switch not found for %s mode",
+> -				modes[usb2->mode]);
+> -			return -EINVAL;
+> +			dev_warn(&port->dev, "usb-role-switch not found for %s mode, forcing host\n", modes[usb2->mode]);
+> +			usb2->mode = USB_DR_MODE_HOST;
+>  		}
+>  	}
+>  
+> 
