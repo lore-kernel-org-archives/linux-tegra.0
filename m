@@ -2,216 +2,103 @@ Return-Path: <SRS0=wB+u=CT=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C220CC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 21:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C64C43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 21:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F84C221E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 21:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA6720731
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Sep 2020 21:53:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="fcQ8pRBP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3SZ+1wI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgIJVhf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47162 "EHLO
+        id S1725710AbgIJVxl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Sep 2020 17:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730912AbgIJNeC (ORCPT
+        with ESMTP id S1725763AbgIJVxg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Sep 2020 09:34:02 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE48C061795
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Sep 2020 06:33:57 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id d18so7023729iop.13
-        for <linux-tegra@vger.kernel.org>; Thu, 10 Sep 2020 06:33:57 -0700 (PDT)
+        Thu, 10 Sep 2020 17:53:36 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2317C061573
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Sep 2020 14:53:35 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id s205so10151192lja.7
+        for <linux-tegra@vger.kernel.org>; Thu, 10 Sep 2020 14:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NA4xq/RvWtw1DoG4R42VuDAYvxbq5gOs0uGkp97do30=;
-        b=fcQ8pRBPaEWiThwI4IpJI/6RvrpktlhqIcuTs8ion57IfAcoLZwMinlg018HPs4g0P
-         PfERQLGzgxTimYY/S16DcluJPa3UrMAv2VeDrvrD2khzMlgcNU3uG+U66xQTcGI4k/PB
-         tyd6Y57erW7Jw7CdoQkzGYnD3z09a+1xAJWCw3ZTA9vq0DdHjCGpzxmBZebxDdyQNZ5o
-         a8n4/aQGMi16zmzKxYbuyXtVYNEIktp6No97ibi4qLI+zDV4g/TXIXD87q5g2S3KNUFg
-         wjgBbIjqjQrEef6DxEeF173z4nhe4RTeiKBDtbYrCu4PSy+IwGvrlXsJFLKINZmU1V2I
-         yoXQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZTz92FZRLYQUuL1AGrMY217U2x0D5xTTHk4tSTwZ26I=;
+        b=P3SZ+1wII1hoifG4XlZEtd9JsxZ4/tEiGdEipNFTMxBw37+k0HJq9qm0gJWi/h2Snl
+         oVjaJqZQKhl6qCxV3rLbYbdpM3zAYYJpoiw2kMRnNRVGN5O3ayGT3pvM5KUjidgguW66
+         o62Sc7Fs20xtD+WRJxf03Vb5W24pdCYdWKJdR04WQH1OAFl0oQBlACGRu8ytakrn1Iv0
+         ZiUMR6aPfNwE/VCt7UWamSe+LIosHJKc7wHClWT0oR3kpBvnox7jZ7bXUpyGH0UHUNen
+         Wa1VtC2B3HoS8739wAzvdrcr8sU0RwzI417UYDvBy4SqJL1+UiQJU+VTvoTi8Izf6h59
+         cPyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NA4xq/RvWtw1DoG4R42VuDAYvxbq5gOs0uGkp97do30=;
-        b=lCCi533e3X2x2RKu+XRuOWItpHpjSu1wZZa/9AEuN6AH7/HbfcmS/vwXtEonMPsPpB
-         wfKvLzvhgvG3hBwre2owJslaFshvPsPCsqUtsbMFmXCsksM6m9dyzdhJhcQgqR3hQm4a
-         DqB81lAlIJcfh3x1OxvygrbOFWqONGQJkcz4J5NuLfnD3C3cqFrhHqQSQXglIzwf+oUb
-         rKFBXDZuxpRM5k2qLAFuzSG9PGOO4AGy9KkqGEQ+NHZIvel3oal1VzPga38DDJDjwXOw
-         EauiYS2S8LORvwvq1FelgHaH4UKpODBl3KW53X5QhBf8yHY/IPzrX52AB4OVOONRowim
-         nFoA==
-X-Gm-Message-State: AOAM533KLJWxgcpfwrV1pR9x5iE9Jjpwv+6Bc+hXW9ZiAKskfCtTnifU
-        hphA63bA1j1EdzS8yJm+ROv2pTCSUgZeFC4nKGf3Ew==
-X-Google-Smtp-Source: ABdhPJzlID7Qr9FJiMTGq9orpwBT55dMvomyRpqx73nK5lHz5vZjsdxpDDRxLur0/nChDVSeWcISfULGX7CKyavrOhU=
-X-Received: by 2002:a02:834a:: with SMTP id w10mr8873252jag.63.1599744834395;
- Thu, 10 Sep 2020 06:33:54 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZTz92FZRLYQUuL1AGrMY217U2x0D5xTTHk4tSTwZ26I=;
+        b=gDuXh3i341RXdEjkKooczmCZhfD+zF1O0uyiwcOiMVHyh1rbLXe8GG5QTGnZKUafV/
+         mGJzBw+aWybOMuJn/B6HvyLPlKU0PNBEWYIUofrXmlcE6L9g+EFbbxqOpkUeHrFsm/fm
+         MA50LTWUvXOwmo6G47n4Y3wim5B6KGG+n92LUtddDIWUqlZVip0vV8d6EpwDIVRPcHkj
+         +Un4l4L5G8WQuJY01AukaXmI/P7K3vKpfI9E8reiNnOk04/Ynazgrs7HKPJTMdny1ZHM
+         Dn9XdjjAIywXPKeOPz4Y6CJjiNkZHEAgGsa6nWxjXfrdPf0TkA0wkYiFs21KfBYUzCnO
+         Z2Wg==
+X-Gm-Message-State: AOAM530q3o2BKJo8J8DYaAi6ajvKs7r5d3cxWv+ch174R+kZp3aVhKkc
+        PRX8NkaaFBzoi5iNByj1qzQ=
+X-Google-Smtp-Source: ABdhPJzAtxOdImQW7Iwj61TpQ/70njlX6JUG7pEszRZjYGlGI0N+d8Ack9GN8s5OhVspUeQbOWzvBg==
+X-Received: by 2002:a2e:90ca:: with SMTP id o10mr5756072ljg.155.1599774814213;
+        Thu, 10 Sep 2020 14:53:34 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id j127sm21998lfd.6.2020.09.10.14.53.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2020 14:53:33 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 00/17] Host1x/TegraDRM UAPI
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com
+References: <20200905103420.3021852-1-mperttunen@nvidia.com>
+ <963bb17d-9501-0118-b5c2-a06d68c3eb9f@gmail.com>
+ <8fb335d3-5af9-5922-579c-e3575772732a@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ae922486-5e10-e795-54a7-565b87abfa4d@gmail.com>
+Date:   Fri, 11 Sep 2020 00:53:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com> <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
- <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com> <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
- <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
- <7106602a-9964-851e-9c4e-d8acf4033b89@linux.intel.com> <ea24e077-5aa6-dd8e-69a7-d186b606703f@linux.intel.com>
-In-Reply-To: <ea24e077-5aa6-dd8e-69a7-d186b606703f@linux.intel.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Thu, 10 Sep 2020 14:33:43 +0100
-Message-ID: <CALQxJus4prs0T6G9Z4bw5BDgwmkaiynBcoknLsYEY45SNZ6Ukg@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
- dma-iommu api
-To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc:     kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8fb335d3-5af9-5922-579c-e3575772732a@kapsi.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 9 Sep 2020 at 13:56, Tvrtko Ursulin
-<tvrtko.ursulin@linux.intel.com> wrote:
->
->
-> On 09/09/2020 10:16, Tvrtko Ursulin wrote:
-> > On 08/09/2020 23:43, Tom Murphy wrote:
-> >> On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
-> >> <tvrtko.ursulin@linux.intel.com> wrote:
-> >>> On 08/09/2020 16:44, Logan Gunthorpe wrote:
-> >>>> On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
-> >>>>>>
-> >>>>>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>>>>> b/drivers/gpu/drm/i915/i915
-> >>>>>> index b7b59328cb76..9367ac801f0c 100644
-> >>>>>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>>>>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>>>>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
-> >>>>>>     } __sgt_iter(struct scatterlist *sgl, bool dma) {
-> >>>>>>            struct sgt_iter s = { .sgp = sgl };
-> >>>>>>
-> >>>>>> +       if (sgl && !sg_dma_len(s.sgp))
-> >>>>>
-> >>>>> I'd extend the condition to be, just to be safe:
-> >>>>>       if (dma && sgl && !sg_dma_len(s.sgp))
-> >>>>>
-> >>>>
-> >>>> Right, good catch, that's definitely necessary.
-> >>>>
-> >>>>>> +               s.sgp = NULL;
-> >>>>>> +
-> >>>>>>            if (s.sgp) {
-> >>>>>>                    s.max = s.curr = s.sgp->offset;
-> >>>>>> -               s.max += s.sgp->length;
-> >>>>>> -               if (dma)
-> >>>>>> +
-> >>>>>> +               if (dma) {
-> >>>>>> +                       s.max += sg_dma_len(s.sgp);
-> >>>>>>                            s.dma = sg_dma_address(s.sgp);
-> >>>>>> -               else
-> >>>>>> +               } else {
-> >>>>>> +                       s.max += s.sgp->length;
-> >>>>>>                            s.pfn = page_to_pfn(sg_page(s.sgp));
-> >>>>>> +               }
-> >>>>>
-> >>>>> Otherwise has this been tested or alternatively how to test it?
-> >>>>> (How to
-> >>>>> repro the issue.)
-> >>>>
-> >>>> It has not been tested. To test it, you need Tom's patch set without
-> >>>> the
-> >>>> last "DO NOT MERGE" patch:
-> >>>>
-> >>>> https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
-> >>>
-> >>> Tom, do you have a branch somewhere I could pull from? (Just being lazy
-> >>> about downloading a bunch of messages from the archives.)
-> >>
-> >> I don't unfortunately. I'm working locally with poor internet.
-> >>
-> >>>
-> >>> What GPU is in your Lenovo x1 carbon 5th generation and what
-> >>> graphical/desktop setup I need to repro?
-> >>
-> >>
-> >> Is this enough info?:
-> >>
-> >> $ lspci -vnn | grep VGA -A 12
-> >> 00:02.0 VGA compatible controller [0300]: Intel Corporation HD
-> >> Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
-> >>      Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
-> >>      Flags: bus master, fast devsel, latency 0, IRQ 148
-> >>      Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
-> >>      Memory at 60000000 (64-bit, prefetchable) [size=256M]
-> >>      I/O ports at e000 [size=64]
-> >>      [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
-> >>      Capabilities: [40] Vendor Specific Information: Len=0c <?>
-> >>      Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
-> >>      Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
-> >>      Capabilities: [d0] Power Management version 2
-> >>      Capabilities: [100] Process Address Space ID (PASID)
-> >>      Capabilities: [200] Address Translation Service (ATS)
-> >
-> > Works for a start. What about the steps to repro? Any desktop
-> > environment and it is just visual corruption, no hangs/stalls or such?
-> >
-> > I've submitted a series consisting of what I understood are the patches
-> > needed to repro the issue to our automated CI here:
-> >
-> > https://patchwork.freedesktop.org/series/81489/
-> >
-> > So will see if it will catch something, or more targeted testing will be
-> > required. Hopefully it does trip over in which case I can add the patch
-> > suggested by Logan on top and see if that fixes it. Or I'll need to
-> > write a new test case.
-> >
-> > If you could glance over my series to check I identified the patches
-> > correctly it would be appreciated.
->
-> Our CI was more than capable at catching the breakage so I've copied you
-> on a patch (https://patchwork.freedesktop.org/series/81497/) which has a
-> good potential to fix this. (Or improve the robustness of our sg walks,
-> depends how you look at it.)
->
-> Would you be able to test it in your environment by any chance? If it
-> works I understand it unblocks your IOMMU work, right?
+09.09.2020 11:44, Mikko Perttunen пишет:
+...
+>> Could you please enumerate all the currently opened questions?
+>>
+> 
+> Which open questions do you refer to?
 
-I tested your latest patch set ([PATCH 1/2] drm/i915: Fix DMA mapped
-scatterlist walks) and it fixes the issue. great work!
+Anything related to the UAPI definition that needs more thought. If
+there is nothing outstanding, then good!
 
->
-> Regards,
->
-> Tvrtko
+> The open items of v1 should be
+> closed now; for fences we setup an SW timeout to prevent them from
+> sticking around forever, and regarding GEM the GEM IOCTLs are again
+> being used.
+> 
+
+We'll see how it will be in practice! For now it's a bit difficult to
+decide what is good and what needs more improvement.
