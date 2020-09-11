@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703A0C43461
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA50C43461
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 102872075E
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A772078B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:53:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="HXFC7QNP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="YkNcRn0/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725770AbgIKJHj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Sep 2020 05:07:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59724 "EHLO
+        id S1725778AbgIKJxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Sep 2020 05:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgIKJHi (ORCPT
+        with ESMTP id S1725770AbgIKJxB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Sep 2020 05:07:38 -0400
+        Fri, 11 Sep 2020 05:53:01 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F43C061573
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 02:07:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC729C061573
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 02:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
         MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=14W5Ud7nOZEUj6jje/j81qaDf7zDwsYZWUKd48Ow0A4=; b=HXFC7QNPFIUxw0fkHnEql3q3O8
-        YwIQ4XtwSwDSkicGFFYH2Vk3+uD7ZzuZJWAA8uE8Rax9HqkbkkMw8sJ4L0B+jMyQtSZb4zepSyahP
-        ZtzSOqLGNvWRZ/Bab1f497zQul1YZnc3NoqPyLjCGtrhIG+lkuLMZIexqzSIMj55HMWvcSBmim/nr
-        jEgae7zWDbHIw+ogVZnwjMgCkUap/cuJa+VqqGTU5I3lP6RfowZ2Lv8r/DePaK2HAS233Z5e/5nSC
-        dHNXnlCLcWz/RUhx8BaYClnxwZace5A4DKXAYJOpw7eNiofeGkOKQhWGl8J84pgmdWe+KMKhPDBtG
-        +Gu+aBmA==;
+        bh=iOgmppT0qGwZOUSB5AHlfatEojFVOgSi72SRxPTKIUU=; b=YkNcRn0/g+VnGQ/Wmck4Wd/mHv
+        KcpmsVuBM0Z8eGelYlb3LJJnYbJRrT76gfnzWZqV9FT2XOhNQJT4fpq0q9xZ3tGvSlYTTpesFW+k7
+        xdTgaictL65VL6kg+Iz4O23Zvzw6qtw+M/ehmvS1CvUrBBAmxWeVL+BgOes0J2OJMDU3++3KzHDSH
+        keyNQ4f4Catt0f97fjgNotpaEg6VKjbezZvaa5KKAk4xEmqyOfo29DF87AqdE20PE2Az9dLjWUmgL
+        qdOJbIvFJBFg1cHM7xRgLhkfJSlp7ZjfYsODZj6yxXjF3kXjXq/4mZBToTlb+GaQXK1joAvvXbMkc
+        G9sbCf/g==;
 Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1kGf1j-00049b-Qt; Fri, 11 Sep 2020 12:07:27 +0300
-Subject: Re: [RFC PATCH v2 09/17] gpu: host1x: DMA fences and userspace fence
- creation
+        id 1kGfjj-0000uP-NU; Fri, 11 Sep 2020 12:52:55 +0300
+Subject: Re: DRM_TEGRA_SUBMIT_BUF_WRITE_RELOC
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
@@ -51,15 +50,17 @@ To:     Dmitry Osipenko <digetx@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-10-mperttunen@nvidia.com>
- <ceaa95f3-51a1-3fc6-2466-053e21506d6d@gmail.com>
+ <20200905103420.3021852-15-mperttunen@nvidia.com>
+ <54aff7f1-86b2-6bd7-1e47-2078edcf94b3@gmail.com>
+ <a734a45f-2366-8a9f-1029-c052bd03bf78@kapsi.fi>
+ <17e24d23-3b1e-44e3-57ca-35721dbd4af2@gmail.com>
 From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <a820c4dc-c433-559a-bf1f-1cdc0e27949a@kapsi.fi>
-Date:   Fri, 11 Sep 2020 12:07:17 +0300
+Message-ID: <b85af7b8-870a-31e2-2f09-902a84a2afb6@kapsi.fi>
+Date:   Fri, 11 Sep 2020 12:52:44 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <ceaa95f3-51a1-3fc6-2466-053e21506d6d@gmail.com>
+In-Reply-To: <17e24d23-3b1e-44e3-57ca-35721dbd4af2@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -71,36 +72,32 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/11/20 1:00 AM, Dmitry Osipenko wrote:
-> 05.09.2020 13:34, Mikko Perttunen пишет:
-> ...
->>   
->> +static void action_signal_fence(struct host1x_waitlist *waiter)
->> +{
->> +	struct host1x_syncpt_fence *f = waiter->data;
->> +
->> +	host1x_fence_signal(f);
->> +}
->> +
->>   typedef void (*action_handler)(struct host1x_waitlist *waiter);
->>   
->>   static const action_handler action_handlers[HOST1X_INTR_ACTION_COUNT] = {
->>   	action_submit_complete,
->>   	action_wakeup,
->>   	action_wakeup_interruptible,
->> +	action_signal_fence,
->>   };
+On 9/11/20 1:15 AM, Dmitry Osipenko wrote:
+> 09.09.2020 11:10, Mikko Perttunen пишет:
+>> On 9/9/20 2:45 AM, Dmitry Osipenko wrote:
+>>> 05.09.2020 13:34, Mikko Perttunen пишет:
+>>> ...
+>>>> +/* Submission */
+>>>> +
+>>>> +/** Patch address of the specified mapping in the submitted gather. */
+>>>> +#define DRM_TEGRA_SUBMIT_BUF_WRITE_RELOC        (1<<0)
+>>>
+>>> Shouldn't the kernel driver be aware about what relocations need to be
+>>> patched? Could you please explain the purpose of this flag?
+>>>
+>>
+>> Sure, the kernel knows if it returned the IOVA to the user or not, so we
+>> could remove this flag and determine it implicitly. I don't think there
+>> is much harm in it though; if we have the flag an application can decide
+>> to ignore the iova field and just pass WRITE_RELOC always, and it's not
+>> really any extra code on kernel side.
 > 
-> My expectation is that we should remove the host1x-waiter entirely. It
-> comes from 2011/2012 era of the host1x driver and now duplicates
-> functionality provided by the dma-fence and drm-scheduler. Perhaps it
-> could be okay to re-use existing code for the starter, but this is
-> something to keep in mind that it may be better not to put much effort
-> into the older code.
+> Sounds like there is no real practical use for this flag other than for
+> testing purposes, correct?
 > 
 
-Agreed, it should be cleaned up and probably replaced. I made only 
-minimal changes here to get all my tests working, as I didn't want to do 
-a full refactoring in this patch series.
+Patching depending just on if the MAP IOCTL returned an IOVA or not 
+seems a bit "spooky action at a distance"-ish to me, but maybe it's not 
+so bad.. I'll consider removing it.
 
 Mikko
