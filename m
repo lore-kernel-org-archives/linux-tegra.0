@@ -2,150 +2,99 @@ Return-Path: <SRS0=EsoP=CU=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC1BC43461
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 06:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE388C43461
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 646D720735
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 06:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599804048;
-	bh=WESK6UKUjRSkP/TKSKzcEG4kxiuhjNV3m+bUJP3+ZXk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MykabL0mFebVghSyrJ8WgoK2L5nWzKy3yfSyb6SfcM9Giu75/5X9ThaeA/14xLEyl
-	 YsaU1sYLQOdPaSGLhNwef9FbKtVprkvq3MVZdXyf6g9rLZTyOvj3VGPkGkbTw064QK
-	 JpfdA1zgj4ryCSmDSzAfjCgCJkipB4llvbJJfQhc=
+	by mail.kernel.org (Postfix) with ESMTP id 60BF021D81
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:19:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqFXSJCc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725536AbgIKGAr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Sep 2020 02:00:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbgIKGAr (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Sep 2020 02:00:47 -0400
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3315221E5;
-        Fri, 11 Sep 2020 06:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599804046;
-        bh=WESK6UKUjRSkP/TKSKzcEG4kxiuhjNV3m+bUJP3+ZXk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LC7DGZ8rQekxgJUgL7zxJ0LSh8Y/78j+NhruI5QfUcNvg1Qnnm5Qz3wO0/okaaFUA
-         WVguyWmjY1UBQ9GxUMisqY9kXRKh70rJ39UFlNetdPSqcs6RJ0mLNogVJ4Op3PRi+h
-         kmmKZWyIKgr1QkKcWDHBRWULkVuo4+FNDgWkBwkM=
-Received: by mail-ed1-f50.google.com with SMTP id g4so8768450edk.0;
-        Thu, 10 Sep 2020 23:00:45 -0700 (PDT)
-X-Gm-Message-State: AOAM532K56wgC580HP5gHKHNUMIZAb1K5Fp9G7cHX0cde1ITsE5oZQqe
-        8Hhegfvdk2kMKVYmfjuCFrkjgVHpY+PH1wVNihg=
-X-Google-Smtp-Source: ABdhPJymE4+rHgjSFNYuvs+iwJGMjk8bYNxuRzgTr6WbXwAWTZAX5N+hRh1+ebmhCBeiPPYGzNLG50rUvrXYcNeA9YU=
-X-Received: by 2002:a05:6402:515:: with SMTP id m21mr346459edv.348.1599804044455;
- Thu, 10 Sep 2020 23:00:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200902193658.20539-1-krzk@kernel.org> <CAPDyKFqBS-ws6fkirDQL8EEqh9At88K2vrG5fc8K5_JiXsmfyg@mail.gmail.com>
- <CAL_Jsq+ajm5aiAJfQdS2+2DO1ynBDHWha_7TsA4u-2qwd87y6g@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+ajm5aiAJfQdS2+2DO1ynBDHWha_7TsA4u-2qwd87y6g@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 11 Sep 2020 08:00:32 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf8cNDGaXGkYpgc-LEEPSoF2JxwzQp7fwVQB3kLJWNKXw@mail.gmail.com>
-Message-ID: <CAJKOXPf8cNDGaXGkYpgc-LEEPSoF2JxwzQp7fwVQB3kLJWNKXw@mail.gmail.com>
-Subject: Re: [PATCH 00/11] mmc: Minor cleanups and compile test
-To:     Rob Herring <robh@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1725835AbgIKHTV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Sep 2020 03:19:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbgIKHTB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 11 Sep 2020 03:19:01 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD4FC061757;
+        Fri, 11 Sep 2020 00:19:00 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id fa1so1285866pjb.0;
+        Fri, 11 Sep 2020 00:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=cGYTBEv6g30jYHt4cdTq/c1g79ggDOFP0r3LMo62bBA=;
+        b=gqFXSJCchjmN+3IhIFj8p5RjLbBWt/19Ys9tktWnFE1eEYnt5q5iGnWHNhTMks+iqK
+         b0NCEBV+tmQh/qf0Vap62vKCEX4BiEdJqWk/0fNXjsQjtqoje3xQ8tD64tNaCXhJGZEN
+         +PdbkA+U6zcv69VRmd5Y7nB1UikA1Yd7/vUljAwpV1R0Cav2OxkSBA368tZa0/2lPNBH
+         cpdQxOFw5+M4+8hVmvzVLWDp45ldlx4Zinyz/n9mG+uxuZczKE7TAl2YH/nYwCxTUzH0
+         TDMkdYhHqMfrLRfqNJDqx2Zs6T6lnF/3y3Lo5EB+kBffm4tefn7oUQtp/pO+/Poix78v
+         CRMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=cGYTBEv6g30jYHt4cdTq/c1g79ggDOFP0r3LMo62bBA=;
+        b=iDyqqMQhUvZ4IjClYSvHdC5kFOElrI+W2MWkY8JnbbNONDELiT6NtTKdXYah6AST2C
+         ks5+bZ3M37jY0PbYBRZbSp1gTtUq/3ODLEWsqS6c8HQaS0KROX0swdwutHeZ85X1w6zB
+         OcgdttXek5HBPHljxFoKwrnOhJhb/AbMttdiI6yUgRITEdGHYtu9pb9rs22EC1vPXxyr
+         2SmFXEnj4vFETAabLJVEr/D68GM96MqBGq2YPCHWqLkPiGfk1FHRt0ekx6iaDmoKcIU1
+         luS25g5BNJbB+utZzVIBB4kk12V4sm1G9DQodcdXCjl4Fsln6y4OVSBlWPH89kk3Nqja
+         Ze7g==
+X-Gm-Message-State: AOAM530KuA+4amMy02ZpCefPeHjXykPnMT6DIZvcwUpd3bMCjI48IdQ1
+        aiN9RxVRqQNszkGwWARg2H8=
+X-Google-Smtp-Source: ABdhPJysb3zMsd21LwFN+cGxUyxUozexoZzDRQwFqu8uNQaMf6bEjsdKUDDmuSmGaf7sFabYFoiIwA==
+X-Received: by 2002:a17:90a:ea0c:: with SMTP id w12mr1003887pjy.65.1599808740186;
+        Fri, 11 Sep 2020 00:19:00 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id 131sm1264692pfc.20.2020.09.11.00.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Sep 2020 00:18:59 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     joro@8bytes.org, thierry.reding@gmail.com
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
+        vdumpa@nvidia.com
+Subject: [PATCH 2/3] iommu/tegra-smmu: Fix iova->phys translation
+Date:   Fri, 11 Sep 2020 00:16:42 -0700
+Message-Id: <20200911071643.17212-3-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200911071643.17212-1-nicoleotsuka@gmail.com>
+References: <20200911071643.17212-1-nicoleotsuka@gmail.com>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 11 Sep 2020 at 00:55, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Sep 3, 2020 at 2:40 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Wed, 2 Sep 2020 at 21:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > Set of minor cleanups.  Patches requiring more attention:
-> > >  - 6/11: Testing and review would be appreciated,
-> > >  - 11/11: I build tested multiple architectures but not all and
-> > >    definitely no all possible configs. This one could sit on the lists
-> > >    for few days so 0-day would try it.
-> > >
-> > > Best regards,
-> > > Krzysztof
-> > >
-> > > Krzysztof Kozlowski (11):
-> > >   mmc: bcm2835: Simplify with dev_err_probe()
-> > >   mmc: davinci: Simplify with dev_err_probe()
-> > >   mmc: dw_mmc-zx: Simplify with dev_err_probe()
-> > >   mmc: jz4740: Simplify with dev_err_probe()
-> > >   mmc: meson: Simplify with dev_err_probe()
-> > >   mmc: sdhci-brcmstb: Simplify with optional clock and dev_err_probe()
-> > >   mmc: sdhci-of-arasan: Simplify with dev_err_probe()
-> > >   mmc: sdhci-tegra: Simplify with dev_err_probe()
-> > >   mmc: dw_mmc: Simplify with dev_err_probe()
-> > >   mmc: sdhci-of-sparx5: Use proper printk format for dma_addr_t
-> > >   mmc: host: Enable compile testing of multiple drivers
-> > >
-> > >  drivers/mmc/host/Kconfig           | 42 ++++++++++++++++--------------
-> > >  drivers/mmc/host/bcm2835.c         |  4 +--
-> > >  drivers/mmc/host/davinci_mmc.c     |  5 ++--
-> > >  drivers/mmc/host/dw_mmc-zx.c       | 11 +++-----
-> > >  drivers/mmc/host/dw_mmc.c          |  9 +++----
-> > >  drivers/mmc/host/jz4740_mmc.c      |  5 ++--
-> > >  drivers/mmc/host/meson-gx-mmc.c    | 16 ++++--------
-> > >  drivers/mmc/host/sdhci-brcmstb.c   | 12 ++++-----
-> > >  drivers/mmc/host/sdhci-of-arasan.c |  7 +++--
-> > >  drivers/mmc/host/sdhci-of-sparx5.c |  4 +--
-> > >  drivers/mmc/host/sdhci-tegra.c     |  7 ++---
-> > >  11 files changed, 51 insertions(+), 71 deletions(-)
-> > >
-> > > --
-> > > 2.17.1
-> > >
-> >
-> > Series applied for next, except 11, thanks!
->
-> I see there's a bunch of these already, but I think we can do better
-> here than dev_err_probe. We have _optional variants for the case not
-> getting a resource is not an error. So the called functions like
-> devm_clk_get can print an error. We already have this for
-> platform_get_irq along with a coccinelle script to fix cases. I have a
-> WIP branch[1] doing this.
+IOVA might not be always 4KB aligned. So tegra_smmu_iova_to_phys
+function needs to add on the lower 12-bit offset from input iova.
 
-That's quite good idea.
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ drivers/iommu/tegra-smmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 789d21c01b77..50b962b0647e 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -795,7 +795,7 @@ static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
+ 
+ 	pfn = *pte & as->smmu->pfn_mask;
+ 
+-	return SMMU_PFN_PHYS(pfn);
++	return SMMU_PFN_PHYS(pfn) + SMMU_OFFSET_IN_PAGE(iova);
+ }
+ 
+ static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
+-- 
+2.17.1
+
