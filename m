@@ -2,144 +2,157 @@ Return-Path: <SRS0=EsoP=CU=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E91DC2BC11
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD7CC433E2
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4B7B22206
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC9E22209
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 07:46:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRvaasQL"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iJSfcSRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725797AbgIKHTb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Sep 2020 03:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
+        id S1725763AbgIKHqJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Sep 2020 03:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbgIKHS7 (ORCPT
+        with ESMTP id S1725562AbgIKHp5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Sep 2020 03:18:59 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA44AC061756;
-        Fri, 11 Sep 2020 00:18:59 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id o20so6587179pfp.11;
-        Fri, 11 Sep 2020 00:18:59 -0700 (PDT)
+        Fri, 11 Sep 2020 03:45:57 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B50C061757
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 00:45:56 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id g4so9030726edk.0
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 00:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IT/Av6WkMGnwscYg5rCYcAHZEDtZ2ZLSfy2TWZBlkOI=;
-        b=XRvaasQLXfZi4L/MubCaNLsVOzGgVMgXoHQLOZDXqqE8Z7q9DzDMD312rJuB/cfLBD
-         uDkfacySRZUMsBz5WjIVPt/yryNfy6aeldQpBVkEMJNozVVNlYyzXB+FTubsYkKw/3XZ
-         n4ze00UNfGHelIaYnuYjcsgqb90jjmVtf48EMm24h3+V9ICn+n8MwW4GSIix4YBFnF6D
-         cFLxB1dTA1AboS8W66H0l92LX6AR8NyBFtbpMae1zLfGiEGQRqSs0WFhBGeYyxZpA+7Y
-         5tEzLQFlYJBrWeyv+8ICSsew8Vtg0Z3GPzpAPDx7Tebxmi/ANscB4rVUv4G6S8fGZcTA
-         TrPg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H10t/PoYzFp2YJmus+JauG6BT44xTI8He+24ZzfKGuc=;
+        b=iJSfcSRDOI0uj91Wf8MfSv/rALU7QF9mAKdWgTtdYgxxMFt80M8rsPWnXsXYMzUpZK
+         xHebxWWZTzyE/epGDO1WpaKpE8SOrd0QpZqajO8z3MCuct47/WoledDN2wrpFrTVsELB
+         C/Dyw6kPcsR4JDILPM/nBFjJEI3h0YHOinecmu1KOgC5RsTbTTEEaZwZDv4YHbWn9RIm
+         ZviGWZDSck3+GZAMoo2bfIS1Lxd32PEiG9+OLmj4P9a/W52MoUUrfQmqYprssftujuh9
+         DmCIv8Yi1GSnT8yjI/bThPIVd20V7UVAMCV+ydLH3qveG2n2iguoJxEkaBA2PVarhCv6
+         2M+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IT/Av6WkMGnwscYg5rCYcAHZEDtZ2ZLSfy2TWZBlkOI=;
-        b=BvaE6B9fMGPHLJz4JViPz2mqB3qKK4JodoBLQGOp3hJjCp9ZgdfwV5gQubVoHLzhIV
-         QPX2IavB6gJS6URTcZtNqFNGklkt7EQzY9k45hP9oc69vMY/LbbGzVRkcO8eDFwHfBPR
-         Sfdg33dmEFuq5OJv8Wa22WWlMNvm72UvtOS2AflMFqjNM25l0oVOH/isz/DFJmJMu8hQ
-         bmO51UhtIVt1kZxka7F35PPaFFwczrG+xGLWtunolIXkbv3miJloOs8m+f80cs6ucL7Y
-         3zhxUfhPUdY0aYIiSL1NKII79ULtrtlJuNRiJ5Z/Ex9jkZJ50OIqDSi4JXLE7OwX+v5Q
-         JQ7w==
-X-Gm-Message-State: AOAM533u3PNRdqCWvFPzn7Kv0mOi2AgESvYlBZkcYh+gEGAvDCk/SGt1
-        3h/e3N6qm4MfYR9TTfsyb3E=
-X-Google-Smtp-Source: ABdhPJyEI6r0AcSE7Kuaf3mASRla3Lliv+I9mZhI5bV7w6vYeD4EbDgqQzjAVldY4rOnokzlfiJzQw==
-X-Received: by 2002:a17:902:7fc7:: with SMTP id t7mr709678plb.159.1599808739278;
-        Fri, 11 Sep 2020 00:18:59 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 131sm1264692pfc.20.2020.09.11.00.18.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2020 00:18:58 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     joro@8bytes.org, thierry.reding@gmail.com
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
-        vdumpa@nvidia.com
-Subject: [PATCH 1/3] iommu/tegra-smmu: Do not use PAGE_SHIFT and PAGE_MASK
-Date:   Fri, 11 Sep 2020 00:16:41 -0700
-Message-Id: <20200911071643.17212-2-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200911071643.17212-1-nicoleotsuka@gmail.com>
-References: <20200911071643.17212-1-nicoleotsuka@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H10t/PoYzFp2YJmus+JauG6BT44xTI8He+24ZzfKGuc=;
+        b=hbeR54UWCIPtx0xOKr/lByHIgs/tCuuz0aL/tvZmtRe3qdcFH4pryIZMrXbO9BTcHU
+         lIwUzkJ+LMzRjiCJej7vSuu3FL6+UUGXJlGsf9nYcioQN7DGBJCI76AHBl0VzIPyZZX6
+         zV8ZLpXQ8UWcZoTQxLPSEflBiz4PlOWivENe13VHbPUWUJaqaEeKrWYXqBZ6EywfpUYS
+         73Z1O5lCqKYmEgplTxIBL28hQ93SiREMihJ86K/3znYoRuD8KVV1bGuaZJGkE5HFvsoO
+         7kZgGEjZyz/5M/qE/TJsp2D37I9DDOgqyIAMa49YPkWpvEkWKZwB/kS0mKz9KYZ0+MuT
+         eLhA==
+X-Gm-Message-State: AOAM533f+vfClf/KYdlAlVBSZGJ+2In86kLubQNhZpwgRFp9rPhjB1je
+        +6uykVOM5PaJr/sf8xOhcHqEqGY2JaHChdDbBx0xgQ==
+X-Google-Smtp-Source: ABdhPJzoAxY70MZcPNGWxyG6zQ6qr5FKoQPOg9NgPLDiF+Ir58RNLJLUI7l1ei3YibuFb2rBegUpdWQ+ccblZaesBJc=
+X-Received: by 2002:a50:e79c:: with SMTP id b28mr712767edn.371.1599810354627;
+ Fri, 11 Sep 2020 00:45:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200910134239.192030-1-jonathanh@nvidia.com> <20200910134239.192030-2-jonathanh@nvidia.com>
+ <CAMpxmJXbhrmJJn4f3zk4=Y2tCwLzpFc+c6NbxcqVe8eaLSRvtw@mail.gmail.com>
+ <88021f57-b8cf-d3d6-0e9c-19ed0bccb729@nvidia.com> <5afe9537-dc50-16ff-028e-b4539c6f924a@nvidia.com>
+In-Reply-To: <5afe9537-dc50-16ff-028e-b4539c6f924a@nvidia.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 11 Sep 2020 09:45:43 +0200
+Message-ID: <CAMpxmJUAhJmGA_3nKs51hF=08vY19U5Rpfz30DLgOOiTMuxjzA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] misc: eeprom: at24: Initialise AT24 NVMEM ID field
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PAGE_SHIFT and PAGE_MASK are defined corresponding to the page size
-for CPU virtual addresses, which means PAGE_SHIFT could be a number
-other than 12, but tegra-smmu maintains fixed 4KB IOVA pages and has
-fixed [21:12] bit range for PTE entries.
+On Thu, Sep 10, 2020 at 8:19 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 10/09/2020 19:15, Jon Hunter wrote:
+> >
+> > On 10/09/2020 16:35, Bartosz Golaszewski wrote:
+> >> On Thu, Sep 10, 2020 at 3:43 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>>
+> >>> The AT24 EEPROM driver does not initialise the 'id' field of the
+> >>> nvmem_config structure and because the entire structure is not
+> >>> initialised, it ends up with a random value. This causes the NVMEM
+> >>> driver to append the device 'devid' value to name of the NVMEM
+> >>> device. Although this is not a problem per-se, for I2C devices such as
+> >>> the AT24, that already have a device unique name, there does not seem
+> >>> much value in appending an additional 0 to the I2C name. For example,
+> >>> appending a 0 to an I2C device name such as 1-0050 does not seem
+> >>> necessary and maybe even a bit confusing. Therefore, fix this by
+> >>> setting the NVMEM config.id to NVMEM_DEVID_NONE for AT24 EEPROMs.
+> >>>
+> >>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >>> ---
+> >>>  drivers/misc/eeprom/at24.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> >>> index e9df1ca251df..3f7a3bb6a36c 100644
+> >>> --- a/drivers/misc/eeprom/at24.c
+> >>> +++ b/drivers/misc/eeprom/at24.c
+> >>> @@ -715,6 +715,7 @@ static int at24_probe(struct i2c_client *client)
+> >>>
+> >>>         nvmem_config.name = dev_name(dev);
+> >>>         nvmem_config.dev = dev;
+> >>> +       nvmem_config.id = NVMEM_DEVID_NONE;
+> >>>         nvmem_config.read_only = !writable;
+> >>>         nvmem_config.root_only = !(flags & AT24_FLAG_IRUGO);
+> >>>         nvmem_config.owner = THIS_MODULE;
+> >>> --
+> >>> 2.25.1
+> >>>
+> >>
+> >> This patch is correct and thanks for catching it. I vaguely recall
+> >> wondering at some point why the appended 0 in the nvmem name for at24.
+> >> Unfortunately this change would affect how the device is visible in
+> >> user-space in /sys/bus/nvmem/devices/ and this could break existing
+> >> users. Also: there are many in-kernel users that would need to be
+> >> updated. I'm afraid we'll need some sort of backward compatibility.
+> >
+> >
+> > Thanks, yes that is a problem. I guess for now we could explicitly init
+> > to NVMEM_DEVID_AUTO or maybe just 0 so that it defaults to the same path
+> > in the NVMEM driver. However, I am not sure how we can make allow some
+> > devices to use NVMEM_DEVID_NONE and others use something else. This is
+> > not really something that we can describe in DT because it has nothing
+> > to do with h/w.
+>
+>
+> Unless we make the configuration of the 'id' dependent on the 'label'
+> property so something like ...
+>
+>         if (device_property_present(dev, "label")) {
+>                 nvmem_config.id = NVMEM_DEVID_NONE;
+>                 err = device_property_read_string(dev, "label",
+>                                                   &nvmem_config.name);
+>                 if (err)
+>                         return err;
+>         } else {
+>                 nvmem_config.id = NVMEM_DEVID_AUTO;
+>                 nvmem_config.name = dev_name(dev);
+>         }
+>
+> Cheers
+> Jon
+>
+> --
+> nvpublic
 
-So this patch replaces all PAGE_SHIFT/PAGE_MASK references with the
-macros defined with SMMU_PTE_SHIFT.
+Yes, this looks like the best compromise we can get for now. Please
+make sure to document why we do this in the code.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/iommu/tegra-smmu.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 046add7acb61..789d21c01b77 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -130,6 +130,11 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
- #define SMMU_PDE_SHIFT 22
- #define SMMU_PTE_SHIFT 12
- 
-+#define SMMU_PAGE_MASK		(~(SMMU_SIZE_PT-1))
-+#define SMMU_OFFSET_IN_PAGE(x)	((unsigned long)(x) & ~SMMU_PAGE_MASK)
-+#define SMMU_PFN_PHYS(x)	((phys_addr_t)(x) << SMMU_PTE_SHIFT)
-+#define SMMU_PHYS_PFN(x)	((unsigned long)((x) >> SMMU_PTE_SHIFT))
-+
- #define SMMU_PD_READABLE	(1 << 31)
- #define SMMU_PD_WRITABLE	(1 << 30)
- #define SMMU_PD_NONSECURE	(1 << 29)
-@@ -644,7 +649,7 @@ static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
- 			       u32 *pte, dma_addr_t pte_dma, u32 val)
- {
- 	struct tegra_smmu *smmu = as->smmu;
--	unsigned long offset = offset_in_page(pte);
-+	unsigned long offset = SMMU_OFFSET_IN_PAGE(pte);
- 
- 	*pte = val;
- 
-@@ -726,7 +731,7 @@ __tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
- 		pte_attrs |= SMMU_PTE_WRITABLE;
- 
- 	tegra_smmu_set_pte(as, iova, pte, pte_dma,
--			   __phys_to_pfn(paddr) | pte_attrs);
-+			   SMMU_PHYS_PFN(paddr) | pte_attrs);
- 
- 	return 0;
- }
-@@ -790,7 +795,7 @@ static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 
- 	pfn = *pte & as->smmu->pfn_mask;
- 
--	return PFN_PHYS(pfn);
-+	return SMMU_PFN_PHYS(pfn);
- }
- 
- static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
-@@ -1108,7 +1113,8 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 	smmu->dev = dev;
- 	smmu->mc = mc;
- 
--	smmu->pfn_mask = BIT_MASK(mc->soc->num_address_bits - PAGE_SHIFT) - 1;
-+	smmu->pfn_mask =
-+		BIT_MASK(mc->soc->num_address_bits - SMMU_PTE_SHIFT) - 1;
- 	dev_dbg(dev, "address bits: %u, PFN mask: %#lx\n",
- 		mc->soc->num_address_bits, smmu->pfn_mask);
- 	smmu->tlb_mask = (smmu->soc->num_tlb_lines << 1) - 1;
--- 
-2.17.1
-
+Bartosz
