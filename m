@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA50C43461
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2DEC2D0E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 10:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22A772078B
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 09:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 990F0221ED
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 10:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="YkNcRn0/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="yh5ekNT/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725778AbgIKJxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Sep 2020 05:53:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38460 "EHLO
+        id S1725837AbgIKKAf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Sep 2020 06:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbgIKJxB (ORCPT
+        with ESMTP id S1725818AbgIKJ75 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Sep 2020 05:53:01 -0400
+        Fri, 11 Sep 2020 05:59:57 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC729C061573
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 02:53:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECB7C061573
+        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 02:59:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
         MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iOgmppT0qGwZOUSB5AHlfatEojFVOgSi72SRxPTKIUU=; b=YkNcRn0/g+VnGQ/Wmck4Wd/mHv
-        KcpmsVuBM0Z8eGelYlb3LJJnYbJRrT76gfnzWZqV9FT2XOhNQJT4fpq0q9xZ3tGvSlYTTpesFW+k7
-        xdTgaictL65VL6kg+Iz4O23Zvzw6qtw+M/ehmvS1CvUrBBAmxWeVL+BgOes0J2OJMDU3++3KzHDSH
-        keyNQ4f4Catt0f97fjgNotpaEg6VKjbezZvaa5KKAk4xEmqyOfo29DF87AqdE20PE2Az9dLjWUmgL
-        qdOJbIvFJBFg1cHM7xRgLhkfJSlp7ZjfYsODZj6yxXjF3kXjXq/4mZBToTlb+GaQXK1joAvvXbMkc
-        G9sbCf/g==;
+        bh=hgg6FoHK15WmMAYAEZFH4drMXVQgN/IydltaEjCXX9Q=; b=yh5ekNT/CnmyWDBz6fZFL5dyjr
+        JS9Ob1Puccx+SzGO/pYsqJMh77fkopJjRsSsu+q7sD4UFFYgTemKiOhhI5kHU0aMkTT23gVBTaYuW
+        HzI7dzCv7sMIQNEWCqNZHMxzLrofLZcKmG74ofPELKP+GWLUsdjb57rmlPqbsK2ELg5Nniu2Hn1Xe
+        4RItI/PfpkFuQTpHtunat8I+DoRUk56RQB+WBk4AF0f3Xn1pd2OvuR1CDBI2nIrZfHTXTSL1Ww8HJ
+        hFhbzHXcdbytDHmgNgWSsOqmIxLkZkOgbrnxQJTKw+qbyIt+hmGIHH1dYsKMBud1JbGiMq2tGiadX
+        cTKM+M1g==;
 Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1kGfjj-0000uP-NU; Fri, 11 Sep 2020 12:52:55 +0300
-Subject: Re: DRM_TEGRA_SUBMIT_BUF_WRITE_RELOC
+        id 1kGfqQ-0004Gx-UP; Fri, 11 Sep 2020 12:59:51 +0300
+Subject: Re: [RFC PATCH v2 17/17] WIP: drm/tegra: Implement new UAPI
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
@@ -50,17 +50,18 @@ To:     Dmitry Osipenko <digetx@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-15-mperttunen@nvidia.com>
- <54aff7f1-86b2-6bd7-1e47-2078edcf94b3@gmail.com>
- <a734a45f-2366-8a9f-1029-c052bd03bf78@kapsi.fi>
- <17e24d23-3b1e-44e3-57ca-35721dbd4af2@gmail.com>
+ <20200905103420.3021852-18-mperttunen@nvidia.com>
+ <11c05ff2-092b-dc40-73a9-c0ec0fa22826@gmail.com>
+ <3b3b7d35-e96c-1b6e-ddd0-24fd8a9dd5bf@gmail.com>
+ <6d317f3f-51c8-6ed5-0a27-00e72f204941@kapsi.fi>
+ <dba5e023-23d5-7e8a-f45e-bf41abf66ef6@gmail.com>
 From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <b85af7b8-870a-31e2-2f09-902a84a2afb6@kapsi.fi>
-Date:   Fri, 11 Sep 2020 12:52:44 +0300
+Message-ID: <27ee1096-d7fa-da63-f60e-93dbdd679893@kapsi.fi>
+Date:   Fri, 11 Sep 2020 12:59:40 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <17e24d23-3b1e-44e3-57ca-35721dbd4af2@gmail.com>
+In-Reply-To: <dba5e023-23d5-7e8a-f45e-bf41abf66ef6@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -72,32 +73,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/11/20 1:15 AM, Dmitry Osipenko wrote:
-> 09.09.2020 11:10, Mikko Perttunen пишет:
->> On 9/9/20 2:45 AM, Dmitry Osipenko wrote:
->>> 05.09.2020 13:34, Mikko Perttunen пишет:
->>> ...
->>>> +/* Submission */
->>>> +
->>>> +/** Patch address of the specified mapping in the submitted gather. */
->>>> +#define DRM_TEGRA_SUBMIT_BUF_WRITE_RELOC        (1<<0)
+On 9/11/20 12:57 AM, Dmitry Osipenko wrote:
+> 09.09.2020 11:36, Mikko Perttunen пишет:
+> ...
 >>>
->>> Shouldn't the kernel driver be aware about what relocations need to be
->>> patched? Could you please explain the purpose of this flag?
+>>> Does it make sense to have timeout in microseconds?
 >>>
 >>
->> Sure, the kernel knows if it returned the IOVA to the user or not, so we
->> could remove this flag and determine it implicitly. I don't think there
->> is much harm in it though; if we have the flag an application can decide
->> to ignore the iova field and just pass WRITE_RELOC always, and it's not
->> really any extra code on kernel side.
+>> Not sure, but better have it a bit more fine-grained rather than
+>> coarse-grained. This still gives a maximum timeout of 71 minutes so I
+>> don't think it has any negatives compared to milliseconds.
 > 
-> Sounds like there is no real practical use for this flag other than for
-> testing purposes, correct?
+> If there is no good reason to use microseconds right now, then should be
+> better to default to milliseconds, IMO. It shouldn't be a problem to
+> extend the IOCLT with a microseconds entry, if ever be needed.
+> 
+> {
+> 	__u32 timeout_ms;
+> ...
+> 	__u32 timeout_us;
+> }
+> 
+> timeout = timeout_ms + 1000 * timeout_us;
+> 
+> There shouldn't be a need for a long timeouts, since a job that takes
+> over 100ms is probably too unpractical. It also should be possible to
+> detect a progressing job and then defer timeout in the driver. At least
+> this is what other drivers do, like etnaviv driver for example:
+> 
+> https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/gpu/drm/etnaviv/etnaviv_sched.c#L107
 > 
 
-Patching depending just on if the MAP IOCTL returned an IOVA or not 
-seems a bit "spooky action at a distance"-ish to me, but maybe it's not 
-so bad.. I'll consider removing it.
+I still don't quite understand why it's better to default to 
+milliseconds? As you say, there is no need to have a long timeout, and 
+if we go microseconds now, then there wouldn't be a need to extend in 
+the future.
 
 Mikko
