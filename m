@@ -1,122 +1,94 @@
-Return-Path: <SRS0=EsoP=CU=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=YHIj=CV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D489C43461
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 22:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41868C433E2
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Sep 2020 02:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D19121D7E
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Sep 2020 22:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD182207BB
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Sep 2020 02:25:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="gPdH7Mi+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qm6U7MAW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgIKWLa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Sep 2020 18:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbgIKWL2 (ORCPT
+        id S1725681AbgILCZx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Sep 2020 22:25:53 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9149 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbgILCZw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Sep 2020 18:11:28 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD2BEC061573
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2020 15:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ogTQed4AB3YTOxiNumxOSIUQDui4rXqp7ldPSCSbBJ8=; b=gPdH7Mi+qbv0+WK4jFhsY6nd0d
-        RdTASNJFBBYgMPRnW5CatCY/463DWXIHv4oUhiME+OqvpTgWNJvH0y58fz1FsmK6W6TTxJSLT9KuO
-        QTnEFYY421E1mcEH/2gu6DYBvompjnxYcIpVj6MnI6NJZ90k/wvHoakyQeh1mA4lQKVdVTkCJ95Zs
-        ez/Y0BxUpRV/SfyZ+6AfXaWxw8y4x6sc1nJgPyIt5TtdTJGqmtjGZef8sTncgtZxW3d5v+xr8pA1N
-        oL7N8A49ZDqLFKlv2zqBegCPWLSS2Xjbwjbmi6X8iBHLjJgAJzOPsBG3TnUCRyFREZnC+APfp0d+W
-        citAHyKA==;
-Received: from dsl-hkibng22-54faab-65.dhcp.inet.fi ([84.250.171.65] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kGrGG-0005lL-Gn; Sat, 12 Sep 2020 01:11:16 +0300
-Subject: Re: [RFC PATCH v2 10/17] WIP: gpu: host1x: Add no-recovery mode
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-11-mperttunen@nvidia.com>
- <7d7a29e8-3151-12ea-da66-d8a479edda84@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <c2498218-e107-4df4-41ce-c60da65ceaf7@kapsi.fi>
-Date:   Sat, 12 Sep 2020 01:11:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Fri, 11 Sep 2020 22:25:52 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f5c31260000>; Fri, 11 Sep 2020 19:23:34 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 11 Sep 2020 19:25:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 11 Sep 2020 19:25:52 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Sep
+ 2020 02:25:51 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sat, 12 Sep 2020 02:25:51 +0000
+Received: from dipenp.nvidia.com (Not Verified[172.17.173.69]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f5c31af0000>; Fri, 11 Sep 2020 19:25:51 -0700
+From:   Dipen Patel <dipenp@nvidia.com>
+To:     <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>
+Subject: [PATCH v2] arm64: tegra: Wrong hsp_aon reg property size
+Date:   Fri, 11 Sep 2020 19:26:45 -0700
+Message-ID: <20200912022645.7338-1-dipenp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <7d7a29e8-3151-12ea-da66-d8a479edda84@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.250.171.65
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1599877414; bh=GA7oDohcEOV8AS7cTcnVkrK/v7M538GZva1ik4ji2Os=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=qm6U7MAWebo9Ot2ZZZI6C1tot4LQlTWQRxZ/TTP2pV8BGaqOvaHbk2uRJsCw0KRb3
+         0GHKuSrSPUWe5CeYaHT+FkDnS2ZZ4QgIxTmtJcCVKF1AwmijrlbzC4GQEPH97Rb6a/
+         yy7Cyplqt/4yoIsSijbHAjVmPSdK9pHvuiu6NhUrslAKdI0M+4sGAeEH0WMXiXjIbN
+         P1nTcPfzxbENbuko+Lr+95WUBrTaOnUdOCGNwrJgNbRS9cVHOeROljLIqmJb1/bBwW
+         X6pm0xbT3jI8bdWVkrXrA7Ye4Ayj3kKrTV57AOD4ZgPl+5c2TVGv8ridiFG4Th/YSc
+         CtoirUisWuzSQ==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/11/20 7:40 PM, Dmitry Osipenko wrote:
-> 05.09.2020 13:34, Mikko Perttunen пишет:
->> +	} else {
->> +		struct host1x_job *failed_job = job;
->> +
->> +		host1x_job_dump(dev, job);
->> +
->> +		host1x_syncpt_set_locked(job->syncpt);
->> +		failed_job->cancelled = true;
->> +
->> +		list_for_each_entry_continue(job, &cdma->sync_queue, list) {
->> +			unsigned int i;
->> +
->> +			if (job->syncpt != failed_job->syncpt)
->> +				continue;
->> +
->> +			for (i = 0; i < job->num_slots; i++) {
->> +				unsigned int slot = (job->first_get/8 + i) %
->> +						    HOST1X_PUSHBUFFER_SLOTS;
->> +				u32 *mapped = cdma->push_buffer.mapped;
->> +
->> +				mapped[2*slot+0] = 0x1bad0000;
->> +				mapped[2*slot+1] = 0x1bad0000;
-> 
-> The 0x1bad0000 is a valid memory address on Tegra20.
-> 
-> The 0x60000000 is invalid phys address for all hardware generations.
-> It's used by grate-kernel [1] and VDE driver [2]. Note that the 0x6 <<
-> 28 is also invalid Host1x opcode, while 0x1 should break CDMA parser
-> during of PB debug-dumping.
-> 
-> [1]
-> https://github.com/grate-driver/linux/blob/master/drivers/gpu/drm/tegra/gem.h#L16
-> 
-> [2]
-> https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/staging/media/tegra-vde/iommu.c#L99
-> 
-> The VDE driver reserves the trapping IOVA addresses, I assume the Host1x
-> driver should do the same.
-> 
+The hsp_aon node reg property size 0xa0000 will overlap with other
+resources. This patch fixes that wrong value with correct size 0x90000.
 
-The 0x1bad0000's are not intended to be memory addresses, they are NOOP 
-opcodes (INCR of 0 words to offset 0xbad). I'll fix this to use proper 
-functions to construct the opcodes and add some comments. These need to 
-be NOOP opcodes so the command parser skips over these "cancelled" jobs 
-when the channel is resumed.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+Fixes: a38570c22e9d ("arm64: tegra: Add nodes for TCU on Tegra194")
+---
+Changes in v2:
+  - Remove the space between Fixes and Signed-off-by tags
 
-BTW, 0x60000000 is valid on Tegra194 and later.
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Mikko
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index e9c90f0f44ff..93438d2b9469 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1161,7 +1161,7 @@
+ 
+ 		hsp_aon: hsp@c150000 {
+ 			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
+-			reg = <0x0c150000 0xa0000>;
++			reg = <0x0c150000 0x90000>;
+ 			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
+ 			             <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
+ 			             <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.17.1
+
