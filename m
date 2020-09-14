@@ -8,65 +8,64 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CE5C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D65C43461
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11EAA20E65
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CBA216C4
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGzE+KCl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qsB3JFiI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbgINNiy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Sep 2020 09:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
+        id S1726683AbgINNiz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Sep 2020 09:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbgINNhw (ORCPT
+        with ESMTP id S1726770AbgINNht (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Sep 2020 09:37:52 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 422FEC061351;
-        Mon, 14 Sep 2020 06:37:52 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id c18so18757936wrm.9;
-        Mon, 14 Sep 2020 06:37:52 -0700 (PDT)
+        Mon, 14 Sep 2020 09:37:49 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF3CC06178B
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Sep 2020 06:37:49 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id d4so42776wmd.5
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Sep 2020 06:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=07LfpwukpmTeG70upPXM1ceHmoutqYVR0coB+0ggDoI=;
-        b=MGzE+KCln2rDlWU1eor1MDlnrGu6r4T9HJnQcZfGGdYlBsSLzOuOKiZmi/RtTeCWsh
-         PMFpPh35W8yjk3tKQsF4ZvlYO3/Ozbc26pqBrCXTqP6QTscaqsPQ+jor9OAiqd3P8T21
-         3pMl9gPdP7rXbspX1NNpdGWMDUlsC//0sGdmtcPgEsYf/GpbHoPbDDHikmh9BZAEU4ki
-         EoIZlp6JLAQfC0+ueN8Xv6qnLS5WFOJYj1wzSyzPHkGdN7WPIPDhg2GcW2jttgGr2Xfh
-         3vaFf8L1Js5VoKx0WLJoIQ7f1OyOwm2JNPU8wcJcIJNLmo/y5ui4b8HSGEuRc6XZopIk
-         w2JA==
+        bh=IQU/5no96PfQVnDWZvRJxAMbJR8IojKL6s+SB7SMMPA=;
+        b=qsB3JFiIIoFf7VC8hVaXdeCovxGLCxGQg1BEyDwsmkE3arg1wdOseM/lHAUg/8AHKr
+         XYsHwN83c2aRlXOYPOL1VTUiBthFV/G7Bu3am4WoDdh/5H5IuS5dVZzlIpr2ljgkAUgR
+         mKf5Sg58OsROwQK0upk9kXy0Z2I48SyXsOTTDJPeDAjEu3TcxOzGla5TIEZjKtS1fIRR
+         HxCVYGkuFtDY25bAHum/TNJA3SsdDvyAS0yCBfJJVhXsj7qo3dzVOKQX8b9yvCC/Iiz4
+         mPLkRvqZRCIALSiWch28L3aJ7C1m7TKwSdPL1+OlwiW+FOfvezFMt8DDKwS/F9aXDhNz
+         PZfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=07LfpwukpmTeG70upPXM1ceHmoutqYVR0coB+0ggDoI=;
-        b=forROESNbABpZQBdRKnXP97WJU0T6KeQ6pi10CSLjYRXluwyoI0/lKhrE8nv+qU3vH
-         jJZ+xMps5GT9slUeDkPSfeH+yNxV0aZLWp8H4QfdahXbNSdiy2hQ0mow+l5160CZJ+Or
-         33SugaN4qR1KiIp3/QAJhfWpEiZudJyZkZ4NLbbJHxmGxbL1Mr4Qz4HUIYyca6hbmicq
-         mTV9ADhME1w/HReYlRBTXXs1u6YACzBOYbsf4s3kAD6v6XTcJZFAs1xyEWDb6/+Qc9eT
-         zkqSE98lQAOuiPIPxcqMFOj4QruLjpsQuiAHgMRj8S8JkAJVNRrSyIxjjk7bzT3NWI+d
-         qEpw==
-X-Gm-Message-State: AOAM533JiGlO09n75PK8B1wUtnXqEe/Et/48K1B2s/5RZJeEsvs3U/mo
-        Z4KyUxBYTh3rHM2hMAdTVoA=
-X-Google-Smtp-Source: ABdhPJwOX30ps/KDJqJPmeNlxoDcQHCf41blysDKip2XcAupmMDfIO/EoCW16fLZhFmxwma2jVaUNw==
-X-Received: by 2002:adf:8b1d:: with SMTP id n29mr15420779wra.383.1600090671007;
-        Mon, 14 Sep 2020 06:37:51 -0700 (PDT)
+        bh=IQU/5no96PfQVnDWZvRJxAMbJR8IojKL6s+SB7SMMPA=;
+        b=f2TZvSMOwjF5iJ02tKMjivYaN1iWiqcWA+r26BqpCNDPrLu97gsyu2gd8qCWn3ntZI
+         lXXdDQG4kh/wJEBoSVGDyZ6zCeRedUzBrfyR6Xl7ui86TbGHlJevgqrgaSIjJV8SGKrh
+         fd1X4zc7GUawaqgURy7tZutuRPeXvk05UfULk7FQhDhlmIIH1i6BI+0PuNyu1is5egM/
+         2zwp1EDSO9qdRthLqJ28ygf6MOWgrMssz6LOx0morcuS6sLHgWwcejvtpMYCA1zkL74j
+         fXVimbCZl9hEI/TYHPwRJOTpgL90JofFxE5TgpyAOAjHb5967SBe2iBJJo4j8/Or0S0S
+         jKoQ==
+X-Gm-Message-State: AOAM532Ax7QGmUfaj7tKeAK0N8eym7vquoaIdc1PslpFQC4Y+cOZp83x
+        SXgANReK6r+QxTlmx79osmc=
+X-Google-Smtp-Source: ABdhPJxUEX0WLu+PFr4OTIX+EKQA+38Lw22k6baJmQmrmSYGblVP/nmpkKauqOZfWY5MlD/zipYzXQ==
+X-Received: by 2002:a1c:2cc2:: with SMTP id s185mr3385229wms.77.1600090668150;
+        Mon, 14 Sep 2020 06:37:48 -0700 (PDT)
 Received: from arrakis.kwizart.net (lfbn-nic-1-212-171.w2-15.abo.wanadoo.fr. [2.15.59.171])
-        by smtp.gmail.com with ESMTPSA id a11sm18532488wmm.18.2020.09.14.06.37.50
+        by smtp.gmail.com with ESMTPSA id a11sm18532488wmm.18.2020.09.14.06.37.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 06:37:50 -0700 (PDT)
+        Mon, 14 Sep 2020 06:37:43 -0700 (PDT)
 From:   Nicolas Chauvet <kwizart@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 4/4] ARM: tegra: Avoid setting edp_irq when not relevant
-Date:   Mon, 14 Sep 2020 15:37:39 +0200
-Message-Id: <20200914133739.60020-5-kwizart@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
+Subject: [PATCH 2/4] ARM: tegra: Add missing hot temperatures to tegra124 thermal-zones
+Date:   Mon, 14 Sep 2020 15:37:37 +0200
+Message-Id: <20200914133739.60020-3-kwizart@gmail.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200914133739.60020-1-kwizart@gmail.com>
 References: <20200914133739.60020-1-kwizart@gmail.com>
@@ -77,59 +76,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-According to the binding, the edp_irq is not available on tegra124/132
+According to dmesg, thermal-zones for mem and cpu are missing hot
+temperatures properties.
 
-This commit moves the initialization of tegra->edp_irq after the
-introduced SoCs condition. This will have the following effects:
- - soctherm_interrupts_init will not return prematurely with unfinished
-thermal_irq initialization on tegra124 and tegra132
- - edp_irq initialization will be bypassed when not relevant
+  throttrip: pll: missing hot temperature
+...
+  throttrip: mem: missing hot temperature
+...
 
-As a result, this will clear the following error when loading the driver:
-  kernel: tegra_soctherm 700e2000.thermal-sensor: IRQ index 1 not found
+Adding them will clear the messages.
 
-Fixes: 4a04beb1bf2e (thermal: tegra: add support for EDP IRQ)
-Cc: stable@vger.kernel.org
 Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
 ---
- drivers/thermal/tegra/soctherm.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/tegra124.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 66e0639da4bf..0a7dc988f25f 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -2025,12 +2025,6 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
- 		return 0;
- 	}
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index a0fa5821a232..c71d597ace01 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -1248,6 +1248,11 @@ mem-shutdown-trip {
+ 					hysteresis = <0>;
+ 					type = "critical";
+ 				};
++				mem-throttle-trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
+ 			};
  
--	tegra->edp_irq = platform_get_irq(pdev, 1);
--	if (tegra->edp_irq < 0) {
--		dev_dbg(&pdev->dev, "get 'edp_irq' failed.\n");
--		return 0;
--	}
--
- 	ret = devm_request_threaded_irq(&pdev->dev,
- 					tegra->thermal_irq,
- 					soctherm_thermal_isr,
-@@ -2043,6 +2037,17 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
- 		return ret;
- 	}
+ 			cooling-maps {
+@@ -1299,6 +1304,11 @@ pllx-shutdown-trip {
+ 					hysteresis = <0>;
+ 					type = "critical";
+ 				};
++				pllx-throttle-trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
+ 			};
  
-+	/* None of the tegra124 and tegra132 SoCs have edp_irq */
-+	if (of_machine_is_compatible("nvidia,tegra124") ||
-+		of_machine_is_compatible("nvidia,tegra132"))
-+			return 0;
-+
-+	tegra->edp_irq = platform_get_irq(pdev, 1);
-+	if (tegra->edp_irq < 0) {
-+		dev_dbg(&pdev->dev, "get 'edp_irq' failed.\n");
-+		return 0;
-+	}
-+
- 	ret = devm_request_threaded_irq(&pdev->dev,
- 					tegra->edp_irq,
- 					soctherm_edp_isr,
+ 			cooling-maps {
 -- 
 2.25.4
 
