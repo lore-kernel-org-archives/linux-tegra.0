@@ -2,264 +2,112 @@ Return-Path: <SRS0=22zn=CX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F18CC2BC11
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 15:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DF8C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 17:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E489421974
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 15:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79EB920EDD
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 17:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbgINPGM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Sep 2020 11:06:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36296 "EHLO mx2.suse.de"
+        id S1726075AbgINL0x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Sep 2020 07:26:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43092 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbgINPF6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Sep 2020 11:05:58 -0400
+        id S1726057AbgINLZ1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 14 Sep 2020 07:25:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 36552AFC1;
-        Mon, 14 Sep 2020 15:06:10 +0000 (UTC)
-Subject: Re: [PATCH 01/20] drm/amdgpu: Introduce GEM object functions
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, l.stach@pengutronix.de,
-        christian.gmeiner@gmail.com, inki.dae@samsung.com,
-        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
-        patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
-        matthias.bgg@gmail.com, robdclark@gmail.com, sean@poorly.run,
-        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
-        hjc@rock-chips.com, heiko@sntech.de, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, rodrigosiqueiramelo@gmail.com,
-        hamohammed.sa@gmail.com, oleksandr_andrushchenko@epam.com,
-        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
-        michal.simek@xilinx.com, sumit.semwal@linaro.org,
-        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
-        marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        abdiel.janulgue@linux.intel.com, tvrtko.ursulin@linux.intel.com,
-        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20200813083644.31711-1-tzimmermann@suse.de>
- <20200813083644.31711-2-tzimmermann@suse.de>
- <5c1b3cab-1898-46df-2c5c-23ab6cbfbb7a@amd.com>
+        by mx2.suse.de (Postfix) with ESMTP id 0E010B0EA;
+        Mon, 14 Sep 2020 11:25:41 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <c445493b-9914-63f2-1cf2-c3c1de14e3e5@suse.de>
-Date:   Mon, 14 Sep 2020 17:05:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+To:     sumit.semwal@linaro.org, christian.koenig@amd.com, daniel@ffwll.ch,
+        airlied@linux.ie, sam@ravnborg.org, mark.cave-ayland@ilande.co.uk,
+        kraxel@redhat.com, davem@davemloft.net,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, pawel@osciak.com,
+        m.szyprowski@samsung.com, kyungmin.park@samsung.com,
+        tfiga@chromium.org, mchehab@kernel.org, chris@chris-wilson.co.uk,
+        matthew.auld@intel.com, thomas.hellstrom@intel.com
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, etnaviv@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        sparclinux@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/3] dma-buf: Flag vmap'ed memory as system or I/O memory
+Date:   Mon, 14 Sep 2020 13:25:18 +0200
+Message-Id: <20200914112521.1327-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <5c1b3cab-1898-46df-2c5c-23ab6cbfbb7a@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="MeVdSsKebthdc7DC8hvgqWlLwpjnz0H9f"
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---MeVdSsKebthdc7DC8hvgqWlLwpjnz0H9f
-Content-Type: multipart/mixed; boundary="zniUnHMaoWytGRm2jwIkKjV0oPt2fa9bx";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
- linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, l.stach@pengutronix.de, christian.gmeiner@gmail.com,
- inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
- patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
- joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
- chunkuang.hu@kernel.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com,
- robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
- tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com, heiko@sntech.de,
- thierry.reding@gmail.com, jonathanh@nvidia.com,
- rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
- oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
- laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
- sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
- tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
- andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com, xinhui.pan@amd.com,
- aaron.liu@amd.com, nirmoy.das@amd.com, chris@chris-wilson.co.uk,
- matthew.auld@intel.com, abdiel.janulgue@linux.intel.com,
- tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com, sam@ravnborg.org,
- miaoqinglang@huawei.com, emil.velikov@collabora.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- xen-devel@lists.xenproject.org
-Message-ID: <c445493b-9914-63f2-1cf2-c3c1de14e3e5@suse.de>
-Subject: Re: [PATCH 01/20] drm/amdgpu: Introduce GEM object functions
-References: <20200813083644.31711-1-tzimmermann@suse.de>
- <20200813083644.31711-2-tzimmermann@suse.de>
- <5c1b3cab-1898-46df-2c5c-23ab6cbfbb7a@amd.com>
-In-Reply-To: <5c1b3cab-1898-46df-2c5c-23ab6cbfbb7a@amd.com>
+Dma-buf provides vmap() and vunmap() for retrieving and releasing mappings
+of dma-buf memory in kernel address space. The functions operate with plain
+addresses and the assumption is that the memory can be accessed with load
+and store operations. This is not the case on some architectures (e.g.,
+sparc64) where I/O memory can only be accessed with dedicated instructions.
 
---zniUnHMaoWytGRm2jwIkKjV0oPt2fa9bx
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+This patchset introduces struct dma_buf_map, which contains the address of
+a buffer and a flag that tells whether system- or I/O-memory instructions
+are required.
 
-Hi
+Some background: updating the DRM framebuffer console on sparc64 makes the
+kernel panic. This is because the framebuffer memory cannot be accessed with
+system-memory instructions. We currently employ a workaround in DRM to
+address this specific problem. [1]
 
-Am 13.08.20 um 12:22 schrieb Christian K=C3=B6nig:
-> Am 13.08.20 um 10:36 schrieb Thomas Zimmermann:
->> GEM object functions deprecate several similar callback interfaces in
->> struct drm_driver. This patch replaces the per-driver callbacks with
->> per-instance callbacks in amdgpu. The only exception is gem_prime_mmap=
-,
->> which is non-trivial to convert.
->>
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> ---
->> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c=C2=A0=C2=A0=C2=A0 |=C2=A0=
- 6 ------
->> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 12 ++++++++++++
->> =C2=A0 2 files changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> index 81a79760ca61..51525b8774c9 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> @@ -1468,19 +1468,13 @@ static struct drm_driver kms_driver =3D {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lastclose =3D amdgpu_driver_lastclose_=
-kms,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .irq_handler =3D amdgpu_irq_handler,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ioctls =3D amdgpu_ioctls_kms,
->> -=C2=A0=C2=A0=C2=A0 .gem_free_object_unlocked =3D amdgpu_gem_object_fr=
-ee,
->> -=C2=A0=C2=A0=C2=A0 .gem_open_object =3D amdgpu_gem_object_open,
->> -=C2=A0=C2=A0=C2=A0 .gem_close_object =3D amdgpu_gem_object_close,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dumb_create =3D amdgpu_mode_dumb_creat=
-e,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dumb_map_offset =3D amdgpu_mode_dumb_m=
-map,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .fops =3D &amdgpu_driver_kms_fops,
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .prime_handle_to_fd =3D drm_gem_=
-prime_handle_to_fd,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .prime_fd_to_handle =3D drm_gem_prime_f=
-d_to_handle,
->> -=C2=A0=C2=A0=C2=A0 .gem_prime_export =3D amdgpu_gem_prime_export,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gem_prime_import =3D amdgpu_gem_prime_=
-import,
->> -=C2=A0=C2=A0=C2=A0 .gem_prime_vmap =3D amdgpu_gem_prime_vmap,
->> -=C2=A0=C2=A0=C2=A0 .gem_prime_vunmap =3D amdgpu_gem_prime_vunmap,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gem_prime_mmap =3D amdgpu_gem_prime_mm=
-ap,
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D DRIVER_NAME,
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->> b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->> index 43f4966331dd..ca2b79f94e99 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
->> @@ -36,6 +36,7 @@
->> =C2=A0 #include <drm/amdgpu_drm.h>
->> =C2=A0 #include <drm/drm_cache.h>
->> =C2=A0 #include "amdgpu.h"
->> +#include "amdgpu_dma_buf.h"
->> =C2=A0 #include "amdgpu_trace.h"
->> =C2=A0 #include "amdgpu_amdkfd.h"
->> =C2=A0 @@ -510,6 +511,15 @@ bool amdgpu_bo_support_uswc(u64 bo_flags)
->> =C2=A0 #endif
->> =C2=A0 }
->> =C2=A0 +static const struct drm_gem_object_funcs amdgpu_gem_object_fun=
-cs =3D {
->> +=C2=A0=C2=A0=C2=A0 .free =3D amdgpu_gem_object_free,
->> +=C2=A0=C2=A0=C2=A0 .open =3D amdgpu_gem_object_open,
->> +=C2=A0=C2=A0=C2=A0 .close =3D amdgpu_gem_object_close,
->> +=C2=A0=C2=A0=C2=A0 .export =3D amdgpu_gem_prime_export,
->> +=C2=A0=C2=A0=C2=A0 .vmap =3D amdgpu_gem_prime_vmap,
->> +=C2=A0=C2=A0=C2=A0 .vunmap =3D amdgpu_gem_prime_vunmap,
->> +};
->> +
->=20
-> Wrong file, this belongs into amdgpu_gem.c
->=20
->> =C2=A0 static int amdgpu_bo_do_create(struct amdgpu_device *adev,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_bo_param *=
-bp,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_bo **bo_pt=
-r)
->> @@ -552,6 +562,8 @@ static int amdgpu_bo_do_create(struct
->> amdgpu_device *adev,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo =3D kzalloc(sizeof(struct amdgpu_bo)=
-, GFP_KERNEL);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (bo =3D=3D NULL)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;=
+To resolve the problem, we'd like to address it at the most common point,
+which is the dma-buf framework. The dma-buf mapping ideally knows if I/O
+instructions are required and exports this information to it's users. The
+new structure struct dma_buf_map stores the buffer address and a flag that
+signals I/O memory. Affected users of the buffer (e.g., drivers, frameworks)
+can then access the memory accordingly.
 
->> +
->> +=C2=A0=C2=A0=C2=A0 bo->tbo.base.funcs =3D &amdgpu_gem_object_funcs;
->=20
-> And this should probably go into amdgpu_gem_object_create().
+This patchset only introduces struct dma_buf_map, and updates struct dma_buf
+and it's interfaces. Further patches can update dma-buf users. For example,
+there's a prototype patchset for DRM that fixes the framebuffer problem. [2]
 
-I'm trying to understand what amdgpu does.  What about all the places
-where amdgpu calls amdgpu_bo_create() internally? Wouldn't these miss
-the free callback for the GEM object?
+Further work: TTM, one of DRM's memory managers, already exports an
+is_iomem flag of its own. It could later be switched over to exporting struct
+dma_buf_map, thus simplifying some code. Several DRM drivers expect their
+fbdev console to operate on I/O memory. These could possibly be switched over
+to the generic fbdev emulation, as soon as the generic code uses struct
+dma_buf_map.
 
-Best regards
-Thomas
+[1] https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg.org/
+[2] https://lore.kernel.org/dri-devel/20200806085239.4606-1-tzimmermann@suse.de/
 
->=20
-> Apart from that looks like a good idea to me.
->=20
-> Christian.
->=20
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_gem_private_object_init(adev->ddev,=
- &bo->tbo.base, size);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 INIT_LIST_HEAD(&bo->shadow_list);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo->vm_bo =3D NULL;
->=20
+Thomas Zimmermann (3):
+  dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr
+  dma-buf: Use struct dma_buf_map in dma_buf_vmap() interfaces
+  dma-buf: Use struct dma_buf_map in dma_buf_vunmap() interfaces
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+ Documentation/driver-api/dma-buf.rst          |   3 +
+ drivers/dma-buf/dma-buf.c                     |  40 +++---
+ drivers/gpu/drm/drm_gem_cma_helper.c          |  16 ++-
+ drivers/gpu/drm/drm_gem_shmem_helper.c        |  17 ++-
+ drivers/gpu/drm/drm_prime.c                   |  14 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c   |  13 +-
+ drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c    |  13 +-
+ .../drm/i915/gem/selftests/i915_gem_dmabuf.c  |  18 ++-
+ drivers/gpu/drm/tegra/gem.c                   |  23 ++--
+ .../common/videobuf2/videobuf2-dma-contig.c   |  17 ++-
+ .../media/common/videobuf2/videobuf2-dma-sg.c |  19 ++-
+ .../common/videobuf2/videobuf2-vmalloc.c      |  21 ++-
+ include/drm/drm_prime.h                       |   5 +-
+ include/linux/dma-buf-map.h                   | 126 ++++++++++++++++++
+ include/linux/dma-buf.h                       |  11 +-
+ 15 files changed, 274 insertions(+), 82 deletions(-)
+ create mode 100644 include/linux/dma-buf-map.h
 
+--
+2.28.0
 
---zniUnHMaoWytGRm2jwIkKjV0oPt2fa9bx--
-
---MeVdSsKebthdc7DC8hvgqWlLwpjnz0H9f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9fhs0UHHR6aW1tZXJt
-YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPJNAgAlfJhPTx8SHwyCGcF7SoXCxqFUag5
-/hXG2aWBOQj0PGNIWjEqH/FwrQApUbBmpbBWXncgOJjyevY1bY3RXSi+ibAW263g
-1lb0Cf5fR55oudCzfJIiQhM5nXHpnbDTdEq1kVtVf4mD3cn1eyPWtOgpXIklFs+w
-YSnklFEtZsXQnHs9whrVXf1UPUoecKtVRfIflZBfGttuRdODIknW+9iFA/+QYggh
-4WsKIHEpME3IpnfYOqS6yZ3oqcKeROalr2HZ6EUy/NaixshxCZxnLQVMNWx7saKP
-aygn2TEK3CwcBwiYGlPcx3/VFCRdviSNuxDmkZ5CV3ceT5gUjE0suBVVaA==
-=QxSN
------END PGP SIGNATURE-----
-
---MeVdSsKebthdc7DC8hvgqWlLwpjnz0H9f--
