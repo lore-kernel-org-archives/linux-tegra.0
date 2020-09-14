@@ -1,141 +1,171 @@
-Return-Path: <SRS0=sMWC=CW=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=22zn=CX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933B3C43461
-	for <linux-tegra@archiver.kernel.org>; Sun, 13 Sep 2020 18:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8F7C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 06:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF4D2098B
-	for <linux-tegra@archiver.kernel.org>; Sun, 13 Sep 2020 18:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACE75207EA
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 06:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNKBG4qd"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dDM5dzCM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbgIMShU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 13 Sep 2020 14:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbgIMShL (ORCPT
+        id S1726123AbgING5C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Sep 2020 02:57:02 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:18990 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbgING45 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 13 Sep 2020 14:37:11 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D55FC06174A
-        for <linux-tegra@vger.kernel.org>; Sun, 13 Sep 2020 11:37:10 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id z19so11045291lfr.4
-        for <linux-tegra@vger.kernel.org>; Sun, 13 Sep 2020 11:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6JrXgrGcuM/lh+9ydycjop/vKpXIRF8pxi41i/Mqj7w=;
-        b=MNKBG4qd8al4yLawWk9ma3/zvVcEMdhlM1BlJzg220J/cBrV+EIgrUHb065fBXSQMp
-         ZE6pX5R+Nxm9bLVMYSpU0hM0ZdYl0qXvn3SGMaL8i9/O1x3xqaREWiI/oBgBSYRTaDZZ
-         Oe38mbEVcNU0/13hIeERDjW6lBJVyHeBLiRrTmPNGA9jSbk0hdyBbsG+TmmTUkt6NnMM
-         2P+Cy7Q5rhvIF75IUs32prVImc7YzefKZTG3oO96rkxO9vRrgCLK+GnlbcsI1B8Xc87P
-         V1Ho08Y/RYeqaxkUQ7kwdWLqX0EeikremwLfg3AqAcDsM8hQnKArh72mhtJYY4w4OxaH
-         SM7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6JrXgrGcuM/lh+9ydycjop/vKpXIRF8pxi41i/Mqj7w=;
-        b=uk+5Lf0LfAqoHwt4gIaIAPFiVv25kU4kp/gXjntj++TWWVkBqIf7CgArNqW5Anbqhu
-         F7KWn7D/hb3ByRKtS0wwV4hkB+5PLXU9Li8XPc1xvYWH2Q9ODQoe2V9cs0lohlkZwt15
-         /TS9QirY1NNooyOtmmrVg6KmuN9o56QDc66koyY2JN1sAn1JE7rzX58LpBi1gQYeAQ0i
-         TUZNgvKobaEcEbDQHJg8pTlwtHl7qeMNI3gvk55PolWFd8cJihmW+E9C7Fym2JMgU4wJ
-         QtSkme8QbZIV+BtKiB8+2CzvVRZ6RWttvFehmhLGkn8L8eDw5EgN8/uDhlfPauadoFuW
-         LASA==
-X-Gm-Message-State: AOAM532QEK1gqLJTcrH64qWbJjiBHOpvidMvnWLH1xpbQH2/cdzy5WrX
-        JUB1NHJo0Dpc6fEp3R9dFtw=
-X-Google-Smtp-Source: ABdhPJxs164zhRlgTtqXXKJS7zgNaFJvvgayhPykK1yIaRI6ZEZNIDIxoK3B7+n43mCQz/US8XyBTQ==
-X-Received: by 2002:a19:a406:: with SMTP id q6mr3452621lfc.556.1600022224641;
-        Sun, 13 Sep 2020 11:37:04 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id y4sm3322747ljk.61.2020.09.13.11.37.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Sep 2020 11:37:03 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 10/17] WIP: gpu: host1x: Add no-recovery mode
-To:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-11-mperttunen@nvidia.com>
- <7d7a29e8-3151-12ea-da66-d8a479edda84@gmail.com>
- <c2498218-e107-4df4-41ce-c60da65ceaf7@kapsi.fi>
- <07f933b3-10d9-0318-e2f3-6dfd5b4903ac@gmail.com>
- <28f18a23-b588-004d-4945-91b7a593607a@kapsi.fi>
- <3f80aff2-23ce-9b1f-d242-e46e974fbeed@gmail.com>
- <56c956a3-af14-559b-8022-2228a65e82a6@kapsi.fi>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fe626343-6f10-96bd-171c-7876917d570b@gmail.com>
-Date:   Sun, 13 Sep 2020 21:37:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 14 Sep 2020 02:56:57 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200914065655epoutp01384eab809fc657a30cd1d71828e90ec5~0lBv8LT9U2912029120epoutp01C
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Sep 2020 06:56:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200914065655epoutp01384eab809fc657a30cd1d71828e90ec5~0lBv8LT9U2912029120epoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600066615;
+        bh=C4XSZmER5MiWAkWbGr3v851kfh36ZagoIZlAAYNfoi8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=dDM5dzCM/tU6Z7wFrOzwgje3QdEWHiwQLjix4eE1MJwZmVlj9/jhBKiOqpL/lmrX2
+         sp8Ao1JvB5GblylEhnHmlSSJ9iVwEo1L9IPslz/8qpFh89wcOAGYh+gu+xeuWkKvZn
+         Y2/weDxpNbcb7IWmaaZTEFpDih59oC8MzrG99Oes=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200914065654epcas1p203ecdacb14b31928006da737a9880b32~0lBvWwKM40577705777epcas1p2g;
+        Mon, 14 Sep 2020 06:56:54 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Bqcbm37TRzMqYkl; Mon, 14 Sep
+        2020 06:56:52 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D1.F3.20696.3341F5F5; Mon, 14 Sep 2020 15:56:52 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200914065651epcas1p22e28d708d21874eca2cb84db41c976ac~0lBsKuUlt0084800848epcas1p2H;
+        Mon, 14 Sep 2020 06:56:51 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200914065651epsmtrp115b6fc19ae0a4c2c4d19ce1d9cfcb7c5~0lBsJSWzS2839628396epsmtrp1g;
+        Mon, 14 Sep 2020 06:56:51 +0000 (GMT)
+X-AuditID: b6c32a39-47198a80000050d8-54-5f5f14331f17
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CC.B4.08303.3341F5F5; Mon, 14 Sep 2020 15:56:51 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200914065651epsmtip2f48e276ad838e02f9bba22738298e477~0lBr2HCLy2271522715epsmtip28;
+        Mon, 14 Sep 2020 06:56:51 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+Date:   Mon, 14 Sep 2020 16:09:02 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <56c956a3-af14-559b-8022-2228a65e82a6@kapsi.fi>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200908072557.GC294938@mwanda>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmga6JSHy8wfWbjBav/01nsVj98TGj
+        RcusRSwWW29JW5xtesNu8bn3CKNF55dZbBa3G1ewWfzcNY/FgdNj56y77B69ze/YPD4+vcXi
+        0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkou
+        PgG6bpk5QPcoKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgosC/SKE3OLS/PS9ZLz
+        c60MDQyMTIEKE7Izju78w1gwg6tiwYzvjA2MKzi6GDk5JARMJG4susDSxcjFISSwg1Hi5db9
+        TBDOJ0aJO5s2QjmfGSWm/5jPBNMy5ddhZojELkaJH+cmsUE47xklbr44CVYlLOAt8fvBL9Yu
+        Rg4OEYEgiYZfgiA1zALtTBLT29+xgtSwCWhJ7H9xgw3E5hdQlLj64zEjiM0rYCfx99o0ZhCb
+        RUBVYtuDT2BxUYEwiZPbWqBqBCVOznzCAmJzCuhKzN9+gh3EZhYQl7j1BOJSZgF5ie1v54Bd
+        KiGwlEPi98H97BAvuEg8uvED6h1hiVfHt0DFpSRe9rdB2dUSK08eYYNo7mCU2LL/AitEwlhi
+        /9LJTCCfMQtoSqzfpQ8RVpTY+XsuI8RiPol3X3vAnpcQ4JXoaBOCKFGWuPzgLtRaSYnF7Z1s
+        ExiVZiF5ZxaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQtMkaN7EyM4sWpZ7mCc/vaD3iFGJg7G
+        Q4wSHMxKIryuKbHxQrwpiZVVqUX58UWlOanFhxhNgQE8kVlKNDkfmNrzSuINTY2MjY0tTAzN
+        TA0NlcR5H95SiBcSSE8sSc1OTS1ILYLpY+LglGpgYt6kfnd2QOOp+J1bZM4rLFm44GNMRDAP
+        0+yVGj/dzewOvf4lOX/b1akPMysmWQROlwnysuXcI/JE+OAkU93FQu4pv3RvstRuW/5sd9OP
+        ffWTYpldMyzsXTeKzNq31/iR5LXNy1RX5dseXK/C1vC6ds7HrIsf2I5dW3mhIY/3u1XAhw9a
+        7+9ONkvcujJUVyx1wdvgkLU/HDMmZ3KsE3YW+f0lstWilkOtVZr3gnC/8fe4tNxXB15fzhK6
+        t4Bvp/0r6+lbVBcJeEfd8kn/cPlM8kWjaDYb7S4p519Ri6blLHz+TEvzzvYyXY0zVZ5Zq47w
+        aGxfsVTnbcXHpSdP8XkslFTdvHpTxbMc0wuuUQWup5RYijMSDbWYi4oTAe+wp741BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJXtdYJD7e4PgXMYvX/6azWKz++JjR
+        omXWIhaLrbekLc42vWG3+Nx7hNGi88ssNovbjSvYLH7umsfiwOmxc9Zddo/e5ndsHh+f3mLx
+        6NuyitHj8ya5ANYoLpuU1JzMstQifbsEroyjO/8wFszgqlgw4ztjA+MKji5GTg4JAROJKb8O
+        M3cxcnEICexglHi49SwrREJSYtrFo0AJDiBbWOLw4WKImreMEktWvQKrERbwlvj94BeYLSIQ
+        JPHg2RJmEJtZoJNJ4vgZO4iGBkaJNxuawBJsAloS+1/cYAOx+QUUJa7+eMwIYvMK2En8vTYN
+        rIZFQFVi24NPYHFRgTCJnUseM0HUCEqcnPmEBcTmFNCVmL/9BDvEMnWJP/MuQS0Wl7j1ZD4T
+        hC0vsf3tHOYJjMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn
+        525iBEeYltYOxj2rPugdYmTiYDzEKMHBrCTC65oSGy/Em5JYWZValB9fVJqTWnyIUZqDRUmc
+        9+ushXFCAumJJanZqakFqUUwWSYOTqkGJu2kOQ6ZiZeiA9xUDsskLmN6336Tx7s19WhrZc/H
+        lxvSZm8N+/Ew67PQ3n1/hPU217SlH8njehEXe7HA6dMFl9P3BFInXrGM5JO7wjJrwublb3sK
+        OULep0TvFNu0PebqUmbHyrLpbjEf2nLnt8zoYZflTM3NKp/7Oz06tcJb+Ijrxl2MK8taKx+H
+        vzlVd3nP7/2dE7+nPuWd53dTiE3pWU9EgIo2d6rbqeln17Bsuf1sxxufltcy/J/vl3Sc3RT0
+        4cmlXn2/Pa+Oq7z5+VN6+o61r87P/p8V6hqUGtdyzlxx9q4m50Ut/C1Ldh4vPfueeVqYOvOE
+        BfdlXoY8/9X19YXcuRU7ep59nXKbN2+XNIcSS3FGoqEWc1FxIgB8r3SxHwMAAA==
+X-CMS-MailID: 20200914065651epcas1p22e28d708d21874eca2cb84db41c976ac
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+        <20200908072557.GC294938@mwanda>
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.09.2020 12:51, Mikko Perttunen пишет:
-...
->> All waits that are internal to a job should only wait for relative sync
->> point increments. >
->> In the grate-kernel every job uses unique-and-clean sync point (which is
->> also internal to the kernel driver) and a relative wait [1] is used for
->> the job's internal sync point increments [2][3][4], and thus, kernel
->> driver simply jumps over a hung job by updating DMAGET to point at the
->> start of a next job.
+Hi,
+
+On 9/8/20 4:25 PM, Dan Carpenter wrote:
+> This error path needs to call clk_disable_unprepare().
 > 
-> Issues I have with this approach:
+> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> * Both this and my approach have the requirement for userspace, that if
-> a job hangs, the userspace must ensure all external waiters have timed
-> out / been stopped before the syncpoint can be freed, as if the
-> syncpoint gets reused before then, false waiter completions can happen.
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index e94a27804c20..dedd39de7367 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>  	if (rate < 0) {
+>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+> -		return rate;
+> +		err = rate;
+> +		goto disable_clk;
+>  	}
+>  
+>  	tegra->max_freq = rate / KHZ;
+> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>  
+>  	reset_control_reset(tegra->reset);
+> +disable_clk:
+>  	clk_disable_unprepare(tegra->clock);
+
+Is it doesn't need to reset with reset_contrl_reset()?
+
+>  
+>  	return err;
 > 
-> So freeing the syncpoint must be exposed to userspace. The kernel cannot
-> do this since there may be waiters that the kernel is not aware of. My
-> proposal only has one syncpoint, which I feel makes this part simpler, too.
-> 
-> * I believe this proposal requires allocating a syncpoint for each
-> externally visible syncpoint increment that the job does. This can use
-> up quite a few syncpoints, and it makes syncpoints a dynamically
-> allocated resource with unbounded allocation latency. This is a problem
-> for safety-related systems.
 
-Maybe we could have a special type of a "shared" sync point that is
-allocated per-hardware engine? Then shared SP won't be a scarce resource
-and job won't depend on it. The kernel or userspace driver may take care
-of recovering the counter value of a shared SP when job hangs or do
-whatever else is needed without affecting the job's sync point.
 
-Primarily I'm not feeling very happy about retaining the job's sync
-point recovery code because it was broken the last time I touched it and
-grate-kernel works fine without it.
-
-> * If a job fails on a "virtual channel" (userctx), I think it's a
-> reasonable expectation that further jobs on that "virtual channel" will
-> not execute, and I think implementing that model is simpler than doing
-> recovery.
-
-Couldn't jobs just use explicit fencing? Then a second job won't be
-executed if first job hangs and explicit dependency is expressed. I'm
-not sure that concept of a "virtual channel" is applicable to drm-scheduler.
-
-I'll need to see a full-featured driver implementation and the test
-cases that cover all the problems that you're worried about because I'm
-not aware about all the T124+ needs and seeing code should help. Maybe
-in the end yours approach will be the best, but for now it's not clear :)
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
