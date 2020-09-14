@@ -2,49 +2,73 @@ Return-Path: <SRS0=22zn=CX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72677C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 11:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACF5C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48569216C4
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 11:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA8A220E65
+	for <linux-tegra@archiver.kernel.org>; Mon, 14 Sep 2020 13:38:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vFq1f6SK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726012AbgINL0u (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Sep 2020 07:26:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43012 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbgINLZ1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Sep 2020 07:25:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0FE30B11E;
-        Mon, 14 Sep 2020 11:25:41 +0000 (UTC)
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     sumit.semwal@linaro.org, christian.koenig@amd.com, daniel@ffwll.ch,
-        airlied@linux.ie, sam@ravnborg.org, mark.cave-ayland@ilande.co.uk,
-        kraxel@redhat.com, davem@davemloft.net,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
-        christian.gmeiner@gmail.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, pawel@osciak.com,
-        m.szyprowski@samsung.com, kyungmin.park@samsung.com,
-        tfiga@chromium.org, mchehab@kernel.org, chris@chris-wilson.co.uk,
-        matthew.auld@intel.com, thomas.hellstrom@intel.com
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, etnaviv@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        sparclinux@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 1/3] dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr
-Date:   Mon, 14 Sep 2020 13:25:19 +0200
-Message-Id: <20200914112521.1327-2-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200914112521.1327-1-tzimmermann@suse.de>
-References: <20200914112521.1327-1-tzimmermann@suse.de>
+        id S1726477AbgINNil (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 14 Sep 2020 09:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbgINNhw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 14 Sep 2020 09:37:52 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B3CC06178C
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Sep 2020 06:37:51 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id j2so18787097wrx.7
+        for <linux-tegra@vger.kernel.org>; Mon, 14 Sep 2020 06:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JiAbE/SJFaiXXWha+UZiz5ngLuS7vuLVdaMJTivRPyQ=;
+        b=vFq1f6SKOxtpuKxNma+7ZA9kDXv2zGVkGU9v9NUmImjiKTQeM/2i3e0oTmeVt/DY6w
+         tgv1Cx56ozRP1TV9Gzlxb12Mpwf6bVRCXJLQQ3zah/nXpAILn+H/HklrAZtRC1zNOSXT
+         hZcDsubA6BWg8/Oef67y/vmHzS3XmbgaY7QSBMu01oBGi5jH5l8gpDkRwETb4VTVXjha
+         q2UlYokEpJtwGYhuKm3a6uqsnwRNvKcsTpr24JoHW8MYjWbnMHicviAIBXfdWJpTu9ZR
+         5jmJs3VbdGAmNmGqYTMsr4eJhd4Is+6XVh4O9Ab3gDtftBYU7SKDZol7RNTOsA9e9AT5
+         kqOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JiAbE/SJFaiXXWha+UZiz5ngLuS7vuLVdaMJTivRPyQ=;
+        b=BONTVJaCXB0d0DKYN5uMuBR6otZXYkBk1cujhF0GMLZgIsFyKX1x/CdZx6NEShgOOJ
+         JLTu++Bry1/HlObDBnxweLa8hNB5W0oI1KWIZnAovwl6rYr6pnrUyJNOpKCt/OOhCOED
+         osw/feG8p9uLvnCRR5oJ3WURK6QprLw+zbL0wN8+b7a/1tX1oJphCD3See9jKxZVHipr
+         oCX7ZCQd5kW2jpao2XqmKWEktbPsb3GohEadXx0JoCLm4tmHQ2lopuYMO+PquktSPbxU
+         /ihXE9oQsqwc/5D4mwS6jJCuhsGYwAJv8W5CaS5QXn9DbVvxSnJ2CGRbWJCuuY9Belkl
+         h/jg==
+X-Gm-Message-State: AOAM53288ufkYp9VQCDdmq6xPYWYtGzNWkEZUm4nBnougvSWPb0dUKYm
+        6i5/GWD+JweA/LyMGsqsjSQ=
+X-Google-Smtp-Source: ABdhPJw87PMqYf884sc9nCWQvnZpNiQyODT4J/UycBGllM2p5oMrTfGriEh/cMu4n58JpyTmFfW65w==
+X-Received: by 2002:adf:f3c6:: with SMTP id g6mr17355339wrp.340.1600090669198;
+        Mon, 14 Sep 2020 06:37:49 -0700 (PDT)
+Received: from arrakis.kwizart.net (lfbn-nic-1-212-171.w2-15.abo.wanadoo.fr. [2.15.59.171])
+        by smtp.gmail.com with ESMTPSA id a11sm18532488wmm.18.2020.09.14.06.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2020 06:37:48 -0700 (PDT)
+From:   Nicolas Chauvet <kwizart@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>
+Subject: [PATCH 3/4] arm64: tegra: Add missing hot temperatures to tegra132 thermal-zones
+Date:   Mon, 14 Sep 2020 15:37:38 +0200
+Message-Id: <20200914133739.60020-4-kwizart@gmail.com>
+X-Mailer: git-send-email 2.25.4
+In-Reply-To: <20200914133739.60020-1-kwizart@gmail.com>
+References: <20200914133739.60020-1-kwizart@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
@@ -52,208 +76,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The new type struct dma_buf_map represents a mapping of dma-buf memory
-into kernel space. It contains a flag, is_iomem, that signals users to
-access the mapped memory with I/O operations instead of regular loads
-and stores.
+According to dmesg, thermal-zones for mem and cpu are missing hot
+temperatures properties.
 
-It was assumed that DMA buffer memory can be accessed with regular load
-and store operations. Some architectures, such as sparc64, require the
-use of I/O operations to access dma-map buffers that are located in I/O
-memory. Providing struct dma_buf_map allows drivers to implement this.
-This was specifically a problem when refreshing the grahpics framebuffer
-on such systems. [Link 1]
+  throttrip: pll: missing hot temperature
+...
+  throttrip: mem: missing hot temperature
+...
 
-As the first step, struct dma_buf stores an instance of struct dma_buf_map
-internally. Afterwards, dma-buf's vmap and vunmap interfaces are be
-converted. Finally, affected drivers can be fixed.
+Adding them will clear the messages.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Link: https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg.org/
+Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
 ---
- Documentation/driver-api/dma-buf.rst |  3 +
- drivers/dma-buf/dma-buf.c            | 14 ++---
- include/linux/dma-buf-map.h          | 87 ++++++++++++++++++++++++++++
- include/linux/dma-buf.h              |  3 +-
- 4 files changed, 99 insertions(+), 8 deletions(-)
- create mode 100644 include/linux/dma-buf-map.h
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/driver-api/dma-buf.rst b/Documentation/driver-api/dma-buf.rst
-index 13ea0cc0a3fa..3244c600a9a1 100644
---- a/Documentation/driver-api/dma-buf.rst
-+++ b/Documentation/driver-api/dma-buf.rst
-@@ -115,6 +115,9 @@ Kernel Functions and Structures Reference
- .. kernel-doc:: include/linux/dma-buf.h
-    :internal:
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index e40281510c0c..cd913e59ba26 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -925,6 +925,11 @@ mem_shutdown_trip {
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
++				mem_throttle_trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
+ 			};
  
-+.. kernel-doc:: include/linux/dma-buf-map.h
-+   :internal:
-+
- Reservation Objects
- -------------------
+ 			cooling-maps {
+@@ -975,6 +980,11 @@ pllx_shutdown_trip {
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
++				pllx_throttle_trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
+ 			};
  
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 58564d82a3a2..5e849ca241a0 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -1207,12 +1207,12 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
- 	mutex_lock(&dmabuf->lock);
- 	if (dmabuf->vmapping_counter) {
- 		dmabuf->vmapping_counter++;
--		BUG_ON(!dmabuf->vmap_ptr);
--		ptr = dmabuf->vmap_ptr;
-+		BUG_ON(dma_buf_map_is_null(&dmabuf->vmap_ptr));
-+		ptr = dmabuf->vmap_ptr.vaddr;
- 		goto out_unlock;
- 	}
- 
--	BUG_ON(dmabuf->vmap_ptr);
-+	BUG_ON(dma_buf_map_is_set(&dmabuf->vmap_ptr));
- 
- 	ptr = dmabuf->ops->vmap(dmabuf);
- 	if (WARN_ON_ONCE(IS_ERR(ptr)))
-@@ -1220,7 +1220,7 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
- 	if (!ptr)
- 		goto out_unlock;
- 
--	dmabuf->vmap_ptr = ptr;
-+	dmabuf->vmap_ptr.vaddr = ptr;
- 	dmabuf->vmapping_counter = 1;
- 
- out_unlock:
-@@ -1239,15 +1239,15 @@ void dma_buf_vunmap(struct dma_buf *dmabuf, void *vaddr)
- 	if (WARN_ON(!dmabuf))
- 		return;
- 
--	BUG_ON(!dmabuf->vmap_ptr);
-+	BUG_ON(dma_buf_map_is_null(&dmabuf->vmap_ptr));
- 	BUG_ON(dmabuf->vmapping_counter == 0);
--	BUG_ON(dmabuf->vmap_ptr != vaddr);
-+	BUG_ON(!dma_buf_map_is_vaddr(&dmabuf->vmap_ptr, vaddr));
- 
- 	mutex_lock(&dmabuf->lock);
- 	if (--dmabuf->vmapping_counter == 0) {
- 		if (dmabuf->ops->vunmap)
- 			dmabuf->ops->vunmap(dmabuf, vaddr);
--		dmabuf->vmap_ptr = NULL;
-+		dma_buf_map_clear(&dmabuf->vmap_ptr);
- 	}
- 	mutex_unlock(&dmabuf->lock);
- }
-diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
-new file mode 100644
-index 000000000000..d4b1bb3cc4b0
---- /dev/null
-+++ b/include/linux/dma-buf-map.h
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Pointer to dma-buf-mapped memory, plus helpers.
-+ */
-+
-+#ifndef __DMA_BUF_MAP_H__
-+#define __DMA_BUF_MAP_H__
-+
-+#include <linux/io.h>
-+
-+/**
-+ * struct dma_buf_map - Pointer to vmap'ed dma-buf memory.
-+ * @vaddr_iomem:	The buffer's address if in I/O memory
-+ * @vaddr:		The buffer's address if in system memory
-+ * @is_iomem:		True if the dma-buf memory is located in I/O
-+ *			memory, or false otherwise.
-+ *
-+ * Calling dma-buf's vmap operation returns a pointer to the buffer.
-+ * Depending on the location of the buffer, users may have to access it
-+ * with I/O operations or memory load/store operations. struct dma_buf_map
-+ * stores the buffer address and a flag that signals the required access.
-+ */
-+struct dma_buf_map {
-+	union {
-+		void __iomem *vaddr_iomem;
-+		void *vaddr;
-+	};
-+	bool is_iomem;
-+};
-+
-+/* API transition helper */
-+static inline bool dma_buf_map_is_vaddr(const struct dma_buf_map *map, const void *vaddr)
-+{
-+	return !map->is_iomem && (map->vaddr == vaddr);
-+}
-+
-+/**
-+ * dma_buf_map_is_null - Tests for a dma-buf mapping to be NULL
-+ * @map:	The dma-buf mapping structure
-+ *
-+ * Depending on the state of struct dma_buf_map.is_iomem, tests if the
-+ * mapping is NULL.
-+ *
-+ * Returns:
-+ * True if the mapping is NULL, or false otherwise.
-+ */
-+static inline bool dma_buf_map_is_null(const struct dma_buf_map *map)
-+{
-+	if (map->is_iomem)
-+		return map->vaddr_iomem == NULL;
-+	return map->vaddr == NULL;
-+}
-+
-+/**
-+ * dma_buf_map_is_set - Tests is the dma-buf mapping has been set
-+ * @map:	The dma-buf mapping structure
-+ *
-+ * Depending on the state of struct dma_buf_map.is_iomem, tests if the
-+ * mapping has been set.
-+ *
-+ * Returns:
-+ * True if the mapping is been set, or false otherwise.
-+ */
-+static inline bool dma_buf_map_is_set(const struct dma_buf_map *map)
-+{
-+	return !dma_buf_map_is_null(map);
-+}
-+
-+/**
-+ * dma_buf_map_clear - Clears a dma-buf mapping structure
-+ * @map:	The dma-buf mapping structure
-+ *
-+ * Clears all fields to zero; including struct dma_buf_map.is_iomem. So
-+ * mapping structures that were set to point to I/O memory are reset for
-+ * system memory. Pointers are cleared to NULL. This is the default.
-+ */
-+static inline void dma_buf_map_clear(struct dma_buf_map *map)
-+{
-+	if (map->is_iomem) {
-+		map->vaddr_iomem = NULL;
-+		map->is_iomem = false;
-+	} else {
-+		map->vaddr = NULL;
-+	}
-+}
-+
-+#endif /* __DMA_BUF_MAP_H__ */
-diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-index 957b398d30e5..fcc2ddfb6d18 100644
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@ -13,6 +13,7 @@
- #ifndef __DMA_BUF_H__
- #define __DMA_BUF_H__
- 
-+#include <linux/dma-buf-map.h>
- #include <linux/file.h>
- #include <linux/err.h>
- #include <linux/scatterlist.h>
-@@ -309,7 +310,7 @@ struct dma_buf {
- 	const struct dma_buf_ops *ops;
- 	struct mutex lock;
- 	unsigned vmapping_counter;
--	void *vmap_ptr;
-+	struct dma_buf_map vmap_ptr;
- 	const char *exp_name;
- 	const char *name;
- 	spinlock_t name_lock;
+ 			cooling-maps {
 -- 
-2.28.0
+2.25.4
 
