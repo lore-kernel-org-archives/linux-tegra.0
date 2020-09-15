@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E356BC43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA513C35257
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAF91208E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77B3620770
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgIOXBg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36816 "EHLO mx2.suse.de"
+        id S1727380AbgIOXBh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 19:01:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34064 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbgIOPB0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:01:26 -0400
+        id S1727375AbgIOPAZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 11:00:25 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3CFA9B299;
-        Tue, 15 Sep 2020 15:00:28 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id B6C0FAF48;
+        Tue, 15 Sep 2020 15:00:17 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -57,9 +57,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 13/21] drm/rockchip: Convert to drm_gem_object_funcs
-Date:   Tue, 15 Sep 2020 16:59:50 +0200
-Message-Id: <20200915145958.19993-14-tzimmermann@suse.de>
+Subject: [PATCH v2 01/21] drm/amdgpu: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:38 +0200
+Message-Id: <20200915145958.19993-2-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
@@ -72,63 +72,137 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in rockchip. The only exception is gem_prime_mmap,
+per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
 which is non-trivial to convert.
+
+v2:
+	* move object-function instance to amdgpu_gem.c (Christian)
+	* set callbacks in amdgpu_gem_object_create() (Christian)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  5 -----
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 10 ++++++++++
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  6 ------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    | 23 +++++++++++++++++-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h    |  5 -----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  1 +
+ 4 files changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 0f3eb392fe39..b7654f5e4225 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -212,15 +212,10 @@ static const struct file_operations rockchip_drm_driver_fops = {
- static struct drm_driver rockchip_drm_driver = {
- 	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
- 	.lastclose		= drm_fb_helper_lastclose,
--	.gem_vm_ops		= &drm_gem_cma_vm_ops,
--	.gem_free_object_unlocked = rockchip_gem_free_object,
- 	.dumb_create		= rockchip_gem_dumb_create,
- 	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
--	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
--	.gem_prime_vmap		= rockchip_gem_prime_vmap,
--	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
- 	.gem_prime_mmap		= rockchip_gem_mmap_buf,
- 	.fops			= &rockchip_drm_driver_fops,
- 	.name	= DRIVER_NAME,
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index 0055d86576f7..bddc7d99efe3 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -296,6 +296,14 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
- 	kfree(rk_obj);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 6edde2b9e402..840ca8f9c1e1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1505,19 +1505,13 @@ static struct drm_driver kms_driver = {
+ 	.lastclose = amdgpu_driver_lastclose_kms,
+ 	.irq_handler = amdgpu_irq_handler,
+ 	.ioctls = amdgpu_ioctls_kms,
+-	.gem_free_object_unlocked = amdgpu_gem_object_free,
+-	.gem_open_object = amdgpu_gem_object_open,
+-	.gem_close_object = amdgpu_gem_object_close,
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = amdgpu_gem_prime_export,
+ 	.gem_prime_import = amdgpu_gem_prime_import,
+-	.gem_prime_vmap = amdgpu_gem_prime_vmap,
+-	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
+ 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
+ 
+ 	.name = DRIVER_NAME,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index aa7f230c71bf..aeecd5dc3ce4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -36,9 +36,12 @@
+ 
+ #include "amdgpu.h"
+ #include "amdgpu_display.h"
++#include "amdgpu_dma_buf.h"
+ #include "amdgpu_xgmi.h"
+ 
+-void amdgpu_gem_object_free(struct drm_gem_object *gobj)
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs;
++
++static void amdgpu_gem_object_free(struct drm_gem_object *gobj)
+ {
+ 	struct amdgpu_bo *robj = gem_to_amdgpu_bo(gobj);
+ 
+@@ -87,6 +90,7 @@ int amdgpu_gem_object_create(struct amdgpu_device *adev, unsigned long size,
+ 		return r;
+ 	}
+ 	*obj = &bo->tbo.base;
++	(*obj)->funcs = &amdgpu_gem_object_funcs;
+ 
+ 	return 0;
+ }
+@@ -119,8 +123,8 @@ void amdgpu_gem_force_release(struct amdgpu_device *adev)
+  * Call from drm_gem_handle_create which appear in both new and open ioctl
+  * case.
+  */
+-int amdgpu_gem_object_open(struct drm_gem_object *obj,
+-			   struct drm_file *file_priv)
++static int amdgpu_gem_object_open(struct drm_gem_object *obj,
++				  struct drm_file *file_priv)
+ {
+ 	struct amdgpu_bo *abo = gem_to_amdgpu_bo(obj);
+ 	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
+@@ -152,8 +156,8 @@ int amdgpu_gem_object_open(struct drm_gem_object *obj,
+ 	return 0;
  }
  
-+static const struct drm_gem_object_funcs rockchip_gem_object_funcs = {
-+	.free = rockchip_gem_free_object,
-+	.get_sg_table = rockchip_gem_prime_get_sg_table,
-+	.vmap = rockchip_gem_prime_vmap,
-+	.vunmap	= rockchip_gem_prime_vunmap,
-+	.vm_ops = &drm_gem_cma_vm_ops,
+-void amdgpu_gem_object_close(struct drm_gem_object *obj,
+-			     struct drm_file *file_priv)
++static void amdgpu_gem_object_close(struct drm_gem_object *obj,
++				    struct drm_file *file_priv)
+ {
+ 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+ 	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
+@@ -211,6 +215,15 @@ void amdgpu_gem_object_close(struct drm_gem_object *obj,
+ 	ttm_eu_backoff_reservation(&ticket, &list);
+ }
+ 
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
++	.free = amdgpu_gem_object_free,
++	.open = amdgpu_gem_object_open,
++	.close = amdgpu_gem_object_close,
++	.export = amdgpu_gem_prime_export,
++	.vmap = amdgpu_gem_prime_vmap,
++	.vunmap = amdgpu_gem_prime_vunmap,
 +};
 +
- static struct rockchip_gem_object *
- 	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
- {
-@@ -310,6 +318,8 @@ static struct rockchip_gem_object *
+ /*
+  * GEM ioctls.
+  */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+index e0f025dd1b14..637bf51dbf06 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+@@ -33,11 +33,6 @@
+ #define AMDGPU_GEM_DOMAIN_MAX		0x3
+ #define gem_to_amdgpu_bo(gobj) container_of((gobj), struct amdgpu_bo, tbo.base)
  
- 	obj = &rk_obj->base;
+-void amdgpu_gem_object_free(struct drm_gem_object *obj);
+-int amdgpu_gem_object_open(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-void amdgpu_gem_object_close(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+ unsigned long amdgpu_gem_timeout(uint64_t timeout_ns);
  
-+	obj->funcs = &rockchip_gem_object_funcs;
+ /*
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index ac043baac05d..c4e82a8fa53f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -561,6 +561,7 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 	bo = kzalloc(sizeof(struct amdgpu_bo), GFP_KERNEL);
+ 	if (bo == NULL)
+ 		return -ENOMEM;
 +
- 	drm_gem_object_init(drm, obj, size);
- 
- 	return rk_obj;
+ 	drm_gem_private_object_init(adev_to_drm(adev), &bo->tbo.base, size);
+ 	INIT_LIST_HEAD(&bo->shadow_list);
+ 	bo->vm_bo = NULL;
 -- 
 2.28.0
 
