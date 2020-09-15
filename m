@@ -2,55 +2,55 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A060C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53539C433E2
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAD9F2074B
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA58220731
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="uvoqfpRx"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="2TKpXBO1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbgIOPI7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 11:08:59 -0400
-Received: from mail-eopbgr680040.outbound.protection.outlook.com ([40.107.68.40]:35716
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        id S1727388AbgIOP1W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 11:27:22 -0400
+Received: from mail-bn8nam12on2088.outbound.protection.outlook.com ([40.107.237.88]:38753
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727388AbgIOPIo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:08:44 -0400
+        id S1727180AbgIOPZu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 11:25:50 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hUcNpo5fzb3JwwK0F942oTWh45NniLMZoGoYfx18U+KII72eKBob3HzhqHRckJbnsYy8IaZHa/n/tWED0Nm2tPGcRSUyQE7djlDrijJC9BoxobLmWxRBhLb1UqmUkhXgy/3WmVQ0jzDH1zrueK3iYPFGBSt8Y1x1wOvroMiCJLU4sYJcdki+ULyq1J2flrqJ7+YbaJkskCZs4mGbmGO/Q3Yx7wag2sg7oosNcSR2kujs3FQZDJl7BMeyaaGRWtCgJQfKCPzYpsEPr7L/HktdQo6ybnE6uNnLhTstHqUsMiK2Kdc+/tbhJzc74j5Ue1GTZ1Jmq6qepExtLp+J7M0kQw==
+ b=TNyu3se6nj5CdwqB2Ba5/f3rzi1dpALcbMnf7q4gC/qnEj7CVxLG0CQvjgBxZJKL0CKLezMPElHJa1EW43BmLYkr7c/XvCsVjIevV8RrVVtwVM7FuMaqw5u02u+OZLw0aNaBR5KDjcQMYtW13NxhoxJ2CXiUJs8jZXapZ2WFa0xOfLWCI2GxhG7bwKGOLIbfewdda24lu0kAwuss1AvVQtwAyiO3ZF+E2naJHzlkdSiIwR23QxY10jotW1pfjxq7R2akBUNZEy26Qm0l0HZG7b1rF/W3DkmppeDdJKQpfOxhba0DnSHf1P3+kM2zx61kZkImkeRwLq/CmE1REHJZpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r5uCNV14Y5+oxuB45JEb7dF0haf6FFXwOrSKO4I5r1M=;
- b=m43WwP43FOvu9Sm0tQVQ5iW4VVHojmBhWFbeASYIh44O0OtThl2Rl93orlBmtBljedDJ/UbZSnzEYL9Bu+CLYUpzVd6QM+KHAgeTtnW36viqcrbYJxTXMmNZ3P3UxvLjVGxYGdkOsTF/go0tEOsTMD5qULgwUgjDoWRvrtd4+QBYmhZNn+LSbz2R31Tiby79R3gp2C+FzMzhNXOHW7lfx6cPH2kvlpRT96fArkDnyLTK0mP/Ae/kxHoN6Q7oCyu6GgD8Noj8ZD9T+YiMFcyMOtT1R1L9QqUFMUd6kWEj6Ex7VuQfp8XhmgXfGKDryVmDbeplzITjUodDuOhKxYZyUg==
+ bh=FN4LXhsMN/CwF8Z3fqwL1YBenN/Iqkt5Gd+NvDDo/s4=;
+ b=RGoUt2FwJ+nPaI6aTs+uwZzDFMXe/QxIEUnYpJSIatpp8plt+FcScZLBn+lnOfq9oXFSNrpVLM7Wc5N8j5VSN+owUwiaaE7EX4hq2Aje8D985hw2u/b/Qz+nMEFq0uAXchKG6YeZKKodY9YSJeVY2FnPPpnYoxxUGA9a5w/tTeVUvdpn6hpgxB1VQvYKKgmf+QReMItq3uQRt6pMH/iBSmgv0o2dyjUlv0Ph1lRKjq5ltymrxfsq5JQamVKlxr8UhK9THey5YjwV6fBGG8EtWUKTnq6MH8cov8E9y9GIr8X+PG3sojxJhfDpjJG5FDEyOwcM3G7Wq18hwlcbdwIAtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r5uCNV14Y5+oxuB45JEb7dF0haf6FFXwOrSKO4I5r1M=;
- b=uvoqfpRxta/vXsJXFE/V6/V+hDRU6w+cjrHsAAQvLpVVSF1WQg+w/qXVONScovvbZFUaP5afM1e9LW8o5aWuXFO1WAut8DzuVEAmOcfWdCc9VEGswDDmdntg0MNUghna7S1e3cJ4EAQ5GjimK+MCcLvIz6JlyYD0//Ap0E7zp7A=
+ bh=FN4LXhsMN/CwF8Z3fqwL1YBenN/Iqkt5Gd+NvDDo/s4=;
+ b=2TKpXBO1kaOmOlL5BbbKKYUwkHs3+SRgzEIHSu2lYIOUwrjgoLsarsaTGHkbA5KRb2TaDe8qsbZJYx82KRslzcZ5g/tlbfLAH8R4TIvvq8IaqFnRcCcL3YFzO8M9MlE7MyacTGaIZ1pZz5Ai2Xl793j+9iolnhRLeUkZrrNq1qs=
 Authentication-Results: lists.xenproject.org; dkim=none (message not signed)
  header.d=none;lists.xenproject.org; dmarc=none action=none
  header.from=amd.com;
 Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by MN2PR12MB4125.namprd12.prod.outlook.com (2603:10b6:208:1d9::9) with
+ by MN2PR12MB3679.namprd12.prod.outlook.com (2603:10b6:208:159::31) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3370.16; Tue, 15 Sep
- 2020 15:08:38 +0000
+ 2020 15:25:41 +0000
 Received: from MN2PR12MB3775.namprd12.prod.outlook.com
  ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
  ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3370.019; Tue, 15 Sep 2020
- 15:08:38 +0000
-Subject: Re: [PATCH v2 12/21] drm/radeon: Introduce GEM object functions
+ 15:25:41 +0000
+Subject: Re: [PATCH v2 00/21] Convert all remaining drivers to GEM object
+ functions
 To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
@@ -84,202 +84,175 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org
 References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-13-tzimmermann@suse.de>
 From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <4b6a97f2-6787-e727-d723-00fa35d6e67a@amd.com>
-Date:   Tue, 15 Sep 2020 17:08:25 +0200
+Message-ID: <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
+Date:   Tue, 15 Sep 2020 17:25:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
-In-Reply-To: <20200915145958.19993-13-tzimmermann@suse.de>
+In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-ClientProxiedBy: AM3PR07CA0079.eurprd07.prod.outlook.com
- (2603:10a6:207:6::13) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
+X-ClientProxiedBy: FRYP281CA0016.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::26)
+ To MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM3PR07CA0079.eurprd07.prod.outlook.com (2603:10a6:207:6::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.5 via Frontend Transport; Tue, 15 Sep 2020 15:08:29 +0000
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by FRYP281CA0016.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.9 via Frontend Transport; Tue, 15 Sep 2020 15:25:32 +0000
 X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b21235c9-3b87-4bbc-3b4a-08d8598938ba
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4125:
+X-MS-Office365-Filtering-Correlation-Id: 1c40dd76-f213-4adf-5db9-08d8598b9a92
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3679:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4125DAC29E711691DA35650B83200@MN2PR12MB4125.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:327;
+X-Microsoft-Antispam-PRVS: <MN2PR12MB367978B9C270066D448D8B2383200@MN2PR12MB3679.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EFwQBSYQJvriXtH4jYw1xxlsZ9NameSbLcnEu4Tuwz81gKQ5atGHV5uSILYOc96fXON7mQoH4at8JPoX+GnjDm8QPRJP03yJagISM+DhjiKXfvsFmFvkvHWAlc7z2EJinH5Uxt9q9CLlRHDHmPHAqCBcXZIFb6gJYBN7ow9ME0el9GwMCdIuyyYT+bkCJs+rucuhVWfdg49KgLeCQ9gdng69kif0zH8k8xfNAp+czYKmeu8qh6q5IxHYvKzo9ZyJYtaN1qk4jJdYTk4MI3VQ8fO+jro6SqyqtjYr+cpuuY7YygGmRD5qY23esd8TikocLkYIwN7JAlX2B9p3YwMuL/9kzfp/cINpajNaD6un4vXhTJXJppMhoFZFFef+uc7whvQm2/dJIRDST54jPfcjA1k6hmacNfoIH5+b+AuBzKdAQ6d0JH/Z6Ow9NbGpzNME
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(39860400002)(366004)(396003)(136003)(1191002)(4326008)(7416002)(7366002)(66574015)(83380400001)(186003)(7406005)(2616005)(36756003)(31686004)(316002)(31696002)(6666004)(8676002)(16526019)(2906002)(6486002)(66476007)(66556008)(478600001)(8936002)(86362001)(52116002)(5660300002)(66946007)(921003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: 8CiufGiqhDTeP4EZXv+6HoHId8NRbG6zzdX81ctFuLi8NnPTkqKLL9u8yl4bd2/H3+XvCnOEmS03wdgzUkBiplMy0brhli9qTxGZ+Mc5MpLJQA943sD6kuYMHVDLLqX+E2m50F2G9zKaQq2ek1xdGoPOb9KLnlsW52poC7mt/cVCVAiHwXyQ2QroxSGBXzHSrOky1guDph6xbQ9VH1eRZ8nMZPWfTPuMrkeRP5LmF98Wl4Kviv65U6JnBY32LOMzwYrBxl7rc1Jnqi+i8aXrS1gyL1bU9aNgfzRxij8wIAluaArGfMqkMt1M8VI/0fTKf2xqOLN+Lbz5Fb1MhihWP8YSM+g/hilI9Suin0rv0VgklFIhyBa2wrzNKSRbFZ1OJGg7xudNvDd9P6dY2BAchmvR8oFXv5oapvdmhs8geYHEFWNrY1Cm8Q/vcrjArReKJ/HW3Tdqs/HhPLX/JMAA5N5mAybUDcviC+I9bcRqtRDqYbSn9l9fNbdZBD1mB/ZLqBgWYG0SCAb4hswC4wRqDK54xotxN1ydpNsvBYWbxPPDVREhZX64ewhRvJWgMH2JhkL+vxyQM86jLyp4UuOvRxywqsFznHRzv1XRPTGYHXjYZODUM4g4Yf2TTI7ZOKG+7b58lIMD0RzBq2/GfpnlJ3S7h0dWCiVsXe+QyCxNO3US3ESqS8mHeGeNMLl7auiGYB545qjIPCIYt534kbVvwg==
+X-Microsoft-Antispam-Message-Info: bq6iy9bdQwcv25HsoU+7zOgpdOsz9268Kepixksd+89M4pAGYvL2U00gir/fXpn79u2mpaOj3Ztv+B9CpTIw9h3qqfj52LnFvapiNawzK6Azx2R/1eHC+PJR0vpWlnnncCMfTyc8yg5UU7MsqoZqSnaNL+dgVFShuhN+VeHZp9URoa7Q5Zvs4yiLRLyB/oQrXmGSgvgDODrkqkUQS3jaQ01ax8JEAxZ2GByQF2q59FZ6kjUIgUHePow2DMmheD5MBZ5KZd6QCHvcOztJGkqzWXc/tNU6f9iIMsFcq31rFcSS35wR3BsAo4aOBbwbO2Ktt3iDKImkfyuvGs9vcGaX3U0HJV4N0NfueRSgOSut6Gndb9gmQ8V9koBc+Iuy3ehQV23I94+wH59fPWkG5DOwDw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(8936002)(2906002)(186003)(86362001)(6486002)(16526019)(31696002)(478600001)(31686004)(36756003)(316002)(83380400001)(6666004)(4326008)(1191002)(66476007)(7406005)(5660300002)(2616005)(66946007)(7416002)(8676002)(66556008)(7366002)(52116002)(921003)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: jgFurlY0qyhWsliElO8ws55Sd+CZT5oiKQ5+9yJlBKp5v33Gqa/MTH091WNx8kNqPD9e7/RpesjeJgk+Pz2x1dWiBhH7GVo1xSJsvqcoLJrCBMZbyWn8NNsHxo/qk+3GlCWKvqQz92Vkg16oiNjVfUGYVMp085ZL2yOoLBJRvBIXvkkmQgzxw5DQi0K0B2sWEKvs8zsrnohmXg/VKGcm9F5eSW+OaPaR4pLYvh37Us1NKPjcXGmiM0oJs7H8rUbVq9vzyvzFN2G1bRHlK4Bajsxa+/vdF3BmZqIfQ+mMSaVwKmvkaq82WgEosVWpLjCRHyn2b+AmuL+RPKhJSxLpojrOt2b6A7rzDtD/1unvl9hiO1LpEOfkEXtRM3W6jVSekgWbYQPU9M6eGR1XBSPvfQ4R19pTPotiryvtvAjnC+Txv5TaJG+M/FLzV085CHI51EBABE72/3WBVcqKeoLeT/GdGRxoS+xEEno1h3NcpdScW3ty04Cb56erF4fxL9E2igpaVBjp7aaLgCx0+Mpa4tCaLPFOEle/bCmX27J/dr2MusMMHnNt56Q8c/f8hiBMH3wnAqIi+KI9YX5sJ6sqx9pIl7F2BocctuWA3YLRufoovVknCmbVgGxoLHG+RAmEMNT/UwsxaBffLhaWeujD2R7cQtRWTyhY+k1Bg21E5e85AbUw4sdJ/MLcO98kXpJf0VGvMuLyHUkcKebRv1vTCg==
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b21235c9-3b87-4bbc-3b4a-08d8598938ba
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c40dd76-f213-4adf-5db9-08d8598b9a92
 X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2020 15:08:37.7991
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2020 15:25:40.7761
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PgQ4GzL7IGSFftfLEaFMbjQc3dl3Z1KJkpOYSKn9HXJ2CJQXGwiCyFzSthRSpEQl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4125
+X-MS-Exchange-CrossTenant-UserPrincipalName: rFw3xZeIByu8QMQSyCPTzQs9gUitereUl70S9WrhOTsl4SQkqE38/cz4fLDGQS3s
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3679
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Added my rb to the amdgpu and radeon patches.
+
+Should we pick those up through the amd branches or do you want to push 
+everything to drm-misc-next?
+
+I think the later since this should result in much merge clash.
+
+Christian.
+
 Am 15.09.20 um 16:59 schrieb Thomas Zimmermann:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in radeon.
+> The GEM and PRIME related callbacks in struct drm_driver are deprecated in
+> favor of GEM object functions in struct drm_gem_object_funcs. This patchset
+> converts the remaining drivers to object functions and removes most of the
+> obsolete interfaces.
+>
+> Patches #1 to #16 and #18 to #19 convert DRM drivers to GEM object functions,
+> one by one. Each patch moves existing callbacks from struct drm_driver to an
+> instance of struct drm_gem_object_funcs, and sets these funcs when the GEM
+> object is initialized. The expection is .gem_prime_mmap. There are different
+> ways of how drivers implement the callback, and moving it to GEM object
+> functions requires a closer review for each.
+>
+> Patch #17 fixes virtgpu to use GEM object functions where possible. The
+> driver recently introduced a function for one of the deprecated callbacks.
+>
+> Patch #20 converts xlnx to CMA helper macros. There's no apparent reason
+> why the driver does the GEM setup on it's own. Using CMA helper macros
+> adds GEM object functions implicitly.
+>
+> With most of the GEM and PRIME moved to GEM object functions, related code
+> in struct drm_driver and in the DRM core/helpers is being removed by patch
+> #21.
+>
+> Further testing is welcome. I tested the drivers for which I have HW
+> available. These are gma500, i915, nouveau, radeon and vc4. The console,
+> Weston and Xorg apparently work with the patches applied.
 >
 > v2:
-> 	* move object-function instance to radeon_gem.c (Christian)
-> 	* set callbacks in radeon_gem_object_create() (Christian)
+> 	* moved code in amdgpu and radeon
+> 	* made several functions static in various drivers
+> 	* updated TODO-list item
+> 	* fix virtgpu
 >
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Reviewed-by: Christian König <christian.koenig@amd.com>
-
-> ---
->   drivers/gpu/drm/radeon/radeon_drv.c | 23 +--------------------
->   drivers/gpu/drm/radeon/radeon_gem.c | 31 +++++++++++++++++++++++++----
->   2 files changed, 28 insertions(+), 26 deletions(-)
+> Thomas Zimmermann (21):
+>    drm/amdgpu: Introduce GEM object functions
+>    drm/armada: Introduce GEM object functions
+>    drm/etnaviv: Introduce GEM object functions
+>    drm/exynos: Introduce GEM object functions
+>    drm/gma500: Introduce GEM object functions
+>    drm/i915: Introduce GEM object functions
+>    drm/mediatek: Introduce GEM object functions
+>    drm/msm: Introduce GEM object funcs
+>    drm/nouveau: Introduce GEM object functions
+>    drm/omapdrm: Introduce GEM object functions
+>    drm/pl111: Introduce GEM object functions
+>    drm/radeon: Introduce GEM object functions
+>    drm/rockchip: Convert to drm_gem_object_funcs
+>    drm/tegra: Introduce GEM object functions
+>    drm/vc4: Introduce GEM object functions
+>    drm/vgem: Introduce GEM object functions
+>    drm/virtgpu: Set PRIME export function in struct drm_gem_object_funcs
+>    drm/vkms: Introduce GEM object functions
+>    drm/xen: Introduce GEM object functions
+>    drm/xlnx: Initialize DRM driver instance with CMA helper macro
+>    drm: Remove obsolete GEM and PRIME callbacks from struct drm_driver
 >
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index 4cd30613fa1d..65061c949aee 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -124,13 +124,6 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev);
->   int radeon_driver_irq_postinstall_kms(struct drm_device *dev);
->   void radeon_driver_irq_uninstall_kms(struct drm_device *dev);
->   irqreturn_t radeon_driver_irq_handler_kms(int irq, void *arg);
-> -void radeon_gem_object_free(struct drm_gem_object *obj);
-> -int radeon_gem_object_open(struct drm_gem_object *obj,
-> -				struct drm_file *file_priv);
-> -void radeon_gem_object_close(struct drm_gem_object *obj,
-> -				struct drm_file *file_priv);
-> -struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
-> -					int flags);
->   extern int radeon_get_crtc_scanoutpos(struct drm_device *dev, unsigned int crtc,
->   				      unsigned int flags, int *vpos, int *hpos,
->   				      ktime_t *stime, ktime_t *etime,
-> @@ -145,14 +138,9 @@ int radeon_mode_dumb_mmap(struct drm_file *filp,
->   int radeon_mode_dumb_create(struct drm_file *file_priv,
->   			    struct drm_device *dev,
->   			    struct drm_mode_create_dumb *args);
-> -struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
->   struct drm_gem_object *radeon_gem_prime_import_sg_table(struct drm_device *dev,
->   							struct dma_buf_attachment *,
->   							struct sg_table *sg);
-> -int radeon_gem_prime_pin(struct drm_gem_object *obj);
-> -void radeon_gem_prime_unpin(struct drm_gem_object *obj);
-> -void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
-> -void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
->   
->   /* atpx handler */
->   #if defined(CONFIG_VGA_SWITCHEROO)
-> @@ -550,7 +538,7 @@ long radeon_drm_ioctl(struct file *filp,
->   	}
->   
->   	ret = drm_ioctl(filp, cmd, arg);
-> -	
-> +
->   	pm_runtime_mark_last_busy(dev->dev);
->   	pm_runtime_put_autosuspend(dev->dev);
->   	return ret;
-> @@ -609,22 +597,13 @@ static struct drm_driver kms_driver = {
->   	.irq_uninstall = radeon_driver_irq_uninstall_kms,
->   	.irq_handler = radeon_driver_irq_handler_kms,
->   	.ioctls = radeon_ioctls_kms,
-> -	.gem_free_object_unlocked = radeon_gem_object_free,
-> -	.gem_open_object = radeon_gem_object_open,
-> -	.gem_close_object = radeon_gem_object_close,
->   	.dumb_create = radeon_mode_dumb_create,
->   	.dumb_map_offset = radeon_mode_dumb_mmap,
->   	.fops = &radeon_driver_kms_fops,
->   
->   	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->   	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_export = radeon_gem_prime_export,
-> -	.gem_prime_pin = radeon_gem_prime_pin,
-> -	.gem_prime_unpin = radeon_gem_prime_unpin,
-> -	.gem_prime_get_sg_table = radeon_gem_prime_get_sg_table,
->   	.gem_prime_import_sg_table = radeon_gem_prime_import_sg_table,
-> -	.gem_prime_vmap = radeon_gem_prime_vmap,
-> -	.gem_prime_vunmap = radeon_gem_prime_vunmap,
->   
->   	.name = DRIVER_NAME,
->   	.desc = DRIVER_DESC,
-> diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
-> index e5c4271e64ed..0ccd7213e41f 100644
-> --- a/drivers/gpu/drm/radeon/radeon_gem.c
-> +++ b/drivers/gpu/drm/radeon/radeon_gem.c
-> @@ -35,7 +35,17 @@
->   
->   #include "radeon.h"
->   
-> -void radeon_gem_object_free(struct drm_gem_object *gobj)
-> +struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
-> +					int flags);
-> +struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
-> +int radeon_gem_prime_pin(struct drm_gem_object *obj);
-> +void radeon_gem_prime_unpin(struct drm_gem_object *obj);
-> +void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
-> +void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
-> +
-> +static const struct drm_gem_object_funcs radeon_gem_object_funcs;
-> +
-> +static void radeon_gem_object_free(struct drm_gem_object *gobj)
->   {
->   	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
->   
-> @@ -85,6 +95,7 @@ int radeon_gem_object_create(struct radeon_device *rdev, unsigned long size,
->   		return r;
->   	}
->   	*obj = &robj->tbo.base;
-> +	(*obj)->funcs = &radeon_gem_object_funcs;
->   	robj->pid = task_pid_nr(current);
->   
->   	mutex_lock(&rdev->gem.mutex);
-> @@ -146,7 +157,7 @@ void radeon_gem_fini(struct radeon_device *rdev)
->    * Call from drm_gem_handle_create which appear in both new and open ioctl
->    * case.
->    */
-> -int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
-> +static int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
->   {
->   	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
->   	struct radeon_device *rdev = rbo->rdev;
-> @@ -176,8 +187,8 @@ int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_pri
->   	return 0;
->   }
->   
-> -void radeon_gem_object_close(struct drm_gem_object *obj,
-> -			     struct drm_file *file_priv)
-> +static void radeon_gem_object_close(struct drm_gem_object *obj,
-> +				    struct drm_file *file_priv)
->   {
->   	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
->   	struct radeon_device *rdev = rbo->rdev;
-> @@ -216,6 +227,18 @@ static int radeon_gem_handle_lockup(struct radeon_device *rdev, int r)
->   	return r;
->   }
->   
-> +static const struct drm_gem_object_funcs radeon_gem_object_funcs = {
-> +	.free = radeon_gem_object_free,
-> +	.open = radeon_gem_object_open,
-> +	.close = radeon_gem_object_close,
-> +	.export = radeon_gem_prime_export,
-> +	.pin = radeon_gem_prime_pin,
-> +	.unpin = radeon_gem_prime_unpin,
-> +	.get_sg_table = radeon_gem_prime_get_sg_table,
-> +	.vmap = radeon_gem_prime_vmap,
-> +	.vunmap = radeon_gem_prime_vunmap,
-> +};
-> +
->   /*
->    * GEM ioctls.
->    */
+>   Documentation/gpu/todo.rst                    |  7 +-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  6 --
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       | 23 +++--
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h       |  5 --
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_object.c    |  1 +
+>   drivers/gpu/drm/armada/armada_drv.c           |  3 -
+>   drivers/gpu/drm/armada/armada_gem.c           | 12 ++-
+>   drivers/gpu/drm/armada/armada_gem.h           |  2 -
+>   drivers/gpu/drm/drm_gem.c                     | 35 ++------
+>   drivers/gpu/drm/drm_gem_cma_helper.c          |  6 +-
+>   drivers/gpu/drm/drm_prime.c                   | 17 ++--
+>   drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 13 ---
+>   drivers/gpu/drm/etnaviv/etnaviv_drv.h         |  1 -
+>   drivers/gpu/drm/etnaviv/etnaviv_gem.c         | 19 ++++-
+>   drivers/gpu/drm/exynos/exynos_drm_drv.c       | 10 ---
+>   drivers/gpu/drm/exynos/exynos_drm_gem.c       | 15 ++++
+>   drivers/gpu/drm/gma500/framebuffer.c          |  2 +
+>   drivers/gpu/drm/gma500/gem.c                  | 18 +++-
+>   drivers/gpu/drm/gma500/gem.h                  |  3 +
+>   drivers/gpu/drm/gma500/psb_drv.c              |  9 --
+>   drivers/gpu/drm/gma500/psb_drv.h              |  2 -
+>   drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++-
+>   drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 -
+>   drivers/gpu/drm/i915/i915_drv.c               |  4 -
+>   .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 -
+>   drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  5 --
+>   drivers/gpu/drm/mediatek/mtk_drm_gem.c        | 11 +++
+>   drivers/gpu/drm/msm/msm_drv.c                 | 13 ---
+>   drivers/gpu/drm/msm/msm_drv.h                 |  1 -
+>   drivers/gpu/drm/msm/msm_gem.c                 | 19 ++++-
+>   drivers/gpu/drm/nouveau/nouveau_drm.c         |  9 --
+>   drivers/gpu/drm/nouveau/nouveau_gem.c         | 13 +++
+>   drivers/gpu/drm/nouveau/nouveau_gem.h         |  2 +
+>   drivers/gpu/drm/nouveau/nouveau_prime.c       |  2 +
+>   drivers/gpu/drm/omapdrm/omap_drv.c            |  9 --
+>   drivers/gpu/drm/omapdrm/omap_gem.c            | 18 +++-
+>   drivers/gpu/drm/omapdrm/omap_gem.h            |  2 -
+>   drivers/gpu/drm/pl111/pl111_drv.c             |  5 +-
+>   drivers/gpu/drm/radeon/radeon_drv.c           | 23 +----
+>   drivers/gpu/drm/radeon/radeon_gem.c           | 31 ++++++-
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  5 --
+>   drivers/gpu/drm/rockchip/rockchip_drm_gem.c   | 10 +++
+>   drivers/gpu/drm/tegra/drm.c                   |  4 -
+>   drivers/gpu/drm/tegra/gem.c                   |  8 ++
+>   drivers/gpu/drm/vc4/vc4_bo.c                  | 21 ++++-
+>   drivers/gpu/drm/vc4/vc4_drv.c                 | 12 ---
+>   drivers/gpu/drm/vc4/vc4_drv.h                 |  1 -
+>   drivers/gpu/drm/vgem/vgem_drv.c               | 21 +++--
+>   drivers/gpu/drm/virtio/virtgpu_drv.c          |  1 -
+>   drivers/gpu/drm/virtio/virtgpu_object.c       |  1 +
+>   drivers/gpu/drm/vkms/vkms_drv.c               |  8 --
+>   drivers/gpu/drm/vkms/vkms_gem.c               | 13 +++
+>   drivers/gpu/drm/xen/xen_drm_front.c           | 44 ++++------
+>   drivers/gpu/drm/xen/xen_drm_front.h           |  2 +
+>   drivers/gpu/drm/xen/xen_drm_front_gem.c       | 15 ++++
+>   drivers/gpu/drm/xlnx/zynqmp_dpsub.c           | 14 +--
+>   include/drm/drm_drv.h                         | 85 +------------------
+>   57 files changed, 319 insertions(+), 349 deletions(-)
+>
+> --
+> 2.28.0
+>
 
