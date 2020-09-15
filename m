@@ -2,257 +2,160 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53539C433E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0706EC43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 17:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA58220731
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 15:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7E6E21D24
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 17:25:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="2TKpXBO1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVIyTl6c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbgIOP1W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 11:27:22 -0400
-Received: from mail-bn8nam12on2088.outbound.protection.outlook.com ([40.107.237.88]:38753
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727180AbgIOPZu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:25:50 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TNyu3se6nj5CdwqB2Ba5/f3rzi1dpALcbMnf7q4gC/qnEj7CVxLG0CQvjgBxZJKL0CKLezMPElHJa1EW43BmLYkr7c/XvCsVjIevV8RrVVtwVM7FuMaqw5u02u+OZLw0aNaBR5KDjcQMYtW13NxhoxJ2CXiUJs8jZXapZ2WFa0xOfLWCI2GxhG7bwKGOLIbfewdda24lu0kAwuss1AvVQtwAyiO3ZF+E2naJHzlkdSiIwR23QxY10jotW1pfjxq7R2akBUNZEy26Qm0l0HZG7b1rF/W3DkmppeDdJKQpfOxhba0DnSHf1P3+kM2zx61kZkImkeRwLq/CmE1REHJZpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FN4LXhsMN/CwF8Z3fqwL1YBenN/Iqkt5Gd+NvDDo/s4=;
- b=RGoUt2FwJ+nPaI6aTs+uwZzDFMXe/QxIEUnYpJSIatpp8plt+FcScZLBn+lnOfq9oXFSNrpVLM7Wc5N8j5VSN+owUwiaaE7EX4hq2Aje8D985hw2u/b/Qz+nMEFq0uAXchKG6YeZKKodY9YSJeVY2FnPPpnYoxxUGA9a5w/tTeVUvdpn6hpgxB1VQvYKKgmf+QReMItq3uQRt6pMH/iBSmgv0o2dyjUlv0Ph1lRKjq5ltymrxfsq5JQamVKlxr8UhK9THey5YjwV6fBGG8EtWUKTnq6MH8cov8E9y9GIr8X+PG3sojxJhfDpjJG5FDEyOwcM3G7Wq18hwlcbdwIAtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1727551AbgIORTo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 13:19:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbgIORPd (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 13:15:33 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051EEC06121D;
+        Tue, 15 Sep 2020 10:01:17 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id q8so3875183lfb.6;
+        Tue, 15 Sep 2020 10:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FN4LXhsMN/CwF8Z3fqwL1YBenN/Iqkt5Gd+NvDDo/s4=;
- b=2TKpXBO1kaOmOlL5BbbKKYUwkHs3+SRgzEIHSu2lYIOUwrjgoLsarsaTGHkbA5KRb2TaDe8qsbZJYx82KRslzcZ5g/tlbfLAH8R4TIvvq8IaqFnRcCcL3YFzO8M9MlE7MyacTGaIZ1pZz5Ai2Xl793j+9iolnhRLeUkZrrNq1qs=
-Authentication-Results: lists.xenproject.org; dkim=none (message not signed)
- header.d=none;lists.xenproject.org; dmarc=none action=none
- header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by MN2PR12MB3679.namprd12.prod.outlook.com (2603:10b6:208:159::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3370.16; Tue, 15 Sep
- 2020 15:25:41 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3370.019; Tue, 15 Sep 2020
- 15:25:41 +0000
-Subject: Re: [PATCH v2 00/21] Convert all remaining drivers to GEM object
- functions
-To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20200915145958.19993-1-tzimmermann@suse.de>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
-Date:   Tue, 15 Sep 2020 17:25:28 +0200
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H0YZs1pPwgJd7Ktmm4myWmRtfPUsH5VHa1+aQx55PSk=;
+        b=RVIyTl6cn7mdnTle5r2TB8rk6Z5oEtnLJ5ScwkQx8hgwsXp9QUmXVRlwB4uojEMlyK
+         ro4ICaJFazaA1mm+EfgVBI9hxAPzmmhJ64lz4e9XRqr/CqvyDMSlTIi0Jq4DCY/1tT26
+         lZ90elCBfhc46rgjopy+NisYGA97eLI+mgA9sV8BwFl4VzDJuGCE8wJmhnAMhcX+cwiK
+         VVsJbNpykSo75U56Bmx3jdegHXN1gwtsHTK88BBJRkMJxUd4BcjpwaHbCwYnGYPU7epw
+         ghh2waPDId+IGm4+zWuFtbnEpr9oY8ZzoiInt5wUgHUlgJNe36Jd/6L2agHbfAUq3+tf
+         QEbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H0YZs1pPwgJd7Ktmm4myWmRtfPUsH5VHa1+aQx55PSk=;
+        b=bG3u3U/NzMoA2SlC2NYfKMb9JR4n9dYN62mECR7PXWeLewrEiHSYmDyFz081Ga7Dwi
+         kYzxc8eAsmhy9oh5IIVH7xUCrJ5XfVyLa5ZxDXPbcQGaLJBgllIIhKyYOgevauOl8czE
+         odjs96X2Fpr7EfCZN/x+IbeWqz22P5u2u56Cm44yy79AI35bWZ+kfwc24ylmW7vu29YU
+         O2GmhrUx/Nlvy2OJTaN2cq6/68H2/sIKhR/br+xlP24ZboDB+iVgZeU2JQScZA1WNso/
+         pPZK9B09XxJ1Y9E1Gr8+ZPa4ETDBwHAiypA+afcYZIym7NAQs/IDvVVs/tudcbj0jGjt
+         Dfiw==
+X-Gm-Message-State: AOAM531h1IaJWGWVbIeK09n92welCNQsoh4XmPGYmQ7crPAXnthwRxXf
+        7CfjdeMWA/xp7BG1HZ0co4maNSpPW1w=
+X-Google-Smtp-Source: ABdhPJwQLpjsE+qFpvuqxasOzAcBnwJF7tP1y9VybOqTsRjgyc1k0GY6l9M7N7DZMzsiWYmMb1c9Zg==
+X-Received: by 2002:ac2:548d:: with SMTP id t13mr6603232lfk.602.1600189274348;
+        Tue, 15 Sep 2020 10:01:14 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id 73sm4011754lff.118.2020.09.15.10.01.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2020 10:01:13 -0700 (PDT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+ <20200908072557.GC294938@mwanda>
+ <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+ <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+ <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+ <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+Date:   Tue, 15 Sep 2020 20:01:12 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
-In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: FRYP281CA0016.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::26)
- To MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by FRYP281CA0016.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.9 via Frontend Transport; Tue, 15 Sep 2020 15:25:32 +0000
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1c40dd76-f213-4adf-5db9-08d8598b9a92
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3679:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB367978B9C270066D448D8B2383200@MN2PR12MB3679.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bq6iy9bdQwcv25HsoU+7zOgpdOsz9268Kepixksd+89M4pAGYvL2U00gir/fXpn79u2mpaOj3Ztv+B9CpTIw9h3qqfj52LnFvapiNawzK6Azx2R/1eHC+PJR0vpWlnnncCMfTyc8yg5UU7MsqoZqSnaNL+dgVFShuhN+VeHZp9URoa7Q5Zvs4yiLRLyB/oQrXmGSgvgDODrkqkUQS3jaQ01ax8JEAxZ2GByQF2q59FZ6kjUIgUHePow2DMmheD5MBZ5KZd6QCHvcOztJGkqzWXc/tNU6f9iIMsFcq31rFcSS35wR3BsAo4aOBbwbO2Ktt3iDKImkfyuvGs9vcGaX3U0HJV4N0NfueRSgOSut6Gndb9gmQ8V9koBc+Iuy3ehQV23I94+wH59fPWkG5DOwDw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(8936002)(2906002)(186003)(86362001)(6486002)(16526019)(31696002)(478600001)(31686004)(36756003)(316002)(83380400001)(6666004)(4326008)(1191002)(66476007)(7406005)(5660300002)(2616005)(66946007)(7416002)(8676002)(66556008)(7366002)(52116002)(921003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: jgFurlY0qyhWsliElO8ws55Sd+CZT5oiKQ5+9yJlBKp5v33Gqa/MTH091WNx8kNqPD9e7/RpesjeJgk+Pz2x1dWiBhH7GVo1xSJsvqcoLJrCBMZbyWn8NNsHxo/qk+3GlCWKvqQz92Vkg16oiNjVfUGYVMp085ZL2yOoLBJRvBIXvkkmQgzxw5DQi0K0B2sWEKvs8zsrnohmXg/VKGcm9F5eSW+OaPaR4pLYvh37Us1NKPjcXGmiM0oJs7H8rUbVq9vzyvzFN2G1bRHlK4Bajsxa+/vdF3BmZqIfQ+mMSaVwKmvkaq82WgEosVWpLjCRHyn2b+AmuL+RPKhJSxLpojrOt2b6A7rzDtD/1unvl9hiO1LpEOfkEXtRM3W6jVSekgWbYQPU9M6eGR1XBSPvfQ4R19pTPotiryvtvAjnC+Txv5TaJG+M/FLzV085CHI51EBABE72/3WBVcqKeoLeT/GdGRxoS+xEEno1h3NcpdScW3ty04Cb56erF4fxL9E2igpaVBjp7aaLgCx0+Mpa4tCaLPFOEle/bCmX27J/dr2MusMMHnNt56Q8c/f8hiBMH3wnAqIi+KI9YX5sJ6sqx9pIl7F2BocctuWA3YLRufoovVknCmbVgGxoLHG+RAmEMNT/UwsxaBffLhaWeujD2R7cQtRWTyhY+k1Bg21E5e85AbUw4sdJ/MLcO98kXpJf0VGvMuLyHUkcKebRv1vTCg==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c40dd76-f213-4adf-5db9-08d8598b9a92
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2020 15:25:40.7761
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rFw3xZeIByu8QMQSyCPTzQs9gUitereUl70S9WrhOTsl4SQkqE38/cz4fLDGQS3s
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3679
+In-Reply-To: <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Added my rb to the amdgpu and radeon patches.
+15.09.2020 05:13, Chanwoo Choi пишет:
+> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
+>> Hi Dmitry,
+>>
+>> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
+>>> 14.09.2020 10:09, Chanwoo Choi пишет:
+>>>> Hi,
+>>>>
+>>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
+>>>>> This error path needs to call clk_disable_unprepare().
+>>>>>
+>>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>>> ---
+>>>>> ---
+>>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>>>>> index e94a27804c20..dedd39de7367 100644
+>>>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>>>>>  	if (rate < 0) {
+>>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+>>>>> -		return rate;
+>>>>> +		err = rate;
+>>>>> +		goto disable_clk;
+>>>>>  	}
+>>>>>  
+>>>>>  	tegra->max_freq = rate / KHZ;
+>>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>>>>>  
+>>>>>  	reset_control_reset(tegra->reset);
+>>>>> +disable_clk:
+>>>>>  	clk_disable_unprepare(tegra->clock);
+>>>>
+>>>> Is it doesn't need to reset with reset_contrl_reset()?
+>>>
+>>> Hello, Chanwoo!
+>>>
+>>> It's reset just before the clk_round_rate() invocation, hence there
+>>> shouldn't be a need to reset it second time.
+>>
+>> Do you mean that reset is deasserted automatically
+>> when invoke clk_round_rate() on tegra?
 
-Should we pick those up through the amd branches or do you want to push 
-everything to drm-misc-next?
+I only mean that the tegra30-devfreq driver deasserts the reset before
+the clk_round_rate():
 
-I think the later since this should result in much merge clash.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
 
-Christian.
+>> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
+> 
+> I'm sorry for my typo. s/tree/true.
+> 
+>> is not needed on 'remove_opp:' goto. Because already reset deassertion
+>> is invoked by clk_round_rate(), it seems that doesn't need to invoke
+>> anymore during exception case.
+>>
+>> Actually, it is not clear in my case.
 
-Am 15.09.20 um 16:59 schrieb Thomas Zimmermann:
-> The GEM and PRIME related callbacks in struct drm_driver are deprecated in
-> favor of GEM object functions in struct drm_gem_object_funcs. This patchset
-> converts the remaining drivers to object functions and removes most of the
-> obsolete interfaces.
->
-> Patches #1 to #16 and #18 to #19 convert DRM drivers to GEM object functions,
-> one by one. Each patch moves existing callbacks from struct drm_driver to an
-> instance of struct drm_gem_object_funcs, and sets these funcs when the GEM
-> object is initialized. The expection is .gem_prime_mmap. There are different
-> ways of how drivers implement the callback, and moving it to GEM object
-> functions requires a closer review for each.
->
-> Patch #17 fixes virtgpu to use GEM object functions where possible. The
-> driver recently introduced a function for one of the deprecated callbacks.
->
-> Patch #20 converts xlnx to CMA helper macros. There's no apparent reason
-> why the driver does the GEM setup on it's own. Using CMA helper macros
-> adds GEM object functions implicitly.
->
-> With most of the GEM and PRIME moved to GEM object functions, related code
-> in struct drm_driver and in the DRM core/helpers is being removed by patch
-> #21.
->
-> Further testing is welcome. I tested the drivers for which I have HW
-> available. These are gma500, i915, nouveau, radeon and vc4. The console,
-> Weston and Xorg apparently work with the patches applied.
->
-> v2:
-> 	* moved code in amdgpu and radeon
-> 	* made several functions static in various drivers
-> 	* updated TODO-list item
-> 	* fix virtgpu
->
-> Thomas Zimmermann (21):
->    drm/amdgpu: Introduce GEM object functions
->    drm/armada: Introduce GEM object functions
->    drm/etnaviv: Introduce GEM object functions
->    drm/exynos: Introduce GEM object functions
->    drm/gma500: Introduce GEM object functions
->    drm/i915: Introduce GEM object functions
->    drm/mediatek: Introduce GEM object functions
->    drm/msm: Introduce GEM object funcs
->    drm/nouveau: Introduce GEM object functions
->    drm/omapdrm: Introduce GEM object functions
->    drm/pl111: Introduce GEM object functions
->    drm/radeon: Introduce GEM object functions
->    drm/rockchip: Convert to drm_gem_object_funcs
->    drm/tegra: Introduce GEM object functions
->    drm/vc4: Introduce GEM object functions
->    drm/vgem: Introduce GEM object functions
->    drm/virtgpu: Set PRIME export function in struct drm_gem_object_funcs
->    drm/vkms: Introduce GEM object functions
->    drm/xen: Introduce GEM object functions
->    drm/xlnx: Initialize DRM driver instance with CMA helper macro
->    drm: Remove obsolete GEM and PRIME callbacks from struct drm_driver
->
->   Documentation/gpu/todo.rst                    |  7 +-
->   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  6 --
->   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       | 23 +++--
->   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h       |  5 --
->   drivers/gpu/drm/amd/amdgpu/amdgpu_object.c    |  1 +
->   drivers/gpu/drm/armada/armada_drv.c           |  3 -
->   drivers/gpu/drm/armada/armada_gem.c           | 12 ++-
->   drivers/gpu/drm/armada/armada_gem.h           |  2 -
->   drivers/gpu/drm/drm_gem.c                     | 35 ++------
->   drivers/gpu/drm/drm_gem_cma_helper.c          |  6 +-
->   drivers/gpu/drm/drm_prime.c                   | 17 ++--
->   drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 13 ---
->   drivers/gpu/drm/etnaviv/etnaviv_drv.h         |  1 -
->   drivers/gpu/drm/etnaviv/etnaviv_gem.c         | 19 ++++-
->   drivers/gpu/drm/exynos/exynos_drm_drv.c       | 10 ---
->   drivers/gpu/drm/exynos/exynos_drm_gem.c       | 15 ++++
->   drivers/gpu/drm/gma500/framebuffer.c          |  2 +
->   drivers/gpu/drm/gma500/gem.c                  | 18 +++-
->   drivers/gpu/drm/gma500/gem.h                  |  3 +
->   drivers/gpu/drm/gma500/psb_drv.c              |  9 --
->   drivers/gpu/drm/gma500/psb_drv.h              |  2 -
->   drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++-
->   drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 -
->   drivers/gpu/drm/i915/i915_drv.c               |  4 -
->   .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 -
->   drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  5 --
->   drivers/gpu/drm/mediatek/mtk_drm_gem.c        | 11 +++
->   drivers/gpu/drm/msm/msm_drv.c                 | 13 ---
->   drivers/gpu/drm/msm/msm_drv.h                 |  1 -
->   drivers/gpu/drm/msm/msm_gem.c                 | 19 ++++-
->   drivers/gpu/drm/nouveau/nouveau_drm.c         |  9 --
->   drivers/gpu/drm/nouveau/nouveau_gem.c         | 13 +++
->   drivers/gpu/drm/nouveau/nouveau_gem.h         |  2 +
->   drivers/gpu/drm/nouveau/nouveau_prime.c       |  2 +
->   drivers/gpu/drm/omapdrm/omap_drv.c            |  9 --
->   drivers/gpu/drm/omapdrm/omap_gem.c            | 18 +++-
->   drivers/gpu/drm/omapdrm/omap_gem.h            |  2 -
->   drivers/gpu/drm/pl111/pl111_drv.c             |  5 +-
->   drivers/gpu/drm/radeon/radeon_drv.c           | 23 +----
->   drivers/gpu/drm/radeon/radeon_gem.c           | 31 ++++++-
->   drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  5 --
->   drivers/gpu/drm/rockchip/rockchip_drm_gem.c   | 10 +++
->   drivers/gpu/drm/tegra/drm.c                   |  4 -
->   drivers/gpu/drm/tegra/gem.c                   |  8 ++
->   drivers/gpu/drm/vc4/vc4_bo.c                  | 21 ++++-
->   drivers/gpu/drm/vc4/vc4_drv.c                 | 12 ---
->   drivers/gpu/drm/vc4/vc4_drv.h                 |  1 -
->   drivers/gpu/drm/vgem/vgem_drv.c               | 21 +++--
->   drivers/gpu/drm/virtio/virtgpu_drv.c          |  1 -
->   drivers/gpu/drm/virtio/virtgpu_object.c       |  1 +
->   drivers/gpu/drm/vkms/vkms_drv.c               |  8 --
->   drivers/gpu/drm/vkms/vkms_gem.c               | 13 +++
->   drivers/gpu/drm/xen/xen_drm_front.c           | 44 ++++------
->   drivers/gpu/drm/xen/xen_drm_front.h           |  2 +
->   drivers/gpu/drm/xen/xen_drm_front_gem.c       | 15 ++++
->   drivers/gpu/drm/xlnx/zynqmp_dpsub.c           | 14 +--
->   include/drm/drm_drv.h                         | 85 +------------------
->   57 files changed, 319 insertions(+), 349 deletions(-)
->
-> --
-> 2.28.0
->
-
+The reset_control_reset() in the error path of the driver probe function
+is placed that way to make the tear-down order match the driver removal
+order. Perhaps the reset could be moved before the remove_opp, but this
+change won't make any real difference, hence it already should be good
+as-is.
