@@ -2,40 +2,29 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F74C43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 22:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A42C43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1CF420936
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 22:44:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="k/TxRWDw"
+	by mail.kernel.org (Postfix) with ESMTP id 1598120770
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbgIOWoX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:44:23 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36610 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbgIOPyy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:54:54 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0FA56276;
-        Tue, 15 Sep 2020 17:54:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1600185256;
-        bh=XzPEATglwb8mJLD0DYu0V5mnVt9Rmyb4GFF3M0n1BQw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k/TxRWDwAUeEA/mxOqDGy3dXpqZvHw1rgu/hfc6AZ+2kJHV8nY1aZQ1niwJxXM2on
-         uMm8kF40aJQq8Y3LJa+B/xGzPCzryGwMdT5H5oWYJQ48rRZEb8n/CrAkn0VvMZEJAK
-         zd/EMFYW53+dug8ySJGu6EPKXShM0dS8ZH8bQ3S8=
-Date:   Tue, 15 Sep 2020 18:53:46 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        id S1727320AbgIOXAm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 19:00:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36398 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727367AbgIOPCM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 11:02:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8F191B2AD;
+        Tue, 15 Sep 2020 15:00:32 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
         maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         l.stach@pengutronix.de, christian.gmeiner@gmail.com,
@@ -50,87 +39,104 @@ Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
         heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
         rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
         oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        michal.simek@xilinx.com, sumit.semwal@linaro.org,
-        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
-        marek.olsak@amd.com, hdegoede@redhat.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
         andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
         xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
         chris@chris-wilson.co.uk, matthew.auld@intel.com,
         tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
         sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 20/21] drm/xlnx: Initialize DRM driver instance with
- CMA helper macro
-Message-ID: <20200915155346.GA26029@pendragon.ideasonboard.com>
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 18/21] drm/vkms: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:55 +0200
+Message-Id: <20200915145958.19993-19-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-21-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-21-tzimmermann@suse.de>
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas,
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in vkms.
 
-Thank you for the patch.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/vkms/vkms_drv.c |  8 --------
+ drivers/gpu/drm/vkms/vkms_gem.c | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-On Tue, Sep 15, 2020 at 04:59:57PM +0200, Thomas Zimmermann wrote:
-> The xlnx driver uses CMA helpers with default callback functions.
-> Initialize the driver structure with the rsp CMA helper macro. The
-> driver is being converted to use GEM object functions as part of
-> this change.
-> 
-> Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
-> to their default implementations, so they are just kept empty now.
-> 
-> v2:
-> 	* initialize with DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE (Laurent)
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> index 8e69303aad3f..f3ffc3703a0e 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> @@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
->  	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
->  					  DRIVER_ATOMIC,
->  
-> -	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
-> -	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
-> -	.gem_prime_export		= drm_gem_prime_export,
-> -	.gem_prime_import		= drm_gem_prime_import,
-> -	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
-> -	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
-> -	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
-> -	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
-> -	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
-> -	.gem_free_object_unlocked	= drm_gem_cma_free_object,
-> -	.gem_vm_ops			= &drm_gem_cma_vm_ops,
-> -	.dumb_create			= zynqmp_dpsub_dumb_create,
-> -	.dumb_destroy			= drm_gem_dumb_destroy,
-> +	DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
->  
->  	.fops				= &zynqmp_dpsub_drm_fops,
->  
-
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index cb0b6230c22c..726801ab44d4 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -51,12 +51,6 @@ static const struct file_operations vkms_driver_fops = {
+ 	.release	= drm_release,
+ };
+ 
+-static const struct vm_operations_struct vkms_gem_vm_ops = {
+-	.fault = vkms_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
+-
+ static void vkms_release(struct drm_device *dev)
+ {
+ 	struct vkms_device *vkms = container_of(dev, struct vkms_device, drm);
+@@ -98,8 +92,6 @@ static struct drm_driver vkms_driver = {
+ 	.release		= vkms_release,
+ 	.fops			= &vkms_driver_fops,
+ 	.dumb_create		= vkms_dumb_create,
+-	.gem_vm_ops		= &vkms_gem_vm_ops,
+-	.gem_free_object_unlocked = vkms_gem_free_object,
+ 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+ 	.gem_prime_import_sg_table = vkms_prime_import_sg_table,
+ 
+diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
+index a017fc59905e..19a0e260a4df 100644
+--- a/drivers/gpu/drm/vkms/vkms_gem.c
++++ b/drivers/gpu/drm/vkms/vkms_gem.c
+@@ -7,6 +7,17 @@
+ 
+ #include "vkms_drv.h"
+ 
++static const struct vm_operations_struct vkms_gem_vm_ops = {
++	.fault = vkms_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
++};
++
++static const struct drm_gem_object_funcs vkms_gem_object_funcs = {
++	.free = vkms_gem_free_object,
++	.vm_ops = &vkms_gem_vm_ops,
++};
++
+ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
+ 						 u64 size)
+ {
+@@ -17,6 +28,8 @@ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
+ 	if (!obj)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	obj->gem.funcs = &vkms_gem_object_funcs;
++
+ 	size = roundup(size, PAGE_SIZE);
+ 	ret = drm_gem_object_init(dev, &obj->gem, size);
+ 	if (ret) {
 -- 
-Regards,
+2.28.0
 
-Laurent Pinchart
