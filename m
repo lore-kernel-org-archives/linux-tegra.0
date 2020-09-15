@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D871AC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 10:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1892EC433E2
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 11:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9B6206DC
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 10:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C903621D7B
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 11:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="hwBuVZbs"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Iic6iRCj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgIOK66 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 06:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57828 "EHLO
+        id S1726149AbgIOLJW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 07:09:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbgIOK6M (ORCPT
+        with ESMTP id S1726095AbgIOLJH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 06:58:12 -0400
+        Tue, 15 Sep 2020 07:09:07 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 460CEC06174A
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 03:58:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4DCC06174A
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 04:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
         MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xP8x+rJt/TDG2zJOATSck7z/xoasmq8xmsbnci0vekA=; b=hwBuVZbsJMj7BYuovOczCmWmJO
-        +stzJG5cE13CJx9193Mr1QqrLnyIYFr2dEBTNvH4uS4OfvxU/d70aeA3FWpW/OG3S5az3GX1oqWXf
-        Gy3l6+SOIMchyV7itseuSvP9I8VAnHy0cgi7qVnFPEAiTJ4TPmHovyatcKq2uChQLEwNKW4lKlPQb
-        bPsBCRtOyhAR3vYn4xTxonvGxpw4Cf/Kk+V1JDib+7E1XX8bpmAMoL0wt3Ia+hVdhEm6PNGB2530b
-        trYEYdAotwlfHVeLzwnFUVq8L4yY/uQriT+AByVq3MoY41ZFU/5DG8rNBkmlkgs6iYBnWqfTU0aWq
-        y2teu5yQ==;
+        bh=GWe1kxX/X61YaBd3+sgGR1kBcW44l/c7WKlet3NJe+8=; b=Iic6iRCjVNoed4pmyzensccdmf
+        T/fJ949WCVy3Po9+oeF/UVXUptIPJTgNBCeUqaMOtMVv2sJbC3wYB0KUs7zivF5PCozLGnzaiNR1S
+        gXhL/jl8DnpM/h18L5A2Wm6NtidWl8pFcGjEUWbD+EW0/NrZK4vLmqaMGv0cX/AOsowLW7s5VPb+g
+        8ksZWd6s2wZfZY3WPHhv/aEqPbih6XrhI0edRn9sSdWT5kqELt8P2CEkoJHLRiQYeLmnWPj8jKqAr
+        sj3D4u02Tfct3gm0/jVionbLA+mT7aXScrxOs6SAws5e7XkQ1MxZA0c+B9DORR3FGgPF5jxG5Wmab
+        A7kukDug==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <cyndis@kapsi.fi>)
-        id 1kI8et-0001i2-0o; Tue, 15 Sep 2020 13:57:59 +0300
-Subject: Re: [RFC PATCH v2 10/17] WIP: gpu: host1x: Add no-recovery mode
+        id 1kI8pW-0007ex-Si; Tue, 15 Sep 2020 14:08:58 +0300
+Subject: Re: [RFC PATCH v2 17/17] WIP: drm/tegra: Implement new UAPI
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
@@ -50,21 +50,20 @@ To:     Dmitry Osipenko <digetx@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com
 References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-11-mperttunen@nvidia.com>
- <7d7a29e8-3151-12ea-da66-d8a479edda84@gmail.com>
- <c2498218-e107-4df4-41ce-c60da65ceaf7@kapsi.fi>
- <07f933b3-10d9-0318-e2f3-6dfd5b4903ac@gmail.com>
- <28f18a23-b588-004d-4945-91b7a593607a@kapsi.fi>
- <3f80aff2-23ce-9b1f-d242-e46e974fbeed@gmail.com>
- <56c956a3-af14-559b-8022-2228a65e82a6@kapsi.fi>
- <fe626343-6f10-96bd-171c-7876917d570b@gmail.com>
+ <20200905103420.3021852-18-mperttunen@nvidia.com>
+ <11c05ff2-092b-dc40-73a9-c0ec0fa22826@gmail.com>
+ <3b3b7d35-e96c-1b6e-ddd0-24fd8a9dd5bf@gmail.com>
+ <6d317f3f-51c8-6ed5-0a27-00e72f204941@kapsi.fi>
+ <dba5e023-23d5-7e8a-f45e-bf41abf66ef6@gmail.com>
+ <27ee1096-d7fa-da63-f60e-93dbdd679893@kapsi.fi>
+ <7244cec7-a1e5-e3ad-f4f5-31f8034fb270@gmail.com>
 From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <3e8abd77-6d33-98fa-7df0-17b9c10596eb@kapsi.fi>
-Date:   Tue, 15 Sep 2020 13:57:46 +0300
+Message-ID: <7923986d-c884-c6e6-3ea5-4e45ff4d1d13@kapsi.fi>
+Date:   Tue, 15 Sep 2020 14:08:46 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <fe626343-6f10-96bd-171c-7876917d570b@gmail.com>
+In-Reply-To: <7244cec7-a1e5-e3ad-f4f5-31f8034fb270@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -76,121 +75,64 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/13/20 9:37 PM, Dmitry Osipenko wrote:
-> 13.09.2020 12:51, Mikko Perttunen пишет:
-> ...
->>> All waits that are internal to a job should only wait for relative sync
->>> point increments. >
->>> In the grate-kernel every job uses unique-and-clean sync point (which is
->>> also internal to the kernel driver) and a relative wait [1] is used for
->>> the job's internal sync point increments [2][3][4], and thus, kernel
->>> driver simply jumps over a hung job by updating DMAGET to point at the
->>> start of a next job.
+
+
+On 9/11/20 7:30 PM, Dmitry Osipenko wrote:
+> 11.09.2020 12:59, Mikko Perttunen пишет:
+>> On 9/11/20 12:57 AM, Dmitry Osipenko wrote:
+>>> 09.09.2020 11:36, Mikko Perttunen пишет:
+>>> ...
+>>>>>
+>>>>> Does it make sense to have timeout in microseconds?
+>>>>>
+>>>>
+>>>> Not sure, but better have it a bit more fine-grained rather than
+>>>> coarse-grained. This still gives a maximum timeout of 71 minutes so I
+>>>> don't think it has any negatives compared to milliseconds.
+>>>
+>>> If there is no good reason to use microseconds right now, then should be
+>>> better to default to milliseconds, IMO. It shouldn't be a problem to
+>>> extend the IOCLT with a microseconds entry, if ever be needed.
+>>>
+>>> {
+>>>      __u32 timeout_ms;
+>>> ...
+>>>      __u32 timeout_us;
+>>> }
+>>>
+>>> timeout = timeout_ms + 1000 * timeout_us;
+>>>
+>>> There shouldn't be a need for a long timeouts, since a job that takes
+>>> over 100ms is probably too unpractical. It also should be possible to
+>>> detect a progressing job and then defer timeout in the driver. At least
+>>> this is what other drivers do, like etnaviv driver for example:
+>>>
+>>> https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/gpu/drm/etnaviv/etnaviv_sched.c#L107
+>>>
+>>>
 >>
->> Issues I have with this approach:
->>
->> * Both this and my approach have the requirement for userspace, that if
->> a job hangs, the userspace must ensure all external waiters have timed
->> out / been stopped before the syncpoint can be freed, as if the
->> syncpoint gets reused before then, false waiter completions can happen.
->>
->> So freeing the syncpoint must be exposed to userspace. The kernel cannot
->> do this since there may be waiters that the kernel is not aware of. My
->> proposal only has one syncpoint, which I feel makes this part simpler, too.
->>
->> * I believe this proposal requires allocating a syncpoint for each
->> externally visible syncpoint increment that the job does. This can use
->> up quite a few syncpoints, and it makes syncpoints a dynamically
->> allocated resource with unbounded allocation latency. This is a problem
->> for safety-related systems.
+>> I still don't quite understand why it's better to default to
+>> milliseconds? As you say, there is no need to have a long timeout, and
+>> if we go microseconds now, then there wouldn't be a need to extend in
+>> the future.
 > 
-> Maybe we could have a special type of a "shared" sync point that is
-> allocated per-hardware engine? Then shared SP won't be a scarce resource
-> and job won't depend on it. The kernel or userspace driver may take care
-> of recovering the counter value of a shared SP when job hangs or do
-> whatever else is needed without affecting the job's sync point.
+> It will nicer to avoid unnecessary unit-conversions in the code in order
+> to keep it cleaner.
 
-Having a shared syncpoint opens up possibilities for interference 
-between jobs (if we're not using the firewall, the HW cannot distinguish 
-between jobs on the same channel), and doesn't work if there are 
-multiple channels using the same engine, which we want to do for newer 
-chips (for performance and virtualization reasons).
-
-Even then, even if we need to allocate one syncpoint per job, the issue 
-seems to be there.
+We can change all the internals to use microseconds as well. We 
+eventually have to convert it to jiffies anyway, so the unit before that 
+shouldn't matter much.
 
 > 
-> Primarily I'm not feeling very happy about retaining the job's sync
-> point recovery code because it was broken the last time I touched it and
-> grate-kernel works fine without it.
-
-I'm not planning to retain it any longer than necessary, which is until 
-the staging interface is removed. Technically I can already remove it 
-now -- that would cause any users of the staging interface to 
-potentially behave weirdly if a job times out, but maybe we don't care 
-about that all that much?
-
-> 
->> * If a job fails on a "virtual channel" (userctx), I think it's a
->> reasonable expectation that further jobs on that "virtual channel" will
->> not execute, and I think implementing that model is simpler than doing
->> recovery.
-> 
-> Couldn't jobs just use explicit fencing? Then a second job won't be
-> executed if first job hangs and explicit dependency is expressed. I'm
-> not sure that concept of a "virtual channel" is applicable to drm-scheduler.
-
-I assume what you mean is that each job incrementing a syncpoint would 
-first wait for the preceding job incrementing that syncpoint to 
-complete, by waiting for the preceding job's fence value.
-
-I would consider what I do in this patch to be an optimization of that. 
-Let's say we detect a timed out job and just skip that job in the CDMA 
-pushbuffer (but do not CPU-increment syncpoints), then at every 
-subsequent job using that syncpoint, we will be detecting a timeout and 
-skipping it eventually. With the "NOPping" in this patch we just 
-pre-emptively cancel those jobs so that we don't have to spend time 
-waiting for timeouts in the future. Functionally these should be the 
-same, though.
-
-The wait-for-preceding-job-to-complete thing should already be there in 
-form of the "serialize" operation if the jobs use the same syncpoint.
-
-So, if DRM scheduler's current operation is just skipping the timing out 
-job and continuing from the next job, that's functionally fine. But we 
-could improve DRM scheduler to allow for also cancelling future jobs 
-that we know will time out. That would be in essence "virtual channel" 
-support.
-
-Userspace still has options -- if it puts in other prefences, timeouts 
-will happen as usual. If it wants to have multiple "threads" of 
-execution where a timeout on one doesn't affect the others, it can use 
-different syncpoints for them.
-
-> 
-> I'll need to see a full-featured driver implementation and the test
-> cases that cover all the problems that you're worried about because I'm
-> not aware about all the T124+ needs and seeing code should help. Maybe
-> in the end yours approach will be the best, but for now it's not clear :)
+> I'm now also a bit dubious about that the timeout field of the submit
+> IOCTL will be in the final UAPI version because it should become
+> obsolete once drm-scheduler will be hooked up, since the hung-check
+> timeout will be specified per-hardware engine within the kernel driver
+> and there won't be much use for the user-defined timeout.
 > 
 
-My primary goal is simplicity of programming model and implementation. 
-Regarding the resource management concerns, I can of course create a 
-test case that allocates a lot of resources, but what I'm afraid about 
-is that once we put this into a big system, with several VMs with their 
-own resource reservations (including syncpoints), and the GPU and camera 
-subsystems using hundreds of syncpoints, dynamic usage of those 
-resources will create uncertainty in the system, and bug reports.
-
-And of course, if we want to make a safety-related system, you also need 
-to document before-hand how you are ensuring that e.g. job submission 
-(including syncpoint allocation if that is dynamic) happens under x 
-microseconds.
-
-I don't think the model used in the grate host1x driver is bad, and I 
-think the code there and its integration with the existing kernel 
-frameworks are beautiful, and that is definitely a goal for the mainline 
-driver as well. But I think we can make things even simpler overall and 
-more reliable.
+Perhaps we can omit this field for now. Looking at it, it's primarily 
+used for tests, and for that we could add a debugfs knob to adjust the 
+timeout if needed.
 
 Mikko
