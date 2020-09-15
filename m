@@ -2,137 +2,152 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1892EC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 11:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D57C43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 12:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C903621D7B
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 11:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A516620936
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 12:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Iic6iRCj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qUQOtu4B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbgIOLJW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 07:09:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59530 "EHLO
+        id S1726445AbgIOMjY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 08:39:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbgIOLJH (ORCPT
+        with ESMTP id S1726447AbgIOMjF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 07:09:07 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4DCC06174A
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 04:09:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GWe1kxX/X61YaBd3+sgGR1kBcW44l/c7WKlet3NJe+8=; b=Iic6iRCjVNoed4pmyzensccdmf
-        T/fJ949WCVy3Po9+oeF/UVXUptIPJTgNBCeUqaMOtMVv2sJbC3wYB0KUs7zivF5PCozLGnzaiNR1S
-        gXhL/jl8DnpM/h18L5A2Wm6NtidWl8pFcGjEUWbD+EW0/NrZK4vLmqaMGv0cX/AOsowLW7s5VPb+g
-        8ksZWd6s2wZfZY3WPHhv/aEqPbih6XrhI0edRn9sSdWT5kqELt8P2CEkoJHLRiQYeLmnWPj8jKqAr
-        sj3D4u02Tfct3gm0/jVionbLA+mT7aXScrxOs6SAws5e7XkQ1MxZA0c+B9DORR3FGgPF5jxG5Wmab
-        A7kukDug==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kI8pW-0007ex-Si; Tue, 15 Sep 2020 14:08:58 +0300
-Subject: Re: [RFC PATCH v2 17/17] WIP: drm/tegra: Implement new UAPI
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-18-mperttunen@nvidia.com>
- <11c05ff2-092b-dc40-73a9-c0ec0fa22826@gmail.com>
- <3b3b7d35-e96c-1b6e-ddd0-24fd8a9dd5bf@gmail.com>
- <6d317f3f-51c8-6ed5-0a27-00e72f204941@kapsi.fi>
- <dba5e023-23d5-7e8a-f45e-bf41abf66ef6@gmail.com>
- <27ee1096-d7fa-da63-f60e-93dbdd679893@kapsi.fi>
- <7244cec7-a1e5-e3ad-f4f5-31f8034fb270@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <7923986d-c884-c6e6-3ea5-4e45ff4d1d13@kapsi.fi>
-Date:   Tue, 15 Sep 2020 14:08:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Tue, 15 Sep 2020 08:39:05 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D2D1C06174A
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 05:38:51 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id r7so4770296ejs.11
+        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 05:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6+eIisxgi/7DBd67MZsvWapYN3hNHSpdCq4Nuq8Zaw4=;
+        b=qUQOtu4BEYo53sNLoAc7L0JBG5WnrTDBsFfcD71gMXqja9EOliFXddaW0sv1SBFmPY
+         rtsp6xgyZQf+WkXAdirmvAwlrE0wt+Vw7pWsji5m4qIeS056mtqqAC/l+XuZDFW1LVUq
+         Fm0qVHMqvZUWe/8q7ZYmP7KwpWLneG8JBXy426AcKhuAMCn3lAGrh01YjOLCI5b3m/dm
+         Wg4O37K7A/SMjIQ0invcjZb9m7aA3Dc5ebGyEB4FX3/OUDNWWbZxcDlzn5+B48fgPUYg
+         9LnDjNUOLPX4OYDpvF7Y3ADEw9/I35+iudQ2hoJ5zMtpeXeQsEVbn/yiE7xc9JkQODgy
+         ZSEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6+eIisxgi/7DBd67MZsvWapYN3hNHSpdCq4Nuq8Zaw4=;
+        b=NyVxH9QlJ9esL8Gvw9s/LG49SBZhXMkjdIQ7VmtLjnRRwjsC/+0OGUK9rXz7PRMsjR
+         cGWUpRYqBhvVrkiy2uvz6TGq1t9dCYnd9HQlkB29TSA2hqFSMOzvmh+v97HVv/YKxN1k
+         O/dgNy+jrjCO2OBKESu89g514ZsZoLyESz7NACK3+OL+lucDAYEoyaDyhAJeJmpWQZlj
+         zBPn3bWKmtJGh4c35xiTUHG6v0ZTlrOOyq5l/7Q6BabqU6TB1KP5/lPXTdLytphqDasM
+         IVy3rXDtIE1NfmJTYnEHYSPM/H5P9ZDh/hZ+B+uSO1M/HcgCD3+ZSWYf8q7KRSznkBjV
+         hnCg==
+X-Gm-Message-State: AOAM533H11+MM1WRFV1S1ofvdNtNJoNvkBFQHoXZZzoglNVfCGoZ2IQ6
+        /xWDAlALGi3AVa4OIkSsZn4=
+X-Google-Smtp-Source: ABdhPJz+iUVGNrROwyyTpilZTJ+fbR5p4UvHc/91zVSLl18UTG9E3EySpa91bwVGTxGl0L9MoPeYBg==
+X-Received: by 2002:a17:906:4101:: with SMTP id j1mr19152895ejk.473.1600173530064;
+        Tue, 15 Sep 2020 05:38:50 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id y9sm10049215ejw.96.2020.09.15.05.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2020 05:38:48 -0700 (PDT)
+Date:   Tue, 15 Sep 2020 14:38:47 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/9] soc/tegra: fuse: Implement tegra_is_silicon()
+Message-ID: <20200915123847.GB3496938@ulmo>
+References: <20200716141856.544718-1-thierry.reding@gmail.com>
+ <20200716141856.544718-7-thierry.reding@gmail.com>
+ <c3bff9d8-7b74-3614-177a-09efcc05982f@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <7244cec7-a1e5-e3ad-f4f5-31f8034fb270@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Content-Disposition: inline
+In-Reply-To: <c3bff9d8-7b74-3614-177a-09efcc05982f@nvidia.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+--ftEhullJWpWg/VHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/20 7:30 PM, Dmitry Osipenko wrote:
-> 11.09.2020 12:59, Mikko Perttunen пишет:
->> On 9/11/20 12:57 AM, Dmitry Osipenko wrote:
->>> 09.09.2020 11:36, Mikko Perttunen пишет:
->>> ...
->>>>>
->>>>> Does it make sense to have timeout in microseconds?
->>>>>
->>>>
->>>> Not sure, but better have it a bit more fine-grained rather than
->>>> coarse-grained. This still gives a maximum timeout of 71 minutes so I
->>>> don't think it has any negatives compared to milliseconds.
->>>
->>> If there is no good reason to use microseconds right now, then should be
->>> better to default to milliseconds, IMO. It shouldn't be a problem to
->>> extend the IOCLT with a microseconds entry, if ever be needed.
->>>
->>> {
->>>      __u32 timeout_ms;
->>> ...
->>>      __u32 timeout_us;
->>> }
->>>
->>> timeout = timeout_ms + 1000 * timeout_us;
->>>
->>> There shouldn't be a need for a long timeouts, since a job that takes
->>> over 100ms is probably too unpractical. It also should be possible to
->>> detect a progressing job and then defer timeout in the driver. At least
->>> this is what other drivers do, like etnaviv driver for example:
->>>
->>> https://elixir.bootlin.com/linux/v5.9-rc4/source/drivers/gpu/drm/etnaviv/etnaviv_sched.c#L107
->>>
->>>
->>
->> I still don't quite understand why it's better to default to
->> milliseconds? As you say, there is no need to have a long timeout, and
->> if we go microseconds now, then there wouldn't be a need to extend in
->> the future.
-> 
-> It will nicer to avoid unnecessary unit-conversions in the code in order
-> to keep it cleaner.
+On Mon, Sep 07, 2020 at 08:32:08PM +0100, Jon Hunter wrote:
+>=20
+> On 16/07/2020 15:18, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > This function can be used by drivers to determine whether code is
+> > running on silicon or on a simulation platform.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >  drivers/soc/tegra/fuse/tegra-apbmisc.c | 13 +++++++++++++
+> >  include/soc/tegra/fuse.h               |  1 +
+> >  2 files changed, 14 insertions(+)
+> >=20
+> > diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra=
+/fuse/tegra-apbmisc.c
+> > index 89f1479b4d0e..be6b7fc169ca 100644
+> > --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> > +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> > @@ -52,6 +52,19 @@ u8 tegra_get_platform(void)
+> >  	return (tegra_read_chipid() >> 20) & 0xf;
+> >  }
+> > =20
+> > +bool tegra_is_silicon(void)
+> > +{
+> > +	switch (tegra_get_chip_id()) {
+> > +	case TEGRA194:
+> > +		if (tegra_get_platform() =3D=3D 0)
+> > +			return true;
+> > +
+> > +		return false;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+>=20
+> Should we do this the other way around and default to is-silicon?
+>=20
+> For devices prior to Tegra194, this will always return false.
 
-We can change all the internals to use microseconds as well. We 
-eventually have to convert it to jiffies anyway, so the unit before that 
-shouldn't matter much.
+Yes, that's definitely a bug. I'll address that in the next version.
 
-> 
-> I'm now also a bit dubious about that the timeout field of the submit
-> IOCTL will be in the final UAPI version because it should become
-> obsolete once drm-scheduler will be hooked up, since the hung-check
-> timeout will be specified per-hardware engine within the kernel driver
-> and there won't be much use for the user-defined timeout.
-> 
+Thierry
 
-Perhaps we can omit this field for now. Looking at it, it's primarily 
-used for tests, and for that we could add a debugfs knob to adjust the 
-timeout if needed.
+--ftEhullJWpWg/VHq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Mikko
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9gtdYACgkQ3SOs138+
+s6Gxbw/+KNqcheX92OY1gA8LeRlSS8dj1ibpigZe+PkxY2mkyymukGtkGsOf6oUt
+1AG7tAha6R0kAhoIMy4i4E9Vi5pFxPTN1Jii0BCkGbWpi6QrqwfPWLFDq8v7cUdX
+Iv00w9zMcO4wPNvsao5tvs3x/71Wbt7H9aLJl7WomVrfFYKLYPgeP7eA3Fmu2VHz
+dBxckr4sA2xqonEK4Di6PnIEI9AlvKYZHgd7FWYI1HWzpnMYaiMWyvPoJLvip/D1
+/pwr2/GTvTYQz3G4YJPVrtDa6Ufcha4TKWGaKJRu/IilCjDzs9qt8XS5EUPmcRn/
+Y/BVxv5V3XkxJQfxCUtZ2nLnMJk9cUcsckcG5IvYPBKn83f3IUh7fz/pNv6Ec68u
+ih2ygolVsa6LoiWOW1UFPow2Lh7yB2fZo6F6f68upMPgOBHSjt6xKKkFQSkkEuZi
+H9UHVwlpBaSQeI/bLR+VhAiE3dUMlK+0Im1bC/6ToX9OOTZZXLoCCARzOHFGB8Dz
+UhTPXHEq/FLYjL13m7De4zn6CUV0EJYb3o6WaDUsnJEcHOrMwwUUs0DbohEyzBAC
+n2aOY+vSdSvX5xyQj33Ug6LIKHGr/wuJG77NV50xiq8dBI9ckkA1OvIUm+Alj4r5
+GwspJgJyVIJBHvookw2/wvorsNPsSQEEngL91sV5BRkUx0HuGS0=
+=oREA
+-----END PGP SIGNATURE-----
+
+--ftEhullJWpWg/VHq--
