@@ -2,160 +2,245 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0706EC43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 17:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42DFC43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 18:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7E6E21D24
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 17:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 645BC20872
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 18:39:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVIyTl6c"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Ft9IxLhr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbgIORTo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 13:19:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbgIORPd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 13:15:33 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051EEC06121D;
-        Tue, 15 Sep 2020 10:01:17 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id q8so3875183lfb.6;
-        Tue, 15 Sep 2020 10:01:16 -0700 (PDT)
+        id S1727976AbgIOSji (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 14:39:38 -0400
+Received: from mail-dm6nam10on2049.outbound.protection.outlook.com ([40.107.93.49]:15409
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728022AbgIOSjZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 14:39:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RArpkZ/l/P0gBhyiVnFzlnK1+ltpu4x88FRuCdWtNwWkp98mExU2EARfU6VG5otrPM9YMztHQ/zNIMyLWyYeDSehv+5ddUu5QkXHHrPXqkcHNzmYi/ERU4FdoINvsO0vS4BwlbEdx7+wtX0wfgwsnyORrfNfHGuXiyS1GCBCOdPHP7YfyO9HbWENIeHr4NEhKRcC1qdLa1GgV9F9xiTcV35GTG9B98p17FI7Dcmdoy5O8kN2yk4QEPzW+msX7k0AmzfXVF4ub8AMUSXd/UHcD3pRDMGcul4U5uWl9czAi4Uclw9huD+9RW5oEjZtfYzlCedo3XonK4F5T9S6WNrTwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4nIO+lhNFgioRkRyGhdB1I3Uj8gi/oxj23FCH5WSe8E=;
+ b=R8H8SkAXciLhrprBnQK3SHbWsJcLCXqoT+g20E1/ybgGhxqZtPiDOGOmY/LrTSxcpGB73tZW5v1PNPMcgwEzSZMJdunPyGyb+IohPUaPR8BO2oj2GZkHVfq647GrY3z9KniynTif8AVTOztHi1kEtPjQOLSScdWMVRNUP4xQLbCzGB+Kfj9GTwzzxOTbf1K+UAkqii38ibdb+kBBQr49WLJLJh8RjphzYqjDNYKUdZZhOGHIvovYgMzNgpj8qUJI3LwCXulrTIIc9F1n4FS+99hApKJrfmt6b9+AGfaSps5cJLpvUeMu5jyKWPcKjQLuB7YD69qLPjzISQqhD+zOhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H0YZs1pPwgJd7Ktmm4myWmRtfPUsH5VHa1+aQx55PSk=;
-        b=RVIyTl6cn7mdnTle5r2TB8rk6Z5oEtnLJ5ScwkQx8hgwsXp9QUmXVRlwB4uojEMlyK
-         ro4ICaJFazaA1mm+EfgVBI9hxAPzmmhJ64lz4e9XRqr/CqvyDMSlTIi0Jq4DCY/1tT26
-         lZ90elCBfhc46rgjopy+NisYGA97eLI+mgA9sV8BwFl4VzDJuGCE8wJmhnAMhcX+cwiK
-         VVsJbNpykSo75U56Bmx3jdegHXN1gwtsHTK88BBJRkMJxUd4BcjpwaHbCwYnGYPU7epw
-         ghh2waPDId+IGm4+zWuFtbnEpr9oY8ZzoiInt5wUgHUlgJNe36Jd/6L2agHbfAUq3+tf
-         QEbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H0YZs1pPwgJd7Ktmm4myWmRtfPUsH5VHa1+aQx55PSk=;
-        b=bG3u3U/NzMoA2SlC2NYfKMb9JR4n9dYN62mECR7PXWeLewrEiHSYmDyFz081Ga7Dwi
-         kYzxc8eAsmhy9oh5IIVH7xUCrJ5XfVyLa5ZxDXPbcQGaLJBgllIIhKyYOgevauOl8czE
-         odjs96X2Fpr7EfCZN/x+IbeWqz22P5u2u56Cm44yy79AI35bWZ+kfwc24ylmW7vu29YU
-         O2GmhrUx/Nlvy2OJTaN2cq6/68H2/sIKhR/br+xlP24ZboDB+iVgZeU2JQScZA1WNso/
-         pPZK9B09XxJ1Y9E1Gr8+ZPa4ETDBwHAiypA+afcYZIym7NAQs/IDvVVs/tudcbj0jGjt
-         Dfiw==
-X-Gm-Message-State: AOAM531h1IaJWGWVbIeK09n92welCNQsoh4XmPGYmQ7crPAXnthwRxXf
-        7CfjdeMWA/xp7BG1HZ0co4maNSpPW1w=
-X-Google-Smtp-Source: ABdhPJwQLpjsE+qFpvuqxasOzAcBnwJF7tP1y9VybOqTsRjgyc1k0GY6l9M7N7DZMzsiWYmMb1c9Zg==
-X-Received: by 2002:ac2:548d:: with SMTP id t13mr6603232lfk.602.1600189274348;
-        Tue, 15 Sep 2020 10:01:14 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id 73sm4011754lff.118.2020.09.15.10.01.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Sep 2020 10:01:13 -0700 (PDT)
-Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
- <20200908072557.GC294938@mwanda>
- <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
- <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
- <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
- <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
-Date:   Tue, 15 Sep 2020 20:01:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4nIO+lhNFgioRkRyGhdB1I3Uj8gi/oxj23FCH5WSe8E=;
+ b=Ft9IxLhrSyAZPH7YXskNwwHcjwsioZd1gYOVg7DJ49DbK3VXAIGTwQZq6Glqpt3+ujNcSgKehvmyZBDWmlOiekjX6vYBG7i/63A/aBX5gGzuEwyXfvt9wM1DbWvK0PScJ0JlBQD0msFJtI3bvUvSgDPCXYHOa2r5LaLrKnngICs=
+Received: from SN4PR0501CA0139.namprd05.prod.outlook.com
+ (2603:10b6:803:2c::17) by BL0PR02MB3843.namprd02.prod.outlook.com
+ (2603:10b6:207:3e::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.11; Tue, 15 Sep
+ 2020 18:39:16 +0000
+Received: from SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:803:2c:cafe::ab) by SN4PR0501CA0139.outlook.office365.com
+ (2603:10b6:803:2c::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.5 via Frontend
+ Transport; Tue, 15 Sep 2020 18:39:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT052.mail.protection.outlook.com (10.152.72.146) with Microsoft SMTP
+ Server id 15.20.3370.16 via Frontend Transport; Tue, 15 Sep 2020 18:39:16
+ +0000
+Received: from [149.199.38.66] (port=33529 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrC-00079p-6M; Tue, 15 Sep 2020 11:39:10 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by smtp.xilinx.com with smtp (Exim 4.63)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrI-0001lD-0V; Tue, 15 Sep 2020 11:39:16 -0700
+Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 08FId9kc008886;
+        Tue, 15 Sep 2020 11:39:09 -0700
+Received: from [172.19.75.82] (helo=xsjsycl40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrB-0001kK-AQ; Tue, 15 Sep 2020 11:39:09 -0700
+Received: by xsjsycl40.xilinx.com (Postfix, from userid 13638)
+        id 491F2352CB5; Tue, 15 Sep 2020 11:39:09 -0700 (PDT)
+Date:   Tue, 15 Sep 2020 11:39:09 -0700
+From:   Hyun Kwon <hyun.kwon@xilinx.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        "hamohammed.sa@gmail.com" <hamohammed.sa@gmail.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Michal Simek <michals@xilinx.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "emil.velikov@collabora.com" <emil.velikov@collabora.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>,
+        "oleksandr_andrushchenko@epam.com" <oleksandr_andrushchenko@epam.com>,
+        "tomi.valkeinen@ti.com" <tomi.valkeinen@ti.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "bskeggs@redhat.com" <bskeggs@redhat.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "matthew.auld@intel.com" <matthew.auld@intel.com>,
+        "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+        "andi.shyti@intel.com" <andi.shyti@intel.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "marek.olsak@amd.com" <marek.olsak@amd.com>,
+        "tianci.yin@amd.com" <tianci.yin@amd.com>,
+        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "evan.quan@amd.com" <evan.quan@amd.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>,
+        "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
+        "aaron.liu@amd.com" <aaron.liu@amd.com>,
+        "Felix.Kuehling@amd.com" <Felix.Kuehling@amd.com>,
+        "xinhui.pan@amd.com" <xinhui.pan@amd.com>,
+        "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>,
+        "hjc@rock-chips.com" <hjc@rock-chips.com>,
+        "miaoqinglang@huawei.com" <miaoqinglang@huawei.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "nirmoy.das@amd.com" <nirmoy.das@amd.com>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "Hawking.Zhang@amd.com" <Hawking.Zhang@amd.com>,
+        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 20/21] drm/xlnx: Initialize DRM driver instance with
+ CMA helper macro
+Message-ID: <20200915183909.GA2471550@xilinx.com>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-21-tzimmermann@suse.de>
+ <20200915155346.GA26029@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200915155346.GA26029@pendragon.ideasonboard.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a08eb784-7c2d-4b5d-737f-08d859a6a687
+X-MS-TrafficTypeDiagnostic: BL0PR02MB3843:
+X-Microsoft-Antispam-PRVS: <BL0PR02MB38435935F57FA757CF2846C9D6200@BL0PR02MB3843.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:157;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U5bh9p8yPdraqnUk+xpYEA9i315rY+tyWwgDCieDtcnxN/f08b8LfgTIPR0GVDc5TRbMRXbHtIXk9bwONidsek5dZEXL+1y34WGM3WdbloNejuTXRi0u7TVejfJUu6BbouAoHtr7XSuNv/iPrCOZdzQkV2YIy+PArroWHUXic6Shn0pF4O80yuLM7tjzcp2iKGSrKvqYXw0TBXGOJg5JyFqV6kFN5VAMDTsLwzN7Hit4ODczPUGyZgtP4XT6nPUqqiitbhxAr1EuURtpmENziPCH4vQXR+nDXArcpQd4278wALBESD7chGXylksQ6s3YQyYjsKlYVatWB7uEKLed35BqRz3Gy46Mhnug4dwY7t+Rj2tVLG/yba9zNZG8kGqGOmxIOMyILOdQTgk+Ki6V7uCriWFAGUbxgsYixwbVMMx/uT4iwgSiPOdzqnhhrleSZ3KhArLnfwy/3ExD2W9jQg==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(136003)(396003)(376002)(39860400002)(346002)(46966005)(82310400003)(2906002)(36756003)(8676002)(54906003)(83380400001)(44832011)(70586007)(82740400003)(70206006)(356005)(5660300002)(1076003)(47076004)(81166007)(2616005)(450100002)(4326008)(478600001)(426003)(6266002)(336012)(316002)(26005)(186003)(42186006)(33656002)(6862004)(8936002)(966005)(42866002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2020 18:39:16.6223
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a08eb784-7c2d-4b5d-737f-08d859a6a687
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB3843
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.09.2020 05:13, Chanwoo Choi пишет:
-> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
->> Hi Dmitry,
->>
->> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
->>> 14.09.2020 10:09, Chanwoo Choi пишет:
->>>> Hi,
->>>>
->>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
->>>>> This error path needs to call clk_disable_unprepare().
->>>>>
->>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
->>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>> ---
->>>>> ---
->>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
->>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->>>>> index e94a27804c20..dedd39de7367 100644
->>>>> --- a/drivers/devfreq/tegra30-devfreq.c
->>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->>>>>  	if (rate < 0) {
->>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
->>>>> -		return rate;
->>>>> +		err = rate;
->>>>> +		goto disable_clk;
->>>>>  	}
->>>>>  
->>>>>  	tegra->max_freq = rate / KHZ;
->>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
->>>>>  
->>>>>  	reset_control_reset(tegra->reset);
->>>>> +disable_clk:
->>>>>  	clk_disable_unprepare(tegra->clock);
->>>>
->>>> Is it doesn't need to reset with reset_contrl_reset()?
->>>
->>> Hello, Chanwoo!
->>>
->>> It's reset just before the clk_round_rate() invocation, hence there
->>> shouldn't be a need to reset it second time.
->>
->> Do you mean that reset is deasserted automatically
->> when invoke clk_round_rate() on tegra?
+Hi Tomas,
 
-I only mean that the tegra30-devfreq driver deasserts the reset before
-the clk_round_rate():
+Thanks for the patch.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
-
->> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
+On Tue, Sep 15, 2020 at 08:53:46AM -0700, Laurent Pinchart wrote:
+> Hi Thomas,
 > 
-> I'm sorry for my typo. s/tree/true.
+> Thank you for the patch.
 > 
->> is not needed on 'remove_opp:' goto. Because already reset deassertion
->> is invoked by clk_round_rate(), it seems that doesn't need to invoke
->> anymore during exception case.
->>
->> Actually, it is not clear in my case.
+> On Tue, Sep 15, 2020 at 04:59:57PM +0200, Thomas Zimmermann wrote:
+> > The xlnx driver uses CMA helpers with default callback functions.
+> > Initialize the driver structure with the rsp CMA helper macro. The
+> > driver is being converted to use GEM object functions as part of
+> > this change.
+> > 
+> > Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
+> > to their default implementations, so they are just kept empty now.
+> > 
+> > v2:
+> > 	* initialize with DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE (Laurent)
+> > 
+> > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
 
-The reset_control_reset() in the error path of the driver probe function
-is placed that way to make the tear-down order match the driver removal
-order. Perhaps the reset could be moved before the remove_opp, but this
-change won't make any real difference, hence it already should be good
-as-is.
+Reviewed-by: Hyun Kwon <hyun.kwon@xilinx.com>
+
+Thanks,
+-hyun
+
+> > ---
+> >  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
+> >  1 file changed, 1 insertion(+), 13 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > index 8e69303aad3f..f3ffc3703a0e 100644
+> > --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > @@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
+> >  	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
+> >  					  DRIVER_ATOMIC,
+> >  
+> > -	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
+> > -	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
+> > -	.gem_prime_export		= drm_gem_prime_export,
+> > -	.gem_prime_import		= drm_gem_prime_import,
+> > -	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
+> > -	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
+> > -	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
+> > -	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
+> > -	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
+> > -	.gem_free_object_unlocked	= drm_gem_cma_free_object,
+> > -	.gem_vm_ops			= &drm_gem_cma_vm_ops,
+> > -	.dumb_create			= zynqmp_dpsub_dumb_create,
+> > -	.dumb_destroy			= drm_gem_dumb_destroy,
+> > +	DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
+> >  
+> >  	.fops				= &zynqmp_dpsub_drm_fops,
+> >  
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
