@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59755C35257
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32DAC2D0E3
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3271B208E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CB12208E4
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgIOXB2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36540 "EHLO mx2.suse.de"
+        id S1726900AbgIOXB1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 19:01:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36738 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727381AbgIOPB0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:01:26 -0400
+        id S1727383AbgIOPB1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 11:01:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B891DAFB5;
-        Tue, 15 Sep 2020 15:00:24 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 60ABAB042;
+        Tue, 15 Sep 2020 15:00:27 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -57,9 +57,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 09/21] drm/nouveau: Introduce GEM object functions
-Date:   Tue, 15 Sep 2020 16:59:46 +0200
-Message-Id: <20200915145958.19993-10-tzimmermann@suse.de>
+Subject: [PATCH v2 12/21] drm/radeon: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:49 +0200
+Message-Id: <20200915145958.19993-13-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
@@ -72,94 +72,153 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in nouveau.
+per-instance callbacks in radeon.
+
+v2:
+	* move object-function instance to radeon_gem.c (Christian)
+	* set callbacks in radeon_gem_object_create() (Christian)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c   |  9 ---------
- drivers/gpu/drm/nouveau/nouveau_gem.c   | 13 +++++++++++++
- drivers/gpu/drm/nouveau/nouveau_gem.h   |  2 ++
- drivers/gpu/drm/nouveau/nouveau_prime.c |  2 ++
- 4 files changed, 17 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 23 +--------------------
+ drivers/gpu/drm/radeon/radeon_gem.c | 31 +++++++++++++++++++++++++----
+ 2 files changed, 28 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 42fc5c813a9b..72640bca1617 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1207,16 +1207,7 @@ driver_stub = {
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 4cd30613fa1d..65061c949aee 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -124,13 +124,6 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev);
+ int radeon_driver_irq_postinstall_kms(struct drm_device *dev);
+ void radeon_driver_irq_uninstall_kms(struct drm_device *dev);
+ irqreturn_t radeon_driver_irq_handler_kms(int irq, void *arg);
+-void radeon_gem_object_free(struct drm_gem_object *obj);
+-int radeon_gem_object_open(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-void radeon_gem_object_close(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
+-					int flags);
+ extern int radeon_get_crtc_scanoutpos(struct drm_device *dev, unsigned int crtc,
+ 				      unsigned int flags, int *vpos, int *hpos,
+ 				      ktime_t *stime, ktime_t *etime,
+@@ -145,14 +138,9 @@ int radeon_mode_dumb_mmap(struct drm_file *filp,
+ int radeon_mode_dumb_create(struct drm_file *file_priv,
+ 			    struct drm_device *dev,
+ 			    struct drm_mode_create_dumb *args);
+-struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
+ struct drm_gem_object *radeon_gem_prime_import_sg_table(struct drm_device *dev,
+ 							struct dma_buf_attachment *,
+ 							struct sg_table *sg);
+-int radeon_gem_prime_pin(struct drm_gem_object *obj);
+-void radeon_gem_prime_unpin(struct drm_gem_object *obj);
+-void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
+-void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
+ 
+ /* atpx handler */
+ #if defined(CONFIG_VGA_SWITCHEROO)
+@@ -550,7 +538,7 @@ long radeon_drm_ioctl(struct file *filp,
+ 	}
+ 
+ 	ret = drm_ioctl(filp, cmd, arg);
+-	
++
+ 	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ 	return ret;
+@@ -609,22 +597,13 @@ static struct drm_driver kms_driver = {
+ 	.irq_uninstall = radeon_driver_irq_uninstall_kms,
+ 	.irq_handler = radeon_driver_irq_handler_kms,
+ 	.ioctls = radeon_ioctls_kms,
+-	.gem_free_object_unlocked = radeon_gem_object_free,
+-	.gem_open_object = radeon_gem_object_open,
+-	.gem_close_object = radeon_gem_object_close,
+ 	.dumb_create = radeon_mode_dumb_create,
+ 	.dumb_map_offset = radeon_mode_dumb_mmap,
+ 	.fops = &radeon_driver_kms_fops,
  
  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin = nouveau_gem_prime_pin,
--	.gem_prime_unpin = nouveau_gem_prime_unpin,
--	.gem_prime_get_sg_table = nouveau_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = nouveau_gem_prime_import_sg_table,
--	.gem_prime_vmap = nouveau_gem_prime_vmap,
--	.gem_prime_vunmap = nouveau_gem_prime_vunmap,
--
--	.gem_free_object_unlocked = nouveau_gem_object_del,
--	.gem_open_object = nouveau_gem_object_open,
--	.gem_close_object = nouveau_gem_object_close,
+-	.gem_prime_export = radeon_gem_prime_export,
+-	.gem_prime_pin = radeon_gem_prime_pin,
+-	.gem_prime_unpin = radeon_gem_prime_unpin,
+-	.gem_prime_get_sg_table = radeon_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table = radeon_gem_prime_import_sg_table,
+-	.gem_prime_vmap = radeon_gem_prime_vmap,
+-	.gem_prime_vunmap = radeon_gem_prime_vunmap,
  
- 	.dumb_create = nouveau_display_dumb_create,
- 	.dumb_map_offset = nouveau_display_dumb_map_offset,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-index 89adadf4706b..28e0cbb00876 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -169,6 +169,17 @@ nouveau_gem_object_close(struct drm_gem_object *gem, struct drm_file *file_priv)
- 	ttm_bo_unreserve(&nvbo->bo);
+ 	.name = DRIVER_NAME,
+ 	.desc = DRIVER_DESC,
+diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
+index e5c4271e64ed..0ccd7213e41f 100644
+--- a/drivers/gpu/drm/radeon/radeon_gem.c
++++ b/drivers/gpu/drm/radeon/radeon_gem.c
+@@ -35,7 +35,17 @@
+ 
+ #include "radeon.h"
+ 
+-void radeon_gem_object_free(struct drm_gem_object *gobj)
++struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
++					int flags);
++struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
++int radeon_gem_prime_pin(struct drm_gem_object *obj);
++void radeon_gem_prime_unpin(struct drm_gem_object *obj);
++void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
++void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
++
++static const struct drm_gem_object_funcs radeon_gem_object_funcs;
++
++static void radeon_gem_object_free(struct drm_gem_object *gobj)
+ {
+ 	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
+ 
+@@ -85,6 +95,7 @@ int radeon_gem_object_create(struct radeon_device *rdev, unsigned long size,
+ 		return r;
+ 	}
+ 	*obj = &robj->tbo.base;
++	(*obj)->funcs = &radeon_gem_object_funcs;
+ 	robj->pid = task_pid_nr(current);
+ 
+ 	mutex_lock(&rdev->gem.mutex);
+@@ -146,7 +157,7 @@ void radeon_gem_fini(struct radeon_device *rdev)
+  * Call from drm_gem_handle_create which appear in both new and open ioctl
+  * case.
+  */
+-int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
++static int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
+ {
+ 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
+ 	struct radeon_device *rdev = rbo->rdev;
+@@ -176,8 +187,8 @@ int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_pri
+ 	return 0;
  }
  
-+const struct drm_gem_object_funcs nouveau_gem_object_funcs = {
-+	.free = nouveau_gem_object_del,
-+	.open = nouveau_gem_object_open,
-+	.close = nouveau_gem_object_close,
-+	.pin = nouveau_gem_prime_pin,
-+	.unpin = nouveau_gem_prime_unpin,
-+	.get_sg_table = nouveau_gem_prime_get_sg_table,
-+	.vmap = nouveau_gem_prime_vmap,
-+	.vunmap = nouveau_gem_prime_vunmap,
+-void radeon_gem_object_close(struct drm_gem_object *obj,
+-			     struct drm_file *file_priv)
++static void radeon_gem_object_close(struct drm_gem_object *obj,
++				    struct drm_file *file_priv)
+ {
+ 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
+ 	struct radeon_device *rdev = rbo->rdev;
+@@ -216,6 +227,18 @@ static int radeon_gem_handle_lockup(struct radeon_device *rdev, int r)
+ 	return r;
+ }
+ 
++static const struct drm_gem_object_funcs radeon_gem_object_funcs = {
++	.free = radeon_gem_object_free,
++	.open = radeon_gem_object_open,
++	.close = radeon_gem_object_close,
++	.export = radeon_gem_prime_export,
++	.pin = radeon_gem_prime_pin,
++	.unpin = radeon_gem_prime_unpin,
++	.get_sg_table = radeon_gem_prime_get_sg_table,
++	.vmap = radeon_gem_prime_vmap,
++	.vunmap = radeon_gem_prime_vunmap,
 +};
 +
- int
- nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
- 		uint32_t tile_mode, uint32_t tile_flags,
-@@ -186,6 +197,8 @@ nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
- 	if (IS_ERR(nvbo))
- 		return PTR_ERR(nvbo);
- 
-+	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
-+
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
- 	ret = drm_gem_object_init(drm->dev, &nvbo->bo.base, size);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.h b/drivers/gpu/drm/nouveau/nouveau_gem.h
-index 978e07591990..b35c180322e2 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.h
-@@ -5,6 +5,8 @@
- #include "nouveau_drv.h"
- #include "nouveau_bo.h"
- 
-+extern const struct drm_gem_object_funcs nouveau_gem_object_funcs;
-+
- static inline struct nouveau_bo *
- nouveau_gem_object(struct drm_gem_object *gem)
- {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
-index b2ecb91f8ddc..a8264aebf3d4 100644
---- a/drivers/gpu/drm/nouveau/nouveau_prime.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
-@@ -77,6 +77,8 @@ struct drm_gem_object *nouveau_gem_prime_import_sg_table(struct drm_device *dev,
- 
- 	nvbo->valid_domains = NOUVEAU_GEM_DOMAIN_GART;
- 
-+	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
-+
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
- 	ret = drm_gem_object_init(dev, &nvbo->bo.base, size);
+ /*
+  * GEM ioctls.
+  */
 -- 
 2.28.0
 
