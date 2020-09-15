@@ -2,193 +2,366 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8350C43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 02:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619CCC2D0E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DABB207EA
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 02:01:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EweiNUmR"
+	by mail.kernel.org (Postfix) with ESMTP id 3A16E21D24
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 08:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbgIOCBR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Sep 2020 22:01:17 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:19744 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgIOCBQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Sep 2020 22:01:16 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200915020112epoutp03b89c0bb28b51a9114421506f74e79f49~00o11XMmX3147831478epoutp03a
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2020 02:01:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200915020112epoutp03b89c0bb28b51a9114421506f74e79f49~00o11XMmX3147831478epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600135272;
-        bh=wGMymztbJmfEZTOOZj2lpRmtKls5pkqELPQ6OqgpQVE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=EweiNUmRF5I2K6bxf/sYtXvXaim0P6akaDZU+H9MHjKf6BUes1YVIe1J+lIUTr6FC
-         yrccl1mnPTEssm/7lwKd4G7UmiAJoGx0Eq76vGyEAAJaZRitYYiPyqDCaiqAlMfp4W
-         4q9Z4vpE1x5RNzd2u5p7EkhVCkMcC+XEQaa3ofI4=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200915020111epcas1p3c53ad8bd16abcd812f51bb3bb4484d1c~00o1Hkqjl2759427594epcas1p3N;
-        Tue, 15 Sep 2020 02:01:11 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Br6052l8TzMqYkp; Tue, 15 Sep
-        2020 02:01:09 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.5B.29173.060206F5; Tue, 15 Sep 2020 11:01:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200915020102epcas1p35fd3921fff8a0e384828efa769c85c1d~00oszblS12745227452epcas1p3L;
-        Tue, 15 Sep 2020 02:01:02 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200915020102epsmtrp2199f36a719970a28a4e5f335998a8dc7~00osyrfU70882908829epsmtrp2I;
-        Tue, 15 Sep 2020 02:01:02 +0000 (GMT)
-X-AuditID: b6c32a37-9cdff700000071f5-6c-5f602060f878
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        65.2B.08303.E50206F5; Tue, 15 Sep 2020 11:01:02 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915020102epsmtip2f3cf3a905568dd4d1ab7ef342df6f704~00oscZtpz1190411904epsmtip2I;
-        Tue, 15 Sep 2020 02:01:02 +0000 (GMT)
-Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Organization: Samsung Electronics
-Message-ID: <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
-Date:   Tue, 15 Sep 2020 11:13:12 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1726157AbgIOI4z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 04:56:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40602 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbgIOI4y (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 04:56:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 91A0BB071;
+        Tue, 15 Sep 2020 08:57:07 +0000 (UTC)
+Subject: Re: [PATCH 18/20] drm/xen: Introduce GEM object functions
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "christian.gmeiner@gmail.com" <christian.gmeiner@gmail.com>,
+        "inki.dae@samsung.com" <inki.dae@samsung.com>,
+        "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>,
+        "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "patrik.r.jakobsson@gmail.com" <patrik.r.jakobsson@gmail.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "robdclark@gmail.com" <robdclark@gmail.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "bskeggs@redhat.com" <bskeggs@redhat.com>,
+        "tomi.valkeinen@ti.com" <tomi.valkeinen@ti.com>,
+        "eric@anholt.net" <eric@anholt.net>,
+        "hjc@rock-chips.com" <hjc@rock-chips.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
+        "hamohammed.sa@gmail.com" <hamohammed.sa@gmail.com>,
+        "hyun.kwon@xilinx.com" <hyun.kwon@xilinx.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+        "evan.quan@amd.com" <evan.quan@amd.com>,
+        "Hawking.Zhang@amd.com" <Hawking.Zhang@amd.com>,
+        "tianci.yin@amd.com" <tianci.yin@amd.com>,
+        "marek.olsak@amd.com" <marek.olsak@amd.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "andrey.grodzovsky@amd.com" <andrey.grodzovsky@amd.com>,
+        "Felix.Kuehling@amd.com" <Felix.Kuehling@amd.com>,
+        "xinhui.pan@amd.com" <xinhui.pan@amd.com>,
+        "aaron.liu@amd.com" <aaron.liu@amd.com>,
+        "nirmoy.das@amd.com" <nirmoy.das@amd.com>,
+        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>,
+        "matthew.auld@intel.com" <matthew.auld@intel.com>,
+        "abdiel.janulgue@linux.intel.com" <abdiel.janulgue@linux.intel.com>,
+        "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
+        "andi.shyti@intel.com" <andi.shyti@intel.com>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "miaoqinglang@huawei.com" <miaoqinglang@huawei.com>,
+        "emil.velikov@collabora.com" <emil.velikov@collabora.com>
+Cc:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
+ <20200813083644.31711-19-tzimmermann@suse.de>
+ <1fe5f918-2445-d2e6-a501-881e70929404@epam.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <ea91877b-6398-a398-4972-9794f7965662@suse.de>
+Date:   Tue, 15 Sep 2020 10:56:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmvm6CQkK8wZbnyhav/01nsVj98TGj
-        RcusRSwWW29JW5xtesNu8bn3CKNF55dZbBa3G1ewWfzcNY/FgdNj56y77B69ze/YPD4+vcXi
-        0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkou
-        PgG6bpk5QPcoKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgosC/SKE3OLS/PS9ZLz
-        c60MDQyMTIEKE7Iz+qf+Zym4IFAx89I75gbG67xdjJwcEgImEo+mbmLsYuTiEBLYwSjxY/k6
-        VgjnE6PE2VNXWCCcz4wSfYe3scK0fOzugGrZxSixftJkJgjnPaNEQ+sVNpAqYQFvid8PfoF1
-        sAloSex/cQMsLiIQJLHr80xmkAZmgXYmient78CK+AUUJa7+eMwIYvMK2EncOb2WHcRmEVCV
-        uHj5OFhcVCBM4uS2FqgaQYmTM5+wgNicAvYSLdd3gcWZBcQlbj2ZzwRhy0s0b50NtkxCYCmH
-        xK597cwQP7hI7GjcBmULS7w6voUdwpaS+PxuLxuEXS2x8uQRNojmDkaJLfsvQAPAWGL/UpCf
-        OYA2aEqs36UPEVaU2Pl7LtQRfBLvvvawgpRICPBKdLQJQZQoS1x+cJcJwpaUWNzeyTaBUWkW
-        kndmIXlhFpIXZiEsW8DIsopRLLWgODc9tdiwwBg5vjcxglOrlvkOxmlvP+gdYmTiYDzEKMHB
-        rCTCe6AxPl6INyWxsiq1KD++qDQntfgQoykwgCcyS4km5wOTe15JvKGpkbGxsYWJoZmpoaGS
-        OO/DWwrxQgLpiSWp2ampBalFMH1MHJxSDUxGQhG9fNPNA2vZ1Hubl/9flbJk/aL9/2rEj1zW
-        +rXroPTc6y1XpK81bJn5haFQ9XXDQdPMNsGZV0Rdp5YmKE0MWxo9qZW3tIuNh1Nzu5p64vTj
-        y5jVdA8s6ODpuWru1ZLsXOK4kdk54FGTtv3myKWPn4TstE51nBwsmH/sePWugGSbD+Xfthil
-        MF55YvWWt/xOaYb4qsvfyrV3sL9SF/Wve/dX+ItcnnKC0yXlfedfMCQsKV26P2Lb3szyfYlb
-        ZhUv1PzCMudy9EOf8/w7s+c3eczsnzjnWMTy70EvNr+SrG08Z9Nq9uPUR1MjqZSiy0bhpr/l
-        jYJ3zr0s9Iz7sNP++svbfbpPbN5464Fz5GIlluKMREMt5qLiRABu8LA2NgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJXjdOISHeYFG3gcXrf9NZLFZ/fMxo
-        0TJrEYvF1lvSFmeb3rBbfO49wmjR+WUWm8XtxhVsFj93zWNx4PTYOesuu0dv8zs2j49Pb7F4
-        9G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV0b/1P8sBRcEKmZeesfcwHidt4uRk0NCwETiY3cH
-        YxcjF4eQwA5Gidv79rNCJCQlpl08ytzFyAFkC0scPlwMUfOWUeJ5/0tGkBphAW+J3w9+gdWz
-        CWhJ7H9xgw3EFhEIkji1+S1YDbNAJ5PE8TN2EM1zmSR2zDkMVsQvoChx9cdjsCJeATuJO6fX
-        soPYLAKqEhcvHweLiwqESexc8pgJokZQ4uTMJywgNqeAvUTL9V1QC9Ql/sy7xAxhi0vcejKf
-        CcKWl2jeOpt5AqPwLCTts5C0zELSMgtJywJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ
-        +bmbGMERpqW1g3HPqg96hxiZOBgPMUpwMCuJ8B5ojI8X4k1JrKxKLcqPLyrNSS0+xCjNwaIk
-        zvt11sI4IYH0xJLU7NTUgtQimCwTB6dUA9O2T5/Fq59VLtnw/f6mz/NzlGTKPl1c0sHzJ/PE
-        nNOLWx5kvG8rmbL6QvoCy1ef7pukiS7auvXdj5yff6N4hLZm7j+feytrdfDUsguTxNnfZZx2
-        s3pr//0kx85Tr9rNcrTO+SwoaP4pr+Pn2h4hJaIm0d49x01bpkv6Pp+vdJ/vpB2/NWrW6ZoF
-        LmVwn/LnvEDXHdHlP93V94czfc3abSv1qUozfXHNdt6YmwnTbYR/PnB86WOfNc11xcRXF55x
-        NVTmS9x9khty8J3squqymxIGNQo3w/2elqtOYhO1CVD6Gn3uZ6aYT/gm5sSeonARr+kLFN4U
-        LXXYUmPDOZk/teha4q/vy3l9pm+z9vp6PF2JpTgj0VCLuag4EQCQWZN7HwMAAA==
-X-CMS-MailID: 20200915020102epcas1p35fd3921fff8a0e384828efa769c85c1d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7
-References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
-        <20200908072557.GC294938@mwanda>
-        <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
-        <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
-        <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+In-Reply-To: <1fe5f918-2445-d2e6-a501-881e70929404@epam.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="PEKUmr8ZTfzNvLYko4DS4LvqUwNvZCpsP"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/15/20 11:00 AM, Chanwoo Choi wrote:
-> Hi Dmitry,
-> 
-> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
->> 14.09.2020 10:09, Chanwoo Choi пишет:
->>> Hi,
->>>
->>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
->>>> This error path needs to call clk_disable_unprepare().
->>>>
->>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>> ---
->>>> ---
->>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
->>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->>>> index e94a27804c20..dedd39de7367 100644
->>>> --- a/drivers/devfreq/tegra30-devfreq.c
->>>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->>>>  	if (rate < 0) {
->>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
->>>> -		return rate;
->>>> +		err = rate;
->>>> +		goto disable_clk;
->>>>  	}
->>>>  
->>>>  	tegra->max_freq = rate / KHZ;
->>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
->>>>  
->>>>  	reset_control_reset(tegra->reset);
->>>> +disable_clk:
->>>>  	clk_disable_unprepare(tegra->clock);
->>>
->>> Is it doesn't need to reset with reset_contrl_reset()?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--PEKUmr8ZTfzNvLYko4DS4LvqUwNvZCpsP
+Content-Type: multipart/mixed; boundary="kA0kz2rRnYLjEYgqBQNbqkILRFPajOphI";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "airlied@linux.ie" <airlied@linux.ie>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+ "christian.gmeiner@gmail.com" <christian.gmeiner@gmail.com>,
+ "inki.dae@samsung.com" <inki.dae@samsung.com>,
+ "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>,
+ "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>,
+ "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+ "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>,
+ "patrik.r.jakobsson@gmail.com" <patrik.r.jakobsson@gmail.com>,
+ "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+ "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+ "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "robdclark@gmail.com" <robdclark@gmail.com>,
+ "sean@poorly.run" <sean@poorly.run>, "bskeggs@redhat.com"
+ <bskeggs@redhat.com>, "tomi.valkeinen@ti.com" <tomi.valkeinen@ti.com>,
+ "eric@anholt.net" <eric@anholt.net>, "hjc@rock-chips.com"
+ <hjc@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+ "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
+ "hamohammed.sa@gmail.com" <hamohammed.sa@gmail.com>,
+ "hyun.kwon@xilinx.com" <hyun.kwon@xilinx.com>,
+ "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
+ "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+ "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+ "evan.quan@amd.com" <evan.quan@amd.com>,
+ "Hawking.Zhang@amd.com" <Hawking.Zhang@amd.com>,
+ "tianci.yin@amd.com" <tianci.yin@amd.com>,
+ "marek.olsak@amd.com" <marek.olsak@amd.com>,
+ "hdegoede@redhat.com" <hdegoede@redhat.com>,
+ "andrey.grodzovsky@amd.com" <andrey.grodzovsky@amd.com>,
+ "Felix.Kuehling@amd.com" <Felix.Kuehling@amd.com>,
+ "xinhui.pan@amd.com" <xinhui.pan@amd.com>,
+ "aaron.liu@amd.com" <aaron.liu@amd.com>,
+ "nirmoy.das@amd.com" <nirmoy.das@amd.com>,
+ "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>,
+ "matthew.auld@intel.com" <matthew.auld@intel.com>,
+ "abdiel.janulgue@linux.intel.com" <abdiel.janulgue@linux.intel.com>,
+ "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
+ "andi.shyti@intel.com" <andi.shyti@intel.com>,
+ "sam@ravnborg.org" <sam@ravnborg.org>,
+ "miaoqinglang@huawei.com" <miaoqinglang@huawei.com>,
+ "emil.velikov@collabora.com" <emil.velikov@collabora.com>
+Cc: "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Message-ID: <ea91877b-6398-a398-4972-9794f7965662@suse.de>
+Subject: Re: [PATCH 18/20] drm/xen: Introduce GEM object functions
+References: <20200813083644.31711-1-tzimmermann@suse.de>
+ <20200813083644.31711-19-tzimmermann@suse.de>
+ <1fe5f918-2445-d2e6-a501-881e70929404@epam.com>
+In-Reply-To: <1fe5f918-2445-d2e6-a501-881e70929404@epam.com>
+
+--kA0kz2rRnYLjEYgqBQNbqkILRFPajOphI
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi
+
+Am 13.08.20 um 13:19 schrieb Oleksandr Andrushchenko:
+> Hi,
+>=20
+> On 8/13/20 11:36 AM, Thomas Zimmermann wrote:
+>> GEM object functions deprecate several similar callback interfaces in
+>> struct drm_driver. This patch replaces the per-driver callbacks with
+>> per-instance callbacks in xen. The only exception is gem_prime_mmap,
+>> which is non-trivial to convert.
 >>
->> Hello, Chanwoo!
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>   drivers/gpu/drm/xen/xen_drm_front.c     | 12 +-----------
+>>   drivers/gpu/drm/xen/xen_drm_front.h     |  2 ++
+>>   drivers/gpu/drm/xen/xen_drm_front_gem.c | 15 +++++++++++++++
+>>   3 files changed, 18 insertions(+), 11 deletions(-)
 >>
->> It's reset just before the clk_round_rate() invocation, hence there
->> shouldn't be a need to reset it second time.
-> 
-> Do you mean that reset is deasserted automatically
-> when invoke clk_round_rate() on tegra?
-> 
-> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen=
+/xen_drm_front.c
+>> index 3e660fb111b3..bd9af1875af1 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front.c
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
+>> @@ -433,7 +433,7 @@ static int xen_drm_drv_dumb_create(struct drm_file=
+ *filp,
+>>   	return ret;
+>>   }
+>>  =20
+>> -static void xen_drm_drv_free_object_unlocked(struct drm_gem_object *o=
+bj)
+>> +void xen_drm_drv_free_object_unlocked(struct drm_gem_object *obj)
+>=20
+> Can we please have naming consistent and name it as
+>=20
+> xen_drm_front_drv_free_object_unlocked or any other name if this seems =
+to be too long,
+>=20
+> but starting with xen_drm_front_ as the rest of exported functions?
 
-I'm sorry for my typo. s/tree/true.
+There already is a function with that name in drm_xen_front_gem.c. I'll
+move the callback function next to the object-function structure and
+rename it slightly.
 
-> is not needed on 'remove_opp:' goto. Because already reset deassertion
-> is invoked by clk_round_rate(), it seems that doesn't need to invoke
-> anymore during exception case.
-> 
-> Actually, it is not clear in my case.
-> 
+Best regards
+Thomas
+
+>=20
+> With this,
+>=20
+> Acked-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>=20
+> Thank you,
+>=20
+> Oleksandr
+>=20
+>>   {
+>>   	struct xen_drm_front_drm_info *drm_info =3D obj->dev->dev_private;
+>>   	int idx;
+>> @@ -481,22 +481,12 @@ static const struct file_operations xen_drm_dev_=
+fops =3D {
+>>   	.mmap           =3D xen_drm_front_gem_mmap,
+>>   };
+>>  =20
+>> -static const struct vm_operations_struct xen_drm_drv_vm_ops =3D {
+>> -	.open           =3D drm_gem_vm_open,
+>> -	.close          =3D drm_gem_vm_close,
+>> -};
+>> -
+>>   static struct drm_driver xen_drm_driver =3D {
+>>   	.driver_features           =3D DRIVER_GEM | DRIVER_MODESET | DRIVER=
+_ATOMIC,
+>>   	.release                   =3D xen_drm_drv_release,
+>> -	.gem_vm_ops                =3D &xen_drm_drv_vm_ops,
+>> -	.gem_free_object_unlocked  =3D xen_drm_drv_free_object_unlocked,
+>>   	.prime_handle_to_fd        =3D drm_gem_prime_handle_to_fd,
+>>   	.prime_fd_to_handle        =3D drm_gem_prime_fd_to_handle,
+>>   	.gem_prime_import_sg_table =3D xen_drm_front_gem_import_sg_table,
+>> -	.gem_prime_get_sg_table    =3D xen_drm_front_gem_get_sg_table,
+>> -	.gem_prime_vmap            =3D xen_drm_front_gem_prime_vmap,
+>> -	.gem_prime_vunmap          =3D xen_drm_front_gem_prime_vunmap,
+>>   	.gem_prime_mmap            =3D xen_drm_front_gem_prime_mmap,
+>>   	.dumb_create               =3D xen_drm_drv_dumb_create,
+>>   	.fops                      =3D &xen_drm_dev_fops,
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen=
+/xen_drm_front.h
+>> index f92c258350ca..93e60c1db550 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front.h
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
+>> @@ -160,4 +160,6 @@ int xen_drm_front_page_flip(struct xen_drm_front_i=
+nfo *front_info,
+>>   void xen_drm_front_on_frame_done(struct xen_drm_front_info *front_in=
+fo,
+>>   				 int conn_idx, u64 fb_cookie);
+>>  =20
+>> +void xen_drm_drv_free_object_unlocked(struct drm_gem_object *obj);
+>> +
+>>   #endif /* __XEN_DRM_FRONT_H_ */
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm=
+/xen/xen_drm_front_gem.c
+>> index f0b85e094111..7b315c08bcfc 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>> @@ -56,6 +56,19 @@ static void gem_free_pages_array(struct xen_gem_obj=
+ect *xen_obj)
+>>   	xen_obj->pages =3D NULL;
+>>   }
+>>  =20
+>> +static const struct vm_operations_struct xen_drm_drv_vm_ops =3D {
+>> +	.open           =3D drm_gem_vm_open,
+>> +	.close          =3D drm_gem_vm_close,
+>> +};
+>> +
+>> +static const struct drm_gem_object_funcs xen_drm_front_gem_object_fun=
+cs =3D {
+>> +	.free =3D xen_drm_drv_free_object_unlocked,
+>> +	.get_sg_table =3D xen_drm_front_gem_get_sg_table,
+>> +	.vmap =3D xen_drm_front_gem_prime_vmap,
+>> +	.vunmap =3D xen_drm_front_gem_prime_vunmap,
+>> +	.vm_ops =3D &xen_drm_drv_vm_ops,
+>> +};
+>> +
+>>   static struct xen_gem_object *gem_create_obj(struct drm_device *dev,=
+
+>>   					     size_t size)
+>>   {
+>> @@ -66,6 +79,8 @@ static struct xen_gem_object *gem_create_obj(struct =
+drm_device *dev,
+>>   	if (!xen_obj)
+>>   		return ERR_PTR(-ENOMEM);
+>>  =20
+>> +	xen_obj->base.funcs =3D &xen_drm_front_gem_object_funcs;
+>> +
+>>   	ret =3D drm_gem_object_init(dev, &xen_obj->base, size);
+>>   	if (ret < 0) {
+>>   		kfree(xen_obj);
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+--kA0kz2rRnYLjEYgqBQNbqkILRFPajOphI--
+
+--PEKUmr8ZTfzNvLYko4DS4LvqUwNvZCpsP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9ggdEUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPDBwf/f2Q/YJ8WXCfC3ehLZzwlJXNPSLdV
+RBu8TYn7lfxxUA4dxKgUAU8gtA/RhGAj6nStvS9xB/lBn3Pzea0Zgxyi9muLzrVj
+AAtdCLdz4ykNSJKXeHJFa2/gNzRETQYNok4p3aC2o7qLw1vUdb3U2GY3PzrEX+CR
+cF1iwAbanJ+/6sT1OATWLOSzjyZ4EkRCP6xclKm6wzrrATaBUeneBeDT0TW4OY1i
+0W8WRT7epjcXidinkJnDOtSXDzLRgl5eV5BnsTioD1vJ12ArZwkW0xG/wTTpNgMq
+Rs06mSE5osC1vjmNLl5TUYmtRzgLkOztpo+HyNQH5SwuMdM1wMCL8OkOVA==
+=swh3
+-----END PGP SIGNATURE-----
+
+--PEKUmr8ZTfzNvLYko4DS4LvqUwNvZCpsP--
