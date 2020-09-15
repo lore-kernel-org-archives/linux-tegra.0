@@ -2,151 +2,96 @@ Return-Path: <SRS0=iMCN=CY=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8934DC31E51
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178E9C43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64367208E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0F542193E
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Sep 2020 23:31:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ho4tJJkk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgIOXBg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34386 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbgIOPA0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:00:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 54959AF57;
-        Tue, 15 Sep 2020 15:00:20 +0000 (UTC)
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
-Date:   Tue, 15 Sep 2020 16:59:41 +0200
-Message-Id: <20200915145958.19993-5-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726900AbgIOXbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Sep 2020 19:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbgIOXbP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Sep 2020 19:31:15 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A716C06174A;
+        Tue, 15 Sep 2020 16:31:15 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id k13so2158812plk.3;
+        Tue, 15 Sep 2020 16:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7Z09eYaCc/CIae1Sq3zxvtZJUX+ossSY9hwOHisjfq0=;
+        b=Ho4tJJkk1ZBSfesk8sKYG7kdl5fqQN0s5A4sA17HhEa4zl2s75EImMpbu/8CqHA9N5
+         omJ/GKrzdKezLV+kW1/tD0k3kG/vYA4OE5pIpjd3m4nGhxRJfkIPY1JiwNBNhL/8455W
+         g2lKMcKVRlV2dDq7R8Ui5q5Fge1D3xZxv26/nPgbWb36284ji9tEs/x+7FCynADn9kDU
+         zz1a7NpgsbbnH7jTjVX4bnJYeVjjnMvqHr7c8JrlPWUkEQG41Karwh0lSKTHdL1wSc4q
+         48kzZu4E5lF/A+gIWBbclUMlVvaKBIPJ9l8KSk4GVHc7JdrOK+yKyFS4MPaMo5iCTALy
+         MyCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7Z09eYaCc/CIae1Sq3zxvtZJUX+ossSY9hwOHisjfq0=;
+        b=tiLWmOs7dFBIrefNrinjM58LnOgfE8ZIzL07qMAls9aKmDazOGuoXuQf8i6AC6VKhq
+         qdamBnhauhUWg8Gv6IRBEXVWgwLxmeusMoWZ1KNMMWuJFdShjZEl6jXVtdC71FzH6Eue
+         SgSftUqemK8okcveHC1Yr6/x02NEmKTPQxre71lafKzKTgMks2lzEKHBtT+xDHO/+D3E
+         d+PF/1IMbjS0tT6UrXAxw8DaKEw/+hRR4JKNBXaZavDTPNqOMLEa4miZsMjgQ5pnT1DF
+         5UAPItDUEjABfU/khkV1MTQJC8tBH/W4Xu8cUXj579AzzZbRMaJWyX/sWHDb0gNvGJSP
+         S61Q==
+X-Gm-Message-State: AOAM533WV/Bz3WrYaL7s5MjV6jVXwLFh4R8w60+NnnaRj+SZedBM+bn7
+        rP0S166/2mg7wxXet3mSUkFKtc6YmY0=
+X-Google-Smtp-Source: ABdhPJy5kLuSYa3gGuc4HA+hssYOfBHuBtsj+etWZNl/2+BfPEs1LsU5pvdz3mKM9/GoybtUoR307g==
+X-Received: by 2002:a17:90a:f010:: with SMTP id bt16mr1421238pjb.143.1600212674400;
+        Tue, 15 Sep 2020 16:31:14 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id gq14sm501795pjb.44.2020.09.15.16.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2020 16:31:14 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     thierry.reding@gmail.com, krzk@kernel.org
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jonathanh@nvidia.com
+Subject: [PATCH] memory: tegra: Correct num_tlb_lines for tegra210
+Date:   Tue, 15 Sep 2020 16:28:03 -0700
+Message-Id: <20200915232803.26163-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-GEM object functions deprecate several similar callback interfaces in
-struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in exynos. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
+According to Tegra210 TRM, the default value of TLB_ACTIVE_LINES
+field of register MC_SMMU_TLB_CONFIG_0 is 0x30. So num_tlb_lines
+should be 48 (0x30) rather than 32 (0x20).
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
- 2 files changed, 15 insertions(+), 10 deletions(-)
+ drivers/memory/tegra/tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index dbd80f1e4c78..fe46680ca208 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- 	file->driver_priv = NULL;
- }
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index 51b537cfa5a7..4fbf8cbc6666 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1074,7 +1074,7 @@ static const struct tegra_smmu_soc tegra210_smmu_soc = {
+ 	.num_groups = ARRAY_SIZE(tegra210_groups),
+ 	.supports_round_robin_arbitration = true,
+ 	.supports_request_limit = true,
+-	.num_tlb_lines = 32,
++	.num_tlb_lines = 48,
+ 	.num_asids = 128,
+ };
  
--static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
--
- static const struct drm_ioctl_desc exynos_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
- 			DRM_RENDER_ALLOW),
-@@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
- 	.open			= exynos_drm_open,
- 	.lastclose		= drm_fb_helper_lastclose,
- 	.postclose		= exynos_drm_postclose,
--	.gem_free_object_unlocked = exynos_drm_gem_free_object,
--	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
- 	.dumb_create		= exynos_drm_gem_dumb_create,
- 	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
- 	.gem_prime_import	= exynos_drm_gem_prime_import,
--	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
--	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
--	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
- 	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
- 	.ioctls			= exynos_ioctls,
- 	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index efa476858db5..69a5cf28b4ae 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
- 	kfree(exynos_gem);
- }
- 
-+static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
-+	.open = drm_gem_vm_open,
-+	.close = drm_gem_vm_close,
-+};
-+
-+static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
-+	.free = exynos_drm_gem_free_object,
-+	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
-+	.vmap = exynos_drm_gem_prime_vmap,
-+	.vunmap	= exynos_drm_gem_prime_vunmap,
-+	.vm_ops = &exynos_drm_gem_vm_ops,
-+};
-+
- static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
- 						  unsigned long size)
- {
-@@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
- 	exynos_gem->size = size;
- 	obj = &exynos_gem->base;
- 
-+	obj->funcs = &exynos_drm_gem_object_funcs;
-+
- 	ret = drm_gem_object_init(dev, obj, size);
- 	if (ret < 0) {
- 		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
 -- 
-2.28.0
+2.17.1
 
