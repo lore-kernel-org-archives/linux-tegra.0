@@ -2,106 +2,197 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109CDC35256
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 09:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C522DC433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB88E2080C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 09:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E8F2080C
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="D5BSMD99"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YwQFNnZ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgIPJuP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 05:50:15 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12388 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbgIPJuN (ORCPT
+        id S1726832AbgIPKDd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 06:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgIPKDY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 05:50:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f61df470000>; Wed, 16 Sep 2020 02:47:51 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 16 Sep 2020 02:50:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 02:50:13 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
- 2020 09:50:12 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 16 Sep 2020 09:50:12 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.26.74.242]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f61dfd20002>; Wed, 16 Sep 2020 02:50:12 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 1/5] misc: eeprom: at24: Initialise AT24 NVMEM ID field
-Date:   Wed, 16 Sep 2020 10:49:48 +0100
-Message-ID: <20200916094952.458003-2-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200916094952.458003-1-jonathanh@nvidia.com>
-References: <20200916094952.458003-1-jonathanh@nvidia.com>
+        Wed, 16 Sep 2020 06:03:24 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3BCC06178A
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id j2so6236704wrx.7
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
+        b=YwQFNnZ46y23ilMPtQ+YA1uU56yQbhOv6Wnxz4ZcYBv/64HXgnQIstoy81UuE+BuFc
+         RbVimusECAo2qKzk8yvrlLUDfal98le+MXG5s9js8pfohQ+Bnhlzr8odUz3778w+kM1b
+         6iP/yC9nMmGqgDJRKWjaW8mpLjM0JRvnAZoXk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
+        b=nyNb9Hct6ZuafZ3c/JKBuBAoyzBFiHPuoGZc32pjRYf/ojFZJCICvOesLo0MYUxagr
+         89WXuzFOTFBLZdCSzHDZzP+wtRiep1qqIvgHE9ZWhDHX3TyGXHdXb5VsrAtsmYrdarSi
+         ruGS/DYc3j4qVEveVUggeh0t+mnMmMFeejWk1VaKgymjiwXcn6X+0R7S0ZMb+Pg72Hxc
+         Tkv3A64jlHXKA4Fpyo58aU9EcurlQy+YWD2OpxzasPFFlci0xojpCBdyX5FSzLwnpsLu
+         AHCacMJe4zDwfkTgkcRkWTS5IlxWmQMsNPDOWBjbyX1cJ4pLEUdCbHq7TfxzEYGtIk2K
+         w42w==
+X-Gm-Message-State: AOAM532qp/ZTw+h8ERRZUGiTkqR65g/aDldH/JUVa/9RS3jYKVpc8oB0
+        SszYzP3Y6skMiEMnDG9GTN0VTQ==
+X-Google-Smtp-Source: ABdhPJzeuyJCXxonH76Yve4EPaguLB8swVVrVRKLIRv+fjNVrJReD84NaGvyyVb0RMzIohYAQGFSOA==
+X-Received: by 2002:adf:81e6:: with SMTP id 93mr25703900wra.412.1600250602103;
+        Wed, 16 Sep 2020 03:03:22 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id s26sm4516179wmh.44.2020.09.16.03.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 03:03:21 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 12:03:18 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+Message-ID: <20200916100318.GF438822@phenom.ffwll.local>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600249671; bh=jmvtm55itr9eJOTSnEX+409Pt+fxKdfCDE/ObG7O/GE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=D5BSMD999NSmW/YfFUWVQw0Sh1JKISbvb6+atTZAj17ffE67K1oFTolREyiwEnGmp
-         /4VFtDnO4SpQoXnnELXjxf0/ne8dcddYurw9Sg0kcn6cT3XC22fNAQAlvvIde1fL6k
-         7xWJxjUYZ9E24Mz1402wcCXqS6Ndg05aA6QULdafwsVnpIOSEbPg5ZK1NTADe4WiD9
-         JOplbHXCukvwVpxUXuYb39aDAyAl9TWfzDcpGycVBD2n9A9YAzTraLWLv/fP0FvCHF
-         bI9h0d2uhFbaaxDEJeOr4Xy7WzKe57U6g3AFGhtaV0ltUnkRKYuDiLg6jNXzkrT5kf
-         k4q362vvJoR5g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200915145958.19993-5-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The AT24 EEPROM driver does not initialise the 'id' field of the
-nvmem_config structure and because the entire structure is not
-initialised, it ends up with a random value. This causes the NVMEM
-driver to append the device 'devid' value to name of the NVMEM
-device. Ideally for I2C devices such as the AT24 that already have a
-unique name, we would not bother to append the 'devid'. However, given
-that this has always been done for AT24 devices, we cannot remove the
-'devid' as this will change the name of the userspace sysfs node for
-the NVMEM device. Nonetheless we should ensure that the 'id' field of
-the nvmem_config structure is initialised so that there is no chance of
-a random value causes problems in the future. Therefore, set the NVMEM
-config.id to NVMEM_DEVID_AUTO for AT24 EEPROMs so that the 'devid' is
-always appended.
+On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces the per-driver callbacks with
+> per-instance callbacks in exynos. The only exception is gem_prime_mmap,
+> which is non-trivial to convert.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+>  2 files changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index dbd80f1e4c78..fe46680ca208 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  	file->driver_priv = NULL;
+>  }
+>  
+> -static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> -	.open = drm_gem_vm_open,
+> -	.close = drm_gem_vm_close,
+> -};
+> -
+>  static const struct drm_ioctl_desc exynos_ioctls[] = {
+>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+>  			DRM_RENDER_ALLOW),
+> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
+>  	.open			= exynos_drm_open,
+>  	.lastclose		= drm_fb_helper_lastclose,
+>  	.postclose		= exynos_drm_postclose,
+> -	.gem_free_object_unlocked = exynos_drm_gem_free_object,
+> -	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
+>  	.dumb_create		= exynos_drm_gem_dumb_create,
+>  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+>  	.gem_prime_import	= exynos_drm_gem_prime_import,
+> -	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
+>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+> -	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
+> -	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
+>  	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
+>  	.ioctls			= exynos_ioctls,
+>  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index efa476858db5..69a5cf28b4ae 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
+>  	kfree(exynos_gem);
+>  }
+>  
+> +static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> +	.open = drm_gem_vm_open,
+> +	.close = drm_gem_vm_close,
+> +};
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/misc/eeprom/at24.c | 1 +
- 1 file changed, 1 insertion(+)
+Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling
+them drm_gem_simple_ops or so would remove a pile of these. But perhaps a
+quick follow up series.
 
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index e9df1ca251df..f76624b5c033 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -715,6 +715,7 @@ static int at24_probe(struct i2c_client *client)
-=20
- 	nvmem_config.name =3D dev_name(dev);
- 	nvmem_config.dev =3D dev;
-+	nvmem_config.id =3D NVMEM_DEVID_AUTO;
- 	nvmem_config.read_only =3D !writable;
- 	nvmem_config.root_only =3D !(flags & AT24_FLAG_IRUGO);
- 	nvmem_config.owner =3D THIS_MODULE;
---=20
-2.25.1
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
+> +
+> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+> +	.free = exynos_drm_gem_free_object,
+> +	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+> +	.vmap = exynos_drm_gem_prime_vmap,
+> +	.vunmap	= exynos_drm_gem_prime_vunmap,
+> +	.vm_ops = &exynos_drm_gem_vm_ops,
+> +};
+> +
+>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+>  						  unsigned long size)
+>  {
+> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+>  	exynos_gem->size = size;
+>  	obj = &exynos_gem->base;
+>  
+> +	obj->funcs = &exynos_drm_gem_object_funcs;
+> +
+>  	ret = drm_gem_object_init(dev, obj, size);
+>  	if (ret < 0) {
+>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+> -- 
+> 2.28.0
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
