@@ -2,151 +2,142 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99772C433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 14:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28DFC43461
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 15:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECE9122245
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 14:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D6C22274
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 15:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FENeMTOi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQn4Nuki"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbgIPOUV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 10:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
+        id S1726247AbgIPPa3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 11:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbgIPNcn (ORCPT
+        with ESMTP id S1726129AbgIPPaW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 09:32:43 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B37C08E86E
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id x14so6611471wrl.12
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
+        Wed, 16 Sep 2020 11:30:22 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77FAC0D941C;
+        Wed, 16 Sep 2020 07:57:17 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id u21so10821342eja.2;
+        Wed, 16 Sep 2020 07:57:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
-        b=FENeMTOiWrFokQkUzY6vSvMhlCXV7HMJqSDFsMTbLqeNytwJMofYpFGvXfw3GhxJQe
-         D9FUrSX8+Brv74I6kUhpyFb/XZioFwNiGTb+QuFgOQkexhfx/xeg364unF1nN8hvk40W
-         Hh+h3hsu+pBXFmPF/2PAzcQ04fALpK5XDa9tA=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BavzM8dqao5JCiPkWFEijbjqferuuSqIJ7QT/mKoTAQ=;
+        b=nQn4NukiiRCo18F4AEpFB+HOHN7WOI+rKirSQpjyRP4nmmO3697PAVTWv092GNG/k8
+         kp3TKYaL+GKVqBfEzVKELXgdIhndqS+7gDH5LIOf2Awcr9rvxKba0usL6+NprjZo59y+
+         WPWNlD8cFafBUra2EOCbqnFw5K8p4HazPUNbBx+UU7RTWsr2sOYeaViwGv3XqS3yoQ9Y
+         wHAtetcNTyjbmz+LG2Dz6SNBVd2uvIpFilSf7/A4ZgdNIWZil1NME8GVqVzLN4LBnn49
+         7HxREZ2eCGJCkwRIWfMDIZftQX42C8n5ywKYWOEo6MLVN2Me+zduyJ0lBaAdPEgYMMHZ
+         fi0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
-        b=M7cWjGiTM6qE2DwJWJTg2C+TDo8T2FmV9Hg9nIcQbeq+2FcH7tIo6wwwK8M8v52X+2
-         euRA29jKJbSDyzcrSP3hedAoK+ioidK5jnUEdvCEJKH9u1VpWfc2bCpFmn7ajvvniEn9
-         7tJpKgYnSrJ27oF5Qc2o5t4F3iin5o22m8oPia1/G7D5JUkv0potDUd1NckYyPudL4Jt
-         ihay7qeiOAvlxnU8RLQzOerUv6Ugn/iTk0pWCj6eEvDnE+Q2lSBc+CDkrtAt1ZDEL5JW
-         tOFWDD92Tmq3enK9Tddit/ef8uTnE0/ReuEQ5IXIM90GPG0zXxfGCnTK0AOKj+0Ne6dr
-         r05A==
-X-Gm-Message-State: AOAM532o0R+O6VM0rlxGLX8+Pjc9zfyN8z0XM4YYwFWwzkR7a3OxVShs
-        z6KTuDyL2t4OvkuRUQhHHHEOQA==
-X-Google-Smtp-Source: ABdhPJwcFrpBowFHXDaGWxAmgGA6UC0qLIIbiwK0yYyfwUChHgh/bXrgr93clOHTT0R4i2flV+cOiA==
-X-Received: by 2002:a5d:4448:: with SMTP id x8mr28185933wrr.207.1600258192468;
-        Wed, 16 Sep 2020 05:09:52 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id n11sm32655611wrx.91.2020.09.16.05.09.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 05:09:51 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 14:09:48 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 17/21] drm/virtgpu: Set PRIME export function in
- struct drm_gem_object_funcs
-Message-ID: <20200916120948.GO438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-18-tzimmermann@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BavzM8dqao5JCiPkWFEijbjqferuuSqIJ7QT/mKoTAQ=;
+        b=TXub0/Tn8OvBj2iPPdr9MNdkiIiTNOGQkzps7I/i3kMaUDA1/oe4uNHdUipIaIeeal
+         ec9TNUhi6jmOwXuX4hFUheVZH9iplzl3/uONhaDhbzwPAZyGvbP13ZAIaNOIvnqemrRi
+         TKg+ZK+OEP96tzSkeFY6Kt5hpPswk9vwidNcoL/+hpMOqR4zp9ZeG23gX30HXi+p3N39
+         /MVUKN6aSb2Y730brJywTwW16+o6fjDBR0+l6TuZOe1Lke9whhjQhuY/qdJpQLPYvULb
+         5dagtYNl34bPB0O6oRc9/+LMZqcHFAi182Sfk1Zh4d9bgLBo061uuTxh4E2AUIHel+Or
+         Es2A==
+X-Gm-Message-State: AOAM531uCLbaL21YydSXQ72P2U9HPWvMSgfM2OQ3PJW032bkKg5/LekS
+        OnAgRWHhQyTNWVBLr8f+wTIFSr/Ykg29Tckp/ZU=
+X-Google-Smtp-Source: ABdhPJx9FNTjCittOjxhqVQ8Y3/Ji00bVrlyO0GKfHoEdHIMHs+TI34YOUrZdyDTCMX0SDNkYsvmR37O4kEsPhGUX2M=
+X-Received: by 2002:a17:906:c1c6:: with SMTP id bw6mr26850175ejb.374.1600268236393;
+ Wed, 16 Sep 2020 07:57:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-18-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+References: <20200916122247.534374-1-pgwipeout@gmail.com> <20200916122247.534374-2-pgwipeout@gmail.com>
+ <3cdcb877-e4c7-aab8-b7f9-0c88f2247d03@gmail.com>
+In-Reply-To: <3cdcb877-e4c7-aab8-b7f9-0c88f2247d03@gmail.com>
+From:   Peter Geis <pgwipeout@gmail.com>
+Date:   Wed, 16 Sep 2020 10:57:04 -0400
+Message-ID: <CAMdYzYrKHBrh47PMrj=TP_FPttFOkRO2J_wrDr7oEyBNnyexAA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: tegra: Add device-tree for Ouya
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bob Ham <rah@settrans.net>,
+        Leonardo Bras <leobras.c@gmail.com>,
+        Michael Brougham <jusplainmike@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:54PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces virtgpu's per-driver PRIME export
-> function with a per-object function.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+On Wed, Sep 16, 2020 at 10:17 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 16.09.2020 15:22, Peter Geis =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > The Ouya was the sole device produced by Ouya Inc in 2013.
+> > It was a game console originally running Android 5 on top of Linux 3.1.=
+10.
+> >
+> > This patch adds the device tree supporting the Ouya.
+> > It has been tested on the original variant with Samsung ram.
+> >
+> > Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/Makefile         |    3 +-
+> >  arch/arm/boot/dts/tegra30-ouya.dts | 4498 ++++++++++++++++++++++++++++
+> >  2 files changed, 4500 insertions(+), 1 deletion(-)
+> >  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
+>
+> Hello, Peter! Very nice work!
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Thanks!
 
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.c    | 1 -
->  drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index b039f493bda9..1f8d6ed11d21 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -203,7 +203,6 @@ static struct drm_driver driver = {
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->  	.gem_prime_mmap = drm_gem_prime_mmap,
-> -	.gem_prime_export = virtgpu_gem_prime_export,
->  	.gem_prime_import = virtgpu_gem_prime_import,
->  	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
->  
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-> index 842f8b61aa89..4f7d7ea8194c 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-> @@ -108,6 +108,7 @@ static const struct drm_gem_object_funcs virtio_gpu_shmem_funcs = {
->  	.close = virtio_gpu_gem_object_close,
->  
->  	.print_info = drm_gem_shmem_print_info,
-> +	.export = virtgpu_gem_prime_export,
->  	.pin = drm_gem_shmem_pin,
->  	.unpin = drm_gem_shmem_unpin,
->  	.get_sg_table = drm_gem_shmem_get_sg_table,
-> -- 
-> 2.28.0
-> 
+>
+> Could you please clarify how many variants of the board exist?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+It is unknown how many exist in reality.
+At least three RAM variants are supported in the downstream kernel,
+Samsung, Hynix M, and Hynix A.
+Two variants in storage capacity, the original had 8GB eMMC while the
+new variant had 16GB eMMC.
+
+>
+> What are the differences between the variants?
+
+Aside from the RAM and storage changes there should be no functional
+differences.
+It is unknown at which point the RAM changes were cut in with the eMMC chan=
+ge.
+
+>
+> Is this device-tree suitable for all variants?
+
+This device tree should support all variants, but I haven't been able
+to locate anyone with the newer variants who can test it yet.
+
+>
+> How user could determine the board's variant?
+
+On upstream:
+The tegra emc driver will output the RAM code detected in the kernel log:
+tegra30-emc 7000f400.memory-controller: got 6 timings for RAM code 0
+(min 25MHz max 800MHz)
+The mmc-core will output the storage capacity in the kernel log:
+mmcblk1: mmc1:0001 MMC08G 7.19 GiB
+
+On downstream:
+The ram variant is output in the kernel log:
+DDR Strap Pin AD4: 0
+DDR Strap Pin AD5: 0
+Init DFS table for Samsung DDR
+The mmc-core outputs the storage capacity in the kernel log:
+mmcblk0: mmc0:0001 MMC08G 7.18 GiB
