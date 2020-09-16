@@ -2,129 +2,232 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188A4C43461
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CE6C43461
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0F4C20708
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:08:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A292A20715
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:15:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Akgvk03c"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="GUr+B+EI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbgIPTId (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:08:33 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11662 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbgIPTI1 (ORCPT
+        id S1726369AbgIPRiU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 13:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbgIPRhz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 15:08:27 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f6262500001>; Wed, 16 Sep 2020 12:06:57 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 16 Sep 2020 12:08:24 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 16 Sep 2020 12:08:24 -0700
-Received: from [10.26.74.242] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
- 2020 19:08:14 +0000
-Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
- interrupts
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Sumit Garg <sumit.garg@linaro.org>, <kernel-team@android.com>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        <linux-kernel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Will Deacon" <will@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20200901144324.1071694-1-maz@kernel.org>
- <20200901144324.1071694-9-maz@kernel.org>
- <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
- <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
- <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
- <3378cd07b92e87a24f1db75f708424ee@kernel.org>
- <dcf812d9-2409-bcae-1925-e21740c2932e@nvidia.com>
- <a6c7bbc91c5b23baa44f3abe35eb61c9@kernel.org>
- <d6dddab0-47aa-ddf2-959b-85493b8da52d@nvidia.com>
- <13c096832bd923f956ddd7db7e337857@kernel.org>
- <5c2ec2bf156f27f2f1cde54611a98923@kernel.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <fdf8605d-22ea-0832-625e-749291d88b8c@nvidia.com>
-Date:   Wed, 16 Sep 2020 20:08:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 16 Sep 2020 13:37:55 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF3BC0698C8
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:24:30 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id l15so2020526wmh.1
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=+a06VRmEudn2VQsC3iRJVsBR9BGJLaW45iWLDadZyRI=;
+        b=GUr+B+EIQnykYRecoS9xztPc0/dmBYz0juGXJQ+82bnH0XOFLeyGdR7DXoJWfQI/8v
+         uV6cBfGWTv8GfGsnvr2MrJOMoG5UfSEg4lIignk/xv/qBGjiERDGzKpRftrrWz5Mz7Ds
+         IxCKmFcqeMxhPaSpSYh1wxMK2TNY4jkQyjW+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=+a06VRmEudn2VQsC3iRJVsBR9BGJLaW45iWLDadZyRI=;
+        b=QVWn41JM/l/6Y/iHfASbFeYJ26Ay5vgzVxnkEN3SOQ7OGi2iml2fD+xm9LpLrlILEp
+         1X6cFrVhMboMPTemVqujZnLndq9EN2dBqMmCb9hkHFvQIl6w/D+rLm78lYZAGQkQDvG1
+         ag9twShgWGccoTtw3T3A+N/iIhBvEzm6KQWA2StzvJFIs24d2y02uYRHqzu2xspfd3qG
+         P3DeIlX7w0PnKSSRLWgXQdsGVHC70ib/ZCAisvqdu1/LOaN5SwTzSxcTc49Vx/+ZWpfe
+         Sq8h/qdbCyrE/zaKfHyWUUrgyWNu9ksdoq5FkEXfAOV/N7ghTtIeSEgLDBxa7/dooI1i
+         Mr6A==
+X-Gm-Message-State: AOAM533ugoKsUVD/znYXzy3evO/dmHbYy4V4jqKwcKTjDDu6bWafDiCp
+        Q9xWGIExatT/W8LlOyL76ZS3bQ==
+X-Google-Smtp-Source: ABdhPJz4UqL+lwqUdWSoHFY6s7qCiJkilQoTwwhfF2waks/JDm6PnP2Zfkj6hPwcgWm/ZWJDyyjL3w==
+X-Received: by 2002:a7b:c24a:: with SMTP id b10mr3984516wmj.149.1600255468515;
+        Wed, 16 Sep 2020 04:24:28 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id h76sm5509546wme.10.2020.09.16.04.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 04:24:27 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 13:24:24 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, hamohammed.sa@gmail.com,
+        airlied@linux.ie, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, michal.simek@xilinx.com,
+        thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
+        emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, oleksandr_andrushchenko@epam.com,
+        tomi.valkeinen@ti.com, linux-tegra@vger.kernel.org,
+        linux@armlinux.org.uk, jonathanh@nvidia.com,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        bskeggs@redhat.com, xen-devel@lists.xenproject.org,
+        miaoqinglang@huawei.com, intel-gfx@lists.freedesktop.org,
+        matthew.auld@intel.com, chunkuang.hu@kernel.org,
+        andi.shyti@intel.com, linux-arm-msm@vger.kernel.org,
+        marek.olsak@amd.com, tianci.yin@amd.com,
+        etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
+        linux-mediatek@lists.infradead.org, rodrigo.vivi@intel.com,
+        matthias.bgg@gmail.com, evan.quan@amd.com, sean@poorly.run,
+        linux-arm-kernel@lists.infradead.org,
+        tvrtko.ursulin@linux.intel.com, amd-gfx@lists.freedesktop.org,
+        laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
+        rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+        Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+        hjc@rock-chips.com, chris@chris-wilson.co.uk,
+        kyungmin.park@samsung.com, nirmoy.das@amd.com,
+        alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+        freedreno@lists.freedesktop.org, christian.koenig@amd.com
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+Message-ID: <20200916112424.GH438822@phenom.ffwll.local>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+ <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <5c2ec2bf156f27f2f1cde54611a98923@kernel.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600283217; bh=r0H0jedd/uhuvnqLBjAgmRLE9Ie1+Xeyuy2zOoYREEc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Akgvk03cLtJ2sCI7EynFQPFruJe6WTFuVooa/py9K7DeLTv09BaVfueSTE2OtyZ8Z
-         qPQb5DMPru8Mpjmrp165mW/6p3kfAd6CCkyPDncY3og8RD8AgyuBsYb8tiPfj8nOvP
-         jE8EjJvoQXyXwITJXL462NGIJvf05C6UpCRYDzTFh/9f13hRkPFcutLMkNTMhbVZ+N
-         YBmpqUaZBJNL32aF76+VUSkoxsiAcOxi7WSotdBV4j5EmoOthZuk3ukgQHw6ItRjwn
-         LMMSlTC0n+s0PBO5Q/eNwGc4mM9ZBVQF7FpYGXrsqrFCfTCxU8qT6VBECQ+LPbCbnF
-         EfQCSMEbhbgfQ==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, Sep 16, 2020 at 12:36:28PM +0200, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 16.09.20 um 12:03 schrieb Daniel Vetter:
+> > On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+> >> GEM object functions deprecate several similar callback interfaces in
+> >> struct drm_driver. This patch replaces the per-driver callbacks with
+> >> per-instance callbacks in exynos. The only exception is gem_prime_mmap,
+> >> which is non-trivial to convert.
+> >>
+> >> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >> ---
+> >>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+> >>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+> >>  2 files changed, 15 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> index dbd80f1e4c78..fe46680ca208 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> >>  	file->driver_priv = NULL;
+> >>  }
+> >>  
+> >> -static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> >> -	.open = drm_gem_vm_open,
+> >> -	.close = drm_gem_vm_close,
+> >> -};
+> >> -
+> >>  static const struct drm_ioctl_desc exynos_ioctls[] = {
+> >>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+> >>  			DRM_RENDER_ALLOW),
+> >> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
+> >>  	.open			= exynos_drm_open,
+> >>  	.lastclose		= drm_fb_helper_lastclose,
+> >>  	.postclose		= exynos_drm_postclose,
+> >> -	.gem_free_object_unlocked = exynos_drm_gem_free_object,
+> >> -	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
+> >>  	.dumb_create		= exynos_drm_gem_dumb_create,
+> >>  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+> >>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+> >>  	.gem_prime_import	= exynos_drm_gem_prime_import,
+> >> -	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
+> >>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+> >> -	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
+> >> -	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
+> >>  	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
+> >>  	.ioctls			= exynos_ioctls,
+> >>  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> index efa476858db5..69a5cf28b4ae 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
+> >>  	kfree(exynos_gem);
+> >>  }
+> >>  
+> >> +static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> >> +	.open = drm_gem_vm_open,
+> >> +	.close = drm_gem_vm_close,
+> >> +};
+> > 
+> > Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling
+> > them drm_gem_simple_ops or so would remove a pile of these. But perhaps a
+> > quick follow up series.
+> 
+> Good idea. Several interfaces use the term 'default' in their name, so
+> something like drm_gem_default_vm_ops seems appropriate.
 
-On 16/09/2020 17:28, Marc Zyngier wrote:
+Default sounds like a fine naming choice too.
 
-...
+> BTW is there a reason why we have file operations like
+> DEFINE_DRM_GEM_CMA_FOPS() in each module? It seems like this could also
+> be provided by the rsp memory-manager library.
 
-> Make it that instead:
->=20
-> =C2=A0static void gic_eoimode1_eoi_irq(struct irq_data *d)
-> =C2=A0{
-> +=C2=A0=C2=A0=C2=A0 u32 hwirq =3D gic_irq(d);
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0 /* Do not deactivate an IRQ forwarded to a vcpu.=
- */
-> =C2=A0=C2=A0=C2=A0=C2=A0 if (irqd_is_forwarded_to_vcpu(d))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->=20
-> -=C2=A0=C2=A0=C2=A0 writel_relaxed(gic_irq(d), gic_cpu_base(d) + GIC_CPU_=
-DEACTIVATE);
-> +=C2=A0=C2=A0=C2=A0 if (hwirq < 16)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hwirq =3D this_cpu_read(sgi_i=
-ntid);
-> +
-> +=C2=A0=C2=A0=C2=A0 writel_relaxed(hwirq, gic_cpu_base(d) + GIC_CPU_DEACT=
-IVATE);
-> =C2=A0}
+It's for the module reference counting of the underlying file. So
+file_operations need this.
+-Daniel
 
 
-Unfortunately, still does not boot :-(
+> 
+> Best regards
+> Thomas
+> 
+> > 
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > 
+> >> +
+> >> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+> >> +	.free = exynos_drm_gem_free_object,
+> >> +	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+> >> +	.vmap = exynos_drm_gem_prime_vmap,
+> >> +	.vunmap	= exynos_drm_gem_prime_vunmap,
+> >> +	.vm_ops = &exynos_drm_gem_vm_ops,
+> >> +};
+> >> +
+> >>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+> >>  						  unsigned long size)
+> >>  {
+> >> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+> >>  	exynos_gem->size = size;
+> >>  	obj = &exynos_gem->base;
+> >>  
+> >> +	obj->funcs = &exynos_drm_gem_object_funcs;
+> >> +
+> >>  	ret = drm_gem_object_init(dev, obj, size);
+> >>  	if (ret < 0) {
+> >>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+> >> -- 
+> >> 2.28.0
+> >>
+> > 
+> 
+> -- 
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Maxfeldstr. 5, 90409 Nürnberg, Germany
+> (HRB 36809, AG Nürnberg)
+> Geschäftsführer: Felix Imendörffer
+> 
 
-Jon
 
---=20
-nvpublic
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
