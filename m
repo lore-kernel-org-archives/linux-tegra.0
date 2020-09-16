@@ -2,66 +2,57 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDAFC43461
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F871C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B09120838
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D164220936
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="nsqiln7d"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IcyIvdV5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgIPT2j (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728132AbgIPT0r (ORCPT
+        id S1727535AbgIPTkD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 15:40:03 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15021 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbgIPTjz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 15:26:47 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F14C06174A
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 12:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=g+cGRsItI8plFrm1ENJsm5T9BsZ3PevnipkmNmYaEic=; b=nsqiln7dC94KM3EbOP3WwRNekM
-        Zsn+t9m8xOpw26pB49IeRez35DrfsyTv1kF4bnBFO2sBKc88VNx6bcQTDjQnJqJrg5dHSYa7ytfRv
-        FEs8DrOUHD+Kf8bengp0S9LQhwbKDLjG38VLdCljqmqdM2p+eOcVr1Act2eLrSQz+rZvQmp8vBrcI
-        Jp0f4na136iojZcXquXOe3ins/7/1ScMqyqP/Cxp2jGXa4EBn+jPSwZ9K51c5tsd1c5g3PBuk9kQq
-        FPDKT3Capk4vfmSSek0w6Mqg8Gb1YiXaxfLS5DR4AGp+NOzQPdBkcYlvFn6/bo9oQ6regJwB2EGSo
-        vlH51i5A==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kId4W-0008Fg-46; Wed, 16 Sep 2020 22:26:28 +0300
+        Wed, 16 Sep 2020 15:39:55 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f6269b30000>; Wed, 16 Sep 2020 12:38:27 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 16 Sep 2020 12:39:55 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 12:39:55 -0700
+Received: from [10.26.74.242] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
+ 2020 19:39:41 +0000
 Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
  interrupts
-To:     Jon Hunter <jonathanh@nvidia.com>, Marc Zyngier <maz@kernel.org>
-Cc:     Sumit Garg <sumit.garg@linaro.org>, linus.walleij@linaro.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
+To:     Mikko Perttunen <cyndis@kapsi.fi>, Marc Zyngier <maz@kernel.org>
+CC:     Sumit Garg <sumit.garg@linaro.org>, <kernel-team@android.com>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
         Russell King <linux@arm.linux.org.uk>,
         Jason Cooper <jason@lakedaemon.net>,
         Saravana Kannan <saravanak@google.com>,
         Andrew Lunn <andrew@lunn.ch>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
+        <linus.walleij@linaro.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Will Deacon" <will@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
 References: <20200901144324.1071694-1-maz@kernel.org>
  <20200901144324.1071694-9-maz@kernel.org>
@@ -74,36 +65,48 @@ References: <20200901144324.1071694-1-maz@kernel.org>
  <d6dddab0-47aa-ddf2-959b-85493b8da52d@nvidia.com>
  <13c096832bd923f956ddd7db7e337857@kernel.org>
  <02bb9262-221a-b2cf-4471-dd3a46b442e7@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <63815f37-6a82-27c2-10e9-2649b2c864a0@kapsi.fi>
-Date:   Wed, 16 Sep 2020 22:26:14 +0300
+ <63815f37-6a82-27c2-10e9-2649b2c864a0@kapsi.fi>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <28655b4b-79fe-2400-8dbc-5592660e6b4a@nvidia.com>
+Date:   Wed, 16 Sep 2020 20:39:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <02bb9262-221a-b2cf-4471-dd3a46b442e7@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <63815f37-6a82-27c2-10e9-2649b2c864a0@kapsi.fi>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600285107; bh=/5KjCkcLzngnkCQGz7TD33bT1DSdH/EM8+HlFjeCcYc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=IcyIvdV5Nks+v9t6EZeKukN52YaSukQXQqwW8I/r1q3SFx3FnNyMieAHNVufe27vL
+         zDdui7llBBMMflOnHIhtUSVFUZBsS+tBY6ndRO/1H+qwbnb+A/PFV5C+CYLNq2hdt7
+         vWUC9ZN6W8O/CNdqSYhDUa5IftysTwJzVCoaNdRA/YzqdwNbcFFoUuzPJC4Aj098d6
+         6TbohVolnqJXW2eUOZy5xKjgIJGWLMjUDmrjOONTPJSqxzoLw8FZezHkPahoBIWMu8
+         WJcUiJxQh32OGmZp+nzx4bKj0gT/0ywJPuIMJXsYL11BAHR/ORl6sdxQZsJSjC2mjM
+         2AxzBUS0q3yzA==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Not sure which boards this issue is happening on, but looking at my 
-hobby kernel's git history (from a couple of years ago, memory is a bit 
-hazy), the commit labeled "Add support for TX2" adds code to drop from 
-EL2 to EL1 at boot.
 
-Mikko
+On 16/09/2020 20:26, Mikko Perttunen wrote:
+> Not sure which boards this issue is happening on, but looking at my
+> hobby kernel's git history (from a couple of years ago, memory is a bit
+> hazy), the commit labeled "Add support for TX2" adds code to drop from
+> EL2 to EL1 at boot.
 
-On 9/16/20 10:06 PM, Jon Hunter wrote:
-> On 16/09/2020 17:22, Marc Zyngier wrote:
->> Do you boot form EL2?
-> 
-> Not that I am aware of. There is no hypervisor that we are using.
-> 
-> Jon
-> 
+I am seeing boot issues on Tegra20, Tegra30, Tegra186 and Tegra194.
+Interestingly, Tegra124 and Tegra210 are booting OK.
+
+Jon
+
+-- 
+nvpublic
