@@ -2,218 +2,181 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C09C35264
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0635C2BB84
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B099206DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5372520708
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 19:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dNYt3KSm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjEFJzce"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbgIPTHt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:07:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
+        id S1727566AbgIPTIF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 15:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbgIPRoz (ORCPT
+        with ESMTP id S1727370AbgIPTHv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:44:55 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C8DC0698C4
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:21:43 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id a9so2592535wmm.2
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:21:43 -0700 (PDT)
+        Wed, 16 Sep 2020 15:07:51 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED56C06174A;
+        Wed, 16 Sep 2020 12:07:50 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id k25so6849946ljg.9;
+        Wed, 16 Sep 2020 12:07:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mUOAFu1Sstz+Y84HDrSYqg/SYf7AQiwgyxkdfcX2QWQ=;
-        b=dNYt3KSmP2zoajuEOcpSRwKjslSpbjWRZP10ZdmvUDBODfNwzvcZciCjx0cVSGnRP/
-         JUZRa+hP31+BJN/M1t7m9Ls/tiT5od6BnRGoXiiAJTdUcoTfR5J6SoK2kCHBNgd6JM9c
-         NsxYbB5nxATvUhunbEGd6bVQp6IDhaI5uBozM=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QihZ8Xz8SWvem6yekgcSVMIjh2NsmhJScWGu6NS+TEk=;
+        b=MjEFJzceOxDmHnZTXQpUriaxu7YZuYPh9ri7J4wMEmqYn62mY5W3Ir4+zMzkboPdV/
+         hij4RfkJbfESMIVrEsEq/ItYHrytO0JPLYerI14dkQvnC5SMw/3rahxv1q14TtPJeOLa
+         84/J/UKGojO41P/yW9EdEXjb/l55mIG+xE3bl3NkRu6jtr+vRaASQpxUdLILm30uGPzE
+         mjT+C/fSdJMJGx6zBVxdoRlboMKsPllVZhFDyhj9vvpf/+iA9ya8XOXpMad0aukZ+i3M
+         Gq6Lmx5u0G7PLryBoqvNU5CDB4BJ5KowGaa5QxjkIaTSxiASbO+Q09ykKfCXh0qg7DnW
+         /d1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mUOAFu1Sstz+Y84HDrSYqg/SYf7AQiwgyxkdfcX2QWQ=;
-        b=Zi2hC+wiFMWIVMnvQ71gsQ9cxmj/0txl4tLgiXPtL2Z7LgLYI9z2aiQLUujnm8i1/S
-         6RVI+646cdY8qamQ/Kq66uhN12iU57ycQ5tSg4Xw6cAOTffF5aFxgeBW9Roz4Cw4GrXt
-         pSXLYiOz/dCDCdkTdk98iL/XGG08pA2ENeoT+KPVcYgTPKnr8+A9mSg/w+bwOZOttsYe
-         dg5xZT9wjMUILuNwtDYy91MmGgcwxWZOtNtA65MuyPte6K3rWBuEqQn6d4xLH2NfeAUm
-         1bt4zmKvsxZUC+SxsiteJHeiL99tWDZVJ19URk6AwSkk/wA1+YpOe1VE4V4XXAlLr20j
-         eeIA==
-X-Gm-Message-State: AOAM531kw4jibq8WDTYO8HuCTEqtSAgDRSUxsPRb6yyK2UAmBFY2xZ1M
-        0Mtmp8RyVovMCzEaAW/fJ2xUqg==
-X-Google-Smtp-Source: ABdhPJxN4KFdG0OXvpCuI3UQDQSjm9d9naSAnHnzOZnbaecNO0ofucAiEdpaLFF0vBOBWzg3E9jOYA==
-X-Received: by 2002:a05:600c:414e:: with SMTP id h14mr4127600wmm.2.1600255301791;
-        Wed, 16 Sep 2020 04:21:41 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q186sm4894705wma.45.2020.09.16.04.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 04:21:40 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 13:21:36 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 03/21] drm/etnaviv: Introduce GEM object functions
-Message-ID: <20200916112136.GG438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-4-tzimmermann@suse.de>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QihZ8Xz8SWvem6yekgcSVMIjh2NsmhJScWGu6NS+TEk=;
+        b=RXhvS7ZfLbBaWmzLmhmi8b1FS8kaNonp8hNQmH3clJlG4Z/T3YgIxfdc2Ut5ST7O2C
+         yogiVPE2T9AWKBmFWnwKSTr988S8qaolUjB5KCXn2n3BUnWoJ87uEnZhhZ5f9/LR/xmO
+         dECvbAlG5O90lZytFyzkwHMTABQJ/P41eF7Z8nIkwpSto7RljzmU5zzXByK/T5n05H5Z
+         nQF/eVjUW7zt9sGtMq8gtUGa5rXkyRQiACzzilrSJZMpS3B7Km3UH0REpPX868qu71t2
+         RQm8f+VoYsNZWH+pKdwlwFTurmK8RNp/GNtCgSqEEtzMU4b6kj7M+8ScZQxnBAXFgeZP
+         xYrA==
+X-Gm-Message-State: AOAM531EuacXdktUrALxyVJUFyt4e6+0cGHR+RGf4LpiCE+BwFWUYFvw
+        9pAOi8aCQhKrFQkEGFzRSQUqbgrYVDE=
+X-Google-Smtp-Source: ABdhPJwLeJRJDNQ4ngutlFWCR9878+7Mq3GY8kKayy8m4NAmTnIKCJTR95DZytNYtYS+rulcgvIq4g==
+X-Received: by 2002:a2e:8956:: with SMTP id b22mr8844646ljk.85.1600283268428;
+        Wed, 16 Sep 2020 12:07:48 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id d18sm4722662lfm.178.2020.09.16.12.07.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2020 12:07:47 -0700 (PDT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+ <20200908072557.GC294938@mwanda>
+ <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+ <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+ <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+ <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+ <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+ <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+Date:   Wed, 16 Sep 2020 22:07:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-4-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:40PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in etnaviv. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
+16.09.2020 05:38, Chanwoo Choi пишет:
+> On 9/16/20 2:01 AM, Dmitry Osipenko wrote:
+>> 15.09.2020 05:13, Chanwoo Choi пишет:
+>>> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
+>>>>> 14.09.2020 10:09, Chanwoo Choi пишет:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
+>>>>>>> This error path needs to call clk_disable_unprepare().
+>>>>>>>
+>>>>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
+>>>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>>>>> ---
+>>>>>>> ---
+>>>>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>>>>>>> index e94a27804c20..dedd39de7367 100644
+>>>>>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>>>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>>>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+>>>>>>>  	if (rate < 0) {
+>>>>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+>>>>>>> -		return rate;
+>>>>>>> +		err = rate;
+>>>>>>> +		goto disable_clk;
+>>>>>>>  	}
+>>>>>>>  
+>>>>>>>  	tegra->max_freq = rate / KHZ;
+>>>>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>>>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+>>>>>>>  
+>>>>>>>  	reset_control_reset(tegra->reset);
+>>>>>>> +disable_clk:
+>>>>>>>  	clk_disable_unprepare(tegra->clock);
+>>>>>>
+>>>>>> Is it doesn't need to reset with reset_contrl_reset()?
+>>>>>
+>>>>> Hello, Chanwoo!
+>>>>>
+>>>>> It's reset just before the clk_round_rate() invocation, hence there
+>>>>> shouldn't be a need to reset it second time.
+>>>>
+>>>> Do you mean that reset is deasserted automatically
+>>>> when invoke clk_round_rate() on tegra?
+>>
+>> I only mean that the tegra30-devfreq driver deasserts the reset before
+>> the clk_round_rate():
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
+>>
+>>>> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
+>>>
+>>> I'm sorry for my typo. s/tree/true.
+>>>
+>>>> is not needed on 'remove_opp:' goto. Because already reset deassertion
+>>>> is invoked by clk_round_rate(), it seems that doesn't need to invoke
+>>>> anymore during exception case.
+>>>>
+>>>> Actually, it is not clear in my case.
+>>
+>> The reset_control_reset() in the error path of the driver probe function
+>> is placed that way to make the tear-down order match the driver removal
+>> order. Perhaps the reset could be moved before the remove_opp, but this
+>> change won't make any real difference, hence it already should be good
+>> as-is.
+>>
+>>
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 13 -------------
->  drivers/gpu/drm/etnaviv/etnaviv_drv.h |  1 -
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 19 ++++++++++++++++++-
->  3 files changed, 18 insertions(+), 15 deletions(-)
+> I have one more question.
+> When failed to enable clock on line829[1],
+> does it need any reset_control invocation?
+> In this case on line829, just return without any restoration 
+> about reset control.
 > 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index a9a3afaef9a1..aa270b79e585 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -468,12 +468,6 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] = {
->  	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
->  };
->  
-> -static const struct vm_operations_struct vm_ops = {
-> -	.fault = etnaviv_gem_fault,
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static const struct file_operations fops = {
->  	.owner              = THIS_MODULE,
->  	.open               = drm_open,
-> @@ -490,16 +484,9 @@ static struct drm_driver etnaviv_drm_driver = {
->  	.driver_features    = DRIVER_GEM | DRIVER_RENDER,
->  	.open               = etnaviv_open,
->  	.postclose           = etnaviv_postclose,
-> -	.gem_free_object_unlocked = etnaviv_gem_free_object,
-> -	.gem_vm_ops         = &vm_ops,
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_pin      = etnaviv_gem_prime_pin,
-> -	.gem_prime_unpin    = etnaviv_gem_prime_unpin,
-> -	.gem_prime_get_sg_table = etnaviv_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = etnaviv_gem_prime_import_sg_table,
-> -	.gem_prime_vmap     = etnaviv_gem_prime_vmap,
-> -	.gem_prime_vunmap   = etnaviv_gem_prime_vunmap,
->  	.gem_prime_mmap     = etnaviv_gem_prime_mmap,
->  #ifdef CONFIG_DEBUG_FS
->  	.debugfs_init       = etnaviv_debugfs_init,
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> index 4d8dc9236e5f..914f0867ff71 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> @@ -49,7 +49,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
->  		struct drm_file *file);
->  
->  int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
-> -vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
->  int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
->  struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
->  void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index ea19f1d27275..312e9d58d5a7 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -171,7 +171,7 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
->  	return obj->ops->mmap(obj, vma);
->  }
->  
-> -vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
-> +static vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct drm_gem_object *obj = vma->vm_private_data;
-> @@ -561,6 +561,22 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
->  	mutex_unlock(&priv->gem_lock);
->  }
->  
-> +static const struct vm_operations_struct vm_ops = {
-> +	.fault = etnaviv_gem_fault,
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-> +
-> +static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
-> +	.free = etnaviv_gem_free_object,
-> +	.pin = etnaviv_gem_prime_pin,
-> +	.unpin = etnaviv_gem_prime_unpin,
-> +	.get_sg_table = etnaviv_gem_prime_get_sg_table,
-> +	.vmap = etnaviv_gem_prime_vmap,
-> +	.vunmap = etnaviv_gem_prime_vunmap,
-> +	.vm_ops = &vm_ops,
-> +};
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-> +
->  static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
->  	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
->  {
-> @@ -595,6 +611,7 @@ static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
->  	INIT_LIST_HEAD(&etnaviv_obj->vram_list);
->  
->  	*obj = &etnaviv_obj->base;
-> +	(*obj)->funcs = &etnaviv_gem_object_funcs;
->  
->  	return 0;
->  }
-> -- 
-> 2.28.0
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n829
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+There is no need to deassert the reset if clk-enable fails because reset
+control of tegra30-devfreq is exclusive, i.e it isn't shared with any
+other peripherals, and thus, reset control could asserted/deasserted at
+any time by the devfreq driver. If clk-enable fails, then reset will
+stay asserted and it will be fine to re-assert it again.
