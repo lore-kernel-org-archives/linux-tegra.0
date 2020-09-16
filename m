@@ -2,184 +2,115 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E93C43461
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 21:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5382EC433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 21:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD54E2087D
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 21:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F08E9221F1
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 21:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VZm53vKz"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h4M5AySz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbgIPVBY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgIPQaY (ORCPT
+        id S1726697AbgIPVBv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 17:01:51 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3555 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgIPQaX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:30:24 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F621C0698D1
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:35:20 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id d4so2420918wmd.5
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 04:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DdTA+P9lRhC68qI4dpVtWpzlyCIniGzxdHE1O+Q7zUU=;
-        b=VZm53vKzP2cW6qF7XV0KSRt5PPELHpk07zG//Mxa2CBTIBDdZdST/S+s0rdEQKVsZW
-         gTZ1OWjoGqV/1N91UgOzFqec1vf3PElY/ngrFrKXGmjuOOcYrYiRpj5tf2Kdv9HG27Xk
-         tCQbqYKzbNGq1n8DixVR/dUuMsm1DSxiACKH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DdTA+P9lRhC68qI4dpVtWpzlyCIniGzxdHE1O+Q7zUU=;
-        b=B7JK46tli/E+R1YMduwyKXmanIhaKwOZoQxwMp+FA0D+V3lixxGQco4ddveDLuANSM
-         V9rO03gnz9WI8U8K/CxCVF2DeJSHJmPKySokIubnGgZzKgL70vfFgiK0wtuPmVm45WpD
-         ke5yKRSEYwRAJSohWLKX4RF3JEaRKq2POA3Cpzt+bfHuDqO9MeF+STL/WRqH2H7KAIOd
-         seVl9cZc7Inf/+rKsdIXFF2SjN6SnowZdLVrGRP3GZUrv6hf1IFPG9dOJTbyghmvPeYj
-         ZqEwHzVA7rkbGYTV7tEArMUR5h4KJoXvAiRz64Il7HOjwKfRda7U3lzgEKdykbTb773P
-         Ldsg==
-X-Gm-Message-State: AOAM530YgskY6gn6ewuuHPjVbbv36pV91/aUGP6PbtEu4JeW0kUrOAR3
-        uGYNs+dPHPxq95aXUNFPXUtFNA==
-X-Google-Smtp-Source: ABdhPJylkcOBbGgEGGZKZhaBAwyH9kqk9RFSGhRv17hk61GEhNulx96NJ9Vhx8cdjXcbwhCg7LMEDQ==
-X-Received: by 2002:a05:600c:2109:: with SMTP id u9mr3990398wml.147.1600256118887;
-        Wed, 16 Sep 2020 04:35:18 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id g14sm4163583wrv.25.2020.09.16.04.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 04:35:18 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 13:35:14 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 07/21] drm/mediatek: Introduce GEM object functions
-Message-ID: <20200916113514.GK438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-8-tzimmermann@suse.de>
+        Wed, 16 Sep 2020 12:30:23 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f621e260000>; Wed, 16 Sep 2020 07:16:06 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 16 Sep 2020 07:16:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 07:16:49 -0700
+Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
+ 2020 14:16:37 +0000
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marc Zyngier <maz@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Sumit Garg <sumit.garg@linaro.org>, <kernel-team@android.com>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "'Linux Samsung SOC'" <linux-samsung-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+Date:   Wed, 16 Sep 2020 15:16:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-8-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600265766; bh=pV8Al2EsECbYDuX4UchdWHAopEeJoNVCwOOj35gvWvM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=h4M5AySzWoSIHgOXxW6Cn6jFLbFFw8EwZnKcPIVJxTt3lSUrVD8nJr9GNzVJRZw5V
+         mImZhD/RoS7WwjvahDfKgHkYaIXfp+ftoL0pqJHgDB+z5tAdDFpFx9bA/x6JlhfK07
+         SLOGZitVugJy7yKYTZsjbw1FujpcWOlBOZraOptc4MQLn05uQ3SocrToJ8Savf0KM4
+         SnNPc4LrFohTkfjRPSVWjsWMZh0carNG4uAOHRtzY/JiNFmLJdERbfdH1kEdnhq6Cv
+         tBNxAb5MW8py5l5lQvAPjoT6utASZ4p7GrGoOsMgMNbtZa/YXT9RYgS2d2jEzajJb+
+         5CnyNusDsNCYg==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:44PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in mediatek. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c |  5 -----
->  drivers/gpu/drm/mediatek/mtk_drm_gem.c | 11 +++++++++++
->  2 files changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index 040a8f393fe2..2f8d0043fca7 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -301,18 +301,13 @@ struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
->  static struct drm_driver mtk_drm_driver = {
->  	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
->  
-> -	.gem_free_object_unlocked = mtk_drm_gem_free_object,
-> -	.gem_vm_ops = &drm_gem_cma_vm_ops,
->  	.dumb_create = mtk_drm_gem_dumb_create,
->  
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->  	.gem_prime_import = mtk_drm_gem_prime_import,
-> -	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
->  	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
-> -	.gem_prime_vmap = mtk_drm_gem_prime_vmap,
-> -	.gem_prime_vunmap = mtk_drm_gem_prime_vunmap,
->  	.fops = &mtk_drm_fops,
->  
->  	.name = DRIVER_NAME,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_gem.c b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> index 6190cc3b7b0d..591b90410e4a 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> @@ -8,11 +8,20 @@
->  #include <drm/drm.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_gem.h>
-> +#include <drm/drm_gem_cma_helper.h>
->  #include <drm/drm_prime.h>
->  
->  #include "mtk_drm_drv.h"
->  #include "mtk_drm_gem.h"
->  
-> +static const struct drm_gem_object_funcs mtk_drm_gem_object_funcs = {
-> +	.free = mtk_drm_gem_free_object,
-> +	.get_sg_table = mtk_gem_prime_get_sg_table,
-> +	.vmap = mtk_drm_gem_prime_vmap,
-> +	.vunmap = mtk_drm_gem_prime_vunmap,
-> +	.vm_ops = &drm_gem_cma_vm_ops,
-> +};
-> +
->  static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
->  						unsigned long size)
->  {
-> @@ -25,6 +34,8 @@ static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
->  	if (!mtk_gem_obj)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	mtk_gem_obj->base.funcs = &mtk_drm_gem_object_funcs;
-> +
->  	ret = drm_gem_object_init(dev, &mtk_gem_obj->base, size);
->  	if (ret < 0) {
->  		DRM_ERROR("failed to initialize gem object\n");
-> -- 
-> 2.28.0
+Hi Marc,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
+On 14/09/2020 14:06, Marek Szyprowski wrote:
+> Hi Marc,
 > 
+> On 01.09.2020 16:43, Marc Zyngier wrote:
+>> Change the way we deal with GIC SGIs by turning them into proper
+>> IRQs, and calling into the arch code to register the interrupt range
+>> instead of a callback.
+>>
+>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> This patch landed in linux next-20200914 as commit ac063232d4b0 
+> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it breaks 
+> booting of all Samsung Exynos 4210/4412 based boards (dual/quad ARM 
+> Cortex A9 based). Here are the last lines from the bootlog:
+
+I am observing the same thing on several Tegra boards (both arm and
+arm64). Bisect is pointing to this commit. Reverting this alone does not
+appear to be enough to fix the issue.
+
+Cheers
+Jon
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+nvpublic
