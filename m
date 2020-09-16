@@ -2,110 +2,126 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3144CC433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 02:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB67C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED74C2087D
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 02:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4A52080C
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="hZYcEooi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgIPC26 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Sep 2020 22:28:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12717 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726402AbgIPC2A (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Sep 2020 22:28:00 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6181BEED522A6A6B5DFE;
-        Wed, 16 Sep 2020 10:27:58 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Wed, 16 Sep 2020
- 10:27:50 +0800
-From:   Liu Shixin <liushixin2@huawei.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Liu Shixin <liushixin2@huawei.com>
-Subject: [PATCH -next] PCI: tegra: convert to use DEFINE_SEQ_ATTRIBUTE macro
-Date:   Wed, 16 Sep 2020 10:50:25 +0800
-Message-ID: <20200916025025.3992783-1-liushixin2@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726304AbgIPHyW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 03:54:22 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:49189 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbgIPHyW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 16 Sep 2020 03:54:22 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id DFEDB22F00;
+        Wed, 16 Sep 2020 09:54:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1600242857;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/mrV4ooFGnJh2/RwC1ApcYKUUoJS8TkPIKcSBJOevMI=;
+        b=hZYcEooibPlvGYZsIy6M1JnuIGdhF2nyPQr1geOw5eoiHM1PLx4w1uqnELsVgZaNK9oHSm
+        J6p7MyQNttvX9ylL+BtvV4J5f43XLjVJl9to5980o1I2bsOOnMfHmjEWfJQwKTEZ7audCW
+        GI7REFPaQWuDo39bLZ59wHfcBEUMegs=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.32]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Sep 2020 09:54:10 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Gross, Andy" <agross@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel@axis.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Song Xiaowei <songxiaowei@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wangbinghui <wangbinghui@hisilicon.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yue Wang <yue.wang@amlogic.com>
+Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+In-Reply-To: <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+References: <20200821035420.380495-1-robh@kernel.org>
+ <20200915091218.28737-1-michael@walle.cc>
+ <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <346b694e43b1b6b86e4f3164e6589d25@walle.cc>
+X-Sender: michael@walle.cc
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use DEFINE_SEQ_ATTRIBUTE macro to simplify the code.
+Am 2020-09-16 00:02, schrieb Rob Herring:
+> Can you try this? The link up check seemed unnecessary as it is racy.
+> What happens if the link goes down right after checking? That's the
+> only thing in the change that sticks out.
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 317ff512f8df..afee1a0e8883 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -441,6 +441,9 @@ static void __iomem
+> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
+>         struct pcie_port *pp = bus->sysdata;
+>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> 
+> +       if (!dw_pcie_link_up(pci))
+> +               return NULL;
+> +
+>         busdev = PCIE_ATU_BUS(bus->number) | 
+> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
+>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
 
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
----
- drivers/pci/controller/pci-tegra.c | 28 +++-------------------------
- 1 file changed, 3 insertions(+), 25 deletions(-)
+This will fix the issue.
 
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index c1d34353c29b..556c30a718f0 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -2564,36 +2564,14 @@ static int tegra_pcie_ports_seq_show(struct seq_file *s, void *v)
- 	return 0;
- }
- 
--static const struct seq_operations tegra_pcie_ports_seq_ops = {
-+static const struct seq_operations tegra_pcie_ports_sops = {
- 	.start = tegra_pcie_ports_seq_start,
- 	.next = tegra_pcie_ports_seq_next,
- 	.stop = tegra_pcie_ports_seq_stop,
- 	.show = tegra_pcie_ports_seq_show,
- };
- 
--static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
--{
--	struct tegra_pcie *pcie = inode->i_private;
--	struct seq_file *s;
--	int err;
--
--	err = seq_open(file, &tegra_pcie_ports_seq_ops);
--	if (err)
--		return err;
--
--	s = file->private_data;
--	s->private = pcie;
--
--	return 0;
--}
--
--static const struct file_operations tegra_pcie_ports_ops = {
--	.owner = THIS_MODULE,
--	.open = tegra_pcie_ports_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = seq_release,
--};
-+DEFINE_SEQ_ATTRIBUTE(tegra_pcie_ports);
- 
- static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
- {
-@@ -2610,7 +2588,7 @@ static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
- 		return -ENOMEM;
- 
- 	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
--				   pcie, &tegra_pcie_ports_ops);
-+				   pcie, &tegra_pcie_ports_fops);
- 	if (!file)
- 		goto remove;
- 
--- 
-2.25.1
-
+-michael
