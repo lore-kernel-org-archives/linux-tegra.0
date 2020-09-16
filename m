@@ -2,126 +2,104 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB67C433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A846C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 08:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4A52080C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 285362083B
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 08:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="hZYcEooi"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Di/rDUHh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbgIPHyW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 03:54:22 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:49189 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbgIPHyW (ORCPT
+        id S1726473AbgIPIMX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 04:12:23 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17930 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgIPIMW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 03:54:22 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id DFEDB22F00;
-        Wed, 16 Sep 2020 09:54:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1600242857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/mrV4ooFGnJh2/RwC1ApcYKUUoJS8TkPIKcSBJOevMI=;
-        b=hZYcEooibPlvGYZsIy6M1JnuIGdhF2nyPQr1geOw5eoiHM1PLx4w1uqnELsVgZaNK9oHSm
-        J6p7MyQNttvX9ylL+BtvV4J5f43XLjVJl9to5980o1I2bsOOnMfHmjEWfJQwKTEZ7audCW
-        GI7REFPaQWuDo39bLZ59wHfcBEUMegs=
+        Wed, 16 Sep 2020 04:12:22 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f61c8d80001>; Wed, 16 Sep 2020 01:12:08 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 16 Sep 2020 01:12:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 01:12:21 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
+ 2020 08:12:21 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 16 Sep 2020 08:12:21 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <pavel@denx.de>, <stable@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/130] 5.4.66-rc3 review
+In-Reply-To: <20200916063531.282549329@linuxfoundation.org>
+References: <20200916063531.282549329@linuxfoundation.org>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Message-ID: <0e7228bef5fc48fa9d8afd6651d1d149@HQMAIL105.nvidia.com>
+Date:   Wed, 16 Sep 2020 08:12:21 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 16 Sep 2020 09:54:10 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "Gross, Andy" <agross@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@axis.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Song Xiaowei <songxiaowei@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wangbinghui <wangbinghui@hisilicon.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yue Wang <yue.wang@amlogic.com>
-Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
-In-Reply-To: <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
-References: <20200821035420.380495-1-robh@kernel.org>
- <20200915091218.28737-1-michael@walle.cc>
- <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <346b694e43b1b6b86e4f3164e6589d25@walle.cc>
-X-Sender: michael@walle.cc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600243928; bh=EAgwF4jzTMDceNc6VsEP2mUBbriBptaV4VYW6mS8Vfw=;
+        h=X-PGP-Universal:From:To:CC:Subject:In-Reply-To:References:
+         X-NVConfidentiality:MIME-Version:Message-ID:Date:Content-Type:
+         Content-Transfer-Encoding;
+        b=Di/rDUHh4747VihyGw0/940Ihy+EYfHyqNsm6gLTMSEFomT+q+pazKGQ9k6b2zgod
+         q1vYjwHcJKGgGxHmpM8Io41iBg5oE5Zx3il6PYLjdASn0QKHQ25AE98Gimtk9MLrRE
+         jCMXAIgewsQojdkza+bQj9BcpHs8vML4CCxfJjtYePBR+lBba04xW9T0QLNoxxKgjb
+         crYYNsOoKfFoz3+CH+s5U2U+Yl7YSvHvKBJv0gy9FU17dCQKHYPBsJngux96Z0Y9JU
+         GeJ4A/wFm46po0dzdtkRwAfQfYrK7s7nQxQj4BVnd+1qz3yNsBT+/Epgxu4V8UonxZ
+         FcXfbMLeQmD2g==
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am 2020-09-16 00:02, schrieb Rob Herring:
-> Can you try this? The link up check seemed unnecessary as it is racy.
-> What happens if the link goes down right after checking? That's the
-> only thing in the change that sticks out.
+On Wed, 16 Sep 2020 08:37:45 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.66 release.
+> There are 130 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
-> b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 317ff512f8df..afee1a0e8883 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -441,6 +441,9 @@ static void __iomem
-> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
->         struct pcie_port *pp = bus->sysdata;
->         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> Responses should be made by Fri, 18 Sep 2020 06:35:01 +0000.
+> Anything received after that time might be too late.
 > 
-> +       if (!dw_pcie_link_up(pci))
-> +               return NULL;
-> +
->         busdev = PCIE_ATU_BUS(bus->number) | 
-> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
->                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.66-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-This will fix the issue.
+All tests passing for Tegra ...
 
--michael
+Test results for stable-v5.4:
+    14 builds:	14 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
+
+Linux version:	5.4.66-rc3-g0d8c7a7aec77
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
