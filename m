@@ -2,220 +2,101 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461D5C433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88342C43461
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED8020809
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27FF920936
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kXxeFKQt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UrD16+4Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbgIPSn4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41240 "EHLO
+        id S1728184AbgIPSyh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbgIPSW4 (ORCPT
+        with ESMTP id S1727677AbgIPR6D (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:22:56 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B2A7C035430
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:01:35 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id e17so2526936wme.0
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:01:35 -0700 (PDT)
+        Wed, 16 Sep 2020 13:58:03 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D081DC02526F;
+        Wed, 16 Sep 2020 05:23:21 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id e7so5866441qtj.11;
+        Wed, 16 Sep 2020 05:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=igBfcxeCtlQN5CLlSYPTKG81q+ycX2teEyiF94cMRWs=;
-        b=kXxeFKQt9X9g8aLTM+QgfFognrWsi7bbeKyXtbUa6Sw3vDhO1pk5GhyGWNAwFRiYV/
-         y3+Zb9FAd6+OgeWN2UBgXkLCkDAoTOIILHbMfIswZ+DjZ6vsfBBnkeLG6pdGQ2oE+uvl
-         +Byrs6EBHXRCTzlSe/2XCwaludcXLVt60J20Y=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x4wPfQmQhf0NljYX+V0pyWs88eqATG0x9CyI9/ZzQY0=;
+        b=UrD16+4ZGVjqAOCUEP3SztgNMTfkfYV48g797TFORwMqRQKhFfL7bvC0TujD+q1bHi
+         QmGFHcsHtuVsQq+P8Q3+caTRG5sovVxjxqjx+QwZ59hJeAZGYmi76/VUf7af8kkisLBK
+         Yv2zDs+toOhfEDtL789wOoFSR8hYkEMjBbSvJwqq8xV2Qv8WdYWRy+UbMiTgXdZVzoPz
+         t8d9bw8y1O6lixH4fdwgqz+l4itVoeM6fBgC8h5tyEQjmHxQIDle2VWyfxcxsr7fxHrV
+         0pNflCzHF1XlLb4Z5RpzXLAuXjxz6DbXtKWjAvfmYjCwggVb6XQASYYvso+Y/ST3QfcC
+         kP8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=igBfcxeCtlQN5CLlSYPTKG81q+ycX2teEyiF94cMRWs=;
-        b=S4sdutdJMme1OeJvbShthin92rO5V1/bQnv31P6URwGQD0jcxPYZkGrHJSsXsg4ZEp
-         PwFUGhfpxjzgVRkJPya7caHpH/9ARWMRUNa/6dipWstRw9nQWq9jFyLmNPOQ11iSHlpf
-         AcfYp6uq0xnH/jq3797LoNwKSyKUL2ZKNfRu+ZTRqC8iWRkSCQ/2WtxQEATIIy82uE9m
-         aB3bovK6tOLZ30psKYRodO/eDXVqEgexFs+BNwQw0U8gNHUB2HuQZQC65kYmWiIk/wa3
-         bATaQN7YlyoIIDoRdCFLPRYBuz67BPxMJrP749ecS1JWkCV3+57NoEFroVhB6GpKrkC8
-         nB4g==
-X-Gm-Message-State: AOAM532j2XQymbhcyktUxA50MrfjwmmyyK6LI6pA7FHniKlARtzZEKUo
-        Zd/QnaQQ3c9+QMbVVDV5K61OuA==
-X-Google-Smtp-Source: ABdhPJzfc+smqAu2u0R++9ZZRUwUh0N8NfJRxHBrlnztnEgrnVKh20aLbXU2FBFNb/vMU9OQyVRfcw==
-X-Received: by 2002:a1c:1d08:: with SMTP id d8mr4572504wmd.78.1600257693715;
-        Wed, 16 Sep 2020 05:01:33 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id x16sm31915068wrq.62.2020.09.16.05.01.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x4wPfQmQhf0NljYX+V0pyWs88eqATG0x9CyI9/ZzQY0=;
+        b=Lw8ANrW6kZS+1+wVBy+52Vv+Qdt3p3aP+OMuXppaNHARaUrjaJ/GvLlrWAfAbM/EGz
+         GsKJYNwfnRyVYAPUeOIIrH0i6Ib9DdBxK0yhAo3N7pVKGek5YpJ/0/oR3M0x8PPAy+nx
+         3Wc4FQojPiIoV7lwurbZXHrMIrKcvtMDV5KHNuJV+/Qr0g3gS9F2xkiAVLlSDhBPmOuD
+         kDvos5w5pTQhlKxlS/8rxFUyKLB58hvWr/ds7C/HEd46crvTmFhpvBWCq9bxoKrfVEQ2
+         hCJeHA/jKMfuR00F7sWF6Dd84hZTiSyfbQUbrg3iDbazd03grE0RHoK2GiwLcllSsccB
+         mF1A==
+X-Gm-Message-State: AOAM531vGDCLZaA8rLEmuvGiXTvuvQL+QASwR93mfT0OjDiP1JWd2E8S
+        zAGW04zQTcxlrU0A4o1w5X8=
+X-Google-Smtp-Source: ABdhPJyYFHM98y3t4bvelmErVTC+bzmtmK5S7QI0UYB/iUZVijInyy/6WwWg0jYRBUl0iwYVRGFrhQ==
+X-Received: by 2002:ac8:6e84:: with SMTP id c4mr10320947qtv.118.1600259000895;
+        Wed, 16 Sep 2020 05:23:20 -0700 (PDT)
+Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
+        by smtp.gmail.com with ESMTPSA id v30sm19916177qtj.52.2020.09.16.05.23.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 05:01:32 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 14:01:29 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 08/21] drm/msm: Introduce GEM object funcs
-Message-ID: <20200916120129.GL438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-9-tzimmermann@suse.de>
+        Wed, 16 Sep 2020 05:23:20 -0700 (PDT)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bob Ham <rah@settrans.net>,
+        Leonardo Bras <leobras.c@gmail.com>,
+        Michael Brougham <jusplainmike@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH 0/3] Support NVIDIA Tegra-based Ouya game console
+Date:   Wed, 16 Sep 2020 12:22:44 +0000
+Message-Id: <20200916122247.534374-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-9-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:45PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in msm. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Good Day,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+This series introduces upstream kernel support for the Ouya game console device. Please review and apply. Thank you in advance.
 
-> ---
->  drivers/gpu/drm/msm/msm_drv.c | 13 -------------
->  drivers/gpu/drm/msm/msm_drv.h |  1 -
->  drivers/gpu/drm/msm/msm_gem.c | 19 ++++++++++++++++++-
->  3 files changed, 18 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> index 79333842f70a..5952767ea478 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.c
-> +++ b/drivers/gpu/drm/msm/msm_drv.c
-> @@ -978,12 +978,6 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
->  	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_QUERY, msm_ioctl_submitqueue_query, DRM_RENDER_ALLOW),
->  };
->  
-> -static const struct vm_operations_struct vm_ops = {
-> -	.fault = msm_gem_fault,
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static const struct file_operations fops = {
->  	.owner              = THIS_MODULE,
->  	.open               = drm_open,
-> @@ -1009,18 +1003,11 @@ static struct drm_driver msm_driver = {
->  	.irq_preinstall     = msm_irq_preinstall,
->  	.irq_postinstall    = msm_irq_postinstall,
->  	.irq_uninstall      = msm_irq_uninstall,
-> -	.gem_free_object_unlocked = msm_gem_free_object,
-> -	.gem_vm_ops         = &vm_ops,
->  	.dumb_create        = msm_gem_dumb_create,
->  	.dumb_map_offset    = msm_gem_dumb_map_offset,
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_pin      = msm_gem_prime_pin,
-> -	.gem_prime_unpin    = msm_gem_prime_unpin,
-> -	.gem_prime_get_sg_table = msm_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = msm_gem_prime_import_sg_table,
-> -	.gem_prime_vmap     = msm_gem_prime_vmap,
-> -	.gem_prime_vunmap   = msm_gem_prime_vunmap,
->  	.gem_prime_mmap     = msm_gem_prime_mmap,
->  #ifdef CONFIG_DEBUG_FS
->  	.debugfs_init       = msm_debugfs_init,
-> diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-> index af259b0573ea..7bcea10be81f 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.h
-> +++ b/drivers/gpu/drm/msm/msm_drv.h
-> @@ -269,7 +269,6 @@ void msm_gem_shrinker_cleanup(struct drm_device *dev);
->  int msm_gem_mmap_obj(struct drm_gem_object *obj,
->  			struct vm_area_struct *vma);
->  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
-> -vm_fault_t msm_gem_fault(struct vm_fault *vmf);
->  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
->  int msm_gem_get_iova(struct drm_gem_object *obj,
->  		struct msm_gem_address_space *aspace, uint64_t *iova);
-> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-> index b4553caaa196..de915ff6f4b4 100644
-> --- a/drivers/gpu/drm/msm/msm_gem.c
-> +++ b/drivers/gpu/drm/msm/msm_gem.c
-> @@ -247,7 +247,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
->  	return msm_gem_mmap_obj(vma->vm_private_data, vma);
->  }
->  
-> -vm_fault_t msm_gem_fault(struct vm_fault *vmf)
-> +static vm_fault_t msm_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct drm_gem_object *obj = vma->vm_private_data;
-> @@ -994,6 +994,22 @@ int msm_gem_new_handle(struct drm_device *dev, struct drm_file *file,
->  	return ret;
->  }
->  
-> +static const struct vm_operations_struct vm_ops = {
-> +	.fault = msm_gem_fault,
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-> +
-> +static const struct drm_gem_object_funcs msm_gem_object_funcs = {
-> +	.free = msm_gem_free_object,
-> +	.pin = msm_gem_prime_pin,
-> +	.unpin = msm_gem_prime_unpin,
-> +	.get_sg_table = msm_gem_prime_get_sg_table,
-> +	.vmap = msm_gem_prime_vmap,
-> +	.vunmap = msm_gem_prime_vunmap,
-> +	.vm_ops = &vm_ops,
-> +};
-> +
->  static int msm_gem_new_impl(struct drm_device *dev,
->  		uint32_t size, uint32_t flags,
->  		struct drm_gem_object **obj)
-> @@ -1024,6 +1040,7 @@ static int msm_gem_new_impl(struct drm_device *dev,
->  	INIT_LIST_HEAD(&msm_obj->vmas);
->  
->  	*obj = &msm_obj->base;
-> +	(*obj)->funcs = &msm_gem_object_funcs;
->  
->  	return 0;
->  }
-> -- 
-> 2.28.0
-> 
+Peter Geis (3):
+  ARM: tegra: Add device-tree for Ouya
+  dt-bindings: Add vendor prefix for Ouya Inc.
+  dt-bindings: ARM: tegra: Add Ouya game console
+
+ .../devicetree/bindings/arm/tegra.yaml        |    3 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ arch/arm/boot/dts/Makefile                    |    3 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            | 4498 +++++++++++++++++
+ 4 files changed, 4505 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.25.1
+
