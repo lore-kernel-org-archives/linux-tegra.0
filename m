@@ -2,172 +2,159 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8829CC2BB84
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 17:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D93C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 17:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46B222244C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 17:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929C9222C8
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 17:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="e5NpJqEt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PX7zxOa0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbgIPRTj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:19:39 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12086 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbgIPRNx (ORCPT
+        id S1727134AbgIPR3c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 13:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727106AbgIPR3L (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:13:53 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f6247320001>; Wed, 16 Sep 2020 10:11:14 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 16 Sep 2020 10:11:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 10:11:27 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
- 2020 17:11:27 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 16 Sep 2020 17:11:27 +0000
-Received: from sumitg-l4t.nvidia.com (Not Verified[10.24.37.103]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f62473c0001>; Wed, 16 Sep 2020 10:11:27 -0700
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <viresh.kumar@linaro.org>, <rjw@rjwysocki.net>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [Patch 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-Date:   Wed, 16 Sep 2020 22:41:16 +0530
-Message-ID: <1600276277-7290-2-git-send-email-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
-References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 16 Sep 2020 13:29:11 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D079AC02C29D;
+        Wed, 16 Sep 2020 09:09:06 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id v23so6451953ljd.1;
+        Wed, 16 Sep 2020 09:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WU8kkRrE3jlr7jbbJ1vMZoztyKQSB8TKep3W2+Nhdpo=;
+        b=PX7zxOa0V1P+T5PQE8MemGbm8QD2DVms2wDVKL0zvIl654L3hn4IH9ImISDHPhiUWx
+         BLk3uerGbG/Cu2WECtitLX5tZZYQKw3GN4pYJvktzAaSEFy2rjZ9L+bBA+MjWJH1F9Pi
+         uU750U2N7VA4ZXpPre+5W7l1Hw0xSQJA6+zZ31HZQ0EFegsM7WqaZrCq9QSIr/E2H2nR
+         SgKr1UhwmwJq57nEy5CrwC6fUeShqN2u2jOMgRC5gKOCdvD2z6cNaTumY1duObWGvYm7
+         A32s+XjKK9tDlVKTOjrnjYuiWzyviQLKEAoET98SqTVV3MBctGHXYFgAY9nvxk/jQQxg
+         pu0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WU8kkRrE3jlr7jbbJ1vMZoztyKQSB8TKep3W2+Nhdpo=;
+        b=YEGqkzzZgHbVAZzs2jZKHZeGETO9yRu2YyG5N1FmRr/5+gMVTz2QGHa1XDoL+maXl3
+         mYHksa8uwNt0hQSSHukORmNDZFi9GsGYTqfer304GNGubBOQLkXQWK87GLlogmB0d03u
+         1Ji726eaQdQC7Eon1widUmLfDAd5fylBbZ3GzxNOAGvknDMF5OSbbEMkqCDf2OaF4RHy
+         UlS9l8phKCBbCq9fKM5c3Z97Oo4AXMEAptBT8iUkt/fI9fhjZ/IQE9d6dQuDu5Ord7uJ
+         4i2vAN+JA/ahbXjyCVeyvQExWUUrxrxsh+Rv5maThO7I588jZD4KJY4eU7zRIW/RxuAu
+         ixNg==
+X-Gm-Message-State: AOAM533O0CzlDhGb4IdI5MU09ar5OOaRb0dnvfzeOMGk9Ta2NFo7BZ7r
+        PjseKq7DnUMsJVnLg9qR3iqvcB0Q9zg=
+X-Google-Smtp-Source: ABdhPJwgUpIjt1JfZmr2hIDAqmuETyFK5I1BMqLPpG/JmuzJbZgHaxUG0ETD48tl/QDqV3qD5CzHdQ==
+X-Received: by 2002:a2e:9116:: with SMTP id m22mr8286871ljg.387.1600272544856;
+        Wed, 16 Sep 2020 09:09:04 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id l82sm5051890lfd.58.2020.09.16.09.09.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2020 09:09:03 -0700 (PDT)
+Subject: Re: [PATCH 1/3] ARM: tegra: Add device-tree for Ouya
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bob Ham <rah@settrans.net>,
+        Leonardo Bras <leobras.c@gmail.com>,
+        Michael Brougham <jusplainmike@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200916122247.534374-1-pgwipeout@gmail.com>
+ <20200916122247.534374-2-pgwipeout@gmail.com>
+ <3cdcb877-e4c7-aab8-b7f9-0c88f2247d03@gmail.com>
+ <CAMdYzYrKHBrh47PMrj=TP_FPttFOkRO2J_wrDr7oEyBNnyexAA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c92a457d-9829-99ce-8d7c-29fe5395728c@gmail.com>
+Date:   Wed, 16 Sep 2020 19:09:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600276274; bh=oXH+axlIrWrmMMW7JliHScXS/IYj9I3hPRTXw99Y67M=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=e5NpJqEtVyF0iSjm3HSYcIZEjbmI05YLKBUhC83u3VL1qlZA20cd13Okj2u9fKqoe
-         /L5Fcp1uRMIAYT5Q1yNkUTqMaqhmE2Dy9LzjKVKTxUXvt2R07j6soJ96kyU5nzllqM
-         OIebOGaUZpbpz46qVQbxJsPY72KhxAY3I1oAr02zpPWQOS1qUmP6UOKjmnGEnsGBsg
-         ljFa0ODuT/WNxQ7onZ7AygSQJ2ER+a7f/hUhb4oXqX5ZwSQ6ExHQDwv4nOHXLsk+zX
-         HIL37shFft9GCvSLNj235VXgsgXdmitp+dFq8h9yzAR2lQd0d0q5mU9npk+9KJIg5u
-         vstmOw40P0TKg==
+In-Reply-To: <CAMdYzYrKHBrh47PMrj=TP_FPttFOkRO2J_wrDr7oEyBNnyexAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
-and keeps changing slightly. This change returns a consistent value
-from freq_table. If the reconstructed frequency has acceptable delta
-from the last written value, then return the frequency corresponding
-to the last written ndiv value from freq_table. Otherwise, print a
-warning and return the reconstructed freq.
+16.09.2020 17:57, Peter Geis пишет:
+> On Wed, Sep 16, 2020 at 10:17 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 16.09.2020 15:22, Peter Geis пишет:
+>>> The Ouya was the sole device produced by Ouya Inc in 2013.
+>>> It was a game console originally running Android 5 on top of Linux 3.1.10.
+>>>
+>>> This patch adds the device tree supporting the Ouya.
+>>> It has been tested on the original variant with Samsung ram.
+>>>
+>>> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+>>> ---
+>>>  arch/arm/boot/dts/Makefile         |    3 +-
+>>>  arch/arm/boot/dts/tegra30-ouya.dts | 4498 ++++++++++++++++++++++++++++
+>>>  2 files changed, 4500 insertions(+), 1 deletion(-)
+>>>  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
+>>
+>> Hello, Peter! Very nice work!
+> 
+> Thanks!
+> 
+>>
+>> Could you please clarify how many variants of the board exist?
+> 
+> It is unknown how many exist in reality.
+> At least three RAM variants are supported in the downstream kernel,
+> Samsung, Hynix M, and Hynix A.
+> Two variants in storage capacity, the original had 8GB eMMC while the
+> new variant had 16GB eMMC.
+> 
+>>
+>> What are the differences between the variants?
+> 
+> Aside from the RAM and storage changes there should be no functional
+> differences.
+> It is unknown at which point the RAM changes were cut in with the eMMC change.
+> 
+>>
+>> Is this device-tree suitable for all variants?
+> 
+> This device tree should support all variants, but I haven't been able
+> to locate anyone with the newer variants who can test it yet.
+> 
+>>
+>> How user could determine the board's variant?
+> 
+> On upstream:
+> The tegra emc driver will output the RAM code detected in the kernel log:
+> tegra30-emc 7000f400.memory-controller: got 6 timings for RAM code 0
+> (min 25MHz max 800MHz)
+> The mmc-core will output the storage capacity in the kernel log:
+> mmcblk1: mmc1:0001 MMC08G 7.19 GiB
+> 
+> On downstream:
+> The ram variant is output in the kernel log:
+> DDR Strap Pin AD4: 0
+> DDR Strap Pin AD5: 0
+> Init DFS table for Samsung DDR
+> The mmc-core outputs the storage capacity in the kernel log:
+> mmcblk0: mmc0:0001 MMC08G 7.18 GiB
+> 
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 66 ++++++++++++++++++++++++++++++++------
- 1 file changed, 57 insertions(+), 9 deletions(-)
+I was thinking that maybe it could be necessary to separate the DT per
+board variant, like we did it for Nexus 7, but it shouldn't be needed
+given yours answer.
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index e1d931c..d5b608d 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -180,9 +180,65 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
- 	return (rate_mhz * KHZ); /* in KHz */
- }
- 
-+static void get_cpu_ndiv(void *ndiv)
-+{
-+	u64 ndiv_val;
-+
-+	asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
-+
-+	*(u64 *)ndiv = ndiv_val;
-+}
-+
-+static void set_cpu_ndiv(void *data)
-+{
-+	struct cpufreq_frequency_table *tbl = data;
-+	u64 ndiv_val = (u64)tbl->driver_data;
-+
-+	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
-+}
-+
- static unsigned int tegra194_get_speed(u32 cpu)
- {
--	return tegra194_get_speed_common(cpu, US_DELAY);
-+	struct cpufreq_frequency_table *table, *pos;
-+	struct cpufreq_policy policy;
-+	unsigned int rate;
-+	u64 ndiv;
-+	int err;
-+
-+	cpufreq_get_policy(&policy, cpu);
-+	table = policy.freq_table;
-+
-+	/* reconstruct actual cpu freq using counters*/
-+	rate = tegra194_get_speed_common(cpu, US_DELAY);
-+
-+	/* get last written ndiv value*/
-+	err = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
-+	if (err) {
-+		pr_err("cpufreq: Failed to get ndiv for CPU%d, ret:%d\n",
-+		       cpu, err);
-+		return rate;
-+	}
-+
-+	/* if the reconstructed frequency has acceptable delta from
-+	 * the last written value, then return freq corresponding
-+	 * to the last written ndiv value from freq_table. This is
-+	 * done to return consistent value.
-+	 */
-+	cpufreq_for_each_valid_entry(pos, table) {
-+		if (pos->driver_data != ndiv)
-+			continue;
-+
-+		if (abs(pos->frequency - rate) > 115200) {
-+			pr_warn("cpufreq: high delta (%d) on CPU%d\n",
-+				abs(pos->frequency - rate), cpu);
-+			pr_warn("cpufreq: cur:%u, set:%u, set ndiv:%llu\n",
-+				rate, pos->frequency, ndiv);
-+		} else {
-+			rate = pos->frequency;
-+		}
-+		break;
-+	}
-+	return rate;
- }
- 
- static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
-@@ -209,14 +265,6 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static void set_cpu_ndiv(void *data)
--{
--	struct cpufreq_frequency_table *tbl = data;
--	u64 ndiv_val = (u64)tbl->driver_data;
--
--	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
--}
--
- static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
- 				       unsigned int index)
- {
--- 
-2.7.4
-
+So far looks good to me!
