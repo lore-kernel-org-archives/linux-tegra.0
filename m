@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C522DC433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99772C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 14:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69E8F2080C
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE9122245
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 14:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YwQFNnZ4"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FENeMTOi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbgIPKDd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 06:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
+        id S1726301AbgIPOUV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 10:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbgIPKDY (ORCPT
+        with ESMTP id S1726610AbgIPNcn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 06:03:24 -0400
+        Wed, 16 Sep 2020 09:32:43 -0400
 Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3BCC06178A
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id j2so6236704wrx.7
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B37C08E86E
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id x14so6611471wrl.12
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
-        b=YwQFNnZ46y23ilMPtQ+YA1uU56yQbhOv6Wnxz4ZcYBv/64HXgnQIstoy81UuE+BuFc
-         RbVimusECAo2qKzk8yvrlLUDfal98le+MXG5s9js8pfohQ+Bnhlzr8odUz3778w+kM1b
-         6iP/yC9nMmGqgDJRKWjaW8mpLjM0JRvnAZoXk=
+        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
+        b=FENeMTOiWrFokQkUzY6vSvMhlCXV7HMJqSDFsMTbLqeNytwJMofYpFGvXfw3GhxJQe
+         D9FUrSX8+Brv74I6kUhpyFb/XZioFwNiGTb+QuFgOQkexhfx/xeg364unF1nN8hvk40W
+         Hh+h3hsu+pBXFmPF/2PAzcQ04fALpK5XDa9tA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
-        b=nyNb9Hct6ZuafZ3c/JKBuBAoyzBFiHPuoGZc32pjRYf/ojFZJCICvOesLo0MYUxagr
-         89WXuzFOTFBLZdCSzHDZzP+wtRiep1qqIvgHE9ZWhDHX3TyGXHdXb5VsrAtsmYrdarSi
-         ruGS/DYc3j4qVEveVUggeh0t+mnMmMFeejWk1VaKgymjiwXcn6X+0R7S0ZMb+Pg72Hxc
-         Tkv3A64jlHXKA4Fpyo58aU9EcurlQy+YWD2OpxzasPFFlci0xojpCBdyX5FSzLwnpsLu
-         AHCacMJe4zDwfkTgkcRkWTS5IlxWmQMsNPDOWBjbyX1cJ4pLEUdCbHq7TfxzEYGtIk2K
-         w42w==
-X-Gm-Message-State: AOAM532qp/ZTw+h8ERRZUGiTkqR65g/aDldH/JUVa/9RS3jYKVpc8oB0
-        SszYzP3Y6skMiEMnDG9GTN0VTQ==
-X-Google-Smtp-Source: ABdhPJzeuyJCXxonH76Yve4EPaguLB8swVVrVRKLIRv+fjNVrJReD84NaGvyyVb0RMzIohYAQGFSOA==
-X-Received: by 2002:adf:81e6:: with SMTP id 93mr25703900wra.412.1600250602103;
-        Wed, 16 Sep 2020 03:03:22 -0700 (PDT)
+        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
+        b=M7cWjGiTM6qE2DwJWJTg2C+TDo8T2FmV9Hg9nIcQbeq+2FcH7tIo6wwwK8M8v52X+2
+         euRA29jKJbSDyzcrSP3hedAoK+ioidK5jnUEdvCEJKH9u1VpWfc2bCpFmn7ajvvniEn9
+         7tJpKgYnSrJ27oF5Qc2o5t4F3iin5o22m8oPia1/G7D5JUkv0potDUd1NckYyPudL4Jt
+         ihay7qeiOAvlxnU8RLQzOerUv6Ugn/iTk0pWCj6eEvDnE+Q2lSBc+CDkrtAt1ZDEL5JW
+         tOFWDD92Tmq3enK9Tddit/ef8uTnE0/ReuEQ5IXIM90GPG0zXxfGCnTK0AOKj+0Ne6dr
+         r05A==
+X-Gm-Message-State: AOAM532o0R+O6VM0rlxGLX8+Pjc9zfyN8z0XM4YYwFWwzkR7a3OxVShs
+        z6KTuDyL2t4OvkuRUQhHHHEOQA==
+X-Google-Smtp-Source: ABdhPJwcFrpBowFHXDaGWxAmgGA6UC0qLIIbiwK0yYyfwUChHgh/bXrgr93clOHTT0R4i2flV+cOiA==
+X-Received: by 2002:a5d:4448:: with SMTP id x8mr28185933wrr.207.1600258192468;
+        Wed, 16 Sep 2020 05:09:52 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id s26sm4516179wmh.44.2020.09.16.03.03.19
+        by smtp.gmail.com with ESMTPSA id n11sm32655611wrx.91.2020.09.16.05.09.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 03:03:21 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 12:03:18 +0200
+        Wed, 16 Sep 2020 05:09:51 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 14:09:48 +0200
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
@@ -89,105 +89,59 @@ Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
-Message-ID: <20200916100318.GF438822@phenom.ffwll.local>
+Subject: Re: [PATCH v2 17/21] drm/virtgpu: Set PRIME export function in
+ struct drm_gem_object_funcs
+Message-ID: <20200916120948.GO438822@phenom.ffwll.local>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200915145958.19993-18-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-5-tzimmermann@suse.de>
+In-Reply-To: <20200915145958.19993-18-tzimmermann@suse.de>
 X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+On Tue, Sep 15, 2020 at 04:59:54PM +0200, Thomas Zimmermann wrote:
 > GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in exynos. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
+> struct drm_driver. This patch replaces virtgpu's per-driver PRIME export
+> function with a per-object function.
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
->  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
->  2 files changed, 15 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index dbd80f1e4c78..fe46680ca208 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
->  	file->driver_priv = NULL;
->  }
->  
-> -static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static const struct drm_ioctl_desc exynos_ioctls[] = {
->  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
->  			DRM_RENDER_ALLOW),
-> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
->  	.open			= exynos_drm_open,
->  	.lastclose		= drm_fb_helper_lastclose,
->  	.postclose		= exynos_drm_postclose,
-> -	.gem_free_object_unlocked = exynos_drm_gem_free_object,
-> -	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
->  	.dumb_create		= exynos_drm_gem_dumb_create,
->  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
->  	.gem_prime_import	= exynos_drm_gem_prime_import,
-> -	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
-> -	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
-> -	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
->  	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
->  	.ioctls			= exynos_ioctls,
->  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> index efa476858db5..69a5cf28b4ae 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
->  	kfree(exynos_gem);
->  }
->  
-> +static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-
-Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling
-them drm_gem_simple_ops or so would remove a pile of these. But perhaps a
-quick follow up series.
 
 Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-> +
-> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
-> +	.free = exynos_drm_gem_free_object,
-> +	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
-> +	.vmap = exynos_drm_gem_prime_vmap,
-> +	.vunmap	= exynos_drm_gem_prime_vunmap,
-> +	.vm_ops = &exynos_drm_gem_vm_ops,
-> +};
-> +
->  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
->  						  unsigned long size)
->  {
-> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
->  	exynos_gem->size = size;
->  	obj = &exynos_gem->base;
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.c    | 1 -
+>  drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> index b039f493bda9..1f8d6ed11d21 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> @@ -203,7 +203,6 @@ static struct drm_driver driver = {
+>  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>  	.gem_prime_mmap = drm_gem_prime_mmap,
+> -	.gem_prime_export = virtgpu_gem_prime_export,
+>  	.gem_prime_import = virtgpu_gem_prime_import,
+>  	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
 >  
-> +	obj->funcs = &exynos_drm_gem_object_funcs;
-> +
->  	ret = drm_gem_object_init(dev, obj, size);
->  	if (ret < 0) {
->  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+> index 842f8b61aa89..4f7d7ea8194c 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+> @@ -108,6 +108,7 @@ static const struct drm_gem_object_funcs virtio_gpu_shmem_funcs = {
+>  	.close = virtio_gpu_gem_object_close,
+>  
+>  	.print_info = drm_gem_shmem_print_info,
+> +	.export = virtgpu_gem_prime_export,
+>  	.pin = drm_gem_shmem_pin,
+>  	.unpin = drm_gem_shmem_unpin,
+>  	.get_sg_table = drm_gem_shmem_get_sg_table,
 > -- 
 > 2.28.0
 > 
