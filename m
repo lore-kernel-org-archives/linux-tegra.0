@@ -2,112 +2,253 @@ Return-Path: <SRS0=19fU=CZ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61764C43461
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED401C433E2
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 156A420872
-	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:08:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvqYVCPN"
+	by mail.kernel.org (Postfix) with ESMTP id BD2FB21974
+	for <linux-tegra@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgIPSId (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbgIPR6d (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:58:33 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEACC002183;
-        Wed, 16 Sep 2020 07:17:29 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id b19so6037201lji.11;
-        Wed, 16 Sep 2020 07:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HKFjjXX/Fu5zjF0HZ6s7EvKUrOD09AhmACAgWHR4WJc=;
-        b=mvqYVCPNof43k9goSUMLYsmddY1xjRWfLRyPyXaME3y2bs6i0ZkqWvjlSeIWhHMfaQ
-         9zMlCWy4xcHiWIksv02XJmn2dTAsFIqYLNfQTEhvSa6LYRoQL0Fj/oAgFZett2tq1N74
-         dozIWdEDVJH3+NP1fuu4vjT/VhSSEkJgNP3HxbUX4n3k1Tt37V5Z65FBlIEngHM9iIT/
-         wTky7fwT5+avJFvbMXDANHlNSqHC/ZmDUJA36NskKlzslATW49ZCqI0B5G/0/F/jHkUo
-         jQV79g7kxbs+TxCNRO9kt6/DW8vAdwh8MF5fwx9TTlczoxlRcGcgCRWQOpaRRrVGiYYV
-         WhVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HKFjjXX/Fu5zjF0HZ6s7EvKUrOD09AhmACAgWHR4WJc=;
-        b=AULLrlWHiPc4LLB1wzSnCh1imXMXE7BN2QLfj+8HjM1+SkmUVURUFwndPmGEsla9M7
-         xX+Oeg8W21TSrxsypGahVtjKN++vI8phueEHDnUUZc0x0V8H+qoH6kdxKg4AAYHisYEk
-         lis8r6uOtIx7awQsWvoCktr+eG8JooE1YcXf6YF4dT3vJSZLTf9Kzwhw89bGtdS2uy4z
-         HliIRorw+yGGASmXA3fiMRN7CJWynNNUnAPx0CJJWtzSUluSzcMQbpV9xFkHPWSvElB0
-         vM7zb2rGlyeJ8Cb0EyNV3dN1qE3kUUsxnSAcwKvP3mHc/f1QoeSQwFnTR2/V6vco2+3N
-         P4Ag==
-X-Gm-Message-State: AOAM532/scEaEzY2KO2VJLXfxLT3zEBq8y9WPKP2/VRM5IgwWUhi8rQ7
-        M+2hnlECN5FyBN80wMRdZb2ZjNEq1dw=
-X-Google-Smtp-Source: ABdhPJzOWf6bO6BJSSKVvsY8LHw/SdhBM4Zq10+VY39wg1d+t9a6mejTf8wlO11e4etxzPRQ/tEJkw==
-X-Received: by 2002:a2e:b813:: with SMTP id u19mr7881504ljo.396.1600265847640;
-        Wed, 16 Sep 2020 07:17:27 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id c28sm4626382lfh.98.2020.09.16.07.17.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2020 07:17:26 -0700 (PDT)
-Subject: Re: [PATCH 1/3] ARM: tegra: Add device-tree for Ouya
-To:     Peter Geis <pgwipeout@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bob Ham <rah@settrans.net>,
-        Leonardo Bras <leobras.c@gmail.com>,
-        Michael Brougham <jusplainmike@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200916122247.534374-1-pgwipeout@gmail.com>
- <20200916122247.534374-2-pgwipeout@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3cdcb877-e4c7-aab8-b7f9-0c88f2247d03@gmail.com>
-Date:   Wed, 16 Sep 2020 17:17:25 +0300
+        id S1727990AbgIPSXt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 16 Sep 2020 14:23:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38076 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727882AbgIPSXs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 16 Sep 2020 14:23:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3CCD4B28A;
+        Wed, 16 Sep 2020 10:36:48 +0000 (UTC)
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     hamohammed.sa@gmail.com, airlied@linux.ie,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        michal.simek@xilinx.com, thierry.reding@gmail.com, krzk@kernel.org,
+        sam@ravnborg.org, emil.velikov@collabora.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        oleksandr_andrushchenko@epam.com, tomi.valkeinen@ti.com,
+        linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
+        jonathanh@nvidia.com, linux-rockchip@lists.infradead.org,
+        kgene@kernel.org, bskeggs@redhat.com,
+        xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
+        intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
+        chunkuang.hu@kernel.org, andi.shyti@intel.com,
+        linux-arm-msm@vger.kernel.org, marek.olsak@amd.com,
+        tianci.yin@amd.com, etnaviv@lists.freedesktop.org,
+        hdegoede@redhat.com, linux-mediatek@lists.infradead.org,
+        rodrigo.vivi@intel.com, matthias.bgg@gmail.com, evan.quan@amd.com,
+        sean@poorly.run, linux-arm-kernel@lists.infradead.org,
+        tvrtko.ursulin@linux.intel.com, amd-gfx@lists.freedesktop.org,
+        laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
+        rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+        Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+        hjc@rock-chips.com, chris@chris-wilson.co.uk,
+        kyungmin.park@samsung.com, nirmoy.das@amd.com,
+        alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+        freedreno@lists.freedesktop.org, christian.koenig@amd.com
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+Date:   Wed, 16 Sep 2020 12:36:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200916122247.534374-2-pgwipeout@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="VLzf65jApKkRavuxi39QvnC87GfNF3zix"
 Sender: linux-tegra-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.09.2020 15:22, Peter Geis пишет:
-> The Ouya was the sole device produced by Ouya Inc in 2013.
-> It was a game console originally running Android 5 on top of Linux 3.1.10.
-> 
-> This patch adds the device tree supporting the Ouya.
-> It has been tested on the original variant with Samsung ram.
-> 
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> ---
->  arch/arm/boot/dts/Makefile         |    3 +-
->  arch/arm/boot/dts/tegra30-ouya.dts | 4498 ++++++++++++++++++++++++++++
->  2 files changed, 4500 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix
+Content-Type: multipart/mixed; boundary="dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: hamohammed.sa@gmail.com, airlied@linux.ie, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, michal.simek@xilinx.com,
+ thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
+ emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
+ jy0922.shim@samsung.com, oleksandr_andrushchenko@epam.com,
+ tomi.valkeinen@ti.com, linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
+ jonathanh@nvidia.com, linux-rockchip@lists.infradead.org, kgene@kernel.org,
+ bskeggs@redhat.com, xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
+ intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
+ chunkuang.hu@kernel.org, andi.shyti@intel.com,
+ linux-arm-msm@vger.kernel.org, marek.olsak@amd.com, tianci.yin@amd.com,
+ etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
+ linux-mediatek@lists.infradead.org, rodrigo.vivi@intel.com,
+ matthias.bgg@gmail.com, evan.quan@amd.com, sean@poorly.run,
+ linux-arm-kernel@lists.infradead.org, tvrtko.ursulin@linux.intel.com,
+ amd-gfx@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+ hyun.kwon@xilinx.com, rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+ Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+ hjc@rock-chips.com, chris@chris-wilson.co.uk, kyungmin.park@samsung.com,
+ nirmoy.das@amd.com, alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+ freedreno@lists.freedesktop.org, christian.koenig@amd.com
+Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
 
-Hello, Peter! Very nice work!
+--dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Could you please clarify how many variants of the board exist?
+Hi
 
-What are the differences between the variants?
+Am 16.09.20 um 12:03 schrieb Daniel Vetter:
+> On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+>> GEM object functions deprecate several similar callback interfaces in
+>> struct drm_driver. This patch replaces the per-driver callbacks with
+>> per-instance callbacks in exynos. The only exception is gem_prime_mmap=
+,
+>> which is non-trivial to convert.
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+>>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+>>  2 files changed, 15 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm=
+/exynos/exynos_drm_drv.c
+>> index dbd80f1e4c78..fe46680ca208 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device =
+*dev, struct drm_file *file)
+>>  	file->driver_priv =3D NULL;
+>>  }
+>> =20
+>> -static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
+>> -	.open =3D drm_gem_vm_open,
+>> -	.close =3D drm_gem_vm_close,
+>> -};
+>> -
+>>  static const struct drm_ioctl_desc exynos_ioctls[] =3D {
+>>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+>>  			DRM_RENDER_ALLOW),
+>> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver =3D {=
 
-Is this device-tree suitable for all variants?
+>>  	.open			=3D exynos_drm_open,
+>>  	.lastclose		=3D drm_fb_helper_lastclose,
+>>  	.postclose		=3D exynos_drm_postclose,
+>> -	.gem_free_object_unlocked =3D exynos_drm_gem_free_object,
+>> -	.gem_vm_ops		=3D &exynos_drm_gem_vm_ops,
+>>  	.dumb_create		=3D exynos_drm_gem_dumb_create,
+>>  	.prime_handle_to_fd	=3D drm_gem_prime_handle_to_fd,
+>>  	.prime_fd_to_handle	=3D drm_gem_prime_fd_to_handle,
+>>  	.gem_prime_import	=3D exynos_drm_gem_prime_import,
+>> -	.gem_prime_get_sg_table	=3D exynos_drm_gem_prime_get_sg_table,
+>>  	.gem_prime_import_sg_table	=3D exynos_drm_gem_prime_import_sg_table,=
 
-How user could determine the board's variant?
+>> -	.gem_prime_vmap		=3D exynos_drm_gem_prime_vmap,
+>> -	.gem_prime_vunmap	=3D exynos_drm_gem_prime_vunmap,
+>>  	.gem_prime_mmap		=3D exynos_drm_gem_prime_mmap,
+>>  	.ioctls			=3D exynos_ioctls,
+>>  	.num_ioctls		=3D ARRAY_SIZE(exynos_ioctls),
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm=
+/exynos/exynos_drm_gem.c
+>> index efa476858db5..69a5cf28b4ae 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem=
+ *exynos_gem)
+>>  	kfree(exynos_gem);
+>>  }
+>> =20
+>> +static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
+>> +	.open =3D drm_gem_vm_open,
+>> +	.close =3D drm_gem_vm_close,
+>> +};
+>=20
+> Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling=
+
+> them drm_gem_simple_ops or so would remove a pile of these. But perhaps=
+ a
+> quick follow up series.
+
+Good idea. Several interfaces use the term 'default' in their name, so
+something like drm_gem_default_vm_ops seems appropriate.
+
+BTW is there a reason why we have file operations like
+DEFINE_DRM_GEM_CMA_FOPS() in each module? It seems like this could also
+be provided by the rsp memory-manager library.
+
+Best regards
+Thomas
+
+>=20
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>=20
+>> +
+>> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs =
+=3D {
+>> +	.free =3D exynos_drm_gem_free_object,
+>> +	.get_sg_table =3D exynos_drm_gem_prime_get_sg_table,
+>> +	.vmap =3D exynos_drm_gem_prime_vmap,
+>> +	.vunmap	=3D exynos_drm_gem_prime_vunmap,
+>> +	.vm_ops =3D &exynos_drm_gem_vm_ops,
+>> +};
+>> +
+>>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *=
+dev,
+>>  						  unsigned long size)
+>>  {
+>> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(=
+struct drm_device *dev,
+>>  	exynos_gem->size =3D size;
+>>  	obj =3D &exynos_gem->base;
+>> =20
+>> +	obj->funcs =3D &exynos_drm_gem_object_funcs;
+>> +
+>>  	ret =3D drm_gem_object_init(dev, obj, size);
+>>  	if (ret < 0) {
+>>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+>> --=20
+>> 2.28.0
+>>
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE--
+
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9h6qwUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPl9Qf+KR96aoWYf20LvHA3GnV4zrCawiec
+y2yduL2GYhWPOf4GMfY2D+iMsP8w0W7E25g5LPHA+Vqz5D02rDOi3daO0DrNPmW6
+693QU4qPhbQzK7Y+2jWAjMeuNnkrX+LMllUvQ1+QfapihbnvGqu9aNH3BpXfjOgt
+BoqBHPnc6jc6BCC9knI+JDmxfv+mxrkN3TVEWw78TRR8W9HubgJK3Qx5yFPb76jL
+BTd4moKQlMWspChoyM+/682BI3I/vaGbC7dL6ABTxoYc5Ub2PxY3RtaKnNPfCcpq
+dvopHHQ1YJ3wOj988DPHGprg6T0jK2zsR3M9rja76IOs/Y3rh1LWAWk2LA==
+=Gxfw
+-----END PGP SIGNATURE-----
+
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix--
