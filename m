@@ -2,114 +2,176 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602D2C43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7CBC43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDAC21D7F
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF51B21974
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:26:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvsNSj6b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ogm/0usc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbgIQLXc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58044 "EHLO
+        id S1726721AbgIQLZ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 07:25:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbgIQLXA (ORCPT
+        with ESMTP id S1726185AbgIQLZs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:23:00 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3675C06174A;
-        Thu, 17 Sep 2020 04:22:59 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id r19so974097pls.1;
-        Thu, 17 Sep 2020 04:22:59 -0700 (PDT)
+        Thu, 17 Sep 2020 07:25:48 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F564C061756;
+        Thu, 17 Sep 2020 04:25:45 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id m6so1678816wrn.0;
+        Thu, 17 Sep 2020 04:25:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OY4SO5nFE7KdPupdQ8u5OIhV4Gkr+fJvE2+DG/emg9o=;
-        b=hvsNSj6bS5FmO3BXPJIbt+BGy3okyL9JagaNRBHhyZkwQDi7LjNPEBHHYxbSe2kddC
-         IsJaIvhbaDq3ZBjbiDc/S8fpKEMRIGYSm80p0pwRvQ0ty9lf1D2r8jN2942W04jdnLsM
-         VWaspF9GtNo0aLlL3kKAjJDxqkkmHiVtdPBrgmyjiBDLTjX7dqpx/5r/gpwTym4IoKWs
-         +NZmRZPU5qCbrlqj7C+NiWWvuiclmvL+MtfN+wnJVoWr3PUW2FbGF51c2uh0d3FBsBhN
-         ww6EqV0+uTqOP9Z0z/3nTs0Rq4XUiRsRzYyblRlg3lvY9M1p9/UMUAKFSLjgz6OJeXof
-         0D8g==
+        bh=n7mBa3+CaabyaqB7OhdCT9CLExpPusdRJluP0asp0D0=;
+        b=Ogm/0uscGeh7KAqkm/ldWNn0FW/9aagq7DisuImZNRkAK9HzRblbPJlWYGnmISFJH2
+         7HO+HlI3U6+xrL5eA2p8OlGNsh16X93j0kXa29nDk3itm7lQK2hVxKFTYBm+85aWXyE/
+         ZPxooKr1DdVC8+d+gdnZWTkGsvBuqPFJ5BI06Vv4/JBCUfGmfmA9+dywjd9axOeWm0Yt
+         JI83xwNTdbZTGKHIipqYsaOdGzWunRHPZintkX9omNFWAiLk9LJ2i6y4+vLVar7ViGhC
+         Gcnxuin6xACClSWHsSuzGbl+kHARpcCQujCLXOXdvGPkOJVq9iID6xnaM4nQxWZnLUZC
+         gTXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OY4SO5nFE7KdPupdQ8u5OIhV4Gkr+fJvE2+DG/emg9o=;
-        b=lcVtI8nFBW2sp9tiDTkLTU8Iit4J+keJhQDI0ebqSQQUwNsXvQhsqc5cn8csVjuZuG
-         ZEji3cd9Dg7lk+VXP9AslDvC3mOBzZRxJOKnQzhd6GJWEYvIOvpM8rjgnkYluYVgTejr
-         gODzqApHyvoTgSWDFKDP5apjf2x9ttEl3uWX5R0Nb69oSUjh8cJKtyyHhW54gr00wHsW
-         pVVbMoWIpcH4Qxui2jHhfWyuzn5pAL2orbEHx/q6UK5v3HYbQzjqNjBAZjLXvNKhS12n
-         9UZSJuUytdA1P9aXjYkM31UGtdToH5W3Bea/mh6iKu0njyNctUKTYa96DG9zLKgeShTO
-         pkeQ==
-X-Gm-Message-State: AOAM530kO8YJ4pwci4Q9zjxrQiryr54HH5+oi6ekAOPi6ZZ/DdsRJtQh
-        NRlU2Du7oiOlrunYP0Igt52QcdzPvUY=
-X-Google-Smtp-Source: ABdhPJwmttNRwnuVNn94v6XiKOKMt90dhA1lkfsqqw0fnEKyABBv096p+HBcHqMPlAhQIgd+CjUlhA==
-X-Received: by 2002:a17:90b:208:: with SMTP id fy8mr8222682pjb.153.1600341778876;
-        Thu, 17 Sep 2020 04:22:58 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id y202sm21433183pfc.179.2020.09.17.04.22.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Sep 2020 04:22:58 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 04:19:41 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>, linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        jonathanh@nvidia.com
-Subject: Re: [PATCH] memory: tegra: Correct num_tlb_lines for tegra210
-Message-ID: <20200917111940.GA12912@Asurada-Nvidia>
-References: <20200915232803.26163-1-nicoleotsuka@gmail.com>
- <20200917104315.GI3515672@ulmo>
- <CAJKOXPf5zqJYvaZc102PnTOXKrNYm8fReeJQGGx8eaQDCXavkw@mail.gmail.com>
+        bh=n7mBa3+CaabyaqB7OhdCT9CLExpPusdRJluP0asp0D0=;
+        b=n+B/4eLW+HQOVzFhV2cR2xYeVz9VgznKw31jr8zDcbCVyIs9xy2kTfj5UZXZR67/Mb
+         AhgJoQ3WnnbXJUnpVKQ4pwYn9glX+0UA0Mb31vyuaWRnaI9XHqIrfZE45CoNt+hY38th
+         UKVZjl/MyZrrqATAXimJhEeKhyJjhYAEadonorvjwLE9mO0N8veP+MlwyMfno6I6TBlT
+         V1oBNsJ9bpMQ0u+oMNB9HmB3wMz1Qq6WaRwYVnbkB6YQ0CVJjWskZuot1+6Wh37IIHiu
+         Ae8GKqdB4WkDVo8otGAUO7WxVQqlCUXT9I5J0AGEC2wHI6sC3YfKixyZX2CzpSiTvwoA
+         /z9Q==
+X-Gm-Message-State: AOAM533eM8nuTSH74C4Yh9n9VjHJcfDKhjmt1Xk9od1or1j6mq8EAZkW
+        3MAeTJU6keEZ4/tkAUhiNYU=
+X-Google-Smtp-Source: ABdhPJxEQ66hE6LXyYUreo4HvpzmU/v+VrDmSoavPcLF8vPs0JdHc6p/NdXzSaOvChNf2cuFhoXS/g==
+X-Received: by 2002:a5d:6406:: with SMTP id z6mr30563305wru.133.1600341944228;
+        Thu, 17 Sep 2020 04:25:44 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id x16sm37547473wrq.62.2020.09.17.04.25.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 04:25:43 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 13:25:41 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 06/34] i2c: tegra: Remove
+ i2c_dev.clk_divisor_non_hs_mode member
+Message-ID: <20200917112541.GR3515672@ulmo>
+References: <20200908224006.25636-1-digetx@gmail.com>
+ <20200908224006.25636-7-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gMqNd2jlyJQcupG/"
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPf5zqJYvaZc102PnTOXKrNYm8fReeJQGGx8eaQDCXavkw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200908224006.25636-7-digetx@gmail.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 12:54:42PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, 17 Sep 2020 at 12:43, Thierry Reding <thierry.reding@gmail.com> wrote:
-> >
-> > On Tue, Sep 15, 2020 at 04:28:03PM -0700, Nicolin Chen wrote:
-> > > According to Tegra210 TRM, the default value of TLB_ACTIVE_LINES
-> > > field of register MC_SMMU_TLB_CONFIG_0 is 0x30. So num_tlb_lines
-> > > should be 48 (0x30) rather than 32 (0x20).
-> > >
-> > > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > > ---
-> > >  drivers/memory/tegra/tegra210.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Please send this as part of a series including:
-> >
-> >     https://patchwork.ozlabs.org/project/linux-tegra/patch/20200916002359.10823-1-nicoleotsuka@gmail.com/
-> >
-> > Adding Joerg for visibility. From the Tegra side:
-> >
-> > Acked-by: Thierry Reding <treding@nvidia.com>
-> 
-> So basically applying this one alone breaks existing platforms and
-> makes history non-bisectable...
->
-> Nicolin, the bisectability is important requirement so you must always
-> mention the dependencies between patches.
 
-Sorry. Will be careful next time.
+--gMqNd2jlyJQcupG/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And I am resending both in a series.
+On Wed, Sep 09, 2020 at 01:39:38AM +0300, Dmitry Osipenko wrote:
+> The "non_hs_mode" divisor value is fixed, thus there is no need to have
+> the variable i2c_dev.clk_divisor_non_hs_mode struct member. Let's remove
+> it and move the mode selection into tegra_i2c_init() where it can be
+> united with the timing selection.
+>=20
+> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++------------------
+>  1 file changed, 21 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
+a.c
+> index 720a75439e91..85ed0e02d48c 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -250,7 +250,6 @@ struct tegra_i2c_hw_feature {
+>   * @msg_buf_remaining: size of unsent data in the message buffer
+>   * @msg_read: identifies read transfers
+>   * @bus_clk_rate: current I2C bus clock rate
+> - * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>   * @tx_dma_chan: DMA transmit channel
+>   * @rx_dma_chan: DMA receive channel
+> @@ -281,7 +280,6 @@ struct tegra_i2c_dev {
+>  	size_t msg_buf_remaining;
+>  	int msg_read;
+>  	u32 bus_clk_rate;
+> -	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+>  	struct dma_chan *tx_dma_chan;
+>  	struct dma_chan *rx_dma_chan;
+> @@ -783,6 +781,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_d=
+ev)
+>  	u32 val;
+>  	int err;
+>  	u32 clk_divisor, clk_multiplier;
+> +	u32 non_hs_mode;
+>  	u32 tsu_thd;
+>  	u8 tlow, thigh;
+> =20
+> @@ -805,24 +804,33 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c=
+_dev)
+>  	if (i2c_dev->is_vi)
+>  		tegra_i2c_vi_init(i2c_dev);
+> =20
+> -	/* Make sure clock divisor programmed correctly */
+> -	clk_divisor =3D FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
+> -				 i2c_dev->hw->clk_divisor_hs_mode) |
+> -		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE,
+> -				 i2c_dev->clk_divisor_non_hs_mode);
+> -	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
+> -
+> -	if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
+> -	    i2c_dev->bus_clk_rate <=3D I2C_MAX_FAST_MODE_PLUS_FREQ) {
+> +	switch (i2c_dev->bus_clk_rate) {
+> +	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
 
-Thanks
-Nic
+Is there are particular reason for switching the simple conditional to a
+switch here? The old variant looks much easier to understand to me.
+
+Thierry
+
+--gMqNd2jlyJQcupG/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jR7UACgkQ3SOs138+
+s6EJmw//f5VTJ9VKqV7qgDBw5KqPdBxP4vgDU7q1b0NNHgCiXE3+4v3pwldNLP2i
+g/thiKML1GPBWcZImlVHvlWOzXt6KScIH8NuXpx4hXZW5vJPbCVjuk9LSDZUfJDg
+ue9apmnUvTsnVwdn/D8KR8RpcPk3psHysIaUWaJCN306bhIIMeo9UutHsCOhukST
+bgXbDnGmkAuEYf56wh2MHIe1NdqPXXE3TJxjYVbGNX0ZEhEE8UbeRNpL0oSIAmqG
+8jtkjXxKxilmdG23woleqf/3FpSt78uREv0N8Zt3nADlHcFa7OhqZ56muFDoM/y0
+hS2ho8hFa5AAcAEiANbxmMec6qz5n3MMyK/f9BYLZsOKryuEmKKzFnCkHbM3MERX
+Zu2328AjtA7hpYxHA2PYchunbV3FCWOrCn5CsgEZhUnxBjYjnGi0yNST1VrIsES7
+wqRQ1LIVT7DR63eRaaHfpqhLR59/p3dkF0Dk93k+BaYKLqUZRD50yCrTgKg1Hwrm
+3fsJASIGJStLmZXVYzL+B3+I1hEmfv5QkiKcYJ4KKlFZ7FVEccRbtITdKv/jMv1N
+k9mHp75h7g8Q7m/WwrPojbSkzdhYZxmHjMPcitB9qCUUdo1n+OuFZJDsl0Y2Q5oS
+x2+GxSlY1lr3MvDpdiolWdJ5eyvwgsjvG3XILl7G0jhXFrxwsUY=
+=nRmr
+-----END PGP SIGNATURE-----
+
+--gMqNd2jlyJQcupG/--
