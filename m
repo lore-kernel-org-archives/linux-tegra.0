@@ -2,125 +2,348 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBDFC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBA4C43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C42972083B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:26:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="ILiIQABH"
+	by mail.kernel.org (Postfix) with ESMTP id CFBB92083B
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726153AbgIQH0m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 03:26:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgIQH0U (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 03:26:20 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB7E1C06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 00:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GGGsLVujs/uHJ07NhvsVtGBnxX9a+r2uLCeXPx2mgvc=; b=ILiIQABHWh6z0TH/lsqyKjIXiH
-        WAG2OJjXIfYuiNHFwpYZbehPJlQtYs2ITFs50ImmzWB5gxVDACtbEWqWbu+MEtgAEon/RYQR/ribf
-        Weg0ipJpjJZTJJ48AOTV1BrI4dU0EI4d2AScqb5uQ/rLrS3gl5JhHhpmQ7HMB04wfm0kyNc0lQ64/
-        6+shy4IIhQceJY1eMJOnPJNiQTen2ZkTKvD/muFvmx1DluBnXz8DHxZi8fn5vV+ELzA5gaBt4lQv9
-        d+E+O3UZ9vzSDSiREWxz5F0qfIEjf/rXaQQqq0AIU5KOw1R9nXfa4pHzb/AUfeErPBrrPGjBH7MQ0
-        FZpP895g==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kIoIy-0002cj-Lf; Thu, 17 Sep 2020 10:26:08 +0300
-Subject: Re: [RFC PATCH v2 13/17] gpu: host1x: Reset max value when freeing a
- syncpoint
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20200905103420.3021852-1-mperttunen@nvidia.com>
- <20200905103420.3021852-14-mperttunen@nvidia.com>
- <b4b3ae98-4ccb-152a-deda-2da81d1c46ef@gmail.com>
- <0d12991e-3599-c5bf-11e5-78031f0f8088@kapsi.fi>
- <343e4518-e132-6ea8-6169-0685f000b89c@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <04e2ddf9-c1d9-0a43-fbf2-85bfcd3a5a6a@kapsi.fi>
-Date:   Thu, 17 Sep 2020 10:25:55 +0300
+        id S1726185AbgIQHkj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 03:40:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58724 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbgIQHki (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 03:40:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 95349AF00;
+        Thu, 17 Sep 2020 07:40:50 +0000 (UTC)
+Subject: Re: [PATCH v2 01/21] drm/amdgpu: Introduce GEM object functions
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, l.stach@pengutronix.de,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+        matthias.bgg@gmail.com, robdclark@gmail.com, sean@poorly.run,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        hjc@rock-chips.com, heiko@sntech.de, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, rodrigosiqueiramelo@gmail.com,
+        hamohammed.sa@gmail.com, oleksandr_andrushchenko@epam.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, sumit.semwal@linaro.org,
+        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
+        marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-2-tzimmermann@suse.de>
+ <835ba167-3576-1af6-5421-552075588796@amd.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <41eebda8-bf90-7b5c-8af2-e96b8fd0cea2@suse.de>
+Date:   Thu, 17 Sep 2020 09:40:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <343e4518-e132-6ea8-6169-0685f000b89c@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <835ba167-3576-1af6-5421-552075588796@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="ZR47F2it7RqvbT2snhj2Q3AXTit7yD8k0"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/17/20 12:37 AM, Dmitry Osipenko wrote:
-> 16.09.2020 23:43, Mikko Perttunen пишет:
-> ...
->>> Please note that the sync point state actually needs to be completely
->>> reset at the sync point request-time because both downstream fastboot
->>> and upstream u-boot [1] are needlessly enabling display VBLANK interrupt
->>> that continuously increments sync point #26 during of kernel boot until
->>> display controller is reset.
->>>
->>> [1]
->>> https://github.com/u-boot/u-boot/blob/master/drivers/video/tegra.c#L155
->>>
->>> Hence once sync point #26 is requested, it will have a dirty state. So
->>> far this doesn't have any visible effect because sync points aren't used
->>> much.
->>>
->>
->> Maybe we can instead reserve syncpoints that might be used by the boot
->> chain, and only allow allocating them once the display driver has acked
->> that the syncpoint will no longer be incremented? That way if the
->> display driver is disabled for some reason we'll still be fine.
-> 
-> sounds good
-> 
->> Looking at the downstream driver, it (still, on new chips..) reserves
->> the following syncpoints:
->>
->> - 10 (AVP)
->> - 22 (3D)
->> - 26 (VBLANK0)
->> - 27 (VBLANK1)
->>
->> and says that this applies to T20, T30, T114 and T148.
->>
->> I suppose if you haven't observed this happening to other syncpoints
->> than 26, then reserving 26 would probably be enough.
-> 
-> I only saw SP 26 being used by the DC, but perhaps that may vary from
-> device to device and SP 27 could actually be used in a wild as well.
-> 
-> I think the AVP SP should only relate to the AVP-firmware that upstream
-> doesn't support, so we can ignore its reservation.
-> 
-> I've no idea what may use the 3D SP.
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ZR47F2it7RqvbT2snhj2Q3AXTit7yD8k0
+Content-Type: multipart/mixed; boundary="mXx6VnsL56rJiBRNYFJpJY6lkuO91DGub";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+ linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+ inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+ patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
+ joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+ chunkuang.hu@kernel.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+ robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+ tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com, heiko@sntech.de,
+ thierry.reding@gmail.com, jonathanh@nvidia.com,
+ rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+ oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+ laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+ sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+ tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+ andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com, xinhui.pan@amd.com,
+ aaron.liu@amd.com, nirmoy.das@amd.com, chris@chris-wilson.co.uk,
+ matthew.auld@intel.com, tvrtko.ursulin@linux.intel.com,
+ andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+ emil.velikov@collabora.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ xen-devel@lists.xenproject.org, freedreno@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <41eebda8-bf90-7b5c-8af2-e96b8fd0cea2@suse.de>
+Subject: Re: [PATCH v2 01/21] drm/amdgpu: Introduce GEM object functions
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-2-tzimmermann@suse.de>
+ <835ba167-3576-1af6-5421-552075588796@amd.com>
+In-Reply-To: <835ba167-3576-1af6-5421-552075588796@amd.com>
 
-My guess is that some very old code used fixed syncpoint numbers so 
-these were added to the reservation list. Let's reserve 26 and 27, that 
-should be simple enough since both would be "released" by the display 
-driver.
+--mXx6VnsL56rJiBRNYFJpJY6lkuO91DGub
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Mikko
+Hi
+
+Am 15.09.20 um 17:05 schrieb Christian K=C3=B6nig:
+> Am 15.09.20 um 16:59 schrieb Thomas Zimmermann:
+>> GEM object functions deprecate several similar callback interfaces in
+>> struct drm_driver. This patch replaces the per-driver callbacks with
+>> per-instance callbacks in amdgpu. The only exception is gem_prime_mmap=
+,
+>> which is non-trivial to convert.
+>>
+>> v2:
+>> =C2=A0=C2=A0=C2=A0=C2=A0* move object-function instance to amdgpu_gem.=
+c (Christian)
+>> =C2=A0=C2=A0=C2=A0=C2=A0* set callbacks in amdgpu_gem_object_create() =
+(Christian)
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 6 ------
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c=C2=A0=C2=A0=C2=A0 | 23 =
++++++++++++++++++-----
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 5 -----
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |=C2=A0 1 +
+>> =C2=A0 4 files changed, 19 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+>> index 6edde2b9e402..840ca8f9c1e1 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+>> @@ -1505,19 +1505,13 @@ static struct drm_driver kms_driver =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lastclose =3D amdgpu_driver_lastclose_=
+kms,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .irq_handler =3D amdgpu_irq_handler,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ioctls =3D amdgpu_ioctls_kms,
+>> -=C2=A0=C2=A0=C2=A0 .gem_free_object_unlocked =3D amdgpu_gem_object_fr=
+ee,
+>> -=C2=A0=C2=A0=C2=A0 .gem_open_object =3D amdgpu_gem_object_open,
+>> -=C2=A0=C2=A0=C2=A0 .gem_close_object =3D amdgpu_gem_object_close,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dumb_create =3D amdgpu_mode_dumb_creat=
+e,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .dumb_map_offset =3D amdgpu_mode_dumb_m=
+map,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .fops =3D &amdgpu_driver_kms_fops,
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .prime_handle_to_fd =3D drm_gem_=
+prime_handle_to_fd,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .prime_fd_to_handle =3D drm_gem_prime_f=
+d_to_handle,
+>> -=C2=A0=C2=A0=C2=A0 .gem_prime_export =3D amdgpu_gem_prime_export,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gem_prime_import =3D amdgpu_gem_prime_=
+import,
+>> -=C2=A0=C2=A0=C2=A0 .gem_prime_vmap =3D amdgpu_gem_prime_vmap,
+>> -=C2=A0=C2=A0=C2=A0 .gem_prime_vunmap =3D amdgpu_gem_prime_vunmap,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gem_prime_mmap =3D amdgpu_gem_prime_mm=
+ap,
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D DRIVER_NAME,
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+>> index aa7f230c71bf..aeecd5dc3ce4 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+>> @@ -36,9 +36,12 @@
+>> =C2=A0 =C2=A0 #include "amdgpu.h"
+>> =C2=A0 #include "amdgpu_display.h"
+>> +#include "amdgpu_dma_buf.h"
+>> =C2=A0 #include "amdgpu_xgmi.h"
+>> =C2=A0 -void amdgpu_gem_object_free(struct drm_gem_object *gobj)
+>> +static const struct drm_gem_object_funcs amdgpu_gem_object_funcs;
+>> +
+>> +static void amdgpu_gem_object_free(struct drm_gem_object *gobj)
+>> =C2=A0 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_bo *robj =3D gem_to_amdgp=
+u_bo(gobj);
+>> =C2=A0 @@ -87,6 +90,7 @@ int amdgpu_gem_object_create(struct amdgpu_de=
+vice
+>> *adev, unsigned long size,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return r;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *obj =3D &bo->tbo.base;
+>> +=C2=A0=C2=A0=C2=A0 (*obj)->funcs =3D &amdgpu_gem_object_funcs;
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> @@ -119,8 +123,8 @@ void amdgpu_gem_force_release(struct amdgpu_device=
+
+>> *adev)
+>> =C2=A0=C2=A0 * Call from drm_gem_handle_create which appear in both ne=
+w and open
+>> ioctl
+>> =C2=A0=C2=A0 * case.
+>> =C2=A0=C2=A0 */
+>> -int amdgpu_gem_object_open(struct drm_gem_object *obj,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 struct drm_file *file_priv)
+>> +static int amdgpu_gem_object_open(struct drm_gem_object *obj,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_file *file_priv)
+>> =C2=A0 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_bo *abo =3D gem_to_amdgpu=
+_bo(obj);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_device *adev =3D amdgpu_t=
+tm_adev(abo->tbo.bdev);
+>> @@ -152,8 +156,8 @@ int amdgpu_gem_object_open(struct drm_gem_object
+>> *obj,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> =C2=A0 -void amdgpu_gem_object_close(struct drm_gem_object *obj,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_file *file_priv)
+>> +static void amdgpu_gem_object_close(struct drm_gem_object *obj,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_file *file_priv)=
+
+>> =C2=A0 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_bo *bo =3D gem_to_amdgpu_=
+bo(obj);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct amdgpu_device *adev =3D amdgpu_t=
+tm_adev(bo->tbo.bdev);
+>> @@ -211,6 +215,15 @@ void amdgpu_gem_object_close(struct
+>> drm_gem_object *obj,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ttm_eu_backoff_reservation(&ticket, &li=
+st);
+>> =C2=A0 }
+>> =C2=A0 +static const struct drm_gem_object_funcs amdgpu_gem_object_fun=
+cs =3D {
+>> +=C2=A0=C2=A0=C2=A0 .free =3D amdgpu_gem_object_free,
+>> +=C2=A0=C2=A0=C2=A0 .open =3D amdgpu_gem_object_open,
+>> +=C2=A0=C2=A0=C2=A0 .close =3D amdgpu_gem_object_close,
+>> +=C2=A0=C2=A0=C2=A0 .export =3D amdgpu_gem_prime_export,
+>> +=C2=A0=C2=A0=C2=A0 .vmap =3D amdgpu_gem_prime_vmap,
+>> +=C2=A0=C2=A0=C2=A0 .vunmap =3D amdgpu_gem_prime_vunmap,
+>> +};
+>> +
+>> =C2=A0 /*
+>> =C2=A0=C2=A0 * GEM ioctls.
+>> =C2=A0=C2=A0 */
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+>> index e0f025dd1b14..637bf51dbf06 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+>> @@ -33,11 +33,6 @@
+>> =C2=A0 #define AMDGPU_GEM_DOMAIN_MAX=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0x3
+>> =C2=A0 #define gem_to_amdgpu_bo(gobj) container_of((gobj), struct
+>> amdgpu_bo, tbo.base)
+>> =C2=A0 -void amdgpu_gem_object_free(struct drm_gem_object *obj);
+>> -int amdgpu_gem_object_open(struct drm_gem_object *obj,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct drm_file *file_priv);
+>> -void amdgpu_gem_object_close(struct drm_gem_object *obj,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct drm_file *file_priv);
+>> =C2=A0 unsigned long amdgpu_gem_timeout(uint64_t timeout_ns);
+>> =C2=A0 =C2=A0 /*
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+>> index ac043baac05d..c4e82a8fa53f 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+>> @@ -561,6 +561,7 @@ static int amdgpu_bo_do_create(struct
+>> amdgpu_device *adev,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo =3D kzalloc(sizeof(struct amdgpu_bo)=
+, GFP_KERNEL);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (bo =3D=3D NULL)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;=
+
+>> +
+>=20
+> The newline is not unrelated.
+>=20
+> Apart from that the patch is Reviewed-by: Christian K=C3=B6nig
+> <christian.koenig@amd.com>.
+>=20
+> But I think we need some smoke testing of it.
+
+I gave it a try on the HW/drivers that I listed in the cover letter.
+Appears to be working there. There was a bug reported by CI that will be
+fixed in the next iteration.
+
+Best regards
+Thomas
+
+>=20
+> Christian.
+>=20
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_gem_private_object_init(adev_to_drm=
+(adev), &bo->tbo.base,
+>> size);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 INIT_LIST_HEAD(&bo->shadow_list);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bo->vm_bo =3D NULL;
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--mXx6VnsL56rJiBRNYFJpJY6lkuO91DGub--
+
+--ZR47F2it7RqvbT2snhj2Q3AXTit7yD8k0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9jEuwUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPyiggAh/BO7SFe5ZVkcBfrX0+omcib+uvq
+wUfAVwNVPgP4GrDtDXLr4zKuk59o62DKt31reEMSrNQm0ZVv4oYlt9YTXUIBc0fb
+Kfg1G/YdZEH4gl6Xnb1Y6bhK0lFKESQonYcCM20uUfgcfhIL71bxo6IQzNkLLXNl
+Gvbkj8qnJhHFWO8PunW5ufHbKHG+ywye5TnGplv1ubKtNKZuIbC+3zb7gf/+ysCT
++8ttQ5BqdlF1Mc31bYqBTR0GwyfdofspCeDjdA6jDGN3Wq2Be+Y/E6/Pt7ANwWn8
++pRLfFQYnt1aj5BKBvxQ4zLmOtqu3DJtik5oXtau5wp3407kMunsBYib0A==
+=Cl71
+-----END PGP SIGNATURE-----
+
+--ZR47F2it7RqvbT2snhj2Q3AXTit7yD8k0--
