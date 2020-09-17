@@ -2,64 +2,64 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73047C2BBD1
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE151C43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38EA121655
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E42921655
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:32:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSwh2l8g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKoIQ5Lw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgIQLbJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59006 "EHLO
+        id S1726765AbgIQLc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 07:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgIQL3S (ORCPT
+        with ESMTP id S1726810AbgIQLcP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:29:18 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7178C06178A;
-        Thu, 17 Sep 2020 04:28:56 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id w5so1659452wrp.8;
-        Thu, 17 Sep 2020 04:28:56 -0700 (PDT)
+        Thu, 17 Sep 2020 07:32:15 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CBCC06174A;
+        Thu, 17 Sep 2020 04:32:01 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id k18so1671092wmj.5;
+        Thu, 17 Sep 2020 04:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wne0WJCLcc/dHJqUUWNQM1s/g9SNjKh5aju9qPMBUW8=;
-        b=VSwh2l8gAbo53bBx4GPf+Gjs18L3S4Z6B5S1Hmz6tmVktSAkX3F+QB1r4qkIxSXqeO
-         ltVIPAvO45+AYv7+nlcdDXXoKBxcAKPyByp5f3aeMrQPtTv1sQ4L1cX7XLVz0jne+j1L
-         3YdJMAI4L/y/Fm2ArsNRagzRRhVMKPYXxVZ50YapBnBmQ+g6yCvbrQZg7h7WFxg2zOGV
-         t1AflVS5BgbKRIoeMVjY1sXY6Kkp4ancO4HUbls75chwV+6u3pjFmUuDEVP0/ATpnivN
-         c0aXqx4fg5nmSqhfVkXOEtpgY7jXNxsxd5Y+yMpqFBz0XSHHgKEXy1PW1z/p0LnJsOPx
-         NUEA==
+        bh=WajD7Q5IaEUeqlGzuj9f4SKj/X4IJE7Rh0zR/eL6gi8=;
+        b=XKoIQ5LwWSVKQPOxrOces5s/xdb6iMl76kL+eVU9QNRs9jbIsbBr7kvTzmRTX2ya0j
+         FibQfCrYj9OG13OWmKlDVAZWGnVo/fKsSu3AC6ZMdK7MR936TLdiOY5zaWDfNrDtc+EX
+         PvHzTe6ZdECU6Z0YR7eCGJfyEtYfJV2CBKQD02yR0NP3mUpZ/ZCThPhvHXbB7FFFiHBS
+         GIZOC2M+IX+urevXxx70diNZ5mzn3wz7OUMhwzGZN2/UOxnI11uOk3usmWciwJ3S7tM9
+         cMvHcri/k1sElWz5NV73YnLmjrUx3AsB3Jwr/qAkPCSP45WpfoXvCDYd3jb4SqlWlpku
+         1dWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wne0WJCLcc/dHJqUUWNQM1s/g9SNjKh5aju9qPMBUW8=;
-        b=N69E3tka3wpouN85eAE80Lql/8V1Y9pFM88Qtr5wVWS0a7ye707Q5aIwW+noXoJjNG
-         D1bipn33oD7lBuqNgntyE+aWVzFpHD2A/ld9vQS5BxocNzpqcGop0e47fYmT1KRtuZPm
-         ntPnnIJI1nW2THc1H+AYg9kf3v2T3H1U+RfZB6dmtZOpeRDz2kNMrfYnb463lezUw5Ac
-         5PjbDXuJm2rbBCqLraDYYTFw5IhlZYgJqvQEv5LYpSUtZ3G8ec8hiTLreON2B6nZjgkJ
-         Xnm6sphGl6ADPSA88MR64NTHKHWT4CBh8ss1ENzh7BpM++DWMm1veZtEk06umUPX2sfk
-         k+xw==
-X-Gm-Message-State: AOAM530fvcrgfzHb7gEOSHB4hyc6jzEY3gQlvh6tUGZPrs8kyu2I60EP
-        +2Xg9EiAgbeqiU6sdcoln8c=
-X-Google-Smtp-Source: ABdhPJzi1wu5FbjTXyo9AO8Z7R3NKsiJOwCYGMUL6Ey8CGEfcApubXdovS3Sw7b2DJArIaXqCRZbZA==
-X-Received: by 2002:adf:9c93:: with SMTP id d19mr32416170wre.275.1600342135633;
-        Thu, 17 Sep 2020 04:28:55 -0700 (PDT)
+        bh=WajD7Q5IaEUeqlGzuj9f4SKj/X4IJE7Rh0zR/eL6gi8=;
+        b=A4rOByXAfl2HxZ7AWHx0zNiPH2t9RVc1o3wFN+c1HEwRkwuTEkMSzIlJzshiTbw0Jp
+         P2R4/BCVzNV6cTNRALyKnu6mXxFpezqQPvB2q+MuYDp+qoi0dr7wn4XUEiWh8W+IsbrI
+         KzSm6d2IfGmjLqg3vKLWygt4XfSdlI0M2hYupVoHtO7zRwyT+uFz7eba9FaczQhzyfhI
+         iE8060nPX/Nvb+M5nkA8PAhcYNR/pdBrM6i+hsPhv6BOhIXB95gtqecDmCW2cS1ixfNi
+         OdNEvfdRFeaF5W8732Uf6kUBqq8RZ1U38yYsto8fiwNIX9OEuEYB+fbOlBEfNtGgn4/K
+         QRNg==
+X-Gm-Message-State: AOAM531IkAEIm7p8DYInhRAX580/N56crA4Dj03KFH4DTu8nMswbodIu
+        +D80q0I8ZhFpRGaSyn9LoC6fkxnQTsz8LA==
+X-Google-Smtp-Source: ABdhPJwk4+ou8IHIzcuyJxZq22L1zderwjpVKf78WTU+pyCvP/jeFyd94qbdR7A4/3sPPZ7lsi382A==
+X-Received: by 2002:a1c:f402:: with SMTP id z2mr9231898wma.87.1600342320026;
+        Thu, 17 Sep 2020 04:32:00 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id v9sm43239177wrv.35.2020.09.17.04.28.53
+        by smtp.gmail.com with ESMTPSA id s80sm10200478wme.41.2020.09.17.04.31.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:28:54 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 13:28:52 +0200
+        Thu, 17 Sep 2020 04:31:58 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 13:31:57 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,88 +69,57 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 08/34] i2c: tegra: Remove error message used for
- devm_request_irq() failure
-Message-ID: <20200917112852.GT3515672@ulmo>
+Subject: Re: [PATCH v7 10/34] i2c: tegra: Use
+ devm_platform_get_and_ioremap_resource()
+Message-ID: <20200917113157.GV3515672@ulmo>
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-9-digetx@gmail.com>
+ <20200908224006.25636-11-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BfbbJsf3thGkpLcA"
+        protocol="application/pgp-signature"; boundary="dRgc669pgRVB2OqT"
 Content-Disposition: inline
-In-Reply-To: <20200908224006.25636-9-digetx@gmail.com>
+In-Reply-To: <20200908224006.25636-11-digetx@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---BfbbJsf3thGkpLcA
+--dRgc669pgRVB2OqT
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 09, 2020 at 01:39:40AM +0300, Dmitry Osipenko wrote:
-> The error message prints number of vIRQ, which isn't a useful information.
-> In practice devm_request_irq() never fails, hence let's remove the bogus
-> message in order to make code cleaner.
+On Wed, Sep 09, 2020 at 01:39:42AM +0300, Dmitry Osipenko wrote:
+> Driver now uses devm_platform_get_and_ioremap_resource() which replaces
+> the typical boilerplate code and makes code cleaner.
 >=20
 > Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-I think I have seen this fail occasionally when something's wrong in the
-IRQ code, or when we are not properly configuring the IRQ in device tree
-for example.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-So I'd prefer if this error message stayed here. I agree that it's not a
-terribly useful error message, so perhaps adding the error code to it
-would make it more helpful?
-
-Thierry
-
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index a52c72135390..b813c0976c10 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1807,10 +1807,8 @@ static int tegra_i2c_probe(struct platform_device =
-*pdev)
-> =20
->  	ret =3D devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
->  			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c_dev);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
-> +	if (ret)
->  		goto release_dma;
-> -	}
-> =20
->  	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
->  	i2c_dev->adapter.owner =3D THIS_MODULE;
-> --=20
-> 2.27.0
->=20
-
---BfbbJsf3thGkpLcA
+--dRgc669pgRVB2OqT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jSHQACgkQ3SOs138+
-s6EQPA//cqgGscSVoB4ZSvrGlXMpsipFhAxmGfMpIBFMhGW5Z+JioIHFc6CsVQ5z
-9byRZoytT7bhvC7arnWk4lsVAT/xtf6/hmyJzSITsctOF4MqLztkwklqKmOAONwX
-xFmR+uU9L61VgxBZ6KU7fUrj9Rl/isHoJ+3diNtRU3fwym2SurMgfC84hemKw9n9
-KhijIbzztf4jMkdyKwNPCHp8XWgDLPpsS8/j6WC37iNfQ+ZRZjM9q+JOMq75q85q
-WDMup12UU/OZpo1DlH5TwJAMoMDCyl4+RFgdLbumf7Da4jvXn7ppzRzBQZScYZ6L
-0xR0lbv8+MJv7hfHh3TJuL/TqXG+H/D+Pb4Jc/8p1+ZFgKTPCO26ghCpGqZfGReJ
-uPcEjoKuADFKrAiU6NEpJPyCOSDg7TQXRkvnYOQF61g6WOK1WZVWO+pUTxpoSNXk
-2Yi2laFNbgAfw/M4oe6U9Z5tSi1Vsdbej9T6L4wUjnKd2YW55ynWSY3/pkcbRGP0
-Exvd/OUVGFf8TRWVfwlA6qr6l+0/IXUpMMYphEEXWuxt//rklJW19Gv1RF2EBE1m
-aGX756Yuyt+kfoeAyAm3edbJkCEezMFV66KoptEQMtDE+n298Psegivavumlcol4
-/HxKi4BZC4Wba4iW/9UM20AqTbDN+K9K0BoiuJ+2g91gwL9ssYw=
-=LsIW
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jSS0ACgkQ3SOs138+
+s6GyoA/+JS/7t4lJVZ41P+9Vnrd05ZUVparmqXNdy03HlhU8g3/GC0JJ0qW0nzJd
+AW69IMT2HGYO9qJlC4NZbfWWiY/a4A3Oiqiemixp5hgOU7nkeOADsYmNargr6K6z
+cyDsMjbABeYth+wB3PvDGvCzb4hWWHk4GgOEwvzr6Aiotf9+SFSe0b/UoL9rWqpO
+lnooT+d6c6vhDVmUhGk9PgAdXh4Ym883V858NUpTm/Pghn2V86S9rrDzUKFSenWP
+vzEUzWFA1nvcCxOghmKBvmRXFep6uOLsyGh5CmYmUo6+t2ezuUdXx7TLy9VAl+tI
+Tlzt9tKAkSlIKrLR/VS2CRV1aClpxMJ6QoGyE/pj2EkmpvuGsT5sliQiZ3HEDpjn
+7AM1yEpwBYuGzLsMpl7nYCMKjbLf9PqRYNF/ZYEGcGWXe0f+pveyXhW4riJpBeVu
+QtAEZoaEXHKUIB02Mj0PoHEzZJMrlxlrEO1U/xT38Nm/sTiaZP52DMJBZhMgyZjF
+xKn4zOPyz7U/a7u9Ph6Ch12tdjrfDCA9a+NdwFP4jJEIFaoOD58DShw6XsciJro1
+PlROhUCEzsiPgrKdSIL2CxyS3RgpTsKQF1w244brlBJZfU1eMcFeZC28V5nJJDl0
+/LK/Ole9R1neAa+VVxJr6klZa5O6z1I5switUvfWktXxEse4Y5I=
+=J1ev
 -----END PGP SIGNATURE-----
 
---BfbbJsf3thGkpLcA--
+--dRgc669pgRVB2OqT--
