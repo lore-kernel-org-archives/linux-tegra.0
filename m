@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD21C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5352AC43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7AB3208DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B9F52087D
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUJMp2HS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AG4HHZYh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgIQKIK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46398 "EHLO
+        id S1726362AbgIQKIM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgIQKIF (ORCPT
+        with ESMTP id S1726360AbgIQKIL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:08:05 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D59DC06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:05 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id a9so1435466wmm.2
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:04 -0700 (PDT)
+        Thu, 17 Sep 2020 06:08:11 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D50C06174A
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:11 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id b79so1426626wmb.4
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9SOnLXMYGWEmAszlwx/dtkJXl4pCAVxRgqI/JLE79jA=;
-        b=TUJMp2HS7DtqZquSsbfNOAHKSzEun1xe/4YD9QtVdaaZuUhMiTMf+Fm4XXFpQO7eNP
-         3sXQ9AAh6KuSQKR4RRLpVgH/EUuK/vMviOST9qAsOC97MlASg6PslJ0gnp7Ps1Nbkzp9
-         KeyyMLH3Ra+L9IoacqD+8ingp54Vb17iFawnPvMfrFTD0iscUhphiVHYOkPfpDZIfwgu
-         Coq8bia065UPTssxtPd4K2P/KeoQVi04LqsxwqV54rivR/9lOVLDTgCwrUed+8/8OY4c
-         LgMcIpjYs3Cg4eEJK2MPA5ZTFvv6yZ3YvRqjCT4Pdd6o2Yi3gMYsA8cUSV6VVae4SbeS
-         YLKA==
+        bh=kwIhMiKwFA9UbevhkK+ZQGnCqGV++rJhNBk/vocGlqk=;
+        b=AG4HHZYh/lS4KCl8vF1CBlBPRAA3wg00sNAGurd/cshinKyzmKEZ27FWrgLivznShB
+         yIliV7lRx5ws/J2OenlKgdZ8DxmCknQEdNm9e6ewfJctiAuZ96LQjHhA8MOzAfWCvGlj
+         XaZDlJkfQTo763Y63mQ6KdB0YP8OBmeEJVOZTSpieUV7QRLzDv8RULZ7eDDxrOclaEtn
+         O48rRt6MC5OjtX8hInBDBESe4UDfp+Lt+z5sdvymnzn1tzIOPnlRcNEBz+kDGbNN+ycn
+         daGRi57nlLxN9Dc3+Df6GxHQpVYLy5hPP++VmJI9sn8ybHnqPlu7JxVrBJu2ybnPahd8
+         Bvsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9SOnLXMYGWEmAszlwx/dtkJXl4pCAVxRgqI/JLE79jA=;
-        b=ZgNtIUcDQponJ6QDvD9G5BliLJYNpMABKr918HqP3wVQFeQ832exPUrxXbJsRVXPpW
-         a09ktv8kY0+Xm50KWYRzMmQ6M++T3JnVLNI9ywC6TN5Ae06lcmOI6N0XQ1v3lBnDDeK4
-         FMJKNcTAzginQbpQH1+L2/nq/qQS4RJqcftxt4NwaKpdUxqvYv3/Ipcbtt6fzbVoM1tF
-         SwND5UNoT16UowPV/MmNtAvOdY5ov/hjLyw3ptyIdMQB4i15Ujw4RWFjP8S6qDQrWloY
-         D0Fmeo1pvGK2OYBesvTUK17R+Ulo0aQjqxPlyM4tNMei22RQnmZIOOKbfiKHeAPX06rh
-         u6tg==
-X-Gm-Message-State: AOAM5322NZoM1CFSZUZ1hSqt0Of8NxrrH/mdHk7f8jGEDvhXJ1/SRgpY
-        PGzARSbqAnfF9RdopJx9tRk=
-X-Google-Smtp-Source: ABdhPJwd2UMu5CUafGzYRdftZI00s1wk7UBAsiZxoMhny5MfOqhZMx+gIgCM6Hy0ju/P7JHDLVMK3Q==
-X-Received: by 2002:a1c:28a:: with SMTP id 132mr7158586wmc.144.1600337283771;
-        Thu, 17 Sep 2020 03:08:03 -0700 (PDT)
+        bh=kwIhMiKwFA9UbevhkK+ZQGnCqGV++rJhNBk/vocGlqk=;
+        b=nptaRAVXNx6JiUo2uyWMt9zX8MVjxIb6Rsei64zha4tM2jYf8tnxgKsOmeXPHgbSWJ
+         0SN74+S4t30ig/p+wzvkjXVTcHCdKmwtC4GSOaYG7Qoo96wLi7bznBMbMzAO6yfB1ZOs
+         dhyeekWr7vQF+HXcGxJVivRVeH+ykHAdYPCasF/z/zNq3UxlptTIHRCI4jFs2KCoEhfv
+         BNEW1JjoHFokY6C7FXHR0PqmenJCeYQqKeczDwkIrDhfrM4waPjCbKCWgnOfgTiRm5VF
+         t2jeD9ii+G44/2y5JfpAGP9wm9M2q1Il2CR30VjQk5P6k/o0t+NvkaMqbn51ZF8Oq6I7
+         tBgA==
+X-Gm-Message-State: AOAM531GbWkfFe3fqs5BN6GbmpgdHIhfD9pI8e9417kAcsTGM57TJ9fU
+        dJAz+Iukt/mttso+F9o0hVY=
+X-Google-Smtp-Source: ABdhPJxGNXnzvTSiOWew8AxmTOG7GJ/ghclcyySs/R7BA+KwOjDkYDpgQT+sVAAg1uGKeNGRLWECpg==
+X-Received: by 2002:a7b:c1c3:: with SMTP id a3mr9976780wmj.68.1600337289049;
+        Thu, 17 Sep 2020 03:08:09 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id k22sm38824704wrd.29.2020.09.17.03.08.02
+        by smtp.gmail.com with ESMTPSA id i11sm38591935wre.32.2020.09.17.03.08.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:08:03 -0700 (PDT)
+        Thu, 17 Sep 2020 03:08:08 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 02/14] dt-bindings: misc: tegra186-misc: Add missing compatible string
-Date:   Thu, 17 Sep 2020 12:07:40 +0200
-Message-Id: <20200917100752.3516153-3-thierry.reding@gmail.com>
+Subject: [PATCH v2 04/14] dt-bindings: tegra: Add Tegra234 VDK compatible
+Date:   Thu, 17 Sep 2020 12:07:42 +0200
+Message-Id: <20200917100752.3516153-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917100752.3516153-1-thierry.reding@gmail.com>
 References: <20200917100752.3516153-1-thierry.reding@gmail.com>
@@ -77,33 +77,28 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add the missing compatible string for the Tegra194 MISC block.
+The NVIDIA Tegra234 VDK is a simulation platform for the Orin SoC. It
+supports a subset of the peripherals that will be available in the final
+chip and serves as a bootstrapping platform.
 
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../devicetree/bindings/misc/nvidia,tegra186-misc.txt      | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.txt
-index 892ba4384abc..111dfac70ea7 100644
---- a/Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.txt
-+++ b/Documentation/devicetree/bindings/misc/nvidia,tegra186-misc.txt
-@@ -1,11 +1,12 @@
--NVIDIA Tegra186 MISC register block
-+NVIDIA Tegra186 (and later) MISC register block
- 
--The MISC register block found on Tegra186 SoCs contains registers that can be
--used to identify a given chip and various strapping options.
-+The MISC register block found on Tegra186 and later SoCs contains registers
-+that can be used to identify a given chip and various strapping options.
- 
- Required properties:
- - compatible: Must be:
-   - Tegra186: "nvidia,tegra186-misc"
-+  - Tegra194: "nvidia,tegra194-misc"
- - reg: Should contain 2 entries: The first entry gives the physical address
-        and length of the register region which contains revision and debug
-        features. The second entry specifies the physical address and length
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index e0b3debaee9e..85006ca503a7 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -119,3 +119,7 @@ properties:
+         items:
+           - const: nvidia,p3509-0000+p3668-0000
+           - const: nvidia,tegra194
++      - items:
++          - enum:
++              - nvidia,tegra234-vdk
++          - const: nvidia,tegra234
 -- 
 2.28.0
 
