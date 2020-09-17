@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6C0C43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EFBC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75DF62087D
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC94F208DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnoEaymz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tQSs3303"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbgIQKId (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
+        id S1726410AbgIQKIh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:08:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgIQKIc (ORCPT
+        with ESMTP id S1726360AbgIQKIe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:08:32 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BC6C06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:31 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id e17so1394771wme.0
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:31 -0700 (PDT)
+        Thu, 17 Sep 2020 06:08:34 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263E6C06174A
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:34 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id z1so1421634wrt.3
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4vsTqHDRezfzd8SF1y8hAmLtXdBEdab2904l3pZe9lw=;
-        b=bnoEaymzFihtmsp+uKBU0Z3FhsHQEoFMUiV6DwaJB9YZu1BYNv8Og77NXMY2w/gd1L
-         zbkYagF+6Cc7ZFz4IrOv7uH6joZO5fECK7zx4NCssjbaREmYfa3jTCIK8hgsOCdZzFHa
-         KdgJjzrRvOMhaiFm6qNXp0EZ0TRmZtNDHNT+u5P53SoGV5lUZPv8rNw6P643BCK6Xqah
-         xZuQE6s0ct+Eh0tKIotdgdKgV4t+GPZUCh8oLsloN7yVAoL5mFUh6Dq8zqtbEN4f4nzt
-         mGiNPqGoTQ8A/TjPlTi1AwwDBZxScZwl/r+ourU/MVUvIeXX5iSfItTR31u4Lfgurbtn
-         omcA==
+        bh=TiJR36A6WzVMF6xqdDOcepS7F4dEZ9OVgowRWFZ1uks=;
+        b=tQSs3303aEdukcfpHyNesIC7F63IBi+loPYOYanS55q/KqNEMlKQyZJOqWW+PDaIdy
+         Hzl3dmK1CsDW3oNj4JMtelUVB2zs2H+s2LfZFYJ8a1BAp3lVK0SlCl3LKFcr1Rg7ectM
+         QkdA535G27LaZOykS9/XPKmtEJkM52bEgyitkf8ubOYdWMAjTu9zqftA5WbZ4aXOaLj+
+         2W2+r58U0BMhzBzrRCwwhxGQjSRFZx1MC83qMtwkOw2V46YrAzqqCFOLRCKzO4cEq/5g
+         oI86hCCnPTqZtN82QvnmAt/wb3RBr/FbyVi464WaR/JxJy6q1nUfzm8TcdLHGQA9+B9+
+         ORFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4vsTqHDRezfzd8SF1y8hAmLtXdBEdab2904l3pZe9lw=;
-        b=GoXKloF7zpRsMBHXeQA/fGlce42+sjZwK51Lv6b/IM0dZZIv65dCXOpJ/Ht+LC5JpQ
-         S3w5o2VAbUPgDOPkPXFly+uqepfJDHVMnNtKiCCn5au7fjb1bUq090MD66tPIhMBYsK1
-         8RgQg80SW7ZBSgoFtQk0jevP6qF9U9gAw3+ieCvrLHPCa4kyxfXGzJBIu++nbEpLfePO
-         a8WkilAjsHInwY/SbxJEZZkqAuyWiPCw6gCDjbGCf0QRnbu4+7HNzzASClDQYDAoecam
-         wb2JhWIWabazJpgcIqOuoT8kEkQ0DbramVcXHMnZAm5QGPDjS+C/k7HT2GAHnhChqA3G
-         qKmA==
-X-Gm-Message-State: AOAM533PEjOAMony32BDP4kDEd7qCodHSiQfaZhCeaCNewg5eWW1KKLQ
-        mj6XMjjbRr3fU4OX8lT/BP4=
-X-Google-Smtp-Source: ABdhPJyYJyqb8oOcqVpklD5SRqFrZG/iWKXym1Vl1fBtJG2U2u9AqM9X/ta3TiKssGcK34kTIB24SQ==
-X-Received: by 2002:a1c:6487:: with SMTP id y129mr9673845wmb.90.1600337310097;
-        Thu, 17 Sep 2020 03:08:30 -0700 (PDT)
+        bh=TiJR36A6WzVMF6xqdDOcepS7F4dEZ9OVgowRWFZ1uks=;
+        b=Ky0mqEOjdhUO7upbcEX+RBxd0NJA9/P/R6k/yrquk+L/+jBpo7VZqSgYXxt2MwxVtl
+         fAp911/omKzCHdHKirCpnIx5mN6TUF4SQSQAyJu6y/oOGqaoo8v3lKz/jGClppamKCGd
+         OZJcDBpL4nUxjq7M87GxKBfl76z8HzBrgA3P5JgHsIeh//VinD/AivLqWJS8J7/khuz/
+         ZyU5ANVzEXsWG9qf4gW/40VziAPk1zAU+iBl42V/0K3VsMtT21ECwPqvdPYfJX10KQfQ
+         ER5OW9u4NWectW7aujFONjL+gu+dpcloeNzAmJn+UJs6+Q+wv9uNNRg5PvdGdezYWqCh
+         9F+g==
+X-Gm-Message-State: AOAM530jXylom+bPLQ5f+Hx0AhPozrwXn38P3/OhA8IkfODjikP/y6R8
+        juLMIlndpZi7i9mL63Wdy6M=
+X-Google-Smtp-Source: ABdhPJzKfbB/ieqKnYMMtGHW2A1dx/j0OzK0xW4LCwmh8FFA4m8tRA17CVIdhPuORy0L8AIxISw+kA==
+X-Received: by 2002:adf:9bcf:: with SMTP id e15mr26392211wrc.93.1600337312861;
+        Thu, 17 Sep 2020 03:08:32 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id t22sm12342777wmt.1.2020.09.17.03.08.28
+        by smtp.gmail.com with ESMTPSA id h76sm11507895wme.10.2020.09.17.03.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:08:29 -0700 (PDT)
+        Thu, 17 Sep 2020 03:08:31 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 12/14] soc/tegra: pmc: Add Tegra234 support
-Date:   Thu, 17 Sep 2020 12:07:50 +0200
-Message-Id: <20200917100752.3516153-13-thierry.reding@gmail.com>
+Subject: [PATCH v2 13/14] firmware: tegra: Enable BPMP support on Tegra234
+Date:   Thu, 17 Sep 2020 12:07:51 +0200
+Message-Id: <20200917100752.3516153-14-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917100752.3516153-1-thierry.reding@gmail.com>
 References: <20200917100752.3516153-1-thierry.reding@gmail.com>
@@ -77,93 +77,63 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The PMC block is largely similar to that found on earlier chips, but
-not completely compatible. Allow binding to the instantiation found on
-Tegra234.
+Enable support for the BPMP on Tegra234 to avoid relying on Tegra194
+being enabled to pull in the needed OF device ID table entry.
 
+On simulation platforms the BPMP hasn't booted up yet by the time we
+probe the BPMP driver and the BPMP hasn't had a chance to mark the
+doorbell as ringable by the CCPLEX. This corresponding check in the
+BPMP driver will therefore fail. Work around this by disabling the
+check on simulation platforms.
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 67 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ drivers/firmware/tegra/bpmp.c | 3 ++-
+ drivers/mailbox/tegra-hsp.c   | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 4071181a4a42..622496df6282 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -3362,6 +3362,73 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
- 	.has_blink_output = false,
- };
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 4d93d8925e14..0742a90cb844 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -856,7 +856,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
  
-+static const struct tegra_pmc_regs tegra234_pmc_regs = {
-+	.scratch0 = 0x2000,
-+	.dpd_req = 0,
-+	.dpd_status = 0,
-+	.dpd2_req = 0,
-+	.dpd2_status = 0,
-+	.rst_status = 0x70,
-+	.rst_source_shift = 0x2,
-+	.rst_source_mask = 0xfc,
-+	.rst_level_shift = 0x0,
-+	.rst_level_mask = 0x3,
-+};
+ static const struct of_device_id tegra_bpmp_match[] = {
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+-    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
++    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
++    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
+ 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
+ #endif
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 834b35dc3b13..e07091d71986 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -13,6 +13,8 @@
+ #include <linux/pm.h>
+ #include <linux/slab.h>
+ 
++#include <soc/tegra/fuse.h>
 +
-+static const char * const tegra234_reset_sources[] = {
-+	"SYS_RESET_N",
-+	"AOWDT",
-+	"BCCPLEXWDT",
-+	"BPMPWDT",
-+	"SCEWDT",
-+	"SPEWDT",
-+	"APEWDT",
-+	"LCCPLEXWDT",
-+	"SENSOR",
-+	"AOTAG",
-+	"VFSENSOR",
-+	"MAINSWRST",
-+	"SC7",
-+	"HSM",
-+	"CSITE",
-+	"RCEWDT",
-+	"PVA0WDT",
-+	"PVA1WDT",
-+	"L1A_ASYNC",
-+	"BPMPBOOT",
-+	"FUSECRC",
-+};
-+
-+static const struct tegra_pmc_soc tegra234_pmc_soc = {
-+	.num_powergates = 0,
-+	.powergates = NULL,
-+	.num_cpu_powergates = 0,
-+	.cpu_powergates = NULL,
-+	.has_tsense_reset = false,
-+	.has_gpu_clamps = false,
-+	.needs_mbist_war = false,
-+	.has_impl_33v_pwr = true,
-+	.maybe_tz_only = false,
-+	.num_io_pads = 0,
-+	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
-+	.regs = &tegra234_pmc_regs,
-+	.init = NULL,
-+	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
-+	.reset_sources = tegra194_reset_sources,
-+	.num_reset_sources = ARRAY_SIZE(tegra194_reset_sources),
-+	.reset_levels = tegra186_reset_levels,
-+	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
-+	.num_wake_events = 0,
-+	.wake_events = NULL,
-+	.pmc_clks_data = NULL,
-+	.num_pmc_clks = 0,
-+	.has_blink_output = false,
-+};
-+
- static const struct of_device_id tegra_pmc_match[] = {
- 	{ .compatible = "nvidia,tegra194-pmc", .data = &tegra194_pmc_soc },
- 	{ .compatible = "nvidia,tegra186-pmc", .data = &tegra186_pmc_soc },
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+ 
+ #include "mailbox.h"
+@@ -322,7 +324,12 @@ static int tegra_hsp_doorbell_startup(struct mbox_chan *chan)
+ 	if (!ccplex)
+ 		return -ENODEV;
+ 
+-	if (!tegra_hsp_doorbell_can_ring(db))
++	/*
++	 * On simulation platforms the BPMP hasn't had a chance yet to mark
++	 * the doorbell as ringable by the CCPLEX, so we want to skip extra
++	 * checks here.
++	 */
++	if (tegra_is_silicon() && !tegra_hsp_doorbell_can_ring(db))
+ 		return -ENODEV;
+ 
+ 	spin_lock_irqsave(&hsp->lock, flags);
 -- 
 2.28.0
 
