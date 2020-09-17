@@ -2,153 +2,195 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7DBC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 18:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCCCC35267
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A45721973
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 18:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9642221EC
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:42:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJpJIBCp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNZiBZAK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbgIQQXB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 12:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
+        id S1728309AbgIQQMu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 12:12:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbgIQQW7 (ORCPT
+        with ESMTP id S1727999AbgIQPOi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:22:59 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E546FC06174A;
-        Thu, 17 Sep 2020 08:27:31 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id r24so2412398ljm.3;
-        Thu, 17 Sep 2020 08:27:31 -0700 (PDT)
+        Thu, 17 Sep 2020 11:14:38 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5FEC061756;
+        Thu, 17 Sep 2020 07:01:59 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id w2so2092781wmi.1;
+        Thu, 17 Sep 2020 07:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ayxZ/apLrEsT1wotEfQehRQnLkINjTczpn8uLHl9SZs=;
-        b=DJpJIBCp+9h8BU3cFFtUV53GeJ1YpgZyucs9afKIg9xFPsx0DlCXdV932Np4NZFmK3
-         gXfukvFcrdbhALcvHA+QnWEYJYgqvj1L7ID3W6omqTkSPJqWfCmtKhUdfR6qSfKwNBgG
-         2Khy3ine7vO4vT62jVIV7SY7vJvGf7rs4ZVPukmiaZJBCpSN54a0gIHtxpAlKc92kkr1
-         EwRiq3yWmy3l/hBHtOIhkt0kDPETCJsDKEE4LqfbnmFqRDZcZ4/83sJULzEd31ZouAk8
-         tKyv0e/3rLkEnXYG1RyHC/yHnWOalPkl4Dw4vECb+JkkRBnjIJIjLWvLDmQjMf/yKERS
-         G2Ug==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lBUrIOfg3+mq8ad85tbb7EImBFZIDC/tVRBXQ4hE1ik=;
+        b=DNZiBZAKqypMSqQJoyD2IPrVpqiI3ikdcnRtqSUtglPbT/8APSdwaP78S9dCceWhaB
+         CUFzh+i3SYFxQjgJQYQXA+eAyv74bC7KPueFL/Gfi5sPNtWoyu6oeH0LQkpIWYJSX21y
+         rV7VkyxfFYten7MOhzm3Bz7i04GYai5m0PJD8/+pat7mIsmnFKD4UKKCCUMZ01zZFTbO
+         PKJYwiwHEuO6KO353OHy/LaLG0eDM48NEvTlWgc4GQY7VXvipXO0S4rEEhbCyvprEr3R
+         BIuNCJjy1NTGULEvR1fAoX12DfpViAnvzecyOpIl9S6AtbE1NSwC4GsSGoUx0L019NSL
+         oeQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ayxZ/apLrEsT1wotEfQehRQnLkINjTczpn8uLHl9SZs=;
-        b=sdfY67Yq3A+vJeQAs8epBPuLqMc0KBNsEpdh+eCf6Sr+qff8cbfgxol1PtHZIMZtnW
-         a4gaYlRnDr1202LyBNLLecfvr4cxXZTX/wdH7tqeGBu0B8eBf3w6ZOylSfDiLEkVGyWz
-         mUUU995h/mQl3yJ8UWqmkXZzDv0Ga+dKK0PHQI8SFx19ozZcMYJep1xRX6rNh1pCSyYT
-         UWYECKnGJBZCBRF9Sk9DokqA2XKDSye0WxqfxoPnSu4gp+hqhWbYsEWy3tl5tof1Xdhz
-         UwM2uL7ajvQkOcqg26ecwLhPJ3lDoUbN5HZcecKZnAmq5wwNKVY6Oae79bs8sjUL8wDK
-         Jllg==
-X-Gm-Message-State: AOAM531oADnpq9B/GWNK6vbS+XcULuiR0907/iluSZsGhhV0j0Y+rSF1
-        UBT9CVM+Oo/E3yrdi5sZ+AztsTPpnvc=
-X-Google-Smtp-Source: ABdhPJy8d99/Pbv+6/CzgFnGRxlv4uWxZuQ7RuLtQMhsj3Rb+/ghDu8lW3+99++S72u7C/wjlae9QQ==
-X-Received: by 2002:a2e:8619:: with SMTP id a25mr10922980lji.390.1600356450050;
-        Thu, 17 Sep 2020 08:27:30 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id y21sm6119219ljk.110.2020.09.17.08.27.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 08:27:29 -0700 (PDT)
-Subject: Re: [PATCH v7 06/34] i2c: tegra: Remove
- i2c_dev.clk_divisor_non_hs_mode member
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-7-digetx@gmail.com> <20200917112541.GR3515672@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <716583f1-60df-f576-16d3-dbb72d12fa54@gmail.com>
-Date:   Thu, 17 Sep 2020 18:27:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lBUrIOfg3+mq8ad85tbb7EImBFZIDC/tVRBXQ4hE1ik=;
+        b=I8sXVyuXDfOS/Rn1LuibbXR68vspATS4+Zh1GbkfPl2Gn6w302/lot/OqZjeDBDF5H
+         ElcZV/6Cn7RztN8iNEQf5PK+5fplnB2BdGEo/qLigK9Yb+eQfRHqnw6oFiaR+WkMEN1L
+         itIE4fqC8w8mySJM1BnhawzGtVyiuMbxt0dA76CeqH3wFk9qPLCjri9XAjdV1/z2xgY2
+         5tR3Mri56IC/Ab9bi8fEBdye5sHpwV0WQLD9U259wtgN8dpHVm0NFpnk1dcbfAcAwjHs
+         cfpqkq2p6x+Fn55YXewLEx1iOZaFd3tzADg1WWiNATH7Bhafh9BE2v72diRUJur7+ynE
+         cCjA==
+X-Gm-Message-State: AOAM533L5ZhWz/j+rsdJn97szolaosxqsdBYCXCiYS6DwoPLayV101Qz
+        /SZvBkDLejY0S2Xw0PAwDVo=
+X-Google-Smtp-Source: ABdhPJwVFsi9VyC5N2zDyjQYYSf7iQdzkgcW/plJduCk7Y3eMkitDq4/6m+bqkSKVjF1esIZWne4iA==
+X-Received: by 2002:a1c:ba0b:: with SMTP id k11mr10119624wmf.20.1600351318328;
+        Thu, 17 Sep 2020 07:01:58 -0700 (PDT)
+Received: from smtp.gmail.com (a95-92-181-29.cpe.netcabo.pt. [95.92.181.29])
+        by smtp.gmail.com with ESMTPSA id z14sm37316830wrh.14.2020.09.17.07.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 07:01:57 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 11:01:48 -0300
+From:   Melissa Wen <melissa.srw@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 16/21] drm/vgem: Introduce GEM object functions
+Message-ID: <20200917140148.orpdihcctrr5upxg@smtp.gmail.com>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-17-tzimmermann@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20200917112541.GR3515672@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200915145958.19993-17-tzimmermann@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.09.2020 14:25, Thierry Reding пишет:
-> On Wed, Sep 09, 2020 at 01:39:38AM +0300, Dmitry Osipenko wrote:
->> The "non_hs_mode" divisor value is fixed, thus there is no need to have
->> the variable i2c_dev.clk_divisor_non_hs_mode struct member. Let's remove
->> it and move the mode selection into tegra_i2c_init() where it can be
->> united with the timing selection.
->>
->> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++------------------
->>  1 file changed, 21 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index 720a75439e91..85ed0e02d48c 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -250,7 +250,6 @@ struct tegra_i2c_hw_feature {
->>   * @msg_buf_remaining: size of unsent data in the message buffer
->>   * @msg_read: identifies read transfers
->>   * @bus_clk_rate: current I2C bus clock rate
->> - * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
->>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
->>   * @tx_dma_chan: DMA transmit channel
->>   * @rx_dma_chan: DMA receive channel
->> @@ -281,7 +280,6 @@ struct tegra_i2c_dev {
->>  	size_t msg_buf_remaining;
->>  	int msg_read;
->>  	u32 bus_clk_rate;
->> -	u16 clk_divisor_non_hs_mode;
->>  	bool is_multimaster_mode;
->>  	struct dma_chan *tx_dma_chan;
->>  	struct dma_chan *rx_dma_chan;
->> @@ -783,6 +781,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->>  	u32 val;
->>  	int err;
->>  	u32 clk_divisor, clk_multiplier;
->> +	u32 non_hs_mode;
->>  	u32 tsu_thd;
->>  	u8 tlow, thigh;
->>  
->> @@ -805,24 +804,33 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->>  	if (i2c_dev->is_vi)
->>  		tegra_i2c_vi_init(i2c_dev);
->>  
->> -	/* Make sure clock divisor programmed correctly */
->> -	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
->> -				 i2c_dev->hw->clk_divisor_hs_mode) |
->> -		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE,
->> -				 i2c_dev->clk_divisor_non_hs_mode);
->> -	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
->> -
->> -	if (i2c_dev->bus_clk_rate > I2C_MAX_STANDARD_MODE_FREQ &&
->> -	    i2c_dev->bus_clk_rate <= I2C_MAX_FAST_MODE_PLUS_FREQ) {
->> +	switch (i2c_dev->bus_clk_rate) {
->> +	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
+Hi Thomas,
+
+On 09/15, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces the per-driver callbacks with
+> per-instance callbacks in vgem. The only exception is gem_prime_mmap,
+> which is non-trivial to convert.
 > 
-> Is there are particular reason for switching the simple conditional to a
-> switch here? The old variant looks much easier to understand to me.
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-The reason is make it readable :) For me it's too difficult to read > <=
-&& { } + no proper indentation.
+Thanks here again.
 
-The switches are more suitable for ranges, IMO. Especially when there
-are multiple ranges, and there could be more ranges in the future in
-this code.
+This drv file is little tumultuous to me.
+I mean, I took a while to sort functions in my head.
+
+However, finally, I got it, and the change looks good.
+
+Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
+
+> ---
+>  drivers/gpu/drm/vgem/vgem_drv.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+> index cb884c890065..fa54a6d1403d 100644
+> --- a/drivers/gpu/drm/vgem/vgem_drv.c
+> +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+> @@ -50,6 +50,8 @@
+>  #define DRIVER_MAJOR	1
+>  #define DRIVER_MINOR	0
+>  
+> +static const struct drm_gem_object_funcs vgem_gem_object_funcs;
+> +
+>  static struct vgem_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+> @@ -167,6 +169,8 @@ static struct drm_vgem_gem_object *__vgem_gem_create(struct drm_device *dev,
+>  	if (!obj)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	obj->base.funcs = &vgem_gem_object_funcs;
+> +
+>  	ret = drm_gem_object_init(dev, &obj->base, roundup(size, PAGE_SIZE));
+>  	if (ret) {
+>  		kfree(obj);
+> @@ -401,12 +405,20 @@ static int vgem_prime_mmap(struct drm_gem_object *obj,
+>  	return 0;
+>  }
+>  
+> +static const struct drm_gem_object_funcs vgem_gem_object_funcs = {
+> +	.free = vgem_gem_free_object,
+> +	.pin = vgem_prime_pin,
+> +	.unpin = vgem_prime_unpin,
+> +	.get_sg_table = vgem_prime_get_sg_table,
+> +	.vmap = vgem_prime_vmap,
+> +	.vunmap = vgem_prime_vunmap,
+> +	.vm_ops = &vgem_gem_vm_ops,
+> +};
+> +
+>  static struct drm_driver vgem_driver = {
+>  	.driver_features		= DRIVER_GEM | DRIVER_RENDER,
+>  	.open				= vgem_open,
+>  	.postclose			= vgem_postclose,
+> -	.gem_free_object_unlocked	= vgem_gem_free_object,
+> -	.gem_vm_ops			= &vgem_gem_vm_ops,
+>  	.ioctls				= vgem_ioctls,
+>  	.num_ioctls 			= ARRAY_SIZE(vgem_ioctls),
+>  	.fops				= &vgem_driver_fops,
+> @@ -415,13 +427,8 @@ static struct drm_driver vgem_driver = {
+>  
+>  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+> -	.gem_prime_pin = vgem_prime_pin,
+> -	.gem_prime_unpin = vgem_prime_unpin,
+>  	.gem_prime_import = vgem_prime_import,
+>  	.gem_prime_import_sg_table = vgem_prime_import_sg_table,
+> -	.gem_prime_get_sg_table = vgem_prime_get_sg_table,
+> -	.gem_prime_vmap = vgem_prime_vmap,
+> -	.gem_prime_vunmap = vgem_prime_vunmap,
+>  	.gem_prime_mmap = vgem_prime_mmap,
+>  
+>  	.name	= DRIVER_NAME,
+> -- 
+> 2.28.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
