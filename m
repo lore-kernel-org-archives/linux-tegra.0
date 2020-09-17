@@ -2,66 +2,66 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F383C43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7496EC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFFA821974
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C73B21582
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pYH5L1q8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1IoCVWc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbgIQNzo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 09:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53312 "EHLO
+        id S1727270AbgIQN7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 09:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbgIQNzm (ORCPT
+        with ESMTP id S1727255AbgIQN6l (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 09:55:42 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30825C061354;
-        Thu, 17 Sep 2020 06:54:46 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id gf14so1265266pjb.5;
-        Thu, 17 Sep 2020 06:54:46 -0700 (PDT)
+        Thu, 17 Sep 2020 09:58:41 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AFEC061221;
+        Thu, 17 Sep 2020 06:47:03 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id l126so1247867pfd.5;
+        Thu, 17 Sep 2020 06:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8arQyKVcFoMsxaf7+upG1bKHZzkRUlGuc4HZvvDOaUk=;
-        b=pYH5L1q8tdSZGq8cqmfTaZ1G1cYVnO228V4zcBNAOMyQa1kemyvLm97FE+5JgBdNvg
-         OmoMbWz0ddPcwtK43CZZDbRtSdTG5MjGNvRxK8JVfK8/vepCiwA5LXLTol4nNE/3/ElL
-         O+iTolHoArRnMlUwvjTXE666N1dyNJtJEHtVunv2kqKT4tcEZgM7J6BPdHQuMqwY3uJo
-         MG5MbDs9pRvZRbFJdTipJlZ6E9MZdiJmL/QtVjMtLMTz+8iRFa78p9KF57+Gpr+SsP8S
-         Fd1FP1f4SFI0tFMqoqtJTpazWniArqTPuHUyAvMsRrRHoycFX6uooGMCGsfWqoDqhSV2
-         zMuA==
+        bh=55M23fIBKyr8UknSe2QfC4lOvamfuOO1MWAAx+e2vC0=;
+        b=d1IoCVWcyMIae2dHO+3iOQHxRR4m0uArjTaX6mrc4c34FypS7dws0gW1ni3PaOAcJI
+         5F3N1oadIQGe8N84j+w/ts9RBg1hZdnJykLj4U+U726H9pXleBq3XXg5B3LGa5QQj6/k
+         +MG7Tzs+qg6Ry4OvdtOyW5IIjA07jTCwq0xw6sGHNls8zsnZNG06i0flA2h7lyy55QF7
+         j3wcak7sdHaCWs8LUuEx0ETdy9nF5oVFr9zWzF4RA0WQTGncifRLYJtkNw55znA5NreY
+         TxR/9RQLJGKJ8J+mSnGFoUStPWnJljpqXI+ZIGOUbhs4GK3XX+LUD4HTxrWs7o6SIig1
+         qykQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8arQyKVcFoMsxaf7+upG1bKHZzkRUlGuc4HZvvDOaUk=;
-        b=MWHMKMP6mipI4k1ZT0LTSBrJPjWL6jrZrjkYd9YyRk+QxX+9Mega9GPijRJNIpE/MN
-         zqm7YUwzFPLAdcQR8uz8M7tarH5AOG/wq8rCUEzFpfAai9HdKfYwn9xsGOlssfV+lYiu
-         yHHTDiRLIUHe0OszYhIeyOvWu3lO6ALk41WmLQLjCEys5Qbncklg7Eyi10Q2bcKLSNY8
-         BbH54UmTm1PkFBm6HnNmxFbacxJX652b5ESztOsKZ8+NESQSvGIkIOhs+gevpxBOQbJV
-         R0k2pLY6Ukv8+3y8WaxOrmufI/XARSo5lloJS96E6BvlkogQqE3zOtyPgUbIQac8Kmhm
-         vjyg==
-X-Gm-Message-State: AOAM530Yyz6ral5Emf3ypGr3MabfYA3nKmo3/Drpjm+VSK+W9SODXtsa
-        Dea2LCX4swe9iDg/OR5EbUImxOHjzTG/tSS06QE=
-X-Google-Smtp-Source: ABdhPJzRw2jLHXiTRUSgRINrCCSrzIZPDYCK1UEUCky6r5Xib2G/udNWHIo9encUMcaQ9dPMVe/3runfRqhVJQJAMgE=
-X-Received: by 2002:a17:90a:b387:: with SMTP id e7mr8860381pjr.228.1600350885724;
- Thu, 17 Sep 2020 06:54:45 -0700 (PDT)
+        bh=55M23fIBKyr8UknSe2QfC4lOvamfuOO1MWAAx+e2vC0=;
+        b=GEHzHvKtvyiRgUT5mO3KxZb8gn+USQHZxrf5xWHjdOBPG4i1AYPN7gKI5fCqyJjiut
+         uFPKcyiy/e27FF1vLl31tUwLd/dULFA3RqQ3lGkgsqQhdnyymUcSmTcAoi+F5XUKbhcz
+         5lzn/i1Uahzmt18VQs0AQo/D8JKK7iaoms81odlWcoqyjDUCr9AbowCeR+mFsSfTVdI/
+         fFxFAbLxs1oDAMApS/F7RovkdhEGiBkYuwL7Dptfh5QMFumXW6ESnrQYts8d/sGkg65Z
+         rWKq/FG4eEGwNP4302BwruZdRSPnBdZBxTWuQD1eAEEd5XHmptMa82SoiW/PN+66ij/v
+         oHKw==
+X-Gm-Message-State: AOAM530Rq08hGTFdf31tyaEhmFsls2cTJxCN9ZU9keOXLfDeZt6DwzDG
+        eAhvErPA3HBZdoN0z1Lb2y6EGku7wVk+YRo8KGw=
+X-Google-Smtp-Source: ABdhPJx46s/q6mEolYXQuE3gnUPpUwExXCVWjupcaUxMbF59YWDoirDqB7ORt9sBZOva8UO/Ch+v/+PuMDfYZVJVUjM=
+X-Received: by 2002:a63:d648:: with SMTP id d8mr22523973pgj.4.1600350422955;
+ Thu, 17 Sep 2020 06:47:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200908224006.25636-1-digetx@gmail.com> <20200908224006.25636-13-digetx@gmail.com>
- <20200917113846.GX3515672@ulmo>
-In-Reply-To: <20200917113846.GX3515672@ulmo>
+References: <20200908224006.25636-1-digetx@gmail.com> <20200908224006.25636-15-digetx@gmail.com>
+ <20200917123755.GO3515672@ulmo>
+In-Reply-To: <20200917123755.GO3515672@ulmo>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 17 Sep 2020 16:54:28 +0300
-Message-ID: <CAHp75Vd_B9WLM99LnN2YiZ045z8SUkD7KwY2wVEUeQ9Mx7fg5g@mail.gmail.com>
-Subject: Re: [PATCH v7 12/34] i2c: tegra: Use clk-bulk helpers
+Date:   Thu, 17 Sep 2020 16:46:45 +0300
+Message-ID: <CAHp75VeWq_GzJ_yZag2yceuUDqPiMRWEa4XNYT5uPwXCzrsb7g@mail.gmail.com>
+Subject: Re: [PATCH v7 14/34] i2c: tegra: Clean up probe function
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,37 +76,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 2:38 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Wed, Sep 09, 2020 at 01:39:44AM +0300, Dmitry Osipenko wrote:
-> > Use clk-bulk helpers and factor out clocks initialization into separate
-> > function in order to make code cleaner.
-> >
-> > The clocks initialization now performed after reset-control initialization
-> > in order to avoid a noisy -PROBE_DEFER errors on T186+ from the clk-bulk
-> > helper which doesn't silence this error code. Hence reset_control_get()
-> > now may return -EPROBE_DEFER on newer Tegra SoCs because they use BPMP
-> > driver that provides reset controls and BPMP doesn't come up early during
-> > boot. Previously rst was protected by the clocks retrieval and now this
-> > patch makes dev_err_probe() to be used for the rst error handling.
-> >
-> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/i2c/busses/i2c-tegra.c | 187 ++++++++++++---------------------
-> >  1 file changed, 67 insertions(+), 120 deletions(-)
->
-> This is tempting from a diffstat point of view, but the downside is that
-> we can now no longer validate that all of the necessary clocks are given
-> in device tree.
->
-> Previously the driver would fail to probe the I2C controller if any of
-> the expected clocks were not defined in device tree, but now it's just
-> going to continue without it and not give any indication as to what's
-> wrong.
+On Thu, Sep 17, 2020 at 3:37 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Wed, Sep 09, 2020 at 01:39:46AM +0300, Dmitry Osipenko wrote:
 
-You may print an error in the error path as previously. Since both
-clocks are mandatory (as far as I understood the code) user will need
-to check DT in any case.
+...
+
+> > +     ret = devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
+> > +                            IRQF_NO_SUSPEND, dev_name(&pdev->dev),
+> > +                            i2c_dev);
+> > +     if (ret)
+> > +             return ret;
+>
+> Is it safe to install the interrupt handler at this point? What if,
+> perhaps because some bootloader didn't properly quiesce the I2C
+> controller, an interrupt triggers immediately after this?
+
+It\s easy to check with debug shared IRQ, but here IRQ is not shared...
+So, with a hack into the code and enabled debug it will be achievable to test.
+
+And you probably meant that IRQ triggers *before* the handler is in place?
 
 -- 
 With Best Regards,
