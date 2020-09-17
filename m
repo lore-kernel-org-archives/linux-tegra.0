@@ -8,150 +8,138 @@ X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C62C2BBD1
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367EAC43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0703C2087D
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:41:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA6862074B
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:43:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r8Zs4fj6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qseHGXS+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbgIQKlp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51712 "EHLO
+        id S1726683AbgIQKn2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbgIQKlo (ORCPT
+        with ESMTP id S1726678AbgIQKnU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:41:44 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2F1C06174A;
-        Thu, 17 Sep 2020 03:41:43 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id l15so4157174wmh.1;
-        Thu, 17 Sep 2020 03:41:43 -0700 (PDT)
+        Thu, 17 Sep 2020 06:43:20 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D567DC06174A;
+        Thu, 17 Sep 2020 03:43:19 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id z4so1523756wrr.4;
+        Thu, 17 Sep 2020 03:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=X83+YxLNLakSEy2MO2kNdUk1vFYzpBNVVoYA7qc9Hv8=;
-        b=r8Zs4fj610xUajyLYCKzJ7kAYSxcX52cD0GDHf40+fI98gr6h+EEWEzyMRb075ARrd
-         I4sQVmOtKcmMh9a+5BNplnzJgXH3H25Zj9voFQqDQ+xop77fAYdWEjS1wT6K98E1DRCr
-         BVBWvX6+Y0BzkRUk6UgA7Hgj3WPBr8HhdmogWFQYUibY6Mpol9wiICtNNiHZoEbj4+SZ
-         8TrBabmozaC37Inx39cnR26MiNEG68s44MsDxPnMLY5nwuoubCF0djgum70p26BQBADS
-         mcZ1QsQWAAvz4kTrJ++tk5PgAIVrK8UrUbAl4aLFZ1dr9p1vR+yQ+21BhkLKWpUdEnsT
-         VrQg==
+        bh=mKCF4ocmjj0Rm/uGS3hAJIwKdlyyGieDpW/qiQNTdJk=;
+        b=qseHGXS+myHj8YT5np06wt5GuN3KC9SHsrQKnfIB33AKOpEwc2CRp8YEaM8Fyzo8Jf
+         8gLosBtOHZzdOTjf0O4tiAJAx/fOFkPK1Lvr8paLzeYh/HxR+cF4I1VTnnP6Rkv7WaCH
+         hjGEaRwgaUflAzRjLzwcIQoQH9u5FMCjk91LM0X5/6t/0WVNajYkaopS9jMKX0XtXDJ1
+         HsC4TXCFXEvXp9h2SuEEN6m+eBafPkwkaatwa7UN5292Ew0kES3VD67QsUxaXi9lSFxz
+         5TEjL1tjKe+gKTdd1Ywhk4kSq5N2R0VcAxCeIPZXWNJ20R/Q2iakudz9fvYzM+B4XTKt
+         Ebvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X83+YxLNLakSEy2MO2kNdUk1vFYzpBNVVoYA7qc9Hv8=;
-        b=My2Vnx/vz5mQBgZMa0/joBJ9x0MnXZcYWOjJzgRsPNd348NkLOKmyI4gPNDKZ9GwuI
-         5tOKaz/t5D33bOtUnqm1UYdq6Q1xL3cey6cHiYY7mIxK0VGb2rW/vvGjNk68KeZZQzKd
-         OeJ1e0m/ESXyWCVs4i4S977yBkDB+43x3QWpKcBVHQeGJuPE36v3XfP5KaJdIlPQpQSD
-         01DAfCxucyfC5tL6wE3tlcT704XqIcnaWa+HDsxx7QnwM+wgKykzIHi3CkBgtlrT2dio
-         HaoWGr/eEtYiR+bSaGtUq734/UQrN95BxxHf3AiTQ0lZzT1uWDD8o3Fsk3AFPQnJTRz6
-         H9uQ==
-X-Gm-Message-State: AOAM5326sM4lkYOHFccn7uxutIKmnFzcNciHTIY6/u+0lSVgK6+7AxDS
-        m98M0iyTmGwEvflHWa7V3Zc=
-X-Google-Smtp-Source: ABdhPJzLaq0pt0bNv92XyZEyoER6JQVztwJxVRUOSMo+cF5R4NCHmce2JIVKbOJMi0TkQ/eTSVcYZA==
-X-Received: by 2002:a1c:6a11:: with SMTP id f17mr8726659wmc.143.1600339302168;
-        Thu, 17 Sep 2020 03:41:42 -0700 (PDT)
+        bh=mKCF4ocmjj0Rm/uGS3hAJIwKdlyyGieDpW/qiQNTdJk=;
+        b=Md+uSjlljgZfyotZT6wv6CWH42Ob2a26Q7ULT/xsIuXtzqCcSHvKN6jRoZ2ubOptij
+         rvPk+WpzWfE9/ksOt4wCTzjk7BjLhKAeJJ07Vpi8wIXdN2IH8xCLUI4pzG9lP0eWgRg8
+         cbJ/VPOSKBuYT+Wc4uz9U53uZDmgQZjuBC7/b4TyJgJ6hhfoZGexoagj4N2NCqCfyNfo
+         dbuLhsDXk84yktpZIrlUi5s2uw2Cgw2aSvDXortFJY9BiOa00JWQKfXIKwhvZWQ5OA8S
+         QNSaOlHjsfPHzRbH7IzutqJ5Rv3XPKlZ8cmGQUZTY/U07R5wVaNHjsebsRgUFu8wvNNp
+         pcnQ==
+X-Gm-Message-State: AOAM532AhUmosCWT/FBKRt7x4+aUE1wMYqP/yJiEOpVHp38IowURktpX
+        LC4rT5O77REYPqABypQCCZzMxmEzsDbpJQ==
+X-Google-Smtp-Source: ABdhPJyBLuiFgLg3ScXKGeKllJOMU22WY2nsLkgR2mJHwhvarmwmUZ5Qy9UU6mDr6dlEtNsUFWiDVw==
+X-Received: by 2002:adf:eacf:: with SMTP id o15mr33419886wrn.12.1600339398589;
+        Thu, 17 Sep 2020 03:43:18 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id y6sm38883203wrn.41.2020.09.17.03.41.40
+        by smtp.gmail.com with ESMTPSA id t188sm11273801wmf.41.2020.09.17.03.43.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:41:40 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 12:41:39 +0200
+        Thu, 17 Sep 2020 03:43:17 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 12:43:15 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     joro@8bytes.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
-        vdumpa@nvidia.com
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix tlb_mask
-Message-ID: <20200917104139.GH3515672@ulmo>
-References: <20200916002359.10823-1-nicoleotsuka@gmail.com>
+Cc:     krzk@kernel.org, Joerg Roedel <joro@8bytes.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jonathanh@nvidia.com
+Subject: Re: [PATCH] memory: tegra: Correct num_tlb_lines for tegra210
+Message-ID: <20200917104315.GI3515672@ulmo>
+References: <20200915232803.26163-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Yia77v5a8fyVHJSl"
+        protocol="application/pgp-signature"; boundary="D6z0c4W1rkZNF4Vu"
 Content-Disposition: inline
-In-Reply-To: <20200916002359.10823-1-nicoleotsuka@gmail.com>
+In-Reply-To: <20200915232803.26163-1-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Yia77v5a8fyVHJSl
+--D6z0c4W1rkZNF4Vu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2020 at 05:23:59PM -0700, Nicolin Chen wrote:
-> The "num_tlb_lines" might not be a power-of-2 value, being 48 on
-> Tegra210 for example. So the current way of calculating tlb_mask
-> using the num_tlb_lines is not correct: tlb_mask=3D0x5f in case of
-> num_tlb_lines=3D48, which will trim a setting of 0x30 (48) to 0x10.
+On Tue, Sep 15, 2020 at 04:28:03PM -0700, Nicolin Chen wrote:
+> According to Tegra210 TRM, the default value of TLB_ACTIVE_LINES
+> field of register MC_SMMU_TLB_CONFIG_0 is 0x30. So num_tlb_lines
+> should be 48 (0x30) rather than 32 (0x20).
 >=20
 > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > ---
->  drivers/iommu/tegra-smmu.c | 2 +-
+>  drivers/memory/tegra/tegra210.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is technically a prerequisite for this patch you sent out earlier:
+Please send this as part of a series including:
 
-    https://patchwork.ozlabs.org/project/linux-tegra/patch/20200915232803.2=
-6163-1-nicoleotsuka@gmail.com/
+    https://patchwork.ozlabs.org/project/linux-tegra/patch/20200916002359.1=
+0823-1-nicoleotsuka@gmail.com/
 
-You should send both of those out as one series and add maintainers for
-both subsystems to both patches so that they can work out who will be
-applying them.
-
-For this pair it's probably best for Joerg to pick up both patches
-because this primarily concerns the Tegra SMMU, whereas the above patch
-only provides the per-SoC data update for the SMMU. Obviously if Joerg
-prefers for Krzysztof to pick up both patches that's fine with me too.
-
-In either case, please send this out as a series so that both Joerg and
-Krzysztof (Cc'ed for visibility) are aware of both patches. From the
-Tegra side:
+Adding Joerg for visibility. From the Tegra side:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 84fdee473873..0becdbfea306 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -1120,7 +1120,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *=
-dev,
->  		BIT_MASK(mc->soc->num_address_bits - SMMU_PTE_SHIFT) - 1;
->  	dev_dbg(dev, "address bits: %u, PFN mask: %#lx\n",
->  		mc->soc->num_address_bits, smmu->pfn_mask);
-> -	smmu->tlb_mask =3D (smmu->soc->num_tlb_lines << 1) - 1;
-> +	smmu->tlb_mask =3D (1 << fls(smmu->soc->num_tlb_lines)) - 1;
->  	dev_dbg(dev, "TLB lines: %u, mask: %#lx\n", smmu->soc->num_tlb_lines,
->  		smmu->tlb_mask);
+> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra=
+210.c
+> index 51b537cfa5a7..4fbf8cbc6666 100644
+> --- a/drivers/memory/tegra/tegra210.c
+> +++ b/drivers/memory/tegra/tegra210.c
+> @@ -1074,7 +1074,7 @@ static const struct tegra_smmu_soc tegra210_smmu_so=
+c =3D {
+>  	.num_groups =3D ARRAY_SIZE(tegra210_groups),
+>  	.supports_round_robin_arbitration =3D true,
+>  	.supports_request_limit =3D true,
+> -	.num_tlb_lines =3D 32,
+> +	.num_tlb_lines =3D 48,
+>  	.num_asids =3D 128,
+>  };
 > =20
 > --=20
 > 2.17.1
 >=20
 
---Yia77v5a8fyVHJSl
+--D6z0c4W1rkZNF4Vu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jPWMACgkQ3SOs138+
-s6F/bg//XdumYVA2ODztwS8iTzCljbnXyjUzNX8Ru37N5Br82W9rXoStYRiZ7boA
-8IQVASAvvHf8pKd8J6Sm1sXasSi6yGFeJqPrCfZxYq1PCs+RIM93OrXtBd1JRajl
-8d/u3ivynx6Qd3E98BQTc9uNc2+6cXY11XR6dKwhHuI4wb43BS/4FOR8a3lq+VWf
-gznzq/QZPd11ZbCNLF4eI/LaWByGR4c/J1yrnw4O/QcCv/MTMr2m6YViJHhybm+V
-XOTLotbAK0sjn2ihlieHKVUHvluPKkAn+qJVdB9/9SpgaPBq1/wueXu4GpLOcA9F
-1ffbBx27wHv/dW3QzAqyOrjeTsKd0vFwTVziux0eZ1zOt74n9ARp9C+KDEn4b28G
-2XtbuBE4CVTsZ2IS+ePrWAAG3ZnPfcz+cu+v6NNxZ9cd65qDK2aqOD6nskkUbbaf
-m8eV41RK2PqT8p5FaeA3KFmXASVIMAwSFqWhNGnPYO5fzPSdr43m/iPas77sM8pE
-OXPy/+SL5YDyYwez4mEs3gCzdPy19pFcnXgKGACS9yR5xnYAEBBvU+UpV8xAHFfE
-vJYX5UyOBqJbmUAccVEhqllklQ0iWpTR1gmGBWlwjizBGxyR4bXW82oL/+ePcv0c
-xdzFtey9zMVqmbsX3wqCi83VoEEwfo8VzxWF399WCoUiQMUJo+s=
-=dbE2
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jPcMACgkQ3SOs138+
+s6EmBg/9HLDWhpRNJR/5mco/9GHyNB36dWfDmikjmORhkt5kJlK8O5z93Y7+kUbE
+s/KFvB/lBMrkKqHhG2SeCFB7gQ+xQKz0isV1S/NhjgzxWfggd2B1w3ZRLdQZksFP
+YEzQIdj81fGuI4/kJSt/q1/yVAgqXDTbuZeYjdrLOwK59y89BUZjS89H0AeKHduG
+0UN/zrFuc67q587yy+kVFjhuHoSZG/APsIIMc0x0Q/GmSbPKcAf3UMEZ/QpwE0Bb
+PT657IFAhhdosRc89UAjBXBMqCwaXEn4ZVImaUs4DM+GUm+lM8LnvQswDf1s+TkT
+eDfsI2B4ptr0hMaoC4NC7BZX1BDbgj13S40x1kkXAyWSzRvTZjhF/2pHA8Mu6ZAx
+3nH3v9o7cCu7qKpWYW+wTuewj9IejPXMKVjy3Dx8zVIAxux4Q3zr9LCJASzMoabk
+M1ph2Nd3j3/dMKDAQGkW9Yyj/Ny16k7LWbtEAM+V3Ineg8vTOgTc869Tfmj5IK+K
+V+kVgzokJ8JL8wxpzvVS2mvhGKl5vGD97BYQnlOTaC4iOZcLr99YfeVUdY43Yo+9
+wHgaGfY1c3XxmiOre3OYXaXUOB0pXF2++3L1G1OUZowdH1v180WK+1IWG1Qk3ol+
+tQiVymrJlDnzyw/MhKdzJ+WBB3uxibFu6LzOnQuIbidFHxhAFI8=
+=w5PD
 -----END PGP SIGNATURE-----
 
---Yia77v5a8fyVHJSl--
+--D6z0c4W1rkZNF4Vu--
