@@ -2,100 +2,96 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7496EC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DD4C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 14:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C73B21582
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:59:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1IoCVWc"
+	by mail.kernel.org (Postfix) with ESMTP id 5598F22211
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 14:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600353186;
+	bh=oI259mpyrtE1FuIf0ohrhJ+YfhIrCCtcnhpQqYeYZBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=z22n+oFSe/lTSBJSmmMjHwSe6+G7baOxgwfDh2bzjPDOKSofzgS9vLPzZ6z1dwMAj
+	 TybcvT2LS5r4A4owo8tqxMMmSnHl05cMQy4eya5L+n5iwb8vTqRzfPiX903B4cXR4s
+	 dJoEHLEb8UE6QMICl2cxyXqtQzTFU0yGUVeot8OQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbgIQN7s (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 09:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727255AbgIQN6l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 09:58:41 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AFEC061221;
-        Thu, 17 Sep 2020 06:47:03 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id l126so1247867pfd.5;
-        Thu, 17 Sep 2020 06:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=55M23fIBKyr8UknSe2QfC4lOvamfuOO1MWAAx+e2vC0=;
-        b=d1IoCVWcyMIae2dHO+3iOQHxRR4m0uArjTaX6mrc4c34FypS7dws0gW1ni3PaOAcJI
-         5F3N1oadIQGe8N84j+w/ts9RBg1hZdnJykLj4U+U726H9pXleBq3XXg5B3LGa5QQj6/k
-         +MG7Tzs+qg6Ry4OvdtOyW5IIjA07jTCwq0xw6sGHNls8zsnZNG06i0flA2h7lyy55QF7
-         j3wcak7sdHaCWs8LUuEx0ETdy9nF5oVFr9zWzF4RA0WQTGncifRLYJtkNw55znA5NreY
-         TxR/9RQLJGKJ8J+mSnGFoUStPWnJljpqXI+ZIGOUbhs4GK3XX+LUD4HTxrWs7o6SIig1
-         qykQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=55M23fIBKyr8UknSe2QfC4lOvamfuOO1MWAAx+e2vC0=;
-        b=GEHzHvKtvyiRgUT5mO3KxZb8gn+USQHZxrf5xWHjdOBPG4i1AYPN7gKI5fCqyJjiut
-         uFPKcyiy/e27FF1vLl31tUwLd/dULFA3RqQ3lGkgsqQhdnyymUcSmTcAoi+F5XUKbhcz
-         5lzn/i1Uahzmt18VQs0AQo/D8JKK7iaoms81odlWcoqyjDUCr9AbowCeR+mFsSfTVdI/
-         fFxFAbLxs1oDAMApS/F7RovkdhEGiBkYuwL7Dptfh5QMFumXW6ESnrQYts8d/sGkg65Z
-         rWKq/FG4eEGwNP4302BwruZdRSPnBdZBxTWuQD1eAEEd5XHmptMa82SoiW/PN+66ij/v
-         oHKw==
-X-Gm-Message-State: AOAM530Rq08hGTFdf31tyaEhmFsls2cTJxCN9ZU9keOXLfDeZt6DwzDG
-        eAhvErPA3HBZdoN0z1Lb2y6EGku7wVk+YRo8KGw=
-X-Google-Smtp-Source: ABdhPJx46s/q6mEolYXQuE3gnUPpUwExXCVWjupcaUxMbF59YWDoirDqB7ORt9sBZOva8UO/Ch+v/+PuMDfYZVJVUjM=
-X-Received: by 2002:a63:d648:: with SMTP id d8mr22523973pgj.4.1600350422955;
- Thu, 17 Sep 2020 06:47:02 -0700 (PDT)
+        id S1727458AbgIQObI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 10:31:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727589AbgIQObD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 10:31:03 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90F0E20684;
+        Thu, 17 Sep 2020 14:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600353046;
+        bh=oI259mpyrtE1FuIf0ohrhJ+YfhIrCCtcnhpQqYeYZBE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RVtyz10UpZJ5dti/zoEH1OaCzrpfv9R1u9sXrai4/fc6veUFG+APd4Enps0yvvOq+
+         RC1CilRuvccrkZdyUpTqMMlABccv7u0QCqQ7DEbc7mn/vDehQa2TaMGJc6aq48rLIZ
+         WDp4JxZw4zTS68BvjaqKmp5zN4jqFATcpWam3LZU=
+Date:   Thu, 17 Sep 2020 16:31:18 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        pavel@denx.de, stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.8 000/177] 5.8.10-rc1 review
+Message-ID: <20200917143118.GB3941575@kroah.com>
+References: <20200915140653.610388773@linuxfoundation.org>
+ <4784c765af9d4be98276fb717f77d756@HQMAIL105.nvidia.com>
 MIME-Version: 1.0
-References: <20200908224006.25636-1-digetx@gmail.com> <20200908224006.25636-15-digetx@gmail.com>
- <20200917123755.GO3515672@ulmo>
-In-Reply-To: <20200917123755.GO3515672@ulmo>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 17 Sep 2020 16:46:45 +0300
-Message-ID: <CAHp75VeWq_GzJ_yZag2yceuUDqPiMRWEa4XNYT5uPwXCzrsb7g@mail.gmail.com>
-Subject: Re: [PATCH v7 14/34] i2c: tegra: Clean up probe function
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4784c765af9d4be98276fb717f77d756@HQMAIL105.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 3:37 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Wed, Sep 09, 2020 at 01:39:46AM +0300, Dmitry Osipenko wrote:
+On Wed, Sep 16, 2020 at 08:17:36AM +0000, Jon Hunter wrote:
+> On Tue, 15 Sep 2020 16:11:11 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.8.10 release.
+> > There are 177 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 17 Sep 2020 14:06:12 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.10-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.8:
+>     14 builds:	14 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     60 tests:	60 pass, 0 fail
+> 
+> Linux version:	5.8.10-rc1-g337aafeeb4cd
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-...
+Thanks for testing all of these and letting me know.
 
-> > +     ret = devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
-> > +                            IRQF_NO_SUSPEND, dev_name(&pdev->dev),
-> > +                            i2c_dev);
-> > +     if (ret)
-> > +             return ret;
->
-> Is it safe to install the interrupt handler at this point? What if,
-> perhaps because some bootloader didn't properly quiesce the I2C
-> controller, an interrupt triggers immediately after this?
-
-It\s easy to check with debug shared IRQ, but here IRQ is not shared...
-So, with a hack into the code and enabled debug it will be achievable to test.
-
-And you probably meant that IRQ triggers *before* the handler is in place?
-
--- 
-With Best Regards,
-Andy Shevchenko
+greg k-h
