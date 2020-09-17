@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC4CC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C72FC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB27521655
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 343FC221E3
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:36:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZrVq98D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWxRVmNU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbgIQLdU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59448 "EHLO
+        id S1726803AbgIQLfl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 07:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbgIQLbt (ORCPT
+        with ESMTP id S1726863AbgIQLfb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:31:49 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6189C06174A;
-        Thu, 17 Sep 2020 04:31:48 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id t10so1688256wrv.1;
-        Thu, 17 Sep 2020 04:31:48 -0700 (PDT)
+        Thu, 17 Sep 2020 07:35:31 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC940C06178A;
+        Thu, 17 Sep 2020 04:35:30 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id s13so1621190wmh.4;
+        Thu, 17 Sep 2020 04:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=UM35Rz/z6Kt1fk3hrJcZfv0YfHRgM9+Q33CFv7aCdSI=;
-        b=XZrVq98D8H2TZ9pw8D4QrlP/urfWYfB05/TiUS9qO0mrL/hlemKvYDgTYsV2v1Cju8
-         mBhS44ceeYeHW/GMFvSYld/fC01ok8+yOzE6LXPDgsWq7tmXB7zlALhC7GY8VP06Dgga
-         hDVuPgf/SXa9s5ZasxUxJBMkkECKGxxaou6+SLj3ovP9h+OjsGDSamDs0jdVJNjyx6iN
-         hcLyLgcb7/GA9dOzhZeJl/qF2sdIGScnEaJCwy3slrRQZGwQ7ifZgYgCi9VaB2EcCzGM
-         YAw5A6+RSutPhvPckfAgibcPKGUrmReJggYRnnK7tWoPUe7VqtvnecQy94VqtNwjEuUL
-         lqQA==
+        bh=Mus1g7E9Rtbt7/nepGmgFQZVliCzO5VVruzhgZKok1k=;
+        b=GWxRVmNUwNR9Ey5zhEDaCxB8vv1SHPfruBwXls5beC7jujQF9UjZwyDycRPrdLdOsv
+         Z3BWpYUlraPEsFkTHs6OIfyGhK4h4DbqGQNG06+ULS73/C7I4zuUeYnkG+NkQAE8iZDT
+         KdFapj1rUlWsf87R61RI3QAv1mDuGo6oZt4uTl5orzGpEyvoCV7beECuaoacvZsaJRgZ
+         JgNUyA6qGFpyc5YhTVZTHQlZ5Z3FmdomkquHtR6/hE+RbYFffAExC+LO62KD0pvkfH1s
+         NM1qWpBIUrU+/2DMMXCfHVZXL+x+BsE8ONfghfOhvS0JzzmfgeBYIgRmubvFgDZECiGY
+         ztcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UM35Rz/z6Kt1fk3hrJcZfv0YfHRgM9+Q33CFv7aCdSI=;
-        b=btpV8qV9R8wHwq6uIRMkeDs2jJutqUqudDP+tW5xVyOqKoJ18bRZmEt+EAYGC89cGk
-         JPOklIa/7oKppiCMNb83ZEsKQ6bMEtvYDVWG53vgcLbEp+Hx0kbFtc8A9f0O0D1Z5o6Z
-         YJAGytUdt9pgAJpwCATOkiYqN9Uq8D3UEyWzEhX/MEbZD+xXVhKL4saSYfS9DJHDTpbG
-         EyeQc7MJx1JytMcUc+IFPrXkdFWTc7HGO6vc7hUOMEs42MstO2gpFfd3XNN1Nfy8syvv
-         7eeeP2fCBtDUqVIc/DfYDhSoyX2IH5OpaHu2A8PV1cUQi+QjXNiTtnOBI2U5PKhCEXO7
-         DuHw==
-X-Gm-Message-State: AOAM530w593Iv3r/DzhhioZJmx5munOyPNPD44MWxZa6lFYXUksIJnm8
-        Sv8FfnKl4mbOGsbdAXYyRtXxg0Eei566cg==
-X-Google-Smtp-Source: ABdhPJyEaskOyNjz75uwych9h7nYbJr3AvRQYu2dfBa3uHwINdIg81F4pYnhyNS0H1s1zO1ebrv6CQ==
-X-Received: by 2002:a5d:43cf:: with SMTP id v15mr32479370wrr.269.1600342307502;
-        Thu, 17 Sep 2020 04:31:47 -0700 (PDT)
+        bh=Mus1g7E9Rtbt7/nepGmgFQZVliCzO5VVruzhgZKok1k=;
+        b=PwzDx/dHVDEwmrpky8s87RHTh7oxJ22ti5MUl5QWTxFboXTnfLwGOgWnM/XS1po6Od
+         9B3HgujZsxPGVmg7yBCMBD4DvOxyZFSoOrB1PXaX2E133ZXkEHZucn12ZpSS78SBGTsB
+         HZnCiMd4c7nOKkEKVRBmSxLHTuhpIl/38pHW43ozCft7bEhJlIVhQ8dKfoFZPSfzEOTw
+         D+YzKMJTJ/fViy3Q2/avz9n9QJkdK86Hll8HxByLO5yOnzScamg/JWrIq442oAnwfjWK
+         dNz5ATomBnEWRr4gwelAloyfSdiQYmCyrSarC+IvlK1RhEIndKUCRDY8nxnIJn2EWgl5
+         sq9Q==
+X-Gm-Message-State: AOAM533hgonaKYptMFh4yxh72d6VXGstd1Amtz82CSvX05pMwkN+Cl9y
+        xjobpxJsHnVUa4MDzChZRoNp5Vckrs4ABQ==
+X-Google-Smtp-Source: ABdhPJwi+j3bVV9XLDKvfIFeifnu1UdiG8GWsRRGY75Du3lRw3z/gOOcDakf0MzklQhLjWAvLqdD9A==
+X-Received: by 2002:a05:600c:20c:: with SMTP id 12mr10078544wmi.40.1600342529387;
+        Thu, 17 Sep 2020 04:35:29 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id l126sm10205995wmf.39.2020.09.17.04.31.45
+        by smtp.gmail.com with ESMTPSA id i83sm11166196wma.22.2020.09.17.04.35.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:31:46 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 13:31:44 +0200
+        Thu, 17 Sep 2020 04:35:27 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 13:35:26 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,56 +69,57 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/34] i2c: tegra: Use platform_get_irq()
-Message-ID: <20200917113144.GU3515672@ulmo>
+Subject: Re: [PATCH v7 13/34] i2c: tegra: Move out all device-tree parsing
+ into tegra_i2c_parse_dt()
+Message-ID: <20200917113526.GW3515672@ulmo>
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-12-digetx@gmail.com>
+ <20200908224006.25636-14-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QOa9dl9wYIBIim/b"
+        protocol="application/pgp-signature"; boundary="NO4xtVTk6ycZDAf4"
 Content-Disposition: inline
-In-Reply-To: <20200908224006.25636-12-digetx@gmail.com>
+In-Reply-To: <20200908224006.25636-14-digetx@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---QOa9dl9wYIBIim/b
+--NO4xtVTk6ycZDAf4
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 09, 2020 at 01:39:43AM +0300, Dmitry Osipenko wrote:
-> Use common helper for retrieval of the interrupt number in order to make
-> code cleaner. Note that platform_get_irq() prints error message by itself.
+On Wed, Sep 09, 2020 at 01:39:45AM +0300, Dmitry Osipenko wrote:
+> Move out code related to device-tree parsing from the probe function into
+> tegra_i2c_parse_dt() in order to make code more consistent.
 >=20
 > Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---QOa9dl9wYIBIim/b
+--NO4xtVTk6ycZDAf4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jSSAACgkQ3SOs138+
-s6EXkA/6AvPlAXn38dxmP+5hB1FF0aYyDDH2Z0CrYPtYrLfr0lOPjJGHjs8aP184
-fnc3Zwt4/0Ep53tSTgxBNZfQQe+F5bgOHerUbjG6svkWbHs0cXVQ1UlYJn4uzcwz
-Aw8WdQTIXHUmviM6euI3Rhm7PwbNeEcXb+0nWkDGAwcExkUtODPTWinYOYvyAPjR
-fnObgvZxHF1ThN/BhlONzr2GoLJxDYExcXe44rkS1iKi8uVl7hn0pZNJWgVDeD7G
-OYG7bsg3cAxHpKKB2C6fLJoJ+gExYhtl0KOnPmERw9iB2wH02siOssv00VRquh6K
-kxBX5kJ7mD7VYOFRLo4qT9K4U1oAqr6MCelFv1GEEdDkDyUhQQ3HR0OENCv3JDEi
-ivqcjSxb2UBrqSh1aHbgpD0u7SS13+/IvjePV40SB7WsYJrDHChQ6UOcVN+IDKxt
-UHdjk/jbD3HZZFpQHD5eAif6PTbUoYlhfBNxlR+AMJ0nUoS7+3Y5I6CwphUXvbuu
-WB08aTvXBMxGRlpxLIWuUWqJMceyFKA38o6ys1GqBFSp5N0yWusjTJCtdOvJm4e4
-S248kJjIxC1Q+DHcKBEKGkNeiZ6Y6jrJIYEaNzXs9VyrjnDAAERfijbouASCd6gX
-QueZpDaRTxB61DTuv4QMJqJeCWPrxTlxHOFqj/TWGy7ZUuPts3c=
-=sxyt
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jSf0ACgkQ3SOs138+
+s6EdSA//fSTxfL0lQvOvL75JmgW/zF9J1QXfQzIC7XqKLeVa26a5695M346bbUuh
+2DiJpiTXoAKxbqVg+X/M1ptf+04/cACAMj4jyaCaFIjVngsCtV96bRNcZFTkjmH0
+kL5KcPHbvKi5rRfyKjodfDTworIbMg8WqDabhUl1pXL6SyctkkLNreXXlDuKMUbx
+vo/I2xu8G4bxHAiBA+mBg3l9nJ70vENR4GlT8NRhmaGCnaEtYUYtpgKXUq25Y5Gc
+/OIibcJ4hErXLjFnfaEf4wUtkVTlRlz/yB8jDSVqFu/E/ybsW0pZO//LiIwwIpTn
+abmXuOzJxQPhkay8fdE8jymUALh5vpb1iE8eEGHHZOibb8Q6UD3dXZKuZcWqNGZP
+Myj/ROITZ6nTpZSp5x4NThxltO9J6L+5WVyFyq3ZqRV2WBeDmzfayXePdf0WuW6F
+aoT8bL049X5fNl+wg8dCI91NKHxeOwXk4ns22Zy5UdO6YE701GG02VeAg/eifb3y
+3Sj41pcdsOQR4JpDB2wSJFOrtuiEvHzUuc2VQJjtUany7dArhLp9FmxFtggIh9Er
+gZApT//JSGbdNMju+n6UAQRIZnwrFUir2IRdGqFdHKePVBz3pcPeLyuWfCLe0/7o
+CVpKTi3HwfRg4sXpWh0ePK0p3RvjjpTPX8yghsGXGXRtT0/9NHQ=
+=tV8d
 -----END PGP SIGNATURE-----
 
---QOa9dl9wYIBIim/b--
+--NO4xtVTk6ycZDAf4--
