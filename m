@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EFBC433E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2E4C43461
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC94F208DB
+	by mail.kernel.org (Postfix) with ESMTP id 0568E21974
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tQSs3303"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTkhBl7H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbgIQKIh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:08:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46494 "EHLO
+        id S1726446AbgIQKIi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:08:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbgIQKIe (ORCPT
+        with ESMTP id S1726433AbgIQKIh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:08:34 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263E6C06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:34 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id z1so1421634wrt.3
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:34 -0700 (PDT)
+        Thu, 17 Sep 2020 06:08:37 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF68C06174A
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:36 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id q9so1392644wmj.2
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TiJR36A6WzVMF6xqdDOcepS7F4dEZ9OVgowRWFZ1uks=;
-        b=tQSs3303aEdukcfpHyNesIC7F63IBi+loPYOYanS55q/KqNEMlKQyZJOqWW+PDaIdy
-         Hzl3dmK1CsDW3oNj4JMtelUVB2zs2H+s2LfZFYJ8a1BAp3lVK0SlCl3LKFcr1Rg7ectM
-         QkdA535G27LaZOykS9/XPKmtEJkM52bEgyitkf8ubOYdWMAjTu9zqftA5WbZ4aXOaLj+
-         2W2+r58U0BMhzBzrRCwwhxGQjSRFZx1MC83qMtwkOw2V46YrAzqqCFOLRCKzO4cEq/5g
-         oI86hCCnPTqZtN82QvnmAt/wb3RBr/FbyVi464WaR/JxJy6q1nUfzm8TcdLHGQA9+B9+
-         ORFw==
+        bh=WwtmUU2xza1QbboPfaTnSXPWTgY+PkqC6A8ukr3UUPc=;
+        b=KTkhBl7H0eZUuai+qJNFzWV6ys6cgQgB8upaKWfbdEkSGKM+oNzMHbl9MgFGeUjHOQ
+         5gNcTtld7F5N2L3UplvVv+5tqcs/R2Dd2o1Sp3rJ+zlxS3Iekry7PSnXOUl1KtW+WoH0
+         oRgur9jhD/Z/Xx9SYzyZgDvS1ZkaidmLkuqz9ZC8qgZgENDz2nXh8R+U7TJ30AIS1cLC
+         emRr9uNnloK3sxP8GI0tMgDptYWpJr89OtzkyZevdy/WkC9jp5UX7UuQJQ36Lm55iokm
+         wzljFSQM2dvxX+5pEpkw+vPbgCd0UZsgCl56eSqPBz6yMsiGyjHsQr9T6y59L65nOjwJ
+         RskQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TiJR36A6WzVMF6xqdDOcepS7F4dEZ9OVgowRWFZ1uks=;
-        b=Ky0mqEOjdhUO7upbcEX+RBxd0NJA9/P/R6k/yrquk+L/+jBpo7VZqSgYXxt2MwxVtl
-         fAp911/omKzCHdHKirCpnIx5mN6TUF4SQSQAyJu6y/oOGqaoo8v3lKz/jGClppamKCGd
-         OZJcDBpL4nUxjq7M87GxKBfl76z8HzBrgA3P5JgHsIeh//VinD/AivLqWJS8J7/khuz/
-         ZyU5ANVzEXsWG9qf4gW/40VziAPk1zAU+iBl42V/0K3VsMtT21ECwPqvdPYfJX10KQfQ
-         ER5OW9u4NWectW7aujFONjL+gu+dpcloeNzAmJn+UJs6+Q+wv9uNNRg5PvdGdezYWqCh
-         9F+g==
-X-Gm-Message-State: AOAM530jXylom+bPLQ5f+Hx0AhPozrwXn38P3/OhA8IkfODjikP/y6R8
-        juLMIlndpZi7i9mL63Wdy6M=
-X-Google-Smtp-Source: ABdhPJzKfbB/ieqKnYMMtGHW2A1dx/j0OzK0xW4LCwmh8FFA4m8tRA17CVIdhPuORy0L8AIxISw+kA==
-X-Received: by 2002:adf:9bcf:: with SMTP id e15mr26392211wrc.93.1600337312861;
-        Thu, 17 Sep 2020 03:08:32 -0700 (PDT)
+        bh=WwtmUU2xza1QbboPfaTnSXPWTgY+PkqC6A8ukr3UUPc=;
+        b=W8L772vM3QsK5u63vbmnulyo1+O3TpjMy8GD0iQauNNMX0mOSICDYPOki0D2KOqO5t
+         D5NMx9gT/TCNqUFbne4r3USVXQJT3dPB2v+4hLiRwoCBzuzbla2jK4SeDlnd5dfuKwo7
+         eCoGVOw2uO2bRR2EQameEThYX1AsC9L/Rh2bnrGlkyIJtf8mYl/3tzNBgBjkDVRyUrer
+         z7uY8DfC1/3lUQdZEU3pM4CVQE0kKw1yBhZfz93uy5luIWOc82Rr1CK2Hdc2GKKVsH6U
+         W38f2koS6M4+BRe2mEesDrmEGdLfJiW0A1j+yqBO3yMuOneR9azwp9VpD+1lYSMRDftp
+         XEIQ==
+X-Gm-Message-State: AOAM531sBzhF3QGqvCv0ury0k7LTbl0PM5w9BF20BPa8csZyqGyIPJmy
+        K3qQV1iqha9frHZ7e0tNUXbKGd7pBGpo0A==
+X-Google-Smtp-Source: ABdhPJzkoguP19vjgJoOGnU/guNx1ONPKYb4kWR/mdBd3TJrgxl545Lsfmplrvl513m1YOQ2jBcDvQ==
+X-Received: by 2002:a1c:e4c5:: with SMTP id b188mr8233781wmh.67.1600337315256;
+        Thu, 17 Sep 2020 03:08:35 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id h76sm11507895wme.10.2020.09.17.03.08.31
+        by smtp.gmail.com with ESMTPSA id h2sm39346270wrp.69.2020.09.17.03.08.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:08:31 -0700 (PDT)
+        Thu, 17 Sep 2020 03:08:34 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 13/14] firmware: tegra: Enable BPMP support on Tegra234
-Date:   Thu, 17 Sep 2020 12:07:51 +0200
-Message-Id: <20200917100752.3516153-14-thierry.reding@gmail.com>
+Subject: [PATCH v2 14/14] arm64: tegra: Initial Tegra234 VDK support
+Date:   Thu, 17 Sep 2020 12:07:52 +0200
+Message-Id: <20200917100752.3516153-15-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917100752.3516153-1-thierry.reding@gmail.com>
 References: <20200917100752.3516153-1-thierry.reding@gmail.com>
@@ -77,63 +77,335 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Enable support for the BPMP on Tegra234 to avoid relying on Tegra194
-being enabled to pull in the needed OF device ID table entry.
+The NVIDIA Tegra234 VDK is a simulation platform for the Orin SoC. It
+supports a subset of the peripherals that will be available in the final
+chip and serves as a bootstrapping platform.
 
-On simulation platforms the BPMP hasn't booted up yet by the time we
-probe the BPMP driver and the BPMP hasn't had a chance to mark the
-doorbell as ringable by the CCPLEX. This corresponding check in the
-BPMP driver will therefore fail. Work around this by disabling the
-check on simulation platforms.
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/firmware/tegra/bpmp.c | 3 ++-
- drivers/mailbox/tegra-hsp.c   | 9 ++++++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+Changes in v2:
+- drop compatible string for BPMP shared memory nodes
+- add fallback compatible string for RTC
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 4d93d8925e14..0742a90cb844 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -856,7 +856,8 @@ static const struct tegra_bpmp_soc tegra210_soc = {
- 
- static const struct of_device_id tegra_bpmp_match[] = {
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
--    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
- 	{ .compatible = "nvidia,tegra186-bpmp", .data = &tegra186_soc },
- #endif
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 834b35dc3b13..e07091d71986 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -13,6 +13,8 @@
- #include <linux/pm.h>
- #include <linux/slab.h>
- 
-+#include <soc/tegra/fuse.h>
+ arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+ .../boot/dts/nvidia/tegra234-sim-vdk.dts      |  40 ++++
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 189 ++++++++++++++++++
+ drivers/soc/tegra/Kconfig                     |  10 +
+ include/dt-bindings/clock/tegra234-clock.h    |  14 ++
+ include/dt-bindings/reset/tegra234-reset.h    |  10 +
+ 6 files changed, 264 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra234.dtsi
+ create mode 100644 include/dt-bindings/clock/tegra234-clock.h
+ create mode 100644 include/dt-bindings/reset/tegra234-reset.h
+
+diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+index 2273fc5db19c..9296d12d11e9 100644
+--- a/arch/arm64/boot/dts/nvidia/Makefile
++++ b/arch/arm64/boot/dts/nvidia/Makefile
+@@ -9,3 +9,4 @@ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2894-0050-a08.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p2771-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p2972-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra194-p3509-0000+p3668-0000.dtb
++dtb-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra234-sim-vdk.dtb
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+new file mode 100644
+index 000000000000..f6e6a24829af
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
 +
- #include <dt-bindings/mailbox/tegra186-hsp.h>
++#include "tegra234.dtsi"
++
++/ {
++	model = "NVIDIA Tegra234 VDK";
++	compatible = "nvidia,tegra234-vdk", "nvidia,tegra234";
++
++	aliases {
++		sdhci3 = "/cbb@0/sdhci@3460000";
++		serial0 = &uarta;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200n8 earlycon=uart8250,mmio32,0x03100000";
++		stdout-path = "serial0:115200n8";
++	};
++
++	cbb@0 {
++		serial@3100000 {
++			status = "okay";
++		};
++
++		sdhci@3460000 {
++			status = "okay";
++			bus-width = <8>;
++			non-removable;
++			only-1-8-v;
++		};
++
++		rtc@c2a0000 {
++			status = "okay";
++		};
++
++		pmc@c360000 {
++			nvidia,invert-interrupt;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+new file mode 100644
+index 000000000000..f0efb3a62804
+--- /dev/null
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -0,0 +1,189 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <dt-bindings/clock/tegra234-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/mailbox/tegra186-hsp.h>
++#include <dt-bindings/reset/tegra234-reset.h>
++
++/ {
++	compatible = "nvidia,tegra234";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	bus@0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		ranges = <0x0 0x0 0x0 0x40000000>;
++
++		misc@100000 {
++			compatible = "nvidia,tegra234-misc";
++			reg = <0x00100000 0xf000>,
++			      <0x0010f000 0x1000>;
++			status = "okay";
++		};
++
++		uarta: serial@3100000 {
++			compatible = "nvidia,tegra234-uart", "nvidia,tegra20-uart";
++			reg = <0x03100000 0x10000>;
++			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA234_CLK_UARTA>;
++			clock-names = "serial";
++			resets = <&bpmp TEGRA234_RESET_UARTA>;
++			reset-names = "serial";
++			status = "disabled";
++		};
++
++		mmc@3460000 {
++			compatible = "nvidia,tegra234-sdhci", "nvidia,tegra186-sdhci";
++			reg = <0x03460000 0x20000>;
++			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA234_CLK_SDMMC4>;
++			clock-names = "sdhci";
++			resets = <&bpmp TEGRA234_RESET_SDMMC4>;
++			reset-names = "sdhci";
++			dma-coherent;
++			status = "disabled";
++		};
++
++		fuse@3810000 {
++			compatible = "nvidia,tegra234-efuse";
++			reg = <0x03810000 0x10000>;
++			clocks = <&bpmp TEGRA234_CLK_FUSE>;
++			clock-names = "fuse";
++		};
++
++		hsp_top0: hsp@3c00000 {
++			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
++			reg = <0x03c00000 0xa0000>;
++			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "doorbell", "shared0", "shared1", "shared2",
++					  "shared3", "shared4", "shared5", "shared6",
++					  "shared7";
++			#mbox-cells = <2>;
++		};
++
++		hsp_aon: hsp@c150000 {
++			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
++			reg = <0x0c150000 0x90000>;
++			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++			/*
++			 * Shared interrupt 0 is routed only to AON/SPE, so
++			 * we only have 4 shared interrupts for the CCPLEX.
++			 */
++			interrupt-names = "shared1", "shared2", "shared3", "shared4";
++			#mbox-cells = <2>;
++		};
++
++		rtc@c2a0000 {
++			compatible = "nvidia,tegra234-rtc", "nvidia,tegra20-rtc";
++			reg = <0x0c2a0000 0x10000>;
++			interrupt-parent = <&pmc>;
++			interrupts = <73 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		pmc: pmc@c360000 {
++			compatible = "nvidia,tegra234-pmc";
++			reg = <0x0c360000 0x10000>,
++			      <0x0c370000 0x10000>,
++			      <0x0c380000 0x10000>,
++			      <0x0c390000 0x10000>,
++			      <0x0c3a0000 0x10000>;
++			reg-names = "pmc", "wake", "aotag", "scratch", "misc";
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++		};
++
++		gic: interrupt-controller@f400000 {
++			compatible = "arm,gic-v3";
++			reg = <0x0f400000 0x010000>, /* GICD */
++			      <0x0f440000 0x200000>; /* GICR */
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++
++			#redistributor-regions = <1>;
++			#interrupt-cells = <3>;
++			interrupt-controller;
++		};
++	};
++
++	sysram@40000000 {
++		compatible = "nvidia,tegra234-sysram", "mmio-sram";
++		reg = <0x0 0x40000000 0x0 0x50000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x40000000 0x50000>;
++
++		cpu_bpmp_tx: shmem@4e000 {
++			reg = <0x4e000 0x1000>;
++			label = "cpu-bpmp-tx";
++			pool;
++		};
++
++		cpu_bpmp_rx: shmem@4f000 {
++			reg = <0x4f000 0x1000>;
++			label = "cpu-bpmp-rx";
++			pool;
++		};
++	};
++
++	bpmp: bpmp {
++		compatible = "nvidia,tegra234-bpmp", "nvidia,tegra186-bpmp";
++		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB
++				    TEGRA_HSP_DB_MASTER_BPMP>;
++		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++
++		bpmp_i2c: i2c {
++			compatible = "nvidia,tegra186-bpmp-i2c";
++			nvidia,bpmp-bus-id = <5>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			reg = <0x000>;
++
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		status = "okay";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupt-parent = <&gic>;
++		always-on;
++	};
++};
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 6bc603d0b9d9..976dee036470 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -119,6 +119,16 @@ config ARCH_TEGRA_194_SOC
+ 	help
+ 	  Enable support for the NVIDIA Tegra194 SoC.
  
- #include "mailbox.h"
-@@ -322,7 +324,12 @@ static int tegra_hsp_doorbell_startup(struct mbox_chan *chan)
- 	if (!ccplex)
- 		return -ENODEV;
++config ARCH_TEGRA_234_SOC
++	bool "NVIDIA Tegra234 SoC"
++	select MAILBOX
++	select TEGRA_BPMP
++	select TEGRA_HSP_MBOX
++	select TEGRA_IVC
++	select SOC_TEGRA_PMC
++	help
++	  Enable support for the NVIDIA Tegra234 SoC.
++
+ endif
+ endif
  
--	if (!tegra_hsp_doorbell_can_ring(db))
-+	/*
-+	 * On simulation platforms the BPMP hasn't had a chance yet to mark
-+	 * the doorbell as ringable by the CCPLEX, so we want to skip extra
-+	 * checks here.
-+	 */
-+	if (tegra_is_silicon() && !tegra_hsp_doorbell_can_ring(db))
- 		return -ENODEV;
- 
- 	spin_lock_irqsave(&hsp->lock, flags);
+diff --git a/include/dt-bindings/clock/tegra234-clock.h b/include/dt-bindings/clock/tegra234-clock.h
+new file mode 100644
+index 000000000000..2c82072950ee
+--- /dev/null
++++ b/include/dt-bindings/clock/tegra234-clock.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018-2019, NVIDIA CORPORATION. All rights reserved. */
++
++#ifndef DT_BINDINGS_CLOCK_TEGRA234_CLOCK_H
++#define DT_BINDINGS_CLOCK_TEGRA234_CLOCK_H
++
++/** @brief output of gate CLK_ENB_FUSE */
++#define TEGRA234_CLK_FUSE			40
++/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC4 */
++#define TEGRA234_CLK_SDMMC4			123
++/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
++#define TEGRA234_CLK_UARTA			155
++
++#endif
+diff --git a/include/dt-bindings/reset/tegra234-reset.h b/include/dt-bindings/reset/tegra234-reset.h
+new file mode 100644
+index 000000000000..b3c63be06d2d
+--- /dev/null
++++ b/include/dt-bindings/reset/tegra234-reset.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018-2020, NVIDIA CORPORATION. All rights reserved. */
++
++#ifndef DT_BINDINGS_RESET_TEGRA234_RESET_H
++#define DT_BINDINGS_RESET_TEGRA234_RESET_H
++
++#define TEGRA234_RESET_SDMMC4			85
++#define TEGRA234_RESET_UARTA			100
++
++#endif
 -- 
 2.28.0
 
