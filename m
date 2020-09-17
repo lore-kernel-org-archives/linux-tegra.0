@@ -2,145 +2,83 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2CFC2BBD1
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E2AC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39359208E4
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:44:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNVzEkwh"
+	by mail.kernel.org (Postfix) with ESMTP id 8806321D43
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgIQMod (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 08:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbgIQMoX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 08:44:23 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E88C06174A;
-        Thu, 17 Sep 2020 05:44:22 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id m6so1939324wrn.0;
-        Thu, 17 Sep 2020 05:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WPlmUK6xwfYIFf3eWa41i7jGBkJm7AGo8SuUlHspOHo=;
-        b=oNVzEkwh40IxzO/aY6JQzbYAPpqvISEzTYDWD2bUR4qN45wRoNgiHxyBi9jWKdo3Hk
-         4axmalkFJNo/1tKG7y7Ww0FlAJhF4I+TpP/IYsn9URi9FnzSVAA30Ekrrmxf1qi9gQ5Y
-         sLLzb+MKBTcpSj2RGjEYn864kGGMgOAL7BXcgoySg6fjY6SefDMklVOiKcL9wvgnFBau
-         /r15uSaU0tE41865RuC4H+V4GLCTrdSltEAwXcjVnsmWbRpjcO1Qfv0kIO8Ugw+LQber
-         JoLlcrPxHQMh8oS1AShVm2Caxy0OyYCKT0DHQWhwQeCOCPE5l9ukwpGhRZJko1pY5avO
-         YLGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WPlmUK6xwfYIFf3eWa41i7jGBkJm7AGo8SuUlHspOHo=;
-        b=bHzNgd0+g0tE/CC/ezfuSyjEXbMcZMQD7pnBgkeVIBsU537P/vb7Kbm3ZpSB3NyWRF
-         2aIr4dw8Liy/Ie8L8xvBOz264Xw+Vdb8wolq4EEZbgFTWD8Woa020quR/tC3iYwElCvm
-         A0m5zdjsVwVVwIH1KFxgIFW5swQzJ+adPjw0L1UR1eCDBzrl4cl5eduQUC89UhZvykSp
-         5UqCR/dp6hZqPSssocnYbngZYliHRe7nYybBu59a001fO/2q1PM7cniBCKm83TMuc6l5
-         n01LEC/LpyVF6v5n0KCkI8OZmNAapcce/aZDnI+cXWLHGV3uCsT1/5mNwTCF3T4Y0Rn8
-         q4nQ==
-X-Gm-Message-State: AOAM532VOe3a+mcwBiJdNvmR/C1jYikR04PG65Kf9xVA9HNi5/J0VqFV
-        vDekFWKysUMuUUTG7TkvHIY=
-X-Google-Smtp-Source: ABdhPJxC+ACx1y00LV9cPUIOkPlWKgy7JaEDqL3m8hrxOjM4ZoCyav9AC2Gv/4UV9aLYz9cWRi0Xgw==
-X-Received: by 2002:adf:fe42:: with SMTP id m2mr31464066wrs.367.1600346661188;
-        Thu, 17 Sep 2020 05:44:21 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id h2sm39945128wrp.69.2020.09.17.05.44.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 05:44:20 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 14:44:18 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 00/34] Improvements for Tegra I2C driver
-Message-ID: <20200917124418.GU3515672@ulmo>
-References: <20200908224006.25636-1-digetx@gmail.com>
- <CAHp75Vdh6bErqeO-ki2xsS9jEeoy4mKF1h0Jw_HM6UpukqH_BQ@mail.gmail.com>
- <854a0ed8-35dd-0b25-6c53-4915be0e33e9@gmail.com>
- <20200909154902.GA916@kunai>
+        id S1726823AbgIQMvI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 08:51:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13240 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727052AbgIQMut (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 08:50:49 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 41FDA76BA2B16871A86E;
+        Thu, 17 Sep 2020 20:50:46 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 17 Sep 2020 20:50:37 +0800
+From:   Qinglang Miao <miaoqinglang@huawei.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        "Qinglang Miao" <miaoqinglang@huawei.com>
+Subject: [PATCH -next v2] memory: tegra: Convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Thu, 17 Sep 2020 20:51:14 +0800
+Message-ID: <20200917125114.103598-1-miaoqinglang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KCGU/3tJP9FZjbY4"
-Content-Disposition: inline
-In-Reply-To: <20200909154902.GA916@kunai>
-User-Agent: Mutt/1.14.6 (2020-07-11)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
---KCGU/3tJP9FZjbY4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+---
+v2: based on linux-next(20200917), and can be applied to
+    mainline cleanly now.
 
-On Wed, Sep 09, 2020 at 05:49:02PM +0200, Wolfram Sang wrote:
-> On Wed, Sep 09, 2020 at 06:36:50PM +0300, Dmitry Osipenko wrote:
-> > 09.09.2020 12:11, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > On Wed, Sep 9, 2020 at 1:40 AM Dmitry Osipenko <digetx@gmail.com> wro=
-te:
-> > >>
-> > >> Hello!
-> > >>
-> > >> This series performs refactoring of the Tegra I2C driver code and ha=
-rdens
-> > >> the atomic-transfer mode.
-> > >=20
-> > > I think there is still room for improvement, but let not block it, FW=
-IW,
-> > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> >=20
-> > Thank you and Micha=C5=82 for helping with the review! Very appreciate =
-this!
->=20
-> Yes, thanks everyone so far!
->=20
-> Is there some internal testfarm where this should be regression tested?
-> Otherwise, I'd trust Dmitry, Andy, and Micha=C5=82 here and would apply it
-> this week after some generic high-level review.
+ drivers/memory/tegra/tegra124-emc.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-I'll queue this for a run on the test farm. I had a couple of minor
-comments, but after going through the full series I'm pretty happy
-overall with the result, so I'll go over my comments again and will
-reevaluate.
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index ba5cb1f4d..76ace42a6 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1060,19 +1060,7 @@ static int tegra_emc_debug_available_rates_show(struct seq_file *s,
+ 	return 0;
+ }
+ 
+-static int tegra_emc_debug_available_rates_open(struct inode *inode,
+-						struct file *file)
+-{
+-	return single_open(file, tegra_emc_debug_available_rates_show,
+-			   inode->i_private);
+-}
+-
+-static const struct file_operations tegra_emc_debug_available_rates_fops = {
+-	.open = tegra_emc_debug_available_rates_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(tegra_emc_debug_available_rates);
+ 
+ static int tegra_emc_debug_min_rate_get(void *data, u64 *rate)
+ {
+-- 
+2.23.0
 
-Thierry
-
---KCGU/3tJP9FZjbY4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jWiIACgkQ3SOs138+
-s6GyBQ//eTPEG9XrbiSZuZ/pokmEuYx3ZKqv/WXycZTlqx7dXe0FAqHrwGm0id00
-IqlDYhim9YMkjsCREzyevGrEW2Joua02DCLyMEasJrZIFb82ttFTZ7kthKsr+iqN
-AYx1tmsfo7LhRbRciW/QPUDunWVjrvBW7ts95hv6/3Dg89wSscpJYSjba1scfZjV
-lwxgvYRN//RmpTgiln+yWVlAgF4tkZPcRBAVeH0b0DJkuIGRDAbawl9n0rLkTk2Y
-nC9PahvrSX8Z100WXmIxEeBNDSYJq9mGAU7ZG/muHmd5eiAKS6y7Ck6SpQj+9QbT
-euIMgQTO/B3/rYJ6KAIsS3Dt+jjkp5K/oMGvBamyzQZkgpia1GduaqkjEaCvBF4c
-IzRyKuxMxU6DJk2yMM7sMxVNMpySlXPeNHB+q4bWjQkD3pATfuu/GYmYpzGuNX7R
-dU8FgmmbbnjIfzABLKBqfJh4njke/ppWZAOhqzV1o4mGU60r9ReN59E24rzGrW2H
-lHlkpZbgr04yV3QpW22mG4GX0aRQxz851uVqcUZTWnYGfI2DVIa/mEyHqXOLFRsN
-Yh+HdBeVx3oTkL2myo5MrVG4yGZsJX5D6c1n8uLPJWyuDaR0ydb1tZMNaJB2LbgU
-3Ded33GREKwK6yKLzqoPS3tnfiWGUzRGP8bsZf+dVR55JkcbvZ0=
-=fNMv
------END PGP SIGNATURE-----
-
---KCGU/3tJP9FZjbY4--
