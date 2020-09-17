@@ -2,136 +2,128 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD28C43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5895C2BBD1
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 118852087D
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7F821734
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQk3wzP7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdF0FOLa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgIQKWb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48646 "EHLO
+        id S1726670AbgIQKW7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgIQKWE (ORCPT
+        with ESMTP id S1726658AbgIQKWz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:22:04 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C347C06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:22:04 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id w2so1432349wmi.1
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:22:04 -0700 (PDT)
+        Thu, 17 Sep 2020 06:22:55 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36209C06174A;
+        Thu, 17 Sep 2020 03:22:55 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id l15so4123602wmh.1;
+        Thu, 17 Sep 2020 03:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=5sK4Ga/gjLq/h1v5YXhWI2BJ46zhY1ZtAqhufOWtyuo=;
-        b=HQk3wzP7oJNFovKlJ2ECPLXt/2oMK19nq+rIoLRbHLPkR5BkUNZiL5vmJFKgOV3PMu
-         oJueDLHRWnNlQTKe9aU5zkRTvFdFYxvrNP2djrPw7tvbKq5vrTyqJlS8+zc0QCX1tqke
-         BpwlTMIQdCAM/auWMLfRturtsgGdX8SRjzzCMSnDeb9sJ40CDZOK8Rob3vFhS75wApHy
-         j3mpG+ybehLfCAAJeiH61pX2SvTehrk8ELxYgQylKP/kIs2rO6iUtt0agQi3f67tsNCe
-         3Q4xISAdwttfdL5n2K4Ol1oYNEyIRjBNKJyd6OHQP3+55mfgAXAYFfnH/RYl0P4u+9aF
-         0aow==
+        bh=wqlie8EFOYHLM9Tep6zCT0u3ufvIqmdBeSQ+iF05o/k=;
+        b=kdF0FOLaM8oPwGpYMI2arvofCqA+eyS4XrmIcvizl/nd5IshZNOENGXytbPR6mgSoF
+         xndxRKwiq+WbF9Duj8JUz+jI+RzsVnVNZozHyTRcjce58dbIT6ii+xWPO8bnZinwT60A
+         2d+FiIamtYbNy7QHWsUtcUwsn3NjYwkx7F+nwzZ7hZZkQsLIo9ao46FguPzk/mCm7trc
+         LRv0FvHMLse23VQgyMhzUAjtMfZNT2lZAT1JWnmvK9LRQCgplEdwg9aOta0RLlvJKDmT
+         0FWLIXQCuGPSItI+wWoYF41eT/ENLL3s5bP1ve3dcuzpIo73XpTlHyKJvFf0GotPxuZJ
+         ziLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5sK4Ga/gjLq/h1v5YXhWI2BJ46zhY1ZtAqhufOWtyuo=;
-        b=IL8MeJqYC6ecRDASbccrkVJCXx08KNwh9yN6YxMF4lZA+cGoMcIpSjfA4NQk0jUPRl
-         RhVjFgl/8Wb7gvM2+GeXxj0YWfMVD9Q2KvdsOEbOoFFKNfjicepAUtBOH7wpkMfsZMFi
-         QsCTv6kfCEvll17axPIncOxd1LzOq6bb4Kjlx4Jgj5Ew/+2jaMsLy4yxT1h/ef98Ejvz
-         wyvENxS8FOaKyl/zZJmJqLi5sQe2soQxfC810wms+I+drR1iDvzhb5REY5KnMrwaqCmH
-         ZPWfiw5UwXybeV1zaZqfY/ODXILVi6QspTah8PFpmm2VFfynASv7h16302af4XlZmpeN
-         w6lg==
-X-Gm-Message-State: AOAM530hv7j7ASSZE8aVqgotBPqYKvx4MhrHnbbGHO8I3d6x/TEn9vx+
-        FWxwrlGdSI0I5WzQRLGCLI3HdoAmeznMlg==
-X-Google-Smtp-Source: ABdhPJyT+yXlW7CCgB7vQGLIyuXLU0OIcpJVolpX2xDCKxRVfzE0cowJKSB5uRKHLPEy9P/Heyvmhw==
-X-Received: by 2002:a1c:7c1a:: with SMTP id x26mr9700948wmc.112.1600338122717;
-        Thu, 17 Sep 2020 03:22:02 -0700 (PDT)
+        bh=wqlie8EFOYHLM9Tep6zCT0u3ufvIqmdBeSQ+iF05o/k=;
+        b=F8ZD03JbLjUDXA5gqETt4XJubnP8qUglwWxx1lTZVI7X5HUDg5F17f6Y62YrF+/+Z+
+         DHgd2SFaYdUxOzezzzQ4VNp7IT6gabbqXjm5qXTE2WbTSg8LDxGuv/1GVaeDhT1kGkF6
+         ZX1XopFVU7XYaO2rdLUdoTYb54wmaIwbS9rr6CH8I+Y736LgklGZjXurfK84hrywkQ3h
+         J6bcckFTMc/Tl5eCkQh2kkTjfCQ5mitlHN1aZhi4z23ROZ2SyN0z5r2csvdL4O9sYdou
+         vCBH2uvAYR4acXmYgyFtwz64LldDfft5D6Q6Ay4yBcM/1lLldZXoEW6YlIZXCpQ8vZdv
+         RaBQ==
+X-Gm-Message-State: AOAM533K2AiU8IUtSqOUXRNedHpxyFdLOe8yzddVADtAmf8+N+g8XjWp
+        81PVwQX/kGf0Fb3EhoOQejo=
+X-Google-Smtp-Source: ABdhPJygMkCt6FkVUlglGZsRFLgKEPZIwFRNzFDuplgHssjjteWsH/QsEwVuB+uNQnhxt0OcvSkl2w==
+X-Received: by 2002:a7b:c5c6:: with SMTP id n6mr9055494wmk.120.1600338173932;
+        Thu, 17 Sep 2020 03:22:53 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id 63sm10421835wrh.71.2020.09.17.03.22.01
+        by smtp.gmail.com with ESMTPSA id n21sm10142585wmi.21.2020.09.17.03.22.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:22:01 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 12:21:59 +0200
+        Thu, 17 Sep 2020 03:22:52 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 12:22:51 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Wright Feng <Wright.Feng@cypress.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        David Heidelberg <david@ixit.cz>, linux-input@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] WiFi SDIO fixes and improvements for Acer A500
- and Nexus 7
-Message-ID: <20200917102159.GD3515672@ulmo>
-References: <20200823144725.28299-1-digetx@gmail.com>
+Subject: Re: [PATCH v1] ARM: tegra: nexus7: Add touchscreen
+Message-ID: <20200917102251.GE3515672@ulmo>
+References: <20200814002138.12312-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k4f25fnPtRuIRUb3"
+        protocol="application/pgp-signature"; boundary="TD8GDToEDw0WLGOL"
 Content-Disposition: inline
-In-Reply-To: <20200823144725.28299-1-digetx@gmail.com>
+In-Reply-To: <20200814002138.12312-1-digetx@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---k4f25fnPtRuIRUb3
+--TD8GDToEDw0WLGOL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 23, 2020 at 05:47:21PM +0300, Dmitry Osipenko wrote:
-> Hello!
+On Fri, Aug 14, 2020 at 03:21:38AM +0300, Dmitry Osipenko wrote:
+> Nexus 7 2012 has Elantech EKTF3624 touchscreen, this patch adds TS node to
+> the device-tree.
 >=20
-> I was debugging WiFi performance problems that I started to notice on
-> Acer A500 and found couple problems. One discovered problem lays in a
-> wrong SDIO PINCTRL configuration of A500 device-tree, others are found
-> in MMC core and brcmfmac driver.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 >=20
-> This series fixes the PINCTRL configuration and improves MMC clock setup
-> of Acer A500 and Nexus 7 WiFi.
+> Please note that EKTF3624 is already supported by the elan,elants_i2c.yaml
+> binding, but elants_i2c driver doesn't support it yet becasue some of the
+> patches [1] are still under review.
 >=20
-> Big thanks to Wright Feng of Cypress who indirectly helped me to notice t=
-he
-> PINCTRL bug by showing MMC IOS info of the BCM4329 setup that Wright uses,
-> it lead me to re-check to the PINCTRL configuration!
+> [1] https://patchwork.kernel.org/project/linux-input/list/?series=3D316905
 >=20
-> Dmitry Osipenko (4):
->   ARM: tegra: acer-a500: Correct PINCTRL configuration
->   ARM: tegra: acer-a500: Set WiFi MMC clock rate to 50MHz
->   ARM: tegra: acer-a500: Use PLLC for WiFi MMC clk parent
->   ARM: tegra: nexus7: Use PLLC for WiFi MMC clk parent
->=20
->  .../arm/boot/dts/tegra20-acer-a500-picasso.dts | 18 +++++++++++++++---
->  .../tegra30-asus-nexus7-grouper-common.dtsi    |  5 +++++
->  2 files changed, 20 insertions(+), 3 deletions(-)
+>  .../tegra30-asus-nexus7-grouper-common.dtsi    | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
-All patches applied to for-5.10/arm/dt, thanks.
+Applied to for-5.10/arm/dt, thanks.
 
 Thierry
 
---k4f25fnPtRuIRUb3
+--TD8GDToEDw0WLGOL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jOMcACgkQ3SOs138+
-s6G3NhAAjs4663wmicChZ7UUV628WApOIxKeZ2bJpoKG9twXnWliCD3icB4jEf5B
-pd9hva8w/NejWrD+hSxUNUTXR7ZcI2JjALmLOSemS5xkmWBYU4o/CN8e8fA8VNdL
-ZulqcFsVqFPQd+jo407eGjd7YZWPA4L+yI14twOcqU6tEyCKZ+c7XeWthWl9tRMn
-0B5EA56NMhEyP4NLycJ5+pXWhV9ZOdb/T4NWsrbmKwcJt8DtA/EllqtXiG5is0k0
-+awd4UUioWKU/eVDWsP/KdfALESeVPNf/77Z11lttWjLBaP9L646cnk2QGApv6e3
-5PNVp7m6s4WCc7cjsykkjOSNT2rnABt7XUQBCYNR4/VGWIgqNqghPmBASYhGHwPI
-Jat2nJoKLQE0W7zMfXTMoVjCASfKa/gQBjKHDSZotLY7yy0lxxoxc6X3qkvg5SMy
-BwkyidxBTnnxUN6CshCtRr1kRGIKkIP/yCg0xkuXUyEXv11k7qEaocKcNcgpC048
-DuBXJepcG/3VhQBl2e26JQW/xWBPqixvDjApzR9R145BHl6P2DCaMFstgOGTHG8/
-VHo7AQOyL9EGlfeQSJyLWbAUASdx+NtkYYCKExznJAhqMS0SY1aB977aNvlfzOWO
-PFCR09ZIt4ylNOHDx4NMxmtXX/PzHLgbeocs3I4ot9/ijYcbYvQ=
-=dS6E
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jOPsACgkQ3SOs138+
+s6EgPw/6A7Zax2fL+gbhAAUuC8zPwX/+S94hE7LTaSmrXU0VqOKDZkYjgR/idj+E
+3TLkH7x4934HOfZhIvfR4ZJVxB7Az8/BUzbIgVG7BHbS73u5e6hb13m3Zoa6Xu87
+teA/cCpiXSJu4zhMu2bbhGXyyvzwiQzbhMjf24cwx5SN9kgjKJKx3ojfriO673ne
+w3bOJLEiK5izJMkabK7jEwUhfybT5ION46GlRpNztFMPibXBXNFj92OZw0D7NHaX
+p9YSuyfJ3xcBwrPDzpXIXMnKDSH315d1gq2H9mDQZPq8W4WA54Vr4A+1mIXF2yVr
+hmh7Y/3v4KD95qLOZ/V296EvUELxb3zThRb+eRW7xK1F2E4HjNTGtlvtWRtRC6Qh
+jaAxFwXZ9zAhRlVAiNMnCs0uAOESEPzh0dhJ6NBXiY1aKZCt6aAX69hLTRghasS3
+i5x0QcHZCAQoWMUXI77jonqiYWUrZW0RGZMfAM9DYWZ7dEsrjrA83oK5tbXQ+Nzc
+rJmseZuJR9PEanylt3rVbhDldHgVh2MyQl1H6TAJIsIYkuNptnvT4U5GV1dxYPr3
+o3ybAFzLYJ3+/BQicnWMFuaQC3Isn4qR6KQ9PKpuzwqy/nbZ6VjLxVxas4NPIYfn
+0INcpVxVRnwe+S1rSuTIbkZuzpzcjhpPOQZ1O08s3skjOUagGPQ=
+=SELD
 -----END PGP SIGNATURE-----
 
---k4f25fnPtRuIRUb3--
+--TD8GDToEDw0WLGOL--
