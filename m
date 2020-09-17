@@ -2,64 +2,64 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDFEC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FC3C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 351412072E
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19125221EC
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:06:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmREtLnO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6bZqsPW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbgIQL6q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
+        id S1726900AbgIQMGo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 08:06:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbgIQL6k (ORCPT
+        with ESMTP id S1726868AbgIQMGk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:58:40 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6BFC06174A;
-        Thu, 17 Sep 2020 04:58:07 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id s13so1682093wmh.4;
-        Thu, 17 Sep 2020 04:58:07 -0700 (PDT)
+        Thu, 17 Sep 2020 08:06:40 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A74C06174A;
+        Thu, 17 Sep 2020 05:06:18 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id l9so1784350wme.3;
+        Thu, 17 Sep 2020 05:06:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RBptPCK3cQyzDC4iQm1JuF+G8rrPiJFIChJc1eo/SrA=;
-        b=lmREtLnOklYbI3srvQzEqSZtK5ujhvC4CyUFkIPqoP7OltUdmTeBd8UX4md/edLziG
-         IplQvddLFN6dsr69qRjbGADMu1M+8wJN/5mmHdsaYW10Vlgwgg6rSJKVP+wMM1dk3wWF
-         PRrqJtP/x3n82aquu/po2aRNoJWcq5eBR0que/CQb8U8/0ognq8++s0RPGkY4w3iwTeI
-         yDChJw0Rb3Zfc+p8HUQnXYIg/aY7fDp6/y1uJSsdOoPbLXsSPd9n53iE71WL8L5DaD4p
-         q16pI3lVLdbkq7iD7vkYMv7nhzTAGhbBnMucDPOvACLQgjJ9ACaEBsiBlO0xYv3w/Bcr
-         8+0w==
+        bh=tE9yLGNH1EMsfGO/TyvFBeLycfQZd8KEkVYBUcpK+V4=;
+        b=J6bZqsPWsLpDwG7bmnR7GKqPSvmtPDV9Jb0lO1LO5qwAvotOxtvCLn21cRP0BzWt+V
+         uR9MAInTJAD7UgdD0/Oj4nYwhpeR+hr1MlGj+fUmSLzazWD14HDDjYoksBVkjAy6JQpl
+         zAXP9lCyeT1lT+eXeREUzCesaGBbJiBGFHpwsJOrfhQPrhZVrkLLUZTmUMOADJZvAHD/
+         LiuS9rQnTeF5hh4CNpYhfUXPgqzYs1MV+/ueFTdg0T1ETmD2ZH4/r226ENkFs1/NRv6q
+         HG+S+adX7nSi0wtrys00tkws9iRJH8HGn+F2B4VivNkDfwEDw0UzDs9TapH0mcN1zKjF
+         AVzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RBptPCK3cQyzDC4iQm1JuF+G8rrPiJFIChJc1eo/SrA=;
-        b=KSl2zhA9cfaXtPB932JOnBDV7miMcO7G8x9Nky9nBaFD8pBMwL7KF8sGbYzTDV1DwT
-         rZqgRGCFz8LPQnmFHReaimCsqe5aYjVz45tH68u0T5OQsqgnMUx733NxpH3ZdTYPB8mc
-         Tzcr3XxV0TJWThPxoIBicxx/YvpWp5884qBOl99mzcxJrzgfVdhrq9/9bLvngB1hFf91
-         mgwGsrj6daWa+dsKRAv6P9Ju0wznuMAhDYXONbaP1A2TlBqcg1NFKXpzV8i4/6/dUUzB
-         3+gAFhSv9rjg9WtCVTUy4flTI6cUB/7wmDFXz9xl8Ukrhs4/t72bmVNsKQCOCjh0kVet
-         L8Yw==
-X-Gm-Message-State: AOAM533X4K/vsHBI2HbyFTshpemAcaPu73xXdivr3D7+coOTxIjkQeU0
-        Rh88SwJIyvnzzN7Alif15Kc=
-X-Google-Smtp-Source: ABdhPJw/mWdAvNtcZT+O7OFBzGYrS+RLxKlsckI0DnnY0PrVS/fmvoVpxWtBYJZ5pGUWUX6fP6YGqg==
-X-Received: by 2002:a1c:65c1:: with SMTP id z184mr9225398wmb.61.1600343885657;
-        Thu, 17 Sep 2020 04:58:05 -0700 (PDT)
+        bh=tE9yLGNH1EMsfGO/TyvFBeLycfQZd8KEkVYBUcpK+V4=;
+        b=pROvloJt5Jkxp6+gRCj7jI0yd4q4tsnq9FM0HUrwsxWRgofSj94SxACus8Jb+PmZxk
+         rxhnUOk3faGwFdiix6PsNQjgyOsDDE/zdGCmhB3S3tUcFdT9W0Y2HQF/2D2G5WtCuRwf
+         mxv28iLF/VN5A95MHwUIcD9Itb2dbsdvOmH76GUpcBqmrjYTo0Nvga6qYybToHTFUIt0
+         p7GmgZJ5tE8oqqciPw0/QPY2g5dJiYKDeEVQDefh/93800RzaSO/2Um2tWIukxYmPNcJ
+         9HALRLUnMO8moB5j8xLym+i7vEEBRS0yv4GbTxet7cjKRZstlRfpEGzurb20yRePvc0H
+         DO7Q==
+X-Gm-Message-State: AOAM532kjFnH1Xsml/djx4G0Q84mePEpQFk5JHtaDChafQ43lgVeLnSr
+        +I42dG5JDkuTui8LJCtlHyM=
+X-Google-Smtp-Source: ABdhPJzmbtGSgc/sCPHjT+k5AfHdUa4dj7lYQlTy1Z+U37azmH8kS8esDLh8hX0vP2eldd03r2AWrg==
+X-Received: by 2002:a05:600c:210c:: with SMTP id u12mr10437557wml.185.1600344377136;
+        Thu, 17 Sep 2020 05:06:17 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id t16sm38888777wrm.57.2020.09.17.04.58.03
+        by smtp.gmail.com with ESMTPSA id d83sm11075751wmf.23.2020.09.17.05.06.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:58:03 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 13:58:02 +0200
+        Thu, 17 Sep 2020 05:06:15 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 14:06:14 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,152 +69,61 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 25/34] i2c: tegra: Factor out register polling into
- separate function
-Message-ID: <20200917115802.GD3515672@ulmo>
+Subject: Re: [PATCH v7 26/34] i2c: tegra: Factor out hardware initialization
+ into separate function
+Message-ID: <20200917120614.GE3515672@ulmo>
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-26-digetx@gmail.com>
+ <20200908224006.25636-27-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="stFzI3XAseUQ09UW"
+        protocol="application/pgp-signature"; boundary="kUmo4NyTJbuJZ752"
 Content-Disposition: inline
-In-Reply-To: <20200908224006.25636-26-digetx@gmail.com>
+In-Reply-To: <20200908224006.25636-27-digetx@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---stFzI3XAseUQ09UW
-Content-Type: text/plain; charset=utf-8
+--kUmo4NyTJbuJZ752
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 09, 2020 at 01:39:57AM +0300, Dmitry Osipenko wrote:
-> Factor out register polling into a separate function in order to remove
-> boilerplate code and make code cleaner.
+On Wed, Sep 09, 2020 at 01:39:58AM +0300, Dmitry Osipenko wrote:
+> Factor out hardware initialization into a separate function from the probe
+> function. The only place where runtime PM needs to be resumed during probe
+> is the place of hardware initialization, hence it makes sense to factor
+> out it in order to have a bit cleaner error handling in tegra_i2c_probe().
 >=20
-> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 57 +++++++++++++++-------------------
->  1 file changed, 25 insertions(+), 32 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 405b87e28a98..e071de9ce106 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -514,10 +514,24 @@ static void tegra_i2c_vi_init(struct tegra_i2c_dev =
-*i2c_dev)
->  	i2c_writel(i2c_dev, 0x0, I2C_TLOW_SEXT);
->  }
-> =20
-> +static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
-> +				   u32 reg, u32 mask, u32 delay_us,
-> +				   u32 timeout_us)
-> +{
-> +	void __iomem *addr =3D i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg);
-> +	u32 val;
-> +
-> +	if (!i2c_dev->is_curr_atomic_xfer)
-> +		return readl_relaxed_poll_timeout(addr, val, !(val & mask),
-> +						  delay_us, timeout_us);
-> +
-> +	return readl_relaxed_poll_timeout_atomic(addr, val, !(val & mask),
-> +						 delay_us, timeout_us);
-> +}
-> +
->  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
->  {
-> -	u32 mask, val, offset, reg_offset;
-> -	void __iomem *addr;
-> +	u32 mask, val, offset;
->  	int err;
-> =20
->  	if (i2c_dev->hw->has_mst_fifo) {
-> @@ -534,16 +548,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_de=
-v *i2c_dev)
->  	val |=3D mask;
->  	i2c_writel(i2c_dev, val, offset);
-> =20
-> -	reg_offset =3D tegra_i2c_reg_addr(i2c_dev, offset);
-> -	addr =3D i2c_dev->base + reg_offset;
-> -
-> -	if (i2c_dev->is_curr_atomic_xfer)
-> -		err =3D readl_relaxed_poll_timeout_atomic(addr, val, !(val & mask),
-> -							1000, 1000000);
-> -	else
-> -		err =3D readl_relaxed_poll_timeout(addr, val, !(val & mask),
-> -						 1000, 1000000);
-> -
-> +	err =3D tegra_i2c_poll_register(i2c_dev, offset, mask, 1000, 1000000);
->  	if (err) {
->  		dev_err(i2c_dev->dev, "failed to flush FIFO\n");
->  		return err;
-> @@ -553,30 +558,18 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_d=
-ev *i2c_dev)
-> =20
->  static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
->  {
-> -	unsigned long reg_offset;
-> -	void __iomem *addr;
-> -	u32 val;
->  	int err;
-> =20
-> -	if (i2c_dev->hw->has_config_load_reg) {
-> -		reg_offset =3D tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
-> -		addr =3D i2c_dev->base + reg_offset;
-> -		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-> +	if (!i2c_dev->hw->has_config_load_reg)
-> +		return 0;
-> =20
-> -		if (i2c_dev->is_curr_atomic_xfer)
-> -			err =3D readl_relaxed_poll_timeout_atomic(
-> -						addr, val, val =3D=3D 0, 1000,
-> -						I2C_CONFIG_LOAD_TIMEOUT);
-> -		else
-> -			err =3D readl_relaxed_poll_timeout(
-> -						addr, val, val =3D=3D 0, 1000,
-> -						I2C_CONFIG_LOAD_TIMEOUT);
-> +	i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-> =20
-> -		if (err) {
-> -			dev_warn(i2c_dev->dev,
-> -				 "timeout waiting for config load\n");
-> -			return err;
-> -		}
-> +	err =3D tegra_i2c_poll_register(i2c_dev, I2C_CONFIG_LOAD, 0xffffffff,
-> +				      1000, I2C_CONFIG_LOAD_TIMEOUT);
-> +	if (err) {
-> +		dev_warn(i2c_dev->dev, "timeout waiting for config load\n");
-> +		return err;
->  	}
+>  drivers/i2c/busses/i2c-tegra.c | 32 +++++++++++++++++++-------------
+>  1 file changed, 19 insertions(+), 13 deletions(-)
 
-The deindentation in this hunk is messing up the diffstat in my opinion.
-It would probably be worth splitting that into a separate patch to make
-it more evident that this patch actually removes boilerplate.
+Not really sure this is worth it, but since I don't feel strongly, I'll
+leave this up to Wolfram to decide:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---stFzI3XAseUQ09UW
+--kUmo4NyTJbuJZ752
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jT0oACgkQ3SOs138+
-s6GUHxAAnwK9bQJoihAW8/1DAfvP9xNcE5rcJoKtrMJAxgpAFcZQQiMUKSerk+8G
-z5YRnKmv/JOZp9Yqavl6U6xDCYv9fR+D3TBQ34A3TRIrpazPwhffvt+QkzXaaj76
-2ybOQY4x0UmQW6ipWWOxBSzxy0Zql1bpUU4z+Mh7RZaR7vKqv0JuVdwLnERvPZJM
-+YV98iZJoJIIVRM5QFJBL8jaL6nqkOh9vmOfONjAL8z/xqYFuYKMWpTkf1vOJ6P3
-peyRgTa9tgmvfWU/Rjr8DdBjBM/Y5s8aiJA4YO60S6R29fWEybnOud4UOXOixhM+
-D8PMFGiA6B+iwt4EAgwBD7eio8bxwQJ1vz+mqWyzrUvnDpCGMTkd6tzUX3M2v3lr
-WmIBQ09e9mK2H7DGn70WGn9GETn8ElMDhERQrAAIe+4u3BD9MhQAcK9nzMcIydyx
-OvAcSNghr4of1rmVYvcn5EFluRyPLidGqB8HxZP75BDPsRQ8NBfJP/rTGJi62JZy
-mgcfpdAXXCR0nw+efiVuAHYtqNJKnIDzgevU/zqIMEa336WCqaksdCdQLJcctWZ3
-z6+z+DVL4ueZ8aiBBk18TQjtxK5fTVZF9fWI/SUU4ZapvJicRIuHw66TMVOBUMFz
-R7q09gbPtYxwra6UOCmBIs+yiLLWpn7a+X7mFi8XS5mZOnXjk3g=
-=CIb2
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jUTUACgkQ3SOs138+
+s6HD+BAArcmDQvZJ43BnrWJSDzM2F4Nc1yHsjUZkBEwlFdVehB88ksYQMGJRWs3/
+fkKLrBksvlGvGVReLfL0SxFmJXifR/qxYbnkZv+G2yleGdXa7w7VTfYUBI/CG8Dn
+Y78esXfSlqIr0sYIrXlSaIyiUqjzP6hB4x/G5awdKREiWyqGmgZ17AFd01QZyMG0
++wTVSvfR4/IGhMJnqqdgXRUCbY+NTGEMzT3pkTuZ629fmKBxDVac3Pg0wEOaK4T0
+IzIOc58zbQ1g1IwAfXxXf0MaQ1YtG6rDfU7xWUZxEWfV9Mjeg0RaX2ooXVfF5Y43
+rIKKdxS5v+hJhvZKoPAyjAjFaj8Nt83Wf5Tm/ZjyMVJCBPbws0DI5ZYAHo9ABEXp
+mWMTnFIcMQaSQTY/JIu32KCQxjoTC/ZI0U3SNtyY23C9RL85mnd4uDPzS/uv7auT
+EXvbL6htIs5dPzSJemQUpW93UKa5SbBsRj4u3k4ZFbqGVkO92L+gWBSUPcCU3Of0
+d3yru6TAaQoQbT3XGa5PaDHauscLeTWgcsPJM1VFD8T6IJeN6oqfM0zY4YSjkBLh
+Cw3mcAXX7uMiIxNdwfoNxJhm+eOCeDd4UEJWPW0IOumOy9JkgfdROEq7/4eFPpGP
+lcnaBN31gf/4jrZDNaeORhScYXUCPwP0dk+DLm3I0WcP7MknVjI=
+=pBH+
 -----END PGP SIGNATURE-----
 
---stFzI3XAseUQ09UW--
+--kUmo4NyTJbuJZ752--
