@@ -2,90 +2,145 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B840EC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EFDC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C53A21974
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F32208E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 12:41:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oiHEEW9K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbgIQMlq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 08:41:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13237 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726741AbgIQMl0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 08:41:26 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E55CB31BFF30A85B6887;
-        Thu, 17 Sep 2020 20:41:23 +0800 (CST)
-Received: from [10.174.179.91] (10.174.179.91) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 17 Sep 2020 20:41:19 +0800
-Subject: Re: [PATCH -next] gpu: host1x: Convert to DEFINE_SHOW_ATTRIBUTE
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200716090323.13274-1-miaoqinglang@huawei.com>
- <20200716133450.GJ535268@ulmo>
- <5684dcb3-c5a4-96c1-dd96-c44f5a94938f@huawei.com>
- <20200717142524.GA1218823@ulmo>
-From:   miaoqinglang <miaoqinglang@huawei.com>
-Message-ID: <cc115577-e536-d9d9-4e82-715309c40ad1@huawei.com>
-Date:   Thu, 17 Sep 2020 20:41:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1726960AbgIQMlv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 08:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbgIQMl3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 08:41:29 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA58DC06174A;
+        Thu, 17 Sep 2020 05:41:24 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id t10so1922130wrv.1;
+        Thu, 17 Sep 2020 05:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NBHR/fgIoFwmMy9FagkEI3Hp1HWTM/rAeZswTOULEWM=;
+        b=oiHEEW9KiIBL2DtNhJzo1QxpIOhm/e+pIPpsmvTwBi0d839K5GCBj6IRZCNCfUcYun
+         l34MEY63AWgKua4s3sM6I+oOsH5k4SKzzqlpFro95p8kdcxVZxNfEdqwHCEBcNZE2p4G
+         OBvUvyD0P8qxXd+7y3EYGeM54tztI43PaLRlvQQ3o1MdDmNSQ8YaS8w50MHUyNQr9ToJ
+         ntCzZQlH+YfVIGc16KRfHP6lft+7ZzVlyXMgbu6NkTHiln9SqwU7v6TBr4Qw16ROBisn
+         U7NgYoop96e/xVbsV0d/jAViqsAOr54TNE0z5pj908JLONEpFdApr22LpyurOjikRp5g
+         9bkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NBHR/fgIoFwmMy9FagkEI3Hp1HWTM/rAeZswTOULEWM=;
+        b=Kn4JzFhU7aI2LSHxPIzPjtFCdnmmjlCOWiv2Hr7u2xV3o1xLawqVghh7OGfXdyfpfQ
+         CODp5XuTHpGYto07ozbiDZCwr5lfHF52akmQVBXzgC3oNcOJmP6IGL2s6RvSLeWKBN1M
+         4eTvklSrL5oEHC+k6dXX2t4vCgyidWMojAjVbfjftIth8x6yydJ67NHBefvLKsyEOcUG
+         PyX5ap7Wj2XCHjFtOXc7vRD52Dns3W9u44iy3vkteTWoWySRn6QnL9vtNxxlmZcW4vUU
+         m3XFgX9+vJOCYMGpIbXsPqQYk1IuaZFsgsdVH1v/1yUK/p3/3if2Qyd0+OjVALLohiWh
+         00aQ==
+X-Gm-Message-State: AOAM532Et2h5ub/K+Kn6DKNE93evZYxvvTDBLs0nDQh5FVr/DNLY/7F8
+        J2KlyIDboIYbdO7X72fnbq0=
+X-Google-Smtp-Source: ABdhPJyN19L+ZxIYbdbk9hfFceuN6mCl4fWAlDvGP7X8RBovx12aRuredCaarWMW85c5lu/4CIwAvA==
+X-Received: by 2002:a5d:660f:: with SMTP id n15mr34461459wru.103.1600346483526;
+        Thu, 17 Sep 2020 05:41:23 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id o15sm10476800wmh.29.2020.09.17.05.41.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 05:41:21 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 14:41:20 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 18/34] i2c: tegra: Remove likely/unlikely from the code
+Message-ID: <20200917124120.GS3515672@ulmo>
+References: <20200908224006.25636-1-digetx@gmail.com>
+ <20200908224006.25636-19-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200717142524.GA1218823@ulmo>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.179.91]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3xvobRwI6W2FSfVC"
+Content-Disposition: inline
+In-Reply-To: <20200908224006.25636-19-digetx@gmail.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+--3xvobRwI6W2FSfVC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2020/7/17 22:25, Thierry Reding 写道:
-> On Fri, Jul 17, 2020 at 09:32:21AM +0800, miaoqinglang wrote:
->>
->> 在 2020/7/16 21:34, Thierry Reding 写道:
->>> On Thu, Jul 16, 2020 at 05:03:23PM +0800, Qinglang Miao wrote:
->>>> From: Yongqiang Liu <liuyongqiang13@huawei.com>
->>>>
->>>> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->>>>
->>>> Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
->>>> ---
->>>>    drivers/gpu/host1x/debug.c | 28 ++++------------------------
->>>>    1 file changed, 4 insertions(+), 24 deletions(-)
->>> This doesn't apply. Can you please resend, based on something like
->>> linux-next?
->>>
->>> Thanks,
->>> Thierry
->> Hi, Thierry
->>
->>    Sorry I didn't mention it in commit log, but this patch is based on
->> linux-next where commit <4d4901c6d7> has switched over direct  seq_read
->> method calls to seq_read_iter, this is why there's conflict in  your apply.
->>
->>    Do you think I should send a new patch based on 5.8rc?
-> 
-> No need to. I'm about to send out the pull request for v5.9-rc1, so I'll
-> just defer this to v5.10 since it doesn't look like it's anything
-> urgent.
-> 
-> Thierry
->
-Hi, Thierry
+On Wed, Sep 09, 2020 at 01:39:50AM +0300, Dmitry Osipenko wrote:
+> The likely/unlikely annotations should be used only in a hot paths of
+> performance-critical code. The I2C driver doesn't have such paths, and
+> thus, there is no justification for usage of likely/unlikely annotations
+> in the code. Hence remove them.
+>=20
+> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
+a.c
+> index ab83d1de6c94..fd0d51ec447f 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -852,7 +852,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_i=
+d)
+>  		goto err;
+>  	}
+> =20
+> -	if (unlikely(status & status_err)) {
+> +	if (status & status_err) {
+>  		tegra_i2c_disable_packet_mode(i2c_dev);
+>  		if (status & I2C_INT_NO_ACK)
+>  			i2c_dev->msg_err |=3D I2C_ERR_NO_ACK;
 
-I've sent a new patch against linux-next(20200917), and can be applied 
-to mainline cleanly now. So I suggest you v2 patch.
+At least this one is an interrupt handler, so it's kind of performance
+critical. That said, it probably doesn't make a huge difference, so I
+don't have any objection:
 
-Thanks.
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--3xvobRwI6W2FSfVC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jWXAACgkQ3SOs138+
+s6EN1BAAl+GC/O0i3TYCRAwVs2JSksmmfZw7tOyIS66DyRolVplzWcmmaYc3SFFY
+emR7t+vbcueRN89jX0kR05LXAupTtdIcanFTdr6bvMnDwccLfnK1bXFF9dW/AwOl
+IbUdZrgZaYHBWHB9VvesJX3SONsrP9RjQ4ftJ+FIkd7c20VKkNnTsLbPpr/Qed6L
++gsyVuJPOtcWeBn/jcXCuSXVKkXSq+RMAiJlxmwXxVcMm50KtlEnJixWpCAke2kl
+3zT3YPn17IOZYY3zxrnH1lVHVvgFXKDN6ild9qGpqRlvISp+KtKppa52yaNbJMam
+FpUst5MtqP+qWl8D2MmmmIk51KzmGelZghvQS0KMvi4Pa0WrUtlFaRoXh57oKdBH
+Xal3cUunpNMJzIT879UH9r+X13ahz8wbhYxMI7Rg5vbZd8lOdN1a8oPXJLexctLu
+YjmmCjCGAN5dCN0NEVNfGCwph+smKN+Y21OTPIcCkfp549EgMBP0doc6dCHTmUBc
+02hd5EasRwtf2ik3/sNUWTkDzoZeWyRqNDwn1Yg7jEfC4Civ12f/2JahjQRwrMPi
+HZRa0vgy7FDzr97L+4tRL+Qp9nZZlAUkgQeTNt+OcJ4R5g+MDjxvW8DWNHF62UOT
+HDCaFbwOchkrWRSExwvETNXoaLFRbUF4TS/ZSk1CNIKrLCK1nR8=
+=jcaP
+-----END PGP SIGNATURE-----
+
+--3xvobRwI6W2FSfVC--
