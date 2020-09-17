@@ -2,123 +2,89 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DDAC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6657C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B60A2083B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E55421D7F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 13:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVdnvsGC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7Tbc5qC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgIQMhK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 08:37:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41176 "EHLO
+        id S1727097AbgIQNxi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 09:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbgIQMgJ (ORCPT
+        with ESMTP id S1726783AbgIQNut (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 08:36:09 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89D9C061756;
-        Thu, 17 Sep 2020 05:36:03 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id m6so1911195wrn.0;
-        Thu, 17 Sep 2020 05:36:03 -0700 (PDT)
+        Thu, 17 Sep 2020 09:50:49 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DD9C061D73;
+        Thu, 17 Sep 2020 06:50:24 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id f18so1239780pfa.10;
+        Thu, 17 Sep 2020 06:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3yPXsrPhSCIZUrB7xZj1zBgenMOKixXRrzVZiQa+dO4=;
-        b=WVdnvsGCc2l4csA5idiz5iTwvWaHJ0eZNqDWhuAlryyyMn/OYAx9ewOZtWhBg0/cq+
-         GmcQCv+j3ijB+ifJVlcu03YzQXaKc6FUCCmwXxervJ/o6ae50PqjT81Q2RdrSnPLpV2y
-         hcTct0eLgR2WYcAEjgVY/53Q4mz2bo+7ZVoTYzMlMN2Y7y/p3VSmK/dXNf4Pq1xCqDAv
-         nj2uk7nbT37qqm9yi4BlpRr5NNG8VNkTRBmYDaxqD3sKId7FFWT2Yqz+7xelZeem44OJ
-         zsVd0319nO81CiNuoA7goFLnvxJCyG5xeVJHzqxzNDgGBtJGqwyac16GbylWkIPlUVVJ
-         +3yQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KPaE7MzGUy8EbIKncE+ieqkHzqJTXMjDit15B2UGepg=;
+        b=a7Tbc5qCqZH1fluejWr2MXblRtsb9a2CqU2gJzpaLB9c9UMzc+C1vVA3c41+7EzAZN
+         xqsUgvC68sxJhZSg5G87dmdsSWmfyB7XBEgTunHAWWdnBPsWSSCXjfTvLVbvju9OINYU
+         emefOm/lLYe7UdeEL3G8G+bcX7vb0Jw+6sitSGEpAhGnkoNHCCQ3C4+Hc2j/V8WSZA+E
+         QJ9XIZDpo/soa+7C1+SrBzWjcPrz8wdqJN2OxJIsnP+V8uzVhUVJdfq+uj2JlJh7wNtZ
+         GRWKYwwEIoRe9SETYWdUoYKEhdQG8mdstglf9vkeQSQi1QtAoN8M92aJywoZXAxTbw63
+         DMNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3yPXsrPhSCIZUrB7xZj1zBgenMOKixXRrzVZiQa+dO4=;
-        b=GV6L6HsUeiGzPqIma5dYia/eLiaU8ZXUGK2AIqPJ/GFyrlooU2WIS8UZvM2pBSZG1N
-         YFCCoVzgdPRg08n/5FwuaxnvGvb0UjzUveetLhoS1uPcG9H9mpc4k3iEBno8t6ipK4fp
-         6c5wfXKyFqnx15hBE1JWNhYQUXMg4Pw1TooM90RFhqasZuU1UMOC+sy2E2PGuNXG6eyX
-         /bZcDPaLlV706+uymRkxwk7HFKqCLRMo5H/JPo0gk7AzfG3YRUZaCSD0hNszKtnM4fs/
-         7MmLqxIgFWkM/cYDk86dGPEunNGz81wELvoRZNaxp0A9CEiz7JbnRKdSuHV0rjkK/m/e
-         9GEQ==
-X-Gm-Message-State: AOAM531hhS2cxllssTsJy/oBHU6BzF8Lbi2BLzn1zuzqiFe0Q1m1Jh/N
-        Iis4uiRumGWZsqSMmnZyr0o=
-X-Google-Smtp-Source: ABdhPJywcomF+a0+iY7h+fYLupgH6UzzAN511ZwJ4vwAxZaobLmDmAlvaCrBFWsPki3ptYHRx0ZmWg==
-X-Received: by 2002:a5d:69cd:: with SMTP id s13mr30907536wrw.379.1600346162543;
-        Thu, 17 Sep 2020 05:36:02 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id 9sm11063919wmf.7.2020.09.17.05.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 05:36:01 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 14:35:59 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KPaE7MzGUy8EbIKncE+ieqkHzqJTXMjDit15B2UGepg=;
+        b=rOQr+74F1vP0ToiGnp7GDUSJTa8Ok3dizlVdL3YJIME8ZEyG3NwS4t5KmBYZqkg6Nu
+         gzTm1TAuNSidyO7zWcgbxPMcgiLx7jUJvQ88pjNTnhsXPN1JNdVxd+Vrv0VKqeGzkZi0
+         zem1g2hU02MwGSzpkkEWjUb1HXAFSVgeI7NtAcrbudusznGPIPKNUE4OUcFVRGI6yvb8
+         yBJMah48/wLyy4Sd8xKkbfd3KxP/FDlBPsF4I6u0JTJcacVffmgbE6KFlN7fzUZfOJq7
+         3LSFbu4mydes5Jxhlpe8IJSNlIKtwjedDjyfpqDrwi1GXdO4ihZpSj0T2Yb41fOqlEjt
+         SJvQ==
+X-Gm-Message-State: AOAM530lES8lacUwTdHCdPbVW4P5mWHHCT5NVLwtt5QyFuqZLcxuRjvk
+        OIbDr8NxPJq0BiENy9kLtz7her0geih5l54yU/o=
+X-Google-Smtp-Source: ABdhPJxMxXTy2uCYupbtrxsmgKQ11wUvjaFj0XA2C+8VDhh7rl8J6tQJs14Up25DkPThBFF4YdLE5wdSJQ+X85PmC6k=
+X-Received: by 2002:a63:d648:: with SMTP id d8mr22534746pgj.4.1600350624302;
+ Thu, 17 Sep 2020 06:50:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200908224006.25636-1-digetx@gmail.com> <20200908224006.25636-28-digetx@gmail.com>
+ <20200917120955.GF3515672@ulmo>
+In-Reply-To: <20200917120955.GF3515672@ulmo>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 17 Sep 2020 16:50:06 +0300
+Message-ID: <CAHp75VdEoLAMvQWb1_p8ydROmY9p7KCqFGarRsgM8p8nDhyY7g@mail.gmail.com>
+Subject: Re: [PATCH v7 27/34] i2c: tegra: Check errors for both positive and
+ negative values
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Wolfram Sang <wsa@the-dreams.de>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 34/34] i2c: tegra: Improve driver module description
-Message-ID: <20200917123559.GM3515672@ulmo>
-References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-35-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="O7r0+uQg70mf5vhh"
-Content-Disposition: inline
-In-Reply-To: <20200908224006.25636-35-digetx@gmail.com>
-User-Agent: Mutt/1.14.6 (2020-07-11)
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Sep 17, 2020 at 3:09 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Wed, Sep 09, 2020 at 01:39:59AM +0300, Dmitry Osipenko wrote:
 
---O7r0+uQg70mf5vhh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Why? All of these functions "return 0 on success or a negative error
+> code on failure", don't they?
 
-On Wed, Sep 09, 2020 at 01:40:06AM +0300, Dmitry Osipenko wrote:
-> Use proper spelling of "NVIDIA" and don't designate driver as Tegra2-only
-> since newer SoC generations are supported as well.
->=20
-> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+And what is the point of having ' < 0' in all those cases?
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---O7r0+uQg70mf5vhh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jWC8ACgkQ3SOs138+
-s6FjmxAAuYZkqBGgrZXFeRxA8HF7im1K980s10TUvYL6syg0rZL2Ic/mAXhHw5ch
-X+Us9KVrUDv5lGK8h19oGCeZSKmort3NxPJpPff7r9AgJ2/IyWZmYKB6pNRUAGQy
-GkBfCMJBs1kvP3cY0+iaw2ePTlB3kNBpSogIHmC28zn4AMvMjeq8m5BKHeNJcywp
-Ub2DXJQvmic7e4SWFc0biJH0vzBl0r9Ujh1Ln3vzXQRpRbo1lm5bIOoNGsEMkkFk
-xvJ7hI5fT3Jk/+soM0/b9QYR6kQvUwbE057J1cfRug9hs+XVsMgZgVWX0h5Hv8fA
-FBe/VXDoAWFtcn4wJd6Ah+1nLvUVh/gvXUpHa4O9bDEAnIFrzpdVXs9Rm+JMTEEv
-96RMRgazS49xZuoVVEb+pesKYKvxkszs/eVss68M4DCdIWeJA+Qb2m0QWr4dGjXY
-W/GIAq4XIuf4EiyqaM4jy1VdVR+Cw0cVOoTc0bHRsGyopeu8SMR0F+K6luRT+KDf
-Yf2PwWij0g0xeGFPnb9Pn4fkr/O2M9ghkErCxGnv2uTk4BZwGX0DVDB420eQafgk
-gBn/tfx735dR4a1tFdwhL5vtWnxhU9eM6S5XqDMeRlGJWrYkxRuMk6jy9eIaRsko
-V7ARxD3vgxmgaHkZmOPQ2pNocH1T6MSSIAAm8hQUrmSp3UmKAdg=
-=i9VQ
------END PGP SIGNATURE-----
-
---O7r0+uQg70mf5vhh--
+-- 
+With Best Regards,
+Andy Shevchenko
