@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6006AC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D40CC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 289E32087D
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 283EA2087D
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 10:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKbTCxXl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1kc3i+c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbgIQKIT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 06:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46442 "EHLO
+        id S1726410AbgIQKIX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbgIQKIT (ORCPT
+        with ESMTP id S1726241AbgIQKIV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:08:19 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6572EC06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:18 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id d4so1381763wmd.5
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:18 -0700 (PDT)
+        Thu, 17 Sep 2020 06:08:21 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11448C06174A
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:21 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id z4so1411619wrr.4
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 03:08:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LTTvnN7h1giqzGBn0jgQpPTrpXXAfS+8xuM6lWplWks=;
-        b=jKbTCxXlp+3Uc6wfjxw56OIRQmme7ezOZtxJGDNCbD7aRPVlc93adtuw0LPBME9/w1
-         xlj3jeFHkxAkW6+dvIXa5YEU0n6tzKZbdF0QwL3WIWKSND3cxX+oIL0Scmd9NviJya/l
-         fnxOzR4sCdfQeOiJ8w5HVlGx6YPvHVPxlS7bs8bJbDrRnAAD2YuA6VPxESKbj3L32Wio
-         JizhqGsk6tNNI6oP7W54JwKsEDsmhfdliDcA7iTd4OfdL1dJKzcg5OEEzEXZ545q+dsv
-         AZnDTj51F9tYJVu2oXYQHLWYeLgfvPhZ74xReaTL4BgckTUAo+MH6frKsNBuZgwBBiqL
-         LEBw==
+        bh=czdPuULQn7FXaX//w2/IuNy72dljJKMueVpajrgEMGA=;
+        b=Y1kc3i+cLkTZfUYpVNr3/Tt0RQyTgiU9SEedoROI54EgQXgxtHdTdtvff5YiCXZObX
+         nwJkfeZX2FVl8Pbq/OHERdX67hcA56er5Otjf/w10OYzFWiD7sUaBDQDtjFKpqG1kZPq
+         t7oM42g95hMQ+hhrfVCHML01DMqabJ/XkHtbaOQBfiHBfaKOG0KNZGjM4rJnV/sK2Z7A
+         k54rVdPO96NJtecrHKY+AaJqycIuuyN+ryJRfMEBz2bR3pTSGJzVkTNh7hFYFRvdQ4Rx
+         cgXvPTTlBy/L8657GEBxlDJn0Pzm2Aue9DZf48UYWFwfdE5puCfGJu7TPnS6vBIhSXb1
+         Uj/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LTTvnN7h1giqzGBn0jgQpPTrpXXAfS+8xuM6lWplWks=;
-        b=QnAF1XuSdU8L9wIL3HgVpCSgnzjofbWQNssHUkUWTlt+UdRd8NKWe9eBffMNziRun7
-         WCkx/3oytqL/dcKQVO7baqadYDFwNRH9jpW3nvUP0gUZRpsMP3F+ZPPL0vwLjiI8nQKN
-         GqysP/a5fx5IN848ie97PKaVgyswnxNX4KbI+go02DwPFNLTUS7iaenG35QkQ7bzkhkv
-         bMqfsv2P9VRmiD5+oJjur00tcV0RxGFtiB0FLzwU0zaq/hBafGBk+vbK5agfAk22Tny2
-         9X5JHhODr4UtPe/F73JsoMkxhK4/wwSmmp9WnDZg+kTnIveqOp+xDFLiC61esNBglg+4
-         dR2g==
-X-Gm-Message-State: AOAM530KMQngqLBJovujkEX2QW3YQs+tfCjk5kJGQtcbL0HlIacDikYr
-        4sHtCoKxN3rOc4AdqrYjcxU=
-X-Google-Smtp-Source: ABdhPJwNbdThURz1CUtSnCJ4UFy3jXBerwtQmeCNSsUIzbbbHJwdvA/uDil996hN/ViJaR0YLibrmA==
-X-Received: by 2002:a1c:9cd3:: with SMTP id f202mr9133765wme.148.1600337297045;
-        Thu, 17 Sep 2020 03:08:17 -0700 (PDT)
+        bh=czdPuULQn7FXaX//w2/IuNy72dljJKMueVpajrgEMGA=;
+        b=MrOHhkN/M105ft9hX55eigyFLfXz/GbMjDOzcreJAR2mysrX1JtEQrYtgMGDh3AzZf
+         uTeH+rwhtUCOWba+hXfqk+PQV2JPOVI9SH6m4SSiMVfE0hiqa8D207GZgActqZz2L4Co
+         AEi66FPOold+mMlibucMSGzYJ/6bYba0/OG0X/fs77VvDQthZmVsciSRZjG0Q/6/bYCT
+         lfPe9fr2t15MeSC2nvy8FoeIWv/w04o+UZF+UStENnvxN5NRcRhSHq3Wfw3ZIPHP8LNw
+         FouKWjrpiBjd4gKH6/OkPNJsyzNoPva9OfdkaowjmAsr/NcZ7P3fnGKYQQxn2gdrJvlU
+         S0sg==
+X-Gm-Message-State: AOAM531kGi8Wcltv3eQVSmkxA4XOYwZI8V46UXdutJ/XerZgp/+zDI7L
+        oN2+r25R7bP2WWTQR5c9fZg=
+X-Google-Smtp-Source: ABdhPJzwajaKK7EDJ5+O0dX6h6sN+JcQShuZCuXKogyfNUjco+ykT2nWvjnmMPUymdEl2HwB0AkFtQ==
+X-Received: by 2002:a5d:6acf:: with SMTP id u15mr31044659wrw.221.1600337299786;
+        Thu, 17 Sep 2020 03:08:19 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id y1sm10104979wma.36.2020.09.17.03.08.15
+        by smtp.gmail.com with ESMTPSA id o4sm38072371wrv.86.2020.09.17.03.08.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 03:08:16 -0700 (PDT)
+        Thu, 17 Sep 2020 03:08:18 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 07/14] soc/tegra: fuse: Extract tegra_get_platform()
-Date:   Thu, 17 Sep 2020 12:07:45 +0200
-Message-Id: <20200917100752.3516153-8-thierry.reding@gmail.com>
+Subject: [PATCH v2 08/14] soc/tegra: fuse: Implement tegra_is_silicon()
+Date:   Thu, 17 Sep 2020 12:07:46 +0200
+Message-Id: <20200917100752.3516153-9-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917100752.3516153-1-thierry.reding@gmail.com>
 References: <20200917100752.3516153-1-thierry.reding@gmail.com>
@@ -77,58 +77,58 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This function extracts the PRE_SI_PLATFORM field from the HIDREV
-register and can be used to determine which platform the kernel runs on
-(silicon, simulation, ...). Note that while only Tegra194 and later
-define this field, it should be safe to call this on prior generations
-as well since this field should read as 0, indicating silicon.
+This function can be used by drivers to determine whether code is
+running on silicon or on a simulation platform.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c    | 2 +-
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 5 +++++
- include/soc/tegra/fuse.h               | 1 +
- 3 files changed, 7 insertions(+), 1 deletion(-)
+Changes in v2:
+- fix return value for pre-Tegra194 chips and add comment explaining
+  why we always return true for those chips
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index d1f8dd0289e6..7e6b6ee59120 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -336,7 +336,7 @@ static ssize_t platform_show(struct device *dev, struct device_attribute *attr,
- 	 * platform type is silicon and all other non-zero values indicate
- 	 * the type of simulation platform is being used.
- 	 */
--	return sprintf(buf, "%d\n", (tegra_read_chipid() >> 20) & 0xf);
-+	return sprintf(buf, "%d\n", tegra_get_platform());
- }
- 
- static DEVICE_ATTR_RO(platform);
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 19 +++++++++++++++++++
+ include/soc/tegra/fuse.h               |  1 +
+ 2 files changed, 20 insertions(+)
+
 diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 8e416ad91ee2..92a2d646c183 100644
+index 92a2d646c183..946a2d9ad117 100644
 --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
 +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -47,6 +47,11 @@ u8 tegra_get_minor_rev(void)
- 	return (tegra_read_chipid() >> 16) & 0xf;
+@@ -52,6 +52,25 @@ u8 tegra_get_platform(void)
+ 	return (tegra_read_chipid() >> 20) & 0xf;
  }
  
-+u8 tegra_get_platform(void)
++bool tegra_is_silicon(void)
 +{
-+	return (tegra_read_chipid() >> 20) & 0xf;
++	switch (tegra_get_chip_id()) {
++	case TEGRA194:
++		if (tegra_get_platform() == 0)
++			return true;
++
++		return false;
++	}
++
++	/*
++	 * Chips prior to Tegra194 have a different way of determining whether
++	 * they are silicon or not. Since we never supported simulation on the
++	 * older Tegra chips, don't bother extracting the information and just
++	 * report that we're running on silicon.
++	 */
++	return true;
 +}
 +
  u32 tegra_read_straps(void)
  {
  	WARN(!chipid, "Tegra ABP MISC not yet available\n");
 diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 1097feca41ed..214908fc5581 100644
+index 214908fc5581..a9db917a1d06 100644
 --- a/include/soc/tegra/fuse.h
 +++ b/include/soc/tegra/fuse.h
-@@ -23,6 +23,7 @@
- 
+@@ -24,6 +24,7 @@
  u32 tegra_read_chipid(void);
  u8 tegra_get_chip_id(void);
-+u8 tegra_get_platform(void);
+ u8 tegra_get_platform(void);
++bool tegra_is_silicon(void);
  
  enum tegra_revision {
  	TEGRA_REVISION_UNKNOWN = 0,
