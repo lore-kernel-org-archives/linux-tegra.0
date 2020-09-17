@@ -2,244 +2,377 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D3EC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 02:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6544C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2DB206DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 02:27:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KzeVBbp+"
+	by mail.kernel.org (Postfix) with ESMTP id AAEB82072E
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 07:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbgIQC1W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 16 Sep 2020 22:27:22 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:41520 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbgIQC1V (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 16 Sep 2020 22:27:21 -0400
-X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Sep 2020 22:27:19 EDT
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200917021919epoutp0467301f965f3337f81fd408176bdee1a6~1cLOci6If1257412574epoutp04-
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 02:19:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200917021919epoutp0467301f965f3337f81fd408176bdee1a6~1cLOci6If1257412574epoutp04-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600309159;
-        bh=Y2WbprGh1QdL8poMPL+mRB1yv/xvwknGbXce4Q04kAU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=KzeVBbp+C6jUaot+SRX7ZGzc5ZUHtl7nK9PcUlXHkj6Ww5ysEypFVu9nHZyFO46RZ
-         D2hxIa/kojEE3PbX6CRe0pldCzcJjMPfqOzghcey20t1A3doVieVG8HUHd7h1FktQS
-         ErEaqE6nJBseAbXkUM+0jV3FRUT2qzX12aEqk50E=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200917021918epcas1p3bf33ef8cbc9fb85c14e4121c2a17f753~1cLNvtKSB0798907989epcas1p3b;
-        Thu, 17 Sep 2020 02:19:18 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4BsLJ35fcpzMqYm0; Thu, 17 Sep
-        2020 02:19:15 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        59.D4.29173.1A7C26F5; Thu, 17 Sep 2020 11:19:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200917021912epcas1p19acb32265d42a0c244d994282c25c56f~1cLIUmX3w0828608286epcas1p1m;
-        Thu, 17 Sep 2020 02:19:12 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200917021912epsmtrp26a9ce8f57d53ba759b7f6bde82863be8~1cLIT5CEk2220522205epsmtrp2E;
-        Thu, 17 Sep 2020 02:19:12 +0000 (GMT)
-X-AuditID: b6c32a37-9cdff700000071f5-69-5f62c7a17b2b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        42.C0.08303.0A7C26F5; Thu, 17 Sep 2020 11:19:12 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200917021912epsmtip18445e10d8f8c50c1e50355e300086b6f~1cLIE4Or21303513035epsmtip1K;
-        Thu, 17 Sep 2020 02:19:12 +0000 (GMT)
-Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
-Date:   Thu, 17 Sep 2020 11:32:10 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1726191AbgIQHXy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 03:23:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45216 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726187AbgIQHXx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 03:23:53 -0400
+X-Greylist: delayed 1094 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 03:23:51 EDT
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8601CAEF8;
+        Thu, 17 Sep 2020 07:05:40 +0000 (UTC)
+Subject: Re: [PATCH v2 00/21] Convert all remaining drivers to GEM object
+ functions
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, l.stach@pengutronix.de,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+        matthias.bgg@gmail.com, robdclark@gmail.com, sean@poorly.run,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        hjc@rock-chips.com, heiko@sntech.de, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, rodrigosiqueiramelo@gmail.com,
+        hamohammed.sa@gmail.com, oleksandr_andrushchenko@epam.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, sumit.semwal@linaro.org,
+        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
+        marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <94b4d32e-92f2-cc29-1d59-b9b10b814220@suse.de>
+Date:   Thu, 17 Sep 2020 09:05:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmge7C40nxBov+ilu8/jedxWL1x8eM
-        Fi2zFrFYbL0lbXG26Q27xefeI4wWnV9msVncblzBZvFz1zwWB06PnbPusnv0Nr9j8/j49BaL
-        R9+WVYwenzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
-        +AToumXmAN2jpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNArTswtLs1L10vO
-        z7UyNDAwMgUqTMjO2N32k6lgj1LFrn+LmBoYt8h0MXJySAiYSMyb2MTaxcjFISSwg1Fi+vsG
-        NgjnE6PEo4ZdjBDOZ0aJPa/OMsK0rJlzgx0isQuoZfMLZgjnPaPEjCef2EGqhAW8JX4/+MUK
-        YosIBEns+jwTrIhZoJ1JYnr7O7AEm4CWxP4XN9hAbH4BRYmrPx4DreDg4BWwk9jyMhzEZBFQ
-        ldjeaQ1SISoQJnFyWwvYEbwCghInZz5hAbE5BWwllr3qArOZBcQlbj2ZzwRhy0s0b50NtlZC
-        YCmHxPdvy9ghPnCR2LbiN9Q3whKvjm+BiktJfH63lw3CrpZYefIIG0RzB6PElv0XWCESxhL7
-        l05mAjmOWUBTYv0ufYiwosTO33MZIRbzSbz72sMKUiIhwCvR0SYEUaIscfnBXSYIW1JicXsn
-        2wRGpVlI3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCY+TY3sQITqta5jsYp739oHeIkYmD
-        8RCjBAezkgjvgcb4eCHelMTKqtSi/Pii0pzU4kOMpsDwncgsJZqcD0zseSXxhqZGxsbGFiaG
-        ZqaGhkrivA9vKcQLCaQnlqRmp6YWpBbB9DFxcEo1MJmeej/F9GhBfsvBz5f+nNJl/Hkgftn9
-        Ber14u9EPJJ91uVq3eHUssuxfXz95+LLq401/BexaDQdnmrs43dK8RbfxV83mtclBqu7zrr9
-        4YqT7pf4xMMHT5zmKwrx2NSocKfAfcGXUIHdP0/eK/uzuqzi77uHrKvZ2//dLJ177lSh8Ld6
-        51YfFpbY9k9LeecJe693mfSof//5E08s7bJvpmc7OJ+tePUhZcFpho6Gl7K8ewVWp5lLHfvf
-        9WnnSYm3Z77KurQqNRv/CA9oXqd9RczYqermgo0P7+zP8plusbXTad6n2T/rD3B3m9235cqT
-        eTmzQP1Y9+xVIumhITN4WrodL3wrWRSmP7tybVBwKqsSS3FGoqEWc1FxIgA3GTbYNAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJTnfB8aR4g+5Hahav/01nsVj98TGj
-        RcusRSwWW29JW5xtesNu8bn3CKNF55dZbBa3G1ewWfzcNY/FgdNj56y77B69ze/YPD4+vcXi
-        0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBm7234yFexRqtj1bxFTA+MWmS5GTg4JAROJNXNu
-        sHcxcnEICexglJg6/QkrREJSYtrFo8xdjBxAtrDE4cPFEDVvGSUerl8HViMs4C3x+8EvMFtE
-        IEji1Oa3jCA2s0Ank8TxM3ZQDcwS7ydPAStiE9CS2P/iBhuIzS+gKHH1x2NGkAW8AnYSW16G
-        g5gsAqoS2zutQSpEBcIkdi55zARi8woISpyc+YQFxOYUsJVY9qqLBWKVusSfeZeYIWxxiVtP
-        5jNB2PISzVtnM09gFJ6FpH0WkpZZSFpmIWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9d
-        Lzk/dxMjOLq0tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeA43x8UK8KYmVValF+fFFpTmpxYcYpTlY
-        lMR5v85aGCckkJ5YkpqdmlqQWgSTZeLglGpgutz9v7vuZODWfIdtAjphxme/Z2wQaK1W2LC0
-        8887g6K6L2bnb2vvXBQYL3x+TWnfxGpe/3fcXCwCKxYwztvKeFY9J5FFKPh408PQnXLyfzu0
-        DptMirnMnf0jbX+i9C+htbds5jFJLppunZNW68VX0Sma1LQ946TU61BXy2zTU2uzZy9uZWcX
-        6F65//pdwcun0558Z8kIDKpvkyjQ2FN35vWkZfwtOT3KF64fPeR1dNYm6+XrZBoD/2St6uX/
-        v1fjkbCbSn3aQaWN70/V/GeyLvYqfq8WqK+6+9mUj9PSw1fmCDJd5fwmkXwgZ1FRaIlKCkPH
-        JunPMVN9ZzlP/v1D8ell8eqN+etSsn8v+rtfiaU4I9FQi7moOBEABQrxOx0DAAA=
-X-CMS-MailID: 20200917021912epcas1p19acb32265d42a0c244d994282c25c56f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7
-References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
-        <20200908072557.GC294938@mwanda>
-        <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
-        <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
-        <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
-        <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
-        <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
-        <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
-        <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+In-Reply-To: <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="IlbjXZFzpa1bxN3Foosb3hob3NomxLQSR"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/17/20 4:07 AM, Dmitry Osipenko wrote:
-> 16.09.2020 05:38, Chanwoo Choi пишет:
->> On 9/16/20 2:01 AM, Dmitry Osipenko wrote:
->>> 15.09.2020 05:13, Chanwoo Choi пишет:
->>>> On 9/15/20 11:00 AM, Chanwoo Choi wrote:
->>>>> Hi Dmitry,
->>>>>
->>>>> On 9/14/20 10:56 PM, Dmitry Osipenko wrote:
->>>>>> 14.09.2020 10:09, Chanwoo Choi пишет:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On 9/8/20 4:25 PM, Dan Carpenter wrote:
->>>>>>>> This error path needs to call clk_disable_unprepare().
->>>>>>>>
->>>>>>>> Fixes: 7296443b900e ("PM / devfreq: tegra30: Handle possible round-rate error")
->>>>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>>>>> ---
->>>>>>>> ---
->>>>>>>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
->>>>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->>>>>>>> index e94a27804c20..dedd39de7367 100644
->>>>>>>> --- a/drivers/devfreq/tegra30-devfreq.c
->>>>>>>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>>>>>>> @@ -836,7 +836,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>>>>  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->>>>>>>>  	if (rate < 0) {
->>>>>>>>  		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
->>>>>>>> -		return rate;
->>>>>>>> +		err = rate;
->>>>>>>> +		goto disable_clk;
->>>>>>>>  	}
->>>>>>>>  
->>>>>>>>  	tegra->max_freq = rate / KHZ;
->>>>>>>> @@ -897,6 +898,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>>>>>>>  	dev_pm_opp_remove_all_dynamic(&pdev->dev);
->>>>>>>>  
->>>>>>>>  	reset_control_reset(tegra->reset);
->>>>>>>> +disable_clk:
->>>>>>>>  	clk_disable_unprepare(tegra->clock);
->>>>>>>
->>>>>>> Is it doesn't need to reset with reset_contrl_reset()?
->>>>>>
->>>>>> Hello, Chanwoo!
->>>>>>
->>>>>> It's reset just before the clk_round_rate() invocation, hence there
->>>>>> shouldn't be a need to reset it second time.
->>>>>
->>>>> Do you mean that reset is deasserted automatically
->>>>> when invoke clk_round_rate() on tegra?
->>>
->>> I only mean that the tegra30-devfreq driver deasserts the reset before
->>> the clk_round_rate():
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n834
->>>
->>>>> If tree, I think that 'reset_control_reset(tegra->reset)' invocation
->>>>
->>>> I'm sorry for my typo. s/tree/true.
->>>>
->>>>> is not needed on 'remove_opp:' goto. Because already reset deassertion
->>>>> is invoked by clk_round_rate(), it seems that doesn't need to invoke
->>>>> anymore during exception case.
->>>>>
->>>>> Actually, it is not clear in my case.
->>>
->>> The reset_control_reset() in the error path of the driver probe function
->>> is placed that way to make the tear-down order match the driver removal
->>> order. Perhaps the reset could be moved before the remove_opp, but this
->>> change won't make any real difference, hence it already should be good
->>> as-is.
->>>
->>>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--IlbjXZFzpa1bxN3Foosb3hob3NomxLQSR
+Content-Type: multipart/mixed; boundary="MOeMuup4o07wOcrSIw7xNuGzkQ7VfpmEx";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ alexander.deucher@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+ linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+ inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+ patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
+ joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+ chunkuang.hu@kernel.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+ robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+ tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com, heiko@sntech.de,
+ thierry.reding@gmail.com, jonathanh@nvidia.com,
+ rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+ oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+ laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+ sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+ tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+ andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com, xinhui.pan@amd.com,
+ aaron.liu@amd.com, nirmoy.das@amd.com, chris@chris-wilson.co.uk,
+ matthew.auld@intel.com, tvrtko.ursulin@linux.intel.com,
+ andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+ emil.velikov@collabora.com
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Message-ID: <94b4d32e-92f2-cc29-1d59-b9b10b814220@suse.de>
+Subject: Re: [PATCH v2 00/21] Convert all remaining drivers to GEM object
+ functions
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
+In-Reply-To: <b527fde4-b456-6683-4a9e-0f7dcf1525be@amd.com>
+
+--MOeMuup4o07wOcrSIw7xNuGzkQ7VfpmEx
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi
+
+Am 15.09.20 um 17:25 schrieb Christian K=C3=B6nig:
+> Added my rb to the amdgpu and radeon patches.
+>=20
+> Should we pick those up through the amd branches or do you want to push=
+
+> everything to drm-misc-next?
+>=20
+> I think the later since this should result in much merge clash.
+
+Yes, preferable, I'd merge it all through drm-misc.
+
+Best regards
+Thomas
+
+>=20
+> Christian.
+>=20
+> Am 15.09.20 um 16:59 schrieb Thomas Zimmermann:
+>> The GEM and PRIME related callbacks in struct drm_driver are
+>> deprecated in
+>> favor of GEM object functions in struct drm_gem_object_funcs. This
+>> patchset
+>> converts the remaining drivers to object functions and removes most of=
+
+>> the
+>> obsolete interfaces.
 >>
->> I have one more question.
->> When failed to enable clock on line829[1],
->> does it need any reset_control invocation?
->> In this case on line829, just return without any restoration 
->> about reset control.
+>> Patches #1 to #16 and #18 to #19 convert DRM drivers to GEM object
+>> functions,
+>> one by one. Each patch moves existing callbacks from struct drm_driver=
+
+>> to an
+>> instance of struct drm_gem_object_funcs, and sets these funcs when the=
+
+>> GEM
+>> object is initialized. The expection is .gem_prime_mmap. There are
+>> different
+>> ways of how drivers implement the callback, and moving it to GEM objec=
+t
+>> functions requires a closer review for each.
 >>
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/devfreq/tegra30-devfreq.c?h=v5.9-rc5#n829
+>> Patch #17 fixes virtgpu to use GEM object functions where possible. Th=
+e
+>> driver recently introduced a function for one of the deprecated
+>> callbacks.
 >>
-> 
-> There is no need to deassert the reset if clk-enable fails because reset
-> control of tegra30-devfreq is exclusive, i.e it isn't shared with any
-> other peripherals, and thus, reset control could asserted/deasserted at
-> any time by the devfreq driver. If clk-enable fails, then reset will
-> stay asserted and it will be fine to re-assert it again.
->
+>> Patch #20 converts xlnx to CMA helper macros. There's no apparent reas=
+on
+>> why the driver does the GEM setup on it's own. Using CMA helper macros=
 
-Thanks for the detailed explanation. 
-But, I think that almost people don't know the detailed h/w information.
-If possible, how about matching the pair when clk-enable fails as following?
+>> adds GEM object functions implicitly.
+>>
+>> With most of the GEM and PRIME moved to GEM object functions, related
+>> code
+>> in struct drm_driver and in the DRM core/helpers is being removed by
+>> patch
+>> #21.
+>>
+>> Further testing is welcome. I tested the drivers for which I have HW
+>> available. These are gma500, i915, nouveau, radeon and vc4. The consol=
+e,
+>> Weston and Xorg apparently work with the patches applied.
+>>
+>> v2:
+>> =C2=A0=C2=A0=C2=A0=C2=A0* moved code in amdgpu and radeon
+>> =C2=A0=C2=A0=C2=A0=C2=A0* made several functions static in various dri=
+vers
+>> =C2=A0=C2=A0=C2=A0=C2=A0* updated TODO-list item
+>> =C2=A0=C2=A0=C2=A0=C2=A0* fix virtgpu
+>>
+>> Thomas Zimmermann (21):
+>> =C2=A0=C2=A0 drm/amdgpu: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/armada: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/etnaviv: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/exynos: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/gma500: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/i915: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/mediatek: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/msm: Introduce GEM object funcs
+>> =C2=A0=C2=A0 drm/nouveau: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/omapdrm: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/pl111: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/radeon: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/rockchip: Convert to drm_gem_object_funcs
+>> =C2=A0=C2=A0 drm/tegra: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/vc4: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/vgem: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/virtgpu: Set PRIME export function in struct drm_gem_=
+object_funcs
+>> =C2=A0=C2=A0 drm/vkms: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/xen: Introduce GEM object functions
+>> =C2=A0=C2=A0 drm/xlnx: Initialize DRM driver instance with CMA helper =
+macro
+>> =C2=A0=C2=A0 drm: Remove obsolete GEM and PRIME callbacks from struct =
+drm_driver
+>>
+>> =C2=A0 Documentation/gpu/todo.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0 7 +-
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 6 --
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 23 +++--
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 5 --
+>> =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_object.c=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 1 +
+>> =C2=A0 drivers/gpu/drm/armada/armada_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 -
+>> =C2=A0 drivers/gpu/drm/armada/armada_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 ++-
+>> =C2=A0 drivers/gpu/drm/armada/armada_gem.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 -
+>> =C2=A0 drivers/gpu/drm/drm_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 35 ++------
+>> =C2=A0 drivers/gpu/drm/drm_gem_cma_helper.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +-
+>> =C2=A0 drivers/gpu/drm/drm_prime.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| 17 ++--
+>> =C2=A0 drivers/gpu/drm/etnaviv/etnaviv_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 13 ---
+>> =C2=A0 drivers/gpu/drm/etnaviv/etnaviv_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+>> =C2=A0 drivers/gpu/drm/etnaviv/etnaviv_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 19 ++++-
+>> =C2=A0 drivers/gpu/drm/exynos/exynos_drm_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 10 ---
+>> =C2=A0 drivers/gpu/drm/exynos/exynos_drm_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 15 ++++
+>> =C2=A0 drivers/gpu/drm/gma500/framebuffer.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+>> =C2=A0 drivers/gpu/drm/gma500/gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 18 +=
+++-
+>> =C2=A0 drivers/gpu/drm/gma500/gem.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 3 +
+>> =C2=A0 drivers/gpu/drm/gma500/psb_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 --
+>> =C2=A0 drivers/gpu/drm/gma500/psb_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 -
+>> =C2=A0 drivers/gpu/drm/i915/gem/i915_gem_object.c=C2=A0=C2=A0=C2=A0 | =
+21 ++++-
+>> =C2=A0 drivers/gpu/drm/i915/gem/i915_gem_object.h=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 3 -
+>> =C2=A0 drivers/gpu/drm/i915/i915_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 -
+>> =C2=A0 .../gpu/drm/i915/selftests/mock_gem_device.c=C2=A0 |=C2=A0 3 -
+>> =C2=A0 drivers/gpu/drm/mediatek/mtk_drm_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 5 --
+>> =C2=A0 drivers/gpu/drm/mediatek/mtk_drm_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 11 +++
+>> =C2=A0 drivers/gpu/drm/msm/msm_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 ---
+>> =C2=A0 drivers/gpu/drm/msm/msm_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+>> =C2=A0 drivers/gpu/drm/msm/msm_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 19 ++++-
+>> =C2=A0 drivers/gpu/drm/nouveau/nouveau_drm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 --
+>> =C2=A0 drivers/gpu/drm/nouveau/nouveau_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 13 +++
+>> =C2=A0 drivers/gpu/drm/nouveau/nouveau_gem.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+>> =C2=A0 drivers/gpu/drm/nouveau/nouveau_prime.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 2 +
+>> =C2=A0 drivers/gpu/drm/omapdrm/omap_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 --
+>> =C2=A0 drivers/gpu/drm/omapdrm/omap_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 18 +++-
+>> =C2=A0 drivers/gpu/drm/omapdrm/omap_gem.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 -
+>> =C2=A0 drivers/gpu/drm/pl111/pl111_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +-
+>> =C2=A0 drivers/gpu/drm/radeon/radeon_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 23 +----
+>> =C2=A0 drivers/gpu/drm/radeon/radeon_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 31 ++++++-
+>> =C2=A0 drivers/gpu/drm/rockchip/rockchip_drm_drv.c=C2=A0=C2=A0 |=C2=A0=
+ 5 --
+>> =C2=A0 drivers/gpu/drm/rockchip/rockchip_drm_gem.c=C2=A0=C2=A0 | 10 ++=
++
+>> =C2=A0 drivers/gpu/drm/tegra/drm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 4 -
+>> =C2=A0 drivers/gpu/drm/tegra/gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 8 ++
+>> =C2=A0 drivers/gpu/drm/vc4/vc4_bo.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 21 +=
++++-
+>> =C2=A0 drivers/gpu/drm/vc4/vc4_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 ---
+>> =C2=A0 drivers/gpu/drm/vc4/vc4_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+>> =C2=A0 drivers/gpu/drm/vgem/vgem_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 21 +++--
+>> =C2=A0 drivers/gpu/drm/virtio/virtgpu_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+>> =C2=A0 drivers/gpu/drm/virtio/virtgpu_object.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 1 +
+>> =C2=A0 drivers/gpu/drm/vkms/vkms_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 --
+>> =C2=A0 drivers/gpu/drm/vkms/vkms_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 +++
+>> =C2=A0 drivers/gpu/drm/xen/xen_drm_front.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 44 ++++------
+>> =C2=A0 drivers/gpu/drm/xen/xen_drm_front.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+>> =C2=A0 drivers/gpu/drm/xen/xen_drm_front_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 15 ++++
+>> =C2=A0 drivers/gpu/drm/xlnx/zynqmp_dpsub.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 +--
+>> =C2=A0 include/drm/drm_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 85 +------------------
+>> =C2=A0 57 files changed, 319 insertions(+), 349 deletions(-)
+>>
+>> --=20
+>> 2.28.0
+>>
+>=20
 
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -828,6 +828,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
-        if (err) {
-                dev_err(&pdev->dev,
-                        "Failed to prepare and enable ACTMON clock\n");
-+               reset_control_deassert(tegra->reset);
-                return err;
-        }
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+--MOeMuup4o07wOcrSIw7xNuGzkQ7VfpmEx--
+
+--IlbjXZFzpa1bxN3Foosb3hob3NomxLQSR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9jCrIUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiNzVwf+LuvZqcvZRWJqBwD/EReZk8QEdB4C
+gFkyqltsHWaQRxf+it2Dp14i6FxEXB7E3aVwF5jPAdikNLapTbkD9Y/2xPJQr+MR
+GJLLPZPYWT8OMyj5OitKkx0wGAHp+CZTn/GXhI7YyECfs2Jdwy7ZPJ4FpzCgB4Dy
+btJKCeubADE1QK+I9K2E2dYATQP5BDfqZsBLXrTF+Lu4ZzqYLGAyM04KIlou4XNS
+I4MWAApxCCZloSTMlpYYOH3hyupIlLwCnmSvIlrAa2gUGPGzy82UmH/7lPMlFRIR
+1bYU5b70s8vx4bS0brsRnZhYfmGewk+4sIcsneQfbRHKw459wJ4h46CbrA==
+=kk1b
+-----END PGP SIGNATURE-----
+
+--IlbjXZFzpa1bxN3Foosb3hob3NomxLQSR--
