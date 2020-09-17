@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD00C2BBD1
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 15:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EFCC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 15:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4F7D2223C
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 15:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDD62068D
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 15:45:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQ1f0h6p"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p6X4LHoO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbgIQPnv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 11:43:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42400 "EHLO
+        id S1728160AbgIQPpb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 11:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbgIQPnd (ORCPT
+        with ESMTP id S1728029AbgIQPOw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:43:33 -0400
+        Thu, 17 Sep 2020 11:14:52 -0400
 Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4D8C061756;
-        Thu, 17 Sep 2020 08:43:31 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id w3so2456115ljo.5;
-        Thu, 17 Sep 2020 08:43:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9574DC06174A;
+        Thu, 17 Sep 2020 08:13:41 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id n25so2376181ljj.4;
+        Thu, 17 Sep 2020 08:13:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DAWnaNNCLzi2b/HYy/bsKZyv4EO4JHS8WK3RrU3eKQE=;
-        b=QQ1f0h6p9q4wGklnosXzt8rGHZ3AFmRZF8H2xnIIeFrDAKe4zA6eEXRQ9XZ5Jig+UQ
-         7zZF/0POnOdLmtWmPDyRI3p7S+zM4NoV9hQoQ0eL+EIQn+I4mC9n5Z34qOLlC64T87oU
-         YxzGX+gwY3iSiUKM7T8n639FTqeoqRDbaps7wGxF/svu99Uf4qBNA06R2Ri6An3/vTrN
-         z4hGbTO3Q4x94WIyRVaODSvJrKCo1QKmGRz0HVb9dRXnivzXdMj0n7yZQbL5h+SedIys
-         LG+zIEDkNQv/D5f3o0Il7WTFwDtkpt5L8DB51xvgg/YtVW8O10eVW8Lj0YJMZQt4Z4A6
-         scjg==
+        bh=gum9DdcPqTqgI+Z4PbKKo27wTlCKipvkfDL7Z94Tv9U=;
+        b=p6X4LHoOdqiI26F0qasmwGL7GizIELP6ApEIvGCI1OOoLchntoKQ741T++M2EpnhOo
+         OZ2xdvrCKYi64rOCbFfpzMmI3WIAWq2yCvWu45QHlLHpxyu8JTReEZBueuVTS9Kd1k3j
+         RsW7kFlqweL4iIOCnbZ8Cvwfe4QZNFyNXKgNg9uO0keKKFiN8GzEW8tTxVpPS/XrNnQJ
+         z090v0UtPrXORST1Bi+Iic807qR07cdalELu0gkTEU57YGxCg7Zdm01pgkNF/uWjCkOE
+         Trh3tuyWzfp5jf6KcjLO3aJ9w21dw4YJlcH7q3eQv6vq/di5o7jqmQxHwwrEE+iBsCgy
+         Iv/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DAWnaNNCLzi2b/HYy/bsKZyv4EO4JHS8WK3RrU3eKQE=;
-        b=XsYfcL90MFXeEUgLW6fJVbQRcSnXWHh0Tflcxy1kjaTbDQ0qBIHoJbL8yazcau/zCj
-         PzTmeq+xD2UIn+h14woaBXCIh4/pCHkn9CqPk3Jc0i67jsmcEZzUNFEUU0Qkw7K51mkU
-         FA1+fIHyD+R2bJd1urLg1ttuu5Jzg2PhFZFZeXWmzwXive7vaRiCE68JnGGkDXLAb8Se
-         H2hN3T7oV3UOvNv2p6je77YmPFGNTDRhutmwidfF+J79SBs5Dg7g6vlkFcMJOxX2wBxC
-         dqRCr6DYFsDU9kMmB6gEQJWvvxMo68U7TQxr1Fq+HYcaS9wyk0E0SYNYKcHIdOUyHwrt
-         lU5w==
-X-Gm-Message-State: AOAM532mavdSIVbt11qQm7fjtjUKDQJDzuts6eZXWSYh2NFXP8CWfqhP
-        iWxIUMWX/y2Z2rh8UldsZCa2p3EemAc=
-X-Google-Smtp-Source: ABdhPJwpb9L2t1kEXCu/zJQbLoXsknW2ZpQlhcAy/zmrCSGu1WKnb3or7d+bh/5ugj/9eI7nXYkRSg==
-X-Received: by 2002:a2e:989a:: with SMTP id b26mr9064020ljj.111.1600357409561;
-        Thu, 17 Sep 2020 08:43:29 -0700 (PDT)
+        bh=gum9DdcPqTqgI+Z4PbKKo27wTlCKipvkfDL7Z94Tv9U=;
+        b=rkCnCZB0T9NObpxYx3Q6YMoW4SdscJ2kbmfNLR3NwbLnlrHANe4f8LDIUVkIE514Zq
+         RHs/PRLB88MeT08n/ZJ0jypqViLGIGwcr2hxg+4hsZMHCPw+w5W/ijnQKAKHZT7yjGPX
+         neXsxA5RwIYMwoKeSJa210hTKyMhwhkxdS8rhQ4Os7mjtfHvuhy2UbDVlvWhx79yjk/8
+         KFyx8JES6gB/Gx9y8HtizuZFah+LcNd74APK4emz0xtgQqQ09zgQLD1Q/HOz1r4I4xwM
+         XMASkALMjJnB+EyGpUowlQaNLkK8lxg1Cr2FAAk8ys8+H6PZmfWczDQh8N2Cm0diyPcN
+         0JGQ==
+X-Gm-Message-State: AOAM533oAx/N50O5laQkvZuYOiAtfiTcSosxlEQfFtLLEVrZ+toRVo38
+        OcyFwFJ4DX/ULrjEwn5kd7fF9gw9sFE=
+X-Google-Smtp-Source: ABdhPJz9PWrXh5LmthwX9pNFwQ9PX0tq7AfXtdAakbW1J3ctyb+7jk0hpck+SbBmvVk48YmaHJM8bw==
+X-Received: by 2002:a05:651c:3c3:: with SMTP id f3mr9754284ljp.90.1600355618766;
+        Thu, 17 Sep 2020 08:13:38 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id m10sm5348006lfo.184.2020.09.17.08.43.28
+        by smtp.googlemail.com with ESMTPSA id b1sm5245010lfi.264.2020.09.17.08.13.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 08:43:29 -0700 (PDT)
-Subject: Re: [PATCH v7 30/34] i2c: tegra: Clean up variable names
+        Thu, 17 Sep 2020 08:13:38 -0700 (PDT)
+Subject: Re: [PATCH v7 29/34] i2c: tegra: Improve formatting of variables
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
@@ -70,14 +70,14 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-31-digetx@gmail.com> <20200917122105.GI3515672@ulmo>
+ <20200908224006.25636-30-digetx@gmail.com> <20200917121640.GH3515672@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <49498b9c-3b75-ad97-1859-5d6442b27b0c@gmail.com>
-Date:   Thu, 17 Sep 2020 18:43:28 +0300
+Message-ID: <6957eafb-8be2-3323-9c55-bb6eee6ab6bf@gmail.com>
+Date:   Thu, 17 Sep 2020 18:13:36 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200917122105.GI3515672@ulmo>
+In-Reply-To: <20200917121640.GH3515672@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,81 +85,85 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.09.2020 15:21, Thierry Reding пишет:
-> On Wed, Sep 09, 2020 at 01:40:02AM +0300, Dmitry Osipenko wrote:
->> Rename "ret" variables to "err" in order to make code a bit more
->> expressive, emphasizing that the returned value is an error code.
->> Same vice versa, where appropriate.
->>
->> Rename variable "reg" to "val" in order to better reflect the actual
->> usage of the variable in the code and to make naming consistent with
->> the rest of the code.
->>
->> Use briefer names for a few members of the tegra_i2c_dev structure in
->> order to improve readability of the code.
->>
->> All dev/&pdev->dev are replaced with i2c_dev->dev in order to have uniform
->> code style across the driver.
+17.09.2020 15:16, Thierry Reding пишет:
+> On Wed, Sep 09, 2020 at 01:40:01AM +0300, Dmitry Osipenko wrote:
+>> Reorder definition of variables in the code to have them sorted by length
+>> and grouped logically, also replace "unsigned long" with "u32". Do this in
+>> order to make code easier to read.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/i2c/busses/i2c-tegra.c | 173 ++++++++++++++++-----------------
->>  1 file changed, 86 insertions(+), 87 deletions(-)
-> 
-> That's indeed a nice improvement. One thing did spring out at me,
-> though.
-> 
+>>  drivers/i2c/busses/i2c-tegra.c | 97 ++++++++++++++++------------------
+>>  1 file changed, 45 insertions(+), 52 deletions(-)
+>>
 >> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> [...]
->> @@ -1831,20 +1830,20 @@ static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
+>> index ac40c87f1c21..2376f502d299 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -259,42 +259,48 @@ struct tegra_i2c_hw_feature {
+>>   */
+>>  struct tegra_i2c_dev {
+>>  	struct device *dev;
+>> -	const struct tegra_i2c_hw_feature *hw;
+>>  	struct i2c_adapter adapter;
+>> -	struct clk *div_clk;
+>> -	struct clk_bulk_data *clocks;
+>> -	unsigned int nclocks;
+>> +
+>> +	const struct tegra_i2c_hw_feature *hw;
+>>  	struct reset_control *rst;
+>> -	void __iomem *base;
+>> -	phys_addr_t base_phys;
+>>  	unsigned int cont_id;
+>>  	unsigned int irq;
+>> -	bool is_dvc;
+>> -	bool is_vi;
+>> +
+>> +	phys_addr_t base_phys;
+>> +	void __iomem *base;
+>> +
+>> +	struct clk_bulk_data *clocks;
+>> +	unsigned int nclocks;
+>> +
+>> +	struct clk *div_clk;
+>> +	u32 bus_clk_rate;
+>> +
+>>  	struct completion msg_complete;
+>> +	size_t msg_buf_remaining;
+>>  	int msg_err;
+>>  	u8 *msg_buf;
+>> -	size_t msg_buf_remaining;
+>> -	bool msg_read;
+>> -	u32 bus_clk_rate;
+>> -	bool is_multimaster_mode;
+>> +
+>> +	struct completion dma_complete;
+>>  	struct dma_chan *tx_dma_chan;
+>>  	struct dma_chan *rx_dma_chan;
+>> +	unsigned int dma_buf_size;
+>>  	dma_addr_t dma_phys;
+>>  	u32 *dma_buf;
+>> -	unsigned int dma_buf_size;
+>> -	bool is_curr_dma_xfer;
+>> -	struct completion dma_complete;
+>> +
+>> +	bool is_multimaster_mode;
+>>  	bool is_curr_atomic_xfer;
+>> +	bool is_curr_dma_xfer;
+>> +	bool msg_read;
+>> +	bool is_dvc;
+>> +	bool is_vi;
+>>  };
 >>  
->>  	clk_bulk_disable(i2c_dev->nclocks, i2c_dev->clocks);
->>  
->> -	return pinctrl_pm_select_idle_state(i2c_dev->dev);
->> +	return pinctrl_pm_select_idle_state(dev);
->>  }
->>  
->>  static int __maybe_unused tegra_i2c_suspend(struct device *dev)
->>  {
->>  	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->> -	int err = 0;
->> +	int ret = 0;
->>  
->>  	i2c_mark_adapter_suspended(&i2c_dev->adapter);
->>  
->>  	if (!pm_runtime_status_suspended(dev))
->> -		err = tegra_i2c_runtime_suspend(dev);
->> +		ret = tegra_i2c_runtime_suspend(dev);
->>  
->> -	return err;
->> +	return ret;
->>  }
+>> -static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>> -		       unsigned long reg)
+>> +static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, u32 reg)
 > 
-> Isn't this exactly the opposite of what the commit message says (and the
-> rest of the patch does)?
+> I actually prefer unsigned long/int over u32 for offsets because it
+> makes it clearer that this is not in fact a 32-bit value that we're
+> writing into a register. This is especially true for these register
+> accessors where the "offset" is called "reg" and may be easily
+> mistaken for a register value.
 
-This change makes it to be consistent with the rest of the code. You may
-notice that "Factor out hardware initialization into separate function"
-made a similar change.
-
-The reason I'm doing this is that the "err" suggests that code returns a
-error failure code, while it could be a success too and you don't know
-for sure by looking only at the part of code. Hence it's cleaner to use
-"err" when error code is returned.
-
-It is possible (and maybe even better) to rewrite this function as:
-
-static int __maybe_unused tegra_i2c_suspend(struct device *dev)
-{
-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-
-	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-
-	if (!pm_runtime_status_suspended(dev)) {
-		int err = tegra_i2c_runtime_suspend(dev);
-		if (err)
-			return err;
-	}
-
-	return 0;
-}
+That is a bit questionable, at least it definitely won't save me from a
+mistake :)
