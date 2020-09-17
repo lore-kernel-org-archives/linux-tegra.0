@@ -2,106 +2,133 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2D3C433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 08:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0638C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 08:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC3212075E
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 08:45:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lPIdu/lV"
+	by mail.kernel.org (Postfix) with ESMTP id B014D20770
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 08:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600332365;
+	bh=XYG6JGcwgkmjNbVGDa4h66QWAsy/bKbSi/BpwoM8ZUU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=vOsv687XD/X4OxC11NLOvAwsbZhmnZNUykL6dr+3j1TjGfs8sEnSORYL/3LOKSj+4
+	 kUUc8iNxtQuvKIDrRn7xT9EHAA8Bw8bGJBao58cNvk8075EI4gwa7BUSX9VolpSu9f
+	 vF6Qo3OamYZfjmhoWcj7NJ2D45z56SaghXVG8Uno=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgIQIpP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 04:45:15 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5878 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbgIQIpO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 04:45:14 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f6321c00001>; Thu, 17 Sep 2020 01:43:44 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 17 Sep 2020 01:45:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 17 Sep 2020 01:45:13 -0700
-Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Sep
- 2020 08:45:06 +0000
-Subject: Re: [Patch 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Sumit Gupta <sumitg@nvidia.com>, <viresh.kumar@linaro.org>,
-        <rjw@rjwysocki.net>, <thierry.reding@gmail.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <sudeep.holla@arm.com>
-CC:     <ksitaraman@nvidia.com>, <bbasu@nvidia.com>
-References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
- <1600276277-7290-3-git-send-email-sumitg@nvidia.com>
- <53d4513d-0232-0287-9610-3e9ed8888273@nvidia.com>
-Message-ID: <f387abcc-f68f-37fb-32cb-d8eb9c75b37a@nvidia.com>
-Date:   Thu, 17 Sep 2020 09:45:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726180AbgIQIqA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 04:46:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726169AbgIQIp7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 04:45:59 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8271F206A1;
+        Thu, 17 Sep 2020 08:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600332358;
+        bh=XYG6JGcwgkmjNbVGDa4h66QWAsy/bKbSi/BpwoM8ZUU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TvMRY2qOEraH4Rfb8k5hDT8yd1Lz4WxBT0oWNg/vfxujfyT7zAh5fVe5VXdROxz3V
+         fjxL56HpXlT9rEhS1V6QbWFjKeNrhwuYJSiuF+sDqd0JJuxFbzdAnEjLioqFC2oPV/
+         EKZO8cw4Z4UVtE7Q9XSt5BlFS0Y6ujF7tV63c4UY=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1kIpYC-00Ca3q-N1; Thu, 17 Sep 2020 09:45:56 +0100
 MIME-Version: 1.0
-In-Reply-To: <53d4513d-0232-0287-9610-3e9ed8888273@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600332224; bh=hkXgHpAJCj98mhBFpX/Xx3jMKH0Fmfp4GUiqjPmKgnc=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=lPIdu/lV6xPaiAJYJ/X1tTpA2Im+0Ezxo1S/l66mu3rKs1XH6HcOx7a/fhwE2ETuN
-         TAxRK8mM59GciT0xIxQPbeZc2OIW0JY3sYYWiCJex6mZ1sAlAbC+5PnbAndvPdMTj4
-         SwU61bhmX4daXloN00qSAoFd/1IXm8SM1RYkNGEJ+mHAfssRPpTNd+bhLIYKg2Va63
-         AeproXEMWbbH9nejH60pyHdvhtv8EH2wtqb26f8vRDEKCCvEF0RFyxT2FgN8cB8mRo
-         f5jW9Rl7zHF2HjSd12e2ikBkqMm6EPp43C+cCUYV747d2DDtq596fl3Jrp1rZmiHWC
-         8IsfAR+sLG3vw==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 17 Sep 2020 09:45:56 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
+        kernel-team@android.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+In-Reply-To: <a88528cd-eb76-367a-77d6-7ae20bd28304@nvidia.com>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+ <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+ <3378cd07b92e87a24f1db75f708424ee@kernel.org>
+ <CACRpkdYvqQUJaReD1yNTwiHhaZpQ9h5Z9DgdqbKkCexnM7cWNw@mail.gmail.com>
+ <049d62ac7de32590cb170714b47fb87d@kernel.org>
+ <a88528cd-eb76-367a-77d6-7ae20bd28304@nvidia.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <81cb16323baa1c81e7bc1e8156fa47b8@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, linus.walleij@linaro.org, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, sumit.garg@linaro.org, kernel-team@android.com, f.fainelli@gmail.com, linux@arm.linux.org.uk, jason@lakedaemon.net, saravanak@google.com, andrew@lunn.ch, catalin.marinas@arm.com, gregory.clement@bootlin.com, b.zolnierkie@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, will@kernel.org, Valentin.Schneider@arm.com, linux-tegra@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 2020-09-17 08:54, Jon Hunter wrote:
+> On 17/09/2020 08:50, Marc Zyngier wrote:
+>> Hi Linus,
+>> 
+>> On 2020-09-17 08:40, Linus Walleij wrote:
+>>> On Wed, Sep 16, 2020 at 5:11 PM Marc Zyngier <maz@kernel.org> wrote:
+>>> 
+>>>> Can you try the patch below and let me know?
+>>> 
+>>> I tried this patch and now Ux500 WORKS. So this patch is definitely
+>>> something you should apply.
+>>> 
+>>>> -                       if (is_frankengic())
+>>>> -                               set_sgi_intid(irqstat);
+>>>> +                       this_cpu_write(sgi_intid, intid);
+>>> 
+>>> This needs changing to irqstat to compile as pointed out by Jon.
+>>> 
+>>> With that:
+>>> Tested-by: Linus Walleij <linus.walleij@linaro.org>
+>> 
+>> Thanks a lot for that.
+>> 
+>> Still need to understand why some of Jon's systems are left 
+>> unbootable,
+>> despite having similar GIC implementations (Tegra194 and Tegra210 use
+>> the same GIC-400, and yet only one of the two boots correctly...).
+> 
+> So far, I have only tested this patch on Tegra20. Let me try the other
+> failing boards this morning and see if those still fail.
 
-On 17/09/2020 09:38, Jon Hunter wrote:
-> 
-> On 16/09/2020 18:11, Sumit Gupta wrote:
->> Warning coming during boot because the boot freq set by bootloader
->> gets filtered out due to big freq steps while creating freq_table.
->> Fixing this by setting closest ndiv value from freq_table.
->> Warning:
->>   cpufreq: cpufreq_online: CPU0: Running at unlisted freq
->>   cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
->>
->> Also, added change in init to wait till current frequency becomes
->> equal or near to the previously requested frequency. This is done
->> because it takes some time to restore the previous frequency while
->> turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
-> 
-> Same here ...
-> 
-> Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
-> 
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Viresh, this is also needed for v5.9.
+Tegra20 (if I remember well) is a dual A9 with the same GIC 
+implementation
+as Ux500, hence requiring the source CPU bits to be written back. So 
+this
+patch should have cured it, but didn't...
 
-Adding Sudeep.
+/me puzzled.
 
-Jon
-
+         M.
 -- 
-nvpublic
+Jazz is not dead. It just smells funny...
