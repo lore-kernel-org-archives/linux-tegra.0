@@ -2,155 +2,162 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF92C43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B043CC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9F0820717
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76B0F22211
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irr5qCIj"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gWnvu/cy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgIQTzZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 15:55:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbgIQO5q (ORCPT
+        id S1726769AbgIQT4C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 15:56:02 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12254 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727757AbgIQOyn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 10:57:46 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63799C06174A;
-        Thu, 17 Sep 2020 07:57:19 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id c2so2286388ljj.12;
-        Thu, 17 Sep 2020 07:57:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n0joxHTLl3BqxQ6ij0VXBgOyNi8Eer/XXbvWMRdVNFY=;
-        b=irr5qCIjdOYv20J8iTCaTRA5UJ8jnzNtuQ9wBAKUkBkUwYZvSpC/yLVt7ThRgwXQ3B
-         sAUAzvzQiKgn6uepWWSuEPmVz6AgknRFD868eBfrgomBpnC125FhY/EeTGUpTSm4EjC9
-         y90PFg52OzZ5LKvpAMAB/vVIvpPXfMTxkIIDssejlrp/YCzJN5iEAdDOK9wprJcz/blX
-         XYdmup+XrgixfQUOA4hklmzYVqN/FszMsZ8QEph+f65iaugTJXhxnuorpw7OqYYL9Vk7
-         t8goGMla2PD6wfNBb1hJInCz+6Al0znr5ED4bTqS3Fq69eQDa2TN4Ys8SrknAT+w41tV
-         7nvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=n0joxHTLl3BqxQ6ij0VXBgOyNi8Eer/XXbvWMRdVNFY=;
-        b=PSo1alyDuynrGPcrAxt+CcAStZ+K+d5aQcjbOrPtmTymCzHfcwmOJa2dm6w1ORnXEa
-         17O15R/GlKK749BNEwak3wA0a40kng2HuLEhWy6/Skr0k4GTjq9zQ7nqipNXv4h9voaA
-         mJYIbisHQPOGhTn+IpMCpbqslUEC2aP4lqpJf7SKg1s0l80WvsFVcSuBlngIurb5O9XF
-         zyeBHik9dxugun6M2xqF4RIMxW/lpEM5WlPSbgwW7dJGt3T4CSaDwAA5XDEIwpJPwat0
-         8k9p/i7/KGX5qLnvhVbH1qrm20Rr4WeBPloqk234oFpEGKqzL+F3/C2Q/j/RBrT3dXS3
-         taNQ==
-X-Gm-Message-State: AOAM533eQ4e9Sw2gtNdrRpU+vVmlcnCSgJeG0fTzbbywEF0TQv3qCWa3
-        QK+8QEPuqOlZB0InRG0MSUZYQoc7r3g=
-X-Google-Smtp-Source: ABdhPJxDy3ZIF2c4BkIXP4LkxiCyIhhPar673IiuvvC9LBQ6MF45yrzV0/L+xC0E2Z0ABrAbjVzUPQ==
-X-Received: by 2002:a2e:810a:: with SMTP id d10mr10798579ljg.302.1600354637605;
-        Thu, 17 Sep 2020 07:57:17 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id 140sm5274211lfj.146.2020.09.17.07.57.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 07:57:16 -0700 (PDT)
-Subject: Re: [PATCH v7 01/34] i2c: tegra: Make tegra_i2c_flush_fifos() usable
- in atomic transfer
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-2-digetx@gmail.com> <20200917111057.GM3515672@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9beab533-8734-f18b-887d-d0e8cc09bb72@gmail.com>
-Date:   Thu, 17 Sep 2020 17:57:15 +0300
+        Thu, 17 Sep 2020 10:54:43 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f6378080002>; Thu, 17 Sep 2020 07:51:52 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 17 Sep 2020 07:53:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 17 Sep 2020 07:53:21 -0700
+Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Sep
+ 2020 14:53:09 +0000
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marc Zyngier <maz@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sumit Garg" <sumit.garg@linaro.org>, <kernel-team@android.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Gregory Clement" <gregory.clement@bootlin.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Linux Samsung SOC" <linux-samsung-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+ <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+ <3378cd07b92e87a24f1db75f708424ee@kernel.org>
+ <CACRpkdYvqQUJaReD1yNTwiHhaZpQ9h5Z9DgdqbKkCexnM7cWNw@mail.gmail.com>
+ <049d62ac7de32590cb170714b47fb87d@kernel.org>
+ <a88528cd-eb76-367a-77d6-7ae20bd28304@nvidia.com>
+ <81cb16323baa1c81e7bc1e8156fa47b8@kernel.org>
+ <e317b2fe-52e3-8ce7-ba77-43d2708d660f@nvidia.com>
+ <4645f636-e7cc-6983-a3b7-897c20ec5096@samsung.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <ace68d00-f005-fee3-1f01-44522c180462@nvidia.com>
+Date:   Thu, 17 Sep 2020 15:53:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200917111057.GM3515672@ulmo>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4645f636-e7cc-6983-a3b7-897c20ec5096@samsung.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600354312; bh=JvhskCgRRc+by6CEI8mCU2/vrU7nc17FP3zO033b9jg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=gWnvu/cyb8ETmuvHuS85SQkDc0iD+QnmQ5xmwjvHmr7dpAdvG02eZggPEx5xq/yoP
+         CI5kwWAviTU0lE/2QCaSTE11nna/qI+/b3O6W3MbI/qwTb85w6eSkd/FS/AYlGZlkX
+         vryYTr3aT7GFbksMsJhg5hzivJg7dYFo1M3u1L9AIMK8Et0FD7ZFaUBFy2k95BJX8G
+         qPlt+zqWvWw5XGuSVI1cCZYZdE6IPn1Gl5uxFqRAcbu3FzDmUKwE1tmzvRqcAmjXF8
+         EvqYNfFv6Dz5H36qrqeFxgUJlsrN7AN5pfv28L4H/48v0MKDddNjA3BCXdV+p36qQa
+         869zQF2HOlTow==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.09.2020 14:10, Thierry Reding пишет:
-> On Wed, Sep 09, 2020 at 01:39:33AM +0300, Dmitry Osipenko wrote:
->> The tegra_i2c_flush_fifos() shouldn't sleep in atomic transfer and jiffies
->> are not updating if interrupts are disabled. Let's switch to use iopoll
->> API helpers for register-polling. The iopoll API provides helpers for both
->> atomic and non-atomic cases.
->>
->> Note that this patch doesn't fix any known problem because normally FIFO
->> is flushed at the time of starting a new transfer.
->>
->> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/i2c/busses/i2c-tegra.c | 25 ++++++++++++++++---------
->>  1 file changed, 16 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index 00d3e4d7a01e..ab88cdd70376 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -470,9 +470,9 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->>  
->>  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
->>  {
->> -	unsigned long timeout = jiffies + HZ;
->> -	unsigned int offset;
->> -	u32 mask, val;
->> +	u32 mask, val, offset, reg_offset;
-> 
-> Is there are reason why we need reg_offset? Seems to me like we could
-> simplify this, see below.
 
-The reason is that this patch addresses potential problem, hence it's
-not a cleanup change and it should be kept minimal.
+On 17/09/2020 09:54, Marek Szyprowski wrote:
+> Hi Jon,
+>=20
+> On 17.09.2020 10:49, Jon Hunter wrote:
+>> On 17/09/2020 09:45, Marc Zyngier wrote:
+>>> On 2020-09-17 08:54, Jon Hunter wrote:
+>>>> On 17/09/2020 08:50, Marc Zyngier wrote:
+>>>>> On 2020-09-17 08:40, Linus Walleij wrote:
+>>>>>> On Wed, Sep 16, 2020 at 5:11 PM Marc Zyngier <maz@kernel.org> wrote:
+>>>>>>
+>>>>>>> Can you try the patch below and let me know?
+>>>>>> I tried this patch and now Ux500 WORKS. So this patch is definitely
+>>>>>> something you should apply.
+>>>>>>
+>>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (is_f=
+rankengic())
+>>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_sgi_intid(irqstat);
+>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 this_cpu=
+_write(sgi_intid, intid);
+>>>>>> This needs changing to irqstat to compile as pointed out by Jon.
+>>>>>>
+>>>>>> With that:
+>>>>>> Tested-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>> Thanks a lot for that.
+>>>>>
+>>>>> Still need to understand why some of Jon's systems are left unbootabl=
+e,
+>>>>> despite having similar GIC implementations (Tegra194 and Tegra210 use
+>>>>> the same GIC-400, and yet only one of the two boots correctly...).
+>>>> So far, I have only tested this patch on Tegra20. Let me try the other
+>>>> failing boards this morning and see if those still fail.
+>>> Tegra20 (if I remember well) is a dual A9 with the same GIC implementat=
+ion
+>>> as Ux500, hence requiring the source CPU bits to be written back. So th=
+is
+>>> patch should have cured it, but didn't...
+>>>
+>>> /me puzzled.
+>> Me too. Maybe there just happens to be something else also going wrong
+>> in next. I am doing a bit more testing to see if applying the fix
+>> directly on top of this change fixes it to try and eliminate anything
+>> else in -next.
+>>
+>> Linus, what -next are you testing on? I am using next-20200916.
+>=20
+> next-20200916 completely broken on ARM and ARM64. Please check=20
+> next-20200915 + the mentioned fix or just check=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log=
+/?h=3Dirq/ipi-as-irq
 
->> +	void __iomem *addr;
->> +	int err;
->>  
->>  	if (i2c_dev->hw->has_mst_fifo) {
->>  		mask = I2C_MST_FIFO_CONTROL_TX_FLUSH |
->> @@ -488,12 +488,19 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
->>  	val |= mask;
->>  	i2c_writel(i2c_dev, val, offset);
->>  
->> -	while (i2c_readl(i2c_dev, offset) & mask) {
->> -		if (time_after(jiffies, timeout)) {
->> -			dev_warn(i2c_dev->dev, "timeout waiting for fifo flush\n");
->> -			return -ETIMEDOUT;
->> -		}
->> -		usleep_range(1000, 2000);
->> +	reg_offset = tegra_i2c_reg_addr(i2c_dev, offset);
->> +	addr = i2c_dev->base + reg_offset;
-> 
-> Why not just:
-> 
-> 	offset = tegra_i2c_reg_offset(i2c_dev, offset);
-> 	addr = i2c_dev->base + offset;
-> 
-> or even just:
-> 
-> 	addr = i2c_dev->base + tegra_i2c_reg_offset(i2c_dev, offset);
-> 
-> ? That makes the patch much smaller because you don't have to rewrite
-> the whole variable declaration block and just add the "addr" and "err"
-> variables while removing "timeout".
+OK, I have confirmed that on Tegra20 and Tegra30, that next-20200915 +
+Marc's fix boots fine.
 
-There is a further "cleanup" patch named "Factor out register polling
-into separate function" that already implements yours suggestion.
+Tegra186 and Tegra194 are not booting, but I am wondering if this is yet
+another issue that is not related. I have not actually bisected on these
+boards, but I am now bisecting on Tegra186 to confirm.
+
+Jon
+
+--=20
+nvpublic
