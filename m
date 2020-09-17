@@ -2,162 +2,157 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B043CC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780ACC43467
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 21:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76B0F22211
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 19:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 255F721D24
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 21:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gWnvu/cy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROFQIrag"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbgIQT4C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 15:56:02 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12254 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbgIQOyn (ORCPT
+        id S1726156AbgIQVW7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 17:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbgIQVW7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 10:54:43 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f6378080002>; Thu, 17 Sep 2020 07:51:52 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 17 Sep 2020 07:53:21 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 17 Sep 2020 07:53:21 -0700
-Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Sep
- 2020 14:53:09 +0000
-Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
- interrupts
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marc Zyngier <maz@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sumit Garg" <sumit.garg@linaro.org>, <kernel-team@android.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Gregory Clement" <gregory.clement@bootlin.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Linux Samsung SOC" <linux-samsung-soc@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20200901144324.1071694-1-maz@kernel.org>
- <20200901144324.1071694-9-maz@kernel.org>
- <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
- <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
- <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
- <3378cd07b92e87a24f1db75f708424ee@kernel.org>
- <CACRpkdYvqQUJaReD1yNTwiHhaZpQ9h5Z9DgdqbKkCexnM7cWNw@mail.gmail.com>
- <049d62ac7de32590cb170714b47fb87d@kernel.org>
- <a88528cd-eb76-367a-77d6-7ae20bd28304@nvidia.com>
- <81cb16323baa1c81e7bc1e8156fa47b8@kernel.org>
- <e317b2fe-52e3-8ce7-ba77-43d2708d660f@nvidia.com>
- <4645f636-e7cc-6983-a3b7-897c20ec5096@samsung.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ace68d00-f005-fee3-1f01-44522c180462@nvidia.com>
-Date:   Thu, 17 Sep 2020 15:53:07 +0100
+        Thu, 17 Sep 2020 17:22:59 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC8AC061797;
+        Thu, 17 Sep 2020 14:14:28 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id q8so3751884lfb.6;
+        Thu, 17 Sep 2020 14:14:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zeV+mNFI/EgD0ltGwvOsQ9sUEu48alm6T8WJu6X0xts=;
+        b=ROFQIragMPxda0wm8eB23qUXEEnwDbE2wkNTzhsnH0F4GRxsP+X/ud4fE5EuSEAKgr
+         4PPlDY2Bir6r4MQL7yrkndOMOQwVatr2LRbrzb5egzQgt7hlGRecWIarXBnkmeAzsOhB
+         PDFE2OIqkURoKWgNj1IQ1zJKLVIitTkWKzbfGeYFL/HCEA706yu3UPWpBF8BFKvznOO8
+         I/15etk99rRobQ8ahqc+tiBB9H/lDAdAIKerbN4rxfCzDY2tfe5Vw+WJcWkz/K6Nh6fZ
+         j61JxbvntyzW13r9mZv/z3QVO1ESqqN2ww7ghB17m34xWMyDYI5f0b7XlB4060cpV/i1
+         Ck1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zeV+mNFI/EgD0ltGwvOsQ9sUEu48alm6T8WJu6X0xts=;
+        b=PRes7uyCy8NF7kC+5E4NtHc1qcQhSRy3RCgWQNz03N+cfieow2qCu8a9gX+NqznNUs
+         JA2MToV9Aceqi8NOzp6MfnrtCLYb2pCoHX+u8U7ehzMhYQXZEMb8GhhoJw7DcUNWcPYS
+         y/qlHmoW6rLTMLa4OneMw7o3+fJ+Qp0DAZJBadhEh+TByxrxiTljMCtkdOehfZGo57nH
+         vAw31MTb4i++6PNhw7hIrGd8fxo7dCn3K9oV8rTDKzlXjNZe2qemjmI+GSMTREpZjiE9
+         qTeYMY5Ol0lPK4i2CIVvoHVemu21n43GSX+J6sfnA0A+HxgU8dcVFzigsIWeXMbSKV8o
+         QSWw==
+X-Gm-Message-State: AOAM530hN3keBNmLSO9TXYIhAX2Y0GnvJ5oPPvaBS5iZD3JldNW4E679
+        KH9Wp4F3Pbl+EqaenrgBruOZkMk9cqY=
+X-Google-Smtp-Source: ABdhPJzX3Gh0eBK4RFPqX3iwxA8g95t6owrUg5pFXe6zYJNekJZyBM0quLpT/oWfVBFNJtkUZTYGHQ==
+X-Received: by 2002:a19:404e:: with SMTP id n75mr9776857lfa.172.1600377266754;
+        Thu, 17 Sep 2020 14:14:26 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id u18sm145137lfg.86.2020.09.17.14.14.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Sep 2020 14:14:25 -0700 (PDT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+ <20200908072557.GC294938@mwanda>
+ <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+ <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+ <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+ <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+ <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+ <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+ <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+ <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <57e8ccad-f0d5-febb-7a31-8d34430a5cb8@gmail.com>
+Date:   Fri, 18 Sep 2020 00:14:24 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <4645f636-e7cc-6983-a3b7-897c20ec5096@samsung.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600354312; bh=JvhskCgRRc+by6CEI8mCU2/vrU7nc17FP3zO033b9jg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=gWnvu/cyb8ETmuvHuS85SQkDc0iD+QnmQ5xmwjvHmr7dpAdvG02eZggPEx5xq/yoP
-         CI5kwWAviTU0lE/2QCaSTE11nna/qI+/b3O6W3MbI/qwTb85w6eSkd/FS/AYlGZlkX
-         vryYTr3aT7GFbksMsJhg5hzivJg7dYFo1M3u1L9AIMK8Et0FD7ZFaUBFy2k95BJX8G
-         qPlt+zqWvWw5XGuSVI1cCZYZdE6IPn1Gl5uxFqRAcbu3FzDmUKwE1tmzvRqcAmjXF8
-         EvqYNfFv6Dz5H36qrqeFxgUJlsrN7AN5pfv28L4H/48v0MKDddNjA3BCXdV+p36qQa
-         869zQF2HOlTow==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 17/09/2020 09:54, Marek Szyprowski wrote:
-> Hi Jon,
->=20
-> On 17.09.2020 10:49, Jon Hunter wrote:
->> On 17/09/2020 09:45, Marc Zyngier wrote:
->>> On 2020-09-17 08:54, Jon Hunter wrote:
->>>> On 17/09/2020 08:50, Marc Zyngier wrote:
->>>>> On 2020-09-17 08:40, Linus Walleij wrote:
->>>>>> On Wed, Sep 16, 2020 at 5:11 PM Marc Zyngier <maz@kernel.org> wrote:
->>>>>>
->>>>>>> Can you try the patch below and let me know?
->>>>>> I tried this patch and now Ux500 WORKS. So this patch is definitely
->>>>>> something you should apply.
->>>>>>
->>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (is_f=
-rankengic())
->>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_sgi_intid(irqstat);
->>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 this_cpu=
-_write(sgi_intid, intid);
->>>>>> This needs changing to irqstat to compile as pointed out by Jon.
->>>>>>
->>>>>> With that:
->>>>>> Tested-by: Linus Walleij <linus.walleij@linaro.org>
->>>>> Thanks a lot for that.
->>>>>
->>>>> Still need to understand why some of Jon's systems are left unbootabl=
-e,
->>>>> despite having similar GIC implementations (Tegra194 and Tegra210 use
->>>>> the same GIC-400, and yet only one of the two boots correctly...).
->>>> So far, I have only tested this patch on Tegra20. Let me try the other
->>>> failing boards this morning and see if those still fail.
->>> Tegra20 (if I remember well) is a dual A9 with the same GIC implementat=
-ion
->>> as Ux500, hence requiring the source CPU bits to be written back. So th=
-is
->>> patch should have cured it, but didn't...
->>>
->>> /me puzzled.
->> Me too. Maybe there just happens to be something else also going wrong
->> in next. I am doing a bit more testing to see if applying the fix
->> directly on top of this change fixes it to try and eliminate anything
->> else in -next.
+17.09.2020 05:32, Chanwoo Choi пишет:
+...
+>> There is no need to deassert the reset if clk-enable fails because reset
+>> control of tegra30-devfreq is exclusive, i.e it isn't shared with any
+>> other peripherals, and thus, reset control could asserted/deasserted at
+>> any time by the devfreq driver. If clk-enable fails, then reset will
+>> stay asserted and it will be fine to re-assert it again.
 >>
->> Linus, what -next are you testing on? I am using next-20200916.
->=20
-> next-20200916 completely broken on ARM and ARM64. Please check=20
-> next-20200915 + the mentioned fix or just check=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log=
-/?h=3Dirq/ipi-as-irq
+> 
+> Thanks for the detailed explanation. 
+> But, I think that almost people don't know the detailed h/w information.
+> If possible, how about matching the pair when clk-enable fails as following?
+> 
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -828,6 +828,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>         if (err) {
+>                 dev_err(&pdev->dev,
+>                         "Failed to prepare and enable ACTMON clock\n");
+> +               reset_control_deassert(tegra->reset);
+>                 return err;
+>         }
 
-OK, I have confirmed that on Tegra20 and Tegra30, that next-20200915 +
-Marc's fix boots fine.
+That change won't bring any real benefits and will confuse people who
+know the HW, so we shouldn't do it.
 
-Tegra186 and Tegra194 are not booting, but I am wondering if this is yet
-another issue that is not related. I have not actually bisected on these
-boards, but I am now bisecting on Tegra186 to confirm.
+Since the interrupt is disabled by default at the probe time, we
+actually don't need to care in a what state ACTMON hardware is at the
+driver-probe time since even if HW is active, it won't cause any damage
+to the system since ACTMON only collects and processes stats.
 
-Jon
+I made some experiments and looks like at least on Tegra30 the ACTMON
+hardware block uses multiple clocks and the ACTMON-clk isn't strictly
+necessary for the resetting of the HW state, it's actually quite common
+for Tegra peripherals that a part of HW logic runs off some root clk.
 
---=20
-nvpublic
+Hence if we want to improve the code, I think we can make this change:
+
+diff --git a/drivers/devfreq/tegra30-devfreq.c
+b/drivers/devfreq/tegra30-devfreq.c
+index ee274daa57ac..4e3ac23e6850 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -891,8 +891,6 @@ static int tegra_devfreq_probe(struct
+platform_device *pdev)
+ 		return err;
+ 	}
+
+-	reset_control_assert(tegra->reset);
+-
+ 	err = clk_prepare_enable(tegra->clock);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+@@ -900,7 +898,7 @@ static int tegra_devfreq_probe(struct
+platform_device *pdev)
+ 		return err;
+ 	}
+
+-	reset_control_deassert(tegra->reset);
++	reset_control_reset(tegra->reset);
+
+ 	for (i = 0; i < mc->num_timings; i++) {
+ 		/*
