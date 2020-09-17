@@ -2,131 +2,100 @@ Return-Path: <SRS0=Tnts=C2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33BAC433E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B188AC433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3F3D206C9
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79E4521655
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Sep 2020 11:48:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QitX2hEb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYEi0omm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgIQLrb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33650 "EHLO
+        id S1726825AbgIQLr5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 07:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbgIQLrV (ORCPT
+        with ESMTP id S1726799AbgIQLfX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:47:21 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C57B8C06174A;
-        Thu, 17 Sep 2020 04:47:20 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id x14so1699031wrl.12;
-        Thu, 17 Sep 2020 04:47:20 -0700 (PDT)
+        Thu, 17 Sep 2020 07:35:23 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79AE1C061756;
+        Thu, 17 Sep 2020 04:35:23 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id y1so1197745pgk.8;
+        Thu, 17 Sep 2020 04:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CsSULRHEwOUPa0oBdSSa2xFRccNBYxIxudhxZxhguzQ=;
-        b=QitX2hEbnZeGW/PJejcn2xiUVk97n/t1hg3QgOSFJXVTo1UxxAiXTS6yyXT8XipbTs
-         nqdZMmAtQVBpv0q8+8DRERuHhMfvo+8fCS0w31oIY9vXSPj8mhats3h48EFUliUNdYij
-         M0mIW21JLzG+nQ91I0ym9jPK6QAwVfO7rn5vjOVVLsEe/qRcnOStBU+C5DTBPo3BHqAH
-         U5FLdmKmmD4aLX0OPWKo6x1hBNYQ1e9JAYG/Y9c8pqZJgr55D2EBPseMPHSnV1E0eopC
-         CSdpzdLqtfTPJ1+IhmVnOURgEilywrGFF4N7PS9PeiKXl2NexFTKQU7K2I+Lzin8mWk4
-         t9Gg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=44JkQ0xk/m6YNhH3hVjpFztigV1A13fyXiwxKi+U+Xc=;
+        b=VYEi0ommvZ/cuDCP/38rRPYUvZFPkgwB+TFwx9CUcF0Rrc6CxikinYRSo8JLeozSM4
+         nZuR/iudhktaOl9035RVAB1bWwE2aNPKQ68RqJ2moK7wErajVDa2W4KsVdgnxqATvPsH
+         qesyy7x4S9n/tF5N6LU7GbCS2rAPfNYR31ArlBn5YdLYdyd3k5GY0UvtN38CEeWqksWS
+         +2t76vzN9kETK9E65XfknlmpGtSxnX4uN06GS+Mm362bhgkQ8lrobYQdvP4612iOYdmD
+         jaBuIkEgTga2SwFSc3gNmg9/eFJxTUGf+egOJ+Qm16Pdufzuscb9EXB7pVV8KRmOL+zM
+         OSQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CsSULRHEwOUPa0oBdSSa2xFRccNBYxIxudhxZxhguzQ=;
-        b=gPuDNhDIC92YEUN1u3BtHzYqhPGZmKVrbmwFVJbVetzXerp94XPC3X/r8r+QIUTlAP
-         thQSjmruQQqpZn3SHPrM2ZHqQoN4RA35nfJrTjNsZt+LTM7uJSGSMLJBCsC83Tsy212p
-         KN5ASDuGQLYcGvYiHTnjNb4YoMCwpk5jihZL5IHIw7JsByzaGF4FdZ43H06KE3nLh6BN
-         dqCiweiHI6RtuCxx8OF0CBz/KlnT2fY7RTRHvKXTiDS/NKvu1LbZ9TqS4iCVaJ1GzCUW
-         DM1EHtHYRylbpO7TlucrPVhcJxE7T0kQzLmfNqks+WaBzwXe253YqAx/0Sxf/bTPU/ia
-         wQng==
-X-Gm-Message-State: AOAM532uakGNlotmLv2qtF/b1iEenHBVaDaPYjafQVDZIq8geyS+f1zy
-        eVAkAmKUbk1RE5fwdBE/L3s=
-X-Google-Smtp-Source: ABdhPJz+yKz3QpNLXp/JzXcrh9g10SAeQ/RabQPP8fMs6W/gl/lwTvxyNClHAnNctIYQvKWAa9vquQ==
-X-Received: by 2002:a5d:458a:: with SMTP id p10mr30826324wrq.282.1600343239531;
-        Thu, 17 Sep 2020 04:47:19 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id q15sm36499027wrr.8.2020.09.17.04.47.17
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=44JkQ0xk/m6YNhH3hVjpFztigV1A13fyXiwxKi+U+Xc=;
+        b=O258ZyPics6QyFWliRQmw/AUMDERhrf8VbyozAwaJT7ao0CmKTaV5iqKo0Z5mAojx/
+         irr2OI+zz/aJ/TacPycQC8TtpVF1xpmbtVr3YpXaHI9+ZBf/WTHwlAPDNKVP9xK5KebI
+         nElZ7o4kBh7oOw7kGkx3fO0JtqPmo3UIKmhwg62jL3mI7IqU+ctajFC18LTXlImXwcqH
+         Vg8Kp/7XCxsGD4GXnyIijBY0RtFA/pYTIqmz5euAu/rMRtYeUKW9zz7qsoLhI1EMmiYn
+         KLQooplhem87Btd0JFUr/lAMc4fqDYNP7WhTrFJjBmloFs1xYTPo8o8RJLyUPy1Eq0bp
+         CdkQ==
+X-Gm-Message-State: AOAM530zRGX9Rh4ITTgkmRRoQl2oVsGpNbye3tBIehWkTAAfFJO46Gjm
+        6I6WWNk/sisrrOz8CDdWLPwi9SHRD/U=
+X-Google-Smtp-Source: ABdhPJyP5LqjnXvH1LhpCFGPDM4Dnp5PmbvsiDx0qDuxmUYG+ysZXqB6qzdfLj9uIk8o7d38xlH5Ng==
+X-Received: by 2002:a05:6a00:1356:b029:13e:d13d:a084 with SMTP id k22-20020a056a001356b029013ed13da084mr26669802pfu.27.1600342522940;
+        Thu, 17 Sep 2020 04:35:22 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id a138sm21128382pfd.19.2020.09.17.04.35.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:47:18 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 13:47:16 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 21/34] i2c: tegra: Don't fall back to PIO mode if DMA
- configuration fails
-Message-ID: <20200917114716.GZ3515672@ulmo>
-References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-22-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Wn0J+vu9+NMIXK57"
-Content-Disposition: inline
-In-Reply-To: <20200908224006.25636-22-digetx@gmail.com>
-User-Agent: Mutt/1.14.6 (2020-07-11)
+        Thu, 17 Sep 2020 04:35:22 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     krzk@kernel.org, joro@8bytes.org
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, jonathanh@nvidia.com,
+        vdumpa@nvidia.com, thierry.reding@gmail.com
+Subject: [RESEND][PATCH 2/2] memory: tegra: Correct num_tlb_lines for tegra210
+Date:   Thu, 17 Sep 2020 04:31:55 -0700
+Message-Id: <20200917113155.13438-3-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200917113155.13438-1-nicoleotsuka@gmail.com>
+References: <20200917113155.13438-1-nicoleotsuka@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+According to Tegra210 TRM, the default value of TLB_ACTIVE_LINES
+field of register MC_SMMU_TLB_CONFIG_0 is 0x30. So num_tlb_lines
+should be 48 (0x30) rather than 32 (0x20).
 
---Wn0J+vu9+NMIXK57
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/memory/tegra/tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Sep 09, 2020 at 01:39:53AM +0300, Dmitry Osipenko wrote:
-> The DMA code path has been tested well enough and the DMA configuration
-> performed by tegra_i2c_config_fifo_trig() shouldn't ever fail in practice.
-> Hence let's remove the obscure transfer-mode switching in order to have a
-> cleaner and simpler code. Now I2C transfer will be failed if DMA
-> configuration fails.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index 51b537cfa5a7..4fbf8cbc6666 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1074,7 +1074,7 @@ static const struct tegra_smmu_soc tegra210_smmu_soc = {
+ 	.num_groups = ARRAY_SIZE(tegra210_groups),
+ 	.supports_round_robin_arbitration = true,
+ 	.supports_request_limit = true,
+-	.num_tlb_lines = 32,
++	.num_tlb_lines = 48,
+ 	.num_asids = 128,
+ };
+ 
+-- 
+2.17.1
 
-I'm not sure that's a good idea. It's always possible that the DMA setup
-is going to break because of something that's not related to the I2C
-driver itself. Having the system completely break instead of falling
-back to PIO mode seems like it would only complicate troubleshooting any
-such issues.
-
-Thierry
-
---Wn0J+vu9+NMIXK57
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9jTMQACgkQ3SOs138+
-s6HHJw/+JbrupYuSJ+2UrJaYVJmaS3aD2VRhWfwqmchEo35Mm8b7gpCojcNZbF8N
-pqGsYXjkyg6Rv7lxuHBamwJMkpwhw1ELEqQM7Eh4QjWTfVTZ1dU9PCYZfQB5xUMm
-kcYGrfKyHQMfOpS4rYhOtYQirXzGQ9up+2UdR9LhL+ypvsh+kIjGDE1Fk0WTO8LN
-n7p/fpfikDzklNWh5VmWZKT7GEg9bcRVhQRHkTAQQ2Zm1DL8Io/jGnkGeyP/GjFq
-MoFRnAFBYxZaWE7Zv03CUw9JLucEuVe7AbxjV+4wlSWpqsTuVqREL977RB+4wGZo
-sEvuGCZBBwH+K2n+UKRMPfsbmLARZ2zMnAA8S3FNtNE+nKDQOZrRak2QcOmgDlY8
-+5wH+F5cODFXAuxHzYxmcnfp4Wk9ThigT7yv6+zbtOUvwBYeXiMi4lVh/TS83ncM
-qhdWpbRTToG+V4lX9tShb1309X+yjh3cYjHgE9IKHPDVOUh/HQQOke4YlTdHqxyt
-yJSjmeuQkPOPcM1qwY9wcViWaqCcvVNbWYsv/vsuBHX35QdGSxKNgylzDWIRmpml
-NaoVP9eshXPwbe6B2RrjEJ/SXNtIVLIGFACVg4BlU53LXOHBVKiTKXDcfYuw6DIP
-5+g/ZgrRprtbk5RBYJexHSRRyzY9RNSe/n+8Amu6wKnj4ltGxGA=
-=USYD
------END PGP SIGNATURE-----
-
---Wn0J+vu9+NMIXK57--
