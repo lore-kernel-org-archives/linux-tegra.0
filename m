@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92211C43463
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3237BC43464
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48B2F2311D
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9597235FA
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u77fyfBc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctQt0eGw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgIRPDS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Sep 2020 11:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33012 "EHLO
+        id S1725955AbgIRPDV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Sep 2020 11:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbgIRPDR (ORCPT
+        with ESMTP id S1725941AbgIRPDV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Sep 2020 11:03:17 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 872FAC0613CE
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:17 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id e17so5653165wme.0
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:17 -0700 (PDT)
+        Fri, 18 Sep 2020 11:03:21 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE7CC0613CE
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:21 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id c18so5958790wrm.9
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eRAaG1Mgh2jmfC212SCxdZAHu4KWm9h0NWThIuXfRCY=;
-        b=u77fyfBcJlnawBeuXx9MddkW3RYV3Recv4SIRxpxW18yVKezoTcWSrqsN7zbPoEqj1
-         Zg9RgtUMrwJ+d86CiJOKN4iBJs1aIqbvxZGzioCugkQUFyiYT5tDmp3Mw57hwjot4QN1
-         gQZB7/qbnHn/Pi2BP9+Ft4QvHcbsZKj2SibiwdGiFf306zDMeK1uBAIPiNfhr7P5jmNh
-         ypxxBTjE4226O1XcBKK1fH22ro20siKh8M0tKo1rag89FJEkmRoiDsUu3Upoe4MLjrVs
-         /TsxVviQXZwJ6GRXR1dXvsr2iL25RYEMmwem/t2cEM5J+x8A2CGGgEBPXXm8NH5EngJ2
-         eoMg==
+        bh=Y9qhdBdqKt7haqnMYa8T1EtRMPe2y0qWWDUzYgf6xEg=;
+        b=ctQt0eGwSdtbuxmOxMfZThK43FcwXhujW4DJx2UoQ3rSpU2YLURVg/E3eVNe5sjAqd
+         IidWDl70tWcAWL9aZ3ixHMFbZiRcHQErlzFgmixdzZJUVQDjRT4glHBKTwEvNhbjMydY
+         mZ9QJYafbf/522akDWxP17FFz39p94L00ppvAt9Y0UqPk/xWYEuWeCsEq8y8onokMzeJ
+         XqnS/uHvZ2PkzGU4wKEgAuOSfpw5AIScN+d8cUVvEvkScMVvT+8NcINonLALK6SgaCei
+         bQ44ROX+l/BiBaO70cZ+IHh+DaPuMa4HYDll9e+Wj4dzWhto1ICuJnKA+orVERsOiAB7
+         Tahw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eRAaG1Mgh2jmfC212SCxdZAHu4KWm9h0NWThIuXfRCY=;
-        b=jV73VazjsMnIvO5wsP+aGLMTFPiMpqaeg1kY9Yl0UadE59AC/09CYN+c8/HyAg+x3t
-         y7o/dZz9Q3ck7BAvVI5wN2e+wCE/8MK/D6lAhJW8Jo1HOdCSCc3KlU86OqxjzUpTAWE5
-         PQyC3Bn4Qfa+28Mpqp+VlldBLyU6Y2XIUniDGqbRb1Q0Py2Wp1dg0hAErnGlP4NQ29Bo
-         NEEsWV2h2x7ybxwCi/adgVTkY1Zt/iwOZ9XTGY82+pPE8CsDcapvQAW8rJ92pEhCTpbg
-         Sh6rby076vWzCNv5mOU7BHXs7TkknM9IbX81u9vySDCnXXy3/HGOIlaMX3dv1QRSznAw
-         YT/w==
-X-Gm-Message-State: AOAM5319CgFIwMwE5YP2605TSBEzQsj2rdMHmqI3Mo2M5FhF2WK6SU4m
-        oL2W78oNXrThQQFJt9/HyRg=
-X-Google-Smtp-Source: ABdhPJwry+IZ6bUZYEuxWUmoLirKJ2bkZrhz/DjUOHWavPi0Qrq/Gqm9J2Hbv6VjPU/ahsG0zqBQEA==
-X-Received: by 2002:a1c:5602:: with SMTP id k2mr15501101wmb.25.1600441396226;
-        Fri, 18 Sep 2020 08:03:16 -0700 (PDT)
+        bh=Y9qhdBdqKt7haqnMYa8T1EtRMPe2y0qWWDUzYgf6xEg=;
+        b=sQdNxhZfOGxRlxTXh6ZyMiavPFokKsC2ER4Ei5SjBxs3NFAPYfsQ4n1psGJ+RscdFS
+         WADBQ1fPnZwvUwwcYya/8h2sO5DS7TtBg/HXX9StnhLKAgcyv5b7FZUe5D+Th7rw2xOk
+         mlWKfAcmzrE4U3fHB7hONs8UJFZGYxknNCYducMUSqe+zIX5VpeQZflxuAgA9OSN9ogE
+         uCGChyHvNWPsXkS8CLJUQbOXpBKNLze1Lxr74ego3Yhhdg0p7JSErn+XMYY/m1VejNb5
+         OedB6ETvSJBBwlSzBkHcwiBq3hnG1kbe7Nv3zYoy5HyLXck5cRkbk7OVUnoWm7rD4wuG
+         JQzw==
+X-Gm-Message-State: AOAM5302aS2BHV1RvmSr6TKFwtukJEER2z90vyCt+1Ja36kf6Zj5ue3C
+        1EjuEYlEiro8tBGrAuP79X4=
+X-Google-Smtp-Source: ABdhPJz79t/SkVV2CtQUtoMr09BkMfm8+JDc3EnMd7HAX7LKYG+EdWthhiA+VDEFbu3o5plBp+fkEA==
+X-Received: by 2002:a5d:680b:: with SMTP id w11mr40720860wru.73.1600441398724;
+        Fri, 18 Sep 2020 08:03:18 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id 97sm5578861wrm.15.2020.09.18.08.03.15
+        by smtp.gmail.com with ESMTPSA id w15sm5451958wro.46.2020.09.18.08.03.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2020 08:03:15 -0700 (PDT)
+        Fri, 18 Sep 2020 08:03:18 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/6] firmware: tegra: Changes for v5.10-rc1
-Date:   Fri, 18 Sep 2020 17:03:00 +0200
-Message-Id: <20200918150303.3938852-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/6] ARM: tegra: Changes for v5.10-rc1
+Date:   Fri, 18 Sep 2020 17:03:01 +0200
+Message-Id: <20200918150303.3938852-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200918150303.3938852-1-thierry.reding@gmail.com>
 References: <20200918150303.3938852-1-thierry.reding@gmail.com>
@@ -86,31 +86,53 @@ The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-arm-dt
 
-for you to fetch changes up to 0ebdf11699d0491c0a1eee5bb5d920f4f36810ba:
+for you to fetch changes up to c2ef3aa464a70f73f4fc763e6f54f689c2ee6d6a:
 
-  firmware: tegra: Enable BPMP support on Tegra234 (2020-09-18 15:57:04 +0200)
+  ARM: tegra: nexus7: Add SMB347 battery charger (2020-09-17 18:09:40 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v5.10-rc1
+ARM: tegra: Changes for v5.10-rc1
 
-This is a minor change that implements a BPMP workaround for pre-silicon
-platforms and is needed to enable support for BPMP on Tegra234.
+These changes extend support on the Nexus 7 and Acer A500 devices.
 
 ----------------------------------------------------------------
-Thierry Reding (4):
-      soc/tegra: fuse: Extract tegra_get_platform()
-      soc/tegra: fuse: Implement tegra_is_silicon()
-      Merge branch 'for-5.10/soc' into for-5.10/firmware
-      firmware: tegra: Enable BPMP support on Tegra234
+David Heidelberg (2):
+      dt-bindings: power: supply: Add device-tree binding for Summit SMB3xx
+      ARM: tegra: nexus7: Add SMB347 battery charger
 
- drivers/firmware/tegra/bpmp.c          |  3 ++-
- drivers/mailbox/tegra-hsp.c            |  9 ++++++++-
- drivers/soc/tegra/fuse/fuse-tegra.c    |  2 +-
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 24 ++++++++++++++++++++++++
- include/soc/tegra/fuse.h               |  2 ++
- 5 files changed, 37 insertions(+), 3 deletions(-)
+Dmitry Osipenko (8):
+      ARM: tegra: nexus7: Add aliases for MMC
+      ARM: tegra: acer-a500: Add aliases for MMC
+      ARM: tegra: acer-a500: Remove atmel,cfg_name property
+      ARM: tegra: acer-a500: Correct PINCTRL configuration
+      ARM: tegra: acer-a500: Set WiFi MMC clock rate to 50 MHz
+      ARM: tegra: acer-a500: Use PLLC for WiFi MMC clock parent
+      ARM: tegra: nexus7: Use PLLC for WiFi MMC clock parent
+      ARM: tegra: nexus7: Add touchscreen
+
+Thierry Reding (7):
+      dt-bindings: misc: tegra-apbmisc: Add missing compatible strings
+      dt-bindings: misc: tegra186-misc: Add missing compatible string
+      dt-bindings: misc: tegra186-misc: Add Tegra234 support
+      dt-bindings: tegra: Add Tegra234 VDK compatible
+      dt-bindings: fuse: tegra: Add Tegra234 support
+      dt-bindings: tegra: pmc: Add Tegra234 support
+      Merge branch 'for-5.10/dt-bindings' into for-5.10/arm/dt
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |   4 +
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   3 +-
+ .../bindings/fuse/nvidia,tegra20-fuse.txt          |   1 +
+ .../bindings/misc/nvidia,tegra186-misc.txt         |   8 +-
+ .../bindings/misc/nvidia,tegra20-apbmisc.txt       |  13 +-
+ .../power/supply/summit,smb347-charger.yaml        | 152 +++++++++++++++++++++
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    |  30 ++--
+ .../dts/tegra30-asus-nexus7-grouper-common.dtsi    |  54 +++++++-
+ include/dt-bindings/power/summit,smb347-charger.h  |  19 +++
+ 9 files changed, 264 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
+ create mode 100644 include/dt-bindings/power/summit,smb347-charger.h
