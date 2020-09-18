@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08141C43465
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 02:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3FFC43465
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 02:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7D3E23600
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 02:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826E123770
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 02:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600396174;
-	bh=z6WH/dxbI5lzFkCLiIYwfprIJLDsUsAMekmZzPTs7iQ=;
+	s=default; t=1600396681;
+	bh=Kvg4TYtCRyYFiO+X6QdpTQiPvFHaswMRec8XtHXSmN8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kyWvSx0uGhCth+UAGSqdd39rrolpYuf7fvWBTGA/6OpxDycZywwDRNXPgZJQWZEg/
-	 2T8L6bG/Td5/U37MdA0E3JQBMkmCPFbHS+yjq+kajoi9RMMOkRfoAWUefHRnDMtJGt
-	 EAKhe0obg2jtdV0hjFQg0R6aKbW5suVPkFZbWt8U=
+	b=Ywtj+l7KtNAIAI9T2Eeop3qRrfKlclQkXhMRwqOQs7FTWxFcdTABwIULUucb6jITe
+	 CaYgae5PgmhHoBewRM9wy5tKEYVqQApfy/96TOIp503i3pW8hOFjlC38anzryCTIPP
+	 C8xmVHtQBB26soq2WERvX3S/RGpnOStTdm7+MMWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgIRC3a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 22:29:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43810 "EHLO mail.kernel.org"
+        id S1730112AbgIRCiA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Sep 2020 22:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729173AbgIRCPH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:15:07 -0400
+        id S1727309AbgIRCMa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:12:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61130239A1;
-        Fri, 18 Sep 2020 02:15:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E51022395C;
+        Fri, 18 Sep 2020 02:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395303;
-        bh=z6WH/dxbI5lzFkCLiIYwfprIJLDsUsAMekmZzPTs7iQ=;
+        s=default; t=1600395149;
+        bh=Kvg4TYtCRyYFiO+X6QdpTQiPvFHaswMRec8XtHXSmN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vAttXVLKoCfIomZQHtNBjVhqAGB2cRNHSRugASytujjbCh0bLNIVNFurzK5gSxvbQ
-         lyjqFgakh1DhMyUexqaEptrwkra+hrKBYa5LIqsYnrQOKDLq6DjYw9shQGxNEwfxSg
-         AeRxvhqeuIaX+h1/EEI7FtoeDpbe780ffU6pHfzI=
+        b=LFbE9k+i2w563HolCNKfu72VmXle8l0O+rtlkxEEnY4ifvDUSA/pwLACXrOdyoVCM
+         +gR0g1JOpQtKoO0aSCHqcIXAetZ2IBuwU6SwkbquTUaLfmkZfi/pZ0/rc868rR1fyt
+         6XuGxEorVZcF6uT30OSWf9Eghh/XGRVd60bA5mrI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
@@ -45,12 +45,12 @@ Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 06/90] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
-Date:   Thu, 17 Sep 2020 22:13:31 -0400
-Message-Id: <20200918021455.2067301-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 008/127] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+Date:   Thu, 17 Sep 2020 22:10:21 -0400
+Message-Id: <20200918021220.2066485-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918021455.2067301-1-sashal@kernel.org>
-References: <20200918021455.2067301-1-sashal@kernel.org>
+In-Reply-To: <20200918021220.2066485-1-sashal@kernel.org>
+References: <20200918021220.2066485-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -77,7 +77,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index fe9dce0245bf0..a20267d93f8a4 100644
+index 6627a7dce95c4..f6a2dd6b188fa 100644
 --- a/drivers/devfreq/tegra-devfreq.c
 +++ b/drivers/devfreq/tegra-devfreq.c
 @@ -79,6 +79,8 @@
