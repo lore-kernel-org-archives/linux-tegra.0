@@ -8,67 +8,69 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FA6C43463
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610FEC43463
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFFDD21D7B
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0681C23119
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 15:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue89Aq0z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0qcHLmx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbgIRPDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Sep 2020 11:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32996 "EHLO
+        id S1726139AbgIRPDP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Sep 2020 11:03:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbgIRPDN (ORCPT
+        with ESMTP id S1725941AbgIRPDP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Sep 2020 11:03:13 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1701C0613CE
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:12 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id z9so5905635wmk.1
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:12 -0700 (PDT)
+        Fri, 18 Sep 2020 11:03:15 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34423C0613CE
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:15 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id m6so5991968wrn.0
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2020 08:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1qKzeSW5r/FU37oFleaqW+7BnwDvRMS2XHIjQKn0VIk=;
-        b=Ue89Aq0zA3ynws8rvUdVzHVjO7FqKIoCvecdg1tTivA3qSwgfSbo5jS6cP+nVh9AGo
-         AnO7b5Y9uf0v15nIw8DPkgSGD/2YfbC7Gu/rdFBaByKz3bfzXg2wUZvVC/jGGNi+/Zw7
-         UjEBtP9g3T5YOuwIgkKED5CVdJm0KDtDUoUyd1MHgTYoUAi+aO92fhZTgVkhXLBNq2BC
-         /+KKOYO3IcPlVz8FNZADsTggtPduGH4kov7he0KgQLNyNcTuuYvamIsVYcKBiGTEe2Us
-         rcWkAm/9rlb60VomjYWK8clYvPhphii5Mwzop57uD/Iib7wnTMm3yZumrdXz73/mBqWt
-         Q/yg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6MqmYtoNPusi7d9e/KIUSFMLKp5blUl2clfpqGQ3OYE=;
+        b=F0qcHLmxyIwaiO+Rpa1HZxLzjaBCTuhT51b5Z4cLfqo100Rfn4nooxMXdjsrxgnvpb
+         EM7tjo1ZTfsKunbnqbsl/WUa1dC8YmAX8NkJcisgUN/7sBJedE1RcoFeh87YLCp7E4JD
+         FGOB25W96VbG23Vkd9ksD7H7qwUmiv4goAA1UlPk/0C95b7ps70SxTzMC5acDzzfQV+H
+         JC3su+KjGPZaeoej6oLpqcb3JxfRsqYie0T5hGn+gwuypjTXWKtJkAxozCMhVLgeis1G
+         AbRfyUStBxCAlu3Tndns+59uSj7iNJgKyG11E87JOHGxnPq0fTlgaJ8SfVIsrxhZEaXc
+         RWlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1qKzeSW5r/FU37oFleaqW+7BnwDvRMS2XHIjQKn0VIk=;
-        b=QBtMvrw7VpELftYqfU9MjNJTwsyVmC/yxPyDnmOnvHXePV4E7QLy6DM68uDPv9RKVB
-         Rj/9+drWJ58/ezyDOetb6hb6btgtUmEJH9dotgW7kA6xB4Nzu4qutoFmfhxd268vT+Ci
-         Wfp/A6Yu9QQnE3STZsdTQDKSITMlbgSuzV2iNz5W5syZUqy+R8d21US3+2Et6L7PSccg
-         CAJ0AmOzDBLuQz64uWm2RjtRf++Q0bMtDXBtAjDUBqNasXFxTenSaQShz/SUqKiBjbEm
-         qY27QRHhGsGfwBKPOeYJEyB3tdIVFzKswhhh6S4dlltYaDEHqaX/aI8kcd+GV/J/2TlU
-         FMsQ==
-X-Gm-Message-State: AOAM532qCk6Ct3is3O0L7d8meZ6zy46zhgMTYbTiJ5jutyIFHr8xC7Z2
-        x+Fy+SD/XMxCyi7DgOf+pWs=
-X-Google-Smtp-Source: ABdhPJz0qupsUhKOvffrkUG/2ijwCDfKvmbsCH5+lIm/TEn/vpp6adJcxyTUW+XSBMtFOhnNsw/Ttw==
-X-Received: by 2002:a7b:c751:: with SMTP id w17mr15627189wmk.97.1600441391274;
-        Fri, 18 Sep 2020 08:03:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6MqmYtoNPusi7d9e/KIUSFMLKp5blUl2clfpqGQ3OYE=;
+        b=SWEqXBoyBDIS/HAldHw3YKboRKVWUh/iaqJD71pzYtJdzDaBJwAsCvmaqcD2GvDEhG
+         04wVwiSDm6dfB0ozEKS5XhOLR79DOOhBpKNS7nh0j6JwEH5zLMEMj2sylbrUiQ886GEp
+         SuuuerQyzc3mZEGnjvD3X+6RfCJ3+SjU1TxyZd0j8HvbKuVGqOPZgljki9XJR7vtQZ1c
+         PeVWwzA9db369esZ1pKVwiETYx/Q3QbFDk3nJ7D9fVVi60W6g+TRzF7GPfMpH+8LRKdT
+         oeI0lq8EmyXmWAMkeV0SOr0Cr0ZWS9Idw63EXvw1//3mC02Xm3nZIrnAzVSmkBLx3N+Y
+         6w1A==
+X-Gm-Message-State: AOAM533kUKiKlIP0SXiwCIxNuStp3eYJKf3OEiu9zNp8WoQ4nUQo1DR3
+        FlxJB/trE2UhqpQlUl6cL7Q=
+X-Google-Smtp-Source: ABdhPJzLcBCw4+Qq9YIislBi8l67/yVhdfM5ehtAf1Dy5W6jpUkUjpFJ3NKI6ZCEeHJ7VglTpUOHzA==
+X-Received: by 2002:a5d:61c7:: with SMTP id q7mr38806255wrv.343.1600441393776;
+        Fri, 18 Sep 2020 08:03:13 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id z14sm5786100wrs.76.2020.09.18.08.03.09
+        by smtp.gmail.com with ESMTPSA id d23sm5082728wmb.6.2020.09.18.08.03.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2020 08:03:10 -0700 (PDT)
+        Fri, 18 Sep 2020 08:03:13 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/6] dt-bindings: Changes for v5.10-rc1
-Date:   Fri, 18 Sep 2020 17:02:58 +0200
-Message-Id: <20200918150303.3938852-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] soc/tegra: Changes for v5.10-rc1
+Date:   Fri, 18 Sep 2020 17:02:59 +0200
+Message-Id: <20200918150303.3938852-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200918150303.3938852-1-thierry.reding@gmail.com>
+References: <20200918150303.3938852-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -84,40 +86,34 @@ The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-soc
 
-for you to fetch changes up to 2312c291f6ac340af88eee0867fdfdfa2299ffc3:
+for you to fetch changes up to 34e214a99689054e666cd4149500a37fa0c5ac98:
 
-  dt-bindings: power: supply: Add device-tree binding for Summit SMB3xx (2020-09-18 15:54:50 +0200)
+  soc/tegra: pmc: Add Tegra234 support (2020-09-18 15:55:37 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v5.10-rc1
+soc/tegra: Changes for v5.10-rc1
 
-This set of changes adds compatible strings for Tegra234 to existing
-device tree bindings.
+These changes contain a bit of cleanup and chip support for the upcoming
+Tegra234 SoC.
 
 ----------------------------------------------------------------
-David Heidelberg (1):
-      dt-bindings: power: supply: Add device-tree binding for Summit SMB3xx
-
 Thierry Reding (6):
-      dt-bindings: misc: tegra-apbmisc: Add missing compatible strings
-      dt-bindings: misc: tegra186-misc: Add missing compatible string
-      dt-bindings: misc: tegra186-misc: Add Tegra234 support
-      dt-bindings: tegra: Add Tegra234 VDK compatible
-      dt-bindings: fuse: tegra: Add Tegra234 support
-      dt-bindings: tegra: pmc: Add Tegra234 support
+      soc/tegra: fuse: Extract tegra_get_platform()
+      soc/tegra: fuse: Implement tegra_is_silicon()
+      soc/tegra: fuse: Add Tegra234 support
+      soc/tegra: misc: Add Tegra234 support
+      soc/tegra: pmc: Reorder reset sources/levels definitions
+      soc/tegra: pmc: Add Tegra234 support
 
- Documentation/devicetree/bindings/arm/tegra.yaml   |   4 +
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   3 +-
- .../bindings/fuse/nvidia,tegra20-fuse.txt          |   1 +
- .../bindings/misc/nvidia,tegra186-misc.txt         |   8 +-
- .../bindings/misc/nvidia,tegra20-apbmisc.txt       |  13 +-
- .../power/supply/summit,smb347-charger.yaml        | 152 +++++++++++++++++++++
- include/dt-bindings/power/summit,smb347-charger.h  |  19 +++
- 7 files changed, 191 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/power/supply/summit,smb347-charger.yaml
- create mode 100644 include/dt-bindings/power/summit,smb347-charger.h
+ drivers/soc/tegra/fuse/fuse-tegra.c    |   8 +-
+ drivers/soc/tegra/fuse/fuse-tegra30.c  |  30 +++++++
+ drivers/soc/tegra/fuse/fuse.h          |  10 ++-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c |  26 ++++++
+ drivers/soc/tegra/pmc.c                | 146 ++++++++++++++++++++++++---------
+ include/soc/tegra/fuse.h               |   3 +
+ 6 files changed, 181 insertions(+), 42 deletions(-)
