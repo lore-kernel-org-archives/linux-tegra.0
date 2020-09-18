@@ -2,102 +2,171 @@ Return-Path: <SRS0=kXk7=C3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2801C43466
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 03:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC1FC43463
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 06:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5489423976
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 03:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600398892;
-	bh=olcSovhd3mqxcStuyRQwJpR7Kpxz7YoVX9eWDOiAVEc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ksnswYJP5XeIiVif8oih1s6BDTNOt8xIXHyjbiwZOVOocGiq1XrgwMasnXEQIHgBV
-	 D7UhMPZ9ktiULHa+vb9KXvZyvZ8joOopTA4hncMc5buZmM+3e2ZkGKw/Z0Llax4fs2
-	 IJyWYikLTvlXK5q6j/u89ZzN1yIGi7SR/Zf6HUPA=
+	by mail.kernel.org (Postfix) with ESMTP id 0AF5621582
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Sep 2020 06:07:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xu+0pooH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgIRDOj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Sep 2020 23:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbgIRCBo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:01:44 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B79A1235FA;
-        Fri, 18 Sep 2020 02:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394503;
-        bh=olcSovhd3mqxcStuyRQwJpR7Kpxz7YoVX9eWDOiAVEc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GcnlEkM9DpS3aOEsWMtitzrrdI6LnJVjEZ62LzECo7UGaW21gPspj7tKkFKBjJFLp
-         CwsbihE6feT12eXerKTnUKI915QnYq7NIcsy+7tjSOZj2afnTa+dR1h9+0LSmOo08b
-         G7SXprcM3Tvmlwm0xoyVY7a6N7LSUVTzBqIhe69c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 027/330] PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
-Date:   Thu, 17 Sep 2020 21:56:07 -0400
-Message-Id: <20200918020110.2063155-27-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
-References: <20200918020110.2063155-1-sashal@kernel.org>
+        id S1726384AbgIRGHD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Sep 2020 02:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbgIRGHD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 18 Sep 2020 02:07:03 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7E9C061756
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 23:07:02 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id u21so4071788ljl.6
+        for <linux-tegra@vger.kernel.org>; Thu, 17 Sep 2020 23:07:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ILLtYDh87Hnf9dA6vVS4B7psVL7r7MTKfeGqDa+SuKE=;
+        b=xu+0pooH8LiZDIx8k+PJPkqxKyO32tFfHElOtANSYujXsHlpbt9GYPehidVtEWjXNc
+         /xXXU+SiXhhV3tr4L3m+CIptvYV9Y1sWjYBj8WA56yU7s/7WSQGfMxqHUrXiCP+Vkwzc
+         rbTTOwP/FDgWbP0pNGUrmSktbFVvHDWG3Tb39PWpXuO4WsbpvOhX7D0h7hEM9jAkTZkj
+         f08exOXNYS1HY9+Aqc9CZYVTuH+vJ+A0XrHZ1ELPpXxNrAW6ZJuG3d/8KAZK9gBIeH98
+         izVqAFItF/kqSVd5X+drWxPWZiRPQpKhEvFC80MCdY3cJMOzEPLjMLled+pEAcD3ztnl
+         D6uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ILLtYDh87Hnf9dA6vVS4B7psVL7r7MTKfeGqDa+SuKE=;
+        b=DxqMH8vo9NjjTEPUIjUZlV7qswLTFJNfbYHGgTuIHBfggJpACfXNR0++0xWA9jJO3v
+         3rujQANbcWFxOp1BcPQmhdFcvvnQG0FStMP4e18MVOUL5csaa5V5D1FxdXG8FvHgLP3e
+         5jHfMT5qeB++VP+BxEkLiGGJc+CQ2QVDo4CgLpFKsZ7wpb03GqsFE0kfCmmF570TrsAZ
+         nL99Z+olGRgYorwnVcmJ4joX7Do8PFqhvlMViZ+Qb2pY2GwOjuNEc3/eAvwKwjgWqOxX
+         tXeKnNZS1gfTXd9t3gUfl+3oAR5fiXAxdhoJrWic5p9KzRySsCEDe4jnNkoFMBycTHe2
+         UfUQ==
+X-Gm-Message-State: AOAM530ZSdfrJ2XjYdjqE+zDXLxQeMaWKDRSvoFnLTmHLACdAoX72IP2
+        eP85gLxT/xw9dXS7G40/XIjoruc+NHuAyM0M7XYd3g==
+X-Google-Smtp-Source: ABdhPJyEXZuLz/9VD9TgkWSbpgqwjYtEuhse8iQmZ+kvD+VMvEh/eMgZha0C2GrZshLMMBrho/gEjAYIvq4mDVItvuo=
+X-Received: by 2002:a2e:9496:: with SMTP id c22mr10298851ljh.249.1600409220979;
+ Thu, 17 Sep 2020 23:07:00 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200914112521.1327-1-tzimmermann@suse.de>
+In-Reply-To: <20200914112521.1327-1-tzimmermann@suse.de>
+From:   Sumit Semwal <sumit.semwal@linaro.org>
+Date:   Fri, 18 Sep 2020 11:36:49 +0530
+Message-ID: <CAO_48GGUiVbWBWdzDYWAH2N9Lp2AU+-78BcYyi-3+LXHM74JQA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] dma-buf: Flag vmap'ed memory as system or I/O memory
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Christian Koenig <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Airlie <airlied@linux.ie>,
+        Sam Ravnborg <sam@ravnborg.org>, mark.cave-ayland@ilande.co.uk,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, Thierry Reding <thierry.reding@gmail.com>,
+        jonathanh@nvidia.com, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        matthew.auld@intel.com, thomas.hellstrom@intel.com,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Linaro MM SIG <linaro-mm-sig@lists.linaro.org>,
+        etnaviv@lists.freedesktop.org,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-tegra@vger.kernel.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Hello Thomas,
 
-[ Upstream commit 53b4b2aeee26f42cde5ff2a16dd0d8590c51a55a ]
+On Mon, 14 Sep 2020 at 16:55, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>
+> Dma-buf provides vmap() and vunmap() for retrieving and releasing mappings
+> of dma-buf memory in kernel address space. The functions operate with plain
+> addresses and the assumption is that the memory can be accessed with load
+> and store operations. This is not the case on some architectures (e.g.,
+> sparc64) where I/O memory can only be accessed with dedicated instructions.
+>
+> This patchset introduces struct dma_buf_map, which contains the address of
+> a buffer and a flag that tells whether system- or I/O-memory instructions
+> are required.
 
-There is another kHz-conversion bug in the code, resulting in integer
-overflow. Although, this time the resulting value is 4294966296 and it's
-close to ULONG_MAX, which is okay in this case.
+Thank you for the patchset - it is a really nice, clean bit to add!
+>
+> Some background: updating the DRM framebuffer console on sparc64 makes the
+> kernel panic. This is because the framebuffer memory cannot be accessed with
+> system-memory instructions. We currently employ a workaround in DRM to
+> address this specific problem. [1]
+>
+> To resolve the problem, we'd like to address it at the most common point,
+> which is the dma-buf framework. The dma-buf mapping ideally knows if I/O
+> instructions are required and exports this information to it's users. The
+> new structure struct dma_buf_map stores the buffer address and a flag that
+> signals I/O memory. Affected users of the buffer (e.g., drivers, frameworks)
+> can then access the memory accordingly.
+>
+> This patchset only introduces struct dma_buf_map, and updates struct dma_buf
+> and it's interfaces. Further patches can update dma-buf users. For example,
+> there's a prototype patchset for DRM that fixes the framebuffer problem. [2]
+>
+> Further work: TTM, one of DRM's memory managers, already exports an
+> is_iomem flag of its own. It could later be switched over to exporting struct
+> dma_buf_map, thus simplifying some code. Several DRM drivers expect their
+> fbdev console to operate on I/O memory. These could possibly be switched over
+> to the generic fbdev emulation, as soon as the generic code uses struct
+> dma_buf_map.
+>
+> [1] https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg.org/
+> [2] https://lore.kernel.org/dri-devel/20200806085239.4606-1-tzimmermann@suse.de/
+>
+> Thomas Zimmermann (3):
+>   dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr
+>   dma-buf: Use struct dma_buf_map in dma_buf_vmap() interfaces
+>   dma-buf: Use struct dma_buf_map in dma_buf_vunmap() interfaces
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/devfreq/tegra30-devfreq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+FWIW, for the series, please feel free to add my
+Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index a6ba75f4106d8..e273011c83fbd 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -68,6 +68,8 @@
- 
- #define KHZ							1000
- 
-+#define KHZ_MAX						(ULONG_MAX / KHZ)
-+
- /* Assume that the bus is saturated if the utilization is 25% */
- #define BUS_SATURATION_RATIO					25
- 
-@@ -169,7 +171,7 @@ struct tegra_actmon_emc_ratio {
- };
- 
- static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
--	{ 1400000, ULONG_MAX },
-+	{ 1400000,    KHZ_MAX },
- 	{ 1200000,    750000 },
- 	{ 1100000,    600000 },
- 	{ 1000000,    500000 },
--- 
-2.25.1
+>
+>  Documentation/driver-api/dma-buf.rst          |   3 +
+>  drivers/dma-buf/dma-buf.c                     |  40 +++---
+>  drivers/gpu/drm/drm_gem_cma_helper.c          |  16 ++-
+>  drivers/gpu/drm/drm_gem_shmem_helper.c        |  17 ++-
+>  drivers/gpu/drm/drm_prime.c                   |  14 +-
+>  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c   |  13 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c    |  13 +-
+>  .../drm/i915/gem/selftests/i915_gem_dmabuf.c  |  18 ++-
+>  drivers/gpu/drm/tegra/gem.c                   |  23 ++--
+>  .../common/videobuf2/videobuf2-dma-contig.c   |  17 ++-
+>  .../media/common/videobuf2/videobuf2-dma-sg.c |  19 ++-
+>  .../common/videobuf2/videobuf2-vmalloc.c      |  21 ++-
+>  include/drm/drm_prime.h                       |   5 +-
+>  include/linux/dma-buf-map.h                   | 126 ++++++++++++++++++
+>  include/linux/dma-buf.h                       |  11 +-
+>  15 files changed, 274 insertions(+), 82 deletions(-)
+>  create mode 100644 include/linux/dma-buf-map.h
+>
+> --
+> 2.28.0
+>
 
+Best,
+Sumit.
