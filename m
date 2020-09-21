@@ -5,143 +5,183 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D6BC43466
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19159C43464
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 642AF2145D
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B9520BED
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:53:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/YnNgTn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9PsPNfv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgIULoO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 07:44:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
+        id S1726444AbgIULxu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 07:53:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbgIULoH (ORCPT
+        with ESMTP id S1726326AbgIULxu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 07:44:07 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42FBFC061755;
-        Mon, 21 Sep 2020 04:44:07 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id o5so12372364wrn.13;
-        Mon, 21 Sep 2020 04:44:07 -0700 (PDT)
+        Mon, 21 Sep 2020 07:53:50 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1ABC061755;
+        Mon, 21 Sep 2020 04:53:49 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id z9so12326146wmk.1;
+        Mon, 21 Sep 2020 04:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FqD+XtlFIJxWhWStSHd4RbFikZ83A6060PJXaSCU2xs=;
-        b=T/YnNgTnyR//4zr6lDgU62cAk0JYaKuYnJWXOWHaCRwbCYQ6j0DLqXg61l3i3bf7eW
-         bDmyZQV8KPRt4yNG+RUjL5h8deRmFIHf/2xGcSlX7LjQ0xoBLkOguL+ntjPkwLqhvDUB
-         kaYaTlniKkG7zp5vFoOOd3tCtlPkvxtY1z8Hhl8CMKUULPGDA7sk2neg3bEahOdszv5H
-         k2CAFjZZyXSuueUFQcxdN6XtANyjbRozLwCQPDhTYfZnmUBX0tY+DK+Ep7xPMjplLDO4
-         26wgVetFaN77pgt62L4Bo8E84FhV5QpTl3eBDNLuk8s/MzaJe4IvUxKVz1jALYjuFPgq
-         NJbw==
+        bh=tnYdKbbs0v8cjRUa6+TQZR8WZS5M4KfLczxxoR92Ii4=;
+        b=k9PsPNfv4RkoW9BlHFdHIf9xY2kBpx4aGy+LnFsfyk7MVKIGfajOKv1yRzBG1g9kRV
+         p5vGoTuYp4sH7fDonoo3vDzOPUMd7BlEl+o7QkPoLDBJUlz5oWXszKWEObMkhiS53SpH
+         wRn0yH+tOYm+0D0rtlQoYQAtrJo20zc9BQhRZCwQlIuisnKA+4NIrYDfj+kz9namaMkx
+         HyFK6tUXueEbzI1XyPT6w+ZymeROdWDVBqT3LM/OgqsxRi/GfJgOY99kYRZFqfJK92Ir
+         LxYTgdQHuFkeU532K8QHqqJUS5jkFiz0n9mcSUyyn5e+qWGwMVp8/B/R4bHG9oSJM374
+         lufA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FqD+XtlFIJxWhWStSHd4RbFikZ83A6060PJXaSCU2xs=;
-        b=rkd7qm1QjHdC/u1Z6m+Ue/u4aUARCojytZG0mzk0jQHZNj0CCx197N1zZ72vK71xmr
-         j1OB5+X/1IjyLKBW2I2JJ2Ay39IihqppjOdydUWSOi7Yx206P/U/2gNCKXwsneywmpQx
-         YwqhkUUQk5hYvWFcgsG36Jhv8f/5iU2LEgmN7SQcy3+T+hjCKpP98ORO0sa90xrVt/Di
-         Dyu21WTKlgFJlvuIoRDen5anDp+mJLQiQkiKm9kgez3BMRITT3+OM7k4tM76blkQ40R/
-         Ne2c0GLdyZHxAenua6yv7m1v65k76fRrO5OUH5gXYgBzNdlMpQkjiHMpnf7PAA9x28r/
-         RMEg==
-X-Gm-Message-State: AOAM532fXta4Hj5hSILqSEsPRHATAtkAUFNwMaX8u5d3MIhwkuxd0t2Z
-        iKeOS+L1ZAmBZIhTM9LgOdo=
-X-Google-Smtp-Source: ABdhPJy0GsL40pgbWIe274jQ0n+bSiIIajzDdFxVyBH93akhvvKOfkaiDSQy7MjC6nyZm1Gkb79jng==
-X-Received: by 2002:adf:f0c7:: with SMTP id x7mr51072937wro.315.1600688645981;
-        Mon, 21 Sep 2020 04:44:05 -0700 (PDT)
+        bh=tnYdKbbs0v8cjRUa6+TQZR8WZS5M4KfLczxxoR92Ii4=;
+        b=Brwhx8ZjBoB7zDwF7t3xURMRZwlhhIuOrynb4S0ahgBSdNHvA0xAXlub74dQoQnOYJ
+         W6sEyZUNt4k1B+uKL48HdzQ/O24V0G2LIfKjRPH7PaGELlZIgiqmLsGYl+nECwuM8RD1
+         EIqkca/tmLJsLtlVqNV/puUMzP7439u/e/zG6OjWCsfOIGk4M0U3TQDLYsFaVb/X56Y3
+         vck5EWTd5J4XFVqbQvXtbLXavxC2ZKeIQsqMnwTg51rw5auEJmGQs4Hw1eO6NHScgPbv
+         Y6sq3o3cZnca5+d6d3mynrNSWSH69aycR5ccXjNwodZ1DVzwt88qFu/51qtnHyFFEu7F
+         1s/A==
+X-Gm-Message-State: AOAM531QGnI/Igy1bAoBgv7EGjmVzOP1rLt49BXv2hr1T3U41euxKuQ8
+        lTC+pg6mpKjdKXCypilFvaA=
+X-Google-Smtp-Source: ABdhPJx5aWLyT9FmZeJfWGXgN3NtrC5HfjdVYSlV8isUlvPJUARX+mcG8/Dj8AaoipCOjPw9vaznhw==
+X-Received: by 2002:a1c:7c13:: with SMTP id x19mr30741819wmc.45.1600689228397;
+        Mon, 21 Sep 2020 04:53:48 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id a81sm20064855wmf.32.2020.09.21.04.44.04
+        by smtp.gmail.com with ESMTPSA id l8sm20641084wrx.22.2020.09.21.04.53.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2020 04:44:05 -0700 (PDT)
-Date:   Mon, 21 Sep 2020 13:44:03 +0200
+        Mon, 21 Sep 2020 04:53:47 -0700 (PDT)
+Date:   Mon, 21 Sep 2020 13:53:45 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 32/34] i2c: tegra: Clean up and improve comments
-Message-ID: <20200921114403.GO3950626@ulmo>
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 12/34] i2c: tegra: Use clk-bulk helpers
+Message-ID: <20200921115345.GP3950626@ulmo>
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-33-digetx@gmail.com>
- <20200917123208.GK3515672@ulmo>
- <11a29706-0870-792e-d5d5-7c0d1f402281@gmail.com>
- <cbf6f8da-0e9e-3249-2173-bdccbf368bcb@gmail.com>
- <20200921114320.GN3950626@ulmo>
+ <20200908224006.25636-13-digetx@gmail.com>
+ <20200917113846.GX3515672@ulmo>
+ <CAHp75Vd_B9WLM99LnN2YiZ045z8SUkD7KwY2wVEUeQ9Mx7fg5g@mail.gmail.com>
+ <20200921110159.GD3950626@ulmo>
+ <CAHp75VcpoZ-m2wkJGv4s+KthOVLQR1XBTzMFMmvj-Q82BEh7NQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7gLe/sNPhR777EPF"
+        protocol="application/pgp-signature"; boundary="6sj9mcRtP+pTWLOo"
 Content-Disposition: inline
-In-Reply-To: <20200921114320.GN3950626@ulmo>
+In-Reply-To: <CAHp75VcpoZ-m2wkJGv4s+KthOVLQR1XBTzMFMmvj-Q82BEh7NQ@mail.gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7gLe/sNPhR777EPF
-Content-Type: text/plain; charset=utf-8
+--6sj9mcRtP+pTWLOo
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 21, 2020 at 01:43:20PM +0200, Thierry Reding wrote:
-> On Thu, Sep 17, 2020 at 06:17:39PM +0300, Dmitry Osipenko wrote:
-> > 17.09.2020 18:02, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > 17.09.2020 15:32, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > ...
-> > >>>  /**
-> > >>> - * struct tegra_i2c_hw_feature : Different HW support on Tegra
-> > >>> - * @has_continue_xfer_support: Continue transfer supports.
-> > >>> + * struct tegra_i2c_hw_feature : per hardware generation features
-> > >>
-> > >> I think that space before ':' can go away. Although that's preexisti=
-ng,
-> > >> so could also be a separate patch, I guess.
-> > >=20
-> > > I haven't even noticed that!
-> > >=20
-> >=20
-> > Wait, that ':' is used only for the struct description, hence it
-> > actually looks natural in the code.
+On Mon, Sep 21, 2020 at 02:15:09PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 21, 2020 at 2:02 PM Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+> > On Thu, Sep 17, 2020 at 04:54:28PM +0300, Andy Shevchenko wrote:
+> > > On Thu, Sep 17, 2020 at 2:38 PM Thierry Reding <thierry.reding@gmail.=
+com> wrote:
+> > > > On Wed, Sep 09, 2020 at 01:39:44AM +0300, Dmitry Osipenko wrote:
 >=20
-> What makes the struct description different from the field descriptions?
-> A description list is basically:
+> ...
 >=20
->   <term>: <description>
+> > > > This is tempting from a diffstat point of view, but the downside is=
+ that
+> > > > we can now no longer validate that all of the necessary clocks are =
+given
+> > > > in device tree.
+> > > >
+> > > > Previously the driver would fail to probe the I2C controller if any=
+ of
+> > > > the expected clocks were not defined in device tree, but now it's j=
+ust
+> > > > going to continue without it and not give any indication as to what=
+'s
+> > > > wrong.
+> > >
+> > > You may print an error in the error path as previously. Since both
+> > > clocks are mandatory (as far as I understood the code) user will need
+> > > to check DT in any case.
+> >
+> > The problem is that the number of required clocks depends on the variant
+> > of the IP block that's implemented. Some require just one clock and
+> > others require two or three. With this patch the driver is just going to
+> > pick whatever clocks are given in device tree, but it removes any
+> > possibility of detecting whether the device trees contain the correct
+> > clocks. So we may very well run into a situation where the driver now
+> > successfully probes but then malfunctions because one or more of the
+> > clocks were not specified in device tree.
+> >
+> > Thierry
 >=20
-> And it doesn't matter what exactly <term> is.
+> I still failed to get this. Are you suggesting that CCF bulk
+> operations are fundamentally broken?
 
-Anyway, like I said, this is preexisting, so we can always fix that up
-in another patch:
+No, I'm not suggesting that. All I'm saying is the way that they are
+used here is causing the driver to behave differently that it was
+before.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Taking for example the VI I2C controller instantiation. That requires
+the "slow" clock to be specified. Previously if the VI I2C device tree
+node didn't have that "slow" clock specified, the I2C driver probe would
+exit with an error code. After this change it will simply not see the
+"slow" clock and then just continue without it as if it was optional.
 
---7gLe/sNPhR777EPF
+In other words, after this patch we have no way of saying which clocks
+are required and which are optional. They all become optional, basically
+and the driver would attempt to continue (and most likely hang) if no
+clocks at all had been specified in device tree.
+
+> In the above case one may add more checks. AFAICS is_vi won't be
+> removed, so can be easily checked.
+> Basically that for-loop for div_clk is questionable. I agree on that.
+
+But we need that one to find which of the clocks is the divider clock so
+that we can call clk_set_rate() on it later on. It's a bit odd that we'd
+just continue even if we didn't find the divider clock. I think the CCF
+does handle this transparently and will just no-op all the calls for
+NULL clocks, but it still means that we won't be running the I2C bus at
+the right frequency if the divider clock was not specified in device
+tree.
+
+Thierry
+
+--6sj9mcRtP+pTWLOo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9okgMACgkQ3SOs138+
-s6EmtBAAkfQ9fVhXgL1Kn6aZkejoutZrTxeIfbN6vwCo2rdm2HliMngdx5VEd/HR
-BeicysE9y12BvO34KW0VVeF7YIPELrYf1V76ROQmLI3GSwFNZ+1i8K4ICtRAHN4D
-RUd4aCiyKDpqwK7WVzdxAyIE53YCd+Lmx4K89s+o5eRc0/ncFv76sHwaVta9fvPa
-f9Rh/s9ec3E8Z70VyC0dVubQ7SB+/OZgtrqq4UvKQB4bnkToaRWM5AHavGngesCN
-DEl7fZmKzZ7jM/QpYEcMYk4SWjrOmduYiEhf0y+3GrRHj8FxVihfBhRwwbJRaaUR
-j0exQgu+B1Yt2rE1ieW8wjYZR9S3qIE5OD3T0oz37AH4PUEOT9yn+ZhuujRr1gjb
-ckXw3Md3cSVxGyQJUtWqzUAvF/zJR86AkkQIvxAr8ZjlYWRA9qsyL4VctdVCpmye
-XE27ycAXmcYOOMlJFlbU7bDdDA30b5JWnubnIiZ1DdDPpOQBmmcNxL/eREl2sFBM
-wONlkz5+IH6c/zIZOxJl+eWKU46du9S5Xr00XctA9zphWkzbKwllzOFUtJl7K4Il
-Ro8hwWokfMKANk9KHY0K34MzHEDzW7ILLD8FYcYEJ/STWBAkh8b8IfuRGhcf6Rgt
-GNLhLC1y0NP16rqKAe9+6T5ztUA4XaO01e70+Yxbzz+j0wCFTwI=
-=a9jA
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9olEkACgkQ3SOs138+
+s6E3RRAAicgwoUZ3itSlxAQ4dLKrDOobCDxoEwECgY1PncljTtqyP6aPCuvy9UnV
+QfJe0iXyK25n3oOFmpX2LEYtoBYHko87xRkII3JESAZLtXrUBdVbvyds4IqXBILR
+RYSVtkfh8Bl5pZggF5HwHpDnZaaQBPtK57c1da8CO2xROJBoXX+l6oiaNQwNkJy7
+n/qbWpBq5X4MMHnISa5YayuxGr0YQbDvFSPZeeWaU7KDBbwwSJPLiknBtQs0dNaB
+Ojm5SMM1aaaFbv15mY9OyK7X4fQ6AENpgAks+GcmZ/bQnFvtgXheMDKBDqFt7q2V
+JxzwXv273wT3qKHvt8yf1IMG2JlNu5OHeTckdMuynn5VIw07TY1xCGKDDL2T9z0P
+yXy3YMv0MunYCTSdjk8LJa4eVNBuEikAQTpN4AJsMTrYFCHH/z0OibRdAjuPbJc/
+SOZMlGwms02fhEiG7MqjI8JYIWdUhKuYiaJ1nfZkYcQnlhvgH+jDWBeJYyR2HzuK
+t/I+waWK6jfach6YbgSbQawvcekpioz1JbQKfqx+WxUtriEEOmHpYDgZolvtO/pI
+YEb/RDepVeQIlutFXAhSmQxa3LTXYcpxghMwnEpmYGJrz4jYc+8jnn3BdurqLAHI
+MYTd3VGD73ikxVgj4d3uzdyBbewjYvMUca7HWn+/YWRceBbCwdw=
+=iz+4
 -----END PGP SIGNATURE-----
 
---7gLe/sNPhR777EPF--
+--6sj9mcRtP+pTWLOo--
