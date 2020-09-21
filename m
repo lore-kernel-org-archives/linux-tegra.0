@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFB6C43463
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCBEC43465
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2CCF2193E
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156C5207BC
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JNSBViVR"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="F4fkjOlZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgIUKZZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 06:25:25 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9237 "EHLO
+        id S1726711AbgIUKZe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 06:25:34 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9249 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgIUKZZ (ORCPT
+        with ESMTP id S1726617AbgIUKZe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 06:25:25 -0400
+        Mon, 21 Sep 2020 06:25:34 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f687e3b0003>; Mon, 21 Sep 2020 03:19:39 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
- 2020 10:20:25 +0000
+        id <B5f687e430000>; Mon, 21 Sep 2020 03:19:47 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
+ 2020 10:20:33 +0000
 Received: from [192.168.22.23] (10.124.1.5) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 21 Sep 2020 10:20:22 +0000
+ Transport; Mon, 21 Sep 2020 10:20:30 +0000
 From:   Thierry Reding <treding@nvidia.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 CC:     Thierry Reding <thierry.reding@gmail.com>,
@@ -40,43 +40,38 @@ CC:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 27/34] i2c: tegra: Check errors for both positive and
- negative values
-In-Reply-To: <20200908224006.25636-28-digetx@gmail.com>
-References: <20200908224006.25636-28-digetx@gmail.com>
+Subject: Re: [PATCH v7 29/34] i2c: tegra: Improve formatting of variables
+In-Reply-To: <20200908224006.25636-30-digetx@gmail.com>
+References: <20200908224006.25636-30-digetx@gmail.com>
 X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Message-ID: <71a199bf16044d93a952fc4f27f28426@HQMAIL111.nvidia.com>
-Date:   Mon, 21 Sep 2020 10:20:22 +0000
+Message-ID: <b8e728f7d160463b8b8216940325c37b@HQMAIL111.nvidia.com>
+Date:   Mon, 21 Sep 2020 10:20:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600683579; bh=i/TazrAKHvxh+5rLEbVuNQITG8MRoX5xzCTI5hmigPY=;
+        t=1600683587; bh=faxYS4QlKCGz6Mgx3etZMrswGKpjdpFCa3JfYOnhQRE=;
         h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
          Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
          Date;
-        b=JNSBViVRORvPhtQH4ZS+uZn6uVl6d014Li4B7HkLGggmbkICWL+0gxzQP8ORBd+nt
-         uHApiz3mO1uGzllgP1nF3Wb+gZiALe7Eb+G71nWUmGK97j0Q9weuYd08PCk7hin0hp
-         KarPB+KtN+JbnDjDnyybxxMoYO4hSqjcYbnDRSyWF5X8GuLQLNUaQr8IHrCVROs2qU
-         cAm6JYdT1zs2EgI4cSTYAFF8/QxcBTLW379YVDwh8g1Hp5e1kTShSuzD1kS4opFYtf
-         w8+H5IsJ7igZmn/QKFrmDmupXbynshynu6DzIkcaOGsxCGUY0t4GOWXbBPgdvJV8b7
-         DwyqYyIQfnGYA==
+        b=F4fkjOlZ1wOvL9mBeE+sHwjr2S7J6juyGMyMxvOwZEe76Nx6t3ed4+Qr2UEPVEgaf
+         eLQlAfNH8yhrTB3UF0QaOqCDI2bNBEs8Ujbq4CqkJQskrXS+nWHSwBsW+uQPqfjr70
+         +4wm+RC6lT4Wdd8WRCMcLtlFrgdpAOQbo/9IMXTFN/wg0K4GyQDexI8Tqtn2VRZO/T
+         wpdK8ja2neAbFshMeWXYnShFVxCsEfs1fVHkMee8QhyyzElyGnqSNBhm8+bnqTuveY
+         +m7MXMJ49OWLda/oWsBUuZMdulP0AhySIQQSnDXRtnGBj+tK+96cQRwMD58LRHB8jy
+         YfLl0ps4G018w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 09 Sep 2020 01:39:59 +0300, Dmitry Osipenko wrote:
-> The driver's code is inconsistent in regards to the error values checking=
-.
-> The correct way should be to check both positive and negative values.
-> This patch cleans up the error-checks in the code. Note that the
-> pm_runtime_get_sync() could return positive value on success, hence only
-> relevant parts of the code are changed by this patch.
->=20
-> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+On Wed, 09 Sep 2020 01:40:01 +0300, Dmitry Osipenko wrote:
+> Reorder definition of variables in the code to have them sorted by length
+> and grouped logically, also replace "unsigned long" with "u32". Do this in
+> order to make code easier to read.
+> 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 97 ++++++++++++++++------------------
+>  1 file changed, 45 insertions(+), 52 deletions(-)
 
 Tested-by: Thierry Reding <treding@nvidia.com>
