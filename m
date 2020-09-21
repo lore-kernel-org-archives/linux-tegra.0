@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDD1C43464
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD78C43466
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC45207BC
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB8A205F4
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:24:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NyV4Fl3z"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VhjP6V0I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbgIUKXt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 06:23:49 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9066 "EHLO
+        id S1726526AbgIUKYM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 06:24:12 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9091 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbgIUKXo (ORCPT
+        with ESMTP id S1727276AbgIUKYK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 06:23:44 -0400
+        Mon, 21 Sep 2020 06:24:10 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f687dd40001>; Mon, 21 Sep 2020 03:17:56 -0700
+        id <B5f687df00003>; Mon, 21 Sep 2020 03:18:24 -0700
 Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
- 2020 10:18:42 +0000
+ 2020 10:19:09 +0000
 Received: from [192.168.22.23] (10.124.1.5) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 21 Sep 2020 10:18:39 +0000
+ Transport; Mon, 21 Sep 2020 10:19:07 +0000
 From:   Thierry Reding <treding@nvidia.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 CC:     Thierry Reding <thierry.reding@gmail.com>,
@@ -40,42 +40,39 @@ CC:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 03/34] i2c: tegra: Handle potential error of
- tegra_i2c_flush_fifos()
-In-Reply-To: <20200908224006.25636-4-digetx@gmail.com>
-References: <20200908224006.25636-4-digetx@gmail.com>
+Subject: Re: [PATCH v7 10/34] i2c: tegra: Use devm_platform_get_and_ioremap_resource()
+In-Reply-To: <20200908224006.25636-11-digetx@gmail.com>
+References: <20200908224006.25636-11-digetx@gmail.com>
 X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Message-ID: <6f29761e17f1461ab21d6e9bcd6d3713@HQMAIL111.nvidia.com>
-Date:   Mon, 21 Sep 2020 10:18:39 +0000
+Message-ID: <4d954388499e4499a86a1f0bf03f59ea@HQMAIL111.nvidia.com>
+Date:   Mon, 21 Sep 2020 10:19:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600683476; bh=VwxWUvvCDE3896KMNP0fBhjI2samcfhvauxAGLDWspc=;
+        t=1600683504; bh=oFIkYpjTxeNbvN+wHYAPcdazlkcTZgVsdBYwQPQHa6E=;
         h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
          Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
          Date;
-        b=NyV4Fl3zuc3mcxm1IFkyYiPOuU5Uu46R4QXrYk7JsqbaaXs0hnTLKW6xivismTjpI
-         FStG80Nn41/Lk+TEtvbvD2K+pz7iZeFgxaa6zE92cfsWw3T9hErOsy+MsWOe6Fbx6D
-         AbPKMwep/Uleot1EUJQDP4cV321EsPTzvPfoL/opx/hAjkM0hwCH6K7SPz3hWf8W+P
-         G6Z+5TiHRhM2M7OiY2P3rOwD/1pDDCbZBjnvKwSZlhvrI9mtLPIZfc/c4WiiTZJHA4
-         xbOHcEqUDGASm1OdqFuuCAwgYILcBYoG01uLSOFXmfdaao0I16BQ6YMWiRpAXlW8YO
-         nLNmdVsmUhLOQ==
+        b=VhjP6V0Izu2gGSkkaiB30tRqIjxD9snkxts2CT2LG02Owv6xAm5cqKkb/MGSVhOX2
+         ju+DDGILvQbSTV/0Bk6/JMkoeE+K3c8MyPAPYVqfb6N4hx60qe59SXwbr31JnBZATP
+         CnKfNa6qfPYqHDjaN7TFPI6KiHUnG+5+TQJOoJ7Pz07Kox9HCY4lNDjMsihV4P1X/G
+         aoA0jxzAb9/XFbviLLZOhBWxNE9ndJ2NRV+bHCMlw+V0gycgm5gn3QLnxD1aEy7AJr
+         QodZRiJQtEtaGuEEPstrogzZfrmyLpcrNaAFIxcLKybnJIUL8qnp3xNn0C4WauBS6S
+         kWbWWWHF3nQbg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 09 Sep 2020 01:39:35 +0300, Dmitry Osipenko wrote:
-> Technically the tegra_i2c_flush_fifos() may fail and transfer should be
-> aborted in this case, but this shouldn't ever happen in practice unless
-> there is a bug somewhere in the driver. Let's add the error check just
-> for completeness.
+On Wed, 09 Sep 2020 01:39:42 +0300, Dmitry Osipenko wrote:
+> Driver now uses devm_platform_get_and_ioremap_resource() which replaces
+> the typical boilerplate code and makes code cleaner.
 >=20
 > Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/i2c/busses/i2c-tegra.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
 Tested-by: Thierry Reding <treding@nvidia.com>
