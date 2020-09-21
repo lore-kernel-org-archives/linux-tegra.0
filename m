@@ -2,63 +2,64 @@ Return-Path: <SRS0=KKuN=C6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629E6C43463
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281EBC43463
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2480120874
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1763207BC
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 11:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qEx4SeSy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kttlAkC1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbgIULRW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 07:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39744 "EHLO
+        id S1726674AbgIULVa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 07:21:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbgIULRW (ORCPT
+        with ESMTP id S1726406AbgIULVa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 07:17:22 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126F1C061755;
-        Mon, 21 Sep 2020 04:17:22 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id s12so12290321wrw.11;
-        Mon, 21 Sep 2020 04:17:21 -0700 (PDT)
+        Mon, 21 Sep 2020 07:21:30 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE77CC061755;
+        Mon, 21 Sep 2020 04:21:29 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id z9so12216782wmk.1;
+        Mon, 21 Sep 2020 04:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=5r12szV9dZx0qXbkrbu9a7oCNIggqfSIuaTZ+HCpPBw=;
-        b=qEx4SeSypuSulfF0ZqcMdvX4IFLpTDAyAwk8WDGr03rGSYt7q5Qxmo/0A6h7JMgRMw
-         KxawOZN742aHbgGPPo/mc9Sp/eo6eGYEZHxrkKMQS17qtqhNTfWu2Pv6cDclORDau+Hn
-         swUPN/iCuioP6IPx0NztsJ2MIcT/wfwDTDy4qF0LertV5PssDBXgqLp8yE74e5WRwZmf
-         Jpop3NgHWA2OQ9XIJYOguHdX6VbQUiAfWNldVfWwq0+hc7xLfKP/cVxn/6DOgxsRXCy2
-         q0XtLLEHPWc2+LrRKVYJ5LREEPRzURUVIgoLCchgWLpTY3igyGrM4xUqpiiviXzMXXHD
-         ha7Q==
+        bh=0ZnIRDHof5llKXKRdM1UTdt+GPv/4voJnfxD2ooD47I=;
+        b=kttlAkC1AoyTyET4BKsIM8keD3CJpbyDi10VAiTrTGxPJQ4Kj8XE5+nitoFbm2PsZC
+         S4HSpUGhV4mUeWY4JR5AuvrfyBUweWZbCBLqHsYoqMdt9ZN3RkApKeg+/5eWheV6leou
+         cMzOEqRMQNQI6vR3TxtgUMDIV8FVbQJ5pyPT1PONXZDlCa5MGLZdUeR0NmKu6SSQyQsL
+         0CTXKKBsN1FUL58poNXtl60kOXOJFIlYXJap9BDzm7fb4juhp1s+yoqP0jCdCDtFbgW4
+         /NaoczVNVeKWKFz9LCI2ljVBZBU8PTw5mpiGrq7gm5AiPziA5i3YGHX3SqlezjWKW7tA
+         peaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5r12szV9dZx0qXbkrbu9a7oCNIggqfSIuaTZ+HCpPBw=;
-        b=E3kdmyWZJ/WmTRZ08Mtld0KaTWKU4LOVN2ALFql+/u4HtzTZ1vtQckZ8eqIhengpXU
-         +1+FydPAeXJoHOhbG5rWwwTEMhEsyDqcVrXd4XC+7eaij07KV7KlGATQodmMjWokm8bb
-         Nelsys48V7VIVHy5GGBj0Vz+3akjQcZeVrn5mJg4cATZNspA02bJT8JI5iAWTVh8uC8E
-         WYOnQ1SmFHb1iMhczXOHxochh66iO9nFx+fwUKT9b9iSQZ5nSkIFm77HRM/RHP3FKuIs
-         +br002k8Bx1+3b2pPdJ9AvneU65+swIheP9Tz/ImlFy96R2dLmGYPwBlbafVgQKZGOEj
-         Wu4Q==
-X-Gm-Message-State: AOAM5336F1/2h4pagcz5wMoxdFxTQl/HpqAr8sif7r/Kq1DdhcnTUbKT
-        LenlE1LPqacSTAB6Oqi7T7I=
-X-Google-Smtp-Source: ABdhPJxslPywD7kxgK9moy2VLhYoljYd70soyLXyVa65oBk3FizZVb5IUOoQn6hyGIWG1g1vYaOucw==
-X-Received: by 2002:a05:6000:1282:: with SMTP id f2mr55416573wrx.251.1600687040631;
-        Mon, 21 Sep 2020 04:17:20 -0700 (PDT)
+        bh=0ZnIRDHof5llKXKRdM1UTdt+GPv/4voJnfxD2ooD47I=;
+        b=gRx9A1aRURjJTwGw/edXSRuXdfXYkShIUa97nDJqg0PhCNtYgZj3XGG8OLYCWlUcXC
+         EwHqeyoiFPHx/i+DYDIjXzcFarveTANMLoJKuCd0STXEcLz6WiYt5n/BErfrR4ZHATLu
+         HynaSqULkHKBGcwPWkHrCMXD4e4wEHnQtqZ96ypjijabY25xkPL4WwxJPWC4MnlhtWNc
+         Q0RYsTojFs4ZCV0W6sffOGIyCxvQSG+BMowO6N+a6PnfaC7qT2MvPsdiJjII0zaqykzQ
+         DbSLBZmIxAUvVKtlKGbokOFdpDT2oyuVqGpMuIUPlhGr8f5udw1RA6zpEMUGoRph8MWH
+         8NAg==
+X-Gm-Message-State: AOAM530BLN496C4Oi4+HAlI/spFpo+5gx6KPPriufSUusEN1m73EXD5k
+        6Nha8qfO4RkRLkKiTSm+CLE=
+X-Google-Smtp-Source: ABdhPJzCvxOm652pEtwWdGmLCokCFTSR23EaxWY7c9VoYRNQezGBdnQCD+zwQald5Jqbhm21QCU9Ug==
+X-Received: by 2002:a7b:cc88:: with SMTP id p8mr29826223wma.150.1600687288359;
+        Mon, 21 Sep 2020 04:21:28 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id 92sm21095515wra.19.2020.09.21.04.17.18
+        by smtp.gmail.com with ESMTPSA id 2sm18627914wmf.25.2020.09.21.04.21.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2020 04:17:19 -0700 (PDT)
-Date:   Mon, 21 Sep 2020 13:17:17 +0200
+        Mon, 21 Sep 2020 04:21:27 -0700 (PDT)
+Date:   Mon, 21 Sep 2020 13:21:25 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,69 +69,81 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 14/34] i2c: tegra: Clean up probe function
-Message-ID: <20200921111717.GH3950626@ulmo>
+Subject: Re: [PATCH v7 21/34] i2c: tegra: Don't fall back to PIO mode if DMA
+ configuration fails
+Message-ID: <20200921112125.GI3950626@ulmo>
 References: <20200908224006.25636-1-digetx@gmail.com>
- <20200908224006.25636-15-digetx@gmail.com>
- <20200917123755.GO3515672@ulmo>
- <7d2803c3-b25e-da62-5e55-fca8e550fcda@gmail.com>
+ <20200908224006.25636-22-digetx@gmail.com>
+ <20200917114716.GZ3515672@ulmo>
+ <b2f68a72-9117-89d1-70f3-750ddc235482@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LZFKeWUZP29EKQNE"
+        protocol="application/pgp-signature"; boundary="2xeD/fx0+7k8I/QN"
 Content-Disposition: inline
-In-Reply-To: <7d2803c3-b25e-da62-5e55-fca8e550fcda@gmail.com>
+In-Reply-To: <b2f68a72-9117-89d1-70f3-750ddc235482@gmail.com>
 User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---LZFKeWUZP29EKQNE
+--2xeD/fx0+7k8I/QN
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 17, 2020 at 06:02:26PM +0300, Dmitry Osipenko wrote:
-> 17.09.2020 15:37, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> >> +	/* interrupt will be enabled during of transfer time */
-> >> +	irq_set_status_flags(i2c_dev->irq, IRQ_NOAUTOEN);
->                                            ^^^^^^^^^^^^
->=20
-> >> +	ret =3D devm_request_irq(&pdev->dev, i2c_dev->irq, tegra_i2c_isr,
-> >> +			       IRQF_NO_SUSPEND, dev_name(&pdev->dev),
-> >> +			       i2c_dev);
-> >> +	if (ret)
-> >> +		return ret;
+On Thu, Sep 17, 2020 at 06:03:04PM +0300, Dmitry Osipenko wrote:
+> 17.09.2020 14:47, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Sep 09, 2020 at 01:39:53AM +0300, Dmitry Osipenko wrote:
+> >> The DMA code path has been tested well enough and the DMA configuration
+> >> performed by tegra_i2c_config_fifo_trig() shouldn't ever fail in pract=
+ice.
+> >> Hence let's remove the obscure transfer-mode switching in order to hav=
+e a
+> >> cleaner and simpler code. Now I2C transfer will be failed if DMA
+> >> configuration fails.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/i2c/busses/i2c-tegra.c | 18 ++++++++++--------
+> >>  1 file changed, 10 insertions(+), 8 deletions(-)
 > >=20
-> > Is it safe to install the interrupt handler at this point? What if,
-> > perhaps because some bootloader didn't properly quiesce the I2C
-> > controller, an interrupt triggers immediately after this?
+> > I'm not sure that's a good idea. It's always possible that the DMA setup
+> > is going to break because of something that's not related to the I2C
+> > driver itself. Having the system completely break instead of falling
+> > back to PIO mode seems like it would only complicate troubleshooting any
+> > such issues.
 >=20
-> This is why we're using the IRQ_NOAUTOEN flag above :)
+> That code has zero test coverage because this problem never happens in
+> practice, hence it should be better to have it removed. We may consider
+> re-adding it back if there will be a real-world incident, okay?
 
-Ah, I missed that. Seems fine then:
+Again, I think throwing out fallbacks and error messages out the window
+just because they "don't happen in practice" is misguided. Just because
+they don't *usually* happen doesn't mean they can't happen. And in case
+they do happen we absolutely do want some way of dealing with it rather
+than just have the driver stop working without any explanation.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Thierry
 
---LZFKeWUZP29EKQNE
+--2xeD/fx0+7k8I/QN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9oi70ACgkQ3SOs138+
-s6F94A//Y8wN36lT+FIE1Gyzo6Go2+uOHQd1Ofag8Zcypmgp3TCI3frXZGJ8TNxL
-ucXf2duY9hFNPXheFjrATPxww/Uiz2e/q7jHpoN9RNJEwRqvu9sJywNuDsENFPeX
-BP9pctj09MujoWQ/+SJfgRpSO+Y5ZDr7oNba2VOnKNDE+Oqdz2S6Z6wuqbKGOpzY
-WSOKhw3ywMutVWfpCtUlxmeKr2l/Hixrrk/L2AUMpBXMfDtKakTRWPZoahxZHNVg
-LxlEVdcJip2jUon3UpoHmsPPVZTDStLegK2e2hjT5QRZEamNa/11s5dop6GFtea9
-A4x3FjTLUePuE34PAnl2Y3sVCLeenO3LgrQoFlM2S889yd4cDPI97Rp4mgn2fmkK
-rM6pwZBMUHtHpIochCvIcvD5N8QWJuxGUzf9x43l64Dj4KekmcL697eltkDx046t
-7kbnzerXGH1tJO5dXLPaI5VIMWtWKdtGz9WPUcLuoCj+2peEQLIgmlz4WfM8IvoP
-3MgRFLUq4Asac9JUGJg9GrcgTGSAcOWmqtTCXY2oTRhgO6G5kluOLUSUISHU/Gil
-znMXbkjds7eEF7p68cg8R3HROAhIVQ3EMlVfg5eGbwc768TjHxivAAvs7TM8r2Vr
-7apqVz2axOCKy1ieG9WMdclLDtOcnzjOjyuclse3fmRHx6JCNb0=
-=KB40
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9ojLUACgkQ3SOs138+
+s6G1jBAAo7ALv/1b+UdZOVeHC+ZjxIDvuKeSkINgH09LfvSpEP0SE09rXlVrk1VJ
+tJkgVoeixIlCNCPPW62AVl91hiYdAoah2oywe8F5wrPuB06sGfcgaOrYTCGilYdt
+wN/wCRgHOYhqLB/sfe8vMS29hhxxA5V3F6uCUrdIhHsTv7L5i+g/v3FJsR3LHX3X
+aBMwKrO1Ku8gn5jySWeJRTjxnm8X+AhxTJepSS5kxxZALaS3mhLtbYO5qhZmiE0r
+xW7i+04SS5ILKdMWEC/xB1WFD7oVSAgzCd9ei7UWxFFUpLWzQ9upWNrLB01Ysap5
+lRCRk0PLyA56JdKQgHVUnjMpWpGk7zv/4NjQK5Hn/B3JFCw7CLYbmpWLJiqAWEwb
+Ov0SjbCuPeIMNdUlt0Ndlhqr6TeFjTg8h36oqaXZvdA0vYEXuGDVxFWbgLnvwemN
+nkAjxUe24kyeCze/RV0EzgpbldywDJe+/q+swkcF4t4f+/cbNXS3zIsxewSRpsN5
+IzQc4QRoPgE3dhCWEdi9X4DTWu3wDSXCBW7Plnw5zTekIsq5yMqL6RZOjT1mTv8z
+DWh/At1KaPDwZ10vH9zb1pmVQyNnUBNcTB/8YyqI+7ErMEoHsv2AcPBNjEd+qURQ
+xaalpSnh91hwMjyHRxoRW5JGBrq28zX28SfO7GXioeEa3qwAhQw=
+=wZn0
 -----END PGP SIGNATURE-----
 
---LZFKeWUZP29EKQNE--
+--2xeD/fx0+7k8I/QN--
