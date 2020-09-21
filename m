@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8122C43463
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C486AC43464
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB32207BC
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860ED20EDD
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jle6ucdk"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="T+T0tKEh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbgIUKYM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 06:24:12 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9083 "EHLO
+        id S1726664AbgIUKY4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 06:24:56 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9152 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbgIUKYH (ORCPT
+        with ESMTP id S1726748AbgIUKYu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 06:24:07 -0400
+        Mon, 21 Sep 2020 06:24:50 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f687dec0000>; Mon, 21 Sep 2020 03:18:20 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
- 2020 10:19:05 +0000
+        id <B5f687e170000>; Mon, 21 Sep 2020 03:19:03 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
+ 2020 10:19:47 +0000
 Received: from [192.168.22.23] (10.124.1.5) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 21 Sep 2020 10:19:03 +0000
+ Transport; Mon, 21 Sep 2020 10:19:45 +0000
 From:   Thierry Reding <treding@nvidia.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 CC:     Thierry Reding <thierry.reding@gmail.com>,
@@ -40,47 +40,39 @@ CC:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 09/34] i2c: tegra: Use reset_control_reset()
-In-Reply-To: <20200908224006.25636-10-digetx@gmail.com>
-References: <20200908224006.25636-10-digetx@gmail.com>
+Subject: Re: [PATCH v7 19/34] i2c: tegra: Remove redundant check in
+ tegra_i2c_issue_bus_clear()
+In-Reply-To: <20200908224006.25636-20-digetx@gmail.com>
+References: <20200908224006.25636-20-digetx@gmail.com>
 X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Message-ID: <b5125a8e9d83491cbd03b9817cde2b76@HQMAIL111.nvidia.com>
-Date:   Mon, 21 Sep 2020 10:19:03 +0000
+Message-ID: <63f5c911fd24425fbe8bab250fa922d0@HQMAIL111.nvidia.com>
+Date:   Mon, 21 Sep 2020 10:19:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600683500; bh=i70FCSUV9flyEkpXv9CHGczlPR4717jAf2IAWaY1S94=;
+        t=1600683543; bh=2Cx9emq6T9X3oRhp18fLwghcsvBkqu6hxKg8UDlIHc8=;
         h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
          Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
          Date;
-        b=jle6ucdkcjOgIIDkZMOYDIL2DC+x+Jw4z555oxmiWyLiw4/o0SsV62yXCSCbleLf0
-         tRxT6i70POpp6RucfbJ9Wvxm/FhzHC9RqQNZRWF3uI+0MPa74WqnmAcUkAFI4xRzmj
-         OtCrfCXwWl9q8UVr13/A5BgA8MoOLx0lxEoqVTxHMtNaBxMNkFp6vk+qPGUYsViQT7
-         tIFX07mUAMqkGtvK7nGhPI1twszA/mkazvx0EC/QLauOWl66CvZVESSKo/7YJYFNrn
-         47RjIK4sYQvK1+kmae0xe/cE/N/St8l2MERyZrEEwbMbKqJIR8ShvV9fI5EmM/079w
-         dgnXmII5zGhCA==
+        b=T+T0tKEhsKsOgZeIwhUtc0zmwxecYXCojZEayJJ8uU/5lz4JDL8llKGQc3PsaBdqQ
+         MU91PuaCO77W1gA/+3AjwOY2ruV825Md//hFb0i5iPP/5C29Gqg4WVXR8zT9nOiDW3
+         D1SmTNDZthJ493VYuczQLyxu1/nr2GWrrYbhMePPkmONPAlJNSShwwLUswNjh4F0BC
+         M8jshjWpFdk7S37ckGPERDOURBjtRIQxLAapDT+iOdq4cl6xygw9zc5vnoSCUz+lcC
+         DJf5mp/+XCqL4DBHkhLv9dUZBWpqrX5gPbpac5Va0fS0scmzZZOI2dQX69PYYMfG6h
+         a0ECyQGBxDo0g==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 09 Sep 2020 01:39:41 +0300, Dmitry Osipenko wrote:
-> Use a single reset_control_reset() instead of assert/deasset couple in
-> order to make code cleaner a tad. Note that the reset_control_reset()
-> uses 1 microsecond delay instead of 2 that was used previously, but this
-> shouldn't matter because one microsecond is a default reset time for most
-> of Tegra peripherals and TRM doesn't mention anything special in regards
-> to I2C controller's reset propagation time.
->=20
-> In addition don't ignore potential error of the reset control by emitting
-> a noisy warning if it fails, which will indicate an existence of a severe
-> problem, while still allow machine to boot up.
->=20
-> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+On Wed, 09 Sep 2020 01:39:51 +0300, Dmitry Osipenko wrote:
+> The tegra_i2c_wait_for_config_load() checks for 'has_config_load_reg' by
+> itself, hence there is no need to duplicate the check.
+> 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > Acked-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
 Tested-by: Thierry Reding <treding@nvidia.com>
