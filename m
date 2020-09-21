@@ -2,114 +2,84 @@ Return-Path: <SRS0=KKuN=C6=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F5FC43464
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 09:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6E8C43463
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 278CD20BED
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 09:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7014620BED
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Sep 2020 10:18:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FqysjnrW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgIUJWE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Sep 2020 05:22:04 -0400
-Received: from sauhun.de ([88.99.104.3]:51050 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726419AbgIUJWE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Sep 2020 05:22:04 -0400
-X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 05:22:03 EDT
-Received: from localhost (p5486cf2a.dip0.t-ipconnect.de [84.134.207.42])
-        by pokefinder.org (Postfix) with ESMTPSA id E1C8F2C0505;
-        Mon, 21 Sep 2020 11:12:40 +0200 (CEST)
-Date:   Mon, 21 Sep 2020 11:12:39 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        id S1726366AbgIUKSe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Sep 2020 06:18:34 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:18351 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbgIUKSe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Sep 2020 06:18:34 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f687d9d0004>; Mon, 21 Sep 2020 03:17:01 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Sep
+ 2020 10:18:34 +0000
+Received: from [192.168.22.23] (10.124.1.5) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 21 Sep 2020 10:18:31 +0000
+From:   Thierry Reding <treding@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 00/34] Improvements for Tegra I2C driver
-Message-ID: <20200921091239.GD1840@ninjato>
-References: <20200908224006.25636-1-digetx@gmail.com>
- <CAHp75Vdh6bErqeO-ki2xsS9jEeoy4mKF1h0Jw_HM6UpukqH_BQ@mail.gmail.com>
- <854a0ed8-35dd-0b25-6c53-4915be0e33e9@gmail.com>
- <20200909154902.GA916@kunai>
- <20200917124418.GU3515672@ulmo>
+        Wolfram Sang <wsa@the-dreams.de>,
+        =?utf-8?q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 01/34] i2c: tegra: Make tegra_i2c_flush_fifos() usable
+ in atomic transfer
+In-Reply-To: <20200908224006.25636-2-digetx@gmail.com>
+References: <20200908224006.25636-2-digetx@gmail.com>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="M38YqGLZlgb6RLPS"
-Content-Disposition: inline
-In-Reply-To: <20200917124418.GU3515672@ulmo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <962981f15b0c46b98ee97a75116a68ad@HQMAIL111.nvidia.com>
+Date:   Mon, 21 Sep 2020 10:18:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600683421; bh=71b9OPsGwFjxNUIJyhuwHE6AC7ShbTfyiZBTFJAh67w=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=FqysjnrWVyMFe+xrbIOdgjN86t7L3K40irAfzP3z3qEsUY5ssLRnzyP7vopu0zG9k
+         DHWDvKW6l9yAQPJkMTHUN2KzrhyROtvnM+7fusVho8Vx01fF6I/SbS0L78VJN2zMFi
+         RB+U62YiTqpD3YSq3PrvOTuY+v2Ueprsw0lvupUYARRPyYETj7BsSvt6m6lUrLp2Qm
+         wokFoVBFWRPqOim5YyT97JGEKaTm84xri7tT7s0BdQxD2V250SCwWIqmNynE26+Rwg
+         uTeCsy5rN5q8ChBhNcq8o1iytUmf0cgS9bZh/KTkm/mPCaSZ6PMLeRz44ih0GeBPaa
+         3LSPKQIlnueFw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---M38YqGLZlgb6RLPS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 17, 2020 at 02:44:18PM +0200, Thierry Reding wrote:
-> On Wed, Sep 09, 2020 at 05:49:02PM +0200, Wolfram Sang wrote:
-> > On Wed, Sep 09, 2020 at 06:36:50PM +0300, Dmitry Osipenko wrote:
-> > > 09.09.2020 12:11, Andy Shevchenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > On Wed, Sep 9, 2020 at 1:40 AM Dmitry Osipenko <digetx@gmail.com> w=
-rote:
-> > > >>
-> > > >> Hello!
-> > > >>
-> > > >> This series performs refactoring of the Tegra I2C driver code and =
-hardens
-> > > >> the atomic-transfer mode.
-> > > >=20
-> > > > I think there is still room for improvement, but let not block it, =
-FWIW,
-> > > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > >=20
-> > > Thank you and Micha=C5=82 for helping with the review! Very appreciat=
-e this!
-> >=20
-> > Yes, thanks everyone so far!
-> >=20
-> > Is there some internal testfarm where this should be regression tested?
-> > Otherwise, I'd trust Dmitry, Andy, and Micha=C5=82 here and would apply=
- it
-> > this week after some generic high-level review.
+On Wed, 09 Sep 2020 01:39:33 +0300, Dmitry Osipenko wrote:
+> The tegra_i2c_flush_fifos() shouldn't sleep in atomic transfer and jiffie=
+s
+> are not updating if interrupts are disabled. Let's switch to use iopoll
+> API helpers for register-polling. The iopoll API provides helpers for bot=
+h
+> atomic and non-atomic cases.
 >=20
-> I'll queue this for a run on the test farm. I had a couple of minor
-> comments, but after going through the full series I'm pretty happy
-> overall with the result, so I'll go over my comments again and will
-> reevaluate.
+> Note that this patch doesn't fix any known problem because normally FIFO
+> is flushed at the time of starting a new transfer.
+>=20
+> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
 
-Cool, thanks! You guys just let me know if v7 is fine please. Otherwise
-I will surely notice if a v8 hits the list ;)
-
-
---M38YqGLZlgb6RLPS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9obocACgkQFA3kzBSg
-KbayEQ/9GE4R7RHuTRmxdHMw3BDUAbBK4rUVkdbXlK2OurNJppa3fn8uNm90duoR
-hHd3E00Qp23SoLz49m/33eG9g5m++qEzAByQWdEijHofXiAY3rkQ/tbD6oaBZLFn
-jUqz52z6eqcHbUOdGkI+RjQ9/drvT/G5p/l1kIMX/U8MDDbAd3vTGvypCK75X6pj
-gSkKPa2f8jH47JJPd93GIg+byghzWTHoQY7K9ia3j7pzC9jiOO1xqE5RAJGqIdwA
-yIih5PhllKu7f6GXV31Ec7sWg4AEb685G8JJfqKL7uFykj5eC2zr+BECjCCCs0Hr
-lGZvkW7uFS6klPNAoDOU4JxA+fcf66nvMmHodsN5ckrF89N+uZK9GV4jS3pwPs8G
-0D19Xt4EqSG/BuFcBjUN2dR/H1SkHZV6mYi4l+r4rrKRKoawRH7EYgK8qv9dvkyy
-ZNq4UPDNuKCU4Pj6dFERsVTZYPQcBE8fPIAsh/huZEkI+9nIA4ZorJkG6FqGD2O6
-oikU8+MjV8gooVIQTZEFncqcKtH3kfyT3l15Wv6KkPRx9Ua07x+s1p9KfsFsBbmh
-kfPa/10ovLSECUAFDTd35f5lP3zXxL35XvXSoltVTKr9HnaLDXqcihuWyJgFjuBB
-7nVH1jxCCqMrD1egO9lanrxj7w5R2XzD8T+nPwbyIVwdRBHUIus=
-=gFo1
------END PGP SIGNATURE-----
-
---M38YqGLZlgb6RLPS--
+Tested-by: Thierry Reding <treding@nvidia.com>
