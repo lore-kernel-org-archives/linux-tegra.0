@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC15C4727E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75489C4741F
 	for <linux-tegra@archiver.kernel.org>; Tue, 22 Sep 2020 22:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC44D22206
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Sep 2020 22:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43587221EB
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Sep 2020 22:53:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMI6UU5z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwOBAhSP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgIVWxs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Sep 2020 18:53:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58726 "EHLO
+        id S1726667AbgIVWxr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Sep 2020 18:53:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbgIVWwv (ORCPT
+        with ESMTP id S1727012AbgIVWwv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Tue, 22 Sep 2020 18:52:51 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403E9C0613D1;
-        Tue, 22 Sep 2020 15:52:49 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id b22so19824172lfs.13;
-        Tue, 22 Sep 2020 15:52:49 -0700 (PDT)
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C84C0613D3;
+        Tue, 22 Sep 2020 15:52:51 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id 77so12538265lfj.0;
+        Tue, 22 Sep 2020 15:52:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DtwhdcYe1/rW3u1cX4z6pvysE+j6MqsTW1PsvueCYsE=;
-        b=CMI6UU5z2XqW9YiVQINQT1oa3GkoooQU8YBSScgQFubdI/+z3gKBf7LSESabI+C0+Z
-         QpkJK5d/WeE3xk7O9ommgxrWSnQ49qA3ueg1wrj3lNy5wgH6YKMLaLkvsY1VBYdJME0Z
-         e3o8T494mtA45mHcJI0p+pZcXWhIWUmygzf7WxWt265Pm+rZnT+lnHCSgDiiTpmXcCUc
-         IXyPOHPJ52Tmq49OPJJF+L5YC7sQJK1EPM4EwYgwVpS0T/niMlZZSxPnN2D683+Om22k
-         pDpDspA+3QN7N3nL956vObB6WFxeQLDIYr6gEIHGUkXzYp6ML6Zxacb4TIH8WGJPcmY/
-         hipw==
+        bh=9jKPC4Y8PGr72JzqJj/t+lHzExw3qoHFHLOgMaNhKTU=;
+        b=PwOBAhSPQSxjvqbB94InL4uRztLMaVf7i7mJKEZ5U2wELq/W6eRIYHIZYUJashdwqs
+         XONqwevjUAmTxABh6Ly9OR4147gQRKfitSIM5+SqzYH4KLiS5OWsqANUnbujnyGdglfM
+         4pwE50EornF+hOmEP63Qq7N3+lrc9p3+I6cCXiYPVbFEGRuaJCpNn69IkIDl0gRGxxbe
+         B4ANWAGXDKkge/V6EElo5bfvmxMxXPqjASwh1zGZzywc4pT+e6J3f71BVoxw8sea5RD+
+         TVZY75QIb49nYqnVJzhiiDcsNkRlX9IJi7yLXAgAPiWSFOQ5Nj0tyqReFist/aPg1OQ8
+         dQpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DtwhdcYe1/rW3u1cX4z6pvysE+j6MqsTW1PsvueCYsE=;
-        b=Gbx1YpfV//gWPyv9cY/83jowqAT5SD+vbbe81FUbWvVSqIOv+jCT8TQ3DZyP5s3toX
-         qWoOmJhLqkNA/7144Odko2K1dGXT63L6Z2RYVgFu3tmD9rL1GkjqAlxTTwoH53OTZ1B3
-         fLUqVFkcmAXd/EadicyK4JRAnpQs4Mk4DG0wniUXydWBcXAx3QMioZVbsbBlwQeUl7pO
-         Bqzz5gDSPA/LOxo3ec8hGTsYTKNScfYOtPVqrVkPu3OyP3BHAyAjFQb89yL0IgemlGHo
-         9ViWA4SNB52XsidXkrPI7enVDjPhAw/x/+uDDXXoiqDcTXvC0SWiApVm5b0abfw1CHv1
-         mbFg==
-X-Gm-Message-State: AOAM531G4lD53h8xcmKzDX75NZlR9t0L5a8s1D9Vh4dRi7SlUYJGafYb
-        eHf+Jaf+yvMfUUlD11sOOB4=
-X-Google-Smtp-Source: ABdhPJw7iETcMdt2etY21hYRs83/PAeXfWVeZwpayk9//ddO8Q9/xCzPfQwr2Alr+PpuXQ0EF+DNQg==
-X-Received: by 2002:ac2:5df3:: with SMTP id z19mr2172712lfq.567.1600815167689;
-        Tue, 22 Sep 2020 15:52:47 -0700 (PDT)
+        bh=9jKPC4Y8PGr72JzqJj/t+lHzExw3qoHFHLOgMaNhKTU=;
+        b=ZxtIkQ5Ia835PdcIjYsu2lSHVGxDEpQ7eaduWKhb6Rvhkf3Coup89SLXSymFcYv8j7
+         oAZQq6sUfWD3yoAmmvIdWCM4tsXbkWkBuut8DYmVM7vIC5ayeCCOiZsSH+ttxKY0dFMl
+         6uw/N8tCT9zkIPtFE/ZlOHYKiFa7qxgY5MO2K6KGoh6tB65R/9vxUlS3YRckv679+Ss3
+         v7CtGqmnM9h0/rUurJmYZcyX/Ij9nyLuaF/JkD2arHHAfcQ8ugcBkfCJGDfjutjmDofq
+         WoULHN/MrwHLrCLGnw5ec9hCjG7CKNG1SVkSzVNTh/4Us+h0qBrywF7Av9pMHFbNvHRb
+         6a1Q==
+X-Gm-Message-State: AOAM531X3cxtf0g3aovQA5ggII0D8RPsJL/DX9xZWbGrD/CNJC9sSAxN
+        yWfx6Erf/C7U+UW8YBNNzSs=
+X-Google-Smtp-Source: ABdhPJxl6QKyY3seBSEzj8VhcrY1ewLnC/7VbKQW1+ZzCv/qQz6/cp2ZnQcLebVnLlvkeuCQ1TK2IA==
+X-Received: by 2002:a19:546:: with SMTP id 67mr2155553lff.99.1600815169578;
+        Tue, 22 Sep 2020 15:52:49 -0700 (PDT)
 Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.gmail.com with ESMTPSA id l15sm3977588lfk.71.2020.09.22.15.52.46
+        by smtp.gmail.com with ESMTPSA id l15sm3977588lfk.71.2020.09.22.15.52.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2020 15:52:47 -0700 (PDT)
+        Tue, 22 Sep 2020 15:52:49 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,54 +68,117 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 18/32] i2c: tegra: Remove likely/unlikely from the code
-Date:   Wed, 23 Sep 2020 01:51:41 +0300
-Message-Id: <20200922225155.10798-19-digetx@gmail.com>
+Subject: [PATCH v8 20/32] i2c: tegra: Remove "dma" variable from tegra_i2c_xfer_msg()
+Date:   Wed, 23 Sep 2020 01:51:43 +0300
+Message-Id: <20200922225155.10798-21-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200922225155.10798-1-digetx@gmail.com>
 References: <20200922225155.10798-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The likely/unlikely annotations should be used only in a hot paths of
-performance-critical code. The I2C driver doesn't have such paths, and
-thus, there is no justification for usage of likely/unlikely annotations
-in the code. Hence remove them.
+The "dma" variable of tegra_i2c_xfer_msg() function doesn't bring much in
+regards to readability and generation of the code.
 
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Besides readability, it's also not very nice that the is_curr_dma_xfer
+is initialized in tegra_i2c_xfer_msg() and then could be overridden by
+tegra_i2c_config_fifo_trig(). In a result, the "dma" variable creates
+slight confusion since it's not instantly obvious why it's set after
+tegra_i2c_config_fifo_trig().
+
+Hence should be better to have the variable removed. This makes code
+more consistent.
+
 Acked-by: Thierry Reding <treding@nvidia.com>
 Tested-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 347651401cd6..dc25578adb6b 100644
+index 79fa98423cae..eb62284e2293 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -852,7 +852,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		goto err;
- 	}
+@@ -1120,7 +1120,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	size_t xfer_size;
+ 	u32 *buffer = NULL;
+ 	int err = 0;
+-	bool dma;
+ 	u16 xfer_time = 100;
  
--	if (unlikely(status & status_err)) {
-+	if (status & status_err) {
- 		tegra_i2c_disable_packet_mode(i2c_dev);
- 		if (status & I2C_INT_NO_ACK)
- 			i2c_dev->msg_err |= I2C_ERR_NO_ACK;
-@@ -1294,7 +1294,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		i2c_dev->msg_err);
+ 	err = tegra_i2c_flush_fifos(i2c_dev);
+@@ -1143,7 +1142,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 				    i2c_dev->dma_buf &&
+ 				    !i2c_dev->is_curr_atomic_xfer;
+ 	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+-	dma = i2c_dev->is_curr_dma_xfer;
++
+ 	/*
+ 	 * Transfer time in mSec = Total bits / transfer rate
+ 	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
+@@ -1153,7 +1152,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
  
- 	i2c_dev->is_curr_dma_xfer = false;
--	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
-+	if (i2c_dev->msg_err == I2C_ERR_NONE)
- 		return 0;
+ 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+ 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
+-	if (dma) {
++	if (i2c_dev->is_curr_dma_xfer) {
+ 		if (i2c_dev->msg_read) {
+ 			dma_sync_single_for_device(i2c_dev->dev,
+ 						   i2c_dev->dma_phys,
+@@ -1181,13 +1180,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 				   PACKET_HEADER0_PROTOCOL_I2C) |
+ 			FIELD_PREP(PACKET_HEADER0_CONT_ID, i2c_dev->cont_id) |
+ 			FIELD_PREP(PACKET_HEADER0_PACKET_ID, 1);
+-	if (dma && !i2c_dev->msg_read)
++	if (i2c_dev->is_curr_dma_xfer && !i2c_dev->msg_read)
+ 		*buffer++ = packet_header;
+ 	else
+ 		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
  
- 	tegra_i2c_init(i2c_dev);
+ 	packet_header = msg->len - 1;
+-	if (dma && !i2c_dev->msg_read)
++	if (i2c_dev->is_curr_dma_xfer && !i2c_dev->msg_read)
+ 		*buffer++ = packet_header;
+ 	else
+ 		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+@@ -1207,13 +1206,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		packet_header |= I2C_HEADER_CONT_ON_NAK;
+ 	if (msg->flags & I2C_M_RD)
+ 		packet_header |= I2C_HEADER_READ;
+-	if (dma && !i2c_dev->msg_read)
++	if (i2c_dev->is_curr_dma_xfer && !i2c_dev->msg_read)
+ 		*buffer++ = packet_header;
+ 	else
+ 		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ 
+ 	if (!i2c_dev->msg_read) {
+-		if (dma) {
++		if (i2c_dev->is_curr_dma_xfer) {
+ 			memcpy(buffer, msg->buf, msg->len);
+ 			dma_sync_single_for_device(i2c_dev->dev,
+ 						   i2c_dev->dma_phys,
+@@ -1233,7 +1232,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 
+ 	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
+ 		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
+-	if (!dma) {
++	if (!i2c_dev->is_curr_dma_xfer) {
+ 		if (msg->flags & I2C_M_RD)
+ 			int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
+ 		else if (i2c_dev->msg_buf_remaining)
+@@ -1244,7 +1243,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
+ 		i2c_readl(i2c_dev, I2C_INT_MASK));
+ 
+-	if (dma) {
++	if (i2c_dev->is_curr_dma_xfer) {
+ 		time_left = tegra_i2c_wait_completion_timeout(
+ 				i2c_dev, &i2c_dev->dma_complete, xfer_time);
+ 
 -- 
 2.27.0
 
