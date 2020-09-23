@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCE7C47437
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7E9C47420
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 682DA23899
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A8332388A
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgIWKWP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1726718AbgIWKWP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 23 Sep 2020 06:22:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57990 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:57482 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726709AbgIWKWP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:15 -0400
+        id S1726703AbgIWKWN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3F26CB281;
-        Wed, 23 Sep 2020 10:22:51 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 2589BB009;
+        Wed, 23 Sep 2020 10:22:49 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,14 +59,13 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 13/22] drm/radeon: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:50 +0200
-Message-Id: <20200923102159.24084-14-tzimmermann@suse.de>
+Subject: [PATCH v3 11/22] drm/omapdrm: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:48 +0200
+Message-Id: <20200923102159.24084-12-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -74,154 +73,118 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in radeon.
+per-instance callbacks in omapdrm.
 
 v2:
-	* move object-function instance to radeon_gem.c (Christian)
-	* set callbacks in radeon_gem_object_create() (Christian)
+	* make omap_gem_free_object() static (Tomi)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 ---
- drivers/gpu/drm/radeon/radeon_drv.c | 23 +--------------------
- drivers/gpu/drm/radeon/radeon_gem.c | 31 +++++++++++++++++++++++++----
- 2 files changed, 28 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_drv.c |  9 ---------
+ drivers/gpu/drm/omapdrm/omap_gem.c | 18 ++++++++++++++++--
+ drivers/gpu/drm/omapdrm/omap_gem.h |  2 --
+ 3 files changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index 4cd30613fa1d..65061c949aee 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -124,13 +124,6 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev);
- int radeon_driver_irq_postinstall_kms(struct drm_device *dev);
- void radeon_driver_irq_uninstall_kms(struct drm_device *dev);
- irqreturn_t radeon_driver_irq_handler_kms(int irq, void *arg);
--void radeon_gem_object_free(struct drm_gem_object *obj);
--int radeon_gem_object_open(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
--void radeon_gem_object_close(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
--struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
--					int flags);
- extern int radeon_get_crtc_scanoutpos(struct drm_device *dev, unsigned int crtc,
- 				      unsigned int flags, int *vpos, int *hpos,
- 				      ktime_t *stime, ktime_t *etime,
-@@ -145,14 +138,9 @@ int radeon_mode_dumb_mmap(struct drm_file *filp,
- int radeon_mode_dumb_create(struct drm_file *file_priv,
- 			    struct drm_device *dev,
- 			    struct drm_mode_create_dumb *args);
--struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
- struct drm_gem_object *radeon_gem_prime_import_sg_table(struct drm_device *dev,
- 							struct dma_buf_attachment *,
- 							struct sg_table *sg);
--int radeon_gem_prime_pin(struct drm_gem_object *obj);
--void radeon_gem_prime_unpin(struct drm_gem_object *obj);
--void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
--void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
- 
- /* atpx handler */
- #if defined(CONFIG_VGA_SWITCHEROO)
-@@ -550,7 +538,7 @@ long radeon_drm_ioctl(struct file *filp,
- 	}
- 
- 	ret = drm_ioctl(filp, cmd, arg);
--	
-+
- 	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- 	return ret;
-@@ -609,22 +597,13 @@ static struct drm_driver kms_driver = {
- 	.irq_uninstall = radeon_driver_irq_uninstall_kms,
- 	.irq_handler = radeon_driver_irq_handler_kms,
- 	.ioctls = radeon_ioctls_kms,
--	.gem_free_object_unlocked = radeon_gem_object_free,
--	.gem_open_object = radeon_gem_object_open,
--	.gem_close_object = radeon_gem_object_close,
- 	.dumb_create = radeon_mode_dumb_create,
- 	.dumb_map_offset = radeon_mode_dumb_mmap,
- 	.fops = &radeon_driver_kms_fops,
- 
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_export = radeon_gem_prime_export,
--	.gem_prime_pin = radeon_gem_prime_pin,
--	.gem_prime_unpin = radeon_gem_prime_unpin,
--	.gem_prime_get_sg_table = radeon_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = radeon_gem_prime_import_sg_table,
--	.gem_prime_vmap = radeon_gem_prime_vmap,
--	.gem_prime_vunmap = radeon_gem_prime_vunmap,
- 
- 	.name = DRIVER_NAME,
- 	.desc = DRIVER_DESC,
-diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
-index e5c4271e64ed..0ccd7213e41f 100644
---- a/drivers/gpu/drm/radeon/radeon_gem.c
-+++ b/drivers/gpu/drm/radeon/radeon_gem.c
-@@ -35,7 +35,17 @@
- 
- #include "radeon.h"
- 
--void radeon_gem_object_free(struct drm_gem_object *gobj)
-+struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
-+					int flags);
-+struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
-+int radeon_gem_prime_pin(struct drm_gem_object *obj);
-+void radeon_gem_prime_unpin(struct drm_gem_object *obj);
-+void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
-+void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
-+
-+static const struct drm_gem_object_funcs radeon_gem_object_funcs;
-+
-+static void radeon_gem_object_free(struct drm_gem_object *gobj)
- {
- 	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
- 
-@@ -85,6 +95,7 @@ int radeon_gem_object_create(struct radeon_device *rdev, unsigned long size,
- 		return r;
- 	}
- 	*obj = &robj->tbo.base;
-+	(*obj)->funcs = &radeon_gem_object_funcs;
- 	robj->pid = task_pid_nr(current);
- 
- 	mutex_lock(&rdev->gem.mutex);
-@@ -146,7 +157,7 @@ void radeon_gem_fini(struct radeon_device *rdev)
-  * Call from drm_gem_handle_create which appear in both new and open ioctl
-  * case.
-  */
--int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
-+static int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
- {
- 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
- 	struct radeon_device *rdev = rbo->rdev;
-@@ -176,8 +187,8 @@ int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_pri
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+index 53d5e184ee77..2e598b8b72af 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.c
++++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+@@ -521,12 +521,6 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
  	return 0;
  }
  
--void radeon_gem_object_close(struct drm_gem_object *obj,
--			     struct drm_file *file_priv)
-+static void radeon_gem_object_close(struct drm_gem_object *obj,
-+				    struct drm_file *file_priv)
+-static const struct vm_operations_struct omap_gem_vm_ops = {
+-	.fault = omap_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
+-
+ static const struct file_operations omapdriver_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = drm_open,
+@@ -549,10 +543,7 @@ static struct drm_driver omap_drm_driver = {
+ #endif
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = omap_gem_prime_export,
+ 	.gem_prime_import = omap_gem_prime_import,
+-	.gem_free_object_unlocked = omap_gem_free_object,
+-	.gem_vm_ops = &omap_gem_vm_ops,
+ 	.dumb_create = omap_gem_dumb_create,
+ 	.dumb_map_offset = omap_gem_dumb_map_offset,
+ 	.ioctls = ioctls,
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+index f67f223c6479..d8e09792793a 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -487,7 +487,7 @@ static vm_fault_t omap_gem_fault_2d(struct drm_gem_object *obj,
+  * vma->vm_private_data points to the GEM object that is backing this
+  * mapping.
+  */
+-vm_fault_t omap_gem_fault(struct vm_fault *vmf)
++static vm_fault_t omap_gem_fault(struct vm_fault *vmf)
  {
- 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
- 	struct radeon_device *rdev = rbo->rdev;
-@@ -216,6 +227,18 @@ static int radeon_gem_handle_lockup(struct radeon_device *rdev, int r)
- 	return r;
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj = vma->vm_private_data;
+@@ -1089,7 +1089,7 @@ void omap_gem_describe_objects(struct list_head *list, struct seq_file *m)
+  * Constructor & Destructor
+  */
+ 
+-void omap_gem_free_object(struct drm_gem_object *obj)
++static void omap_gem_free_object(struct drm_gem_object *obj)
+ {
+ 	struct drm_device *dev = obj->dev;
+ 	struct omap_drm_private *priv = dev->dev_private;
+@@ -1169,6 +1169,18 @@ static bool omap_gem_validate_flags(struct drm_device *dev, u32 flags)
+ 	return true;
  }
  
-+static const struct drm_gem_object_funcs radeon_gem_object_funcs = {
-+	.free = radeon_gem_object_free,
-+	.open = radeon_gem_object_open,
-+	.close = radeon_gem_object_close,
-+	.export = radeon_gem_prime_export,
-+	.pin = radeon_gem_prime_pin,
-+	.unpin = radeon_gem_prime_unpin,
-+	.get_sg_table = radeon_gem_prime_get_sg_table,
-+	.vmap = radeon_gem_prime_vmap,
-+	.vunmap = radeon_gem_prime_vunmap,
++static const struct vm_operations_struct omap_gem_vm_ops = {
++	.fault = omap_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
 +};
 +
- /*
-  * GEM ioctls.
-  */
++static const struct drm_gem_object_funcs omap_gem_object_funcs = {
++	.free = omap_gem_free_object,
++	.export = omap_gem_prime_export,
++	.vm_ops = &omap_gem_vm_ops,
++};
++
+ /* GEM buffer object constructor */
+ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+ 		union omap_gem_size gsize, u32 flags)
+@@ -1236,6 +1248,8 @@ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+ 		size = PAGE_ALIGN(gsize.bytes);
+ 	}
+ 
++	obj->funcs = &omap_gem_object_funcs;
++
+ 	/* Initialize the GEM object. */
+ 	if (!(flags & OMAP_BO_MEM_SHMEM)) {
+ 		drm_gem_private_object_init(dev, obj, size);
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
+index 729b7812a815..eda9b4839c30 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.h
++++ b/drivers/gpu/drm/omapdrm/omap_gem.h
+@@ -48,7 +48,6 @@ struct drm_gem_object *omap_gem_new_dmabuf(struct drm_device *dev, size_t size,
+ 		struct sg_table *sgt);
+ int omap_gem_new_handle(struct drm_device *dev, struct drm_file *file,
+ 		union omap_gem_size gsize, u32 flags, u32 *handle);
+-void omap_gem_free_object(struct drm_gem_object *obj);
+ void *omap_gem_vaddr(struct drm_gem_object *obj);
+ 
+ /* Dumb Buffers Interface */
+@@ -69,7 +68,6 @@ struct dma_buf *omap_gem_prime_export(struct drm_gem_object *obj, int flags);
+ struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
+ 		struct dma_buf *buffer);
+ 
+-vm_fault_t omap_gem_fault(struct vm_fault *vmf);
+ int omap_gem_roll(struct drm_gem_object *obj, u32 roll);
+ void omap_gem_cpu_sync_page(struct drm_gem_object *obj, int pgoff);
+ void omap_gem_dma_sync_buffer(struct drm_gem_object *obj,
 -- 
 2.28.0
 
