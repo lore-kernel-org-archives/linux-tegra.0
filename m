@@ -2,86 +2,101 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A184C4727E
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 15:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0777C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 16:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B87972311E
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 15:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600876016;
-	bh=Ys8EwVGrCYZe14XHYuddf0k7NEMOHNVUbyun9VSyPRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fAf4xYClssXEA4v8LJAsfgZlVoKatGoQEgFZ7gL3DGBQO5wjqILx1JbHX/rGIbhBa
-	 Ruq3Y1/MNWNbUAhwW/0zwHemwz0FcsaRUHoWI7CPu5OQ/xwLklwwpdkZobLf1pbHCr
-	 13RXOtNkn+vFdXIXfk4G7SUqUIuNgsC2eoOHn6uI=
+	by mail.kernel.org (Postfix) with ESMTP id 9D8CC206A2
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 16:10:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p2evDSCa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgIWPq4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 11:46:56 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:43057 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWPq4 (ORCPT
+        id S1726596AbgIWQKR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 12:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbgIWQKR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 11:46:56 -0400
-Received: by mail-il1-f193.google.com with SMTP id a19so17094ilq.10;
-        Wed, 23 Sep 2020 08:46:55 -0700 (PDT)
+        Wed, 23 Sep 2020 12:10:17 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3981C0613CE;
+        Wed, 23 Sep 2020 09:10:16 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id c2so72790ljj.12;
+        Wed, 23 Sep 2020 09:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=fLmbb9U9bqHqilaK4385mcuNv91EOtpVFkgBOfJ5G/o=;
+        b=p2evDSCa2EcEE8ZLWWk1otlE+tmQeKWRhzKOHSeR4RMUh1WzU6ZMTSjwuENScJP6e7
+         d7/O+k7UsRmvszhNWV8bEJsqD+t4J5QFYpFjbD+4NPsGYb5AbEmWNlUYI2gj8InGLjhz
+         ppUPvvkXKBf3p0RGWZG0Hbsn1xHXNoJummU3B0GeW5vvezDasmFy2FefgEyVWxvWvxin
+         nr3OCyWdIJ109nZRH3928LJyg+y9gc+1KoHl5z1hjsDPB4yQIOJ/B6AuFA5xy9klepan
+         fHvdT8Ec0cFLT6OXaZfunoMH6Vt8d+IF73RKXD70/EFTWgX3X35lx58/Jf01hM9mnXDF
+         /sMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hcUWBscIPHyYy3WPszDKh/+hciVUg18KKkd9cn+Y5lk=;
-        b=tn+JKF0n/y+sOwgw/Fj32R9jEFSLW1r+9iRXKYtcfgkTRNwkE0K/jC70i2IL8mD758
-         rG68uUrCRbQu+sMUbMhJe2fzg2KuQmy4CvrVzvUAYrKdCSHjk9FREfxLLJTCKDDZssXz
-         qg8VCgfb+qicSjvwBX3PknwhHhbXJy4D7VB9fG9JtlX2x2gPDHVNiwdjVGIRU4RjzOEw
-         lIAGVrBjnEq6MY12/PCpuAr0ZAfSqU2cJoKr5xNDx/BFVNhjDJ/h1gXzdcCIGN43/pwW
-         ydpakL16S8folnzs+Hdk6UvTLG5uJfhywCIK0xZJs4+rNg3lEr0vCYX7WI/rZkECIeLN
-         8RsA==
-X-Gm-Message-State: AOAM532xygRkFErfNnlH0DYSOPTkxFWED2XjzYCFKKGZ6eFLh0Nrv8Wm
-        EFYkRRCd+7QqgHe++y4PrA==
-X-Google-Smtp-Source: ABdhPJzc2bg567tNHGR1zBgCyAAojRU5RF+wVPMTLKiGwEgu90auZXs1z945nZqz8sap+GOLMuZNKA==
-X-Received: by 2002:a92:96c5:: with SMTP id g188mr309118ilh.283.1600876015132;
-        Wed, 23 Sep 2020 08:46:55 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id 2sm116552iow.4.2020.09.23.08.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2020 08:46:54 -0700 (PDT)
-Received: (nullmailer pid 809927 invoked by uid 1000);
-        Wed, 23 Sep 2020 15:46:53 -0000
-Date:   Wed, 23 Sep 2020 09:46:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bob Ham <rah@settrans.net>, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Michael Brougham <jusplainmike@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fLmbb9U9bqHqilaK4385mcuNv91EOtpVFkgBOfJ5G/o=;
+        b=E6SgHfr2/SU50R6QZHWMiUGQRFPGOqla0TTpQRkqvVyG/AF+Br77s+B9jrtHCqJF4p
+         +es+KHgcbeSUCDvjeY4f97VjG5hqdkry/f3q27f/TbPSJV3g7kk+wjYTWRm0lm2lLd4I
+         uaC7XZ3/yupXbG18YZd1IfQLxpeikjwGYCVxDYE5cOjCCSwSznJgqoNpMHuySo/rjCc8
+         JbicObXBtQHJCM2z/KwaJu4r161zRgLq3ozbTtzZ66BVvfnhJI7J3BlmhxHIFFqd4eW2
+         y+AKhUnx5Fwu/6u5Lj2nFYn6mgLkS1SbfesZ1D+zTCsKsKRBjvUIr7v74+ZwgKKmzXhM
+         pgHQ==
+X-Gm-Message-State: AOAM533ovi05ffeR2zdz6NybS1BBggz7hUUtxP1389DMyncS1/Z1ukxD
+        PxQFhrwJdS1FKvYdRcVhQXs0UeX2ICk=
+X-Google-Smtp-Source: ABdhPJy6vKnTPgLoiX0HtGkIO62575jsR7MzgOu0CgQRtBKXfWwHlcqdzmyuK6P5D3TqhFGniDjGnA==
+X-Received: by 2002:a2e:8607:: with SMTP id a7mr197615lji.122.1600877414986;
+        Wed, 23 Sep 2020 09:10:14 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id p18sm5357671ljg.26.2020.09.23.09.10.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Sep 2020 09:10:14 -0700 (PDT)
+Subject: Re: [PATCH v8 00/32] Improvements for Tegra I2C driver
+To:     Wolfram Sang <wsa@the-dreams.de>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Leonardo Bras <leobras.c@gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: ARM: tegra: Add Ouya game console
-Message-ID: <20200923154653.GA809872@bogus>
-References: <20200916122247.534374-1-pgwipeout@gmail.com>
- <20200916122247.534374-4-pgwipeout@gmail.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200922225155.10798-1-digetx@gmail.com>
+ <aee6c548-241d-2cc5-415e-9f0b60177d67@gmail.com>
+ <20200923070153.GA2548@kunai>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <47220c52-76db-a153-45e2-6c223a2fe56a@gmail.com>
+Date:   Wed, 23 Sep 2020 19:10:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916122247.534374-4-pgwipeout@gmail.com>
+In-Reply-To: <20200923070153.GA2548@kunai>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 16 Sep 2020 12:22:47 +0000, Peter Geis wrote:
-> Add a binding for the Tegra30-based Ouya game console.
+23.09.2020 10:01, Wolfram Sang пишет:
 > 
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>> Ahh, I missed to add Andy's r-b to all patches.
+>>
+>> Hope it's okay if I'll add it here like this:
+>>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
+> Yes, it is. So, I ideally we get an ack on patch 12 and are good to go,
+> I'd think?
+> 
+> Thanks again, everyone!
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Correct, Thierry should give the final ack. Thanks :)
