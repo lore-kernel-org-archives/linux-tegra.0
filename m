@@ -2,27 +2,27 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0387C4743E
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D9CC47426
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A79C723119
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10A27238D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgIWKWL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57082 "EHLO mx2.suse.de"
+        id S1726732AbgIWKWR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 06:22:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57482 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbgIWKWH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:07 -0400
+        id S1726674AbgIWKWQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7A514B282;
-        Wed, 23 Sep 2020 10:22:42 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 388DBB009;
+        Wed, 23 Sep 2020 10:22:52 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -60,9 +60,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v3 04/22] drm/exynos: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:41 +0200
-Message-Id: <20200923102159.24084-5-tzimmermann@suse.de>
+Subject: [PATCH v3 14/22] drm/rockchip: Convert to drm_gem_object_funcs
+Date:   Wed, 23 Sep 2020 12:21:51 +0200
+Message-Id: <20200923102159.24084-15-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -74,82 +74,76 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in exynos. The only exception is gem_prime_mmap,
+per-instance callbacks in rockchip. The only exception is gem_prime_mmap,
 which is non-trivial to convert.
+
+v3:
+	* update documentation
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
- 2 files changed, 15 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  5 -----
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 12 +++++++++++-
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index dbd80f1e4c78..fe46680ca208 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- 	file->driver_priv = NULL;
- }
- 
--static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
--
- static const struct drm_ioctl_desc exynos_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
- 			DRM_RENDER_ALLOW),
-@@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
- 	.open			= exynos_drm_open,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 0f3eb392fe39..b7654f5e4225 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -212,15 +212,10 @@ static const struct file_operations rockchip_drm_driver_fops = {
+ static struct drm_driver rockchip_drm_driver = {
+ 	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
  	.lastclose		= drm_fb_helper_lastclose,
- 	.postclose		= exynos_drm_postclose,
--	.gem_free_object_unlocked = exynos_drm_gem_free_object,
--	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
- 	.dumb_create		= exynos_drm_gem_dumb_create,
+-	.gem_vm_ops		= &drm_gem_cma_vm_ops,
+-	.gem_free_object_unlocked = rockchip_gem_free_object,
+ 	.dumb_create		= rockchip_gem_dumb_create,
  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
- 	.gem_prime_import	= exynos_drm_gem_prime_import,
--	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
--	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
--	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
- 	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
- 	.ioctls			= exynos_ioctls,
- 	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 1716a023bca0..e7a6eb96f692 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
- 	kfree(exynos_gem);
+-	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
+-	.gem_prime_vmap		= rockchip_gem_prime_vmap,
+-	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
+ 	.gem_prime_mmap		= rockchip_gem_mmap_buf,
+ 	.fops			= &rockchip_drm_driver_fops,
+ 	.name	= DRIVER_NAME,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index 62e5d0970525..1cf4631461c9 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -295,6 +295,14 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
+ 	kfree(rk_obj);
  }
  
-+static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
-+	.open = drm_gem_vm_open,
-+	.close = drm_gem_vm_close,
++static const struct drm_gem_object_funcs rockchip_gem_object_funcs = {
++	.free = rockchip_gem_free_object,
++	.get_sg_table = rockchip_gem_prime_get_sg_table,
++	.vmap = rockchip_gem_prime_vmap,
++	.vunmap	= rockchip_gem_prime_vunmap,
++	.vm_ops = &drm_gem_cma_vm_ops,
 +};
 +
-+static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
-+	.free = exynos_drm_gem_free_object,
-+	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
-+	.vmap = exynos_drm_gem_prime_vmap,
-+	.vunmap	= exynos_drm_gem_prime_vunmap,
-+	.vm_ops = &exynos_drm_gem_vm_ops,
-+};
-+
- static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
- 						  unsigned long size)
+ static struct rockchip_gem_object *
+ 	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
  {
-@@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
- 	exynos_gem->size = size;
- 	obj = &exynos_gem->base;
+@@ -309,6 +317,8 @@ static struct rockchip_gem_object *
  
-+	obj->funcs = &exynos_drm_gem_object_funcs;
+ 	obj = &rk_obj->base;
+ 
++	obj->funcs = &rockchip_gem_object_funcs;
 +
- 	ret = drm_gem_object_init(dev, obj, size);
- 	if (ret < 0) {
- 		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+ 	drm_gem_object_init(drm, obj, size);
+ 
+ 	return rk_obj;
+@@ -337,7 +347,7 @@ rockchip_gem_create_object(struct drm_device *drm, unsigned int size,
+ }
+ 
+ /*
+- * rockchip_gem_free_object - (struct drm_driver)->gem_free_object_unlocked
++ * rockchip_gem_free_object - (struct drm_gem_object_funcs)->free
+  * callback function
+  */
+ void rockchip_gem_free_object(struct drm_gem_object *obj)
 -- 
 2.28.0
 
