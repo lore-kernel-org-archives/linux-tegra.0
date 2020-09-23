@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6F5C4742D
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6B4C4743E
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA00623787
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A73323787
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgIWKWU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57482 "EHLO mx2.suse.de"
+        id S1726670AbgIWKWL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 06:22:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57174 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726662AbgIWKWT (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:19 -0400
+        id S1726632AbgIWKWI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1F324B283;
-        Wed, 23 Sep 2020 10:22:55 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 71F61B284;
+        Wed, 23 Sep 2020 10:22:43 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,10 +59,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Melissa Wen <melissa.srw@gmail.com>
-Subject: [PATCH v3 17/22] drm/vgem: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:54 +0200
-Message-Id: <20200923102159.24084-18-tzimmermann@suse.de>
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 05/22] drm/gma500: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:42 +0200
+Message-Id: <20200923102159.24084-6-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -74,74 +74,146 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in vgem. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
+per-instance callbacks in gma500.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/gma500/framebuffer.c |  2 ++
+ drivers/gpu/drm/gma500/gem.c         | 18 ++++++++++++++++--
+ drivers/gpu/drm/gma500/gem.h         |  3 +++
+ drivers/gpu/drm/gma500/psb_drv.c     |  9 ---------
+ drivers/gpu/drm/gma500/psb_drv.h     |  2 --
+ 5 files changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index cb884c890065..fa54a6d1403d 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -50,6 +50,8 @@
- #define DRIVER_MAJOR	1
- #define DRIVER_MINOR	0
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index 54d9876b5305..5ede24fb44ae 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -24,6 +24,7 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
  
-+static const struct drm_gem_object_funcs vgem_gem_object_funcs;
-+
- static struct vgem_device {
- 	struct drm_device drm;
- 	struct platform_device *platform;
-@@ -167,6 +169,8 @@ static struct drm_vgem_gem_object *__vgem_gem_create(struct drm_device *dev,
- 	if (!obj)
- 		return ERR_PTR(-ENOMEM);
+ #include "framebuffer.h"
++#include "gem.h"
+ #include "gtt.h"
+ #include "psb_drv.h"
+ #include "psb_intel_drv.h"
+@@ -285,6 +286,7 @@ static struct gtt_range *psbfb_alloc(struct drm_device *dev, int aligned_size)
+ 	/* Begin by trying to use stolen memory backing */
+ 	backing = psb_gtt_alloc_range(dev, aligned_size, "fb", 1, PAGE_SIZE);
+ 	if (backing) {
++		backing->gem.funcs = &psb_gem_object_funcs;
+ 		drm_gem_private_object_init(dev, &backing->gem, aligned_size);
+ 		return backing;
+ 	}
+diff --git a/drivers/gpu/drm/gma500/gem.c b/drivers/gpu/drm/gma500/gem.c
+index f9c4b1d76f56..8f07de83b6fb 100644
+--- a/drivers/gpu/drm/gma500/gem.c
++++ b/drivers/gpu/drm/gma500/gem.c
+@@ -18,7 +18,9 @@
  
-+	obj->base.funcs = &vgem_gem_object_funcs;
+ #include "psb_drv.h"
+ 
+-void psb_gem_free_object(struct drm_gem_object *obj)
++static vm_fault_t psb_gem_fault(struct vm_fault *vmf);
 +
- 	ret = drm_gem_object_init(dev, &obj->base, roundup(size, PAGE_SIZE));
- 	if (ret) {
- 		kfree(obj);
-@@ -401,12 +405,20 @@ static int vgem_prime_mmap(struct drm_gem_object *obj,
- 	return 0;
++static void psb_gem_free_object(struct drm_gem_object *obj)
+ {
+ 	struct gtt_range *gtt = container_of(obj, struct gtt_range, gem);
+ 
+@@ -36,6 +38,17 @@ int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 	return -EINVAL;
  }
  
-+static const struct drm_gem_object_funcs vgem_gem_object_funcs = {
-+	.free = vgem_gem_free_object,
-+	.pin = vgem_prime_pin,
-+	.unpin = vgem_prime_unpin,
-+	.get_sg_table = vgem_prime_get_sg_table,
-+	.vmap = vgem_prime_vmap,
-+	.vunmap = vgem_prime_vunmap,
-+	.vm_ops = &vgem_gem_vm_ops,
++static const struct vm_operations_struct psb_gem_vm_ops = {
++	.fault = psb_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
 +};
 +
- static struct drm_driver vgem_driver = {
- 	.driver_features		= DRIVER_GEM | DRIVER_RENDER,
- 	.open				= vgem_open,
- 	.postclose			= vgem_postclose,
--	.gem_free_object_unlocked	= vgem_gem_free_object,
--	.gem_vm_ops			= &vgem_gem_vm_ops,
- 	.ioctls				= vgem_ioctls,
- 	.num_ioctls 			= ARRAY_SIZE(vgem_ioctls),
- 	.fops				= &vgem_driver_fops,
-@@ -415,13 +427,8 @@ static struct drm_driver vgem_driver = {
++const struct drm_gem_object_funcs psb_gem_object_funcs = {
++	.free = psb_gem_free_object,
++	.vm_ops = &psb_gem_vm_ops,
++};
++
+ /**
+  *	psb_gem_create		-	create a mappable object
+  *	@file: the DRM file of the client
+@@ -63,6 +76,7 @@ int psb_gem_create(struct drm_file *file, struct drm_device *dev, u64 size,
+ 		dev_err(dev->dev, "no memory for %lld byte GEM object\n", size);
+ 		return -ENOSPC;
+ 	}
++	r->gem.funcs = &psb_gem_object_funcs;
+ 	/* Initialize the extra goodies GEM needs to do all the hard work */
+ 	if (drm_gem_object_init(dev, &r->gem, size) != 0) {
+ 		psb_gtt_free_range(dev, r);
+@@ -123,7 +137,7 @@ int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+  *	vma->vm_private_data points to the GEM object that is backing this
+  *	mapping.
+  */
+-vm_fault_t psb_gem_fault(struct vm_fault *vmf)
++static vm_fault_t psb_gem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj;
+diff --git a/drivers/gpu/drm/gma500/gem.h b/drivers/gpu/drm/gma500/gem.h
+index 4a74dc623b6b..3741a711b9fd 100644
+--- a/drivers/gpu/drm/gma500/gem.h
++++ b/drivers/gpu/drm/gma500/gem.h
+@@ -8,6 +8,9 @@
+ #ifndef _GEM_H
+ #define _GEM_H
  
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin = vgem_prime_pin,
--	.gem_prime_unpin = vgem_prime_unpin,
- 	.gem_prime_import = vgem_prime_import,
- 	.gem_prime_import_sg_table = vgem_prime_import_sg_table,
--	.gem_prime_get_sg_table = vgem_prime_get_sg_table,
--	.gem_prime_vmap = vgem_prime_vmap,
--	.gem_prime_vunmap = vgem_prime_vunmap,
- 	.gem_prime_mmap = vgem_prime_mmap,
++extern const struct drm_gem_object_funcs psb_gem_object_funcs;
++
+ extern int psb_gem_create(struct drm_file *file, struct drm_device *dev,
+ 			  u64 size, u32 *handlep, int stolen, u32 align);
++
+ #endif
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 34b4aae9a15e..b13376a6fb91 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -480,12 +480,6 @@ static const struct dev_pm_ops psb_pm_ops = {
+ 	.runtime_idle = psb_runtime_idle,
+ };
  
- 	.name	= DRIVER_NAME,
+-static const struct vm_operations_struct psb_gem_vm_ops = {
+-	.fault = psb_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
+-
+ static const struct file_operations psb_gem_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = drm_open,
+@@ -507,9 +501,6 @@ static struct drm_driver driver = {
+ 	.irq_uninstall = psb_irq_uninstall,
+ 	.irq_handler = psb_irq_handler,
+ 
+-	.gem_free_object_unlocked = psb_gem_free_object,
+-	.gem_vm_ops = &psb_gem_vm_ops,
+-
+ 	.dumb_create = psb_gem_dumb_create,
+ 	.ioctls = psb_ioctls,
+ 	.fops = &psb_gem_fops,
+diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
+index 956926341316..c71a5a4e912c 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.h
++++ b/drivers/gpu/drm/gma500/psb_drv.h
+@@ -735,12 +735,10 @@ extern const struct drm_connector_helper_funcs
+ extern const struct drm_connector_funcs psb_intel_lvds_connector_funcs;
+ 
+ /* gem.c */
+-extern void psb_gem_free_object(struct drm_gem_object *obj);
+ extern int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 			struct drm_file *file);
+ extern int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args);
+-extern vm_fault_t psb_gem_fault(struct vm_fault *vmf);
+ 
+ /* psb_device.c */
+ extern const struct psb_ops psb_chip_ops;
 -- 
 2.28.0
 
