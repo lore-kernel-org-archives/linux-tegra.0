@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC33DC4742C
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5507C47425
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B746A2388A
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59882388B
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbgIWKWW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57482 "EHLO mx2.suse.de"
+        id S1726799AbgIWKWY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 06:22:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57990 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbgIWKWV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:21 -0400
+        id S1726752AbgIWKWU (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:20 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0808CB29A;
-        Wed, 23 Sep 2020 10:22:57 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1D0B8B281;
+        Wed, 23 Sep 2020 10:22:56 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,10 +59,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Melissa Wen <melissa.srw@gmail.com>
-Subject: [PATCH v3 19/22] drm/vkms: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:56 +0200
-Message-Id: <20200923102159.24084-20-tzimmermann@suse.de>
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 18/22] drm/virtgpu: Set PRIME export function in struct drm_gem_object_funcs
+Date:   Wed, 23 Sep 2020 12:21:55 +0200
+Message-Id: <20200923102159.24084-19-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -73,73 +73,40 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
-struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in vkms.
+struct drm_driver. This patch replaces virtgpu's per-driver PRIME export
+function with a per-object function.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/vkms/vkms_drv.c |  8 --------
- drivers/gpu/drm/vkms/vkms_gem.c | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.c    | 1 -
+ drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index cb0b6230c22c..726801ab44d4 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -51,12 +51,6 @@ static const struct file_operations vkms_driver_fops = {
- 	.release	= drm_release,
- };
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+index b039f493bda9..1f8d6ed11d21 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+@@ -203,7 +203,6 @@ static struct drm_driver driver = {
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+ 	.gem_prime_mmap = drm_gem_prime_mmap,
+-	.gem_prime_export = virtgpu_gem_prime_export,
+ 	.gem_prime_import = virtgpu_gem_prime_import,
+ 	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
  
--static const struct vm_operations_struct vkms_gem_vm_ops = {
--	.fault = vkms_gem_fault,
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
--
- static void vkms_release(struct drm_device *dev)
- {
- 	struct vkms_device *vkms = container_of(dev, struct vkms_device, drm);
-@@ -98,8 +92,6 @@ static struct drm_driver vkms_driver = {
- 	.release		= vkms_release,
- 	.fops			= &vkms_driver_fops,
- 	.dumb_create		= vkms_dumb_create,
--	.gem_vm_ops		= &vkms_gem_vm_ops,
--	.gem_free_object_unlocked = vkms_gem_free_object,
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
- 	.gem_prime_import_sg_table = vkms_prime_import_sg_table,
+diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+index 00d6b95e259d..42560afc3875 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -107,6 +107,7 @@ static const struct drm_gem_object_funcs virtio_gpu_shmem_funcs = {
+ 	.close = virtio_gpu_gem_object_close,
  
-diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-index a017fc59905e..19a0e260a4df 100644
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -7,6 +7,17 @@
- 
- #include "vkms_drv.h"
- 
-+static const struct vm_operations_struct vkms_gem_vm_ops = {
-+	.fault = vkms_gem_fault,
-+	.open = drm_gem_vm_open,
-+	.close = drm_gem_vm_close,
-+};
-+
-+static const struct drm_gem_object_funcs vkms_gem_object_funcs = {
-+	.free = vkms_gem_free_object,
-+	.vm_ops = &vkms_gem_vm_ops,
-+};
-+
- static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
- 						 u64 size)
- {
-@@ -17,6 +28,8 @@ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
- 	if (!obj)
- 		return ERR_PTR(-ENOMEM);
- 
-+	obj->gem.funcs = &vkms_gem_object_funcs;
-+
- 	size = roundup(size, PAGE_SIZE);
- 	ret = drm_gem_object_init(dev, &obj->gem, size);
- 	if (ret) {
+ 	.print_info = drm_gem_shmem_print_info,
++	.export = virtgpu_gem_prime_export,
+ 	.pin = drm_gem_shmem_pin,
+ 	.unpin = drm_gem_shmem_unpin,
+ 	.get_sg_table = drm_gem_shmem_get_sg_table,
 -- 
 2.28.0
 
