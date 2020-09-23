@@ -2,110 +2,118 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D4AC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 08:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3F5C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 09:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9D49235FC
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 08:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2331F2176B
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 09:15:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dGD/kF+p"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="b0cXVGoW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbgIWIe2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 04:34:28 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4049 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbgIWIe2 (ORCPT
+        id S1726338AbgIWJPP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 05:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbgIWJPP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 04:34:28 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f6b08650000>; Wed, 23 Sep 2020 01:33:41 -0700
-Received: from [10.26.74.254] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 23 Sep
- 2020 08:34:20 +0000
-Subject: Re: [Patch 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Sumit Gupta <sumitg@nvidia.com>, <viresh.kumar@linaro.org>,
-        <rjw@rjwysocki.net>, <thierry.reding@gmail.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <sudeep.holla@arm.com>
-CC:     <ksitaraman@nvidia.com>, <bbasu@nvidia.com>
-References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
- <1600276277-7290-2-git-send-email-sumitg@nvidia.com>
- <81d2517d-6581-b491-c509-832fd1c0321e@nvidia.com>
- <6dcc664e-e4d2-6334-f0f5-4ead5935cbc7@nvidia.com>
-Message-ID: <86356902-5488-bb34-70a4-b6a916ccca7d@nvidia.com>
-Date:   Wed, 23 Sep 2020 09:34:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 23 Sep 2020 05:15:15 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECABC0613D1
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Sep 2020 02:15:15 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id p9so26739192ejf.6
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Sep 2020 02:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k+orPivdtkIhi2/+DCsb0aHIGGKlk58BwIbkL2c8OXE=;
+        b=b0cXVGoWMxMSjUmBe73Ir2VHt6b6HeMPDg9ITy0nlxfvt+nfGcH6ULy6Yfb05m6b9R
+         V7rNup5xQ3sHSRcvEltzMhS6dOBGwvW/+7FubHmwPSGMBsGqxrgqfupptvgSd7409oAN
+         QZY79fEXqt7oCMUbZCHSIRvumBxJL29lx7PwwXwwe9qMuHH5rSnovTKOYkIShJu3UJ/C
+         8WVW+4VDlIIEidOrZ+tF0Lk63N0VOs01IcgypBeVllQBiGD/8vzr1WUjUR1iwBHiaA5E
+         Gvdw7QsBb0+YP7PYOawpRUn0KcWC05Nrbw+UNV0pv99XG7TzaMzP82cs2lnYm3EfpGAO
+         pBNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k+orPivdtkIhi2/+DCsb0aHIGGKlk58BwIbkL2c8OXE=;
+        b=UXH2VILrYLkG5DR2+hWyky/0N3Ske9KMSWutN9vOoqPIjmaZhewLm/OwMzp28gxIcH
+         9HgBXir+i7scpg7kw6MQoq0SalJFlx8uKn4+kILrAodj4goQIm23JzXRTKa4DzA2Lk9T
+         oLavapZs9IlkUnXsufN65KRhUsRQ82LBQ+NklSe1bgmQXREqFKLkU5Ktu1wf9mH5RskX
+         mMNb/GuZ6yIp6x4uX6zFFMrDhnC4YWKA9onn5+yNBHyrTzH8EfaWJrQWVUvw2/XfpCJ7
+         G23At1sQ70nkJZpsNiO0j/vDq4kJJ8DLnDqDh8pRNCSgypqYijr5JkIwxbrmtvQCBtn/
+         Y/3A==
+X-Gm-Message-State: AOAM532jDK97pFf7Ku1kPQQdoa+6T6+QLGwkpjXNpgTBaeA8HsPqliLC
+        Yk378kICOu6evtOh08425F7wJWfrwYZSljlqbceTZg==
+X-Google-Smtp-Source: ABdhPJxsj1SgC5CPIZrwIKGez9btT0ZoBj+Syo+tSKXy5WrWFEci2o5Lpgfk6iCFKLomUXGGSKtqoLQ5WAlzeul68PU=
+X-Received: by 2002:a17:906:7489:: with SMTP id e9mr9120634ejl.154.1600852513787;
+ Wed, 23 Sep 2020 02:15:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <6dcc664e-e4d2-6334-f0f5-4ead5935cbc7@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600850021; bh=2pX9LlyppSFkcWLjsdQA46jR7c0N+/P/KPu5e9cVUhM=;
-        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=dGD/kF+pgPYMk/1CEZkcw2a9lw7N8AO3y3kPAuqAL24H7ca3RJJ86STmfXc5a/o/e
-         iKJqVcjnei95TFbVognObhEza+h+9snfgLX+9i4gpFqMenjxRM2/FYILSDy7U79OoR
-         YxOSUP6VQwxu6uIXsfsJ0a3tCUsVmB7mR2U7hWLZnykVY2cA1Jt4bwiaZYxn7oRPUd
-         j0KKI2IZfsINA7FvHIgGn8Mjy3hWrZMbSBT1399IZi2tJhrs7C0fFpwrv2BSRdZ7AQ
-         cfnHpiaZMzjYpOHTWcJmEjGRPKZvve8IMOo7FbU3cmQL7Ztgldd65Igj7a5VpK03hv
-         Usasw0dtKaDiA==
+References: <20200916094952.458003-1-jonathanh@nvidia.com>
+In-Reply-To: <20200916094952.458003-1-jonathanh@nvidia.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 23 Sep 2020 11:15:03 +0200
+Message-ID: <CAMpxmJX6OxS-dxcK8whCm-Ups6Uts1iYE8bux_wAGeBPXihYBA@mail.gmail.com>
+Subject: Re: [PATCH V2 0/5] Add support for custom names for AT24 EEPROMs
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rafael, Sudeep,
+On Wed, Sep 16, 2020 at 11:50 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> For platforms that have multiple boards and hence have multiple EEPROMs
+> for identifying the different boards, it is useful to label the EEPROMs
+> in device-tree so that they can be easily identified. For example, MAC
+> address information is stored in the EEPROM on the processor module for
+> some Jetson platforms which is not only required by the kernel but the
+> bootloader as well. So having a simple way to identify the EEPROM is
+> needed.
+>
+> Changes since V1:
+> - By default initialise the nvmem_config.id as NVMEM_DEVID_AUTO and not
+>   NVMEM_DEVID_NONE
+> - Dropped the 'maxItems' from the dt-binding doc.
+>
+> Jon Hunter (5):
+>   misc: eeprom: at24: Initialise AT24 NVMEM ID field
+>   dt-bindings: eeprom: at24: Add label property for AT24
+>   misc: eeprom: at24: Support custom device names for AT24 EEPROMs
+>   arm64: tegra: Add label properties for EEPROMs
+>   arm64: tegra: Populate EEPROMs for Jetson Xavier NX
+>
+>  .../devicetree/bindings/eeprom/at24.yaml      |  3 +++
+>  .../boot/dts/nvidia/tegra186-p2771-0000.dts   |  1 +
+>  .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  1 +
+>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  1 +
+>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  1 +
+>  .../nvidia/tegra194-p3509-0000+p3668-0000.dts | 14 ++++++++++++
+>  .../boot/dts/nvidia/tegra194-p3668-0000.dtsi  | 16 ++++++++++++++
+>  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  1 +
+>  .../boot/dts/nvidia/tegra210-p2371-2180.dts   |  1 +
+>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |  2 ++
+>  drivers/misc/eeprom/at24.c                    | 22 ++++++++++++++++++-
+>  11 files changed, 62 insertions(+), 1 deletion(-)
+>
+> --
+> 2.25.1
+>
 
-On 17/09/2020 09:44, Jon Hunter wrote:
-> Adding Sudeep ...
-> 
-> On 17/09/2020 09:36, Jon Hunter wrote:
->>
->>
->> On 16/09/2020 18:11, Sumit Gupta wrote:
->>> Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
->>> and keeps changing slightly. This change returns a consistent value
->>> from freq_table. If the reconstructed frequency has acceptable delta
->>> from the last written value, then return the frequency corresponding
->>> to the last written ndiv value from freq_table. Otherwise, print a
->>> warning and return the reconstructed freq.
->>
->> We should include the Fixes tag here ...
->>
->> Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
->>
->>>
->>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>
->> Otherwise ...
->>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> Viresh, ideally we need to include this fix for v5.9. Do you need Sumit
->> to resend with the Fixes tag or are you happy to add?
-> 
-> 
-> Sudeep, Rafael, looks like Viresh is out of office until next month.
-> Please let me know if we can pick up both this patch and following patch
-> for v5.9.
+Just FYI: I'm fine with the at24 part. I can take them through my tree
+for v5.10. Who is taking the DTS patches for tegra? Thierry? I can
+provide you with an immutable branch if that's fine. I can't just ack
+the at24 patches because they conflict with what I already have in my
+tree for v5.10.
 
-Any chance we can get these patches into v5.9?
-
-Thanks!
-Jon
-
--- 
-nvpublic
+Bartosz
