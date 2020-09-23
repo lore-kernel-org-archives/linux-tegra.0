@@ -2,179 +2,160 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B4AC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 11:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2CCC2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 11:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3372145D
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 11:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0241D235FD
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 11:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="IhaOeAiL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMwZsd4F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbgIWLSt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 07:18:49 -0400
-Received: from mail-am6eur05on2051.outbound.protection.outlook.com ([40.107.22.51]:23009
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726332AbgIWLSp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 07:18:45 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WCaP/uGNXw6HZ2ZCO69SxY5dXzWEo50Zx1xnmgdDLLd/DjdG1Pham7z/dRotdz4TA8Mn0MmGWhfq/3ZbgnpxFHBVXlNfHk8Kh68q12XCV92Tq4Xbsz574n1I6WhRBw9LEkQSNl+OnCca+ncycRet8j+cc+jnY9kDilLW6Y91/uTgkQ+9KPoZeTsqTbf776tDQW3NXjI/bMi6+jIkcEFuraO+eMXCTZMNDRvtHC63bVqCSRXbavhdAs/s6Su7GsukyqMy/3dZqbrSGOfbZxhshX+RQihuUIyvpAvfPnAk1yHydBv+WtamiR6Iqzr7x+uIvOA7m1D2EZa/PeKm+Hi0/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAkLMJGw7Vv/vvyJ1mi700q4G3h4xSaJtX4PCcR/n8Q=;
- b=SF4lHP3dTItZIoxSOnx/sUplrrIw9qEgg+WqEOfvO7jnpCB4MB3ag95aRbsMOWq/e0JCVWtemQSpTHGutCpg8pBCTVv+5NaA+XnVuFFTN73DcCaRCJbpYtj0BWtYYkPjFsi1Hswv8EQnGPOR/7UKXiaNNFiy9iZtpZJZxTplqPgSkx1zQvsmJsQh9dXVMc1p3SdnQzDGNVbjec3/5TQ1d0PPJz+LQ0Wv7MrJ+TaJSDqsTt8jr4HEHb12m8TzZlUorvHlVKALwLlSDd0NsoSb45zHp0skT/xQEV3aVqOwTfCTPY4Tq+3sTEfeTniy+PybaCf8tqDTZoz0UqqpIMLJlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAkLMJGw7Vv/vvyJ1mi700q4G3h4xSaJtX4PCcR/n8Q=;
- b=IhaOeAiLhydbVcliIEHIxwHK8uy+OFYk24U03M6rPJ3678PrAOUVPaRY1ZuprY4ya7UN5z6Wq5hrgRHr9x6apoNer+HEktwoAznNrjHep2kx4Npy2+kc0awqfbNc//sb+1Tw6PjGG66mBfjAZLGSFqhaBZtNVSVfy7Xoe358A9w=
-Authentication-Results: suse.de; dkim=none (message not signed)
- header.d=none;suse.de; dmarc=none action=none header.from=oss.nxp.com;
-Received: from VI1PR0402MB3902.eurprd04.prod.outlook.com
- (2603:10a6:803:22::27) by VI1PR04MB5789.eurprd04.prod.outlook.com
- (2603:10a6:803:e2::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.20; Wed, 23 Sep
- 2020 11:18:37 +0000
-Received: from VI1PR0402MB3902.eurprd04.prod.outlook.com
- ([fe80::5d66:84a7:26de:67c3]) by VI1PR0402MB3902.eurprd04.prod.outlook.com
- ([fe80::5d66:84a7:26de:67c3%6]) with mapi id 15.20.3412.021; Wed, 23 Sep 2020
- 11:18:36 +0000
-Date:   Wed, 23 Sep 2020 14:18:27 +0300
-From:   Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 07/22] drm/imx/dcss: Initialize DRM driver instance
- with CMA helper macro
-Message-ID: <20200923111827.dtpgxpa7ydd4kxio@fsr-ub1864-141>
-References: <20200923102159.24084-1-tzimmermann@suse.de>
- <20200923102159.24084-8-tzimmermann@suse.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200923102159.24084-8-tzimmermann@suse.de>
-User-Agent: NeoMutt/20171215
-X-ClientProxiedBy: AM4PR05CA0036.eurprd05.prod.outlook.com (2603:10a6:205::49)
- To VI1PR0402MB3902.eurprd04.prod.outlook.com (2603:10a6:803:22::27)
+        id S1726487AbgIWLig (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 07:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbgIWLif (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 07:38:35 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EDE1C0613CE;
+        Wed, 23 Sep 2020 04:38:35 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id y15so6766654wmi.0;
+        Wed, 23 Sep 2020 04:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=W4t+72Rd9BRbOxDCzWkNzy7ayx5sj6wel8M7/f96GfE=;
+        b=gMwZsd4FyKgaQjgL0cQVNKc6IVCeaCTkg1MFtFL1R9P/JFC8qBT8q82SbMQEPNJtmx
+         SrATKCtochuXDfyps32jh5mtXSKhZUVbPelL+mVFLX13vKn/5AuX6vRHq9t+iXWhyE8p
+         N0wqLmuS1cgcxp8QGW6/UbdEqnawplKOIFdSvnn1ONRgp8Mdg1kplyo+Z+aHZyjFOMzj
+         blKEqaSJyTlbLYVNYcawptR5hE3dJwWpUvtSchNEzjpr6UAMkggbARrawCKziyNnkWdA
+         ASKohbeURgNYB8T9LWhU8Cn0RM3kREzshNGq6QtvfKE/fYU5y1iMyr523cfOsYodda71
+         apeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W4t+72Rd9BRbOxDCzWkNzy7ayx5sj6wel8M7/f96GfE=;
+        b=rbREjusnDY860a7fHLjnKmFkvMfS2MNcBQEEiUnrIwXfO+gC336Vlno3dJWdhiT02f
+         soY4hREbMc+wvwejuWHL1jMqRRj5vRSqrZdNukva3FVzZXY3WQ+GTs9uzVafzgn7VebY
+         /g+RcZe5ZGoO2/Sna9C/HZdmVJf2+s50oDDhDN5sC5VadYmSQndnBN4FtkYwPDvk6UPm
+         NvYwCVRofot0dWnCA7c3wUWZGoxUp0/xbQOoqjVNcjF0iocnPJiuXlMes7ZyuMV5USlM
+         ndSj0+a3xXKZkojrfSMSQ214rdLGSg4axkeOyBzAqY6C0FMD2lpbcxNRkyjrjN8XLypV
+         wFhg==
+X-Gm-Message-State: AOAM531gnpqMKT1DWJKgjFGtkEpAYlHZ9NV3xWtI+bMi6nb03nbAo4Uf
+        364DztgZ60CSUqgLuuLHdYo=
+X-Google-Smtp-Source: ABdhPJyP7M6ejF+lzdGEE6Fr5/fL3p4IQ5iKzHXqk5PjV9rwA2+Jo5TuDsnlbCuZSMpdJ2cGhWRhFw==
+X-Received: by 2002:a05:600c:2312:: with SMTP id 18mr5920078wmo.141.1600861113644;
+        Wed, 23 Sep 2020 04:38:33 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id u8sm7803632wmj.45.2020.09.23.04.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2020 04:38:32 -0700 (PDT)
+Date:   Wed, 23 Sep 2020 13:38:30 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2 0/5] Add support for custom names for AT24 EEPROMs
+Message-ID: <20200923113830.GA1846003@ulmo>
+References: <20200916094952.458003-1-jonathanh@nvidia.com>
+ <CAMpxmJX6OxS-dxcK8whCm-Ups6Uts1iYE8bux_wAGeBPXihYBA@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from fsr-ub1864-141 (83.217.231.2) by AM4PR05CA0036.eurprd05.prod.outlook.com (2603:10a6:205::49) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.14 via Frontend Transport; Wed, 23 Sep 2020 11:18:31 +0000
-X-Originating-IP: [83.217.231.2]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d8600018-cf47-486d-b728-08d85fb269f7
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5789:
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR04MB5789EE9EDF94E109850D8E27BE380@VI1PR04MB5789.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:198;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cmbn5QGDKVdeukmXn+cSl5AnvEvL0ckzdWVYbUbIiFKDufVmovnsHe9+cBwKmqrhGAG48LjAdqYsNoRhOEb8u9iyvPYM0ZS6zY56r6wNCrzz8xYAd8cTMnCpD9nBU8fXCCd6WoyUShskT4fo1a+IxvsJe/kG4XvCooOWlcINdPn8JeKfPw6JwN7e3dkIREdzpkPWplfEFUUCO7CV1zJRiDfS4vfBYCKYoKXYi2vz+1T659axyOmJJzPzkLvzd4tN0P12rR2TZ/GO7jzB8wV6ciy9akEwGjTLGpBlmXJXFl4h/s5Q8mv/EEkORN7auCVwZMC12OryeiWc3X4P2c+I9g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3902.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39850400004)(346002)(376002)(136003)(396003)(86362001)(7366002)(7416002)(7406005)(83380400001)(5660300002)(2906002)(6666004)(8936002)(66946007)(33716001)(1076003)(55016002)(66556008)(66476007)(9686003)(6496006)(6916009)(4326008)(8676002)(52116002)(16526019)(44832011)(316002)(956004)(26005)(478600001)(186003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: YH6/GixFZP1cMd5wQlgyMojaOxfMwE5sHkpGKdNK74B/W7U0HBFvECepHtetZN8rzrviI1iMfCLKDW6lNqlv4ioK0DKlIsG2ebDfGpMMW96aopjhu1hB1B9+gXrgtenHXJVj5REKsiC/svUeV6FUMjb/v7dyoVtvzJoX6gfpMUwaX3tCfMJO6VeNyz6vnQB7FkXduiUjyInDToTOH+xRSPwfIlgP8TLl5/RsRSZi4bmbDm25Ia/ssmlIODu0sI8hlggBQf4+mGRb3V5tHuAx3ry6L6vjkR73gjnxwPDPLukIUoE+HKx33w82c5FZa9zDuyxvpMByPJ+O4HNbZo42DUV4/bc7x5Ze8t+eXxA8D9djSiHDOHiCezBcCj38npuRNUEfqlXS6237vyUofgkZkQZfM7XeJdM4BhdApgB8j/lXXiHuT7+3dlSKCirJpEOhqJu3HYhh9yCrJjm4Dpt36Wik0MqNkX8cO9LdOQkoB+GRgia88YzrBIHWrUZvogM7UF6hOBCG43Jf1vTLZ3rSZzJvDgvgA1G/T6Gy5HRQetklf5l1AMEsAKH0qsXPXiqMfNWKHfHvIQ+Lt8Mlvj2TaDH9r5pDH3Rf/3H3rO3q40NorExRF5I7cPzo1fto2cqq8KE8tGIDDo0c5fz1qFMM2w==
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8600018-cf47-486d-b728-08d85fb269f7
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3902.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2020 11:18:36.6980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5lZLGbhnJQjJpuaMRljf8APd1c9V2G5Oo5JlPEh+eK3QI/loeb5TW6ThgWbwHNTOGTy7vQTpDlxVPdBJxYiV8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5789
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Disposition: inline
+In-Reply-To: <CAMpxmJX6OxS-dxcK8whCm-Ups6Uts1iYE8bux_wAGeBPXihYBA@mail.gmail.com>
+User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas,
 
-On Wed, Sep 23, 2020 at 12:21:44PM +0200, Thomas Zimmermann wrote:
-> The i.MX DCSS driver uses CMA helpers with default callback functions.
-> Initialize the driver structure with the rsp CMA helper macro. The
-> driver is being converted to use GEM object functions as part of
-> this change.
-> 
-> Two callbacks, .gem_prime_export and .gem_prime_import, were initialized
-> to their default implementations, so they are just kept empty now.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reported-by: kernel test robot <lkp@intel.com>
-> ---
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+On Wed, Sep 23, 2020 at 11:15:03AM +0200, Bartosz Golaszewski wrote:
+> On Wed, Sep 16, 2020 at 11:50 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+> >
+> > For platforms that have multiple boards and hence have multiple EEPROMs
+> > for identifying the different boards, it is useful to label the EEPROMs
+> > in device-tree so that they can be easily identified. For example, MAC
+> > address information is stored in the EEPROM on the processor module for
+> > some Jetson platforms which is not only required by the kernel but the
+> > bootloader as well. So having a simple way to identify the EEPROM is
+> > needed.
+> >
+> > Changes since V1:
+> > - By default initialise the nvmem_config.id as NVMEM_DEVID_AUTO and not
+> >   NVMEM_DEVID_NONE
+> > - Dropped the 'maxItems' from the dt-binding doc.
+> >
+> > Jon Hunter (5):
+> >   misc: eeprom: at24: Initialise AT24 NVMEM ID field
+> >   dt-bindings: eeprom: at24: Add label property for AT24
+> >   misc: eeprom: at24: Support custom device names for AT24 EEPROMs
+> >   arm64: tegra: Add label properties for EEPROMs
+> >   arm64: tegra: Populate EEPROMs for Jetson Xavier NX
+> >
+> >  .../devicetree/bindings/eeprom/at24.yaml      |  3 +++
+> >  .../boot/dts/nvidia/tegra186-p2771-0000.dts   |  1 +
+> >  .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  1 +
+> >  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  1 +
+> >  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  1 +
+> >  .../nvidia/tegra194-p3509-0000+p3668-0000.dts | 14 ++++++++++++
+> >  .../boot/dts/nvidia/tegra194-p3668-0000.dtsi  | 16 ++++++++++++++
+> >  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  1 +
+> >  .../boot/dts/nvidia/tegra210-p2371-2180.dts   |  1 +
+> >  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |  2 ++
+> >  drivers/misc/eeprom/at24.c                    | 22 ++++++++++++++++++-
+> >  11 files changed, 62 insertions(+), 1 deletion(-)
+> >
+> > --
+> > 2.25.1
+> >
+>=20
+> Just FYI: I'm fine with the at24 part. I can take them through my tree
+> for v5.10. Who is taking the DTS patches for tegra? Thierry? I can
+> provide you with an immutable branch if that's fine. I can't just ack
+> the at24 patches because they conflict with what I already have in my
+> tree for v5.10.
 
-Thanks,
-laurentiu
+I don't think I'll need an immutable branch since the device tree
+changes are not dependent on anything in the bindings, except maybe for
+validation, or the driver.
 
->  drivers/gpu/drm/imx/dcss/dcss-kms.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/imx/dcss/dcss-kms.c b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-> index 135a62366ab8..b72e5cef7e40 100644
-> --- a/drivers/gpu/drm/imx/dcss/dcss-kms.c
-> +++ b/drivers/gpu/drm/imx/dcss/dcss-kms.c
-> @@ -28,19 +28,7 @@ static const struct drm_mode_config_funcs dcss_drm_mode_config_funcs = {
->  
->  static struct drm_driver dcss_kms_driver = {
->  	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
-> -	.gem_free_object_unlocked = drm_gem_cma_free_object,
-> -	.gem_vm_ops		= &drm_gem_cma_vm_ops,
-> -	.dumb_create		= drm_gem_cma_dumb_create,
-> -
-> -	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
-> -	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
-> -	.gem_prime_import	= drm_gem_prime_import,
-> -	.gem_prime_export	= drm_gem_prime_export,
-> -	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
-> -	.gem_prime_import_sg_table = drm_gem_cma_prime_import_sg_table,
-> -	.gem_prime_vmap		= drm_gem_cma_prime_vmap,
-> -	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
-> -	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
-> +	DRM_GEM_CMA_DRIVER_OPS,
->  	.fops			= &dcss_cma_fops,
->  	.name			= "imx-dcss",
->  	.desc			= "i.MX8MQ Display Subsystem",
-> -- 
-> 2.28.0
-> 
+Thierry
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9rM7MACgkQ3SOs138+
+s6FSxQ//Y3cu1pKoORNASb4SjuhJ1XGyVeT1xKWlhPxPQ1aAR3KgU/LGMQ3WbU6M
+FJ63l/kiFyUdMspp0VTssirFu9QxgSLPtOtz8W+s9bJQgEq2ePTGcd5lbS+Vft9a
+mGYfpDPCMo3rxvLKFZ1rXeqhMQKqU+Sp7rxYDAFlYXzTHyQREmnnR3HZNsEIMfqy
+xOXa0coi2G15CWUtdsBQD5DZn4r8fgENfkXSTXrpv/SqAFz5XBt6VPGMr+s/486f
+Bj/N0Exbjf07P5vTsbN+KmVH7eMbJg+LCRjZ+SxtGgn3UwRU7Fg/oO0UpinzISBK
+7WFyzGw2bKKbIFXRL4nEYyrJO4IIXje6VB8pg+Qtx6qdwgJk1jOz0QGjrhqzlyNn
+WaLSqxohWtTsmQdrTN2bbzSmKfKUtp4DcYdn1WSvGAsgc3oEbcSpXR6tSHhK1c35
+xshvEZopkDrNxUdg1fwetfyUbyyNNNGjUatcXMKZsMTJ+F4xPf1tcB1xneAJmmj8
+l0Y0cUh3SCO3IZvN4xrkxEK8EwiYES2LnrIdZjIj/DSkwa9W5FylrnOA6GK+niGn
+9PtaoeJfe4M2jmFrZDlI7Kh7A8AuuTH+WjUVBoxQJxY6EdAJWlIcvh2u/Ee4stcX
+NaKddzWQd6nEGDIa11KIZ6RZa/bSU+oM8D5WKlVkSgLVSTSwG0I=
+=UAvS
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
