@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E8DC47431
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22784C47433
 	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B61223119
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93F023119
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgIWKWP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:15 -0400
+        id S1726419AbgIWKWM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 06:22:12 -0400
 Received: from mx2.suse.de ([195.135.220.15]:57174 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgIWKWO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:14 -0400
+        id S1726674AbgIWKWM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:12 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 204ABB283;
-        Wed, 23 Sep 2020 10:22:50 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 415BAB279;
+        Wed, 23 Sep 2020 10:22:48 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -58,10 +58,11 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 12/22] drm/pl111: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:49 +0200
-Message-Id: <20200923102159.24084-13-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 10/22] drm/nouveau: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:47 +0200
+Message-Id: <20200923102159.24084-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -73,39 +74,95 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in pl111. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
-
-v2:
-	* use drm_gem_cma_create_object_default_funcs() (Eric)
+per-instance callbacks in nouveau.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/pl111/pl111_drv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_drm.c   |  9 ---------
+ drivers/gpu/drm/nouveau/nouveau_gem.c   | 13 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_gem.h   |  2 ++
+ drivers/gpu/drm/nouveau/nouveau_prime.c |  2 ++
+ 4 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
-index 46b0d1c4a16c..ecef8a2383d2 100644
---- a/drivers/gpu/drm/pl111/pl111_drv.c
-+++ b/drivers/gpu/drm/pl111/pl111_drv.c
-@@ -224,15 +224,12 @@ static struct drm_driver pl111_drm_driver = {
- 	.major = 1,
- 	.minor = 0,
- 	.patchlevel = 0,
-+	.gem_create_object = drm_gem_cma_create_object_default_funcs,
- 	.dumb_create = drm_gem_cma_dumb_create,
--	.gem_free_object_unlocked = drm_gem_cma_free_object,
--	.gem_vm_ops = &drm_gem_cma_vm_ops,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 42fc5c813a9b..72640bca1617 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1207,16 +1207,7 @@ driver_stub = {
+ 
  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_import_sg_table = pl111_gem_import_sg_table,
--	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
- 	.gem_prime_mmap = drm_gem_cma_prime_mmap,
--	.gem_prime_vmap = drm_gem_cma_prime_vmap,
+-	.gem_prime_pin = nouveau_gem_prime_pin,
+-	.gem_prime_unpin = nouveau_gem_prime_unpin,
+-	.gem_prime_get_sg_table = nouveau_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table = nouveau_gem_prime_import_sg_table,
+-	.gem_prime_vmap = nouveau_gem_prime_vmap,
+-	.gem_prime_vunmap = nouveau_gem_prime_vunmap,
+-
+-	.gem_free_object_unlocked = nouveau_gem_object_del,
+-	.gem_open_object = nouveau_gem_object_open,
+-	.gem_close_object = nouveau_gem_object_close,
  
- #if defined(CONFIG_DEBUG_FS)
- 	.debugfs_init = pl111_debugfs_init,
+ 	.dumb_create = nouveau_display_dumb_create,
+ 	.dumb_map_offset = nouveau_display_dumb_map_offset,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+index 89adadf4706b..28e0cbb00876 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -169,6 +169,17 @@ nouveau_gem_object_close(struct drm_gem_object *gem, struct drm_file *file_priv)
+ 	ttm_bo_unreserve(&nvbo->bo);
+ }
+ 
++const struct drm_gem_object_funcs nouveau_gem_object_funcs = {
++	.free = nouveau_gem_object_del,
++	.open = nouveau_gem_object_open,
++	.close = nouveau_gem_object_close,
++	.pin = nouveau_gem_prime_pin,
++	.unpin = nouveau_gem_prime_unpin,
++	.get_sg_table = nouveau_gem_prime_get_sg_table,
++	.vmap = nouveau_gem_prime_vmap,
++	.vunmap = nouveau_gem_prime_vunmap,
++};
++
+ int
+ nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
+ 		uint32_t tile_mode, uint32_t tile_flags,
+@@ -186,6 +197,8 @@ nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
+ 	if (IS_ERR(nvbo))
+ 		return PTR_ERR(nvbo);
+ 
++	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
++
+ 	/* Initialize the embedded gem-object. We return a single gem-reference
+ 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
+ 	ret = drm_gem_object_init(drm->dev, &nvbo->bo.base, size);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.h b/drivers/gpu/drm/nouveau/nouveau_gem.h
+index 978e07591990..b35c180322e2 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.h
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.h
+@@ -5,6 +5,8 @@
+ #include "nouveau_drv.h"
+ #include "nouveau_bo.h"
+ 
++extern const struct drm_gem_object_funcs nouveau_gem_object_funcs;
++
+ static inline struct nouveau_bo *
+ nouveau_gem_object(struct drm_gem_object *gem)
+ {
+diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
+index b2ecb91f8ddc..a8264aebf3d4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_prime.c
++++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
+@@ -77,6 +77,8 @@ struct drm_gem_object *nouveau_gem_prime_import_sg_table(struct drm_device *dev,
+ 
+ 	nvbo->valid_domains = NOUVEAU_GEM_DOMAIN_GART;
+ 
++	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
++
+ 	/* Initialize the embedded gem-object. We return a single gem-reference
+ 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
+ 	ret = drm_gem_object_init(dev, &nvbo->bo.base, size);
 -- 
 2.28.0
 
