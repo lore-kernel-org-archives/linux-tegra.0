@@ -1,81 +1,94 @@
-Return-Path: <SRS0=69DC=C7=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98287C2D0E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Sep 2020 23:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51A0C4727D
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 00:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56166221F0
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Sep 2020 23:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71F1F2085B
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 00:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ID8iAlY4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsjApSOQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbgIVXVU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Sep 2020 19:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
+        id S1727074AbgIWAX4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Sep 2020 20:23:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgIVXVT (ORCPT
+        with ESMTP id S1727034AbgIWAXz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Sep 2020 19:21:19 -0400
+        Tue, 22 Sep 2020 20:23:55 -0400
 Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323FAC061755;
-        Tue, 22 Sep 2020 16:21:19 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id b19so15564824lji.11;
-        Tue, 22 Sep 2020 16:21:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8589FC061755;
+        Tue, 22 Sep 2020 17:23:55 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id c2so15662315ljj.12;
+        Tue, 22 Sep 2020 17:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wto1lfSHBTmfREetyWLDZnc6AY7l78uuUDVKMqaUTyE=;
-        b=ID8iAlY4ls9D/QjT0mUgVU9OdN2PG9hI9yj5d/6o0kdBfSGxQl19P7WCagqvhDm9K0
-         JjwwlnEQM73tlCtBEsV1bO7votjB6wEFN+wSw0d5GA/cl3kRE9e7pQMEPep7k6g1z9mM
-         OiPGa+ZridNOyQPlReXoSkAcZxpBdy8COxWgdhaU+7RqRCpX3XmTcO2pcHfzgfVIi8cR
-         de3H4evSX5N9wwiWEesfYeE3LKLUsUa2hDJ4X/JeH/Zk9GNNHUT/tctvG2VzDjbRqLWi
-         QeGjxz5A0YRTegUQuD3/lc/h6KhwQ4FVcAY21DNzobRBWy0KVnhbW0X7OvfGz6ROFk+5
-         gMdA==
+        bh=cwzaj94ysfb2oIuq7DMGMurIpefx3s7WUXIPx+I2/JI=;
+        b=HsjApSOQdUFAXFomG0yjE8eIsjfUv+vuxrkNFEzOjy7yBCKLpyehHduZkrcSlQXpzX
+         +8EzQTenrCe2UHZPnaGtAP7BSIOi2qxqCzEtA/08QUq6RvB69JGjKo5f/QXn0/2OOXik
+         qwV12VaUhHZFV5vsEX5wkJ4sv5SzP1aAxL6UVsgo9IH8OpIt7+ODrn/6pnn3e1qaQxwQ
+         JduhuHTdqnm/5emRGmiFU5ndBYwvbFVChFwaq/4/X47ZH4AVAWW/O1mbCeOQEI627LJC
+         bpv/tT8bui01jscbPWSZ/HpKFBxI19cTQER0qtvQTvtcl/9/PrYL09TKqntPKNxRiNp9
+         Tc4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wto1lfSHBTmfREetyWLDZnc6AY7l78uuUDVKMqaUTyE=;
-        b=lGBaiHIuj5mDwSMEIo4FAa8Zg0FfSSrNrbD7nG3/TcNRml+g5m9eB+Cm3tU8W3YTK7
-         EVY1mwBDyWxJrw8vW0zRnNipDwbIrJM9xqYGGubt4xWaAtCtWFy8nqh0qYQZuViX/7az
-         U1Mx+s9q6sO/YbBkBagJjIZaL17AXvWky6d4lW/razmWIgz3KsPi+g9HeGR5Y2kISbiJ
-         YdjbHBKNHr1zzTOYrcqwk/w0qFcGGuCpMrWjbqQf+94p4y0f/lrM5+UJcuPPbEL58FZs
-         XhwhwqIP94GzHkYYqlHhrzrtj9RXVWC9VlDGbY2SEmDqVHCxtHGcoYa+Q6ScLSmH9skP
-         J6xw==
-X-Gm-Message-State: AOAM531QXwUuZxPUYzTPtXBNZqOW0LPXa+69AnuvZCCdXFP4ARENOcKT
-        u9bZSEqLcbJx2vGAEXpp2zo=
-X-Google-Smtp-Source: ABdhPJwCwb0txemQccr9IvfcvZNgCRr0ozV2cVM5l12Fx+BFOlmogtc32aMjAJCgPKiG0X49BZ/ddA==
-X-Received: by 2002:a2e:a411:: with SMTP id p17mr753838ljn.282.1600816877662;
-        Tue, 22 Sep 2020 16:21:17 -0700 (PDT)
+        bh=cwzaj94ysfb2oIuq7DMGMurIpefx3s7WUXIPx+I2/JI=;
+        b=ms0A4X+ACxWSTsV1GdN1QhOEtclhBHk0+bdkNzL33siinCZDccOuMtOOW4oIHh91db
+         9Y340qYigL2vKp2qv9A0xPylkGWXglaV3+/b5jCEfPrWt7yAk2nupDAXCYSrEUzTSYOn
+         eGu5NCYmtPR5rvdd7j2jgYZBrwiNQwGr/hQ3nyrOd9inlHp046D8PR6YJlYHO+QfbLkd
+         oHCUCAZ55K7/sLUjHwBcE9Yzxb/+aZrnvpzJGW5MJ6dCIoUOg/2JBVaEO2w1X8RiLKSv
+         9izXFQMBH3VU6Lx1ClExv47rjONVFcFDPlm6nJ9PCIshf03UPesaso/RJ64JXFFLndAQ
+         lD+Q==
+X-Gm-Message-State: AOAM531hA870/OrmUNhNjkMxf1LswRANkwxBbDFQ/RGx57vsfwuPD25b
+        bZQ9s7ibLIlMd6gVlhI0+1aIcR7lLvs=
+X-Google-Smtp-Source: ABdhPJyeTG9zBC3DCrZGGpyGMVtvFhq9Cv5J7h6zr1hxSWOy/bzdCkJqDKMqs5yXZK6qL4bTJ37snA==
+X-Received: by 2002:a2e:9943:: with SMTP id r3mr2154914ljj.342.1600820633688;
+        Tue, 22 Sep 2020 17:23:53 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id 13sm3933886lfn.239.2020.09.22.16.21.16
+        by smtp.googlemail.com with ESMTPSA id u18sm4393580ljo.131.2020.09.22.17.23.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Sep 2020 16:21:17 -0700 (PDT)
-Subject: Re: [PATCH v1 2/3] Input: atmel_mxt_ts - implement I2C retries for
- mXT1368
-To:     Jiada Wang <jiada_wang@mentor.com>, dmitry.torokhov@gmail.com,
-        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     nick@shmanahar.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200921140054.2389-1-jiada_wang@mentor.com>
- <20200921140054.2389-2-jiada_wang@mentor.com>
+        Tue, 22 Sep 2020 17:23:53 -0700 (PDT)
+Subject: Re: [PATCH] PM / devfreq: tegra30: disable clock on error in probe
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e8c700b5-93f3-4069-1b9e-a85934a52515@gmail.com>
-Date:   Wed, 23 Sep 2020 02:21:16 +0300
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <CGME20200908072627epcas1p41f2c8c2730d42bd8935a40b0ab8122f7@epcas1p4.samsung.com>
+ <20200908072557.GC294938@mwanda>
+ <2ceb045a-ebac-58d7-0250-4ea39d711ce8@samsung.com>
+ <44560522-f04e-ade5-2e02-9df56a6f79ba@gmail.com>
+ <e45c8ffc-ea24-1178-7bfa-62ca6bedbb3b@samsung.com>
+ <2573cd77-1175-d194-7bfc-24d28b276846@samsung.com>
+ <5aac4d59-5e06-25a6-3de1-6a5a586b9e34@gmail.com>
+ <bccb08ef-7e48-0cc7-08b5-7177b84a5763@samsung.com>
+ <887f4b2d-9181-356c-5f09-23be30d2480c@gmail.com>
+ <8edcfd7b-110b-3886-64ee-3ec02cc6bd19@samsung.com>
+ <57e8ccad-f0d5-febb-7a31-8d34430a5cb8@gmail.com>
+ <64f4b682-00b7-60f2-902f-e50a40a04a55@samsung.com>
+ <c80c6f3a-bbbf-f18b-33c8-62e63397df9c@gmail.com>
+Message-ID: <cc3523ad-1295-cccb-12da-f0ea7c129e7a@gmail.com>
+Date:   Wed, 23 Sep 2020 03:23:52 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200921140054.2389-2-jiada_wang@mentor.com>
+In-Reply-To: <c80c6f3a-bbbf-f18b-33c8-62e63397df9c@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,91 +96,42 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.09.2020 17:00, Jiada Wang пишет:
-> According to datasheet, mXT1386 chip has a WAKE line, it is used
-> to wake the chip up from deep sleep mode before communicating with
-> it via the I2C-compatible interface.
+21.09.2020 00:37, Dmitry Osipenko пишет:
+> 18.09.2020 12:23, Chanwoo Choi пишет:
+> ...
+>>> Hence if we want to improve the code, I think we can make this change:
+>>>
+>>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+>>> b/drivers/devfreq/tegra30-devfreq.c
+>>> index ee274daa57ac..4e3ac23e6850 100644
+>>> --- a/drivers/devfreq/tegra30-devfreq.c
+>>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>>> @@ -891,8 +891,6 @@ static int tegra_devfreq_probe(struct
+>>> platform_device *pdev)
+>>>  		return err;
+>>>  	}
+>>>
+>>> -	reset_control_assert(tegra->reset);
+>>> -
+>>>  	err = clk_prepare_enable(tegra->clock);
+>>>  	if (err) {
+>>>  		dev_err(&pdev->dev,
+>>> @@ -900,7 +898,7 @@ static int tegra_devfreq_probe(struct
+>>> platform_device *pdev)
+>>>  		return err;
+>>>  	}
+>>>
+>>> -	reset_control_deassert(tegra->reset);
+>>> +	reset_control_reset(tegra->reset);
+>>>
+>>>  	for (i = 0; i < mc->num_timings; i++) {
+>>>  		/*
+>>
+>> It looks good to me for improving the readability
+>> for everyone who don't know the detailed h/w information.
 > 
-> if the WAKE line is connected to a GPIO line, the line must be
-> asserted 25 ms before the host attempts to communicate with the mXT1386.
-> If the WAKE line is connected to the SCL pin, the mXT1386 will send a
-> NACK on the first attempt to address it, the host must then retry 25 ms
-> later.
-> 
-> This patch adds compatible string "atmel,mXT1386" for mXT1386 controller,
-> when I2C transfer on mXT1386 fails, retry the transfer once after a 25 ms
-> sleep.
-> 
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 44 +++++++++++++++++-------
->  1 file changed, 32 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 98f17fa3a892..96d5f4d64cb0 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -198,6 +198,7 @@ enum t100_type {
->  #define MXT_CRC_TIMEOUT		1000	/* msec */
->  #define MXT_FW_RESET_TIME	3000	/* msec */
->  #define MXT_FW_CHG_TIMEOUT	300	/* msec */
-> +#define MXT_WAKEUP_TIME		25	/* msec */
->  
->  /* Command to unlock bootloader */
->  #define MXT_UNLOCK_CMD_MSB	0xaa
-> @@ -627,7 +628,9 @@ static int mxt_send_bootloader_cmd(struct mxt_data *data, bool unlock)
->  static int __mxt_read_reg(struct i2c_client *client,
->  			       u16 reg, u16 len, void *val)
->  {
-> +	struct device_node *np = client->dev.of_node;
->  	struct i2c_msg xfer[2];
-> +	bool retried = false;
->  	u8 buf[2];
->  	int ret;
->  
-> @@ -646,22 +649,30 @@ static int __mxt_read_reg(struct i2c_client *client,
->  	xfer[1].len = len;
->  	xfer[1].buf = val;
->  
-> -	ret = i2c_transfer(client->adapter, xfer, 2);
-> -	if (ret == 2) {
-> -		ret = 0;
-> -	} else {
-> -		if (ret >= 0)
-> -			ret = -EIO;
-> +retry_read:
-> +	ret = i2c_transfer(client->adapter, xfer, ARRAY_SIZE(xfer));
-> +	if (ret != ARRAY_SIZE(xfer)) {
-> +		if (of_device_is_compatible(np, "atmel,mXT1386") && !retried) {
+> Okay, I'll make a patch sometime soon.
 
-Hello, Jiada!
-
-This looks almost good to me! But I think we should add "bool
-retry_i2c_transfers" to the struct mxt_data and then set it to true for
-atmel,mXT1386 because of_device_is_compatible() looks a bit too bulky
-and this is usually discouraged to have in the code.
-
-Secondly, we should also add a clarifying comment to the code, telling
-why retries are needed for 1386, something like this:
-
-static int mxt_probe(struct i2c_client *client, const struct
-i2c_device_id *id)
-{
-...
-
-/*
- * The mXT1386 has a dedicated WAKE-line that could be connected to a
- * dedicated GPIO, or to the I2C SCL pin, or permanently asserted LOW.
- * It's used for waking controller from a deep-sleep and it needs to be
- * asserted LOW for 25 milliseconds before issuing I2C transfer if
-controller
- * was in a deep-sleep mode. If WAKE-line is connected to I2C SCL pin, then
- * the first I2C transfer will get an instant NAK and transfer needs to be
- * retried after 25ms. There are too many places in the code where the
-wake-up
- * needs to be inserted, hence it's much easier to add a retry to the common
- * I2C accessors, also given that the WAKE-GPIO is unsupported by the
-driver.
- */
-if (of_device_is_compatible(np, "atmel,mXT1386")
-	data->retry_i2c_transfers = true;
+Chanwoo, I want to clarify that the Dan's v1 patch is still good to me
+and should be applied. I'll improve the readability on top of the Dan's
+change.
