@@ -2,120 +2,199 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAFBC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 09:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC13C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 442A82137B
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 09:23:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="irajoaE9"
+	by mail.kernel.org (Postfix) with ESMTP id 82FB72145D
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgIWJX2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 05:23:28 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13240 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgIWJX2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 05:23:28 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f6b13b10002>; Wed, 23 Sep 2020 02:21:53 -0700
-Received: from [10.26.74.254] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 23 Sep
- 2020 09:23:26 +0000
-Subject: Re: [PATCH V2 0/5] Add support for custom names for AT24 EEPROMs
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20200916094952.458003-1-jonathanh@nvidia.com>
- <CAMpxmJX6OxS-dxcK8whCm-Ups6Uts1iYE8bux_wAGeBPXihYBA@mail.gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c8bd52a5-2f80-2183-11bf-f7f531be2a56@nvidia.com>
-Date:   Wed, 23 Sep 2020 10:23:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726424AbgIWKWE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 06:22:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56790 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726314AbgIWKWE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 06:22:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id A24C4B016;
+        Wed, 23 Sep 2020 10:22:39 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, laurentiu.palcu@oss.nxp.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 01/22] drm/amdgpu: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:38 +0200
+Message-Id: <20200923102159.24084-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
+References: <20200923102159.24084-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJX6OxS-dxcK8whCm-Ups6Uts1iYE8bux_wAGeBPXihYBA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600852913; bh=9tn65bkkY70YMWVjeAuBAkcP9eGmaq3E0Ud6x7JNbDM=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=irajoaE9RYbmc3jeKLDjjG8BGENVRqAuONIPqXagWEZ0uWKthZmbwR9DuLJFWXet2
-         5OXWRvJxpAcs2WgqKNkLp5dcNRlRsAB2TMi8SrnRXf95OXWjwUMVdNGMgK8FY5gDNR
-         3sMzFD/PJdAzsgk6DG7ZaBgqDKdf0pq3syQ40PtCTIDNtVou6Ht4hTpGy3LyIiVtla
-         JV+d0oufRc4HoLfs0QSFyXebxK0RfH0ZJjV3r1RUV2yinQM7KkfMHSSqL2VkyxlD4b
-         e9IPUMTnIf4N/UtO+MUGeIyCStYmX/dUacGjhJ7bKEv/5wsaeRNq2PJc+5GcNqOjm5
-         b98eIajGZvJoQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
-On 23/09/2020 10:15, Bartosz Golaszewski wrote:
-> On Wed, Sep 16, 2020 at 11:50 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->> For platforms that have multiple boards and hence have multiple EEPROMs
->> for identifying the different boards, it is useful to label the EEPROMs
->> in device-tree so that they can be easily identified. For example, MAC
->> address information is stored in the EEPROM on the processor module for
->> some Jetson platforms which is not only required by the kernel but the
->> bootloader as well. So having a simple way to identify the EEPROM is
->> needed.
->>
->> Changes since V1:
->> - By default initialise the nvmem_config.id as NVMEM_DEVID_AUTO and not
->>   NVMEM_DEVID_NONE
->> - Dropped the 'maxItems' from the dt-binding doc.
->>
->> Jon Hunter (5):
->>   misc: eeprom: at24: Initialise AT24 NVMEM ID field
->>   dt-bindings: eeprom: at24: Add label property for AT24
->>   misc: eeprom: at24: Support custom device names for AT24 EEPROMs
->>   arm64: tegra: Add label properties for EEPROMs
->>   arm64: tegra: Populate EEPROMs for Jetson Xavier NX
->>
->>  .../devicetree/bindings/eeprom/at24.yaml      |  3 +++
->>  .../boot/dts/nvidia/tegra186-p2771-0000.dts   |  1 +
->>  .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  1 +
->>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  1 +
->>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  1 +
->>  .../nvidia/tegra194-p3509-0000+p3668-0000.dts | 14 ++++++++++++
->>  .../boot/dts/nvidia/tegra194-p3668-0000.dtsi  | 16 ++++++++++++++
->>  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  1 +
->>  .../boot/dts/nvidia/tegra210-p2371-2180.dts   |  1 +
->>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |  2 ++
->>  drivers/misc/eeprom/at24.c                    | 22 ++++++++++++++++++-
->>  11 files changed, 62 insertions(+), 1 deletion(-)
->>
->> --
->> 2.25.1
->>
-> 
-> Just FYI: I'm fine with the at24 part. I can take them through my tree
-> for v5.10. Who is taking the DTS patches for tegra? Thierry? I can
-> provide you with an immutable branch if that's fine. I can't just ack
-> the at24 patches because they conflict with what I already have in my
-> tree for v5.10.
+v3:
+	* remove amdgpu_object.c from patch (Christian)
+v2:
+	* move object-function instance to amdgpu_gem.c (Christian)
+	* set callbacks in amdgpu_gem_object_create() (Christian)
 
-Thanks. Yes Thierry is picking up the DTS patches.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c |  6 ------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 23 ++++++++++++++++++-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h |  5 -----
+ 3 files changed, 18 insertions(+), 16 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 6edde2b9e402..840ca8f9c1e1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1505,19 +1505,13 @@ static struct drm_driver kms_driver = {
+ 	.lastclose = amdgpu_driver_lastclose_kms,
+ 	.irq_handler = amdgpu_irq_handler,
+ 	.ioctls = amdgpu_ioctls_kms,
+-	.gem_free_object_unlocked = amdgpu_gem_object_free,
+-	.gem_open_object = amdgpu_gem_object_open,
+-	.gem_close_object = amdgpu_gem_object_close,
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = amdgpu_gem_prime_export,
+ 	.gem_prime_import = amdgpu_gem_prime_import,
+-	.gem_prime_vmap = amdgpu_gem_prime_vmap,
+-	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
+ 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
+ 
+ 	.name = DRIVER_NAME,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index aa7f230c71bf..aeecd5dc3ce4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -36,9 +36,12 @@
+ 
+ #include "amdgpu.h"
+ #include "amdgpu_display.h"
++#include "amdgpu_dma_buf.h"
+ #include "amdgpu_xgmi.h"
+ 
+-void amdgpu_gem_object_free(struct drm_gem_object *gobj)
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs;
++
++static void amdgpu_gem_object_free(struct drm_gem_object *gobj)
+ {
+ 	struct amdgpu_bo *robj = gem_to_amdgpu_bo(gobj);
+ 
+@@ -87,6 +90,7 @@ int amdgpu_gem_object_create(struct amdgpu_device *adev, unsigned long size,
+ 		return r;
+ 	}
+ 	*obj = &bo->tbo.base;
++	(*obj)->funcs = &amdgpu_gem_object_funcs;
+ 
+ 	return 0;
+ }
+@@ -119,8 +123,8 @@ void amdgpu_gem_force_release(struct amdgpu_device *adev)
+  * Call from drm_gem_handle_create which appear in both new and open ioctl
+  * case.
+  */
+-int amdgpu_gem_object_open(struct drm_gem_object *obj,
+-			   struct drm_file *file_priv)
++static int amdgpu_gem_object_open(struct drm_gem_object *obj,
++				  struct drm_file *file_priv)
+ {
+ 	struct amdgpu_bo *abo = gem_to_amdgpu_bo(obj);
+ 	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
+@@ -152,8 +156,8 @@ int amdgpu_gem_object_open(struct drm_gem_object *obj,
+ 	return 0;
+ }
+ 
+-void amdgpu_gem_object_close(struct drm_gem_object *obj,
+-			     struct drm_file *file_priv)
++static void amdgpu_gem_object_close(struct drm_gem_object *obj,
++				    struct drm_file *file_priv)
+ {
+ 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+ 	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
+@@ -211,6 +215,15 @@ void amdgpu_gem_object_close(struct drm_gem_object *obj,
+ 	ttm_eu_backoff_reservation(&ticket, &list);
+ }
+ 
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
++	.free = amdgpu_gem_object_free,
++	.open = amdgpu_gem_object_open,
++	.close = amdgpu_gem_object_close,
++	.export = amdgpu_gem_prime_export,
++	.vmap = amdgpu_gem_prime_vmap,
++	.vunmap = amdgpu_gem_prime_vunmap,
++};
++
+ /*
+  * GEM ioctls.
+  */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+index e0f025dd1b14..637bf51dbf06 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
+@@ -33,11 +33,6 @@
+ #define AMDGPU_GEM_DOMAIN_MAX		0x3
+ #define gem_to_amdgpu_bo(gobj) container_of((gobj), struct amdgpu_bo, tbo.base)
+ 
+-void amdgpu_gem_object_free(struct drm_gem_object *obj);
+-int amdgpu_gem_object_open(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-void amdgpu_gem_object_close(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+ unsigned long amdgpu_gem_timeout(uint64_t timeout_ns);
+ 
+ /*
 -- 
-nvpublic
+2.28.0
+
