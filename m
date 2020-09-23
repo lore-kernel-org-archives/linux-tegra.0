@@ -2,190 +2,261 @@ Return-Path: <SRS0=J1sk=DA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4130CC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 12:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C46EC2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 12:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECF8B206F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 12:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52151221E7
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Sep 2020 12:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgIWMac (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Sep 2020 08:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWMac (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Sep 2020 08:30:32 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20FBC0613CE
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Sep 2020 05:30:31 -0700 (PDT)
-Received: from [2a0a:edc0:0:900:6245:cbff:fea0:1793] (helo=kresse.office.stw.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1kL3sK-0001Gu-2L; Wed, 23 Sep 2020 14:27:57 +0200
-Message-ID: <3411d277f84ec42eca6c467ceafb10d59c0fd482.camel@pengutronix.de>
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
-        christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        id S1726595AbgIWMcL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Sep 2020 08:32:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38314 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbgIWMcL (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Sep 2020 08:32:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id DC130AFF4;
+        Wed, 23 Sep 2020 12:32:46 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     sumit.semwal@linaro.org, christian.koenig@amd.com, afd@ti.com,
+        corbet@lwn.net, benjamin.gaignard@linaro.org, lmark@codeaurora.org,
+        labbott@redhat.com, Brian.Starkey@arm.com, john.stultz@linaro.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
         jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, laurentiu.palcu@oss.nxp.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 23 Sep 2020 14:27:37 +0200
-In-Reply-To: <20200923102159.24084-4-tzimmermann@suse.de>
-References: <20200923102159.24084-1-tzimmermann@suse.de>
-         <20200923102159.24084-4-tzimmermann@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        rodrigo.vivi@intel.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, tfiga@chromium.org, mchehab@kernel.org,
+        matthew.auld@intel.com, robin.murphy@arm.com,
+        thomas.hellstrom@intel.com, sam@ravnborg.org, kraxel@redhat.com
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
+        etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 1/3] dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr
+Date:   Wed, 23 Sep 2020 14:32:03 +0200
+Message-Id: <20200923123205.30671-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200923123205.30671-1-tzimmermann@suse.de>
+References: <20200923123205.30671-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:6245:cbff:fea0:1793
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-Subject: Re: [PATCH v3 03/22] drm/etnaviv: Introduce GEM object functions
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on metis.ext.pengutronix.de)
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mi, 2020-09-23 at 12:21 +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in etnaviv. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+The new type struct dma_buf_map represents a mapping of dma-buf memory
+into kernel space. It contains a flag, is_iomem, that signals users to
+access the mapped memory with I/O operations instead of regular loads
+and stores.
 
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 13 -------------
->  drivers/gpu/drm/etnaviv/etnaviv_drv.h |  1 -
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 19 ++++++++++++++++++-
->  3 files changed, 18 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index a9a3afaef9a1..aa270b79e585 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -468,12 +468,6 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] = {
->  	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
->  };
->  
-> -static const struct vm_operations_struct vm_ops = {
-> -	.fault = etnaviv_gem_fault,
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static const struct file_operations fops = {
->  	.owner              = THIS_MODULE,
->  	.open               = drm_open,
-> @@ -490,16 +484,9 @@ static struct drm_driver etnaviv_drm_driver = {
->  	.driver_features    = DRIVER_GEM | DRIVER_RENDER,
->  	.open               = etnaviv_open,
->  	.postclose           = etnaviv_postclose,
-> -	.gem_free_object_unlocked = etnaviv_gem_free_object,
-> -	.gem_vm_ops         = &vm_ops,
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_pin      = etnaviv_gem_prime_pin,
-> -	.gem_prime_unpin    = etnaviv_gem_prime_unpin,
-> -	.gem_prime_get_sg_table = etnaviv_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = etnaviv_gem_prime_import_sg_table,
-> -	.gem_prime_vmap     = etnaviv_gem_prime_vmap,
-> -	.gem_prime_vunmap   = etnaviv_gem_prime_vunmap,
->  	.gem_prime_mmap     = etnaviv_gem_prime_mmap,
->  #ifdef CONFIG_DEBUG_FS
->  	.debugfs_init       = etnaviv_debugfs_init,
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> index 4d8dc9236e5f..914f0867ff71 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> @@ -49,7 +49,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
->  		struct drm_file *file);
->  
->  int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
-> -vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
->  int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
->  struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
->  void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index d1533bdc1335..67d9a2b9ea6a 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -171,7 +171,7 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
->  	return obj->ops->mmap(obj, vma);
->  }
->  
-> -vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
-> +static vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct drm_gem_object *obj = vma->vm_private_data;
-> @@ -559,6 +559,22 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
->  	mutex_unlock(&priv->gem_lock);
->  }
->  
-> +static const struct vm_operations_struct vm_ops = {
-> +	.fault = etnaviv_gem_fault,
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-> +
-> +static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
-> +	.free = etnaviv_gem_free_object,
-> +	.pin = etnaviv_gem_prime_pin,
-> +	.unpin = etnaviv_gem_prime_unpin,
-> +	.get_sg_table = etnaviv_gem_prime_get_sg_table,
-> +	.vmap = etnaviv_gem_prime_vmap,
-> +	.vunmap = etnaviv_gem_prime_vunmap,
-> +	.vm_ops = &vm_ops,
-> +};
-> +
->  static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
->  	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
->  {
-> @@ -593,6 +609,7 @@ static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
->  	INIT_LIST_HEAD(&etnaviv_obj->vram_list);
->  
->  	*obj = &etnaviv_obj->base;
-> +	(*obj)->funcs = &etnaviv_gem_object_funcs;
->  
->  	return 0;
->  }
+It was assumed that DMA buffer memory can be accessed with regular load
+and store operations. Some architectures, such as sparc64, require the
+use of I/O operations to access dma-map buffers that are located in I/O
+memory. Providing struct dma_buf_map allows drivers to implement this.
+This was specifically a problem when refreshing the graphics framebuffer
+on such systems. [1]
+
+As the first step, struct dma_buf stores an instance of struct dma_buf_map
+internally. Afterwards, dma-buf's vmap and vunmap interfaces are be
+converted. Finally, affected drivers can be fixed.
+
+[1] https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg.org/
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
+---
+ Documentation/driver-api/dma-buf.rst |  3 +
+ drivers/dma-buf/dma-buf.c            | 14 ++---
+ include/linux/dma-buf-map.h          | 87 ++++++++++++++++++++++++++++
+ include/linux/dma-buf.h              |  3 +-
+ 4 files changed, 99 insertions(+), 8 deletions(-)
+ create mode 100644 include/linux/dma-buf-map.h
+
+diff --git a/Documentation/driver-api/dma-buf.rst b/Documentation/driver-api/dma-buf.rst
+index 13ea0cc0a3fa..3244c600a9a1 100644
+--- a/Documentation/driver-api/dma-buf.rst
++++ b/Documentation/driver-api/dma-buf.rst
+@@ -115,6 +115,9 @@ Kernel Functions and Structures Reference
+ .. kernel-doc:: include/linux/dma-buf.h
+    :internal:
+ 
++.. kernel-doc:: include/linux/dma-buf-map.h
++   :internal:
++
+ Reservation Objects
+ -------------------
+ 
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 58564d82a3a2..5e849ca241a0 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -1207,12 +1207,12 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
+ 	mutex_lock(&dmabuf->lock);
+ 	if (dmabuf->vmapping_counter) {
+ 		dmabuf->vmapping_counter++;
+-		BUG_ON(!dmabuf->vmap_ptr);
+-		ptr = dmabuf->vmap_ptr;
++		BUG_ON(dma_buf_map_is_null(&dmabuf->vmap_ptr));
++		ptr = dmabuf->vmap_ptr.vaddr;
+ 		goto out_unlock;
+ 	}
+ 
+-	BUG_ON(dmabuf->vmap_ptr);
++	BUG_ON(dma_buf_map_is_set(&dmabuf->vmap_ptr));
+ 
+ 	ptr = dmabuf->ops->vmap(dmabuf);
+ 	if (WARN_ON_ONCE(IS_ERR(ptr)))
+@@ -1220,7 +1220,7 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
+ 	if (!ptr)
+ 		goto out_unlock;
+ 
+-	dmabuf->vmap_ptr = ptr;
++	dmabuf->vmap_ptr.vaddr = ptr;
+ 	dmabuf->vmapping_counter = 1;
+ 
+ out_unlock:
+@@ -1239,15 +1239,15 @@ void dma_buf_vunmap(struct dma_buf *dmabuf, void *vaddr)
+ 	if (WARN_ON(!dmabuf))
+ 		return;
+ 
+-	BUG_ON(!dmabuf->vmap_ptr);
++	BUG_ON(dma_buf_map_is_null(&dmabuf->vmap_ptr));
+ 	BUG_ON(dmabuf->vmapping_counter == 0);
+-	BUG_ON(dmabuf->vmap_ptr != vaddr);
++	BUG_ON(!dma_buf_map_is_vaddr(&dmabuf->vmap_ptr, vaddr));
+ 
+ 	mutex_lock(&dmabuf->lock);
+ 	if (--dmabuf->vmapping_counter == 0) {
+ 		if (dmabuf->ops->vunmap)
+ 			dmabuf->ops->vunmap(dmabuf, vaddr);
+-		dmabuf->vmap_ptr = NULL;
++		dma_buf_map_clear(&dmabuf->vmap_ptr);
+ 	}
+ 	mutex_unlock(&dmabuf->lock);
+ }
+diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
+new file mode 100644
+index 000000000000..d4b1bb3cc4b0
+--- /dev/null
++++ b/include/linux/dma-buf-map.h
+@@ -0,0 +1,87 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Pointer to dma-buf-mapped memory, plus helpers.
++ */
++
++#ifndef __DMA_BUF_MAP_H__
++#define __DMA_BUF_MAP_H__
++
++#include <linux/io.h>
++
++/**
++ * struct dma_buf_map - Pointer to vmap'ed dma-buf memory.
++ * @vaddr_iomem:	The buffer's address if in I/O memory
++ * @vaddr:		The buffer's address if in system memory
++ * @is_iomem:		True if the dma-buf memory is located in I/O
++ *			memory, or false otherwise.
++ *
++ * Calling dma-buf's vmap operation returns a pointer to the buffer.
++ * Depending on the location of the buffer, users may have to access it
++ * with I/O operations or memory load/store operations. struct dma_buf_map
++ * stores the buffer address and a flag that signals the required access.
++ */
++struct dma_buf_map {
++	union {
++		void __iomem *vaddr_iomem;
++		void *vaddr;
++	};
++	bool is_iomem;
++};
++
++/* API transition helper */
++static inline bool dma_buf_map_is_vaddr(const struct dma_buf_map *map, const void *vaddr)
++{
++	return !map->is_iomem && (map->vaddr == vaddr);
++}
++
++/**
++ * dma_buf_map_is_null - Tests for a dma-buf mapping to be NULL
++ * @map:	The dma-buf mapping structure
++ *
++ * Depending on the state of struct dma_buf_map.is_iomem, tests if the
++ * mapping is NULL.
++ *
++ * Returns:
++ * True if the mapping is NULL, or false otherwise.
++ */
++static inline bool dma_buf_map_is_null(const struct dma_buf_map *map)
++{
++	if (map->is_iomem)
++		return map->vaddr_iomem == NULL;
++	return map->vaddr == NULL;
++}
++
++/**
++ * dma_buf_map_is_set - Tests is the dma-buf mapping has been set
++ * @map:	The dma-buf mapping structure
++ *
++ * Depending on the state of struct dma_buf_map.is_iomem, tests if the
++ * mapping has been set.
++ *
++ * Returns:
++ * True if the mapping is been set, or false otherwise.
++ */
++static inline bool dma_buf_map_is_set(const struct dma_buf_map *map)
++{
++	return !dma_buf_map_is_null(map);
++}
++
++/**
++ * dma_buf_map_clear - Clears a dma-buf mapping structure
++ * @map:	The dma-buf mapping structure
++ *
++ * Clears all fields to zero; including struct dma_buf_map.is_iomem. So
++ * mapping structures that were set to point to I/O memory are reset for
++ * system memory. Pointers are cleared to NULL. This is the default.
++ */
++static inline void dma_buf_map_clear(struct dma_buf_map *map)
++{
++	if (map->is_iomem) {
++		map->vaddr_iomem = NULL;
++		map->is_iomem = false;
++	} else {
++		map->vaddr = NULL;
++	}
++}
++
++#endif /* __DMA_BUF_MAP_H__ */
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index 957b398d30e5..fcc2ddfb6d18 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -13,6 +13,7 @@
+ #ifndef __DMA_BUF_H__
+ #define __DMA_BUF_H__
+ 
++#include <linux/dma-buf-map.h>
+ #include <linux/file.h>
+ #include <linux/err.h>
+ #include <linux/scatterlist.h>
+@@ -309,7 +310,7 @@ struct dma_buf {
+ 	const struct dma_buf_ops *ops;
+ 	struct mutex lock;
+ 	unsigned vmapping_counter;
+-	void *vmap_ptr;
++	struct dma_buf_map vmap_ptr;
+ 	const char *exp_name;
+ 	const char *name;
+ 	spinlock_t name_lock;
+-- 
+2.28.0
 
