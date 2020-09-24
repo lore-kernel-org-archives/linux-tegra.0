@@ -2,65 +2,66 @@ Return-Path: <SRS0=yNrD=DB=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2F1C4727D
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Sep 2020 13:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B13C4363D
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Sep 2020 13:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C917B238E4
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Sep 2020 13:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45E3323741
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Sep 2020 13:26:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="b4eP8EMI"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kgTjvI+n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbgIXNZg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Sep 2020 09:25:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48028 "EHLO
+        id S1727988AbgIXN0I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Sep 2020 09:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727853AbgIXNZg (ORCPT
+        with ESMTP id S1727873AbgIXN0I (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Sep 2020 09:25:36 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA76C0613D4
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2020 06:25:35 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id a12so3303536eds.13
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2020 06:25:35 -0700 (PDT)
+        Thu, 24 Sep 2020 09:26:08 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34EEC0613D3
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2020 06:26:07 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id gx22so4480450ejb.5
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2020 06:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=P/tGoQrJpdGYYfUAvw2qVEeVgn4GEtbYMszWw+xnR0k=;
-        b=b4eP8EMIrQcqHXeKCgWPF2pre1/THZMlYelpeGjpX0ITqb5559DvtkCgHzods0pTal
-         VcULZxsFhJc/Ft+rO6NmVvoKAOXSGdKp//Scus8F5EeQX+lQwVTDyvV9QZ2wJg08scbl
-         dX3/JV8Ez9ruuDaX7SlWyy/8qgcNd9DcXvgGygrrp0wo2j55KXK7XDHJxFVIFA2C2en3
-         ka+ax/uxeTAnxWDU7u+VfxO2NWyGqwRg/zDh+PMvalA1N/V6K9RYYg/xPyfJGB5bHpEE
-         2ymoCUAXfFUsBYjjT8OTAccmb1wMnAbU0s+cRSMl4dV11nwLJJ2RoEMx/Tac7Wzh0fGl
-         fn0w==
+        bh=XexnDGcXtnYzxSDXXL3LsxUhuAmen63As9oxJV/uz9Q=;
+        b=kgTjvI+notSvcV1G6DlP/YbBRTYIoc9l+xpy2LnM2CAUVSj4ezg/9x6dqOZ6wnrq94
+         9MtdtxN11ZInl93BO1eYXIug84nACv74HI0Bou42h/R6ly+hJgJucBtFwoi55wT0shSk
+         LFDbcbXi7f8wKGj9oWgR9a4BMZ8us74xQRmaL0jhunAT0o6ZPyKIS1cQ5obDH5ZVDNK1
+         i/HHctQ+fqdd3KkbVaoKIPbGFGuQf7QfUZZX4jKh5f3qRC4qyq1s4k53xIqvXVLpHDQn
+         oRsIhLPdVxLK/zWXUj1yCexDQd9E2st1Mz0TEywAu4kFD7takgrMpk5THLnYgtq/3ckb
+         3sAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=P/tGoQrJpdGYYfUAvw2qVEeVgn4GEtbYMszWw+xnR0k=;
-        b=kb+5u9YMlb5eGmSE+5OkTJeJ+MDe5K7yqMl5Wc2SJNd8dZ7HlgElMyKLbAjYPPJit+
-         dvN/mw4aoRYfkjTAThVL6U1guUEXQ4O/OedMTbymxmTj7c1BNs1/QBPL8bYEkmdWnvfb
-         lWevk2G6CqKH2EvmJvGLsX43Go6i6FDFuNF6VO1Jk7aW+7dw5gWapqEz3uepaDfl+KFB
-         65174dt05qSMCNW4btwwSTnPtxS+WuwLop74C/6D01BJZygwyPEMeV+pv/2SsgfglWot
-         4qzxoTTKaFNoIlbQ+gWru1nYSbocNbRspjtM+GSj44mZKkD+5sKIxy2EwBAW0WPIP5N6
-         YU6Q==
-X-Gm-Message-State: AOAM533mXh6LDQaAZs7lQHnJoKG+ALIB8EWR1QN1KKuM6jJihAuAiBhg
-        VSqOFI4TmrrizZkCejbLHElELiuNJIq2zpr5LiR5JQ==
-X-Google-Smtp-Source: ABdhPJxHcJJd/t6XJJ5glQNT60CX8Gg5PBlM/2nPfTGKWak5ON1a/oflvMG3lHj80ELgvHkH9h8g0EKqdeZHKRHfWhI=
-X-Received: by 2002:a50:e79c:: with SMTP id b28mr1046419edn.371.1600953934375;
- Thu, 24 Sep 2020 06:25:34 -0700 (PDT)
+        bh=XexnDGcXtnYzxSDXXL3LsxUhuAmen63As9oxJV/uz9Q=;
+        b=frLRsCzbEHvHDaZ+WvYlsNRm+KFLQ1FCBmEPYj793FUdpAESLacBFkx4Rt/KrwfnWI
+         xNpnS6PlwascU419KmxKzV8OHpvfypwCJ26fe+iIFuVjc/PvxJJ8pBQ4jlxH14l44oPh
+         uimgfS/A3Y7a0hNaoq/OW5xiNKg5knOwd3yDUZxbMFLRWlcxyUANnNdRvzAUYR4ZO1sD
+         Kvr0+Cu+OjkpqCYdFnSaYwdfsfB6+Bn3zsMd7ksKYSkYMrd/SXN2M60qXcsnQMMD6oy7
+         DnknC9UazAnbsIvK0+Mfg0BE9KjbB/KB9YRrwO7lTvHviub1j6jDrSbJiHt58sGL74oj
+         r67A==
+X-Gm-Message-State: AOAM531Ikh5NBN+/axlKtVbF3uTLkdOeOm8BQ89Kz6LZFe+uVEwkxmBS
+        hYZOZkZkePzc1AZHq0rK7uQCqyJoVuMkJZxr4pOAWw==
+X-Google-Smtp-Source: ABdhPJzL25q1kuPvZnzXILD9yCjuVJJoFdPmKYvOCzgBP1DPA6gPD4TIEnBP9L8hXZW3TjX9vVurhdi3YXx/TqF6yN8=
+X-Received: by 2002:a17:906:f11:: with SMTP id z17mr1101533eji.88.1600953966583;
+ Thu, 24 Sep 2020 06:26:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200916094952.458003-1-jonathanh@nvidia.com> <20200916094952.458003-3-jonathanh@nvidia.com>
-In-Reply-To: <20200916094952.458003-3-jonathanh@nvidia.com>
+References: <20200916094952.458003-1-jonathanh@nvidia.com> <20200916094952.458003-4-jonathanh@nvidia.com>
+In-Reply-To: <20200916094952.458003-4-jonathanh@nvidia.com>
 From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 24 Sep 2020 15:25:23 +0200
-Message-ID: <CAMpxmJX2AndfE6pNEGJnRhGZiH+WStO644nJ_Twq6b-Ksen4OQ@mail.gmail.com>
-Subject: Re: [PATCH V2 2/5] dt-bindings: eeprom: at24: Add label property for AT24
+Date:   Thu, 24 Sep 2020 15:25:55 +0200
+Message-ID: <CAMpxmJVFtx4kZOvP5UkYL1U_1UJn_FGabBZdE7cdMDxQAPoSwA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/5] misc: eeprom: at24: Support custom device names
+ for AT24 EEPROMs
 To:     Jon Hunter <jonathanh@nvidia.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -74,32 +75,16 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 On Wed, Sep 16, 2020 at 11:50 AM Jon Hunter <jonathanh@nvidia.com> wrote:
 >
-> Add a label property for the AT24 EEPROM to allow a custom name to be
-> used for identifying the EEPROM on a board. This is useful when there
-> is more than one EEPROM present.
+> By using the label property, a more descriptive name can be populated
+> for AT24 EEPROMs NVMEM device. Update the AT24 driver to check to see
+> if the label property is present and if so, use this as the name for
+> NVMEM device. Please note that when the 'label' property is present for
+> the AT24 EEPROM, we do not want the NVMEM driver to append the 'devid'
+> to the name and so the nvmem_config.id is initialised to
+> NVMEM_DEVID_NONE.
 >
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/eeprom/at24.yaml | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> index 4cee72d53318..6edfa705b486 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -114,6 +114,9 @@ properties:
->            - const: renesas,r1ex24128
->            - const: atmel,24c128
->
-> +  label:
-> +    description: Descriptive name of the EEPROM.
-> +
->    reg:
->      maxItems: 1
->
-> --
-> 2.25.1
->
 
 Queued for v5.10, thanks!
 
