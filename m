@@ -2,218 +2,400 @@ Return-Path: <SRS0=4r7m=DC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475D6C4363D
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Sep 2020 09:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A59C4741F
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Sep 2020 11:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC08420756
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Sep 2020 09:27:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="BfGXtqJR"
+	by mail.kernel.org (Postfix) with ESMTP id 79F5722211
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Sep 2020 11:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgIYJ15 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 25 Sep 2020 05:27:57 -0400
-Received: from mail-dm6nam10on2084.outbound.protection.outlook.com ([40.107.93.84]:28896
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727428AbgIYJ14 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 25 Sep 2020 05:27:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MCCMn01NgRqC607Qf60XtpUA5S7vZTBeS7ymYdf0G6jC1f+Lo47jBNZm+iXed44RtpTwi21J5ASy4CdHMwu2laNOq3POWrStXJR7c3jcOU1C2Ds675ON7RCk08yVA2iVpM3lAxWeSEz6zHOSjr2/o3IfPKaf6APFAYT3WllIgAIyOO+6IsV+PDbY1x8XAoEjyzMYJOu73ewIi813bK/QkVNaGFI5PmG9qC4Hb4E+Jdtcp2QuT0kn5Wz8+qo77/UE8ZGp3RtfhWZPVLRsGjRTNJQffK0S6Y99VjkCyFH9nIC9wSEpCk6KvGo9NxiR60X2FFDuML8H3oXXkQ6FgorF6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DQtmM6YxLmySA1Vuq7uzCm/RSj0khAM/y0uXrFWDct0=;
- b=Tg25HEkPTj7dMvxcAgyiaHD1qchNveDi+IhyLmJ8IPKM1BylB/tcQ5VFgCP/v4QcCYg/wgvyeJm0ii+WanKAERQpRmyavnLNfo4vqFMkKmcv84xAzj0cOj6Xtd6JCP+wRA6zdyk76jXDeI+aGS/Y3PFtdaU3FB4EwVWcSXsBa7IRVKJ443CEURdI4JFd1Ertftlb6+Q3utwVJJAligQZ5alLuvxH1qlkmLNxk9ziJzuexXI1A1sTfuAwPcTuazKiJpRwZMIC5gQZSFe/xF+vKQW5ZaxtJpMNiF7zF5gt3FFiocobm4kcsANCRDEeRzPpcaf85WupF/MK5imdcio/ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DQtmM6YxLmySA1Vuq7uzCm/RSj0khAM/y0uXrFWDct0=;
- b=BfGXtqJRS5Yx/Hy/5408fDdyXwUlt6kIpERB3tz68hSnmu+3zHQhaYbr5M6FHRcjLrYBWMYaKX2x6tqU1uXJUhLYKCSqtGSrxhwnsq0HT9Km2s9QmqdJul7WSPp1ZSbdAUFM3QuJl318afeUxr/Ac0COuQVLj98j5DAMO9J8HFI=
-Authentication-Results: nvidia.com; dkim=none (message not signed)
- header.d=none;nvidia.com; dmarc=none action=none header.from=synaptics.com;
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
- by DM6PR03MB4442.namprd03.prod.outlook.com (2603:10b6:5:10a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.15; Fri, 25 Sep
- 2020 09:27:53 +0000
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3391.028; Fri, 25 Sep 2020
- 09:27:53 +0000
-Date:   Fri, 25 Sep 2020 17:27:24 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-Message-ID: <20200925172724.5bdf6aab@xhacker.debian>
-In-Reply-To: <20200925171712.254a018d@xhacker.debian>
-References: <20200924190421.549cb8fc@xhacker.debian>
-        <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
-        <20200925171712.254a018d@xhacker.debian>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TY2PR06CA0023.apcprd06.prod.outlook.com
- (2603:1096:404:42::35) To DM6PR03MB4555.namprd03.prod.outlook.com
- (2603:10b6:5:102::17)
+        id S1728193AbgIYLcP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 25 Sep 2020 07:32:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46948 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728139AbgIYLcO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 25 Sep 2020 07:32:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 70A8DAD1B;
+        Fri, 25 Sep 2020 11:32:09 +0000 (UTC)
+Subject: Re: [PATCH v2 1/3] dma-buf: Add struct dma-buf-map for storing struct
+ dma_buf.vaddr_ptr
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        sumit.semwal@linaro.org, afd@ti.com, corbet@lwn.net,
+        benjamin.gaignard@linaro.org, lmark@codeaurora.org,
+        labbott@redhat.com, Brian.Starkey@arm.com, john.stultz@linaro.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, tfiga@chromium.org, mchehab@kernel.org,
+        matthew.auld@intel.com, robin.murphy@arm.com,
+        thomas.hellstrom@intel.com, sam@ravnborg.org, kraxel@redhat.com
+Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
+        etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org
+References: <20200923123205.30671-1-tzimmermann@suse.de>
+ <20200923123205.30671-2-tzimmermann@suse.de>
+ <fa595f8a-3360-dc9f-2b85-0cdda28da3e5@amd.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <3037ab4c-8f9f-b794-32f6-3c0a3c7c9386@suse.de>
+Date:   Fri, 25 Sep 2020 13:32:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (124.74.246.114) by TY2PR06CA0023.apcprd06.prod.outlook.com (2603:1096:404:42::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.22 via Frontend Transport; Fri, 25 Sep 2020 09:27:42 +0000
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-X-Originating-IP: [124.74.246.114]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 08b5c9c0-366c-4ceb-680c-08d8613546fb
-X-MS-TrafficTypeDiagnostic: DM6PR03MB4442:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB4442C9D838716EA6EA073FABED360@DM6PR03MB4442.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: iJSGkfRAHDXDHjqUDFfaQ4pnN7SpUhEkOYEiP8cPOHJO1V3WxXkRm7gxobdsF/Pc5WS7b0vdGyl0J9niToq7p9cKLXI4XHs2SqEcTWSZ5PJKLA0HB/665ZGRc0oYW7Ydzaj4/MpOPfCCFXFrJjQyBy8Q++3JCh/q1k2ABbNONyaum0u79GCHtIMKyn3JarFkWuX6RT4T2XOJb6LDSJtunIx5z2C8pbg3+Qtlbicg1bz04WAeM4Y0dIQhHA6zR0Xc2TdEy/DMEZKjNi5rfAcdg08pKqdWUNPhfWdyoop6OFYemhJddDSJZudXGpMIoow5cmvoGqFJflv4PstV6YhqXbj+ERg+9Ihd06OyrwWRFEwtYSGSHbzw69zdRuPZ7pDU
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39860400002)(136003)(346002)(366004)(396003)(316002)(9686003)(8936002)(55016002)(4326008)(83380400001)(6916009)(54906003)(66556008)(66476007)(66946007)(5660300002)(7406005)(6506007)(8676002)(1076003)(2906002)(956004)(16526019)(26005)(52116002)(6666004)(186003)(7696005)(53546011)(7416002)(478600001)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: GiG8+SfVuXOIaBCnAUuUBwmzRd4zisLOF7dcvTvyp5tJk1CmsQdVVw2nXL7WfO3o/jE4lWyLcfNSyINmEcNjRWgo3jvfwLNapKTVCoakd/xJ4XMKD/DBNmViHjtIxljHnEPFMO6M4hUb+7hxHuwzWE/DVWJXlnmdYuJew5m1eShcxqYMV7rCJ1RNKpYpZTX09i+hLJcc4O+wLUOU0ryN5psXVAidVXyYJ7lDcCyMA2H5AxnIzS2L3WOmqh81XmD2dFb1lH4MyzweSqEU6UBsJSkS6yp20jJIwgvw3bbt/s9UrDD1PKgjWyoQRufaOVmn8p9oI4CEGwBZFhCxZ0tH4rsoNPOJwf+VbcXEWDn02/2sU1y6JxtUbbnXibj1Mw285Ah0eJhzFqQ6YZKSgG6TMw4gmvzgbfMI+NRbmZPdIE/sAn5CSWRSKr9tiNKBVXsnO5s01m2rRU0qBnnxkTN+ABntem7CheF6rKWLLBFIfi6RuY3kMsPhR0raRkj0N93cG82pbb3fJXqJMQl0mYkp2uoSRgqBoMqd6hi6O1czdj0Caa6GYgkTA7/eODveC4gEuN/2V54NXS4QYxLdbNc5YaukSJrDLqeM1sYl/KMtN+tJ6kndsSrEZ6LyBLHzzowKKy8pxeQAwknGW4V6NpkbwQ==
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08b5c9c0-366c-4ceb-680c-08d8613546fb
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2020 09:27:53.2243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rofo6AOMlWuSpQFgUURNt+ONytHUCHAdLDZZq3JgCZcsUePwfWT1xvPp1a6pzS8+8xDKQYSS4KOh3B06ksq4EA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4442
+In-Reply-To: <fa595f8a-3360-dc9f-2b85-0cdda28da3e5@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="49giZWWPeWjVVqaE8hkWJZ8vcyv1KOI11"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 25 Sep 2020 17:17:12 +0800
-Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--49giZWWPeWjVVqaE8hkWJZ8vcyv1KOI11
+Content-Type: multipart/mixed; boundary="a0B5SjwbJ043BiHrfHGQFb73vMfEbDQR3";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ sumit.semwal@linaro.org, afd@ti.com, corbet@lwn.net,
+ benjamin.gaignard@linaro.org, lmark@codeaurora.org, labbott@redhat.com,
+ Brian.Starkey@arm.com, john.stultz@linaro.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@linux.ie,
+ daniel@ffwll.ch, l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+ christian.gmeiner@gmail.com, jani.nikula@linux.intel.com,
+ joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, pawel@osciak.com,
+ m.szyprowski@samsung.com, kyungmin.park@samsung.com, tfiga@chromium.org,
+ mchehab@kernel.org, matthew.auld@intel.com, robin.murphy@arm.com,
+ thomas.hellstrom@intel.com, sam@ravnborg.org, kraxel@redhat.com
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
+ etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org
+Message-ID: <3037ab4c-8f9f-b794-32f6-3c0a3c7c9386@suse.de>
+Subject: Re: [PATCH v2 1/3] dma-buf: Add struct dma-buf-map for storing struct
+ dma_buf.vaddr_ptr
+References: <20200923123205.30671-1-tzimmermann@suse.de>
+ <20200923123205.30671-2-tzimmermann@suse.de>
+ <fa595f8a-3360-dc9f-2b85-0cdda28da3e5@amd.com>
+In-Reply-To: <fa595f8a-3360-dc9f-2b85-0cdda28da3e5@amd.com>
 
-> CAUTION: Email originated externally, do not click links or open attachments unless you recognize the sender and know the content is safe.
-> 
-> 
-> Hi Jon,
-> 
-> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
-> 
-> 
-> >
-> > On 24/09/2020 12:05, Jisheng Zhang wrote:  
-> > > Improve the msi code:
-> > > 1. Add proper error handling.
-> > > 2. Move dw_pcie_msi_init() from each users to designware host to solve
-> > > msi page leakage in resume path.  
-> >
-> > Apologies if this is slightly off topic, but I have been meaning to ask
-> > about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, whenever we
-> > hotplug CPUs we see the following warnings ...
-> >
-> >  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
-> >  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
-> >
-> > These interrupts are the MSIs ...
-> >
-> > 70:          0          0          0          0          0          0          0          0   PCI-MSI 134217728 Edge      PCIe PME, aerdrv
-> > 71:          0          0          0          0          0          0          0          0   PCI-MSI 134742016 Edge      ahci[0001:01:00.0]
-> >
-> > This caused because ...
-> >
-> >  static int dw_pci_msi_set_affinity(struct irq_data *d,
-> >                                     const struct cpumask *mask, bool force)
-> >  {
-> >          return -EINVAL;
-> >  }
-> >
-> > Now the above is not unique to the DWC PCI host driver, it appears that
-> > most PCIe drivers also do the same. However, I am curious if there is
-> > any way to avoid the above warnings given that setting the affinity does
-> > not appear to be supported in anyway AFAICT.
-> >  
-> 
-> 
-> Could you please try below patch?
-> 
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index bf25d783b5c5..7e5dc54d060e 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -197,7 +197,6 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
->         .name = "DWPCI-MSI",
->         .irq_ack = dw_pci_bottom_ack,
->         .irq_compose_msi_msg = dw_pci_setup_msi_msg,
-> -       .irq_set_affinity = dw_pci_msi_set_affinity,
->         .irq_mask = dw_pci_bottom_mask,
->         .irq_unmask = dw_pci_bottom_unmask,
->  };
+--a0B5SjwbJ043BiHrfHGQFb73vMfEbDQR3
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-A complete patch w/o compiler warning:
+Hi
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index bf25d783b5c5..18f719cfed0b 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -137,12 +137,6 @@ static void dw_pci_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
- 		(int)d->hwirq, msg->address_hi, msg->address_lo);
- }
- 
--static int dw_pci_msi_set_affinity(struct irq_data *d,
--				   const struct cpumask *mask, bool force)
--{
--	return -EINVAL;
--}
--
- static void dw_pci_bottom_mask(struct irq_data *d)
- {
- 	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
-@@ -197,7 +191,6 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
- 	.name = "DWPCI-MSI",
- 	.irq_ack = dw_pci_bottom_ack,
- 	.irq_compose_msi_msg = dw_pci_setup_msi_msg,
--	.irq_set_affinity = dw_pci_msi_set_affinity,
- 	.irq_mask = dw_pci_bottom_mask,
- 	.irq_unmask = dw_pci_bottom_unmask,
- };
+Am 23.09.20 um 16:27 schrieb Christian K=C3=B6nig:
+> Am 23.09.20 um 14:32 schrieb Thomas Zimmermann:
+>> The new type struct dma_buf_map represents a mapping of dma-buf memory=
+
+>> into kernel space. It contains a flag, is_iomem, that signals users to=
+
+>> access the mapped memory with I/O operations instead of regular loads
+>> and stores.
+>>
+>> It was assumed that DMA buffer memory can be accessed with regular loa=
+d
+>> and store operations. Some architectures, such as sparc64, require the=
+
+>> use of I/O operations to access dma-map buffers that are located in I/=
+O
+>> memory. Providing struct dma_buf_map allows drivers to implement this.=
+
+>> This was specifically a problem when refreshing the graphics framebuff=
+er
+>> on such systems. [1]
+>>
+>> As the first step, struct dma_buf stores an instance of struct
+>> dma_buf_map
+>> internally. Afterwards, dma-buf's vmap and vunmap interfaces are be
+>> converted. Finally, affected drivers can be fixed.
+>>
+>> [1]
+>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flo=
+re.kernel.org%2Fdri-devel%2F20200725191012.GA434957%40ravnborg.org%2F&amp=
+;data=3D02%7C01%7Cchristian.koenig%40amd.com%7C54486b9682654f3950b808d85f=
+bcb1d3%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637364611338153209&am=
+p;sdata=3D%2BZm7t8OcgkIxnY%2FdZSLhSbKC7t1y4VW5lINFKwCQv3A%3D&amp;reserved=
+=3D0
+>>
+>=20
+> Only two nit picks below, apart from that Reviewed-by: Christian K=C3=B6=
+nig
+> <christian.koenig@amd.com>
+>=20
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
+>> ---
+>> =C2=A0 Documentation/driver-api/dma-buf.rst |=C2=A0 3 +
+>> =C2=A0 drivers/dma-buf/dma-buf.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 ++---
+>> =C2=A0 include/linux/dma-buf-map.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 87 ++++++++++++++++++++++++++++
+>> =C2=A0 include/linux/dma-buf.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +-
+>> =C2=A0 4 files changed, 99 insertions(+), 8 deletions(-)
+>> =C2=A0 create mode 100644 include/linux/dma-buf-map.h
+>>
+>> diff --git a/Documentation/driver-api/dma-buf.rst
+>> b/Documentation/driver-api/dma-buf.rst
+>> index 13ea0cc0a3fa..3244c600a9a1 100644
+>> --- a/Documentation/driver-api/dma-buf.rst
+>> +++ b/Documentation/driver-api/dma-buf.rst
+>> @@ -115,6 +115,9 @@ Kernel Functions and Structures Reference
+>> =C2=A0 .. kernel-doc:: include/linux/dma-buf.h
+>> =C2=A0=C2=A0=C2=A0=C2=A0 :internal:
+>> =C2=A0 +.. kernel-doc:: include/linux/dma-buf-map.h
+>> +=C2=A0=C2=A0 :internal:
+>> +
+>> =C2=A0 Reservation Objects
+>> =C2=A0 -------------------
+>> =C2=A0 diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-bu=
+f.c
+>> index 58564d82a3a2..5e849ca241a0 100644
+>> --- a/drivers/dma-buf/dma-buf.c
+>> +++ b/drivers/dma-buf/dma-buf.c
+>> @@ -1207,12 +1207,12 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&dmabuf->lock);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dmabuf->vmapping_counter) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmabuf->vmappin=
+g_counter++;
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(!dmabuf->vmap_ptr);=
+
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ptr =3D dmabuf->vmap_ptr;
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(dma_buf_map_is_null=
+(&dmabuf->vmap_ptr));
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ptr =3D dmabuf->vmap_ptr.v=
+addr;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out_unlock=
+;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0 -=C2=A0=C2=A0=C2=A0 BUG_ON(dmabuf->vmap_ptr);
+>> +=C2=A0=C2=A0=C2=A0 BUG_ON(dma_buf_map_is_set(&dmabuf->vmap_ptr));
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ptr =3D dmabuf->ops->vmap(dmabuf=
+);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (WARN_ON_ONCE(IS_ERR(ptr)))
+>> @@ -1220,7 +1220,7 @@ void *dma_buf_vmap(struct dma_buf *dmabuf)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!ptr)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out_unlock=
+;
+>> =C2=A0 -=C2=A0=C2=A0=C2=A0 dmabuf->vmap_ptr =3D ptr;
+>> +=C2=A0=C2=A0=C2=A0 dmabuf->vmap_ptr.vaddr =3D ptr;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmabuf->vmapping_counter =3D 1;
+>> =C2=A0 =C2=A0 out_unlock:
+>> @@ -1239,15 +1239,15 @@ void dma_buf_vunmap(struct dma_buf *dmabuf,
+>> void *vaddr)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (WARN_ON(!dmabuf))
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> =C2=A0 -=C2=A0=C2=A0=C2=A0 BUG_ON(!dmabuf->vmap_ptr);
+>> +=C2=A0=C2=A0=C2=A0 BUG_ON(dma_buf_map_is_null(&dmabuf->vmap_ptr));
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUG_ON(dmabuf->vmapping_counter =3D=3D =
+0);
+>> -=C2=A0=C2=A0=C2=A0 BUG_ON(dmabuf->vmap_ptr !=3D vaddr);
+>> +=C2=A0=C2=A0=C2=A0 BUG_ON(!dma_buf_map_is_vaddr(&dmabuf->vmap_ptr, va=
+ddr));
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&dmabuf->lock);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (--dmabuf->vmapping_counter =3D=3D 0=
+) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dmabuf->ops=
+->vunmap)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 dmabuf->ops->vunmap(dmabuf, vaddr);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmabuf->vmap_ptr =3D NULL;=
+
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma_buf_map_clear(&dmabuf-=
+>vmap_ptr);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_unlock(&dmabuf->lock);
+>> =C2=A0 }
+>> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h=
+
+>> new file mode 100644
+>> index 000000000000..d4b1bb3cc4b0
+>> --- /dev/null
+>> +++ b/include/linux/dma-buf-map.h
+>> @@ -0,0 +1,87 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Pointer to dma-buf-mapped memory, plus helpers.
+>> + */
+>> +
+>> +#ifndef __DMA_BUF_MAP_H__
+>> +#define __DMA_BUF_MAP_H__
+>> +
+>> +#include <linux/io.h>
+>> +
+>> +/**
+>> + * struct dma_buf_map - Pointer to vmap'ed dma-buf memory.
+>> + * @vaddr_iomem:=C2=A0=C2=A0=C2=A0 The buffer's address if in I/O mem=
+ory
+>> + * @vaddr:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The buffer's add=
+ress if in system memory
+>> + * @is_iomem:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 True if the d=
+ma-buf memory is located in I/O
+>> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+memory, or false otherwise.
+>> + *
+>> + * Calling dma-buf's vmap operation returns a pointer to the buffer.
+>> + * Depending on the location of the buffer, users may have to access =
+it
+>> + * with I/O operations or memory load/store operations. struct
+>> dma_buf_map
+>> + * stores the buffer address and a flag that signals the required
+>> access.
+>> + */
+>> +struct dma_buf_map {
+>> +=C2=A0=C2=A0=C2=A0 union {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void __iomem *vaddr_iomem;=
+
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void *vaddr;
+>> +=C2=A0=C2=A0=C2=A0 };
+>> +=C2=A0=C2=A0=C2=A0 bool is_iomem;
+>> +};
+>> +
+>> +/* API transition helper */
+>> +static inline bool dma_buf_map_is_vaddr(const struct dma_buf_map
+>> *map, const void *vaddr)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 return !map->is_iomem && (map->vaddr =3D=3D vaddr)=
+;
+>> +}
+>> +
+>> +/**
+>> + * dma_buf_map_is_null - Tests for a dma-buf mapping to be NULL
+>> + * @map:=C2=A0=C2=A0=C2=A0 The dma-buf mapping structure
+>> + *
+>> + * Depending on the state of struct dma_buf_map.is_iomem, tests if th=
+e
+>> + * mapping is NULL.
+>> + *
+>> + * Returns:
+>> + * True if the mapping is NULL, or false otherwise.
+>> + */
+>> +static inline bool dma_buf_map_is_null(const struct dma_buf_map *map)=
+
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 if (map->is_iomem)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return map->vaddr_iomem =3D=
+=3D NULL;
+>> +=C2=A0=C2=A0=C2=A0 return map->vaddr =3D=3D NULL;
+>=20
+> This looks like overkill since both pointers are part of the same union=
+=2E
+>=20
+> I suggest to test only one and add a comment.
+
+I've been trying to separate I/O and system memory as much as possible.
+I'd rather leave it as it is.
+
+Best regards
+Thomas
+
+>=20
+>> +}
+>> +
+>> +/**
+>> + * dma_buf_map_is_set - Tests is the dma-buf mapping has been set
+>> + * @map:=C2=A0=C2=A0=C2=A0 The dma-buf mapping structure
+>> + *
+>> + * Depending on the state of struct dma_buf_map.is_iomem, tests if th=
+e
+>> + * mapping has been set.
+>> + *
+>> + * Returns:
+>> + * True if the mapping is been set, or false otherwise.
+>> + */
+>> +static inline bool dma_buf_map_is_set(const struct dma_buf_map *map)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 return !dma_buf_map_is_null(map);
+>> +}
+>> +
+>> +/**
+>> + * dma_buf_map_clear - Clears a dma-buf mapping structure
+>> + * @map:=C2=A0=C2=A0=C2=A0 The dma-buf mapping structure
+>> + *
+>> + * Clears all fields to zero; including struct dma_buf_map.is_iomem. =
+So
+>> + * mapping structures that were set to point to I/O memory are reset =
+for
+>> + * system memory. Pointers are cleared to NULL. This is the default.
+>> + */
+>> +static inline void dma_buf_map_clear(struct dma_buf_map *map)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 if (map->is_iomem) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 map->vaddr_iomem =3D NULL;=
+
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 map->is_iomem =3D false;
+>> +=C2=A0=C2=A0=C2=A0 } else {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 map->vaddr =3D NULL;
+>> +=C2=A0=C2=A0=C2=A0 }
+>=20
+> Maybe just use memset() on the structure.
+>=20
+> Christian.
+>=20
+>> +}
+>> +
+>> +#endif /* __DMA_BUF_MAP_H__ */
+>> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+>> index 957b398d30e5..fcc2ddfb6d18 100644
+>> --- a/include/linux/dma-buf.h
+>> +++ b/include/linux/dma-buf.h
+>> @@ -13,6 +13,7 @@
+>> =C2=A0 #ifndef __DMA_BUF_H__
+>> =C2=A0 #define __DMA_BUF_H__
+>> =C2=A0 +#include <linux/dma-buf-map.h>
+>> =C2=A0 #include <linux/file.h>
+>> =C2=A0 #include <linux/err.h>
+>> =C2=A0 #include <linux/scatterlist.h>
+>> @@ -309,7 +310,7 @@ struct dma_buf {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct dma_buf_ops *ops;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mutex lock;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned vmapping_counter;
+>> -=C2=A0=C2=A0=C2=A0 void *vmap_ptr;
+>> +=C2=A0=C2=A0=C2=A0 struct dma_buf_map vmap_ptr;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *exp_name;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spinlock_t name_lock;
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--a0B5SjwbJ043BiHrfHGQFb73vMfEbDQR3--
+
+--49giZWWPeWjVVqaE8hkWJZ8vcyv1KOI11
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9t1TUUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiMsXAf/Rp7g/ueCyrDxiqYgnjHhJodeYxjU
+ITNTefS6a2Pp2f4c2nPOpQrsLZAQI88rALoDareFIFLDt+5hLYXBlr9ZP8PhpU/z
+L6SIxyUIFJ0d7doD9OIUPmedRXHkvOshGXnQ1RpNQYA07Aw1QrQeKBdt/nJY6IiJ
+4sKVQznERwRv1a3FaUer40F22SuuAbWrH1MQ+TYjbW2nlJx5b4YTQkyOdCdpD8az
+Vh/OF7XKAVPYndTILizxt9Wym1E5FRsdPrmsb9+T4SoUZqjvpbvih26gS5A2NmbY
+GJJ4Lp5Huc8h/5ZtRHwLECD+RzwXESpcAJAgGfRkInpx9bAaB3BAA3sDSw==
+=PsUA
+-----END PGP SIGNATURE-----
+
+--49giZWWPeWjVVqaE8hkWJZ8vcyv1KOI11--
