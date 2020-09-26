@@ -2,86 +2,79 @@ Return-Path: <SRS0=NmuO=DD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A9DC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 13:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF08BC2D0A8
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 14:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 642FD2168B
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 13:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A132820BED
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 14:48:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oBp6M429"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Da2dQsvt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbgIZNrw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 26 Sep 2020 09:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43842 "EHLO
+        id S1726210AbgIZOsW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 26 Sep 2020 10:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgIZNrv (ORCPT
+        with ESMTP id S1725208AbgIZOsU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 26 Sep 2020 09:47:51 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C9BDC0613CE;
-        Sat, 26 Sep 2020 06:47:51 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id y2so5939260lfy.10;
-        Sat, 26 Sep 2020 06:47:51 -0700 (PDT)
+        Sat, 26 Sep 2020 10:48:20 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C6BC0613CE;
+        Sat, 26 Sep 2020 07:48:20 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id y4so4799397ljk.8;
+        Sat, 26 Sep 2020 07:48:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lNbXhJArblGcxeZheeo2BpWV11J4mxo5UBEIbVkUdsg=;
-        b=oBp6M429G1+h4azfP/C5b2+24+Fz6tHTQYZXp6E9HDH6MhMFGC5F3sszOUygMDlfpY
-         o7y39C4qbqRXeRzLRI4CtYvvsqZNbu0XXOyiAcztl1jFm1Bg8vu5SqNs6FCloMAlF5qc
-         8H8rbYed437z7dNLf6t5C7RQr01TEA0Pvklx4UL2QWLMu0KKsKgL7AGQzMjplst9i/ff
-         xk1hnZJBY5Hx3UfL3BOqYkQmjSAvN/QlHagqwR1HMDxeJt5dN6hjRmVjBTznWStAAH+M
-         F3DY/QCeyFtkVVBtmndIv2Yojumr8pE8mBNZyFtG2Lt46L65OjsijM9YNrFLg3oa6yhR
-         QoRQ==
+        bh=GmeWL4e97JOYksVRJPh3LZ20PhqAWfrd18WuURhNUqs=;
+        b=Da2dQsvtt390rs2pLfGxg5H7LfvRU97nWrWHhLdOnlueFbA5n9xzbVj8G0EQEi9A2B
+         T4ElpmoXvzicZoTHgevuKH3Vn16UztVYNlv0WLDASryYQFE6tRVOvaQQNms5YL9L78h+
+         kxAUQMzroE7n+meun8leaDB24i+tI2Zngfqe8YoywblLHNI8JWUB99eGUFsaD3bnfmi3
+         PIEwvwfL9oteyke579GB9C4SPjMl12LTNBtJJISDaWCsdtaYMKzgx1+p7ZSnLjRDQa8L
+         HC5xhyVTO1AO0PLg0rFXdLkGNSTd0QTXS+9mm6/J7/wo5r47+nh+2ICLhf7oV3hadLZz
+         lL4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lNbXhJArblGcxeZheeo2BpWV11J4mxo5UBEIbVkUdsg=;
-        b=jSerRX00QXOTcqlCmnVjragk1DTJIXrVhdtubd1adQXx8Tntnn6/UGdTqlAXe4iP+0
-         bPmEB2Y9qfA30tI8wiicHu7PlhJZRBmWFzUfSETqEva1ztW5RWYlrAG2hy/56xayU/vq
-         BI3meNueyDKwu4UMvH/IVvpADXBvQMPm6+zeVoZqZtMFl4YulWiH8DHvp1C3Gf659ndl
-         8/GcBxKbhMeTMbD7ImbOPMSL05RCc80ZuqjtihLRDPYNJg4PxPbLwtuWvD/7ahKMMpvb
-         k3Z7EhhdPJXHRmHgH+QDNPJYL2hu4R/xDxkSXO7E//yMlkdeSq9D159tnQnGpVhrkUx6
-         tfZg==
-X-Gm-Message-State: AOAM530XhP06Kr8vj+Ls4cl8NyvTYvXT77kdqyKYzQWAEsLXJQQFUQYB
-        nsoc57B5POXYMgq1qsYpZ987M7EKx6Q=
-X-Google-Smtp-Source: ABdhPJzZAAbv71OtrERAMczlk029GPxqrzyFd4H7DB09Xp64+SklRLmRTHEzBlZkOpogwqAB9GwMtg==
-X-Received: by 2002:ac2:51a8:: with SMTP id f8mr1303670lfk.472.1601128069735;
-        Sat, 26 Sep 2020 06:47:49 -0700 (PDT)
+        bh=GmeWL4e97JOYksVRJPh3LZ20PhqAWfrd18WuURhNUqs=;
+        b=TO1ufPHyB0OfE/OkAwYCbWAgM3+FOGRvPQ9F0Qpy7M8Lgcn/1156wgR3o3fN+YKhvm
+         r0nkzpP7zys1/kPCBqXJEeQX5WpCMO2hhT3CvhHnQqqTg4ESKvXVDYkWb/bL+LSV7N3R
+         b2yG7W9tdH84nLfvl1ta7LOa9fl9WRM3f5t+If2raEkzAdmztqaYfvxN1bMlmoMjznkb
+         SCXdyq82pJzz8mRPfhhdqu7BhGT87RptT4AEn4SppiXj/F5UYLVmAi+wwFZZ1YeUYYBg
+         INuaB74OINhlvrBucaayZcXvD9u3u2peMxJMKOA0za9JQat1dtsRVeOp+plAYKfkOhVs
+         PJGQ==
+X-Gm-Message-State: AOAM533S9oAi5qc3BsGcrj5OnxYAxTswMCQXP1YqlJBaoMkLfjDcOpP4
+        7pstra+aCzUC7Q/fQJ5mF9w=
+X-Google-Smtp-Source: ABdhPJysZ6qsJ8tmdwEUN8O9JQINNopqSw7epUEiCL+BXo31HbEM/8IxY+vVbIbm9TmEqyjilNGz9g==
+X-Received: by 2002:a05:651c:1397:: with SMTP id k23mr2998474ljb.263.1601131698679;
+        Sat, 26 Sep 2020 07:48:18 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id v17sm1659052lfr.42.2020.09.26.06.47.48
+        by smtp.googlemail.com with ESMTPSA id n4sm1757440lfe.246.2020.09.26.07.48.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Sep 2020 06:47:48 -0700 (PDT)
-Subject: Re: [PATCH v2 1/3] ARM: tegra: Add device-tree for Ouya
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bob Ham <rah@settrans.net>,
-        Leonardo Bras <leobras.c@gmail.com>,
-        Michael Brougham <jusplainmike@gmail.com>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200923210352.1176386-1-pgwipeout@gmail.com>
- <20200923210352.1176386-2-pgwipeout@gmail.com>
- <df2d6a8d-8a6c-464b-8f35-a7994ea01534@gmail.com>
- <CAMdYzYosBUUudsRnf9RQ1HKYq8cS4uXRm-9Mg1=hZy+v_Q_X6g@mail.gmail.com>
+        Sat, 26 Sep 2020 07:48:18 -0700 (PDT)
+Subject: Re: [PATCH 3/5] iommu/tegra-smmu: Use iommu_fwspec in
+ .probe_/.attach_device()
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
+        joro@8bytes.org, krzk@kernel.org
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jonathanh@nvidia.com
+References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
+ <20200926080719.6822-4-nicoleotsuka@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <83a5ee67-e30d-db43-a210-345304ed6edd@gmail.com>
-Date:   Sat, 26 Sep 2020 16:47:48 +0300
+Message-ID: <ccb95c4e-64ba-bab9-1f75-0c6d287540b0@gmail.com>
+Date:   Sat, 26 Sep 2020 17:48:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAMdYzYosBUUudsRnf9RQ1HKYq8cS4uXRm-9Mg1=hZy+v_Q_X6g@mail.gmail.com>
+In-Reply-To: <20200926080719.6822-4-nicoleotsuka@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -89,25 +82,69 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-26.09.2020 05:01, Peter Geis пишет:
+26.09.2020 11:07, Nicolin Chen пишет:
 ...
->>> +             pmic: pmic@2d {
->>> +                     compatible = "ti,tps65911";
->>> +                     reg = <0x2d>;
->>> +
->>> +                     interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
->>> +                     #interrupt-cells = <2>;
->>> +                     interrupt-controller;
->>> +
->>> +                     ti,system-power-controller;
->>
->> Are the ti,sleep-keep-ck32k and other properties not needed for Ouya
->> like they are needed for Nexus 7?
-> 
-> Ouya is wall powered, so ultra low power isn't terribly necessary.
-> Also with LP1 and LP0 not working, it doesn't make much sense to
-> implement this yet.
+> +	/* NULL smmu pointer means that SMMU driver is not probed yet */
+> +	if (unlikely(!smmu))
+> +		return ERR_PTR(-EPROBE_DEFER);
 
-The keep-ck32 is not about power saving. If PMC is running off PMIC's
-oscillator during LP1 suspend, then this should be one of the reasons
-why LP1 doesn't work for you.
+Hello, Nicolin!
+
+Please don't pollute code with likely/unlikely. This is not a
+performance-critical code.
+
+...
+> -static struct platform_driver tegra_mc_driver = {
+> +struct platform_driver tegra_mc_driver = {
+>  	.driver = {
+>  		.name = "tegra-mc",
+>  		.of_match_table = tegra_mc_of_match,
+> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+> index 1238e35653d1..49a4cf64c4b9 100644
+> --- a/include/soc/tegra/mc.h
+> +++ b/include/soc/tegra/mc.h
+> @@ -184,4 +184,6 @@ struct tegra_mc {
+>  int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
+>  unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
+>  
+> +extern struct platform_driver tegra_mc_driver;
+
+No global variables, please. See for the example:
+
+https://elixir.bootlin.com/linux/v5.9-rc6/source/drivers/devfreq/tegra20-devfreq.c#L100
+
+The tegra_get_memory_controller() is now needed by multiple Tegra
+drivers, I think it should be good to have it added into the MC driver
+and then make it globally available for all drivers by making use of
+of_find_matching_node_and_match().
+
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index e1db209fd2ea..ed1bd6d00aaf 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -43,6 +43,29 @@ static const struct of_device_id tegra_mc_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+
++struct tegra_mc *tegra_get_memory_controller(void)
++{
++	struct platform_device *pdev;
++	struct device_node *np;
++	struct tegra_mc *mc;
++
++	np = of_find_matching_node_and_match(NULL, tegra_mc_of_match, NULL);
++	if (!np)
++		return ERR_PTR(-ENOENT);
++
++	pdev = of_find_device_by_node(np);
++	of_node_put(np);
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
++
++	mc = platform_get_drvdata(pdev);
++	if (!mc)
++		return ERR_PTR(-EPROBE_DEFER);
++
++	return mc;
++}
++EXPORT_SYMBOL_GPL(tegra_get_memory_controller);
