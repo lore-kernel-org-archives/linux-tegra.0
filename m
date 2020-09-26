@@ -2,175 +2,96 @@ Return-Path: <SRS0=NmuO=DD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EFBC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 07:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16C1C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 411D520882
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 07:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BCF8215A4
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7IRl9KG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgIZHS5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 26 Sep 2020 03:18:57 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:50996 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgIZHS5 (ORCPT
+        id S1726037AbgIZIM3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 26 Sep 2020 04:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48752 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725208AbgIZIM3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 26 Sep 2020 03:18:57 -0400
-X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Sep 2020 03:18:55 EDT
-Received: from ravnborg.org (unknown [188.228.123.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 25FB6200E6;
-        Sat, 26 Sep 2020 09:13:35 +0200 (CEST)
-Date:   Sat, 26 Sep 2020 09:13:34 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     sumit.semwal@linaro.org, christian.koenig@amd.com, afd@ti.com,
-        corbet@lwn.net, benjamin.gaignard@linaro.org, lmark@codeaurora.org,
-        labbott@redhat.com, Brian.Starkey@arm.com, john.stultz@linaro.org,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, l.stach@pengutronix.de,
-        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, pawel@osciak.com, m.szyprowski@samsung.com,
-        kyungmin.park@samsung.com, tfiga@chromium.org, mchehab@kernel.org,
-        matthew.auld@intel.com, robin.murphy@arm.com,
-        thomas.hellstrom@intel.com, kraxel@redhat.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-doc@vger.kernel.org, etnaviv@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
- memory
-Message-ID: <20200926071334.GA42915@ravnborg.org>
-References: <20200925115601.23955-1-tzimmermann@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200925115601.23955-1-tzimmermann@suse.de>
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=CaYmGojl c=1 sm=1 tr=0
-        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
-        a=kj9zAlcOel0A:10 a=VwQbUJbxAAAA:8 a=7gkXJVJtAAAA:8
-        a=VHCyA-Zl7a4LrUxzt10A:9 a=MWUCcgKsKLDUXRMs:21 a=VnMhorO1uwyDQjeY:21
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=E9Po1WZjFZOl8hwRPBS3:22
+        Sat, 26 Sep 2020 04:12:29 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94698C0613CE;
+        Sat, 26 Sep 2020 01:12:29 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id x22so5260990pfo.12;
+        Sat, 26 Sep 2020 01:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RqGonHimm7XKXd4Ikem1uzvHdZOfGO32j99S5gvNitA=;
+        b=j7IRl9KG/Se58SYA6QuKBw/YmiREdDFLHKttC0OcR475GvqIUmNwYl4EH6zKZRjWl4
+         UQwJt9nQm2pxOy/cEOr3j3PKZn+0ERaK79LiLsWCHjm304oGXxjYEEcsDN56k2eKixfa
+         hscI3xgUxuMp+t4T8gCXGGJvGmOPX2361HMj428IIAj83DHM1sXEuQCHZva8YCBaun89
+         6KRJ9Pbqp8czbZzATMwH0ToUTTkrUfvfyJrEWMq7k7lUTuneSPuS8oFfoxmGSwABPngq
+         ViS9j5mnTvkWndOh2eSLtjE26QFp35ccwIZh6u44Lz7Mo4g0X7aKAJW0CC9p96YclRt+
+         ftCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RqGonHimm7XKXd4Ikem1uzvHdZOfGO32j99S5gvNitA=;
+        b=CqP9lK0KuFevaZhtbtQgEQETvg6aeCCtPTT6cy+2ZglrQF/NadYQHUviwbhmTKmG0U
+         7L/t1sN4hJl7H9PRJV/l2rgNWg8N8viaIe7rJeUUJ4uoJtnS5CNreVcbmogXpaj/ak0T
+         8oon9CS4hZ+EvQOrwlIG9bCGFFCGGafDJdrxLOCK3Y8L8JV4Bo7IFLpKp7qHAbqwmkss
+         FeztjF+j+IixRnWCHvzWY3yXg53OrD1XTq5FHf8hu/SQ2hSnXn/5kpLIaC9SeMM6hb7r
+         y1/1/nCng9rt0zUW5YDOn9x5lByk4Va7xdXkr819wn/z7n6oRMkIW9sTlRSoPCAOWZNU
+         ygqg==
+X-Gm-Message-State: AOAM532R48yfzwUxTZX5imkZHNw8QHb28ewl0XEn/T8fUTzlIOdnhuAU
+        MdM7Kypy+9RRFVefOBnHC0U=
+X-Google-Smtp-Source: ABdhPJy9a1WcIQBjVdYr5QAtqHP0TJd+SJ/l8Mqb8n6WGtKnDdwx1qDk93Bdrq7G0FwZSdF8jpKI0g==
+X-Received: by 2002:aa7:97a8:0:b029:13e:d13d:a105 with SMTP id d8-20020aa797a80000b029013ed13da105mr2189367pfq.33.1601107949029;
+        Sat, 26 Sep 2020 01:12:29 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id i1sm4833497pfk.21.2020.09.26.01.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Sep 2020 01:12:28 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] iommu/tegra-smmu: Adding PCI support and mappings debugfs node
+Date:   Sat, 26 Sep 2020 01:07:14 -0700
+Message-Id: <20200926080719.6822-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas.
+This series of patches are some followup patches for tegra-smmu.
 
-Sorry for chiming in late here, have been offline for a while.
+There are four parts:
+1, PATCH-1 is a clean-up patch for the recently applied SWGROUP change.
+2, PATCH-2 fixes a potential race condition
+3, PATCH-3/4 adds PCI device support
+4, PATCH-5 adds a debugfs node for phys<=>iova mappings
 
-On Fri, Sep 25, 2020 at 01:55:57PM +0200, Thomas Zimmermann wrote:
-> Dma-buf provides vmap() and vunmap() for retriving and releasing mappings
-> of dma-buf memory in kernel address space. The functions operate with plain
-> addresses and the assumption is that the memory can be accessed with load
-> and store operations. This is not the case on some architectures (e.g.,
-> sparc64) where I/O memory can only be accessed with dedicated instructions.
-> 
-> This patchset introduces struct dma_buf_map, which contains the address of
-> a buffer and a flag that tells whether system- or I/O-memory instructions
-> are required.
+Each of the four parts is sort of functional independent, so we may
+apply them separately or incrementally depending on the reviews.
 
-The whole idea with a struct that can represent both a pointer to system
-memory and io memory is very nice.
-dma-buf is one user of this but we may/will see other users. So the
-naming seems of as this should be a concept independent of dma-buf.
+Nicolin Chen (5):
+  iommu/tegra-smmu: Unwrap tegra_smmu_group_get
+  iommu/tegra-smmu: Expend mutex protection range
+  iommu/tegra-smmu: Use iommu_fwspec in .probe_/.attach_device()
+  iommu/tegra-smmu: Add PCI support
+  iommu/tegra-smmu: Add pagetable mappings to debugfs
 
-And then the struct definition and all the helpers should be moved away
-from dma-buf.
+ drivers/iommu/tegra-smmu.c | 287 ++++++++++++++++++++++++++++---------
+ drivers/memory/tegra/mc.c  |   2 +-
+ include/soc/tegra/mc.h     |   2 +
+ 3 files changed, 221 insertions(+), 70 deletions(-)
 
-Maybe something like this:
+-- 
+2.17.1
 
-struct simap {
-       union {
-               void __iomem *vaddr_iomem;
-               void *vaddr;
-       };
-       bool is_iomem;
-};
-
-Where simap is a shorthand for system_iomem_map
-And it could al be stuffed into a include/linux/simap.h file.
-
-Not totally sold on the simap name - but wanted to come up with
-something.
-
-With this approach users do not have to pull in dma-buf to use it and
-users will not confuse that this is only for dma-buf usage.
-
-I am sorry for being late with the feedback.
-
-	Sam
-
-
-> Some background: updating the DRM framebuffer console on sparc64 makes the
-> kernel panic. This is because the framebuffer memory cannot be accessed with
-> system-memory instructions. We currently employ a workaround in DRM to
-> address this specific problem. [1]
-> 
-> To resolve the problem, we'd like to address it at the most common point,
-> which is the dma-buf framework. The dma-buf mapping ideally knows if I/O
-> instructions are required and exports this information to it's users. The
-> new structure struct dma_buf_map stores the buffer address and a flag that
-> signals I/O memory. Affected users of the buffer (e.g., drivers, frameworks)
-> can then access the memory accordingly.
-> 
-> This patchset only introduces struct dma_buf_map, and updates struct dma_buf
-> and it's interfaces. Further patches can update dma-buf users. For example,
-> there's a prototype patchset for DRM that fixes the framebuffer problem. [2]
-> 
-> Further work: TTM, one of DRM's memory managers, already exports an
-> is_iomem flag of its own. It could later be switched over to exporting struct
-> dma_buf_map, thus simplifying some code. Several DRM drivers expect their
-> fbdev console to operate on I/O memory. These could possibly be switched over
-> to the generic fbdev emulation, as soon as the generic code uses struct
-> dma_buf_map.
-> 
-> v3:
-> 	* update fastrpc driver (kernel test robot)
-> 	* expand documentation (Daniel)
-> 	* move documentation into separate patch
-> v2:
-> 	* always clear map parameter in dma_buf_vmap() (Daniel)
-> 	* include dma-buf-heaps and i915 selftests (kernel test robot)
-> 	* initialize cma_obj before using it in drm_gem_cma_free_object()
-> 	  (kernel test robot)
-> 
-> [1] https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg.org/
-> [2] https://lore.kernel.org/dri-devel/20200806085239.4606-1-tzimmermann@suse.de/
-> 
-> Thomas Zimmermann (4):
->   dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr
->   dma-buf: Use struct dma_buf_map in dma_buf_vmap() interfaces
->   dma-buf: Use struct dma_buf_map in dma_buf_vunmap() interfaces
->   dma-buf: Document struct dma_buf_map
-> 
->  Documentation/driver-api/dma-buf.rst          |   9 +
->  drivers/dma-buf/dma-buf.c                     |  42 ++--
->  drivers/dma-buf/heaps/heap-helpers.c          |  10 +-
->  drivers/gpu/drm/drm_gem_cma_helper.c          |  20 +-
->  drivers/gpu/drm/drm_gem_shmem_helper.c        |  17 +-
->  drivers/gpu/drm/drm_prime.c                   |  15 +-
->  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c   |  13 +-
->  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c    |  13 +-
->  .../drm/i915/gem/selftests/i915_gem_dmabuf.c  |  18 +-
->  .../gpu/drm/i915/gem/selftests/mock_dmabuf.c  |  14 +-
->  drivers/gpu/drm/tegra/gem.c                   |  23 ++-
->  .../common/videobuf2/videobuf2-dma-contig.c   |  17 +-
->  .../media/common/videobuf2/videobuf2-dma-sg.c |  19 +-
->  .../common/videobuf2/videobuf2-vmalloc.c      |  21 +-
->  drivers/misc/fastrpc.c                        |   6 +-
->  include/drm/drm_prime.h                       |   5 +-
->  include/linux/dma-buf-map.h                   | 193 ++++++++++++++++++
->  include/linux/dma-buf.h                       |  11 +-
->  18 files changed, 372 insertions(+), 94 deletions(-)
->  create mode 100644 include/linux/dma-buf-map.h
-> 
-> --
-> 2.28.0
