@@ -5,67 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF97CC47420
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECDEC4727F
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF74215A4
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92CF9208A9
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 08:12:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9gN1ml5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdQNx36G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbgIZIMh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 26 Sep 2020 04:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48772 "EHLO
+        id S1726309AbgIZIMc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 26 Sep 2020 04:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729263AbgIZIMe (ORCPT
+        with ESMTP id S1729121AbgIZIMc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 26 Sep 2020 04:12:34 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB27C0613CE;
-        Sat, 26 Sep 2020 01:12:33 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id 5so4370715pgf.5;
-        Sat, 26 Sep 2020 01:12:33 -0700 (PDT)
+        Sat, 26 Sep 2020 04:12:32 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 193C9C0613D4;
+        Sat, 26 Sep 2020 01:12:32 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id s31so102390pga.7;
+        Sat, 26 Sep 2020 01:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hn15A+vsHfLhY3Qf2WKiES6GK2r9N1/EPLi1y9sGZ+o=;
-        b=E9gN1ml5289yy634xD3SxLIOwpcQ28fm+5OJf0GUVpnRghCObspVzuiA4bxNrVSUIk
-         A4PFZp75Q8+OOTW/RcXdduTpvYmbKz1GlgpApbx1wllz4sBoBna4b02v8bCYpjamsiEz
-         rLpcovobdTgXmG4XIWKHOeNEsK56O1BoPBuuE4pmFkAFy8t/7F+5Elt6cbU7dHiZ5IRn
-         tpPVKnHoHC4KdSrb725ADTki2VliPGQvom6u4sW4SxERnhc3t6rZ1TyH0+C+IPdfxyVO
-         M0C1OQbZBBX2b4iImXCYmkiLGd49zuj5QHZMh4sKDs/q/96Uszso3HvKVD+d2WPjoCNP
-         tgHw==
+        bh=vtniy9MQG8g1im7mkourJLoiK6EQaD/OMzZkrwUt7dQ=;
+        b=FdQNx36G+PK+XfB5nyM1LE61yYlJaxKqsifAeu182MYWA6ILLnylD2ZiMvaARw7/kZ
+         Ugszx8LP0sZJvU69wy0XfbxKUlB/YtLymTg3wLqlROs3LXYgIiTy9Bl4a2XFHUEtbRd9
+         ulcnbkLiwWU0KjRfgyHi/CCAZEjpm2lcQN8PfFu/T53+0Tn8l+AieETDqJgpijBY86o3
+         jgMYmwwNXMiIEQj4+m8y1FMF6DHAzy2oxHqtdWzza5bT4pVaVSX18o/jJ1FiqaXODCGW
+         xZoRtNmxOWOeWfb+kj0AOU2AjzUx+rmYP1M9eYqio4EbK4fsCq5nePwsNaoR0gguzMce
+         qtMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hn15A+vsHfLhY3Qf2WKiES6GK2r9N1/EPLi1y9sGZ+o=;
-        b=OPvY4SAEc/BWEmQhmjmQQ/JYYs0wNc4bzzj3xM5WcnHN1flsrXO9WMWsf/QbB5WACf
-         8+eYMDXMngbk/dhEGRoFUCW1m8nG2xNW+WoSL0tMBqmFXblpFES/0lT3SBXh2C8NZTEC
-         KD9IbziwDWcSu4gT7eyRlq44gqDnyNKbF7fIlqZnHJmUFpQIWwyesa5WROHq9T1nVO4M
-         37FUXzwE0vq/mvk/WglfFt7nShryBV9YBDyhKnex4kfLspMjOIQP7jjFoDhKvogTvzw5
-         1Ixkwy13ePQSQGLAvVKp5FVI1VMLjkNm2gBMTUi+FJuvIcoMtbynOGVtoY35ECpNqAe5
-         71mA==
-X-Gm-Message-State: AOAM531hA08byonEjQ1EB2D0fNn/9x7CNaFpJEyhm9PCdoa1OxQljyog
-        Df6Np8mdG2295YNg4sB8X3tm6ay4DZE=
-X-Google-Smtp-Source: ABdhPJyH63/udFsunnlEF9CWjc0nbDNTUFXv6823ctOsZ47ZbwEKBQn1Iy/guE1oUd/7sUJUDxLhLw==
-X-Received: by 2002:a63:1604:: with SMTP id w4mr2057718pgl.148.1601107953334;
-        Sat, 26 Sep 2020 01:12:33 -0700 (PDT)
+        bh=vtniy9MQG8g1im7mkourJLoiK6EQaD/OMzZkrwUt7dQ=;
+        b=Ccehnl/GjIKaZtBNYpUJOPz5JTg3MfO6G8oVSBHSP5PBlQ3LMoNF/wTAFbdIly6G70
+         hbM0AxQnts+un9HGOaZBdiPcK+pppW7T1GOCI3ad89DPfvwSZj1CMFgOo1XNrSZX4yOM
+         KewnMR/+OW3HTriC5549+h5kH6M/akWoLCxxY7k7AQnLUvHtOYGnWWrg6UOq49BsS9Q3
+         diexjXee8uAIJXIm3W+YnYPH5lVoxHOLr/BScPhq78uCcNTUHQsIJQEMTPrLd5XemUEp
+         rsUS5F0QReXuXrb+ah38JW/4VGGmLThCzmEi4IBun+MriGIEO23CJIP4orXInwivlibG
+         RZBg==
+X-Gm-Message-State: AOAM533d11SK4Qt4qiVo3ztfn0tSFtou/GdECnwr6Ya1EJ64yJk0RRC8
+        fQO0hYjP7q5/Sx7RSuAJ1MA=
+X-Google-Smtp-Source: ABdhPJyvQ9D8aHndKyDkTNn0uJ8eoLdkPzJs+t7e+SGLOnDf2uS7EUHnHg7M8JXlkqpdJtvMiiz3Aw==
+X-Received: by 2002:a63:500e:: with SMTP id e14mr2098853pgb.36.1601107951569;
+        Sat, 26 Sep 2020 01:12:31 -0700 (PDT)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id i1sm4833497pfk.21.2020.09.26.01.12.32
+        by smtp.gmail.com with ESMTPSA id i1sm4833497pfk.21.2020.09.26.01.12.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2020 01:12:32 -0700 (PDT)
+        Sat, 26 Sep 2020 01:12:31 -0700 (PDT)
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org
 Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] iommu/tegra-smmu: Add pagetable mappings to debugfs
-Date:   Sat, 26 Sep 2020 01:07:19 -0700
-Message-Id: <20200926080719.6822-6-nicoleotsuka@gmail.com>
+Subject: [PATCH 3/5] iommu/tegra-smmu: Use iommu_fwspec in .probe_/.attach_device()
+Date:   Sat, 26 Sep 2020 01:07:17 -0700
+Message-Id: <20200926080719.6822-4-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200926080719.6822-1-nicoleotsuka@gmail.com>
 References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
@@ -73,254 +73,214 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch dumps all active mapping entries from pagetable
-to a debugfs directory named "mappings".
+The tegra_smmu_probe_device() function searches in DT for the iommu
+phandler to get "smmu" pointer. This works for most of SMMU clients
+that exist in the DTB. But a PCI device will not be added to iommu,
+since it doesn't have a DT node.
 
-Ataching an example:
+Fortunately, for a client with a DT node, tegra_smmu_probe_device()
+calls tegra_smmu_of_xlate() via tegra_smmu_configure(), while for a
+PCI device, of_pci_iommu_init() in the IOMMU core calls .of_xlate()
+as well, even before running tegra_smmu_probe_device(). And in both
+cases, tegra_smmu_of_xlate() prepares a valid iommu_fwspec pointer
+that allows us to get the mc->smmu pointer via dev_get_drvdata() by
+calling driver_find_device_by_fwnode().
 
-SWGROUP: hc
-ASID: 0
-reg: 0x250
-PTB_ASID: 0xe00bb880
-as->pd_dma: 0xbb880000
-{
-        [1023] 0xf00bb882 (1)
-        {
-                PDE   ATTR         PHYS         IOVA
-                #1023 0x5    0x159f5d000    0xfffff000
-        }
-}
-Total PDE count: 1
-Total PTE count: 1
+So this patch uses iommu_fwspec in .probe_device() and related code
+for a client that does not exist in the DTB, especially a PCI one.
 
 Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
- drivers/iommu/tegra-smmu.c | 130 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 125 insertions(+), 5 deletions(-)
+ drivers/iommu/tegra-smmu.c | 89 +++++++++++++++++++++++---------------
+ drivers/memory/tegra/mc.c  |  2 +-
+ include/soc/tegra/mc.h     |  2 +
+ 3 files changed, 56 insertions(+), 37 deletions(-)
 
 diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 9dbc5d7183cc..53160d1ca086 100644
+index b10e02073610..97a7185b4578 100644
 --- a/drivers/iommu/tegra-smmu.c
 +++ b/drivers/iommu/tegra-smmu.c
-@@ -20,6 +20,11 @@
+@@ -13,6 +13,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/dma-iommu.h>
+ #include <linux/dma-mapping.h>
+ 
  #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
- 
-+struct tegra_smmu_group_debug {
-+	const struct tegra_smmu_swgroup *group;
-+	void *priv;
-+};
-+
- struct tegra_smmu_group {
- 	struct list_head list;
- 	struct tegra_smmu *smmu;
-@@ -48,6 +53,8 @@ struct tegra_smmu {
- 	struct dentry *debugfs;
- 
- 	struct iommu_device iommu;	/* IOMMU Core code handle */
-+
-+	struct tegra_smmu_group_debug *group_debug;
+@@ -61,6 +62,8 @@ struct tegra_smmu_as {
+ 	u32 attr;
  };
  
- struct tegra_smmu_as {
-@@ -155,6 +162,9 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
- 
- #define SMMU_PDE_ATTR		(SMMU_PDE_READABLE | SMMU_PDE_WRITABLE | \
- 				 SMMU_PDE_NONSECURE)
-+#define SMMU_PTE_ATTR		(SMMU_PTE_READABLE | SMMU_PTE_WRITABLE | \
-+				 SMMU_PTE_NONSECURE)
-+#define SMMU_PTE_ATTR_SHIFT	(29)
- 
- static unsigned int iova_pd_index(unsigned long iova)
++static const struct iommu_ops tegra_smmu_ops;
++
+ static struct tegra_smmu_as *to_smmu_as(struct iommu_domain *dom)
  {
-@@ -337,7 +347,7 @@ static void tegra_smmu_domain_free(struct iommu_domain *domain)
- }
- 
- static const struct tegra_smmu_swgroup *
--tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
-+tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup, int *index)
+ 	return container_of(dom, struct tegra_smmu_as, domain);
+@@ -484,60 +487,49 @@ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
+ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
+ 				 struct device *dev)
  {
- 	const struct tegra_smmu_swgroup *group = NULL;
- 	unsigned int i;
-@@ -345,6 +355,8 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
- 	for (i = 0; i < smmu->soc->num_swgroups; i++) {
- 		if (smmu->soc->swgroups[i].swgroup == swgroup) {
- 			group = &smmu->soc->swgroups[i];
-+			if (index)
-+				*index = i;
- 			break;
- 		}
- 	}
-@@ -353,19 +365,22 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
- }
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
+ 	struct tegra_smmu_as *as = to_smmu_as(domain);
+-	struct device_node *np = dev->of_node;
+-	struct of_phandle_args args;
+-	unsigned int index = 0;
+-	int err = 0;
+-
+-	while (!of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
+-					   &args)) {
+-		unsigned int swgroup = args.args[0];
+-
+-		if (args.np != smmu->dev->of_node) {
+-			of_node_put(args.np);
+-			continue;
+-		}
++	int index, err = 0;
  
- static void tegra_smmu_enable(struct tegra_smmu *smmu, unsigned int swgroup,
--			      unsigned int asid)
-+			      struct tegra_smmu_as *as)
- {
- 	const struct tegra_smmu_swgroup *group;
-+	unsigned int asid = as->id;
- 	unsigned int i;
- 	u32 value;
+-		of_node_put(args.np);
++	if (!fwspec || fwspec->ops != &tegra_smmu_ops)
++		return -ENOENT;
  
--	group = tegra_smmu_find_swgroup(smmu, swgroup);
-+	group = tegra_smmu_find_swgroup(smmu, swgroup, &i);
- 	if (group) {
- 		value = smmu_readl(smmu, group->reg);
- 		value &= ~SMMU_ASID_MASK;
- 		value |= SMMU_ASID_VALUE(asid);
- 		value |= SMMU_ASID_ENABLE;
- 		smmu_writel(smmu, value, group->reg);
-+		if (smmu->group_debug)
-+			smmu->group_debug[i].priv = as;
- 	} else {
- 		pr_warn("%s group from swgroup %u not found\n", __func__,
- 				swgroup);
-@@ -392,13 +407,15 @@ static void tegra_smmu_disable(struct tegra_smmu *smmu, unsigned int swgroup,
- 	unsigned int i;
- 	u32 value;
++	for (index = 0; index < fwspec->num_ids; index++) {
+ 		err = tegra_smmu_as_prepare(smmu, as);
+-		if (err < 0)
+-			return err;
++		if (err)
++			goto err_disable;
  
--	group = tegra_smmu_find_swgroup(smmu, swgroup);
-+	group = tegra_smmu_find_swgroup(smmu, swgroup, &i);
- 	if (group) {
- 		value = smmu_readl(smmu, group->reg);
- 		value &= ~SMMU_ASID_MASK;
- 		value |= SMMU_ASID_VALUE(asid);
- 		value &= ~SMMU_ASID_ENABLE;
- 		smmu_writel(smmu, value, group->reg);
-+		if (smmu->group_debug)
-+			smmu->group_debug[i].priv = NULL;
- 	}
- 
- 	for (i = 0; i < smmu->soc->num_clients; i++) {
-@@ -501,7 +518,7 @@ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
- 		if (err)
- 			goto err_disable;
- 
--		tegra_smmu_enable(smmu, fwspec->ids[index], as->id);
-+		tegra_smmu_enable(smmu, fwspec->ids[index], as);
+-		tegra_smmu_enable(smmu, swgroup, as->id);
+-		index++;
++		tegra_smmu_enable(smmu, fwspec->ids[index], as->id);
  	}
  
  	if (index == 0)
-@@ -1078,8 +1095,96 @@ static int tegra_smmu_clients_show(struct seq_file *s, void *data)
+ 		return -ENODEV;
  
- DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
- 
-+static int tegra_smmu_mappings_show(struct seq_file *s, void *data)
-+{
-+	struct tegra_smmu_group_debug *group_debug = s->private;
-+	const struct tegra_smmu_swgroup *group;
-+	struct tegra_smmu_as *as;
-+	struct tegra_smmu *smmu;
-+	int pd_index, pt_index;
-+	u64 pte_count = 0;
-+	u32 pde_count = 0;
-+	u32 val, ptb_reg;
-+	u32 *pd;
+ 	return 0;
 +
-+	if (!group_debug || !group_debug->priv || !group_debug->group)
-+		return 0;
-+
-+	group = group_debug->group;
-+	as = group_debug->priv;
-+	smmu = as->smmu;
-+
-+	val = smmu_readl(smmu, group->reg) & SMMU_ASID_ENABLE;
-+	if (!val)
-+		return 0;
-+
-+	pd = page_address(as->pd);
-+	if (!pd)
-+		return 0;
-+
-+	seq_printf(s, "\nSWGROUP: %s\nASID: %d\nreg: 0x%x\n", group->name,
-+			as->id, group->reg);
-+
-+	mutex_lock(&smmu->lock);
-+	smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
-+	ptb_reg = smmu_readl(smmu, SMMU_PTB_DATA);
-+	mutex_unlock(&smmu->lock);
-+
-+	seq_printf(s, "PTB_ASID: 0x%x\nas->pd_dma: 0x%llx\n", ptb_reg, as->pd_dma);
-+	seq_puts(s, "{\n");
-+
-+	for (pd_index = 0; pd_index < SMMU_NUM_PDE; pd_index++) {
-+		struct page *pt;
-+		u32 *addr;
-+
-+		if (!as->count[pd_index] || !pd[pd_index])
-+			continue;
-+
-+		pde_count++;
-+		pte_count += as->count[pd_index];
-+		seq_printf(s, "\t[%d] 0x%x (%d)\n",
-+			   pd_index, pd[pd_index], as->count[pd_index]);
-+		pt = as->pts[pd_index];
-+		addr = page_address(pt);
-+
-+		seq_puts(s, "\t{\n");
-+		seq_printf(s, "\t\t%-5s %-4s %12s %12s\n", "PDE", "ATTR", "PHYS", "IOVA");
-+		for (pt_index = 0; pt_index < SMMU_NUM_PTE; pt_index++) {
-+			u64 iova;
-+
-+			if (!addr[pt_index])
-+				continue;
-+
-+			iova = ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT;
-+			iova |= ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-+
-+			seq_printf(s, "\t\t#%-4d 0x%-4x 0x%-12llx 0x%-12llx\n",
-+				   pt_index, addr[pt_index] >> SMMU_PTE_ATTR_SHIFT,
-+				   SMMU_PFN_PHYS(addr[pt_index] & ~SMMU_PTE_ATTR), iova);
-+		}
-+		seq_puts(s, "\t}\n");
-+	}
-+	seq_puts(s, "}\n");
-+	seq_printf(s, "Total PDE count: %d\n", pde_count);
-+	seq_printf(s, "Total PTE count: %lld\n", pte_count);
-+
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(tegra_smmu_mappings);
-+
- static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
- {
-+	const struct tegra_smmu_soc *soc = smmu->soc;
-+	struct tegra_smmu_group_debug *group_debug;
-+	struct device *dev = smmu->dev;
-+	struct dentry *d;
-+	int i;
-+
-+	group_debug = devm_kzalloc(dev, sizeof(*group_debug) * soc->num_swgroups, GFP_KERNEL);
-+	if (!group_debug)
-+		return;
-+
- 	smmu->debugfs = debugfs_create_dir("smmu", NULL);
- 	if (!smmu->debugfs)
- 		return;
-@@ -1088,6 +1193,21 @@ static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
- 			    &tegra_smmu_swgroups_fops);
- 	debugfs_create_file("clients", S_IRUGO, smmu->debugfs, smmu,
- 			    &tegra_smmu_clients_fops);
-+	d = debugfs_create_dir("mappings", smmu->debugfs);
-+
-+	for (i = 0; i < soc->num_swgroups; i++) {
-+		const struct tegra_smmu_swgroup *group = &soc->swgroups[i];
-+
-+		if (!group->name)
-+			continue;
-+
-+		group_debug[i].group = group;
-+
-+		debugfs_create_file(group->name, 0444, d, &group_debug[i],
-+				    &tegra_smmu_mappings_fops);
++err_disable:
++	for (index--; index >= 0; index--) {
++		tegra_smmu_disable(smmu, fwspec->ids[index], as->id);
++		tegra_smmu_as_unprepare(smmu, as);
 +	}
 +
-+	smmu->group_debug = group_debug;
++	return err;
  }
  
- static void tegra_smmu_debugfs_exit(struct tegra_smmu *smmu)
+ static void tegra_smmu_detach_dev(struct iommu_domain *domain, struct device *dev)
+ {
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct tegra_smmu_as *as = to_smmu_as(domain);
+-	struct device_node *np = dev->of_node;
+ 	struct tegra_smmu *smmu = as->smmu;
+-	struct of_phandle_args args;
+ 	unsigned int index = 0;
+ 
+-	while (!of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
+-					   &args)) {
+-		unsigned int swgroup = args.args[0];
+-
+-		if (args.np != smmu->dev->of_node) {
+-			of_node_put(args.np);
+-			continue;
+-		}
+-
+-		of_node_put(args.np);
++	if (!fwspec || fwspec->ops != &tegra_smmu_ops)
++		return;
+ 
+-		tegra_smmu_disable(smmu, swgroup, as->id);
++	for (index = 0; index < fwspec->num_ids; index++) {
++		tegra_smmu_disable(smmu, fwspec->ids[index], as->id);
+ 		tegra_smmu_as_unprepare(smmu, as);
+-		index++;
+ 	}
+ }
+ 
+@@ -845,10 +837,25 @@ static int tegra_smmu_configure(struct tegra_smmu *smmu, struct device *dev,
+ 	return 0;
+ }
+ 
++static struct tegra_smmu *tegra_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
++{
++	struct device *dev = driver_find_device_by_fwnode(&tegra_mc_driver.driver, fwnode);
++	struct tegra_mc *mc;
++
++	if (!dev)
++		return NULL;
++
++	put_device(dev);
++	mc = dev_get_drvdata(dev);
++
++	return mc->smmu;
++}
++
+ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct tegra_smmu *smmu = NULL;
++	struct iommu_fwspec *fwspec;
+ 	struct of_phandle_args args;
+ 	unsigned int index = 0;
+ 	int err;
+@@ -868,8 +875,6 @@ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
+ 			 * supported by the Linux kernel, so abort after the
+ 			 * first match.
+ 			 */
+-			dev_iommu_priv_set(dev, smmu);
+-
+ 			break;
+ 		}
+ 
+@@ -877,8 +882,20 @@ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
+ 		index++;
+ 	}
+ 
+-	if (!smmu)
+-		return ERR_PTR(-ENODEV);
++	/* Any device should be able to get smmu pointer using fwspec */
++	if (!smmu) {
++		fwspec = dev_iommu_fwspec_get(dev);
++		if (!fwspec || fwspec->ops != &tegra_smmu_ops)
++			return ERR_PTR(-ENODEV);
++
++		smmu = tegra_smmu_get_by_fwnode(fwspec->iommu_fwnode);
++	}
++
++	/* NULL smmu pointer means that SMMU driver is not probed yet */
++	if (unlikely(!smmu))
++		return ERR_PTR(-EPROBE_DEFER);
++
++	dev_iommu_priv_set(dev, smmu);
+ 
+ 	return &smmu->iommu;
+ }
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index ec8403557ed4..4e23fd8d8433 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -735,7 +735,7 @@ static const struct dev_pm_ops tegra_mc_pm_ops = {
+ 	.resume = tegra_mc_resume,
+ };
+ 
+-static struct platform_driver tegra_mc_driver = {
++struct platform_driver tegra_mc_driver = {
+ 	.driver = {
+ 		.name = "tegra-mc",
+ 		.of_match_table = tegra_mc_of_match,
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 1238e35653d1..49a4cf64c4b9 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -184,4 +184,6 @@ struct tegra_mc {
+ int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
+ unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
+ 
++extern struct platform_driver tegra_mc_driver;
++
+ #endif /* __SOC_TEGRA_MC_H__ */
 -- 
 2.17.1
 
