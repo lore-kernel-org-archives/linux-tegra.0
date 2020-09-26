@@ -2,192 +2,119 @@ Return-Path: <SRS0=NmuO=DD=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D19CC2D0A8
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 20:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE94CC2D0A8
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 21:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D219921527
-	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 20:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A55A621531
+	for <linux-tegra@archiver.kernel.org>; Sat, 26 Sep 2020 21:24:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p21Cw0Gd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nynDsskn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbgIZUwk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 26 Sep 2020 16:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52616 "EHLO
+        id S1726462AbgIZVY6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 26 Sep 2020 17:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbgIZUwk (ORCPT
+        with ESMTP id S1726311AbgIZVY6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 26 Sep 2020 16:52:40 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8D7C0613CE;
-        Sat, 26 Sep 2020 13:52:40 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id s31so883573pga.7;
-        Sat, 26 Sep 2020 13:52:40 -0700 (PDT)
+        Sat, 26 Sep 2020 17:24:58 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09C3C0613CE;
+        Sat, 26 Sep 2020 14:24:57 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id y2so6708923lfy.10;
+        Sat, 26 Sep 2020 14:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WDzjfa8QUsgUaih+kIpPeyFOqv/pDOBqTsibbBt+0tA=;
-        b=p21Cw0Gd5+8Un3GCJAR7IRm9YOwwgnJJTECiQUrzwluzON3YE0rHS2rkhNAToyq1iy
-         LAiYyWrglDQyz1NimEvVAcwlPrhwKCeNkTIrfi9u/8T+0YT5I1dPG5yZgXDp6CKMCEhX
-         0Ao9gibUIOzk65fw0c7HBQxMnJer5x/yxdlohKQxN1XJ5x09QjnGDi4KIGGMD+21JBeQ
-         ecfno/bfvh55TgkY6kcdwQ+guh3DBnwPt/Ap28BI1ou6Ot2319GPrkP8lqe3rTwLZTBP
-         S7RoKJbABPrDYnDtryxA2qmYCuNeihYSkZbcL61TBg/h9ly7Gk0pEg3AtDC4kRS2jwFb
-         rWkA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6wrB9fto+I1fUbDhgF+w5avJWzjFlsE3ApMnh8XsGZM=;
+        b=nynDsskn2v5Qu272LIVZKOws9vaysTXN5vZ6JQgTLmnYG1jrb3q4FxGnFq+y5VkL7g
+         F+N1QjZGNJnUDcmqPg0DxMXiwjXcf8VG84KBs513JJt4z2Zd394TptCU8mBo9swAiPeo
+         TjgKgJiUZZ6pMVRnm9NpPtt2m8UeTBDdWBpjLyxFWr/hVZvhKLm0FyCEGpIvroNUIZ2l
+         hA4x8IOpmhQyxaaoYB1uew6JOlinbvr3kQ2L/0wPhi+attppdLmUtK/fZN/jbrm9/WhO
+         XKIlXDf1CL1zOkSWm0v32SrO3w1L6YzBke7RR/+u0xI3/7337PnPXG5g76qoNtBu3aGQ
+         F01w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WDzjfa8QUsgUaih+kIpPeyFOqv/pDOBqTsibbBt+0tA=;
-        b=aLjFfyZAHccxQnVPkZdoV2NNaNEW+3OlVADOd31XPA7rzXczMmSIRNyyYr0Y1Xg8L4
-         yWT2NpTM23DVxD5PmpO3ydIrlwNBBD9BrxBU+MFP5onuq7+VO/5ieizA9sWtR6os8uff
-         FmInGzzOMGjudARU5n4USB/2r6m+Jp85RkQgm9lvlweJyKwZJC5x+PwzGwC0xVqknFEL
-         yg2Sb/qpetvdDFuytAIJAC1/UUzOwQ4KvAl3u7IFquuQPNYFSEDcsxiLephHqngeuOeK
-         4KHOfqAWWm1YX2s69ijLfveDXKrI9Ie66Ad5vhRoZNFWtw+LIf80F0v/3mPhTBRVmIDp
-         NvHQ==
-X-Gm-Message-State: AOAM530nBwEwU4yEqtsz5lus/m6C06pqAijnVV10dZFBlN1gRBX/uuBq
-        SfLm06EGS7dmfHuUHuKbiLw=
-X-Google-Smtp-Source: ABdhPJzQgKnWxoBbJQBJf/eknMgjtWp+DPqXjU/t6wROxeDyeHz3Nq1vOnxzQ3KbUmJjCyFz+Zi+xQ==
-X-Received: by 2002:a63:f54f:: with SMTP id e15mr3816188pgk.310.1601153559608;
-        Sat, 26 Sep 2020 13:52:39 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id c6sm6314291pfd.83.2020.09.26.13.52.39
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 26 Sep 2020 13:52:39 -0700 (PDT)
-Date:   Sat, 26 Sep 2020 13:47:44 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jonathanh@nvidia.com
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6wrB9fto+I1fUbDhgF+w5avJWzjFlsE3ApMnh8XsGZM=;
+        b=WJzWOF+h133w7UeU2I4j1tSxujUh8gvGkwxtVunBFXxmq7UKEcK+NZj33Gtu6QhHJy
+         DrsJ3gX8WbEEKrUm6D0Y+qMLif+8trBj4Iuo4We3uVGbhhrqXXpS45jJpJVtgXGg4DdY
+         s+WYSqyVoLEyDyQMno43/jxMsr5kotChjjrBi9vSgV8Z1lBjwWg2pdpJKVPI8LJlRM1y
+         CAYgQObbHsCFzBilZsjDnIuC/OAxaahPveqi0lSld4sw1oINrGLRn8cDEnjfk7nBB2eQ
+         2AyxLYTQSBVO/IDGiQd618RSo1E0l7+MjwG2G7nIPR8tMF6AC7RmtY4AZ6QF6Admy4l/
+         4xhw==
+X-Gm-Message-State: AOAM530sy2j1z2o++rPYmnK3CQzndbap1er/54NvMefLvQkxoZptnJ9K
+        TMsPkzT9G0LkErbU73bxVw8=
+X-Google-Smtp-Source: ABdhPJxT9fBzeCt7l5s5mHsDyMF6JTcv7kgGvdkxvGDECbJLHk4gNOOOtmGLdqsWW1tTLW51rYsfGA==
+X-Received: by 2002:ac2:4559:: with SMTP id j25mr1442963lfm.484.1601155496084;
+        Sat, 26 Sep 2020 14:24:56 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id b8sm2124820lfq.144.2020.09.26.14.24.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Sep 2020 14:24:55 -0700 (PDT)
 Subject: Re: [PATCH 5/5] iommu/tegra-smmu: Add pagetable mappings to debugfs
-Message-ID: <20200926204744.GB4947@Asurada-Nvidia>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
+        joro@8bytes.org, krzk@kernel.org
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jonathanh@nvidia.com
 References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
  <20200926080719.6822-6-nicoleotsuka@gmail.com>
- <0c9ca297-d656-59a5-eefd-00e0c0542c29@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0451e362-30eb-2ba2-33f1-e9ab3972cada@gmail.com>
+Date:   Sun, 27 Sep 2020 00:24:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200926080719.6822-6-nicoleotsuka@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0c9ca297-d656-59a5-eefd-00e0c0542c29@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+26.09.2020 11:07, Nicolin Chen пишет:
+...
+> +	for (pd_index = 0; pd_index < SMMU_NUM_PDE; pd_index++) {
+> +		struct page *pt;
+> +		u32 *addr;
+> +
+> +		if (!as->count[pd_index] || !pd[pd_index])
+> +			continue;
 
-Thank you for the review.
+I guess the idea of this patch is to print out the hardware state, isn't
+it? Hence the as->count shouldn't be checked here.
 
-On Sat, Sep 26, 2020 at 05:48:54PM +0300, Dmitry Osipenko wrote:
-> 26.09.2020 11:07, Nicolin Chen пишет:
-> ...
-> > +static int tegra_smmu_mappings_show(struct seq_file *s, void *data)
-> > +{
-> > +	struct tegra_smmu_group_debug *group_debug = s->private;
-> > +	const struct tegra_smmu_swgroup *group;
-> > +	struct tegra_smmu_as *as;
-> > +	struct tegra_smmu *smmu;
-> > +	int pd_index, pt_index;
-> > +	u64 pte_count = 0;
-> > +	u32 pde_count = 0;
-> > +	u32 val, ptb_reg;
-> > +	u32 *pd;
-> > +
-> > +	if (!group_debug || !group_debug->priv || !group_debug->group)
-> > +		return 0;
-> > +
-> > +	group = group_debug->group;
-> > +	as = group_debug->priv;
-> > +	smmu = as->smmu;
-> > +
-> > +	val = smmu_readl(smmu, group->reg) & SMMU_ASID_ENABLE;
-> > +	if (!val)
-> > +		return 0;
-> > +
-> > +	pd = page_address(as->pd);
-> > +	if (!pd)
-> > +		return 0;
-> > +
-> > +	seq_printf(s, "\nSWGROUP: %s\nASID: %d\nreg: 0x%x\n", group->name,
-> > +			as->id, group->reg);
-> > +
-> > +	mutex_lock(&smmu->lock);
-> > +	smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
-> > +	ptb_reg = smmu_readl(smmu, SMMU_PTB_DATA);
-> 
-> I think the whole traverse needs a locking protection, doesn't it?
+> +		pde_count++;
+> +		pte_count += as->count[pd_index];
+> +		seq_printf(s, "\t[%d] 0x%x (%d)\n",
+> +			   pd_index, pd[pd_index], as->count[pd_index]);
+> +		pt = as->pts[pd_index];
+> +		addr = page_address(pt);
+> +
+> +		seq_puts(s, "\t{\n");
+> +		seq_printf(s, "\t\t%-5s %-4s %12s %12s\n", "PDE", "ATTR", "PHYS", "IOVA");
+> +		for (pt_index = 0; pt_index < SMMU_NUM_PTE; pt_index++) {
+> +			u64 iova;
+> +
+> +			if (!addr[pt_index])
+> +				continue;
+> +
+> +			iova = ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT;
+> +			iova |= ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
+> +
+> +			seq_printf(s, "\t\t#%-4d 0x%-4x 0x%-12llx 0x%-12llx\n",
+> +				   pt_index, addr[pt_index] >> SMMU_PTE_ATTR_SHIFT,
+> +				   SMMU_PFN_PHYS(addr[pt_index] & ~SMMU_PTE_ATTR), iova);
+>
 
-Hmm..probably would be nicer. Will move the mutex to the top.
-
-> > +	mutex_unlock(&smmu->lock);
-> > +
-> > +	seq_printf(s, "PTB_ASID: 0x%x\nas->pd_dma: 0x%llx\n", ptb_reg, as->pd_dma);
-> > +	seq_puts(s, "{\n");
-> > +
-> > +	for (pd_index = 0; pd_index < SMMU_NUM_PDE; pd_index++) {
-> > +		struct page *pt;
-> > +		u32 *addr;
-> > +
-> > +		if (!as->count[pd_index] || !pd[pd_index])
-> > +			continue;
-> > +
-> > +		pde_count++;
-> > +		pte_count += as->count[pd_index];
-> > +		seq_printf(s, "\t[%d] 0x%x (%d)\n",
-> > +			   pd_index, pd[pd_index], as->count[pd_index]);
-> > +		pt = as->pts[pd_index];
-> > +		addr = page_address(pt);
-> 
-> This needs as->lock protection.
-
-Will add that.
-
-> > +		seq_puts(s, "\t{\n");
-> > +		seq_printf(s, "\t\t%-5s %-4s %12s %12s\n", "PDE", "ATTR", "PHYS", "IOVA");
-> > +		for (pt_index = 0; pt_index < SMMU_NUM_PTE; pt_index++) {
-> > +			u64 iova;
-> > +
-> > +			if (!addr[pt_index])
-> > +				continue;
-> > +
-> > +			iova = ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT;
-> > +			iova |= ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-> > +
-> > +			seq_printf(s, "\t\t#%-4d 0x%-4x 0x%-12llx 0x%-12llx\n",
-> > +				   pt_index, addr[pt_index] >> SMMU_PTE_ATTR_SHIFT,
-> > +				   SMMU_PFN_PHYS(addr[pt_index] & ~SMMU_PTE_ATTR), iova);
-> > +		}
-> > +		seq_puts(s, "\t}\n");
-> > +	}
-> > +	seq_puts(s, "}\n");
-> > +	seq_printf(s, "Total PDE count: %d\n", pde_count);
-> > +	seq_printf(s, "Total PTE count: %lld\n", pte_count);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +DEFINE_SHOW_ATTRIBUTE(tegra_smmu_mappings);
-> > +
-> >  static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
-> >  {
-> > +	const struct tegra_smmu_soc *soc = smmu->soc;
-> > +	struct tegra_smmu_group_debug *group_debug;
-> > +	struct device *dev = smmu->dev;
-> > +	struct dentry *d;
-> > +	int i;
-> > +
-> > +	group_debug = devm_kzalloc(dev, sizeof(*group_debug) * soc->num_swgroups, GFP_KERNEL);
-> 
-> devm_kcalloc()
-
-Will change it.
-
-Thanks
-Nic
+Would be nice if you could improve the output formatting by printing out
+contiguous ranges that have the same ATTRs, otherwise it could be a bit
+too large and unpractical output in a case if lots of pages are mapped.
