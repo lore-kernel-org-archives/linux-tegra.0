@@ -2,99 +2,289 @@ Return-Path: <SRS0=p7a/=DE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A294C4346E
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 17:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA03AC4741F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 18:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F89423718
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 17:29:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm5+voUS"
+	by mail.kernel.org (Postfix) with ESMTP id 86B6A23A33
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 18:36:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbgI0R3g (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 13:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgI0R3g (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 13:29:36 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7DDC0613CE;
-        Sun, 27 Sep 2020 10:29:36 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id q4so2292945pjh.5;
-        Sun, 27 Sep 2020 10:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H2ne51E0OC00G+XGm4/7Oiftb+fIPcNupoPj2jSF7Tc=;
-        b=jm5+voUSxOT1hkFK/U/6V6PljCVLKzwhyxE6vQpyOPp4CHAYM4cSz3SOQ70102BMlR
-         xqkPipQ295I94D9BtSHecW50PRGIjzENm9tb9R4q4u005pEQkT+SE9dv977LLg8RbGqJ
-         52kNvb4qJ69lxCTaXTfxd1eJEg1vP9qgdAHZgc3gtO9A1Df3pgQAnxm1R5dtu6MZvscT
-         ivukUp4aPX3JuRNFLyvmVX/bAIvYiiJW0TTdknFdJiFoLSItPDuTbZYRDAIsbLA4L9sc
-         F6LH2oA5en9eXXPAmbWMecS+0hrrBPQHZVrKT5Z6OeMBLbScXE7WkacC8nLqUQ8BwEpn
-         gBEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=H2ne51E0OC00G+XGm4/7Oiftb+fIPcNupoPj2jSF7Tc=;
-        b=b5Qf2IDxXbCYWfKlkWkq0P5naG8OTz0Lr/Sp/3gl+rf6xDm2Wq8CZmQFwomNKQ5KIM
-         uUcLQmkZaL4RGs1y2Z5DPX+Z6L6eJo3rR/L0fRDr1FfVZSjIxdt/p1Qz4WLouKawdDEv
-         RMXEPIHwu0F3QdJrlOIOEqw8fKxPSLSiG+ijPDmkPdM2O554o4Ca+K+Ae4sHMp49UXxJ
-         ECufGjsVyHtoKR7OyqqBAA1S9X0mhKLa48fFIfCpstqmoRe5MBkzS/cBkjWoXA4gdVll
-         kEtRD5IvnobUxvAA/xMrVlhfC/Sa3322lbcG0Ntg4VvK9e83hC4JOKyhC9qINheNTQGf
-         ymfQ==
-X-Gm-Message-State: AOAM531Y6OPI0o8YrbgE8gU7JeARbwxqKEKXeaXmOst3i2hiGNN3S8gf
-        PZuo+ztgcTVCfDufojRgI1AxHvB6qIeZaQme
-X-Google-Smtp-Source: ABdhPJxl+ql0T7Q5Ay/5aWfJh6kYGpeJNzskFTiWrbLwmG2aGZ2xaeoCKQuU8Zx2NfbR88loopslqw==
-X-Received: by 2002:a17:902:a712:b029:d1:cbf4:c583 with SMTP id w18-20020a170902a712b02900d1cbf4c583mr8186666plq.16.1601227775544;
-        Sun, 27 Sep 2020 10:29:35 -0700 (PDT)
-Received: from localhost.localdomain (cpe-70-95-82-187.san.res.rr.com. [70.95.82.187])
-        by smtp.gmail.com with ESMTPSA id fw4sm4434030pjb.55.2020.09.27.10.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2020 10:29:35 -0700 (PDT)
-From:   Ryan Kosta <ryanpkosta@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     marvin24@gmx.de, p.zabel@pengutronix.de, ac100@lists.launchpad.net,
-        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Ryan Kosta <ryanpkosta@gmail.com>
-Subject: [PATCH v3] Staging: nvec: Removes repeated word typo in comment
-Date:   Sun, 27 Sep 2020 10:28:55 -0700
-Message-Id: <20200927172855.9813-1-ryanpkosta@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726291AbgI0SgO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 27 Sep 2020 14:36:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48610 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbgI0SgO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 27 Sep 2020 14:36:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5DB8BAD1A;
+        Sun, 27 Sep 2020 18:36:12 +0000 (UTC)
+Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
+ memory
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     christian.koenig@amd.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
+        kraxel@redhat.com, tfiga@chromium.org, m.szyprowski@samsung.com,
+        arnd@arndb.de, corbet@lwn.net, linux-doc@vger.kernel.org,
+        jonathanh@nvidia.com, matthew.auld@intel.com,
+        linux+etnaviv@armlinux.org.uk, labbott@redhat.com,
+        linux-media@vger.kernel.org, pawel@osciak.com,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
+        rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org,
+        mchehab@kernel.org, gregkh@linuxfoundation.org,
+        lmark@codeaurora.org, afd@ti.com, kyungmin.park@samsung.com,
+        robin.murphy@arm.com
+References: <20200925115601.23955-1-tzimmermann@suse.de>
+ <20200926071334.GA42915@ravnborg.org>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+Date:   Sun, 27 Sep 2020 20:36:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200926071334.GA42915@ravnborg.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="hhzdij9h3h5l7FmCv0soJzCgJCNlXGmQ7"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix a comment typo.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--hhzdij9h3h5l7FmCv0soJzCgJCNlXGmQ7
+Content-Type: multipart/mixed; boundary="JSVXy7fTE5UylfGVVSA7JgWciPcmDmtcJ";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: christian.koenig@amd.com, airlied@linux.ie,
+ dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
+ kraxel@redhat.com, tfiga@chromium.org, m.szyprowski@samsung.com,
+ arnd@arndb.de, corbet@lwn.net, linux-doc@vger.kernel.org,
+ jonathanh@nvidia.com, matthew.auld@intel.com, linux+etnaviv@armlinux.org.uk,
+ labbott@redhat.com, linux-media@vger.kernel.org, pawel@osciak.com,
+ intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
+ rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org, mchehab@kernel.org,
+ gregkh@linuxfoundation.org, lmark@codeaurora.org, afd@ti.com,
+ kyungmin.park@samsung.com, robin.murphy@arm.com
+Message-ID: <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
+ memory
+References: <20200925115601.23955-1-tzimmermann@suse.de>
+ <20200926071334.GA42915@ravnborg.org>
+In-Reply-To: <20200926071334.GA42915@ravnborg.org>
 
-Signed-off-by: Ryan Kosta <ryanpkosta@gmail.com>
----
-V3: Fix commit name
- drivers/staging/nvec/nvec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--JSVXy7fTE5UylfGVVSA7JgWciPcmDmtcJ
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 360ec040774..a80996b2f5c 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -289,7 +289,7 @@ EXPORT_SYMBOL(nvec_write_async);
-  * interrupt handlers.
-  *
-  * Returns: 0 on success, a negative error code on failure.
-- * The response message is returned in @msg. Shall be freed with
-+ * The response message is returned in @msg. Shall be freed
-  * with nvec_msg_free() once no longer used.
-  *
-  */
--- 
-2.20.1
+Hi Sam
 
+Am 26.09.20 um 09:13 schrieb Sam Ravnborg:
+> Hi Thomas.
+>=20
+> Sorry for chiming in late here, have been offline for a while.
+>=20
+> On Fri, Sep 25, 2020 at 01:55:57PM +0200, Thomas Zimmermann wrote:
+>> Dma-buf provides vmap() and vunmap() for retriving and releasing mappi=
+ngs
+>> of dma-buf memory in kernel address space. The functions operate with =
+plain
+>> addresses and the assumption is that the memory can be accessed with l=
+oad
+>> and store operations. This is not the case on some architectures (e.g.=
+,
+>> sparc64) where I/O memory can only be accessed with dedicated instruct=
+ions.
+>>
+>> This patchset introduces struct dma_buf_map, which contains the addres=
+s of
+>> a buffer and a flag that tells whether system- or I/O-memory instructi=
+ons
+>> are required.
+>=20
+> The whole idea with a struct that can represent both a pointer to syste=
+m
+> memory and io memory is very nice.
+> dma-buf is one user of this but we may/will see other users. So the
+> naming seems of as this should be a concept independent of dma-buf.
+>=20
+> And then the struct definition and all the helpers should be moved away=
+
+> from dma-buf.
+>=20
+> Maybe something like this:
+>=20
+> struct simap {
+>        union {
+>                void __iomem *vaddr_iomem;
+>                void *vaddr;
+>        };
+>        bool is_iomem;
+> };
+>=20
+> Where simap is a shorthand for system_iomem_map
+> And it could al be stuffed into a include/linux/simap.h file.
+>=20
+> Not totally sold on the simap name - but wanted to come up with
+> something.
+
+Yes. Others, myself included, have suggested to use a name that does not
+imply a connection to the dma-buf framework, but no one has come up with
+ a good name.
+
+I strongly dislike simap, as it's entirely non-obvious what it does.
+dma-buf-map is not actually wrong. The structures represents the mapping
+of a dma-able buffer in most cases.
+
+>=20
+> With this approach users do not have to pull in dma-buf to use it and
+> users will not confuse that this is only for dma-buf usage.
+
+There's no need to enable dma-buf. It's all in the header file without
+dependencies on dma-buf. It's really just the name.
+
+But there's something else to take into account. The whole issue here is
+that the buffer is disconnected from its originating driver, so we don't
+know which kind of memory ops we have to use. Thinking about it, I
+realized that no one else seemed to have this problem until now.
+Otherwise there would be a solution already. So maybe the dma-buf
+framework *is* the native use case for this data structure.
+
+Anyway, if a better name than dma-buf-map comes in, I'm willing to
+rename the thing. Otherwise I intend to merge the patchset by the end of
+the week.
+
+Best regards
+Thomas
+
+>=20
+> I am sorry for being late with the feedback.
+>=20
+> 	Sam
+>=20
+>=20
+>> Some background: updating the DRM framebuffer console on sparc64 makes=
+ the
+>> kernel panic. This is because the framebuffer memory cannot be accesse=
+d with
+>> system-memory instructions. We currently employ a workaround in DRM to=
+
+>> address this specific problem. [1]
+>>
+>> To resolve the problem, we'd like to address it at the most common poi=
+nt,
+>> which is the dma-buf framework. The dma-buf mapping ideally knows if I=
+/O
+>> instructions are required and exports this information to it's users. =
+The
+>> new structure struct dma_buf_map stores the buffer address and a flag =
+that
+>> signals I/O memory. Affected users of the buffer (e.g., drivers, frame=
+works)
+>> can then access the memory accordingly.
+>>
+>> This patchset only introduces struct dma_buf_map, and updates struct d=
+ma_buf
+>> and it's interfaces. Further patches can update dma-buf users. For exa=
+mple,
+>> there's a prototype patchset for DRM that fixes the framebuffer proble=
+m. [2]
+>>
+>> Further work: TTM, one of DRM's memory managers, already exports an
+>> is_iomem flag of its own. It could later be switched over to exporting=
+ struct
+>> dma_buf_map, thus simplifying some code. Several DRM drivers expect th=
+eir
+>> fbdev console to operate on I/O memory. These could possibly be switch=
+ed over
+>> to the generic fbdev emulation, as soon as the generic code uses struc=
+t
+>> dma_buf_map.
+>>
+>> v3:
+>> 	* update fastrpc driver (kernel test robot)
+>> 	* expand documentation (Daniel)
+>> 	* move documentation into separate patch
+>> v2:
+>> 	* always clear map parameter in dma_buf_vmap() (Daniel)
+>> 	* include dma-buf-heaps and i915 selftests (kernel test robot)
+>> 	* initialize cma_obj before using it in drm_gem_cma_free_object()
+>> 	  (kernel test robot)
+>>
+>> [1] https://lore.kernel.org/dri-devel/20200725191012.GA434957@ravnborg=
+=2Eorg/
+>> [2] https://lore.kernel.org/dri-devel/20200806085239.4606-1-tzimmerman=
+n@suse.de/
+>>
+>> Thomas Zimmermann (4):
+>>   dma-buf: Add struct dma-buf-map for storing struct dma_buf.vaddr_ptr=
+
+>>   dma-buf: Use struct dma_buf_map in dma_buf_vmap() interfaces
+>>   dma-buf: Use struct dma_buf_map in dma_buf_vunmap() interfaces
+>>   dma-buf: Document struct dma_buf_map
+>>
+>>  Documentation/driver-api/dma-buf.rst          |   9 +
+>>  drivers/dma-buf/dma-buf.c                     |  42 ++--
+>>  drivers/dma-buf/heaps/heap-helpers.c          |  10 +-
+>>  drivers/gpu/drm/drm_gem_cma_helper.c          |  20 +-
+>>  drivers/gpu/drm/drm_gem_shmem_helper.c        |  17 +-
+>>  drivers/gpu/drm/drm_prime.c                   |  15 +-
+>>  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c   |  13 +-
+>>  drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c    |  13 +-
+>>  .../drm/i915/gem/selftests/i915_gem_dmabuf.c  |  18 +-
+>>  .../gpu/drm/i915/gem/selftests/mock_dmabuf.c  |  14 +-
+>>  drivers/gpu/drm/tegra/gem.c                   |  23 ++-
+>>  .../common/videobuf2/videobuf2-dma-contig.c   |  17 +-
+>>  .../media/common/videobuf2/videobuf2-dma-sg.c |  19 +-
+>>  .../common/videobuf2/videobuf2-vmalloc.c      |  21 +-
+>>  drivers/misc/fastrpc.c                        |   6 +-
+>>  include/drm/drm_prime.h                       |   5 +-
+>>  include/linux/dma-buf-map.h                   | 193 +++++++++++++++++=
++
+>>  include/linux/dma-buf.h                       |  11 +-
+>>  18 files changed, 372 insertions(+), 94 deletions(-)
+>>  create mode 100644 include/linux/dma-buf-map.h
+>>
+>> --
+>> 2.28.0
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--JSVXy7fTE5UylfGVVSA7JgWciPcmDmtcJ--
+
+--hhzdij9h3h5l7FmCv0soJzCgJCNlXGmQ7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9w25oUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiOPvQf9H3xIxlKoNjkmNDMgSLtVcoOhqWxL
+rCrmmDXAtxJJ16fx4daY/2Vk8Zxc5B4msQ/Y9JC4uzMT16ZaeOpLcjqS6d4QSNk4
+4tRmIwMcB9Ok6DmxoInzpOxgbvmZ3m2zNBQGOjEwvVXVfBpBeLE0RvoZ3xOsRS2x
+JyHO66Xj7RV5cZXrgWaj2ZRoalKpzJh6wa/3w73ZfELwBLg85eibKenYGwc5fSl5
+asogcXmB5kKBfuLgQojKfNXqCRUAICy21AFAFQ9fwrscGAs3XaRN7J25DP7lBwwp
+/508HXeAuIgJ9ANkdk7kHeJ5S5oKFG8CNAYYsbFvZsgTmUm+uLtnEDh8rQ==
+=Vk2o
+-----END PGP SIGNATURE-----
+
+--hhzdij9h3h5l7FmCv0soJzCgJCNlXGmQ7--
