@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB95CC4727D
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE469C4741F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6553223976
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E642389F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG0X42Fc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODbXkF8W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbgI0PKE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 11:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50854 "EHLO
+        id S1726291AbgI0PKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 27 Sep 2020 11:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbgI0PKE (ORCPT
+        with ESMTP id S1726196AbgI0PKF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 11:10:04 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB30C0613CE;
-        Sun, 27 Sep 2020 08:10:03 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id k18so4077478wmj.5;
-        Sun, 27 Sep 2020 08:10:03 -0700 (PDT)
+        Sun, 27 Sep 2020 11:10:05 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955F6C0613CE;
+        Sun, 27 Sep 2020 08:10:05 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id d4so3863377wmd.5;
+        Sun, 27 Sep 2020 08:10:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nQZJ7yPVXRTTpaaOFiG+mf5v7oE6uXQPB9nQE0+9z00=;
-        b=bG0X42Fc4mVAg6I/1UJJ2q1ckTY+2hVIt3dTvMuA1PizsJxAyfWnoFJUAYQV97kovW
-         TXILlzAitdEY1HmgWs0dVhHkYPrfxPNYd9c4E8YN+Akzpa+G3lkCBCl6xE8nq7mCAhrr
-         vCHOKGPbWQA2zvZwZhBTd6tPqIVI2kBkuPsr0t+SbQiT4gC7zdVySXbxX5JWW5QbcLI2
-         Ztkit3Job2jn+LeiHjcnGENUo20CAgxrHpdR4+D1TdtCVMzHKXGyxn735sgDHNSiNsu7
-         CnnljxtFVgksHqnmDCR5r1waB8ScfmOpCd+fNyIWEsoqrxxXP5sDRLGwslMJhPG9BMKF
-         RzuA==
+        bh=JiAbE/SJFaiXXWha+UZiz5ngLuS7vuLVdaMJTivRPyQ=;
+        b=ODbXkF8Wh1TzUQoRi7zRknzD3nNTxIGB3PW+ys8JVNIYjnfREoYrXLT3qQtKDX23H7
+         SOu59Mi0HQKNKikKQYyah8dkhgbCDry751o5vmGorza8MTtj8FN6wtKhvLyNujPJNtlP
+         32tP49HJM0zyqugzgb3jGNq/Ngpjsd1C4DELu7ss7B8gIdejQe7WzThXzfjwwTkIcFaW
+         zhVPySMBfAl2J2aT7xLBGpH3BU8RHwbi60wH0yLI0p0XkcnC5NfjBXupTusSU7051ZLN
+         mHQLM/W14tpCx/fxNOiIKNhEHIkFLAz8MqnhenTUn6yk4uG1yFbL5d+vM0qkiUEIOveN
+         ALGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nQZJ7yPVXRTTpaaOFiG+mf5v7oE6uXQPB9nQE0+9z00=;
-        b=LvRjUoAn0X5u5iAi1oYhtPhEYFJVb5r7VMLvqMThG7jYu/lCMmbacNUYK3viwui0io
-         iZtjbkiSqPrKypoAdCiWR4ZS9NoIyZnaEKChZ9eFiO4cio0EPjDcqHCmfRh+at9Wf3Y/
-         dtnjBvYrpfUPNhujb0RTZb0re7qtO0hc8h+cw0lzBsuLQgk2WJSugd49YxyEb48ddx3C
-         3bY1ABXmeLmvrI7yBE+Gn7s/LypZ0Lr5dSnffWQFM+KVwTFGtNcZxU3eY6qmpiL3IPYH
-         puac2Ui8MNFGslbCN1nhEtsWaI/ye2ZwtNn5p6NlqPBn3grfzxSZ3knvY6DxIzc11aHK
-         7B7g==
-X-Gm-Message-State: AOAM532N9xXAN+b44TGcggZB19s+xDGMpujb80hvMFyC+nRR7sgPajCW
-        eSzYJyetFyyzXRxRWB70N8izhF/Fx/0bqWhg
-X-Google-Smtp-Source: ABdhPJzqnYAqqLAVnob8XTUEUo0SaxsaIT+JsjRper/5hhwPxpgpzqhKKaFgtytc9GGFxciICoYaEQ==
-X-Received: by 2002:a1c:cc0a:: with SMTP id h10mr6970201wmb.80.1601219402359;
-        Sun, 27 Sep 2020 08:10:02 -0700 (PDT)
+        bh=JiAbE/SJFaiXXWha+UZiz5ngLuS7vuLVdaMJTivRPyQ=;
+        b=MSM/lQUUn87XKs6+ym3arq0h1+YxukDFzQj1y69pof8y8JX3NAqixCKRQLb57vvHWU
+         W9LilzUcR2YCWyI7VPOHT6FB8gl+OI6INNMaGt9sYZXHde0y1sSDLCmTDfLqY6uHdIFq
+         oOvPAK+Ps+8gyt94exfOj7YeUZD8xaHsSwVO92W6ishHTQ7gzwIf6XRyruQjv90B43G9
+         XTlzk78GbuStGvtTGIvPd7DE+m1G9hs0O6MiJwyf+mniddKM4dP5fMM53tEIOI7AIwf2
+         bq4uSUCGu6Sq5rGrYTmdpyJQu7+JdkZu0p8hZj2UZQAR+7aknBrk1/TNMX4VbcYqgQrr
+         qerg==
+X-Gm-Message-State: AOAM5303/QJXnBa4mNFxJ1W5mXssYsDISLARlz3Wup3BORi1mWY3AVxP
+        9h0gCkIm09ng/nDIs3u83QAmDp5YHQXF9uGR
+X-Google-Smtp-Source: ABdhPJxRhKwmnznqBlQCmvDqbFbox2+Y4y4DbRbccIs4gUeOyJjheF4paOvjtzZ6VPFySdoMDTpkBA==
+X-Received: by 2002:a1c:2903:: with SMTP id p3mr7569765wmp.170.1601219404304;
+        Sun, 27 Sep 2020 08:10:04 -0700 (PDT)
 Received: from arrakis.kwizart.net (lfbn-nic-1-212-171.w2-15.abo.wanadoo.fr. [2.15.59.171])
-        by smtp.gmail.com with ESMTPSA id s11sm9565114wrt.43.2020.09.27.08.10.01
+        by smtp.gmail.com with ESMTPSA id s11sm9565114wrt.43.2020.09.27.08.10.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2020 08:10:01 -0700 (PDT)
+        Sun, 27 Sep 2020 08:10:03 -0700 (PDT)
 From:   Nicolas Chauvet <kwizart@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH v2 1/6] ARM: tegra: Add missing gpu-throt-level to tegra124 soctherm
-Date:   Sun, 27 Sep 2020 17:09:51 +0200
-Message-Id: <20200927150956.34609-2-kwizart@gmail.com>
+Subject: [PATCH v2 3/6] arm64: tegra: Add missing hot temperatures to tegra132 thermal-zones
+Date:   Sun, 27 Sep 2020 17:09:53 +0200
+Message-Id: <20200927150956.34609-4-kwizart@gmail.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200927150956.34609-1-kwizart@gmail.com>
 References: <20200927150956.34609-1-kwizart@gmail.com>
@@ -78,28 +78,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On jetson-tk1 the following message can be seen:
- tegra_soctherm 700e2000.thermal-sensor: throttle-cfg: heavy: no throt prop or invalid prop
+According to dmesg, thermal-zones for mem and cpu are missing hot
+temperatures properties.
 
-This patch will fix the invalid prop issue according to the binding.
+  throttrip: pll: missing hot temperature
+...
+  throttrip: mem: missing hot temperature
+...
+
+Adding them will clear the messages.
 
 Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 64f488ba1e72..a0fa5821a232 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -910,6 +910,7 @@ throttle-cfgs {
- 			throttle_heavy: heavy {
- 				nvidia,priority = <100>;
- 				nvidia,cpu-throt-percent = <85>;
-+				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
- 
- 				#cooling-cells = <2>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index e40281510c0c..cd913e59ba26 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -925,6 +925,11 @@ mem_shutdown_trip {
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
++				mem_throttle_trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
  			};
+ 
+ 			cooling-maps {
+@@ -975,6 +980,11 @@ pllx_shutdown_trip {
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
++				pllx_throttle_trip {
++					temperature = <99000>;
++					hysteresis = <1000>;
++					type = "hot";
++				};
+ 			};
+ 
+ 			cooling-maps {
 -- 
 2.25.4
 
