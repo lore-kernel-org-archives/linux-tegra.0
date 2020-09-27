@@ -2,126 +2,120 @@ Return-Path: <SRS0=p7a/=DE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF4FC4346E
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 19:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05202C4727F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 20:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2881A23A33
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 19:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51F02311C
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 20:52:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pUCVHsgg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbgI0TQQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 15:16:16 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:50146 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbgI0TQQ (ORCPT
+        id S1726369AbgI0UwN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 27 Sep 2020 16:52:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgI0UwN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 15:16:16 -0400
-Received: from ravnborg.org (unknown [188.228.123.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id C2B8980637;
-        Sun, 27 Sep 2020 21:16:06 +0200 (CEST)
-Date:   Sun, 27 Sep 2020 21:16:05 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     christian.koenig@amd.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
-        kraxel@redhat.com, tfiga@chromium.org, m.szyprowski@samsung.com,
-        arnd@arndb.de, corbet@lwn.net, linux-doc@vger.kernel.org,
-        jonathanh@nvidia.com, matthew.auld@intel.com,
-        linux+etnaviv@armlinux.org.uk, labbott@redhat.com,
-        linux-media@vger.kernel.org, pawel@osciak.com,
-        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
-        rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org,
-        mchehab@kernel.org, gregkh@linuxfoundation.org,
-        lmark@codeaurora.org, afd@ti.com, kyungmin.park@samsung.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
- memory
-Message-ID: <20200927191605.GA237178@ravnborg.org>
-References: <20200925115601.23955-1-tzimmermann@suse.de>
- <20200926071334.GA42915@ravnborg.org>
- <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+        Sun, 27 Sep 2020 16:52:13 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2389CC0613CE;
+        Sun, 27 Sep 2020 13:52:13 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id x69so8749932lff.3;
+        Sun, 27 Sep 2020 13:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x9r2zUlJrQ7nkiEBpXA2Zv1BwsnURHaKKsGfTp01MSk=;
+        b=pUCVHsgg4jDkQONWaRzG9b/bpX4s1TOfzL90y8GlmQkFUxCo2MaFL+GKrCXyyiIPJr
+         gkImS96jOXObL9jgsyUrEo8TNVTR6Hd4jhQLOOKz0eDcVywWiPr5O2F4OvTnOdr998Hu
+         NeWNLfJOsPD8pk2Pt23OJQeeEIkRm6d2V4lQYD3qtLQelxpPP//gQGmE4Lgp5M8U7Rld
+         FYKtAVflIhN9bfQ8LwXTxj3TOsZRdYU6u3u5gT91u6c4MEraWIR1VFVQ4UPlaOE05mSJ
+         W0xQPV0YZGJWRjGji/5eYLJF5jIeQL656kW3XSET6rjFCW8m/nsX2k0MBDfkx77an/EJ
+         gNug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x9r2zUlJrQ7nkiEBpXA2Zv1BwsnURHaKKsGfTp01MSk=;
+        b=rCjEzWbd7C+DpSsFqqbPzuuN+DnUo9n9omHF9RXIDC6ah6lBvZ37MwrWQ4mp/1BLxz
+         7uNnrOctkw7JWdq0Fi2h9z85LJDOscI1mFzc3FWTACDEfgDi4NS1G+/QewaGouKABdBm
+         WkuYTVCyNoPuNNTabxOvEsEM/lD4Ua2BNnNLz/ge5ZyS5sX6n1jghyE83y3X4TXSVsMT
+         o6CYgxGCf6QPr++1V1NMnkw9gV8kcf6k+A+D+Sg/nKeEW2/DzMD/m3/TnBiFY0vmZX/R
+         NxnALOa2IAHu5/w1G36wD2jd8mL320XMcdPrLVs7natreO6Bb3B++28VZEnOhDwlEOj7
+         UEAA==
+X-Gm-Message-State: AOAM532Md/NJrNcJ4v+bjnN1Upjg7ViHiuzGBzS7EBcXvEZ4lhJyoWcD
+        BmMP+mPnuS+MxA2zFddwdTs=
+X-Google-Smtp-Source: ABdhPJyWw7w3gRx+RybRMq2ufLwBRLagwjF81tg5nJm0+m0WQLVUPV46vXlmkeknt4pT2GRMcyiNag==
+X-Received: by 2002:ac2:5333:: with SMTP id f19mr3274267lfh.339.1601239931461;
+        Sun, 27 Sep 2020 13:52:11 -0700 (PDT)
+Received: from localhost.localdomain (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.gmail.com with ESMTPSA id n20sm2604485lfh.1.2020.09.27.13.52.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Sep 2020 13:52:10 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] PM / devfreq: tegra30: Improve initial hardware resetting
+Date:   Sun, 27 Sep 2020 23:51:39 +0300
+Message-Id: <20200927205139.19548-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=A5ZCwZeG c=1 sm=1 tr=0
-        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
-        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=GurwE-QF2vAYMD8ieTkA:9
-        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Thomas.
+It's safe to enable the ACTMON clock at any time during driver probing,
+even if we don't know the state of hardware, because it's used only for
+collecting and processing stats, and interrupt is kept disabled. This
+allows us to slightly improve code which performs initial hardware
+resetting by making use of a single reset_control_reset() instead of
+assert/deassert pair. Secondly, a potential error of the reset-control
+API is handled nicely now.
 
-> > 
-> > struct simap {
-> >        union {
-> >                void __iomem *vaddr_iomem;
-> >                void *vaddr;
-> >        };
-> >        bool is_iomem;
-> > };
-> > 
-> > Where simap is a shorthand for system_iomem_map
-> > And it could al be stuffed into a include/linux/simap.h file.
-> > 
-> > Not totally sold on the simap name - but wanted to come up with
-> > something.
-> 
-> Yes. Others, myself included, have suggested to use a name that does not
-> imply a connection to the dma-buf framework, but no one has come up with
->  a good name.
-> 
-> I strongly dislike simap, as it's entirely non-obvious what it does.
-> dma-buf-map is not actually wrong. The structures represents the mapping
-> of a dma-able buffer in most cases.
-> 
-> > 
-> > With this approach users do not have to pull in dma-buf to use it and
-> > users will not confuse that this is only for dma-buf usage.
-> 
-> There's no need to enable dma-buf. It's all in the header file without
-> dependencies on dma-buf. It's really just the name.
-> 
-> But there's something else to take into account. The whole issue here is
-> that the buffer is disconnected from its originating driver, so we don't
-> know which kind of memory ops we have to use. Thinking about it, I
-> realized that no one else seemed to have this problem until now.
-> Otherwise there would be a solution already. So maybe the dma-buf
-> framework *is* the native use case for this data structure.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/tegra30-devfreq.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-We have at least:
-linux/fb.h:
-	union {
-		char __iomem *screen_base;      /* Virtual address */
-		char *screen_buffer;
-	};
-
-Which solve more or less the same problem.
-
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index dedd39de7367..f5e74c2ede85 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -822,8 +822,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
-> Anyway, if a better name than dma-buf-map comes in, I'm willing to
-> rename the thing. Otherwise I intend to merge the patchset by the end of
-> the week.
+-	reset_control_assert(tegra->reset);
+-
+ 	err = clk_prepare_enable(tegra->clock);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+@@ -831,7 +829,11 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	reset_control_deassert(tegra->reset);
++	err = reset_control_reset(tegra->reset);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to reset hardware: %d\n", err);
++		goto disable_clk;
++	}
+ 
+ 	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
+ 	if (rate < 0) {
+-- 
+2.27.0
 
-Well, the main thing is that I think this shoud be moved away from
-dma-buf. But if indeed dma-buf is the only relevant user in drm then
-I am totally fine with the current naming.
-
-One alternative named that popped up in my head: struct sys_io_map {}
-But again, if this is kept in dma-buf then I am fine with the current
-naming.
-
-In other words, if you continue to think this is mostly a dma-buf
-thing all three patches are:
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-
-	Sam
