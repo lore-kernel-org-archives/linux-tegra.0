@@ -8,201 +8,98 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA40C4727D
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2EEC4741F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 16:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D169F2389F
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07B3921D7F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 16:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7XdetLF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjaYB/5G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgI0PKJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 11:10:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
+        id S1726281AbgI0Qfb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 27 Sep 2020 12:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbgI0PKJ (ORCPT
+        with ESMTP id S1726149AbgI0Qfb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 11:10:09 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3590C0613CE;
-        Sun, 27 Sep 2020 08:10:08 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id d4so3863484wmd.5;
-        Sun, 27 Sep 2020 08:10:08 -0700 (PDT)
+        Sun, 27 Sep 2020 12:35:31 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4527C0613CE;
+        Sun, 27 Sep 2020 09:35:30 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id 197so6160848pge.8;
+        Sun, 27 Sep 2020 09:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SzBl7wm7ho9tfo3JwIhFeWjVTbWY4f6C5L5RqhX83yE=;
-        b=V7XdetLFjHr1QJVK/NImxfK8Pnczz47E1Un3RQL6OXGDBntzC72TsWb93lB9cIdsfQ
-         9g48SjY7RKHsLXeE6p6YfyePPldvUFnIbxyEabhyNN1u6yhX4XpNz4blpLHDhJtt45C/
-         DLmgWr9em+BvNUXsynNvjL54p+urXn2I6CkTGxW2eXHOogn3nySw4Y80vsKyZiTqMa3f
-         NvbODaxlktP1RhFC8Vfgck3YAPSYF/DeO3mTrILSpka+p3TP4m5gPXv9p2ffU/lvW8lS
-         ifR/GM4kRMG8HkSA/h8NM1rZzGmKMf9wKVWwG4hr+JXvImgYdqZgZzWR8NLxXLv5PAGR
-         8MlA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0C5Gjq9HDGphAUKTprSwLydq67owdjsJTm+aKkh5laY=;
+        b=KjaYB/5G2q2kbCuTFvEezBi7+X8RrHgnqaOl7utkH819j1wnF47zRahvsmttOVk4k+
+         PuqOqhWZBLffVp7cN0wDC8aj0EZCPtLzBc56N7B0V1ggr8637yuD0d3fz9eMwz3ijsGB
+         RkrVTGUNeScMSz0FbaZOY8PjCRcYnVvtTOOi1oNpAJd5fm5SmN5dQXmAHmzFYnEa8P8W
+         n53pxgi5XHRvrFR8IU1B6lQbUeC9ZrJpb+8oFx9F7ALq5p80sGCrpd/xvLpSK8il7NQ+
+         BSj0yfjhCCn6C4+fZkq2tCOlqutkjqD2h3PSw8N/Zy0JuOE0uaQnXEzbZnR23mB84Mzi
+         iK1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SzBl7wm7ho9tfo3JwIhFeWjVTbWY4f6C5L5RqhX83yE=;
-        b=GacD1oBz1geWwUYvIkj0dm6bvFQWV4kyqOJrDtCl5XpJDfxDI2kJjcoTvPCztsuQv7
-         WPm+gO+R96krHKGnAks9fgZUjjefcv0SNJCEsbBTSvpkgxCsshyVC6Vin+380/7d1njg
-         wQowj7yPaROHZ5WckffhdhJauuaCiDyslRMIWwNC2AGkyMbq9gLm1xMYwjEBhjuC4pdg
-         TsnHtuatCQBmNh260ynyHuKj3WVpgtpLtHOaE1g8w8xXnMNGgUaqU00TMeV8l8XCp/GA
-         VxNCTBhoBcxobzN2pjFm7plJD5eVwZtDIa7P2a2+JrNDl5cmvLBfYPjJ566xgYMPsDMS
-         0PzA==
-X-Gm-Message-State: AOAM532C0u1nwjNIRZBuONvRN+X11Hp9D53ItqpXBen0o+8pjTxoVr1m
-        LudOiGm8Znoq4Rm1rSF6XTs=
-X-Google-Smtp-Source: ABdhPJzPADGTLSo9o6D4RuPD0rYbuOY+XKHH2BryYiM+CGy/wpxWPav6OBAoDphnUyNZPcD3t2hv1w==
-X-Received: by 2002:a1c:2dc6:: with SMTP id t189mr7567161wmt.92.1601219407518;
-        Sun, 27 Sep 2020 08:10:07 -0700 (PDT)
-Received: from arrakis.kwizart.net (lfbn-nic-1-212-171.w2-15.abo.wanadoo.fr. [2.15.59.171])
-        by smtp.gmail.com with ESMTPSA id s11sm9565114wrt.43.2020.09.27.08.10.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0C5Gjq9HDGphAUKTprSwLydq67owdjsJTm+aKkh5laY=;
+        b=H5J+Ja0+TXs9gseBcUzDqkin6DpPfgfndO3eY14NmGpYvMlwZt+FkGYWehG4pAUOIG
+         Kc2BaSlDY7bsFBh09jpKks6FaSprLeCymXU2ztcPesNrczM7g1rs23FDNMxgX8pGKQPr
+         vkIF4XI2BXkeIiY2a6JFyFS3Ol64lwxlLj+too3i0gSxhiNipAGTDYoGkN12vUlSJhXy
+         KUFm/8kChdWmqCK0n/iMRNpKzS0gyWhGoXNFaPTc/FWo3rhEnzO2kN9DeJDx1QW9t2A+
+         NwBQOO16AJiB9iqkXE6il51MXzwf1PZiahQXp7Y+pMN5OyttnOwoHw10YY0Lat5orPrr
+         kNtw==
+X-Gm-Message-State: AOAM531yYkvmlaaWQEvanIAkRIdzOpVsilHZXVr8OK2BoaI+Er6v77Sh
+        kDRrVtz6gS5ccXJ3D7WM6ts=
+X-Google-Smtp-Source: ABdhPJxi17BidG3zA7awFrVtAaRHMYW0KLI7H2kwkVNIrJNMAkLZF4LndDjyq4SfILAq4d4+5P7YTQ==
+X-Received: by 2002:a63:e94a:: with SMTP id q10mr6233305pgj.189.1601224530512;
+        Sun, 27 Sep 2020 09:35:30 -0700 (PDT)
+Received: from localhost.localdomain (cpe-70-95-82-187.san.res.rr.com. [70.95.82.187])
+        by smtp.gmail.com with ESMTPSA id u15sm4635313pjx.50.2020.09.27.09.35.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2020 08:10:06 -0700 (PDT)
-From:   Nicolas Chauvet <kwizart@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Nicolas Chauvet <kwizart@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH v2 6/6] thermal: tegra: Avoid setting edp_irq when not relevant
-Date:   Sun, 27 Sep 2020 17:09:56 +0200
-Message-Id: <20200927150956.34609-7-kwizart@gmail.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200927150956.34609-1-kwizart@gmail.com>
-References: <20200927150956.34609-1-kwizart@gmail.com>
+        Sun, 27 Sep 2020 09:35:29 -0700 (PDT)
+From:   Ryan Kosta <ryanpkosta@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     marvin24@gmx.de, p.zabel@pengutronix.de, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Ryan Kosta <ryanpkosta@gmail.com>
+Subject: [PATCH v2] Staging: nvec: nvec: fix double next comment
+Date:   Sun, 27 Sep 2020 09:35:04 -0700
+Message-Id: <20200927163504.7546-1-ryanpkosta@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-According to the binding, the edp_irq is not available on tegra124/132
+Changes since v1:
+ * Made commit message more clear
+ * Added description
+Note: previous patch named
+ "[PATCH] fix double next comment in drivers/staging/nvec/nvec.c"
+>8------------------------------------------------------8<
+Fixes a comment typo.
 
-This commit moves the initialization of tegra->edp_irq after the
-introduced has_edp_irq condition. This will have the following effects:
- - soctherm_interrupts_init will not return prematurely with unfinished
-thermal_irq initialization on tegra124 and tegra132
- - edp_irq initialization will be done only when relevant
-
-As a result, this will clear the following error on jetson-tk1 :
-  kernel: tegra_soctherm 700e2000.thermal-sensor: IRQ index 1 not found
-
-v2:
-    * Use .has_edp_irq boolean instead of of_compatible
-    * Switch subject prefix to use thermal instead of ARM
-
-Fixes: 4a04beb1bf2e (thermal: tegra: add support for EDP IRQ)
-Cc: stable@vger.kernel.org
-Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Ryan Kosta <ryanpkosta@gmail.com>
 ---
- drivers/thermal/tegra/soctherm.c          | 38 +++++++++++++----------
- drivers/thermal/tegra/soctherm.h          |  1 +
- drivers/thermal/tegra/tegra124-soctherm.c |  1 +
- drivers/thermal/tegra/tegra132-soctherm.c |  1 +
- drivers/thermal/tegra/tegra210-soctherm.c |  1 +
- 5 files changed, 26 insertions(+), 16 deletions(-)
+ drivers/staging/nvec/nvec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 66e0639da4bf..0c79e033e7ea 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -2025,12 +2025,6 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
- 		return 0;
- 	}
- 
--	tegra->edp_irq = platform_get_irq(pdev, 1);
--	if (tegra->edp_irq < 0) {
--		dev_dbg(&pdev->dev, "get 'edp_irq' failed.\n");
--		return 0;
--	}
--
- 	ret = devm_request_threaded_irq(&pdev->dev,
- 					tegra->thermal_irq,
- 					soctherm_thermal_isr,
-@@ -2043,16 +2037,28 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
- 		return ret;
- 	}
- 
--	ret = devm_request_threaded_irq(&pdev->dev,
--					tegra->edp_irq,
--					soctherm_edp_isr,
--					soctherm_edp_isr_thread,
--					IRQF_ONESHOT,
--					"soctherm_edp",
--					tegra);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "request_irq 'edp_irq' failed.\n");
--		return ret;
-+	/* Initialize edp_irq when available */
-+	if (tegra->soc->has_edp_irq) {
-+		/* get IRQ */
-+
-+		tegra->edp_irq = platform_get_irq(pdev, 1);
-+		if (tegra->edp_irq < 0) {
-+			dev_dbg(&pdev->dev, "get 'edp_irq' failed.\n");
-+			return 0;
-+		}
-+
-+		/* request IRQ */
-+		ret = devm_request_threaded_irq(&pdev->dev,
-+						tegra->edp_irq,
-+						soctherm_edp_isr,
-+						soctherm_edp_isr_thread,
-+						IRQF_ONESHOT,
-+						"soctherm_edp",
-+						tegra);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "request_irq 'edp_irq' failed.\n");
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
-index 70501e73d586..b93cfdd06e5d 100644
---- a/drivers/thermal/tegra/soctherm.h
-+++ b/drivers/thermal/tegra/soctherm.h
-@@ -128,6 +128,7 @@ struct tegra_soctherm_soc {
- 	const int thresh_grain;
- 	const unsigned int bptt;
- 	const bool use_ccroc;
-+	const bool has_edp_irq;
- 	struct tsensor_group_thermtrips *thermtrips;
- };
- 
-diff --git a/drivers/thermal/tegra/tegra124-soctherm.c b/drivers/thermal/tegra/tegra124-soctherm.c
-index 20ad27f4d1a1..c8c8231f6cdd 100644
---- a/drivers/thermal/tegra/tegra124-soctherm.c
-+++ b/drivers/thermal/tegra/tegra124-soctherm.c
-@@ -216,4 +216,5 @@ const struct tegra_soctherm_soc tegra124_soctherm = {
- 	.thresh_grain = TEGRA124_THRESH_GRAIN,
- 	.bptt = TEGRA124_BPTT,
- 	.use_ccroc = false,
-+	.has_edp_irq = false,
- };
-diff --git a/drivers/thermal/tegra/tegra132-soctherm.c b/drivers/thermal/tegra/tegra132-soctherm.c
-index b76308fdad9e..1bc9481de5fc 100644
---- a/drivers/thermal/tegra/tegra132-soctherm.c
-+++ b/drivers/thermal/tegra/tegra132-soctherm.c
-@@ -216,4 +216,5 @@ const struct tegra_soctherm_soc tegra132_soctherm = {
- 	.thresh_grain = TEGRA132_THRESH_GRAIN,
- 	.bptt = TEGRA132_BPTT,
- 	.use_ccroc = true,
-+	.has_edp_irq = false,
- };
-diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
-index d0ff793f18c5..2b09c8a811d0 100644
---- a/drivers/thermal/tegra/tegra210-soctherm.c
-+++ b/drivers/thermal/tegra/tegra210-soctherm.c
-@@ -224,5 +224,6 @@ const struct tegra_soctherm_soc tegra210_soctherm = {
- 	.thresh_grain = TEGRA210_THRESH_GRAIN,
- 	.bptt = TEGRA210_BPTT,
- 	.use_ccroc = false,
-+	.has_edp_irq = true,
- 	.thermtrips = tegra210_tsensor_thermtrips,
- };
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 360ec040774..a80996b2f5c 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -289,7 +289,7 @@ EXPORT_SYMBOL(nvec_write_async);
+  * interrupt handlers.
+  *
+  * Returns: 0 on success, a negative error code on failure.
+- * The response message is returned in @msg. Shall be freed with
++ * The response message is returned in @msg. Shall be freed
+  * with nvec_msg_free() once no longer used.
+  *
+  */
 -- 
-2.25.4
+2.20.1
 
