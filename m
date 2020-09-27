@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE5CC4346E
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE3DC4741F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 705DC23899
-	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64462389F
+	for <linux-tegra@archiver.kernel.org>; Sun, 27 Sep 2020 15:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mU8e0vtY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inaom1v/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbgI0PKF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 11:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50860 "EHLO
+        id S1726316AbgI0PKI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 27 Sep 2020 11:10:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbgI0PKE (ORCPT
+        with ESMTP id S1726196AbgI0PKI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 11:10:04 -0400
+        Sun, 27 Sep 2020 11:10:08 -0400
 Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91AF0C0613CE;
-        Sun, 27 Sep 2020 08:10:04 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id e2so4113214wme.1;
-        Sun, 27 Sep 2020 08:10:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3165C0613CE;
+        Sun, 27 Sep 2020 08:10:07 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id x23so3873677wmi.3;
+        Sun, 27 Sep 2020 08:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IQU/5no96PfQVnDWZvRJxAMbJR8IojKL6s+SB7SMMPA=;
-        b=mU8e0vtY9QN5IrHDotz7Fgyf4RdU20rP+QnbHLKsPR7mD5Bp7Naam4oldT6+ebRG64
-         9kY1nkqtzMVoL3i7J7M3sE3l4gqVrtKAh0D9qYYXhJNrvPL3S2NrbU+hvG/r2D4D87mS
-         wwf6ZW3bKBcec68FnZNb4pRp6qSdCuuK86JlXA2TmD6lq0CzRGzVX5voBpt1R3NfBj09
-         cjo5zhdBzO32+Gk4yXdyv212M2D/bLIke6oBpXsUULAYJhQuos9CR9Ptk/YK8oYZdJRx
-         Xh51bmNeKV2NMfvELh1rwgrBR/OiQ/oAEkUAFP3xN+AZnsPLxWmx38sQNM6xUwjYPtRg
-         02LA==
+        bh=N1v7I4XPINcsYoLjVYjg/trmmo2v0jQccnOxIjDhNkY=;
+        b=inaom1v/j0In/+L2dXCWCvrkS8KCLXpWQyFFaYYQYHOLS2yiX/XRVJCLTw4ltDLiGN
+         UGklcA0NGK3NVaDZdZXfbVfI+TkIBl/1OK8xAWcZ/8NHaSDukkEHT+PGpZKzEcWEgusk
+         Ez3C9UCNuzaXLpOnFh0LnDMZ5HtsWKN+sxG9odAr5ClkBRLdSQ23oJeIlAYF00G8OVs2
+         h5DZu9RqltJ84Ca7Eh4AIqAjJEEnve1+HY4ElfbUxOezyUDNwgjmnO67URmXemImhOWw
+         5MYKZFV26EmPJG+HPUhgJsujY7Cf3uiVyDk9Y+UcvrCJJxVnMP8Js3x+OvbzH3knzG05
+         hc2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IQU/5no96PfQVnDWZvRJxAMbJR8IojKL6s+SB7SMMPA=;
-        b=SB6StpGvyKdwH8NLAiHgunl+Ffo7QjOujLXayu/WKZ04QxjZtPmRPlHANlZqv7d1yN
-         Uh+9qAceo0O6LAOIzkXTh6w63tsRecFvKdBqqwKrdE40of9/uPf5nlZ1GRpRcydxMeOD
-         oZdzphy61oY1RsDUSv+/H3g0ld3ZQkewzGMSawSxPl7nF3b74udUyrKqmUaZbmeqM3O3
-         ubtUUBSFXft6KA4j6hXkWxfDSkgxRGKGEHPO9T2E21nDA2jZIZy+1bLikv5sPeJz3fzN
-         1EEDSaAVoN6heO/tJh2xz895feu7f0nFkQUdueeeTx6CHwMmt3LPaUaCWiNFpunKjFut
-         FXpw==
-X-Gm-Message-State: AOAM532BZkwoS6Ghq1Hv8VU1pG4Ii8sdkMjAl0k1bUvlczlx0mSinvOH
-        mDVx6OrqQVNpwN7UHZ1OMBc=
-X-Google-Smtp-Source: ABdhPJyRKBrj4QfpDb+e1kJEIQs4AmQ0NQQRZXPqEl6jo4XI0Gfuk7IK8exT/uG7zrS5lYWQ5ORuPw==
-X-Received: by 2002:a05:600c:21c4:: with SMTP id x4mr7446993wmj.107.1601219403352;
-        Sun, 27 Sep 2020 08:10:03 -0700 (PDT)
+        bh=N1v7I4XPINcsYoLjVYjg/trmmo2v0jQccnOxIjDhNkY=;
+        b=nWphKWPxSJ3I2noRU9rUpbqxU5OsWQxKKKwbYDRZuoOxSn6dPDkZRVnle20BZCi2uh
+         YUOXiL3a1E6/mQgymZ5qDlFLQcd5Lcs+q1JajYIuta2hJZ53/4yHfpJM0m0FN6p2QLDj
+         68g3d04Ig2PyZDiOXA2gsd2D2g/B95W3mYW9FzAGxl/x12uTGete8zonELLAJb+J5z8Y
+         pVICCU3z8b1w7Ei9CVCqDuBOtskmNLe0wox5V6YPGpZrr7xTVYMfVas+NwcXxfFgyub+
+         dJcg09yuKZqYUctb5tY8IXm/JKM7e4VzpdyrgCSYWgGIiVg0/nFZuZrEslfs1pRgUbBs
+         t6xA==
+X-Gm-Message-State: AOAM532jlDSIaYrwZ1UP20R8VbOjaju9GW8fS9U4P9oak2NnDIuJN/WZ
+        eaI+1TR80s4DBtJQa5q879o=
+X-Google-Smtp-Source: ABdhPJzetvO/vp3JE6rgLvWSdmmfu+pDIrUmB1Q0Evdct9VETa0BtOWPqYF5BH124IyUprIuurphgg==
+X-Received: by 2002:a1c:66c4:: with SMTP id a187mr7157834wmc.148.1601219406490;
+        Sun, 27 Sep 2020 08:10:06 -0700 (PDT)
 Received: from arrakis.kwizart.net (lfbn-nic-1-212-171.w2-15.abo.wanadoo.fr. [2.15.59.171])
-        by smtp.gmail.com with ESMTPSA id s11sm9565114wrt.43.2020.09.27.08.10.02
+        by smtp.gmail.com with ESMTPSA id s11sm9565114wrt.43.2020.09.27.08.10.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2020 08:10:02 -0700 (PDT)
+        Sun, 27 Sep 2020 08:10:05 -0700 (PDT)
 From:   Nicolas Chauvet <kwizart@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH v2 2/6] ARM: tegra: Add missing hot temperatures to tegra124 thermal-zones
-Date:   Sun, 27 Sep 2020 17:09:52 +0200
-Message-Id: <20200927150956.34609-3-kwizart@gmail.com>
+Subject: [PATCH v2 5/6] arm64: tegra: Add missing hot temperatures to tegra210 thermal-zones
+Date:   Sun, 27 Sep 2020 17:09:55 +0200
+Message-Id: <20200927150956.34609-6-kwizart@gmail.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200927150956.34609-1-kwizart@gmail.com>
 References: <20200927150956.34609-1-kwizart@gmail.com>
@@ -90,31 +90,33 @@ Adding them will clear the messages.
 
 Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index a0fa5821a232..c71d597ace01 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -1248,6 +1248,11 @@ mem-shutdown-trip {
- 					hysteresis = <0>;
- 					type = "critical";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index c518292ee3f5..9e8ddec52651 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1639,6 +1639,12 @@ dram_throttle: mem-throttle-trip {
+ 					type = "active";
  				};
-+				mem-throttle-trip {
-+					temperature = <99000>;
+ 
++				mem-hot-trip {
++					temperature = <100000>;
 +					hysteresis = <1000>;
 +					type = "hot";
 +				};
- 			};
- 
- 			cooling-maps {
-@@ -1299,6 +1304,11 @@ pllx-shutdown-trip {
++
+ 				mem-shutdown-trip {
+ 					temperature = <103000>;
+ 					hysteresis = <0>;
+@@ -1701,6 +1707,12 @@ pllx-shutdown-trip {
  					hysteresis = <0>;
  					type = "critical";
  				};
++
 +				pllx-throttle-trip {
-+					temperature = <99000>;
++					temperature = <100000>;
 +					hysteresis = <1000>;
 +					type = "hot";
 +				};
