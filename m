@@ -2,170 +2,155 @@ Return-Path: <SRS0=0tg+=DF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83796C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 07:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69190C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 08:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38F6122574
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 07:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E74D20637
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 08:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qRujn+aH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQeOiCWW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgI1Hzt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Sep 2020 03:55:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
+        id S1726458AbgI1IKa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 04:10:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgI1Hzt (ORCPT
+        with ESMTP id S1726421AbgI1IKa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Sep 2020 03:55:49 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C29AC0613CE;
-        Mon, 28 Sep 2020 00:55:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id k15so78660wrn.10;
-        Mon, 28 Sep 2020 00:55:49 -0700 (PDT)
+        Mon, 28 Sep 2020 04:10:30 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF03C0613CE;
+        Mon, 28 Sep 2020 01:10:29 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id x23so95065wmi.3;
+        Mon, 28 Sep 2020 01:10:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=BVbwN/81blpncprCv+IQkG3sKzMlIpUh26oS8WcgK8I=;
-        b=qRujn+aHOdYZcvhWNaNFfmvq+59z5zN/g2Fh/iOS9naiOmJIprb6+8FsHaN3yqhR9T
-         SoAU+PMlakBl+lBe97YnRYnM/OB/19efDFQ8ktrGQX3N07B6EJCB/Kir+biySDR863SJ
-         dTbZ2BQ0H34vyZ/DXDCQyApKxVbzMUBGGXLqB5TUCmYh0AAAPCM+R7NtbjM6R4touMcO
-         e4L2xhzhAQE73/+uJl4zakcF8QIsLu5NGpUNNm/pYMJikHjYye1HfW4b9JV3tIXtVWDH
-         i66gptHNIvs+jPlVPC43JE6/ymJ5yogiuKMnm3oMgbwuEsyibTm7IapjvfpZxZ/l5JcL
-         2ntg==
+        bh=31AqBMRSXqhYTQQr8QkJaNcT3VWyt1DfR1wcfaGbJtY=;
+        b=PQeOiCWWh5CYSpErnhIwtEUcaxq6IJE4FgWMDgnMJTdkBXfSB8gMVA7HNwkcAThxHM
+         G6hVuXMKh7arr4dsk++A0CROg4x+3tCeAt3caK9vfd6UOM7sz26SIxPo7pcItQDScMx3
+         hq7E6nUI0ckCL1McIx0G0+AwCZiuQCxh3LPBt0Tc2QND5FO19X4B/DKCfoQF2i0d2eji
+         cRbpDRevPrXf9kORDjftSGj4UEXx2a5a5LhDqIqtmcBIY1IWO+0R747pPmouKg+Be/PS
+         zO1jfRN8IInGlrvpKscRSbKPt8P2zibNHll57ULnnYngG+wD+P+P7hgRSID7wX1vq1Pm
+         cGOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BVbwN/81blpncprCv+IQkG3sKzMlIpUh26oS8WcgK8I=;
-        b=LZ6ydtIYHz8hO4tQUrwnpZULzQYfWA1VYcmMMuq9oAB/vT5vY9dXz+TjYgLI/j0eYy
-         rrVXm4CFHo8PbCLr4XLHbKXhoMCutX+AGh03hEYBpTq+F6g0NkLe4+Rtb66zmlsdlOzG
-         W+yHV/rRpeUl1ZuyL6spQ9hA5g3XuV3Ei24tX4LgItPjjpQiWqEoI1p5e7rIsIlDpwhR
-         HOj8BFSDuv5er4yA9tspRWQ+zJVz2HPOlfkOA9LVpe73ZWVRRqwUJ/O7zTytT1QC6vM+
-         pUsd/sk5x3Z1yby+7FHTB+eBLFYN4N7UJpi4y6mRUiKTpRZg36eheQ5WOIbzAPYETkEi
-         jSpw==
-X-Gm-Message-State: AOAM5327DqpENe2CGB/bSybBlRvRX3Xj5G6r+2Zy6kEGNzFFVwH/PShU
-        z/nVofWR+MSXGo0EMRHvugg=
-X-Google-Smtp-Source: ABdhPJy6kBIrePaHTqKmGmBsQEtVR0qF/zVySEmGZbhinj1US60HRDWY2xrvuJPy9tDSyZv8oXAWqA==
-X-Received: by 2002:a5d:444b:: with SMTP id x11mr197900wrr.402.1601279747992;
-        Mon, 28 Sep 2020 00:55:47 -0700 (PDT)
+        bh=31AqBMRSXqhYTQQr8QkJaNcT3VWyt1DfR1wcfaGbJtY=;
+        b=YzWGBALmuutk6SnOEpzkLMGK0O36aM6NXkSnv6X1fRflSqCMqlsA+EsofO/bTo4hkP
+         s9ZZJUyUbj5KMAnWVwC0wOQKy0Kyo2swKFrSoLlfx0flhrHT4lOcrZdFeInA/aH8LtJE
+         mZ/ODTEU+EJxP1ugx7L+QfupQZnmLLDUyk5gkE5pFqaF4wYjhpcremu97PCHnykr6NTu
+         shgZxJOGEz4Oee0F2pllW11lo7TzBVBI2gB8QB57OcmMtRrEcw8KNrk08x8YcCeQefzS
+         gMm1BI4wcmQzqEzHrTa7xp9LmwkyOQfSzqvBWEff5oLE9aSPJ9qcbuiu6DSru06Grz7A
+         UsSg==
+X-Gm-Message-State: AOAM532lPl0HkRJOf61Zgil51hSj3PbGsgX9Sf0H6h3u2Uyaipttn4ZZ
+        +D6aRfo2Xtc3sucXDH9odbo=
+X-Google-Smtp-Source: ABdhPJzIGf+sM0Jx6w17pqYx3HRomoZAcOHNEnPqDg5mojC4p8yVRDu79/lEm46i8sqcgLQFk4MGOQ==
+X-Received: by 2002:a1c:6555:: with SMTP id z82mr315524wmb.101.1601280628586;
+        Mon, 28 Sep 2020 01:10:28 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id m10sm182221wmi.9.2020.09.28.00.55.46
+        by smtp.gmail.com with ESMTPSA id k8sm331939wrl.42.2020.09.28.01.10.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2020 00:55:46 -0700 (PDT)
-Date:   Mon, 28 Sep 2020 09:55:45 +0200
+        Mon, 28 Sep 2020 01:10:27 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 10:10:26 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     joro@8bytes.org, krzk@kernel.org, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] iommu/tegra-smmu: Add PCI support
-Message-ID: <20200928075545.GG2837573@ulmo>
-References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
- <20200926080719.6822-5-nicoleotsuka@gmail.com>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tegra20-spdif: remove "default m"
+Message-ID: <20200928081026.GH2837573@ulmo>
+References: <ede103cf7f6914054a73cf8f1d9725ee13a7cf5d.1601149261.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QWpDgw58+k1mSFBj"
+        protocol="application/pgp-signature"; boundary="SUk9VBj82R8Xhb8H"
 Content-Disposition: inline
-In-Reply-To: <20200926080719.6822-5-nicoleotsuka@gmail.com>
+In-Reply-To: <ede103cf7f6914054a73cf8f1d9725ee13a7cf5d.1601149261.git.mirq-linux@rere.qmqm.pl>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---QWpDgw58+k1mSFBj
-Content-Type: text/plain; charset=us-ascii
+--SUk9VBj82R8Xhb8H
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 26, 2020 at 01:07:18AM -0700, Nicolin Chen wrote:
-> This patch simply adds support for PCI devices.
+On Sat, Sep 26, 2020 at 09:42:40PM +0200, Micha=C5=82 Miros=C5=82aw wrote:
+> Make tegra20-spdif default to N as all other drivers do.
 >=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Fixes: 774fec338bfc ("ASoC: Tegra: Implement SPDIF CPU DAI")
+
+I don't think this is warranted. This doesn't fix a bug or anything.
+It's merely a change in the default configuration. The presence of a
+Fixes: tag is typically used as a hint for people to pick this up into
+stable releases, but I don't think this qualifies.
+
 > ---
->  drivers/iommu/tegra-smmu.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+>  sound/soc/tegra/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 >=20
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 97a7185b4578..9dbc5d7183cc 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -15,6 +15,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/dma-iommu.h>
->  #include <linux/dma-mapping.h>
-> +#include <linux/pci.h>
-> =20
->  #include <soc/tegra/ahb.h>
->  #include <soc/tegra/mc.h>
-> @@ -935,6 +936,7 @@ static struct iommu_group *tegra_smmu_device_group(st=
-ruct device *dev)
->  	const struct tegra_smmu_group_soc *soc;
->  	struct tegra_smmu_group *group;
->  	int swgroup =3D fwspec->ids[0];
-> +	bool pci =3D dev_is_pci(dev);
->  	struct iommu_group *grp;
-> =20
->  	/* Find group_soc associating with swgroup */
-> @@ -961,7 +963,7 @@ static struct iommu_group *tegra_smmu_device_group(st=
-ruct device *dev)
->  	group->smmu =3D smmu;
->  	group->soc =3D soc;
-> =20
-> -	group->group =3D iommu_group_alloc();
-> +	group->group =3D pci ? pci_device_group(dev) : iommu_group_alloc();
->  	if (IS_ERR(group->group)) {
->  		devm_kfree(smmu->dev, group);
->  		mutex_unlock(&smmu->lock);
-> @@ -1180,6 +1182,19 @@ struct tegra_smmu *tegra_smmu_probe(struct device =
-*dev,
->  		return ERR_PTR(err);
->  	}
-> =20
-> +#ifdef CONFIG_PCI
-> +	if (!iommu_present(&pci_bus_type)) {
-> +		pci_request_acs();
-> +		err =3D bus_set_iommu(&pci_bus_type, &tegra_smmu_ops);
-> +		if (err < 0) {
-> +			bus_set_iommu(&platform_bus_type, NULL);
-> +			iommu_device_unregister(&smmu->iommu);
-> +			iommu_device_sysfs_remove(&smmu->iommu);
-> +			return ERR_PTR(err);
+> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+> index 3d91bd3e59cd..a62cc87551ac 100644
+> --- a/sound/soc/tegra/Kconfig
+> +++ b/sound/soc/tegra/Kconfig
+> @@ -39,7 +39,6 @@ config SND_SOC_TEGRA20_I2S
+>  config SND_SOC_TEGRA20_SPDIF
+>  	tristate "Tegra20 SPDIF interface"
+>  	depends on SND_SOC_TEGRA
+> -	default m
+>  	help
+>  	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
+>  	  You will also need to select the individual machine drivers to support
 
-It might be worth factoring out the cleanup code now that there are
-multiple failures from which we may need to clean up.
+So now by default this driver will be disabled, which means that Linux
+is going to regress for people that rely on this driver.
 
-Also, it'd be great if somehow we could do this without the #ifdef,
-but I guess since we're using the pci_bus_type global variable directly,
-there isn't much we can do here?
+You need to at least follow this up with a patch that makes the
+corresponding change in both tegra_defconfig and multi_v7_defconfig to
+ensure that this driver is going to get built by default.
+
+Given the above it's probably also a good idea to explain a bit more in
+the commit message about what you're trying to achieve. Yes, "default n"
+is usually the right thing to do and I'm honestly not sure why Stephen
+chose to make this "default m" back in the day. Given that it depends on
+SND_SOC_TEGRA, which itself is "default n", I think this makes some
+sense, even if in retrospect it ended up being a bit inconsistent (you
+could probably argue that all patches after this are the ones that were
+inconsistent instead). This was merged over 9 years ago and a lot of
+common practices have changed over that period of time.
 
 Thierry
 
---QWpDgw58+k1mSFBj
+--SUk9VBj82R8Xhb8H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9xlwEACgkQ3SOs138+
-s6HuvQ/+KWpcgdZCbKXXhl1yRvr0vAWBpqSaSn2kW0gf5hn9sHoalZ9dqV3sKXYy
-ECgw+sJS/AxESl7W6nUW6yvmcB4XPZSArF5kohfzNo1EKjTO22zqdB/QCWv6k+Yv
-ilWSOnpbLf93QAzkeYXgPYdC0iMMRZaREWktp4Qys/cx8CvuwHWuVGaXJwuo/7yx
-5hfxPUI4GCtYpNllg+QhNJuaLr9GsG49g8HQjpzex5hIC5Q0Io6R6ExQaE0Cdr+o
-op5oiJwx/Mb4DTvo58T79Y+yCdMDC6z0AscXMtRjtevSXEsD9m+04LMG2qYGwhwv
-f4raAIOp/0iJ8izvdN3U7TuuJY6tIypySz30tgwQ5ekxEY/3uWJyTf+foCN3xoMt
-s5lrAdS2/1EELM5YXqNjHZEBHSFCgjD4TvVtrWv1XZdtObaxmquBjoRlDfUhqHGN
-2oHhVcPvGGolbgDqwIJZqnxr13GXfIcthhwUxh+FWWqKtBVsWwGgf2nPQ4tMeWla
-9mMKMSKRDKF1TRoMlYW7iucqEmWETRTJY2bUBOrzK2llKYUdJMXrfIrTw29jyDJP
-v/XNMXjUJzzlLAMnz7Oup7PQyzZWPzWmEUK3y5Sx5JIj00PIbVsLwPpFs25D2V67
-kDwMOwzFrXmIKb606G0PUobcjid45leY99xzDN6QFH/RsUYrb60=
-=8eZB
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9xmm8ACgkQ3SOs138+
+s6EzAw//csXks9215vvcBCKjXwZz3HXXMNsnJveUZK0fzDUjSr5oQeILZbN+gfxa
+6pVNIU0ePDvtIh3814xSwzhSli5OlRq4Vo+y+zI2rer0L3BB6HpM80ekckhtKMJV
+J8gKAxWtjmnzxizchU7LX+Lds/aeYS9xrqxEsninWvGZ7slMPbb7fxfGUyHvyG0n
+ypjLyBsFyzDRfAo5ptW3LVW9W++aMoObYgcubxpdZ4EVThkf+/GUvUdWry69ZTYE
+XmjwM2uq0B5edVuBYN9ezQflcoeDGIrD+ZR6yOtTeXViKxXqwZZuHir4dJ1i/upV
+58cg3rYjAaAPyjxhMilJ35iOan0pGnVQJtjS64p9k9cCJBnADJs2fUcczzdXnP/O
+tze1XSeQXbqr9XZKnODmNHwOajUoHVwLM6RN4bNwYdtMkpETN0afqQ9pX4X3WMD5
+QJWXFSPc13LXeQwhOQNC+u5vfPaWYhne7/7WbLmd82IWiPABXeMwKINyzbv5ddUA
+PWJo5TMOSpEopNzvDoWa8VYMN+QmPujxpiclBMK1aNkcWIa+hGGqWe+tyYun88e5
+z7m9FSDqm0o2eizPl6zfNzUf35ihah/Q86k8eiULWQUR7kLNImS0n8fQGOR1s4dO
+NLs6phyiJyLZOjYJ6GcCm0Vk/vCt2ifr+7DnT/okpWxlO9hDmAY=
+=/ZoJ
 -----END PGP SIGNATURE-----
 
---QWpDgw58+k1mSFBj--
+--SUk9VBj82R8Xhb8H--
