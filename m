@@ -2,88 +2,115 @@ Return-Path: <SRS0=0tg+=DF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA461C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 08:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2E0C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE4C20E65
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 08:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B6521548
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgI1I5x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Sep 2020 04:57:53 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:49907 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgI1I5x (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Sep 2020 04:57:53 -0400
-X-Greylist: delayed 616 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Sep 2020 04:57:50 EDT
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.15]) by rmmx-syy-dmz-app11-12011 (RichMail) with SMTP id 2eeb5f71a31f2bb-f1168; Mon, 28 Sep 2020 16:47:29 +0800 (CST)
-X-RM-TRANSID: 2eeb5f71a31f2bb-f1168
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from [192.168.21.77] (unknown[10.42.68.12])
-        by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee85f71a31f8be-57d56;
-        Mon, 28 Sep 2020 16:47:29 +0800 (CST)
-X-RM-TRANSID: 2ee85f71a31f8be-57d56
-Subject: Re: [PATCH] usb: phy: tegra: Use IS_ERR() to check and simplify code
-To:     Felipe Balbi <balbi@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     gregkh@linuxfoundation.org, jonathanh@nvidia.com,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        id S1726380AbgI1LKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 07:10:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:49468 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726328AbgI1LKF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 28 Sep 2020 07:10:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A24FC31B;
+        Mon, 28 Sep 2020 04:10:04 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8142E3F6CF;
+        Mon, 28 Sep 2020 04:10:03 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 12:09:57 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Liu Shixin <liushixin2@huawei.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20200910115607.11392-1-tangbin@cmss.chinamobile.com>
- <87imc3eiug.fsf@kernel.org> <20200924102139.GF2483160@ulmo>
- <87pn6bcvfm.fsf@kernel.org>
-From:   Tang Bin <tangbin@cmss.chinamobile.com>
-Message-ID: <ae9e3c71-9532-ad13-2109-a278121cf76e@cmss.chinamobile.com>
-Date:   Mon, 28 Sep 2020 16:47:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+Subject: Re: [PATCH -next] PCI: tegra: convert to use DEFINE_SEQ_ATTRIBUTE
+ macro
+Message-ID: <20200928110957.GA13256@e121166-lin.cambridge.arm.com>
+References: <20200916025025.3992783-1-liushixin2@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <87pn6bcvfm.fsf@kernel.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916025025.3992783-1-liushixin2@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi all:
+On Wed, Sep 16, 2020 at 10:50:25AM +0800, Liu Shixin wrote:
+> Use DEFINE_SEQ_ATTRIBUTE macro to simplify the code.
+> 
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> ---
+>  drivers/pci/controller/pci-tegra.c | 28 +++-------------------------
+>  1 file changed, 3 insertions(+), 25 deletions(-)
 
-ÔÚ 2020/9/24 18:37, Felipe Balbi Ð´µÀ:
-> Thierry Reding <thierry.reding@gmail.com> writes:
->
->> On Thu, Sep 24, 2020 at 10:26:15AM +0300, Felipe Balbi wrote:
->>> Tang Bin <tangbin@cmss.chinamobile.com> writes:
->>>
->>>> Use IS_ERR() and PTR_ERR() instead of PTR_ERR_OR_ZERO() to
->>>> simplify code, avoid redundant judgements.
->>>>
->>>> Signed-off-by: Zhang Shengju <zhangshengju@cmss.chinamobile.com>
->>>> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
->>> Applied for next merge window. Make sure to get this driver out of
->>> drivers/usb/phy and moved into drivers/phy ASAP.
->> Sergei had commented on this patch with valid concerns, see here in case
->> you don't have his reply in your inbox:
->>
->>      http://patchwork.ozlabs.org/project/linux-tegra/patch/20200910115607.11392-1-tangbin@cmss.chinamobile.com/#2526208
->>
->> I agree with those concerns. This patch is broken because it will output
->> the wrong error code on failure. I don't fully agree with Sergei's point
->> that this patch isn't worth redoing. I do like the idiomatic error
->> handling better, but I think we shouldn't be breaking the error messages
->> like this.
-> Sure thing, dropped for now.
+Applied to pci/tegra, thanks.
 
-Sorry, it's my fault.
+Lorenzo
 
-Thanks
-
-Tang Bin
-
->
-
-
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index c1d34353c29b..556c30a718f0 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2564,36 +2564,14 @@ static int tegra_pcie_ports_seq_show(struct seq_file *s, void *v)
+>  	return 0;
+>  }
+>  
+> -static const struct seq_operations tegra_pcie_ports_seq_ops = {
+> +static const struct seq_operations tegra_pcie_ports_sops = {
+>  	.start = tegra_pcie_ports_seq_start,
+>  	.next = tegra_pcie_ports_seq_next,
+>  	.stop = tegra_pcie_ports_seq_stop,
+>  	.show = tegra_pcie_ports_seq_show,
+>  };
+>  
+> -static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
+> -{
+> -	struct tegra_pcie *pcie = inode->i_private;
+> -	struct seq_file *s;
+> -	int err;
+> -
+> -	err = seq_open(file, &tegra_pcie_ports_seq_ops);
+> -	if (err)
+> -		return err;
+> -
+> -	s = file->private_data;
+> -	s->private = pcie;
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct file_operations tegra_pcie_ports_ops = {
+> -	.owner = THIS_MODULE,
+> -	.open = tegra_pcie_ports_open,
+> -	.read = seq_read,
+> -	.llseek = seq_lseek,
+> -	.release = seq_release,
+> -};
+> +DEFINE_SEQ_ATTRIBUTE(tegra_pcie_ports);
+>  
+>  static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
+>  {
+> @@ -2610,7 +2588,7 @@ static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
+>  		return -ENOMEM;
+>  
+>  	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
+> -				   pcie, &tegra_pcie_ports_ops);
+> +				   pcie, &tegra_pcie_ports_fops);
+>  	if (!file)
+>  		goto remove;
+>  
+> -- 
+> 2.25.1
+> 
