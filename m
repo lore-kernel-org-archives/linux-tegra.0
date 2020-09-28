@@ -2,115 +2,216 @@ Return-Path: <SRS0=0tg+=DF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2E0C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70194C4727F
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27B6521548
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003D4221E8
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 11:22:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="j7JdjJsg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgI1LKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Sep 2020 07:10:06 -0400
-Received: from foss.arm.com ([217.140.110.172]:49468 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726328AbgI1LKF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Sep 2020 07:10:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A24FC31B;
-        Mon, 28 Sep 2020 04:10:04 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8142E3F6CF;
-        Mon, 28 Sep 2020 04:10:03 -0700 (PDT)
-Date:   Mon, 28 Sep 2020 12:09:57 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] PCI: tegra: convert to use DEFINE_SEQ_ATTRIBUTE
- macro
-Message-ID: <20200928110957.GA13256@e121166-lin.cambridge.arm.com>
-References: <20200916025025.3992783-1-liushixin2@huawei.com>
+        id S1726564AbgI1LW0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 07:22:26 -0400
+Received: from mail-dm6nam12on2046.outbound.protection.outlook.com ([40.107.243.46]:54752
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726477AbgI1LWZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 28 Sep 2020 07:22:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FCjLUCAA8XVyDL2KBJHmEi1Zy/SgpeK1LtIXigePlKkqafb6qaZvlR2jMFaw8uElsDnOXJsGimsf8GbF+NfMjb0UYo4SPWGCGumYZ6GGkmBjjpdC2+ie4ANOXZkVCkPcFBnI0Q7/m0TMt4MvJ00o/88irizYYZF54nUx/2KJnPHfMYv38IsinC6ta6a/S49xKJldDOCjuBUMokVDi/4EogPr6XXgnFLFz7WJmIV74VjHYzKxpBYlwWHFBUwxjYRuwsG57xbPWRIGFZXbSDvC7RhFdE87YzkBZkLcFPcrINTCWAswea4m7B/3ngFSOQQCcfpEvEOyc/t2CRRXZqN4Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hD8W5ThzNGSBL01HXMBRedFUTKVe6ilyPQyyYKe2xKk=;
+ b=fP6As9m0yb5e9Y30h+Zd9gR9v3SMlyoFx7Gk5RNTALfkb15TDlVMPWL6Yb+D4lkqs/tdEHBMPTMoKdWwvNTW+a6V9ppQo9P/TX0Mp5Vzo4cGY8EPShQNt0KtqT+WzbnCUifqzjcvN9JtQiqSAnab3hfTH0sj1wFbCCcyfkKpeWiszizRqIciCboig7c8ds6s2PkSqLqJ1epKPyYNJK442QAReyp4bzzDPED3uWN6MbmaFLm+I7SoN7V85CS6cdKxSRldknukFuGXlcAIobIL/a+uQbytoTYhHooFjKKgKHJZVm5FLK8YNkqcq2rQMmZbBFmBMXUPBPKZWipPxm1iOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hD8W5ThzNGSBL01HXMBRedFUTKVe6ilyPQyyYKe2xKk=;
+ b=j7JdjJsgyMBQJ0WwPDQ81i5UNk45tcg+b9r1HedEwEOELVLowSBXy30CWi3gYiourig4qSCsCANM1D/n0cMTHA4ASZ5LhxuAMqp/Qkr7pLx1DhE66b3ZkmIPss3Nax5xMbkAfBlKKpQOO//TC2mnF5rA/Hvdzsc1DPZWyWKG4vo=
+Authentication-Results: arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
+ by MN2PR12MB4408.namprd12.prod.outlook.com (2603:10b6:208:26c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.25; Mon, 28 Sep
+ 2020 11:22:22 +0000
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3412.029; Mon, 28 Sep 2020
+ 11:22:22 +0000
+Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
+ memory
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     linux-doc@vger.kernel.org, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
+        kraxel@redhat.com, afd@ti.com, m.szyprowski@samsung.com,
+        arnd@arndb.de, corbet@lwn.net, jonathanh@nvidia.com,
+        matthew.auld@intel.com, linux+etnaviv@armlinux.org.uk,
+        labbott@redhat.com, linux-media@vger.kernel.org, pawel@osciak.com,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
+        rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org,
+        mchehab@kernel.org, gregkh@linuxfoundation.org,
+        lmark@codeaurora.org, tfiga@chromium.org,
+        kyungmin.park@samsung.com, robin.murphy@arm.com
+References: <20200925115601.23955-1-tzimmermann@suse.de>
+ <20200926071334.GA42915@ravnborg.org>
+ <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+ <20200927191605.GA237178@ravnborg.org>
+ <3f703297-7b4f-dcca-ea56-70b2413a1e3d@amd.com>
+ <ef4400a7-397b-e550-7114-1d4238dd36f3@suse.de>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <49c4dcec-cd69-510a-9781-e8fa5fb669f9@amd.com>
+Date:   Mon, 28 Sep 2020 13:22:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <ef4400a7-397b-e550-7114-1d4238dd36f3@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-ClientProxiedBy: FR2P281CA0028.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:14::15) To MN2PR12MB3775.namprd12.prod.outlook.com
+ (2603:10b6:208:159::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916025025.3992783-1-liushixin2@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by FR2P281CA0028.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:14::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.18 via Frontend Transport; Mon, 28 Sep 2020 11:22:18 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 344bcca5-18b3-4dda-ed79-08d863a0c45f
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4408:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB440857BCFC2C769A76568D5183350@MN2PR12MB4408.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IRUeFrkBXr0H/jOwBHqPHvishB50tqoIEUWeMVTO+hw02PbTm40K1M4nq7IWUIdSB5NWuAKDdulLk4b4Wm40EkIIpaQikrj99GeqTnCQAtumQPQ/pEGm7OEmdOo9vhMyqof7a2SRSr3nDRuX2xi+vdzI1OznvMKwLhjA925OTvJ0T5QfVDI/y+Ny0wQdOf+7zg3uvysQApS8zQ21Fl/0cjrcYJn/l43lUOuBzBi+W8HRpi8pFw+DaThqo08YgCKPJ+2Exnh+Bu2Fg4sOQEtFPZ8RXqepra2IK5fDdS07poduy/QUyHfaLV2xTA/axhcDbu52si9HTP8ra79pFRoxXPWhN352KsJI3LYeIit4w4p+gabNc1wgMGtc/HA+LhEtp6+nWrDQ/aM3uKBGKQobI+Mh5+ebBOOvoGxFaiCufSKeXAUacGx7783HFU0zhvZvXw4e6dqFWRD63pPObzgzCg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(376002)(366004)(396003)(39860400002)(6486002)(36756003)(4326008)(86362001)(8936002)(52116002)(478600001)(6666004)(966005)(31696002)(8676002)(83380400001)(2616005)(316002)(66574015)(66946007)(31686004)(66476007)(66556008)(110136005)(16526019)(5660300002)(186003)(2906002)(7416002)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: qGSPofKGJ256FYvsiC1t6pMhAyaJsKnwicKR9y7MycQ38js9z/WvHfjtSoem1bR+lbYjhGZ54CFlDmmF+FZ2j14c2vF9jZaZguOBdM2Z/SsFcU8jm7ej0mTMTFEDQRvWbMQa3QfMRvVe7teKChGXsv37QdrP5V9S8PPV2HJUh8qDzrGn0rXV6y91S0HBVRnZsunU3nPVv72h5G3icpPGPPaW/VpQR3gxMryIj2mCLomPSpK3uq0Wg2pbHichri5uZbueqhq9aKWvS/G0eEdACyRhJDPd/sqvvmIflMxPNQ2naC6AAlrm429TR2f7lAggFZzpXKp+uTL3/FlE44emuNCl/sfJOLGwcQvL6FYi6XG3V49y7yJ+QTNzU1jSlNRpaw+cttjHGbazjsDcW5lYPj4qGPE0srzzh0wFvFqMqHO9HK0NonbSSPUrZys+4NXYfF/Io35ztwRUq3MNlawNDRvf+xEazNqNdn4QUyMHtnHuyc45AopcfXJhiw7T71OP8jpR3d3dk8Ub3wUedrr6c3kkOKMBLZ+zBPE9fOTAalkJ8CH33zCuDLiaAKQ2yfTFl/9w6Q/nTKI3ozWwdBgNoniuLdjS+dYwowxgxT3Ji49zNg5AoEEaOhms6nGJbc9DB/sULA7BR3jCQQgrTWmuLtbxvYg1rH7cAimeZwTpzZspP9PrdyuGI3mbJ9cY6jOHprMu3hifcdy+hKwv3Stw9A==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 344bcca5-18b3-4dda-ed79-08d863a0c45f
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2020 11:22:21.8860
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OUI07lNO1T0FbvSXW9b82g9qM23oBRcHqu8hT0hOvTAzGUGVEsS+FFwqw2fhcD0B
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4408
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 10:50:25AM +0800, Liu Shixin wrote:
-> Use DEFINE_SEQ_ATTRIBUTE macro to simplify the code.
-> 
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
->  drivers/pci/controller/pci-tegra.c | 28 +++-------------------------
->  1 file changed, 3 insertions(+), 25 deletions(-)
+Am 28.09.20 um 09:37 schrieb Thomas Zimmermann:
+> Hi
+>
+> Am 28.09.20 um 08:50 schrieb Christian König:
+>> Am 27.09.20 um 21:16 schrieb Sam Ravnborg:
+>>> Hi Thomas.
+>>>
+>>>>> struct simap {
+>>>>>          union {
+>>>>>                  void __iomem *vaddr_iomem;
+>>>>>                  void *vaddr;
+>>>>>          };
+>>>>>          bool is_iomem;
+>>>>> };
+>>>>>
+>>>>> Where simap is a shorthand for system_iomem_map
+>>>>> And it could al be stuffed into a include/linux/simap.h file.
+>>>>>
+>>>>> Not totally sold on the simap name - but wanted to come up with
+>>>>> something.
+>>>> Yes. Others, myself included, have suggested to use a name that does not
+>>>> imply a connection to the dma-buf framework, but no one has come up with
+>>>>    a good name.
+>>>>
+>>>> I strongly dislike simap, as it's entirely non-obvious what it does.
+>>>> dma-buf-map is not actually wrong. The structures represents the mapping
+>>>> of a dma-able buffer in most cases.
+>>>>
+>>>>> With this approach users do not have to pull in dma-buf to use it and
+>>>>> users will not confuse that this is only for dma-buf usage.
+>>>> There's no need to enable dma-buf. It's all in the header file without
+>>>> dependencies on dma-buf. It's really just the name.
+>>>>
+>>>> But there's something else to take into account. The whole issue here is
+>>>> that the buffer is disconnected from its originating driver, so we don't
+>>>> know which kind of memory ops we have to use. Thinking about it, I
+>>>> realized that no one else seemed to have this problem until now.
+>>>> Otherwise there would be a solution already. So maybe the dma-buf
+>>>> framework *is* the native use case for this data structure.
+>>> We have at least:
+>>> linux/fb.h:
+>>>      union {
+>>>          char __iomem *screen_base;      /* Virtual address */
+>>>          char *screen_buffer;
+>>>      };
+>>>
+>>> Which solve more or less the same problem.
+> I thought this was for convenience. The important is_iomem bit is missing.
+>
+>> I also already noted that in TTM we have exactly the same problem and a
+>> whole bunch of helpers to allow operations on those pointers.
+> How do you call this within TTM?
 
-Applied to pci/tegra, thanks.
+ttm_bus_placement, but I really don't like that name.
 
-Lorenzo
+>
+> The data structure represents a pointer to either system or I/O memory,
+> but not necessatrily device memory. It contains raw data. That would
+> give something like
+>
+>    struct databuf_map
+>    struct databuf_ptr
+>    struct dbuf_map
+>    struct dbuf_ptr
+>
+> My favorite would be dbuf_ptr. It's short and the API names would make
+> sense: dbuf_ptr_clear() for clearing, dbuf_ptr_set_vaddr() to set an
+> address, dbuf_ptr_incr() to increment, etc. Also, the _ptr indicates
+> that it's a single address; not an offset with length.
 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index c1d34353c29b..556c30a718f0 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2564,36 +2564,14 @@ static int tegra_pcie_ports_seq_show(struct seq_file *s, void *v)
->  	return 0;
->  }
->  
-> -static const struct seq_operations tegra_pcie_ports_seq_ops = {
-> +static const struct seq_operations tegra_pcie_ports_sops = {
->  	.start = tegra_pcie_ports_seq_start,
->  	.next = tegra_pcie_ports_seq_next,
->  	.stop = tegra_pcie_ports_seq_stop,
->  	.show = tegra_pcie_ports_seq_show,
->  };
->  
-> -static int tegra_pcie_ports_open(struct inode *inode, struct file *file)
-> -{
-> -	struct tegra_pcie *pcie = inode->i_private;
-> -	struct seq_file *s;
-> -	int err;
-> -
-> -	err = seq_open(file, &tegra_pcie_ports_seq_ops);
-> -	if (err)
-> -		return err;
-> -
-> -	s = file->private_data;
-> -	s->private = pcie;
-> -
-> -	return 0;
-> -}
-> -
-> -static const struct file_operations tegra_pcie_ports_ops = {
-> -	.owner = THIS_MODULE,
-> -	.open = tegra_pcie_ports_open,
-> -	.read = seq_read,
-> -	.llseek = seq_lseek,
-> -	.release = seq_release,
-> -};
-> +DEFINE_SEQ_ATTRIBUTE(tegra_pcie_ports);
->  
->  static void tegra_pcie_debugfs_exit(struct tegra_pcie *pcie)
->  {
-> @@ -2610,7 +2588,7 @@ static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
->  		return -ENOMEM;
->  
->  	file = debugfs_create_file("ports", S_IFREG | S_IRUGO, pcie->debugfs,
-> -				   pcie, &tegra_pcie_ports_ops);
-> +				   pcie, &tegra_pcie_ports_fops);
->  	if (!file)
->  		goto remove;
->  
-> -- 
-> 2.25.1
-> 
+Puh, no idea. All of that doesn't sound like it 100% hits the underlying 
+meaning of the structure.
+
+Christian.
+
+>
+> Best regards
+> Thomas
+>
+>> Christian.
+>>
+>>>   
+>>>> Anyway, if a better name than dma-buf-map comes in, I'm willing to
+>>>> rename the thing. Otherwise I intend to merge the patchset by the end of
+>>>> the week.
+>>> Well, the main thing is that I think this shoud be moved away from
+>>> dma-buf. But if indeed dma-buf is the only relevant user in drm then
+>>> I am totally fine with the current naming.
+>>>
+>>> One alternative named that popped up in my head: struct sys_io_map {}
+>>> But again, if this is kept in dma-buf then I am fine with the current
+>>> naming.
+>>>
+>>> In other words, if you continue to think this is mostly a dma-buf
+>>> thing all three patches are:
+>>> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+>>>
+>>>      Sam
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
