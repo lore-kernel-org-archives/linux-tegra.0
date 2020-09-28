@@ -2,105 +2,100 @@ Return-Path: <SRS0=0tg+=DF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDA8C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 19:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C31C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 19:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E0042071E
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 19:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 361CF208D5
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 19:38:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="mGxeFJVC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJNKn7JT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgI1TMw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Sep 2020 15:12:52 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:31607 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbgI1TMw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Sep 2020 15:12:52 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4C0XGT63dJz3c;
-        Mon, 28 Sep 2020 21:12:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1601320370; bh=ZpKqDVMnGnFJxAu7glq/SOb5QpupbYxViZoh10ycH/Y=;
-        h=Date:From:Subject:To:Cc:From;
-        b=mGxeFJVC5qzOolq9C5c/j7x6dSiLgvrIztRQqlkeFwl8znWjtTzKZA7w69wNVcJh1
-         YjsiZq5sRhfi41gAdUEgAPATQq4njIdgd3g585xd6qT4zO/05nOZxBLUDa/1Ys8hHs
-         EO+i4+Q+4oH4ffErejZJ/Viy11DSYaPNagAqME8btEUwJgpZ0qAeyqHCVGR5z+No+q
-         iY4CE6kRqG4huKjRr66reZt5VFBQg6r++UBqJ+xlJj23tclgynMO40ratNXDz3jgbV
-         djSL7D1QfomJIc3vQc+rm+DqHp+qXQ8D9ab6F3zr+ggMUb2DG58W10r9NcbI6GjTRW
-         rHsSkvTwsnBZA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Mon, 28 Sep 2020 21:12:49 +0200
-Message-Id: <d0b8d9294b948eac599fd7e9602085fe606832c4.1601320251.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2] ASoC: tegra20-spdif: remove "default m"
+        id S1726697AbgI1Tis (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 15:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbgI1Tis (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 28 Sep 2020 15:38:48 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A2B3C061755;
+        Mon, 28 Sep 2020 12:38:47 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id q4so1269595pjh.5;
+        Mon, 28 Sep 2020 12:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PvTQsN4lpGwG4bNurmMUhGfYEfi6y08HRQbRjBGRPr4=;
+        b=AJNKn7JTkfaZWtYcKjnLpI83Sh4ohhpITVcw5SKfptBltLlJ8F1Q7Rxw1/Ch3Nmklr
+         4ItvKqn/0VTCFRoP9m8+jQHchDQdnY4n1HvUnaqxq/zKFtHq2CMlziEGwZ3E8yaDfXsu
+         vgiQE6l0m6TLpXKl4vqzfTG0UETd0OiQHvbGlbUcaBwFc1AL9gpVvCEa9LH2dMstyrZB
+         lPxD294GyKHV0gpy1lx0gulhZMLcN1tn8skrdpIYb7jrhbafFj1qvalvpsZGBfP7omAv
+         j3K7yxyM3Bb/4ZupYNrWTUITOjHh10ON5WDvlerBpRtJ57lcEVoURlcNLoSCCXQZ0QKL
+         t7Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PvTQsN4lpGwG4bNurmMUhGfYEfi6y08HRQbRjBGRPr4=;
+        b=Q0l6xGZMts7RwXBcuLRUxmhXv/OaFsD+X2CqT6cDB4pk4wPxsPjNOid7JxzN9y307i
+         P2TZaaU0TGsZz2YJn3dGaWXSVDU+XHecE9cbcwChD9Bt6HXaHWOUhwAGwdBBmO/KBbVF
+         0PgFR+9QwpUZOAFSahjELndIf/5EVV4fZYju68MEsIlA4hmtsb1ctr7dFlaTUg5k64hZ
+         zuiB50E/0WvTeHjzHMqKrLEK++tAG+fzcwAlbNnFAP/jYBURqdjCmiwWfp9D5Zy+DSyo
+         yPFSqkh/c+qSHGz8iEXVbsHO1NnbWRsb4xlVe+GZypMIxMkzCgVmDbU9xSrF0OOdYz3C
+         IxTQ==
+X-Gm-Message-State: AOAM533k21p+JpSVabuJvlxEjENXQCiEyg3AwkpQpzEAVqZ1QjZaHSps
+        o3xLL+Uyhb+HfsIWWiF9bTY=
+X-Google-Smtp-Source: ABdhPJyF7ovAy2Q8BmAUiZrG9WO75KHcCu3kDg52GYU/f+Na8ljFsJelKts82PPVgVv3EihaUWaHaA==
+X-Received: by 2002:a17:90a:1188:: with SMTP id e8mr691936pja.185.1601321926605;
+        Mon, 28 Sep 2020 12:38:46 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id gb19sm2111133pjb.38.2020.09.28.12.38.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Sep 2020 12:38:46 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 12:33:28 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     joro@8bytes.org, krzk@kernel.org, vdumpa@nvidia.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] iommu/tegra-smmu: Unwrap tegra_smmu_group_get
+Message-ID: <20200928193328.GA15720@Asurada-Nvidia>
+References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
+ <20200926080719.6822-2-nicoleotsuka@gmail.com>
+ <20200928071356.GD2837573@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200928071356.GD2837573@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make tegra20-spdif default to N as all other drivers do.
-Add the selection to defconfigs instead.
+Hi Thierry,
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Fixes: 774fec338bfc ("ASoC: Tegra: Implement SPDIF CPU DAI")
----
- v2: add the symbol to defconfig as suggested by Thierry Reding
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- arch/arm/configs/tegra_defconfig    | 1 +
- sound/soc/tegra/Kconfig             | 1 -
- 3 files changed, 2 insertions(+), 1 deletion(-)
+Thanks for the review.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e9e76e32f10f..19342ac738a5 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -743,6 +743,7 @@ CONFIG_SND_SOC_STM32_I2S=m
- CONFIG_SND_SUN4I_CODEC=m
- CONFIG_SND_SOC_TEGRA=m
- CONFIG_SND_SOC_TEGRA20_I2S=m
-+CONFIG_SND_SOC_TEGRA20_SPDIF=m
- CONFIG_SND_SOC_TEGRA30_I2S=m
- CONFIG_SND_SOC_TEGRA_RT5640=m
- CONFIG_SND_SOC_TEGRA_WM8753=m
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fff5fae0db30..08526eb50484 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -225,6 +225,7 @@ CONFIG_SND_HDA_CODEC_HDMI=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA20_I2S=y
-+CONFIG_SND_SOC_TEGRA20_SPDIF=y
- CONFIG_SND_SOC_TEGRA30_I2S=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index 3d91bd3e59cd..a62cc87551ac 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -39,7 +39,6 @@ config SND_SOC_TEGRA20_I2S
- config SND_SOC_TEGRA20_SPDIF
- 	tristate "Tegra20 SPDIF interface"
- 	depends on SND_SOC_TEGRA
--	default m
- 	help
- 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
- 	  You will also need to select the individual machine drivers to support
--- 
-2.20.1
+On Mon, Sep 28, 2020 at 09:13:56AM +0200, Thierry Reding wrote:
+> > -static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
+> > -						unsigned int swgroup)
+> > +static struct iommu_group *tegra_smmu_device_group(struct device *dev)
+> >  {
+> > +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> > +	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
+> >  	const struct tegra_smmu_group_soc *soc;
+> >  	struct tegra_smmu_group *group;
+> > +	int swgroup = fwspec->ids[0];
+> 
+> This should be unsigned int to match the type of swgroup elsewhere.
+> Also, it might not be worth having an extra local variable for this
+> since it's only used once.
 
+Will change to unsigned int. There are actually a few places using
+it in this function, previously tegra_smmu_group_get().
