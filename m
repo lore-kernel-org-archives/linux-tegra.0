@@ -2,174 +2,179 @@ Return-Path: <SRS0=0tg+=DF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2643C4727D
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 03:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327D3C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 06:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59EDA239EB
-	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 03:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCDFE23444
+	for <linux-tegra@archiver.kernel.org>; Mon, 28 Sep 2020 06:50:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qpdcyNuy"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ikKREIXv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgI1DIB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 27 Sep 2020 23:08:01 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:37935 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgI1DIB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 27 Sep 2020 23:08:01 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200928030757epoutp0325a42a66a0a7fae6ee886d0ee91e6dc7~4071DREAL1314613146epoutp03M
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Sep 2020 03:07:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200928030757epoutp0325a42a66a0a7fae6ee886d0ee91e6dc7~4071DREAL1314613146epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601262477;
-        bh=KWXE2fmpyB7eUfVgULX+azIPkRur1+l/RpTT+O8eZgA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qpdcyNuyMtrLNfc+GnaDCfWrD+3Y1wKxDurfVhUGDHFL83FoOvqj/nDP0T7qLJGLH
-         JbNZ4PglyF2EuAK8qLQ5524qpJWHCdItERiFNQoxKrK2m/ddWidtmsA+KjNAWMGLiC
-         GSwE974BLWeMEkugazsCMYrHXiXUjvvTIhLwtr68=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200928030756epcas1p3c8919f8bf3af455ba73cf5d67d6c8cf3~4070XsF9P2788527885epcas1p3Q;
-        Mon, 28 Sep 2020 03:07:56 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.155]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4C06s55CfxzMqYkn; Mon, 28 Sep
-        2020 03:07:53 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.05.09577.983517F5; Mon, 28 Sep 2020 12:07:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200928030753epcas1p24a8a977126254c3e92a2c311ab76b5a9~407xKMJoW1106811068epcas1p2J;
-        Mon, 28 Sep 2020 03:07:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200928030753epsmtrp16e80df336ed3e1753bd196e86a8b1a88~407xJkSoC1510615106epsmtrp1F;
-        Mon, 28 Sep 2020 03:07:53 +0000 (GMT)
-X-AuditID: b6c32a39-bfdff70000002569-98-5f7153890bac
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        23.9D.08604.983517F5; Mon, 28 Sep 2020 12:07:53 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200928030752epsmtip2951b7bc8c33be1d44441639f5a95fcb9~407w9b07K0205102051epsmtip26;
-        Mon, 28 Sep 2020 03:07:52 +0000 (GMT)
-Subject: Re: [PATCH v1] PM / devfreq: tegra30: Improve initial hardware
- resetting
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <9cf563cc-fa74-4a98-c4e2-022dab675a9d@samsung.com>
-Date:   Mon, 28 Sep 2020 12:20:59 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20200927205139.19548-1-digetx@gmail.com>
-Content-Language: en-US
+        id S1726614AbgI1Gut (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 02:50:49 -0400
+Received: from mail-bn8nam11on2060.outbound.protection.outlook.com ([40.107.236.60]:57057
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725294AbgI1Gut (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 28 Sep 2020 02:50:49 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L7bGtQE0xggG4ZIgApP3dyrBzhhxnFcCie64/3YEQa8zpa/HfdH73fWmtR/nHqKBiCllf/NxFjkkpB2M7bO7pDTXRY8FTrpH9JcjesDDC3cf2Dvrvqg8BIICITlPM7rBSP5GLg/O0jLI9pO40AVQfvNncgPhkrYFjGwufzuaj0MZadgMAkJs+J4FSFfHO9BF2bBEDlWqadzxooCTNU4VQKkLGI59fcmzklROomXtDshZqi7PrHbcKSWcTBk4KHiU6AHbMIrPwEwwB23Y0rSi90B+9fYPmvL/+DO4711DeqYBJpn/merH4Cpinf+O6lpRFV60/r0EW7KttG7xG3rUyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ftfPyK2QiwP8U4uWpbXw7JZVcVkZ4Ljqk4X0LAeVhGo=;
+ b=OfBZ7L4a8z0pQNq6o655uf4rpWuVfFLfIsLjz/7L3+P7RhCbtASa92Ws5IBXA4lV2L7dJBYdN23kYUeLvCf6+gRM59jjjwZp+3uoQu/2uj51wcpAgto61M5WtQ1/Z5wsschWyEn57iCYJhxRauLgquYlpvkFiVoXN5d1cMCN2ruyhiboSlZC/vVxGcnpJW83hpT0XkJ3Z9ZTyAnxDSxkbVd3otw+FiCcpXXI97Fdv58nxovDXt2PMd1j9vJ63270cVJ+oTSYGU/DW5Z2/CM+fuMwCnPq1/5g1YS1YJR77tG2wcDgpSmbP8RpkNcgNAGBF2zbFJ7HrRKqMfOnHIcMqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ftfPyK2QiwP8U4uWpbXw7JZVcVkZ4Ljqk4X0LAeVhGo=;
+ b=ikKREIXvqqSX3oKki54axktxBO7Le+SQW45Js0+JPkvJXoe+W7vq533nyKU+UhA+KmRPBbtGZZfkmnLO/L+f9UAHFl5T246siAigWSWV7EhWvQy4bvQCFPCPKdWoRigmt0SzFoZr+m2czMlS5ln2KKmzRrJqOx4uASZayf6dWg8=
+Authentication-Results: arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
+ by MN2PR12MB3901.namprd12.prod.outlook.com (2603:10b6:208:16c::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.23; Mon, 28 Sep
+ 2020 06:50:39 +0000
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3412.029; Mon, 28 Sep 2020
+ 06:50:39 +0000
+Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
+ memory
+To:     Sam Ravnborg <sam@ravnborg.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        thierry.reding@gmail.com, kraxel@redhat.com, tfiga@chromium.org,
+        m.szyprowski@samsung.com, arnd@arndb.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, jonathanh@nvidia.com,
+        matthew.auld@intel.com, linux+etnaviv@armlinux.org.uk,
+        labbott@redhat.com, linux-media@vger.kernel.org, pawel@osciak.com,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
+        rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org,
+        mchehab@kernel.org, gregkh@linuxfoundation.org,
+        lmark@codeaurora.org, afd@ti.com, kyungmin.park@samsung.com,
+        robin.murphy@arm.com
+References: <20200925115601.23955-1-tzimmermann@suse.de>
+ <20200926071334.GA42915@ravnborg.org>
+ <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+ <20200927191605.GA237178@ravnborg.org>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <3f703297-7b4f-dcca-ea56-70b2413a1e3d@amd.com>
+Date:   Mon, 28 Sep 2020 08:50:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <20200927191605.GA237178@ravnborg.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBJsWRmVeSWpSXmKPExsWy7bCmnm5ncGG8wd+JGharPz5mtGiZtYjF
-        4mzTG3aLy7vmsFl87j3CaNH5ZRabxe3GFWwWP3fNY3Hg8Ng56y67R2/zOzaPvi2rGD0+b5IL
-        YInKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkNJ
-        oSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSY
-        kJ2x/+UKpoJ7PBWXt5xgbmBcw9XFyMkhIWAi8exAN3sXIxeHkMAORonT/+6zQDifGCXWb/0C
-        lfnGKNG3pZO1i5EDrOXJsUCQbiGBvYwS384HQtS8Z5Q4M7GJGSQhLBAssWBNMxNIQkTgMqPE
-        0kWvmUASzAKREod3rgaz2QS0JPa/uMEGYvMLKEpc/fGYEcTmFbCT6JlyEmwQi4CqxL7FM8Hi
-        ogJhEie3tUDVCEqcnPmEBcTmFDCT2NE7G2q+uMStJ/OhbHmJ7W/nMIMcISEwk0NiTu9cdoin
-        XSQa11+GsoUlXh3fAmVLSbzsb4OyqyVWnjzCBtHcwSixZf8FVoiEscT+pZOZQEHBLKApsX6X
-        PkRYUWLn77mMEIv5JN597YGGFq9ER5sQRImyxOUHd5kgbEmJxe2dbBMYlWYheWcWkhdmIXlh
-        FsKyBYwsqxjFUguKc9NTiw0LTJFjexMjOIlqWe5gnP72g94hRiYOxkOMEhzMSiK8vjkF8UK8
-        KYmVValF+fFFpTmpxYcYTYEBPJFZSjQ5H5jG80riDU2NjI2NLUwMzUwNDZXEeR/eUogXEkhP
-        LEnNTk0tSC2C6WPi4JRqYGLw3aPw1Nci8bc591Nnix61jkVTja8LxXh+MrlsLlCrILGw02V6
-        l+GOnK0PbH64ZhQU8Lc96v/9ouf0ywoVfb2bPI8XdbZahzatNDvqsnWN492VvX3745/f8Gk1
-        9yzhNZJkiG/7yWSY0SnZVxMglHXYPva1+5npfD8Zc06lpfpN/hagvtzj3u1lsnlfv9vLX372
-        WV+RyfygoEDMFX79dM0JL9zYvW1P5PFyujgced93qicgNHTfy8ayqvr77p8Ev3G+fJcjf9BV
-        6q9lJTPH3/f6Kjuu3eTnPDTFhkUjny1k7QMrr/ltb+sCHtzX2Fe1eWd3RkdAhlrg/GXhzicf
-        eidt8bt3f9FP202mHD5KLMUZiYZazEXFiQDXl3icKwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXrczuDDeoKuR1WL1x8eMFi2zFrFY
-        nG16w25xedccNovPvUcYLTq/zGKzuN24gs3i5655LA4cHjtn3WX36G1+x+bRt2UVo8fnTXIB
-        LFFcNimpOZllqUX6dglcGftfrmAquMdTcXnLCeYGxjVcXYwcHBICJhJPjgV2MXJxCAnsZpSY
-        /qOZqYuREyguKTHt4lFmiBphicOHiyFq3jJKvGm7ygxSIywQLLFgDUg9F4eIwFVGiYWHLzKC
-        JJgFIiV65m5hg+joBEo8/A3WwSagJbH/xQ02EJtfQFHi6o/HYA28AnYSPVNOgtWwCKhK7Fs8
-        EywuKhAmsXPJYyaIGkGJkzOfsIDYnAJmEjt6ZzNBLFOX+DPvEjOELS5x68l8qLi8xPa3c5gn
-        MArPQtI+C0nLLCQts5C0LGBkWcUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERxPWpo7
-        GLev+qB3iJGJg/EQowQHs5IIr29OQbwQb0piZVVqUX58UWlOavEhRmkOFiVx3huFC+OEBNIT
-        S1KzU1MLUotgskwcnFINTCLh93aqXVA03rnQ6PjKc/xrNG9UpqSy1XPp5TSvOSFZMcO3vDFS
-        z4L/VozgyXVnVgctdYqsXC5/2e64ynMZzZzKxUcm1s/5m/b444p77Qs/fRcQ3nJ+lS9f065D
-        /SYKazUXnNuc79Nx5+zH+T06CcvWXLA7cX5NTldt1uwncufLrHcfE7Zd6Pz2i1LSzMplQTzq
-        YhFzZJ/caXVlWe2yKelp5+ETD+oeFvu36E67mijfHmactObwqyd3D0Wu2zmbMWpu5owb2hNm
-        rl3LtHeC9V8NJ+3Di+tOOStvS1T9eezt1D0rrazUf7+R4RaSSHQ3S/vMq28vFBYn7fMv/pbR
-        ykWvfDK2LlV5e0R+btfEy6JKLMUZiYZazEXFiQBoCXTHFgMAAA==
-X-CMS-MailID: 20200928030753epcas1p24a8a977126254c3e92a2c311ab76b5a9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200927205217epcas1p1f4fffea5e9df2ca3b6e3ac13d46156e3
-References: <CGME20200927205217epcas1p1f4fffea5e9df2ca3b6e3ac13d46156e3@epcas1p1.samsung.com>
-        <20200927205139.19548-1-digetx@gmail.com>
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-ClientProxiedBy: AM3PR05CA0092.eurprd05.prod.outlook.com
+ (2603:10a6:207:1::18) To MN2PR12MB3775.namprd12.prod.outlook.com
+ (2603:10b6:208:159::19)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM3PR05CA0092.eurprd05.prod.outlook.com (2603:10a6:207:1::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.22 via Frontend Transport; Mon, 28 Sep 2020 06:50:34 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 90e8fe3c-2fb9-4d9f-d4c7-08d8637acf4c
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3901:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3901950ECAD626023E8C289383350@MN2PR12MB3901.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OrC3AG0vjlaa7toKvgRe22NR3IxPxIDIX6Myv8OPC8YkVjH28mB4zlzVG90g1gcA8GchPvFDKFTcXVyrVd1y7ygiNKeqbBoDX+42uAyXis1O0RdSdQBmwERqoOfyEcI4XCJCdbcSRyVsTGZGNBSg18cZFmnj/xe24mTFi9nqsZ1jzcNvJ/ZLfLrmmPdBeSpv+cGow4rhzR1l0mqSnPe+Z/ZVmDBFQed/a/A8zzI522JNY5/T1EN+b/8iBtnkhGu2Wo02A8y4+qgkarnCXzv0N4Z++WuBMZCQqseYhnPxWo1P/5Z+sTb0hwqyd6hmYGLVC5B0f1UhYuC8RcVkqw/YfKvvaOuN2vX641Hja+OlDjr94FdT9MNmseJTJSdo+EgHKY1yozVs0/l2DOcKnqFwBPM3U2GD+RrQ9x8YMkFfrFbmd/KLpoRZj+2vbF97ca5z
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(366004)(136003)(396003)(7416002)(52116002)(66946007)(83380400001)(5660300002)(31686004)(36756003)(6666004)(110136005)(4326008)(8676002)(31696002)(316002)(16526019)(186003)(6486002)(86362001)(8936002)(2616005)(478600001)(2906002)(66476007)(66556008)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: O+Y0FV2AonwhTb2FTg/L59LjSgF2tLHHcc/FRi4nBCkplmvOrxkjeJo6PE0Zp8m4ylS6hqa5PBYCtZRPakqbvJ4EdircPrWPSiibUcXhrt5rlGg/TBM6c66BoIoPtB8qAKwNL+/pL+HbCCDx+/oQHIsIu0J85RWwFYCeJwAGuVtPT5mTbTk3G1HQJkzcDiaQs83Ohtdp9TEh9hif9b0pJshBDDU1YM+FX6rZv4F6IMktrXhLbQqEmL9me2RZnhIhYxJT7ii4KGrwn7vBEDvDvcEte6TlD7ayznlqJNpSyhLx5bI/rD2JJpiQPq8/o4Bf+rYo/sq1eXWDlU58K0o4nvHxMPffN2JOvSIPKJPhViH8pzdS3vpw/ptCF8b0HewAq+7+L9g8GZFjDxMnXwIto5xLGTxNEw5sl1ViBytitBJJ6+UwktYsuLZ0CIHyF8uN4+L5oP3l4RG5O3POZeeUaIcmJUJ88k9PdVg60kRWykIYf9Sd+rkd5UhSmrtQrl/94lYWgjJUtl232jCT/gc3uP/C8Oo/lMN7cfPxS1XlhI3wH4FY+77WUzO96xrK4jJUtr0hOZMarxBWimL1OPelUPICAppDRYkyxGNjiIqLRIlh/AonVnOul32vmxca5jnbQNyZ2QEhsM7Ro+FHgp1esJqqq2Usoyub3yauxEIUu1pM8vUKaziHRzoD4ZFhtkmEHEWzr7+U4OOds5fV6gHCLQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90e8fe3c-2fb9-4d9f-d4c7-08d8637acf4c
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2020 06:50:39.1731
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y3qVd9zs4iWZBIJuqWgUjOy8glCnqbsoepUdvVX8yNOisW56sMX29eqC6rHlmxHk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3901
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/28/20 5:51 AM, Dmitry Osipenko wrote:
-> It's safe to enable the ACTMON clock at any time during driver probing,
-> even if we don't know the state of hardware, because it's used only for
-> collecting and processing stats, and interrupt is kept disabled. This
-> allows us to slightly improve code which performs initial hardware
-> resetting by making use of a single reset_control_reset() instead of
-> assert/deassert pair. Secondly, a potential error of the reset-control
-> API is handled nicely now.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index dedd39de7367..f5e74c2ede85 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -822,8 +822,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	reset_control_assert(tegra->reset);
-> -
->  	err = clk_prepare_enable(tegra->clock);
->  	if (err) {
->  		dev_err(&pdev->dev,
-> @@ -831,7 +829,11 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	reset_control_deassert(tegra->reset);
-> +	err = reset_control_reset(tegra->reset);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to reset hardware: %d\n", err);
-> +		goto disable_clk;
-> +	}
->  
->  	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
->  	if (rate < 0) {
-> 
+Am 27.09.20 um 21:16 schrieb Sam Ravnborg:
+> Hi Thomas.
+>
+>>> struct simap {
+>>>         union {
+>>>                 void __iomem *vaddr_iomem;
+>>>                 void *vaddr;
+>>>         };
+>>>         bool is_iomem;
+>>> };
+>>>
+>>> Where simap is a shorthand for system_iomem_map
+>>> And it could al be stuffed into a include/linux/simap.h file.
+>>>
+>>> Not totally sold on the simap name - but wanted to come up with
+>>> something.
+>> Yes. Others, myself included, have suggested to use a name that does not
+>> imply a connection to the dma-buf framework, but no one has come up with
+>>   a good name.
+>>
+>> I strongly dislike simap, as it's entirely non-obvious what it does.
+>> dma-buf-map is not actually wrong. The structures represents the mapping
+>> of a dma-able buffer in most cases.
+>>
+>>> With this approach users do not have to pull in dma-buf to use it and
+>>> users will not confuse that this is only for dma-buf usage.
+>> There's no need to enable dma-buf. It's all in the header file without
+>> dependencies on dma-buf. It's really just the name.
+>>
+>> But there's something else to take into account. The whole issue here is
+>> that the buffer is disconnected from its originating driver, so we don't
+>> know which kind of memory ops we have to use. Thinking about it, I
+>> realized that no one else seemed to have this problem until now.
+>> Otherwise there would be a solution already. So maybe the dma-buf
+>> framework *is* the native use case for this data structure.
+> We have at least:
+> linux/fb.h:
+> 	union {
+> 		char __iomem *screen_base;      /* Virtual address */
+> 		char *screen_buffer;
+> 	};
+>
+> Which solve more or less the same problem.
 
-Applied it. Thanks.
+I also already noted that in TTM we have exactly the same problem and a 
+whole bunch of helpers to allow operations on those pointers.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Christian.
+
+>
+>   
+>> Anyway, if a better name than dma-buf-map comes in, I'm willing to
+>> rename the thing. Otherwise I intend to merge the patchset by the end of
+>> the week.
+> Well, the main thing is that I think this shoud be moved away from
+> dma-buf. But if indeed dma-buf is the only relevant user in drm then
+> I am totally fine with the current naming.
+>
+> One alternative named that popped up in my head: struct sys_io_map {}
+> But again, if this is kept in dma-buf then I am fine with the current
+> naming.
+>
+> In other words, if you continue to think this is mostly a dma-buf
+> thing all three patches are:
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+>
+> 	Sam
+
