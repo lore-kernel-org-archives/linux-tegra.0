@@ -2,167 +2,109 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B22AC47420
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBCFC4727C
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A940520936
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601400346;
-	bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=O7XDb3bm8TabT0gghx2l/OrxYqC+/ozahpR7Ehf/T4Uri53EdoQIFkam//fzl8nBx
-	 UkjcdKBbhVMGpc7Ukb/bz9aP78WLxGsTsfJyRF0YNdajU25RPX3qakUxLt18rPN0vK
-	 rlKmt3jjd+uduxXLrM70sejqWeq9x62BOIU6pSG8=
+	by mail.kernel.org (Postfix) with ESMTP id 6CEBA207F7
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:41:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTNWEu8S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbgI2RZn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:25:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbgI2RZl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:25:41 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 003972075A;
-        Tue, 29 Sep 2020 17:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601400340;
-        bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=vW3pXJX83SknNw5HoHFJQaYImR0HN6DhmSa2zEwx5veHCgjUlwS3WW2rRAeg408gA
-         H1Lqkq/nBOwGW3k+W/Jj3WHvm6EHshDZ2YUWoZtTfb4mE55OgYwVXg8gdo4huvJu+i
-         McYfN0AlCJeWRJ5Ebe8RDHaYlGXXxb3l0QXk+F9c=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kNJNh-00Fu9z-Hl; Tue, 29 Sep 2020 18:25:37 +0100
+        id S1728563AbgI2Rlz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 13:41:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbgI2Rlz (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 13:41:55 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8C1C061755;
+        Tue, 29 Sep 2020 10:41:54 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id b19so4717909lji.11;
+        Tue, 29 Sep 2020 10:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ymf5DYD10J/gVTCAgJb77WubJ0BcbD1SvX37zhc4xHQ=;
+        b=UTNWEu8SbvBNm+yTMk4E/UBIu63yOeKo7iE/cZdxuQS8KVZ3Q8fmCHpA2lFIltSDM5
+         TIQs/0w4di/n+3R2+zuKEf2NR4Af/gAGbSzUbRr7QXg/9U/m5CV7x6QOJdltuNDtNMkP
+         fSKpLY32uiQ8KngfUD3rHRwoBscvlORD5fu2qid+pfubqIezgvfVhenTb3NBfCEbaZY7
+         RaMrpPH3loaAlvNQcMtknj1jsUzewl93Cn3Y283ufDGHWHufGkF72MtYhhvQ8OkY4Kwc
+         lA2FE/V6ewd+Rl8pN+CIcvH0M11byZ4ggpfI8DSgxjghVYDspQXB6O/DvDQUmbIezxN6
+         1C9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ymf5DYD10J/gVTCAgJb77WubJ0BcbD1SvX37zhc4xHQ=;
+        b=qxxTcVKYVqICks0LFC3IBXWaZr9Kyp5HdBUzL0CNSpELumPEY7PThsULFjohaXdNVd
+         h4Gy1lsbEDhs7q1k0BeUF4PAg9fEihTZGbdeVqkAHhPgAe7d4+Dc5gXez3r0eLAcSFyx
+         koe2ZKJCC+OTiJw50dJZNzcuh2iiO/1Zwc+52d5s7KLU+u5UZJhlPXRNqI1KKqO7P5uo
+         yDd75p4qsW38cpInlhIjyEtVc6x4ls1ygUPCptaI29fN+2WRIapUk2CJ/jhl0lkmxuNh
+         1iz0ps+XiXApOxMSGNdXKF0lo0uOOHxHP0oG7BLU9yF3u9evWFjHf8QquUonODFTD7YW
+         YLqQ==
+X-Gm-Message-State: AOAM530d2/nL7WubhTBRhARaQfq4A5ODX5VbY2NDoHbQPr5Cy+/r/D+d
+        bFIfWkn9OaZ26UCZ7n1Jn4aK/GzWJts=
+X-Google-Smtp-Source: ABdhPJxgxZwr/emgReyZHJBvOhNw6KNXbB6nWSbYq1wE+ONV0NzfQv3hgDwYmnZeLzriu75KYzgu4w==
+X-Received: by 2002:a2e:889a:: with SMTP id k26mr1457792lji.214.1601401311318;
+        Tue, 29 Sep 2020 10:41:51 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id o17sm3170303lfi.261.2020.09.29.10.41.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Sep 2020 10:41:50 -0700 (PDT)
+Subject: Re: [PATCH v4 1/2] iommu/tegra-smmu: Unwrap tegra_smmu_group_get
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
+        joro@8bytes.org
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, hch@infradead.org
+References: <20200929061325.10197-1-nicoleotsuka@gmail.com>
+ <20200929061325.10197-2-nicoleotsuka@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <35d789ae-7deb-7f8c-0556-98fe73f5999f@gmail.com>
+Date:   Tue, 29 Sep 2020 20:41:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 29 Sep 2020 18:25:37 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yue Wang <yue.wang@amlogic.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-In-Reply-To: <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
-References: <20200924190421.549cb8fc@xhacker.debian>
- <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
- <20200929184851.22682ff1@xhacker.debian>
- <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, Jisheng.Zhang@synaptics.com, hayashi.kunihiko@socionext.com, narmstrong@baylibre.com, linux-pci@vger.kernel.org, wangbinghui@hisilicon.com, bjorn.andersson@linaro.org, yamada.masahiro@socionext.com, thierry.reding@gmail.com, linux-arm-kernel@axis.com, vidyas@nvidia.com, festevam@gmail.com, jbrunet@baylibre.com, robh@kernel.org, jesper.nilsson@axis.com, lorenzo.pieralisi@arm.com, khilman@baylibre.com, pratyush.anand@gmail.com, linux-tegra@vger.kernel.org, krzk@kernel.org, kishon@ti.com, kgene@kernel.org, linux-imx@nxp.com, songxiaowei@hisilicon.com, hongxing.zhu@nxp.com, martin.blumenstingl@googlemail.com, linux-arm-msm@vger.kernel.org, s.hauer@pengutronix.de, yue.wang@amlogic.com, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jingoohan1@gmail.com, agross@kernel.org, linux-kernel@vger.kernel.org, svarbanov@mm-sol.com, kernel@pengutroni
- x.de, gustavo.pimentel@synopsys.com, shawnguo@kernel.org, l.stach@pengutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <20200929061325.10197-2-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-09-29 14:22, Jon Hunter wrote:
-> Hi Jisheng,
+29.09.2020 09:13, Nicolin Chen пишет:
+> The tegra_smmu_group_get was added to group devices in different
+> SWGROUPs and it'd return a NULL group pointer upon a mismatch at
+> tegra_smmu_find_group(), so for most of clients/devices, it very
+> likely would mismatch and need a fallback generic_device_group().
 > 
-> On 29/09/2020 11:48, Jisheng Zhang wrote:
->> Hi Jon,
->> 
->> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
->> 
->>> 
->>> On 24/09/2020 12:05, Jisheng Zhang wrote:
->>>> Improve the msi code:
->>>> 1. Add proper error handling.
->>>> 2. Move dw_pcie_msi_init() from each users to designware host to 
->>>> solve
->>>> msi page leakage in resume path.
->>> 
->>> Apologies if this is slightly off topic, but I have been meaning to 
->>> ask
->>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, 
->>> whenever we
->>> hotplug CPUs we see the following warnings ...
->>> 
->>>  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->>>  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
->>> 
->> 
->> I tried to reproduce this issue on Synaptics SoC, but can't reproduce 
->> it.
->> Per my understanding of the code in kernel/irq/cpuhotplug.c, this 
->> warning
->> happened when we migrate irqs away from the offline cpu, this 
->> implicitly
->> implies that before this point the irq has bind to the offline cpu, 
->> but how
->> could this happen given current dw_pci_msi_set_affinity() 
->> implementation
->> always return -EINVAL
+> But now tegra_smmu_group_get handles devices in same SWGROUP too,
+> which means that it would allocate a group for every new SWGROUP
+> or would directly return an existing one upon matching a SWGROUP,
+> i.e. any device will go through this function.
 > 
-> By default the smp_affinity should be set so that all CPUs can be
-> interrupted ...
+> So possibility of having a NULL group pointer in device_group()
+> is upon failure of either devm_kzalloc() or iommu_group_alloc().
+> In either case, calling generic_device_group() no longer makes a
+> sense. Especially for devm_kzalloc() failing case, it'd cause a
+> problem if it fails at devm_kzalloc() yet succeeds at a fallback
+> generic_device_group(), because it does not create a group->list
+> for other devices to match.
 > 
-> $ cat /proc/irq/70/smp_affinity
-> 0xff
+> This patch simply unwraps the function to clean it up.
 > 
-> In my case there are 8 CPUs and so 0xff implies that the interrupt can
-> be triggered on any of the 8 CPUs.
-> 
-> Do you see the set_affinity callback being called for the DWC irqchip 
-> in
-> migrate_one_irq()?
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
 
-The problem is common to all MSI implementations that end up muxing
-all the end-point MSIs into a single interrupt. With these systems,
-you cannot set the affinity of individual MSIs (they don't target a
-CPU, they target another interrupt... braindead). Only the mux
-interrupt can have its affinity changed.
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-So returning -EINVAL is the right thing to do.
-
-          M.
--- 
-Jazz is not dead. It just smells funny...
