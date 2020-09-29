@@ -2,122 +2,142 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CBFC4727C
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 13:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585E8C4741F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 703592145D
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 13:49:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gj+U2Dfi"
+	by mail.kernel.org (Postfix) with ESMTP id DFED021D7D
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601389950;
+	bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=fopABSYXHfO6otFgQVyq6K0tM1+5SaeYZcL8BLOPh/anf0Hz5eveIxhpXadi5QINa
+	 0AyZVCEnszkJQHQ0hI2+f0vI7iqL3+WfpzvB8VfnF+FZTuCu0DifJRYenky0WDQ+7x
+	 eWd/TlpYGBfFbZPb+KlLAntqzWK0aG94cKHxjOfI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbgI2NtD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 09:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728367AbgI2NtC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 09:49:02 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65540C061755
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Sep 2020 06:49:01 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id k25so4095604ljk.0
-        for <linux-tegra@vger.kernel.org>; Tue, 29 Sep 2020 06:49:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D+vLUCZZ5UKIWpTSD1+fX6O9kh/TXupdSQG8eQc/bmA=;
-        b=gj+U2DfiooxiDzQOUl5qle+R3xr9NIOf6ZcMaxButhbYfcHF3xYrzbQcSYHTV89DeQ
-         4p7fxRX8wEN3dFYIFVnGdvuLdm6bVEMRKOQ4o10c1iE9P+3RDiXGfzq7dcXPHPXxS8jk
-         rexKAs9j3V4IPCFs5cMl+cveTRwSsDYd78Jus7dKGIn2dnDKYE0i+YdbGuRIInE43Be4
-         Jl0yzQe1kSDIFFrpikrL7A6+mTzMLrdzc2O/tA/z9UHM4uGkOW7eCVdDLJREFXQKs5Dj
-         kkXttFPU7Uwhsq+OuJpmxf9/HQx0Uw0jv/+vaMZ8DXn63TAgUkGAMdLu2AmgEL8+8hg7
-         w47w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D+vLUCZZ5UKIWpTSD1+fX6O9kh/TXupdSQG8eQc/bmA=;
-        b=ASrRQdW8EOGwVPr/SZ94dHqm9nByqitl3jViCtD03Fu54IbpkgZ8XwMJl098Ye24XM
-         geoEQqtTirWQu93Lp+iOj2wE6uldAWBSqZ8EH06xJgT1OZSMEh7GEbZpMA8UHYwtZhPl
-         pnecV3M+dcjmIHl6C8pAErSfnMRrERjsjfyvEbj1wh1I3YzX2DvYQt9U6n/05Kc/+e1G
-         PDZ2D5cNaiBvSvEDpz6UdT1vCJWWxbvlOYjAMkf46cERW7uz/GEA6j1moPOuYl9HD7bP
-         SAd6QG/1A0Ode10fNpe3LT8xKrMQY+iDV2Y9MhUpyZdHVvT4+DniH6/XgPZAHmrFpesP
-         DfZg==
-X-Gm-Message-State: AOAM533vUh+b4IqjvGdlt9mGn5/+10NRi7QhfvHz4wG3NuEJruFSPIq0
-        DLQj2aSoVAkQYS3NrCr8eDmzi1OP/ZSf6vJGaVCI9Q==
-X-Google-Smtp-Source: ABdhPJyiIWB6K9oEXax8jJuXMr9FdHo6YqLOve2YqGoXeu0Tzpl7gBLMtEN+zFIv714Ne/aWJD90Rz1GrU1xVpUBXDQ=
-X-Received: by 2002:a05:651c:107b:: with SMTP id y27mr1112311ljm.338.1601387339756;
- Tue, 29 Sep 2020 06:48:59 -0700 (PDT)
+        id S1729738AbgI2Oc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 10:32:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43118 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbgI2Oc3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 10:32:29 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D849F20C09;
+        Tue, 29 Sep 2020 14:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601389948;
+        bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=H42ozem74rjURrts0hRxe5T7CR4s7jiAxWHjUUrTYgxfrnGr0VLpdA4Aw1dCyY2XN
+         F3H1cPJHIvXCrMnWjDV3iLSMTT23c4tqpcm164P6bprzHmV6oXC2ERW52N1oVptGMB
+         32FTqmUy5XKdV9HwtzY+TaD8vzqFnaRvS+GdHy30=
+Received: by mail-ot1-f46.google.com with SMTP id 60so4623648otw.3;
+        Tue, 29 Sep 2020 07:32:27 -0700 (PDT)
+X-Gm-Message-State: AOAM530hi35aVK04eo9DT35oBrTCsxBc06yqeDT+7RJyjb7kAAo18258
+        LDW5TRFGJegbTh4tDbzO0PkVpUlrsBGMACKTcQ==
+X-Google-Smtp-Source: ABdhPJzrYJQxmXmK64+WMD0rkZVvGC2aVs8Bric+nrdYTcuT20sY6koxQbDnQMlcrE1ulqGTm+OoF2mzSgf9Ky4PhtA=
+X-Received: by 2002:a9d:6ada:: with SMTP id m26mr3041497otq.192.1601389946977;
+ Tue, 29 Sep 2020 07:32:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200901124736.155281-1-linus.walleij@linaro.org> <7e34261d-c7b9-99f9-121e-05da76a8781a@gmail.com>
-In-Reply-To: <7e34261d-c7b9-99f9-121e-05da76a8781a@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Sep 2020 15:48:48 +0200
-Message-ID: <CACRpkdZnZ0fxU=7_RLMEivvFProa5r9VPpPiHHR_45zzk3_kCA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: uncompress: Enable debug in head.S
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20200821035420.380495-1-robh@kernel.org> <20200915091218.28737-1-michael@walle.cc>
+ <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+ <346b694e43b1b6b86e4f3164e6589d25@walle.cc> <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
+In-Reply-To: <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 29 Sep 2020 09:32:16 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Michael Walle <michael@walle.cc>,
+        "Gross, Andy" <agross@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel@axis.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Song Xiaowei <songxiaowei@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wangbinghui <wangbinghui@hisilicon.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yue Wang <yue.wang@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 12:13 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-
-> I have CONFIG_DEBUG_UNCOMPRESS=y and was trying today's linux-next which
-> unfortunately doesn't work well on NVIDIA Tegra30 because it's
-> frequently failing to boot, hanging early during boot, about 1 of 5
-> boots are failing. Then I also noticed that Tegra20 has a similar
-> problem, but worse, only 1 of 10 boots succeed.
-
-Hm let's try to fix that.
-
-So you got the "Uncompressing Linux..." message before and all
-worked fine? So we know the physical UART base is correct.
-
-> I loaded Tegra2 QEMU and got it also hanging on boot. I retried multiple
-> times and most of the times it's was a silent CPU hang, but one time I
-> got an endlessly reoccurring debug message from QEMU telling that CPU
-> tries to write to a wrong/non-existent IO address. Then I attached to
-> QEMU's GDB session and found that CPU hangs at the busyuart.
-
-Could you try to implement
-waituarttxrdy in arch/arm/include/debug/tegra.S?
-A copy of the contents in busyuart should work.
-
-I suspect this could be FIFO overflow making the hardware
-hang.
-
-If this is trouble to you I can try to make a patch
-that you can test, just tell me.
-
-> Reverting
-> this patch resolves the trouble for both QEMU and real HW.
+On Tue, Sep 29, 2020 at 12:24 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
 >
-> I also tried to revert only the "ARM: 9006/1: uncompress: Wait for ready
-> and busy in debug prints" patch and got this in QEMU:
+> Hi,
 >
-> Starting kernel ...
+> On 16/09/20 1:24 pm, Michael Walle wrote:
+> > Am 2020-09-16 00:02, schrieb Rob Herring:
+> >> Can you try this? The link up check seemed unnecessary as it is racy.
+> >> What happens if the link goes down right after checking? That's the
+> >> only thing in the change that sticks out.
+> >>
+> >> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> >> b/drivers/pci/controller/dwc/pcie-designware-host.c
+> >> index 317ff512f8df..afee1a0e8883 100644
+> >> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> >> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> >> @@ -441,6 +441,9 @@ static void __iomem
+> >> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
+> >>         struct pcie_port *pp = bus->sysdata;
+> >>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> >>
+> >> +       if (!dw_pcie_link_up(pci))
+> >> +               return NULL;
+> >> +
+> >>         busdev = PCIE_ATU_BUS(bus->number) |
+> >> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
+> >>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
+> >
+> > This will fix the issue.
 >
-> DTB:0x016F6A20 (0x00005DA6)
-> C:0x010000C0-0x016FC820->0x0125AF00-0x01957660
-> Uncompressing Linux...
-(...)
-> LZMA data is corrupt
->
->  -- System halted
+> This fix is required to get DRA7 EVM booting again in linux-next.
 
-Hmmmm is the physical and virtual address to the UART
-really correct?
+Did you see the discussion here[1]? Is firmware setting up the same
+register in question?
 
-Else it might write in some random memory.
+Rob
 
-Yours,
-Linus Walleij
+[1] http://lore.kernel.org/r/HE1PR0402MB33713A623A37D08AE3253DEB84320@HE1PR0402MB3371.eurprd04.prod.outlook.com
