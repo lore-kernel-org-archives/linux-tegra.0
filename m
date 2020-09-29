@@ -2,142 +2,96 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585E8C4741F
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6625C4727C
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 15:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFED021D7D
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601389950;
-	bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fopABSYXHfO6otFgQVyq6K0tM1+5SaeYZcL8BLOPh/anf0Hz5eveIxhpXadi5QINa
-	 0AyZVCEnszkJQHQ0hI2+f0vI7iqL3+WfpzvB8VfnF+FZTuCu0DifJRYenky0WDQ+7x
-	 eWd/TlpYGBfFbZPb+KlLAntqzWK0aG94cKHxjOfI=
+	by mail.kernel.org (Postfix) with ESMTP id 6C2FE20773
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 15:15:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h4/NS2wL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbgI2Oc3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 10:32:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbgI2Oc3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:32:29 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D849F20C09;
-        Tue, 29 Sep 2020 14:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601389948;
-        bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=H42ozem74rjURrts0hRxe5T7CR4s7jiAxWHjUUrTYgxfrnGr0VLpdA4Aw1dCyY2XN
-         F3H1cPJHIvXCrMnWjDV3iLSMTT23c4tqpcm164P6bprzHmV6oXC2ERW52N1oVptGMB
-         32FTqmUy5XKdV9HwtzY+TaD8vzqFnaRvS+GdHy30=
-Received: by mail-ot1-f46.google.com with SMTP id 60so4623648otw.3;
-        Tue, 29 Sep 2020 07:32:27 -0700 (PDT)
-X-Gm-Message-State: AOAM530hi35aVK04eo9DT35oBrTCsxBc06yqeDT+7RJyjb7kAAo18258
-        LDW5TRFGJegbTh4tDbzO0PkVpUlrsBGMACKTcQ==
-X-Google-Smtp-Source: ABdhPJzrYJQxmXmK64+WMD0rkZVvGC2aVs8Bric+nrdYTcuT20sY6koxQbDnQMlcrE1ulqGTm+OoF2mzSgf9Ky4PhtA=
-X-Received: by 2002:a9d:6ada:: with SMTP id m26mr3041497otq.192.1601389946977;
- Tue, 29 Sep 2020 07:32:26 -0700 (PDT)
+        id S1729881AbgI2PPh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 11:15:37 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2773 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729069AbgI2PPg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 11:15:36 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f734f660000>; Tue, 29 Sep 2020 08:14:46 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
+ 2020 15:15:36 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 29 Sep 2020 15:15:36 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <pavel@denx.de>, <stable@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 000/166] 4.14.200-rc1 review
+In-Reply-To: <20200929105935.184737111@linuxfoundation.org>
+References: <20200929105935.184737111@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20200821035420.380495-1-robh@kernel.org> <20200915091218.28737-1-michael@walle.cc>
- <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
- <346b694e43b1b6b86e4f3164e6589d25@walle.cc> <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
-In-Reply-To: <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 29 Sep 2020 09:32:16 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Michael Walle <michael@walle.cc>,
-        "Gross, Andy" <agross@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@axis.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Song Xiaowei <songxiaowei@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wangbinghui <wangbinghui@hisilicon.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yue Wang <yue.wang@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <9b98d5a27ab64aecb54ecb8d5ea222c3@HQMAIL109.nvidia.com>
+Date:   Tue, 29 Sep 2020 15:15:36 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601392486; bh=onRAhWYuUERk8tVjLyc/Cg/3t8QU7xMQQVZd8fcV1ss=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=h4/NS2wLWqkBHaEuGoZVY89l/SvnNhwd6KYPO9axbg08YH1nk45//Qp/gY3GahM2j
+         6HRxwFmKlJkAwVjgOcIVau0mZu1j9FdI/kQfK+EXN2Ig+MdyslkazWfp4wjhDveDpa
+         f2eZPIt375PwlV3Ipw5aZW2GM9qtEH6CLW3mV9aS6qTs7cKxX7ls/KNBngC4cJd/n/
+         +EYn+N5pQYJv08sozcpcisDsY0KCipoR8lJYoYWJwDbhooTjWJhftWnejXOvRDE19M
+         QnEHBBJZ2scbGovUVvlpU+v6Dqssb41Kn9UTIPMmVBlpYNqkoBzIZEBjGRihF1DUjw
+         4RRtssyS6aq/g==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 12:24 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> Hi,
->
-> On 16/09/20 1:24 pm, Michael Walle wrote:
-> > Am 2020-09-16 00:02, schrieb Rob Herring:
-> >> Can you try this? The link up check seemed unnecessary as it is racy.
-> >> What happens if the link goes down right after checking? That's the
-> >> only thing in the change that sticks out.
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> index 317ff512f8df..afee1a0e8883 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> @@ -441,6 +441,9 @@ static void __iomem
-> >> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
-> >>         struct pcie_port *pp = bus->sysdata;
-> >>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >>
-> >> +       if (!dw_pcie_link_up(pci))
-> >> +               return NULL;
-> >> +
-> >>         busdev = PCIE_ATU_BUS(bus->number) |
-> >> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
-> >>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
-> >
-> > This will fix the issue.
->
-> This fix is required to get DRA7 EVM booting again in linux-next.
+On Tue, 29 Sep 2020 12:58:32 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.200 release.
+> There are 166 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 01 Oct 2020 10:59:03 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.200-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Did you see the discussion here[1]? Is firmware setting up the same
-register in question?
+All tests passing for Tegra ...
 
-Rob
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
-[1] http://lore.kernel.org/r/HE1PR0402MB33713A623A37D08AE3253DEB84320@HE1PR0402MB3371.eurprd04.prod.outlook.com
+Linux version:	4.14.200-rc1-g7b80cb61f2b2
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
