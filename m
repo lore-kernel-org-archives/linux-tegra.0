@@ -2,183 +2,100 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5BFC47420
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 18:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A78C4727C
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 19:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC852184D
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 18:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601403182;
-	bh=KbbIptFu2by3ZEgiSoxO0ItV258aPMBQ8QGyKLlZVN4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=KqIJ5DYf3xWDb4jIKPD0tsLRMZAEKL7a45e4LVKOkl3IVVdtsI0h4IkuJl6xmc/YW
-	 zc2cDRv2Xe0Ge74V9yiZiSZ3nZoYB318evDBjRRM4pEKBP1u2gtmHNFRYeDzB2eq0U
-	 AeCQ7Pg5RZwuQBoMDPbs03GyPMiGpARZ7UIvncq8=
+	by mail.kernel.org (Postfix) with ESMTP id 380CC20774
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 19:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgI2SNB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 14:13:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47796 "EHLO mail.kernel.org"
+        id S1728628AbgI2Td2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 15:33:28 -0400
+Received: from sauhun.de ([88.99.104.3]:33568 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbgI2SNA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 14:13:00 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61130208B8;
-        Tue, 29 Sep 2020 18:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601403179;
-        bh=KbbIptFu2by3ZEgiSoxO0ItV258aPMBQ8QGyKLlZVN4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RJjs+GRAdQMy1SObha2G7D1UaBcQCAAyaTf8WgvCvreuOJYCdRhPfgljfewCRMqNa
-         fgTvFA+0dGumXNIblpNRfptGGEAht5GxmMN852H1TK4YPcCUSphboNBwtzPzAVnGzS
-         +GpbuSl9ZZMwew3iyJxm0lXQg8HDC9Hx7S1EK6Fw=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kNK7V-00FxpD-8M; Tue, 29 Sep 2020 19:12:57 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 29 Sep 2020 19:12:57 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        id S1728264AbgI2Td2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 15:33:28 -0400
+Received: from localhost (p54b3311a.dip0.t-ipconnect.de [84.179.49.26])
+        by pokefinder.org (Postfix) with ESMTPSA id 9B7262C052F;
+        Tue, 29 Sep 2020 21:33:25 +0200 (CEST)
+Date:   Tue, 29 Sep 2020 21:33:22 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 12/32] i2c: tegra: Use clk-bulk helpers
+Message-ID: <20200929193322.GA2010@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yue Wang <yue.wang@amlogic.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-In-Reply-To: <6ead62a5-6ad5-bde8-a5df-93c0f8029f65@nvidia.com>
-References: <20200924190421.549cb8fc@xhacker.debian>
- <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
- <20200929184851.22682ff1@xhacker.debian>
- <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
- <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
- <6ead62a5-6ad5-bde8-a5df-93c0f8029f65@nvidia.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <5f4947b18bf381615a37aa81c2242477@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, Jisheng.Zhang@synaptics.com, hayashi.kunihiko@socionext.com, narmstrong@baylibre.com, linux-pci@vger.kernel.org, wangbinghui@hisilicon.com, bjorn.andersson@linaro.org, yamada.masahiro@socionext.com, thierry.reding@gmail.com, linux-arm-kernel@axis.com, vidyas@nvidia.com, festevam@gmail.com, jbrunet@baylibre.com, robh@kernel.org, jesper.nilsson@axis.com, lorenzo.pieralisi@arm.com, khilman@baylibre.com, pratyush.anand@gmail.com, linux-tegra@vger.kernel.org, krzk@kernel.org, kishon@ti.com, kgene@kernel.org, linux-imx@nxp.com, songxiaowei@hisilicon.com, hongxing.zhu@nxp.com, martin.blumenstingl@googlemail.com, linux-arm-msm@vger.kernel.org, s.hauer@pengutronix.de, yue.wang@amlogic.com, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jingoohan1@gmail.com, agross@kernel.org, linux-kernel@vger.kernel.org, svarbanov@mm-sol.com, kernel@pengutroni
- x.de, gustavo.pimentel@synopsys.com, shawnguo@kernel.org, l.stach@pengutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200922225155.10798-1-digetx@gmail.com>
+ <20200922225155.10798-13-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Disposition: inline
+In-Reply-To: <20200922225155.10798-13-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-09-29 19:02, Jon Hunter wrote:
-> On 29/09/2020 18:25, Marc Zyngier wrote:
->> On 2020-09-29 14:22, Jon Hunter wrote:
->>> Hi Jisheng,
->>> 
->>> On 29/09/2020 11:48, Jisheng Zhang wrote:
->>>> Hi Jon,
->>>> 
->>>> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
->>>> 
->>>>> 
->>>>> On 24/09/2020 12:05, Jisheng Zhang wrote:
->>>>>> Improve the msi code:
->>>>>> 1. Add proper error handling.
->>>>>> 2. Move dw_pcie_msi_init() from each users to designware host to 
->>>>>> solve
->>>>>> msi page leakage in resume path.
->>>>> 
->>>>> Apologies if this is slightly off topic, but I have been meaning to 
->>>>> ask
->>>>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver,
->>>>> whenever we
->>>>> hotplug CPUs we see the following warnings ...
->>>>> 
->>>>>  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->>>>>  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
->>>>> 
->>>> 
->>>> I tried to reproduce this issue on Synaptics SoC, but can't 
->>>> reproduce
->>>> it.
->>>> Per my understanding of the code in kernel/irq/cpuhotplug.c, this
->>>> warning
->>>> happened when we migrate irqs away from the offline cpu, this 
->>>> implicitly
->>>> implies that before this point the irq has bind to the offline cpu,
->>>> but how
->>>> could this happen given current dw_pci_msi_set_affinity() 
->>>> implementation
->>>> always return -EINVAL
->>> 
->>> By default the smp_affinity should be set so that all CPUs can be
->>> interrupted ...
->>> 
->>> $ cat /proc/irq/70/smp_affinity
->>> 0xff
->>> 
->>> In my case there are 8 CPUs and so 0xff implies that the interrupt 
->>> can
->>> be triggered on any of the 8 CPUs.
->>> 
->>> Do you see the set_affinity callback being called for the DWC irqchip 
->>> in
->>> migrate_one_irq()?
->> 
->> The problem is common to all MSI implementations that end up muxing
->> all the end-point MSIs into a single interrupt. With these systems,
->> you cannot set the affinity of individual MSIs (they don't target a
->> CPU, they target another interrupt... braindead). Only the mux
->> interrupt can have its affinity changed.
->> 
->> So returning -EINVAL is the right thing to do.
-> 
-> Right, so if that is the case, then surely there should be some way to
-> avoid these warnings because they are not relevant?
 
-I don't think there is a way to do this, because the core code
-doesn't (and cannot) know the exact interrupt topology.
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The only alternative would be to change the affinity of the mux
-interrupt when a MSI affinity changes, but that tends to break
-userspace (irqbalance, for example).
+On Wed, Sep 23, 2020 at 01:51:35AM +0300, Dmitry Osipenko wrote:
+> Use clk-bulk helpers and factor out clocks initialization into separate
+> function in order to make code cleaner.
+>=20
+> The clocks initialization now performed after reset-control initialization
+> in order to avoid a noisy -PROBE_DEFER errors on T186+ from the clk-bulk
+> helper which doesn't silence this error code. Hence reset_control_get()
+> now may return -EPROBE_DEFER on newer Tegra SoCs because they use BPMP
+> driver that provides reset controls and BPMP doesn't come up early during
+> boot. Previously rst was protected by the clocks retrieval and now this
+> patch makes dev_err_probe() to be used for the rst error handling.
+>=20
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Any comments here? I'll apply this series later this week if there are
+no objections coming up.
+
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9zi/4ACgkQFA3kzBSg
+Kbbrlg//YXTGTLSh+tvodavHHfG4QdBSrq225fyLdzaZuhg0R283mmfYqjBpQrOZ
+Sp86TDz632mnmwoTagZiM2Ex6uCqkD0/qy0rsfV5xTC85cSHM0SrOrQFFBGWygeM
+ip0iYNAV79J12xO3dUwIsgcQEBKO/ocHXrmbiMuqBOR0DG+ACv086oE4ouslVDgw
+c+xmsvkQoRP2KTU5jWqAov8jah6dNmvjZ1tXoiIK6jJX58W+pBqzawtxciuiA8FW
+c25IhcxOmJ0LHbwv696Mx6R1E9Bt8pvVaPTM2NyqNLegGmsSYONlogNYtkTxZqZU
+ig5oR+eH2d1PD36vC3brG9GLoaPkGMz3p4s0kyaLDsju93Nyc0zBWOxWyXfQ//HQ
+x2cuVmFPFFrkffEgmbH/f1/0VdVh6eOXgsLZ2gYB45kfh9fll8NQq6y/7XTqnwYw
+hq4Yxi4FJdvdtlYvZOsseY5mWfQgFngfD+gllSEhQzMt4ydsaEFs8FDyYS/Sb734
+ACGDjXVA+CTD1C28EtcVlMCCRJGx+7sSMgZZ+PGs9KR9qr4bkEH4KUyU+gZkFDkH
+/bLXZ7AOeO4X9jDuzUXgGRN11e3rcKx8r8ZKzf1D8DK3ZOBgBlwhg+TZP3qDpUkR
+z/zxnoGWovxFNAQ6RXWfRJmwBN7Cvts/eZwKc2Cax1MMU8rhv+g=
+=VwmE
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
