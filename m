@@ -2,96 +2,167 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9421AC4742C
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 15:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B22AC47420
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37B6D207C4
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 15:15:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PPe1JVnD"
+	by mail.kernel.org (Postfix) with ESMTP id A940520936
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601400346;
+	bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=O7XDb3bm8TabT0gghx2l/OrxYqC+/ozahpR7Ehf/T4Uri53EdoQIFkam//fzl8nBx
+	 UkjcdKBbhVMGpc7Ukb/bz9aP78WLxGsTsfJyRF0YNdajU25RPX3qakUxLt18rPN0vK
+	 rlKmt3jjd+uduxXLrM70sejqWeq9x62BOIU6pSG8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731635AbgI2PPj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 11:15:39 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2903 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729069AbgI2PPj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 11:15:39 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f734f360000>; Tue, 29 Sep 2020 08:13:58 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
- 2020 15:15:39 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 29 Sep 2020 15:15:39 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <pavel@denx.de>, <stable@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.9 000/121] 4.9.238-rc1 review
-In-Reply-To: <20200929105930.172747117@linuxfoundation.org>
-References: <20200929105930.172747117@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1728569AbgI2RZn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 13:25:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbgI2RZl (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 13:25:41 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 003972075A;
+        Tue, 29 Sep 2020 17:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601400340;
+        bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vW3pXJX83SknNw5HoHFJQaYImR0HN6DhmSa2zEwx5veHCgjUlwS3WW2rRAeg408gA
+         H1Lqkq/nBOwGW3k+W/Jj3WHvm6EHshDZ2YUWoZtTfb4mE55OgYwVXg8gdo4huvJu+i
+         McYfN0AlCJeWRJ5Ebe8RDHaYlGXXxb3l0QXk+F9c=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1kNJNh-00Fu9z-Hl; Tue, 29 Sep 2020 18:25:37 +0100
 MIME-Version: 1.0
-Message-ID: <ca8e49fdbdba4cd29f3860eacf1118b6@HQMAIL111.nvidia.com>
-Date:   Tue, 29 Sep 2020 15:15:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601392438; bh=ma86+lGU6hG9PlmwxYSxwXWdV1cuQ0y0yZmLUZRJ4XA=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=PPe1JVnD9cSomicpmBL/RxvYAjz4zVuk/LqqTUPD73ItL/pkECIixnXLN4fUEVRW2
-         iMfcIvtfA4anV/+d82unprGpM51bOTvItI7dUJ07v3fCpWIktBQWGjRzH2tJf48YzN
-         S+NrsXfg3TyTNAFXkeZQBKsbh4SAjJMvvVf33XM4tiW2+8y7zy4QyvghS8Z0Ip87jo
-         uIBYa/7hCCzBQiUZxHO73moTl9vS/uV8nmHizoSvBDiWRuu55Uggz1rcBxc/ThqEI4
-         f6S9RQjflmWdauIGFh0nCtDhNXsfLQK2qGfUvD3L136T79PN6xUn1Y5mspgm+c4d/3
-         /u7A8g70MG8TQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Sep 2020 18:25:37 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-pci@vger.kernel.org,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Yue Wang <yue.wang@amlogic.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
+In-Reply-To: <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
+References: <20200924190421.549cb8fc@xhacker.debian>
+ <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
+ <20200929184851.22682ff1@xhacker.debian>
+ <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, Jisheng.Zhang@synaptics.com, hayashi.kunihiko@socionext.com, narmstrong@baylibre.com, linux-pci@vger.kernel.org, wangbinghui@hisilicon.com, bjorn.andersson@linaro.org, yamada.masahiro@socionext.com, thierry.reding@gmail.com, linux-arm-kernel@axis.com, vidyas@nvidia.com, festevam@gmail.com, jbrunet@baylibre.com, robh@kernel.org, jesper.nilsson@axis.com, lorenzo.pieralisi@arm.com, khilman@baylibre.com, pratyush.anand@gmail.com, linux-tegra@vger.kernel.org, krzk@kernel.org, kishon@ti.com, kgene@kernel.org, linux-imx@nxp.com, songxiaowei@hisilicon.com, hongxing.zhu@nxp.com, martin.blumenstingl@googlemail.com, linux-arm-msm@vger.kernel.org, s.hauer@pengutronix.de, yue.wang@amlogic.com, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jingoohan1@gmail.com, agross@kernel.org, linux-kernel@vger.kernel.org, svarbanov@mm-sol.com, kernel@pengutroni
+ x.de, gustavo.pimentel@synopsys.com, shawnguo@kernel.org, l.stach@pengutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 29 Sep 2020 12:59:04 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.238 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2020-09-29 14:22, Jon Hunter wrote:
+> Hi Jisheng,
 > 
-> Responses should be made by Thu, 01 Oct 2020 10:59:03 +0000.
-> Anything received after that time might be too late.
+> On 29/09/2020 11:48, Jisheng Zhang wrote:
+>> Hi Jon,
+>> 
+>> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
+>> 
+>>> 
+>>> On 24/09/2020 12:05, Jisheng Zhang wrote:
+>>>> Improve the msi code:
+>>>> 1. Add proper error handling.
+>>>> 2. Move dw_pcie_msi_init() from each users to designware host to 
+>>>> solve
+>>>> msi page leakage in resume path.
+>>> 
+>>> Apologies if this is slightly off topic, but I have been meaning to 
+>>> ask
+>>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, 
+>>> whenever we
+>>> hotplug CPUs we see the following warnings ...
+>>> 
+>>>  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
+>>>  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
+>>> 
+>> 
+>> I tried to reproduce this issue on Synaptics SoC, but can't reproduce 
+>> it.
+>> Per my understanding of the code in kernel/irq/cpuhotplug.c, this 
+>> warning
+>> happened when we migrate irqs away from the offline cpu, this 
+>> implicitly
+>> implies that before this point the irq has bind to the offline cpu, 
+>> but how
+>> could this happen given current dw_pci_msi_set_affinity() 
+>> implementation
+>> always return -EINVAL
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.238-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
+> By default the smp_affinity should be set so that all CPUs can be
+> interrupted ...
 > 
-> thanks,
+> $ cat /proc/irq/70/smp_affinity
+> 0xff
 > 
-> greg k-h
+> In my case there are 8 CPUs and so 0xff implies that the interrupt can
+> be triggered on any of the 8 CPUs.
+> 
+> Do you see the set_affinity callback being called for the DWC irqchip 
+> in
+> migrate_one_irq()?
 
-All tests passing for Tegra ...
+The problem is common to all MSI implementations that end up muxing
+all the end-point MSIs into a single interrupt. With these systems,
+you cannot set the affinity of individual MSIs (they don't target a
+CPU, they target another interrupt... braindead). Only the mux
+interrupt can have its affinity changed.
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    30 tests:	30 pass, 0 fail
+So returning -EINVAL is the right thing to do.
 
-Linux version:	4.9.238-rc1-g054f04eb3d5d
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+          M.
+-- 
+Jazz is not dead. It just smells funny...
