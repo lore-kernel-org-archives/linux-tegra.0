@@ -2,147 +2,158 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFF2C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 00:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87E0C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 00:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4856221775
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 00:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D32D2075A
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 00:18:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgGdK8Ox"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVViTjv7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgI2AEr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 28 Sep 2020 20:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44462 "EHLO
+        id S1726421AbgI2ASD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 28 Sep 2020 20:18:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgI2AEr (ORCPT
+        with ESMTP id S1726379AbgI2ASC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 28 Sep 2020 20:04:47 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6785EC0613D3;
-        Mon, 28 Sep 2020 17:04:47 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id f1so3089plo.13;
-        Mon, 28 Sep 2020 17:04:47 -0700 (PDT)
+        Mon, 28 Sep 2020 20:18:02 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C26C061755;
+        Mon, 28 Sep 2020 17:18:01 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id z17so3360885lfi.12;
+        Mon, 28 Sep 2020 17:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=C/2uCZ+b3JDX5POeuiJcjwGtwJq2owg7pPnLmk6OF2c=;
-        b=FgGdK8Ox4KmfRnLlsUDtVNk39OBCNrwR2zslti3e2U+iK2s0i0CWt/nvnfujSfyjD4
-         mRxIDzd59HOdREeeNFR1+8rTnTkqX3HRQopS2MXO9dnYnfpTDnoch209ZQyC4TeEqtBG
-         CQYGEpQOvAX8NPUyaP5SfLMPc+OdOzAqVtOSgpTVeWUIcugKK6Hkblr0bYn5JxcaKdEl
-         7D37Ku+SfdA+yGhjcwJbnP9TSremXnFip3ITB0D2C+KhF+yYRkGWJnl5oIMGKL5fElet
-         V0IpUaFyX1gQy1fbyHbpKjngjE1I2MbqVb08W7+Fp/FsIcmEjJ4rH7iJWFJNwB0pqA2J
-         RuIQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LWyAFftzTgQ/8ZzQPra6i4Q9NzonWukybh/xqSD4SNY=;
+        b=KVViTjv7RofB3mbilJ2qmNPZNQQZQ2SkADTKbbPfsgHfvKhDmG8TMVEnLO+2Krmjrm
+         OQJFHEfjvECuHHMGCafV5snickVdo8dhrl+Q2j/yh3Hbq2kvm9teu9Rpn0tG5lPPi6Qe
+         zyUuHkY5yn/SIMD6H4Jy7HupHIvoCpS8dk2IyVuXQxrHzo7NQMgkPIrqzNul7mQiDMVI
+         53dSdLsumgoB2js+usNGms5nvdcz2QhLsOFimGfizTbkV18pygYDl5jCyz0vR3u+trvg
+         FZ1+dk2qbQRZV6u9X6LBvV53Xv6MDgESnLeqnfjhdNEaHzrsnkWWhro1xHp45PKiHMJt
+         BN1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=C/2uCZ+b3JDX5POeuiJcjwGtwJq2owg7pPnLmk6OF2c=;
-        b=kqtCpIQY3FhRZLLtaX14d1uYdWIOuYCBDWwrLIh4wcidgoHemsTXrVoyw4fcTldr8T
-         NK5ImgX+tPOlmBewI+c7UeQEI8Zn2zulVDwddoqEoY3Gfqs4HYGjhXp5z7iyPg1hr62O
-         tz+QgeKMRVRv88o7raI6vbJ70zs1wIDQ58eL6Ep0gNAjKnH15PWZQjuTyPYpfFLu0R1u
-         Z3LOmZ0S9YrfrGb4TjexFNVfYGMB2BF1qTlijvmJOkz/xD7mymloazqevBENP41dsP++
-         bog5Xek+j6I8NhL9a90msz+kM1nUD9m9c69J3szSS+7Q3HACTqJ0aNtO4jfsR7BQWHqq
-         N13A==
-X-Gm-Message-State: AOAM531z/FAzMuG08FqesNbAEwzVQSaKBW/CCG4hC49RXjffy2HlvVoq
-        5s9lezaRfv4Z4NZtowRvmkDy3Uai9Yk=
-X-Google-Smtp-Source: ABdhPJw1JD+0yORoCok+gamYtL0khtKydIQiDxk27/3l2F5HWucqnW4RdjfC+RJ9HrQewH+66pZsCw==
-X-Received: by 2002:a17:902:7c0e:b029:d0:89f3:28d4 with SMTP id x14-20020a1709027c0eb02900d089f328d4mr1837914pll.16.1601337886912;
-        Mon, 28 Sep 2020 17:04:46 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id fz23sm2392814pjb.36.2020.09.28.17.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2020 17:04:46 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     thierry.reding@gmail.com, joro@8bytes.org
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com, digetx@gmail.com,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LWyAFftzTgQ/8ZzQPra6i4Q9NzonWukybh/xqSD4SNY=;
+        b=WNzXMQr865qKtg2VKbxmfXWGs44mEtAxEG8PI+A4X7LakheaESTZMAr89ZBFCwMK7K
+         Bo0BplKWT+JtVkyf342aj3ck5RqEPD0CBjjdYtguJL60Sh3f/WXJMZnaK9RdGlJ6Mgbm
+         om5MP7k5zKkvVFWsuAxEf60X6ib4eqAeWZ7MbqWJwAB8gk210En5q+KhBRdbn+ecHOoG
+         g9UASIoFLDomCuiCj7Z3kvbgrbr5kPjrFt4b3XcYZc+Is6ac7O0kxvaHsXLM4jxKaaHw
+         QAA651ZilOXq7eOry/gau/mahBbu3HBu+Bvvb309R+frXMOuMeZMQI6wmX32WQeabH+a
+         9IRQ==
+X-Gm-Message-State: AOAM530rMYmsA2WKQSL9+FTK7T9R8d1pLcZup5eNVH1Y96K0F1vLo7T1
+        IppPT1223sD07uhS1vfMh6cyeRKGyUU=
+X-Google-Smtp-Source: ABdhPJwFazCF3sQTeRk6md9P7UFhr2ln8RaMSsv5Xi844x9rjX1AdEJnCbCVu/UtUBG0dljKX7XY9Q==
+X-Received: by 2002:ac2:4424:: with SMTP id w4mr217288lfl.447.1601338679960;
+        Mon, 28 Sep 2020 17:17:59 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id x25sm2990589lfe.284.2020.09.28.17.17.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Sep 2020 17:17:59 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] iommu/tegra-smmu: Expend mutex protection range
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
+        joro@8bytes.org
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] iommu/tegra-smmu: Unwrap tegra_smmu_group_get
-Date:   Mon, 28 Sep 2020 16:59:00 -0700
-Message-Id: <20200928235901.28337-2-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200928235901.28337-1-nicoleotsuka@gmail.com>
 References: <20200928235901.28337-1-nicoleotsuka@gmail.com>
+ <20200928235901.28337-3-nicoleotsuka@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <692b51fa-7a3e-dee7-b628-7cb2d2dc188d@gmail.com>
+Date:   Tue, 29 Sep 2020 03:17:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200928235901.28337-3-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_smmu_group_get was added to group devices in different
-SWGROUPs and it'd return a NULL group pointer upon a mismatch at
-tegra_smmu_find_group(), so for most of clients/devices, it very
-likely would mismatch and need a fallback generic_device_group().
+...
+>  static bool tegra_smmu_capable(enum iommu_cap cap)
+> @@ -420,17 +413,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+>  				 struct tegra_smmu_as *as)
+>  {
+>  	u32 value;
+> -	int err;
+> +	int err = 0;
+> +
+> +	mutex_lock(&smmu->lock);
+>  
+>  	if (as->use_count > 0) {
+>  		as->use_count++;
+> -		return 0;
+> +		goto err_unlock;
 
-But now tegra_smmu_group_get handles devices in same SWGROUP too,
-which means that it would allocate a group for every new SWGROUP
-or would directly return an existing one upon matching a SWGROUP,
-i.e. any device will go through this function.
+This looks a bit odd because it's not a error condition. Perhaps should
+be better to "goto bump_usecount"?
 
-So possibility of having a NULL group pointer in device_group()
-is upon failure of either devm_kzalloc() or iommu_group_alloc().
-In either case, calling generic_device_group() no longer makes a
-sense. Especially for devm_kzalloc() failing case, it'd cause a
-problem if it fails at devm_kzalloc() yet succeeds at a fallback
-generic_device_group(), because it does not create a group->list
-for other devices to match.
+Or make it similar to tegra_smmu_as_unprepare()?
 
-This patch simply unwraps the function to clean it up.
+>  	}
+>  
+>  	as->pd_dma = dma_map_page(smmu->dev, as->pd, 0, SMMU_SIZE_PD,
+>  				  DMA_TO_DEVICE);
+> -	if (dma_mapping_error(smmu->dev, as->pd_dma))
+> -		return -ENOMEM;
+> +	if (dma_mapping_error(smmu->dev, as->pd_dma)) {
+> +		err = -ENOMEM;
+> +		goto err_unlock;
+> +	}
+>  
+>  	/* We can't handle 64-bit DMA addresses */
+>  	if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
+> @@ -453,24 +450,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+>  	as->smmu = smmu;
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
+bump_usecount:
 
-Changelog
-v1->v2:
- * Changed type of swgroup to "unsigned int", following Thierry's
-   commnets.
-
- drivers/iommu/tegra-smmu.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 0becdbfea306..ec4c9dafff95 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -903,10 +903,12 @@ static void tegra_smmu_group_release(void *iommu_data)
- 	mutex_unlock(&smmu->lock);
- }
- 
--static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
--						unsigned int swgroup)
-+static struct iommu_group *tegra_smmu_device_group(struct device *dev)
- {
-+	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-+	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
- 	const struct tegra_smmu_group_soc *soc;
-+	unsigned int swgroup = fwspec->ids[0];
- 	struct tegra_smmu_group *group;
- 	struct iommu_group *grp;
- 
-@@ -950,19 +952,6 @@ static struct iommu_group *tegra_smmu_group_get(struct tegra_smmu *smmu,
- 	return group->group;
- }
- 
--static struct iommu_group *tegra_smmu_device_group(struct device *dev)
--{
--	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
--	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
--	struct iommu_group *group;
--
--	group = tegra_smmu_group_get(smmu, fwspec->ids[0]);
--	if (!group)
--		group = generic_device_group(dev);
--
--	return group;
--}
--
- static int tegra_smmu_of_xlate(struct device *dev,
- 			       struct of_phandle_args *args)
- {
--- 
-2.17.1
+>  	as->use_count++;
+>  
+> +	mutex_unlock(&smmu->lock);
+> +
+>  	return 0;
+>  
+>  err_unmap:
+>  	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
+> +err_unlock:
+> +	mutex_unlock(&smmu->lock);
+> +
+>  	return err;
+>  }
+>  
+>  static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
+>  				    struct tegra_smmu_as *as)
+>  {
+> -	if (--as->use_count > 0)
+> +	mutex_lock(&smmu->lock);
+> +
+> +	if (--as->use_count > 0) {
+> +		mutex_unlock(&smmu->lock);
+>  		return;
+> +	}
+>  
+>  	tegra_smmu_free_asid(smmu, as->id);
+>  
+>  	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
+>  
+>  	as->smmu = NULL;
+> +
+> +	mutex_unlock(&smmu->lock);
+>  }
+>  
+>  static int tegra_smmu_attach_dev(struct iommu_domain *domain,
+> 
 
