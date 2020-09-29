@@ -2,103 +2,118 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74D2C4727C
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18252C47420
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79B162076B
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:42:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a74V0z1z"
+	by mail.kernel.org (Postfix) with ESMTP id C7E9320848
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbgI2Rmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:42:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728386AbgI2Rmz (ORCPT
+        id S1727841AbgI2Rzy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 13:55:54 -0400
+Received: from disco-boy.misterjones.org ([51.254.78.96]:44116 "EHLO
+        disco-boy.misterjones.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbgI2Rzx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:42:55 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E05C061755;
-        Tue, 29 Sep 2020 10:42:55 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id c2so4717516ljj.12;
-        Tue, 29 Sep 2020 10:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DwNtPpUEmgv0ELsT/GqVFAjoTGKCyKCMhl5EuEZOqf4=;
-        b=a74V0z1zlws1Etorsyv0teGeF7Ww3xR72S0PqC1EmOP5h/Lk4aOr/FhYBm0+5AxlCZ
-         prB6QnA+MMHs6wrpZugs6dMf4e9tAR2mwDBsUvg1p8COupXMSCpdeCS++oAd0VJvYpGc
-         CX0zbaO3VQA3YSMwWwsNCyQnDoY6IvB1igj1cVEqEjRiLq+dfJp6SQxI3LmzGwcjVFLj
-         AyYodil/IujXs1Go4DTxg0ir37eylXa6WWDD4nYV8oblkjXrkQOq2kFB4DmmH7VXkebx
-         FOjm73Gu+0OhpSswGj8uJ0DXvkBsPM+/iNXwUk6ZI3pFpxEGrz9ZZ96jUXMJv35Oe/Kp
-         LawA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DwNtPpUEmgv0ELsT/GqVFAjoTGKCyKCMhl5EuEZOqf4=;
-        b=pfJabFHDZWaE9s0rpswEiwL5HmjzTJgI1mx5y8Gc1E/VXJopx4yzoXHpQysKW2Gcic
-         sj4kdWVWzqv9aqjulF1le0FEXBQzIp4bQrzfMvBslfqRICQuW38hErZcUr69N2VvhQK4
-         Y1zQB4uW/EPixTiUw8ZjZRc2exs4rKh8yYWnddgrU8ZEI3k2UAXOn44ikDgb1iP5FwWA
-         FqRcaFc0y104YSHYUqgRnbWhxiB/zoD/ce55eoGF0ZxrKllx6lknJER6hBlobxLvgIHi
-         rsaTRVtVJidN6ukgSx++3RPFkzEEhFbaUTgFA7HQh/o+d+slFdmvUKOzbj+W6lcgkdZi
-         8aVQ==
-X-Gm-Message-State: AOAM533ijI6rkwxpjKfFqY3vDqSIHMKWzl5j1atR9BHScxAI7l95yWFl
-        DOKUjTdj5Dbdwm+UFCxHmKQ=
-X-Google-Smtp-Source: ABdhPJzsDCimFDVDMHaNwlvDskQRdaVTUV8i1sA1CVb2qNn1JAlvxWTfMO0og2S/0kxElaiynX1j0Q==
-X-Received: by 2002:a2e:895a:: with SMTP id b26mr1577495ljk.468.1601401373499;
-        Tue, 29 Sep 2020 10:42:53 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id n8sm418776ljj.69.2020.09.29.10.42.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2020 10:42:53 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] iommu/tegra-smmu: Expand mutex protection range
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
-        joro@8bytes.org
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, hch@infradead.org
-References: <20200929061325.10197-1-nicoleotsuka@gmail.com>
- <20200929061325.10197-3-nicoleotsuka@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <184163e9-01d4-dcc5-0adf-a3d175e56f16@gmail.com>
-Date:   Tue, 29 Sep 2020 20:42:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 29 Sep 2020 13:55:53 -0400
+X-Greylist: delayed 1527 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Sep 2020 13:55:51 EDT
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@misterjones.org>)
+        id 1kNJRo-00FuDq-Bp; Tue, 29 Sep 2020 18:29:52 +0100
 MIME-Version: 1.0
-In-Reply-To: <20200929061325.10197-3-nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Sep 2020 18:29:52 +0100
+From:   Marc Zyngier <maz@misterjones.org>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] PCI: dwc: Check alloc_page() return value
+In-Reply-To: <20200924190623.3251c2ac@xhacker.debian>
+References: <20200924190421.549cb8fc@xhacker.debian>
+ <20200924190623.3251c2ac@xhacker.debian>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <74af578c79bd09f2111e5438917f2c6e@misterjones.org>
+X-Sender: maz@misterjones.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: Jisheng.Zhang@synaptics.com, kishon@ti.com, lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, kgene@kernel.org, krzk@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, yue.wang@amlogic.com, khilman@baylibre.com, narmstrong@baylibre.com, jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, jesper.nilsson@axis.com, gustavo.pimentel@synopsys.com, songxiaowei@hisilicon.com, wangbinghui@hisilicon.com, agross@kernel.org, bjorn.andersson@linaro.org, svarbanov@mm-sol.com, pratyush.anand@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, hayashi.kunihiko@socionext.com, yamada.masahiro@socionext.com, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, lin
+ ux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@misterjones.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-29.09.2020 09:13, Nicolin Chen пишет:
-> This is used to protect potential race condition at use_count.
-> since probes of client drivers, calling attach_dev(), may run
-> concurrently.
+On 2020-09-24 12:06, Jisheng Zhang wrote:
+> We need to check alloc_page() succeed or not before continuing.
 > 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 > ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 0a19de946351..9e04e8ef3aa4 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -303,6 +303,11 @@ void dw_pcie_msi_init(struct pcie_port *pp)
+>  	u64 msi_target;
+> 
+>  	pp->msi_page = alloc_page(GFP_KERNEL);
+> +	if (!pp->msi_page) {
+> +		dev_err(dev, "Failed to alloc MSI page\n");
 
-It's always better not to mix success and error code paths in order to
-keep code readable, but not a big deal in the case of this particular
-patch since the changed code is quite simple. Please try to avoid doing
-this in the future patches.
+A failing allocation will already scream, so there is no need to
+add insult to injury.
 
-Also, please note that in general it's better to use locked/unlocked
-versions for the functions like it's already done for
-tegra_smmu_map/unmap, this will remove the need to maintain lockings in
-the code. The code touched by this patch doesn't have complicated code
-paths, so it's good enough to me.
+More importantly, what is this MSI page ever used for? If I remember
+well, this is just a random address that never gets written to.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+So why do we allocate a page here? Why do we bother with this DMA
+mapping?
+
+         M.
+-- 
+Who you jivin' with that Cosmik Debris?
