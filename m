@@ -2,97 +2,171 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D624C4727C
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6778AC47423
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 18:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2E7F208B8
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D46221D46
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 18:02:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="K87pwVvy"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="W80lX/ss"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbgI2R7i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:59:38 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6263 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbgI2R7i (ORCPT
+        id S1728078AbgI2SCk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 14:02:40 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12168 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727657AbgI2SCk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:59:38 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7375a50000>; Tue, 29 Sep 2020 10:57:57 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
- 2020 17:59:37 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 29 Sep 2020 17:59:37 +0000
+        Tue, 29 Sep 2020 14:02:40 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f73768a0000>; Tue, 29 Sep 2020 11:01:46 -0700
+Received: from [10.26.75.44] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
+ 2020 18:02:19 +0000
+Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        <linux-pci@vger.kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        "Bjorn Andersson" <bjorn.andersson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-arm-kernel@axis.com>, Vidya Sagar <vidyas@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        <linux-tegra@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        "Sascha Hauer" <s.hauer@pengutronix.de>,
+        Yue Wang <yue.wang@amlogic.com>,
+        <linux-samsung-soc@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andy Gross <agross@kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Stanimir Varbanov" <svarbanov@mm-sol.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+References: <20200924190421.549cb8fc@xhacker.debian>
+ <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
+ <20200929184851.22682ff1@xhacker.debian>
+ <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
+ <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
 From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <pavel@denx.de>, <stable@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.19 000/244] 4.19.149-rc2 review
-In-Reply-To: <20200929142826.951084251@linuxfoundation.org>
-References: <20200929142826.951084251@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Message-ID: <6ead62a5-6ad5-bde8-a5df-93c0f8029f65@nvidia.com>
+Date:   Tue, 29 Sep 2020 19:02:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Message-ID: <45634f2f22be48ddb158e496920c145e@HQMAIL109.nvidia.com>
-Date:   Tue, 29 Sep 2020 17:59:37 +0000
+In-Reply-To: <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601402277; bh=YpbQkOl3UJEnpo/FcR5sZa0JAzfUyvvOeSXH8Xp80yE=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=K87pwVvyGZyt52M3R9o4C8L2J2QWzzu+joYtF4VeWFNx53hsdBHGxbyzVq2hxkqTb
-         mW/qLkM97D/YmbchDQFNIxu6UXDV/b+BH/Ot8s1lUVHeyMG6BSAWhlEmwdD4KuCvac
-         pVhZndwQnaNKWI/Vu3Y1ZY6R24fpvES6SgMqWaLKg1DngrTpPSCPKQj9rQ0MW7TTZO
-         eVs/GsC6fb8SiyWyd4C8H+0LG89uUMVNpZ+h9kElPsUImvkcG5ykdwBgNpntX5tEB4
-         BfiRgf4Sf9h2LUGEf8VpBqTZdz3w0wlbXA8YYUWYozzJoKnqgPc+nVy6J0x95fHFZt
-         BnvLAg8OFOHXA==
+        t=1601402506; bh=DFFoTBk7ct8iktjKeMDlsj2Utbk2NKyQWxL2aKVjTaM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=W80lX/ssDGSCkmOHGNX8qfEHRIGTVGbYctuQLU1uEcEjyE0fnkV9wz2g53gstJyUI
+         E4spYYHmwagaxJa4TO8sL06dLbzRwQ2r0mAvKv53wUNqKGfxnV3JfaTodLW7VFp50E
+         IzpjML0CTcNLrRF0t2KZ6sm6PRKfBBHHCK90MeJ/+oyhR43oJQMRzJKkRWKVKPfhQW
+         DwViT05UxhiaQfRiAFkxUNBjLgzRTgqifdmv2KJ8qQd4RmhXR1HisAMmb9APrvJDe6
+         fdCnmmZWbJ3ZUiuMA9/5d7ErTB3BYY+MpqowblPmh6cWgZXddyMV73hexYShiBEboJ
+         plJvT038Egg7Q==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 29 Sep 2020 16:29:27 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.149 release.
-> There are 244 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 01 Oct 2020 14:27:43 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.149-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+On 29/09/2020 18:25, Marc Zyngier wrote:
+> On 2020-09-29 14:22, Jon Hunter wrote:
+>> Hi Jisheng,
+>>
+>> On 29/09/2020 11:48, Jisheng Zhang wrote:
+>>> Hi Jon,
+>>>
+>>> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
+>>>
+>>>>
+>>>> On 24/09/2020 12:05, Jisheng Zhang wrote:
+>>>>> Improve the msi code:
+>>>>> 1. Add proper error handling.
+>>>>> 2. Move dw_pcie_msi_init() from each users to designware host to solv=
+e
+>>>>> msi page leakage in resume path.
+>>>>
+>>>> Apologies if this is slightly off topic, but I have been meaning to as=
+k
+>>>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver,
+>>>> whenever we
+>>>> hotplug CPUs we see the following warnings ...
+>>>>
+>>>> =C2=A0[=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 79.068351] WARNING KERN IRQ70: s=
+et affinity failed(-22).
+>>>> =C2=A0[=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 79.068362] WARNING KERN IRQ71: s=
+et affinity failed(-22).
+>>>>
+>>>
+>>> I tried to reproduce this issue on Synaptics SoC, but can't reproduce
+>>> it.
+>>> Per my understanding of the code in kernel/irq/cpuhotplug.c, this
+>>> warning
+>>> happened when we migrate irqs away from the offline cpu, this implicitl=
+y
+>>> implies that before this point the irq has bind to the offline cpu,
+>>> but how
+>>> could this happen given current dw_pci_msi_set_affinity() implementatio=
+n
+>>> always return -EINVAL
+>>
+>> By default the smp_affinity should be set so that all CPUs can be
+>> interrupted ...
+>>
+>> $ cat /proc/irq/70/smp_affinity
+>> 0xff
+>>
+>> In my case there are 8 CPUs and so 0xff implies that the interrupt can
+>> be triggered on any of the 8 CPUs.
+>>
+>> Do you see the set_affinity callback being called for the DWC irqchip in
+>> migrate_one_irq()?
+>=20
+> The problem is common to all MSI implementations that end up muxing
+> all the end-point MSIs into a single interrupt. With these systems,
+> you cannot set the affinity of individual MSIs (they don't target a
+> CPU, they target another interrupt... braindead). Only the mux
+> interrupt can have its affinity changed.
+>=20
+> So returning -EINVAL is the right thing to do.
 
-Test results for stable-v4.19:
-    14 builds:	14 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
+Right, so if that is the case, then surely there should be some way to
+avoid these warnings because they are not relevant?
 
-Linux version:	4.19.149-rc2-g78ef55ba27c3
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
+Cheers
 Jon
+
+--=20
+nvpublic
