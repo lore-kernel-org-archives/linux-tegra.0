@@ -2,142 +2,98 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5835DC4727D
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 05:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AD2C4346E
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 05:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FDFA21548
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 05:25:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9336E21548
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 05:42:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u9RTZSY0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pl6NtFtB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbgI2FZG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 01:25:06 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56482 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgI2FZG (ORCPT
+        id S1725764AbgI2FmK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 01:42:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgI2FmK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 01:25:06 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08T5NNdV076112;
-        Tue, 29 Sep 2020 00:23:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1601357003;
-        bh=lsVV+WiqwympooMTHM7zY4Y8lKNeYX3fBUBfCVJ/Lnk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=u9RTZSY0p8VY3yd+DO/wPxiDmHvgLQOv/9YyP5Bfl/tblOAubCsvONbhwUbgLjdbZ
-         /cKGeAx5m0FGThnxI/nhlD7bUNB6726QeZ1KmtFTV+0GoBh7x9Bqi8kn2kw+XnRSJ+
-         /r1DJzmnQoK8W/Xv9PAXZUBvtkpZnJ/GFO0hybSw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08T5NNpG047481
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Sep 2020 00:23:23 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Tue, 29
- Sep 2020 00:23:22 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Tue, 29 Sep 2020 00:23:22 -0500
-Received: from [10.250.232.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08T5NAKG078844;
-        Tue, 29 Sep 2020 00:23:11 -0500
-Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
-To:     Michael Walle <michael@walle.cc>, Rob Herring <robh@kernel.org>
-CC:     "Gross, Andy" <agross@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@axis.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Song Xiaowei <songxiaowei@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wangbinghui <wangbinghui@hisilicon.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yue Wang <yue.wang@amlogic.com>
-References: <20200821035420.380495-1-robh@kernel.org>
- <20200915091218.28737-1-michael@walle.cc>
- <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
- <346b694e43b1b6b86e4f3164e6589d25@walle.cc>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
-Date:   Tue, 29 Sep 2020 10:53:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 29 Sep 2020 01:42:10 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 742A4C061755;
+        Mon, 28 Sep 2020 22:42:08 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id g29so2957837pgl.2;
+        Mon, 28 Sep 2020 22:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ysq/ouKi6jMX8v57M9aoYWZV/MYW1mEd7coTo5/bzDw=;
+        b=Pl6NtFtBjxltcAhP3oYqpHyC619vq+rUWAO9wpQ6r8xOUeOIxMFo/fHVYI4AEJHNp5
+         za5pJuRd13498wxA34MIuOty5BAFPXDNXLNTPKu7BdxxumMPZFZCE8W8Qd0KEhvHyQi2
+         M3vaxz28cgacT7MPwiOr3VsoRjQnjZfUgTrwYTCFb00/XO4S2QH1oNTz4af/IvgRweLO
+         9wo/bGpsvINwXh9YQButyh5UJ2mv9kQggxpVN2aIb+C39jmG/gzP9lknTrgLHQiFS+nC
+         yhTcr9o2sEkR+NKFCNn/apjx6TtRm9Ix3QDTddE4XM5mrR6W+fp0Qr5TWg504z/tAyWO
+         uuAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ysq/ouKi6jMX8v57M9aoYWZV/MYW1mEd7coTo5/bzDw=;
+        b=a6VhMSnojUwzkjCuaYlgJ5YyckW6Er0pzSf8D4b7JS/FGTJKRrhIaK9KGXzFbTBtEB
+         BcucRkzxtWuKHE8bS8HokpdWZbDiLIPqh1emDEZrOvePT8TCrdDE/5ybkOoQD+DjrIAJ
+         rUPgXPZJ0uiA/KQ+QBTlD9RqZYjH0JiK+xpjX9b9dfB2yPmlHQb9CCWinb4gKb5DzSUQ
+         7DF/VWpzqEmdUMGPCes1K+jppmVN5wkmmkaIK0xcaQl83ovSW8KHdUh0zclw+dJigNTt
+         kES7xap7pcaMR7bSWG0yD9AKSRJ0LSEdPFSS7WsGLnYpoAsaOlXRkJ6p0payVSk+FL5q
+         UbUw==
+X-Gm-Message-State: AOAM531yYFa7WtSdc4FmTr91d9J4AsJH3yvGso11ba0PR1/3ItxwKAw8
+        DSEtA780BukSTY/YdPaKmhXqKEAkmvg=
+X-Google-Smtp-Source: ABdhPJyu1vAXv5K39kZ/daoUr01rwlDpclPujRxh1WhIz2iFoJLLEPOBrK46HT+Qjp2OFkW78c7Hjg==
+X-Received: by 2002:a05:6a00:23cc:b029:142:2501:34e5 with SMTP id g12-20020a056a0023ccb0290142250134e5mr2621977pfc.62.1601358127716;
+        Mon, 28 Sep 2020 22:42:07 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id k14sm3527621pjd.45.2020.09.28.22.42.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Sep 2020 22:42:07 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 22:36:45 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, krzk@kernel.org,
+        jonathanh@nvidia.com, iommu@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 3/5] iommu/tegra-smmu: Use iommu_fwspec in
+ .probe_/.attach_device()
+Message-ID: <20200929053645.GA16611@Asurada-Nvidia>
+References: <20200926080719.6822-1-nicoleotsuka@gmail.com>
+ <20200926080719.6822-4-nicoleotsuka@gmail.com>
+ <20200928075212.GF2837573@ulmo>
+ <20200928221829.GB15720@Asurada-Nvidia>
+ <2a38018a-3f95-74da-6dc1-270efc26a8fb@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <346b694e43b1b6b86e4f3164e6589d25@walle.cc>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a38018a-3f95-74da-6dc1-270efc26a8fb@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 16/09/20 1:24 pm, Michael Walle wrote:
-> Am 2020-09-16 00:02, schrieb Rob Herring:
->> Can you try this? The link up check seemed unnecessary as it is racy.
->> What happens if the link goes down right after checking? That's the
->> only thing in the change that sticks out.
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
->> b/drivers/pci/controller/dwc/pcie-designware-host.c
->> index 317ff512f8df..afee1a0e8883 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->> @@ -441,6 +441,9 @@ static void __iomem
->> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
->>         struct pcie_port *pp = bus->sysdata;
->>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>
->> +       if (!dw_pcie_link_up(pci))
->> +               return NULL;
->> +
->>         busdev = PCIE_ATU_BUS(bus->number) |
->> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
->>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
+On Tue, Sep 29, 2020 at 07:06:37AM +0300, Dmitry Osipenko wrote:
+> ...
+> >> As I mentioned in another reply, I think tegra_smmu_find() should be all
+> >> you need in this case.
+> > 
+> > This function is used by .probe_device() where its dev pointer is
+> > an SMMU client. IIUC, tegra_smmu_find() needs np pointer of "mc".
+> > For a PCI device that doesn't have a DT node with iommus property,
+> > not sure how we can use tegra_smmu_find().
 > 
-> This will fix the issue.
+> Perhaps you could get np from struct pci_dev.bus?
 
-This fix is required to get DRA7 EVM booting again in linux-next.
-
-Thanks
-Kishon
+Possibly yes...but I was hoping the solution would be potentially
+reused by other devices that don't have DT nodes, USB for example,
+though I haven't tested with current version.
