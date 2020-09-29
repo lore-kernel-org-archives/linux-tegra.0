@@ -4,154 +4,232 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0890C4741F
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 10:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9938CC4727F
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 11:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F79A2158C
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 10:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA3C22207
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 11:10:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="fzGWL+Dt"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="rEr8rwa9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgI2Kte (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 06:49:34 -0400
-Received: from mail-bn8nam11on2043.outbound.protection.outlook.com ([40.107.236.43]:20577
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        id S1729135AbgI2LKG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 07:10:06 -0400
+Received: from mail-dm6nam10on2044.outbound.protection.outlook.com ([40.107.93.44]:59390
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727761AbgI2Ktd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 06:49:33 -0400
+        id S1728658AbgI2LJ6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 29 Sep 2020 07:09:58 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EgK4TbOnr0fczpx5TAK6RA2ni7US/7NnDQ+LvZW8WoKUpwIPuLYiLtUsw1hfq05CLJDyTf/LaK488Qq33vHlh+Yxf9DsSMzvu5i5lmFbhjDNn3m+itfDeDIBGz2xHYecjRSxLpa9MGlANfT8qd9vN6iQz/FYD1jthiVQUJm0wIGuQG0VxKu9dWnOcKmb8GL85xCjesKevcxiSYZG2xum/5ptx045qcw7snH6BIAGjtUx93X30OnjzHdWreE9UpGlXb1RMiPCqqfv0DR3HHQET3Lx4J5N3qkdvW70XXwJ2XdqSA6NKkaXkMtGZR6Z4CrvxUIJZbDpxu9A6/wLFMFBFA==
+ b=nQoewyJpfCBCE3/qElf5nkUfJw0dMuVa6B+HVoEp1mTfiWlIp8/AD3UN8VJtkOVV3RNLttwRcpkCfVTcKvD1Xyl9S2po+i5jxX1YS7KpYXoQAPVsIaiTEpiEV84ujTFL7OegqFDJCoY5gQLxNjA3IrFUz+VVQH7YLJrzOowjeYGH0TLv938euVhHIPLrSiBdoiXObTyoAAFd6M7sW7Dp86wUabH5QigKaaxsJok9dKAxT6O65KiP9Oqoor7xLpERQ9t0ZJfWZ2N0D4DDgEvxlT6DI2MIoFqbbMLy8E9BzevnfPhQyCfc+qJWNlVAU43vc7ZGMF9u2ItRF4lSg81vmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RrEqLeOG0e+YEU9Ew3Jbjzgylpn3z6Ewcxvzj7PRsog=;
- b=iwGWAcbqwq5ivUMM3n8DQNgsckZFsme7VLkdsyWxRFDVYywsvYSEhf4zL2WDvfL9fySw6VhuKrTPnxw8TJmLYAjy+MZNjdR+qdpEhlMs/9ksg0r7sv4lk6QMgxbxvIU39A5OXQC7XAJ7sqrg6ODL8wvIEIdwGg6Z/0wPFLEo8SPO9x0G6d2CtjE9F/JKVhHhgCF3KkHW2r1xMGyCF3Da6q35WTpEedEyO9YHePl/IhSI0ZXKO8Qs4UrwNrumveAicLuBWFkAJC/tflH89Tx4Ppc9Ku5coWsCsBi5gNWYUoP1UL8mfe4xFUHcBJVOiksCPhSyUikAPUlewJ3PO+iwnw==
+ bh=LALp6CBHaJNvdlpYOzbYmeKb8DFCHGK1mLsYgah15Z4=;
+ b=WbIfcnebGBmHytxcLMSyt3DuAJbw+5zBMucRidQY2KahlHWeYpEUhJmZ0ZETvRsQLzoaqGqUCqxbblWOeiiT2PMrNSeGuRHWIXOERa05zGzvdmPmOvw/i9HrzbVCb5wdcktxQDomEWBTCJ6+5KUZu5lPh7am4mAUwU9ER2E4iDf4ZfPfhU5wDp8lG3f6JOIR6y4TdEQgj9K9FVdisPsTqw+32YmHkyfrhOgMhhWC8WeNrZa/rmjd/XVutR/8gyKlmHPttycVDzDmo4MYBHf0pznwL2h4E9grVyhGEE0WGLdMCcW+P18ex92ffpXuBBenuVb1ws+Q72Oofn7SHVKseQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RrEqLeOG0e+YEU9Ew3Jbjzgylpn3z6Ewcxvzj7PRsog=;
- b=fzGWL+Dtmv1fbrzf/1UqoiwBl4DNVP8RYtDYz8YuHO6crpagZ1TAA0Fj5DVPqzC6PE/7L9J/Jep9nES1qMUNSKsWyfziinUmfbT6uRs4sziCKH4vpY4KRthBrm0R2Im5jNpKbqoX66pG4dr9kdx+SPih/r2nKZlYZucEA8snNNA=
-Authentication-Results: nvidia.com; dkim=none (message not signed)
- header.d=none;nvidia.com; dmarc=none action=none header.from=synaptics.com;
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
- by DM6PR03MB4442.namprd03.prod.outlook.com (2603:10b6:5:10a::23) with
+ bh=LALp6CBHaJNvdlpYOzbYmeKb8DFCHGK1mLsYgah15Z4=;
+ b=rEr8rwa9vzEoyNe6kb9v/E3u/yJIEzoQmqpD2M4cqLvHfA4uCAQw6ARW1OHyCrLpuXNSfke65aTFbJzTBGxWZ88Xo311aD9bOGb8BcjvLymmKpyEtelsvQOTRyxIbhIkvjom585h3nNS+3uz6Qe6n4aKsuK6JmmPeaQOocN8TA4=
+Authentication-Results: arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
+ by BL0PR12MB2386.namprd12.prod.outlook.com (2603:10b6:207:47::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.26; Tue, 29 Sep
- 2020 10:49:28 +0000
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3433.032; Tue, 29 Sep 2020
- 10:49:28 +0000
-Date:   Tue, 29 Sep 2020 18:48:51 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "Yue Wang" <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Neil Armstrong" <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-arm-kernel@axis.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-Message-ID: <20200929184851.22682ff1@xhacker.debian>
-In-Reply-To: <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
-References: <20200924190421.549cb8fc@xhacker.debian>
-        <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR01CA0054.jpnprd01.prod.outlook.com
- (2603:1096:404:2b::18) To DM6PR03MB4555.namprd03.prod.outlook.com
- (2603:10b6:5:102::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.22; Tue, 29 Sep
+ 2020 11:09:54 +0000
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3433.032; Tue, 29 Sep 2020
+ 11:09:54 +0000
+Subject: Re: [PATCH v3 0/4] dma-buf: Flag vmap'ed memory as system or I/O
+ memory
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-doc@vger.kernel.org,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        thierry.reding@gmail.com, kraxel@redhat.com, afd@ti.com,
+        m.szyprowski@samsung.com, arnd@arndb.de, corbet@lwn.net,
+        jonathanh@nvidia.com, matthew.auld@intel.com,
+        linux+etnaviv@armlinux.org.uk, labbott@redhat.com,
+        linux-media@vger.kernel.org, pawel@osciak.com,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, thomas.hellstrom@intel.com,
+        rodrigo.vivi@intel.com, linux-tegra@vger.kernel.org,
+        mchehab@kernel.org, gregkh@linuxfoundation.org,
+        lmark@codeaurora.org, tfiga@chromium.org,
+        kyungmin.park@samsung.com, robin.murphy@arm.com
+References: <20200925115601.23955-1-tzimmermann@suse.de>
+ <20200926071334.GA42915@ravnborg.org>
+ <8761e0dd-569e-0ea0-7bc5-25e4f7cb67cc@suse.de>
+ <20200927191605.GA237178@ravnborg.org>
+ <3f703297-7b4f-dcca-ea56-70b2413a1e3d@amd.com>
+ <ef4400a7-397b-e550-7114-1d4238dd36f3@suse.de>
+ <49c4dcec-cd69-510a-9781-e8fa5fb669f9@amd.com>
+ <20200929091445.GI438822@phenom.ffwll.local>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <774e382e-6e60-450c-ee88-bd9ea2916fb4@amd.com>
+Date:   Tue, 29 Sep 2020 13:09:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <20200929091445.GI438822@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-ClientProxiedBy: AM0PR06CA0124.eurprd06.prod.outlook.com
+ (2603:10a6:208:ab::29) To MN2PR12MB3775.namprd12.prod.outlook.com
+ (2603:10b6:208:159::19)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (124.74.246.114) by TYAPR01CA0054.jpnprd01.prod.outlook.com (2603:1096:404:2b::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32 via Frontend Transport; Tue, 29 Sep 2020 10:49:16 +0000
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM0PR06CA0124.eurprd06.prod.outlook.com (2603:10a6:208:ab::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.22 via Frontend Transport; Tue, 29 Sep 2020 11:09:49 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a7998fb7-2a5a-4760-9244-08d864655641
-X-MS-TrafficTypeDiagnostic: DM6PR03MB4442:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB4442DDA95D15D07A19C05B42ED320@DM6PR03MB4442.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: a2f129a8-075b-43d8-74c9-08d8646830ff
+X-MS-TrafficTypeDiagnostic: BL0PR12MB2386:
+X-Microsoft-Antispam-PRVS: <BL0PR12MB2386ECD0145541655827DCA683320@BL0PR12MB2386.namprd12.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bdv1cSzH0wAYG1qqqX9oVTw7xry1CEJvAkVhoAYoETIovnkvhyU9bR2l8SJsKl/2HDwWFtggQHCE02U5rq7nmuvzIlBk+Q05L+5vvP0AOf32sg3STsncAFYVV5mPvGUmte6Bl1L2RR6Z4aCq4wla9AkyAYf2fqEgv+xXdkxurNvxjoOvcy+aFXPh0NyE+uLGOJDmAiXmIETWWQ556OXr5g3yvYTsaTM0H8rgbyfsYTw6yCSt8gPHpHtv628GpNVvcFmiW83uRD1m0OLV8y7RhEzkpPANRTg41ICHSRdEzlTJnVcm26IyCIPiXYfq+X0Kw+bk85hh4oMbCnua/Xahush3rUUFt3YK6vBN9Gzswd+WrIP3fLkDpr+kiGnDEU8D
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(346002)(376002)(366004)(396003)(66946007)(956004)(6666004)(8676002)(86362001)(478600001)(8936002)(1076003)(6916009)(4326008)(5660300002)(7696005)(52116002)(7416002)(7406005)(53546011)(2906002)(16526019)(6506007)(26005)(186003)(66556008)(316002)(66476007)(9686003)(83380400001)(55016002)(54906003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: mXCAddAnPLSkQjPzsCwpnlw31nefGW/Yx2Iy7B5gG4NvIlsPMeoj+EycO5dJ+1dVLM4SMg1eYvdh0/J4xRdUKxV7hyi8HkEmu5s3ikYHSViqYO+qdYIwse6fRJahYUy2WRPvTJLxZAeyOHpYnfzRQiQ8S5uNddpGtkt24/VGOn8TDwAN3LpOj4a6cSiCHvUwkAarEoOFdAMkVBbu+1TpATEBRxv2qLS08noWBQLcfiBD2FZOXiHB5KkhEA5t7QrCRi2nvDwHio/JzxjDOFQNhmXez8HKEDGT9g1FNVQyXSvYvZjhDmnOAx3jgOyDH9c01jjz6r9UpcXNArgsdAy60sEETGRsKusk9/bkIfpGMJpl/QNQ9DQ1T7CN+uShmyBjGFRmUeQrXxLiNUpiaNtHf1Fu5JPXQJXHfHUg7932UXTwzsQpiJv9YMZrBYJJjIpbh7RXIG1P+BB+m7ntLyMTbz9m1jbnFtk/0Px1Zrgxv2DhjmwJxNTS5Uba/lKCgu2XsPF1aZpWGt1wQF4eIvxz+E6fyhNHagR3OniEkeJ3TUx27m+3hFEhI0pV5GrXLuOekQPRcTiYrWrtAF6y4DVaJQeCzPhwnB8MGZfS5+CT18dTXYefIZ6ZQInu4H9tICnzeMht4P2QLbwsNfNzCvng/A==
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7998fb7-2a5a-4760-9244-08d864655641
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
+X-Microsoft-Antispam-Message-Info: 2yP1TRasLE1vKmCSuxaj024bNfGenbBRrgIOMO6Gw5EQIFYmwmOKRRAvyXmghT0SXyA0qnZ2A3vAd5m6YL2VJyqWma9sUDjS1AIy0KBq/NO5yEkQ3oAZkxLGRV2iRN8lgA7sLv/hrJuio5F88uq3iz4iMAnrt3g9jNEvaEVERYdKCp0h2us8tDIsvRbzovR6uE/ZfkqrEIANH5JNxkQcIpmapEdJ/7I3aYIdBf1NoFk+0FQc/QuBKbwUov/CRXH8Wipibwgzf8O7u/8AXjM7yTe9HSqpUKJmwyS2JTBGTYnQC/6Uts2NbOjXxDJcPwmUGLBstwYum51BshYgJRTCeXHJa7uOBsXDzpDU4A3p72sCg8IjXtRVV0OUtlwdMUqGlyCzhUVQfSoyTKbKgKSb71c0SmwEMn/taTwsBzm4bSH2/2NCqfuUyldSfzPym/OwtbrVYBV80j7I1Phf6f0klQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(396003)(366004)(346002)(376002)(136003)(8676002)(7416002)(2906002)(4326008)(6916009)(966005)(7406005)(66476007)(66556008)(86362001)(31686004)(66574015)(83380400001)(31696002)(36756003)(8936002)(54906003)(16526019)(2616005)(186003)(316002)(6666004)(5660300002)(66946007)(6486002)(52116002)(478600001)(45080400002)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: 4bThE3sAYgmvlXt6iy6dj7Y/h2+PA/7qfJddyLVH7oGy83QGtR7i3iY4ab1K3tvpY38n82/hbdSjc2qUhxtKeE6OCPmIRT5+8QXIlnDxxh9cr13jw+hgRkthn1SqEHRCdhlshwaU/b23+q+tCAiw+u/gfw6Fw5IaZPxB/leSowaVPSiqXtKVnSakGpKGKhhgqXB1OSG6Np40MknBKb94exg4GusX4qJ67a+71ZiFZ/wELfodfBLOlhr9uFuWD5pxbtcZcdiXlsTI9/5nW6UhhRyzgNoKFuw9Y5YZAje+P9vu2HAhOhzoAGDf9aLXfoDxSsAIzvai9ncMS/Ryap9FnBj973wGfwXNW209zPqA19bfqFmld7J1Yx/U2KFTQSq7lY3+QKK63jFkcg2SQDsPGKcAUaCWaKMz1Ax31XgAHmTv0Rd7/E/E5WKjwgdj6jeUAQyPW/OtClyShFKcu5/Oxai0409KJ+OM8kyPEy/F4Zs6RBn7tUl9cDiqLgJ3YmLoG7G0IBJh/aP7wGs2vYR7XzmMAi8BKReJCw89jt06DXvwimumzmLiYjDkMwKK8nKmDPhnzC98AlQc7zOvRDTmfbJK+gY9nsKMqigKcnPkG+ioawqj0O5J6IP5AnDEv3op+cGpSZx0Gy3nLYCxRHQ9luIbp30mO6Fmc25V94QLe1SO1YC06ARO95Kj2NmHYChmwWvpPIkb33fhWxszyUTjGQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2f129a8-075b-43d8-74c9-08d8646830ff
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2020 10:49:27.6996
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2020 11:09:54.0326
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lL2OHFP21JIEiE6gpUPB0JP6ixr9g7VrYwQhCn1EXTXxDmQDeFIIIviGQOFYASIUIctBsQ9kmm1z1Za8IFSsjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4442
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5j52JEA12Idjn/FC7IEnEgz9tY3UOwz7AyYNf2Ig3e8ylgqhY7k71oz4l7J+TXZk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2386
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
+Am 29.09.20 um 11:14 schrieb Daniel Vetter:
+> On Mon, Sep 28, 2020 at 01:22:13PM +0200, Christian König wrote:
+>> Am 28.09.20 um 09:37 schrieb Thomas Zimmermann:
+>>> Hi
+>>>
+>>> Am 28.09.20 um 08:50 schrieb Christian König:
+>>>> Am 27.09.20 um 21:16 schrieb Sam Ravnborg:
+>>>>> Hi Thomas.
+>>>>>
+>>>>>>> struct simap {
+>>>>>>>           union {
+>>>>>>>                   void __iomem *vaddr_iomem;
+>>>>>>>                   void *vaddr;
+>>>>>>>           };
+>>>>>>>           bool is_iomem;
+>>>>>>> };
+>>>>>>>
+>>>>>>> Where simap is a shorthand for system_iomem_map
+>>>>>>> And it could al be stuffed into a include/linux/simap.h file.
+>>>>>>>
+>>>>>>> Not totally sold on the simap name - but wanted to come up with
+>>>>>>> something.
+>>>>>> Yes. Others, myself included, have suggested to use a name that does not
+>>>>>> imply a connection to the dma-buf framework, but no one has come up with
+>>>>>>     a good name.
+>>>>>>
+>>>>>> I strongly dislike simap, as it's entirely non-obvious what it does.
+>>>>>> dma-buf-map is not actually wrong. The structures represents the mapping
+>>>>>> of a dma-able buffer in most cases.
+>>>>>>
+>>>>>>> With this approach users do not have to pull in dma-buf to use it and
+>>>>>>> users will not confuse that this is only for dma-buf usage.
+>>>>>> There's no need to enable dma-buf. It's all in the header file without
+>>>>>> dependencies on dma-buf. It's really just the name.
+>>>>>>
+>>>>>> But there's something else to take into account. The whole issue here is
+>>>>>> that the buffer is disconnected from its originating driver, so we don't
+>>>>>> know which kind of memory ops we have to use. Thinking about it, I
+>>>>>> realized that no one else seemed to have this problem until now.
+>>>>>> Otherwise there would be a solution already. So maybe the dma-buf
+>>>>>> framework *is* the native use case for this data structure.
+>>>>> We have at least:
+>>>>> linux/fb.h:
+>>>>>       union {
+>>>>>           char __iomem *screen_base;      /* Virtual address */
+>>>>>           char *screen_buffer;
+>>>>>       };
+>>>>>
+>>>>> Which solve more or less the same problem.
+>>> I thought this was for convenience. The important is_iomem bit is missing.
+>>>
+>>>> I also already noted that in TTM we have exactly the same problem and a
+>>>> whole bunch of helpers to allow operations on those pointers.
+>>> How do you call this within TTM?
+>> ttm_bus_placement, but I really don't like that name.
+>>
+>>> The data structure represents a pointer to either system or I/O memory,
+>>> but not necessatrily device memory. It contains raw data. That would
+>>> give something like
+>>>
+>>>     struct databuf_map
+>>>     struct databuf_ptr
+>>>     struct dbuf_map
+>>>     struct dbuf_ptr
+>>>
+>>> My favorite would be dbuf_ptr. It's short and the API names would make
+>>> sense: dbuf_ptr_clear() for clearing, dbuf_ptr_set_vaddr() to set an
+>>> address, dbuf_ptr_incr() to increment, etc. Also, the _ptr indicates
+>>> that it's a single address; not an offset with length.
+>> Puh, no idea. All of that doesn't sound like it 100% hits the underlying
+>> meaning of the structure.
+> Imo first let's merge this and then second with more users we might come
+> up with a better name. And cocci is fairly good at large-scale rename, to
+> the point where we manged to rename struct fence to struct dma_fence.
 
-On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
+Agreed, renaming things later on is easy if somebody comes up with 
+something better.
 
-> 
-> On 24/09/2020 12:05, Jisheng Zhang wrote:
-> > Improve the msi code:
-> > 1. Add proper error handling.
-> > 2. Move dw_pcie_msi_init() from each users to designware host to solve
-> > msi page leakage in resume path.  
-> 
-> Apologies if this is slightly off topic, but I have been meaning to ask
-> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, whenever we
-> hotplug CPUs we see the following warnings ...
-> 
->  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
-> 
+But blocking a necessary technical change just because of the naming is 
+usually not a good idea.
 
-I tried to reproduce this issue on Synaptics SoC, but can't reproduce it.
-Per my understanding of the code in kernel/irq/cpuhotplug.c, this warning
-happened when we migrate irqs away from the offline cpu, this implicitly
-implies that before this point the irq has bind to the offline cpu, but how
-could this happen given current dw_pci_msi_set_affinity() implementation
-always return -EINVAL
+Christian.
 
-thanks
+>
+> Also this entire thread here imo shows that we haven't yet figured out the
+> perfect name anyway, and I don't think it's worth it to hold this up
+> because of this bikeshed :-)
+>
+> Cheers, Daniel
+>
+>> Christian.
+>>
+>>> Best regards
+>>> Thomas
+>>>
+>>>> Christian.
+>>>>
+>>>>>> Anyway, if a better name than dma-buf-map comes in, I'm willing to
+>>>>>> rename the thing. Otherwise I intend to merge the patchset by the end of
+>>>>>> the week.
+>>>>> Well, the main thing is that I think this shoud be moved away from
+>>>>> dma-buf. But if indeed dma-buf is the only relevant user in drm then
+>>>>> I am totally fine with the current naming.
+>>>>>
+>>>>> One alternative named that popped up in my head: struct sys_io_map {}
+>>>>> But again, if this is kept in dma-buf then I am fine with the current
+>>>>> naming.
+>>>>>
+>>>>> In other words, if you continue to think this is mostly a dma-buf
+>>>>> thing all three patches are:
+>>>>> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+>>>>>
+>>>>>       Sam
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel&amp;data=02%7C01%7Cchristian.koenig%40amd.com%7C71c630a7ca1d48476eed08d864581e4f%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637369676925032848&amp;sdata=CsekzASvj2lY%2B74FIiLc9B5QG7AHma8B2M5y8Cassj4%3D&amp;reserved=0
+
