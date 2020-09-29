@@ -2,118 +2,97 @@ Return-Path: <SRS0=kaSA=DG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18252C47420
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D624C4727C
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7E9320848
-	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E7F208B8
+	for <linux-tegra@archiver.kernel.org>; Tue, 29 Sep 2020 17:59:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="K87pwVvy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgI2Rzy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:55:54 -0400
-Received: from disco-boy.misterjones.org ([51.254.78.96]:44116 "EHLO
-        disco-boy.misterjones.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbgI2Rzx (ORCPT
+        id S1727657AbgI2R7i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 29 Sep 2020 13:59:38 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6263 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbgI2R7i (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:55:53 -0400
-X-Greylist: delayed 1527 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Sep 2020 13:55:51 EDT
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@misterjones.org>)
-        id 1kNJRo-00FuDq-Bp; Tue, 29 Sep 2020 18:29:52 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Tue, 29 Sep 2020 13:59:38 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7375a50000>; Tue, 29 Sep 2020 10:57:57 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 29 Sep
+ 2020 17:59:37 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 29 Sep 2020 17:59:37 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <pavel@denx.de>, <stable@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.19 000/244] 4.19.149-rc2 review
+In-Reply-To: <20200929142826.951084251@linuxfoundation.org>
+References: <20200929142826.951084251@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 29 Sep 2020 18:29:52 +0100
-From:   Marc Zyngier <maz@misterjones.org>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] PCI: dwc: Check alloc_page() return value
-In-Reply-To: <20200924190623.3251c2ac@xhacker.debian>
-References: <20200924190421.549cb8fc@xhacker.debian>
- <20200924190623.3251c2ac@xhacker.debian>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <74af578c79bd09f2111e5438917f2c6e@misterjones.org>
-X-Sender: maz@misterjones.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: Jisheng.Zhang@synaptics.com, kishon@ti.com, lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, kgene@kernel.org, krzk@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, yue.wang@amlogic.com, khilman@baylibre.com, narmstrong@baylibre.com, jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, jesper.nilsson@axis.com, gustavo.pimentel@synopsys.com, songxiaowei@hisilicon.com, wangbinghui@hisilicon.com, agross@kernel.org, bjorn.andersson@linaro.org, svarbanov@mm-sol.com, pratyush.anand@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, hayashi.kunihiko@socionext.com, yamada.masahiro@socionext.com, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, lin
- ux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@misterjones.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Message-ID: <45634f2f22be48ddb158e496920c145e@HQMAIL109.nvidia.com>
+Date:   Tue, 29 Sep 2020 17:59:37 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601402277; bh=YpbQkOl3UJEnpo/FcR5sZa0JAzfUyvvOeSXH8Xp80yE=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=K87pwVvyGZyt52M3R9o4C8L2J2QWzzu+joYtF4VeWFNx53hsdBHGxbyzVq2hxkqTb
+         mW/qLkM97D/YmbchDQFNIxu6UXDV/b+BH/Ot8s1lUVHeyMG6BSAWhlEmwdD4KuCvac
+         pVhZndwQnaNKWI/Vu3Y1ZY6R24fpvES6SgMqWaLKg1DngrTpPSCPKQj9rQ0MW7TTZO
+         eVs/GsC6fb8SiyWyd4C8H+0LG89uUMVNpZ+h9kElPsUImvkcG5ykdwBgNpntX5tEB4
+         BfiRgf4Sf9h2LUGEf8VpBqTZdz3w0wlbXA8YYUWYozzJoKnqgPc+nVy6J0x95fHFZt
+         BnvLAg8OFOHXA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-09-24 12:06, Jisheng Zhang wrote:
-> We need to check alloc_page() succeed or not before continuing.
+On Tue, 29 Sep 2020 16:29:27 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.149 release.
+> There are 244 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> Responses should be made by Thu, 01 Oct 2020 14:27:43 +0000.
+> Anything received after that time might be too late.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
-> b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 0a19de946351..9e04e8ef3aa4 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -303,6 +303,11 @@ void dw_pcie_msi_init(struct pcie_port *pp)
->  	u64 msi_target;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.149-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
->  	pp->msi_page = alloc_page(GFP_KERNEL);
-> +	if (!pp->msi_page) {
-> +		dev_err(dev, "Failed to alloc MSI page\n");
+> thanks,
+> 
+> greg k-h
 
-A failing allocation will already scream, so there is no need to
-add insult to injury.
+All tests passing for Tegra ...
 
-More importantly, what is this MSI page ever used for? If I remember
-well, this is just a random address that never gets written to.
+Test results for stable-v4.19:
+    14 builds:	14 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
 
-So why do we allocate a page here? Why do we bother with this DMA
-mapping?
+Linux version:	4.19.149-rc2-g78ef55ba27c3
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-         M.
--- 
-Who you jivin' with that Cosmik Debris?
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
