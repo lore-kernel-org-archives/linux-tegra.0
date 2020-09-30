@@ -2,133 +2,150 @@ Return-Path: <SRS0=fCh6=DH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2AEC4727E
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 10:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46104C4727F
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 10:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E23C42074A
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 10:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0135B2074A
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 10:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601461155;
-	bh=nTbVVi0bBmsikxqqFyCHBhKtRKOBq+D0s0tir46ZHhk=;
+	s=default; t=1601461643;
+	bh=rN3Ih0FrJMaTBSY1sIDPm0OjGAVyY3eXglamIBYJsNE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HkqyqM/27D/V007ZNBeuUpwAfNHE66qLdDR86KPfyyT1gQzhmq1mfgWqcef/a0/EK
-	 BmTsG6L6RdS52C9e4cQCzo2K4ym4oYN/pKstw2n50qYTwqAfw8wDnzpj5l6gsmCB93
-	 XDmE3IN3YscgOFthrTQYzybPnPjOQcjWorqAcC8M=
+	b=Pz0lGJNid3oI2cUsEpkusfX5+xJp6EfChAqubZA1tf1AsF5/irPKgGwsynb3c/v+4
+	 zBRC56OdulVv+JEYk0sSUPqUVuYs/UlIeXdEVFqlcoVseffmdzp/QLYmpAFNcu+f7Y
+	 Da1xaWRTF15VvF3JxYJCOeJG2er8QFfL1q6ohszI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbgI3KTP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Sep 2020 06:19:15 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38969 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727657AbgI3KTP (ORCPT
+        id S1728500AbgI3K1W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Sep 2020 06:27:22 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:39636 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbgI3K1V (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Sep 2020 06:19:15 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e22so1209363edq.6;
-        Wed, 30 Sep 2020 03:19:13 -0700 (PDT)
+        Wed, 30 Sep 2020 06:27:21 -0400
+Received: by mail-ej1-f66.google.com with SMTP id p9so2008465ejf.6;
+        Wed, 30 Sep 2020 03:27:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=OfTJRaa/8TAarxg+Kx9m69UamnCj7/6BcDzFIhg9imE=;
-        b=FyUpcyJyQm+4awJGoUSBawM/rT7jILBrD3lX+Dd2qKzf/k5RT2IaDEdyEthGm2H5wk
-         nvML8Rw/NsqahYc9oupAVGveRiriky/aVn+mcrR+HSpRWpTnR7upbCXv/XMlNQXcpYwT
-         eDOi3g+kHZdgZ9k2qNIea6ItVxOMXQeIeF65o8BD0rqKNJFkR2/ikv0fJ0n9zXME4PhD
-         YRjMElPoSjK6ak5g+7fzOxxpVEHXa7B3dsuvGygRA27FLoMW+AH+noRaDUgUHsPfj/yd
-         Ixp6M9JorNlYtLRRxET3cq30F3QK5UWwX0Tygb8C3f+8YpGnovpR5KI3Nmr3JTg+T/hR
-         LRHA==
-X-Gm-Message-State: AOAM533azbibP5kUJSyOFCDQQQ2E+T6lCbejUAPY6e5IOW+Smyts/Ll7
-        XnNseVki89ZMy17r9TDreo8=
-X-Google-Smtp-Source: ABdhPJxI9G3fz0Hy5adUFLWMdVySYAPVnzVYqZbp+i4LqrLXxP4uBbfGGky5VyDcqZvwZvjDV53EMw==
-X-Received: by 2002:a50:cc8d:: with SMTP id q13mr1857004edi.298.1601461153186;
-        Wed, 30 Sep 2020 03:19:13 -0700 (PDT)
+        bh=WyRp0sS/CKkD3/s51uId5dPbBJKj9JBduIQHAwqiLCM=;
+        b=qGFcMCIfMnEQ+u2IxejgZcdCjuPcHKS/OoBe+Cy2XbpcaN3iAx60htv7IrqIeJY6eT
+         JH0CdvSl5rQgu6g28AyAzzY4WC/jQUKR5l5jY8WCHMFeTzD+JHT28tooC+sxP1JhEIM1
+         LUkm/a7xGd666bJFZeyB2+VdWtY75IKVz6X3LUh3u7SglkkMdRphpBXwQsPVSnJPVrYt
+         5NMFvAuwuRduHsrpRa0wgMpio5gvGrILZ+Ge25ju6Zo++jMoW+k15SyqBbac/b4J2E/I
+         3ChtES8ppeKPcMH+QHKL+a7jo9Ct6q3ykV3Qcz/Cit+5bbjSZhtPs0p7aQhr9e4sTXbv
+         rm5g==
+X-Gm-Message-State: AOAM531gDbj45dMMYaBygNuXlgxSi/dWwgBqGIxbX6z46KywJcIB+ks0
+        QOuyPbc7BQUk9tquSslKUi09vxG+z2/0+w==
+X-Google-Smtp-Source: ABdhPJyKXzRjgb9OvirP18fAoHzHccaDHJBkc6ZBVoYVJVYeCMwLgOn221SHU9YyAahDM91eqQmxMw==
+X-Received: by 2002:a17:906:f0d3:: with SMTP id dk19mr2040441ejb.202.1601461639048;
+        Wed, 30 Sep 2020 03:27:19 -0700 (PDT)
 Received: from pi3 ([194.230.155.194])
-        by smtp.googlemail.com with ESMTPSA id g11sm1032053edj.85.2020.09.30.03.19.11
+        by smtp.googlemail.com with ESMTPSA id t12sm1069221edy.61.2020.09.30.03.27.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2020 03:19:12 -0700 (PDT)
-Date:   Wed, 30 Sep 2020 12:19:09 +0200
+        Wed, 30 Sep 2020 03:27:17 -0700 (PDT)
+Date:   Wed, 30 Sep 2020 12:27:15 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
 Cc:     thierry.reding@gmail.com, joro@8bytes.org, digetx@gmail.com,
         vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] iommu/tegra-smmu: Rework .probe_device and
- .attach_dev
-Message-ID: <20200930101909.GA1147@pi3>
+Subject: Re: [PATCH v3 1/3] memory: tegra: Add
+ devm_tegra_get_memory_controller()
+Message-ID: <20200930102715.GB1147@pi3>
 References: <20200930084258.25493-1-nicoleotsuka@gmail.com>
- <20200930084258.25493-3-nicoleotsuka@gmail.com>
- <CAJKOXPeF8D0A6PGVbi_7RedO-DFd70sjGcJOjx-gCJ7Cd8k0YQ@mail.gmail.com>
- <20200930094032.GA6686@Asurada-Nvidia>
+ <20200930084258.25493-2-nicoleotsuka@gmail.com>
+ <CAJKOXPd7XSAty_2_6i3bEcoRwJ9HdoE+TKGu1G6ozZ9xYC7M6Q@mail.gmail.com>
+ <20200930094145.GB6686@Asurada-Nvidia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200930094032.GA6686@Asurada-Nvidia>
+In-Reply-To: <20200930094145.GB6686@Asurada-Nvidia>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 02:40:32AM -0700, Nicolin Chen wrote:
-> On Wed, Sep 30, 2020 at 11:21:14AM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, 30 Sep 2020 at 10:48, Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+On Wed, Sep 30, 2020 at 02:41:45AM -0700, Nicolin Chen wrote:
+> On Wed, Sep 30, 2020 at 11:07:32AM +0200, Krzysztof Kozlowski wrote:
+> > "On Wed, 30 Sep 2020 at 10:48, Nicolin Chen <nicoleotsuka@gmail.com> wrote:
 > > >
-> > > Previously the driver relies on bus_set_iommu() in .probe() to call
-> > > in .probe_device() function so each client can poll iommus property
-> > > in DTB to configure fwspec via tegra_smmu_configure(). According to
-> > > the comments in .probe(), this is a bit of a hack. And this doesn't
-> > > work for a client that doesn't exist in DTB, PCI device for example.
+> > > From: Dmitry Osipenko <digetx@gmail.com>
 > > >
-> > > Actually when a device/client gets probed, the of_iommu_configure()
-> > > will call in .probe_device() function again, with a prepared fwspec
-> > > from of_iommu_configure() that reads the SWGROUP id in DTB as we do
-> > > in tegra-smmu driver.
+> > > Multiple Tegra drivers need to retrieve Memory Controller and hence there
+> > > is quite some duplication of the retrieval code among the drivers. Let's
+> > > add a new common helper for the retrieval of the MC.
 > > >
-> > > Additionally, as a new helper devm_tegra_get_memory_controller() is
-> > > introduced, there's no need to poll the iommus property in order to
-> > > get mc->smmu pointers or SWGROUP id.
-> > >
-> > > This patch reworks .probe_device() and .attach_dev() by doing:
-> > > 1) Using fwspec to get swgroup id in .attach_dev/.dettach_dev()
-> > > 2) Removing DT polling code, tegra_smmu_find/tegra_smmu_configure()
-> > > 3) Calling devm_tegra_get_memory_controller() in .probe_device()
-> > > 4) Also dropping the hack in .probe() that's no longer needed.
-> > >
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > > > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > > > ---
 > > >
 > > > Changelog
-> > > v2->v3
-> > >  * Used devm_tegra_get_memory_controller() to get mc pointer
-> > >  * Replaced IS_ERR_OR_NULL with IS_ERR in .probe_device()
-> > > v1->v2
-> > >  * Replaced in .probe_device() tegra_smmu_find/tegra_smmu_configure()
-> > >    with tegra_get_memory_controller call.
-> > >  * Dropped the hack in tegra_smmu_probe().
+> > > v2->v3:
+> > >  * Replaced with Dimtry's devm_tegra_get_memory_controller()
+> > > v1->v2:
+> > >  * N/A
 > > >
-> > >  drivers/iommu/tegra-smmu.c | 144 ++++++++++---------------------------
-> > >  1 file changed, 36 insertions(+), 108 deletions(-)
+> > >  drivers/memory/tegra/mc.c | 39 +++++++++++++++++++++++++++++++++++++++
+> > >  include/soc/tegra/mc.h    | 17 +++++++++++++++++
+> > >  2 files changed, 56 insertions(+)
 > > >
-> > > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> > > index 6a3ecc334481..636dc3b89545 100644
-> > > --- a/drivers/iommu/tegra-smmu.c
-> > > +++ b/drivers/iommu/tegra-smmu.c
-> > > @@ -61,6 +61,8 @@ struct tegra_smmu_as {
-> > >         u32 attr;
+> > > diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> > > index ec8403557ed4..dd691dc3738e 100644
+> > > --- a/drivers/memory/tegra/mc.c
+> > > +++ b/drivers/memory/tegra/mc.c
+> > > @@ -42,6 +42,45 @@ static const struct of_device_id tegra_mc_of_match[] = {
 > > >  };
+> > >  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
 > > >
-> > > +static const struct iommu_ops tegra_smmu_ops;
+> > > +static void tegra_mc_devm_action_put_device(void *data)
 > > 
-> > I cannot find in this patch where this is assigned.
-> 
-> Because it's already set in probe():
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/iommu/tegra-smmu.c#n1162
-> 
-> And my PATCH-3 sets it for PCI bus also.
+> > devm_tegra_memory_controller_put()
 
-OK, good point. Thanks for explanation.
+My bad here, this is not a "put" helper so the previous name was
+actually good. No need to change.
+
+> > 
+> > > +{
+> > > +       struct tegra_mc *mc = data;
+> > > +
+> > > +       put_device(mc->dev);
+> > > +}
+> > > +
+> > > +struct tegra_mc *devm_tegra_get_memory_controller(struct device *dev)
+> > 
+> > Usually 'get' is a suffix (e.g. clk, gpiod, iio, led), so:
+> > devm_tegra_memory_controller_get()
+> > 
+> > > +{
+> > > +       struct platform_device *pdev;
+> > > +       struct device_node *np;
+> > > +       struct tegra_mc *mc;
+> > > +       int err;
+> > > +
+> > > +       np = of_find_matching_node_and_match(NULL, tegra_mc_of_match, NULL);
+> > > +       if (!np)
+> > > +               return ERR_PTR(-ENOENT);
+> > > +
+> > > +       pdev = of_find_device_by_node(np);
+> > > +       of_node_put(np);
+> > > +       if (!pdev)
+> > > +               return ERR_PTR(-ENODEV);
+> > > +
+> > > +       mc = platform_get_drvdata(pdev);
+> > > +       if (!mc) {
+> > > +               put_device(mc->dev);
+> > > +               return ERR_PTR(-EPROBE_DEFER);
+> > > +       }
+> > > +
+> > > +       err = devm_add_action(dev, tegra_mc_devm_action_put_device, mc);
+
+This can be simpler with devm_add_action_or_reset.
 
 Best regards,
 Krzysztof
