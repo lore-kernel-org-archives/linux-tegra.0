@@ -2,117 +2,121 @@ Return-Path: <SRS0=fCh6=DH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21389C4727C
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 07:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF938C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 07:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAC7B20848
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 07:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 624BE20789
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 07:31:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIjQ4Kq7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekxIJCZI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725823AbgI3HWY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Sep 2020 03:22:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51886 "EHLO
+        id S1725777AbgI3HbR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Sep 2020 03:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgI3HWY (ORCPT
+        with ESMTP id S1725535AbgI3HbQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Sep 2020 03:22:24 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F020C061755;
-        Wed, 30 Sep 2020 00:22:22 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id y6so473217plt.9;
-        Wed, 30 Sep 2020 00:22:22 -0700 (PDT)
+        Wed, 30 Sep 2020 03:31:16 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64CA5C061755;
+        Wed, 30 Sep 2020 00:31:15 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id j7so487664plk.11;
+        Wed, 30 Sep 2020 00:31:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=yJyPv9TfvoTiNiepUCS1moee1qgA1MUCDqAQ76iLRGw=;
-        b=dIjQ4Kq7OP6C1q55KiX7llzOLRIxLxLiAEZUJPtcvKr22oEfblNhrGHtxeM8XIyCOI
-         /W/jTi0/dVSNlDsYDUxCqyCzw0wIbPPIoOJWVZHcnie4W616Ent7T6zODTqDg4uABts3
-         hi4fibufYdX0d39thb8ihr7pTCHR/Dhpy1nhM0TrWsDYMdy+FTasX9wI62aVQ/AnQYYp
-         pUnD1gPZir2hrCQi/uqU7HKaMUy8FwlN03RAm6Ik1W8MPPt8lyjBlvVE7Od59AX3Y7Lr
-         RuEK7b1wgvRayFlXhpzLopy50CZF5YLeVwJmAs68gQYgRH/Lmg82pi3Vhn9zwF5h3ImP
-         hfNg==
+         :content-disposition:in-reply-to:user-agent;
+        bh=bwOTOwH4axl9LqPJmEo0RmLkZED4KKjttxbY58nlHVU=;
+        b=ekxIJCZIESz5WSSsGf4/UfvtntXZpRaljNG8C88ia6EAPRAFmIhV+DTBBhuzHywGcI
+         lbwQCkdhE6oB6NBNUaVy3F3Fnx/iYQUvqnQYXRFhlJS3fqeJgTaa/GtmBG7rO4c7qszV
+         ZXpwT9F7D059JXWsKS3rDyxvB2rqeCltH1/ULMohSMyocoZHBajSxiR4ekNysVM6UPwh
+         TA/U6o7KL3qJYlmtBK1ZkhoBJG1r4nnMmmR9R4Jg+myiIZWWn94ydCcZiPGTSzyFPtLG
+         UwAuh4bPvS4FBkpwpACWcOWzD+NcR6Zfv3QwY8D/9XXbOD0nqYfhspMf6Z1sLQXqvh/x
+         k7CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yJyPv9TfvoTiNiepUCS1moee1qgA1MUCDqAQ76iLRGw=;
-        b=ZYBVykERjxmboW6sG1JmUZRxXkdlq5s9e2OlFO+bI0eWzop2IsEvQUU7g0bVRUKejW
-         gmVSIcJfPg4ZScRn7w62WPWYKoRgd/Gyds//hB6y060Gd8xUdrRTL1KcV9+4ntllsrt3
-         wICoYfZI6kTxJ1LqK5GfLPAUxakfe+Mp6Jgsrpmuc79EjaEFekkHKQTKH1LjXnI9kB58
-         Ru7JS0U8AnhNo1EM2l2Bqkx5tLWLy+Uo3hUjuVjIFRt6rmRPaY+bHef5or5dy5aUiz8j
-         PDcviwl62mhyZeDwraWuKpZdUFv1VPtsSdmIaDWdYt7UGHBzppVTz37cPAuocYDhlweN
-         N6HA==
-X-Gm-Message-State: AOAM531rG09n/foOyK22nx91wTBE3hRYcUn8GTtmtFQ6qhfTA4E5dkjl
-        fCgdDGMUprPt0KuiDzzcFIU=
-X-Google-Smtp-Source: ABdhPJz/rnWA9bYT3PPtMlpoljxk/a7LibergtvDqyjwYz/Z7mihUyup7d6kfRH6Q8SIbLPsHcf17A==
-X-Received: by 2002:a17:90a:c17:: with SMTP id 23mr1347882pjs.127.1601450541995;
-        Wed, 30 Sep 2020 00:22:21 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bwOTOwH4axl9LqPJmEo0RmLkZED4KKjttxbY58nlHVU=;
+        b=ljfQKp2D5iKqXHM93H01V81VkhRlalspGClJwSKPSAp+hKzG/pfZFRLv7Xw2e8+GMR
+         QeIHogek2h0fNS/kbrmykDGbAdqCLIOT/wG78Lv21lWr/M+JAAxA+oDzu48agWdQ8TXZ
+         zPDE0mQ6YVprX0tN6wN4X45n4DM/S8OWa42nkayaI7Hzsf1Y2+P8uer37oc+luFNgrC6
+         oHOyW7sRUMaE7IoGXGJszwgJoDmrIWJTDmy7G2E48FnLuK7teI1BGh80yYTB6+wzVKJv
+         X1B0gKop2pVlHT/n8Fe9t52Y06+QfdiAgy4ifkYsKC1RuLZQld7zMMCnhPZv5/4hX+Qj
+         qcCg==
+X-Gm-Message-State: AOAM5302ZTF8M25iv5e8/x2XGxPXK50Vo7MjKu3V3J8QPmOnFF9R5H93
+        ItG7H1XW+VdMxRzVKuLS9TA=
+X-Google-Smtp-Source: ABdhPJwXuia3lh7dWuGxNLtu/8GKrMOmIAmVZsKyyiPZgKjMbUATljSUXVN3+rgD+15l0PNAx7d6mw==
+X-Received: by 2002:a17:90b:93:: with SMTP id bb19mr1410705pjb.162.1601451074777;
+        Wed, 30 Sep 2020 00:31:14 -0700 (PDT)
 Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id v65sm939141pgv.21.2020.09.30.00.22.21
+        by smtp.gmail.com with ESMTPSA id y16sm1370254pfb.154.2020.09.30.00.31.13
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Sep 2020 00:22:21 -0700 (PDT)
-Date:   Wed, 30 Sep 2020 00:16:50 -0700
+        Wed, 30 Sep 2020 00:31:14 -0700 (PDT)
+Date:   Wed, 30 Sep 2020 00:25:43 -0700
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org,
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     thierry.reding@gmail.com, joro@8bytes.org, digetx@gmail.com,
         vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] iommu/tegra-smmu: Add PCI support
-Message-ID: <20200930071650.GB13876@Asurada-Nvidia>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] memory: tegra: Add helper function
+ tegra_get_memory_controller
+Message-ID: <20200930072542.GC13876@Asurada-Nvidia>
 References: <20200930003013.31289-1-nicoleotsuka@gmail.com>
- <20200930003013.31289-4-nicoleotsuka@gmail.com>
- <f07d4fcc-ee19-874b-c542-0679660c3549@gmail.com>
- <20200930052952.GB31821@Asurada-Nvidia>
- <96e71d38-5888-5b21-f0e1-9e6def50484e@gmail.com>
+ <20200930003013.31289-2-nicoleotsuka@gmail.com>
+ <CAJKOXPeye7b0j1oB21JmBwc277_1RYWQ0SC0Otf+F62HK=sjjA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <96e71d38-5888-5b21-f0e1-9e6def50484e@gmail.com>
+In-Reply-To: <CAJKOXPeye7b0j1oB21JmBwc277_1RYWQ0SC0Otf+F62HK=sjjA@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 08:58:50AM +0300, Dmitry Osipenko wrote:
-> 30.09.2020 08:29, Nicolin Chen пишет:
-> > Hi Dmitry,
-> > 
-> > On Wed, Sep 30, 2020 at 08:10:07AM +0300, Dmitry Osipenko wrote:
-> >> 30.09.2020 03:30, Nicolin Chen пишет:
-> >>> -	group->group = iommu_group_alloc();
-> >>> +	group->group = pci ? pci_device_group(dev) : iommu_group_alloc();
-> >>
-> >> This will be nicer to write as:
-> >>
-> >> if (dev_is_pci(dev))
-> >>     group->group = pci_device_group(dev);
-> >> else
-> >>     group->group = generic_device_group(dev);
-> > 
-> > Why is that nicer? I don't feel mine is hard to read at all...
-> > 
+Hi Krzysztof,
+
+On Wed, Sep 30, 2020 at 09:21:39AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, 30 Sep 2020 at 02:35, Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+> >
+> > This can be used by both tegra-smmu and tegra20-devfreq drivers.
+> >
+> > Suggested-by: Dmitry Osipenko <digetx@gmail.com>
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> >
+> > Changelog
+> > v1->v2
+> >  * N/A
+> >
+> >  drivers/memory/tegra/mc.c | 23 +++++++++++++++++++++++
+> >  include/soc/tegra/mc.h    |  1 +
+> >  2 files changed, 24 insertions(+)
+> >
+> > diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> > index ec8403557ed4..09352ad66dcc 100644
+> > --- a/drivers/memory/tegra/mc.c
+> > +++ b/drivers/memory/tegra/mc.c
+> > @@ -42,6 +42,29 @@ static const struct of_device_id tegra_mc_of_match[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
 > 
-> Previously you said that you're going to add USB support, so I assume
-> there will be something about USB.
+> > +struct tegra_mc *tegra_get_memory_controller(void)
+> > +{
+> 
+> Add kerneldoc and mention dropping of reference to the device after use.
 
-I was hoping that it'd work for USB. Yet USB doesn't seem to have
-an different function for device_group().
+I am abort to use Dmitry's devm_ one in my next version:
+https://github.com/grate-driver/linux/commit/2105e7664063772d72fefe9696bdab0b688b9de2
 
-> It's also a kinda common style that majority of Tegra drivers use in
-> upstream kernel. But yours variant is good too if there won't be a need
-> to change it later on.
-
-Okay..I'll use yours then.
+Could I just skip the kerneldoc part? Otherwise, would you please
+tell me which kerneldoc file I should update?
 
 Thanks
