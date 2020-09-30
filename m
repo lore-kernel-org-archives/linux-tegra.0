@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DEEC4727C
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B53C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A02C620706
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBB1E2072E
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:35:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqp4vmkd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Om4V3bcp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbgI3Fdh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Sep 2020 01:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35154 "EHLO
+        id S1725779AbgI3FfY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Sep 2020 01:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbgI3Fdh (ORCPT
+        with ESMTP id S1725306AbgI3FfY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Sep 2020 01:33:37 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BEEAC061755;
-        Tue, 29 Sep 2020 22:33:33 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id l18so237881pjz.1;
-        Tue, 29 Sep 2020 22:33:33 -0700 (PDT)
+        Wed, 30 Sep 2020 01:35:24 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4391CC061755;
+        Tue, 29 Sep 2020 22:35:24 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id y6so321777plt.9;
+        Tue, 29 Sep 2020 22:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=OmxpJuvijh0m6kJcF1u1drddAJ2BLcjqzo+pucKDFhY=;
-        b=nqp4vmkdnFydbbSm+m0QjFWfBzAsAjfdi8rm2h2f9jz87VU+oto3pBdY71rBrklkGt
-         E63lSJUmcKNwPNVphQNlnwwrM++BWwXMYn0IkCrBOAW74ef/WgDFGjLRonwlofMxesji
-         xajr0wGt+ED8HcxXD9WpGvmx093Vj7nxAtzFSEtmDrZ0x+tmdwbsUMxCTn/97F3KesOn
-         PnPPaNTSXPRs6iqleYiJ6dGgOIVbrKV3uV0rgmO/gWhf7qsaflm8bUZIQqHWZ3naNAxf
-         aFJMSpDAEVGBaEDlA5/u1fK2YYdHOOVfZRsEAu6Lxx6l6iyRuBzHHkQksRuCc2Ka7FaG
-         BiPA==
+        bh=W1K8f0z/jqgu4XtKdCAmS7hYkfAxOTJwSduvvMvjP0E=;
+        b=Om4V3bcp3qikxKwomLrvOl7X/sEWzREB8grvkAbmG0xwxEJIlWuGdp1vd8vbTG1Y8a
+         qdjp+fpmenmKk0aB7LP2t89pYDvFWryJy6KlYwNOM4z3/WOvfFGhJpVaQO+oPzEsNl0W
+         8ZWlAkratGdksXj/9ItOPUrJkTVFnjNcSePIc5ReeCYfO87Uus4xD4goW40NbngXZEvU
+         zwj9/YOegVhVJhTyQ9Fum54r/wqAmGHtV+PFoUVjlQsKX7EYhhNDaIVSjpCZS+qZXdl6
+         243VXTxbb1ohLHIqb4JD4NmvPC+clkFuA/QX1kAVH5fmJ2mcGE++M4BotBlBwIg+v1TS
+         sakQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=OmxpJuvijh0m6kJcF1u1drddAJ2BLcjqzo+pucKDFhY=;
-        b=SKrDbfSGR7mcoX3Yqw1DLdok48szXAzgOH6tc5ErYk3Hvq9tVeDu4JTy/YWMDBRJ6O
-         jAGIeTngrVK61TwXaFBJ6uTgB053XzidAUUu+oASeZpTDnXb5Z0o51kJg9kifkpWz1n7
-         pzm7VZBKPCONQ8DaAufTiieekwONqmR7inL03SrJBxL+2mwvb/XmDJf4Fh0gm+5oS2ff
-         nfjMqr4UhsJRFkxVNBNWQp0t4enrmgUNTQ7cow5gq9C8eB/3ifPUo1HpKyvxDCNtaFsE
-         py2vBAHRMnO35rBFtl9+0/wwWvLY5FnHrbyjY4ch/96vPY2hS4Dd0Yj6RJ6bebtc+RMJ
-         UjjA==
-X-Gm-Message-State: AOAM532YmQK7JIA6tGW1ywaOdDUxqjexor5RZKryBTEQjh/Pq/Yi4KOW
-        SZ+CCBvBD5w11q2uGaLtrpQ=
-X-Google-Smtp-Source: ABdhPJz8999KVOIETNd5trWMtQBQibv12Knp50lGI0K0vTSJfuEJs2akAi00z6JP0DZT/qRZNRdhAA==
-X-Received: by 2002:a17:90a:8d05:: with SMTP id c5mr994931pjo.222.1601444012558;
-        Tue, 29 Sep 2020 22:33:32 -0700 (PDT)
+        bh=W1K8f0z/jqgu4XtKdCAmS7hYkfAxOTJwSduvvMvjP0E=;
+        b=q7yZLsep02Hjdw/EIy6yrASetWRvcGr61rOHqN/WGfAj2QUhVUswW6mIq8w1J/apUS
+         DAAsd8JGQehgwIjcZsCSWtfCQJ6AMpdKKyOuLRvCuwbAcoBhnDjbaRcgMDBuS1c0N6Zm
+         nz9ksfD4mMjDpMgY0ThUF6vQz8yWRokpdVQMq/Pmj0VvdgRclpZrjBCwcDuT/IJ6EVE8
+         Fu4tXKZjeYysabnnSyUq2QpMtS1iMm0bSqfq4vvfLtvggppQsAh832X3/atVyCthfNIJ
+         nWSP196zGro+dfNuZz7FzAHjA/DyNHpt+vFxb9IkA/PXAYq/ABFT9TYUELx3nljlBRf7
+         PfBw==
+X-Gm-Message-State: AOAM530AwxLUYdYP2RdaoW3EJTcIADgh6cMBRn5uHW9t3rEkskkCraUY
+        mswsW2045mMHnU8U9Rz+J+WtSkowC0U=
+X-Google-Smtp-Source: ABdhPJyeevosQ4EXxlrLKF/nmXoL76ezZtFWBbElnGnGkpLihSdXCxd/eBg0oInyXEfwwxVTHtakIQ==
+X-Received: by 2002:a17:902:be0d:b029:d2:8084:cb19 with SMTP id r13-20020a170902be0db02900d28084cb19mr815442pls.45.1601444123751;
+        Tue, 29 Sep 2020 22:35:23 -0700 (PDT)
 Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id c1sm648658pfj.219.2020.09.29.22.33.31
+        by smtp.gmail.com with ESMTPSA id r188sm686604pfc.67.2020.09.29.22.35.23
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Sep 2020 22:33:32 -0700 (PDT)
-Date:   Tue, 29 Sep 2020 22:28:00 -0700
+        Tue, 29 Sep 2020 22:35:23 -0700 (PDT)
+Date:   Tue, 29 Sep 2020 22:29:53 -0700
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org,
@@ -68,27 +68,32 @@ Cc:     thierry.reding@gmail.com, joro@8bytes.org, krzk@kernel.org,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 3/3] iommu/tegra-smmu: Add PCI support
-Message-ID: <20200930052759.GA31821@Asurada-Nvidia>
+Message-ID: <20200930052952.GB31821@Asurada-Nvidia>
 References: <20200930003013.31289-1-nicoleotsuka@gmail.com>
  <20200930003013.31289-4-nicoleotsuka@gmail.com>
- <27b155ec-97ab-98f6-7b48-3fded875d5cc@gmail.com>
+ <f07d4fcc-ee19-874b-c542-0679660c3549@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <27b155ec-97ab-98f6-7b48-3fded875d5cc@gmail.com>
+In-Reply-To: <f07d4fcc-ee19-874b-c542-0679660c3549@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 08:10:00AM +0300, Dmitry Osipenko wrote:
-> 30.09.2020 03:30, Nicolin Chen пишет:
-> ...
-> > +#ifdef CONFIG_PCI
-> > +	if (!iommu_present(&pci_bus_type)) {
-> 
-> Could you please explain why this check is needed?
+Hi Dmitry,
 
-That's referencing what's in the arm-smmu.c file, since it does
-not hurt to have a check.
+On Wed, Sep 30, 2020 at 08:10:07AM +0300, Dmitry Osipenko wrote:
+> 30.09.2020 03:30, Nicolin Chen пишет:
+> > -	group->group = iommu_group_alloc();
+> > +	group->group = pci ? pci_device_group(dev) : iommu_group_alloc();
+> 
+> This will be nicer to write as:
+> 
+> if (dev_is_pci(dev))
+>     group->group = pci_device_group(dev);
+> else
+>     group->group = generic_device_group(dev);
+
+Why is that nicer? I don't feel mine is hard to read at all...
