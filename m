@@ -4,178 +4,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62751C4727C
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 16:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02577C4727E
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 17:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10BB12076B
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 16:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D792074B
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 17:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlQtzLTo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHnIsVkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgI3QrM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Sep 2020 12:47:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54468 "EHLO
+        id S1725800AbgI3Rcl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Sep 2020 13:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbgI3QrM (ORCPT
+        with ESMTP id S1725355AbgI3Rcl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Sep 2020 12:47:12 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF9CEC061755;
-        Wed, 30 Sep 2020 09:47:11 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id nw23so3833154ejb.4;
-        Wed, 30 Sep 2020 09:47:11 -0700 (PDT)
+        Wed, 30 Sep 2020 13:32:41 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F1AC061755;
+        Wed, 30 Sep 2020 10:32:40 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id b12so3132735lfp.9;
+        Wed, 30 Sep 2020 10:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dwBlOQMq5+8l62W5AsOI0m1SQ7GJFufU2mYg0ww+V+s=;
-        b=LlQtzLToUwS3qc2V6Fs0G8CkvwmD023iz6KwLcB21kscwYk9l+nG0/DS4EC5KQk+bs
-         JHwajX4MQ/jQTSVtpBbGsX+XtseJgnHt1hwF4yd3TkaCX9NHAl1XRKUmjeNKTUu433OO
-         XIBvHE+5y54gL2vA6+OkIWmguj7pr8BHo5BjMDYcerS6wthRscNfajxXY08EK+sicuHI
-         VpW4h97A6UrLCSsYq/5iWEzHTm9QEE2cOazc3h1ArQwTYTXB++EDUkftvtURcXMEcpto
-         BhIu1OU7+O0C3ExcsCQN37jedc7S0AWpbW00ZLR3vtAkf0NegcdXj+SMYcDDtxsxSFKd
-         UC1A==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JE7rBNz3fAbpVUCcAxjlxKk3sByhl6O4kPv4ljqcvpY=;
+        b=VHnIsVkQF0lihwBssQWLf+Pu7tPzC5QONVf4BUB+G5RTnlAHTWw5N5qTkvNLp7MPTE
+         bCIHXVJJMCzFKau9nV4c+2S/eDcN5dfZKm769aSNghPSLhtsqJSGhM5b9Ar6j6XVZ+2y
+         pln4yC4J+s7/eWGYMqxmF0eAU65EQPQcVSGvWd988rolq5qSJaNR0CGWS6OMg0sFP8oP
+         PP0qcPUoUEEukz8wv14j6RRgmWENL4pwl9MFbUS13EmkcQvYERWXM4CDVtl0PzLc56NE
+         CTQXzFyYiC6FhufdWkkoaFF3bCB/PZLWNSE0PYmfDgInVwF2MNu1UAHmN0okPUUtmbry
+         RfLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dwBlOQMq5+8l62W5AsOI0m1SQ7GJFufU2mYg0ww+V+s=;
-        b=QFgrlhewfYcigad7XmWcAyvd8si7gnhwEGHGZgXdjyJRzC8SxnwmP+T/TNVaIBPrzA
-         0KWxwNaW2x7IKEZcQ+hOpTinhrR/LdmN+1I7PT04/7PdN9s/BPymLw7p5Z4fIMNfm8wm
-         h4ljAKOTQx0UXVD5ZWCjJFao2rXxucGNLxz5Qdsq4cc1zkISyDkjSPs7RIW2V6I+zxEN
-         sqzeYpMcXElYplJfLfA3GN86uNXPUVTBsJLpjhWH+kMFM05H9FAukZewt4rvmM2r6fiE
-         cp2MFjqOig5J2s7Ik7U3//pYvoqdKAmTHkkahAPMnVre3ki5qZkwCqoIUEwmdhd6FLGI
-         +aLQ==
-X-Gm-Message-State: AOAM530PcAEZFEzdJ9wi0qBVwIOJUSpWFwAmv9DO2D42m7wKkEsIto0B
-        HGfRdTLllmXElzkDDUNCG8o=
-X-Google-Smtp-Source: ABdhPJxN0Bp5azrA9FqdvL0cQlEeFs+oVhNgLWX+Hq82bBXYkN+lAk0XbQ1f8vNtQAlDB3wlNxix8A==
-X-Received: by 2002:a17:906:2dd:: with SMTP id 29mr3886541ejk.31.1601484430509;
-        Wed, 30 Sep 2020 09:47:10 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id j20sm1978041ejk.31.2020.09.30.09.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2020 09:47:09 -0700 (PDT)
-Date:   Wed, 30 Sep 2020 18:47:07 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JE7rBNz3fAbpVUCcAxjlxKk3sByhl6O4kPv4ljqcvpY=;
+        b=HSJSFaTNSxWqFKLcGarHROpA9PMBraYN+gHBWSHlVdTPHZBp5/MM1x4Up2/E+0El3E
+         A4/0Z9F24TiXEmyzOsX5jFzCGiDJjxeT3qnkJYqWYoiMr0ed59mkXGKMdmN8QtxR31Di
+         sLqUxiD6lHqfIQ6BLnE7ME3pVmFORFFA/7egfr2zJH0bBUa7Y+WcJsQEdhv2N0iSDZoi
+         5548SJ2hJNvistj1br3X+RVlShvRAkIIRnI28GIPdTpYf2zhfNyWeQbFXltzQhU5Y+3Y
+         34lp6w5vswfhc5i97LuraY5GemDSS4p2ACLziU5HQiKbt7kc2koD05ydMOqjYx/Ill8k
+         YWvA==
+X-Gm-Message-State: AOAM531eU7BT63j1tIqoqT9rGAtY5wdK/ShacensE0k2rlYGqF2aofSX
+        /5xUJHvt6/v9vfQVPw+F4+6HAVj9T8M=
+X-Google-Smtp-Source: ABdhPJzUASOVFi/Kk4L8m9nUPQoSa4qijLEjRQ8iUhedNTqvM198PrBOsczLmapI0GqjFz/R5pD1Sg==
+X-Received: by 2002:ac2:4301:: with SMTP id l1mr1148884lfh.389.1601487158733;
+        Wed, 30 Sep 2020 10:32:38 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
+        by smtp.googlemail.com with ESMTPSA id j23sm214983ljh.96.2020.09.30.10.32.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Sep 2020 10:32:38 -0700 (PDT)
+Subject: Re: [PATCH v3 1/3] memory: tegra: Add
+ devm_tegra_get_memory_controller()
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, joro@8bytes.org,
         krzk@kernel.org, vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iommu/tegra-smmu: Rework .probe_device and
- .attach_dev
-Message-ID: <20200930164707.GB3852280@ulmo>
 References: <20200930084258.25493-1-nicoleotsuka@gmail.com>
- <20200930084258.25493-3-nicoleotsuka@gmail.com>
- <20200930153131.GB3833404@ulmo>
- <ece615ad-8d6b-96ae-d8b4-9667aef17281@gmail.com>
- <20200930160626.GD3833404@ulmo>
- <f11d7d8a-8ce6-a53c-6219-ceec05432002@gmail.com>
+ <20200930084258.25493-2-nicoleotsuka@gmail.com>
+ <20200930152320.GA3833404@ulmo>
+ <ed7b4375-d06e-2750-e6fa-603ef2b60d36@gmail.com>
+ <20200930160355.GC3833404@ulmo>
+ <839df5d6-513f-3d77-ba5f-a1afe5d0883a@gmail.com>
+ <20200930161503.GF3833404@ulmo>
+ <29a989b3-a8cc-5c1f-ba12-47ed0d667e8e@gmail.com>
+ <20200930163842.GA3852280@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <eacbcce4-4574-6b24-9f06-02349ec3092f@gmail.com>
+Date:   Wed, 30 Sep 2020 20:32:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
-Content-Disposition: inline
-In-Reply-To: <f11d7d8a-8ce6-a53c-6219-ceec05432002@gmail.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <20200930163842.GA3852280@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+...
+>> I don't think that the MC driver will stay built-in forever, although
+>> its modularization is complicated right now. Hence something shall keep
+>> the reference to the MC device resources while they are in use and this
+>> patch takes care of doing that.
+> 
+> It looks to me like all the other places where we get a reference to the
+> MC also keep a reference to the device. That's obviously not going to be
+> enough once the code is turned into a module. At that point we need to
+> make sure to also grab a reference to the module. But that's orthogonal
+> to this discussion.
+> 
+>> Secondly, the Nicolin's patch doesn't pretend on anything, but rather
+> 
+> Yes, the patch does pretend to "look up" the memory controller device,
+> but in reality it will always return a singleton object, which can just
+> as easily be achieved by using a global variable.
+> 
+>> brings the already existing duplicated code to a single common place.
+> 
+> Where exactly is that duplicated code? The only places I see where we
+> get a reference to the memory controller are from the EMC drivers and
+> they properly look up the MC via the nvidia,memory-controller device
+> tree property.
 
---kXdP64Ggrk/fb43R
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yours observation is correct, all the drivers *do the lookup*. My point
+is that the nvidia,memory-controller usage isn't strictly necessary.
 
-On Wed, Sep 30, 2020 at 07:25:41PM +0300, Dmitry Osipenko wrote:
-> 30.09.2020 19:06, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Wed, Sep 30, 2020 at 06:36:52PM +0300, Dmitry Osipenko wrote:
-> >>  I'...
-> >>>> +	struct tegra_mc *mc =3D devm_tegra_get_memory_controller(dev);
-> >>>> +	struct iommu_fwspec *fwspec =3D dev_iommu_fwspec_get(dev);
-> >>>
-> >>> It looks to me like the only reason why you need this new global API =
-is
-> >>> because PCI devices may not have a device tree node with a phandle to
-> >>> the IOMMU. However, SMMU support for PCI will only be enabled if the
-> >>> root complex has an iommus property, right? In that case, can't we
-> >>> simply do something like this:
-> >>>
-> >>> 	if (dev_is_pci(dev))
-> >>> 		np =3D find_host_bridge(dev)->of_node;
-> >>> 	else
-> >>> 		np =3D dev->of_node;
-> >>>
-> >>> ? I'm not sure exactly what find_host_bridge() is called, but I'm pre=
-tty
-> >>> sure that exists.
-> >>>
-> >>> Once we have that we can still iterate over the iommus property and do
-> >>> not need to rely on this global variable.
-> >>
-> >> This sounds more complicated than the current variant.
-> >>
-> >> Secondly, I'm already about to use the new tegra_get_memory_controller=
-()
-> >> API for all the T20/30/124/210 EMC and devfreq drivers.
-> >=20
-> > Why do we need it there? They seem to work fine without it right now.
->=20
-> All the Tegra30/124/210 EMC drivers are already duplicating that MC
-> lookup code and only the recent T210 driver does it properly.
->=20
-> > If it is required for new functionality, we can always make the depende=
-nt
-> > on a DT reference via phandle without breaking any existing code.
->=20
-> That's correct, it will be also needed for the new functionality as
-> well, hence even more drivers will need to perform the MC lookup.
+The tegra20-devfreq driver doesn't use the phandle lookup because
+Tegra20 DTs don't have it, instead it uses the compatible lookup. Hence
+this patch doesn't really change the already existing behaviour for the
+drivers. The phandle usage is optional.
 
-I don't have any issues with adding a helper if we need it from several
-different locations. But the helper should be working off of a given
-device and look up the device via the device tree node referenced by
-phandle. We already have those phandles in place for the EMC devices,
-and any other device that needs to interoperate with the MC should also
-get such a reference.
+This patch adds a common API that is usable by *all* the already
+existing drivers, starting from the Tegra20 drivers.
 
-> I don't quite understand why you're asking for the phandle reference,
-> it's absolutely not needed for the MC lookup and won't work for the
+> But that's not what this new helper does. This code will use the OF
+> lookup table to find any match and then returns that, completely
+> ignoring any links established by the device tree.
 
-We need that phandle in order to establish a link between the devices.
-Yes, you can probably do it without the phandle and just match by
-compatible string. But we don't do that for other types of devices
-either, right? For a display driver we reference the attached panel via
-phandle, but we could also just look it up via name or absolute path or
-some other heuristic. But a phandle is just a much more explicit way of
-linking the devices, so why not use it?
+As I already said in the other reply, it should be fine to add lookup by
+the phandle and then fall back to the compatible matching. On the other
+hand, this is not strictly necessary because we always have only a
+single MC device at a time.
 
-> older DTs if DT change will be needed. Please give a detailed explanation.
+Please note that I don't have any objections to improving this patch. In
+the end either way will work, so we just need to choose the best option.
+I was merely explaining the rationale behind this patch and not trying
+to defend it.
 
-New functionality doesn't have to work with older DTs.
+Yours suggestion about using static mc variable is also good to me since
+currently MC driver is built-in and at least that won't be a
+globally-visible kernel variable, which doesn't feel great to have.
 
-Thierry
+I think we can follow approach of the static mc variable for the starter
+and improve it once there will be a real need. This should be the
+simplest option right now.
 
---kXdP64Ggrk/fb43R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl90tosACgkQ3SOs138+
-s6EhVBAAqjpxYzLulCcunbD3SM+z9yRrHLZopF7aAF00WcEq1K4Mp4veCap41y0t
-64EvmoHiMuoTAz8LlZkIv6L1ydvzO1F/K37VIWmCHbjHVrTC0qiH/O++wZ3PvNmC
-uHLPRV7RWGTjYUs8rpcFiVkubdzql+RMiD0nb8GrgbnQbFFLzm8he7Q35b7RtPrr
-BF6IbyBWLziNYRaPZsDq/XEzcz9KLOycjnpuPnAFQRhFP0whZEBp7nqCbcfPlD5w
-bpKyQjBywba/5Qi6DB4751HRaKa1l6iyWsOOkW9EV4ZpAagtnOaG6i+pNiwdiebD
-tw24SQZ+RcIc4Mj4iuly+rgcYVg4pof7qHpJW2Yf6ZYy0x+XHTdzBx/hSx6jhiag
-frIEyRYSRn1o3F4Y2CwFu/n3iM6JgIgsx+t+qrIz7oQDf2RDOpWMzGU1hZw0bDDh
-2LJdKHQ5Xb3tOuIsHvMLD6pp7eCgWkMj87XoTqcUv/IiNxuxrHxmgUExnxXyBGDL
-JwSVsLxnGe0uo4aMyLsNqfv3swWjsoSfS5gKme5tIdMR/7xjEBHs/HtNzu9otHqU
-AaE6tuZHc0DxA5CIIgW/OroLkFi9fDFDhRJGL1vrrkeoXGrXhcN6WnJVtLX8WxYS
-PxBneEM8mVUh0K5AUbL13EMbnm5bgMl/nDS+7fZerv/KmJgef9o=
-=I0Za
------END PGP SIGNATURE-----
-
---kXdP64Ggrk/fb43R--
+But again, we may slightly future-proof the API by adding the
+resource-managed variant. Either way will be good, IMO :) Currently I
+don't have a strong preference.
