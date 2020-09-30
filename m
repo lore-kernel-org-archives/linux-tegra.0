@@ -7,74 +7,74 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CF1C2D0A8
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0687C2D0A8
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 493AC2074A
-	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D09206FC
+	for <linux-tegra@archiver.kernel.org>; Wed, 30 Sep 2020 05:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5GCeSEp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZ2qFS69"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725771AbgI3FL4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 30 Sep 2020 01:11:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60072 "EHLO
+        id S1725799AbgI3FMO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 30 Sep 2020 01:12:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbgI3FLz (ORCPT
+        with ESMTP id S1725320AbgI3FMN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 30 Sep 2020 01:11:55 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3A2C061755;
-        Tue, 29 Sep 2020 22:11:55 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y4so452612ljk.8;
-        Tue, 29 Sep 2020 22:11:55 -0700 (PDT)
+        Wed, 30 Sep 2020 01:12:13 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7124AC061755;
+        Tue, 29 Sep 2020 22:12:13 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id w11so577782lfn.2;
+        Tue, 29 Sep 2020 22:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rLwBsch1+w3pmAWJFs5DtFDJyLpowZ0+c2NUgy8bnXs=;
-        b=m5GCeSEprGiDpHfi1VS3q22QiyOE2gFVXY3X32Hm2ec83A0n6RZ00T7c+/qFGIMHwY
-         x+Puym/28gNgogutmTqBX4rkB4UjmJzUVIXE15Sbrn2sqTD+URXqGHKDRpJgF61y2ppg
-         041DnlHDm90GsKWEBv4kYAlbaIHy581CdsGbgx2g1TTA027Ic4WwXaakvEoQsL5Qqian
-         amomBfKWeKKRr5oj84PKUryv3ZTNWo9LnopBpeW596Vfp+7Y6KHApGZ/T9XqT4uh8D69
-         XUtQChvpjIThUM04sA+tJ6HLWfsa844JL2KEeq+GkjD3WtBKNQohQsfbc4aBCjOPrJYy
-         VnCQ==
+        bh=WnFP8lnfHJgOPmmswyB1oqxtTdFe5yGHV9kG5nGP1I4=;
+        b=bZ2qFS69/vWFPYql8daXf4N+6wro+5xZYyVsqEffhxC47wWH+8i0zGZyc6e8bskZU+
+         rOgj+WMdVjB3jb61M29438T3GD2zcBc2MY6mxg3XHjD/wuJYOVpl5N6fUyY6SLGJoNW3
+         fYhyhcNWCV+QEXo5mQWxgI/0lp8PI2g3dLcHy20/UEQP7zVVoYlr9k4+ipbFxlViJesF
+         c1khISIBWAqPPQQDzhe6Ka4eGmvSclZQFK4wHHEGdk+MAlg/FSmoDJiRVJHseZRi7iS9
+         OFcH+2YCmYZKJD1pMMeyfMK+CFNJs+wYm1raLJXbxLxwJ7KkCU4umuodpn9eYCymeNe2
+         eefQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rLwBsch1+w3pmAWJFs5DtFDJyLpowZ0+c2NUgy8bnXs=;
-        b=FoQRxq9lZrIFG27/8Xy1HV6EVfiishA5GcMIATOWNOBYBIvdWSE6lEyeHRifzMLasA
-         N8wz6i8B2sCgXuHlJmjZ+lAdwOmkmSNp8P6tTz/2evlSLZ1JbQI4Uj6SX5l6CQXpUSr3
-         fuck6Eaj/ymBFdKflVIGmAxvdwfBnE4WMz2Pf7HK2CiYR5J71NGC7kQy40Ndivxk6VNs
-         UW7uhAzhvo8NFKIIlyIL+Te/WMHix/YEjmyDUrKOvR6BbOmcb073exQcamS5VkytMzVn
-         K3C+dlsMep+xAIAe0LI++QRax7G/mZJDxFOeJLVlkGwXsoMxpRrzJHn02/uGcNBRvSgy
-         B1oQ==
-X-Gm-Message-State: AOAM53399LevYnguD/qBhbgPFNMnNQ0vERtn22R3eOPFINi84+q0D3Cc
-        GOOCUY3rk2Sn9EqOECo0rpn1dU0unwM=
-X-Google-Smtp-Source: ABdhPJxWyMn8thmjGkZ8EmMO0wqHrJQj8NxdwNWM0AxXfLfuVFFIm63GXwGeOiyAEd98d86t10qEng==
-X-Received: by 2002:a05:651c:1397:: with SMTP id k23mr341636ljb.263.1601442713758;
-        Tue, 29 Sep 2020 22:11:53 -0700 (PDT)
+        bh=WnFP8lnfHJgOPmmswyB1oqxtTdFe5yGHV9kG5nGP1I4=;
+        b=VJPSxtEq4aqId1RGk2trPbCRZys7PSyFU2qGnUJxSpu4D0DhBOPG0o03+NqhmZP8Jo
+         fYoyNOFNL4Y6kOMda6aN4EC6hBV5V7L6ftSKeyfVzQIuTctK4vL9IVM4P0efouKtc1SR
+         NrELPPjaEBBeztZba5iAyeAoCR8qRdnU5EsMsGxg0V42cy3riwBlFKOLTLkSrt5L/pCW
+         B4KPWAsuZBlSipO2+nsEo4Bd1KvUKmbFqVUDpHwo11pV/toVYvbmbWx/8hYooskJ6Y9F
+         gYPhAqzeVCtl9AO/glMbj6vh6wioAqhRkw+erNYXrFxSQPv2Jozdp5fpTQl5PEBdmTGT
+         wDRA==
+X-Gm-Message-State: AOAM533hBxCJ2P5cLAEfthOsta5Jyj76ikWa6f8MmsiRQsLClyCe8cCW
+        X8cmpsUJ5OMlpb4m7LQqfy8leZ9xKSQ=
+X-Google-Smtp-Source: ABdhPJwj3hG5D4s4X9cvpm66sPqDZ0OHtsu9PITFwy9p2nU9IKOvdUk/0r+Ie5zIY3pz0VFv8jfcKw==
+X-Received: by 2002:a19:e54:: with SMTP id 81mr280338lfo.178.1601442731681;
+        Tue, 29 Sep 2020 22:12:11 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id u23sm48284ljl.86.2020.09.29.22.11.52
+        by smtp.googlemail.com with ESMTPSA id n8sm49566lji.1.2020.09.29.22.12.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2020 22:11:53 -0700 (PDT)
-Subject: Re: [PATCH v2 2/3] iommu/tegra-smmu: Rework .probe_device and
- .attach_dev
+        Tue, 29 Sep 2020 22:12:11 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] memory: tegra: Add helper function
+ tegra_get_memory_controller
 To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
         joro@8bytes.org, krzk@kernel.org
 Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 References: <20200930003013.31289-1-nicoleotsuka@gmail.com>
- <20200930003013.31289-3-nicoleotsuka@gmail.com>
+ <20200930003013.31289-2-nicoleotsuka@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <75514da5-e63a-9e51-8376-abbd12c324d1@gmail.com>
-Date:   Wed, 30 Sep 2020 08:11:52 +0300
+Message-ID: <93803d8b-9863-e977-fa87-a03e877b095d@gmail.com>
+Date:   Wed, 30 Sep 2020 08:12:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200930003013.31289-3-nicoleotsuka@gmail.com>
+In-Reply-To: <20200930003013.31289-2-nicoleotsuka@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,10 +83,13 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 30.09.2020 03:30, Nicolin Chen пишет:
-> +	/* An invalid mc pointer means mc and smmu drivers are not ready */
-> +	if (IS_ERR_OR_NULL(mc))
+...
+>  int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
+>  unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
+> +struct tegra_mc *tegra_get_memory_controller(void);
+>  
+>  #endif /* __SOC_TEGRA_MC_H__ */
+> 
 
-tegra_get_memory_controller() doesn't return NULL.
-
-> +		return ERR_PTR(-EPROBE_DEFER);
-
+This will conflict with the tegra20-devfreq driver, you should change it
+as well.
