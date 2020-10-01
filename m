@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD25C47423
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Oct 2020 17:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3ADC4727E
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Oct 2020 17:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E04A820897
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Oct 2020 17:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249112085B
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Oct 2020 17:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RpitwpNM"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fYUhqZEf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732943AbgJAReb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Oct 2020 13:34:31 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10020 "EHLO
+        id S1732974AbgJARei (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Oct 2020 13:34:38 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10042 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732407AbgJAReb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Oct 2020 13:34:31 -0400
+        with ESMTP id S1732407AbgJARei (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Oct 2020 13:34:38 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7612f30002>; Thu, 01 Oct 2020 10:33:39 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Oct
- 2020 17:34:27 +0000
+        id <B5f7612fa0000>; Thu, 01 Oct 2020 10:33:46 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Oct
+ 2020 17:34:36 +0000
 Received: from audio.nvidia.com (10.124.1.5) by mail.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 1 Oct 2020 17:34:22 +0000
+ Transport; Thu, 1 Oct 2020 17:34:30 +0000
 From:   Sameer Pujar <spujar@nvidia.com>
 To:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
         <kuninori.morimoto.gx@renesas.com>,
@@ -42,84 +42,128 @@ CC:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
         <dramesh@nvidia.com>, <atalambedu@nvidia.com>,
         <nwartikar@nvidia.com>, <swarren@nvidia.com>,
         <nicoleotsuka@gmail.com>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v3 06/13] ASoC: simple-card-utils: Expose new members for asoc_simple_priv
-Date:   Thu, 1 Oct 2020 23:03:00 +0530
-Message-ID: <1601573587-15288-7-git-send-email-spujar@nvidia.com>
+Subject: [PATCH v3 07/13] ASoC: audio-graph: Update driver as per new exposed members
+Date:   Thu, 1 Oct 2020 23:03:01 +0530
+Message-ID: <1601573587-15288-8-git-send-email-spujar@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
 References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601573619; bh=TnQC3AMzHJvCLc6PzO7nm4Imy6ab/tEd095RThQjCi0=;
+        t=1601573626; bh=KGVHwu7gz2uVTadbhaTYCpdQftlC5kySO8eaYF0Uy+k=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:MIME-Version:Content-Type;
-        b=RpitwpNMhaOfs6SsD/PwdvmVMQH79tV7duBLmM49M6xf85Cx1d62RKWPgi1rS2tPq
-         RUIz917LCh3Im01vIBDRu++l2h9Enkp6A/y2axdmen4ryp0iMTJZpjfPT13MN3AIXn
-         1KplgaPsPfHwVS/e5so9ESktrrZQYBlZ6HJy4kQALNFXDJ71eWu74Aio3SaXnQzgxt
-         fKdf0aHbIXpV6XIDcp1fYGEclXkZAkpkjMe2Gg/BJbpME0HSPG1vrXzKvKsmj3a5p+
-         nL/ZxbJfsU68Oh0VlGD7Y0j/4a5Zze+52EzXhGp29lLw2WjyHF9zGzBMZxdTKLb4yw
-         uCZqW1KVyxrGA==
+        b=fYUhqZEfnTADS7VXjUCEX/mFkoL/V4WT96/Hsx2evVoPrcLybnJFba3ISNLNlf7WU
+         FnMTpnqun8xFjI3uVJi23uQ5ITpAkVfig+Fh9UK5HXzMM57j0zib40G5wWHOlt18Ij
+         trZtM1py2HX8SMfwyVM5mGIg2N3lLMfVOIWhOe9GKnpwJNlT8Oo+GKrlqeOaFGSjIQ
+         Ml3t6d0ZsZzx7E3uUefwAzqKIcWh6WVaXCZPk37uTzTBwjfU2UOJf9FUjFjk4MSvAE
+         r06/nS0fX0dtHlwVTnfqW4iKDrzNDW4J8vUOMm/+AP1uzw6JJ7dzaRQovXi9GcY+Nb
+         ajIa1X4fl2TlA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add new members in struct 'asoc_simple_priv'. Idea is to leverage
-simple or graph card driver as much as possible and vendor can
-maintain a thin driver to control the behavior by populating these
-newly exposed members.
+As per the members exposed earlier in the series, audio graph driver
+is updated to make use of these. Functionally there is no change
+in behavior if these are not populated. So following changes are made
+as part of this.
 
-Following are the members added in 'asoc_simple_priv':
+ - Update 'dai_link->ops' for DPCM links if a custom 'snd_soc_ops'
+   is defined by the vendor driver.
 
-  - 'ops' struct: In some cases SoC vendor drivers may want to
-    implement 'snd_soc_ops' callbacks differently. In such cases
-    custom callbacks would be used.
+ - Consider 'force_dpcm' flag status when deciding if a DAI link
+   needs to be treated as DPCM or not. In doing so the logic is
+   moved to a separate inline function for a better readability.
 
-  - 'force_dpcm' flag: Right now simple or graph card drivers
-    detect DAI links as DPCM links if:
-
-      * The dpcm_selectable is set AND
-      * Codec is connected to multiple CPU endpoints or aconvert
-        property is used for rate/channels.
-
-    So there is no way to directly specify usage of DPCM alone. So a
-    flag is exposed to mark all links as DPCM. Vendor driver can
-    set this if required.
-
-  - 'dpcm_selectable': Currently simple or audio graph drivers
-    provide a way to enable this for specific compatibles. However
-    vendor driver may want to define some additional info. Thus
-    expose this variable where vendor drivers can set this if
-    required.
-
-  - 'data': A void pointer member is provided. This would be useful
-    when vendor driver wants to define its own structure for internal
-    usage and still wants to rely on most of the other members from
-    'asoc_simple_priv'.
-
-Subsequent patches in the series illustrate usage for above.
+ - Populate 'dpcm_selectable' flag which is then used to detect
+   DPCM DAI links.
 
 Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- include/sound/simple_card_utils.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/generic/audio-graph-card.c | 40 ++++++++++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 9 deletions(-)
 
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index 86a1e95..9825308 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -56,6 +56,10 @@ struct asoc_simple_priv {
- 	struct asoc_simple_dai *dais;
- 	struct snd_soc_codec_conf *codec_conf;
- 	struct gpio_desc *pa_gpio;
-+	const struct snd_soc_ops *ops;
-+	unsigned int force_dpcm:1;
-+	uintptr_t dpcm_selectable;
-+	void *data;
- };
- #define simple_priv_to_card(priv)	(&(priv)->snd_card)
- #define simple_priv_to_props(priv, i)	((priv)->dai_props + (i))
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 0ba50be9..fb34e34 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -355,6 +355,11 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 	snd_soc_dai_link_set_capabilities(dai_link);
+ 
+ 	dai_link->ops			= &graph_ops;
++
++	/* Use custom snd_soc_ops callbacks if available */
++	if (priv->ops)
++		dai_link->ops = priv->ops;
++
+ 	dai_link->init			= asoc_simple_dai_init;
+ 
+ out_put_node:
+@@ -439,6 +444,28 @@ static int graph_dai_link_of(struct asoc_simple_priv *priv,
+ 	return 0;
+ }
+ 
++static inline bool parse_as_dpcm_link(struct asoc_simple_priv *priv,
++				      struct device_node *codec_port,
++				      struct asoc_simple_data *adata)
++{
++	if (priv->force_dpcm)
++		return true;
++
++	if (!priv->dpcm_selectable)
++		return false;
++
++	/*
++	 * It is DPCM
++	 * if Codec port has many endpoints,
++	 * or has convert-xxx property
++	 */
++	if ((of_get_child_count(codec_port) > 1) ||
++	    (adata->convert_rate || adata->convert_channels))
++		return true;
++
++	return false;
++}
++
+ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 			struct link_info *li,
+ 			int (*func_noml)(struct asoc_simple_priv *priv,
+@@ -459,7 +486,6 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 	struct device_node *codec_port;
+ 	struct device_node *codec_port_old = NULL;
+ 	struct asoc_simple_data adata;
+-	uintptr_t dpcm_selectable = (uintptr_t)of_device_get_match_data(dev);
+ 	int rc, ret;
+ 
+ 	/* loop for all listed CPU port */
+@@ -482,14 +508,8 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 			graph_parse_convert(dev, codec_ep, &adata);
+ 			graph_parse_convert(dev, cpu_ep,   &adata);
+ 
+-			/*
+-			 * It is DPCM
+-			 * if Codec port has many endpoints,
+-			 * or has convert-xxx property
+-			 */
+-			if (dpcm_selectable &&
+-			    ((of_get_child_count(codec_port) > 1) ||
+-			     adata.convert_rate || adata.convert_channels))
++			/* check if link requires DPCM parsing */
++			if (parse_as_dpcm_link(priv, codec_port, &adata))
+ 				ret = func_dpcm(priv, cpu_ep, codec_ep, li,
+ 						(codec_port_old == codec_port));
+ 			/* else normal sound */
+@@ -678,6 +698,8 @@ static int graph_probe(struct platform_device *pdev)
+ 	card->num_dapm_widgets	= ARRAY_SIZE(graph_dapm_widgets);
+ 	card->probe		= graph_card_probe;
+ 
++	priv->dpcm_selectable = (uintptr_t)of_device_get_match_data(dev);
++
+ 	memset(&li, 0, sizeof(li));
+ 	graph_get_dais_count(priv, &li);
+ 	if (!li.link || !li.dais)
 -- 
 2.7.4
 
