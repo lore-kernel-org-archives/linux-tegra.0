@@ -2,143 +2,188 @@ Return-Path: <SRS0=6fDB=DJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B015C4727E
-	for <linux-tegra@archiver.kernel.org>; Fri,  2 Oct 2020 03:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF59C47425
+	for <linux-tegra@archiver.kernel.org>; Fri,  2 Oct 2020 05:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E89C5206DB
-	for <linux-tegra@archiver.kernel.org>; Fri,  2 Oct 2020 03:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSpUgx3P"
+	by mail.kernel.org (Postfix) with ESMTP id 8B3A2206E3
+	for <linux-tegra@archiver.kernel.org>; Fri,  2 Oct 2020 05:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387491AbgJBDAa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Oct 2020 23:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgJBDAa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Oct 2020 23:00:30 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4637C0613D0;
-        Thu,  1 Oct 2020 20:00:28 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id x2so214657pjk.0;
-        Thu, 01 Oct 2020 20:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=vxCBqrAPI4BpulMRUd2dHi3liznsJJT1GfUE4tz0DaA=;
-        b=oSpUgx3PIvcCjJEXKh2OcdwU6+Gu8yhGSFSDnYxRQdH3rtA4+igTwHajMexafQqOYW
-         VrLEKUFMZrfl33npsf3i+TUfQQcSQDNj1++MFzWbhvAFkAOUDB4VXzVxnbUs4hX5AtfZ
-         BTBamC1L1/k0hKUy9Shg8LNdDVyQCwkYwunDN40usxKx/TRQT14t197JR9Mawg4fH7En
-         OSGyHspZxE4tD8K4C/sOwq/YmxjJMByKchRTQB2uII+rjuFBnd1Op2oA4If6XkqNOcZO
-         7f6RV90FRasAxaQAxSW90CDKXbn9+hkW+gJc0LoAt2EfvKU7W6KUhR3PkuqNxKmtMhaz
-         viOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=vxCBqrAPI4BpulMRUd2dHi3liznsJJT1GfUE4tz0DaA=;
-        b=sotMAO++hQ9Yuu9nyvPCSwqi1r5ZTi4tecqBfaxRsEm+74dYKg/ibcgeRf/leFHL/d
-         yin/ZZIgpRDzhbuUmSH5zLR4pyIzji30KrVtsjxfykqqCxujg5LJgh8kFCvF22ydCTnp
-         Y6J0ZQU4FhbC64+1+lUS4sxBJppcX4wuZtkjsz9r2qS02DGzRNtVw1f//peVmLZ5HFlJ
-         /BYZpORKPwIKtMepnYXMsVjYL4PmZFkz18z4MZMWddx45xg5IP/kGLH3cgcfH14tVQma
-         SdQKA1OfFCBNbqqrtPSkKY9CXUizVU+JZili1jd9FWX4kvdurMv3ioX7z6pPctwf7bTx
-         PYdA==
-X-Gm-Message-State: AOAM532k9qszLPmjvricBGxKUzsq1PTfIi0pTvtt9ciHW8MBUntb0EXR
-        NQ+F61FdLtYsnf2u73QjVpE=
-X-Google-Smtp-Source: ABdhPJxxJ/72A/OmbDItHMGCvQ2xjK0xiOUvxS1AbALAf8vSAIoGtERKyAuNNz0J5ee4KjedSLx1Mw==
-X-Received: by 2002:a17:90a:ad8b:: with SMTP id s11mr427971pjq.40.1601607628065;
-        Thu, 01 Oct 2020 20:00:28 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id a1sm13541pjh.2.2020.10.01.20.00.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Oct 2020 20:00:27 -0700 (PDT)
-Date:   Thu, 1 Oct 2020 19:54:35 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>, joro@8bytes.org,
-        krzk@kernel.org, vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iommu/tegra-smmu: Rework .probe_device and
- .attach_dev
-Message-ID: <20201002025434.GA9394@Asurada-Nvidia>
-References: <20200930213244.GA10573@Asurada-Nvidia>
- <5945a63e-79d8-e3ae-ab53-cee8c220ac7d@gmail.com>
- <20201001012630.GA28240@Asurada-Nvidia>
- <72b11925-5857-8ce5-d084-cab01ca1b396@gmail.com>
- <20201001024850.GA28456@Asurada-Nvidia>
- <20201001102316.GF3919720@ulmo>
- <20201001110425.GB1272@Asurada>
- <b966844e-4289-3ff0-9512-852f8419a664@gmail.com>
- <20201002010751.GA26971@Asurada-Nvidia>
- <1b621b9d-cdc3-c7aa-2fa2-d728ae2bbc5d@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b621b9d-cdc3-c7aa-2fa2-d728ae2bbc5d@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1725965AbgJBFeL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 2 Oct 2020 01:34:11 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:18592 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725926AbgJBFeK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 2 Oct 2020 01:34:10 -0400
+Date:   02 Oct 2020 14:34:09 +0900
+X-IronPort-AV: E=Sophos;i="5.77,326,1596466800"; 
+   d="scan'208";a="58517478"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 02 Oct 2020 14:34:09 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D5B8D4000A97;
+        Fri,  2 Oct 2020 14:34:08 +0900 (JST)
+Message-ID: <87362xkxdv.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v3 10/13] ASoC: tegra: Add audio graph based card driver
+In-Reply-To: <1601573587-15288-11-git-send-email-spujar@nvidia.com>
+References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
+        <1601573587-15288-11-git-send-email-spujar@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 04:55:34AM +0300, Dmitry Osipenko wrote:
-> 02.10.2020 04:07, Nicolin Chen пишет:
-> > On Thu, Oct 01, 2020 at 11:33:38PM +0300, Dmitry Osipenko wrote:
-> >>>>> If we can't come to an agreement on globalizing mc pointer, would
-> >>>>> it be possible to pass tegra_mc_driver through tegra_smmu_probe()
-> >>>>> so we can continue to use driver_find_device_by_fwnode() as v1?
-> >>>>>
-> >>>>> v1: https://lkml.org/lkml/2020/9/26/68
-> >>>>
-> >>>> tegra_smmu_probe() already takes a struct tegra_mc *. Did you mean
-> >>>> tegra_smmu_probe_device()? I don't think we can do that because it isn't
-> >>>
-> >>> I was saying to have a global parent_driver pointer: similar to
-> >>> my v1, yet rather than "extern" the tegra_mc_driver, we pass it
-> >>> through egra_smmu_probe() and store it in a static global value
-> >>> so as to call tegra_smmu_get_by_fwnode() in ->probe_device().
-> >>>
-> >>> Though I agree that creating a global device pointer (mc) might
-> >>> be controversial, yet having a global parent_driver pointer may
-> >>> not be against the rule, considering that it is common in iommu
-> >>> drivers to call driver_find_device_by_fwnode in probe_device().
-> >>
-> >> You don't need the global pointer if you have SMMU OF node.
-> >>
-> >> You could also get driver pointer from mc->dev->driver.
-> >>
-> >> But I don't think you need to do this at all. The probe_device() could
-> >> be invoked only for the tegra_smmu_ops and then seems you could use
-> >> dev_iommu_priv_set() in tegra_smmu_of_xlate(), like sun50i-iommu driver
-> >> does.
-> > 
-> > Getting iommu device pointer using driver_find_device_by_fwnode()
-> > is a common practice in ->probe_device() of other iommu drivers.
-> 
-> Please give me a full list of the IOMMU drivers which use this method.
-> 
-> > But this requires a device_driver pointer that tegra-smmu doesn't
-> > have. So passing tegra_mc_driver through tegra_smmu_probe() will
-> > address it.
-> > 
-> 
-> If you're borrowing code and ideas from other drivers, then at least
-> please borrow them from a modern good-looking drivers. And I already
-> pointed out that following cargo cult is not always a good idea.
-> 
-> ARM-SMMU isn't a modern driver and it has legacy code. You shouldn't
-> copy it blindly. The sun50i-iommu driver was added half year ago, you
-> may use it as a reference.
 
-I took a closer look at sun50i-iommu driver. It's a good idea.
-I think I can come up with a cleaner one. Will send v4.
+Hi Sameer
 
-Thanks for the advice.
+> Add Tegra audio machine driver which is based on generic audio graph card
+> driver. It re-uses most of the common stuff from audio graph driver and
+> uses the same DT binding. Required Tegra specific customizations are done
+> in the driver.
+(snip)
+> +static const struct snd_soc_ops tegra_audio_graph_ops = {
+> +	.startup	= asoc_simple_startup,
+> +	.shutdown	= asoc_simple_shutdown,
+> +	.hw_params	= tegra_audio_graph_hw_params,
+> +};
+
+This is just an idea,
+but can we use hooks here somehow ?
+
+	.ops_hook_pre
+	.ops_hook_func
+	.ops_hook_post
+
+	if (priv->ops_hook_pre->func)
+		priv->ops_hook_pre->func_pre(...);
+
+	if (priv->ops_hook_func->func)
+		priv->ops_hook_func->func(...);	/* driver's function */
+	else
+		graph_func(...);	/* audio-graph function */
+		
+	if (priv->ops_hook_post->func)
+		priv->ops_hook_post->func(...);
+
+
+> +static int tegra_audio_graph_probe(struct platform_device *pdev)
+> +{
+> +	struct asoc_simple_priv *priv;
+> +	struct device *dev = &pdev->dev;
+> +	struct snd_soc_card *card;
+> +	struct link_info li;
+> +	int err;
+> +
+> +	/* Allocate the private data and the DAI link array */
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->data = (struct tegra_audio_graph_data *)
+> +		devm_kzalloc(dev, sizeof(*priv->data), GFP_KERNEL);
+> +	if (!priv->data)
+> +		return -ENOMEM;
+> +
+> +	card = simple_priv_to_card(priv);
+> +
+> +	card->owner = THIS_MODULE;
+> +	card->dev = dev;
+> +	card->component_chaining = true;
+> +	card->probe = tegra_audio_graph_card_probe;
+> +
+> +	priv->ops = &tegra_audio_graph_ops;
+> +	priv->force_dpcm = 1;
+> +
+> +	memset(&li, 0, sizeof(li));
+> +	graph_get_dais_count(priv, &li);
+> +	if (!li.link || !li.dais)
+> +		return -EINVAL;
+> +
+> +	err = asoc_simple_init_priv(priv, &li);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = graph_parse_of(priv);
+> +	if (err < 0) {
+> +		if (err != -EPROBE_DEFER)
+> +			dev_err(dev, "Parse error %d\n", err);
+> +		goto cleanup;
+> +	}
+> +
+> +	snd_soc_card_set_drvdata(card, priv);
+> +
+> +	asoc_simple_debug_info(priv);
+> +
+> +	err = devm_snd_soc_register_card(dev, card);
+> +	if (err < 0)
+> +		goto cleanup;
+> +
+> +	return 0;
+> +
+> +cleanup:
+> +	asoc_simple_clean_reference(card);
+> +
+> +	return err;
+> +}
+
+These are almost same as graph_probe().
+Maybe we can separate graph_probe() and export function ?
+
+	struct tegra_audio_graph_data
+	{
+		struct asoc_simple_priv simple;
+		...
+	};
+	#define simple_to_priv(_simple) container_of((_simple), struct my_priv, simple)
+
+	static int tegra_audio_graph_probe(struct platform_device *pdev)
+	{
+		struct tegra_audio_graph_data *data;
+		struct asoc_simple_priv *priv;
+
+		/* Allocate the private data */
+		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+		if (!data)
+			return -ENOMEM;
+
+		/* initial audio-graph */
+		ret = audio_graph_init(priv, pdev);
+		if (ret < 0)
+			return -xxx;
+
+		/* over-write for own settings */
+		card = simple_priv_to_card(priv);
+		card->component_chaining = true;
+		card->probe = tegra_audio_graph_card_probe;
+
+		priv = &data->simple;
+		priv->ops_hook_pre = &tegra_audio_graph_ops;
+		priv->force_dpcm = 1;
+
+		/* audio-graph remain */
+		return audio_graph_prove(priv, pdev);
+	}
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
