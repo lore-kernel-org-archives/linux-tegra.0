@@ -2,157 +2,97 @@ Return-Path: <SRS0=pDv3=DK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83729C46466
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 04:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73B9C4363D
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 07:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9DA206C3
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 04:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B04E206B8
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 07:05:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdIKAi0j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyB0pDpp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725681AbgJCEBO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 3 Oct 2020 00:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38752 "EHLO
+        id S1725775AbgJCHF7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 3 Oct 2020 03:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbgJCEBO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Oct 2020 00:01:14 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA7FC0613D0;
-        Fri,  2 Oct 2020 21:01:13 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id w11so4320398lfn.2;
-        Fri, 02 Oct 2020 21:01:13 -0700 (PDT)
+        with ESMTP id S1725446AbgJCHF6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Oct 2020 03:05:58 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4ADC0613D0;
+        Sat,  3 Oct 2020 00:05:58 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id g18so263957pgd.5;
+        Sat, 03 Oct 2020 00:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4/c66VVNK2fZAJCWWd//XYQrFuPfF7bPZFCOGDskZLA=;
-        b=mdIKAi0jBk+gBPjsj69jEhbol1cZXK/qBB9/Mkh/UZktLcstFuefS7b3t0MJMDQkas
-         e/1w4tha2Rra5oZOH36cSyeXPhb36mRvl0IyDsAQ2QAn0/uAnoWS3t21hIMCkzrNye90
-         hxaRmEStuKQ6mDDC5sVxD9cmibghrb3++rfCXJJQdFxrSAC+AFj6fExIO9Bqj7YANeJV
-         fwGMtYq2dQMsPe3kEsXvV+HCIl/LRZHsZG88kEkA7Bp+9IgzMRSBeczJ/ivsBvkchVKS
-         2ZvH8NGOElXhx1BbOA1qfenw7i4Zv8jvr5X5EGW7iZhZHopYjhsCwiZH/GtV9kIpS+u6
-         me+g==
+        h=from:to:cc:subject:date:message-id;
+        bh=GKKFXutVq6JBEK8XjRJaqT5wjVrg16/0GsaLUpb8/ig=;
+        b=UyB0pDppZuQygRa+/u02Y+YAu6ZQwnMMjnCIjVjZePLFuomQDp0ZEb8cIUvhuHP4ke
+         qQJOxYhY5Rhc8/EPjXmP0zXixURSkXyHeHhZ2094zCvaw4dZx6DY6IqPF4WdziB3PA9V
+         FmzOaugAvFQeOHyTh2DH+DrK1xgnzqUTq6nkfklmCdCbjncww5BZFCIJlCX/dPys/hMe
+         flG61XM+YygIZfxgSDOKeE2xf0vC7QvsKGiBoVlrNg3I2Mf5V/tqmx00FwTVOpyFhIXM
+         lsUi9JFVW2OOLPxysZJVWNwsvuOpANw4cVihDYt6vNs1nOfbS+ddtQVlv1xBqGA/tNIP
+         3rmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4/c66VVNK2fZAJCWWd//XYQrFuPfF7bPZFCOGDskZLA=;
-        b=SQfQfqESU6djRDHNvUhXSQ7gK0gxL3Hpm9bS7axSsGXeSWalNcodG2KcQC9pd0BbYP
-         sgEeuDVtvSwEjYayaoivFjHGHCmsYZ7bERP3jbkSdx+gZytpifGvhnwwoYh+eDa3zAya
-         t5vTQiC7Y7Iug6a+n13e/jUGyLy1NkWYI5Wi5RQv4MuzoDlc8edKIyiugEA42wucSgUa
-         HgnsuWPA7hEQ09+BIUhuprB4YNogQzjEYzjmJcpr4mmiGXUGlzBoo4B5fOV+8WB6P1rr
-         sypWh2tQtdy818tXL3N92BeF9pmXQL1rXvAfttktEBuOrkEiCsuL/sqOkOFtwLaGSorO
-         qdbw==
-X-Gm-Message-State: AOAM530tAXMSAznldrFK/JoQbQvu/Ni0Uuh6EmRfAY+x4GyQRjO/vQZi
-        pj8k9+MB0smjMWZ9fhINiUC98r8qEx0=
-X-Google-Smtp-Source: ABdhPJwqYUrBcIBR4L7qcbGhQA2/6ZFGelci0lcwwEoGBABBT77tRyIGIvMAojDM1i9m1c8LkS/juA==
-X-Received: by 2002:a19:549:: with SMTP id 70mr2110110lff.529.1601697671885;
-        Fri, 02 Oct 2020 21:01:11 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.252])
-        by smtp.googlemail.com with ESMTPSA id y10sm996183lfj.271.2020.10.02.21.01.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2020 21:01:11 -0700 (PDT)
-Subject: Re: [PATCH v4 1/3] iommu/tegra-smmu: Use fwspec in
- tegra_smmu_(de)attach_dev
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, joro@8bytes.org, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20201002060807.32138-1-nicoleotsuka@gmail.com>
- <20201002060807.32138-2-nicoleotsuka@gmail.com>
- <de0b717f-af5c-8813-eb3e-07d19eff5271@gmail.com>
- <20201002194508.GD29706@Asurada-Nvidia>
- <e594374b-d701-fb6f-93f2-4efb9c5eb608@gmail.com>
- <20201002235329.GA11409@Asurada-Nvidia>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f61174fc-f8e2-5f2b-23ff-36642be62e87@gmail.com>
-Date:   Sat, 3 Oct 2020 07:01:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201002235329.GA11409@Asurada-Nvidia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GKKFXutVq6JBEK8XjRJaqT5wjVrg16/0GsaLUpb8/ig=;
+        b=Ed0MHUiNb3++Za/SnVACUES7df0GTVLfdC3R0SPYqkWjSZNEa5NggJ3XRHNHDpse9F
+         fkquOiYoEptd0IXNeCS/SwTd9bA0T9peVZ5yrFn+DaUZkN4PLUK2VyFBzVoPi3jNLdcM
+         XJlSn7d78cNP5oIY1b81+/2ytEBVJ4iNBPNH1Qf1ky0AXIP/AH9Y9saAPMQ9qzOTqpOj
+         RX3UWlBFm/D3z/R++nXbxqL55QElqx+TAM1L38bLF8MXDKiD5IFq7feelAnQoqW2+BCV
+         h2UXDeTIpnSUl2vTyKWSj63e93TSybU/pTM6ebiRex5oZ9JCY01frwn6yX+tNRN72rxo
+         6DrQ==
+X-Gm-Message-State: AOAM533kNcX3ZBAo2OnpZWXkQl9L4RTI+CktIsopfNQr57BPENR/8Yxj
+        jMKAVBxPEjD8yl45Xdog0bFsKb7Oghg=
+X-Google-Smtp-Source: ABdhPJwWzCXCHgBMr3ABCAvMnsMEPZC0oefI+R/nGRotFLhuEtUwjYo0LbgwizMaVm/tkfxCQT64HA==
+X-Received: by 2002:a63:4451:: with SMTP id t17mr5707137pgk.32.1601708758277;
+        Sat, 03 Oct 2020 00:05:58 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id d25sm3854498pgl.23.2020.10.03.00.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Oct 2020 00:05:57 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     thierry.reding@gmail.com, joro@8bytes.org, digetx@gmail.com
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] iommu/tegra-smmu: Add PCI support
+Date:   Fri,  2 Oct 2020 23:59:44 -0700
+Message-Id: <20201003065947.18671-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.10.2020 02:53, Nicolin Chen пишет:
-> On Fri, Oct 02, 2020 at 11:12:18PM +0300, Dmitry Osipenko wrote:
->> 02.10.2020 22:45, Nicolin Chen пишет:
->>> On Fri, Oct 02, 2020 at 05:41:50PM +0300, Dmitry Osipenko wrote:
->>>> 02.10.2020 09:08, Nicolin Chen пишет:
->>>>>  static int tegra_smmu_attach_dev(struct iommu_domain *domain,
->>>>>  				 struct device *dev)
->>>>>  {
->>>>> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->>>>>  	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
->>>>>  	struct tegra_smmu_as *as = to_smmu_as(domain);
->>>>> -	struct device_node *np = dev->of_node;
->>>>> -	struct of_phandle_args args;
->>>>>  	unsigned int index = 0;
->>>>>  	int err = 0;
->>>>>  
->>>>> -	while (!of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
->>>>> -					   &args)) {
->>>>> -		unsigned int swgroup = args.args[0];
->>>>> -
->>>>> -		if (args.np != smmu->dev->of_node) {
->>>>> -			of_node_put(args.np);
->>>>> -			continue;
->>>>> -		}
->>>>> -
->>>>> -		of_node_put(args.np);
->>>>> +	if (!fwspec)
->>>>> +		return -ENOENT;
->>>>
->>>> Could the !fwspec ever be true here as well?
->>>
->>> There are multiple callers of this function. It's really not that
->>> straightforward to track every one of them. So I'd rather have it
->>> here as other iommu drivers do. We are human beings, so we could
->>> have missed something somewhere, especially callers are not from
->>> tegra-* drivers.
->>>
->>
->> I'm looking at the IOMMU core and it requires device to be in IOMMU
->> group before attach_dev() could be called.
->>
->> The group can't be assigned to device without the fwspec, see
->> tegra_smmu_device_group().
->>
->> Seems majority of IOMMU drivers are checking dev_iommu_priv_get() for
->> NULL in attach_dev(), some not checking anything, some check both and
->> only arm-smmu checks the fwspec.
-> 
-> As I said a couple of days ago, I don't like to assume that the
-> callers won't change. And this time, it's from open code. So I
-> don't want to assume that there won't be a change.
-> 
-> If you are confident that there is no need to add such a check,
-> please send patches to remove those checks in those drivers to
-> see if others would agree. I would be willing to remove it after
-> that. Otherwise, I'd like to keep this.
-> 
-> Thanks for the review.
-> 
+This series is to add PCI support in tegra-smmu driver.
 
-I haven't tried to check every code path very thoroughly, expecting you
-to do it since you're making this patch. Maybe there is a real reason
-why majority of drivers do the checks and it would be good to know why.
-Although, it's not critical in this particular case and indeed the
-checks could be improved later on.
+Changelog (Detail in each patch)
+v4->v5
+ * PATCH-1 Cleaned two variables inits
+ * PATCH-2 Fixed put() in ->of_xlate() and Updated commit message
+ * PATCH-3 Added Dmitry's Reviewed-by
+v3->v4
+ * Dropped helper function
+ * Found another way to get smmu pointer
+v2->v3
+ * Replaced with devm_tegra_get_memory_controller
+ * Updated changes by following Dmitry's comments
+v1->v2
+ * Added PATCH-1 suggested by Dmitry
+ * Reworked PATCH-2 to unify certain code
 
-It looks to me that at least will be a bit better/cleaner to check the
-dev_iommu_priv_get() for NULL instead of fwspec because the private
-variable depends on the fwspec presence and there is a similar check in
-probe_device, hence checks will be more consistent.
+Nicolin Chen (3):
+  iommu/tegra-smmu: Use fwspec in tegra_smmu_(de)attach_dev
+  iommu/tegra-smmu: Rework tegra_smmu_probe_device()
+  iommu/tegra-smmu: Add PCI support
+
+ drivers/iommu/tegra-smmu.c | 183 ++++++++++++-------------------------
+ 1 file changed, 59 insertions(+), 124 deletions(-)
+
+-- 
+2.17.1
 
