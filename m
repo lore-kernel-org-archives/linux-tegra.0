@@ -8,73 +8,72 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18368C41604
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 14:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D974BC41604
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 14:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8CC020709
-	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 14:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A962205F4
+	for <linux-tegra@archiver.kernel.org>; Sat,  3 Oct 2020 14:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HK/+xpsb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5oILGSq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725782AbgJCOOi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 3 Oct 2020 10:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47824 "EHLO
+        id S1725816AbgJCOQY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 3 Oct 2020 10:16:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbgJCOOi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Oct 2020 10:14:38 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2807CC0613D0;
-        Sat,  3 Oct 2020 07:14:36 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id l13so491370ljg.10;
-        Sat, 03 Oct 2020 07:14:36 -0700 (PDT)
+        with ESMTP id S1725782AbgJCOQY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sat, 3 Oct 2020 10:16:24 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E55C0613D0;
+        Sat,  3 Oct 2020 07:16:23 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id z19so5460601lfr.4;
+        Sat, 03 Oct 2020 07:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Tst9irh6GksvKPw8ga3l4/uVVfdGZqpV7pFfQRzp6+Q=;
-        b=HK/+xpsbVETdOQjnTAAmtpWFdXmvr8V2jLEQ0Lo39HgkGbLBTh4Q2SqjFF/QxchbkL
-         OLx/PGygV73+elkbNW5MAoSqHjMsP24RY4hSMaUnO1l7PTAE1W3ar3ZSApzU3DBKOzk2
-         CWEJINOe5JSmjCBo4QWCOoB1wgaqWWiJAPjf8hCfzk6DPBX4fSQiRniTjYsI3vemtQPN
-         p+tbvA7bSCYTYYAeZ3HrC51PEKEe1zsISoWQItHVA1ShX4mbdkDeOUch7yTrXGFQdM/d
-         EZXweyqd85+KU8EWWe6X3KTof7iNaRINTxngzxF3/MrF/d2eVYksE641DT2QaU/tLz/Y
-         iX7g==
+        bh=DEerz5rhU/ckz065kjRvk0JGwS2l91T/B4gVGoCe4pI=;
+        b=e5oILGSqKqJSAxFLuiDNAy/BpDOlt8bywuJzHxLtjXCKeAPIeJ5iMamAr/cgV+rIhA
+         vYi7ANkE+lX7E8EjZ4cisFpSOyhVCAw+45dyOA0F/i+WIye875XxvzHSJzXd+thrzVBu
+         HHGzS+8Epj2N1g7bpw4wv8DSO+wsVKY3HpStvCfNOB1QnpUSU/g1OL/yq9Vc1WTgIfbo
+         7NsanE+T9b6azfX9fz01xGooT56QueYTE3thM2u/qOewx3GXKuQTy0Y/DzxONOv2tKeb
+         9zyAZhOUZkLBlOLRjTOCK4H/rf9+MbsaiAI6bqz2ZKll4IXCudNm9u/mCqJ7Op98JzHc
+         lvvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Tst9irh6GksvKPw8ga3l4/uVVfdGZqpV7pFfQRzp6+Q=;
-        b=M4pnnYDTX7xS7rF7xqqIzP6zlH5K/lKYE84hD+4ECNnx8bjDmLesNg0MYc7XolPmCX
-         SKMCnjsaXM6BUzeqGT8d/tnL+9Ca8JzuyUSScReTlBADrR3c+Ckr67HL1I5G5A1L9CAy
-         wmrAQiXXKU33nQy1xiqHJWZ9TXvvgoe7CvFEqNGVF5e6IGJoG0cpl2SGtBEjMJqP9WPP
-         7qNlxGnl5CmKj0ufbz1ecb9+NL8Xfys7Kui+7O6ewX9v8uU8alAicWRrOrm9ai3siazx
-         Dnbj3cdHoFAyLma7wHY3LvOwAu81rRDWyf568xiqS7EUhZykniTqoBq1FJcG3GuMfZ56
-         Vm4w==
-X-Gm-Message-State: AOAM530flU0gR7jcglh8FuSSM7jp9Rt3L9ypnniw+eL5Q6+kS+t+5dW4
-        MrqSWyOICBiwbGhkQOeMNvL0wcghpEY=
-X-Google-Smtp-Source: ABdhPJwQeKuHbETMb2aLQTvU1IDeyzqnysdODtX4b9+61V2w1lWG8caqy/R/zMrMjJgZ6/VsW8wPkA==
-X-Received: by 2002:a05:651c:1073:: with SMTP id y19mr2080980ljm.57.1601734474241;
-        Sat, 03 Oct 2020 07:14:34 -0700 (PDT)
+        bh=DEerz5rhU/ckz065kjRvk0JGwS2l91T/B4gVGoCe4pI=;
+        b=YCcwlXDFuWhbBkVYaQY8t/7CB50P1MY+wGlqnyjG1uPvd6c4tLwatZ7sGYLxWcAf86
+         UOMlSnuBSD3FZB2Vyf+nlDmienYU1Om+p049omj/FFvhJqKjAxPyuxmGMz6Td0AIs0Zc
+         Mox1d4XOrAJHt2mSsbniZD2zxXc4RRBJsrvz2MtkC/KKJDeOzyK18URX1VirRoFUGYHh
+         4YKQ2FRyeaiy0Az1ju/fRVNPh5z8vy8iTFNyxlS+lIP8cY7D7Ap9muZmrnm/JQbpaTQS
+         4zTZxm6zMjRDPSQjoHRkuqztdOUz+xF68GtnuUJ05XtlOfKuvSL9JDF/VbmWdWgcwxsL
+         +cSw==
+X-Gm-Message-State: AOAM533Di3NPgKi2PYy2hjaEb9/t9EjxIMiJR9w7ouV/T2zJMfqYWXhA
+        34DyeQbKSXi35j1Ind2XS5UJb718Ukg=
+X-Google-Smtp-Source: ABdhPJw014yQfHnsOd2flACWZ4nmC6T+bcz5iCrHEo0QLhleYJSseH0mrTtFGnkREbI3iqojD50OcQ==
+X-Received: by 2002:ac2:4148:: with SMTP id c8mr2398321lfi.278.1601734581951;
+        Sat, 03 Oct 2020 07:16:21 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-91-252.nat.spd-mgts.ru. [109.252.91.252])
-        by smtp.googlemail.com with ESMTPSA id o15sm1530649lfo.188.2020.10.03.07.14.33
+        by smtp.googlemail.com with ESMTPSA id l129sm1582110lfd.191.2020.10.03.07.16.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Oct 2020 07:14:33 -0700 (PDT)
-Subject: Re: [PATCH v5 1/3] iommu/tegra-smmu: Use fwspec in
- tegra_smmu_(de)attach_dev
+        Sat, 03 Oct 2020 07:16:21 -0700 (PDT)
+Subject: Re: [PATCH v5 3/3] iommu/tegra-smmu: Add PCI support
 To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
         joro@8bytes.org
 Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 References: <20201003065947.18671-1-nicoleotsuka@gmail.com>
- <20201003065947.18671-2-nicoleotsuka@gmail.com>
+ <20201003065947.18671-4-nicoleotsuka@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <620c9f83-94e8-10c1-67f7-77e57929f46e@gmail.com>
-Date:   Sat, 3 Oct 2020 17:14:33 +0300
+Message-ID: <8b028e6a-de6a-6ca1-79c7-5b9c6e86c021@gmail.com>
+Date:   Sat, 3 Oct 2020 17:16:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201003065947.18671-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20201003065947.18671-4-nicoleotsuka@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,25 +82,12 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 03.10.2020 09:59, Nicolin Chen пишет:
-> In tegra_smmu_(de)attach_dev() functions, we poll DTB for each
-> client's iommus property to get swgroup ID in order to prepare
-> "as" and enable smmu. Actually tegra_smmu_configure() prepared
-> an fwspec for each client, and added to the fwspec all swgroup
-> IDs of client DT node in DTB.
-> 
-> So this patch uses fwspec in tegra_smmu_(de)attach_dev() so as
-> to replace the redundant DT polling code.
+> This patch simply adds support for PCI devices.
 > 
 > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-I'm still not highly impressed by seeing the !fwspec check in this
-patch. But I'm not a maintainer of the SMMU driver, hence will leave it
-up to Thierry and Joerg to decide whether this is good or needs to be
-improved.
+Small nit: yours s-b tag always should be the last line of the commit
+message because you're "signing up" words that were written by you.
 
-Otherwise this patch is good to me, thanks. I tested it on Nexus 7,
-which is Tegra30.
-
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Tested-by: Dmitry Osipenko <digetx@gmail.com>
