@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BA7C4363D
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Oct 2020 13:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9C7C4741F
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Oct 2020 13:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1849B20759
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Oct 2020 13:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 979BE20759
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Oct 2020 13:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B054CBI7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/iwb7th"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbgJDNfg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Oct 2020 09:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36034 "EHLO
+        id S1726175AbgJDNff (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Oct 2020 09:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbgJDNff (ORCPT
+        with ESMTP id S1726095AbgJDNff (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Oct 2020 09:35:35 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E46C0613CE;
-        Sun,  4 Oct 2020 06:35:35 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id c62so8710593qke.1;
-        Sun, 04 Oct 2020 06:35:35 -0700 (PDT)
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7897BC0613CF;
+        Sun,  4 Oct 2020 06:35:34 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id d20so8704994qka.5;
+        Sun, 04 Oct 2020 06:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GdMuyxsbVZIjvN8C24RgnButiYoPlCvAUwNgP4R+JK4=;
-        b=B054CBI71xDz3HkFD7sP5tVUKkYe3qZF+XJ8G0DZoOCF1KmmcM02p11RCuec/cEOFF
-         soca4Yl4SUBwp0wC27UJ7xSAxMiVg5FK4SfjJG+aa41VTvFxpjU437liZzy0neQMbzmU
-         f3SbkD9/4CbvcRevA88VC0CVDbX/F1uWGBjDkncfCkCl6Ilz1PEor9ZC3HxLveIM/mZH
-         oF+1In9cmnEjKx1HYpklcUlCF6ipqPnN2vNbQ2LW9hEsQvZ+GpEj07Yd/6bF+p6nu8OG
-         FMgdYDvEsbroJvgcQfRnWKXhMZrWDiVwZc7V5hBzoi5kI5mIX2R+w2rf4HpGsMbomf/1
-         Nenw==
+        bh=P1qwmBGYoZJBrt8GB20WX7dYQYlUGJS/kgfWhe9Hb0k=;
+        b=B/iwb7th41XUZbFp9C/QBF59CVdSHb405YdmlcDw45dcFRrH6sKVTyu4AqmdVGT0I3
+         TlwifzF9l7mnw48r2LcLKhQAtSNq3ZIskPu0YjLiON615uWhUFTeIPhHwVavSSbpj8gp
+         //jP/zZhCFgE3desJZlsfY4BTcrpK/EV6kj+9SUUW34AjsiQaQPHIKY9LdU1I8pnQgWS
+         PUJUNy47LHWJiIhZlcPWg2bEFT6xLDn7tsBpmu8KpWAr2q8uV3pMORjY94rMHa2Y13Xn
+         uSfflhOZVySYsWiW0gdF3pegZlvpoZJQlgBh8hK/1g3+Nv3vwnMD2Bqdn/rc5nVmzGHu
+         qAxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GdMuyxsbVZIjvN8C24RgnButiYoPlCvAUwNgP4R+JK4=;
-        b=EZQPINJ8ojJ5rs2cYcfZaXwo68EhkqoRqYuZHDcZyTiaN/h/nh9cL00Uc09HtP8eiI
-         OWCbLMRejYjRvpRI0M3orhbk41kMb5q/5Ul3wwtbY3PU8V9JD14HRWGoPt0zT9WeontX
-         E/4LUrJwWZIyOY1wk1Skfn6yQJzBU+RWNN2gmNf7CYMuHMdGz/JtnH4YQftN9wQ4pS7x
-         ey1vahKCAFfVdL3+gI4BpWpIIPdgLQ1goKENo1ecqlBmdNBwED6mpKUYPePePIWy06ZR
-         J2UMyDeaXHoN9Cv1ilWGYufmlDv4tKl1kaffh2idbw/IAgQDJoR1SlsDZ4iSiIaxJIBz
-         66rA==
-X-Gm-Message-State: AOAM531vknSB4DyXQN/Ls35a4OqVWFyxnEnie6KW1v1P6We9ykcmRt9R
-        HRMQLfIWdPPwtv1/l0TkiyAf/FHj6Ts49A0G
-X-Google-Smtp-Source: ABdhPJxi+AiiswEzaHEs1P7kpUNHqnvoXCBWO/4C0c6pRNATgALq8FNl8M9GVw4osajp95Ufq9856g==
-X-Received: by 2002:a37:7747:: with SMTP id s68mr5301926qkc.491.1601818534623;
-        Sun, 04 Oct 2020 06:35:34 -0700 (PDT)
+        bh=P1qwmBGYoZJBrt8GB20WX7dYQYlUGJS/kgfWhe9Hb0k=;
+        b=f5SEX1UYiFFO/f8XEGwW28KakWN8irzKfbQSyIVK5wtdcJ53b/vkY1fY35AvBS5q2M
+         IaUupgeHK1L/nNv3yvVB14KcEQNB0f0c1eRsMs4Ue5chNjNQ6m5LyTZFRwOVHU5ym1fI
+         DO2EmA9JyhK7Or4PLr347gUt5CuVPClEtDQDVIcQjJ/2QZJ68G4xOO+BQruEbnoLAPe3
+         DbmRLr0KdZTo1g6PT2jXNQt2yZicgb8sIjrLFch8Il1ClL4FWIMyqrpJCKZvQWO8PeRO
+         aez2eNqgLkalLdw3yTTZSroUpShFM2/sf7wBNJrZ63wVQxZdnXYcG+xWCA7WBtQ23AG0
+         R2uA==
+X-Gm-Message-State: AOAM533KqGpGKySR9fLkOFZmo8AWR7NuoxLtlkCooVnSw+dfUG8h/i1O
+        x0cywexmCD1XnNx6y3un6EA=
+X-Google-Smtp-Source: ABdhPJwsjrgcS3JdaATE6xaYHSUMGXBGgUtMZNxV+n4nfXmcTbgPKk84Kq+xqF/rffT5ZOYUjUef5g==
+X-Received: by 2002:a37:9b42:: with SMTP id d63mr771778qke.49.1601818533398;
+        Sun, 04 Oct 2020 06:35:33 -0700 (PDT)
 Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id b9sm5539369qta.39.2020.10.04.06.35.33
+        by smtp.gmail.com with ESMTPSA id b9sm5539369qta.39.2020.10.04.06.35.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2020 06:35:34 -0700 (PDT)
+        Sun, 04 Oct 2020 06:35:32 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -71,9 +71,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 3/3] dt-bindings: ARM: tegra: Add Ouya game console
-Date:   Sun,  4 Oct 2020 13:31:14 +0000
-Message-Id: <20201004133114.845230-4-pgwipeout@gmail.com>
+Subject: [PATCH v3 2/3] dt-bindings: Add vendor prefix for Ouya Inc.
+Date:   Sun,  4 Oct 2020 13:31:13 +0000
+Message-Id: <20201004133114.845230-3-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201004133114.845230-1-pgwipeout@gmail.com>
 References: <20201004133114.845230-1-pgwipeout@gmail.com>
@@ -83,28 +83,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a binding for the Tegra30-based Ouya game console.
+Ouya is a defunct company from 2012 to 2015.
+They produced a single device, the Ouya game console.
+In 2015 they were purchased by Razer Inc. and the Ouya was discontinued.
+All Ouya services were shuttered in 2019.
 
 Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index e0b3debaee9e..a8bafe68315f 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -69,6 +69,9 @@ properties:
-           - const: asus,tilapia
-           - const: asus,grouper
-           - const: nvidia,tegra30
-+      - items:
-+          - const: ouya,ouya
-+          - const: nvidia,tegra30
-       - items:
-           - enum:
-               - nvidia,dalmore
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9a5ab7b94789..367dd79c95f6 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -786,6 +786,8 @@ patternProperties:
+     description: Ortus Technology Co., Ltd.
+   "^osddisplays,.*":
+     description: OSD Displays
++  "^ouya,.*":
++    description: Ouya Inc.
+   "^overkiz,.*":
+     description: Overkiz SAS
+   "^ovti,.*":
 -- 
 2.25.1
 
