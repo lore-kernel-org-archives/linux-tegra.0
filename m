@@ -2,133 +2,115 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A24CFC47095
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B88C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6917720853
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:10:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFA2320B80
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1FvaNLz"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PRHpOuQw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgJESKT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 14:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgJESKS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:10:18 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B007C0613CE;
-        Mon,  5 Oct 2020 11:10:18 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id l126so7471534pfd.5;
-        Mon, 05 Oct 2020 11:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YoMIv66+/pcP+7tXkGyfiaP3wPkP8AZJOUeLQyrbhCo=;
-        b=s1FvaNLzk9ENAUF+dImr5G6uF3ttayAdr3ACaxBA/MFA6jo+FY6tDANTn01a3raqQD
-         9Dxru8Cv/VQ9HJfZkv490IkLOJ6zk4WjW2gdMjjjhdIMli3lmGNoaAbkEGAlRSVvmwQr
-         A22Oro0X+4/rXIkuQhY0A3e93DBSE2Ah8ihWqV9RiH94dSKJ+454v6WUhX8Qku/2fCB9
-         IaoYapNlRFdrGPIPkEkUsp4K4vTB4xNAJiQTFCGNXZ8MBzTqadDJn3b8pZVGKYK5XkxE
-         VlRsacm41HnJBo8cXHBiPeH7kiXkkYUa3KaUPA3FcwVcd1QgWybul8C3I51cWAxKKyth
-         kmvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YoMIv66+/pcP+7tXkGyfiaP3wPkP8AZJOUeLQyrbhCo=;
-        b=JKjH0w0r40GrEyehYAg6BsQSXjiEtwFJpO5vX9XHY4rx/1I89b4p/lmW12mG0qG62T
-         wTJVSnT+GhIW9E+2sEUsn8aVpIb4fBdJozwLppUTcbTpZJhHcMhKXUndIZt4spGWaRKU
-         Nyi5VysLpVa20PQ+qQVxXgqv7gwG45eon2Vh4QL10+lPGDXAad4z+C0Mt4gKj8DatVoj
-         R6WJ1OaELHcr6L+/efBS10QeMZ708jujnbIn+4eNTZRqHvQ0osxikJRCoDigoELH27Nk
-         jwYssDyqM7Dtd9Yet3QBeTHpqnPP79PeDqsxPVSBNOmRL1ogBH3bdj5v6PnI9nvCppX0
-         4f3Q==
-X-Gm-Message-State: AOAM530iomReTvihl2+cCcvo/V9UP7sitjMa8LRcZT1WKzELmQtdA5f+
-        t43uTEYJOiBNQgZl4FDV7HA=
-X-Google-Smtp-Source: ABdhPJyH4fsGnVblPJB5N4pgMwQJmZq67gBl5WqwS0SGCx7kk269VvXfguknhYlG7b9tInkRJJ8m+Q==
-X-Received: by 2002:a63:4945:: with SMTP id y5mr679607pgk.181.1601921417989;
-        Mon, 05 Oct 2020 11:10:17 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id v5sm550037pfu.151.2020.10.05.11.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 11:10:16 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 11:10:14 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
-Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
-Message-ID: <20201005181014.GL1009802@dtor-ws>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-8-andrzej.p@collabora.com>
+        id S1727639AbgJESXs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 14:23:48 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16297 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbgJESXs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:23:48 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7b64a60000>; Mon, 05 Oct 2020 11:23:34 -0700
+Received: from [10.26.45.122] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Oct
+ 2020 18:23:43 +0000
+Subject: Re: [PATCH 0/3] soc/tegra: Prevent the PMC driver from corrupting
+ interrupt routing
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Marc Zyngier <maz@kernel.org>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>, <kernel-team@android.com>
+References: <20201005111443.1390096-1-maz@kernel.org>
+ <20201005112217.GR425362@ulmo> <da38356394b63e2210f0e52d2e9bdc60@kernel.org>
+ <20201005154529.GB628746@ulmo>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <dbe75937-dd24-6d2a-e3ea-265b8fa70def@nvidia.com>
+Date:   Mon, 5 Oct 2020 19:23:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608112211.12125-8-andrzej.p@collabora.com>
+In-Reply-To: <20201005154529.GB628746@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601922215; bh=43qLkfMkgiR0apRtpQZNUfVg1Tg+QRHwig6v00fr+Zw=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=PRHpOuQw16ofs6Vhug06TKk2WA6/b0+5NfJ3aRwxtidCCURFCS7e0rmDgs0lOhu02
+         2jYUfg/3ehTT7GOgjWjadCrsKn2xyCaZ5CLES6UGo34fivCwLjGYELfa1onBL1Ik2E
+         V8Or3xumIMNkTHTMhKTIDoc63l3XQumSfxnMpNUXRnsZR2ts5sHbQlLQIDnbk79Pcx
+         rV6n0js5IccOhY6Ke+ixhJJM1C1ALOAYsFnFk1NWDeJRYxsmlVBb3qNbYFD/8UxFBG
+         FterQJ1Sshmdp0R5Vesu+Ju66qqVVcJFnuZCKjpF0G+is3RL0el+i2eBeX+EXBFPZT
+         KJhAT7/s9v0VQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Andrzej,
 
-On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
-> @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
->  	case EV_KEY:
->  		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
->  
-> -			/* auto-repeat bypasses state updates */
-> -			if (value == 2) {
-> +			/*
-> +			 * auto-repeat bypasses state updates but repeat
-> +			 * events are ignored if the key is not pressed
-> +			 */
-> +			if (value == 2 && test_bit(code, dev->key)) {
->  				disposition = INPUT_PASS_TO_HANDLERS;
->  				break;
->  			}
+On 05/10/2020 16:45, Thierry Reding wrote:
 
-Is this chunk really part of inhibit support? I'd think we cancel
-autorepeat timer when we are releasing a key, no?
+...
 
-Thanks.
+>>> Let Jon and myself do a bit of testing with this to verify that the wake
+>>> up paths are still working.
+>>
+>> Sure. Let me know what you find.
+> 
+> The results are in and it's a bit of a mixed bag. I was able to confirm
+> that Tegra194 also boots again after this series and I'm also able to
+> resume from sleep using either rtcwake or the power-key as wakeup
+> source, so the wake-events mechanism is still functional after the
+> series. I do see a bit of breakage on resume, but none of that seems
+> related to your patches and is likely something that crept in while we
+> were looking into the current issue.
+> 
+> Jon had started a job in our test farm in parallel and that came back
+> with a failing suspend/resume test on Tegra186 (Jetson TX2), but that
+> seems to have been a pre-existing issue. This was already in linux-next
+> around next-20200910 and Jon had been investigating it when the boot
+> failures due to the IPI changes started happening. So I then hooked up
+> my Jetson TX2 and verified locally that I can properly suspend/resume
+> using either rtcwake or the power-key as wakeup source, just like I
+> previously did on Tegra194 (Jetson AGX Xavier). Tegra186 seems to be a
+> little more unstable because it didn't boot every time for me, but that
+> is probably not related to this.
+
+Yes my feeling is that those are other issues too that we need to look
+at next.
+
+> So, I'm tempted to say:
+> 
+> Tested-by: Thierry Reding <treding@nvidia.com>
+
+Yes and you can have my ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks again Marc for tracking this down!
+
+Cheers
+Jon
 
 -- 
-Dmitry
+nvpublic
