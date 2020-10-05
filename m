@@ -2,64 +2,64 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D738C4727F
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 14:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EF3C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 14:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 186BA2078A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 14:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B0420776
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 14:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqz8PRRw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fo7miRmO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbgJEO37 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 10:29:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39490 "EHLO
+        id S1726073AbgJEOcN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 10:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbgJEO34 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 10:29:56 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D639C0613CE;
-        Mon,  5 Oct 2020 07:29:56 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id s205so7604069lja.7;
-        Mon, 05 Oct 2020 07:29:56 -0700 (PDT)
+        with ESMTP id S1725936AbgJEOcM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 10:32:12 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F9AC0613CE;
+        Mon,  5 Oct 2020 07:32:11 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id h20so686331lji.9;
+        Mon, 05 Oct 2020 07:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eTnn/kYDZ2BMoYt3lOwT6li62X6H6HZqtaJOYKGMGl0=;
-        b=Iqz8PRRwA1HefiIetdTAflRL7/PFZahvL5Cpex3hvr5Ls5x3d77NrOz/bDJyKbQpre
-         EHS32TtbLrg3b99ldQTfqIns0hV2MnzN0gBrU7Q/F8wvOfEU4cjDCqHOI5EISYSzMc+O
-         a0o3ZqGAMUpYJNf7iGAj+WB7WuKQZyS0RZDWZE4orWXOdooyzATVjXoUua59xJ48hscL
-         b2g2J6DiGjuw3QeSbkcztrx4KupcJppVSPwJamVBogYl9axd76d6Wh4j4S6pM1Y8094Y
-         +lxZxA8vCKF2Gm/DPh/rR0i9EToBAHReEDJsEcoLobwyOoeh8uZT6taV2dBgdnouMdsK
-         D1/g==
+        bh=xVnmPbE/rqcB+pAcWmyPmrjxEQuPQzT1FzRcPGWWoLk=;
+        b=fo7miRmOixdC5jw9TnGWy9aXsWbHOKEzF10iOkZ+BdvyhtfIF7VX9aCmxebMJYIHx3
+         ye8w6uneRWisUJspcvjcOZF7FNZ9gUWxIynBKkfpkhgHUpr9dbQ7cad+qD97PyXukiyR
+         SPDM8d3ZsbzJmGTdh2gb7snYenOlpq3e5EGlZjRYsZ77eIgI8pzh1SnYVsnNCaddzmY5
+         INJfDW6X4h0a5q0qbfdFtff9wT667SCRMhNsxaaG4uT758xTbvwGt1cXH8AxZue5gNd5
+         3axLJkbZvJcsEqo4V58HiFfJ5nyIYSj1VFyjM+d20khw+p4ZqOxg5auUpmTlTbFuZcIO
+         XNEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=eTnn/kYDZ2BMoYt3lOwT6li62X6H6HZqtaJOYKGMGl0=;
-        b=ALlN/COp9pZMFeuOw2v3MnzJpAF6yRqnsuDOOZsUNitCuBji7vywvjEkshI2LeRNRu
-         0LatWpFJZsynPA5IALEwHNm37WsEkz1a4ZRWjrCvf/HPyFLWS5I+r8vqYG9mQf2epG8/
-         Cf4WwLCVJ91Wbor0HtcHFhOcji0DyXKrz7Nz0Y+5YNnk6nh8WP4jxoLy8w6t5NREZ//A
-         lsynZgzTkXgWXvqWzYEVs+UVwg5pd269Td4TCinm5sM+CJKHVIvXqfdNHvuWQHKbbKVI
-         S9Jf9TW9BF81O3iUJH9jKo0y2r6sztF4c/sIyPA0tq6Ch2OAzr8RopYtPJAxGEuJi6B5
-         3Xkw==
-X-Gm-Message-State: AOAM53288UyZ4J/UufbnLBV1+1OSfPgjr6sxNWbmoiubFjHnKswVHu/l
-        uHQWVwxmHQ1S32mTgBQsabiOslOphL4=
-X-Google-Smtp-Source: ABdhPJyJZhlMtE0jvoYtCzDL1pzsEU40Hbiyqw6qIX3RWmgHX5RBdfQJaJpngRhXFO454KmyTwgSWQ==
-X-Received: by 2002:a2e:9dc7:: with SMTP id x7mr5139056ljj.447.1601908194605;
-        Mon, 05 Oct 2020 07:29:54 -0700 (PDT)
+        bh=xVnmPbE/rqcB+pAcWmyPmrjxEQuPQzT1FzRcPGWWoLk=;
+        b=eDPhTWlaX+4S5joHqtUsBZdlPDbmYJawEWGC+sd5CWu1//HOW7wWr2nUfWm1g8JkAk
+         jvmFsYxm1+SyyTIor+7AAGjTSO47n6V/SpBfQEoFOJ3V+okui7NEatOYuAlu+I09qoQp
+         WYPpThOlaIO9TT1jDlt6YhzA+NNmLnpkGOg6ioSHj8OWz211H+guceCDkiagYz4qPNVV
+         kIucfcNHBW32phf/3YIoHwUB7u8cGOKKiR1lDq5i2KE4aivVE2+Q3LxFT1cjZGzKNCI2
+         yH9SK/bf1uOS4WyP5ia0A5Jfk6wwsYn0GuqZ+q+aA4eK65O9EYEoqdim3JVHbgZuze7F
+         kluQ==
+X-Gm-Message-State: AOAM53072YkzZknEtusOXNzAlMiWw4j2i9I51p1Ta90ashkLgJpM46cu
+        GJcoZN8cQHUAxCMdiOhpzYo=
+X-Google-Smtp-Source: ABdhPJy79M0n3h6yKbZzSDkv0hXwaNMwCRiHXmL7YJym18KallJlj1WvZREDzMPnMIRhugJMm5IFYQ==
+X-Received: by 2002:a2e:99c1:: with SMTP id l1mr4360467ljj.95.1601908329479;
+        Mon, 05 Oct 2020 07:32:09 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-91-252.nat.spd-mgts.ru. [109.252.91.252])
-        by smtp.googlemail.com with ESMTPSA id q22sm860990lfm.51.2020.10.05.07.29.53
+        by smtp.googlemail.com with ESMTPSA id c19sm2801125lfc.222.2020.10.05.07.32.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Oct 2020 07:29:54 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] ARM: tegra: Add device-tree for Ouya
+        Mon, 05 Oct 2020 07:32:08 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] dt-bindings: Add vendor prefix for Ouya Inc.
 To:     Peter Geis <pgwipeout@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,16 +69,16 @@ To:     Peter Geis <pgwipeout@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Leonardo Bras <leobras.c@gmail.com>,
         Michael Brougham <jusplainmike@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 References: <20201004133114.845230-1-pgwipeout@gmail.com>
- <20201004133114.845230-2-pgwipeout@gmail.com>
+ <20201004133114.845230-3-pgwipeout@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e7662043-7f8c-4df1-df5c-bef34983c0d9@gmail.com>
-Date:   Mon, 5 Oct 2020 17:29:53 +0300
+Message-ID: <0e6cca03-d881-d8e4-a05d-2850dc5339bb@gmail.com>
+Date:   Mon, 5 Oct 2020 17:32:08 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201004133114.845230-2-pgwipeout@gmail.com>
+In-Reply-To: <20201004133114.845230-3-pgwipeout@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,13 +87,35 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 04.10.2020 16:31, Peter Geis пишет:
-> The Ouya was the sole device produced by Ouya Inc in 2013.
-> It was a game console originally running Android 5 on top of Linux 3.1.10.
-> 
-> This patch adds the device tree supporting the Ouya.
-> It has been tested on the original variant with Samsung ram.
+> Ouya is a defunct company from 2012 to 2015.
+> They produced a single device, the Ouya game console.
+> In 2015 they were purchased by Razer Inc. and the Ouya was discontinued.
+> All Ouya services were shuttered in 2019.
 > 
 > Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Please note that your s-b tag always should be the last line of the
+commit message. This is not important, so no need to make v4 because of
+that.
+
 > ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 9a5ab7b94789..367dd79c95f6 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -786,6 +786,8 @@ patternProperties:
+>      description: Ortus Technology Co., Ltd.
+>    "^osddisplays,.*":
+>      description: OSD Displays
+> +  "^ouya,.*":
+> +    description: Ouya Inc.
+>    "^overkiz,.*":
+>      description: Overkiz SAS
+>    "^ovti,.*":
+> 
 
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
