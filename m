@@ -2,93 +2,193 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A29EC4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D97C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D57020829
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 490FF2080C
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uVF914RE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RXgjeIBy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725853AbgJEEeh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 00:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
+        id S1725891AbgJEEq3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 00:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbgJEEeh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 00:34:37 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FAEC0613CE
-        for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2020 21:34:37 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id y14so5183052pgf.12
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2020 21:34:37 -0700 (PDT)
+        with ESMTP id S1725888AbgJEEq1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 00:46:27 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2757CC0613CE
+        for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2020 21:46:25 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id t7so5238436pjd.3
+        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2020 21:46:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ER8SNkIBPUO1PeDrBI9sogZFaNg4g0CVTXD/yACbP1A=;
-        b=uVF914RE8PZ+0g+2++oaI7xbK8lnE/K79gTtJ5mrBQ7lsDIKF2bikRJFghZqW+RY9m
-         7owim99rGPKMMdXspkSHKrRZobVVU5UligXCkmPofpdtnIrbxJkpE/Ar5C/zRRLc3Eh7
-         +1YMbuG2CaNmc1zVJDV7D4MgSyeYEo591bp55KQQzhgGwDEoJDEJJv74RR6qUwcCBl+g
-         7Z1sm2ZgBnbRNNCiSRm8gmQmsmLVY5BSwP97XaPO8WsSZ44euDGEgKShq3dCkbRjL5fz
-         gmTjAKXrfmz5zbLfpcMS1BwgwhaVvTvdLfdb1g3D+mDJWUc4bLWl4jefPdr5EpTMeXnw
-         vRzQ==
+        bh=+3QPZMfp1DCKLcnWe5NOGZiFhXH+uUxOKLM/vRWWY1s=;
+        b=RXgjeIBy8hkRLrpzOB16SizM5azbR4U+2ps3Y9ljVW2InGToNKdkd68iCB7GySMwNu
+         11F4sTDqlyTd4ftH/fA8jXZxl/l8koV58gKPoMbX/QRvxwydit2KymWVm+jds5giGEAF
+         +ir7YwlPVMlVUlLMoU0asD6ug/h6kaFMzY7BVICTNxmCChiBkN6Rfe8/6bViGOk1Ipp4
+         w7dSebqyiOUTwFFmm0Me6cZplzoGHVve78FUyvnrFDKl08n/H4myo7DC3Pwvmb+QAYZT
+         raS3mIArik7cg4PdKaMAaXGUE8F3FKiLoXjw5vRShf5TkCcyl9Zv4+hE9QEooAqPJG11
+         qioQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ER8SNkIBPUO1PeDrBI9sogZFaNg4g0CVTXD/yACbP1A=;
-        b=rjwsd+vZyiQQHHfWwBlTv4syJ0ooQgtXE6qfTt8lLoxXhGg49R+oLqhesF3fdDqUpc
-         776SNTny7UXZKzS1Wul71dtPNrJtXtlPakMyvXNtOdxUbI2xJ0LSo+rPI711L4QCr7jB
-         XwwPfMg/8LaIgMg1ZnXm8Gw9LPQrKK+A7GbqxFkFK21eZeuUbkeQUOVl6jehX7teCZ+f
-         jR9yYXedG2+80ub0EcQ/41H1TWDrWVakf0yjcTLkuWG4Cwq6D5Bfs1vB+lOsHgAKd01t
-         7gqVk+IudoTJfLinWEvvY7nxwDOegOwi2B/pWIcsZC/eUEmbHUGx6Y9V6avhTfCzwMZ9
-         GQNg==
-X-Gm-Message-State: AOAM533fdYSv9OVvpH3J9Z56zpiv0MKXF7W5FenXdyZg4LB3N7Cv1xB3
-        VxbRIeZa6Tm6a7cFaipvEfBJCQ==
-X-Google-Smtp-Source: ABdhPJzrKc1LvHWa06bmxAdSLSneIia0aUnXbwiPmahaJ6y/3sCPWUpdaV9xsfJiYpM4Voc+ai37Bg==
-X-Received: by 2002:a63:f812:: with SMTP id n18mr12307150pgh.438.1601872476758;
-        Sun, 04 Oct 2020 21:34:36 -0700 (PDT)
+        bh=+3QPZMfp1DCKLcnWe5NOGZiFhXH+uUxOKLM/vRWWY1s=;
+        b=KpsJP1p9kdOqxrDG2mwquX+GI8RfUvO425ViZ3JAgSYrdQUOaQAt95faESFCmfaq70
+         ub9TKgMxrjmUBDXDt2p1jedGtQtXnB+7DJj4Fv5FCMfisu2fRYFflIfCW9tLNdFPAAjt
+         ezqEVbOT9e3ROZppWuhaQ48b4aUaCdVWw47fQHzkmuXal2kiIpTwo6xjwgXQ+edcitzv
+         EBgm412RxWSpfV46IVBc3cfWdnHY5s3oeqf4CmAUACY2Lby0f6T+Yj3ey+gfEzqXd0Pa
+         GWb4bBFXlztPWg0QALoSO9zGTcGGfvpYR2L1O4UFxfdd/PZmRgfP6ed65JIhEslEu8bT
+         yq2w==
+X-Gm-Message-State: AOAM531B3nhoh4LhiSjdICOkPq6l/4fvWq4mPseryvyXiJyM3zVe+FZP
+        ozHLtMabsGJSmIPV0BeND1EDsg==
+X-Google-Smtp-Source: ABdhPJw5MSUuqla5bRzh+iMaf8aQSJKtx6GyLjQ35bYxpqFAZftWUhyFr6ykYrDHc16NrR1DRdnGkw==
+X-Received: by 2002:a17:90a:b949:: with SMTP id f9mr13643522pjw.182.1601873184561;
+        Sun, 04 Oct 2020 21:46:24 -0700 (PDT)
 Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id 17sm10507165pfi.55.2020.10.04.21.34.35
+        by smtp.gmail.com with ESMTPSA id z1sm9097104pgu.80.2020.10.04.21.46.23
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Oct 2020 21:34:35 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 10:04:33 +0530
+        Sun, 04 Oct 2020 21:46:23 -0700 (PDT)
+Date:   Mon, 5 Oct 2020 10:16:21 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Sumit Gupta <sumitg@nvidia.com>, rjw@rjwysocki.net,
-        thierry.reding@gmail.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
-        bbasu@nvidia.com
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rjw@rjwysocki.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ksitaraman@nvidia.com, bbasu@nvidia.com
 Subject: Re: [Patch 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-Message-ID: <20201005043433.hvyjmzafazg46kvv@vireshk-i7>
+Message-ID: <20201005044621.t3stylpbsvzhxtyr@vireshk-i7>
 References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
  <1600276277-7290-2-git-send-email-sumitg@nvidia.com>
- <81d2517d-6581-b491-c509-832fd1c0321e@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81d2517d-6581-b491-c509-832fd1c0321e@nvidia.com>
+In-Reply-To: <1600276277-7290-2-git-send-email-sumitg@nvidia.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-09-20, 09:36, Jon Hunter wrote:
-> Viresh, ideally we need to include this fix for v5.9. Do you need Sumit
-> to resend with the Fixes tag or are you happy to add?
+On 16-09-20, 22:41, Sumit Gupta wrote:
+> Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
+> and keeps changing slightly. This change returns a consistent value
+> from freq_table. If the reconstructed frequency has acceptable delta
+> from the last written value, then return the frequency corresponding
+> to the last written ndiv value from freq_table. Otherwise, print a
+> warning and return the reconstructed freq.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra194-cpufreq.c | 66 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 57 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+> index e1d931c..d5b608d 100644
+> --- a/drivers/cpufreq/tegra194-cpufreq.c
+> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+> @@ -180,9 +180,65 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
+>  	return (rate_mhz * KHZ); /* in KHz */
+>  }
+>  
+> +static void get_cpu_ndiv(void *ndiv)
+> +{
+> +	u64 ndiv_val;
+> +
+> +	asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
+> +
+> +	*(u64 *)ndiv = ndiv_val;
+> +}
+> +
+> +static void set_cpu_ndiv(void *data)
+> +{
+> +	struct cpufreq_frequency_table *tbl = data;
+> +	u64 ndiv_val = (u64)tbl->driver_data;
+> +
+> +	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
+> +}
+> +
+>  static unsigned int tegra194_get_speed(u32 cpu)
+>  {
+> -	return tegra194_get_speed_common(cpu, US_DELAY);
+> +	struct cpufreq_frequency_table *table, *pos;
+> +	struct cpufreq_policy policy;
+> +	unsigned int rate;
+> +	u64 ndiv;
+> +	int err;
+> +
+> +	cpufreq_get_policy(&policy, cpu);
+> +	table = policy.freq_table;
 
-I understand that this fixes a patch which got merged recently, but I am not
-sure if anything is broken badly right now, i.e. will make the hardware work
-incorrectly.
+Maybe getting freq-table from cluster specific data would be better/faster.
 
-Do we really need to get these in 5.9 ? As these are significant changes and may
-cause more bugs. Won't getting them in 5.9-stable and 5.10-rc1 be enough ?
+> +
+> +	/* reconstruct actual cpu freq using counters*/
+> +	rate = tegra194_get_speed_common(cpu, US_DELAY);
+> +
+> +	/* get last written ndiv value*/
+> +	err = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
+> +	if (err) {
+> +		pr_err("cpufreq: Failed to get ndiv for CPU%d, ret:%d\n",
+> +		       cpu, err);
+> +		return rate;
+> +	}
+> +
+> +	/* if the reconstructed frequency has acceptable delta from
+
+Both have got the multi-line comments wrong. Format is wrong and every sentence
+needs to start with a capital letter.
+
+> +	 * the last written value, then return freq corresponding
+> +	 * to the last written ndiv value from freq_table. This is
+> +	 * done to return consistent value.
+> +	 */
+> +	cpufreq_for_each_valid_entry(pos, table) {
+> +		if (pos->driver_data != ndiv)
+> +			continue;
+> +
+> +		if (abs(pos->frequency - rate) > 115200) {
+> +			pr_warn("cpufreq: high delta (%d) on CPU%d\n",
+> +				abs(pos->frequency - rate), cpu);
+> +			pr_warn("cpufreq: cur:%u, set:%u, set ndiv:%llu\n",
+> +				rate, pos->frequency, ndiv);
+
+Both of these can be merged in a single line I think. There is no need to print
+delta as you already print both the frequencies.
+
+> +		} else {
+> +			rate = pos->frequency;
+> +		}
+> +		break;
+> +	}
+> +	return rate;
+>  }
+>  
+>  static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+> @@ -209,14 +265,6 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>  	return 0;
+>  }
+>  
+> -static void set_cpu_ndiv(void *data)
+> -{
+> -	struct cpufreq_frequency_table *tbl = data;
+> -	u64 ndiv_val = (u64)tbl->driver_data;
+> -
+> -	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
+> -}
+> -
+>  static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>  				       unsigned int index)
+>  {
+> -- 
+> 2.7.4
 
 -- 
 viresh
