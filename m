@@ -2,144 +2,205 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01120C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 09:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15C9C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 10:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEBC820795
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 09:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6307720776
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 10:04:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBUQ0LSt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMGSZ4jX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725947AbgJEJ57 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 05:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53818 "EHLO
+        id S1725917AbgJEKEY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 06:04:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbgJEJ57 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 05:57:59 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6525C0613CE;
-        Mon,  5 Oct 2020 02:57:58 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id ce10so11013158ejc.5;
-        Mon, 05 Oct 2020 02:57:58 -0700 (PDT)
+        with ESMTP id S1725887AbgJEKEX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 06:04:23 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F906C0613CE;
+        Mon,  5 Oct 2020 03:04:23 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id k14so8639946edo.1;
+        Mon, 05 Oct 2020 03:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=g7GU/AkNe3daV6icPj0oXO9lJvefNEYI/yjHaeqAgzE=;
-        b=gBUQ0LSt7aRNbGRSly36vsk68h5MeQHGUEn5PNiLM2tUNHqmKSTnY8ucIH9CGASvH9
-         rOJPQrzqJqSjm3vjFOrbslhgFs5YeoVz1zreVI5Gn6XBXNMw/d84OAP+qdX8kL/5r86P
-         7glbh+AwxUOSfftniDaU0W2qVJt5k9afxilwP9Vy1tLVYK/RQkv84fzXbQVBr5MHJcP1
-         dwD6ae8+OT4dchO1S0XKYhHRZLYJ9/gH4QQuuWa7PnLn9Xgc3BL298FJgx0vpPuMAIp6
-         vUWdisshy3dX91w/R534wVAH9qQmaRONx5nTE7PWr1p6CyyDHyGoPmcpaa+xkQj2n296
-         xiNQ==
+        bh=p3BM0kPaZyOPUQYWBvmUtL1qF+A5L+ek6VHw+7yxmPQ=;
+        b=YMGSZ4jX8zZy/zJA+ymFeHemM9uTXw8KWpy+9+08a+s1kDuU+FLEHyOUFoHkq8CaJb
+         VinWd4eIsN1NT7RSoqjueiIPYt6K50guGxOOeLU+hNIO3jW2Avr4mwvaXTNeVNYjOxmC
+         hcx9QpFLQDk8ACHS9yPxfLlnN+JQT0Co0jVeL032FxGChFzsojq6wzwOzRB8wxws6PIg
+         ThfJi+SYghZlg73IKb1qisxGHnkxezbWHSO3o0zD+9NyellUwFrg3sFVnyR2SEa+TMgo
+         81W9tYs8VlPs0UiVzP25lc+0FaDu1VnKXr/Iz3BpSzBdHgv0gMArSb7ui3aSVv+LzzSU
+         ssFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g7GU/AkNe3daV6icPj0oXO9lJvefNEYI/yjHaeqAgzE=;
-        b=TXWIXNTve5F70zbxnEIElP/TO/fC889S3/UFVxn8IWsW5PsKseEZZ4DNk1wSKo59eB
-         buEDlhrIZyRdKGhq75nAPkcvNvIUKALk7LxjIuHJTqFBoVQaRmXbvJcIb3n4fazzRT68
-         ke1MvynGt/u4msegOEihmAfMHdibyqp8t9oHpJ0dd1ALHVHMeV2teLeM4L8EfL0pDWAI
-         hkv6NIRB3/qH6TJERaso2ETwCFoCTWltKPOcHdVxr+wZ8NDMskotQnQYp0+/szsAXJCY
-         KxjNEWgTDbNRSndvxX8OlfjTePxh2Qu7qf/VX9pVERA5ujzDbzCMMWwt/vrKTfjqtB4+
-         dV9g==
-X-Gm-Message-State: AOAM530dgE69OLngqH8lYI5RIw72lamdeG7jDl92ezeVOmMEJp2XQ4Zq
-        cGs4PHN8J+sEg0TDn3TNluTLTEaaAUU=
-X-Google-Smtp-Source: ABdhPJwE+3FLZlVeIjhlYl7qJ/LCobtIjgHrzHX4wuV+T11HeCElPqVpYQH4SuMwe2PbUJy/LNTACw==
-X-Received: by 2002:a17:906:8399:: with SMTP id p25mr14654502ejx.243.1601891877401;
-        Mon, 05 Oct 2020 02:57:57 -0700 (PDT)
+        bh=p3BM0kPaZyOPUQYWBvmUtL1qF+A5L+ek6VHw+7yxmPQ=;
+        b=ES5sCH4DQyDm2mhTPX9nwdVmxl0h7QFDT1cWAdrBEBwcqDeWhMPtjNVl7NWB2OREvz
+         rWCaSqnZIPtInxIzGEGm9Hpb+NT1B7kE6H1v5PJMQUQm+55zwzfzYANijbrJRsyIe1VR
+         RG0peuPtImhCNVPXywG4o3vu917HSKSuyWL9//pK/qgaN9Y8rQdzcF40TlX6OERaTVO3
+         fGsx1waGq1B0dMspKdgxDfKCOTTRpzCslZ1tQauUQsvgCgfUyrJ7SMEfIbjhh9lJ6fnN
+         sJszbYWmqDcFhrdLPEmyF6VBum0wVXU05RDiwOAe1UNF1eQ83dF8nvN5p4YotCBZuxhf
+         9ZEw==
+X-Gm-Message-State: AOAM5330VPEAIn+Zw5znA25qurHGaKd9sngng58mMS5DaACIjf0k0EAl
+        zjImSvt9PoHNQHJSews0dug=
+X-Google-Smtp-Source: ABdhPJynxv4HgFVq+YzG8NngdyxhCbkuUZlkdwXEwFycADMLdau1/kA3SvY2XMssurYI9UWUoDYGZg==
+X-Received: by 2002:a50:fe82:: with SMTP id d2mr15842040edt.86.1601892262334;
+        Mon, 05 Oct 2020 03:04:22 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id q10sm5385858ejb.117.2020.10.05.02.57.55
+        by smtp.gmail.com with ESMTPSA id u9sm7675435eje.119.2020.10.05.03.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 02:57:56 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 11:57:54 +0200
+        Mon, 05 Oct 2020 03:04:20 -0700 (PDT)
+Date:   Mon, 5 Oct 2020 12:04:19 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, joro@8bytes.org,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iommu/tegra-smmu: Rework tegra_smmu_probe_device()
-Message-ID: <20201005095754.GJ425362@ulmo>
+Cc:     joro@8bytes.org, digetx@gmail.com, vdumpa@nvidia.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iommu/tegra-smmu: Add PCI support
+Message-ID: <20201005100419.GK425362@ulmo>
 References: <20201002060807.32138-1-nicoleotsuka@gmail.com>
- <20201002060807.32138-3-nicoleotsuka@gmail.com>
- <5542b314-f414-1e83-8cf6-2bf22a41ae9c@gmail.com>
- <20201002185828.GC29706@Asurada-Nvidia>
+ <20201002060807.32138-4-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fKov5AqTsvseSZ0Z"
+        protocol="application/pgp-signature"; boundary="PEfPc/DjvCj+JzNg"
 Content-Disposition: inline
-In-Reply-To: <20201002185828.GC29706@Asurada-Nvidia>
+In-Reply-To: <20201002060807.32138-4-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fKov5AqTsvseSZ0Z
-Content-Type: text/plain; charset=utf-8
+--PEfPc/DjvCj+JzNg
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 02, 2020 at 11:58:29AM -0700, Nicolin Chen wrote:
-> On Fri, Oct 02, 2020 at 06:02:18PM +0300, Dmitry Osipenko wrote:
-> > 02.10.2020 09:08, Nicolin Chen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > >  static int tegra_smmu_of_xlate(struct device *dev,
-> > >  			       struct of_phandle_args *args)
-> > >  {
-> > > +	struct platform_device *iommu_pdev =3D of_find_device_by_node(args-=
->np);
-> > > +	struct tegra_mc *mc =3D platform_get_drvdata(iommu_pdev);
-> > >  	u32 id =3D args->args[0];
-> > > =20
-> > > +	of_node_put(args->np);
-> >=20
-> > of_find_device_by_node() takes device reference and not the np
-> > reference. This is a bug, please remove of_node_put().
+On Thu, Oct 01, 2020 at 11:08:07PM -0700, Nicolin Chen wrote:
+> This patch simply adds support for PCI devices.
 >=20
-> Looks like so. Replacing it with put_device(&iommu_pdev->dev);
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>=20
+> Changelog
+> v3->v4
+>  * Dropped !iommu_present() check
+>  * Added CONFIG_PCI check in the exit path
+> v2->v3
+>  * Replaced ternary conditional operator with if-else in .device_group()
+>  * Dropped change in tegra_smmu_remove()
+> v1->v2
+>  * Added error-out labels in tegra_smmu_probe()
+>  * Dropped pci_request_acs() since IOMMU core would call it.
+>=20
+>  drivers/iommu/tegra-smmu.c | 37 +++++++++++++++++++++++++++----------
+>  1 file changed, 27 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 02d02b0c55c4..b701a7b55e84 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pci.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> @@ -865,7 +866,11 @@ static struct iommu_group *tegra_smmu_device_group(s=
+truct device *dev)
+>  	group->smmu =3D smmu;
+>  	group->soc =3D soc;
+> =20
+> -	group->group =3D iommu_group_alloc();
+> +	if (dev_is_pci(dev))
+> +		group->group =3D pci_device_group(dev);
+> +	else
+> +		group->group =3D generic_device_group(dev);
+> +
+>  	if (IS_ERR(group->group)) {
+>  		devm_kfree(smmu->dev, group);
+>  		mutex_unlock(&smmu->lock);
+> @@ -1069,22 +1074,32 @@ struct tegra_smmu *tegra_smmu_probe(struct device=
+ *dev,
+>  	iommu_device_set_fwnode(&smmu->iommu, dev->fwnode);
+> =20
+>  	err =3D iommu_device_register(&smmu->iommu);
+> -	if (err) {
+> -		iommu_device_sysfs_remove(&smmu->iommu);
+> -		return ERR_PTR(err);
+> -	}
+> +	if (err)
+> +		goto err_sysfs;
+> =20
+>  	err =3D bus_set_iommu(&platform_bus_type, &tegra_smmu_ops);
+> -	if (err < 0) {
+> -		iommu_device_unregister(&smmu->iommu);
+> -		iommu_device_sysfs_remove(&smmu->iommu);
+> -		return ERR_PTR(err);
+> -	}
+> +	if (err < 0)
+> +		goto err_unregister;
+> +
+> +#ifdef CONFIG_PCI
+> +	err =3D bus_set_iommu(&pci_bus_type, &tegra_smmu_ops);
+> +	if (err < 0)
+> +		goto err_bus_set;
+> +#endif
+> =20
+>  	if (IS_ENABLED(CONFIG_DEBUG_FS))
+>  		tegra_smmu_debugfs_init(smmu);
+> =20
+>  	return smmu;
+> +
+> +err_bus_set: __maybe_unused;
+> +	bus_set_iommu(&platform_bus_type, NULL);
+> +err_unregister:
+> +	iommu_device_unregister(&smmu->iommu);
+> +err_sysfs:
+> +	iommu_device_sysfs_remove(&smmu->iommu);
 
-Putting the put_device() here is wrong, though. You need to make sure
-you keep a reference to it as long as you keep accessing the data that
-is owned by it.
+Can you please switch to label names that are more consistent with the
+others in this driver? Notably the ones in tegra_smmu_domain_alloc().
+The idea is to describe in the name of the label what's happening at the
+label. Something like this, for example:
 
-Like I said earlier, this is a bit weird in this case because we're
-self-referencing, so iommu_pdev->dev is going to stay around as long as
-the SMMU is. However, it might be worth to properly track the lifetime
-anyway just so that the code can serve as a good example of how to do
-things.
-
-If you decide to go for the shortcut and not track this reference
-properly, then at least you need to add a comment as to why it is safe
-to do in this case. This ensures that readers are away of the
-circumstances and don't copy this bad code into a context where the
-circumstances are different.
+unset_platform_bus:
+	bus_set_iommu(&platform_bus_type, NULL);
+unregister:
+	iommu_device_unregister(&smmu->iommu);
+remove_sysfs:
+	iommu_device_sysfs_remove(&smmu->iommu);
 
 Thierry
 
---fKov5AqTsvseSZ0Z
+--PEfPc/DjvCj+JzNg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl967iIACgkQ3SOs138+
-s6FMlQ/+PI2U3e9+14M09UT7Av+BBmD/Af5CKPGXxy5A3EG9pX97uPO6q6kt30/1
-5VnVWJnXCZESSl2ZFNwXcTOrSZ6Pre5QUH8LTM7TG+QcJH3bSn1wk7jZj6snYOto
-z9scPx+zNCqw1lyMbiEd+GkI5DVrrGM6qFH2wESur0ZNn4VUO//DWhOUH62uM1tc
-SuByO6o1fcf66jjb6AHwd79BaIXn6E7rKEdQpRFdTmFhZVxCae2fVeETtQ7IPhBL
-t4K5SBNjdv/2bD1GEKvOgt2ZufQGqkmB52cCW4FFvv+sSzi3nlv3c1W8hMWGgptA
-l/wCei1ZGNU0bwM/Vk+f+/LYjveIarkYsVmZOoamvcliCtnpmpkhznqJy2MJf5GV
-jqYQqzG8WyU0JW3vO6jqTz421YmNqajs82APyv7wHn5/Vq4oicDEh67RQvSqxzV5
-t1gnQaS19CsoB8TLDJE8VYUGnnZ5mxcNwE+P4dy65O21KmyzjJSkwmzSSfaGklG9
-6xLedqfYr2c1YkEiPjYrwpDuLa5ID7A9ohk8x4dkd2OCz/80f4QBnJNt7uv5la1N
-U91E6tJ2cLMkQdxP3RQatyYRlkZk/IQTwtQ9LwuQkAmB/PGb9HcfhGc7cPz2UPZA
-QQ8+ZwFqEJrHlmVudKnjX1HU+FRSvzu3ComceNZjbqXaEd+F9NU=
-=jGLH
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9676MACgkQ3SOs138+
+s6E57BAAt0AeCX/qjGZv2yu0JoZxyVMxx2y3P3p1t8cvhgWhppRMaXErd01bAZoA
+vh4HYhmi1vVbnfyDxtafYXY7jUKwwe1Kwo4zjAnNqzm1xYRTeeEtZ0f03xhMviDk
+G0y7pIXOZeMUozoR0cSruq8ZF7+tVmdmTL2A9ybZBwFXIuL7f1vhizd2Fk9aprvd
+lSwhz43OVmYWWPRAjM+1HBJ1R+klw3SUy/ZBg6kaQX/sBeFnQ3InmapFZ7B+iKt4
+ARXioQv0Kb935t1ABIYJZu26tunTZrMcdhekIOWyn345a7VuHtCOgaUYPSoDJsX4
+1Y+kDStZD9/FZ/EpvCt8saacx1gnJ+yChbiAM/gheIeK5D/42rp4GNElfxOC9Edy
+6qZGXMGCAcrvfCZjozsfNTAg7yG91BshhODi0vtR/ljoKtCdc6A6gGgPb7d6454j
+9KQSrgy0XdV1hI+UOhCVcCWAuY7niE57OHaLSLE58b84Y3q52kGEq8gq7eSVS2ug
+86V8ywHa/NQvE9bVMpwpqIKw5EX5cp3YEHHSmDQufaUlVHHw1kqcVGsDk7YjY7wM
+zJ15fJegbRpPTRKfNehb64hKemeSWjOSi+Ipgkxk8k5WirUp0PiGEUsNEozTBizL
+QMxkTR/VGoott/nWoAAEV+t50W8p/zgdc/ZXbwIq755B9qskBds=
+=E6uA
 -----END PGP SIGNATURE-----
 
---fKov5AqTsvseSZ0Z--
+--PEfPc/DjvCj+JzNg--
