@@ -2,106 +2,94 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE24C47095
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB873C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 20:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAFE620B80
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mCNV9SDa"
+	by mail.kernel.org (Postfix) with ESMTP id 9CD342078E
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 20:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbgJESyP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 14:54:15 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8685 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728944AbgJESyP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:54:15 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7b6b6b000f>; Mon, 05 Oct 2020 11:52:27 -0700
-Received: from [10.24.37.103] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Oct
- 2020 18:54:04 +0000
-Subject: Re: [Patch 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <rjw@rjwysocki.net>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <ksitaraman@nvidia.com>,
-        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
- <1600276277-7290-3-git-send-email-sumitg@nvidia.com>
- <20201005045414.fmntm7ejad7zxcrv@vireshk-i7>
-From:   Sumit Gupta <sumitg@nvidia.com>
-Message-ID: <2c0daaa5-4aec-925d-c1e3-0f15fb93cc20@nvidia.com>
-Date:   Tue, 6 Oct 2020 00:24:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725855AbgJEUxC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 16:53:02 -0400
+Received: from sauhun.de ([88.99.104.3]:52328 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbgJEUxC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 5 Oct 2020 16:53:02 -0400
+Received: from localhost (p54b33598.dip0.t-ipconnect.de [84.179.53.152])
+        by pokefinder.org (Postfix) with ESMTPSA id 1D8E62C08AE;
+        Mon,  5 Oct 2020 22:52:59 +0200 (CEST)
+Date:   Mon, 5 Oct 2020 22:52:58 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 00/32] Improvements for Tegra I2C driver
+Message-ID: <20201005205258.GB1397@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200929221915.10979-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201005045414.fmntm7ejad7zxcrv@vireshk-i7>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601923947; bh=WteRUhNn8LS7dvObuGW8ZJoWxg2jRgT1UeuqiBiT9uA=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=mCNV9SDaMi0yln6EhW1QjxwYlU0taJo/6nPTN/JTBcXiGbez94uBt/wPFWylPa3k7
-         e6gX/XlAIil5qmyr8HO0VfRsWv8e9pQzMiXDSDSueXbzFBrtTcABPHkLqmD47/spPD
-         w6SWVQ7Yudf5paxJVW8OzDus1DksuheH5xhsP4i3EyVzZdamPJMgk967DdkIB588Rq
-         Xz69yrH0qJzN3uHHQatIkQJs2PUw/ytAVoxuE8RNS60wTp+q0s3UzXMCeapPih9ETu
-         nucCFEKb5AcbpYbW/kC/070QYfI0aiuKdsW60uzmAaGCdCxsrPaLIXzSkESo1eGQUI
-         BnoQ5zqrIcbhw==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
+Content-Disposition: inline
+In-Reply-To: <20200929221915.10979-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
->> Warning coming during boot because the boot freq set by bootloader
->> gets filtered out due to big freq steps while creating freq_table.
->> Fixing this by setting closest ndiv value from freq_table.
->> Warning:
->>    cpufreq: cpufreq_online: CPU0: Running at unlisted freq
->>    cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
->>
->> Also, added change in init to wait till current frequency becomes
->> equal or near to the previously requested frequency. This is done
->> because it takes some time to restore the previous frequency while
->> turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
-> 
-> So you are trying to figure if the frequency is listed in freq-table or not,
-> otherwise setting the frequency to a value you think is appropriate. Right ?
-During boot, want to set the frequency from freq_table which is closest 
-to the one set by bootloader.
-During resume from suspend-to-idle, want to restore the frequency which 
-was set on non-boot cores before they were hotplug powered off.
+--i9LlY+UWpKt15+FH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> This is what the cpufreq core already does when it printed these boot time
-> messages. Do we really need to add this much code in here ?
-We want to avoid the warning messages.
+On Wed, Sep 30, 2020 at 01:18:43AM +0300, Dmitry Osipenko wrote:
+> Hello!
+>=20
+> This series performs refactoring of the Tegra I2C driver code and hardens
+> the atomic-transfer mode.
 
-> 
-> If you really don't want to see the warning, how about fixing it the way cpufreq
-> core does ? i.e. with this call:
-> 
-> ret = __cpufreq_driver_target(policy, policy->cur - 1, CPUFREQ_RELATION_L);
-> 
-The cpufreq core change will help in bootup case but not during the case 
-of resume.
-In this change, reading the previously stored value and restoring it 
-will also fix the warning message during resume.
+Applied to for-next, thanks to everyone! Please send incremental patches
+=66rom now on. Also, there is this unreviewed series:
+
+http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D191802
+
+Is it obsolete by now?
 
 
-> --
-> viresh
-> 
+--i9LlY+UWpKt15+FH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl97h6oACgkQFA3kzBSg
+KbY0HA/+NdA/QNyneG0/JryMokkjx1IQtTCzlc7EZ8kmSRY/9yw75uPM9BP5xwCk
+uNIKjR05V1GE5PzoTMjoQ9sHKM1ES3rU6hpoqbuPl//ihdhvyhFUO8FN8aVqCJtV
+GE7jvWxqLSnjVU7TG+EMlSQu7zIL1PGzrBdCn4AITxAS6XW6oNseyNGnXi/YyJhd
+828ILM2YRZXSaiR9YuMhuCQaBlJMcXB5oQ7xbkdlQat+KjnB9jmgj16oHyafH1mF
+kN4N/8f2Qnc9EL4vaGaY+ktp/vTqPcqjDtBo4VDpdkQXVwQdi5JfqMQVk5SmT9Q0
+K4Wnw6cHf+UspgvyABsWn5ofg0gaZOHMoE5gBQGY5FpGh/9XJ73WN2Q0Ub1+zQQy
+jTNfzbPIQxvP/YknQ5eDUBmgVGwN5xdQ4odT05AVBE/VGilfVcYgXsIdtQ/ZGeG+
+l3oKS0jZzaUEjsgQzpm5WoHftrQpaVstFEJwT5vxdSZubaqGQ72bxlEvQX/iFkZv
+iruiHVdC5KdZxlG+J2iMmqiG0qBMKxa7LX3TAr3XrywpttJtSe8tL8DFX5I1T0x1
+VrrJ3510F5NQnK/jLicdlQ0+lLPspRI7w2Ocq078Fuc/VZldmZ7qNpFuXdbGOxv1
+q4hV+VeVu5FcFtClwxjQRzt/1Su1jDiKBZQHQDEBBJVYIDfTVP4=
+=Vvdi
+-----END PGP SIGNATURE-----
+
+--i9LlY+UWpKt15+FH--
