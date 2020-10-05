@@ -2,47 +2,46 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4C4C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 11:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C084C4727D
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 11:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 865E820774
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 11:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E07206CB
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 11:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601896506;
-	bh=QZDBQPDjGlcETLhVySdcVslA4fGitGz/5JwUVeEL0kw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hwh0vF2D1ltdtl3UYJdrVjdcFrck3vVt8HX2XA2qE6ooEjwezcxKa+BVJYWEcF18B
-	 elEOMGIhyvnqlv4KsWyTA4BW4omE0JRHaYsbdY9T+Mc3SE/sYu/DLQRENvKYJoFK7C
-	 fIE8ghIsYuCP/lkPUh1u1Gc9JLXdJWA2aOJlbLlw=
+	s=default; t=1601896512;
+	bh=byOyHb25XO6a9zA+76nGhRy3pYx2YIrog+eRA2qInos=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ZapJhnweznVV6kNvwt3U1XFQMqXJvj1fJ79zkrjeSzMwNvJTED8U3CfLLP9M8G7cj
+	 zMOHzX0bRm5GKCeiNXtKf6A53yZI2pEbICXyqmBpSXulEpRMLM4s+vFJffRmXWPwFV
+	 0wKG7YirfrVJb++TKyOlRKWLa//4sboVVCJOZUo4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbgJELPF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 07:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57782 "EHLO mail.kernel.org"
+        id S1726072AbgJELPA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 07:15:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726123AbgJELPB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Oct 2020 07:15:01 -0400
+        id S1725843AbgJELPA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 5 Oct 2020 07:15:00 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF8412085B;
-        Mon,  5 Oct 2020 11:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B77C206CB;
+        Mon,  5 Oct 2020 11:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601896500;
-        bh=QZDBQPDjGlcETLhVySdcVslA4fGitGz/5JwUVeEL0kw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=02OyK/5eMBScjHBMNFvMqBGkA6OMu3pk1ZoyshClgFx4nVejZpHfyPoipDjvR3hMD
-         VsWK7kWg0G64G10iyd5a+IbHGf3q3cQOcWRfJ9bmI/03jPEddxn9enqTe+SafYtzQG
-         wBj1oYj4dg3Cb/5rcY8ehb3bGEXTP4bV6E+GSFSw=
+        s=default; t=1601896499;
+        bh=byOyHb25XO6a9zA+76nGhRy3pYx2YIrog+eRA2qInos=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RqHUf71fPDWNNdPM2UDmRAP/Z792CVULi4OvJg714IhmVcTOQkI5FZ8W/EKn9f2Sf
+         evBUFr0ErbGaFe0b//XLEgmNXvgSekNpIFA4wPM8PxL8JWgdW7qG813i2q4lSHSyTj
+         8hAzK+Fl9c4wl5C99Ya2XtX8flfGU6VIbpwUcnOY=
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <maz@kernel.org>)
-        id 1kPOSJ-00HLMq-7o; Mon, 05 Oct 2020 12:14:59 +0100
+        id 1kPOSH-00HLMq-6C; Mon, 05 Oct 2020 12:14:57 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -52,12 +51,10 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Sowjanya Komatineni <skomatineni@nvidia.com>,
         Venkat Reddy Talla <vreddytalla@nvidia.com>,
         Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com
-Subject: [PATCH 3/3] soc/tegra: pmc: Don't create fake interrupt hierarchy levels
-Date:   Mon,  5 Oct 2020 12:14:43 +0100
-Message-Id: <20201005111443.1390096-4-maz@kernel.org>
+Subject: [PATCH 0/3] soc/tegra: Prevent the PMC driver from corrupting interrupt routing
+Date:   Mon,  5 Oct 2020 12:14:40 +0100
+Message-Id: <20201005111443.1390096-1-maz@kernel.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201005111443.1390096-1-maz@kernel.org>
-References: <20201005111443.1390096-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
@@ -68,155 +65,54 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Tegra PMC driver does ungodly things with the interrupt hierarchy,
-repeatedly corrupting it by pulling hwirq numbers out of thin air,
-overriding existing IRQ mappings and changing the handling flow
-of unsuspecting users.
+Jon recently reported that one of the Tegra systems (Jetson TX2, aka
+tegra186) stopped booting with the introduction of the "IPI as IRQs"
+series. After a few weeks of head scratching and complete puzzlement,
+I obtained a board and started looking at what was happening.
 
-All of this is done in the name of preserving the interrupt hierarchy
-even when these levels do not exist in the HW. Together with the use
-of proper IRQs for IPIs, this leads to an unbootable system as the
-rescheduling IPI gets repeatedly repurposed for random drivers...
+The interrupt hierarchy looks like this:
 
-Instead, let's allow the hierarchy to be trimmed to the level that
-actually makes sense for the HW, and not any deeper. This avoids
-having unnecessary callbacks, overriding mappings, and otherwise
-keeps the hierarchy sane.
+	[DEVICE] -A-> [PMC] -B-> [GIC]
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/soc/tegra/pmc.c | 79 +++++++++++++++--------------------------
- 1 file changed, 29 insertions(+), 50 deletions(-)
+which seems simple enough. However, not all the devices attached to
+the PMC follow this hierarchy, and in some cases, the 'B' link isn't
+present in the HW. In other cases, neither 'A' nor 'B' are present.
+And yet the PMC driver creates such linkages using random hwirq values
+for the non-existent links, potentially overriding existing mappings
+in the process. "What could possibly go wrong?"
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9960f7c18431..4eea3134fb3e 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1993,6 +1993,30 @@ static int tegra_pmc_irq_translate(struct irq_domain *domain,
- 	return 0;
- }
- 
-+/* Trim the irq hierarchy from a particular irq domain */
-+static void trim_hierarchy(unsigned int virq, struct irq_domain *domain)
-+{
-+	struct irq_data *tail, *irq_data = irq_get_irq_data(virq);
-+
-+	/* The PMC doesn't generate any interrupt by itself */
-+	if (WARN_ON(!irq_data->parent_data))
-+		return;
-+
-+	/* Skip until we find the right domain */
-+	while (irq_data->parent_data && irq_data->parent_data->domain != domain)
-+		irq_data = irq_data->parent_data;
-+
-+	/* Sever the inner part of the hierarchy...  */
-+	tail = irq_data->parent_data;
-+	irq_data->parent_data = NULL;
-+
-+	/* ... and free it */
-+	for (irq_data = tail; irq_data; irq_data = tail) {
-+		tail = irq_data->parent_data;
-+		kfree(irq_data);
-+	};
-+}
-+
- static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
- 			       unsigned int num_irqs, void *data)
- {
-@@ -2039,46 +2063,15 @@ static int tegra_pmc_irq_alloc(struct irq_domain *domain, unsigned int virq,
- 
- 			err = irq_domain_set_hwirq_and_chip(domain, virq,
- 							    event->id,
--							    &pmc->irq, pmc);
--
--			/*
--			 * GPIOs don't have an equivalent interrupt in the
--			 * parent controller (GIC). However some code, such
--			 * as the one in irq_get_irqchip_state(), require a
--			 * valid IRQ chip to be set. Make sure that's the
--			 * case by passing NULL here, which will install a
--			 * dummy IRQ chip for the interrupt in the parent
--			 * domain.
--			 */
--			if (domain->parent)
--				irq_domain_set_hwirq_and_chip(domain->parent,
--							      virq, 0, NULL,
--							      NULL);
--
-+							    &pmc_irqchip, pmc);
-+			if (!err)
-+				trim_hierarchy(virq, domain->parent);
- 			break;
- 		}
- 	}
- 
--	/*
--	 * For interrupts that don't have associated wake events, assign a
--	 * dummy hardware IRQ number. This is used in the ->irq_set_type()
--	 * and ->irq_set_wake() callbacks to return early for these IRQs.
--	 */
--	if (i == soc->num_wake_events) {
--		err = irq_domain_set_hwirq_and_chip(domain, virq, ULONG_MAX,
--						    &pmc_irqchip, pmc);
--
--		/*
--		 * Interrupts without a wake event don't have a corresponding
--		 * interrupt in the parent controller (GIC). Pass NULL for the
--		 * chip here, which causes a dummy IRQ chip to be installed
--		 * for the interrupt in the parent domain, to make this
--		 * explicit.
--		 */
--		if (domain->parent)
--			irq_domain_set_hwirq_and_chip(domain->parent, virq, 0,
--						      NULL, NULL);
--	}
-+	if (i == soc->num_wake_events)
-+		trim_hierarchy(virq, domain);
- 
- 	return err;
- }
-@@ -2094,9 +2087,6 @@ static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	unsigned int offset, bit;
- 	u32 value;
- 
--	if (data->hwirq == ULONG_MAX)
--		return 0;
--
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
- 
-@@ -2131,9 +2121,6 @@ static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned int offset, bit;
- 	u32 value;
- 
--	if (data->hwirq == ULONG_MAX)
--		return 0;
--
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
- 
-@@ -2174,10 +2161,6 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	unsigned int offset, bit;
- 	u32 value;
- 
--	/* nothing to do if there's no associated wake event */
--	if (WARN_ON(data->hwirq == ULONG_MAX))
--		return 0;
--
- 	offset = data->hwirq / 32;
- 	bit = data->hwirq % 32;
- 
-@@ -2205,10 +2188,6 @@ static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
- 
--	/* nothing to do if there's no associated wake event */
--	if (data->hwirq == ULONG_MAX)
--		return 0;
--
- 	value = readl(pmc->wake + WAKE_AOWAKE_CNTRL(data->hwirq));
- 
- 	switch (type) {
+It turns out that for the 'B' link, the PMC driver uses hwirq 0, which
+is SGI0 for the GIC, and used as the rescheduling IPI. Obviously, this
+doesn't go very well, nor very far, as the IPI gets routed to random
+drivers. Also, as the handling flow has been overridden, this
+interrupt never gets deactivated and can't fire anymore. Yes, this is
+bad.
+
+The 'A' link is less problematic, but the hwirq value is still out of
+the irqdomain range, and gets remapped every time a new 'A'-less
+driver comes up.
+
+Instead, let's trim the unused hierarchy levels as needed. This
+requires some checks in the upper levels of the hierarchy as we now
+have optional levels, but this looks a lot saner than what we
+currently have. With this, tegra186 is back booting on -next.
+
+I haven't tested any wake-up stuff, nor any other nvidia system (this
+is the only one I have). If people agree to these changes, I can take
+them via the irqchip tree so that they make it into the next merge
+window.
+
+	M.
+
+Marc Zyngier (3):
+  gpio: tegra186: Allow optional irq parent callbacks
+  soc/tegra: pmc: Allow optional irq parent callbacks
+  soc/tegra: pmc: Don't create fake interrupt hierarchy levels
+
+ drivers/gpio/gpio-tegra186.c |  15 +++-
+ drivers/soc/tegra/pmc.c      | 142 ++++++++++++++++++++---------------
+ 2 files changed, 95 insertions(+), 62 deletions(-)
+
 -- 
 2.28.0
 
