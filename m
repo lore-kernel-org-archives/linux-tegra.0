@@ -2,97 +2,133 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE26C4727D
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 17:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A24CFC47095
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A71F5207BC
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 17:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6917720853
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:10:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="H9EMtRSU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1FvaNLz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbgJERyE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 13:54:04 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1188 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbgJERyB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 13:54:01 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7b5d4e0002>; Mon, 05 Oct 2020 10:52:14 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Oct
- 2020 17:50:43 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 5 Oct 2020 17:50:43 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <pavel@denx.de>, <stable@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.8 00/85] 5.8.14-rc1 review
-In-Reply-To: <20201005142114.732094228@linuxfoundation.org>
-References: <20201005142114.732094228@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1727740AbgJESKT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 14:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbgJESKS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:10:18 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B007C0613CE;
+        Mon,  5 Oct 2020 11:10:18 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id l126so7471534pfd.5;
+        Mon, 05 Oct 2020 11:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=YoMIv66+/pcP+7tXkGyfiaP3wPkP8AZJOUeLQyrbhCo=;
+        b=s1FvaNLzk9ENAUF+dImr5G6uF3ttayAdr3ACaxBA/MFA6jo+FY6tDANTn01a3raqQD
+         9Dxru8Cv/VQ9HJfZkv490IkLOJ6zk4WjW2gdMjjjhdIMli3lmGNoaAbkEGAlRSVvmwQr
+         A22Oro0X+4/rXIkuQhY0A3e93DBSE2Ah8ihWqV9RiH94dSKJ+454v6WUhX8Qku/2fCB9
+         IaoYapNlRFdrGPIPkEkUsp4K4vTB4xNAJiQTFCGNXZ8MBzTqadDJn3b8pZVGKYK5XkxE
+         VlRsacm41HnJBo8cXHBiPeH7kiXkkYUa3KaUPA3FcwVcd1QgWybul8C3I51cWAxKKyth
+         kmvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YoMIv66+/pcP+7tXkGyfiaP3wPkP8AZJOUeLQyrbhCo=;
+        b=JKjH0w0r40GrEyehYAg6BsQSXjiEtwFJpO5vX9XHY4rx/1I89b4p/lmW12mG0qG62T
+         wTJVSnT+GhIW9E+2sEUsn8aVpIb4fBdJozwLppUTcbTpZJhHcMhKXUndIZt4spGWaRKU
+         Nyi5VysLpVa20PQ+qQVxXgqv7gwG45eon2Vh4QL10+lPGDXAad4z+C0Mt4gKj8DatVoj
+         R6WJ1OaELHcr6L+/efBS10QeMZ708jujnbIn+4eNTZRqHvQ0osxikJRCoDigoELH27Nk
+         jwYssDyqM7Dtd9Yet3QBeTHpqnPP79PeDqsxPVSBNOmRL1ogBH3bdj5v6PnI9nvCppX0
+         4f3Q==
+X-Gm-Message-State: AOAM530iomReTvihl2+cCcvo/V9UP7sitjMa8LRcZT1WKzELmQtdA5f+
+        t43uTEYJOiBNQgZl4FDV7HA=
+X-Google-Smtp-Source: ABdhPJyH4fsGnVblPJB5N4pgMwQJmZq67gBl5WqwS0SGCx7kk269VvXfguknhYlG7b9tInkRJJ8m+Q==
+X-Received: by 2002:a63:4945:: with SMTP id y5mr679607pgk.181.1601921417989;
+        Mon, 05 Oct 2020 11:10:17 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id v5sm550037pfu.151.2020.10.05.11.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Oct 2020 11:10:16 -0700 (PDT)
+Date:   Mon, 5 Oct 2020 11:10:14 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
+Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
+Message-ID: <20201005181014.GL1009802@dtor-ws>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <20200608112211.12125-8-andrzej.p@collabora.com>
 MIME-Version: 1.0
-Message-ID: <6d5c5d01ce7c4108b8610141d8c8648d@HQMAIL109.nvidia.com>
-Date:   Mon, 5 Oct 2020 17:50:43 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601920334; bh=Ovf5MnDnwIK/EmznYAtXVU1RC1xpPEPAPLtYKNMLua8=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=H9EMtRSUt6LaD4NP72UEaudMHDD5/Rdjqr3cTavhaEd+YpggnF8rLyTbXFQoyVeRW
-         bjk3eqb4b4NZ9J0YQSrpgh+nuDs//j3quDlgElk7UsCTMItsU0QWD4loHgTFIPjo/k
-         V4rdJc7x2Zj/XXOEU27pr8MMGAqeKpx8NyC0M87TYlBgxTs8xQJZW1q7Umd7y3peXq
-         KcPlgzL1JzFY4IKyJJk1FJPXg5TxpEvPbBRicfbK+vQqptGILTYlDbdqXcv7Vj8uSO
-         dhpx3QuU90L7TOB2KOz5cw340GCnvdf6rXbFsyQOORM4l0SN4X0u+sGCFMzWLuBTK1
-         DU4oJPxculV2A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200608112211.12125-8-andrzej.p@collabora.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 05 Oct 2020 17:25:56 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.8.14 release.
-> There are 85 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 07 Oct 2020 14:20:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.14-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Andrzej,
 
-All tests passing for Tegra ...
+On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
+> @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
+>  	case EV_KEY:
+>  		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
+>  
+> -			/* auto-repeat bypasses state updates */
+> -			if (value == 2) {
+> +			/*
+> +			 * auto-repeat bypasses state updates but repeat
+> +			 * events are ignored if the key is not pressed
+> +			 */
+> +			if (value == 2 && test_bit(code, dev->key)) {
+>  				disposition = INPUT_PASS_TO_HANDLERS;
+>  				break;
+>  			}
 
-Test results for stable-v5.8:
-    15 builds:	15 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    60 tests:	60 pass, 0 fail
+Is this chunk really part of inhibit support? I'd think we cancel
+autorepeat timer when we are releasing a key, no?
 
-Linux version:	5.8.14-rc1-g8bb413de12d0
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Thanks.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+-- 
+Dmitry
