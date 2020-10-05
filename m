@@ -2,104 +2,144 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A138C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982C2C4727D
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 05:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43DF5208A9
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 04:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B152078D
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 05:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l5zJxdYM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfNreHzW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbgJEEyS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 00:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35206 "EHLO
+        id S1725873AbgJEFGt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 01:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgJEEyS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 00:54:18 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D52FC0613A5
-        for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2020 21:54:18 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id x2so4794067pjk.0
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2020 21:54:18 -0700 (PDT)
+        with ESMTP id S1725267AbgJEFGs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 01:06:48 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40393C0613CE;
+        Sun,  4 Oct 2020 22:06:47 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id g18so3111449pgd.5;
+        Sun, 04 Oct 2020 22:06:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wuaS5eoV+4nKA4VFTKBSqLfD9xKQazApFVRKGy/0lFI=;
-        b=l5zJxdYME3oq92mSrDYLm0d0cCxlAMOfFeEdnzoaIogFaG3LCq0FidCwSStVutLvyx
-         0wv96FjK586m5ycfowTJS8JHcNKOIj85DI18zCUfDKwcxnbEJZVTtF4FTJFjDGTXus8l
-         YXQWrqgzelB5W0jNefaUuShjIwPewvlrYgXSaqp7bsM3/DqdCi8KMLtM0nopUiGlBlGe
-         m6y0i7ZHvckJxDBDEbCXSSflghzhBCIiFRpC9GGZ8o+VfSqmtbumc5SHclxAk/RA7mNm
-         9DMJxniiTVDg76zGYXQqvD40l923tkcyRUcrtB3DUlHsbWjO92CGL8l1A0TxipSv6fDb
-         L1NA==
+         :content-disposition:in-reply-to;
+        bh=dxt0ysy04CUIuZwj7WZsE2Z9ZTrTyYeaScGu6k5Gpj0=;
+        b=gfNreHzWt4TPfz/30KqlxE3MmSR0uk0mNv4BhxD1qrqJU0kKDdXnMMbeoKiZ0cDo9n
+         zw3xJ9K8H22DaXnZrAlKWHNLkgYI/AEBTnGiW70jS/x9rp8plOxdERg7bBxCEXxSH5Dj
+         YXHXkr4RUDj+NIT4fSnmTepF7er3jlNAirotlQ0SapEZD6bEVaPAM05Vmf91Wyzz3NyE
+         juXio4hcz9qeyUkl2tVR5TsqeKh5CaQSQ7eP6wPww+qzVBDAl9juAUdkOYXFZUNkJ388
+         pG/3UC6TExI4FXwx/TM1GB4E2cvgU0V7QZ3nDxfm6/syOWz1HtnL208EUdiy+R9io2kT
+         OeaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wuaS5eoV+4nKA4VFTKBSqLfD9xKQazApFVRKGy/0lFI=;
-        b=KuTQ20V3Mk6w+nWPZSnVDTc6T4igX7uXiBBeS+ZIAYTM9T+AGf2KK49VAg6YknqnqQ
-         8gRCmPAvC6iZmJJ9F68ebAKexg7IZSUTnZ1708T4pdDIoyQLjJYaBb5WuIymgoOklqEz
-         FUC/HH4ayG0XGUN2N+tT5yhGv1COfvyHHZaRA2BAUWG858I+Rl/9ywhQobZKdCDiGY6d
-         4J1H7k/yTzW3xqZMvBaeRBRdFD+a9cVQnDg6SzyMZD9Z4TQePkteOrKDJ7N3FNbOcFF7
-         UHBs0jvyrtFNG4sA/CXRTfm1FQ6pBiCgT4qafIdgjT2q3/n3ePLmt8rnIIXTxdsz/IG+
-         e/9Q==
-X-Gm-Message-State: AOAM5320SPyWzKHGmS2zf2DEhVfPOjgE3wg8ZhoknwP7zN7g9oARZYSG
-        bvweXaJg/a9BfgJHZDrZIxAKKA==
-X-Google-Smtp-Source: ABdhPJw+IAPREkiT644OHOYPN0WVvdn6QTaP4XckNLU7A8dFCB0SkJqIEdtw04oWZuqUFMNvTI/UIA==
-X-Received: by 2002:a17:90a:528a:: with SMTP id w10mr14695733pjh.107.1601873657786;
-        Sun, 04 Oct 2020 21:54:17 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id n7sm10536512pfq.114.2020.10.04.21.54.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Oct 2020 21:54:16 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 10:24:14 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rjw@rjwysocki.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ksitaraman@nvidia.com, bbasu@nvidia.com
-Subject: Re: [Patch 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
-Message-ID: <20201005045414.fmntm7ejad7zxcrv@vireshk-i7>
-References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
- <1600276277-7290-3-git-send-email-sumitg@nvidia.com>
+         :mime-version:content-disposition:in-reply-to;
+        bh=dxt0ysy04CUIuZwj7WZsE2Z9ZTrTyYeaScGu6k5Gpj0=;
+        b=CS4QUaG1nVlnmZQNiOxDZ+l7DTWmY3D6b32gigdojytAvve5vTwpagxLdfGNqhgyLX
+         XXjKK+05qClJn+vOUqsIZhwI+jI4euYNnJava640jUAAScTaFUsJ72oRPlrNr3oj+rSR
+         hBtagG/dH/ZmrTNv2JZkCxw04luBZugcwsOVqtlF3yVnNDpkR80qkXZEPqGpuHWWLt5f
+         9Trzv8wkwanKqCPy3UiWF0N4mYtOiUAm6NoR1gdqagwsMg4iTV3GP5YwJpKZ0U9u+wqe
+         pc7cIzGrSsZZ72kvCDeLFDLIHjPPtdbMCThEafFLkaJDnPI/NAb9SikBfMtlUusNo8cG
+         OSEw==
+X-Gm-Message-State: AOAM533vMj4hBUUio9WQnFujmhYZU72c1R4qwJ9PaIroSwy5a6xKN3XL
+        naThKXN38t4SPqGs1dhifQ0=
+X-Google-Smtp-Source: ABdhPJwKCvznRcFib6nkD+RO0m57F4NQznJJCICJJkM3Pz3kXgehY0ax8kdg9YjCt0l6aqeH/wrt+Q==
+X-Received: by 2002:a65:4cc1:: with SMTP id n1mr4035788pgt.404.1601874406624;
+        Sun, 04 Oct 2020 22:06:46 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id m11sm4684586pfa.69.2020.10.04.22.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Oct 2020 22:06:45 -0700 (PDT)
+Date:   Sun, 4 Oct 2020 22:06:42 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com
+Subject: Re: [PATCH v4 4/7] ACPI: button: Use input_device_enabled() helper
+Message-ID: <20201005050642.GH1009802@dtor-ws>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <20200608112211.12125-5-andrzej.p@collabora.com>
+ <20200625052446.GF248110@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1600276277-7290-3-git-send-email-sumitg@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20200625052446.GF248110@dtor-ws>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16-09-20, 22:41, Sumit Gupta wrote:
-> Warning coming during boot because the boot freq set by bootloader
-> gets filtered out due to big freq steps while creating freq_table.
-> Fixing this by setting closest ndiv value from freq_table.
-> Warning:
->   cpufreq: cpufreq_online: CPU0: Running at unlisted freq
->   cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+On Wed, Jun 24, 2020 at 10:24:46PM -0700, Dmitry Torokhov wrote:
+> On Mon, Jun 08, 2020 at 01:22:08PM +0200, Andrzej Pietrasiewicz wrote:
+> > A new helper is available, so use it.
+> > 
+> > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> > ---
+> >  drivers/acpi/button.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> > index ff7ab291f678..4deb2b48d03c 100644
+> > --- a/drivers/acpi/button.c
+> > +++ b/drivers/acpi/button.c
+> > @@ -411,7 +411,7 @@ static void acpi_button_notify(struct acpi_device *device, u32 event)
+> >  		input = button->input;
+> >  		if (button->type == ACPI_BUTTON_TYPE_LID) {
+> >  			mutex_lock(&button->input->mutex);
+> > -			users = button->input->users;
+> > +			users = input_device_enabled(button->input);
+> >  			mutex_unlock(&button->input->mutex);
+> >  			if (users)
 > 
-> Also, added change in init to wait till current frequency becomes
-> equal or near to the previously requested frequency. This is done
-> because it takes some time to restore the previous frequency while
-> turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
+> This chunk (pre-patch) is really wrong. 'users' value is obsolete and
+> can not be trusted the moment we unlocked the mutex. "if" needs to be
+> inside critical section.
 
-So you are trying to figure if the frequency is listed in freq-table or not,
-otherwise setting the frequency to a value you think is appropriate. Right ?
+So looking at this patch and the previous one again, I believe this
+driver is wrong to key the behavior off input->users and we should not
+apply either of the patches. I'll post another patch fixing this.
 
-This is what the cpufreq core already does when it printed these boot time
-messages. Do we really need to add this much code in here ?
-
-If you really don't want to see the warning, how about fixing it the way cpufreq
-core does ? i.e. with this call:
-
-ret = __cpufreq_driver_target(policy, policy->cur - 1, CPUFREQ_RELATION_L);
+Thanks.
 
 -- 
-viresh
+Dmitry
