@@ -2,115 +2,189 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B88C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30823C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFA2320B80
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15F020B80
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 18:41:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PRHpOuQw"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BlKiMMCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgJESXs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 14:23:48 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16297 "EHLO
+        id S1728367AbgJESlb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 14:41:31 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18816 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbgJESXs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:23:48 -0400
+        with ESMTP id S1725940AbgJESlb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 14:41:31 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7b64a60000>; Mon, 05 Oct 2020 11:23:34 -0700
-Received: from [10.26.45.122] (10.124.1.5) by HQMAIL107.nvidia.com
+        id <B5f7b68c90002>; Mon, 05 Oct 2020 11:41:13 -0700
+Received: from [10.24.37.103] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Oct
- 2020 18:23:43 +0000
-Subject: Re: [PATCH 0/3] soc/tegra: Prevent the PMC driver from corrupting
- interrupt routing
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Marc Zyngier <maz@kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ 2020 18:40:18 +0000
+Subject: Re: [Patch 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <rjw@rjwysocki.net>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Venkat Reddy Talla <vreddytalla@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>, <kernel-team@android.com>
-References: <20201005111443.1390096-1-maz@kernel.org>
- <20201005112217.GR425362@ulmo> <da38356394b63e2210f0e52d2e9bdc60@kernel.org>
- <20201005154529.GB628746@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <dbe75937-dd24-6d2a-e3ea-265b8fa70def@nvidia.com>
-Date:   Mon, 5 Oct 2020 19:23:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        <linux-kernel@vger.kernel.org>, <ksitaraman@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
+ <1600276277-7290-2-git-send-email-sumitg@nvidia.com>
+ <20201005044621.t3stylpbsvzhxtyr@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+Message-ID: <69929ea0-0304-3bbe-fd33-40f50791a0ec@nvidia.com>
+Date:   Tue, 6 Oct 2020 00:10:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20201005154529.GB628746@ulmo>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20201005044621.t3stylpbsvzhxtyr@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1601922215; bh=43qLkfMkgiR0apRtpQZNUfVg1Tg+QRHwig6v00fr+Zw=;
+        t=1601923278; bh=0bk80uFfUoVDAgV24Vm7g3jBPiC3DpODVsAsPneRk0I=;
         h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
          MIME-Version:In-Reply-To:Content-Type:Content-Language:
          Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=PRHpOuQw16ofs6Vhug06TKk2WA6/b0+5NfJ3aRwxtidCCURFCS7e0rmDgs0lOhu02
-         2jYUfg/3ehTT7GOgjWjadCrsKn2xyCaZ5CLES6UGo34fivCwLjGYELfa1onBL1Ik2E
-         V8Or3xumIMNkTHTMhKTIDoc63l3XQumSfxnMpNUXRnsZR2ts5sHbQlLQIDnbk79Pcx
-         rV6n0js5IccOhY6Ke+ixhJJM1C1ALOAYsFnFk1NWDeJRYxsmlVBb3qNbYFD/8UxFBG
-         FterQJ1Sshmdp0R5Vesu+Ju66qqVVcJFnuZCKjpF0G+is3RL0el+i2eBeX+EXBFPZT
-         KJhAT7/s9v0VQ==
+        b=BlKiMMCfdVZvY4zvTG3b6mgy+4VEJiAX3cwTK/w+ge8PXBtO1JETAEbthi8KM4gOj
+         AVtpHjlyhmm8wezrva1/F4tUr8f8GRYAH68hz/Rhqmge1TNNivS98ZWkS2DgU6NCU8
+         ADX0PqhOOfx7kAcDYbN2RHRuXoheVTwP/FIbMQzprZluAm0Y2a4RFHLahAlrrTZ01t
+         gAB+is+mLv0IJAyznUT4hG2LZrwPlRS4ke74k77BH0YbROc+DmMKcrzgf5B1y4Ab8B
+         +0rKc1DOGZ1RpQMnSJXMMDVCqi7FKMRcg2u9kdLva+enT0aZwfHSJy4yb/fHEv9ORP
+         EyKvSOsKruXvA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 05/10/2020 16:45, Thierry Reding wrote:
-
-...
-
->>> Let Jon and myself do a bit of testing with this to verify that the wake
->>> up paths are still working.
+>> Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
+>> and keeps changing slightly. This change returns a consistent value
+>> from freq_table. If the reconstructed frequency has acceptable delta
+>> from the last written value, then return the frequency corresponding
+>> to the last written ndiv value from freq_table. Otherwise, print a
+>> warning and return the reconstructed freq.
 >>
->> Sure. Let me know what you find.
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/cpufreq/tegra194-cpufreq.c | 66 ++++++++++++++++++++++++++++++++------
+>>   1 file changed, 57 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+>> index e1d931c..d5b608d 100644
+>> --- a/drivers/cpufreq/tegra194-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+>> @@ -180,9 +180,65 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
+>>        return (rate_mhz * KHZ); /* in KHz */
+>>   }
+>>
+>> +static void get_cpu_ndiv(void *ndiv)
+>> +{
+>> +     u64 ndiv_val;
+>> +
+>> +     asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
+>> +
+>> +     *(u64 *)ndiv = ndiv_val;
+>> +}
+>> +
+>> +static void set_cpu_ndiv(void *data)
+>> +{
+>> +     struct cpufreq_frequency_table *tbl = data;
+>> +     u64 ndiv_val = (u64)tbl->driver_data;
+>> +
+>> +     asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
+>> +}
+>> +
+>>   static unsigned int tegra194_get_speed(u32 cpu)
+>>   {
+>> -     return tegra194_get_speed_common(cpu, US_DELAY);
+>> +     struct cpufreq_frequency_table *table, *pos;
+>> +     struct cpufreq_policy policy;
+>> +     unsigned int rate;
+>> +     u64 ndiv;
+>> +     int err;
+>> +
+>> +     cpufreq_get_policy(&policy, cpu);
+>> +     table = policy.freq_table;
 > 
-> The results are in and it's a bit of a mixed bag. I was able to confirm
-> that Tegra194 also boots again after this series and I'm also able to
-> resume from sleep using either rtcwake or the power-key as wakeup
-> source, so the wake-events mechanism is still functional after the
-> series. I do see a bit of breakage on resume, but none of that seems
-> related to your patches and is likely something that crept in while we
-> were looking into the current issue.
+> Maybe getting freq-table from cluster specific data would be better/faster.
 > 
-> Jon had started a job in our test farm in parallel and that came back
-> with a failing suspend/resume test on Tegra186 (Jetson TX2), but that
-> seems to have been a pre-existing issue. This was already in linux-next
-> around next-20200910 and Jon had been investigating it when the boot
-> failures due to the IPI changes started happening. So I then hooked up
-> my Jetson TX2 and verified locally that I can properly suspend/resume
-> using either rtcwake or the power-key as wakeup source, just like I
-> previously did on Tegra194 (Jetson AGX Xavier). Tegra186 seems to be a
-> little more unstable because it didn't boot every time for me, but that
-> is probably not related to this.
+will do the change in next patch version.
 
-Yes my feeling is that those are other issues too that we need to look
-at next.
-
-> So, I'm tempted to say:
+>> +
+>> +     /* reconstruct actual cpu freq using counters*/
+>> +     rate = tegra194_get_speed_common(cpu, US_DELAY);
+>> +
+>> +     /* get last written ndiv value*/
+>> +     err = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
+>> +     if (err) {
+>> +             pr_err("cpufreq: Failed to get ndiv for CPU%d, ret:%d\n",
+>> +                    cpu, err);
+>> +             return rate;
+>> +     }
+>> +
+>> +     /* if the reconstructed frequency has acceptable delta from
 > 
-> Tested-by: Thierry Reding <treding@nvidia.com>
+> Both have got the multi-line comments wrong. Format is wrong and every sentence
+> needs to start with a capital letter.
+> 
+will correct.
 
-Yes and you can have my ...
+>> +      * the last written value, then return freq corresponding
+>> +      * to the last written ndiv value from freq_table. This is
+>> +      * done to return consistent value.
+>> +      */
+>> +     cpufreq_for_each_valid_entry(pos, table) {
+>> +             if (pos->driver_data != ndiv)
+>> +                     continue;
+>> +
+>> +             if (abs(pos->frequency - rate) > 115200) {
+>> +                     pr_warn("cpufreq: high delta (%d) on CPU%d\n",
+>> +                             abs(pos->frequency - rate), cpu);
+>> +                     pr_warn("cpufreq: cur:%u, set:%u, set ndiv:%llu\n",
+>> +                             rate, pos->frequency, ndiv);
+> 
+> Both of these can be merged in a single line I think. There is no need to print
+> delta as you already print both the frequencies.
+> 
+Will do this also in next patch version.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks again Marc for tracking this down!
-
-Cheers
-Jon
-
--- 
-nvpublic
+>> +             } else {
+>> +                     rate = pos->frequency;
+>> +             }
+>> +             break;
+>> +     }
+>> +     return rate;
+>>   }
+>>
+>>   static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>> @@ -209,14 +265,6 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>>        return 0;
+>>   }
+>>
+>> -static void set_cpu_ndiv(void *data)
+>> -{
+>> -     struct cpufreq_frequency_table *tbl = data;
+>> -     u64 ndiv_val = (u64)tbl->driver_data;
+>> -
+>> -     asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
+>> -}
+>> -
+>>   static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>>                                       unsigned int index)
+>>   {
+>> --
+>> 2.7.4
+> 
+> --
+> viresh
+> 
