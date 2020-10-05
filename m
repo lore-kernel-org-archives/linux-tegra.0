@@ -6,90 +6,76 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB873C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 20:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A3EC4727D
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 22:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD342078E
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 20:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7270E2078D
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 22:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725855AbgJEUxC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:53:02 -0400
-Received: from sauhun.de ([88.99.104.3]:52328 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgJEUxC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:53:02 -0400
-Received: from localhost (p54b33598.dip0.t-ipconnect.de [84.179.53.152])
-        by pokefinder.org (Postfix) with ESMTPSA id 1D8E62C08AE;
-        Mon,  5 Oct 2020 22:52:59 +0200 (CEST)
-Date:   Mon, 5 Oct 2020 22:52:58 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 00/32] Improvements for Tegra I2C driver
-Message-ID: <20201005205258.GB1397@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200929221915.10979-1-digetx@gmail.com>
+        id S1727302AbgJEWgu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 18:36:50 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:34024 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbgJEWgr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 18:36:47 -0400
+Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 40F323A8667;
+        Mon,  5 Oct 2020 22:30:17 +0000 (UTC)
+Received: from localhost (lfbn-lyo-1-1908-165.w90-65.abo.wanadoo.fr [90.65.88.165])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 0AA07240002;
+        Mon,  5 Oct 2020 22:29:53 +0000 (UTC)
+Date:   Tue, 6 Oct 2020 00:29:53 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     a.zummo@towertech.it, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        len.brown@intel.com, pavel@ucw.cz,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [Question] rtc wake behavior and sysfs
+Message-ID: <20201005222953.GD2804081@piout.net>
+References: <CAMdYzYrYdDYF_Y_TwQ65u=Ymu2_8Rs9KWm_TfXcaPGTwucT=jg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200929221915.10979-1-digetx@gmail.com>
+In-Reply-To: <CAMdYzYrYdDYF_Y_TwQ65u=Ymu2_8Rs9KWm_TfXcaPGTwucT=jg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 05/10/2020 09:13:08-0400, Peter Geis wrote:
+> Good Morning,
+> 
+> While testing suspend to ram on the Ouya, I encountered an interesting
+> issue with the rtc-tps65910 driver.
+> Attempting to use rtc-wake on the default configuration returned:
+> rtcwake: /dev/rtc0 not enabled for wakeup events
+> This is due to:
+> eb5eba4ef722 drivers/rtc/rtc-tps65910.c: enable/disable wake in suspend/resume
+> This commit changed this driver's behavior to not enable wakeup by
+> default, but enables it when entering sleep mode.
+> This seems to be odd behavior to me.
+> Looking at a few other rtc drivers show they simply enable themselves
+> as wakeup sources by default.
+> 
+> I also found the sysfs entries are at /sys/devices/ ..
+> /tps65910-rtc/power but are missing at /sys/class/rtc/rtc0/power/
+> 
+> I have two questions.
+>  - Should the sysfs wakeup entries be missing at /sys/class/rtc/rtc0/power/ ?
 
---i9LlY+UWpKt15+FH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I would be in /sys/class/rtc/rtc0/device/power
 
-On Wed, Sep 30, 2020 at 01:18:43AM +0300, Dmitry Osipenko wrote:
-> Hello!
->=20
-> This series performs refactoring of the Tegra I2C driver code and hardens
-> the atomic-transfer mode.
+>  - Shouldn't a rtc be enabled as a wakeup source by default?
+> 
 
-Applied to for-next, thanks to everyone! Please send incremental patches
-=66rom now on. Also, there is this unreviewed series:
+The short answer is no, the reason being that not all RTCs are connected
+to an IRQ or a pin that can wakeup or start the platform. What should be
+done is enabling wakeup only when interrupts are available or the
+wakeup-source property is in the rtc device tree node.
 
-http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D191802
-
-Is it obsolete by now?
-
-
---i9LlY+UWpKt15+FH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl97h6oACgkQFA3kzBSg
-KbY0HA/+NdA/QNyneG0/JryMokkjx1IQtTCzlc7EZ8kmSRY/9yw75uPM9BP5xwCk
-uNIKjR05V1GE5PzoTMjoQ9sHKM1ES3rU6hpoqbuPl//ihdhvyhFUO8FN8aVqCJtV
-GE7jvWxqLSnjVU7TG+EMlSQu7zIL1PGzrBdCn4AITxAS6XW6oNseyNGnXi/YyJhd
-828ILM2YRZXSaiR9YuMhuCQaBlJMcXB5oQ7xbkdlQat+KjnB9jmgj16oHyafH1mF
-kN4N/8f2Qnc9EL4vaGaY+ktp/vTqPcqjDtBo4VDpdkQXVwQdi5JfqMQVk5SmT9Q0
-K4Wnw6cHf+UspgvyABsWn5ofg0gaZOHMoE5gBQGY5FpGh/9XJ73WN2Q0Ub1+zQQy
-jTNfzbPIQxvP/YknQ5eDUBmgVGwN5xdQ4odT05AVBE/VGilfVcYgXsIdtQ/ZGeG+
-l3oKS0jZzaUEjsgQzpm5WoHftrQpaVstFEJwT5vxdSZubaqGQ72bxlEvQX/iFkZv
-iruiHVdC5KdZxlG+J2iMmqiG0qBMKxa7LX3TAr3XrywpttJtSe8tL8DFX5I1T0x1
-VrrJ3510F5NQnK/jLicdlQ0+lLPspRI7w2Ocq078Fuc/VZldmZ7qNpFuXdbGOxv1
-q4hV+VeVu5FcFtClwxjQRzt/1Su1jDiKBZQHQDEBBJVYIDfTVP4=
-=Vvdi
------END PGP SIGNATURE-----
-
---i9LlY+UWpKt15+FH--
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
