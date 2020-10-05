@@ -2,155 +2,92 @@ Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C0C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 13:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4462C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 13:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE0DD20874
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 13:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601903416;
-	bh=kDjkkbRUbpOP0s/mbwqdmPJKM4HIZwidUfRO/Yv/FQw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=MJqWNLdW6KQXOAcjKI3uB+IDMoycqPb8XDEckGcWB+lOfnqIStv0cYLCYEsiRJpge
-	 /MZY5gPKBcBHPoCtFeRt7Av6IiSo8NlhtML3IrgsKvjllflFcLl5hmkHbhSVcVibmI
-	 Yi6xoXocCSf/nIQnmn8PgwhCHz/tX/r213vmkuUM=
+	by mail.kernel.org (Postfix) with ESMTP id 96E77207BC
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 13:13:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUWdgsqp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbgJENKQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 09:10:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbgJENKQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Oct 2020 09:10:16 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26696207BC;
-        Mon,  5 Oct 2020 13:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601903415;
-        bh=kDjkkbRUbpOP0s/mbwqdmPJKM4HIZwidUfRO/Yv/FQw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=r9K6pmsQVtLYS/JRnrZIBTBmJC0nvLDZNOF/a8V/iMZfyIsrdMcqjHjm7xYIhqEBR
-         4qVHGlZ9NbjN4LG9aAVVdf9CBXO+xQzPpKbKXG6pqlR33+eit7iR9NVmoyZj79Koh2
-         m3zuOdF05CvQ/3tsGGolWWL14W6WH+i/KN8kej9Q=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kPQFp-00HNNO-4d; Mon, 05 Oct 2020 14:10:13 +0100
+        id S1726133AbgJENN0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 09:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbgJENN0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 09:13:26 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6173C0613CE;
+        Mon,  5 Oct 2020 06:13:25 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id g4so9267513edk.0;
+        Mon, 05 Oct 2020 06:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=d4eE4p3+B8xLEYjWkMENxr3kighOszJ8l95I4ulqQBU=;
+        b=CUWdgsqpaVHkMUxSJagvGvjIaXWLvO6Gw78iwM00JIjl8bR576GAndbcVvtg9m5qK7
+         XjN9p5XWyp0+8G5E9NfxwPqdjju1GHGjcxetCWqMW2frJd9mbOOlQmdGdd2R6T7TcLXm
+         I2b6ZC6cfEsxttx9DOuDU4RC0lSK5cQ1Fk+uyMmTTf5QmHFbNAw8Pp1Bp7Zlzw53CeG4
+         MjSD4QwtdbwhUTqOHkPdylhCpH9ytsrc8RDSPbgasXrKisjLh3xd+FpUFxTsn8grj9NZ
+         ujjkVsv9tDPAjhX4cYhQavPaPvqRwFNIqZ11lag5RmgIOFMjxMiRUwiAGrMHXPSNvd8x
+         1tnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=d4eE4p3+B8xLEYjWkMENxr3kighOszJ8l95I4ulqQBU=;
+        b=fqvWUgi/Anp5YKhOcTJUp4pbJoN1RS2nEQcmGDGJDvhgQtSrkECqEbzLX9zKgtWl1s
+         +vsI7HlC53pWg0gdO9j9H5hMu8ReDwHRQr5jE3Yc+C2L249z4YIFibegz++OV7q7rLOu
+         ae6t7jcs19qhxmmYwXUPNbX+8gi4NsAPbYKXwE9AW63j2vrINcBEr8tH5QbFG0LM95/0
+         5r8nKCDCc/QPSzHijcLviC6/E0QegZTvsvfYwWhA+hXlOoE62bd0ZFGilOMcn3NPHUWX
+         lES+tEGIZMI54hI8vULHpKCwremtSPe1KcwUy07jbVvfQKvtN1pG4F/PdwFH55lqKMcr
+         F6dA==
+X-Gm-Message-State: AOAM533M7KA37UhMwv8XKCRlMMBOasiNUbLSJz9va8E5BkVT+ZMAKepo
+        O77oqj22yKb8635DJE6RwJ6w26Yvag6dEZviMHM=
+X-Google-Smtp-Source: ABdhPJztT80xgdZTWATqu2sjbwP0+IzNt4mBZ2D5udiHdWCMr7qGwJa9JKyLjIjFFtEbU2JV7gu1SfEdMj8tAe/PvC8=
+X-Received: by 2002:a50:bb0c:: with SMTP id y12mr17418331ede.355.1601903600367;
+ Mon, 05 Oct 2020 06:13:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 05 Oct 2020 14:10:13 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Venkat Reddy Talla <vreddytalla@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com
-Subject: Re: [PATCH 3/3] soc/tegra: pmc: Don't create fake interrupt hierarchy
- levels
-In-Reply-To: <20201005113335.GT425362@ulmo>
-References: <20201005111443.1390096-1-maz@kernel.org>
- <20201005111443.1390096-4-maz@kernel.org> <20201005113335.GT425362@ulmo>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <f5b711ff9289d41f25b0ea3b6658651f@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonathanh@nvidia.com, digetx@gmail.com, skomatineni@nvidia.com, vreddytalla@nvidia.com, tglx@linutronix.de, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+From:   Peter Geis <pgwipeout@gmail.com>
+Date:   Mon, 5 Oct 2020 09:13:08 -0400
+Message-ID: <CAMdYzYrYdDYF_Y_TwQ65u=Ymu2_8Rs9KWm_TfXcaPGTwucT=jg@mail.gmail.com>
+Subject: [Question] rtc wake behavior and sysfs
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, len.brown@intel.com,
+        pavel@ucw.cz, Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-10-05 12:33, Thierry Reding wrote:
-> On Mon, Oct 05, 2020 at 12:14:43PM +0100, Marc Zyngier wrote:
->> The Tegra PMC driver does ungodly things with the interrupt hierarchy,
->> repeatedly corrupting it by pulling hwirq numbers out of thin air,
->> overriding existing IRQ mappings and changing the handling flow
->> of unsuspecting users.
->> 
->> All of this is done in the name of preserving the interrupt hierarchy
->> even when these levels do not exist in the HW. Together with the use
->> of proper IRQs for IPIs, this leads to an unbootable system as the
->> rescheduling IPI gets repeatedly repurposed for random drivers...
->> 
->> Instead, let's allow the hierarchy to be trimmed to the level that
->> actually makes sense for the HW, and not any deeper. This avoids
->> having unnecessary callbacks, overriding mappings, and otherwise
->> keeps the hierarchy sane.
->> 
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>  drivers/soc/tegra/pmc.c | 79 
->> +++++++++++++++--------------------------
->>  1 file changed, 29 insertions(+), 50 deletions(-)
->> 
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index 9960f7c18431..4eea3134fb3e 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -1993,6 +1993,30 @@ static int tegra_pmc_irq_translate(struct 
->> irq_domain *domain,
->>  	return 0;
->>  }
->> 
->> +/* Trim the irq hierarchy from a particular irq domain */
->> +static void trim_hierarchy(unsigned int virq, struct irq_domain 
->> *domain)
->> +{
->> +	struct irq_data *tail, *irq_data = irq_get_irq_data(virq);
->> +
->> +	/* The PMC doesn't generate any interrupt by itself */
->> +	if (WARN_ON(!irq_data->parent_data))
->> +		return;
->> +
->> +	/* Skip until we find the right domain */
->> +	while (irq_data->parent_data && irq_data->parent_data->domain != 
->> domain)
->> +		irq_data = irq_data->parent_data;
->> +
->> +	/* Sever the inner part of the hierarchy...  */
->> +	tail = irq_data->parent_data;
->> +	irq_data->parent_data = NULL;
->> +
->> +	/* ... and free it */
->> +	for (irq_data = tail; irq_data; irq_data = tail) {
->> +		tail = irq_data->parent_data;
->> +		kfree(irq_data);
->> +	};
->> +}
-> 
-> That kind of looks like what I originally wanted to do and (naively)
-> thought that passing the (0, NULL, NULL) triplet would achieve.
-> 
-> Given that this is fairly low-level stuff that deals with the inner
-> workings of the IRQ infrastructure, should we eventually pull this out
-> of the driver and make it into a core helper? I don't seriously expect
-> this to be widely useful, but putting it into the core might help keep
-> it more maintainable.
+Good Morning,
 
-That's the ultimate plan, but I wanted to give it some soaking time
-on Tegra before exposing it to the outside world 
-(irq_domain_free_irq_data()
-could be rewritten in terms of this primitive, for example).
+While testing suspend to ram on the Ouya, I encountered an interesting
+issue with the rtc-tps65910 driver.
+Attempting to use rtc-wake on the default configuration returned:
+rtcwake: /dev/rtc0 not enabled for wakeup events
+This is due to:
+eb5eba4ef722 drivers/rtc/rtc-tps65910.c: enable/disable wake in suspend/resume
+This commit changed this driver's behavior to not enable wakeup by
+default, but enables it when entering sleep mode.
+This seems to be odd behavior to me.
+Looking at a few other rtc drivers show they simply enable themselves
+as wakeup sources by default.
 
-> I volunteer to do that work if you think it's a good idea.
+I also found the sysfs entries are at /sys/devices/ ..
+/tps65910-rtc/power but are missing at /sys/class/rtc/rtc0/power/
 
-Sure, once we know we're good to go with this.
+I have two questions.
+ - Should the sysfs wakeup entries be missing at /sys/class/rtc/rtc0/power/ ?
+ - Shouldn't a rtc be enabled as a wakeup source by default?
 
-Thanks,
+Thank you for your time.
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Very Respectfully,
+Peter Geis
