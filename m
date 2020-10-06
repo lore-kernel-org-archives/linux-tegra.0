@@ -2,171 +2,188 @@ Return-Path: <SRS0=wvja=DN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B17C4363D
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F36A6C4363D
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A85492087E
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602016477;
-	bh=CxlGuJtgwZDj6aScaFk/pY6ggvjWCQI3GmYPSd+uBos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JLymV75T60a9V5tsF7N1GOqCpACI8fscwA2+3rRm9Hv4iCO/RyQH/F5uAXTG4HTjh
-	 LesxPxrf665p9YmIsakEWdCKeQRRh8+Pzm2Zsr5Jo1BpNYoPY1xpoH0GPtQkDTn+21
-	 iwcIvb74Pzkq/4kbolt2JYDADncCs6R5FP4jro0A=
+	by mail.kernel.org (Postfix) with ESMTP id B3F302087E
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:39:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+lasBva";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kdu9Uo5Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbgJFUeh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Oct 2020 16:34:37 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39557 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbgJFUeh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Oct 2020 16:34:37 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f10so62056otb.6;
-        Tue, 06 Oct 2020 13:34:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9Bl8Ef7MsrCUl5Y6fQNE2hvCJzehQ4qg3g3ESvM80Lc=;
-        b=qJWiwuSfJsuTEo5/0ZdGXdjgyhCqQyXoP595ntYK/0Agz93Cjasu4+J4h9ZKdLbCvq
-         huQZq/OC8v6qKyxrgqxXfdNxsWyDVrc/uaSjb4Nms772Ue/mbLQxfl8QBHxzhDyxtJf5
-         MbVbnKXNOIugmz08VJU6LszEmDIP2ufONk1QLVgG7osNAdlUN9GovgUJJv0vpyJ/Wq1L
-         ZlwewHzYB51PkO4UuFx7Q+SR2fq937siea7n8z9AZSFN9IG1JB7ZQMf7ZXOss90ynCu2
-         z9tj8rZHQq84/7x9hLC4hp+vdCiq7iI58LkDdCunVq9YXJi0fC1zRCHeuuPtML2Xxbum
-         1S1A==
-X-Gm-Message-State: AOAM533d98fVbPVcvwG32UhXnLQGGwsrolKeR1uRRMC9bwVdX48Te4DZ
-        3NUQbWeqMsNugiCKylRldtWyMa8paBfP
-X-Google-Smtp-Source: ABdhPJysTVo6aPJYaCescnoWvcltcz2t7AvkaOwyZJCnYE7pLEiVUUXMPN/uFUEiRDTj2GvBxcP5TQ==
-X-Received: by 2002:a9d:77d1:: with SMTP id w17mr3473086otl.27.1602016475621;
-        Tue, 06 Oct 2020 13:34:35 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v21sm1605218ots.29.2020.10.06.13.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 13:34:34 -0700 (PDT)
-Received: (nullmailer pid 2790213 invoked by uid 1000);
-        Tue, 06 Oct 2020 20:34:33 -0000
-Date:   Tue, 6 Oct 2020 15:34:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        kuninori.morimoto.gx@renesas.com,
-        pierre-louis.bossart@linux.intel.com, perex@perex.cz,
-        tiwai@suse.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com,
-        rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com,
-        nwartikar@nvidia.com, swarren@nvidia.com, nicoleotsuka@gmail.com
-Subject: Re: [PATCH v3 09/13] ASoC: dt-bindings: tegra: Add schema for audio
- graph card
-Message-ID: <20201006203433.GA2786434@bogus>
-References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
- <1601573587-15288-10-git-send-email-spujar@nvidia.com>
+        id S1727280AbgJFUjX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Oct 2020 16:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36250 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbgJFUjX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Oct 2020 16:39:23 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625DEC061755;
+        Tue,  6 Oct 2020 13:39:22 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1602016760;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W13RXkAwMTllQhqWm5cq5BZE5nH6uHmGVcHK9GSn3ns=;
+        b=y+lasBvaLUkuLHab5bkpdFiFeUtzZZkMAe0MxPseafS75HZSeZdZN+kymi6dFFQhKZE8VW
+        qc4YvcR4WDd1//cfrfaBnkbFypqZk/QtRqz9DZvsgiv7QXhlnycxcB2xYbujy3EWoOOElY
+        q69FX0eoD272W8M4mxPKAIOLXvd7sGMUJlPaA/xQfAoNdaNCVTQNkJC0J3x4FtpMJBhnq8
+        Os8tzxF592SL6LmG6y8BBUPyOy70MBixUpq551uCnXoajQx0Cc6pZV5/R2R+NwWupaF01r
+        ngTIFTL+iP5AAP2JTZh0eYTc2Nyhf/lod73UHMtQOt9GWFeG7lOyOgueN3WvXg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1602016760;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W13RXkAwMTllQhqWm5cq5BZE5nH6uHmGVcHK9GSn3ns=;
+        b=Kdu9Uo5QYf3A/MyHqKY64fPOxUCAHdJsz+vmpNmY3CnKUZHAh/QD3Mj/dOOk2nryIArRRE
+        eYsAfpW+lOuFYvBA==
+To:     Marc Zyngier <maz@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 1/4] genirq/irqdomain: Allow partial trimming of irq_data hierarchy
+In-Reply-To: <20201006101137.1393797-2-maz@kernel.org>
+References: <20201006101137.1393797-1-maz@kernel.org> <20201006101137.1393797-2-maz@kernel.org>
+Date:   Tue, 06 Oct 2020 22:39:20 +0200
+Message-ID: <87eemb6qdj.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1601573587-15288-10-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 11:03:03PM +0530, Sameer Pujar wrote:
-> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
-> same DT bindings provided by generic audio graph driver. Along with this
-> few standard clock DT bindings are added which are specifically required
-> for Tegra audio.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+On Tue, Oct 06 2020 at 11:11, Marc Zyngier wrote:
+> It appears that some HW is ugly enough that not all the interrupts
+> connected to a particular interrupt controller end up with the same
+> hierarchy repth (some of them are terminated early). This leaves
+
+  depth?
+
+> the irqchip hacker with only two choices, both equally bad:
+>
+> - create discrete domain chains, one for each "hierarchy depth",
+>   which is very hard to maintain
+>
+> - create fake hierarchy levels for the shallow paths, leading
+>   to all kind of problems (what are the safe hwirq values for these
+>   fake levels?)
+>
+> Instead, let's offer the possibility to cut short a single interrupt
+
+s/let's offer/implement/
+
+> hierarchy, exactly representing the HW. This can only be done from
+> the .alloc() callback, before mappings can be established.
+>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 > ---
->  .../sound/nvidia,tegra-audio-graph-card.yaml       | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> new file mode 100644
-> index 0000000..b73fbe5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  include/linux/irqdomain.h |  3 +++
+>  kernel/irq/irqdomain.c    | 56 +++++++++++++++++++++++++++++++++++----
+>  2 files changed, 54 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+> index b37350c4fe37..c6901c1bb981 100644
+> --- a/include/linux/irqdomain.h
+> +++ b/include/linux/irqdomain.h
+> @@ -509,6 +509,9 @@ extern void irq_domain_free_irqs_parent(struct irq_domain *domain,
+>  					unsigned int irq_base,
+>  					unsigned int nr_irqs);
+>  
+> +extern int irq_domain_trim_hierarchy(unsigned int virq,
+> +				     struct irq_domain *domain);
 > +
-> +title: Audio Graph based Tegra sound card driver
+>  static inline bool irq_domain_is_hierarchy(struct irq_domain *domain)
+>  {
+>  	return domain->flags & IRQ_DOMAIN_FLAG_HIERARCHY;
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index 76cd7ebd1178..d0adaeea70b6 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -1136,6 +1136,17 @@ static struct irq_data *irq_domain_insert_irq_data(struct irq_domain *domain,
+>  	return irq_data;
+>  }
+>  
+> +static void __irq_domain_free_hierarchy(struct irq_data *irq_data)
+> +{
+> +	struct irq_data *tmp;
 > +
-> +description: |
-> +  This is based on generic audio graph card driver along with additional
-> +  customizations for Tegra platforms. It uses the same bindings with
-> +  additional standard clock DT bindings required for Tegra.
+> +	while (irq_data) {
+> +		tmp = irq_data;
+> +		irq_data = irq_data->parent_data;
+> +		kfree(tmp);
+> +	}
+> +}
 > +
-> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
+>  static void irq_domain_free_irq_data(unsigned int virq, unsigned int nr_irqs)
+>  {
+>  	struct irq_data *irq_data, *tmp;
+> @@ -1147,14 +1158,49 @@ static void irq_domain_free_irq_data(unsigned int virq, unsigned int nr_irqs)
+>  		irq_data->parent_data = NULL;
+>  		irq_data->domain = NULL;
+>  
+> -		while (tmp) {
+> -			irq_data = tmp;
+> -			tmp = tmp->parent_data;
+> -			kfree(irq_data);
+> -		}
+> +		__irq_domain_free_hierarchy(tmp);
+>  	}
+>  }
+>  
+> +/**
+> + * irq_domain_trim_hierarchy - Trim the irq hierarchy from a particular
+> + *			       irq domain
+> + * @virq:	IRQ number to trim where the hierarchy is to be trimmed
+> + * @domain:	domain from which the hierarchy gets discarded for this
+> + *		interrupt
+> + *
+> + * Drop the partial irq_data hierarchy from @domain (included) onward.
+> + *
+> + * This is only meant to be called from a .alloc() callback, when no
+> + * actual mapping in the respective domains has been established yet.
+> + * Its only use is to be able to trim levels of hierarchy that do not
+> + * have any real meaning for this interrupt.
+> + */
+> +int irq_domain_trim_hierarchy(unsigned int virq, struct irq_domain *domain)
+> +{
+> +	struct irq_data *tail, *irq_data = irq_get_irq_data(virq);
 > +
-> +maintainers:
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Sameer Pujar <spujar@nvidia.com>
+> +	/* It really needs to be a hierarchy, and not a single entry */
+> +	if (WARN_ON(!irq_data->parent_data))
+> +		return -EINVAL;
 > +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nvidia,tegra210-audio-graph-card
-> +      - const: nvidia,tegra186-audio-graph-card
+> +	/* Skip until we find the right domain */
+> +	while (irq_data->parent_data && irq_data->parent_data->domain != domain)
+> +		irq_data = irq_data->parent_data;
 > +
-> +  clocks:
-> +   minItems: 2
+> +	/* The domain doesn't exist in the hierarchy, which is pretty bad */
+> +	if (WARN_ON(!irq_data->parent_data))
+> +		return -ENOENT;
 > +
-> +  clock-names:
-> +   minItems: 2
-> +   items:
-> +     - const: pll_a
-> +     - const: plla_out0
-> +
-> +  assigned-clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  assigned-clock-parents:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  assigned-clock-rates:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - assigned-clocks
-> +  - assigned-clock-parents
+> +	/* Sever the inner part of the hierarchy...  */
+> +	tail = irq_data->parent_data;
+> +	irq_data->parent_data = NULL;
+> +	__irq_domain_free_hierarchy(tail);
 
-Where's the graph? You need to define the ports and reference the common 
-schema.
+This is butt ugly, really. Especially the use case where the tegra PMC
+domain removes itself from the hierarchy from .alloc()
 
-> +
-> +examples:
-> +  - |
-> +    #include<dt-bindings/clock/tegra210-car.h>
-> +
-> +    tegra_sound {
-> +        compatible = "nvidia,tegra210-audio-graph-card";
-> +        clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
-> +                 <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-> +        clock-names = "pll_a", "plla_out0";
-> +        assigned-clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
-> +                          <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
-> +                          <&tegra_car TEGRA210_CLK_EXTERN1>;
-> +        assigned-clock-parents = <0>, <0>, <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-> +        assigned-clock-rates = <368640000>, <49152000>, <12288000>;
-> +    };
-> +
-> +...
-> -- 
-> 2.7.4
-> 
+That said, I don't have a better idea either. Sigh...
+
+Thanks,
+
+        tglx
+
+
