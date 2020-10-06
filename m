@@ -1,112 +1,100 @@
-Return-Path: <SRS0=kAmo=DM=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=wvja=DN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C061BC4727D
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 23:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D076C4727D
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 01:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 731C7206F7
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Oct 2020 23:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 572D820853
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 01:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q8oWwtIr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tT2/p9kk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbgJEXQ6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Oct 2020 19:16:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        id S1725917AbgJFBAt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Oct 2020 21:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgJEXQ5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 19:16:57 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8DDC0613CE;
-        Mon,  5 Oct 2020 16:16:57 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id v23so9015096ljd.1;
-        Mon, 05 Oct 2020 16:16:57 -0700 (PDT)
+        with ESMTP id S1725872AbgJFBAt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Oct 2020 21:00:49 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFE4C0613CE;
+        Mon,  5 Oct 2020 18:00:49 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t18so379734plo.1;
+        Mon, 05 Oct 2020 18:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=/y1V2ecGBf9QUrE1DUxCojq7CebMo4/29DZgpz0CqIc=;
-        b=q8oWwtIr0n+bGp6hi5u5/QwztpijlrnKhlg4zjiqNnCztVBvbZk9dddJV1qzpyAaa1
-         kxQlyj020HlMvFzIA82i+IvfLFbN2y3yfBCuPo3ZeLApj0REXHk7Mshk2vVOJvD46fMs
-         x0DZoC5ZRdkP+aWZj9mwGhT0JkV/76p75wdZuX1ksYPb3kuSqBTmc/XbzpDkHR+yOHtP
-         GfxY/C8xpSjPR7uqVEkz/eowKpQtS5LSiBPHexYJVGaoslqvlk4C/c1wivj/CD2wh3j3
-         dbe4m/Mu1ksaQYwNQJKbp6gMroPvlUpe/1FvDUetKsKs+WQdmWiyu3E5oEbk7acm73WA
-         VPIQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ULovZDh4nNXnrhAmYDekggZ1SAII9f678l5WRSniMjQ=;
+        b=tT2/p9kkQck2bPx0f4E5gQd74HIXbZmZcy2pFDMGyPLhRXmy2wbiGliiPX7/s0eYIX
+         Cu1p6oHsFYVAsEWt8c6zCG9P8iWrZHL4zue7+eSo67dvcqYXtOu1sLmdH8TypU9rx7zR
+         1WTDLkQA2Zgqgy2XeqxsLBamJzJ9OXA/f7qvB4ptUL8EBzA8oY47z2gYY6D9X0mLv0ln
+         /keIq/rxiTYe5wdCkRor4AHg9wyoHuznv7VHMCMt2LUvnN69qhUn40TNg/M9sy4nAKXH
+         QxfnNeyEjWXT1nY9SGDDYAR9fiuokOgj6W3ypq+yX/ZRHgaSs6FeXhANWU0rNEuZCZTL
+         pN3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/y1V2ecGBf9QUrE1DUxCojq7CebMo4/29DZgpz0CqIc=;
-        b=iU5WaBeLMnTd2bRlG6y/fmFKXilYVzep+T4QD8CwZXXffmeGwQRVGHVyGULQ7ONCX/
-         3AMelOIoqcozs6sq9SVer30BHvkqJ4bo1M3sPaeCCoMz8mJDUcLF4xq1n2DA8KnGDEAZ
-         +xfVMBEuF0/mKCzu4AQg3mOGPGvMjjLyIFliWefbNGIIXRVpLHDPX7AYW8G9SBzLGqNY
-         WHyN0Wy1/P01QT8B5Nk+SmCCCCu8lj2kDpq8Z5zNxRw3s/2SI6WVjvFRy32KQ2XPhWhh
-         KQqOFHRSDhXAdzc6b9uIXk+DmAP4nzZS3KJ//qD5YbKGOqQNsmVf1nm7tPopvyERs0kw
-         kg4g==
-X-Gm-Message-State: AOAM5339xszE3GuXl1AvL3OBPDwIi7C1bCGX3eXX9SZ3OQ6/tjGCQWG4
-        f5U2SpcVD9g9zBldlBxWnBhOGeoapVM=
-X-Google-Smtp-Source: ABdhPJwp4vHlmg7PM1+KoUFLLsLH0vbNcBJsVSIUG8JvbOi2f0jOdajZcUSlCSgzB0NrAxP4rHVq+w==
-X-Received: by 2002:a2e:6e12:: with SMTP id j18mr690906ljc.430.1601939815406;
-        Mon, 05 Oct 2020 16:16:55 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-252.nat.spd-mgts.ru. [109.252.91.252])
-        by smtp.googlemail.com with ESMTPSA id 73sm338889lff.125.2020.10.05.16.16.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Oct 2020 16:16:54 -0700 (PDT)
-Subject: Re: [PATCH v9 00/32] Improvements for Tegra I2C driver
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200929221915.10979-1-digetx@gmail.com>
- <20201005205258.GB1397@kunai>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <60ff95a4-2466-a41f-5496-2474f5a256a8@gmail.com>
-Date:   Tue, 6 Oct 2020 02:16:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ULovZDh4nNXnrhAmYDekggZ1SAII9f678l5WRSniMjQ=;
+        b=jvnp2SaYHCFOnl+Cg5rz1kiDaPp7K+0f7+ac6OS09fb0+WVxCmAn8g8S/nCdVs1dBO
+         c8Br0wQfSDpWJda4K7YwFoXyZH+md4MABRKrrvEhO/TN0BDwHzw22ccOqos8LBdS1fy/
+         oR/AtQn2dT/rBnasOrlCAvVjIIUI8WqSui1m0A/Tqvqu0APT9VEQzfRCp4ZOzw4qo/YQ
+         8UydpkQruPcAO1hKbBj/lYD6YQCAg2/NmALjjg62ljNHNIIVj06eA13gPlMBBWFvu/sf
+         Sabcw6jEAps4oOu6xpyPDf3kcWO+iUOlTPAVYggCRceIMuZrE9uTMfb+FyKywoBr6o9U
+         6xGg==
+X-Gm-Message-State: AOAM5322vV+dv5U7e+F9Vn5xiUGJlf6R6HyvmIyvM6oZ5i/AwkFQVFfs
+        BSUrIGl437LW8ZuQqcT0YkI=
+X-Google-Smtp-Source: ABdhPJzIKzYvGywr9Xvoc+MvkW9hchVKOfUbteeoYw0WFYR6RIRBJDmZRDRkTuoxEOWd9qbYFOe+yQ==
+X-Received: by 2002:a17:902:eeca:b029:d3:d8dd:3e4b with SMTP id h10-20020a170902eecab02900d3d8dd3e4bmr1030261plb.68.1601946048616;
+        Mon, 05 Oct 2020 18:00:48 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id cs21sm3278844pjb.0.2020.10.05.18.00.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Oct 2020 18:00:48 -0700 (PDT)
+Date:   Mon, 5 Oct 2020 17:54:14 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     joro@8bytes.org, digetx@gmail.com, vdumpa@nvidia.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iommu/tegra-smmu: Add PCI support
+Message-ID: <20201006005414.GA28640@Asurada-Nvidia>
+References: <20201002060807.32138-1-nicoleotsuka@gmail.com>
+ <20201002060807.32138-4-nicoleotsuka@gmail.com>
+ <20201005100419.GK425362@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <20201005205258.GB1397@kunai>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201005100419.GK425362@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-05.10.2020 23:52, Wolfram Sang пишет:
-> On Wed, Sep 30, 2020 at 01:18:43AM +0300, Dmitry Osipenko wrote:
->> Hello!
->>
->> This series performs refactoring of the Tegra I2C driver code and hardens
->> the atomic-transfer mode.
+On Mon, Oct 05, 2020 at 12:04:19PM +0200, Thierry Reding wrote:
+> > +err_bus_set: __maybe_unused;
+> > +	bus_set_iommu(&platform_bus_type, NULL);
+> > +err_unregister:
+> > +	iommu_device_unregister(&smmu->iommu);
+> > +err_sysfs:
+> > +	iommu_device_sysfs_remove(&smmu->iommu);
 > 
-> Applied to for-next, thanks to everyone! Please send incremental patches
-> from now on.
+> Can you please switch to label names that are more consistent with the
+> others in this driver? Notably the ones in tegra_smmu_domain_alloc().
+> The idea is to describe in the name of the label what's happening at the
+> label. Something like this, for example:
+> 
+> unset_platform_bus:
+> 	bus_set_iommu(&platform_bus_type, NULL);
+> unregister:
+> 	iommu_device_unregister(&smmu->iommu);
+> remove_sysfs:
+> 	iommu_device_sysfs_remove(&smmu->iommu);
 
-Hello, Wolfram! Thank you! This series started with 10 small patches and
-then was growing with every new review round because more ideas were
-suggested and I needed to rebase/redo majority of the patches, hence it
-was a bit difficult to split it up into a smaller parts that could be
-applied incrementally. But I'll try to improve this in the future, thanks!
-
-> Also, there is this unreviewed series:
-> 
-> http://patchwork.ozlabs.org/project/linux-i2c/list/?series=191802
-> 
-> Is it obsolete by now?
-> 
-
-To be honest, I don't know. The author never answered, guess he may
-reappear sometime in the future with a v2. Those patches need to be
-corrected and rebased.
+Okay. Will update in v7.
