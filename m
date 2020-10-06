@@ -2,131 +2,171 @@ Return-Path: <SRS0=wvja=DN=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9650C4727F
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 13:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B17C4363D
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5D62083B
-	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 13:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85492087E
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Oct 2020 20:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602016477;
+	bh=CxlGuJtgwZDj6aScaFk/pY6ggvjWCQI3GmYPSd+uBos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JLymV75T60a9V5tsF7N1GOqCpACI8fscwA2+3rRm9Hv4iCO/RyQH/F5uAXTG4HTjh
+	 LesxPxrf665p9YmIsakEWdCKeQRRh8+Pzm2Zsr5Jo1BpNYoPY1xpoH0GPtQkDTn+21
+	 iwcIvb74Pzkq/4kbolt2JYDADncCs6R5FP4jro0A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgJFNEe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Oct 2020 09:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbgJFNEd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Oct 2020 09:04:33 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A849C061755;
-        Tue,  6 Oct 2020 06:04:33 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 7ECB0299E5B
-Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-8-andrzej.p@collabora.com>
- <20201005181014.GL1009802@dtor-ws>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <ac4eeab7-8333-b96b-707b-eb2d6d0d8139@collabora.com>
-Date:   Tue, 6 Oct 2020 15:04:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727127AbgJFUeh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 6 Oct 2020 16:34:37 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39557 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbgJFUeh (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Oct 2020 16:34:37 -0400
+Received: by mail-ot1-f65.google.com with SMTP id f10so62056otb.6;
+        Tue, 06 Oct 2020 13:34:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9Bl8Ef7MsrCUl5Y6fQNE2hvCJzehQ4qg3g3ESvM80Lc=;
+        b=qJWiwuSfJsuTEo5/0ZdGXdjgyhCqQyXoP595ntYK/0Agz93Cjasu4+J4h9ZKdLbCvq
+         huQZq/OC8v6qKyxrgqxXfdNxsWyDVrc/uaSjb4Nms772Ue/mbLQxfl8QBHxzhDyxtJf5
+         MbVbnKXNOIugmz08VJU6LszEmDIP2ufONk1QLVgG7osNAdlUN9GovgUJJv0vpyJ/Wq1L
+         ZlwewHzYB51PkO4UuFx7Q+SR2fq937siea7n8z9AZSFN9IG1JB7ZQMf7ZXOss90ynCu2
+         z9tj8rZHQq84/7x9hLC4hp+vdCiq7iI58LkDdCunVq9YXJi0fC1zRCHeuuPtML2Xxbum
+         1S1A==
+X-Gm-Message-State: AOAM533d98fVbPVcvwG32UhXnLQGGwsrolKeR1uRRMC9bwVdX48Te4DZ
+        3NUQbWeqMsNugiCKylRldtWyMa8paBfP
+X-Google-Smtp-Source: ABdhPJysTVo6aPJYaCescnoWvcltcz2t7AvkaOwyZJCnYE7pLEiVUUXMPN/uFUEiRDTj2GvBxcP5TQ==
+X-Received: by 2002:a9d:77d1:: with SMTP id w17mr3473086otl.27.1602016475621;
+        Tue, 06 Oct 2020 13:34:35 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v21sm1605218ots.29.2020.10.06.13.34.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Oct 2020 13:34:34 -0700 (PDT)
+Received: (nullmailer pid 2790213 invoked by uid 1000);
+        Tue, 06 Oct 2020 20:34:33 -0000
+Date:   Tue, 6 Oct 2020 15:34:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com,
+        kuninori.morimoto.gx@renesas.com,
+        pierre-louis.bossart@linux.intel.com, perex@perex.cz,
+        tiwai@suse.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com,
+        rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com,
+        nwartikar@nvidia.com, swarren@nvidia.com, nicoleotsuka@gmail.com
+Subject: Re: [PATCH v3 09/13] ASoC: dt-bindings: tegra: Add schema for audio
+ graph card
+Message-ID: <20201006203433.GA2786434@bogus>
+References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
+ <1601573587-15288-10-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20201005181014.GL1009802@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1601573587-15288-10-git-send-email-spujar@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-W dniu 05.10.2020 o 20:10, Dmitry Torokhov pisze:
-> Hi Andrzej,
+On Thu, Oct 01, 2020 at 11:03:03PM +0530, Sameer Pujar wrote:
+> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
+> same DT bindings provided by generic audio graph driver. Along with this
+> few standard clock DT bindings are added which are specifically required
+> for Tegra audio.
 > 
-> On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
->> @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
->>   	case EV_KEY:
->>   		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
->>   
->> -			/* auto-repeat bypasses state updates */
->> -			if (value == 2) {
->> +			/*
->> +			 * auto-repeat bypasses state updates but repeat
->> +			 * events are ignored if the key is not pressed
->> +			 */
->> +			if (value == 2 && test_bit(code, dev->key)) {
->>   				disposition = INPUT_PASS_TO_HANDLERS;
->>   				break;
->>   			}
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  .../sound/nvidia,tegra-audio-graph-card.yaml       | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
 > 
-> Is this chunk really part of inhibit support? I'd think we cancel
-> autorepeat timer when we are releasing a key, no?
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+> new file mode 100644
+> index 0000000..b73fbe5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Audio Graph based Tegra sound card driver
+> +
+> +description: |
+> +  This is based on generic audio graph card driver along with additional
+> +  customizations for Tegra platforms. It uses the same bindings with
+> +  additional standard clock DT bindings required for Tegra.
+> +
+> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
+> +
+> +maintainers:
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Sameer Pujar <spujar@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra210-audio-graph-card
+> +      - const: nvidia,tegra186-audio-graph-card
+> +
+> +  clocks:
+> +   minItems: 2
+> +
+> +  clock-names:
+> +   minItems: 2
+> +   items:
+> +     - const: pll_a
+> +     - const: plla_out0
+> +
+> +  assigned-clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  assigned-clock-parents:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  assigned-clock-rates:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +  - assigned-clocks
+> +  - assigned-clock-parents
+
+Where's the graph? You need to define the ports and reference the common 
+schema.
+
+> +
+> +examples:
+> +  - |
+> +    #include<dt-bindings/clock/tegra210-car.h>
+> +
+> +    tegra_sound {
+> +        compatible = "nvidia,tegra210-audio-graph-card";
+> +        clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
+> +                 <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
+> +        clock-names = "pll_a", "plla_out0";
+> +        assigned-clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
+> +                          <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
+> +                          <&tegra_car TEGRA210_CLK_EXTERN1>;
+> +        assigned-clock-parents = <0>, <0>, <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
+> +        assigned-clock-rates = <368640000>, <49152000>, <12288000>;
+> +    };
+> +
+> +...
+> -- 
+> 2.7.4
 > 
-
-When I look at it now it seems to me the chunk might be redundant.
-But let me explain what I had in mind when adding it.
-
-It is a matter of what we do with input events generated while a
-device is inhibited. If ->open()/->close() are not provided by the
-driver then inhibiting amounts to merely ignoring input events from
-a device while it remains active. What else can you do if the driver
-does not provide a method to prepare the device for generating events/
-to stop generating events?
-
-In this special case a user might trigger a repeated event while the
-device is inhibited, then the user keeps holding the key down and the
-device is uninhibited. Do we pass anything to handlers then?
-
-In my opinion we should not. Such an event is "illegal" in a sense that it
-was generated at a time when nobody wanted any events from the device.
-Hence the test to let only those auto-repeat events through for which
-a key is actually pressed.
-
-However, what I see now is that if a device is inhibited, no key
-will ever reach neither the "1" nor "2" state because of the "if"
-in the very beginning of input_handle_event().
-
-Regards,
-
-Andrzej
