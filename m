@@ -2,153 +2,105 @@ Return-Path: <SRS0=Z/5G=DO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57CFC4727E
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 07:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5038EC4363C
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 07:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F50D207EA
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 07:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC42E207EA
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 07:22:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XtU5tYzm"
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="lncQ3h3F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbgJGHOB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Oct 2020 03:14:01 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5971 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbgJGHOA (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 03:14:00 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7d6a810001>; Wed, 07 Oct 2020 00:13:05 -0700
-Received: from [10.25.101.204] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Oct
- 2020 07:13:53 +0000
-Subject: Re: [PATCH v3 09/13] ASoC: dt-bindings: tegra: Add schema for audio
- graph card
-To:     Rob Herring <robh@kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <kuninori.morimoto.gx@renesas.com>,
-        <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
-        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
-        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
-        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
-References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
- <1601573587-15288-10-git-send-email-spujar@nvidia.com>
- <20201006203433.GA2786434@bogus>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <a5bc07d8-fb2e-e86e-f0d3-be19166ad7bb@nvidia.com>
-Date:   Wed, 7 Oct 2020 12:43:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727694AbgJGHW3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Oct 2020 03:22:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbgJGHW3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 03:22:29 -0400
+Received: from mail.kmu-office.ch (mail.kmu-office.ch [IPv6:2a02:418:6a02::a2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CDCC061755;
+        Wed,  7 Oct 2020 00:22:29 -0700 (PDT)
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7E91B5C9251;
+        Wed,  7 Oct 2020 09:22:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1602055345;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/dAIqjiicGptdfRu3qYqqJJN23634h4i58r4TShcvuQ=;
+        b=lncQ3h3FO0m7JOx+cvkZtWmAtdtQYPCKzVYKHskh6TiyZtL5ZB/ANfyxe3MlhrgeBVKWE1
+        BJhpaMoqQAzmaIVCpZQvmLeDok4Y1Cm5BEW1eSeqqpHN1W8ozn+gFYPfkRxtJYuNahQCmV
+        r6yQ0iCUiXbEjWMU2GuNAHpi306triE=
 MIME-Version: 1.0
-In-Reply-To: <20201006203433.GA2786434@bogus>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602054785; bh=/ogdgdqjxjkT33GrVdiECGAlj2ugqSEXgT8/zYZImUA=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=XtU5tYzm3GfSAkuTvH6PQaSeYmYjAL/rAufBtULI6I/l1BCpFnrNWb/u2GuIbET8t
-         i9+b6WyIVw6t7dplUat1O/UItoSMD+DLVdQpI/cO+KuU/hnS/2S5nBq68dA2uta/88
-         EFJ7am0x2CxfeZL6GidrchQR7m+aunCB5+y8/ks4sh/U5cMdr7333eVaUndl7oPAeW
-         UXfO6g2OvKhr0dMtWH2w7yvC1UzE/E72L4Le8CnulD1cPXxUlLQR4Lt6S9tZclsBUZ
-         jaix0aRqcfKO+B0Koj1B02Wb6SmWrQin/EkmitiWvaH1osQU03KklCXK3vKK6NA+Qq
-         zglpDOr/HxZMA==
+Date:   Wed, 07 Oct 2020 09:22:25 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bob Ham <rah@settrans.net>,
+        Leonardo Bras <leobras.c@gmail.com>,
+        Michael Brougham <jusplainmike@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Support NVIDIA Tegra-based Ouya game console
+In-Reply-To: <20201004133114.845230-1-pgwipeout@gmail.com>
+References: <20201004133114.845230-1-pgwipeout@gmail.com>
+User-Agent: Roundcube Webmail/1.4.1
+Message-ID: <cdd0f520ae4990de90f461e21cb4f298@agner.ch>
+X-Sender: stefan@agner.ch
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Peter,
 
->> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
->> same DT bindings provided by generic audio graph driver. Along with this
->> few standard clock DT bindings are added which are specifically required
->> for Tegra audio.
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> ---
->>   .../sound/nvidia,tegra-audio-graph-card.yaml       | 70 ++++++++++++++++++++++
->>   1 file changed, 70 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->> new file mode 100644
->> index 0000000..b73fbe5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
->> @@ -0,0 +1,70 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Audio Graph based Tegra sound card driver
->> +
->> +description: |
->> +  This is based on generic audio graph card driver along with additional
->> +  customizations for Tegra platforms. It uses the same bindings with
->> +  additional standard clock DT bindings required for Tegra.
->> +
->> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
->> +
->> +maintainers:
->> +  - Jon Hunter <jonathanh@nvidia.com>
->> +  - Sameer Pujar <spujar@nvidia.com>
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - const: nvidia,tegra210-audio-graph-card
->> +      - const: nvidia,tegra186-audio-graph-card
->> +
->> +  clocks:
->> +   minItems: 2
->> +
->> +  clock-names:
->> +   minItems: 2
->> +   items:
->> +     - const: pll_a
->> +     - const: plla_out0
->> +
->> +  assigned-clocks:
->> +    minItems: 1
->> +    maxItems: 3
->> +
->> +  assigned-clock-parents:
->> +    minItems: 1
->> +    maxItems: 3
->> +
->> +  assigned-clock-rates:
->> +    minItems: 1
->> +    maxItems: 3
->> +
->> +required:
->> +  - compatible
->> +  - clocks
->> +  - clock-names
->> +  - assigned-clocks
->> +  - assigned-clock-parents
-> Where's the graph? You need to define the ports and reference the common
-> schema.
+On 2020-10-04 15:31, Peter Geis wrote:
+> Good Day,
+> 
+> This series introduces upstream kernel support for the Ouya game
+> console device. Please review and apply. Thank you in advance.
 
-I am looking to reference the bindings used in below doc which is not 
-yet in YAML format. Only additional properties I listed here.
-{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
+Interesting patchset, maybe I can give my Ouya a second live now :-) Do
+you happen to have (a link) to instructions how to flash the device?
 
-Should I keep this doc to *.txt format as well and later move to YAML or 
-is there a way to reference *.txt doc here?
+Btw, there was also a driver for the Bluetooth controller on the ML
+once, maybe a good time to revive that:
+https://spinics.net/lists/linux-input/msg56288.html
 
+--
+Stefan
+
+> 
+> Changelog:
+> v3: - Reorder aliases per Dmitry Osipenko's review.
+>     - Add sdio clocks per Dmitry Osipenko's review.
+>     - Add missing ti sleep bits per Dmitry Osipenko's review.
+>     - Enable lp1 sleep mode.
+>     - Fix bluetooth comment and add missing power supplies.
+> 
+> v2: - Update pmic and clock handles per Rob Herring's review.
+>     - Add acks from Rob Herring to patch 2 and 3.
+> 
+> Peter Geis (3):
+>   ARM: tegra: Add device-tree for Ouya
+>   dt-bindings: Add vendor prefix for Ouya Inc.
+>   dt-bindings: ARM: tegra: Add Ouya game console
+> 
+>  .../devicetree/bindings/arm/tegra.yaml        |    3 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+>  arch/arm/boot/dts/Makefile                    |    3 +-
+>  arch/arm/boot/dts/tegra30-ouya.dts            | 4511 +++++++++++++++++
+>  4 files changed, 4518 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
