@@ -2,171 +2,196 @@ Return-Path: <SRS0=Z/5G=DO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F528C3279D
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 01:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42475C4727E
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 04:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC5520882
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 01:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077AD21548
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 04:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZ5McIJk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Qw28XsTo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgJGBMz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 6 Oct 2020 21:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbgJGBMy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 6 Oct 2020 21:12:54 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8F2C061755;
-        Tue,  6 Oct 2020 18:12:54 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id ds1so213522pjb.5;
-        Tue, 06 Oct 2020 18:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mhoMukFtXUDnoxYBeSc1gCnHDJjh2RBWkCrpacxBvgc=;
-        b=BZ5McIJk7M9QpLpb5KoCQkdxJYiPrNQhgs5cl4vLLWytK5VF9kyh4DJe1g7PqgOdHJ
-         vi9SNcnbS6RVeKxhRm1gfXYW/1MobIU3emLb+keannjof0F62HLir3wvH+3R+JnKfDDw
-         hUuIq3r2W7hYuJwomu2PHIw9cHJh2bCarSSmPf2vcxlwhVYPy1B59pQCZh88VJfxM+SH
-         P3U1OKhTrqq3QQBPtMpZx/3RzdSMWOBjkBQktmI99bmH+2SMTqoB4KKC16f0DxyVah5V
-         LrrH+r9brZLGlfmZ2vd2w1S9l0EWtUIDgohzA1Ws4rcazlyeai7Bzg+4oBQf9+qgFD1f
-         D10A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mhoMukFtXUDnoxYBeSc1gCnHDJjh2RBWkCrpacxBvgc=;
-        b=tS0Ml+Y0Dw5j/SRwEKUylvVONA0aagIP22QfpHoSXqFa8exJjA/tqhzLKB8yU9wct1
-         uYocjmb0NrgxGzIt5B6ymksQzt9M2YT22LUJ6MzZK8tUzE4xexOiWtDKgoHbgs/ImV2c
-         cuLiB0qoM/e6mLec82qEARigL5Q/t8om6XLMgYdSd79Uho4bKKt4GPgivgY01YypHxHq
-         20W3bNbKPla4VKtYgu3D1MYMFG50Ktg5G9aHRPCaX015QBvwdGFA0RMftu0ldlkTIrTU
-         sGh2imjbHZL5r0TwHXglLQGqWc2001aPQuMamSb0ZeF4c/YVtXb6n8KQj1BQPKjsGpsb
-         BsBQ==
-X-Gm-Message-State: AOAM533lTQL+SB9+qiMJ8Rlk6VQ2zDJElYD9jHKylAvSU3yedmxTbAjP
-        8oKY4HvzTy7UsrJ9vtOxzek=
-X-Google-Smtp-Source: ABdhPJy4dLisQACUERV0GxDAYvpdj82oBH4eI0zaGWCX8W7avrgYWVStQLex6A0apJQoB8lnZYPvuA==
-X-Received: by 2002:a17:90a:1a02:: with SMTP id 2mr708050pjk.201.1602033174099;
-        Tue, 06 Oct 2020 18:12:54 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id f17sm412371pgd.86.2020.10.06.18.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 18:12:53 -0700 (PDT)
-Date:   Tue, 6 Oct 2020 18:12:49 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
-Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
-Message-ID: <20201007011249.GS1009802@dtor-ws>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-8-andrzej.p@collabora.com>
- <20201005181014.GL1009802@dtor-ws>
- <ac4eeab7-8333-b96b-707b-eb2d6d0d8139@collabora.com>
- <20201007011102.GR1009802@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201007011102.GR1009802@dtor-ws>
+        id S1726864AbgJGExu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Oct 2020 00:53:50 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:56317 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgJGExu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 00:53:50 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201007045347epoutp043a9b9a731572a853f3d388ea8927e23d~7nLzOcNrP2056120561epoutp04O
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2020 04:53:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201007045347epoutp043a9b9a731572a853f3d388ea8927e23d~7nLzOcNrP2056120561epoutp04O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1602046427;
+        bh=wkRAS5+UPLdtUDs4UJT4JQOyIRjxqkddK6E3soMuPAs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Qw28XsToECwwaTNnu4o4jULnPAS5gOLc45PoO+h/9/sIKb0N/DhOeCRoIgx7Dr1XB
+         ylnrRuZYmt8sfifZIOoEJQccH3C8FifGNRBz3BrebWCVPaIzsTxH8qCesnEnmaf3xV
+         POzUGlD6f4pw+Awmsjp9PBd7Otgvls+8nxohRgjg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20201007045346epcas1p35f4fd1e681730f5729ebf44df106ee18~7nLykxG682102521025epcas1p3v;
+        Wed,  7 Oct 2020 04:53:46 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4C5hn242xnzMqYkV; Wed,  7 Oct
+        2020 04:53:42 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3E.66.10463.5D94D7F5; Wed,  7 Oct 2020 13:53:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20201007045340epcas1p32326a90323a3313f39041e3699e477f0~7nLs3IVob1699316993epcas1p3b;
+        Wed,  7 Oct 2020 04:53:40 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201007045340epsmtrp13533e2cd01091dc63ca05067595ea932~7nLs2MsFS1492114921epsmtrp10;
+        Wed,  7 Oct 2020 04:53:40 +0000 (GMT)
+X-AuditID: b6c32a38-f11ff700000028df-09-5f7d49d50cce
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1E.99.08745.4D94D7F5; Wed,  7 Oct 2020 13:53:40 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201007045340epsmtip292615296ae22a1d7e8debe7878389649~7nLsipw_g2037420374epsmtip2y;
+        Wed,  7 Oct 2020 04:53:40 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     digetx@gmail.com, leonard.crestez@nxp.com, lukasz.luba@arm.com,
+        enric.balletbo@collabora.com, hl@rock-chips.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, abel.vesa@nxp.com,
+        k.konieczny@samsung.com, b.zolnierkie@samsung.com,
+        cw00.choi@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Subject: [PATCH v3 0/2] PM / devfreq: Add governor feature and attribute
+ flag
+Date:   Wed,  7 Oct 2020 14:07:01 +0900
+Message-Id: <20201007050703.20759-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxiHOW3vbTGpuRTmzpqJXeecNGtpKe2uji4mY9tdMJNNZzI3V+7g
+        Whj9Sm/LppNEoDCpKGMmjlTpQFGhsPExlJagZUCBSjAiU/lIo8twwCKNtEz3xVzrxWz/PXnP
+        8zvvOe85PLbgOCrkFRitlMVI6sXoGs7FgRSp9MZbxVp5xV0UP3fdD/CO2jYEr5n8kYPfWp5D
+        8JalnwHeOtMP8N/br7Bxu/M0B68P1yL4WOk9Lt4UXELwiZ5TKB45OgjwymUnijeU2rn4TEkT
+        iv/R4+JsSyBaXa2A8AQbAeF1BrlEp7sSJY6WhVCiI+RhEStOH4c41uUGRKQzOTt+T2FGPkXm
+        URYRZcw15RUYdRpx1k7ta1qVWq6QKrbgL4tFRtJAacSZ27OlbxToo5cRi4pIvS1ayiZpWpz6
+        aobFZLNSonwTbdWIKXOe3rzFLKNJA20z6mS5JsNWhVyepoqKOYX5K/9MIuaOZz8bvzLNOgTm
+        Ex0gngexdDg1f58VYwHmAbD+gpThMICnSzEHWBPlCIBTnhbkSWDM70QYqQfA0O3XGWkZwJG+
+        YRBbQDEJ9M1Pog7A4yVh78OyQELMYWPjLFgXbOLGnERsB1y6PM6OMQd7AQ6HJ7kxn49thUPf
+        b2N6bYAt7X3sWBZidTz4TdOR1UNkwksnugHDifDX4S4uw0K4UF2xyp/D5sAgyoQPA9jlu7Ya
+        VkLf2eOsWDM2lgLbelKZ8nPQ+1fd4z3Z2FoY+q0KiSkQ48PDFQJGeR5O3AmyGH4GnvmiEmWY
+        gIHeIygzk73Q1fsQfAnWO/9rUA+AG6yjzLRBR9EKc/r/n6gTPP6dEtwD6hbvy/oBiwf6AeSx
+        xUl8XdZBrYCfR+4/QFlMWotNT9H9QBWdVw1b+FSuKfq9jVatQpWmVCrxdIVapVCIn+b/NC3S
+        CjAdaaUKKcpMWZ7kWLx44SHWwfdsmt2oBkTs58ovn1e869dnOH+Ya5510zc5XtqwMprZu/Gj
+        a2rLvtsX35akhQKbRqp3ZPn3L1Ks3Y3ygZp3hoe46WeLPzz/abPfnVDFK1y/MSeZijN2viLz
+        ac8I/dY97Q1rF6Yiu1La/TdLT/jcJaJHNtHJ7usvlpdg5ZFLsw1W+m+H+8+gcCDOfvXrrzZv
+        GMWsfRPq8L2dgrSUR5+oLsxO3xAd8PiMyYj6lzbSe7dq6FvXot+7bp8uMCprDfWevDOz0Dym
+        LmrsCtmTigcfLm2WfFfruqX/YHbO8WCMuBrMeak6VVm+En7A/VhYtuvNQG23p3okrihnL9jU
+        p0fEHDqfVEjYFpr8F2Jw+3UmBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsWy7bCSvO4Vz9p4g7YJvBbLLh1ltNg4Yz2r
+        xcQbV1gsrn95zmqx+uNjRos1tw8xWvzYcIrZomXWIhaLBZ9msFqcbXrDbrHi7kdWi8u75rBZ
+        fO49wmjR+WUWm8XCphZ2i9uNK9gsfu6ax+Ig6LFm3hpGjx13lzB67Jx1l91j06pONo/e5nds
+        Hhvf7WDy+DtrP4tH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVwZfz9d4O1YKNMxcVTt5gaGF8I
+        dzFyckgImEicPTqLtYuRi0NIYAejxNINu1khEpIS0y4eZe5i5ACyhSUOHy4GCQsJfGKU2LSD
+        CcRmE9CS2P/iBhuILSIQLbH440dmkDnMAo+ZJPbfusIOkhAW8JX48egsWBGLgKrE8U832EFm
+        8gpYSRzb7ACxSl5i9YYDzBMYeRYwMqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgO
+        Zy2tHYx7Vn3QO8TIxMF4iFGCg1lJhDfduyZeiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/XWQvj
+        hATSE0tSs1NTC1KLYLJMHJxSDUybfgTsb3mjs26v3t8v8U4ai+WOvj0vqdZw8uaLvaUHNnHt
+        Xr1tclLX51l6lXunmn5grvENjLl84axwXNf/sg8729js19XpdC/U/SuwYjZXQF//R/OKW7kO
+        i1m59zioiEg0H7c+nxL3yb6Drexf79f+yF+RhxpfP95oMfGtlkDdRub48iZmdRnfZTNucrNa
+        mG7Lej9l8ul3OxZU5ao51VuvOme5fIHkvaLJyy3OlHnOnBL2uVlmtatN11rHhX8F7s3fqDH9
+        icrc8vN6MzUrXvZPeaW4dKoLZ2hzX1/GhDjmqdOn8DHIRZZnHS+Ov61ququ4d9/OiW8s9or+
+        eldSW3szWf+jyfLoQP1TF09x2j1XYinOSDTUYi4qTgQAfaFwi9YCAAA=
+X-CMS-MailID: 20201007045340epcas1p32326a90323a3313f39041e3699e477f0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201007045340epcas1p32326a90323a3313f39041e3699e477f0
+References: <CGME20201007045340epcas1p32326a90323a3313f39041e3699e477f0@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 06:11:02PM -0700, Dmitry Torokhov wrote:
-> On Tue, Oct 06, 2020 at 03:04:28PM +0200, Andrzej Pietrasiewicz wrote:
-> > Hi Dmitry,
-> > 
-> > W dniu 05.10.2020 o 20:10, Dmitry Torokhov pisze:
-> > > Hi Andrzej,
-> > > 
-> > > On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
-> > > > @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
-> > > >   	case EV_KEY:
-> > > >   		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
-> > > > -			/* auto-repeat bypasses state updates */
-> > > > -			if (value == 2) {
-> > > > +			/*
-> > > > +			 * auto-repeat bypasses state updates but repeat
-> > > > +			 * events are ignored if the key is not pressed
-> > > > +			 */
-> > > > +			if (value == 2 && test_bit(code, dev->key)) {
-> > > >   				disposition = INPUT_PASS_TO_HANDLERS;
-> > > >   				break;
-> > > >   			}
-> > > 
-> > > Is this chunk really part of inhibit support? I'd think we cancel
-> > > autorepeat timer when we are releasing a key, no?
-> > > 
-> > 
-> > When I look at it now it seems to me the chunk might be redundant.
-> > But let me explain what I had in mind when adding it.
-> > 
-> > It is a matter of what we do with input events generated while a
-> > device is inhibited. If ->open()/->close() are not provided by the
-> > driver then inhibiting amounts to merely ignoring input events from
-> > a device while it remains active. What else can you do if the driver
-> > does not provide a method to prepare the device for generating events/
-> > to stop generating events?
-> > 
-> > In this special case a user might trigger a repeated event while the
-> > device is inhibited, then the user keeps holding the key down and the
-> > device is uninhibited. Do we pass anything to handlers then?
-> > 
-> > In my opinion we should not. Such an event is "illegal" in a sense that it
-> > was generated at a time when nobody wanted any events from the device.
-> > Hence the test to let only those auto-repeat events through for which
-> > a key is actually pressed.
-> > 
-> > However, what I see now is that if a device is inhibited, no key
-> > will ever reach neither the "1" nor "2" state because of the "if"
-> > in the very beginning of input_handle_event().
-> 
-> OK, then let's drop it for now. We can revisit if we see that a problem.
+Each devfreq governor can have the different sysfs attributes and features.
+In order to provide the only available sysfs attribute to user-space,
+add governor attribute flag with DEVFREQ_GOV_ATTR_[attribute name] defintion.
 
-And by that I mean that I will drop it myself, no need to resend. I will
-be applying this shortly.
+Also, each governor is able to have the specific flag in order to
+support specific feature with DEVFREQ_GOV_FLAG_[feature name] defintion
+like immutable governor.
 
-Thanks.
+According to each governor, can initiate the governor feature and attribute
+flags.
+
+[Common sysfs attributes for devfreq class]
+And all devfreq governors have to support the following common attributes.
+The common attributes are added to devfreq class by default.
+- governor
+- available_governors
+- available_frequencies
+- cur_freq
+- target_freq
+- min_freq
+- max_freq
+- trans_stat
+
+[Definition for governor attribute flag]
+- DEVFREQ_GOV_ATTR_POLLING_INTERVAL to update polling interval for timer.
+  : /sys/class/devfreq/[devfreq dev name]/polling_interval
+- DEVFREQ_GOV_ATTR_TIMER to change the type of timer on either deferrable
+  or dealyed timer.
+  : /sys/class/devfreq/[devfreq dev name]/timer
+
+[Definition for governor feature flag]
+- DEVFREQ_GOV_FLAG_IMMUTABLE
+  : If immutable flag is set, governor is never changeable to other governors.
+- DEVFREQ_GOV_FLAG_IRQ_DRIVEN
+  : Devfreq core won't schedule polling work for this governor if value is set.
+
+[Table of governor attribute flags for evfreq governors]
+-----------------------------------------------------------------------------
+                      | simple    | perfor | power | user | passive | tegra30
+		      | ondemand  | mance  | save  | space|         |
+------------------------------------------------------------------------------
+governor              | O         | O      | O     | O    | O       | O
+available_governors   | O         | O      | O     | O    | O       | O
+available_frequencies | O         | O      | O     | O    | O       | O
+cur_freq              | O         | O      | O     | O    | O       | O
+target_freq           | O         | O      | O     | O    | O       | O
+min_freq              | O         | O      | O     | O    | O       | O
+max_freq              | O         | O      | O     | O    | O       | O
+trans_stat            | O         | O      | O     | O    | O       | O
+------------------------------------------------------------------------------
+polling_interval      | O         | X      | X     | X    | X       | O
+timer                 | O         | X      | X     | X    | X       | X
+------------------------------------------------------------------------------
+immutable             | X         | X      | X     | X    | O       | O
+interrupt_driven      | X(polling)| X      | X     | X    | X       | O (irq)
+------------------------------------------------------------------------------
+
+Changes from v2:
+- https://lkml.org/lkml/2020/7/13/285 ("[PATCH v2 0/2] PM / devfreq: Add governor flags")
+- Hide unsupported sysfs node to user-space instead of checking the permission
+of sysfs node.
+
+Chanwoo Choi (2):
+  PM / devfreq: Add governor feature flag
+  PM / devfreq: Add governor attribute flag for specifc sysfs nodes
+
+ Documentation/ABI/testing/sysfs-class-devfreq |  54 +++---
+ drivers/devfreq/devfreq.c                     | 170 +++++++++++-------
+ drivers/devfreq/governor.h                    |  30 +++-
+ drivers/devfreq/governor_passive.c            |   2 +-
+ drivers/devfreq/governor_simpleondemand.c     |   2 +
+ drivers/devfreq/tegra30-devfreq.c             |   5 +-
+ 6 files changed, 171 insertions(+), 92 deletions(-)
 
 -- 
-Dmitry
+2.17.1
+
