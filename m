@@ -2,136 +2,96 @@ Return-Path: <SRS0=Z/5G=DO=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A2DC4363C
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 08:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31861C4363C
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 09:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1F2F21D92
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 08:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF5A420870
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 09:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602060833;
-	bh=xcYFST4YZ+qt7XrJpNgrw7ltFAWNOwJPWgwK/Lvl5k4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=fYHUFKxp9mIlF2HOMJSkSjpFG9zx+lKAiyYYWDw81xW8k+8L/j+0S1XUM59RWe6AK
-	 pCuE4Ipm5//LERRuXjb/D/DkP7DLPZtNjOctu506UrOpZuMj/n8N7jHOkH4JmLo39k
-	 +NJNbeYIaFirPIUd4TL7qwfreWQy/bvVx3SIH9W4=
+	s=default; t=1602061921;
+	bh=osYByLtBDpMOs1YNcRCYEpOPa7uW5uENulIzE5srqWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oTwhoGkYIzM/R79Lws7pN9fuAnQKv7d3XJwA8ERv9qzDfGN39xdDinelPLZ/j79K6
+	 VPESAxx4Aaa7THbdujBOHhxcEv5x0SqflRZSBZ8BDSsS7y37BDKEmad2+VlJTyE9eh
+	 5Lb/LyjzhjL+7nH5v8I9e+CHsYkNAYqM1gZ++5TM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgJGIxx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Oct 2020 04:53:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40828 "EHLO mail.kernel.org"
+        id S1726463AbgJGJMB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Oct 2020 05:12:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbgJGIxx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 7 Oct 2020 04:53:53 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        id S1726302AbgJGJMB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 7 Oct 2020 05:12:01 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D78DB21D7A;
-        Wed,  7 Oct 2020 08:53:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67EF6204EC;
+        Wed,  7 Oct 2020 09:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602060832;
-        bh=xcYFST4YZ+qt7XrJpNgrw7ltFAWNOwJPWgwK/Lvl5k4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IrHPWfp++rFwKXKCJsCgS7gbvfpXwW0IBRtvEDh3jmgFaYzfAPEATaClxn63tvvbs
-         9o5J8UwRcGtH99ZKDi8MIGbKJh+fSjDhCvyELAxsSFMKC8CV7EpNWyosO5qUKRtkuI
-         L51AQtKPZW+5jE3xs9Ar03VPf3RwMzyitnFGauas=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kQ5Cn-000Iql-PM; Wed, 07 Oct 2020 09:53:49 +0100
+        s=default; t=1602061920;
+        bh=osYByLtBDpMOs1YNcRCYEpOPa7uW5uENulIzE5srqWs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZbN/CTKvoac6Q+124snHo7uH5cClGv65gFlvNr0qF4imRj4cXln44uzLBsEGp7iEv
+         1iJX6QhwfKjN6JbmbcfOc9r7sW2CDTBCsok7iwhUdpU3U1Y+eaCJwzczh0gJVnP4Ew
+         dA6Uwv4Dc2tZ/+7Qedv+J7w42J06uqaXNBhUzBZU=
+Date:   Wed, 7 Oct 2020 11:12:45 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        pavel@denx.de, stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.8 00/85] 5.8.14-rc1 review
+Message-ID: <20201007091245.GE614379@kroah.com>
+References: <20201005142114.732094228@linuxfoundation.org>
+ <6d5c5d01ce7c4108b8610141d8c8648d@HQMAIL109.nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 07 Oct 2020 09:53:49 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Venkat Reddy Talla <vreddytalla@nvidia.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 1/4] genirq/irqdomain: Allow partial trimming of
- irq_data hierarchy
-In-Reply-To: <10788c0d08fccbcbc1ac590a855e70d3@kernel.org>
-References: <20201006101137.1393797-1-maz@kernel.org>
- <20201006101137.1393797-2-maz@kernel.org>
- <87eemb6qdj.fsf@nanos.tec.linutronix.de>
- <10788c0d08fccbcbc1ac590a855e70d3@kernel.org>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <738593a42b62ea7905e4a680775cb996@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, skomatineni@nvidia.com, vreddytalla@nvidia.com, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d5c5d01ce7c4108b8610141d8c8648d@HQMAIL109.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-10-07 09:05, Marc Zyngier wrote:
-> On 2020-10-06 21:39, Thomas Gleixner wrote:
->> On Tue, Oct 06 2020 at 11:11, Marc Zyngier wrote:
->>> It appears that some HW is ugly enough that not all the interrupts
->>> connected to a particular interrupt controller end up with the same
->>> hierarchy repth (some of them are terminated early). This leaves
->> 
->>   depth?
->> 
->>> the irqchip hacker with only two choices, both equally bad:
->>> 
->>> - create discrete domain chains, one for each "hierarchy depth",
->>>   which is very hard to maintain
->>> 
->>> - create fake hierarchy levels for the shallow paths, leading
->>>   to all kind of problems (what are the safe hwirq values for these
->>>   fake levels?)
->>> 
->>> Instead, let's offer the possibility to cut short a single interrupt
->> 
->> s/let's offer/implement/
+On Mon, Oct 05, 2020 at 05:50:43PM +0000, Jon Hunter wrote:
+> On Mon, 05 Oct 2020 17:25:56 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.8.14 release.
+> > There are 85 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 07 Oct 2020 14:20:55 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.8.14-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.8.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Thanks for that, I'll fix it locally.
+> All tests passing for Tegra ...
 > 
-> [...]
+> Test results for stable-v5.8:
+>     15 builds:	15 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     60 tests:	60 pass, 0 fail
 > 
->> This is butt ugly, really. Especially the use case where the tegra PMC
->> domain removes itself from the hierarchy from .alloc()
+> Linux version:	5.8.14-rc1-g8bb413de12d0
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
 > 
-> I don't disagree at all. It is both horrible and dangerous.
-> 
-> My preference would have been to split the PMC domain into discrete
-> domains, each one having having its own depth. But that's incredibly
-> hard to express in DT, and would break the combination of old/new
-> DT and kernel.
-> 
->> That said, I don't have a better idea either. Sigh...
-> 
-> A (very minor) improvement would be to turn the trim call in the PMC 
-> driver into
-> a flag set in the first invalid irq_data structure, and let
-> __irq_domain_alloc_irqs() do the dirty work.
-> 
-> Still crap, but at least would prevent some form of abuse. Thoughts?
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Actually, I wonder whether we can have a more general approach:
+Thanks for testing these so quickly and letting me know.
 
-A partial hierarchy that doesn't have an irq_data->chip pointer 
-populated
-cannot be valid. So I wonder if the least ugly thing to do is to just 
-drop
-any messing about in the PMC driver, and instead to let 
-__irq_domain_alloc_irqs()
-do the culling, always, by looking for a NULL pointer in irq_data->chip.
-
-Not any less ugly, but at least doesn't need any driver intervention.
-
-          M.
--- 
-Jazz is not dead. It just smells funny...
+greg k-h
