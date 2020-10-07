@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFEAC4727F
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E21DC47426
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD1C521582
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2067621582
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="tQvAMglZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="VGkHHJ2F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbgJGRR2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Oct 2020 13:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57888 "EHLO
+        id S1728000AbgJGRRX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Oct 2020 13:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728114AbgJGRR1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 13:17:27 -0400
+        with ESMTP id S1727732AbgJGRRW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 13:17:22 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB98C0613D9
-        for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2020 10:17:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE75C0613D5
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2020 10:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=YQ0EIhPEW36Bi6dN6vdj/+iK0R8rqmvsnZ8gGpUrfJo=; b=tQvAMglZTl2MY6aKKvU7KUIbIH
-        y2OS51pmM2cF7d1zrxlmkMUv9MakeiGHw4dCSIto7TsBVLDcKGJ8ozrLFtqdcA2TbkIn554Y3cs+E
-        JM/SKTFiw0HUvz+eW1SnBANzROICXP5d60Ox52+afWYCVYdzJVfPjxi/1URRwKtPJZwBT4pFFWMWK
-        LsXqBc9oqL3al7jKtmm9O9aYmgWZff1GmO4QGBEaYh5vSQk/w5l/hDKEDlgF3QCF81y4Z5UOVxLQt
-        Vg4wtRouUYmxzPFoLZ9llRxMFyiDTTCrwlnPOk0g+awVpXXWXXshWXxPGvfB3wzX1yIpdHAa+11HQ
-        V/PHb8Cg==;
+        bh=S0t8ZPzt4VTfUn3m0ydcvIR2pO0GfgWwf7E1oEaoMpY=; b=VGkHHJ2Fp+76ZIYvYEQkVC1VeJ
+        41bze8B9J+4EIEJRteOsKa2WR774s9XIOMMQbVt1i7Aui2viQ7R2S1tD3UKDxkrsClnt7UetPL8jP
+        zR0xNuvNMfiPOkPFebqUA/jsFNM2Vo9ZhnDq6ank/U/Xe3I0t+R+hawxsWZxmlwSzXvfEUVJyvkjc
+        vCmzfegtqD/OOxuME6ekyqP6Y93QhUR6p9qm+2PmLcvDaBSUiU5mYlgGaV0CCufZ+gmGa+uaB3ES/
+        FdifFOGkePNsh/M5B9YWljZjhEC1Jitlw23KJ697ReklyOogIBvKv9ESp0Oji56Zy3nkvM+kRmHnJ
+        l1YcJmWg==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kQD41-0006P9-FJ; Wed, 07 Oct 2020 20:17:17 +0300
+        id 1kQD3z-0006P9-Sg; Wed, 07 Oct 2020 20:17:15 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 20/20] drm/tegra: Add job firewall
-Date:   Wed,  7 Oct 2020 20:12:38 +0300
-Message-Id: <20201007171238.1795964-21-mperttunen@nvidia.com>
+Subject: [PATCH v3 05/20] gpu: host1x: Use HW-equivalent syncpoint expiration check
+Date:   Wed,  7 Oct 2020 20:12:23 +0300
+Message-Id: <20201007171238.1795964-6-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201007171238.1795964-1-mperttunen@nvidia.com>
 References: <20201007171238.1795964-1-mperttunen@nvidia.com>
@@ -62,272 +62,88 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a firewall that validates jobs before submission to ensure
-they don't do anything they aren't allowed to do, like accessing
-memory they should not access.
+Make syncpoint expiration checks always use the same logic used by
+the hardware. This ensures that there are no race conditions that
+could occur because of the hardware triggering a syncpoint interrupt
+and then the driver disagreeing.
 
-The firewall is functionality-wise a copy of the firewall already
-implemented in gpu/host1x. It is copied here as it makes more
-sense for it to live on the DRM side, as it is only needed for
-userspace job submissions, and generally the data it needs to
-do its job is easier to access here.
-
-In the future, the other implementation will be removed.
+One situation where this could occur is if a job incremented a
+syncpoint too many times -- then the hardware would trigger an
+interrupt, but the driver would assume that a syncpoint value
+greater than the syncpoint's max value is in the future, and not
+clean up the job.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v3:
-* New patch
----
- drivers/gpu/drm/tegra/Makefile        |   1 +
- drivers/gpu/drm/tegra/uapi/firewall.c | 197 ++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/uapi/submit.c   |   4 +
- drivers/gpu/drm/tegra/uapi/submit.h   |   3 +
- 4 files changed, 205 insertions(+)
- create mode 100644 drivers/gpu/drm/tegra/uapi/firewall.c
+ drivers/gpu/host1x/syncpt.c | 51 ++-----------------------------------
+ 1 file changed, 2 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 059322e88943..4e3295f436f1 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -5,6 +5,7 @@ tegra-drm-y := \
- 	drm.o \
- 	uapi/uapi.o \
- 	uapi/submit.o \
-+	uapi/firewall.o \
- 	uapi/gather_bo.o \
- 	gem.o \
- 	fb.o \
-diff --git a/drivers/gpu/drm/tegra/uapi/firewall.c b/drivers/gpu/drm/tegra/uapi/firewall.c
-new file mode 100644
-index 000000000000..a9c5b71bc235
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/uapi/firewall.c
-@@ -0,0 +1,197 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2010-2020 NVIDIA Corporation */
-+
-+#include "../drm.h"
-+#include "../uapi.h"
-+
-+#include "submit.h"
-+
-+struct tegra_drm_firewall {
-+	struct tegra_drm_submit_data *submit;
-+	struct tegra_drm_client *client;
-+	u32 *data;
-+	u32 pos;
-+	u32 end;
-+};
-+
-+static int fw_next(struct tegra_drm_firewall *fw, u32 *word)
-+{
-+	if (fw->pos == fw->end)
-+		return -EINVAL;
-+
-+	*word = fw->data[fw->pos++];
-+
-+	return 0;
-+}
-+
-+static bool fw_check_addr_valid(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < fw->submit->num_used_mappings; i++) {
-+		struct tegra_drm_mapping *m = fw->submit->used_mappings[i].mapping;
-+
-+		if (offset >= m->iova && offset <= m->iova_end)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int fw_check_reg(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	bool is_addr;
-+	u32 word;
-+	int err;
-+
-+	err = fw_next(fw, &word);
-+	if (err)
-+		return err;
-+
-+	if (!fw->client->ops->is_addr_reg)
-+		return 0;
-+
-+	is_addr = fw->client->ops->is_addr_reg(
-+		fw->client->base.dev, fw->client->base.class, offset);
-+
-+	if (!is_addr)
-+		return 0;
-+
-+	if (!fw_check_addr_valid(fw, word))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_seq(struct tegra_drm_firewall *fw, u32 offset,
-+			     u32 count, bool incr)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (fw_check_reg(fw, offset))
-+			return -EINVAL;
-+
-+		if (incr)
-+			offset++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_mask(struct tegra_drm_firewall *fw, u32 offset,
-+			      u16 mask)
-+{
-+	unsigned long bmask = mask;
-+	unsigned int bit;
-+
-+	for_each_set_bit(bit, &bmask, 16) {
-+		if (fw_check_reg(fw, offset+bit))
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_imm(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	bool is_addr;
-+
-+	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev,
-+					       fw->client->base.class, offset);
-+	if (is_addr)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+enum {
-+        HOST1X_OPCODE_SETCLASS  = 0x00,
-+        HOST1X_OPCODE_INCR      = 0x01,
-+        HOST1X_OPCODE_NONINCR   = 0x02,
-+        HOST1X_OPCODE_MASK      = 0x03,
-+        HOST1X_OPCODE_IMM       = 0x04,
-+        HOST1X_OPCODE_RESTART   = 0x05,
-+        HOST1X_OPCODE_GATHER    = 0x06,
-+        HOST1X_OPCODE_SETSTRMID = 0x07,
-+        HOST1X_OPCODE_SETAPPID  = 0x08,
-+        HOST1X_OPCODE_SETPYLD   = 0x09,
-+        HOST1X_OPCODE_INCR_W    = 0x0a,
-+        HOST1X_OPCODE_NONINCR_W = 0x0b,
-+        HOST1X_OPCODE_GATHER_W  = 0x0c,
-+        HOST1X_OPCODE_RESTART_W = 0x0d,
-+        HOST1X_OPCODE_EXTEND    = 0x0e,
-+};
-+
-+int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
-+			  u32 words, struct tegra_drm_submit_data *submit)
-+{
-+	struct tegra_drm_firewall fw = {
-+		.submit = submit,
-+		.client = client,
-+		.data = data,
-+		.pos = start,
-+		.end = start+words,
-+	};
-+	bool payload_valid = false;
-+	u32 payload;
-+	int err;
-+
-+	while (fw.pos != fw.end) {
-+		u32 word, opcode, offset, count, mask;
-+
-+		err = fw_next(&fw, &word);
-+		if (err)
-+			return err;
-+
-+		opcode = (word & 0xf0000000) >> 28;
-+
-+		switch (opcode) {
-+		case HOST1X_OPCODE_INCR:
-+			offset = (word >> 16) & 0xfff;
-+			count = word & 0xffff;
-+			err = fw_check_regs_seq(&fw, offset, count, true);
-+			break;
-+		case HOST1X_OPCODE_NONINCR:
-+			offset = (word >> 16) & 0xfff;
-+			count = word & 0xffff;
-+			err = fw_check_regs_seq(&fw, offset, count, false);
-+			break;
-+		case HOST1X_OPCODE_MASK:
-+			offset = (word >> 16) & 0xfff;
-+			mask = word & 0xffff;
-+			err = fw_check_regs_mask(&fw, offset, mask);
-+			break;
-+		case HOST1X_OPCODE_IMM:
-+			/* IMM cannot reasonably be used to write a pointer */
-+			offset = (word >> 16) & 0xfff;
-+			err = fw_check_regs_imm(&fw, offset);
-+			break;
-+		case HOST1X_OPCODE_SETPYLD:
-+			payload = word & 0xffff;
-+			payload_valid = true;
-+			break;
-+		case HOST1X_OPCODE_INCR_W:
-+			if (!payload_valid)
-+				return -EINVAL;
-+
-+			offset = word & 0x3fffff;
-+			err = fw_check_regs_seq(&fw, offset, payload, true);
-+			break;
-+		case HOST1X_OPCODE_NONINCR_W:
-+			if (!payload_valid)
-+				return -EINVAL;
-+
-+			offset = word & 0x3fffff;
-+			err = fw_check_regs_seq(&fw, offset, payload, false);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/drm/tegra/uapi/submit.c b/drivers/gpu/drm/tegra/uapi/submit.c
-index 95141f1516e5..d2720f616c22 100644
---- a/drivers/gpu/drm/tegra/uapi/submit.c
-+++ b/drivers/gpu/drm/tegra/uapi/submit.c
-@@ -360,6 +360,10 @@ static int submit_job_add_gather(struct host1x_job *job,
- 	if (next_offset > bo->gather_data_words)
- 		return -EINVAL;
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 5982fdf64e1c..9ca0d852e32f 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -306,59 +306,12 @@ EXPORT_SYMBOL(host1x_syncpt_wait);
+ bool host1x_syncpt_is_expired(struct host1x_syncpt *sp, u32 thresh)
+ {
+ 	u32 current_val;
+-	u32 future_val;
  
-+	if (tegra_drm_fw_validate(ctx->client, bo->gather_data, *offset,
-+				  cmd->words, job_data))
-+		return -EINVAL;
-+
- 	host1x_job_add_gather(job, &bo->base, cmd->words, *offset * 4);
+ 	smp_rmb();
  
- 	*offset = next_offset;
-diff --git a/drivers/gpu/drm/tegra/uapi/submit.h b/drivers/gpu/drm/tegra/uapi/submit.h
-index 0a165e9e4bda..0e51627e73f8 100644
---- a/drivers/gpu/drm/tegra/uapi/submit.h
-+++ b/drivers/gpu/drm/tegra/uapi/submit.h
-@@ -14,4 +14,7 @@ struct tegra_drm_submit_data {
- 	u32 num_used_mappings;
- };
- 
-+int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
-+			  u32 words, struct tegra_drm_submit_data *submit);
+ 	current_val = (u32)atomic_read(&sp->min_val);
+-	future_val = (u32)atomic_read(&sp->max_val);
+-
+-	/* Note the use of unsigned arithmetic here (mod 1<<32).
+-	 *
+-	 * c = current_val = min_val	= the current value of the syncpoint.
+-	 * t = thresh			= the value we are checking
+-	 * f = future_val  = max_val	= the value c will reach when all
+-	 *				  outstanding increments have completed.
+-	 *
+-	 * Note that c always chases f until it reaches f.
+-	 *
+-	 * Dtf = (f - t)
+-	 * Dtc = (c - t)
+-	 *
+-	 *  Consider all cases:
+-	 *
+-	 *	A) .....c..t..f.....	Dtf < Dtc	need to wait
+-	 *	B) .....c.....f..t..	Dtf > Dtc	expired
+-	 *	C) ..t..c.....f.....	Dtf > Dtc	expired	   (Dct very large)
+-	 *
+-	 *  Any case where f==c: always expired (for any t).	Dtf == Dcf
+-	 *  Any case where t==c: always expired (for any f).	Dtf >= Dtc (because Dtc==0)
+-	 *  Any case where t==f!=c: always wait.		Dtf <  Dtc (because Dtf==0,
+-	 *							Dtc!=0)
+-	 *
+-	 *  Other cases:
+-	 *
+-	 *	A) .....t..f..c.....	Dtf < Dtc	need to wait
+-	 *	A) .....f..c..t.....	Dtf < Dtc	need to wait
+-	 *	A) .....f..t..c.....	Dtf > Dtc	expired
+-	 *
+-	 *   So:
+-	 *	   Dtf >= Dtc implies EXPIRED	(return true)
+-	 *	   Dtf <  Dtc implies WAIT	(return false)
+-	 *
+-	 * Note: If t is expired then we *cannot* wait on it. We would wait
+-	 * forever (hang the system).
+-	 *
+-	 * Note: do NOT get clever and remove the -thresh from both sides. It
+-	 * is NOT the same.
+-	 *
+-	 * If future valueis zero, we have a client managed sync point. In that
+-	 * case we do a direct comparison.
+-	 */
+-	if (!host1x_syncpt_client_managed(sp))
+-		return future_val - thresh >= current_val - thresh;
+-	else
+-		return (s32)(current_val - thresh) >= 0;
 +
- #endif
++	return ((current_val - thresh) & 0x80000000U) == 0U;
+ }
+ 
+ int host1x_syncpt_init(struct host1x *host)
 -- 
 2.28.0
 
