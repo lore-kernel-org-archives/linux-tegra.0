@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F32C47425
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E8CC4742A
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D76FC2168B
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EE92177B
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Oct 2020 17:17:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="nUjZ/AHn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="SVobqRI5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbgJGRRX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Oct 2020 13:17:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57858 "EHLO
+        id S1728114AbgJGRR2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Oct 2020 13:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbgJGRRW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 13:17:22 -0400
+        with ESMTP id S1728120AbgJGRR1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Oct 2020 13:17:27 -0400
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57356C0613D7
-        for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2020 10:17:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3FEC0613D4
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2020 10:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=XZ5ahcaD3cy8HvqDLsELG9PEcRef8yL5qGNIRSWt5pQ=; b=nUjZ/AHn+DAxLSuni5DTIK3QNZ
-        7Xt8QQ215iacaoB2OO2S6di+0DugtoifgeCOuPTxb1224gjy4Ke5+yXVn/QMIEpe3OYMR34zcQC5i
-        6F1YFZDJpEyP4gOLCyWvpfTtSvqEtLupSFJC4sR9zjqZzD44tzY58oXRReAoHWW4FrcEEsvL2LMAv
-        B7nJvWshRQYP0uzaCbzVRLhk4KQFkieGXlO9x7zlThkLgrkbblg9wwqTrHcSV3jTlsxvVSAzZs9yJ
-        Dy8f2DbafNgvdPnjCwbWVZ0nf/VTmjKmqtWaOyNhPCvxVi0sTyA6Pp8anFlYfFjF/5ptTEhJmDMeK
-        XYpyR+1Q==;
+        bh=jNjvkWl3Ro3OYCw1CzPg5Q9N3r9p/TmjDfeS4m1i9fo=; b=SVobqRI5w6foYs+8hGo+cWIJk/
+        +PXxx37huU8AO+8e7njNwniNZPNa7qcS53wZiZngLzerOhmbSrsbYZ8lSjF/+Zb7gcg7++z6OPF12
+        YaOw9hyFXVycPw+mEFkg4DYBqYY6P2jgcjKPep2rzyyi13KjFBY2ffqsg+SorbAYDeLXJc+/B75eo
+        6HMdDYMrbmn8cJPx/FVKVkRy6ex6FWGRciAMuRw6LEJ5hO1L+xab7SrVBNzfrBUH30UAkykEb0jVI
+        B9pf39ah05vj9URPrE02J5ZmK9QIWe0TcQ7BkA8VguuNURmyhZyah9FB9DWXtEyuh9GFM7XaJijca
+        OWV/Yz3A==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kQD40-0006P9-6o; Wed, 07 Oct 2020 20:17:16 +0300
+        id 1kQD40-0006P9-Rm; Wed, 07 Oct 2020 20:17:16 +0300
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v3 08/20] gpu: host1x: Implement /dev/host1x device node
-Date:   Wed,  7 Oct 2020 20:12:26 +0300
-Message-Id: <20201007171238.1795964-9-mperttunen@nvidia.com>
+Subject: [PATCH v3 15/20] drm/tegra: Add new UAPI to header
+Date:   Wed,  7 Oct 2020 20:12:33 +0300
+Message-Id: <20201007171238.1795964-16-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201007171238.1795964-1-mperttunen@nvidia.com>
 References: <20201007171238.1795964-1-mperttunen@nvidia.com>
@@ -62,419 +62,479 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the /dev/host1x device node, implementing the following
-functionality:
-
-- Reading syncpoint values
-- Allocating syncpoints (providing syncpoint FDs)
-- Incrementing syncpoints (based on syncpoint FD)
+Update the tegra_drm.h UAPI header, adding the new proposed UAPI.
+The old staging UAPI is left in for now, with minor modification
+to avoid name collisions.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
 v3:
-* Pass process name as syncpoint name when allocating
-  syncpoint.
+* Remove timeout field
+* Inline the syncpt_incrs array to the submit structure
+* Remove WRITE_RELOC (it is now implicit)
 ---
- drivers/gpu/host1x/Makefile |   1 +
- drivers/gpu/host1x/dev.c    |   9 ++
- drivers/gpu/host1x/dev.h    |   3 +
- drivers/gpu/host1x/uapi.c   | 276 ++++++++++++++++++++++++++++++++++++
- drivers/gpu/host1x/uapi.h   |  22 +++
- include/linux/host1x.h      |   2 +
- 6 files changed, 313 insertions(+)
- create mode 100644 drivers/gpu/host1x/uapi.c
- create mode 100644 drivers/gpu/host1x/uapi.h
+ include/uapi/drm/tegra_drm.h | 420 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 393 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index 096017b8789d..882f928d75e1 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -9,6 +9,7 @@ host1x-y = \
- 	job.o \
- 	debug.o \
- 	mipi.o \
-+	uapi.o \
- 	hw/host1x01.o \
- 	hw/host1x02.o \
- 	hw/host1x04.o \
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index d0ebb70e2fdd..641317d23828 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -461,6 +461,12 @@ static int host1x_probe(struct platform_device *pdev)
- 		goto deinit_syncpt;
- 	}
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index c4df3c3668b3..9588d5e3308f 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -1,24 +1,5 @@
+-/*
+- * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice shall be included in
+- * all copies or substantial portions of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- * OTHER DEALINGS IN THE SOFTWARE.
+- */
++/* SPDX-License-Identifier: MIT */
++/* Copyright (c) 2012-2020 NVIDIA Corporation */
  
-+	err = host1x_uapi_init(&host->uapi, host);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize uapi\n");
-+		goto deinit_intr;
-+	}
+ #ifndef _UAPI_TEGRA_DRM_H_
+ #define _UAPI_TEGRA_DRM_H_
+@@ -29,6 +10,8 @@
+ extern "C" {
+ #endif
+ 
++/* TegraDRM legacy UAPI. Only enabled with STAGING */
 +
- 	host1x_debug_init(host);
+ #define DRM_TEGRA_GEM_CREATE_TILED     (1 << 0)
+ #define DRM_TEGRA_GEM_CREATE_BOTTOM_UP (1 << 1)
  
- 	if (host->info->has_hypervisor)
-@@ -480,6 +486,8 @@ static int host1x_probe(struct platform_device *pdev)
- 	host1x_unregister(host);
- deinit_debugfs:
- 	host1x_debug_deinit(host);
-+	host1x_uapi_deinit(&host->uapi);
-+deinit_intr:
- 	host1x_intr_deinit(host);
- deinit_syncpt:
- 	host1x_syncpt_deinit(host);
-@@ -501,6 +509,7 @@ static int host1x_remove(struct platform_device *pdev)
- 
- 	host1x_unregister(host);
- 	host1x_debug_deinit(host);
-+	host1x_uapi_deinit(&host->uapi);
- 	host1x_intr_deinit(host);
- 	host1x_syncpt_deinit(host);
- 	reset_control_assert(host->rst);
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 63010ae37a97..7b8b7e20e32b 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -17,6 +17,7 @@
- #include "intr.h"
- #include "job.h"
- #include "syncpt.h"
-+#include "uapi.h"
- 
- struct host1x_syncpt;
- struct host1x_syncpt_base;
-@@ -143,6 +144,8 @@ struct host1x {
- 	struct list_head list;
- 
- 	struct device_dma_parameters dma_parms;
-+
-+	struct host1x_uapi uapi;
+@@ -644,13 +627,13 @@ struct drm_tegra_gem_get_flags {
+ 	__u32 flags;
  };
  
- void host1x_hypervisor_writel(struct host1x *host1x, u32 r, u32 v);
-diff --git a/drivers/gpu/host1x/uapi.c b/drivers/gpu/host1x/uapi.c
-new file mode 100644
-index 000000000000..4747d8de132e
---- /dev/null
-+++ b/drivers/gpu/host1x/uapi.c
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * /dev/host1x syncpoint interface
-+ *
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#include <linux/anon_inodes.h>
-+#include <linux/cdev.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
-+#include <linux/host1x.h>
-+#include <linux/nospec.h>
-+
-+#include "dev.h"
-+#include "syncpt.h"
-+#include "uapi.h"
-+
-+#include <uapi/linux/host1x.h>
-+
-+static int syncpt_file_release(struct inode *inode, struct file *file)
-+{
-+	struct host1x_syncpt *sp = file->private_data;
-+
-+	host1x_syncpt_put(sp);
-+
-+	return 0;
-+}
-+
-+static int syncpt_file_ioctl_info(struct host1x_syncpt *sp, void __user *data)
-+{
-+	struct host1x_syncpoint_info args;
-+	unsigned long copy_err;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	if (args.reserved[0] || args.reserved[1] || args.reserved[2])
-+		return -EINVAL;
-+
-+	args.id = sp->id;
-+
-+	copy_err = copy_to_user(data, &args, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int syncpt_file_ioctl_incr(struct host1x_syncpt *sp, void __user *data)
-+{
-+	struct host1x_syncpoint_increment args;
-+	unsigned long copy_err;
-+	u32 i;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	for (i = 0; i < args.count; i++) {
-+		host1x_syncpt_incr(sp);
-+		if (signal_pending(current))
-+			return -EINTR;
-+	}
-+
-+	return 0;
-+}
-+
-+static long syncpt_file_ioctl(struct file *file, unsigned int cmd,
-+			      unsigned long arg)
-+{
-+	void __user *data = (void __user *)arg;
-+	long err;
-+
-+	switch (cmd) {
-+	case HOST1X_IOCTL_SYNCPOINT_INFO:
-+		err = syncpt_file_ioctl_info(file->private_data, data);
-+		break;
-+
-+	case HOST1X_IOCTL_SYNCPOINT_INCREMENT:
-+		err = syncpt_file_ioctl_incr(file->private_data, data);
-+		break;
-+
-+	default:
-+		err = -ENOTTY;
-+	}
-+
-+	return err;
-+}
-+
-+static const struct file_operations syncpt_file_fops = {
-+	.owner = THIS_MODULE,
-+	.release = syncpt_file_release,
-+	.unlocked_ioctl = syncpt_file_ioctl,
-+	.compat_ioctl = syncpt_file_ioctl,
-+};
-+
-+struct host1x_syncpt *host1x_syncpt_fd_get(int fd)
-+{
-+	struct host1x_syncpt *sp;
-+	struct file *file = fget(fd);
-+
-+	if (!file)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (file->f_op != &syncpt_file_fops) {
-+		fput(file);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	sp = file->private_data;
-+
-+	host1x_syncpt_get(sp);
-+
-+	fput(file);
-+
-+	return sp;
-+}
-+EXPORT_SYMBOL(host1x_syncpt_fd_get);
-+
-+static int dev_file_open(struct inode *inode, struct file *file)
-+{
-+	struct host1x_uapi *uapi =
-+		container_of(inode->i_cdev, struct host1x_uapi, cdev);
-+
-+	file->private_data = container_of(uapi, struct host1x, uapi);
-+
-+	return 0;
-+}
-+
-+static int dev_file_ioctl_read_syncpoint(struct host1x *host1x,
-+					 void __user *data)
-+{
-+	struct host1x_read_syncpoint args;
-+	unsigned long copy_err;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	if (args.id >= host1x_syncpt_nb_pts(host1x))
-+		return -EINVAL;
-+
-+	args.id = array_index_nospec(args.id, host1x_syncpt_nb_pts(host1x));
-+	args.value = host1x_syncpt_read(&host1x->syncpt[args.id]);
-+
-+	copy_err = copy_to_user(data, &args, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int dev_file_ioctl_alloc_syncpoint(struct host1x *host1x,
-+					  void __user *data)
-+{
-+	struct host1x_allocate_syncpoint args;
-+	struct host1x_syncpt *sp;
-+	unsigned long copy_err;
-+	int err;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	if (args.reserved[0] || args.reserved[1] || args.reserved[2])
-+		return -EINVAL;
-+
-+	sp = host1x_syncpt_alloc(host1x, HOST1X_SYNCPT_CLIENT_MANAGED,
-+				 current->comm);
-+	if (!sp)
-+		return -EBUSY;
-+
-+	err = anon_inode_getfd("host1x_syncpt", &syncpt_file_fops, sp,
-+			       O_CLOEXEC);
-+	if (err < 0)
-+		goto free_syncpt;
-+
-+	args.fd = err;
-+
-+	copy_err = copy_to_user(data, &args, sizeof(args));
-+	if (copy_err) {
-+		err = -EFAULT;
-+		goto put_fd;
-+	}
-+
-+	return 0;
-+
-+put_fd:
-+	put_unused_fd(args.fd);
-+free_syncpt:
-+	host1x_syncpt_put(sp);
-+
-+	return err;
-+}
-+
-+static long dev_file_ioctl(struct file *file, unsigned int cmd,
-+			   unsigned long arg)
-+{
-+	void __user *data = (void __user *)arg;
-+	long err;
-+
-+	switch (cmd) {
-+	case HOST1X_IOCTL_READ_SYNCPOINT:
-+		err = dev_file_ioctl_read_syncpoint(file->private_data, data);
-+		break;
-+
-+	case HOST1X_IOCTL_ALLOCATE_SYNCPOINT:
-+		err = dev_file_ioctl_alloc_syncpoint(file->private_data, data);
-+		break;
-+
-+	default:
-+		err = -ENOTTY;
-+	}
-+
-+	return err;
-+}
-+
-+static const struct file_operations dev_file_fops = {
-+	.owner = THIS_MODULE,
-+	.open = dev_file_open,
-+	.unlocked_ioctl = dev_file_ioctl,
-+	.compat_ioctl = dev_file_ioctl,
-+};
-+
-+int host1x_uapi_init(struct host1x_uapi *uapi, struct host1x *host1x)
-+{
-+	int err;
-+	dev_t dev_num;
-+
-+	err = alloc_chrdev_region(&dev_num, 0, 1, "host1x");
-+	if (err)
-+		return err;
-+
-+	uapi->class = class_create(THIS_MODULE, "host1x");
-+	if (IS_ERR(uapi->class)) {
-+		err = PTR_ERR(uapi->class);
-+		goto unregister_chrdev_region;
-+	}
-+
-+	cdev_init(&uapi->cdev, &dev_file_fops);
-+	err = cdev_add(&uapi->cdev, dev_num, 1);
-+	if (err)
-+		goto destroy_class;
-+
-+	uapi->dev = device_create(uapi->class, host1x->dev,
-+				  dev_num, NULL, "host1x");
-+	if (IS_ERR(uapi->dev)) {
-+		err = PTR_ERR(uapi->dev);
-+		goto del_cdev;
-+	}
-+
-+	cdev_add(&uapi->cdev, dev_num, 1);
-+
-+	uapi->dev_num = dev_num;
-+
-+	return 0;
-+
-+del_cdev:
-+	cdev_del(&uapi->cdev);
-+destroy_class:
-+	class_destroy(uapi->class);
-+unregister_chrdev_region:
-+	unregister_chrdev_region(dev_num, 1);
-+
-+	return err;
-+}
-+
-+void host1x_uapi_deinit(struct host1x_uapi *uapi)
-+{
-+	device_destroy(uapi->class, uapi->dev_num);
-+	cdev_del(&uapi->cdev);
-+	class_destroy(uapi->class);
-+	unregister_chrdev_region(uapi->dev_num, 1);
-+}
-diff --git a/drivers/gpu/host1x/uapi.h b/drivers/gpu/host1x/uapi.h
-new file mode 100644
-index 000000000000..7beb5e44c1b1
---- /dev/null
-+++ b/drivers/gpu/host1x/uapi.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#ifndef HOST1X_UAPI_H
-+#define HOST1X_UAPI_H
-+
-+#include <linux/cdev.h>
-+
-+struct host1x_uapi {
-+	struct class *class;
-+
-+	struct cdev cdev;
-+	struct device *dev;
-+	dev_t dev_num;
-+};
-+
-+int host1x_uapi_init(struct host1x_uapi *uapi, struct host1x *host1x);
-+void host1x_uapi_deinit(struct host1x_uapi *uapi);
-+
-+#endif
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index c222cf61b70b..8f6d61e13e05 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -163,6 +163,8 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- struct host1x_syncpt_base *host1x_syncpt_get_base(struct host1x_syncpt *sp);
- u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
+-#define DRM_TEGRA_GEM_CREATE		0x00
+-#define DRM_TEGRA_GEM_MMAP		0x01
++#define DRM_TEGRA_GEM_CREATE_LEGACY	0x00
++#define DRM_TEGRA_GEM_MMAP_LEGACY	0x01
+ #define DRM_TEGRA_SYNCPT_READ		0x02
+ #define DRM_TEGRA_SYNCPT_INCR		0x03
+ #define DRM_TEGRA_SYNCPT_WAIT		0x04
+-#define DRM_TEGRA_OPEN_CHANNEL		0x05
+-#define DRM_TEGRA_CLOSE_CHANNEL		0x06
++#define DRM_TEGRA_OPEN_CHANNEL	        0x05
++#define DRM_TEGRA_CLOSE_CHANNEL	        0x06
+ #define DRM_TEGRA_GET_SYNCPT		0x07
+ #define DRM_TEGRA_SUBMIT		0x08
+ #define DRM_TEGRA_GET_SYNCPT_BASE	0x09
+@@ -659,8 +642,8 @@ struct drm_tegra_gem_get_flags {
+ #define DRM_TEGRA_GEM_SET_FLAGS		0x0c
+ #define DRM_TEGRA_GEM_GET_FLAGS		0x0d
  
-+struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
+-#define DRM_IOCTL_TEGRA_GEM_CREATE DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_CREATE, struct drm_tegra_gem_create)
+-#define DRM_IOCTL_TEGRA_GEM_MMAP DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_MMAP, struct drm_tegra_gem_mmap)
++#define DRM_IOCTL_TEGRA_GEM_CREATE_LEGACY DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_CREATE_LEGACY, struct drm_tegra_gem_create)
++#define DRM_IOCTL_TEGRA_GEM_MMAP_LEGACY DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_MMAP_LEGACY, struct drm_tegra_gem_mmap)
+ #define DRM_IOCTL_TEGRA_SYNCPT_READ DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_SYNCPT_READ, struct drm_tegra_syncpt_read)
+ #define DRM_IOCTL_TEGRA_SYNCPT_INCR DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_SYNCPT_INCR, struct drm_tegra_syncpt_incr)
+ #define DRM_IOCTL_TEGRA_SYNCPT_WAIT DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_SYNCPT_WAIT, struct drm_tegra_syncpt_wait)
+@@ -674,6 +657,389 @@ struct drm_tegra_gem_get_flags {
+ #define DRM_IOCTL_TEGRA_GEM_SET_FLAGS DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_SET_FLAGS, struct drm_tegra_gem_set_flags)
+ #define DRM_IOCTL_TEGRA_GEM_GET_FLAGS DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_GEM_GET_FLAGS, struct drm_tegra_gem_get_flags)
+ 
++/* New TegraDRM UAPI */
 +
- /*
-  * host1x channel
-  */
++struct drm_tegra_channel_open {
++	/**
++	 * @host1x_class: [in]
++	 *
++	 * Host1x class of the engine that will be programmed using this
++	 * channel.
++	 */
++	__u32 host1x_class;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @channel_ctx: [out]
++	 *
++	 * Opaque identifier corresponding to the opened channel.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @hardware_version: [out]
++	 *
++	 * Version of the engine hardware. This can be used by userspace
++	 * to determine how the engine needs to be programmed.
++	 */
++	__u32 hardware_version;
++
++	__u32 reserved[2];
++};
++
++struct drm_tegra_channel_close {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to close.
++	 */
++	__u32 channel_ctx;
++
++	__u32 reserved[1];
++};
++
++#define DRM_TEGRA_CHANNEL_MAP_READWRITE			(1<<0)
++
++struct drm_tegra_channel_map {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to which make memory available for.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @handle: [in]
++	 *
++	 * GEM handle of the memory to map.
++	 */
++	__u32 handle;
++
++	/**
++	 * @offset: [in]
++	 *
++	 * Offset in the GEM handle's underlying memory to start the
++	 * mapping from.
++	 */
++	__u64 offset;
++
++	/**
++	 * @length: [in]
++	 *
++	 * Length of memory to map.
++	 */
++	__u64 length;
++
++	/**
++	 * @iova: [out]
++	 *
++	 * IOVA of mapped memory. Only available if hardware memory
++	 * isolation is supported. If provided, userspace can program this
++	 * address directly to the engine to skip using relocations.
++	 *
++	 * Will be set to U64_MAX if unavailable.
++	 */
++	__u64 iova;
++
++	/**
++	 * @mapping_id: [out]
++	 *
++	 * Identifier corresponding to the mapping, to be used for
++	 * relocations or unmapping later.
++	 */
++	__u32 mapping_id;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	__u32 reserved[2];
++};
++
++struct drm_tegra_channel_unmap {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Channel identifier of the channel to unmap memory from.
++	 */
++	__u32 channel_ctx;
++
++	/**
++	 * @mapping_id: [in]
++	 *
++	 * Mapping identifier of the memory mapping to unmap.
++	 */
++	__u32 mapping_id;
++
++	__u32 reserved[2];
++};
++
++/* Submission */
++
++/**
++ * Specify that bit 39 of the patched-in address should be set to
++ * trigger layout swizzling between Tegra and non-Tegra Blocklinear
++ * layout on systems that store surfaces in system memory in non-Tegra
++ * Blocklinear layout.
++ */
++#define DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR		(1<<0)
++/**
++ * Specify that any implicit fences required to read this buffer
++ * should be waited before executing the job.
++ */
++#define DRM_TEGRA_SUBMIT_BUF_RESV_READ			(1<<1)
++/**
++ * Specify that any implicit fences required to write this buffer
++ * should be waited before executing the job.
++ */
++#define DRM_TEGRA_SUBMIT_BUF_RESV_WRITE			(1<<2)
++
++struct drm_tegra_submit_buf {
++	/**
++	 * @mapping_id: [in]
++	 *
++	 * Identifier of the mapping to use in the submission.
++	 */
++	__u32 mapping_id;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * Information for relocation patching. Relocation patching will
++	 * be done if the MAP IOCTL that created `mapping_id` did not
++	 * return an IOVA. If an IOVA was returned, the application is
++	 * responsible for patching the address into the gather.
++	 */
++	struct {
++		/**
++		 * @target_offset: [in]
++		 *
++		 * Offset from the start of the mapping of the data whose
++		 * address is to be patched into the gather.
++		 */
++		__u64 target_offset;
++
++		/**
++		 * @gather_offset_words: [in]
++		 *
++		 * Offset in words from the start of the gather data to
++		 * where the address should be patched into.
++		 */
++		__u32 gather_offset_words;
++
++		/**
++		 * @shift: [in]
++		 *
++		 * Number of bits the address should be shifted right before
++		 * patching in.
++		 */
++		__u32 shift;
++	} reloc;
++
++	__u32 reserved[2];
++};
++
++#define DRM_TEGRA_SUBMIT_SYNCPT_INCR_CREATE_SYNC_FILE  (1<<0)
++
++struct drm_tegra_submit_syncpt_incr {
++	/**
++	 * @syncpt_fd: [in]
++	 *
++	 * Syncpoint file descriptor of the syncpoint that the job will
++	 * increment.
++	 */
++	__s32 syncpt_fd;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	/**
++	 * @num_incrs: [in]
++	 *
++	 * Number of times the job will increment this syncpoint.
++	 */
++	__u32 num_incrs;
++
++	/**
++	 * @fence_value: [out]
++	 *
++	 * Value the syncpoint will have once the job has completed all
++	 * its specified syncpoint increments.
++	 *
++	 * Note that the kernel may increment the syncpoint before or after
++	 * the job. These increments are not reflected in this field.
++	 *
++	 * If the job hangs or times out, not all of the increments may
++	 * get executed.
++	 */
++	__u32 fence_value;
++
++	/**
++	 * @sync_file_fd: [out]
++	 *
++	 * Created sync_file file descriptor corresponding to the threshold
++	 * specified by `fence_value`. Only set if the CREATE_SYNC_FILE
++	 * flag is specified.
++	 */
++	__s32 sync_file_fd;
++
++	__u32 reserved[3];
++};
++
++/**
++ * Execute `words` words of Host1x opcodes specified in the `gather_data_ptr`
++ * buffer. Each GATHER_UPTR command uses successive words from the buffer.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR		0
++/**
++ * Wait for a syncpoint to reach a value before continuing with further
++ * commands.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT		1
++/**
++ * Wait for the fence represented by the sync_file file descriptor to be
++ * signaled before continuing with further commands. This command may be
++ * executed before submission of the job to hardware.
++ */
++#define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNC_FILE		2
++
++/**
++ * If set, the driver is allowed to skip execution of this command if
++ * the previous job executed by the engine was from the same channel
++ * context as this job.
++ */
++#define DRM_TEGRA_SUBMIT_CONTEXT_SETUP			(1<<0)
++
++struct drm_tegra_submit_cmd_gather_uptr {
++	__u32 words;
++	__u32 reserved[3];
++};
++
++struct drm_tegra_submit_cmd_wait_syncpt {
++	__u32 id;
++	__u32 threshold;
++	__u32 reserved[2];
++};
++
++struct drm_tegra_submit_cmd_wait_sync_file {
++	__s32 fd;
++	__u32 reserved[3];
++};
++
++struct drm_tegra_submit_cmd {
++	/**
++	 * @type: [in]
++	 *
++	 * Command type to execute. One of the DRM_TEGRA_SUBMIT_CMD*
++	 * defines.
++	 */
++	__u32 type;
++
++	/**
++	 * @flags: [in]
++	 *
++	 * Flags.
++	 */
++	__u32 flags;
++
++	union {
++		struct drm_tegra_submit_cmd_gather_uptr gather_uptr;
++		struct drm_tegra_submit_cmd_wait_syncpt wait_syncpt;
++		struct drm_tegra_submit_cmd_wait_sync_file wait_sync_file;
++		__u32 reserved[4];
++	};
++};
++
++struct drm_tegra_channel_submit {
++	/**
++	 * @channel_ctx: [in]
++	 *
++	 * Identifier of the channel to submit this job to.
++	 */
++	__u32 channel_ctx;
++
++	__u32 reserved0;
++
++	/**
++	 * @bufs_ptr: [in]
++	 *
++	 * Pointer to an array of drm_tegra_submit_buf structures.
++	 */
++	__u64 bufs_ptr;
++
++	/**
++	 * @cmds_ptr: [in]
++	 *
++	 * Pointer to an array of drm_tegra_submit_cmd structures.
++	 */
++	__u64 cmds_ptr;
++
++	/**
++	 * @gather_data_ptr: [in]
++	 *
++	 * Pointer to an array of Host1x opcodes to be used by GATHER_UPTR
++	 * commands.
++	 */
++	__u64 gather_data_ptr;
++
++	/**
++	 * @num_bufs: [in]
++	 *
++	 * Number of elements in the `bufs_ptr` array.
++	 */
++	__u32 num_bufs;
++
++	/**
++	 * @num_cmds: [in]
++	 *
++	 * Number of elements in the `cmds_ptr` array.
++	 */
++	__u32 num_cmds;
++
++	/**
++	 * @gather_data_words: [in]
++	 *
++	 * Number of 32-bit words in the `gather_data_ptr` array.
++	 */
++	__u32 gather_data_words;
++
++	__u32 reserved1;
++
++	/**
++	 * @syncpt_incrs: [in,out]
++	 *
++	 * Information about each distinct syncpoint the job will increment.
++	 */
++	struct drm_tegra_submit_syncpt_incr syncpt_incrs[2];
++};
++
++#define DRM_IOCTL_TEGRA_CHANNEL_OPEN     DRM_IOWR(DRM_COMMAND_BASE + 0x10, struct drm_tegra_channel_open)
++#define DRM_IOCTL_TEGRA_CHANNEL_CLOSE    DRM_IOWR(DRM_COMMAND_BASE + 0x11, struct drm_tegra_channel_close)
++#define DRM_IOCTL_TEGRA_CHANNEL_MAP      DRM_IOWR(DRM_COMMAND_BASE + 0x12, struct drm_tegra_channel_map)
++#define DRM_IOCTL_TEGRA_CHANNEL_UNMAP    DRM_IOWR(DRM_COMMAND_BASE + 0x13, struct drm_tegra_channel_unmap)
++#define DRM_IOCTL_TEGRA_CHANNEL_SUBMIT   DRM_IOWR(DRM_COMMAND_BASE + 0x14, struct drm_tegra_channel_submit)
++
++#define DRM_IOCTL_TEGRA_GEM_CREATE       DRM_IOWR(DRM_COMMAND_BASE + 0x15, struct drm_tegra_gem_create)
++#define DRM_IOCTL_TEGRA_GEM_MMAP         DRM_IOWR(DRM_COMMAND_BASE + 0x16, struct drm_tegra_gem_mmap)
++
+ #if defined(__cplusplus)
+ }
+ #endif
 -- 
 2.28.0
 
