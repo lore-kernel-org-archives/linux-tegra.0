@@ -2,139 +2,129 @@ Return-Path: <SRS0=64AB=DP=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29105C43467
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 10:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F246EC43467
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 11:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCC342145D
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 10:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602153185;
-	bh=DnkULCFZoQ6y7MdvkalvclQUq9yoIYYQBdcPMkbHKco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gIMoPDV4BoSZWVXi9tMAGYgG1O7I8DBTLUAiQXqsUSCNTp9WeeBaVlM6HtLSird1o
-	 vzDHv1cNYyPZ7sA/R8ZvjOkixSxcZkn8uPUs7AqygB1FSuYQAvuY/0nemzBeEUayvt
-	 MS0rcolmyIox8XkEwf/raCSeOcOMu3R/RmZ+OKsM=
+	by mail.kernel.org (Postfix) with ESMTP id 944462184D
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 11:11:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ao0j86RL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbgJHKdF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Oct 2020 06:33:05 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37448 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgJHKdF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Oct 2020 06:33:05 -0400
-Received: by mail-wm1-f68.google.com with SMTP id j136so5972286wmj.2;
-        Thu, 08 Oct 2020 03:33:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6LrOBjyvywzVUOxBpR/Sw7dDdwdJuhXEZt1TnYIWH2M=;
-        b=c8tfhKsA3IfSZpA2px1ZmvmD6bq+pUGG1nnpnmBOExTvrXNKRLBj0KMpvtTY7tkMSV
-         aTmHKTaabhi3JrnDWN90H/CHVUoKwoWYPeqeyuB/Oa+ZzBeG4JKthdAZxb7/wSFXD0e7
-         d77hla3w5BZnvxANb9cQQgB5PFj7WnJNEM1hZ/qjSd1p642tALlbL+DNvI2HE2+gRmnP
-         nnJkrJNcWWHXPW8mDWqmm/J71eWChLmmBGFkLyvm8D9UbA/Ev9zpk8X57XAcs10QqQ2H
-         JkW9PuprzILkNrc8i7Knr1xOFbNJOdwn6SzHb6zMd50tUCd4/OUGyTfPz0dUMip7E4FH
-         cJbA==
-X-Gm-Message-State: AOAM530D5eTDmmcabRJaeWRBfQUcdbvc+NOTivgcwK5i1IxtDiLKI8Kg
-        YYZ3FwuLFOX8LelxM9/4tDI=
-X-Google-Smtp-Source: ABdhPJzO/bFr02oV4N6sBlulFdDN5Lzq/N6FBazS8wv6RmatRPJWxe4RliBw38pguvFgKgQpd4Lbzw==
-X-Received: by 2002:a1c:44e:: with SMTP id 75mr8136588wme.117.1602153182410;
-        Thu, 08 Oct 2020 03:33:02 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.194])
-        by smtp.googlemail.com with ESMTPSA id r68sm1056563wmr.37.2020.10.08.03.33.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Oct 2020 03:33:01 -0700 (PDT)
-Date:   Thu, 8 Oct 2020 12:32:58 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] memory: tegra: Sort tegra210_swgroups by reg address
-Message-ID: <20201008103258.GA16358@kozik-lap>
-References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-4-nicoleotsuka@gmail.com>
+        id S1729769AbgJHLLN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Oct 2020 07:11:13 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17180 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729766AbgJHLLN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Oct 2020 07:11:13 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7ef3c40000>; Thu, 08 Oct 2020 04:11:00 -0700
+Received: from [10.24.37.103] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Oct
+ 2020 11:11:09 +0000
+Subject: Re: [Patch 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <rjw@rjwysocki.net>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <ksitaraman@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <1600276277-7290-1-git-send-email-sumitg@nvidia.com>
+ <1600276277-7290-3-git-send-email-sumitg@nvidia.com>
+ <20201005045414.fmntm7ejad7zxcrv@vireshk-i7>
+ <2c0daaa5-4aec-925d-c1e3-0f15fb93cc20@nvidia.com>
+ <20201006053856.dth6ut22pvwpgfz5@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+Message-ID: <7e285f41-e1ae-e352-9d1b-efd4d20ddfa3@nvidia.com>
+Date:   Thu, 8 Oct 2020 16:41:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201008003746.25659-4-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20201006053856.dth6ut22pvwpgfz5@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1602155460; bh=hR+PWuPTBEUl+VVWHX31EggS7H8qb+R7ZpsXaE0Epu0=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=ao0j86RLttzZX8O9MHWgexWKwOryKCi+GkFEnZRe2QUANKDxB4j9iHQca2GuGIi2w
+         XJ/uDV6etWopwbRNTFnkne8hr1W9A4mlQS20PcAigOJgThI9o5ftRMSM6w4T8K1Z4e
+         oz2uaH3WfUK3GZwibveyhcH/qXoctjAj/SLyvlb/RtAiTT0fX1BUxVMs6dbC+Yhk6b
+         Z7+vBPqp8soOWkFvuGp46yYc/cDMrY7uiW4wMRrv0FsGS2muwRef2KaCtjpYelelwO
+         E9IsNr76dARDUVjgoxofjgW8EcUdj/WDdFh+rFELLxxILtMF6jPbmfegKgjTeH0uWt
+         VLcgWKh77tCPQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 05:37:44PM -0700, Nicolin Chen wrote:
-> This is a cleanup change to prepare for new swgroups.
+>>
+>>>> Warning coming during boot because the boot freq set by bootloader
+>>>> gets filtered out due to big freq steps while creating freq_table.
+>>>> Fixing this by setting closest ndiv value from freq_table.
+>>>> Warning:
+>>>>     cpufreq: cpufreq_online: CPU0: Running at unlisted freq
+>>>>     cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+>>>>
+>>>> Also, added change in init to wait till current frequency becomes
+>>>> equal or near to the previously requested frequency. This is done
+>>>> because it takes some time to restore the previous frequency while
+>>>> turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
+>>>
+>>> So you are trying to figure if the frequency is listed in freq-table or not,
+>>> otherwise setting the frequency to a value you think is appropriate. Right ?
+>> During boot, want to set the frequency from freq_table which is closest to
+>> the one set by bootloader.
+> 
+> Right.
+> 
+>> During resume from suspend-to-idle, want to restore the frequency which was
+>> set on non-boot cores before they were hotplug powered off.
+> 
+> Why exactly do you want to do that ? Rather you should provide
+> online/offline hooks for the cpufreq driver and do light-weight
+> suspend/resume as is done by cpufreq-dt.c as well.
+> 
+Thank you for pointer. Added online hook to avoid warning during 
+hot-plug-on for the non-boot CPU's while exiting from Suspend-to-RAM. Will
+send new version with the changes.
 
-What type of cleanup? Any functional change?
+>>>
+>>> This is what the cpufreq core already does when it printed these boot time
+>>> messages. Do we really need to add this much code in here ?
+>> We want to avoid the warning messages.
+> 
+> Hmm, okay.
+> 
+>>>
+>>> If you really don't want to see the warning, how about fixing it the way cpufreq
+>>> core does ? i.e. with this call:
+>>>
+>>> ret = __cpufreq_driver_target(policy, policy->cur - 1, CPUFREQ_RELATION_L);
+>>>
+>> The cpufreq core change will help in bootup case but not during the case of
+>> resume.
+>> In this change, reading the previously stored value and restoring it will
+>> also fix the warning message during resume.
+> 
+> You were getting the message during resume as well ? Why ? The
+> firmware is updating the frequency to a previous value ? If that is
+> so, you should just set the frequency again to some other value during
+> resume to fix it.
+Yes, it boots at a predefined frequency and then some time is taken to 
+restore the last frequency which software requested before entering 
+Suspend-to-RAM. We don't need to re-write the register again.
 
 > 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->  drivers/memory/tegra/tegra210.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
-> index e8a7d266802c..b400802c9f14 100644
-> --- a/drivers/memory/tegra/tegra210.c
-> +++ b/drivers/memory/tegra/tegra210.c
-> @@ -1020,32 +1020,32 @@ static const struct tegra_mc_client tegra210_mc_clients[] = {
->  };
->  
->  static const struct tegra_smmu_swgroup tegra210_swgroups[] = {
-> -	{ .name = "dc",        .swgroup = TEGRA_SWGROUP_DC,        .reg = 0x240 },
-> -	{ .name = "dcb",       .swgroup = TEGRA_SWGROUP_DCB,       .reg = 0x244 },
->  	{ .name = "afi",       .swgroup = TEGRA_SWGROUP_AFI,       .reg = 0x238 },
->  	{ .name = "avpc",      .swgroup = TEGRA_SWGROUP_AVPC,      .reg = 0x23c },
-> -	{ .name = "hda",       .swgroup = TEGRA_SWGROUP_HDA,       .reg = 0x254 },
-> +	{ .name = "dc",        .swgroup = TEGRA_SWGROUP_DC,        .reg = 0x240 },
-> +	{ .name = "dcb",       .swgroup = TEGRA_SWGROUP_DCB,       .reg = 0x244 },
->  	{ .name = "hc",        .swgroup = TEGRA_SWGROUP_HC,        .reg = 0x250 },
-> +	{ .name = "hda",       .swgroup = TEGRA_SWGROUP_HDA,       .reg = 0x254 },
-> +	{ .name = "isp2",      .swgroup = TEGRA_SWGROUP_ISP2,      .reg = 0x258 },
->  	{ .name = "nvenc",     .swgroup = TEGRA_SWGROUP_NVENC,     .reg = 0x264 },
->  	{ .name = "ppcs",      .swgroup = TEGRA_SWGROUP_PPCS,      .reg = 0x270 },
->  	{ .name = "sata",      .swgroup = TEGRA_SWGROUP_SATA,      .reg = 0x274 },
-> -	{ .name = "isp2",      .swgroup = TEGRA_SWGROUP_ISP2,      .reg = 0x258 },
-> +	{ .name = "vi",        .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
-> +	{ .name = "vic",       .swgroup = TEGRA_SWGROUP_VIC,       .reg = 0x284 },
->  	{ .name = "xusb_host", .swgroup = TEGRA_SWGROUP_XUSB_HOST, .reg = 0x288 },
->  	{ .name = "xusb_dev",  .swgroup = TEGRA_SWGROUP_XUSB_DEV,  .reg = 0x28c },
-> -	{ .name = "isp2b",     .swgroup = TEGRA_SWGROUP_ISP2B,     .reg = 0xaa4 },
-> -	{ .name = "tsec",      .swgroup = TEGRA_SWGROUP_TSEC,      .reg = 0x294 },
->  	{ .name = "a9avp",     .swgroup = TEGRA_SWGROUP_A9AVP,     .reg = 0x290 },
-
-I must say I cannot find the order. By name - not. By swgroup name -
-not. By register - not.
-
-What is the order then?
-
-Best regards,
-Krzysztof
-
-
-> -	{ .name = "gpu",       .swgroup = TEGRA_SWGROUP_GPU,       .reg = 0xaac },
-> +	{ .name = "tsec",      .swgroup = TEGRA_SWGROUP_TSEC,      .reg = 0x294 },
->  	{ .name = "sdmmc1a",   .swgroup = TEGRA_SWGROUP_SDMMC1A,   .reg = 0xa94 },
->  	{ .name = "sdmmc2a",   .swgroup = TEGRA_SWGROUP_SDMMC2A,   .reg = 0xa98 },
->  	{ .name = "sdmmc3a",   .swgroup = TEGRA_SWGROUP_SDMMC3A,   .reg = 0xa9c },
->  	{ .name = "sdmmc4a",   .swgroup = TEGRA_SWGROUP_SDMMC4A,   .reg = 0xaa0 },
-> -	{ .name = "vic",       .swgroup = TEGRA_SWGROUP_VIC,       .reg = 0x284 },
-> -	{ .name = "vi",        .swgroup = TEGRA_SWGROUP_VI,        .reg = 0x280 },
-> +	{ .name = "isp2b",     .swgroup = TEGRA_SWGROUP_ISP2B,     .reg = 0xaa4 },
-> +	{ .name = "gpu",       .swgroup = TEGRA_SWGROUP_GPU,       .reg = 0xaac },
->  	{ .name = "nvdec",     .swgroup = TEGRA_SWGROUP_NVDEC,     .reg = 0xab4 },
->  	{ .name = "ape",       .swgroup = TEGRA_SWGROUP_APE,       .reg = 0xab8 },
-> -	{ .name = "nvjpg",     .swgroup = TEGRA_SWGROUP_NVJPG,     .reg = 0xac0 },
->  	{ .name = "se",        .swgroup = TEGRA_SWGROUP_SE,        .reg = 0xabc },
-> +	{ .name = "nvjpg",     .swgroup = TEGRA_SWGROUP_NVJPG,     .reg = 0xac0 },
->  	{ .name = "axiap",     .swgroup = TEGRA_SWGROUP_AXIAP,     .reg = 0xacc },
->  	{ .name = "etr",       .swgroup = TEGRA_SWGROUP_ETR,       .reg = 0xad0 },
->  	{ .name = "tsecb",     .swgroup = TEGRA_SWGROUP_TSECB,     .reg = 0xad4 },
-> -- 
-> 2.17.1
+> --
+> viresh
 > 
