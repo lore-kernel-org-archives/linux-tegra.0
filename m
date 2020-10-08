@@ -2,223 +2,278 @@ Return-Path: <SRS0=64AB=DP=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE73C4363C
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 13:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05657C4363A
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 13:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E7BD2145D
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 13:01:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rRZVfG4f"
+	by mail.kernel.org (Postfix) with ESMTP id 98F0B2145D
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Oct 2020 13:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602162383;
+	bh=2lDf35uHFZosEIVYa7uiAybKH2YKzlzLSzz7E16+iTM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=m0wsIq/S3fe4Dut0u4MlZm3rAKGnVWi1/SVrFlW9hPjD8C5IUx4cMlUA2QooKuG2G
+	 NiI/Ysj0nos0i0CGp4NQjNzKkv+CSNKCbQtHEaMhp3AiWeDrouW7Py/s7is1+vj59g
+	 zTNlv6o+Cl79Q0vbVs3dwn28imLLwzWXMRrqUNp0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbgJHNBa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Oct 2020 09:01:30 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14784 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729869AbgJHNB3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Oct 2020 09:01:29 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7f0d710001>; Thu, 08 Oct 2020 06:00:33 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Oct
- 2020 13:01:24 +0000
-Received: from sumitg-l4t.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 8 Oct 2020 13:01:20 +0000
-From:   Sumit Gupta <sumitg@nvidia.com>
-To:     <viresh.kumar@linaro.org>, <rjw@rjwysocki.net>,
-        <sudeep.holla@arm.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <ksitaraman@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH v2 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
-Date:   Thu, 8 Oct 2020 18:31:06 +0530
-Message-ID: <1602162066-26442-3-git-send-email-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
-References: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
-X-NVConfidentiality: public
+        id S1730190AbgJHNGX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Oct 2020 09:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730146AbgJHNGX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 8 Oct 2020 09:06:23 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A58382083B;
+        Thu,  8 Oct 2020 13:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602162381;
+        bh=2lDf35uHFZosEIVYa7uiAybKH2YKzlzLSzz7E16+iTM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dvbxheAZiHonPfftSbghLP4gXTbyJNpkXoFFeu8P7RgkZdrZNSEbzbNDhmZjCXgpk
+         JJFhlue8V89P8adodQ+BM3NufGvRZEFFYTT1p3mvhTFmun0WO28s4fJC1tAN9J3Hfr
+         9a3H3zZens5u2iwHuJUYkw/k5BywPG6Lp054Gk6Q=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1kQVch-000hXN-JE; Thu, 08 Oct 2020 14:06:19 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602162033; bh=w/t/1HPtHe4dWml26XyhXVC/J2g3Sci7nmwVsHDJwGw=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=rRZVfG4fiJdhzamTESY2oBrCljhFhQ14lxavgwcLewW20BoGjIzcpDvx7nSaGfSRR
-         K0ptRUpNtMPBKCuNm/kIy57jrEk86dYOnRL6+8X7bTYWhH1eR+AqQiEVURYfrABzDg
-         bx0A8yo0NTKrLVoGgIunLxzw+L/IRSpiUPbzL91t19Pg9LEn++z0cM1FUNeVVvS4bn
-         X5g027JUwArOfK5GouxWL4IQPQOSn61g6m239l1VHv6duTANfX4F1OJAe8USi5jl1t
-         6n7a0xPnqU+aN8RgvWmxRkpH2xLWhLjdGICUmeTDxX2u5GnVnHWWW3FxQHp4Gbofgj
-         cZq7EXYrVPxqA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 08 Oct 2020 14:06:19 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH v3 1/4] genirq/irqdomain: Allow partial trimming of
+ irq_data hierarchy
+In-Reply-To: <87d01t2c90.fsf@nanos.tec.linutronix.de>
+References: <20201007124544.1397322-1-maz@kernel.org>
+ <20201007124544.1397322-2-maz@kernel.org>
+ <87d01t2c90.fsf@nanos.tec.linutronix.de>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <9341eb039193d630d8a3f7bac920a76c@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com, skomatineni@nvidia.com, vreddytalla@nvidia.com, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Warning coming during boot because the boot freq set by bootloader
-gets filtered out due to big freq steps while creating freq_table.
-Fix this by setting closest higher frequency from freq_table.
-Warning:
-  cpufreq: cpufreq_online: CPU0: Running at unlisted freq
-  cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+On 2020-10-08 12:22, Thomas Gleixner wrote:
+> On Wed, Oct 07 2020 at 13:45, Marc Zyngier wrote:
+>> +/**
+>> + * irq_domain_trim_hierarchy - Trim the uninitialized part of a irq 
+>> hierarchy
+>> + * @virq:	IRQ number to trim where the hierarchy is to be trimmed
+>> + *
+>> + * Drop the partial irq_data hierarchy from the level where the
+>> + * irq_data->chip is NULL.
+>> + *
+>> + * Its only use is to be able to trim levels of hierarchy that do not
+>> + * have any real meaning for this interrupt, and that the driver 
+>> leaves
+>> + * uninitialized in its .alloc() callback.
+>> + */
+>> +static void irq_domain_trim_hierarchy(unsigned int virq)
+>> +{
+>> +	struct irq_data *tail, *irq_data = irq_get_irq_data(virq);
+>> +
+>> +	/* It really needs to be a hierarchy, and not a single entry */
+>> +	if (!irq_data->parent_data)
+>> +		return;
+>> +
+>> +	/* Skip until we find a parent irq_data without a populated chip */
+>> +	while (irq_data->parent_data && irq_data->parent_data->chip)
+>> +		irq_data = irq_data->parent_data;
+>> +
+>> +	/* All levels populated */
+>> +	if (!irq_data->parent_data)
+>> +		return;
+>> +
+>> +	pr_info("IRQ%d: trimming hierarchy from %s\n",
+>> +		virq, irq_data->parent_data->domain->name);
+>> +
+>> +	/* Sever the inner part of the hierarchy...  */
+>> +	tail = irq_data->parent_data;
+>> +	irq_data->parent_data = NULL;
+>> +	__irq_domain_free_hierarchy(tail);
+>> +}
+> 
+> I like that way more than the previous version, but there are still
+> quite some dangeroos waiting to bite.
+> 
+> Just for robustness sake we should do the following:
 
-These warning messages also come during hotplug online of non-boot
-CPU's while exiting from 'Suspend-to-RAM'. This happens because
-during exit from 'Suspend-to-RAM', some time is taken to restore
-last software requested CPU frequency written in register before
-entering suspend. To fix this, adding online hook to wait till the
-current frequency becomes equal or close to the last requested
-frequency.
+[...]
 
-Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 86 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 79 insertions(+), 7 deletions(-)
+Here's what I have now, with the pmc driver calling
+irq_domain_disconnect_hierarchy() at the right spots.
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index d250e49..cc28b1e3 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -7,6 +7,7 @@
- #include <linux/cpufreq.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
-+#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-@@ -21,7 +22,6 @@
- #define KHZ                     1000
- #define REF_CLK_MHZ             408 /* 408 MHz */
- #define US_DELAY                500
--#define US_DELAY_MIN            2
- #define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
- #define MAX_CNT                 ~0U
- 
-@@ -249,17 +249,22 @@ static unsigned int tegra194_get_speed(u32 cpu)
- static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
--	u32 cpu;
-+	u32 cpu = policy->cpu;
-+	int ret;
- 	u32 cl;
- 
--	smp_call_function_single(policy->cpu, get_cpu_cluster, &cl, true);
-+	if (!cpu_online(cpu))
-+		return -EINVAL;
+         M.
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index b37350c4fe37..a52b095bd404 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -509,6 +509,9 @@ extern void irq_domain_free_irqs_parent(struct 
+irq_domain *domain,
+  					unsigned int irq_base,
+  					unsigned int nr_irqs);
+
++extern int irq_domain_disconnect_hierarchy(struct irq_domain *domain,
++					   unsigned int virq);
 +
-+	ret = smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
-+	if (ret) {
-+		pr_err("cpufreq: Failed to get cluster for CPU%d\n", cpu);
-+		return ret;
-+	}
- 
- 	if (cl >= data->num_clusters)
- 		return -EINVAL;
- 
--	/* boot freq */
--	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY_MIN);
--
- 	/* set same policy for all cpus in a cluster */
- 	for (cpu = (cl * 2); cpu < ((cl + 1) * 2); cpu++)
- 		cpumask_set_cpu(cpu, policy->cpus);
-@@ -267,7 +272,23 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
- 	policy->freq_table = data->tables[cl];
- 	policy->cpuinfo.transition_latency = TEGRA_CPUFREQ_TRANSITION_LATENCY;
- 
--	return 0;
-+	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
-+
-+	ret = cpufreq_table_validate_and_sort(policy);
-+	if (ret)
-+		return ret;
-+
-+	/* Are we running at unknown frequency ? */
-+	ret = cpufreq_frequency_table_get_index(policy, policy->cur);
-+	if (ret == -EINVAL) {
-+		ret = __cpufreq_driver_target(policy, policy->cur - 1,
-+					      CPUFREQ_RELATION_L);
-+		if (ret)
-+			return ret;
-+		policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
-+	}
-+
-+	return ret;
- }
- 
- static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
-@@ -285,6 +306,55 @@ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
- 	return 0;
- }
- 
-+static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
+  static inline bool irq_domain_is_hierarchy(struct irq_domain *domain)
+  {
+  	return domain->flags & IRQ_DOMAIN_FLAG_HIERARCHY;
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 76cd7ebd1178..316f5baa9cd9 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1136,6 +1136,17 @@ static struct irq_data 
+*irq_domain_insert_irq_data(struct irq_domain *domain,
+  	return irq_data;
+  }
+
++static void __irq_domain_free_hierarchy(struct irq_data *irq_data)
 +{
-+	unsigned int interm_freq, last_set_freq;
-+	struct cpufreq_frequency_table *pos;
-+	u64 ndiv;
-+	int ret;
++	struct irq_data *tmp;
 +
-+	if (!cpu_online(policy->cpu))
-+		return -EINVAL;
-+
-+	/* get ndiv for the last frequency request from software  */
-+	ret = smp_call_function_single(policy->cpu, get_cpu_ndiv, &ndiv, true);
-+	if (ret) {
-+		pr_err("cpufreq: Failed to get ndiv for CPU%d\n", policy->cpu);
-+		return ret;
++	while (irq_data) {
++		tmp = irq_data;
++		irq_data = irq_data->parent_data;
++		kfree(tmp);
 +	}
-+
-+	cpufreq_for_each_valid_entry(pos, policy->freq_table) {
-+		if (pos->driver_data == ndiv) {
-+			last_set_freq = pos->frequency;
-+			break;
-+		}
-+	}
-+
-+	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
-+	interm_freq =  policy->cur;
-+
-+	/*
-+	 * It takes some time to restore the previous frequency while
-+	 * turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
-+	 * So, wait till it reaches the previous value and timeout if the
-+	 * time taken to reach requested freq is >100ms
-+	 */
-+	ret = read_poll_timeout(tegra194_get_speed_common, policy->cur,
-+				abs(policy->cur - last_set_freq) <= 115200, 0,
-+				100 * USEC_PER_MSEC, false, policy->cpu,
-+				US_DELAY);
-+	if (ret)
-+		pr_warn("cpufreq: cpu%d, cur:%u, last set:%u, intermed:%u\n",
-+			policy->cpu, policy->cur, last_set_freq, interm_freq);
-+
-+	return ret;
 +}
 +
-+static int tegra194_cpufreq_offline(struct cpufreq_policy *policy)
+  static void irq_domain_free_irq_data(unsigned int virq, unsigned int 
+nr_irqs)
+  {
+  	struct irq_data *irq_data, *tmp;
+@@ -1147,12 +1158,81 @@ static void irq_domain_free_irq_data(unsigned 
+int virq, unsigned int nr_irqs)
+  		irq_data->parent_data = NULL;
+  		irq_data->domain = NULL;
+
+-		while (tmp) {
+-			irq_data = tmp;
+-			tmp = tmp->parent_data;
+-			kfree(irq_data);
++		__irq_domain_free_hierarchy(tmp);
++	}
++}
++
++int irq_domain_disconnect_hierarchy(struct irq_domain *domain,
++				    unsigned int virq)
 +{
++	struct irq_data *irqd;
++
++	irqd = irq_domain_get_irq_data(domain, virq);
++	if (!irqd)
++		return -EINVAL;
++
++	irqd->chip = ERR_PTR(-ENOTCONN);
 +	return 0;
 +}
 +
- static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.name = "tegra194",
- 	.flags = CPUFREQ_STICKY | CPUFREQ_CONST_LOOPS |
-@@ -294,6 +364,8 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.get = tegra194_get_speed,
- 	.init = tegra194_cpufreq_init,
- 	.attr = cpufreq_generic_attr,
-+	.online = tegra194_cpufreq_online,
-+	.offline = tegra194_cpufreq_offline,
- };
- 
- static void tegra194_cpufreq_free_resources(void)
--- 
-2.7.4
++/**
++ * irq_domain_trim_hierarchy - Trim the uninitialized part of a irq 
+hierarchy
++ * @virq:	IRQ number to trim where the hierarchy is to be trimmed
++ *
++ * Drop the partial irq_data hierarchy from the level where the
++ * irq_data->chip is a trim marker (PTR_ERR(-ENOTCONN)).
++ *
++ * Its only use is to be able to trim levels of hierarchy that do not
++ * have any real meaning for this interrupt, and that the driver marks
++ * as such from its .alloc() callback.
++ */
++static int irq_domain_trim_hierarchy(unsigned int virq)
++{
++	struct irq_data *tail, *irqd, *irq_data;
++
++	irq_data = irq_get_irq_data(virq);
++	tail = NULL;
++
++	/* The first entry must have a valid irqchip */
++	if (!irq_data->chip || IS_ERR(irq_data->chip))
++		return -EINVAL;
++
++	/*
++	 * Validate that the irq_data chain is sane in the presence of
++	 * a hierarchy trimming marker.
++	 */
++	for (irqd = irq_data->parent_data; irqd; irq_data = irqd, irqd = 
+irqd->parent_data) {
++		/* Can't have a valid irqchip after a trim marker */
++		if (irqd->chip && tail)
++			return -EINVAL;
++
++		/* Can't have an empty irqchip before a trim marker */
++		if (!irqd->chip && !tail)
++			return -EINVAL;
++
++		if (IS_ERR(irqd->chip)) {
++			/* Only -ENOTCONN is a valid trim marker */
++			if (PTR_ERR(irqd->chip) != -ENOTCONN)
++				return -EINVAL;
++
++			tail = irq_data;
+  		}
+  	}
++
++	/* No trim marker, nothing to do */
++	if (!tail)
++		return 0;
++
++	pr_info("IRQ%d: trimming hierarchy from %s\n",
++		virq, tail->parent_data->domain->name);
++
++	/* Sever the inner part of the hierarchy...  */
++	irqd = tail;
++	tail = tail->parent_data;
++	irqd->parent_data = NULL;
++	__irq_domain_free_hierarchy(tail);
++
++	return 0;
+  }
 
+  static int irq_domain_alloc_irq_data(struct irq_domain *domain,
+@@ -1362,11 +1442,16 @@ int __irq_domain_alloc_irqs(struct irq_domain 
+*domain, int irq_base,
+  		mutex_unlock(&irq_domain_mutex);
+  		goto out_free_irq_data;
+  	}
+-	for (i = 0; i < nr_irqs; i++)
++	for (i = 0; i < nr_irqs; i++) {
++		ret = irq_domain_trim_hierarchy(virq + i);
++		if (ret)
++			break;
+  		irq_domain_insert_irq(virq + i);
++	}
+  	mutex_unlock(&irq_domain_mutex);
+
+-	return virq;
++	if (!ret)
++		return virq;
+
+  out_free_irq_data:
+  	irq_domain_free_irq_data(virq, nr_irqs);
+
+-- 
+Jazz is not dead. It just smells funny...
