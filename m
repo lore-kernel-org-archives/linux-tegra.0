@@ -2,149 +2,192 @@ Return-Path: <SRS0=2JVP=DQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889F4C43457
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF89C433DF
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36C15222B8
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85DCE222B8
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:26:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZ2oP5rf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwXhEoXG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733005AbgJIMVQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Oct 2020 08:21:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33496 "EHLO
+        id S2388496AbgJIM0C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Oct 2020 08:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732974AbgJIMVP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Oct 2020 08:21:15 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CBDC0613D2;
-        Fri,  9 Oct 2020 05:21:14 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id ce10so12778441ejc.5;
-        Fri, 09 Oct 2020 05:21:14 -0700 (PDT)
+        with ESMTP id S2388452AbgJIM0B (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Oct 2020 08:26:01 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F37DC0613D2;
+        Fri,  9 Oct 2020 05:26:01 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id lw21so12790278ejb.6;
+        Fri, 09 Oct 2020 05:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wqW8tLiDohXCRPeIW2J1lirrHi6UIgJCyYAWG9nSsGw=;
-        b=pZ2oP5rfYx1WSdVSTXAOLi7JIksRbP3W2mUtEUFh5x3bGY39SZ4zLnvFOmRb9ozutM
-         OMKWIZPk9qWDHqbuP1ZfST2Hx1Pf31leUu43PAKCDq0mVHFD8eNMKQBPfKBPCx/XG0Sj
-         bAhMU5pP4Gq9L6XjZ8/i9FpCGY4N5hYqPalYjJHj8y5z9a4DRFSz8qOmWsDxatEbU2SN
-         DhLS/9mCClwJB+JxI6BRb3LFUDCaNmGyrF/j7d8Nt96yVVrnqOOeUzSwti9W3CMqFU4S
-         RwOlKLOnrghzS/cEc64fEpMcA8gch/hRBSqS524zjrvwHDVi07bRZj6LWiZ/JIT2MxP+
-         KapQ==
+        bh=vxWvga10iK++hQGsOFVlXKsQyXZ7GztSMmrf028ztk4=;
+        b=NwXhEoXGxC+R37EfS1lfuy3g8wbdrNmU1E77zfyzc9D/fJwROKORSsZfAQKLCnnOMk
+         d5vWXwQRNB4Bi+3zTINWBL0LgydS59ZKZRYp40cKQvY8QiUfAY73FMiBfEWBIGw56R8y
+         iS4a2hSi7xRdR5vj0D+RFTrOaiYJ7evxpNryiOknzByilQ9uNIGR+y0R5FUhcVptSfMM
+         63P7nk78F1hZKMy+TR1hNm9QyO+zYqHIC3cstDV2l2kqtjSuIyCxdIXx5aF63qupP1vn
+         P+WHmPHGzAyyA1lXVqWwtitoHl7b4GiR/PsPmEYg76+c2mfqCWA9pNAP7fV4/QKiLCux
+         D0BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wqW8tLiDohXCRPeIW2J1lirrHi6UIgJCyYAWG9nSsGw=;
-        b=jzOkWG93VwVGSbVzo+6/WhUK084ZjhdeFPciQcU+bofrdhdJtQZPEJpY8lT6SEt6Bt
-         +QwSg8ShD5iPAn5uUqDFMxIbivHy+DVMxT5vBwzkR/c5i8yr7arghJPc5F7zGU6iXAXk
-         yeWzbGN9wT5ZjY1qbV0sjYlMMgXSavIh7pJBzAuZCPWBmRjARXJaS1ePHNR9n8l92Fs+
-         yaqyFvnOMYur8gGVPOCVRZ3541lR126S3xz+n0iQhtnorH15t1qXj1i1UFlpYBDZ035Z
-         gPAfcHxhRp/dWSPL43TxzN4MOLYr7tY9rc6jWBI3Z6gnWkco+oGl2I6eMQtgcNhDnhp9
-         ALnA==
-X-Gm-Message-State: AOAM530JamE9qoKuO8HZcOLtTyoDpThHJmyzbSKtiHJePwbeUbBltrq7
-        HYtgRsZq3zAJptxWNvsfPWM=
-X-Google-Smtp-Source: ABdhPJw+iNVHcU/8xFz64o6lEQtVQ3Zwrk6X3Hl6RtS7BHWq3UuQGfKXLZa5khMX/UUNf9wiW0cSfQ==
-X-Received: by 2002:a17:906:d8e:: with SMTP id m14mr14407722eji.448.1602246073460;
-        Fri, 09 Oct 2020 05:21:13 -0700 (PDT)
+        bh=vxWvga10iK++hQGsOFVlXKsQyXZ7GztSMmrf028ztk4=;
+        b=YiyqUlnI1I0zl45UYfE7v7cQue5MEKbEdMFKr91gA8aNwVHgFsaFd9gYJy690CiNua
+         Ma2gk7z7j9E1l//6NtSuM5TsoXjpTLZTGBKwPGOobEi4aT2U4AG6dE0SnMMAuLIaX9Hi
+         Vy6lbFCKILDFCNXSpm+ENr8iTInjA0FpaDfKyzHalJoQGCXp6oM8qwBSLKnqoQayPe/q
+         chHixuBZPDA9r9NVV5Rrwu+7LDXyTLXLQVVHUMNhcFyThciPqc34sD03pbe7/lNpyqJY
+         8uUCayWdESuOnLgAVpJB3ihPyv0igybF5T+8dm2Z7Kijf1gUBokbtgtkh2YNBPgfL+KX
+         h5yw==
+X-Gm-Message-State: AOAM531nLT6aqERUVNUryoCzrQe/iEXp2bw7g+2hwgcG98WSEzAFbKF/
+        KDYRfsQYe26WMmhPofDpiYA=
+X-Google-Smtp-Source: ABdhPJxkD3KtJ6bfK9EwnyjmX+Fl4PJjDDa08bzc4YEJmViDgYAtnI0ithJ1zzW1tf+4J5V2VWMRNQ==
+X-Received: by 2002:a17:906:490d:: with SMTP id b13mr13800241ejq.122.1602246359881;
+        Fri, 09 Oct 2020 05:25:59 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id j18sm6256432ejc.111.2020.10.09.05.21.11
+        by smtp.gmail.com with ESMTPSA id lb11sm6271626ejb.27.2020.10.09.05.25.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 05:21:12 -0700 (PDT)
-Date:   Fri, 9 Oct 2020 14:21:10 +0200
+        Fri, 09 Oct 2020 05:25:58 -0700 (PDT)
+Date:   Fri, 9 Oct 2020 14:25:56 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     krzk@kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     Dmitry Osipenko <digetx@gmail.com>, joro@8bytes.org,
+        vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: memory: tegra: Add missing swgroups
-Message-ID: <20201009122110.GD458338@ulmo>
-References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-5-nicoleotsuka@gmail.com>
+Subject: Re: [PATCH v4 2/3] iommu/tegra-smmu: Rework tegra_smmu_probe_device()
+Message-ID: <20201009122556.GE458338@ulmo>
+References: <20201002060807.32138-1-nicoleotsuka@gmail.com>
+ <20201002060807.32138-3-nicoleotsuka@gmail.com>
+ <5542b314-f414-1e83-8cf6-2bf22a41ae9c@gmail.com>
+ <20201002185828.GC29706@Asurada-Nvidia>
+ <20201005095754.GJ425362@ulmo>
+ <20201006010546.GB28640@Asurada-Nvidia>
+ <20201008095343.GA2349275@ulmo>
+ <20201008211209.GC32140@Asurada-Nvidia>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k4f25fnPtRuIRUb3"
+        protocol="application/pgp-signature"; boundary="TD8GDToEDw0WLGOL"
 Content-Disposition: inline
-In-Reply-To: <20201008003746.25659-5-nicoleotsuka@gmail.com>
+In-Reply-To: <20201008211209.GC32140@Asurada-Nvidia>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---k4f25fnPtRuIRUb3
-Content-Type: text/plain; charset=us-ascii
+--TD8GDToEDw0WLGOL
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 07, 2020 at 05:37:45PM -0700, Nicolin Chen wrote:
-> According to Tegra X1 TRM, there are missing swgroups in the
-> tegra210_swgroups list. So this patch adds them in bindings.
+On Thu, Oct 08, 2020 at 02:12:10PM -0700, Nicolin Chen wrote:
+> On Thu, Oct 08, 2020 at 11:53:43AM +0200, Thierry Reding wrote:
+> > On Mon, Oct 05, 2020 at 06:05:46PM -0700, Nicolin Chen wrote:
+> > > On Mon, Oct 05, 2020 at 11:57:54AM +0200, Thierry Reding wrote:
+> > > > On Fri, Oct 02, 2020 at 11:58:29AM -0700, Nicolin Chen wrote:
+> > > > > On Fri, Oct 02, 2020 at 06:02:18PM +0300, Dmitry Osipenko wrote:
+> > > > > > 02.10.2020 09:08, Nicolin Chen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > > >  static int tegra_smmu_of_xlate(struct device *dev,
+> > > > > > >  			       struct of_phandle_args *args)
+> > > > > > >  {
+> > > > > > > +	struct platform_device *iommu_pdev =3D of_find_device_by_no=
+de(args->np);
+> > > > > > > +	struct tegra_mc *mc =3D platform_get_drvdata(iommu_pdev);
+> > > > > > >  	u32 id =3D args->args[0];
+> > > > > > > =20
+> > > > > > > +	of_node_put(args->np);
+> > > > > >=20
+> > > > > > of_find_device_by_node() takes device reference and not the np
+> > > > > > reference. This is a bug, please remove of_node_put().
+> > > > >=20
+> > > > > Looks like so. Replacing it with put_device(&iommu_pdev->dev);
+> > > >=20
+> > > > Putting the put_device() here is wrong, though. You need to make su=
+re
+> > > > you keep a reference to it as long as you keep accessing the data t=
+hat
+> > > > is owned by it.
+> > >=20
+> > > I am confused. You said in the other reply (to Dmitry) that we do
+> > > need to put_device(mc->dev), where mc->dev should be the same as
+> > > iommu_pdev->dev. But here your comments sounds that we should not
+> > > put_device at all since ->probe_device/group_device/attach_dev()
+> > > will use it later.
+> >=20
+> > You need to call put_device() at some point to release the reference
+> > that you acquired by calling of_find_device_by_node(). If you don't
+> > release it, you're leaking the reference and the kernel isn't going to
+> > know when it's safe to delete the device.
+> >=20
+> > So what I'm saying is that we either release it here, which isn't quite
+> > right because we do reference data relating to the device later on. And
 >=20
-> Note that the TEGRA_SWGROUP_GPU (in list) should be actually
-> TEGRA_SWGROUP_GPUB (in TRM), yet TEGRA_SWGROUP_GPU (in TRM)
-> is not being used -- only TEGRA_SWGROUP_GPUB (in TRM) is. So
-> this patch does not add TEGRA_SWGROUP_GPU (in TRM) and keeps
-> TEGRA_SWGROUP_GPU (in list) as it is.
+> I see. A small question here by the way: By looking at other IOMMU
+> drivers that are calling driver_find_device_by_fwnode() function,
+> I found that most of them put_device right after the function call,
+> and dev_get_drvdata() after putting the device..
 >=20
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->  include/dt-bindings/memory/tegra210-mc.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindin=
-gs/memory/tegra210-mc.h
-> index c226cba9e077..f9fcb18a6d9b 100644
-> --- a/include/dt-bindings/memory/tegra210-mc.h
-> +++ b/include/dt-bindings/memory/tegra210-mc.h
-> @@ -33,6 +33,16 @@
->  #define TEGRA_SWGROUP_AXIAP	28
->  #define TEGRA_SWGROUP_ETR	29
->  #define TEGRA_SWGROUP_TSECB	30
-> +#define TEGRA_SWGROUP_NV	31
-> +#define TEGRA_SWGROUP_NV2	32
-> +#define TEGRA_SWGROUP_PPCS1	33
-> +#define TEGRA_SWGROUP_DC1	34
-> +#define TEGRA_SWGROUP_PPCS2	35
-> +#define TEGRA_SWGROUP_HC1	36
-> +#define TEGRA_SWGROUP_SE1	37
-> +#define TEGRA_SWGROUP_TSEC1	38
-> +#define TEGRA_SWGROUP_TSECB1	39
-> +#define TEGRA_SWGROUP_NVDEC1	40
+> Feels like they are doing it wrongly?
 
-I'm not sure this is right. The existing list is based on "Table 4:
-Client to Software Name Mapping" from page 28 of the Tegra X1 TRM, and
-none of these new swgroups seem to be present in that table.
+Well, like I said this is somewhat academic because these are all
+referencing the IOMMU that by definition still needs to be around
+when this code is called, and there's locks in place to ensure
+these don't go away. So it's not like these drivers are doing it
+wrong, they're just not doing it pedantically right.
 
-Where exactly did you get those from?
+>=20
+> > because it isn't quite right there should be a reason to justify it,
+> > which is that the SMMU parent device is the same as the MC, so the
+> > reference count isn't strictly necessary. But that's not quite obvious,
+> > so highlighting it in a comment makes sense.
+> >=20
+> > The other alternative is to not call put_device() here and keep on to
+> > the reference as long as you keep using "mc". This might be difficult to
+> > implement because it may not be obvious where to release it. I think
+> > this is the better alternative, but if it's too complicated to implement
+> > it might not be worth it.
+>=20
+> I feel so too. The dev is got at of_xlate() that does not have an
+> obvious counterpart function. So I'll just remove put_device() and
+> put a line of comments, as you suggested.
+
+I think you misunderstood. Not calling put_device() would be wrong
+because that leaks a reference to the SMMU that you can't get back. My
+suggestion was rather to keep put_device() here, but add a comment as to
+why it's okay to call the put_device() here, even though you keep using
+its private data later beyond this point, which typically would be wrong
+to do.
 
 Thierry
 
---k4f25fnPtRuIRUb3
+--TD8GDToEDw0WLGOL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+AVbYACgkQ3SOs138+
-s6EjYw//d7rFLljg4uUz0GAYrWkU+KA1cHfZKLDjjJMNLRm6osUpTfew22WmLk5r
-UupPbHAWPLRE6JEmRvd+YZo9woJR6PENh90tv05ZeyzT17OyqEhIcdwF6tvO+ToQ
-4k1uvcuG2PIC1Ea7a9Q+jpi2H4g60bocm1StHVN0WCj5HzkmIXlK8rlgA7TkXNGC
-eNvIYHq7orAhlk2OMgTzloYk0FcoJgykE3HuJhXbL4k5kO2c65F5Nf07TUyklK3y
-2S2pZcGa7Qs1ztKWB8gHrhai9o6er4v+l2KGN/XNeyaDEzOIMqmfDxbSSyQPnTBL
-IKHvWLLsDijohAT2FJpJkOOl8yDKDWD8Poi9S81JBEIhQzzWavy7X9vY4kfJqRhc
-C2bUVvLswzKbiST2zSGuR7g38yqdW3JPa7yiKBjCIca+MYo0N2DZ+lvFoXvBWvOC
-p6T5uVFBd7qhz/jWfcDD3n2hCcFEIXaljoLPNTEU3OhaoAymwPpgZFQuKlZrHuOK
-/U1SkTGphPxLNf29TJiCeCfPUHmFCOY7QpJCcDeQ+gyB9dfXf9TZqwxSJE5341uo
-PP2P86/Kiv/f/x0AnHFkDs7A41CgDEVX87y3x6lzCrUGHJOZH4VK21urVt1HwzVD
-jrkTX4VOKj825TFTgY9ck/vxiuk/YkKlfReKqlzbbiTVxlvAkK0=
-=C4t1
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+AVtQACgkQ3SOs138+
+s6FyaRAAkt3dP2DNCS6TI3/NevoBQ2IpMYqF1ex7aH/lNxsI1ES7OlWIkSvq7Nbp
+OdGJxPgxHA9kvYKCwk6u97yR8TX8erODLYov8YWeIYT4j5QcSS/axChfZJwYScEy
+TPMyMZrSoQz89AbZjJ1nXF7pafhPzc+9VI9oyouFL2kwJ5nG7oCmHM+oIswYy5gO
+ek1ARsPvwoQu1hBT19wRzaQMgE9TVc/HzaRtjaCbWBAXZSNlScjn3MxuWW4Teo6P
+5lG3qhBCof7r374RLMz/7bq5MUndj3R5MuwX1eOVzcJgxVYV+94fjTs4ysawaG7f
+vqetJ3RBUHia+rXWZx09T3F0ax+EErEs9cQ94OysiDqdnvMSxb/av8yS0j+rYN2u
+ZLOBqTMgfQaVLiTZgehSSYU1wGyId93lWNvH8oQ9VZ032x5ys37j8y5+9IOtufM7
+ebDWZwobYybBpr8qVA/odW6gStS5qj7gbUE9GBg06y+VB74UdN8K7YLzr4nYNFgz
+HEatjuW3kEIAB/Si2fB/yTBm62HAL7pZ2eGeIDxhFr9d0An5mhTkkUF4eN3GPIyA
+gfOkKq+Vfq+0JOFF4GJj1nGB5kV7CON90yy/lZ5Snt5ru2SdQNhhreFAo3v6QhgH
+IdtXPzcQLz/qJ+QceSHsqujPWojzkVLkGTJVkzojRKwOv6B1vVw=
+=8opr
 -----END PGP SIGNATURE-----
 
---k4f25fnPtRuIRUb3--
+--TD8GDToEDw0WLGOL--
