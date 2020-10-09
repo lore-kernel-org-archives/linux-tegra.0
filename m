@@ -2,138 +2,119 @@ Return-Path: <SRS0=2JVP=DQ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9337AC433DF
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA21C433DF
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3EF222BA
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09C220709
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Oct 2020 12:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJdHOZtB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/mqvwPj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388385AbgJIMLq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Oct 2020 08:11:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
+        id S1732479AbgJIMOi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Oct 2020 08:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732957AbgJIMLq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Oct 2020 08:11:46 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111ADC0613D2;
-        Fri,  9 Oct 2020 05:11:46 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id i5so9103450edr.5;
-        Fri, 09 Oct 2020 05:11:45 -0700 (PDT)
+        with ESMTP id S1730726AbgJIMOi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Oct 2020 08:14:38 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA7BC0613D2;
+        Fri,  9 Oct 2020 05:14:37 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id ce10so12751739ejc.5;
+        Fri, 09 Oct 2020 05:14:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Jk0rFDCpD3qSTy22hFQcdvZQOyHmddQwqnlhye5Yc0Y=;
-        b=XJdHOZtBcMJm3LWWIIugpmY5dlOwMxapGDSLOd25Xwn8zKs/BlDOSQpAIB7gvRJ2JB
-         E13PnG0Yw+QrkKa8XIh76Ky0n/EKThjkMVzhHy9L4BDDbM2UaDXntjfRwRY2avt7FOmz
-         f5GzgwKZ+eByPhpX+OYDg4oxS8wO4LK1J6M24BzIlBSyinw6xWnaUcozLUfJtkRcslAy
-         1pS3C8iVY+4D8fMgythYF2/r60zqFAWJPmDxn78byjl01hUcqAKFDnrNsUcZixosHwHj
-         HU++anqe0c7Bw715d7nPpGWTPlE3seLLU90lnpqJNL7+qNi4EQhwCc9NnEKnkluIFdr+
-         klzQ==
+        bh=Cue3h+d2r54WmJHGHLdlVpBbHTAcBo9+6eJx0erzBJc=;
+        b=g/mqvwPjB/xgvzXn8cS8zt9pJyrroWQtccwbyhRJJoaA1C7Q1S0xOA/FuXd0Vt9+Vy
+         sxBsSYMN0/MlGWwycKjniWvq3to4VIS5hRXjatUnloVpdkRmZk5jY3BTGTy9D650mnbo
+         2WrkzSlMJ6X55f1SIgOkIbi2HDc3VmjJEORRUCJRs5u0AzYG3cMkfN5rMqcnWjCv0YG5
+         UyhoBFWWHpk7GtY6CDbeB0kSlG+uXa8twSBW3QxwYS8/ldi7MOKYpHD79SxARlWuR66U
+         M0rC6SkoeJWY02eJilsxUYHrgI3UKWBE1gIG5zIFy9GI2s82xm3eraeUXMRumOs8XkUG
+         a4Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jk0rFDCpD3qSTy22hFQcdvZQOyHmddQwqnlhye5Yc0Y=;
-        b=S50ylAr/FyUf7xqZ/HPwKtm+4IZXrv0k3K14uJshkNlvJtZ651u46AcBpD0bp4UE5j
-         GYcJStqnm+9fIXXkJw4WAOwvgJ6DLihj1DcjLaPLv1ts0xkCHyGUd/KZMs1Mly8R9MHi
-         S5yZRYlDPrR4xgWEgb0+4Wj+SBhpvP+ulUqX6jwrn5iYNzaGa7qkGJq+yJbvMacazpzE
-         PAzbg7RKYctRh2MgdIIPpoRN6utma8JnHFgPbNjMgqwumPmyAkWKNtbgHWuP1KDQQ91W
-         Dk/5xE2JDERxpLrcKq+TTLfbsEJHO4Mey9B35xXfuPy1fKOqQAVGTNB9B9Qp8sWExg0q
-         gEcQ==
-X-Gm-Message-State: AOAM5328UFTvm67PmDBuWgvyadCMLnuSV58awAU0hKH8jASTS5LMdd8O
-        xY22Kq52f06nX967HDXzuIg=
-X-Google-Smtp-Source: ABdhPJxvPt/AAZpDaEx6NkpJGZ5qRZOyDzTTATPtRJDp9RA750NQOrbjTfZL7RInnOxLT5ohOsOOSw==
-X-Received: by 2002:a05:6402:1446:: with SMTP id d6mr14176591edx.244.1602245504723;
-        Fri, 09 Oct 2020 05:11:44 -0700 (PDT)
+        bh=Cue3h+d2r54WmJHGHLdlVpBbHTAcBo9+6eJx0erzBJc=;
+        b=r77HRtn/1Kk9PSnULTn8cD7Fj6JPdj6hFHwdbiLDPNfbqU/lh+nryyVUFNS27UiLry
+         sxcivA1k3XeYN4tcgYLAAUgp9NzGG8tSML7sHksYAqn49W0m9UZUs0DLNv1vFtDXDlgF
+         pAr2LzWPukacq1vlNoun6Uirtw61EfdqNUKpuyNOlX82jYb2txbW8A+xBJnwrDu7OhBW
+         MRTOksYypNqQUk+6op9C1xIpjGP1Fr7hP96Xq/98LIGm5FfWLkIqf6ctg5KagHcrp/QI
+         RR/zmA95R3kkSJvCvH/kWkGpiVaNNxGhIdoTxerE/Q9htfI2h4JOyHObILV779IaJmw6
+         NeYA==
+X-Gm-Message-State: AOAM5317CRhfBTSmAtLcz7U5LeF1+djeVblm84zj6WoLDv4c7m8yWSWd
+        vdkzcoGYqpTqK5W5G55wIDQ=
+X-Google-Smtp-Source: ABdhPJxkLmSMY6wbOmZmUUSOdDFIlbb4fIh5JaFnZzUKAOhmSQb4qUA219hgXl1Rh6Y1YEUUCyqnGQ==
+X-Received: by 2002:a17:906:c007:: with SMTP id e7mr14012833ejz.55.1602245676475;
+        Fri, 09 Oct 2020 05:14:36 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id m7sm6931865edv.88.2020.10.09.05.11.43
+        by smtp.gmail.com with ESMTPSA id b6sm6593220edu.21.2020.10.09.05.14.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 05:11:43 -0700 (PDT)
-Date:   Fri, 9 Oct 2020 14:11:41 +0200
+        Fri, 09 Oct 2020 05:14:34 -0700 (PDT)
+Date:   Fri, 9 Oct 2020 14:14:33 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
 Cc:     krzk@kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] memory: tegra: Correct la.reg address of seswr
-Message-ID: <20201009121141.GA458338@ulmo>
+Subject: Re: [PATCH 2/5] memory: tegra: Correct tegra210_mc_clients def values
+Message-ID: <20201009121433.GB458338@ulmo>
 References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-2-nicoleotsuka@gmail.com>
+ <20201008003746.25659-3-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+        protocol="application/pgp-signature"; boundary="MW5yreqqjyrRcusr"
 Content-Disposition: inline
-In-Reply-To: <20201008003746.25659-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20201008003746.25659-3-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 07, 2020 at 05:37:42PM -0700, Nicolin Chen wrote:
-> According to Tegra X1 TRM, ALLOWANCE_SESWR is located in field
-> [23:16] of register at address 0x3e0 with a reset value of 0x80
-> at register 0x3e0, while bit-1 of register 0xb98 is for enable
-> bit of seswr. So this patch fixes it.
+On Wed, Oct 07, 2020 at 05:37:43PM -0700, Nicolin Chen wrote:
+> Some def values are mismatched with Tegra X1 TRM, probably because
+> being copied from tegra124.c file. So this patch fixes them.
 >=20
 > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > ---
->  drivers/memory/tegra/tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra=
-210.c
-> index 7fb8b5438bf4..088814279616 100644
-> --- a/drivers/memory/tegra/tegra210.c
-> +++ b/drivers/memory/tegra/tegra210.c
-> @@ -897,7 +897,7 @@ static const struct tegra_mc_client tegra210_mc_clien=
-ts[] =3D {
->  			.bit =3D 1,
->  		},
->  		.la =3D {
-> -			.reg =3D 0xb98,
-> +			.reg =3D 0x3e0,
->  			.shift =3D 16,
->  			.mask =3D 0xff,
->  			.def =3D 0x80,
+>  drivers/memory/tegra/tegra210.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 
-Heh, indeed. Look like I copied the reg offset from the .smmu.reg by
-mistake.
+Looks good:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+AU30ACgkQ3SOs138+
-s6HLcw//f0rLGT0weUM22TjDoPlUvDuJdLz7knleQVQb4hOA5dQ982eMQ3N2Dxxv
-0vy3w4DwWguwe07XYwumkLE/jr4ExjKIoy+AUoiEZUb9u4vpuOPlqoKkeUKf+mlW
-dE6grD8rdTXqYyJHlQyRHPLSXyVqLahSAUQDceSbQYZo9uS695NC2y81nzITqNHd
-hgCW/f73CM2Mu3Zld3LQi9v6BpI4JmMLdJVKfGesCSaRxME1e3iCFp66U6dF6eU7
-lJ/oWvE4FqL/PO61xEgm8iL6MmFtuv5sWcS7CD4zL2ISeyLuML821cHshhbZ1MxZ
-VMCmaJtQ65Fm7eqfkSp7pEo8G9tyMrO8Rp+0n7TpmiHC7wdvVlr3eizgNUUW7/zu
-wf9ElokKFHTPYOzZe49cxBagSLhxqA8TZNW1qPy3hfglyFajQIuQ36rZ1sGyG+vR
-pGpeyIcmDdOAz5coUtA29gfS/4dGX11cW07DmvXnPxiA6BWDtWFzXeojY39/UvvQ
-/R8lYlnzXvPbDyyOaqzNi+FVK1xwZSoH7fhBJxCxvTUDil+xiIHGqyfnER3QTy+E
-JcNM3XJwQwT+udbuly/aslk8rMG0ZHvOV9Fv0W+bOyh9f5CF8hN8qcXjzwnnd2F1
-PAOPvBlQEXBburedRuFrhcSZPK51CzNLYCwk1bEOd+BxAfrUSJM=
-=PIGI
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+AVCkACgkQ3SOs138+
+s6EuTxAAu5FFIhbWSdbBx61NVWHT5gYSbq8qN6YaQ6QsRZuJpyN4i3df4q4PO2ML
+tPcsebM2rUMR4MPveMIpUUfqtxvPRv6dP96LHVpgaj8k0HjPJOFJdX+jFh8uKhYg
+g3q4ck7lxiz3aPBUFr6Z3k2Yb3QqgVAUn6yscq2lromeUY94Cy7cAp1+lioGVzPX
+IfhqxDJ8kTMxqDoTvNDb02Wq9XPHbEl+UEVj3zIsLgBU/gMY5HUSjFTY4bRmoWgN
+rsOYGuJCdmf/nkTvzphMGJvvx2QaQAk40AEycj53loG5LYYQ6Xyoa9SgIrfLEDAW
+vziiA8mKzTAfXcyhGqkiVIWlSZpSO96kpCy9fK/87COExJnuhtAbRPhzM+PlbLBX
+18j5A9ZMBoDqFuNDLEmTZSCAMarrLh6mgLJffvuYHdV0fhG2RZMAUuHpm1yIrhAD
+bWdUCKGNmK4arvx7qOhXyBK0dhwBmkHBfPDnbl3RCLYqJrV9LKFLVpcWnjdzxq+T
+8b9Zwk34l0OvHBvBnHW0eoVq9Ld/ICNK/JnLRrtHRtfZfWlwzZ5WKs7AKilDMx3Y
+E0Bb8L2jZ7Y8Kl5RwHBozAB8MDSjzPEzw5F00zGr7VMlCCb9dPcaCop7a6U4afGJ
+hYGSR5AI2IycyvSbn17zqDJf7A2NcU/dA0ZxwILlykODquE2D+o=
+=2U91
 -----END PGP SIGNATURE-----
 
---3V7upXqbjpZ4EhLz--
+--MW5yreqqjyrRcusr--
