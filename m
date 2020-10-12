@@ -2,87 +2,237 @@ Return-Path: <SRS0=SK8g=DT=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B603C433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B790C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 17:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 230092080A
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602521028;
-	bh=ZDbQrkawtzI0eEIpU0v/9WDwo/WOGw8ncSOaV28bNxs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0dI644Ubqf/nLtYT8rFrirlStQ2A5za72D7zqP1M/g2bj62KV+8baS0oi7o7YTBFC
-	 sz83V+7xMiIz6BgfiVmRwDRNgCWwAv4KSqf8F9qeOhBiFm3Z2ko19ZBloczi4g9Jir
-	 yEXFjI0G1gXaBC/5UkNhxTF6ZshNjMrO2Sm709EI=
+	by mail.kernel.org (Postfix) with ESMTP id BCF1120870
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 17:06:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ntZ3XZzR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403844AbgJLQnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Oct 2020 12:43:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40589 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403782AbgJLQnr (ORCPT
+        id S2404017AbgJLRGg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Oct 2020 13:06:36 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14820 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404011AbgJLRGg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Oct 2020 12:43:47 -0400
-Received: by mail-ed1-f67.google.com with SMTP id p13so17705196edi.7;
-        Mon, 12 Oct 2020 09:43:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=btBZVZqxtWI3fuInlzEdZDm6KMtgsylPsMWQD9V4zcU=;
-        b=SUllY70smH5ucMbxTn8eJvN0TW/GB4YZBq1OjmUDTN49Hc5zacxQaVwWZ66wdJa7nR
-         eNswY0xrXF7uZ+eZGBK610IuuqBqqHSeq2QatamRovdrV3O0sf+GH2FZZdOi+AGlxvcD
-         zI/jA3qK8PFoUJUZz1Ld29EOgmgPwJ5jrSLipziMkY40AE8mpxtDmMF0TqJFnvwgNkSp
-         FF1CcO5sLkh4wuHjEb1fhohk3U1ueR+Yx8RSdUrm5QYvF1xZWQ4evYp8IH2+IseHnqVR
-         wA7u9EIS3Dsz3p4d56uiS/2Q9EOmzQb2Ajh3XTsz+fDeKoXkiTbQ+6uuRRaIoFM1qm/8
-         Es6A==
-X-Gm-Message-State: AOAM530B7jgER0HtD6ssWpqe4KV8mZZt7nisQCsJFAMZ6z3u1kkEMHNw
-        HRggncQ6Qk3K8ebnv+Xa5Dw=
-X-Google-Smtp-Source: ABdhPJy83MPzuSNmmNVuVbEVbI50fmUXELVcQJIDTkSuGz3Qa+Derhs51xqlTZOO4i3RL6jwPsc2ug==
-X-Received: by 2002:a05:6402:3133:: with SMTP id dd19mr13178133edb.100.1602521023802;
-        Mon, 12 Oct 2020 09:43:43 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.215])
-        by smtp.googlemail.com with ESMTPSA id m19sm10771438ejj.91.2020.10.12.09.43.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Oct 2020 09:43:42 -0700 (PDT)
-Date:   Mon, 12 Oct 2020 18:43:40 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] memory: tegra: Sort tegra210_swgroups by reg address
-Message-ID: <20201012164340.GA3557@kozik-lap>
-References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-4-nicoleotsuka@gmail.com>
- <20201008103258.GA16358@kozik-lap>
- <20201008202615.GA32140@Asurada-Nvidia>
+        Mon, 12 Oct 2020 13:06:36 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f848ca90000>; Mon, 12 Oct 2020 10:04:41 -0700
+Received: from [10.41.23.128] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Oct
+ 2020 17:06:27 +0000
+Subject: Re: [PATCH v2 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <rjw@rjwysocki.net>, <sudeep.holla@arm.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <ksitaraman@nvidia.com>,
+        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
+ <1602162066-26442-3-git-send-email-sumitg@nvidia.com>
+ <20201012061335.nht4hnn7kdjupakn@vireshk-i7>
+From:   Sumit Gupta <sumitg@nvidia.com>
+Message-ID: <4fb38a3b-ed26-6c02-e9de-59ce99ce563e@nvidia.com>
+Date:   Mon, 12 Oct 2020 22:36:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201008202615.GA32140@Asurada-Nvidia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20201012061335.nht4hnn7kdjupakn@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1602522281; bh=ie/Fj4acUBaQsFdQijWZk+3BtMFnqzGxCLrm9LrQs4I=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=ntZ3XZzRgUBoTpN/QAu1TaiG5Zvji265XxQvtxpjA/TMug16ELujWE3Qzm7x8EKcb
+         VkG1KE4fQba7rPVIJeMLTlJe4H8GcLOL+f7dQZQP9EL5222ewgtZRgOO2Py6qplHJ+
+         jzylPY62nQ1Wllb2EB8DPowKdUq6nlkq0WJElQKyeqb/Ofz54LnQKp3Q7/vKAUVNin
+         YUjQcwtfZtUAU94rfh5NvKwGqNm6FgdQJ4pbbAxv4G9OuB0xckFM/WeXxA6KCAywH6
+         6oP+fSULBFZiRKeJaxDm6UxsGXq7gC6JOUB/DoMaMVReyoGX1tkrdO0TYAxWAiERNd
+         /wQBOA8D02ZJA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Oct 08, 2020 at 01:26:16PM -0700, Nicolin Chen wrote:
-> Hi Krzysztof,
+>> Warning coming during boot because the boot freq set by bootloader
+>> gets filtered out due to big freq steps while creating freq_table.
+>> Fix this by setting closest higher frequency from freq_table.
+>> Warning:
+>>    cpufreq: cpufreq_online: CPU0: Running at unlisted freq
+>>    cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+>>
+>> These warning messages also come during hotplug online of non-boot
+>> CPU's while exiting from 'Suspend-to-RAM'. This happens because
+>> during exit from 'Suspend-to-RAM', some time is taken to restore
+>> last software requested CPU frequency written in register before
+>> entering suspend.
 > 
-> On Thu, Oct 08, 2020 at 12:32:58PM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, Oct 07, 2020 at 05:37:44PM -0700, Nicolin Chen wrote:
-> > > This is a cleanup change to prepare for new swgroups.
-> > 
-> > What type of cleanup? Any functional change?
+> And who does this restoration ?
 > 
-> It's to sort the swgroup list by reg address as I mentioned in
-> the subject. Perhaps I should have put in commit message also.
+>> To fix this, adding online hook to wait till the
+>> current frequency becomes equal or close to the last requested
+>> frequency.
+>>
+>> Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/cpufreq/tegra194-cpufreq.c | 86 ++++++++++++++++++++++++++++++++++----
+>>   1 file changed, 79 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+>> index d250e49..cc28b1e3 100644
+>> --- a/drivers/cpufreq/tegra194-cpufreq.c
+>> +++ b/drivers/cpufreq/tegra194-cpufreq.c
+>> @@ -7,6 +7,7 @@
+>>   #include <linux/cpufreq.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/dma-mapping.h>
+>> +#include <linux/iopoll.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>>   #include <linux/of_platform.h>
+>> @@ -21,7 +22,6 @@
+>>   #define KHZ                     1000
+>>   #define REF_CLK_MHZ             408 /* 408 MHz */
+>>   #define US_DELAY                500
+>> -#define US_DELAY_MIN            2
+>>   #define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
+>>   #define MAX_CNT                 ~0U
+>>
+>> @@ -249,17 +249,22 @@ static unsigned int tegra194_get_speed(u32 cpu)
+>>   static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>>   {
+>>        struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
+>> -     u32 cpu;
+>> +     u32 cpu = policy->cpu;
+>> +     int ret;
+>>        u32 cl;
+>>
+>> -     smp_call_function_single(policy->cpu, get_cpu_cluster, &cl, true);
+>> +     if (!cpu_online(cpu))
+> 
+> Not required to check this.
+> 
+OK.
 
-Indeed it is sorted by regs, I missed some numbers... looks good. I can
-adjust the commit msg so no need for resend.
+>> +             return -EINVAL;
+>> +
+>> +     ret = smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
+>> +     if (ret) {
+> 
+> Same as in the other patch.
+> 
+Got.
 
-Best regards,
-Krzysztof
+>> +             pr_err("cpufreq: Failed to get cluster for CPU%d\n", cpu);
+>> +             return ret;
+>> +     }
+>>
+>>        if (cl >= data->num_clusters)
+>>                return -EINVAL;
+>>
+>> -     /* boot freq */
+>> -     policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY_MIN);
+>> -
+>>        /* set same policy for all cpus in a cluster */
+>>        for (cpu = (cl * 2); cpu < ((cl + 1) * 2); cpu++)
+>>                cpumask_set_cpu(cpu, policy->cpus);
+>> @@ -267,7 +272,23 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>>        policy->freq_table = data->tables[cl];
+>>        policy->cpuinfo.transition_latency = TEGRA_CPUFREQ_TRANSITION_LATENCY;
+>>
+>> -     return 0;
+>> +     policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+>> +
+>> +     ret = cpufreq_table_validate_and_sort(policy);
+>> +     if (ret)
+>> +             return ret;
+>> +
+>> +     /* Are we running at unknown frequency ? */
+>> +     ret = cpufreq_frequency_table_get_index(policy, policy->cur);
+>> +     if (ret == -EINVAL) {
+>> +             ret = __cpufreq_driver_target(policy, policy->cur - 1,
+>> +                                           CPUFREQ_RELATION_L);
+>> +             if (ret)
+>> +                     return ret;
+> 
+>> +             policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+> 
+> cpufreq-core will do this anyway, you don't need to do it.
+> 
+Got.
+
+>> +     }
+>> +
+>> +     return ret;
+>>   }
+> 
+> I wonder if I should change the pr_warn() in cpufreq-core to pr_info()
+> instead, will that help you guys ? Will that still be a problem ? This
+> is exactly same as what we do there.
+> 
+Yes, this will also work. Then we don't need the current patch.
+You want me to send a patch with change from pr_warn to pr_info?
+
+>>   static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>> @@ -285,6 +306,55 @@ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>>        return 0;
+>>   }
+>>
+>> +static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
+>> +{
+>> +     unsigned int interm_freq, last_set_freq;
+>> +     struct cpufreq_frequency_table *pos;
+>> +     u64 ndiv;
+>> +     int ret;
+>> +
+>> +     if (!cpu_online(policy->cpu))
+>> +             return -EINVAL;
+>> +
+>> +     /* get ndiv for the last frequency request from software  */
+>> +     ret = smp_call_function_single(policy->cpu, get_cpu_ndiv, &ndiv, true);
+>> +     if (ret) {
+>> +             pr_err("cpufreq: Failed to get ndiv for CPU%d\n", policy->cpu);
+>> +             return ret;
+>> +     }
+>> +
+>> +     cpufreq_for_each_valid_entry(pos, policy->freq_table) {
+>> +             if (pos->driver_data == ndiv) {
+>> +                     last_set_freq = pos->frequency;
+>> +                     break;
+>> +             }
+>> +     }
+>> +
+>> +     policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+>> +     interm_freq =  policy->cur;
+>> +
+>> +     /*
+>> +      * It takes some time to restore the previous frequency while
+>> +      * turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
+>> +      * So, wait till it reaches the previous value and timeout if the
+>> +      * time taken to reach requested freq is >100ms
+>> +      */
+>> +     ret = read_poll_timeout(tegra194_get_speed_common, policy->cur,
+>> +                             abs(policy->cur - last_set_freq) <= 115200, 0,
+>> +                             100 * USEC_PER_MSEC, false, policy->cpu,
+>> +                             US_DELAY);
+> 
+> The firmware does this update ? Why do we need to wait for this ? I
+> was actually suggesting an empty tegra194_cpufreq_online() routine
+> here.
+> > --
+> viresh
+> 
