@@ -2,189 +2,87 @@ Return-Path: <SRS0=SK8g=DT=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2D2C433E7
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B603C433DF
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 847F7208B8
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LO+ZSK6a"
+	by mail.kernel.org (Postfix) with ESMTP id 230092080A
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 16:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602521028;
+	bh=ZDbQrkawtzI0eEIpU0v/9WDwo/WOGw8ncSOaV28bNxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0dI644Ubqf/nLtYT8rFrirlStQ2A5za72D7zqP1M/g2bj62KV+8baS0oi7o7YTBFC
+	 sz83V+7xMiIz6BgfiVmRwDRNgCWwAv4KSqf8F9qeOhBiFm3Z2ko19ZBloczi4g9Jir
+	 yEXFjI0G1gXaBC/5UkNhxTF6ZshNjMrO2Sm709EI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403840AbgJLQfA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Oct 2020 12:35:00 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10786 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403815AbgJLQfA (ORCPT
+        id S2403844AbgJLQnr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Oct 2020 12:43:47 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40589 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403782AbgJLQnr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Oct 2020 12:35:00 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f8485a70000>; Mon, 12 Oct 2020 09:34:47 -0700
-Received: from [10.41.23.128] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 12 Oct
- 2020 16:34:53 +0000
-Subject: Re: [PATCH v2 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <rjw@rjwysocki.net>, <sudeep.holla@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <ksitaraman@nvidia.com>,
-        <bbasu@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
- <1602162066-26442-2-git-send-email-sumitg@nvidia.com>
- <20201012052227.x3bigztr7fit4jdz@vireshk-i7>
-From:   Sumit Gupta <sumitg@nvidia.com>
-Message-ID: <20018a6a-e230-c39c-e801-5a3d0dd4c0ec@nvidia.com>
-Date:   Mon, 12 Oct 2020 22:04:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 12 Oct 2020 12:43:47 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p13so17705196edi.7;
+        Mon, 12 Oct 2020 09:43:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=btBZVZqxtWI3fuInlzEdZDm6KMtgsylPsMWQD9V4zcU=;
+        b=SUllY70smH5ucMbxTn8eJvN0TW/GB4YZBq1OjmUDTN49Hc5zacxQaVwWZ66wdJa7nR
+         eNswY0xrXF7uZ+eZGBK610IuuqBqqHSeq2QatamRovdrV3O0sf+GH2FZZdOi+AGlxvcD
+         zI/jA3qK8PFoUJUZz1Ld29EOgmgPwJ5jrSLipziMkY40AE8mpxtDmMF0TqJFnvwgNkSp
+         FF1CcO5sLkh4wuHjEb1fhohk3U1ueR+Yx8RSdUrm5QYvF1xZWQ4evYp8IH2+IseHnqVR
+         wA7u9EIS3Dsz3p4d56uiS/2Q9EOmzQb2Ajh3XTsz+fDeKoXkiTbQ+6uuRRaIoFM1qm/8
+         Es6A==
+X-Gm-Message-State: AOAM530B7jgER0HtD6ssWpqe4KV8mZZt7nisQCsJFAMZ6z3u1kkEMHNw
+        HRggncQ6Qk3K8ebnv+Xa5Dw=
+X-Google-Smtp-Source: ABdhPJy83MPzuSNmmNVuVbEVbI50fmUXELVcQJIDTkSuGz3Qa+Derhs51xqlTZOO4i3RL6jwPsc2ug==
+X-Received: by 2002:a05:6402:3133:: with SMTP id dd19mr13178133edb.100.1602521023802;
+        Mon, 12 Oct 2020 09:43:43 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.215])
+        by smtp.googlemail.com with ESMTPSA id m19sm10771438ejj.91.2020.10.12.09.43.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Oct 2020 09:43:42 -0700 (PDT)
+Date:   Mon, 12 Oct 2020 18:43:40 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] memory: tegra: Sort tegra210_swgroups by reg address
+Message-ID: <20201012164340.GA3557@kozik-lap>
+References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
+ <20201008003746.25659-4-nicoleotsuka@gmail.com>
+ <20201008103258.GA16358@kozik-lap>
+ <20201008202615.GA32140@Asurada-Nvidia>
 MIME-Version: 1.0
-In-Reply-To: <20201012052227.x3bigztr7fit4jdz@vireshk-i7>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602520487; bh=n1qI8h6lolczD6I+nv4TVNxGO/CQlyYt+0RLcmOfUxM=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=LO+ZSK6aVPbJ/RX5N3pqGWeA342HMfx8yq9HeTcYCC9ooOqIUyE0s3+i02ZnpMuQq
-         Oj+rPJLlQv/pPJr/wanp5gJNH9k+cuRcKr+en8UgAiMB8S1BMiXWEmOKIMibGxby1K
-         kzCz3faX4NtG+fXpaeDwzLLnz7222ByJc6lIqej5K8ZLP7X0Tnmkaj1YEEz4GdCQXh
-         agYSlsVL1rktF6KNHoeQ/f23wnB5GMpZyQXDed/2yqgwGnCaBY66oDVpo+1/4eD/x6
-         VLyZBV4uqpUTBpwLinzLsOCOgjm2MkUeKef5llH9vi/cRBeve0IU8BulDo7gNsAOB2
-         6TmnXlhoEIPXw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201008202615.GA32140@Asurada-Nvidia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
->> Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
->> and keeps changing slightly. This change returns a consistent value
->> from freq_table. If the reconstructed frequency has acceptable delta
->> from the last written value, then return the frequency corresponding
->> to the last written ndiv value from freq_table. Otherwise, print a
->> warning and return the reconstructed freq.
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/cpufreq/tegra194-cpufreq.c | 71 +++++++++++++++++++++++++++++++++-----
->>   1 file changed, 62 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
->> index e1d931c..d250e49 100644
->> --- a/drivers/cpufreq/tegra194-cpufreq.c
->> +++ b/drivers/cpufreq/tegra194-cpufreq.c
->> @@ -180,9 +180,70 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
->>        return (rate_mhz * KHZ); /* in KHz */
->>   }
->>
->> +static void get_cpu_ndiv(void *ndiv)
->> +{
->> +     u64 ndiv_val;
->> +
->> +     asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
->> +
->> +     *(u64 *)ndiv = ndiv_val;
->> +}
->> +
->> +static void set_cpu_ndiv(void *data)
+On Thu, Oct 08, 2020 at 01:26:16PM -0700, Nicolin Chen wrote:
+> Hi Krzysztof,
 > 
-> You weren't required to do this unnecessary change.
+> On Thu, Oct 08, 2020 at 12:32:58PM +0200, Krzysztof Kozlowski wrote:
+> > On Wed, Oct 07, 2020 at 05:37:44PM -0700, Nicolin Chen wrote:
+> > > This is a cleanup change to prepare for new swgroups.
+> > 
+> > What type of cleanup? Any functional change?
 > 
-ya, moved the function up to keep both {get_|set_} calls together.
+> It's to sort the swgroup list by reg address as I mentioned in
+> the subject. Perhaps I should have put in commit message also.
 
->> +{
->> +     struct cpufreq_frequency_table *tbl = data;
->> +     u64 ndiv_val = (u64)tbl->driver_data;
->> +
->> +     asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
->> +}
->> +
->>   static unsigned int tegra194_get_speed(u32 cpu)
->>   {
->> -     return tegra194_get_speed_common(cpu, US_DELAY);
->> +     struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
->> +     struct cpufreq_frequency_table *pos;
->> +     unsigned int rate;
->> +     u64 ndiv;
->> +     int ret;
->> +     u32 cl;
->> +
->> +     if (!cpu_online(cpu))
-> 
-> This isn't required. The CPU is guaranteed to be online here.
-> 
-OK, will remove this in next version.
+Indeed it is sorted by regs, I missed some numbers... looks good. I can
+adjust the commit msg so no need for resend.
 
->> +             return -EINVAL;
->> +
->> +     smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
->> +
->> +     if (cl >= data->num_clusters)
-> 
-> Is it really possible here ? I meant you must have already checked
-> this at cpufreq-init level already. Else mark it unlikely at least.
-> 
-Ya, will remove the check here.
-
->> +             return -EINVAL;
->> +
->> +     /* reconstruct actual cpu freq using counters */
->> +     rate = tegra194_get_speed_common(cpu, US_DELAY);
->> +
->> +     /* get last written ndiv value */
->> +     ret = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
->> +     if (ret) {
-> 
-> What exactly can fail here ? get_cpu_ndiv() can't fail. Do we really
-> need this check ? What about WARN_ON_ONCE() ?
-> 
-OK.
-
->> +             pr_err("cpufreq: Failed to get ndiv for CPU%d, ret:%d\n",
->> +                    cpu, ret);
->> +             return rate;
->> +     }
->> +
->> +     /*
->> +      * If the reconstructed frequency has acceptable delta from
->> +      * the last written value, then return freq corresponding
->> +      * to the last written ndiv value from freq_table. This is
->> +      * done to return consistent value.
->> +      */
->> +     cpufreq_for_each_valid_entry(pos, data->tables[cl]) {
->> +             if (pos->driver_data != ndiv)
->> +                     continue;
->> +
->> +             if (abs(pos->frequency - rate) > 115200) {
-> 
-> where does this 115200 comes from ? Strange that it matches tty's baud
-> rate :)
->The value is equal to one freq step size.
-
-> This is 115 MHz, right ? Isn't that too big of a delta ?
-> 
-The is the acceptable delta used during our testing keeping some margin.
-
->> +                     pr_warn("cpufreq: cpu%d,cur:%u,set:%u,set ndiv:%llu\n",
->> +                             cpu, rate, pos->frequency, ndiv);
->> +             } else {
->> +                     rate = pos->frequency;
->> +             }
->> +             break;
->> +     }
->> +     return rate;
->>   }
-> 
-> --
-> viresh
-> 
+Best regards,
+Krzysztof
