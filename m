@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4FEC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 05:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3F7C43457
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 06:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E481206B2
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 05:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71D0B20757
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 06:13:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IbqtigIm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sPESY74Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgJLFWb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Oct 2020 01:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38968 "EHLO
+        id S1726636AbgJLGNk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Oct 2020 02:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbgJLFWa (ORCPT
+        with ESMTP id S1726391AbgJLGNk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Oct 2020 01:22:30 -0400
+        Mon, 12 Oct 2020 02:13:40 -0400
 Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3EDFC0613CE
-        for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2020 22:22:30 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id r10so13158525pgb.10
-        for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2020 22:22:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79099C0613D0
+        for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2020 23:13:39 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id u24so13297627pgi.1
+        for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2020 23:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qmE6A/EKe0hTQJfNjsT3sfUiMsmf4sO+YlCAtCElHT4=;
-        b=IbqtigImICgHWY7+4MtxnpiWYffaixBuI0p65m8WBT8s7qhDIXWrbGYHkKZjiM28Tx
-         bFYDc9N1MkHT4hxFizyql+D9mXX2HnRLdLSTL5f9lD0RinlMPoDcTXX0mZcIF9ejzQP2
-         OXnqCfY/Flb/48/k6Iz6aagtF95LbJYC12SFH5u2bQFL27fTMvwjSZw1aJATc4ryp3Qb
-         s5GAKfnrrOWjoM/AXxV1OWpP3ijsH2zZdjcG/exb35au79LUjxNgqD8Vz5AOQclFEeRK
-         oB03PoZ6pHCkCGeDUwzWPJLHA7BLUxtR5Z/u8BIU+m/cqWdykNXR2MvqXHQA6VcCsVou
-         eT2w==
+        bh=wzwgHWW6fAZr3jurcNxxh+hZXMvNGactjM2e0hjZyhg=;
+        b=sPESY74Q66CsNglsTg/3UY1/Fn8549U4STepmGTe0zQUUk72zSettmgX+BaFs9CVq0
+         DruTaVdBebld5EfH33POJJWw5nwgn9fXFyt3ZEh/z3ESVkwMFpT5ZQnp60BIc7aOWp9g
+         sf/7I8L29N1DXn4eWmktZa9OYX26H4ixeY4Ft7gA9IPuqVUnYQ3mxXZ18xozaw9zv0l2
+         wmdYvykokiHwSUc+Itmw9eJwufwWcJMqUPBXKo5CjT2iPtB97XkKvkuSShI6L2xSutTc
+         86d4W0V1Dw4ZzUrhwL5WIU67LT20PL2K7kojRaAiC0yvBvZDTVZFC9G4+c6fWqWCCpv+
+         KJGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qmE6A/EKe0hTQJfNjsT3sfUiMsmf4sO+YlCAtCElHT4=;
-        b=d84nLTMnK+lWmcDaIqxHv6nnVV/ZiOWnso032rGyYu5mTCmxjU9SQm8E4e+ZTcyYjw
-         2Sm6zAXCUSw0vfozO/U/7zlPrvaDAGKbhAKnidY4Amwd3pAtFdDQVBcHVt+A/ppZLErH
-         v0IZVK7KT0o2YLtAD8HOPFlOtDjVoqNvFQD2FgPw9loXsJsfm7PxgR9IwEdB85+7bdge
-         7tQ7mElWZOsan4x7f76LqVqnFjiCmhDNO8P6r2sRFwdL3N6DOYvApIc2baJN4vDgWRLg
-         QoCp6pS8dIWP0D6p3ooGAxn1Z2pAOpKjJ7ALER6BLsWd9paKDFQDb6PRXngLDrHaIx32
-         Dihw==
-X-Gm-Message-State: AOAM532ZccOxtdbbOtNSdAPRc71GolYoclxsrmIn06Q5972JE2KOf/ks
-        ZsIqeym+ugm2w1IeI41KcGRH+g==
-X-Google-Smtp-Source: ABdhPJzKiRNtosO8NGGmlAvudBt+rTXzZbJH1MOqFeWC9h7MElpsoLs64t0rf2Oe+W2vSevTayY3ew==
-X-Received: by 2002:a17:90b:11d1:: with SMTP id gv17mr15654111pjb.3.1602480150206;
-        Sun, 11 Oct 2020 22:22:30 -0700 (PDT)
+        bh=wzwgHWW6fAZr3jurcNxxh+hZXMvNGactjM2e0hjZyhg=;
+        b=MqfCpTM37lf74LPhwo3XpUepBEbhUxRIrpFOLFK/gf1+v4iJL7M+GM4dSJQR0eUzvK
+         mBqui0mJFceZicf/6T0ytcLaJqaXIr1fL9DRH72XFdzYrkCYyRd1nLF6d8el4YMAYYCS
+         8yN1r7o1Z/3h5XGv3lL5AL5yG+jCB+J8DDDq+jCoODgwGA1zhD59ek8pJ+hlxaMXMTzw
+         7dk7PZbJMSNjNyYykRxTDtfEt9Y9pMc0kZ0sGsOP6uZvao0V59qaRF+cq69VAjpHJWwQ
+         WXYY1VS7Hunbh3aaCM+pMnlBHlaAvHBt1NXaSSSTf3MZi6OYeZ8+UkglVEDi506iMuxK
+         rKTA==
+X-Gm-Message-State: AOAM532+0UIQVD2NFCKBaZiE/szCKVYGGNrBleaMfQUAwJl5EG51BJV7
+        Z93uNFAM/UEl6xMjJKV7FW3R7g==
+X-Google-Smtp-Source: ABdhPJwv+DgSLej3lQfBr6wGZhPZg0LBp7Tj7G2jrVpqjzGKafLrDp48qNU3IdOsQe84t73fdd2w3w==
+X-Received: by 2002:a62:b506:0:b029:155:d56e:5193 with SMTP id y6-20020a62b5060000b0290155d56e5193mr6942930pfe.52.1602483218694;
+        Sun, 11 Oct 2020 23:13:38 -0700 (PDT)
 Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id b6sm21266225pjq.42.2020.10.11.22.22.28
+        by smtp.gmail.com with ESMTPSA id na9sm13558143pjb.45.2020.10.11.23.13.37
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Oct 2020 22:22:29 -0700 (PDT)
-Date:   Mon, 12 Oct 2020 10:52:27 +0530
+        Sun, 11 Oct 2020 23:13:37 -0700 (PDT)
+Date:   Mon, 12 Oct 2020 11:43:35 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Sumit Gupta <sumitg@nvidia.com>
 Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, thierry.reding@gmail.com,
@@ -66,126 +66,177 @@ Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, thierry.reding@gmail.com,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
         bbasu@nvidia.com
-Subject: Re: [PATCH v2 1/2] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-Message-ID: <20201012052227.x3bigztr7fit4jdz@vireshk-i7>
+Subject: Re: [PATCH v2 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
+Message-ID: <20201012061335.nht4hnn7kdjupakn@vireshk-i7>
 References: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
- <1602162066-26442-2-git-send-email-sumitg@nvidia.com>
+ <1602162066-26442-3-git-send-email-sumitg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1602162066-26442-2-git-send-email-sumitg@nvidia.com>
+In-Reply-To: <1602162066-26442-3-git-send-email-sumitg@nvidia.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 08-10-20, 18:31, Sumit Gupta wrote:
-> Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
-> and keeps changing slightly. This change returns a consistent value
-> from freq_table. If the reconstructed frequency has acceptable delta
-> from the last written value, then return the frequency corresponding
-> to the last written ndiv value from freq_table. Otherwise, print a
-> warning and return the reconstructed freq.
+> Warning coming during boot because the boot freq set by bootloader
+> gets filtered out due to big freq steps while creating freq_table.
+> Fix this by setting closest higher frequency from freq_table.
+> Warning:
+>   cpufreq: cpufreq_online: CPU0: Running at unlisted freq
+>   cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
 > 
+> These warning messages also come during hotplug online of non-boot
+> CPU's while exiting from 'Suspend-to-RAM'. This happens because
+> during exit from 'Suspend-to-RAM', some time is taken to restore
+> last software requested CPU frequency written in register before
+> entering suspend.
+
+And who does this restoration ?
+
+> To fix this, adding online hook to wait till the
+> current frequency becomes equal or close to the last requested
+> frequency.
+> 
+> Fixes: df320f89359c ("cpufreq: Add Tegra194 cpufreq driver")
 > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/cpufreq/tegra194-cpufreq.c | 71 +++++++++++++++++++++++++++++++++-----
->  1 file changed, 62 insertions(+), 9 deletions(-)
+>  drivers/cpufreq/tegra194-cpufreq.c | 86 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 79 insertions(+), 7 deletions(-)
 > 
 > diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-> index e1d931c..d250e49 100644
+> index d250e49..cc28b1e3 100644
 > --- a/drivers/cpufreq/tegra194-cpufreq.c
 > +++ b/drivers/cpufreq/tegra194-cpufreq.c
-> @@ -180,9 +180,70 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
->  	return (rate_mhz * KHZ); /* in KHz */
->  }
+> @@ -7,6 +7,7 @@
+>  #include <linux/cpufreq.h>
+>  #include <linux/delay.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+> @@ -21,7 +22,6 @@
+>  #define KHZ                     1000
+>  #define REF_CLK_MHZ             408 /* 408 MHz */
+>  #define US_DELAY                500
+> -#define US_DELAY_MIN            2
+>  #define CPUFREQ_TBL_STEP_HZ     (50 * KHZ * KHZ)
+>  #define MAX_CNT                 ~0U
 >  
-> +static void get_cpu_ndiv(void *ndiv)
-> +{
-> +	u64 ndiv_val;
-> +
-> +	asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
-> +
-> +	*(u64 *)ndiv = ndiv_val;
-> +}
-> +
-> +static void set_cpu_ndiv(void *data)
-
-You weren't required to do this unnecessary change.
-
-> +{
-> +	struct cpufreq_frequency_table *tbl = data;
-> +	u64 ndiv_val = (u64)tbl->driver_data;
-> +
-> +	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
-> +}
-> +
->  static unsigned int tegra194_get_speed(u32 cpu)
+> @@ -249,17 +249,22 @@ static unsigned int tegra194_get_speed(u32 cpu)
+>  static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
 >  {
-> -	return tegra194_get_speed_common(cpu, US_DELAY);
-> +	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
-> +	struct cpufreq_frequency_table *pos;
-> +	unsigned int rate;
-> +	u64 ndiv;
+>  	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
+> -	u32 cpu;
+> +	u32 cpu = policy->cpu;
 > +	int ret;
-> +	u32 cl;
-> +
+>  	u32 cl;
+>  
+> -	smp_call_function_single(policy->cpu, get_cpu_cluster, &cl, true);
 > +	if (!cpu_online(cpu))
 
-This isn't required. The CPU is guaranteed to be online here.
+Not required to check this.
 
 > +		return -EINVAL;
 > +
-> +	smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
-> +
-> +	if (cl >= data->num_clusters)
-
-Is it really possible here ? I meant you must have already checked
-this at cpufreq-init level already. Else mark it unlikely at least.
-
-> +		return -EINVAL;
-> +
-> +	/* reconstruct actual cpu freq using counters */
-> +	rate = tegra194_get_speed_common(cpu, US_DELAY);
-> +
-> +	/* get last written ndiv value */
-> +	ret = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
+> +	ret = smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
 > +	if (ret) {
 
-What exactly can fail here ? get_cpu_ndiv() can't fail. Do we really
-need this check ? What about WARN_ON_ONCE() ?
+Same as in the other patch.
 
-> +		pr_err("cpufreq: Failed to get ndiv for CPU%d, ret:%d\n",
-> +		       cpu, ret);
-> +		return rate;
+> +		pr_err("cpufreq: Failed to get cluster for CPU%d\n", cpu);
+> +		return ret;
 > +	}
+>  
+>  	if (cl >= data->num_clusters)
+>  		return -EINVAL;
+>  
+> -	/* boot freq */
+> -	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY_MIN);
+> -
+>  	/* set same policy for all cpus in a cluster */
+>  	for (cpu = (cl * 2); cpu < ((cl + 1) * 2); cpu++)
+>  		cpumask_set_cpu(cpu, policy->cpus);
+> @@ -267,7 +272,23 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+>  	policy->freq_table = data->tables[cl];
+>  	policy->cpuinfo.transition_latency = TEGRA_CPUFREQ_TRANSITION_LATENCY;
+>  
+> -	return 0;
+> +	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+> +
+> +	ret = cpufreq_table_validate_and_sort(policy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Are we running at unknown frequency ? */
+> +	ret = cpufreq_frequency_table_get_index(policy, policy->cur);
+> +	if (ret == -EINVAL) {
+> +		ret = __cpufreq_driver_target(policy, policy->cur - 1,
+> +					      CPUFREQ_RELATION_L);
+> +		if (ret)
+> +			return ret;
+
+> +		policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+
+cpufreq-core will do this anyway, you don't need to do it.
+
+> +	}
+> +
+> +	return ret;
+>  }
+
+I wonder if I should change the pr_warn() in cpufreq-core to pr_info()
+instead, will that help you guys ? Will that still be a problem ? This
+is exactly same as what we do there.
+
+>  static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+> @@ -285,6 +306,55 @@ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+>  	return 0;
+>  }
+>  
+> +static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
+> +{
+> +	unsigned int interm_freq, last_set_freq;
+> +	struct cpufreq_frequency_table *pos;
+> +	u64 ndiv;
+> +	int ret;
+> +
+> +	if (!cpu_online(policy->cpu))
+> +		return -EINVAL;
+> +
+> +	/* get ndiv for the last frequency request from software  */
+> +	ret = smp_call_function_single(policy->cpu, get_cpu_ndiv, &ndiv, true);
+> +	if (ret) {
+> +		pr_err("cpufreq: Failed to get ndiv for CPU%d\n", policy->cpu);
+> +		return ret;
+> +	}
+> +
+> +	cpufreq_for_each_valid_entry(pos, policy->freq_table) {
+> +		if (pos->driver_data == ndiv) {
+> +			last_set_freq = pos->frequency;
+> +			break;
+> +		}
+> +	}
+> +
+> +	policy->cur = tegra194_get_speed_common(policy->cpu, US_DELAY);
+> +	interm_freq =  policy->cur;
 > +
 > +	/*
-> +	 * If the reconstructed frequency has acceptable delta from
-> +	 * the last written value, then return freq corresponding
-> +	 * to the last written ndiv value from freq_table. This is
-> +	 * done to return consistent value.
+> +	 * It takes some time to restore the previous frequency while
+> +	 * turning-on non-boot cores during exit from SC7(Suspend-to-RAM).
+> +	 * So, wait till it reaches the previous value and timeout if the
+> +	 * time taken to reach requested freq is >100ms
 > +	 */
-> +	cpufreq_for_each_valid_entry(pos, data->tables[cl]) {
-> +		if (pos->driver_data != ndiv)
-> +			continue;
-> +
-> +		if (abs(pos->frequency - rate) > 115200) {
+> +	ret = read_poll_timeout(tegra194_get_speed_common, policy->cur,
+> +				abs(policy->cur - last_set_freq) <= 115200, 0,
+> +				100 * USEC_PER_MSEC, false, policy->cpu,
+> +				US_DELAY);
 
-where does this 115200 comes from ? Strange that it matches tty's baud
-rate :)
-
-This is 115 MHz, right ? Isn't that too big of a delta ?
-
-> +			pr_warn("cpufreq: cpu%d,cur:%u,set:%u,set ndiv:%llu\n",
-> +				cpu, rate, pos->frequency, ndiv);
-> +		} else {
-> +			rate = pos->frequency;
-> +		}
-> +		break;
-> +	}
-> +	return rate;
->  }
+The firmware does this update ? Why do we need to wait for this ? I
+was actually suggesting an empty tegra194_cpufreq_online() routine
+here.
 
 -- 
 viresh
