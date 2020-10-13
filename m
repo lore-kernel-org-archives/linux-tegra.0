@@ -1,99 +1,91 @@
-Return-Path: <SRS0=SK8g=DT=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=bDis=DU=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2594C43467
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 19:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B954FC433DF
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Oct 2020 05:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9411521BE5
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Oct 2020 19:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C8DA20878
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Oct 2020 05:13:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2KU3BiT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DAKUM39v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391045AbgJLTFn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Oct 2020 15:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
+        id S1732300AbgJMFNi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Oct 2020 01:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388321AbgJLTFm (ORCPT
+        with ESMTP id S1727502AbgJMFNi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Oct 2020 15:05:42 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB002C0613D7;
-        Mon, 12 Oct 2020 12:05:08 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id b19so9146078pld.0;
-        Mon, 12 Oct 2020 12:05:08 -0700 (PDT)
+        Tue, 13 Oct 2020 01:13:38 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D35C0613D0
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2020 22:13:37 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id y14so15961026pfp.13
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2020 22:13:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=p3cGg0vwc3FihVmBETo+InQcjCzVvWFZGiYWNMDgXHo=;
-        b=R2KU3BiTA8Nmrr+K+h2kh4PXN+JdaEKRuc92/hX1rea8+M04xV2DSjJQpLRaMmFOr+
-         Cb429Bwwk0r6kfUdw83y/EtX7PKpROIqCEPLVR+F/5rObYZl4l6sDlbnrLEcU85TZDS6
-         9oC9WCirk8Z3FGbpYsR+i5rfPSrZFOBXkVTRdmmItGUJEevsRq5+xAYzi2Gn0s91LEfU
-         a2AY00IIjvAOJLTKklCSa3Vf/Xuqs8Mgn/dot64N407SSJodWreCO9D8VIOKopXhwHYe
-         GGwpGUzvi7ougmirF5pmTBJKUoKrl2yfQdXEPTNAJpAKkWqKXPtOIf6PmUblYgtpaXxw
-         Xynw==
+        bh=efg9FTe3uvnwtjsVgWH7nQgd64ldTBqAhLypV6QVYl0=;
+        b=DAKUM39v1Y9ihvNReu6Z5fR987aM7WTeEu0h2bOul3ucAfdXF0TmTia5TSmGBtqkzm
+         g1geRovBMMw4JaDFppUaSpYEwE19jFnOzHvorQgWg6fpJ0Y5dGEEDvnY3ZiLV0zztHgp
+         CAtj+N8d+GKrFhKGHy2hJ+PHd3lxDe6Si5RrxeEBk27hVw68FtdjVARCyYQmPVl+H1Vz
+         eNr5ZDjTl5nHLTVpObPYbtiVYvae+3VDc5Hk5V6LqtaVdrBYxEq5P4V/S2PHJl7eKobN
+         whcQQGIaPtV1RQYseHd3Lw5tT1aFX4OmgmkY8XOsOY7VwbUnRmeCCI+X6jE4L8bCSvdX
+         APFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p3cGg0vwc3FihVmBETo+InQcjCzVvWFZGiYWNMDgXHo=;
-        b=ZxVEnViCjVRGwVI0vUBjYKrR6Hqi/1+aidvaBDj7I1ksbxsQZy+GxOgv6K+TsoDzYD
-         FM/SQPtRSv83jps9VczC2bSOFQ1KTL5itw0K/xg3hLLvMLw1j1eln3q8jb4MXHhUjugx
-         Kda62Y9o0RnxZuHqxNKZMn3m/RBsb4nxfJiZF73JM1cpR1rKDt6W+2OlCkB97ihDOGcg
-         dWCUkV8BUXJ6UqrT1cROK2HrXp7wPHjSTXh/ZyIZkZKumBDTW2sCirNfoPhQRL8yB5r4
-         yMzX92jeAlBSKpLBnxHiNAo9u/BZu/ucunsfBkpU+n6Dx1Nn84vy4/O0uPX1PBXr5Ewq
-         nl+A==
-X-Gm-Message-State: AOAM533XK215eOmbPcsU7axSYp3lzsmoZ/7qXhHhG9sRTnWMnT/7WubM
-        9wrAx6Vi6FKTtwEF8DPltxwUc9rP9lk=
-X-Google-Smtp-Source: ABdhPJzjXdwKjMlIP3AJiMsod6ukBI9sxvQE+gfn2RqN7aXk0BNvM2fP+ILXyldXKpEmA5rdKmvAbQ==
-X-Received: by 2002:a17:902:ee83:b029:d4:bdd6:cabe with SMTP id a3-20020a170902ee83b02900d4bdd6cabemr17253953pld.68.1602529508244;
-        Mon, 12 Oct 2020 12:05:08 -0700 (PDT)
-Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id v20sm15896961pjh.5.2020.10.12.12.05.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Oct 2020 12:05:07 -0700 (PDT)
-Date:   Mon, 12 Oct 2020 11:57:22 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] memory: tegra: Sort tegra210_swgroups by reg address
-Message-ID: <20201012185721.GA17643@Asurada-Nvidia>
-References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-4-nicoleotsuka@gmail.com>
- <20201008103258.GA16358@kozik-lap>
- <20201008202615.GA32140@Asurada-Nvidia>
- <20201012164340.GA3557@kozik-lap>
+        bh=efg9FTe3uvnwtjsVgWH7nQgd64ldTBqAhLypV6QVYl0=;
+        b=txLerKKGP5Z0QfEx0zKsBkVFq6y3qxCkvfZ5x8EiOQFsQfr+efKM29JC1xvaS3Vdwm
+         JX5ZI0Wh/Q6MSUinTpUFIlWk023tYoDLgb5nmCFQg9r599YbBDmOo/0VSdvCL8nW42Gf
+         eeTF7Aky4fSsHUflkJLR6pysL9GPHljGViLHA6NF3kGNDiQg59pwVkiYbRnf8kO082kq
+         gFx27Zyz7B0ddo+3nY/0GqPBUKwkfGv2T8ZWJCPN8ZCSg0jpuKabJxDCgxu7o9pSKK7m
+         u+dr8B2RhoRYrz33J5RxeWdc4NjkaceCUiGnaKDLuMjJ66VCVdDTeyjkZmHZXUeC2BO2
+         d5yg==
+X-Gm-Message-State: AOAM530AvEw94A/Yl8AZDImH9j1XwSkQze6fe0mITVtMWgklZAviO/Fn
+        YyBCD5Ib+ooTTLbvPBtS9ASCvA==
+X-Google-Smtp-Source: ABdhPJxTpZWNGjguj6B7PCtCebgMA5wXT+BYZbYeOEWdL+11jRFlkSEaxJGCu6EEuDHXELY8VFRzig==
+X-Received: by 2002:a63:3247:: with SMTP id y68mr15571023pgy.224.1602566017546;
+        Mon, 12 Oct 2020 22:13:37 -0700 (PDT)
+Received: from localhost ([122.181.54.133])
+        by smtp.gmail.com with ESMTPSA id n67sm20400497pgn.14.2020.10.12.22.13.36
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Oct 2020 22:13:36 -0700 (PDT)
+Date:   Tue, 13 Oct 2020 10:43:34 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ksitaraman@nvidia.com,
+        bbasu@nvidia.com
+Subject: Re: [PATCH v2 2/2] cpufreq: tegra194: Fix unlisted boot freq warning
+Message-ID: <20201013051334.ij3iucjmctg7d2xt@vireshk-i7>
+References: <1602162066-26442-1-git-send-email-sumitg@nvidia.com>
+ <1602162066-26442-3-git-send-email-sumitg@nvidia.com>
+ <20201012061335.nht4hnn7kdjupakn@vireshk-i7>
+ <4fb38a3b-ed26-6c02-e9de-59ce99ce563e@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201012164340.GA3557@kozik-lap>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <4fb38a3b-ed26-6c02-e9de-59ce99ce563e@nvidia.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 06:43:40PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 08, 2020 at 01:26:16PM -0700, Nicolin Chen wrote:
-> > Hi Krzysztof,
-> > 
-> > On Thu, Oct 08, 2020 at 12:32:58PM +0200, Krzysztof Kozlowski wrote:
-> > > On Wed, Oct 07, 2020 at 05:37:44PM -0700, Nicolin Chen wrote:
-> > > > This is a cleanup change to prepare for new swgroups.
-> > > 
-> > > What type of cleanup? Any functional change?
-> > 
-> > It's to sort the swgroup list by reg address as I mentioned in
-> > the subject. Perhaps I should have put in commit message also.
-> 
-> Indeed it is sorted by regs, I missed some numbers... looks good. I can
-> adjust the commit msg so no need for resend.
+On 12-10-20, 22:36, Sumit Gupta wrote:
+> Yes, this will also work. Then we don't need the current patch.
+> You want me to send a patch with change from pr_warn to pr_info?
 
-Thank you!
+I have sent one.
+
+-- 
+viresh
