@@ -2,163 +2,172 @@ Return-Path: <SRS0=m5en=DV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867EBC43457
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 08:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CA4C433DF
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 09:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 241DA214D8
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 08:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB23421527
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 09:36:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jMkplRfr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="I9hRcMpX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbgJNIiF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Oct 2020 04:38:05 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4074 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbgJNIiD (ORCPT
+        id S1726028AbgJNJgX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Oct 2020 05:36:23 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6440 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbgJNJgX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Oct 2020 04:38:03 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f86b8af0001>; Wed, 14 Oct 2020 01:37:03 -0700
-Received: from [10.19.100.177] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Oct
- 2020 08:37:59 +0000
-Subject: Re: [PATCH v3 10/15] phy: tegra: xusb: Add wake/sleepwalk for
- Tegra210
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <gregkh@linuxfoundation.org>, <robh@kernel.org>,
-        <jonathanh@nvidia.com>, <kishon@ti.com>,
-        <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>
-References: <20200909081041.3190157-1-jckuo@nvidia.com>
- <20200909081041.3190157-11-jckuo@nvidia.com> <20200928134057.GK3065790@ulmo>
-From:   JC Kuo <jckuo@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <b2003710-fbc2-803b-134d-22b930342cd5@nvidia.com>
-Date:   Wed, 14 Oct 2020 16:37:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 14 Oct 2020 05:36:23 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f86c6890003>; Wed, 14 Oct 2020 02:36:09 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Oct
+ 2020 09:36:18 +0000
+Received: from sumitg-l4t.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 14 Oct 2020 09:36:15 +0000
+From:   Sumit Gupta <sumitg@nvidia.com>
+To:     <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+        <sudeep.holla@arm.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <sumitg@nvidia.com>, <bbasu@nvidia.com>, <ksitaraman@nvidia.com>
+Subject: [PATCH v3] cpufreq: tegra194: get consistent cpuinfo_cur_freq
+Date:   Wed, 14 Oct 2020 15:06:11 +0530
+Message-ID: <1602668171-30104-1-git-send-email-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200928134057.GK3065790@ulmo>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602664623; bh=CAZydlicr6iDmsmBRxa2+Vc6d131hXksVkD+EkZjLWo=;
-        h=Subject:To:CC:References:From:X-Nvconfidentiality:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=jMkplRfrnatkfiOKOy/291TSZPod/eZAbY5LO23SsyEQcuHCW9t6C+8bdDHzKv3x5
-         il1rEFfZYAgcMfI/dp1JCEMEQw+Z1UfqHuXU9Snqxp/gQZWkrHPv5lU/E/vD00gYe7
-         gMGaXx2WrTANBGi3tPGTHrDGFHVqDMVl5SOpzm9B2HAgetMhlkHtBUo1o0gEePblgI
-         M6EQgETjhnIoOX2Sb6oegY3ah96BdFtqtZNWYwjWCCgHU4VcY7zQEBfJE+Oy2IAMN2
-         PZQQHishMwT3EBhpK/onEgHbEtknr9bW8gyNU18Fjp2AFLL3wZLz6YjhWqXsiGlaY8
-         Mzhyrmd+tWR5g==
+        t=1602668169; bh=nJXHQmA8SJehW7u27ymHyIMfAp9QzF0a30R0l0W0ccY=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=I9hRcMpXYVEMOYPv3b65uisktBZmMlkA1NAwI6Rsi5F8yQWTLcqGa8HZXFw2jfwcN
+         KRZvsk+toi82mkENMo6imd3A+E9HskH2np3Dr/+/YVZlNuJf/fHRz9Vnaszsh+KbQx
+         1LKATsBjfGJLRwtqbmE3Xx2OnhWyys2oX8bJ/6jJNhMcOkLPmlPzdgJvoZlbzwgZFj
+         k8CaJgRBDjI8r190U6IpBeYt4MotlQ401n2sU5OBf6LyHOTglRlWXc7jnJ23Xen5CN
+         xpLKly1Yu2YBEMwN7EK3+CyFK5/f4vPmsetjqafSjlJWJWEEwE9p52Q0I0LBKC7W1c
+         d+vuEO0A2r+Ig==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 9/28/20 9:40 PM, Thierry Reding wrote:
-> On Wed, Sep 09, 2020 at 04:10:36PM +0800, JC Kuo wrote:
-> [...]
->> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-> [...]
-> 
-> Could we add function pointers to struct tegra_xusb_lane_ops for all of
-> these? That would allow us to assign them once during probe and then we
-> don't have to bother with these is_*() functions and multiplexing but
-> instead just call ->enable_phy_wake() and ->disable_phy_wake() directly.
-Yes, I will implement in this way. Thanks for the suggestion.
+Frequency returned by 'cpuinfo_cur_freq' using counters is not fixed
+and keeps changing slightly. This change returns a consistent value
+from freq_table. If the reconstructed frequency has acceptable delta
+from the last written value, then return the frequency corresponding
+to the last written ndiv value from freq_table. Otherwise, print a
+warning and return the reconstructed freq.
 
-> 
->> +
->> +
-> 
-> There's an extra blank line here.
-> 
-I will remove it. Thanks.
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+---
 
->>  static struct tegra_xusb_pad *
->>  tegra210_sata_pad_probe(struct tegra_xusb_padctl *padctl,
->>  			const struct tegra_xusb_pad_soc *soc,
->> @@ -2293,6 +3225,8 @@ tegra210_xusb_padctl_probe(struct device *dev,
->>  			   const struct tegra_xusb_padctl_soc *soc)
->>  {
->>  	struct tegra210_xusb_padctl *padctl;
->> +	struct device_node *node, *np = dev->of_node;
-> 
-> We only need dev->of_node once, so I don't think we need to store it in
-> a local variable. Just make this:
-> 
-> 	struct device_node *np;
-> 
->> +	struct platform_device *pmc_dev;
-> 
-> I'd call this pdev, which is the canonical name for variables pointing
-> to a platform device.
-> 
->>  	int err;
->>  
->>  	padctl = devm_kzalloc(dev, sizeof(*padctl), GFP_KERNEL);
->> @@ -2306,6 +3240,23 @@ tegra210_xusb_padctl_probe(struct device *dev,
->>  	if (err < 0)
->>  		return ERR_PTR(err);
->>  
->> +	node = of_parse_phandle(np, "nvidia,pmc", 0);
->> +	if (!node) {
-> 
-> And make this:
-> 
-> 	np = of_parse_phandle(dev->of_node, "nvidia,pmc", 0);
-> 	if (!np) {
-> 
->> +		dev_info(dev, "nvidia,pmc property is missing\n");
-> 
-> It might be better for this to be a warning, to make it easier to catch.
-> 
->> +		goto no_pmc;
->> +	}
->> +
->> +	pmc_dev = of_find_device_by_node(node);
->> +	if (!pmc_dev) {
->> +		dev_info(dev, "pmc device is not available\n");
-> 
-> Same here. Also s/pmc/PMC/ in the message
-> 
->> +		goto no_pmc;
-> 
-> Maybe call the label "out", "done" or something similar. "no_pmc" makes
-> it sound like it's meant for error cases, which makes it confusing when
-> you fallthrough for the success case as well.
-> 
-I will amend accordingly. Thanks.
+Sending only this patch as other patch not required after the change
+to convert 'pr_warn' to 'pr_info' in cpufreq core for unlisted freq.
+Changelog
+v1[2] -> v3:
+- Removed unwanted checks for cpu_online and max cluster number
+- Used WARN_ON_ONCE to avoid print flooding.
 
-> Actually, in this case it might be easier to just return here instead of
-> using a goto.
-> 
->> +	}
->> +
->> +	padctl->regmap = dev_get_regmap(&pmc_dev->dev, "usb_sleepwalk");
->> +	if (!padctl->regmap)
->> +		dev_info(dev, "pmc regmap is not available.\n");
-> 
-> Do we perhaps want to defer probe here?
-The return value of dev_get_regmap() doesn't tell if PMC driver is loaded.
+v1[1] -> v2:
+- Minor changes to improve comments and reduce debug prints.
+- Get freq table from cluster specific data instead of policy.
 
-I will add the following to for defer probe.
-	if (!device_is_bound(&pdev->dev))
-		return -EPROBE_DEFER;
-> 
-> Thierry
-> 
+[2] https://marc.info/?l=linux-tegra&m=160216218511280&w=2
+[1] https://marc.info/?l=linux-arm-kernel&m=160028821117535&w=2
 
-Thanks for review.
-JC
+ drivers/cpufreq/tegra194-cpufreq.c | 62 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 53 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index e1d931c..7901587 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -180,9 +180,61 @@ static unsigned int tegra194_get_speed_common(u32 cpu, u32 delay)
+ 	return (rate_mhz * KHZ); /* in KHz */
+ }
+ 
++static void get_cpu_ndiv(void *ndiv)
++{
++	u64 ndiv_val;
++
++	asm volatile("mrs %0, s3_0_c15_c0_4" : "=r" (ndiv_val) : );
++
++	*(u64 *)ndiv = ndiv_val;
++}
++
++static void set_cpu_ndiv(void *data)
++{
++	struct cpufreq_frequency_table *tbl = data;
++	u64 ndiv_val = (u64)tbl->driver_data;
++
++	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
++}
++
+ static unsigned int tegra194_get_speed(u32 cpu)
+ {
+-	return tegra194_get_speed_common(cpu, US_DELAY);
++	struct tegra194_cpufreq_data *data = cpufreq_get_driver_data();
++	struct cpufreq_frequency_table *pos;
++	unsigned int rate;
++	u64 ndiv;
++	int ret;
++	u32 cl;
++
++	smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
++
++	/* reconstruct actual cpu freq using counters */
++	rate = tegra194_get_speed_common(cpu, US_DELAY);
++
++	/* get last written ndiv value */
++	ret = smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
++	if (WARN_ON_ONCE(ret))
++		return rate;
++
++	/*
++	 * If the reconstructed frequency has acceptable delta from
++	 * the last written value, then return freq corresponding
++	 * to the last written ndiv value from freq_table. This is
++	 * done to return consistent value.
++	 */
++	cpufreq_for_each_valid_entry(pos, data->tables[cl]) {
++		if (pos->driver_data != ndiv)
++			continue;
++
++		if (abs(pos->frequency - rate) > 115200) {
++			pr_warn("cpufreq: cpu%d,cur:%u,set:%u,set ndiv:%llu\n",
++				cpu, rate, pos->frequency, ndiv);
++		} else {
++			rate = pos->frequency;
++		}
++		break;
++	}
++	return rate;
+ }
+ 
+ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+@@ -209,14 +261,6 @@ static int tegra194_cpufreq_init(struct cpufreq_policy *policy)
+ 	return 0;
+ }
+ 
+-static void set_cpu_ndiv(void *data)
+-{
+-	struct cpufreq_frequency_table *tbl = data;
+-	u64 ndiv_val = (u64)tbl->driver_data;
+-
+-	asm volatile("msr s3_0_c15_c0_4, %0" : : "r" (ndiv_val));
+-}
+-
+ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
+ 				       unsigned int index)
+ {
+-- 
+2.7.4
+
