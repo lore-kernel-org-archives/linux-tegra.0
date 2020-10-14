@@ -2,150 +2,90 @@ Return-Path: <SRS0=m5en=DV=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5FCC433DF
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 17:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69027C433DF
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 18:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D389421D7F
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 17:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4962223F
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Oct 2020 18:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgJNRmk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Oct 2020 13:42:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:54806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbgJNRmk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:42:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52C11D6E;
-        Wed, 14 Oct 2020 10:42:39 -0700 (PDT)
-Received: from [10.57.48.76] (unknown [10.57.48.76])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E31D33F71F;
-        Wed, 14 Oct 2020 10:42:37 -0700 (PDT)
-Subject: Re: [PATCH v7 3/3] iommu/tegra-smmu: Add PCI support
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com,
-        joro@8bytes.org, digetx@gmail.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jonathanh@nvidia.com
-References: <20201009161936.23122-1-nicoleotsuka@gmail.com>
- <20201009161936.23122-4-nicoleotsuka@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cbc6e3bf-eedc-195c-c4d6-52d3cd24c257@arm.com>
-Date:   Wed, 14 Oct 2020 18:42:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        id S1728178AbgJNSGA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Oct 2020 14:06:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbgJNSGA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 14 Oct 2020 14:06:00 -0400
+X-Greylist: delayed 542 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 14 Oct 2020 11:06:00 PDT
+Received: from hera.iit.uni-miskolc.hu (hera.iit.uni-miskolc.hu [IPv6:2001:738:6001:500::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6CAC061755;
+        Wed, 14 Oct 2020 11:06:00 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTP id 126C026C3;
+        Wed, 14 Oct 2020 19:56:44 +0200 (CEST)
+X-Virus-Scanned: Kamavis at iit.uni-miskolc.hu
+Received: from hera.iit.uni-miskolc.hu ([127.0.0.1])
+        by localhost (hera.iit.uni-miskolc.hu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id y9r6n9ypbQcq; Wed, 14 Oct 2020 19:56:37 +0200 (CEST)
+Received: from titan.hitronhub.home (unknown [IPv6:2a02:8109:a180:908:226:9eff:fe30:2af8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: szucst@iit.uni-miskolc.hu)
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTPSA id 0774613D;
+        Wed, 14 Oct 2020 19:56:36 +0200 (CEST)
+From:   =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+Subject: [PATCH v3 0/5] arm64: tegra: Xavier SDMMC changes
+Date:   Wed, 14 Oct 2020 19:56:22 +0200
+Message-Id: <20201014175627.5585-1-tszucs@protonmail.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20201009161936.23122-4-nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2020-10-09 17:19, Nicolin Chen wrote:
-> This patch simply adds support for PCI devices.
-> 
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
-> 
-> Changelog
-> v6->v7
->   * Renamed goto labels, suggested by Thierry.
-> v5->v6
->   * Added Dmitry's Reviewed-by and Tested-by.
-> v4->v5
->   * Added Dmitry's Reviewed-by
-> v3->v4
->   * Dropped !iommu_present() check
->   * Added CONFIG_PCI check in the exit path
-> v2->v3
->   * Replaced ternary conditional operator with if-else in .device_group()
->   * Dropped change in tegra_smmu_remove()
-> v1->v2
->   * Added error-out labels in tegra_smmu_probe()
->   * Dropped pci_request_acs() since IOMMU core would call it.
-> 
->   drivers/iommu/tegra-smmu.c | 35 +++++++++++++++++++++++++----------
->   1 file changed, 25 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index be29f5977145..2941d6459076 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -10,6 +10,7 @@
->   #include <linux/kernel.h>
->   #include <linux/of.h>
->   #include <linux/of_device.h>
-> +#include <linux/pci.h>
->   #include <linux/platform_device.h>
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
-> @@ -865,7 +866,11 @@ static struct iommu_group *tegra_smmu_device_group(struct device *dev)
->   	group->smmu = smmu;
->   	group->soc = soc;
->   
-> -	group->group = iommu_group_alloc();
-> +	if (dev_is_pci(dev))
-> +		group->group = pci_device_group(dev);
+Upstream Xavier SDMMC needs some love. I've been able to test with a Jetson AGX Xavier.
+Changes here work for me with 1.8 V and 3.3 V SD and SDIO devices.
 
-Just to check, is it OK to have two or more swgroups "owning" the same 
-iommu_group if an existing one gets returned here? It looks like that 
-might not play nice with the use of iommu_group_set_iommudata().
+Changes in v3:
+- I started seeing ocasional eMMC init timeouts on cold starts when HS400 is enabled, so drop this until fix is found
+- add missing vmmc-supply regulator for SDMMC1
+- specify bus width and disable WP for SDMMC1
+- specify primary clock source for SDMMC1 and SDMMC3
 
-Robin.
+Changes in v2:
+- fix board name in commit messages
+- rebase on for-next
 
-> +	else
-> +		group->group = generic_device_group(dev);
-> +
->   	if (IS_ERR(group->group)) {
->   		devm_kfree(smmu->dev, group);
->   		mutex_unlock(&smmu->lock);
-> @@ -1075,22 +1080,32 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
->   	iommu_device_set_fwnode(&smmu->iommu, dev->fwnode);
->   
->   	err = iommu_device_register(&smmu->iommu);
-> -	if (err) {
-> -		iommu_device_sysfs_remove(&smmu->iommu);
-> -		return ERR_PTR(err);
-> -	}
-> +	if (err)
-> +		goto remove_sysfs;
->   
->   	err = bus_set_iommu(&platform_bus_type, &tegra_smmu_ops);
-> -	if (err < 0) {
-> -		iommu_device_unregister(&smmu->iommu);
-> -		iommu_device_sysfs_remove(&smmu->iommu);
-> -		return ERR_PTR(err);
-> -	}
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +#ifdef CONFIG_PCI
-> +	err = bus_set_iommu(&pci_bus_type, &tegra_smmu_ops);
-> +	if (err < 0)
-> +		goto unset_platform_bus;
-> +#endif
->   
->   	if (IS_ENABLED(CONFIG_DEBUG_FS))
->   		tegra_smmu_debugfs_init(smmu);
->   
->   	return smmu;
-> +
-> +unset_platform_bus: __maybe_unused;
-> +	bus_set_iommu(&platform_bus_type, NULL);
-> +unregister:
-> +	iommu_device_unregister(&smmu->iommu);
-> +remove_sysfs:
-> +	iommu_device_sysfs_remove(&smmu->iommu);
-> +
-> +	return ERR_PTR(err);
->   }
->   
->   void tegra_smmu_remove(struct tegra_smmu *smmu)
-> 
+Kind regards,
+Tamas
+
+
+Tamás Szűcs (5):
+  arm64: tegra: Enable signal voltage switching on Tegra194 SDMMC1 and
+    SDMMC3
+  arm64: tegra: Specify sdhci clock parent for Tegra194 SDMMC1 and
+    SDMMC3
+  arm64: tegra: Fix CD on Jetson AGX Xavier SDMMC1
+  arm64: tegra: Add vmmc-supply regulator for Jetson AGX Xavier SDMMC1
+  arm64: tegra: Configure SDIO cards on Jetson AGX Xavier SDMMC1
+
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 18 ++++++-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 51 +++++++++++++++++++
+ 2 files changed, 68 insertions(+), 1 deletion(-)
+
+-- 
+2.20.1
+
