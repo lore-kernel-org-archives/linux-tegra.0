@@ -2,87 +2,181 @@ Return-Path: <SRS0=VMTZ=DX=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D10C433DF
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Oct 2020 04:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB66C43457
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Oct 2020 05:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D92242076E
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Oct 2020 04:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E922087D
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Oct 2020 05:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dUdKWY6J"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rkMkit/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbgJPEHH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Oct 2020 00:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42634 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbgJPEHF (ORCPT
+        id S1731908AbgJPFOc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Oct 2020 01:14:32 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10312 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgJPFOc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Oct 2020 00:07:05 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D251C0613CF
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2020 21:07:04 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id n14so712381pff.6
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2020 21:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8vX6ndPTi8E0weS4M30AEHmjjkLUgJeoHZsUqEDqihg=;
-        b=dUdKWY6Jhx5+1cfkWmojPdPlr/pmkDTzwPQ+xyqNJObDcOwpuvD+A3cr0W+xkwP/M0
-         YgRdYCg64sgcX/z/zh1WhITxU0bWX+5gGSinRooozAeNpb5zC0VNMteclsfIepJq4aoG
-         utgGwQ0GWhETE5xvJI2sC6v0ffOwQOXy4T87rUfAgDozbyke6L7owsoTd/JtQ2LM4cZd
-         juG05Xa0+MNJgWGp8qCFkYRpUe17UdqYgsDMdW8tszaWZwBbm/Fl1yrAt5DeMtffO++U
-         xa995M0boaXZ0+HhiM8rcI8P7JpATbsG4N3ONQgIZCPZDQUiKVXSTjnGC1i9dlxtEfMr
-         TeZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8vX6ndPTi8E0weS4M30AEHmjjkLUgJeoHZsUqEDqihg=;
-        b=mkW0Ez8aDCsRqI+iT7v9YyLHN1gcjUTSt1q+dSZMUR4L/R+tl8K4d4Z3O15oMLVf72
-         +tAEah5IN/pghIWe7v8gq+DU17isswGQiCoxeQ9PWKk4jV7dTEXZ4HCWgOXrd3WB+8+e
-         Gvih7r2Sj4CEfBn1eXbyoy4XMiABoz1RVemG+hI9H+afxCrkrLur2IzEgbkQR8x1f/mV
-         QMeWdyhtkac4DrIqKHgxffvE9/344RnxQG/m0D7X3h/FPEDpM6q4H+7Fqp5PMgI6s9jD
-         oRuCeEm360YJbk4n/dPbtdk3fgYdurz57PXqFsGyeO3fjX03icybzmZaFPYVjT/MJoNj
-         cjcg==
-X-Gm-Message-State: AOAM530aR3ZKclOB+Yh3xouffXrQ/Le/1LxpyAnN6VU1VPxn08NPPKAK
-        UyTqUu1Wt7NESGzIs8gSt0ZZzdh51+8VDw==
-X-Google-Smtp-Source: ABdhPJyBTTEAFamTg4RJhFEdUUEc/mchclzo4KAppRt1V0Onx7JzwJTpskED/j0U2zGvoBE6O9jPNw==
-X-Received: by 2002:aa7:83d9:0:b029:138:b217:f347 with SMTP id j25-20020aa783d90000b0290138b217f347mr1937661pfn.0.1602821223447;
-        Thu, 15 Oct 2020 21:07:03 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id e20sm858618pfi.30.2020.10.15.21.07.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Oct 2020 21:07:02 -0700 (PDT)
-Date:   Fri, 16 Oct 2020 09:37:00 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] cpufreq: tegra186: Fix initial frequency
-Message-ID: <20201016040700.wzfegk7hmabxgpff@vireshk-i7>
-References: <20200824145907.331899-1-jonathanh@nvidia.com>
- <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
- <09ac354e-a55b-5300-12ae-3f24c8f8b193@nvidia.com>
+        Fri, 16 Oct 2020 01:14:32 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f892c2b0000>; Thu, 15 Oct 2020 22:14:19 -0700
+Received: from [10.25.98.225] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Oct
+ 2020 05:14:19 +0000
+Subject: Re: [PATCH v3 09/13] ASoC: dt-bindings: tegra: Add schema for audio
+ graph card
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <kuninori.morimoto.gx@renesas.com>,
+        <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>,
+        <mkumard@nvidia.com>, <viswanathl@nvidia.com>,
+        <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <atalambedu@nvidia.com>, <nwartikar@nvidia.com>,
+        <swarren@nvidia.com>, <nicoleotsuka@gmail.com>
+References: <1601573587-15288-1-git-send-email-spujar@nvidia.com>
+ <1601573587-15288-10-git-send-email-spujar@nvidia.com>
+ <20201006203433.GA2786434@bogus>
+ <a5bc07d8-fb2e-e86e-f0d3-be19166ad7bb@nvidia.com>
+Message-ID: <acbcd136-a933-e5e0-863b-f435dafe1697@nvidia.com>
+Date:   Fri, 16 Oct 2020 10:44:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09ac354e-a55b-5300-12ae-3f24c8f8b193@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <a5bc07d8-fb2e-e86e-f0d3-be19166ad7bb@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1602825259; bh=58G5hh5VTCRWNjS2NbwxGT+Sa6kUqX0udY4utQfHKx4=;
+        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=rkMkit/dwJWZjwBML9DdGRm+RNMv9B5Kz7OUNznxWxt1JLSqpH5lHP4OWCQNRdJf5
+         AvU6R5Buf8OP2UclEUIXoAAcYfYNqtLZCpZxiqF4Vr/t5ZyBOAvFO259diZQnwxnJ5
+         PJmLj17dQgUYtijjaRy7Do2j9Vh9oOKDAwkbsfnwQXY5XW5giTTuJZEAV4eRyc43/w
+         0jw6nBHxUXE6faiST7IY30d425/tOOWm01PXWSimZhXK8ylwk0U93tJCaanvdekoBw
+         EpmB7r5c/s+z2Wtg7z5FB+uZ+rhTx9Y7nKpHbzotX2CXRHWigkuDKq9OxDo6w9Dp0e
+         lqPyJ9p8O8KmQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 15-10-20, 15:03, Jon Hunter wrote:
-> If not too late, would you mind dropping this patch for v5.10?
 
-It is already part of Linus's master now.
+>>> Add YAML schema for Tegra audio graph sound card DT bindings. It=20
+>>> uses the
+>>> same DT bindings provided by generic audio graph driver. Along with=20
+>>> this
+>>> few standard clock DT bindings are added which are specifically=20
+>>> required
+>>> for Tegra audio.
+>>>
+>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>> ---
+>>> =C2=A0 .../sound/nvidia,tegra-audio-graph-card.yaml | 70=20
+>>> ++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 70 insertions(+)
+>>> =C2=A0 create mode 100644=20
+>>> Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.y=
+aml
+>>>
+>>> diff --git=20
+>>> a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card=
+.yaml=20
+>>> b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card=
+.yaml=20
+>>>
+>>> new file mode 100644
+>>> index 0000000..b73fbe5
+>>> --- /dev/null
+>>> +++=20
+>>> b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card=
+.yaml
+>>> @@ -0,0 +1,70 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id:=20
+>>> http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Audio Graph based Tegra sound card driver
+>>> +
+>>> +description: |
+>>> +=C2=A0 This is based on generic audio graph card driver along with=20
+>>> additional
+>>> +=C2=A0 customizations for Tegra platforms. It uses the same bindings w=
+ith
+>>> +=C2=A0 additional standard clock DT bindings required for Tegra.
+>>> +
+>>> +=20
+>>> See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
+>>> +
+>>> +maintainers:
+>>> +=C2=A0 - Jon Hunter <jonathanh@nvidia.com>
+>>> +=C2=A0 - Sameer Pujar <spujar@nvidia.com>
+>>> +
+>>> +properties:
+>>> +=C2=A0 compatible:
+>>> +=C2=A0=C2=A0=C2=A0 oneOf:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: nvidia,tegra210-audio-graph-ca=
+rd
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: nvidia,tegra186-audio-graph-ca=
+rd
+>>> +
+>>> +=C2=A0 clocks:
+>>> +=C2=A0=C2=A0 minItems: 2
+>>> +
+>>> +=C2=A0 clock-names:
+>>> +=C2=A0=C2=A0 minItems: 2
+>>> +=C2=A0=C2=A0 items:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 - const: pll_a
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 - const: plla_out0
+>>> +
+>>> +=C2=A0 assigned-clocks:
+>>> +=C2=A0=C2=A0=C2=A0 minItems: 1
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 3
+>>> +
+>>> +=C2=A0 assigned-clock-parents:
+>>> +=C2=A0=C2=A0=C2=A0 minItems: 1
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 3
+>>> +
+>>> +=C2=A0 assigned-clock-rates:
+>>> +=C2=A0=C2=A0=C2=A0 minItems: 1
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 3
+>>> +
+>>> +required:
+>>> +=C2=A0 - compatible
+>>> +=C2=A0 - clocks
+>>> +=C2=A0 - clock-names
+>>> +=C2=A0 - assigned-clocks
+>>> +=C2=A0 - assigned-clock-parents
+>> Where's the graph? You need to define the ports and reference the common
+>> schema.
+>
+> I am looking to reference the bindings used in below doc which is not=20
+> yet in YAML format. Only additional properties I listed here.
+> {LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.txt
+>
+> Should I keep this doc to *.txt format as well and later move to YAML=20
+> or is there a way to reference *.txt doc here?
 
--- 
-viresh
+The dependency here is like below,
+Tegra audio graph card -> generic audio graph card=20
+(audio-graph-card.txt) -> graph (graph.txt)
+
+I plan to convert dependencies to json-schema in next revision and then=20
+refer these for Tegra audio graph card.
+
