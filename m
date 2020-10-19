@@ -2,270 +2,98 @@ Return-Path: <SRS0=MPHS=D2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A3DC433E7
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 22:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD7AC433E7
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 22:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 023C622384
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 22:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603145776;
-	bh=uX4maItsqDG18cfvewtCdQzqtCHtz4s8dlLHWRZfQgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jiSjDSYBzyQU8HyEJVa9oiXl3+sXeUjbD8SkbA5ilc2JDqSQ7/1G7PPEDn92h1KOb
-	 n+Pwo5CTiiwUEKQdgAqIZ0BAzto3BE/h1iJrGEgHVdIzYLtzzkYl5gHaap9bE+uely
-	 Wd6iFKO9fTGVVoRhJuVyv74V2FPhi1YGRvjyGkhg=
+	by mail.kernel.org (Postfix) with ESMTP id ECAA5222EA
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 22:40:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmrjE89v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387972AbgJSWQP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Oct 2020 18:16:15 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41063 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729813AbgJSWQP (ORCPT
+        id S2388374AbgJSWkC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Oct 2020 18:40:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbgJSWkB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Oct 2020 18:16:15 -0400
-Received: by mail-ot1-f65.google.com with SMTP id n15so1336190otl.8;
-        Mon, 19 Oct 2020 15:16:14 -0700 (PDT)
+        Mon, 19 Oct 2020 18:40:01 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C62EC0613CE;
+        Mon, 19 Oct 2020 15:40:00 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id b1so1920412lfp.11;
+        Mon, 19 Oct 2020 15:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rZp4itAJz8aEdqmJauni1XP9ot/pmBFocBopP+DQNbI=;
+        b=PmrjE89voAP6Q7skyHT7DnQ3/Q0kESjOJXSXQYXLOjLcouxJhA9CZrdJmJe+AvKant
+         5UjDEk4/OW9F5aoaahlU7UO6PVjz7MWCV07+Ap20Qb2er2IEd9VARCo5JLolbj71JqDZ
+         BhfCFcNscITIYKeqFh5r5M2qe5iZFIRwm3Yuw7Tm9zkUD9rnPkU8af/a0nfCz0qfd8IJ
+         RUsWxUfLe5pdE2YsNkL2XgNPgyPcvOQXIOnKB0yuQK+SnNJSDHS8K+96dADiFxdpQ8PX
+         liDTqF0xzUmnTioXR7iiZQPMSkZmfnXLO/ZEzk4XY8MofSXDKfK+jNu9Ad2Bpy4BiWBt
+         5aWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7ro/YQVjz81P9SXrPqBg+aSAZ3CY21lcJ/N+W67/ad0=;
-        b=K8kW4jCUVRCf5TwF1Nv/sJeqOk3aP8NEa1MUAxnCJ7dCyEy9AhtKyC0B3Lc6PyJWyY
-         LBO8xPd09afTtgcTCN59DfLRiQd6TJ3IpwzPMvVHufGobWrZHF9aANGYshfBzRuC9pk4
-         9ieY82vgEkeuDW96uK7UlV32Be2PNgSp4fKnzSG4pterRXqd82XBJ6cSQRQ4PsQKRmee
-         52gopXqr6JzloNDZfcabnf7OWgYc9EYuV/c19h2o6x1G/N4YBcp5eWpUFEtegfh8HnEn
-         2X4aSgKs7lWb02MPmkbYk7+vLjXsWLwXSHJSTvx1nvksK5MDYa1dMKbqAtF8UuxNbKuS
-         0N0g==
-X-Gm-Message-State: AOAM531u23oLtWwTuFvrl2znyzjUDnWRyrcTweR/hJ8Md4wO2oPLf6k6
-        mmr+TE9/OOYUTTPCTSsDDQ==
-X-Google-Smtp-Source: ABdhPJwToqJ2946gzDsGsazKbQCSDFHji8pzyB1wMCh7IO4Irb4cjEHJvy/roabKqFJ7wELd+1le8w==
-X-Received: by 2002:a9d:42e:: with SMTP id 43mr1489058otc.199.1603145774004;
-        Mon, 19 Oct 2020 15:16:14 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p10sm312216oig.37.2020.10.19.15.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 15:16:13 -0700 (PDT)
-Received: (nullmailer pid 3695429 invoked by uid 1000);
-        Mon, 19 Oct 2020 22:16:12 -0000
-Date:   Mon, 19 Oct 2020 17:16:12 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        kuninori.morimoto.gx@renesas.com,
-        pierre-louis.bossart@linux.intel.com, perex@perex.cz,
-        tiwai@suse.com, p.zabel@pengutronix.de, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sharadg@nvidia.com,
-        mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com,
-        dramesh@nvidia.com, atalambedu@nvidia.com, nwartikar@nvidia.com,
-        swarren@nvidia.com, nicoleotsuka@gmail.com
-Subject: Re: [PATCH v4 11/15] ASoC: dt-bindings: tegra: Add json-schema for
- Tegra audio graph card
-Message-ID: <20201019221612.GA3690258@bogus>
-References: <1602859382-19505-1-git-send-email-spujar@nvidia.com>
- <1602859382-19505-12-git-send-email-spujar@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rZp4itAJz8aEdqmJauni1XP9ot/pmBFocBopP+DQNbI=;
+        b=DylXiRVfzAu/oG+KoMQhb4vxXCsUgOV27FFsaX0l/TAGCB57p4UusYcTO0NYXH3Kbn
+         R1D4Rf9u6rO3kzxAaS7WfrimgYxphBA2kuM5VzO4Z5itDEMuzc+5fZpjkhJcwTLOGPKI
+         fUAuL5GXMVMRtE2TBhueFfeV8QHQF7PlmUiRnHtCfS/e+w53Z2A4hMl1yY2rZuKYHxwd
+         CelILTUxL3Qw9wK37fWVBEti1jqWemAJbnVlAXQEbGr4IMbKam/p9uUxW+kPmVm2aQNT
+         AZwNXJSmLq852cqg/BNnVp8PgSIjZpGQTUUEOAzmBfKdR/+KbreiBVLNSOzjscuQmCJo
+         GoMw==
+X-Gm-Message-State: AOAM530Q4UkSEB8cRTyWeLlQkC77uufV6cPpE+gQ3BbllEJ4vuuOAGvf
+        7HGxRjwZ5o1NkyLcYYJHNOg=
+X-Google-Smtp-Source: ABdhPJwOdn6hxkyk5CuoGoi1IrNy/FXi/wBwkWM3vILY7vzYJ9dHYIFrL45tykSeqkfW4kdDHUnk7g==
+X-Received: by 2002:a19:2355:: with SMTP id j82mr557878lfj.36.1603147198583;
+        Mon, 19 Oct 2020 15:39:58 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.googlemail.com with ESMTPSA id o17sm192940lfb.55.2020.10.19.15.39.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Oct 2020 15:39:57 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] PM / devfreq: Add governor feature flag
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com,
+        enric.balletbo@collabora.com, hl@rock-chips.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, abel.vesa@nxp.com,
+        k.konieczny@samsung.com, b.zolnierkie@samsung.com,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com
+References: <20201007050703.20759-1-cw00.choi@samsung.com>
+ <CGME20201007045340epcas1p4e63955385b1841f44e7a07e2d5d962c4@epcas1p4.samsung.com>
+ <20201007050703.20759-2-cw00.choi@samsung.com>
+ <83b952ab-a25e-8984-8804-1dd990eec835@gmail.com>
+ <9267f046-1adc-b43d-51ef-2e0ad41dc322@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0d3d20f1-6a23-27c2-1a9d-1c7ac60ce1e7@gmail.com>
+Date:   Tue, 20 Oct 2020 01:39:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1602859382-19505-12-git-send-email-spujar@nvidia.com>
+In-Reply-To: <9267f046-1adc-b43d-51ef-2e0ad41dc322@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 08:12:58PM +0530, Sameer Pujar wrote:
-> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
-> same DT bindings provided by generic audio graph driver. Along with this
-> few standard clock DT bindings are added which are specifically required
-> for Tegra audio.
+19.10.2020 06:53, Chanwoo Choi пишет:
+...
+>>> +	const u64 flag;
+>> A plural form of flag(s) is more common, IMO.
 > 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  .../sound/nvidia,tegra-audio-graph-card.yaml       | 158 +++++++++++++++++++++
->  1 file changed, 158 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> new file mode 100644
-> index 0000000..284d185
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Audio Graph based Tegra sound card driver
-> +
-> +description: |
-> +  This is based on generic audio graph card driver along with additional
-> +  customizations for Tegra platforms. It uses the same bindings with
-> +  additional standard clock DT bindings required for Tegra.
-> +
-> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.yaml
+> When need to add more feature flag, I prefer to add
+> the definition instead of changing the structure.
+> I think it is better.
 
-You should be able to just $ref this at the top level.
-
-> +
-> +maintainers:
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Sameer Pujar <spujar@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - nvidia,tegra210-audio-graph-card
-> +          - nvidia,tegra186-audio-graph-card
-> +
-
-> +  dais:
-> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/dais
-> +
-> +  label:
-> +    $ref: /schemas/sound/simple-card.yaml#/properties/label
-> +
-> +  pa-gpios:
-> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/pa-gpios
-> +
-> +  widgets:
-> +    $ref: /schemas/sound/simple-card.yaml#/definitions/widgets
-> +
-> +  routing:
-> +    $ref: /schemas/sound/simple-card.yaml#/definitions/routing
-> +
-> +  mclk-fs:
-> +    $ref: /schemas/sound/simple-card.yaml#/definitions/mclk-fs
-> +
-> +  prefix:
-> +    $ref: /schemas/sound/simple-card.yaml#/definitions/prefix
-
-And drop all of these.
-
-> +
-> +  clocks:
-> +   minItems: 2
-> +
-> +  clock-names:
-> +   minItems: 2
-
-Don't need this.
-
-> +   items:
-> +     - const: pll_a
-> +     - const: plla_out0
-> +
-> +  assigned-clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  assigned-clock-parents:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  assigned-clock-rates:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  ports:
-> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/ports
-> +
-> +patternProperties:
-> +  "^port(@[0-9a-f]+)?$":
-> +    $ref: /schemas/sound/audio-graph-card.yaml#/definitions/port
-
-And these can be dropped. Unless what each port is is Tegra specific.
-
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - dais
-> +  - clocks
-> +  - clock-names
-> +  - assigned-clocks
-> +  - assigned-clock-parents
-> +
-> +examples:
-> +  - |
-> +    #include<dt-bindings/clock/tegra210-car.h>
-> +
-> +    tegra_sound {
-> +        compatible = "nvidia,tegra210-audio-graph-card";
-> +
-> +        clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
-> +                 <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-> +        clock-names = "pll_a", "plla_out0";
-> +
-> +        assigned-clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
-> +                          <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
-> +                          <&tegra_car TEGRA210_CLK_EXTERN1>;
-> +        assigned-clock-parents = <0>, <0>, <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
-> +        assigned-clock-rates = <368640000>, <49152000>, <12288000>;
-> +
-> +        dais = /* FE */
-> +               <&admaif1_port>,
-> +               /* Router */
-> +               <&xbar_i2s1_port>,
-> +               /* I/O DAP Ports */
-> +               <&i2s1_port>;
-> +
-> +        label = "jetson-tx1-ape";
-> +    };
-> +
-> +    tegra_ahub: ahub@702d0800 {
-> +        // ...
-> +
-> +        reg = <0x702d0800 0x800>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            xbar_i2s1_port: port@a {
-> +                reg = <0xa>;
-> +                xbar_i2s1_ep: endpoint {
-> +                    remote-endpoint = <&i2s1_cif_ep>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +    tegra_i2s1: i2s@702d1000 {
-> +        // ...
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        reg = <0x702d1000 0x100>;
-> +
-> +        port@0 {
-> +            reg = <0>;
-> +
-> +            i2s1_cif_ep: endpoint {
-> +                remote-endpoint = <&xbar_i2s1_ep>;
-> +            };
-> +        };
-> +
-> +        i2s1_port: port@1 {
-> +            reg = <1>;
-> +
-> +            i2s1_dap: endpoint {
-> +                dai-format = "i2s";
-> +
-> +                // ...
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> -- 
-> 2.7.4
-> 
+I meant to rename the new member "flag" to "flags".
