@@ -2,63 +2,63 @@ Return-Path: <SRS0=MPHS=D2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB27CC433DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 03:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F7FC43457
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 03:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 544552080D
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 03:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1230E20709
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 03:58:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L5BIFXm0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tDDmGefd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731574AbgJSDmj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 18 Oct 2020 23:42:39 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:46319 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731567AbgJSDmj (ORCPT
+        id S1731752AbgJSD6Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 18 Oct 2020 23:58:16 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:54149 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731306AbgJSD6P (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 18 Oct 2020 23:42:39 -0400
+        Sun, 18 Oct 2020 23:58:15 -0400
 Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20201019034237epoutp01abc205f32cf66a4226a841453c0557cb~-R9Fyo5ql3027430274epoutp012
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2020 03:42:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20201019034237epoutp01abc205f32cf66a4226a841453c0557cb~-R9Fyo5ql3027430274epoutp012
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201019035810epoutp048beee48d23a49b0606efbd2484ee4670~-SKrRkO1c0660906609epoutp04T
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2020 03:58:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201019035810epoutp048beee48d23a49b0606efbd2484ee4670~-SKrRkO1c0660906609epoutp04T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603078957;
-        bh=oRJpa3IYSgzpxiEPraiJpZ41NHzoahgdfRcWkR+DQBA=;
+        s=mail20170921; t=1603079890;
+        bh=m+psVG5ydnEfTR+95veMJooA8oISCSXl0ADz2z9f3vc=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=L5BIFXm03c2TkvSSywztk/IDp/Vnj2bk4J7JjYd0SWWaoX2RcnRAz8PLtRMBV7qnY
-         X6CkKbLvmRp4UVEZJ2e4UDqDGcHMgFpagdN9huU2259gG9oIVK3M2YjaUT/Th/QI8/
-         MRu85QLsCQnexar4bDq+J3ipbgLDgnLWVI86NtWU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201019034236epcas1p282ec51c5a586068851723318ae8d89a8~-R9FQNWiX0388903889epcas1p2x;
-        Mon, 19 Oct 2020 03:42:36 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4CF2dQ1Y6mzMqYm8; Mon, 19 Oct
-        2020 03:42:34 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        31.A2.09582.A2B0D8F5; Mon, 19 Oct 2020 12:42:34 +0900 (KST)
+        b=tDDmGefdbi8lV8Y4493ZWzVFk9z9ERA1rj4yVgEidB/kV5Q9/wrIQ//wRF0wqvR+f
+         FTY31B4j0iseor4nej03oWbGqHpQRq1dE5Lf7qDo/EzPKF4yCpqShsAbPlqcexITU5
+         I1vAajgJWnxpwH/n3bpwDdN0+ZVKaHZRo2PwIPPo=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20201019035810epcas1p3082bbc6b2c88c010f4851f8e07ef3e9e~-SKqgSgrs1980819808epcas1p3K;
+        Mon, 19 Oct 2020 03:58:10 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4CF2zM3VXrzMqYkg; Mon, 19 Oct
+        2020 03:58:07 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        82.F1.10463.FCE0D8F5; Mon, 19 Oct 2020 12:58:07 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201019034233epcas1p1ef81512dec819d2e2f269b5ab8600c07~-R9Ciyvp-0092100921epcas1p1f;
-        Mon, 19 Oct 2020 03:42:33 +0000 (GMT)
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201019035806epcas1p22dc6646d6f40e36a4797ad00fa46dd42~-SKnh7cv32489824898epcas1p24;
+        Mon, 19 Oct 2020 03:58:06 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201019034233epsmtrp121eb7337688477ba9c3fb2bf8bbc5bd5~-R9Ch7LCJ1750317503epsmtrp16;
-        Mon, 19 Oct 2020 03:42:33 +0000 (GMT)
-X-AuditID: b6c32a37-899ff7000000256e-f3-5f8d0b2a19a4
+        20201019035806epsmtrp13b638c0179070576732b49b1624337f3~-SKnb2NaH2438224382epsmtrp1B;
+        Mon, 19 Oct 2020 03:58:06 +0000 (GMT)
+X-AuditID: b6c32a38-efbff700000028df-48-5f8d0ecfbbdd
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        36.91.08745.92B0D8F5; Mon, 19 Oct 2020 12:42:33 +0900 (KST)
+        C0.03.08745.ECE0D8F5; Mon, 19 Oct 2020 12:58:06 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201019034233epsmtip18c87992ec19756baaae868213e31094f~-R9CMmaMD0773107731epsmtip1j;
-        Mon, 19 Oct 2020 03:42:33 +0000 (GMT)
+        20201019035806epsmtip1c9effe648e0cf6e3afc88f0fa608f611~-SKnJExgc1389113891epsmtip1E;
+        Mon, 19 Oct 2020 03:58:06 +0000 (GMT)
 Subject: Re: [PATCH v3 2/2] PM / devfreq: Add governor attribute flag for
  specifc sysfs nodes
 To:     Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
@@ -71,49 +71,50 @@ Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com,
         kyungmin.park@samsung.com
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <70d5e625-aae0-cb86-e5d5-1c362098876e@samsung.com>
-Date:   Mon, 19 Oct 2020 12:55:58 +0900
+Message-ID: <1db2fb62-0b82-409d-20a7-c2ef376d4580@samsung.com>
+Date:   Mon, 19 Oct 2020 13:11:31 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
         Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <63ac80e9-7f31-8447-06ca-e7d830a4aed4@gmail.com>
+In-Reply-To: <4cb8ece7-9399-9ee0-5f93-6c19630308d6@gmail.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFJsWRmVeSWpSXmKPExsWy7bCmrq4Wd2+8wa41LBbLLh1ltNg4Yz2r
-        xcQbV1gsVn98zGix5vYhRosfG04xW7TMWsRiseDTDFaLs01v2C1W3P3IanF51xw2i8+9Rxgt
-        Or/MYrNY2NTCbnG7cQWbxc9d81gcBDzWzFvD6LHj7hJGj52z7rJ7bFrVyebR2/yOzWPjux1M
-        Hn9n7Wfx6NuyitHj8ya5AM6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-        xNxUWyUXnwBdt8wcoD+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWWBXrFibnF
-        pXnpesn5uVaGBgZGpkCFCdkZUx79Yi84J1+x+8NntgbGO5JdjJwcEgImEmtW7GTsYuTiEBLY
-        wShx6dI9VgjnE6PEsaer2SCcz4wSe5aeZINp6d94mAUisYtRYu7JH8wQzntGicUf5jCCVAkL
-        xEvcXP+NGcQWEaiVOHLxAdgoZoEVTBJr1p9lAUmwCWhJ7H9xA2wsv4CixNUfj8GaeQXsJI7c
-        agGzWQRUJZ6v/gRWLyoQJnFyWwtUjaDEyZlPwOKcArYSm+ZPYgKxmQXEJW49mQ9ly0tsfzsH
-        7DoJgQ8cEg9/LgD6jgPIcZHoeZUB8Y6wxKvjW9ghbCmJl/1tUHa1xMqTR9ggejsYJbbsv8AK
-        kTCW2L90MhPIHGYBTYn1u/QhwooSO3/PZYTYyyfx7msP1CpeiY42IYgSZYnLD+4yQdiSEovb
-        O9kmMCrNQvLNLCQfzELywSyEZQsYWVYxiqUWFOempxYbFhgjR/cmRnAi1zLfwTjt7Qe9Q4xM
-        HIyHGCU4mJVEeCMFu+KFeFMSK6tSi/Lji0pzUosPMZoCw3cis5Rocj4wl+SVxBuaGhkbG1uY
-        GJqZGhoqifP+0e6IFxJITyxJzU5NLUgtgulj4uCUamCSfC/9Yj5/kjjzt9XxD/UmfsiytXu4
-        M7WF5zzDec8rj6Ir5VY6MOyOcql4HHqWke+tzak/76urrXj9/Rl/qrYEiE/QtlZ95+7T1G+8
-        S26mqFvNaS/l76InzQJYflyqD/F6eFRa1/ZmiNbMvUETdr5qi5+1as/EnEMfKlQ8a/27V08z
-        b0wqPOIlx7jiaFD885XfW/peqqqZiIeZJ525xhsaO5N5+1VhRT/XwlsqiTw1WkkeRTfnlxoZ
-        3nBlC6nfdvDGPxthKX3B9P4XtYLThTR+zf9WvYlJmcc5znb/2cR385mvV266e/JE6u1Na6+c
-        ly1WsD5g18N892rtN0Y/9+mr5L9+fNB4+Iap1eEtqUosxRmJhlrMRcWJAB6T6/ZtBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsWy7bCSnK4md2+8wd3FahbLLh1ltNg4Yz2r
-        xcQbV1gsVn98zGix5vYhRosfG04xW7TMWsRiseDTDFaLs01v2C1W3P3IanF51xw2i8+9Rxgt
-        Or/MYrNY2NTCbnG7cQWbxc9d81gcBDzWzFvD6LHj7hJGj52z7rJ7bFrVyebR2/yOzWPjux1M
-        Hn9n7Wfx6NuyitHj8ya5AM4oLpuU1JzMstQifbsErowpj36xF5yTr9j94TNbA+MdyS5GTg4J
-        AROJ/o2HWboYuTiEBHYwSjy5v4QZIiEpMe3iUSCbA8gWljh8uBii5i2jRP+uk2wgNcIC8RI3
-        138DqxcRqJV4tXo6K4jNLLCCSWLhZyGIhk+MEuuXHWYESbAJaEnsf3EDrJlfQFHi6o/HYHFe
-        ATuJI7dawGwWAVWJ56s/sYDYogJhEjuXPGaCqBGUODnzCVicU8BWYtP8SUwQy9Ql/sy7xAxh
-        i0vcejIfKi4vsf3tHOYJjMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOWllusVJ+YW
-        l+al6yXn525iBEe0ltYOxj2rPugdYmTiYDzEKMHBrCTCGynYFS/Em5JYWZValB9fVJqTWnyI
-        UZqDRUmc9+ushXFCAumJJanZqakFqUUwWSYOTqkGpoUfdG+9jFo6pYcpc+oGgX5v5pephWd7
-        a51XH7eqyD3++HLT2djeDMeoejYvsW9TUyRFNrRb3PoasyHcPiVdYObd54fkJtZyMx7u99i+
-        +710wdTVK4wdY6Kumwb+dYjYKTBpkXbHZU8hG4vQBF1JLtnW8xrOTIEnxeTYnd47mneo9HcV
-        TZzX5PQgY/KZW8rVXW3+X5aelYy54VVrbtHE/f+OhPfET/7nuioV+9W//ZncpXd3s9Oe7gyd
-        C0cm5hwwfpse1cIYr2N7S05JgT+rgNu4kDXx4cbva6dknqtScxabPqEz5YzquyiWuaUvpvVF
-        WXdy+6grZC80chS7uu1X5i3nHgNt5ifmSc4R55VYijMSDbWYi4oTAezS0UdXAwAA
-X-CMS-MailID: 20201019034233epcas1p1ef81512dec819d2e2f269b5ab8600c07
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFJsWRmVeSWpSXmKPExsWy7bCmnu55vt54g5PzJS2WXTrKaLFxxnpW
+        i4k3rrBYrP74mNFize1DjBY/NpxitmiZtYjFYsGnGawWZ5vesFusuPuR1eLyrjlsFp97jzBa
+        dH6ZxWaxsKmF3eJ24wo2i5+75rE4CHismbeG0WPH3SWMHjtn3WX32LSqk82jt/kdm8fGdzuY
+        PP7O2s/i0bdlFaPH501yAZxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
+        ibmptkouPgG6bpk5QH8oKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgosC/SKE3OL
+        S/PS9ZLzc60MDQyMTIEKE7Izvl6bzF7wgq3ib/95lgbG/axdjJwcEgImEk+XfmPqYuTiEBLY
+        wSixb+pOFgjnE6PE1KUP2CGcz4wSFz/sZYdp+fByJ1i7kMAuRolPBxwgit4zSjy48B0sISwQ
+        L3Fz/TdmEFtEoFbiyMUHbCBFzAIrmCTWrD/LApJgE9CS2P/iBhuIzS+gKHH1x2NGEJtXwE7i
+        /rT5YNtYBFQlti94CGaLCoRJnNzWAlUjKHFy5hOwOZwCthKX360Hm8MsIC5x68l8JghbXmL7
+        2znMIIslBH5wSDTc3Qb1govErNPnoCEgLPHq+BaouJTEy/42KLtaYuXJI2wQzR2MElv2X4Bq
+        MJbYv3Qy0AYOoA2aEut36UOEFSV2/p7LCLGYT+Ld1x5WkBIJAV6JjjYhiBJlicsP7jJB2JIS
+        i9s72SYwKs1C8s4sJC/MQvLCLIRlCxhZVjGKpRYU56anFhsWmCBH9yZGcCLXstjBOPftB71D
+        jEwcjIcYJTiYlUR4IwW74oV4UxIrq1KL8uOLSnNSiw8xmgIDeCKzlGhyPjCX5JXEG5oaGRsb
+        W5gYmpkaGiqJ8/7R7ogXEkhPLEnNTk0tSC2C6WPi4JRqYJLhli5qrNV4Xhv1nT3N4+Pvy8fP
+        LjRdIpIjrZzfoP9x+z3XxtWWV1xK+Pb+tJ8eJLTmRFnsn8j7Syq+HP78/9kfUe/yEqNZaZmx
+        Kbpykxi2LgucmvRXeIv19uS54odrM9TK/lxwPNJx6dq7aP/TC82+l6WYv5xkVqHtUX94tbjC
+        Hrufr9efLxJiW3mi68Cc9vv2Le77s8+1LKiUCWdS/j3FZUqImvJ+i3pen9OOBa/tDmQr73sb
+        NfvfjRLfS9IKWvNn8B2exWYlaN/2Sq/31dFvMslXD6zdVl/O7caw8lR3XEjrRYHdnzyu1ykd
+        5bBwCC35nm/xLvSi7sufy/cnfPx+o0HeNVpytfGdspvvdiqxFGckGmoxFxUnAgDFiERkbQQA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSnO45vt54gyMrVS2WXTrKaLFxxnpW
+        i4k3rrBYrP74mNFize1DjBY/NpxitmiZtYjFYsGnGawWZ5vesFusuPuR1eLyrjlsFp97jzBa
+        dH6ZxWaxsKmF3eJ24wo2i5+75rE4CHismbeG0WPH3SWMHjtn3WX32LSqk82jt/kdm8fGdzuY
+        PP7O2s/i0bdlFaPH501yAZxRXDYpqTmZZalF+nYJXBlfr01mL3jBVvG3/zxLA+N+1i5GTg4J
+        AROJDy93gtlCAjsYJZ6f5YOIS0pMu3iUuYuRA8gWljh8uLiLkQuo5C2jxNee+UwgNcIC8RI3
+        139jBrFFBGolXq2eDjaHWWAFk8TCz0IQMz8xSryYawhiswloSex/cYMNxOYXUJS4+uMxI4jN
+        K2AncX/afHYQm0VAVWL7godgtqhAmMTOJY+ZIGoEJU7OfMICYnMK2EpcfreeDWKXusSfeZeY
+        IWxxiVtPIG5jFpCX2P52DvMERuFZSNpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LjPJSy/WK
+        E3OLS/PS9ZLzczcxgqNZS2sH455VH/QOMTJxMB5ilOBgVhLhjRTsihfiTUmsrEotyo8vKs1J
+        LT7EKM3BoiTO+3XWwjghgfTEktTs1NSC1CKYLBMHp1QDU9nKHNHjL3jXhJ86mB3Et/vWxBe/
+        llTknjA6rO/55J6+9+SiP3zdotU2Mx2W3XqVpxu4K7mzLrHufXH114f8LzU5rkWl7T5bYVVx
+        6OCPxW67t0SHJMadYvuW5r/cVmH2fKfEmDXpP50zEzoSA/vXrF+w4Ja56r2SzVzfr2/YFxGx
+        o3vROxsr/qyeWKnY3kyFwB1n5YzMe4q2O7tKLLhSx7m7drPipqs5xxUZ7xy9aumzfvapPboy
+        Ggrt+np3l30+eNz497b/pUocNxs5H+9ZtrvxsPCDJdG/5Pa3KN3wvckZ6/ifWVLyx8fG1do7
+        xTqXxsf1M+iZsRbtjK3fHLArM600wtF4Vc1vh9b5M+bcUWIpzkg01GIuKk4EAHzXfChVAwAA
+X-CMS-MailID: 20201019035806epcas1p22dc6646d6f40e36a4797ad00fa46dd42
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
@@ -124,106 +125,35 @@ X-CMS-RootMailID: 20201007045340epcas1p3b4d0f9187f5330a45d20d9d9b79f1767
 References: <20201007050703.20759-1-cw00.choi@samsung.com>
         <CGME20201007045340epcas1p3b4d0f9187f5330a45d20d9d9b79f1767@epcas1p3.samsung.com>
         <20201007050703.20759-3-cw00.choi@samsung.com>
-        <63ac80e9-7f31-8447-06ca-e7d830a4aed4@gmail.com>
+        <4cb8ece7-9399-9ee0-5f93-6c19630308d6@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/19/20 9:38 AM, Dmitry Osipenko wrote:
+On 10/19/20 9:39 AM, Dmitry Osipenko wrote:
 > ...
->> diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
->> index deefffb3bbe4..67af3f31e17c 100644
->> --- a/Documentation/ABI/testing/sysfs-class-devfreq
->> +++ b/Documentation/ABI/testing/sysfs-class-devfreq
->> @@ -37,20 +37,6 @@ Description:
->>  		The /sys/class/devfreq/.../target_freq shows the next governor
->>  		predicted target frequency of the corresponding devfreq object.
+>> @@ -1361,6 +1373,9 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+>>  		goto out;
+>>  	}
 >>  
->> -What:		/sys/class/devfreq/.../polling_interval
->> -Date:		September 2011
->> -Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> -Description:
->> -		The /sys/class/devfreq/.../polling_interval shows and sets
->> -		the requested polling interval of the corresponding devfreq
->> -		object. The values are represented in ms. If the value is
->> -		less than 1 jiffy, it is considered to be 0, which means
->> -		no polling. This value is meaningless if the governor is
->> -		not polling; thus. If the governor is not using
->> -		devfreq-provided central polling
->> -		(/sys/class/devfreq/.../central_polling is 0), this value
->> -		may be useless.
->> -
->>  What:		/sys/class/devfreq/.../trans_stat
->>  Date:		October 2012
->>  Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> @@ -65,14 +51,6 @@ Description:
->>  		as following:
->>  			echo 0 > /sys/class/devfreq/.../trans_stat
->>  
->> -What:		/sys/class/devfreq/.../userspace/set_freq
->> -Date:		September 2011
->> -Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> -Description:
->> -		The /sys/class/devfreq/.../userspace/set_freq shows and
->> -		sets the requested frequency for the devfreq object if
->> -		userspace governor is in effect.
->> -
->>  What:		/sys/class/devfreq/.../available_frequencies
->>  Date:		October 2012
->>  Contact:	Nishanth Menon <nm@ti.com>
->> @@ -109,6 +87,35 @@ Description:
->>  		The max_freq overrides min_freq because max_freq may be
->>  		used to throttle devices to avoid overheating.
->>  
->> +What:		/sys/class/devfreq/.../polling_interval
->> +Date:		September 2011
->> +Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> +Description:
->> +		The /sys/class/devfreq/.../polling_interval shows and sets
->> +		the requested polling interval of the corresponding devfreq
->> +		object. The values are represented in ms. If the value is
->> +		less than 1 jiffy, it is considered to be 0, which means
->> +		no polling. This value is meaningless if the governor is
->> +		not polling; thus. If the governor is not using
->> +		devfreq-provided central polling
->> +		(/sys/class/devfreq/.../central_polling is 0), this value
->> +		may be useless.
+>> +	remove_sysfs_files(df, df->governor);
+>> +	create_sysfs_files(df, governor);
 >> +
->> +		A list of governors that support the node:
->> +		- simple_ondmenad
->> +		- tegra_actmon
->> +
->> +What:		/sys/class/devfreq/.../userspace/set_freq
->> +Date:		September 2011
->> +Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> +Description:
->> +		The /sys/class/devfreq/.../userspace/set_freq shows and
->> +		sets the requested frequency for the devfreq object if
->> +		userspace governor is in effect.
->> +
->> +		A list of governors that support the node:
->> +		- userspace
->> +
->>  What:		/sys/class/devfreq/.../timer
->>  Date:		July 2020
->>  Contact:	Chanwoo Choi <cw00.choi@samsung.com>
->> @@ -120,3 +127,6 @@ Description:
->>  		as following:
->>  			echo deferrable > /sys/class/devfreq/.../timer
->>  			echo delayed > /sys/class/devfreq/.../timer
->> +
->> +		A list of governors that support the node:
->> +		- simple_ondemand
+>>  	prev_governor = df->governor;
+>>  	df->governor = governor;
+>>  	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
+>> @@ -1460,39 +1475,6 @@ static ssize_t target_freq_show(struct device *dev,
+>>  }
 > 
-> Hello, Chanwoo!
-> 
-> Could you please explain the reason of changing the doc? It looks like
-> you only added the lists of governors, but is it a really useful change?
-> Are you going to keep these lists up-to-date?
+> The further code may revert df->governor to the prev_governor or set it
 
-I think that is is useful. Because user cannot know why specific sysfs node
-(like 'timer') is absence according to governor. So, in order to remove
-the user confusion, better to add the information to documentation.
+prev_governor is better. I'll change it.
+
+> to NULL. The create_sysfs_files(df->governor) should be invoked at the
+> very end of the governor_store() and only in a case of success.
+
+OK. I'll add more exception handling code.
+
 
 -- 
 Best Regards,
