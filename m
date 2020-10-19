@@ -2,167 +2,171 @@ Return-Path: <SRS0=MPHS=D2=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1172EC43457
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 10:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B47C43457
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 10:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B05022268
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 10:27:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tqtSjjqN"
+	by mail.kernel.org (Postfix) with ESMTP id 906F222276
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Oct 2020 10:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbgJSK1o (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Oct 2020 06:27:44 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:22997 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbgJSK1o (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Oct 2020 06:27:44 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201019102740epoutp02d28cb1e45f06468d1abb386aa2beb55d~-Xev_9tKo1488714887epoutp02-
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2020 10:27:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201019102740epoutp02d28cb1e45f06468d1abb386aa2beb55d~-Xev_9tKo1488714887epoutp02-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603103260;
-        bh=yDoDNggOg225OrRqSzF1Bazr7Llyp7wh5Skp9ddw+sE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tqtSjjqN0J/CyHqud8XhIJe2YsS5jLLchn7D+Z/iQbmhafUN9rRsveinPyIho2H8v
-         gibGLwwlcDjawTb9CBJHsBFDH+gHqrLw05R1V7/Cp+gTMGM6P4ymywCyv3xNizYFXz
-         F+plIiExPtscarsXOZA/Y3QjHO6Z/7jPf6gx0T5w=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20201019102739epcas1p42e5bfcd73ff2fa8b98b3cd0e920fd705~-XevXOg6F0830008300epcas1p4u;
-        Mon, 19 Oct 2020 10:27:39 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4CFCcn42zwzMqYkj; Mon, 19 Oct
-        2020 10:27:37 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0C.1B.10463.91A6D8F5; Mon, 19 Oct 2020 19:27:37 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20201019102736epcas1p32f607ce884d698b00f7f3a4c89f7fbbb~-XesqXydC0660906609epcas1p3T;
-        Mon, 19 Oct 2020 10:27:36 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201019102736epsmtrp21ee944d31054f04479a958947c9f1f89~-XespcpP31185611856epsmtrp2z;
-        Mon, 19 Oct 2020 10:27:36 +0000 (GMT)
-X-AuditID: b6c32a38-efbff700000028df-f5-5f8d6a195582
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FB.EE.08604.81A6D8F5; Mon, 19 Oct 2020 19:27:36 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201019102736epsmtip27f942c8dd0686286e094a9cede41c278~-XesV_66R0681806818epsmtip2S;
-        Mon, 19 Oct 2020 10:27:36 +0000 (GMT)
-Subject: Re: [PATCH v3 2/2] PM / devfreq: Add governor attribute flag for
- specifc sysfs nodes
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com,
-        enric.balletbo@collabora.com, hl@rock-chips.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, abel.vesa@nxp.com,
-        k.konieczny@samsung.com, b.zolnierkie@samsung.com,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com
-Organization: Samsung Electronics
-Message-ID: <d198e358-f636-2f52-1d73-098f8bebffbf@samsung.com>
-Date:   Mon, 19 Oct 2020 19:41:01 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1727372AbgJSKz5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Oct 2020 06:55:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:55082 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbgJSKz5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 19 Oct 2020 06:55:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D12630E;
+        Mon, 19 Oct 2020 03:55:56 -0700 (PDT)
+Received: from [10.57.51.3] (unknown [10.57.51.3])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96F4A3F719;
+        Mon, 19 Oct 2020 03:55:50 -0700 (PDT)
+Subject: Re: [PATCH v7 3/3] iommu/tegra-smmu: Add PCI support
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     thierry.reding@gmail.com, joro@8bytes.org, digetx@gmail.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jonathanh@nvidia.com
+References: <20201009161936.23122-1-nicoleotsuka@gmail.com>
+ <20201009161936.23122-4-nicoleotsuka@gmail.com>
+ <cbc6e3bf-eedc-195c-c4d6-52d3cd24c257@arm.com>
+ <20201015041346.GA13936@Asurada-Nvidia>
+ <340afbc0-5513-0742-d2d2-1ab908248af3@arm.com>
+ <20201016035347.GA28140@Asurada-Nvidia>
+ <1431eba3-d0b3-8460-2c12-573dc148e0df@arm.com>
+ <20201017015607.GC7203@Asurada-Nvidia>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9452ee18-4f85-a744-6520-bdd43fe137a9@arm.com>
+Date:   Mon, 19 Oct 2020 11:55:41 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.2
 MIME-Version: 1.0
-In-Reply-To: <1db2fb62-0b82-409d-20a7-c2ef376d4580@samsung.com>
-Content-Language: en-US
+In-Reply-To: <20201017015607.GC7203@Asurada-Nvidia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzO6eP21q1yrIBHNIjXmE0USimFqwNnpm6Nw8GeCWroOnpDEWib
-        e2ERCRsojIdjwxCSrkFExpBHN0YlUKuE0FUXXkOHCIjdXOgmEShQHKtD4/oy47/vd37fd77z
-        /c45OFs4hYXgGeocilYrsghsHafrp12iiM0nK+VRtrtbyaZfbwCyQ9fOJc9P3OGQbUvTgDRM
-        WQDp+nGATRbrGzhkvVPHJYfPzPHIZtsSlxw112LkcqUVkOWP9Rh56Uwxj5wqasbIJ+Y6zgEo
-        M9QZgMxkawSyq3obT2ZsLcdklWcdmKzDYWLJnul7ObKvOluBbNkYmsw/lhmvohRKig6j1Gka
-        ZYY6PYF4+335Qbk0NkocId5LxhFhakU2lUAcSkyOeDMjy52DCPtUkZXrXkpWMAwh2h9Pa3Jz
-        qDCVhslJICitMku7VxvJKLKZXHV6ZJome584Kipa6iZ+nKnSGbq52mH8VE19Pa8QrGAVgI8j
-        GIMW255xK8A6XAhNAJUUtbB8hROg3zpW2b5iBSDXQAnvhaS0rtTP6gHo+blKv34BoFqX08va
-        COVosn2F7cEYDEe9MxNew0BYgKy3H2AeARs2s5ChfZjjaQTA7WjMNQ08WAD3o/nvrSwP5sCd
-        qG1u1isOgh+h/q5iP2cD6v/G7tXy4euoumvJy2HDTeie/SLLh7eh7vlabwYEXTiaWRhj+TIc
-        Qg5rJfDhjejRz53+bCFo2dHjH00+aum3Yj5xGUCdvbe4voYE9X5X7d4IdzvsQu1mkW95O7q6
-        egH4jNcjx99fcj0UBAWo7Auhj7IDjT6w+Y+wGX1bWo5VAUK/Jo5+TQT9mgj6/83qAacVBFNa
-        JjudYsTamLX3bQTeVx5OmsCF+cVIC2DhwAIQziYCBSkbKuRCgVKRd5qiNXI6N4tiLEDqHvB5
-        dkhQmsb9TdQ5crE0WiKRkDHiWKlYTGwSPN1dJhfCdEUOlUlRWop+oWPh/JBC1jbnQUGE3bw4
-        ePR62dBCtW22aWu8ceeWi+zDiYOi8ap7/+J5Txt1E9c+qzCE8uFNla3kWtKcY8L0y0suZmQo
-        eOCyPdEYfvfI6In7x45nvrMFDil7/onVTexhhJ1Xaq4YdnfM5j0pv9/33uOUT8ZhI736SlHq
-        SSruz2lefkEtVcCLDw/mNtTxxuLevRSSz3t+c+xzOH58h2j6yI23Aj6Q/KGm26IfpmCp0Jha
-        U1Y4bk06ahqx/HW7qeVs3w/OO5fN1wdrTrCSZmbOvdb9sGDf0qS0ubB4j1kVNHLqdO38ra81
-        B5QfVh0OyKPrQtf//nJog2D+VWVFXOBsov2RpS9wfGwy9Q2Cw6gU4nA2zSj+A88TQkxuBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsWy7bCSvK5EVm+8wcaHJhbLLh1ltNg4Yz2r
-        xcQbV1gsVn98zGix5vYhRosfG04xW7TMWsRiseDTDFaLs01v2C1W3P3IanF51xw2i8+9Rxgt
-        Or/MYrNY2NTCbnG7cQWbxc9d81gcBDzWzFvD6LHj7hJGj52z7rJ7bFrVyebR2/yOzWPjux1M
-        Hn9n7Wfx6NuyitHj8ya5AM4oLpuU1JzMstQifbsErowZa7azFpzlqJi6YAF7A+M3ti5GTg4J
-        AROJ9nntTF2MXBxCArsZJd6s2coCkZCUmHbxKHMXIweQLSxx+HAxRM1bRon5Z/awg9QIC8RL
-        3Fz/jRnEZhPQktj/4gbYUBGBWolXq6ezgtjMAiuYJBZ+FoJoXs4k8W/vWSaQBL+AosTVH48Z
-        QWxeATuJt2uPgMVZBFQlVr95DTZIVCBMYueSx0wQNYISJ2c+ATuOU8BeYvK2j2wQC9Ql/sy7
-        xAxhi0vcejKfCcKWl9j+dg7zBEbhWUjaZyFpmYWkZRaSlgWMLKsYJVMLinPTc4sNCwzzUsv1
-        ihNzi0vz0vWS83M3MYIjWktzB+P2VR/0DjEycTAeYpTgYFYS4Y0U7IoX4k1JrKxKLcqPLyrN
-        SS0+xCjNwaIkznujcGGckEB6YklqdmpqQWoRTJaJg1Oqgck6KmfKslul4rfydl2IZ22N/rXL
-        0cNCd7v6TjGBXpb/lXcEN9kd3hvuFzPl5crbBXx+u55t792pOjOmydHTR/yW0uHHWyf1HVzv
-        u6bRtaa+UfrEN/tDC5W2Zgpb37R/rHrJ61LFuxXTSz+0LolrldZ1+LXDI3/b0hO7/fTkBF+I
-        NOwIzzzdGVdyTD84tjbtq9XV545/us807mv+6bzkh0+K8RfrhoCt1YufPVyZMffDZS4WK5Us
-        P1/rqi8xTzq2nuz39GX8qbSWb2rk7PvnOmzzyxfG/6h6tr+Nkd+KMbH2WtGsM+HnGyfLrX7H
-        J8Rp3GR/TKvGeE7ZE99vUXJ3MsLFdrcJTsx5dW2eCOvr2UosxRmJhlrMRcWJAELi1pFXAwAA
-X-CMS-MailID: 20201019102736epcas1p32f607ce884d698b00f7f3a4c89f7fbbb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201007045340epcas1p3b4d0f9187f5330a45d20d9d9b79f1767
-References: <20201007050703.20759-1-cw00.choi@samsung.com>
-        <CGME20201007045340epcas1p3b4d0f9187f5330a45d20d9d9b79f1767@epcas1p3.samsung.com>
-        <20201007050703.20759-3-cw00.choi@samsung.com>
-        <4cb8ece7-9399-9ee0-5f93-6c19630308d6@gmail.com>
-        <1db2fb62-0b82-409d-20a7-c2ef376d4580@samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/19/20 1:11 PM, Chanwoo Choi wrote:
-> On 10/19/20 9:39 AM, Dmitry Osipenko wrote:
->> ...
->>> @@ -1361,6 +1373,9 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
->>>  		goto out;
->>>  	}
->>>  
->>> +	remove_sysfs_files(df, df->governor);
->>> +	create_sysfs_files(df, governor);
->>> +
->>>  	prev_governor = df->governor;
->>>  	df->governor = governor;
->>>  	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
->>> @@ -1460,39 +1475,6 @@ static ssize_t target_freq_show(struct device *dev,
->>>  }
+On 2020-10-17 02:56, Nicolin Chen wrote:
+> On Fri, Oct 16, 2020 at 03:10:26PM +0100, Robin Murphy wrote:
+>> On 2020-10-16 04:53, Nicolin Chen wrote:
+>>> On Thu, Oct 15, 2020 at 10:55:52AM +0100, Robin Murphy wrote:
+>>>> On 2020-10-15 05:13, Nicolin Chen wrote:
+>>>>> On Wed, Oct 14, 2020 at 06:42:36PM +0100, Robin Murphy wrote:
+>>>>>> On 2020-10-09 17:19, Nicolin Chen wrote:
+>>>>>>> This patch simply adds support for PCI devices.
+>>>>>>>
+>>>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+>>>>>>> ---
+>>>>>>>
+>>>>>>> Changelog
+>>>>>>> v6->v7
+>>>>>>>      * Renamed goto labels, suggested by Thierry.
+>>>>>>> v5->v6
+>>>>>>>      * Added Dmitry's Reviewed-by and Tested-by.
+>>>>>>> v4->v5
+>>>>>>>      * Added Dmitry's Reviewed-by
+>>>>>>> v3->v4
+>>>>>>>      * Dropped !iommu_present() check
+>>>>>>>      * Added CONFIG_PCI check in the exit path
+>>>>>>> v2->v3
+>>>>>>>      * Replaced ternary conditional operator with if-else in .device_group()
+>>>>>>>      * Dropped change in tegra_smmu_remove()
+>>>>>>> v1->v2
+>>>>>>>      * Added error-out labels in tegra_smmu_probe()
+>>>>>>>      * Dropped pci_request_acs() since IOMMU core would call it.
+>>>>>>>
+>>>>>>>      drivers/iommu/tegra-smmu.c | 35 +++++++++++++++++++++++++----------
+>>>>>>>      1 file changed, 25 insertions(+), 10 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+>>>>>>> index be29f5977145..2941d6459076 100644
+>>>>>>> --- a/drivers/iommu/tegra-smmu.c
+>>>>>>> +++ b/drivers/iommu/tegra-smmu.c
+>>>>>>> @@ -10,6 +10,7 @@
+>>>>>>>      #include <linux/kernel.h>
+>>>>>>>      #include <linux/of.h>
+>>>>>>>      #include <linux/of_device.h>
+>>>>>>> +#include <linux/pci.h>
+>>>>>>>      #include <linux/platform_device.h>
+>>>>>>>      #include <linux/slab.h>
+>>>>>>>      #include <linux/spinlock.h>
+>>>>>>> @@ -865,7 +866,11 @@ static struct iommu_group *tegra_smmu_device_group(struct device *dev)
+>>>>>>>      	group->smmu = smmu;
+>>>>>>>      	group->soc = soc;
+>>>>>>> -	group->group = iommu_group_alloc();
+>>>>>>> +	if (dev_is_pci(dev))
+>>>>>>> +		group->group = pci_device_group(dev);
+>>>>>>
+>>>>>> Just to check, is it OK to have two or more swgroups "owning" the same
+>>>>>> iommu_group if an existing one gets returned here? It looks like that might
+>>>>>> not play nice with the use of iommu_group_set_iommudata().
+>>>>>
+>>>>> Do you mean by "gets returned here" the "IS_ERR" check below?
+>>>>
+>>>> I mean that unlike iommu_group_alloc()/generic_device_group(),
+>>>> pci_device_group() may give you back a group that already contains another
+>>>> device and has already been set up from that device's perspective. This can
+>>>> happen for topological reasons like requester ID aliasing through a PCI-PCIe
+>>>> bridge or lack of isolation between functions.
+>>>
+>>> Okay..but we don't really have two swgroups owning the same groups
+>>> in case of PCI devices. For Tegra210, all PCI devices inherit the
+>>> same swgroup from the PCI controller. And I'd think previous chips
+>>> do the same. The only use case currently of 2+ swgroups owning the
+>>> same iommu_group is for display controller.
+>>>
+>>> Or do you suggest we need an additional check for pci_device_group?
 >>
->> The further code may revert df->governor to the prev_governor or set it
+>> Ah, OK - I still don't have the best comprehension of what exactly swgroups
 > 
-> prev_governor is better. I'll change it.
-> 
->> to NULL. The create_sysfs_files(df->governor) should be invoked at the
+> The "swgroup" stands for "software group", which associates with
+> an ASID (Address Space Identifier) for SMMU to determine whether
+> this client is going through SMMU translation or not.
 
-Also, when creating and removing the sysfs files, devfreq instance is needed
-because of df->dev.kobj. So, *_sysfs_files need the two parameters.
+So in Arm SMMU analogy terms it's more like a context bank index than a 
+stream ID - got it.
 
->> very end of the governor_store() and only in a case of success.
+>> are, and the path through .of_xlate looked like you might be using the PCI
+>> requester ID as the swgroup identifier, but I guess that ultimately depends
+>> on what your "iommu-map" is supposed to look like. If pci_device_group()
 > 
-> OK. I'll add more exception handling code.
+> This is copied from pcie node in our downstream dtsi file:
 > 
-> 
+> 		iommus = <&mc TEGRA_SWGROUP_AFI>;
+> 		iommu-map = <0x0 &mc TEGRA_SWGROUP_AFI 0x1000>;
+> 		iommu-map-mask = <0x0>;
 
+Aha, indeed that iommu-map-mask is the trick :)
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>> will effectively only ever get called once regardless of how many endpoints
+>> exist, then indeed this won't be a concern (although if that's *guaranteed*
+>> to be the case then you may as well just stick with calling
+>> iommu_group_alloc() directly). Thanks for clarifying.
+> 
+> All PCI devices are supposed to get this swgroup of the pcie node
+> above. So the function will return the existing group of the pcie
+> controller, before giving a chance to call iommu_group_alloc().
+
+Yes, the "iommus" property will mean that the group always gets created 
+first for the platform device owning the host bridge, and thus won't be 
+visible to pci_device_group() anyway. Subsequent tegra_smmu_group_get() 
+calls for the PCI devices (including the PCI side of the host bridge 
+itself) are then going to match TEGRA_SWGROUP_AFI in the smmu->groups 
+list lookup and return early, so the dev_is_pci() condition will never 
+be true, and the call to pci_device_group() is in fact entirely dead code.
+
+(I was assuming a case where you didn't have the "iommus" property, in 
+which case you would reach that path exactly once for the first PCI 
+device probed, wherein pci_device_group() is still only going to fall 
+through to calling iommu_group_alloc() anyway).
+
+Cheers,
+Robin.
