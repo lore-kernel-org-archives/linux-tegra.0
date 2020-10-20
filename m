@@ -2,43 +2,42 @@ Return-Path: <SRS0=rHad=D3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70789C388F7
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C93C41604
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09F682242E
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0451F2225C
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ArgT2VVu"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Yn9aFeh6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438164AbgJTTfd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Oct 2020 15:35:33 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5593 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438191AbgJTTfc (ORCPT
+        id S2438217AbgJTTfe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 15:35:34 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9850 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438209AbgJTTfe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Oct 2020 15:35:32 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f8f3bd40000>; Tue, 20 Oct 2020 12:34:45 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
- 2020 19:35:31 +0000
+        Tue, 20 Oct 2020 15:35:34 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f8f3bf90000>; Tue, 20 Oct 2020 12:35:21 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
+ 2020 19:35:33 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 20 Oct 2020 19:35:31 +0000
+ Transport; Tue, 20 Oct 2020 19:35:33 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>
 CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 6/9] media: tegra-video: Add support for EDID ioctl ops
-Date:   Tue, 20 Oct 2020 12:36:12 -0700
-Message-ID: <1603222575-14427-7-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 9/9] media: tegra-video: Implement V4L2 device notify callback
+Date:   Tue, 20 Oct 2020 12:36:15 -0700
+Message-ID: <1603222575-14427-10-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1603222575-14427-1-git-send-email-skomatineni@nvidia.com>
 References: <1603222575-14427-1-git-send-email-skomatineni@nvidia.com>
@@ -46,73 +45,93 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603222485; bh=bHzQRpU16Ph4H6jjekuasUSGwbJ9VXFyRGyVRWLhW1I=;
+        t=1603222521; bh=xWtjeqZACAKCgSw2RHdrYwyQIBNwajqC+8SWI/tdbs0=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=ArgT2VVui8CMC7it1MIhqExeU//Gg5UL4XwZo/zSoXw5h86DUOFzy+vgmR39XiWOT
-         OIeicLYDRrK8f4sEFjUiVb8AEk7Cm6H345DWQwRXPywCic9bFI085wiqK515x4CznM
-         eplCMlkY0ud94TVmYuhAVlQSHzrvQqmZ6ctqkRlMiVperCfk18ap9LOoifNLiJBAjH
-         FANRKpRJAnqDPEr/Fj7kW3fs3pyqBjqS8cIOTB7Y9UKHrKxLAaYJKp+q+/8i5J0YiJ
-         /+11ee28DunHsxRtYKgr7OPdrAOnAm9SHQ2zWNDi6W0Rqdjfx87knzI/ZoM7btxvHz
-         Zdx3Psf3/WZVA==
+        b=Yn9aFeh6ccUnDsgV7gbxyyzaK7F13d6oJhk6HFyA9JiReXTf7mcEoMYZrdIYr5qJu
+         o5CdAnfmVY152nVsWV/mY64K1C3WimMu2g9d6EzdjJiQCoSh7+KNJqfBQYbwshwp5M
+         0ztZ3GmxG3PAvDyFkiFZxChem7HR2jZOKRWcpGjacOVpv19jDPZPuPb3Jd0w4REOMF
+         agi+uDEJSP2c/W4pFRmTRNIUXzzsNQNw2so9JALFTRgF3yzZSITSSrHcXbK4qYxRyb
+         yxr8nHIYn2kIuHptvJYxAHX77tCWy1Ab4qgln5xuyQL6Clz+PB/5OcAtOCwHR4Cgjw
+         W4MV7mMTdDVVA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds support for EDID get and set v4l2 ioctl ops to use
-with HDMI to CSI bridges.
+Implement V4L2 device notify callback to handle
+V4L2_EVENT_SOURCE_CHANGE event from subdevices.
+
+HDMI-to-CSI bridge drivers trigger V4L2_EVENT_SOURCE_CHANGE when
+source DV timing changes are detected or when HDMI hotplug happens.
+
+Runtime source parameter changes during active streaming is not
+allowed and Tegra video driver calls vb2_queue_error to signal a
+fatal error if a notification of this event happens during an active
+streaming.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/staging/media/tegra-video/vi.c    |  3 +++
+ drivers/staging/media/tegra-video/video.c | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index d0d84da..92f36b1 100644
+index 28c06a9..e866f7d 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -721,6 +721,32 @@ static int tegra_channel_s_selection(struct file *file, void *fh,
- 	return ret;
+@@ -1634,6 +1634,9 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
+ 
+ 	v4l2_set_subdev_hostdata(subdev, chan);
+ 
++	subdev = tegra_channel_get_remote_source_subdev(chan);
++	v4l2_set_subdev_hostdata(subdev, chan);
++
+ 	return 0;
+ 
+ unregister_video:
+diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+index e50bd70..d966b31 100644
+--- a/drivers/staging/media/tegra-video/video.c
++++ b/drivers/staging/media/tegra-video/video.c
+@@ -7,6 +7,8 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ 
++#include <media/v4l2-event.h>
++
+ #include "video.h"
+ 
+ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+@@ -24,6 +26,21 @@ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+ 	kfree(vid);
  }
  
-+static int tegra_channel_g_edid(struct file *file, void *fh,
-+				struct v4l2_edid *edid)
++static void tegra_v4l2_dev_notify(struct v4l2_subdev *sd,
++				  unsigned int notification, void *arg)
 +{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
++	struct tegra_vi_channel *chan;
++	const struct v4l2_event *ev = arg;
 +
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, get_edid))
-+		return -ENOTTY;
++	if (notification != V4L2_DEVICE_NOTIFY_EVENT)
++		return;
 +
-+	return v4l2_subdev_call(subdev, pad, get_edid, edid);
++	chan = v4l2_get_subdev_hostdata(sd);
++	v4l2_event_queue(&chan->video, arg);
++	if (ev->type == V4L2_EVENT_SOURCE_CHANGE && vb2_is_streaming(&chan->queue))
++		vb2_queue_error(&chan->queue);
 +}
 +
-+static int tegra_channel_s_edid(struct file *file, void *fh,
-+				struct v4l2_edid *edid)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+	struct v4l2_subdev *subdev;
-+
-+	subdev = tegra_channel_get_remote_source_subdev(chan);
-+	if (!v4l2_subdev_has_op(subdev, pad, set_edid))
-+		return -ENOTTY;
-+
-+	return v4l2_subdev_call(subdev, pad, set_edid, edid);
-+}
-+
- static int tegra_channel_g_dv_timings(struct file *file, void *fh,
- 				      struct v4l2_dv_timings *timings)
+ static int host1x_video_probe(struct host1x_device *dev)
  {
-@@ -871,6 +897,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
- 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
- 	.vidioc_g_selection		= tegra_channel_g_selection,
- 	.vidioc_s_selection		= tegra_channel_s_selection,
-+	.vidioc_g_edid			= tegra_channel_g_edid,
-+	.vidioc_s_edid			= tegra_channel_s_edid,
- 	.vidioc_g_dv_timings		= tegra_channel_g_dv_timings,
- 	.vidioc_s_dv_timings		= tegra_channel_s_dv_timings,
- 	.vidioc_query_dv_timings	= tegra_channel_query_dv_timings,
+ 	struct tegra_video_device *vid;
+@@ -49,6 +66,7 @@ static int host1x_video_probe(struct host1x_device *dev)
+ 
+ 	vid->v4l2_dev.mdev = &vid->media_dev;
+ 	vid->v4l2_dev.release = tegra_v4l2_dev_release;
++	vid->v4l2_dev.notify = tegra_v4l2_dev_notify;
+ 	ret = v4l2_device_register(&dev->dev, &vid->v4l2_dev);
+ 	if (ret < 0) {
+ 		dev_err(&dev->dev,
 -- 
 2.7.4
 
