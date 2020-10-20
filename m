@@ -2,149 +2,221 @@ Return-Path: <SRS0=rHad=D3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F71BC433DF
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 12:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59853C4363A
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 13:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6B3522282
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 12:51:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="WkE+8hpn"
+	by mail.kernel.org (Postfix) with ESMTP id EBCF720BED
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 13:24:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603200295;
+	bh=ZaKgderQG4KKZH6fH+HyuZTcQv1aic4HE94Cqcbe1RY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qCwoZDuKcgfu0CXE07x3YWjNcG5Re0OLCld/BMB4CkcCR4l/xVcBp0MSObI97HFRF
+	 SfU/7roZ6lCrXK1wHzHgJGmYSQYn+gjyDIdWzWzRcAINCGOsn8VhFycrmmG8ystQmr
+	 Zj2XxZvBBIdvoCdRb//WLD5U14qidrKcdK4JwZzk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406605AbgJTMvG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:51:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406603AbgJTMvG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Oct 2020 08:51:06 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182C8C061755
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2020 05:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=uGxWEQsK754B3hOZSl63aoEnD4e7Swtrm1bF3mwOKPw=; b=WkE+8hpnwpJq7/7GOu+amAhzHH
-        fUudy/CdvWDL0aR4T5oBcdGrxh2ewoX6vaIKYVjG9EfaSPtWzk6Bnxs3cpnTFaHpFsxBJHgu1KXrx
-        Z7SfCzMN7DlM7/Xr3NCzCF+6XVWU3/Jn7Qgbm8OBhu4kzwKz4DaVbNSZJNdaZyIVxnPgSbO6CwLua
-        Y0W8O/9ElmK7UvejFALfbIaApSyjV/STjnDXh+UkZ8PxG5BIaA5cJGlXzZvlOF8HtdFU3GJDjT04/
-        V6oFrlSz2mUZIryGUC5BC8Td8sAVAFMAkz82qp61D11c1fp8VuUds5HKUdzbEfAlcEjBJOzs6AgSM
-        jw7GHFaQ==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kUr6T-0003kC-IK; Tue, 20 Oct 2020 15:51:01 +0300
-Subject: Re: [PATCH v3 19/20] drm/tegra: Implement new UAPI
-To:     Daniel Vetter <daniel@ffwll.ch>, Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        id S2407408AbgJTNYy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 09:24:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406741AbgJTNYx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 20 Oct 2020 09:24:53 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A137920BED;
+        Tue, 20 Oct 2020 13:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603200292;
+        bh=ZaKgderQG4KKZH6fH+HyuZTcQv1aic4HE94Cqcbe1RY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oMLMoBv80hIxboOAiLeXVWq+xzfjYExK0+aAYH/Glp3Pe78NPfGerVw9m4mjjYFrO
+         M90N8EAaloVWWbe8yl6W/TqmoF1pgWGDlbLJgLWBW5P9lALjjJCnv/wjH64R8OG/aR
+         A5AfKmrc+BaDOCNR8+8jSrmF0NgQBfbGZwiG/Z0o=
+Received: by mail-ot1-f46.google.com with SMTP id e20so1654908otj.11;
+        Tue, 20 Oct 2020 06:24:52 -0700 (PDT)
+X-Gm-Message-State: AOAM533NUApPLFWs9U1he4YaaCutDk0dqBtomQ3vCF7Lh9GQuJy8W3gp
+        tsYmn4ER/wa8RN+g4w/khRI3gPBwO9nhRW1aIw==
+X-Google-Smtp-Source: ABdhPJydcSIKB2h68GX/LgNGhYJ62BnuNy3smEVojrJZ6JNICv7hKDMocPUZoKv8WcFtfUrf9fI4R28od7lNCSbidaw=
+X-Received: by 2002:a9d:5e14:: with SMTP id d20mr1611217oti.107.1603200291871;
+ Tue, 20 Oct 2020 06:24:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <1602859382-19505-1-git-send-email-spujar@nvidia.com>
+ <1602859382-19505-12-git-send-email-spujar@nvidia.com> <20201019221612.GA3690258@bogus>
+ <f6d098fa-cbc2-7563-a68c-5d00d71d128f@nvidia.com>
+In-Reply-To: <f6d098fa-cbc2-7563-a68c-5d00d71d128f@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 20 Oct 2020 08:24:39 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+5mLqHBOhsjA6KnjFbyKymoyr9ubVG7ehWvE7GdTACrg@mail.gmail.com>
+Message-ID: <CAL_Jsq+5mLqHBOhsjA6KnjFbyKymoyr9ubVG7ehWvE7GdTACrg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/15] ASoC: dt-bindings: tegra: Add json-schema for
+ Tegra audio graph card
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
-        Dave Airlie <airlied@linux.ie>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree@vger.kernel.org,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, talho@nvidia.com,
-        bhuntsman@nvidia.com
-References: <20201007171238.1795964-1-mperttunen@nvidia.com>
- <20201007171238.1795964-20-mperttunen@nvidia.com>
- <dd13ec2c-1e01-ca61-656c-b23b156b100f@gmail.com>
- <b33a5084-7dc3-a865-2f36-274ecebf2ee7@kapsi.fi>
- <1f3267a9-37b4-2cff-08a2-2ca7c905ce01@gmail.com>
- <CAKMK7uFWyMZQauakjzSWa9r494R4JKDkAk6ABZOLLsCXb6_yHg@mail.gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <ec4138c0-6c7f-b32e-2049-7848b6ac7f6b@kapsi.fi>
-Date:   Tue, 20 Oct 2020 15:51:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
-MIME-Version: 1.0
-In-Reply-To: <CAKMK7uFWyMZQauakjzSWa9r494R4JKDkAk6ABZOLLsCXb6_yHg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com,
+        rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com,
+        nwartikar@nvidia.com, Stephen Warren <swarren@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/20/20 2:40 PM, Daniel Vetter wrote:
-> On Mon, Oct 19, 2020 at 7:27 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 19.10.2020 11:13, Mikko Perttunen пишет:
->>> On 10/19/20 5:21 AM, Dmitry Osipenko wrote:
->>>> 07.10.2020 20:12, Mikko Perttunen пишет:
->>>>> +int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data,
->>>>> +                struct drm_file *file)
->>>>> +{
->>>>
->>>> Hello, Mikko!
->>>>
->>>> Could you please tell what are the host1x clients that are going to be
->>>> upstreamed and will need this IOCTL?
->>>>
->>>
->>> Hi Dmitry!
->>>
->>> It is needed for any engine/job that wants to access memory, as this
->>> IOCTL must be used to map memory for the engine. So all of them.
->>>
->>> Downstream doesn't have an equivalent IOCTL because it (currently) does
->>> mapping at submit time, but that is suboptimal because
->>>
->>> - it requires doing relocations in the kernel which isn't required for
->>> T186+
->>> - it's a big performance penalty, due to which the downstream kernel has
->>> the "deferred dma-buf unmapping" feature, where unmapping a dma_buf may
->>> not immediately unmap it in case it's used later, so that the "mapping"
->>> later is faster. A feature which we'd preferably get rid of.
->>> - because of the above feature not being controlled by the user, it can
->>> cause variance in submit times.
->>>
->>> On the other hand, we cannot (at least always) do the mapping at
->>> allocation/import time, because
->>>
->>> - A single FD may have multiple channel_ctx's, and an allocation/import
->>> may need to be used in any subset of them
->>> - The import IOCTL is fixed and doesn't have the parameters we'd need to
->>> do this at import time
->>> - Overall it's more orthogonal to have GEM object acquirement in one
->>> step and mapping in another.
->>>
->>> Maybe that's not quite what you asked, but it's some background anyway :)
->>
->> I'm asking this question because right now there is only one potential
->> client for this IOCTL, the VIC. If other clients aren't supposed to be a
->> part of the DRM driver, like for example NVDEC which probably should be
->> a V4L driver, then DRM driver will have only a single VIC and in this
->> case we shouldn't need this IOCTL because DRM and V4L should use generic
->> dmabuf API for importing and exporting buffers.
-> 
-> Randomly jumping in here ...
-> 
-> So if you have a drm driver with userspace in mesa3d already, the
-> usual approach is to have a libva implementation (ideally in mesa3d
-> too, using the gallium framework so that a lot of the boring
-> integration glue is taken care of already) directly on top of drm. No
-> v4l driver needed at all here.
-> 
-> And it sounds like this nvdec thing would fit that bill pretty neatly.
-Something like this would be my preference as well.
+On Tue, Oct 20, 2020 at 1:16 AM Sameer Pujar <spujar@nvidia.com> wrote:
+>
+>
+> >> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
+> >> same DT bindings provided by generic audio graph driver. Along with this
+> >> few standard clock DT bindings are added which are specifically required
+> >> for Tegra audio.
+> >>
+> >> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> >> ---
+> >>   .../sound/nvidia,tegra-audio-graph-card.yaml       | 158 +++++++++++++++++++++
+> >>   1 file changed, 158 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+> >> new file mode 100644
+> >> index 0000000..284d185
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+> >> @@ -0,0 +1,158 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Audio Graph based Tegra sound card driver
+> >> +
+> >> +description: |
+> >> +  This is based on generic audio graph card driver along with additional
+> >> +  customizations for Tegra platforms. It uses the same bindings with
+> >> +  additional standard clock DT bindings required for Tegra.
+> >> +
+> >> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.yaml
+> > You should be able to just $ref this at the top level.
+>
+> I am seeing one problem while using $ref like below.
+> allOf:
+>    - $ref: /schemas/sound/audio-graph-card.yaml
+>
+> I see below while running doc validator.
+> "Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.example.dt.yaml:
+> tegra_sound: compatible:0: 'audio-graph-card' was expected"
+>
+> Is there a way to avoid this?
 
-Mikko
+Adjust the schemas so the constraints match. You can't say it must be
+one thing in one place and something else here. Your choices are:
 
-> 
->> I'm also not quite sure about whether the current model of the unified
->> Tegra DRM driver is suitable for having the separated engines. Perhaps
->> each separated engine should just have its own rendering node?
-> 
-> Above model using libva driver in userspace for nvdec would avoid this
-> issue too.
-> -Daniel
-> 
+- Drop compatible from audio-graph-card.yaml. You can define a 2nd
+schema that references audio-graph-card.yaml and defines the
+compatible.
+- Use 'contains' in audio-graph-card.yaml and then make
+'audio-graph-card' a fallback here.
+
+The best option depends on what existing users have.
+
+> >> +maintainers:
+> >> +  - Jon Hunter <jonathanh@nvidia.com>
+> >> +  - Sameer Pujar <spujar@nvidia.com>
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    items:
+> >> +      - enum:
+> >> +          - nvidia,tegra210-audio-graph-card
+> >> +          - nvidia,tegra186-audio-graph-card
+> >> +
+>
+> >> +  dais:
+> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/dais
+> >> +
+> >> +  label:
+> >> +    $ref: /schemas/sound/simple-card.yaml#/properties/label
+> >> +
+> >> +  pa-gpios:
+> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/pa-gpios
+> >> +
+> >> +  widgets:
+> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/widgets
+> >> +
+> >> +  routing:
+> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/routing
+> >> +
+> >> +  mclk-fs:
+> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/mclk-fs
+> >> +
+> >> +  prefix:
+> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/prefix
+> > And drop all of these.
+>
+> Could not re-use because of above compatible problem. Also require some
+> additional properties for Tegra.
+>
+> >> +
+> >> +  clocks:
+> >> +   minItems: 2
+> >> +
+> >> +  clock-names:
+> >> +   minItems: 2
+> > Don't need this.
+>
+> This is required for Tegra audio graph card to update clock rates at
+> runtime.
+
+I mean you can drop 'minItems: 2' as it is redundant. The 'items' list
+size implies the size.
+
+> >> +   items:
+> >> +     - const: pll_a
+> >> +     - const: plla_out0
+> >> +
+> >> +  assigned-clocks:
+> >> +    minItems: 1
+> >> +    maxItems: 3
+> >> +
+> >> +  assigned-clock-parents:
+> >> +    minItems: 1
+> >> +    maxItems: 3
+> >> +
+> >> +  assigned-clock-rates:
+> >> +    minItems: 1
+> >> +    maxItems: 3
+> >> +
+>
+> It is required for initialisation of above clocks with specific rates.
+>
+> >> +  ports:
+> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/ports
+> >> +
+> >> +patternProperties:
+> >> +  "^port(@[0-9a-f]+)?$":
+> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/definitions/port
+> > And these can be dropped. Unless what each port is is Tegra specific.
+>
+> May be I can drop this if I could just directly include
+> audio-graph-card.yaml and extend required properties for Tegra.
+
+There are numerous examples of doing that.
+
+Rob
