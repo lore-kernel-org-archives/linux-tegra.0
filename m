@@ -2,221 +2,140 @@ Return-Path: <SRS0=rHad=D3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59853C4363A
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 13:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955A3C388F2
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 16:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBCF720BED
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 13:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603200295;
-	bh=ZaKgderQG4KKZH6fH+HyuZTcQv1aic4HE94Cqcbe1RY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qCwoZDuKcgfu0CXE07x3YWjNcG5Re0OLCld/BMB4CkcCR4l/xVcBp0MSObI97HFRF
-	 SfU/7roZ6lCrXK1wHzHgJGmYSQYn+gjyDIdWzWzRcAINCGOsn8VhFycrmmG8ystQmr
-	 Zj2XxZvBBIdvoCdRb//WLD5U14qidrKcdK4JwZzk=
+	by mail.kernel.org (Postfix) with ESMTP id 288B52224A
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 16:36:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h5ZsEBib"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407408AbgJTNYy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Oct 2020 09:24:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406741AbgJTNYx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Oct 2020 09:24:53 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A137920BED;
-        Tue, 20 Oct 2020 13:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603200292;
-        bh=ZaKgderQG4KKZH6fH+HyuZTcQv1aic4HE94Cqcbe1RY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oMLMoBv80hIxboOAiLeXVWq+xzfjYExK0+aAYH/Glp3Pe78NPfGerVw9m4mjjYFrO
-         M90N8EAaloVWWbe8yl6W/TqmoF1pgWGDlbLJgLWBW5P9lALjjJCnv/wjH64R8OG/aR
-         A5AfKmrc+BaDOCNR8+8jSrmF0NgQBfbGZwiG/Z0o=
-Received: by mail-ot1-f46.google.com with SMTP id e20so1654908otj.11;
-        Tue, 20 Oct 2020 06:24:52 -0700 (PDT)
-X-Gm-Message-State: AOAM533NUApPLFWs9U1he4YaaCutDk0dqBtomQ3vCF7Lh9GQuJy8W3gp
-        tsYmn4ER/wa8RN+g4w/khRI3gPBwO9nhRW1aIw==
-X-Google-Smtp-Source: ABdhPJydcSIKB2h68GX/LgNGhYJ62BnuNy3smEVojrJZ6JNICv7hKDMocPUZoKv8WcFtfUrf9fI4R28od7lNCSbidaw=
-X-Received: by 2002:a9d:5e14:: with SMTP id d20mr1611217oti.107.1603200291871;
- Tue, 20 Oct 2020 06:24:51 -0700 (PDT)
+        id S2394728AbgJTQg3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 12:36:29 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15657 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394696AbgJTQg3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 20 Oct 2020 12:36:29 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f8f11b00000>; Tue, 20 Oct 2020 09:34:56 -0700
+Received: from [10.2.48.229] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
+ 2020 16:36:28 +0000
+Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
+ of writesl()
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
+References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
+ <20201020074846.GA1877013@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
+Date:   Tue, 20 Oct 2020 09:37:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1602859382-19505-1-git-send-email-spujar@nvidia.com>
- <1602859382-19505-12-git-send-email-spujar@nvidia.com> <20201019221612.GA3690258@bogus>
- <f6d098fa-cbc2-7563-a68c-5d00d71d128f@nvidia.com>
-In-Reply-To: <f6d098fa-cbc2-7563-a68c-5d00d71d128f@nvidia.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 20 Oct 2020 08:24:39 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+5mLqHBOhsjA6KnjFbyKymoyr9ubVG7ehWvE7GdTACrg@mail.gmail.com>
-Message-ID: <CAL_Jsq+5mLqHBOhsjA6KnjFbyKymoyr9ubVG7ehWvE7GdTACrg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/15] ASoC: dt-bindings: tegra: Add json-schema for
- Tegra audio graph card
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        sharadg@nvidia.com, mkumard@nvidia.com, viswanathl@nvidia.com,
-        rlokhande@nvidia.com, dramesh@nvidia.com, atalambedu@nvidia.com,
-        nwartikar@nvidia.com, Stephen Warren <swarren@nvidia.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201020074846.GA1877013@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1603211696; bh=IRzx7toziwfEhCB0R8L4ncX6WNEWaogumr5debjdP10=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=h5ZsEBibHk2k0cNQ1TDHX1bj5qAuK2CkUOESSVGGNHGLDZ2oJKLIkTpoT50QVFcV9
+         f45FrWGH9pf9JSIst1zTso8FtGwmXurkWQo1ZZ2yWhSsi1/xICDtbtCnpoerBS3SDz
+         Wl4hAqM6zHyMSUlNTHCdEQpodJ8G+ljxaTQpK1ps3bTsp1dakFR6Tr4nh4qiOHURes
+         ei3mhCg5l+5j8zHPmYmyBudRJKprWEneBfj3Ks8uZl5cw2vX4lB9EzGZKl986BC3bH
+         bKkvrmxYO/zKx3gE4YQtWGxmMQdv1F2fMoT6WvrfcwpPqv9SREmMq15D0EE7h2tqGl
+         QCrqq5uoywTiw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 20, 2020 at 1:16 AM Sameer Pujar <spujar@nvidia.com> wrote:
->
->
-> >> Add YAML schema for Tegra audio graph sound card DT bindings. It uses the
-> >> same DT bindings provided by generic audio graph driver. Along with this
-> >> few standard clock DT bindings are added which are specifically required
-> >> for Tegra audio.
-> >>
-> >> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> >> ---
-> >>   .../sound/nvidia,tegra-audio-graph-card.yaml       | 158 +++++++++++++++++++++
-> >>   1 file changed, 158 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> >> new file mode 100644
-> >> index 0000000..284d185
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
-> >> @@ -0,0 +1,158 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-graph-card.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Audio Graph based Tegra sound card driver
-> >> +
-> >> +description: |
-> >> +  This is based on generic audio graph card driver along with additional
-> >> +  customizations for Tegra platforms. It uses the same bindings with
-> >> +  additional standard clock DT bindings required for Tegra.
-> >> +
-> >> +  See{LINUX}/Documentation/devicetree/bindings/sound/audio-graph-card.yaml
-> > You should be able to just $ref this at the top level.
->
-> I am seeing one problem while using $ref like below.
-> allOf:
->    - $ref: /schemas/sound/audio-graph-card.yaml
->
-> I see below while running doc validator.
-> "Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.example.dt.yaml:
-> tegra_sound: compatible:0: 'audio-graph-card' was expected"
->
-> Is there a way to avoid this?
 
-Adjust the schemas so the constraints match. You can't say it must be
-one thing in one place and something else here. Your choices are:
-
-- Drop compatible from audio-graph-card.yaml. You can define a 2nd
-schema that references audio-graph-card.yaml and defines the
-compatible.
-- Use 'contains' in audio-graph-card.yaml and then make
-'audio-graph-card' a fallback here.
-
-The best option depends on what existing users have.
-
-> >> +maintainers:
-> >> +  - Jon Hunter <jonathanh@nvidia.com>
-> >> +  - Sameer Pujar <spujar@nvidia.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    items:
-> >> +      - enum:
-> >> +          - nvidia,tegra210-audio-graph-card
-> >> +          - nvidia,tegra186-audio-graph-card
-> >> +
+On 10/20/20 12:48 AM, Thierry Reding wrote:
+> On Mon, Oct 19, 2020 at 09:03:54PM -0700, Sowjanya Komatineni wrote:
+>> VI I2C don't have DMA support and uses PIO mode all the time.
+>>
+>> Current driver uses writesl() to fill TX FIFO based on available
+>> empty slots and with this seeing strange silent hang during any I2C
+>> register access after filling TX FIFO with 8 words.
+>>
+>> Using writel() followed by i2c_readl() in a loop to write all words
+>> to TX FIFO instead of using writesl() helps for large transfers in
+>> PIO mode.
+>>
+>> So, this patch updates i2c_writesl() API to use writel() in a loop
+>> instead of writesl().
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index 6f08c0c..274bf3a 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned int reg)
+>>   	return readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+>>   }
+>>   
+>> -static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
+>> +static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
+>>   			unsigned int reg, unsigned int len)
+>>   {
+>> -	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+>> +	while (len--) {
+>> +		writel(*data++, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+>> +		i2c_readl(i2c_dev, I2C_INT_STATUS);
+>> +	}
+>>   }
+>>   
+>>   static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+>> @@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+>>   		i2c_dev->msg_buf_remaining = buf_remaining;
+>>   		i2c_dev->msg_buf = buf + words_to_transfer * BYTES_PER_FIFO_WORD;
+>>   
+>> -		i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
+>> +		i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO, words_to_transfer);
+> I've thought a bit more about this and I wonder if we're simply reading
+> out the wrong value for tx_fifo_avail and therefore end up overflowing
+> the TX FIFO. Have you checked what the value is for tx_fifo_avail when
+> this silent hang occurs? Given that this is specific to the VI I2C I'm
+> wondering if this is perhaps a hardware bug where we read the wrong TX
+> FIFO available count.
 >
-> >> +  dais:
-> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/dais
-> >> +
-> >> +  label:
-> >> +    $ref: /schemas/sound/simple-card.yaml#/properties/label
-> >> +
-> >> +  pa-gpios:
-> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/pa-gpios
-> >> +
-> >> +  widgets:
-> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/widgets
-> >> +
-> >> +  routing:
-> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/routing
-> >> +
-> >> +  mclk-fs:
-> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/mclk-fs
-> >> +
-> >> +  prefix:
-> >> +    $ref: /schemas/sound/simple-card.yaml#/definitions/prefix
-> > And drop all of these.
->
-> Could not re-use because of above compatible problem. Also require some
-> additional properties for Tegra.
->
-> >> +
-> >> +  clocks:
-> >> +   minItems: 2
-> >> +
-> >> +  clock-names:
-> >> +   minItems: 2
-> > Don't need this.
->
-> This is required for Tegra audio graph card to update clock rates at
-> runtime.
+> Thierry
 
-I mean you can drop 'minItems: 2' as it is redundant. The 'items' list
-size implies the size.
+Yes FIFO status shows all 8 slots available.
 
-> >> +   items:
-> >> +     - const: pll_a
-> >> +     - const: plla_out0
-> >> +
-> >> +  assigned-clocks:
-> >> +    minItems: 1
-> >> +    maxItems: 3
-> >> +
-> >> +  assigned-clock-parents:
-> >> +    minItems: 1
-> >> +    maxItems: 3
-> >> +
-> >> +  assigned-clock-rates:
-> >> +    minItems: 1
-> >> +    maxItems: 3
-> >> +
->
-> It is required for initialisation of above clocks with specific rates.
->
-> >> +  ports:
-> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/properties/ports
-> >> +
-> >> +patternProperties:
-> >> +  "^port(@[0-9a-f]+)?$":
-> >> +    $ref: /schemas/sound/audio-graph-card.yaml#/definitions/port
-> > And these can be dropped. Unless what each port is is Tegra specific.
->
-> May be I can drop this if I could just directly include
-> audio-graph-card.yaml and extend required properties for Tegra.
+Also, HW wise VI I2C is similar to other I2C and FIFO depth is also 8 
+words. Confirmed from HW designers as well.
 
-There are numerous examples of doing that.
+Using writesl() causes silent hang after filling some words in FIFO and 
+most of time after filling 8 words and sometime after filling it with 
+around 6 words.
 
-Rob
+I am not sure if this issue is specific to VI I2C alone as other I2C 
+mostly use DMA for more than 8 words and I am not sure if we ever used 
+other I2C in PIO mode for ~8 words transfer for slave devices we have on 
+the platform.
+
+
+Thanks
+
+Sowjanya
+
