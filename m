@@ -8,616 +8,102 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAE9C43467
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 02:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3267DC43457
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 04:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5222222E9
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 02:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23E1222D5
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 04:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UZYvVm6H"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="msQieKyH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390840AbgJTCuy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Oct 2020 22:50:54 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:58546 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390838AbgJTCux (ORCPT
+        id S1725379AbgJTEDR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 00:03:17 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17794 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbgJTEDR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Oct 2020 22:50:53 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20201020025049epoutp010f381ae2a1aa622709169977743db9c3~-k5J7ZyqI0426204262epoutp018
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2020 02:50:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20201020025049epoutp010f381ae2a1aa622709169977743db9c3~-k5J7ZyqI0426204262epoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603162249;
-        bh=fs2NY4fwed6432mUalOcT1WPOKKFQz6AAKW/PjerA0s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZYvVm6HtjhCvhmEtLY9gnVj1sBb2kuiOfHZ5iHBgqXWXwo4eiJfyFeyKgLpZmEwt
-         f861q2pryf64DzWzsLd54vfua7Z509FDQ7UBY2fVqEYxK0m88SeEhC/J7xGhccq2lg
-         GObAvi3MrIkqyaNY2Vc3jgGgyVSVkzgpdAc79clY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20201020025049epcas1p4de70ea2f5c1d30ab569b77f554027a2b~-k5JZCH1Y3015330153epcas1p4L;
-        Tue, 20 Oct 2020 02:50:49 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4CFdRB5kdyzMqYkg; Tue, 20 Oct
-        2020 02:50:46 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C7.2D.09543.6805E8F5; Tue, 20 Oct 2020 11:50:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21~-k5F9cY6u3014930149epcas1p4B;
-        Tue, 20 Oct 2020 02:50:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201020025045epsmtrp2311fbd4f56fed8c67b2987fce8996f64~-k5F8mzAj3248932489epsmtrp2G;
-        Tue, 20 Oct 2020 02:50:45 +0000 (GMT)
-X-AuditID: b6c32a35-347ff70000002547-ae-5f8e50866666
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6E.36.08745.5805E8F5; Tue, 20 Oct 2020 11:50:45 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201020025045epsmtip112fadd83561eae938c2d3a2ff3cfe178~-k5FsNWCO0042200422epsmtip1-;
-        Tue, 20 Oct 2020 02:50:45 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     digetx@gmail.com, lukasz.luba@arm.com,
-        enric.balletbo@collabora.com, hl@rock-chips.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, abel.vesa@nxp.com,
-        k.konieczny@samsung.com, b.zolnierkie@samsung.com,
-        cw00.choi@samsung.com, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Subject: [PATCH v4 2/2] PM / devfreq: Add governor attribute flag for
- specifc sysfs nodes
-Date:   Tue, 20 Oct 2020 12:04:07 +0900
-Message-Id: <20201020030407.21047-3-cw00.choi@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201020030407.21047-1-cw00.choi@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmgW5bQF+8wYx72hbLLh1ltNg4Yz2r
-        xcQbV1gsrn95zmqx+uNjRos1tw8xWvzYcIrZomXWIhaLBZ9msFqcbXrDbnF51xw2i8+9Rxgt
-        Or/MYrNY2NTCbnG7cQWbxc9d81gcBDzWzFvD6LHj7hJGj52z7rJ7bFrVyebR2/yOzWPjux1M
-        Hn9n7Wfx6NuyitHj8ya5AM6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-        xNxUWyUXnwBdt8wcoD+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWWBXrFibnF
-        pXnpesn5uVaGBgZGpkCFCdkZ62edZyz42MVYcfrZTLYGxqP5XYycHBICJhJTVj5j7mLk4hAS
-        2MEocX/TZhaQhJDAJ0aJFcfFIRKfGSV6fjexw3S86L0F1bGLUaLl8H8mCOcLUMf/WUwgVWwC
-        WhL7X9xg62Lk4BARiJRoPikIUsMssINJYnfzRUaQGmGBaImPDRPAbBYBVYnZDW1gq3kFrCR6
-        lpxhhdgmL7F6wwFmEJtTwFriQ+c/sGUSAis5JG7dnMQMUeQicfzKNjYIW1ji1fEtUKdKSXx+
-        txcqXi2x8uQRNojmDkaJLfsvQG0wlti/dDITyKXMApoS63fpQ4QVJXb+ngt2HLMAn8S7rz2s
-        ICUSArwSHW1CECXKEpcf3GWCsCUlFrd3Qq3ykFj9aSIjJFD6GCWal85hmsAoNwthwwJGxlWM
-        YqkFxbnpqcWGBYbIcbaJEZxStUx3ME58+0HvECMTB+MhRgkOZiUR3gmsffFCvCmJlVWpRfnx
-        RaU5qcWHGE2BoTeRWUo0OR+Y1PNK4g1NjYyNjS1MDM1MDQ2VxHn/aHfECwmkJ5akZqemFqQW
-        wfQxcXBKNTDtS7Y0OiDMXyCQ/rKFyXfhtMC/B1bMzLM1FoyZ89xv9RGusJuJjl+z6u7cXb1F
-        atOaQ4o7q84qufJa3j+zVuiKQVnMf6Xpq7gjjk16Xz1j/7RzoewaFzdymXoeOnliicQkOVuh
-        dVPyrFS0j4uc1DNYKBrwVl/5yedF31hZeRt3rtkjEKo4JyHHjn+z13uOtJi8R6GpfffkcrTK
-        5SMiVgilTn50Ya2zs1bmY9FjD/b7djRx9LXMXPbBV2Nx66UD0Y9SWrbVi272D2Q4ae458VPE
-        6l/GOvZdeUcuCs3uU48JXlCRo8Hk98hq+rHDs9pjxK9tuKvP2a80a3WR/CZNw3fbK0+nhm10
-        vJLx5NQHq0VKLMUZiYZazEXFiQATDoArMgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWy7bCSnG5rQF+8walbIhbLLh1ltNg4Yz2r
-        xcQbV1gsrn95zmqx+uNjRos1tw8xWvzYcIrZomXWIhaLBZ9msFqcbXrDbnF51xw2i8+9Rxgt
-        Or/MYrNY2NTCbnG7cQWbxc9d81gcBDzWzFvD6LHj7hJGj52z7rJ7bFrVyebR2/yOzWPjux1M
-        Hn9n7Wfx6NuyitHj8ya5AM4oLpuU1JzMstQifbsEroz1s84zFnzsYqw4/WwmWwPj0fwuRk4O
-        CQETiRe9t5i7GLk4hAR2MEpcOHSUDSIhKTHt4lGgBAeQLSxx+HAxRM0nRonWKwuZQGrYBLQk
-        9r+4AVYvIhAtsfjjR7BBzAInmCRWf9kFViQsECnx7OFtMJtFQFVidkMbC4jNK2Al0bPkDCvE
-        MnmJ1RsOMIPYnALWEh86/4HVCwHVzDx6n20CI98CRoZVjJKpBcW56bnFhgVGeanlesWJucWl
-        eel6yfm5mxjBoa+ltYNxz6oPeocYmTgYDzFKcDArifBOYO2LF+JNSaysSi3Kjy8qzUktPsQo
-        zcGiJM77ddbCOCGB9MSS1OzU1ILUIpgsEwenVAMTe194Z2jV8+6qfjmXJj3dNbfPV2vlP796
-        XYnhY82FdRKrrfNm52jMUr5g0s1ZUHf5TNCKlCtvrZTEFv68Zmh9vvRTueqUS/v0nLYLTX12
-        bN+LK/YbqoKfv1Pac/EqX010iEpvvxrH3vyassl7BV5emyGgzpi+I+xF63xGBTvRf780NpX/
-        17Ir7D0ue9ovatXx/KNScSrW1nVsa+tyZu9wcHqotYT1/a2d2+J2VTo/+8+yXvr9IWXO9xs5
-        X7hlnp7C0s90kXn9SbnEro0hkx4bSwjOnfB4eiJ/9Y2WXQq3U16stq0KVYlKvtvVdCd686qI
-        jdMOqUcZ79ycb8q6be/exTkqT8r69h++tmFrSnCPEktxRqKhFnNRcSIAq7vT4ewCAAA=
-X-CMS-MailID: 20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21
-References: <20201020030407.21047-1-cw00.choi@samsung.com>
-        <CGME20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21@epcas1p4.samsung.com>
+        Tue, 20 Oct 2020 00:03:17 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f8e61280000>; Mon, 19 Oct 2020 21:01:44 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
+ 2020 04:03:16 +0000
+Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Tue, 20 Oct 2020 04:03:16 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <digetx@gmail.com>, <skomatineni@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>
+Subject: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead of writesl()
+Date:   Mon, 19 Oct 2020 21:03:54 -0700
+Message-ID: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1603166504; bh=k0OpCwKOIS1mzOf9rDffepCbD0hVHg+ZBxopLq0hOT0=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=msQieKyHswBsMpmzAhUyhwrV5hazjv2iGfCMdcVaXmfLWmKaAFqarqmmRaHim6pWs
+         9X94Mx2vHymB0IfZcIvOAoIAp76+PFnbktb0uOcUEwCSSELvoZj2u6FgHxxAsLGENl
+         dXQhXIKj6oLi3VDiwqWbku/9nms2fcrr6WSaNla8EuAHTF/EClR+hfeEOeuXsyxrbY
+         u/mdUaEMed9caeh59PuuTrbiK5AjIp/0hZs/7bXw+D0ILTTtvB1DEijE+4tjJ2i8Si
+         RrKLbzi5FDhy07SNMzFqjY9xGNkBOrVaXTwClJVp2hi/7jjq9XV/PFaTPbdDVMavJY
+         sOO46WV/ufKOg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-DEVFREQ supports the default governors like performance, simple_ondemand and
-also allows the devfreq driver to add their own governor like tegra30-devfreq.c
-according to their requirement. In result, some sysfs attributes are useful
-or not useful. Prior to that the user can access all sysfs attributes
-regardless of the available attributes.
+VI I2C don't have DMA support and uses PIO mode all the time.
 
-So, clarify the access permission of sysfs attributes according to governor.
-When adding the devfreq governor, can specify the available attribute
-information by using DEVFREQ_GOV_ATTR_* constant variable. The user can
-read or write the sysfs attributes in accordance to the specified attributes.
+Current driver uses writesl() to fill TX FIFO based on available
+empty slots and with this seeing strange silent hang during any I2C
+register access after filling TX FIFO with 8 words.
 
-When adding the governor, can add the following attributes
-according to the governor feature.
+Using writel() followed by i2c_readl() in a loop to write all words
+to TX FIFO instead of using writesl() helps for large transfers in
+PIO mode.
 
-[Definition for speific sysfs attributes]
-- DEVFREQ_GOV_ATTR_POLLING_INTERVAL to update polling interval for timer.
-  : /sys/class/devfreq/[devfreq dev name]/polling_interval
-- DEVFREQ_GOV_ATTR_TIMER to change the type of timer on either deferrable
-  or dealyed timer.
-  : /sys/class/devfreq/[devfreq dev name]/timer
+So, this patch updates i2c_writesl() API to use writel() in a loop
+instead of writesl().
 
-And all devfreq governors have to support the following common attributes.
-The common attributes are added to devfreq class by default.
-- governor
-- available_governors
-- available_frequencies
-- cur_freq
-- target_freq
-- min_freq
-- max_freq
-- trans_stat
-
-[Table of governor attribute flags for devfreq governors]
-------------------------------------------------------------------------------
-                      | simple    | perfor | power | user | passive | tegra30
-		      | ondemand  | mance  | save  | space|         |
-------------------------------------------------------------------------------
-governor              | O         | O      | O     | O    | O       | O
-available_governors   | O         | O      | O     | O    | O       | O
-available_frequencies | O         | O      | O     | O    | O       | O
-cur_freq              | O         | O      | O     | O    | O       | O
-target_freq           | O         | O      | O     | O    | O       | O
-min_freq              | O         | O      | O     | O    | O       | O
-max_freq              | O         | O      | O     | O    | O       | O
-trans_stat            | O         | O      | O     | O    | O       | O
-                      --------------------------------------------------------
-polling_interval      | O         | X      | X     | X    | X       | O
-timer                 | O         | X      | X     | X    | X       | X
-------------------------------------------------------------------------------
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- Documentation/ABI/testing/sysfs-class-devfreq |  54 +++--
- drivers/devfreq/devfreq.c                     | 192 ++++++++++++------
- drivers/devfreq/governor.h                    |  12 ++
- drivers/devfreq/governor_simpleondemand.c     |   2 +
- drivers/devfreq/tegra30-devfreq.c             |   1 +
- 5 files changed, 173 insertions(+), 88 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
-index deefffb3bbe4..67af3f31e17c 100644
---- a/Documentation/ABI/testing/sysfs-class-devfreq
-+++ b/Documentation/ABI/testing/sysfs-class-devfreq
-@@ -37,20 +37,6 @@ Description:
- 		The /sys/class/devfreq/.../target_freq shows the next governor
- 		predicted target frequency of the corresponding devfreq object.
- 
--What:		/sys/class/devfreq/.../polling_interval
--Date:		September 2011
--Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
--Description:
--		The /sys/class/devfreq/.../polling_interval shows and sets
--		the requested polling interval of the corresponding devfreq
--		object. The values are represented in ms. If the value is
--		less than 1 jiffy, it is considered to be 0, which means
--		no polling. This value is meaningless if the governor is
--		not polling; thus. If the governor is not using
--		devfreq-provided central polling
--		(/sys/class/devfreq/.../central_polling is 0), this value
--		may be useless.
--
- What:		/sys/class/devfreq/.../trans_stat
- Date:		October 2012
- Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
-@@ -65,14 +51,6 @@ Description:
- 		as following:
- 			echo 0 > /sys/class/devfreq/.../trans_stat
- 
--What:		/sys/class/devfreq/.../userspace/set_freq
--Date:		September 2011
--Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
--Description:
--		The /sys/class/devfreq/.../userspace/set_freq shows and
--		sets the requested frequency for the devfreq object if
--		userspace governor is in effect.
--
- What:		/sys/class/devfreq/.../available_frequencies
- Date:		October 2012
- Contact:	Nishanth Menon <nm@ti.com>
-@@ -109,6 +87,35 @@ Description:
- 		The max_freq overrides min_freq because max_freq may be
- 		used to throttle devices to avoid overheating.
- 
-+What:		/sys/class/devfreq/.../polling_interval
-+Date:		September 2011
-+Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
-+Description:
-+		The /sys/class/devfreq/.../polling_interval shows and sets
-+		the requested polling interval of the corresponding devfreq
-+		object. The values are represented in ms. If the value is
-+		less than 1 jiffy, it is considered to be 0, which means
-+		no polling. This value is meaningless if the governor is
-+		not polling; thus. If the governor is not using
-+		devfreq-provided central polling
-+		(/sys/class/devfreq/.../central_polling is 0), this value
-+		may be useless.
-+
-+		A list of governors that support the node:
-+		- simple_ondmenad
-+		- tegra_actmon
-+
-+What:		/sys/class/devfreq/.../userspace/set_freq
-+Date:		September 2011
-+Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
-+Description:
-+		The /sys/class/devfreq/.../userspace/set_freq shows and
-+		sets the requested frequency for the devfreq object if
-+		userspace governor is in effect.
-+
-+		A list of governors that support the node:
-+		- userspace
-+
- What:		/sys/class/devfreq/.../timer
- Date:		July 2020
- Contact:	Chanwoo Choi <cw00.choi@samsung.com>
-@@ -120,3 +127,6 @@ Description:
- 		as following:
- 			echo deferrable > /sys/class/devfreq/.../timer
- 			echo delayed > /sys/class/devfreq/.../timer
-+
-+		A list of governors that support the node:
-+		- simple_ondemand
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index a862acfe987e..99df27368628 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -32,6 +32,7 @@
- #include <trace/events/devfreq.h>
- 
- #define IS_SUPPORTED_FLAG(f, name) ((f & DEVFREQ_GOV_FLAG_##name) ? true : false)
-+#define IS_SUPPORTED_ATTR(f, name) ((f & DEVFREQ_GOV_ATTR_##name) ? true : false)
- #define HZ_PER_KHZ	1000
- 
- static struct class *devfreq_class;
-@@ -760,6 +761,11 @@ static void devfreq_dev_release(struct device *dev)
- 	kfree(devfreq);
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 6f08c0c..274bf3a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned int reg)
+ 	return readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
  }
  
-+static void create_sysfs_files(struct devfreq *devfreq,
-+				const struct devfreq_governor *gov);
-+static void remove_sysfs_files(struct devfreq *devfreq,
-+				const struct devfreq_governor *gov);
-+
- /**
-  * devfreq_add_device() - Add devfreq feature to the device
-  * @dev:	the device to add devfreq feature.
-@@ -909,6 +915,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_init;
- 	}
- 
-+	create_sysfs_files(devfreq, governor);
-+
- 	devfreq->governor = governor;
- 	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_START,
- 						NULL);
-@@ -947,9 +955,12 @@ int devfreq_remove_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
--	if (devfreq->governor)
-+	if (devfreq->governor) {
- 		devfreq->governor->event_handler(devfreq,
- 						 DEVFREQ_GOV_STOP, NULL);
-+		remove_sysfs_files(devfreq, devfreq->governor);
+-static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
++static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
+ 			unsigned int reg, unsigned int len)
+ {
+-	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
++	while (len--) {
++		writel(*data++, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
++		i2c_readl(i2c_dev, I2C_INT_STATUS);
 +	}
-+
- 	device_unregister(&devfreq->dev);
- 
- 	return 0;
-@@ -1354,55 +1365,71 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 	struct devfreq *df = to_devfreq(dev);
- 	int ret;
- 	char str_governor[DEVFREQ_NAME_LEN + 1];
--	const struct devfreq_governor *governor, *prev_governor;
-+	const struct devfreq_governor *new_governor, *prev_governor;
- 
- 	if (!df->governor)
- 		return -EINVAL;
-+	prev_governor = df->governor;
- 
- 	ret = sscanf(buf, "%" __stringify(DEVFREQ_NAME_LEN) "s", str_governor);
- 	if (ret != 1)
- 		return -EINVAL;
- 
- 	mutex_lock(&devfreq_list_lock);
--	governor = try_then_request_governor(str_governor);
--	if (IS_ERR(governor)) {
--		ret = PTR_ERR(governor);
-+	new_governor = try_then_request_governor(str_governor);
-+	if (IS_ERR(new_governor)) {
-+		ret = PTR_ERR(new_governor);
- 		goto out;
- 	}
--	if (df->governor == governor) {
-+	if (prev_governor == new_governor) {
- 		ret = 0;
- 		goto out;
--	} else if (IS_SUPPORTED_FLAG(df->governor->flags, IMMUTABLE)
--		|| IS_SUPPORTED_FLAG(governor->flags, IMMUTABLE)) {
-+	} else if (IS_SUPPORTED_FLAG(prev_governor->flags, IMMUTABLE)
-+		|| IS_SUPPORTED_FLAG(new_governor->flags, IMMUTABLE)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
-+	/*
-+	 * Stop the previous governor and remove the specific sysfs files
-+	 * which depend on previous governor.
-+	 */
-+	ret = prev_governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
- 	if (ret) {
- 		dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
--			 __func__, df->governor->name, ret);
-+			 __func__, prev_governor->name, ret);
- 		goto out;
- 	}
- 
--	prev_governor = df->governor;
--	df->governor = governor;
--	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
--	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-+	remove_sysfs_files(df, prev_governor);
-+
-+	/*
-+	 * Start the new governor and create the specific sysfs files
-+	 * which depend on new governor.
-+	 */
-+	strncpy(df->governor_name, new_governor->name, DEVFREQ_NAME_LEN);
-+	ret = new_governor->event_handler(df, DEVFREQ_GOV_START, NULL);
- 	if (ret) {
- 		dev_warn(dev, "%s: Governor %s not started(%d)\n",
--			 __func__, df->governor->name, ret);
--		df->governor = prev_governor;
-+			 __func__, new_governor->name, ret);
- 		strncpy(df->governor_name, prev_governor->name,
- 			DEVFREQ_NAME_LEN);
--		ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-+
-+		/* Restore prev_governor when failed to start new governor */
-+		ret = prev_governor->event_handler(df, DEVFREQ_GOV_START, NULL);
- 		if (ret) {
- 			dev_err(dev,
- 				"%s: reverting to Governor %s failed (%d)\n",
- 				__func__, df->governor_name, ret);
- 			df->governor = NULL;
-+			goto out;
- 		}
-+		create_sysfs_files(df, prev_governor);
-+		goto out;
- 	}
-+	create_sysfs_files(df, new_governor);
-+	df->governor = new_governor;
-+
- out:
- 	mutex_unlock(&devfreq_list_lock);
- 
-@@ -1484,39 +1511,6 @@ static ssize_t target_freq_show(struct device *dev,
  }
- static DEVICE_ATTR_RO(target_freq);
  
--static ssize_t polling_interval_show(struct device *dev,
--				     struct device_attribute *attr, char *buf)
--{
--	struct devfreq *df = to_devfreq(dev);
--
--	if (!df->profile)
--		return -EINVAL;
--
--	return sprintf(buf, "%d\n", df->profile->polling_ms);
--}
--
--static ssize_t polling_interval_store(struct device *dev,
--				      struct device_attribute *attr,
--				      const char *buf, size_t count)
--{
--	struct devfreq *df = to_devfreq(dev);
--	unsigned int value;
--	int ret;
--
--	if (!df->governor)
--		return -EINVAL;
--
--	ret = sscanf(buf, "%u", &value);
--	if (ret != 1)
--		return -EINVAL;
--
--	df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
--	ret = count;
--
--	return ret;
--}
--static DEVICE_ATTR_RW(polling_interval);
--
- static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
- 			      const char *buf, size_t count)
- {
-@@ -1724,6 +1718,53 @@ static ssize_t trans_stat_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(trans_stat);
+ static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+@@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_dev->msg_buf_remaining = buf_remaining;
+ 		i2c_dev->msg_buf = buf + words_to_transfer * BYTES_PER_FIFO_WORD;
  
-+static struct attribute *devfreq_attrs[] = {
-+	&dev_attr_name.attr,
-+	&dev_attr_governor.attr,
-+	&dev_attr_available_governors.attr,
-+	&dev_attr_cur_freq.attr,
-+	&dev_attr_available_frequencies.attr,
-+	&dev_attr_target_freq.attr,
-+	&dev_attr_min_freq.attr,
-+	&dev_attr_max_freq.attr,
-+	&dev_attr_trans_stat.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(devfreq);
-+
-+static ssize_t polling_interval_show(struct device *dev,
-+				     struct device_attribute *attr, char *buf)
-+{
-+	struct devfreq *df = to_devfreq(dev);
-+
-+	if (!df->profile)
-+		return -EINVAL;
-+
-+	return sprintf(buf, "%d\n", df->profile->polling_ms);
-+}
-+
-+static ssize_t polling_interval_store(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t count)
-+{
-+	struct devfreq *df = to_devfreq(dev);
-+	unsigned int value;
-+	int ret;
-+
-+	if (!df->governor)
-+		return -EINVAL;
-+
-+	ret = sscanf(buf, "%u", &value);
-+	if (ret != 1)
-+		return -EINVAL;
-+
-+	df->governor->event_handler(df, DEVFREQ_GOV_UPDATE_INTERVAL, &value);
-+	ret = count;
-+
-+	return ret;
-+}
-+static DEVICE_ATTR_RW(polling_interval);
-+
- static ssize_t timer_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
-@@ -1787,21 +1828,36 @@ static ssize_t timer_store(struct device *dev, struct device_attribute *attr,
- }
- static DEVICE_ATTR_RW(timer);
+-		i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
++		i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO, words_to_transfer);
  
--static struct attribute *devfreq_attrs[] = {
--	&dev_attr_name.attr,
--	&dev_attr_governor.attr,
--	&dev_attr_available_governors.attr,
--	&dev_attr_cur_freq.attr,
--	&dev_attr_available_frequencies.attr,
--	&dev_attr_target_freq.attr,
--	&dev_attr_polling_interval.attr,
--	&dev_attr_min_freq.attr,
--	&dev_attr_max_freq.attr,
--	&dev_attr_trans_stat.attr,
--	&dev_attr_timer.attr,
--	NULL,
--};
--ATTRIBUTE_GROUPS(devfreq);
-+#define CREATE_SYSFS_FILE(df, name)					\
-+{									\
-+	int ret;							\
-+	ret = sysfs_create_file(&df->dev.kobj, &dev_attr_##name.attr);	\
-+	if (ret < 0) {							\
-+		dev_warn(&df->dev,					\
-+			"Unable to create attr(%s)\n", "##name");	\
-+	}								\
-+}									\
-+
-+/* Create the specific sysfs files which depend on each governor. */
-+static void create_sysfs_files(struct devfreq *devfreq,
-+				const struct devfreq_governor *gov)
-+{
-+	if (IS_SUPPORTED_ATTR(gov->attr, POLLING_INTERVAL))
-+		CREATE_SYSFS_FILE(devfreq, polling_interval);
-+	if (IS_SUPPORTED_ATTR(gov->attr, TIMER))
-+		CREATE_SYSFS_FILE(devfreq, timer);
-+}
-+
-+/* Remove the specific sysfs files which depend on each governor. */
-+static void remove_sysfs_files(struct devfreq *devfreq,
-+				const struct devfreq_governor *gov)
-+{
-+	if (IS_SUPPORTED_ATTR(gov->attr, POLLING_INTERVAL))
-+		sysfs_remove_file(&devfreq->dev.kobj,
-+				&dev_attr_polling_interval.attr);
-+	if (IS_SUPPORTED_ATTR(gov->attr, TIMER))
-+		sysfs_remove_file(&devfreq->dev.kobj, &dev_attr_timer.attr);
-+}
- 
- /**
-  * devfreq_summary_show() - Show the summary of the devfreq devices
-@@ -1858,8 +1914,12 @@ static int devfreq_summary_show(struct seq_file *s, void *data)
- 		mutex_lock(&devfreq->lock);
- 		cur_freq = devfreq->previous_freq;
- 		get_freq_range(devfreq, &min_freq, &max_freq);
--		polling_ms = devfreq->profile->polling_ms;
- 		timer = devfreq->profile->timer;
-+
-+		if (IS_SUPPORTED_ATTR(devfreq->governor->attr, POLLING_INTERVAL))
-+			polling_ms = devfreq->profile->polling_ms;
-+		else
-+			polling_ms = 0;
- 		mutex_unlock(&devfreq->lock);
- 
- 		seq_printf(s,
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index 7dbb110a869e..6458fbb58d27 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -35,10 +35,21 @@
- #define DEVFREQ_GOV_FLAG_IMMUTABLE			BIT(0)
- #define DEVFREQ_GOV_FLAG_IRQ_DRIVEN			BIT(1)
- 
-+/*
-+ * Definition of governor attribute flags except for common sysfs attributes
-+ * - DEVFREQ_GOV_ATTR_POLLING_INTERVAL
-+ *   : Indicate polling_interal sysfs attribute
-+ * - DEVFREQ_GOV_ATTR_TIMER
-+ *   : Indicate timer sysfs attribute
-+ */
-+#define DEVFREQ_GOV_ATTR_POLLING_INTERVAL		BIT(0)
-+#define DEVFREQ_GOV_ATTR_TIMER				BIT(1)
-+
- /**
-  * struct devfreq_governor - Devfreq policy governor
-  * @node:		list node - contains registered devfreq governors
-  * @name:		Governor's name
-+ * @attr:		Governor's sysfs attribute flag
-  * @flags:		Governor's feature flags
-  * @get_target_freq:	Returns desired operating frequency for the device.
-  *			Basically, get_target_freq will run
-@@ -57,6 +68,7 @@ struct devfreq_governor {
- 	struct list_head node;
- 
- 	const char name[DEVFREQ_NAME_LEN];
-+	const u64 attr;
- 	const u64 flags;
- 	int (*get_target_freq)(struct devfreq *this, unsigned long *freq);
- 	int (*event_handler)(struct devfreq *devfreq,
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index 1b314e1df028..28b7f9d8fb4e 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -117,6 +117,8 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
- 
- static struct devfreq_governor devfreq_simple_ondemand = {
- 	.name = DEVFREQ_GOV_SIMPLE_ONDEMAND,
-+	.attr = DEVFREQ_GOV_ATTR_POLLING_INTERVAL
-+		| DEVFREQ_GOV_ATTR_TIMER,
- 	.get_target_freq = devfreq_simple_ondemand_func,
- 	.event_handler = devfreq_simple_ondemand_handler,
- };
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index faa1aecf2a31..83daa8aad30f 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -765,6 +765,7 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
- 
- static struct devfreq_governor tegra_devfreq_governor = {
- 	.name = "tegra_actmon",
-+	.attr = DEVFREQ_GOV_ATTR_POLLING_INTERVAL,
- 	.flags = DEVFREQ_GOV_FLAG_IMMUTABLE
- 		| DEVFREQ_GOV_FLAG_IRQ_DRIVEN,
- 	.get_target_freq = tegra_governor_get_target,
+ 		buf += words_to_transfer * BYTES_PER_FIFO_WORD;
+ 	}
 -- 
-2.17.1
+2.7.4
 
