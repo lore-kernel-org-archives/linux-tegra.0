@@ -2,163 +2,90 @@ Return-Path: <SRS0=rHad=D3=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DD1C4363A
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 16:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C87C4363A
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29FE722247
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 16:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590982225D
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:35:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MN02MJJd"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LrEnEU6y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbgJTQiY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Oct 2020 12:38:24 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15942 "EHLO
+        id S2438155AbgJTTf2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 15:35:28 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14695 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728837AbgJTQiY (ORCPT
+        with ESMTP id S2438154AbgJTTf2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Oct 2020 12:38:24 -0400
+        Tue, 20 Oct 2020 15:35:28 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f8f12220002>; Tue, 20 Oct 2020 09:36:50 -0700
-Received: from [10.2.48.229] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
- 2020 16:38:23 +0000
-Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
- of writesl()
+        id <B5f8f3ba30000>; Tue, 20 Oct 2020 12:33:55 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
+ 2020 19:35:27 +0000
+Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Tue, 20 Oct 2020 19:35:27 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <digetx@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
-References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
- <20201020074846.GA1877013@ulmo>
- <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
-Message-ID: <d880a7b1-28e2-1bfc-2ba7-a7139455b890@nvidia.com>
-Date:   Tue, 20 Oct 2020 09:39:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>
+CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/9] media: tegra-video: Add support for capturing from HDMI-to-CSI bridge
+Date:   Tue, 20 Oct 2020 12:36:06 -0700
+Message-ID: <1603222575-14427-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603211811; bh=MtaU68vTjnAu/ibJOUXO8MYkZUIwYmMk+2uQWXcPQ7Q=;
-        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=MN02MJJdJkNwpkfm0GLLSESW9K1j0E8ulX5qcyky/TvE0/IVMkE32aQkYDFpFuJxO
-         c0Syw232lnPLp6YLKOvPcW1Lw+xbTgxiXk8qity0OjS9o4+D/xvNCZjcNmGILDGj+G
-         wOTaabW2c7KHaFE30LNUmLPgZDlKCCnwkls3L/EYjO4f92X6lZIFNhA3jrAKBJKrOn
-         4rKSmMkY79Mp5uG9VEefJI8hdmj5iqOjGFVhPq4x6I5xqL/2chc5zb9qqNhza5iwZh
-         YNd73hzd4ov2gdLT/Cg/4Ato7q8Ef+Ffm+ci6T5D7J2iEKf2caEOWLDPCzTqOj4Y70
-         Gmw/YfiZ7j7cA==
+        t=1603222435; bh=vk0Z162ydt5goTkfbh7cvYRBInjh/n9d55j7/sDPyE0=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=LrEnEU6y0IcixcnHy+BlIa6VuVeT+J5yNKe507Q7CwiD6VDHjkIb+zadqIfJI/tXs
+         ghWDLx26mRLH0QjkEdHGujUGk6N5UOb9JOuC7HqGRDehPIX4SIrRqUsdk9yz0WqFAi
+         HRUAiB9Ykiz96kusImH/c4YLiH3Fr0lkQK6J1USNwfjAncjgCD5M4oZbqReJwJS3LX
+         5zqvxMGPNGJHJUCAGiAlmsGgEjMYpHHbgP+XIQjmhM87B3RxtV7jFLxW0hiN6KyLUa
+         6xpIFypV0X6PC2JyXmt78cSkJM7vWyPCPS10Hdhqs5wKMRIYksIBXFhksG7m2isfeT
+         9N7IBHfTmwhNQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series includes below changes to allow capturing from HDMI-to-CSI bridges.
+- Add DV timing, EDID and log status V4L2 IOCTLs
+- Subscribe V4L2_EVENT_SOURCE_CHANGE
+- Implement V4L2 device notify callback to report queue error on source change
+  during active streaming.
+- Add support for NV16 V4L2 Pixel format.
 
-On 10/20/20 9:37 AM, Sowjanya Komatineni wrote:
->
-> On 10/20/20 12:48 AM, Thierry Reding wrote:
->> On Mon, Oct 19, 2020 at 09:03:54PM -0700, Sowjanya Komatineni wrote:
->>> VI I2C don't have DMA support and uses PIO mode all the time.
->>>
->>> Current driver uses writesl() to fill TX FIFO based on available
->>> empty slots and with this seeing strange silent hang during any I2C
->>> register access after filling TX FIFO with 8 words.
->>>
->>> Using writel() followed by i2c_readl() in a loop to write all words
->>> to TX FIFO instead of using writesl() helps for large transfers in
->>> PIO mode.
->>>
->>> So, this patch updates i2c_writesl() API to use writel() in a loop
->>> instead of writesl().
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>> =A0 drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
->>> =A0 1 file changed, 6 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
->>> b/drivers/i2c/busses/i2c-tegra.c
->>> index 6f08c0c..274bf3a 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev=20
->>> *i2c_dev, unsigned int reg)
->>> =A0=A0=A0=A0=A0 return readl_relaxed(i2c_dev->base +=20
->>> tegra_i2c_reg_addr(i2c_dev, reg));
->>> =A0 }
->>> =A0 -static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
->>> +static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned int reg, unsigned int =
-len)
->>> =A0 {
->>> -=A0=A0=A0 writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), da=
-ta,=20
->>> len);
->>> +=A0=A0=A0 while (len--) {
->>> +=A0=A0=A0=A0=A0=A0=A0 writel(*data++, i2c_dev->base + tegra_i2c_reg_ad=
-dr(i2c_dev,=20
->>> reg));
->>> +=A0=A0=A0=A0=A0=A0=A0 i2c_readl(i2c_dev, I2C_INT_STATUS);
->>> +=A0=A0=A0 }
->>> =A0 }
->>> =A0 =A0 static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *dat=
-a,
->>> @@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct=20
->>> tegra_i2c_dev *i2c_dev)
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 i2c_dev->msg_buf_remaining =3D buf_remainin=
-g;
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0 i2c_dev->msg_buf =3D buf + words_to_transfe=
-r *=20
->>> BYTES_PER_FIFO_WORD;
->>> =A0 -=A0=A0=A0=A0=A0=A0=A0 i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words=
-_to_transfer);
->>> +=A0=A0=A0=A0=A0=A0=A0 i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO,=20
->>> words_to_transfer);
->> I've thought a bit more about this and I wonder if we're simply reading
->> out the wrong value for tx_fifo_avail and therefore end up overflowing
->> the TX FIFO. Have you checked what the value is for tx_fifo_avail when
->> this silent hang occurs? Given that this is specific to the VI I2C I'm
->> wondering if this is perhaps a hardware bug where we read the wrong TX
->> FIFO available count.
->>
->> Thierry
->
-> Yes FIFO status shows all 8 slots available.
+This series also include below fixes
+- Allow format change for subdevs that don't have crop support.
+- Correct V4L2 Pixel format for RGB888_1X24
+- Enable VI pixel transform for YUV and RGB formats.
 
-To be clear, TX slots availability in FIFO status before filling shows 8=20
-words empty.
 
-With writesl() when silent hang is seen, couldn't access any registers=20
-and with debug messages I see silent hang happens immediate during=20
-accessing any of i2c controller register after writesl() call
+Sowjanya Komatineni (9):
+  media: tegra-video: Use zero crop settings if subdev has no
+    get_selection
+  media: tegra-video: Enable VI pixel transform for YUV and RGB formats
+  media: tegra-video: Fix V4L2 pixel format for RGB888_1X24
+  media: tegra-video: Add support for V4L2_PIX_FMT_NV16
+  media: tegra-video: Add DV timing support
+  media: tegra-video: Add support for EDID ioctl ops
+  media: tegra-video: Add support for VIDIOC_LOG_STATUS ioctl
+  media: tegra-video: Add support for V4L2_EVENT_SOURCE_CHANGE
+  media: tegra-video: Implement V4L2 device notify callback
 
->
-> Also, HW wise VI I2C is similar to other I2C and FIFO depth is also 8=20
-> words. Confirmed from HW designers as well.
->
-> Using writesl() causes silent hang after filling some words in FIFO=20
-> and most of time after filling 8 words and sometime after filling it=20
-> with around 6 words.
->
-> I am not sure if this issue is specific to VI I2C alone as other I2C=20
-> mostly use DMA for more than 8 words and I am not sure if we ever used=20
-> other I2C in PIO mode for ~8 words transfer for slave devices we have=20
-> on the platform.
->
->
-> Thanks
->
-> Sowjanya
->
+ drivers/staging/media/tegra-video/tegra210.c |  30 ++++-
+ drivers/staging/media/tegra-video/vi.c       | 171 ++++++++++++++++++++++++++-
+ drivers/staging/media/tegra-video/video.c    |  18 +++
+ 3 files changed, 211 insertions(+), 8 deletions(-)
+
+-- 
+2.7.4
+
