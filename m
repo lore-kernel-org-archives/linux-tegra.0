@@ -1,110 +1,104 @@
-Return-Path: <SRS0=rHad=D3=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=wuJM=D4=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F1FC54FB2
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B296C4363D
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Oct 2020 01:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B52A72225C
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Oct 2020 19:36:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rxxA3eb8"
+	by mail.kernel.org (Postfix) with ESMTP id B162121D6C
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Oct 2020 01:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438169AbgJTTfa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Oct 2020 15:35:30 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14699 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438168AbgJTTf3 (ORCPT
+        id S2439833AbgJUBOo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Oct 2020 21:14:44 -0400
+Received: from esa4.mentor.iphmx.com ([68.232.137.252]:7913 "EHLO
+        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439830AbgJUBOo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Oct 2020 15:35:29 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f8f3ba40000>; Tue, 20 Oct 2020 12:33:56 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Oct
- 2020 19:35:29 +0000
-Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 20 Oct 2020 19:35:28 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>
-CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/9] media: tegra-video: Enable VI pixel transform for YUV and RGB formats
-Date:   Tue, 20 Oct 2020 12:36:08 -0700
-Message-ID: <1603222575-14427-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1603222575-14427-1-git-send-email-skomatineni@nvidia.com>
-References: <1603222575-14427-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 20 Oct 2020 21:14:44 -0400
+IronPort-SDR: vfMMZbMrvhynx/OHgDO01je5JhrfEJXz4n0Goj22cn35m5OTsfmbJgp/mYTCVegcRx13zLvlVj
+ +OGzYXpR3S8ZN0t5UMY/CToFQ0PcQpyxEYLaRGVtzXhTymS8o68ezFjMbybiU2JnZHSdiEWuIS
+ YfMrO0uTWY0oj6A94ekr4gyfIiqeijJGrwmiSqMF4zNUiSZq/mKx6it/ywudLYLHfRfcd2jZO7
+ jX8vjAsSplVla0rxwWTGA4/vD3VPBbEQ2BduU7RYTS0eDZw9Dqm9w16aS9Bn6fkND8TK/eREpF
+ TRo=
+X-IronPort-AV: E=Sophos;i="5.77,399,1596528000"; 
+   d="scan'208";a="54294566"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 20 Oct 2020 17:14:43 -0800
+IronPort-SDR: 85YMpVnbLfxUK1a+jmxhDCviXgDNMb8OelwxFri+DnANo5VLi2+uV9HRtg85TTf4D5RxfI0pJd
+ twwUxlr7wjnHBJzcYgWEQU2yqmjkp/8Peac8BtAZECdDUoXkijOFPJR+pMxdpFixS4OxSIiq7D
+ FPTVDjCf97Eqaf2DZkpDAz8PbVIkd8vOzPqsG1WXPSWdnG8Pe4urz5eRwhB062UtB0QBOdNztL
+ yzzvgzXh5BbqjGMZ9ZUE4IKX//UHy1Wn4LrS1DOyvM68Y5vwXo/xnp307dsbQv5OZvmrHfWdGb
+ oRY=
+Subject: Re: [PATCH v3 0/3] implement I2C retries for mXT1368
+To:     <dmitry.torokhov@gmail.com>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <digetx@gmail.com>,
+        <jonathanh@nvidia.com>
+CC:     <nick@shmanahar.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <erosca@de.adit-jv.com>, <andrew_gabbasov@mentor.com>
+References: <20200930151259.18119-1-jiada_wang@mentor.com>
+From:   "Wang, Jiada" <jiada_wang@mentor.com>
+Message-ID: <653c24a4-704a-4d65-2622-49c55a82c901@mentor.com>
+Date:   Wed, 21 Oct 2020 10:14:29 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603222436; bh=3KvReLIRXcuW/kRnBsqtVyD+GiWXJeSQRRku54/yeMg=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=rxxA3eb8lTF3vxQKlNQSweKhXyOed4RyexUAzbSmitHgGJ94mxUWwvVeQy8/gam+2
-         f/ZSgEF7ljRnVWIcI8/Xg/aYIsdw7YQZsANJEt7M7NmgYXVMJgUTJXeQU/3L7bAb/Z
-         V3BJ1Y+TPezJfrEavxdH2/cTzUxOl0FBPtD0uk6OxeQJRmQ8jGfINeWcpAmucIYvjF
-         aSuTlhObZYYyauBYUp4XKVb27z2ARJO2JbeJXIiuP6U+hGxLEtFgbtwB9KI5fckv5/
-         ISMbDcibkfaRVg3RBSqfY9jtz05GBGWCcbxhImetRENZB2U4TSezsfDlyAmkqPH+0Z
-         t7mgSj9sW1ZCQ==
+In-Reply-To: <20200930151259.18119-1-jiada_wang@mentor.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-VI Pixel transforms converts source pixel data to selected
-destination pixel formats in memory and aligns properly.
+Hello Dmitry and all
 
-YUV and RGB formats need this pixel transform to be enabled.
+Kind reminder on this patch-set
 
-RAW formats use T_R16_I destination pixel format in memory and
-does not need pixel transform as they support direct write to
-memory.
 
-So, this patch enables pixel transform for YUV and RGB and keeps
-it bypass for RAW formats.
+Thanks,
+Jiada
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/staging/media/tegra-video/tegra210.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index ac066c0..6b23aa7 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -178,10 +178,23 @@ static int tegra_channel_capture_setup(struct tegra_vi_channel *chan)
- 	u32 format = chan->fmtinfo->img_fmt;
- 	u32 data_type = chan->fmtinfo->img_dt;
- 	u32 word_count = (width * chan->fmtinfo->bit_width) / 8;
-+	u32 bypass_pixel_transform = BIT(BYPASS_PXL_TRANSFORM_OFFSET);
-+
-+	/*
-+	 * VI Pixel transformation unit converts source pixels data format
-+	 * into selected destination pixel format and aligns properly while
-+	 * interfacing with memory packer.
-+	 * This pixel transformation should be enabled for YUV and RGB
-+	 * formats and should be bypassed for RAW formats as RAW formats
-+	 * only support direct to memory.
-+	 */
-+	if (chan->pg_mode || data_type == TEGRA_IMAGE_DT_YUV422_8 ||
-+	    data_type == TEGRA_IMAGE_DT_RGB888)
-+		bypass_pixel_transform = 0;
- 
- 	vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS, 0xffffffff);
- 	vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DEF,
--		     ((chan->pg_mode ? 0 : 1) << BYPASS_PXL_TRANSFORM_OFFSET) |
-+		     bypass_pixel_transform |
- 		     (format << IMAGE_DEF_FORMAT_OFFSET) |
- 		     IMAGE_DEF_DEST_MEM);
- 	vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DT, data_type);
--- 
-2.7.4
-
+On 2020/10/01 0:12, Jiada Wang wrote:
+> According to datasheet, mXT1386 chip has a WAKE line, it is used
+> to wake the chip up from deep sleep mode before communicating with
+> it via the I2C-compatible interface.
+>      
+> if the WAKE line is connected to a GPIO line, the line must be
+> asserted 25 ms before the host attempts to communicate with the
+> mXT1386.
+> If the WAKE line is connected to the SCL pin, the mXT1386 will send
+> a NACK on the first attempt to address it, the host must then retry
+> 25 ms later.
+>      
+> This patch adds compatible string "atmel,mXT1386" for mXT1386 controller,
+> when I2C transfer on mXT1386 fails, retry the transfer once after a
+> 25 ms sleep.
+> 
+> 
+> Jiada Wang (3):
+>    dt-bindings: input: atmel: add compatible for mXT1386
+>    Input: atmel_mxt_ts - implement I2C retries for mXT1368
+>    ARM: tegra: add mXT1386 compatible
+> 
+> ---
+> v3:
+> change compatible string to lowercase
+> 
+> v2:
+> add bool retry_i2c_transfers to struct mxt_data,
+> to indicate whether retry is needed when i2c transfer fails
+> 
+> v1: initial version
+> ---
+>   .../bindings/input/atmel,maxtouch.txt         |  1 +
+>   .../boot/dts/tegra20-acer-a500-picasso.dts    |  2 +-
+>   drivers/input/touchscreen/atmel_mxt_ts.c      | 62 +++++++++++++++----
+>   3 files changed, 52 insertions(+), 13 deletions(-)
+> 
