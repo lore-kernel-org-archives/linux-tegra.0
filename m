@@ -2,226 +2,141 @@ Return-Path: <SRS0=kmJj=D5=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8415EC55179
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 02:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD174C388F2
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 04:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22CAC2227F
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 02:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F69722267
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 04:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YLw8Bz2H"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcGsnzpG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443282AbgJVCda (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Oct 2020 22:33:30 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:22546 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2443193AbgJVCda (ORCPT
+        id S1726190AbgJVEUv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Oct 2020 00:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgJVEUv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Oct 2020 22:33:30 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201022023326epoutp02b44f8df648f30fa239b1c585022ea2e0~AL8jKyKUf3178431784epoutp02b
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2020 02:33:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201022023326epoutp02b44f8df648f30fa239b1c585022ea2e0~AL8jKyKUf3178431784epoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603334006;
-        bh=kDAYexLUL1fIzAZL+IINMuwVpdSM8IRXCDveo7dhFUY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=YLw8Bz2HvkH40y1S0a89QuW37A1ZIQEaapLOAorBuC4C6I4HHI+aaf6wDMUx2qEiq
-         rfapHcpvzjBJaxpTMAou/BjQDLHzxWS8MMZ7fP+yfvxO7kqEtxadxlblvixdM7tRtd
-         2Pts87mjHtJoBkyMwM70VaArJq0e8lsnghVeShYo=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20201022023326epcas1p3b9bdd8fb412cd443e0c0b9d43fe7561e~AL8ijoQwv0726607266epcas1p3U;
-        Thu, 22 Oct 2020 02:33:26 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4CGryC4Xc0zMqYm6; Thu, 22 Oct
-        2020 02:33:23 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.7B.09543.37FE09F5; Thu, 22 Oct 2020 11:33:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20201022023323epcas1p4ea552e1162038d835a07738768d00b01~AL8fv2UJ51068810688epcas1p4s;
-        Thu, 22 Oct 2020 02:33:23 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201022023323epsmtrp1dcb1f281dd861d046cab21ccbc6b5235~AL8fu4gmy2300923009epsmtrp1d;
-        Thu, 22 Oct 2020 02:33:23 +0000 (GMT)
-X-AuditID: b6c32a35-347ff70000002547-b0-5f90ef732b0b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CC.04.08604.27FE09F5; Thu, 22 Oct 2020 11:33:22 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201022023322epsmtip1bdc086dee72f2aaaec3bd4e62a5ab4b9~AL8fbDqUS2126221262epsmtip1F;
-        Thu, 22 Oct 2020 02:33:22 +0000 (GMT)
-Subject: Re: [PATCH v4 2/2] PM / devfreq: Add governor attribute flag for
- specifc sysfs nodes
-To:     Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     lukasz.luba@arm.com, enric.balletbo@collabora.com,
-        hl@rock-chips.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        abel.vesa@nxp.com, k.konieczny@samsung.com,
-        b.zolnierkie@samsung.com, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <5802dfbd-22d2-0efb-cc98-2dbb1d420367@samsung.com>
-Date:   Thu, 22 Oct 2020 11:47:02 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Thu, 22 Oct 2020 00:20:51 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D59AC0613CE
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Oct 2020 21:20:51 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id c141so496915lfg.5
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Oct 2020 21:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bHoZT/Fr9uAigMoBzLNCfLcCJhHkAk9QlkwBKzVc6sU=;
+        b=JcGsnzpG4cmLKqGoh+N5JKm4CoANnz8x2hANg5VK15vgE2wyhYhmCX5p34ujEWGo6L
+         lDJsZgl8whwW72iGwUUf9uH7C7lcT+QpEf3Dw95PGkovSjbYMpM8MHDUDwR8Yrson+/U
+         jUTgvn+xmj9GuAs8q6kmxA2WyejrM5XYLGcmxEIbyCIBTjRPGzuuQdXus4RxIZf6OpDU
+         1DYFDXwPiB9YFP4/Te503421p9Vfhc0ZDE2dCQgFUR4TG+n82N7GuAGZh3cYcnNAcAcN
+         869MmrFBHLRTQOe8J1Fov4OUjdkRIMQXahKOwbiRlrx6imqpJr9EVg0riVsJPG0/Y6e+
+         7fmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bHoZT/Fr9uAigMoBzLNCfLcCJhHkAk9QlkwBKzVc6sU=;
+        b=scfTVzyAWlNq59i2d0vSEqzw66u7zxtdx2Hn246v7Pdr7McPlCnENBqSriTRb1DVdl
+         hF8RRYfTzjPB6PaGw1rrD3igC6xheBGVyT3V1VZgQ/0gGAjoOWVOK9vtzJvZ1sBEzpid
+         mulYbkIvyloFOpMpkLJViuHTDqe0IxLuCFXnMI7mhexwbtT5cFE3Kb/tX1HaIMB135A+
+         1mLg8cJ10LQhrdI18uj4QRwr55N3YNxhpnYUIgIGz2Kpr3FKD3wmuk7e/9neqltE5iyH
+         yYStY/gs1/iQhv7R2/rSISY+Anw/8MeWXFSS/VHB2BMd6c1VpmHMNqdz1p9TIYpCGhvr
+         MOew==
+X-Gm-Message-State: AOAM532uu0f2WBsTHlMFaW2C4rgOoTjfwzil1YR1fLFq+Vs0ScatR1b9
+        bYfODu+zgCC6ilcL6la1hQk=
+X-Google-Smtp-Source: ABdhPJxcRk3r72EvW5bHItYyzrdcIYOyYwLLZoWJW2nYBOTOUUajal7hm4xXuJnEcof9Pvja15gWXw==
+X-Received: by 2002:a19:7009:: with SMTP id h9mr200749lfc.201.1603340449722;
+        Wed, 21 Oct 2020 21:20:49 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.googlemail.com with ESMTPSA id t80sm60273lff.72.2020.10.21.21.20.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2020 21:20:48 -0700 (PDT)
+Subject: Re: [PATCH v3 19/20] drm/tegra: Implement new UAPI
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com
+References: <20201007171238.1795964-1-mperttunen@nvidia.com>
+ <20201007171238.1795964-20-mperttunen@nvidia.com>
+ <dd13ec2c-1e01-ca61-656c-b23b156b100f@gmail.com>
+ <b33a5084-7dc3-a865-2f36-274ecebf2ee7@kapsi.fi>
+ <1f3267a9-37b4-2cff-08a2-2ca7c905ce01@gmail.com>
+ <6a7b4d4e-8d4a-416e-9789-45282b44bce5@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <48f5bbac-3955-c227-dbe1-d987b4ec5bd0@gmail.com>
+Date:   Thu, 22 Oct 2020 07:20:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <bee3ef10-ddec-5ad4-9daa-79d9b01651d9@gmail.com>
+In-Reply-To: <6a7b4d4e-8d4a-416e-9789-45282b44bce5@kapsi.fi>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGJsWRmVeSWpSXmKPExsWy7bCmgW7x+wnxBs2TZC2WXTrKaLFxxnpW
-        i4k3rrBYrP74mNFize1DjBY/NpxitmiZtYjFYsGnGawWZ5vesFtc3jWHzeJz7xFGi84vs9gs
-        Fja1sFvcblzBZvFz1zwWB36PNfPWMHrsuLuE0WPnrLvsHptWdbJ59Da/Y/PY+G4Hk8ffWftZ
-        PPq2rGL0+LxJLoAzKtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
-        xSdA1y0zB+gFJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BZYFecWJucWleul5y
-        fq6VoYGBkSlQYUJ2xvPHp5gK/kpWdKxcw9rA2CjaxcjJISFgIrF/83LWLkYuDiGBHYwSq3sa
-        2SCcT4wSTWf+MUE43xgllq6dzw7TsutpLzNEYi+jxK5tc6Cc94wSfa9b2ECqhAXiJZ5OOs4I
-        YosI1EocufgAbC6zQC+TxLQ9S5lAEmwCWhL7X9wAa+AXUJS4+uMxWAOvgJ3E5GXzmUFsFgFV
-        iW+fH4PViwqESZzc1gJVIyhxcuYTFhCbU8BW4s7fZ2A2s4C4xK0n85kgbHmJ5q2zwa6TEPjB
-        IXH1w06oH1wkbk7+BGULS7w6vgXKlpJ42d8GZVdLrDx5hA2iuYNRYsv+C6wQCWOJ/UsnA23g
-        ANqgKbF+lz5EWFFi5++5jBCL+STefe1hBSmREOCV6GgTgihRlrj84C4ThC0psbi9k20Co9Is
-        JO/MQvLCLCQvzEJYtoCRZRWjWGpBcW56arFhgSFyfG9iBCdwLdMdjBPfftA7xMjEwXiIUYKD
-        WUmEN090QrwQb0piZVVqUX58UWlOavEhRlNgAE9klhJNzgfmkLySeENTI2NjYwsTQzNTQ0Ml
-        cd4/2h3xQgLpiSWp2ampBalFMH1MHJxSDUwLGqezBH+eNNFQ691t5wPnGd9s2j5r1XezU6sW
-        b5G8ZJ3AV3mZIThx9b6pZ4/xK3dlLDvOu2l2H4vX1fvmq1O+ng19wM42++IP9qlz9f03OvI+
-        /7LRJnc9s+Ue/ggpya55u8ROC+gp9XEURW1jL9Z8Y//8+rGZe7f92Pf0is7JM7pXPsv9eBdy
-        YvadF7nFCq0h7zfmPdh355bq9u4DD2IZnqy8/2XSvKPvPZyvzpNoeNv24+tms1tCrmnrmeL+
-        +OZXCJRHxU5pUnCKLg65JN/2RGPuN6tOu4VrpM5t2Cbm5/rMJKr9cvUMLm6152Hn/tXavF6i
-        JCj8OHemy635c1YVBYkGXGE+2uAefkxf56XyfCWW4oxEQy3mouJEAOUGUHVpBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsWy7bCSnG7R+wnxBj9eWlksu3SU0WLjjPWs
-        FhNvXGGxWP3xMaPFmtuHGC1+bDjFbNEyaxGLxYJPM1gtzja9Ybe4vGsOm8Xn3iOMFp1fZrFZ
-        LGxqYbe43biCzeLnrnksDvwea+atYfTYcXcJo8fOWXfZPTat6mTz6G1+x+ax8d0OJo+/s/az
-        ePRtWcXo8XmTXABnFJdNSmpOZllqkb5dAlfG88enmAr+SlZ0rFzD2sDYKNrFyMkhIWAisetp
-        L3MXIxeHkMBuRokVK58xQSQkJaZdPAqU4ACyhSUOHy6GqHnLKDFj0SNGkBphgXiJp5OOg9ki
-        ArUSr1ZPZwUpYhboZZLo2rWXFSQhJPCJUeL5fm4Qm01AS2L/ixtsIDa/gKLE1R+PwZp5Bewk
-        Ji+bzwxiswioSnz7/BjsCFGBMImdSyBsXgFBiZMzn7CA2JwCthJ3/j4Ds5kF1CX+zLvEDGGL
-        S9x6Mp8JwpaXaN46m3kCo/AsJO2zkLTMQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnF
-        pXnpesn5uZsYwXGspbmDcfuqD3qHGJk4GA8xSnAwK4nw5olOiBfiTUmsrEotyo8vKs1JLT7E
-        KM3BoiTOe6NwYZyQQHpiSWp2ampBahFMlomDU6qBybPg37cqt3vtM5ZeXM0/X23DD3ans7vf
-        uIjGrzZMKF679J+lWfwSPSHWd2lCecJFdZFpG3w21VrPnZl5/NAVpc9r5t+672Q6J+V0Vcyn
-        u757z63c9LnmiWKM0/UpbQxbt/yZd1Oo1+r3rNoNU6/+27WAn/cZ94vrNi+Zok4fetdjEi4Y
-        +yrYbd0hzy13ZPm+BFkcP19jn1DuPntBYePiVa+P3WPgY3iS6xr54r+B8Fdug3cyaSuPbcs9
-        u8XqeGtUxTbeTatMdXP6d3yozaj4LMv11PPpwqxll21n/mGaeZ2H4VBioRnDlP0bLildOLPs
-        +bO8N+cfPv5nfpmByXUp79OcF49OGLUG+81ecWG5zUxhJZbijERDLeai4kQA1mNDNlIDAAA=
-X-CMS-MailID: 20201022023323epcas1p4ea552e1162038d835a07738768d00b01
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21
-References: <20201020030407.21047-1-cw00.choi@samsung.com>
-        <CGME20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21@epcas1p4.samsung.com>
-        <20201020030407.21047-3-cw00.choi@samsung.com>
-        <bee3ef10-ddec-5ad4-9daa-79d9b01651d9@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/22/20 11:30 AM, Dmitry Osipenko wrote:
-> Hello Chanwoo,
+20.10.2020 12:18, Mikko Perttunen пишет:
+>> I'm asking this question because right now there is only one potential
+>> client for this IOCTL, the VIC. If other clients aren't supposed to be a
+>> part of the DRM driver, like for example NVDEC which probably should be
+>> a V4L driver, then DRM driver will have only a single VIC and in this
+>> case we shouldn't need this IOCTL because DRM and V4L should use generic
+>> dmabuf API for importing and exporting buffers.
 > 
-> 20.10.2020 06:04, Chanwoo Choi пишет:
->> @@ -1354,55 +1365,71 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
->>  	struct devfreq *df = to_devfreq(dev);
->>  	int ret;
->>  	char str_governor[DEVFREQ_NAME_LEN + 1];
->> -	const struct devfreq_governor *governor, *prev_governor;
->> +	const struct devfreq_governor *new_governor, *prev_governor;
->>  
->>  	if (!df->governor)
->>  		return -EINVAL;
->> +	prev_governor = df->governor;
->>  
->>  	ret = sscanf(buf, "%" __stringify(DEVFREQ_NAME_LEN) "s", str_governor);
->>  	if (ret != 1)
->>  		return -EINVAL;
->>  
->>  	mutex_lock(&devfreq_list_lock);
->> -	governor = try_then_request_governor(str_governor);
->> -	if (IS_ERR(governor)) {
->> -		ret = PTR_ERR(governor);
->> +	new_governor = try_then_request_governor(str_governor);
->> +	if (IS_ERR(new_governor)) {
->> +		ret = PTR_ERR(new_governor);
->>  		goto out;
->>  	}
->> -	if (df->governor == governor) {
->> +	if (prev_governor == new_governor) {
->>  		ret = 0;
->>  		goto out;
->> -	} else if (IS_SUPPORTED_FLAG(df->governor->flags, IMMUTABLE)
->> -		|| IS_SUPPORTED_FLAG(governor->flags, IMMUTABLE)) {
->> +	} else if (IS_SUPPORTED_FLAG(prev_governor->flags, IMMUTABLE)
->> +		|| IS_SUPPORTED_FLAG(new_governor->flags, IMMUTABLE)) {
->>  		ret = -EINVAL;
->>  		goto out;
->>  	}
->>  
->> -	ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
->> +	/*
->> +	 * Stop the previous governor and remove the specific sysfs files
->> +	 * which depend on previous governor.
->> +	 */
->> +	ret = prev_governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
->>  	if (ret) {
->>  		dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
->> -			 __func__, df->governor->name, ret);
->> +			 __func__, prev_governor->name, ret);
->>  		goto out;
->>  	}
->>  
->> -	prev_governor = df->governor;
->> -	df->governor = governor;
->> -	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
->> -	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
->> +	remove_sysfs_files(df, prev_governor);
->> +
->> +	/*
->> +	 * Start the new governor and create the specific sysfs files
->> +	 * which depend on new governor.
->> +	 */
->> +	strncpy(df->governor_name, new_governor->name, DEVFREQ_NAME_LEN);
->> +	ret = new_governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-> 
-> The "df->governor = new_governor" needs to be set before invocation of
-> the event_handler(GOV_START) because governors like a
-> performance-governor need to have the df->governor being set before the
-> GOV_START callback, otherwise performance governor will use
-> devfreq->prev_governor->get_target_freq() in devfreq_update_target(),
-> thus setting a wrong (non-max) freq.
-
-You're right. It is my mistake. Thanks for your detailed review.
-
-> 
->>  	if (ret) {
->>  		dev_warn(dev, "%s: Governor %s not started(%d)\n",
->> -			 __func__, df->governor->name, ret);
->> -		df->governor = prev_governor;
->> +			 __func__, new_governor->name, ret);
->>  		strncpy(df->governor_name, prev_governor->name,
->>  			DEVFREQ_NAME_LEN);
->> -		ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-> 
-> Same here.
-
-OK.
-
-> 
+> This IOCTL is required for GR2D/GR3D too, as they need to access memory
+> as well. This is a different step from import/export -- first you import
+> or allocate your memory so you have a GEM handle, then you map it to the
+> channel, which does the IOMMU mapping (if there is an IOMMU).
 > 
 
+This doesn't answer my question. I don't have a full picture and for now
+will remain dubious about this IOCTL, but it should be fine to have it
+in a form of WIP patches (maybe staging feature) until userspace code
+and hardware specs will become available.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Some more comments:
+
+1. Older Tegra SoCs do not have restrictions which do not allow to group
+IOMMU as wished by kernel driver. It's fine to have one static mapping
+per-GEM that can be accessed by all DRM devices, that's why CHANNEL_MAP
+is questionable.
+
+2. IIUC, the mappings need to be done per-device group/stream and not
+per-channel_ctx. It looks like nothing stops channel contexts to guess
+mapping addresses of the other context, isn't it?
+
+I'm suggesting that each GEM should have a per-device mapping and the
+new IOCTL should create these GEM-mappings, instead of the channel_ctx
+mappings.
+
+3. We shouldn't need channel contexts at all, a single "DRM file"
+context should be enough to have.
+
+4. The new UAPI need to be separated into several parts in the next
+revision, one patch for each new feature.
+
+The first patches should be the ones that are relevant to the existing
+userspace code, like support for the waits.
+
+Partial mappings should be a separate feature because it's a
+questionable feature that needs to be proved by a real userspace first.
+Maybe it would be even better to drop it for the starter, to ease reviewing.
+
+Waiting for fences on host1x should be a separate feature.
+
+The syncfile support needs to be a separate feature as well because I
+don't see a use-case for it right now.
+
+I'd like to see the DRM_SCHED and syncobj support. I can help you with
+it if it's out of yours scope for now.
