@@ -1,115 +1,169 @@
-Return-Path: <SRS0=wuJM=D4=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=kmJj=D5=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5480C55178
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205D3C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 02:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56BA822249
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 913A1223C7
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Oct 2020 02:30:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hdaUtzrB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEt9sG/H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441842AbgJUXBW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Oct 2020 19:01:22 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5860 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439276AbgJUXBW (ORCPT
+        id S2895055AbgJVCaY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Oct 2020 22:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35298 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2894988AbgJVCaX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Oct 2020 19:01:22 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f90bd640000>; Wed, 21 Oct 2020 15:59:48 -0700
-Received: from krlm (172.20.13.39) by HQMAIL107.nvidia.com (172.20.187.13)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Oct 2020 23:01:22
- +0000
-Date:   Wed, 21 Oct 2020 16:01:37 -0700
-From:   Sivaram Nair <sivaramn@nvidia.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-CC:     <pdeschrijver@nvidia.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: bpmp: Clamp clock rates on requests
-Message-ID: <20201021230137.GA3933@krlm>
-References: <20201021101054.2836146-1-mperttunen@nvidia.com>
+        Wed, 21 Oct 2020 22:30:23 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B669C0613CE;
+        Wed, 21 Oct 2020 19:30:23 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id 23so266468ljv.7;
+        Wed, 21 Oct 2020 19:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=23JIzalfv0ggVkyqjQr+BuKWg31TSczrM+Eba30Wc8g=;
+        b=YEt9sG/Ha7WLxkLoBsF/QQl3yasCICjyFATWnguGX/BIQc0yp6wl8x4Zdv1jULxk/l
+         5Hxy6OBpz+T3sBNCATpXyFs4DMqb+W2Zzq6ToT2P3dFR2EVVc+6ifIXCC4oNOt28dwDY
+         W4Nsb7T8MIcKiwUCjkMT6U3sWiWgZuG72opuVgT9OjVsuUrfh/cPwF2EaH5jZt3Wqeoh
+         Kl7nJ7CBPKFHjpgGsJOoC4Ko43u62tbPgakRNbVIgGgiIq89MBLs7I3MlsPuKVUxlRee
+         9M98k6+1FA4weR3LKdOSpTcJCvhHXgr4mWP4LeKS4Z8uvJc7SwzpGod+kCGUVeVBoMbN
+         qemA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=23JIzalfv0ggVkyqjQr+BuKWg31TSczrM+Eba30Wc8g=;
+        b=K4EadbLSpK94HKu8/+/ph+BqNd6cefUTExpXaeJiaVbpVtEK8WfyEf/U5LqHrVrW2v
+         0sgf4XIt9YYPMu8zjljiF9WriOcr2nXumLXQu6B2N1f34P3ufSOQ/aH6leSU7gcN9o1y
+         dMyAavlyHYz2cmGv5l3Ri6muRVlM0UGNJJnt86LptcGT5DNegIh8WLeOXjQnjTlz7sd7
+         HuLfX+xVa5V3WvbIozubHn3P/0VWHptmUe046578KAw3Niih+xB0yEzHfP9z6m1wbWgR
+         y3ixSV4++Oc4kkPI2V4jN37/KGQbTp7komXIXyG6YK75NYUPgT6ICce7yAyPSeVTY1Qy
+         i8FA==
+X-Gm-Message-State: AOAM533+nlNvyGNbrQDH27wD7E+M7qQIvS8kSy9875MclI/jVhU9VleQ
+        Hru8e0MTtUWy38JziTmwPQyUBOrEJYw=
+X-Google-Smtp-Source: ABdhPJxmmjN99e7flZQNN/wYzTYz3Ija2Zvb3PiDoUHb09bt7Yq0O8q2RMZNfi09dB25zlMvrWL00Q==
+X-Received: by 2002:a2e:87d2:: with SMTP id v18mr144983ljj.371.1603333821560;
+        Wed, 21 Oct 2020 19:30:21 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.googlemail.com with ESMTPSA id x17sm21425lfc.33.2020.10.21.19.30.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2020 19:30:20 -0700 (PDT)
+Subject: Re: [PATCH v4 2/2] PM / devfreq: Add governor attribute flag for
+ specifc sysfs nodes
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     lukasz.luba@arm.com, enric.balletbo@collabora.com,
+        hl@rock-chips.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        abel.vesa@nxp.com, k.konieczny@samsung.com,
+        b.zolnierkie@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+References: <20201020030407.21047-1-cw00.choi@samsung.com>
+ <CGME20201020025045epcas1p4b26b6f23e2896c2d661b2cfa93505e21@epcas1p4.samsung.com>
+ <20201020030407.21047-3-cw00.choi@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <bee3ef10-ddec-5ad4-9daa-79d9b01651d9@gmail.com>
+Date:   Thu, 22 Oct 2020 05:30:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20201021101054.2836146-1-mperttunen@nvidia.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603321188; bh=M/AGDHeb6JmQ+yu/XSBNHiMwy7D0SMSWDOU9Iywtgpw=;
-        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Disposition:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=hdaUtzrBEzXuJ96dTPEnqVXnjCdVyZCq4kuElU72CuiuWKZ2ngvrm/O9JeYwuBrgc
-         9QMTJsHu/ZhTaiYUC7e6EIynJU+YIs0SC9rYVU8HNSOcfuR12JOAuwZiPtAImFA7Tl
-         IjyJ/ZXoUMU+CSoJiI9fFsAKGMh+z3Tm0050RACzAHUm7bQr9AB8u4UrX5NSYjN2NO
-         Sm+5eCxuVRQDnJjHwBh1zzg8qgceKOibaGfdqyeB6ydjOEyJs8Ge6PnIfcDu4AesUj
-         ErW9X1wRZJLbvP4kj9lf89j5Vg0uvMPiPLj26KHUHBYNMUmGPEUavg/g9I9kFLjL/X
-         FELyGvYD8MGCQ==
+In-Reply-To: <20201020030407.21047-3-cw00.choi@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 01:10:54PM +0300, Mikko Perttunen wrote:
-> From: Sivaram Nair <sivaramn@nvidia.com>
-> 
-> BPMP firmware ABI expects the rate inputs in int64_t. However,
-> tegra_bpmp_clk_round_rate() and tegra_bpmp_clk_set_rate() functions
-> directly assign 'unsigned long' inputs to a int64_t value causing
-> unexpected rounding errors.
-> 
-> Fix this by clipping the input rate to S64_MAX.
-> 
-> Signed-off-by: Sivaram Nair <sivaramn@nvidia.com>
-> [mperttunen: slight cleanup]
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-bpmp.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index a66263b6490d..6ecf18f71c32 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (C) 2016 NVIDIA Corporation
-> + * Copyright (C) 2016-2020 NVIDIA Corporation
->   */
->  
->  #include <linux/clk-provider.h>
-> @@ -174,7 +174,7 @@ static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->  	int err;
->  
->  	memset(&request, 0, sizeof(request));
-> -	request.rate = rate;
-> +	request.rate = min_t(u64, rate, S64_MAX);
->  
->  	memset(&msg, 0, sizeof(msg));
->  	msg.cmd = CMD_CLK_ROUND_RATE;
-> @@ -256,7 +256,7 @@ static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  	struct tegra_bpmp_clk_message msg;
->  
->  	memset(&request, 0, sizeof(request));
-> -	request.rate = rate;
-> +	request.rate = min_t(u64, rate, S64_MAX);
->  
->  	memset(&msg, 0, sizeof(msg));
->  	msg.cmd = CMD_CLK_SET_RATE;
-> -- 
-> 2.28.0
-> 
+Hello Chanwoo,
 
-Reviewed-by: Sivaram Nair
+20.10.2020 06:04, Chanwoo Choi пишет:
+> @@ -1354,55 +1365,71 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+>  	struct devfreq *df = to_devfreq(dev);
+>  	int ret;
+>  	char str_governor[DEVFREQ_NAME_LEN + 1];
+> -	const struct devfreq_governor *governor, *prev_governor;
+> +	const struct devfreq_governor *new_governor, *prev_governor;
+>  
+>  	if (!df->governor)
+>  		return -EINVAL;
+> +	prev_governor = df->governor;
+>  
+>  	ret = sscanf(buf, "%" __stringify(DEVFREQ_NAME_LEN) "s", str_governor);
+>  	if (ret != 1)
+>  		return -EINVAL;
+>  
+>  	mutex_lock(&devfreq_list_lock);
+> -	governor = try_then_request_governor(str_governor);
+> -	if (IS_ERR(governor)) {
+> -		ret = PTR_ERR(governor);
+> +	new_governor = try_then_request_governor(str_governor);
+> +	if (IS_ERR(new_governor)) {
+> +		ret = PTR_ERR(new_governor);
+>  		goto out;
+>  	}
+> -	if (df->governor == governor) {
+> +	if (prev_governor == new_governor) {
+>  		ret = 0;
+>  		goto out;
+> -	} else if (IS_SUPPORTED_FLAG(df->governor->flags, IMMUTABLE)
+> -		|| IS_SUPPORTED_FLAG(governor->flags, IMMUTABLE)) {
+> +	} else if (IS_SUPPORTED_FLAG(prev_governor->flags, IMMUTABLE)
+> +		|| IS_SUPPORTED_FLAG(new_governor->flags, IMMUTABLE)) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+>  
+> -	ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
+> +	/*
+> +	 * Stop the previous governor and remove the specific sysfs files
+> +	 * which depend on previous governor.
+> +	 */
+> +	ret = prev_governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
+>  	if (ret) {
+>  		dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
+> -			 __func__, df->governor->name, ret);
+> +			 __func__, prev_governor->name, ret);
+>  		goto out;
+>  	}
+>  
+> -	prev_governor = df->governor;
+> -	df->governor = governor;
+> -	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
+> -	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
+> +	remove_sysfs_files(df, prev_governor);
+> +
+> +	/*
+> +	 * Start the new governor and create the specific sysfs files
+> +	 * which depend on new governor.
+> +	 */
+> +	strncpy(df->governor_name, new_governor->name, DEVFREQ_NAME_LEN);
+> +	ret = new_governor->event_handler(df, DEVFREQ_GOV_START, NULL);
+
+The "df->governor = new_governor" needs to be set before invocation of
+the event_handler(GOV_START) because governors like a
+performance-governor need to have the df->governor being set before the
+GOV_START callback, otherwise performance governor will use
+devfreq->prev_governor->get_target_freq() in devfreq_update_target(),
+thus setting a wrong (non-max) freq.
+
+>  	if (ret) {
+>  		dev_warn(dev, "%s: Governor %s not started(%d)\n",
+> -			 __func__, df->governor->name, ret);
+> -		df->governor = prev_governor;
+> +			 __func__, new_governor->name, ret);
+>  		strncpy(df->governor_name, prev_governor->name,
+>  			DEVFREQ_NAME_LEN);
+> -		ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
+
+Same here.
