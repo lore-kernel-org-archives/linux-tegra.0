@@ -2,62 +2,63 @@ Return-Path: <SRS0=lnQj=EA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D263C4363A
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627AAC5DF9D
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC339222D9
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D164222C2
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:17:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqrBJE7i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObYcZgUx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419180AbgJYWRv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:17:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34968 "EHLO
+        id S1419201AbgJYWR4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:17:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419143AbgJYWRu (ORCPT
+        with ESMTP id S1419190AbgJYWRy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:17:50 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344F2C061755;
-        Sun, 25 Oct 2020 15:17:50 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id l28so9411327lfp.10;
-        Sun, 25 Oct 2020 15:17:50 -0700 (PDT)
+        Sun, 25 Oct 2020 18:17:54 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C36E8C0613D0;
+        Sun, 25 Oct 2020 15:17:53 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id l28so9411408lfp.10;
+        Sun, 25 Oct 2020 15:17:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lS31qqXjb2nZNMfqmorVKbOrq/mtt3uPoJRjR59Ynbg=;
-        b=FqrBJE7iHMH6ooAcFQ6eNTa5IqjGgCRuhBBffEGVIgYhsvRoakNcsLFVISTaKRaJpc
-         zIrsqjrq7CS30eXUq66XR1cUjk/bp9btwY55Zn3qYCr5Zru/BhWnZxOv+ESk3ACDBJqm
-         4qF0t34EYl9JaqAmHv0PHP0GGK5g3eQZMdg5GomqppTWj9Q/TNJCV5zl32//YU6oVqxF
-         BLlSGAZ0DBfE+qx4yADs9ViLgZaZ9wWs6YyIBF/6MVVMkiruvFL1AGeLP/KottT9jpNb
-         8PkSLc2fo5wv7yTLZHksWsmiQezLmjz9UTsZHJbLl/+8+/9gjR4YdM+Fjsxl1aiO8ohC
-         crsA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=g/a3gv2AYUyxirfwrA7rzcTGHo2Zy7KgU1OVTj3xJww=;
+        b=ObYcZgUx+SaP7LqHDAeEz2WRgz82BIoMe3e6Wy0p5n0geMQ8hPcVndGrFEpIFBaDl8
+         DcS4JDNyy0GkN/f8wuZOa4COaTBYdmLeGomolgAPoUpN9Rr+Rpc4ERtZts5ZAdJKXg+v
+         RpJtEtB9KAJMANMZYEpEUh5tbALJE3iQc4Y6l0CBpinPo+kqynxajGLn+H4VGEGDO2NC
+         e2wAsYFKDhjgtAUCkF7eLtPZarSFb/fLj4eyLP+i0+d9VdRvHFFoGLL7jIhnF0KO/unY
+         Nl91rWDlLeup58a5iD8/RDkPq7Z+Zrbt6NDF0WBdt5VcTgDEYkaThRKYh6v/QhfX5el6
+         x1TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lS31qqXjb2nZNMfqmorVKbOrq/mtt3uPoJRjR59Ynbg=;
-        b=B8MqRDLgr2D8sv1xzopOUEMbhK5zo83Klqe9852z/33RxAk1PXSCI++CF0kG7DrNZw
-         cjwCtDZ7X+ElPNsH9xTTHBQpxxztCsGiizrympADBbitbZxqPrC5uxZ0lHdUlXfSTAXR
-         Ai1hnh+JOmjaVeOVPbH3pOu+c9tEBCXaAeVc3fxj1XsIDo5I9Xc1tLLVJVKnCwk5KYnB
-         ani6MRySH6YyGG3QjDgjXEnc2YmLRAsWyZECG7iIveQ51a5HOHuKZehZI3HZBM8NeZ6Q
-         lwEKWnBXf5UBkLJAIZe/4G2pl/ne99+3XPuYpANXVsOTwMcNBZWJ2jrXWZZQbJvEw2EB
-         oF5A==
-X-Gm-Message-State: AOAM533Kp/Iiwgijrfv6QECSuV826c/jFnMgBEm3620HWZ7VM6A6Kenu
-        Wlnp1SEmR4RXa2RleAMzpn0=
-X-Google-Smtp-Source: ABdhPJyoum9/8vjz3AMEGaeRQfpM3ifxVNWuDQSt4eFHVVUNlJaXmct21ZPdSztWbjRpzkZpi84I5g==
-X-Received: by 2002:a19:64b:: with SMTP id 72mr3954478lfg.47.1603664268545;
-        Sun, 25 Oct 2020 15:17:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g/a3gv2AYUyxirfwrA7rzcTGHo2Zy7KgU1OVTj3xJww=;
+        b=bpKwSGhgXpvMWE2HPTJCwcfzfoWsy8EMesJS2i03fDiuBa/OTRgLxCLB6+O6/EQkbl
+         M8eRNf6813lecOe0g47xYMSWXrGjssv5mh0mjico/4/Iwiy+VD6keO6qhMaqqx0o1jCT
+         tIvya7kVnhsITg0I75TebsdNSCUJTI0bg91YLJSRFOtLdni2yTPuhrLKhdUa+7z4mbGB
+         tY1RVeuy7LNEvXuMr5ntokwaHoBNJwlPBqIMSmvA6xqIoYqiB+MlDc4OPB+FrIFzOJKT
+         WNGK+BkHTLByZ6mJG2RlvGYyOKNynpfsVbP+DYIK+eRWIKuo0TOD036FlUBRTHxqkCTB
+         Z90Q==
+X-Gm-Message-State: AOAM533/laX2luIIbT2HBDrUXlFl64gy8/P+aBXDpCcDUgMcOzvL+BOI
+        V590ssdxhRbjwR7LrsIpp28=
+X-Google-Smtp-Source: ABdhPJzkAQEflxUEUyIu+FDg08TzL0+YPQxbPHKvkiy04QyTo2AhWvcREt2iDMcDPG+nPZJAgQ96xA==
+X-Received: by 2002:a19:8c07:: with SMTP id o7mr3834013lfd.525.1603664272272;
+        Sun, 25 Oct 2020 15:17:52 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.17.47
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:17:47 -0700 (PDT)
+        Sun, 25 Oct 2020 15:17:51 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,350 +78,39 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 00/52] Introduce memory interconnect for NVIDIA Tegra SoCs
-Date:   Mon, 26 Oct 2020 01:16:43 +0300
-Message-Id: <20201025221735.3062-1-digetx@gmail.com>
+Subject: [PATCH v6 03/52] dt-bindings: memory: tegra20: emc: Correct registers range in example
+Date:   Mon, 26 Oct 2020 01:16:46 +0300
+Message-Id: <20201025221735.3062-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
+References: <20201025221735.3062-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+There is superfluous zero in the registers base address and registers
+size should be twice bigger.
 
-This series brings initial support for memory interconnect to Tegra20,
-Tegra30 and Tegra124 SoCs.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../bindings/memory-controllers/nvidia,tegra20-emc.txt          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For the starter only display controllers and devfreq devices are getting
-interconnect API support, others could be supported later on. The display
-controllers have the biggest demand for interconnect API right now because
-dynamic memory frequency scaling can't be done safely without taking into
-account bandwidth requirement from the displays. In particular this series
-fixes distorted display output on T30 Ouya and T124 TK1 devices.
-
-Changelog:
-
-v6: - This series was massively reworked in comparison to v5, most of the
-      patches that previously got r-b need a new round of a review (!).
-
-    - Added missed clk-rounding to the set() callback of EMC ICC providers.
-      Now clk_set_min_rate() doesn't error out on rate overflow.
-
-    - Now peak bandwidth is properly taken into account by the set() callback
-      of EMC ICC providers.
-
-    - EMC runs at 2x of the DRAM bus only on Tegra20, this now taken in account
-      properly by the EMC ICC set() callbacks.
-
-    - ICC drivers use new icc_sync_state() and xlate_extended().
-
-    - ICC drivers support new TEGRA_MC_ICC_TAG_ISO for ICC paths, which
-      conveys to ICC driver that memory path uses isochronous transfers.
-
-    - Added support for memory latency scaling to Tegra30 ICC provider.
-      It's required for fixing display FIFO underflows on T30.
-
-    - Added basic interconnect support to Tegra124 drivers.
-
-    - Tegra20/30/124 EMC drivers now support voltage scaling using generic
-      OPP API.
-
-    - The display bandwidth management is reworked and improved. It now
-      supports both bandwidth and latency allocations. The nv-display is
-      now also taken into account properly, i.e. it's kept untouched.
-      The extra bandwidth reservation required for ISO clients is moved
-      from DC driver to the ICC drivers.
-
-    - Dropped patch that tuned T20 display controller memory client because
-      turned out that it kills ~30% of memory bandwidth. It should be possible
-      to support client tuning, but it's too complicated for now.
-
-    - Corrected display's cursor and winb-vfilter ICC clients.
-      The winb-vfilter was erroneously used in place of cursor's client
-      in device-trees.
-
-    - Added devm_tegra_get_memory_controller() and switched drivers to
-      use it.
-
-    - Device-tree OPP tables are now supported by memory and devfreq
-      drivers.
-
-    - Tegra20-devfeq driver is reworked and now uses EMC-stats instead
-      of IMC-stats (which are nearly identical modules) because previously
-      I failed to understand how EMC-stats work and succeeded this time,
-      thinking that it simply doesn't work. This removes a bit icky dependency
-      on using both EMC and MC drivers simultaneously by the devfreq driver.
-
-    - Tegra20-devfeq driver now is a sub-device of the EMC, it also now uses
-      interconnect API for driving memory bandwidth.
-
-    - Tegra30-devfreq got interconnect support.
-
-    - Devfreq patches now use dev_err_probe(), which was suggested by
-      Chanwoo Choi.
-
-    - Added acks from Chanwoo Choi and Rob Herring to the reviewed and
-      unchanged patches.
-
-    - Added tested-by from Peter Geis and Nicolas Chauvet, who tested this
-      series on Ouya and TK1 devices, reporting that it fixes display
-      corruption on these devices which happened due to insufficient memory
-      bandwidth.
-
-    - Added patches to fix T20 EMC registers size.
-
-    - Fixed missing LA entry for PTC in the Tegra MC drivers.
-
-    - New and updated patches in v6:
-
-        dt-bindings: memory: tegra20: emc: Correct registers range in example
-        dt-bindings: memory: tegra20: emc: Document nvidia,memory-controller property
-        dt-bindings: memory: tegra20: emc: Document OPP table and voltage regulator
-        dt-bindings: memory: tegra20: emc: Document mfd-simple compatible and statistics sub-device
-        dt-bindings: memory: tegra30: emc: Document OPP table and voltage regulator
-        dt-bindings: memory: tegra124: mc: Document new interconnect property
-        dt-bindings: memory: tegra124: emc: Document new interconnect property
-        dt-bindings: memory: tegra124: emc: Document OPP table and voltage regulator
-        dt-bindings: tegra30-actmon: Document OPP and interconnect properties
-        dt-bindings: memory: tegra124: Add memory client IDs
-        ARM: tegra: Correct EMC registers size in Tegra20 device-tree
-        ARM: tegra: Add interconnect properties to Tegra124 device-tree
-        ARM: tegra: Add nvidia,memory-controller phandle to Tegra20 EMC device-tree
-        ARM: tegra: Add DVFS properties to Tegra20 EMC device-tree node
-        ARM: tegra: Add DVFS properties to Tegra30 EMC and ACTMON device-tree nodes
-        ARM: tegra: Add DVFS properties to Tegra124 EMC and ACTMON device-tree nodes
-        memory: tegra: Add and use devm_tegra_get_memory_controller()
-        memory: tegra-mc: Add interconnect framework
-        memory: tegra20: Support interconnect framework
-        memory: tegra20-emc: Skip parsing of emc-stats DT sub-node
-        memory: tegra: Add missing latency allowness entry for Page Table Cache
-        memory: tegra: Add FIFO sizes to Tegra30 memory clients
-        memory: tegra30: Support interconnect framework
-        memory: tegra124-emc: Make driver modular
-        memory: tegra124: Support interconnect framework
-        memory: tegra: Remove superfluous error messages around platform_get_irq()
-        drm/tegra: dc: Support memory bandwidth management
-        drm/tegra: dc: Extend debug stats with total number of events
-        PM / devfreq: tegra20: Convert to EMC_STAT driver, support interconnect and device-tree
-        PM / devfreq: tegra30: Support interconnect and OPPs from device-tree
-        PM / devfreq: tegra30: Separate configurations per-SoC generation
-        opp: Put interconnect paths outside of opp_table_lock
-
-v5: - The devfreq drivers now won't probe if memory timings aren't specified
-      in a device-tree, like was suggested by Chanwoo Choi in a review comment
-      to v4. Initially I wanted to always probe the driver even with a single
-      fixed memory freq, but after a closer look turned out it can't be done
-      easily for Tegra20 driver.
-
-    - The "interconnect: Relax requirement in of_icc_get_from_provider()"
-      patch was already applied, hence one less patch in comparison to v4.
-
-    - Renamed display interconnect paths in accordance to the names that
-      were used by Thierry Reding in one of his recent patches that supposed
-      to update the Host1x's DT binding.
-
-    - Added acks from Chanwoo Choi.
-
-    - Added clarifying comment to tegra_mc_icc_set() about why it's a dummy
-      function, this is done in a response to the review comment made by
-      Georgi Djakov to v4.
-
-v4: - All drivers that use interconnect API now select it in the Kconfig in
-      order to properly express the build dependency.
-
-    - The IS_ENABLED(CONFIG_INTERCONNECT) is dropped now from all patches.
-
-    - Added MODULE_AUTHOR() to the modularized drivers, for completeness.
-
-    - Added missed TEGRA_MC Kconfig dependency for the Tegra20 EMC driver.
-
-    - Added more acks from Rob Herring that I accidentally missed to add in v3.
-
-v3: - Added acks from Rob Herring that were given to some of the v2 patches.
-
-    - Specified name of the TRM documentation chapter in the patch
-      "dt-bindings: host1x: Document new interconnect properties", which was
-      suggested by Rob Herring in the review comment to v2.
-
-    - Added patches that allow EMC drivers to be compiled as a loadable kernel
-      modules. This came up during of the v2 review when Georgi Djakov pointed
-      out that interconnect-core could be compiled as a kernel module. Please
-      note that the Tegra124 EMC driver is compile-tested only, I don't have
-      Tegra124 HW.
-
-    - In the review comment to [1] Stephen Boyd suggested that it will be
-      better not to make changes to clk API, which was needed in order to
-      avoid clashing of the interconnect driver with the devfreq in regards
-      to memory clk-rate rounding.
-
-      [1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20200330231617.17079-3-digetx@gmail.com/
-
-      Stephen Boyd suggested that instead we should provide OPP table via DT.
-      I tried to investigate whether this could be done and turned out
-      it's a bit complicated. Technically it should be doable, but:
-
-        1. For now we don't fully support voltage scaling of the CORE regulator
-           and so OPP table in the DT isn't really needed today. We can
-           generate table from the memory timings, which is what Tegra devfreq
-           drivers already do.
-
-        2. The OPP table should be defined in the DT for the Memory Controller
-           node and then its usage somehow should be shared by both interconnect
-           and devfreq drivers. It's not obvious what's the best way to do it.
-
-      So, it will be much better to postpone the DT OPP table addition
-      until these questions are resolved. We can infer OPPs from the
-      memory timings and we could get the memory rates from the memory
-      driver directly, avoiding the problems induced by the clk API usage.
-      This idea is implemented in v3, see these patches:
-
-        PM / devfreq: tegra20: Use MC timings for building OPP table
-        PM / devfreq: tegra30: Use MC timings for building OPP table
-
-v2: - Instead of a single dma-mem interconnect path, the paths are now
-      defined per memory client.
-
-    - The EMC provider now uses #interconnect-cells=<0>.
-
-    - Dropped Tegra124 because there is no enough information about how to
-      properly calculate required EMC clock rate for it and I don't have
-      hardware for testing. Somebody else will have to work on it.
-
-    - Moved interconnect providers code into drivers/memory/tegra/*.
-
-    - Added "Create tegra20-devfreq device" patch because interconnect
-      is not very usable without the devfreq memory auto-scaling since
-      memory freq will be fixed to the display's requirement.
-
-Dmitry Osipenko (52):
-  clk: tegra: Export Tegra20 EMC kernel symbols
-  soc/tegra: fuse: Export tegra_read_ram_code()
-  dt-bindings: memory: tegra20: emc: Correct registers range in example
-  dt-bindings: memory: tegra20: emc: Document nvidia,memory-controller
-    property
-  dt-bindings: memory: tegra20: mc: Document new interconnect property
-  dt-bindings: memory: tegra20: emc: Document new interconnect property
-  dt-bindings: memory: tegra20: emc: Document OPP table and voltage
-    regulator
-  dt-bindings: memory: tegra20: emc: Document mfd-simple compatible and
-    statistics sub-device
-  dt-bindings: memory: tegra30: mc: Document new interconnect property
-  dt-bindings: memory: tegra30: emc: Document new interconnect property
-  dt-bindings: memory: tegra30: emc: Document OPP table and voltage
-    regulator
-  dt-bindings: memory: tegra124: mc: Document new interconnect property
-  dt-bindings: memory: tegra124: emc: Document new interconnect property
-  dt-bindings: memory: tegra124: emc: Document OPP table and voltage
-    regulator
-  dt-bindings: tegra30-actmon: Document OPP and interconnect properties
-  dt-bindings: host1x: Document new interconnect properties
-  dt-bindings: memory: tegra20: Add memory client IDs
-  dt-bindings: memory: tegra30: Add memory client IDs
-  dt-bindings: memory: tegra124: Add memory client IDs
-  ARM: tegra: Correct EMC registers size in Tegra20 device-tree
-  ARM: tegra: Add interconnect properties to Tegra20 device-tree
-  ARM: tegra: Add interconnect properties to Tegra30 device-tree
-  ARM: tegra: Add interconnect properties to Tegra124 device-tree
-  ARM: tegra: Add nvidia,memory-controller phandle to Tegra20 EMC
-    device-tree
-  ARM: tegra: Add DVFS properties to Tegra20 EMC device-tree node
-  ARM: tegra: Add DVFS properties to Tegra30 EMC and ACTMON device-tree
-    nodes
-  ARM: tegra: Add DVFS properties to Tegra124 EMC and ACTMON device-tree
-    nodes
-  memory: tegra: Add and use devm_tegra_get_memory_controller()
-  memory: tegra-mc: Add interconnect framework
-  memory: tegra20-emc: Make driver modular
-  memory: tegra20-emc: Use devm_platform_ioremap_resource()
-  memory: tegra20-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra20: Support interconnect framework
-  memory: tegra20-emc: Don't parse emc-stats node
-  memory: tegra: Add missing latency allowness entry for Page Table
-    Cache
-  memory: tegra: Add FIFO sizes to Tegra30 memory clients
-  memory: tegra30-emc: Make driver modular
-  memory: tegra30-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra30: Support interconnect framework
-  memory: tegra124-emc: Make driver modular
-  memory: tegra124-emc: Use devm_platform_ioremap_resource()
-  memory: tegra124: Support interconnect framework
-  memory: tegra: Remove superfluous error messages around
-    platform_get_irq()
-  drm/tegra: dc: Support memory bandwidth management
-  drm/tegra: dc: Extend debug stats with total number of events
-  opp: Put interconnect paths outside of opp_table_lock
-  PM / devfreq: tegra20: Silence deferred probe error
-  PM / devfreq: tegra20: Relax Kconfig dependency
-  PM / devfreq: tegra20: Convert to EMC_STAT driver, support
-    interconnect and device-tree
-  PM / devfreq: tegra30: Silence deferred probe error
-  PM / devfreq: tegra30: Support interconnect and OPPs from device-tree
-  PM / devfreq: tegra30: Separate configurations per-SoC generation
-
- .../arm/tegra/nvidia,tegra30-actmon.txt       |  25 ++
- .../display/tegra/nvidia,tegra20-host1x.txt   |  68 +++
- .../nvidia,tegra124-emc.yaml                  |  18 +
- .../nvidia,tegra124-mc.yaml                   |   5 +
- .../memory-controllers/nvidia,tegra20-emc.txt |  63 ++-
- .../memory-controllers/nvidia,tegra20-mc.txt  |   3 +
- .../nvidia,tegra30-emc.yaml                   |  18 +
- .../memory-controllers/nvidia,tegra30-mc.yaml |   5 +
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |   8 +
- .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |   8 +
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  |  10 +
- .../boot/dts/tegra124-peripherals-opp.dtsi    | 419 ++++++++++++++++++
- arch/arm/boot/dts/tegra124.dtsi               |  31 ++
- .../boot/dts/tegra20-acer-a500-picasso.dts    |  12 +
- arch/arm/boot/dts/tegra20-colibri.dtsi        |   8 +
- arch/arm/boot/dts/tegra20-paz00.dts           |  10 +
- .../arm/boot/dts/tegra20-peripherals-opp.dtsi | 181 ++++++++
- arch/arm/boot/dts/tegra20.dtsi                |  42 +-
- .../tegra30-asus-nexus7-grouper-common.dtsi   |  16 +
- .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 383 ++++++++++++++++
- arch/arm/boot/dts/tegra30.dtsi                |  33 +-
- drivers/clk/tegra/Makefile                    |   2 +-
- drivers/clk/tegra/clk-tegra124-emc.c          |  41 +-
- drivers/clk/tegra/clk-tegra124.c              |  27 +-
- drivers/clk/tegra/clk-tegra20-emc.c           |   3 +
- drivers/clk/tegra/clk.h                       |  16 +-
- drivers/devfreq/Kconfig                       |   3 +-
- drivers/devfreq/tegra20-devfreq.c             | 186 ++++----
- drivers/devfreq/tegra30-devfreq.c             | 166 ++++---
- drivers/gpu/drm/tegra/Kconfig                 |   1 +
- drivers/gpu/drm/tegra/dc.c                    | 340 ++++++++++++++
- drivers/gpu/drm/tegra/dc.h                    |  11 +
- drivers/gpu/drm/tegra/drm.c                   |  14 +
- drivers/gpu/drm/tegra/hub.c                   |   3 +
- drivers/gpu/drm/tegra/plane.c                 | 122 +++++
- drivers/gpu/drm/tegra/plane.h                 |  15 +
- drivers/memory/tegra/Kconfig                  |  12 +-
- drivers/memory/tegra/mc.c                     | 184 +++++++-
- drivers/memory/tegra/mc.h                     |  20 +
- drivers/memory/tegra/tegra114.c               |   6 +
- drivers/memory/tegra/tegra124-emc.c           | 235 ++++++++--
- drivers/memory/tegra/tegra124.c               |  37 ++
- drivers/memory/tegra/tegra20-emc.c            | 244 ++++++++--
- drivers/memory/tegra/tegra20.c                |  34 ++
- drivers/memory/tegra/tegra210-emc-core.c      |  39 +-
- drivers/memory/tegra/tegra30-emc.c            | 245 ++++++++--
- drivers/memory/tegra/tegra30.c                | 191 ++++++++
- drivers/opp/core.c                            |  21 +-
- drivers/soc/tegra/fuse/tegra-apbmisc.c        |   2 +
- include/dt-bindings/memory/tegra124-mc.h      |  68 +++
- include/dt-bindings/memory/tegra20-mc.h       |  53 +++
- include/dt-bindings/memory/tegra30-mc.h       |  67 +++
- include/linux/clk/tegra.h                     |   9 +
- include/soc/tegra/emc.h                       |  16 -
- include/soc/tegra/mc.h                        |  26 ++
- 55 files changed, 3477 insertions(+), 348 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra124-peripherals-opp.dtsi
- create mode 100644 arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
- create mode 100644 arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
- delete mode 100644 include/soc/tegra/emc.h
-
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+index add95367640b..567cffd37f3f 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+@@ -21,7 +21,7 @@ Example:
+ 		#address-cells = < 1 >;
+ 		#size-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+-		reg = <0x7000f4000 0x200>;
++		reg = <0x7000f400 0x400>;
+ 		interrupts = <0 78 0x04>;
+ 		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+ 	}
 -- 
 2.27.0
 
