@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF31CC5DF9D
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E922C56201
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 919902231B
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4905522403
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oWfNh0Tn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV/1WFw0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419646AbgJYWUg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35114 "EHLO
+        id S1419370AbgJYWSq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:18:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419315AbgJYWSZ (ORCPT
+        with ESMTP id S1419360AbgJYWSl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:18:25 -0400
+        Sun, 25 Oct 2020 18:18:41 -0400
 Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42721C061755;
-        Sun, 25 Oct 2020 15:18:25 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id l2so9444268lfk.0;
-        Sun, 25 Oct 2020 15:18:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D118C061755;
+        Sun, 25 Oct 2020 15:18:41 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id 77so9432676lfl.2;
+        Sun, 25 Oct 2020 15:18:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SK4mi4uPijedwapHTvsgA4XRJA8rJ81UCcUw/rkRDT0=;
-        b=oWfNh0TnVrlfrER/pSC3S0HngwdJVUEVprw9AJ7ZTjeAZ4ypifGCr4JaLsmtQ5rSMp
-         NP2b/L/QmJ4SJPoiyPPs4DCI2LbdQHK8dn8PJVu8En/xcHBefZK7xnybpEUpsuzWBBPT
-         MJKyawREcvZXsS1o4FGhn7fDCy/pHkvVZ6pZN79murFKRQNNnKfHFsxXc3goXo0cUmwj
-         PqeBM/Q1YtMJXkpMbhJtGTh84uc1Lcq6X8Pu6X3AnwE3zpotj47mq3f6OpQIcI0H1o7e
-         E1xna5MFtAxyiF7tcyKEKEwbo7wYC7EdqpRe7DBZCfjoI56hxcaY6Y7rXrX8Dgp7ugEz
-         slyA==
+        bh=zjxBYYYDofDB9Xc2U/Srp0mvRhO4gkuJUBQqpWNNoV0=;
+        b=YV/1WFw0xY3isTwdScb3k2pex3Dai3xJdtff9FJqsRfSyKVdWHHs5DCXBfBgTpqldg
+         l4M4l39dmFECPUYA8K7mZbJJ9/dyLPqq81DL+nT1fAi3XuOYLgs75rpFJlw55Pz5Voyu
+         PqgjSMwWydryrom39MPZ3Opv96Y7IZPOp1k/+RuMn/FzvGvbyf4Cz65SKxu4cksxu7Mv
+         vYKDyyCF2dkUVBepQ6QBdISdwIO60wB6J/4Z0h9tH4RHnflO0s4EkyNE1XrFCVZGers+
+         qV0ypNS/sZp0b+/u1UFVx3YqsmStUaDMW8Sdemm34XE/gPL+FZltNkipyVVKTWOoH/Mk
+         ydZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SK4mi4uPijedwapHTvsgA4XRJA8rJ81UCcUw/rkRDT0=;
-        b=UErpNv1lDQuS2XJ0MN9kWlN739YCp8uwH4u94tF4CNwOvq70dlMR0hgCOEED3CVdz6
-         hkY+mwCV5RrMhSDENLtLwYoZr8SsPT55klRqwhRzx7F4RzeiITlw8odIXXl0IiD5RqKM
-         6iiGe98JNuv+7mi5oxC0quma+VmX7G6bn5eR5TSRgQqBnpQRWXQdsuBufbRdi7FUHzrh
-         2KK+O9kX48yZzMnVC/fiEw37BvoFIyjFRRpypy42ncFy7jxA0tRJaDYrrVRayzUiXTN3
-         lCqH/RBqujF+8XV6IbAgFBBPtyBrtgMKJTxE3omfHWWi3/G4Ct0upQc9Pak42hu/Ibsw
-         i/6Q==
-X-Gm-Message-State: AOAM531Z23vx+r1l9HqBh+Y83yfmuX+mW5X1VWe2vVitqlGVMQdQf1IR
-        NI2cbt1lWtWEXDzG5CRdqkqyfMqLbnI=
-X-Google-Smtp-Source: ABdhPJz8J+3PAUyWg+GX6iBLvZsb4KMZxRBUq+g7QPwhtNzgE5vfBxmo9k+d9RHakO69bfv4wqvYXA==
-X-Received: by 2002:ac2:47f3:: with SMTP id b19mr4296256lfp.192.1603664303791;
-        Sun, 25 Oct 2020 15:18:23 -0700 (PDT)
+        bh=zjxBYYYDofDB9Xc2U/Srp0mvRhO4gkuJUBQqpWNNoV0=;
+        b=nihlK0ylkfLdKNei2M9qZ+/XxOXuFyXHX47U9jI8VKN2kEX+m6UMFZIQWUyHWzNuEL
+         fptfOWZVcGNYsgMNStvSohoiU8en4nDRa4/7KHJv21IDmcrTG2yvjUK1fN28wCK1Y8qx
+         oxAwwUuXCfkppFKNoSsVd2wZBdKd9ghni/458FNE4nl27LBNPBsIgkIS+PmanUN/XXwv
+         +Bzs+Z/u2sRfnc3vN1vQHtKG6jJjFQnl/YhsgFursxU5AiKEcGvQ9Z/G/ejIQ41C5fMt
+         fGtF9zLs4ZNHD3nCLTLWj1QfdfFN0L79Jjx+9wbdQXWSnOWKmGQw/LzMiFZ9ubXXuwFI
+         Tmuw==
+X-Gm-Message-State: AOAM533a5vxpOA/S50tdxSzyHJ6LSJMEAPSnoEEe9HhHzDt0ZTvaBabX
+        R51Se2GHmUcEcz2AlSFwzIM=
+X-Google-Smtp-Source: ABdhPJwBd34BXTnyHpkHGOlFfGgghnvgLQ4l+3P5+e3cLu4M9Ce5jOuxIhq1ehyjQz2mLjcLOIJ2mA==
+X-Received: by 2002:a05:6512:301:: with SMTP id t1mr3615749lfp.232.1603664319577;
+        Sun, 25 Oct 2020 15:18:39 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.22
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:18:23 -0700 (PDT)
+        Sun, 25 Oct 2020 15:18:39 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 31/52] memory: tegra20-emc: Use devm_platform_ioremap_resource()
-Date:   Mon, 26 Oct 2020 01:17:14 +0300
-Message-Id: <20201025221735.3062-32-digetx@gmail.com>
+Subject: [PATCH v6 45/52] drm/tegra: dc: Extend debug stats with total number of events
+Date:   Mon, 26 Oct 2020 01:17:28 +0300
+Message-Id: <20201025221735.3062-46-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
 References: <20201025221735.3062-1-digetx@gmail.com>
@@ -90,36 +90,88 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use devm_platform_ioremap_resource() helper which makes code a bit
-cleaner.
+It's useful to know the total number of underflow events and currently
+the debug stats are getting reset each time CRTC is being disabled. Let's
+account the overall number of events that doesn't get a reset.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/tegra/dc.c | 10 ++++++++++
+ drivers/gpu/drm/tegra/dc.h |  5 +++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 0baa6590adea..ce22ca7cfb77 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -654,7 +654,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
- 	struct tegra_emc *emc;
--	struct resource *res;
- 	int irq, err;
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 986e7a0dde2a..f50a42170977 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1539,6 +1539,11 @@ static int tegra_dc_show_stats(struct seq_file *s, void *data)
+ 	seq_printf(s, "underflow: %lu\n", dc->stats.underflow);
+ 	seq_printf(s, "overflow: %lu\n", dc->stats.overflow);
  
- 	/* driver has nothing to do in a case of memory timing absence */
-@@ -689,8 +688,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
++	seq_printf(s, "frames total: %lu\n", dc->stats.frames_total);
++	seq_printf(s, "vblank total: %lu\n", dc->stats.vblank_total);
++	seq_printf(s, "underflow total: %lu\n", dc->stats.underflow_total);
++	seq_printf(s, "overflow total: %lu\n", dc->stats.overflow_total);
++
+ 	return 0;
+ }
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	emc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(emc->regs))
- 		return PTR_ERR(emc->regs);
+@@ -2289,6 +2294,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+ 		/*
+ 		dev_dbg(dc->dev, "%s(): frame end\n", __func__);
+ 		*/
++		dc->stats.frames_total++;
+ 		dc->stats.frames++;
+ 	}
  
+@@ -2297,6 +2303,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+ 		dev_dbg(dc->dev, "%s(): vertical blank\n", __func__);
+ 		*/
+ 		drm_crtc_handle_vblank(&dc->base);
++		dc->stats.vblank_total++;
+ 		dc->stats.vblank++;
+ 	}
+ 
+@@ -2304,6 +2311,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+ 		/*
+ 		dev_dbg(dc->dev, "%s(): underflow\n", __func__);
+ 		*/
++		dc->stats.underflow_total++;
+ 		dc->stats.underflow++;
+ 	}
+ 
+@@ -2311,11 +2319,13 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
+ 		/*
+ 		dev_dbg(dc->dev, "%s(): overflow\n", __func__);
+ 		*/
++		dc->stats.overflow_total++;
+ 		dc->stats.overflow++;
+ 	}
+ 
+ 	if (status & HEAD_UF_INT) {
+ 		dev_dbg_ratelimited(dc->dev, "%s(): head underflow\n", __func__);
++		dc->stats.underflow_total++;
+ 		dc->stats.underflow++;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 8fade75caef9..e3fc48f8154a 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -40,6 +40,11 @@ struct tegra_dc_stats {
+ 	unsigned long vblank;
+ 	unsigned long underflow;
+ 	unsigned long overflow;
++
++	unsigned long frames_total;
++	unsigned long vblank_total;
++	unsigned long underflow_total;
++	unsigned long overflow_total;
+ };
+ 
+ struct tegra_windowgroup_soc {
 -- 
 2.27.0
 
