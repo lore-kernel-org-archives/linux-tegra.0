@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D7DC4363A
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D3EC4363A
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04DDC222E8
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B132F222D9
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEa4Ok+E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFsKgExK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419356AbgJYWSk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:18:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35168 "EHLO
+        id S1419387AbgJYWSv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:18:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419352AbgJYWSi (ORCPT
+        with ESMTP id S1419381AbgJYWSt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:18:38 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D39C0613D1;
-        Sun, 25 Oct 2020 15:18:37 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id a7so9394055lfk.9;
-        Sun, 25 Oct 2020 15:18:37 -0700 (PDT)
+        Sun, 25 Oct 2020 18:18:49 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CF1C0613CE;
+        Sun, 25 Oct 2020 15:18:48 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id h6so9405583lfj.3;
+        Sun, 25 Oct 2020 15:18:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3EhKDbYBl/W4vyGmACGVXwv0qO3ebzMX67r/csDaZQQ=;
-        b=ZEa4Ok+Eeh6O6h2WWjVtO+4i/6CJbdyLlhAShpAGNDMJNPKyo/Jgi0YhuPb5q/LSYU
-         tQfB517FYY+lIGgC5tDB8uXehydg02cF2ffsVnAjjrSpJQ9ImeWRJl2yb7vWAHz1cBLw
-         av3px2uI8/ZgwvNvIxKwNB6Ptje1Sf75j+gzjtFsissqE11Rv5dWiriEP1+wP9AelSIQ
-         HGaQMOZ7ODYiJhTprotufZaUU43jtbP39/Pu7DzA6wd3ANym85+6ysP4WiEAjJkQgoog
-         F7tfT8PkMtCSjBljVbbh7lH9oocwThSqcPwQQCuOYQv3n/IrylMzepJrMkJn34HEaQjo
-         z8Ug==
+        bh=LdiZrrGK3XSDuaDqdvEn5sNXECSyQyzuvaJBQ5a6gpI=;
+        b=BFsKgExK5mmiZk/T1b5Fphn/W8R05bQS1UGW3Zy/tybjtACTbxQ7HmPYEaIYLu9xTR
+         aEAcmNa1NOf6sD+OvMbYTD/Armlc+FP06Bp1xlg+djCb6zndAVwuJ7OIB9p7UdRxzFCM
+         eH4OvGnWdiLC2ZTWdxWst4UdEmJUgKQYBR6FgBB+GAupTsAkzzkClP2QYd2hNeN4qdwY
+         bcdrmdbbQnZNGStDApenM8mFa7Yys7MLZLQ+Yh7Wgcz2P13Qk4btUPizal/cMRUsHNep
+         nzcaI64mEtrCvov5tHBfmaWllGQGBmPT0jb4Dlr3CtJtLejjAoVDUceA1U1WRYB0gwTc
+         sUhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3EhKDbYBl/W4vyGmACGVXwv0qO3ebzMX67r/csDaZQQ=;
-        b=rJPMm32pH8bR7Lb8EusLSHRWbLb6NAjHPjSVyoFdTb48/6XChaddJwuJ2zQhGedkkq
-         Scrbsr24q08qDSK+RTy5Tf7TuUiAcg5cN7BeHZBWtAhWROIV+nkSa3EZ4sXWENA4mcu8
-         nHx61jm2MbN51TxA9Hks3cu2j9cswI5LVxfmvPDXxkPrv4UWNuBChJtyWSjf1ulGPtKr
-         iAol9uot5yb4mzIemb/EusgsBBnFQamU5czahUew9YT2EWqqnv5c3bAdts9eHC8GyLNx
-         iQiogOy/P8HdR1BMU3e0aMG4OW0FbbKmTwKuBDRWMDUA9DTplTye2LMmydBxBg21f6Ff
-         ZY4Q==
-X-Gm-Message-State: AOAM530OV75ciEt1J3ip7H28Rj4kY95keoaln2PVEZPuo6kIRsR5b6gn
-        ei0jBjqtoL8pFo/9IR76S8g=
-X-Google-Smtp-Source: ABdhPJwuR2DanyajcL3uVnJBhRnxV8Dit/JxgZTRGvekw4lWvdqctPwGyXhg1RFlWvu9MJBC1PgbNQ==
-X-Received: by 2002:ac2:550d:: with SMTP id j13mr3843419lfk.475.1603664316155;
-        Sun, 25 Oct 2020 15:18:36 -0700 (PDT)
+        bh=LdiZrrGK3XSDuaDqdvEn5sNXECSyQyzuvaJBQ5a6gpI=;
+        b=B7aCNvFhJh0468nu4b+5vwnhNBqt8+ZTNNZl/zg4YcgwzxffD2g0QvVQKNK5Vn7V5n
+         ADpn3u8FTgrLY9kHWL8FZT/QhNjq0/b1/jYgr+0CN3mEYZvwqslxay8vQjKGHsCaSaZL
+         zlvTBKzlqqabY2IrjYK+5xZzQCDWjB8Tx5tpPbPtoJFX/fkvzw28NIk87zsuONdJThvU
+         +73Xkgt0j/7S+vey6Jt2H+2gZjATjcaBKmkXpacPdTwPJbe4lplRQVE3DU96A2FYCFiG
+         TmFX21aLPacy6qV5kBThhHv7XhhwvyaHjEnikYSxt3+Q9jCFCIebH9N9d6fEw2PkhBLz
+         BIrw==
+X-Gm-Message-State: AOAM530mu+qQhPO4i6l+QEaw1OOyDFd79lpfTc5oONQVi9vYNL9FX8Vt
+        7WQfWEwe25zvVSW8R3hXUGk=
+X-Google-Smtp-Source: ABdhPJxMMlMxc3Ux1JgbgvNpd6rj5NUgdKbgQjR+tgIGJcQOq/Qc6TInPjjlzZ3yQt7ws6L+QDgEsA==
+X-Received: by 2002:a19:8c07:: with SMTP id o7mr3834632lfd.525.1603664327423;
+        Sun, 25 Oct 2020 15:18:47 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.35
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:18:35 -0700 (PDT)
+        Sun, 25 Oct 2020 15:18:47 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 42/52] memory: tegra124: Support interconnect framework
-Date:   Mon, 26 Oct 2020 01:17:25 +0300
-Message-Id: <20201025221735.3062-43-digetx@gmail.com>
+Subject: [PATCH v6 52/52] PM / devfreq: tegra30: Separate configurations per-SoC generation
+Date:   Mon, 26 Oct 2020 01:17:35 +0300
+Message-Id: <20201025221735.3062-53-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
 References: <20201025221735.3062-1-digetx@gmail.com>
@@ -90,334 +90,169 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Now Internal and External memory controllers are memory interconnection
-providers. This allows us to use interconnect API for tuning of memory
-configuration. EMC driver now supports OPPs and DVFS.
+Previously we were using count-weight of the T124 for T30 in order to
+get EMC clock rate that was reasonable for T30. In fact the count-weight
+should be x2 times smaller on T30, but then devfreq was producing a bit
+too low EMC clock rate for ISO memory clients, like display controller
+for example.
 
+Now both Tegra ACTMON and Tegra DRM display drivers support interconnect
+framework and display driver tells to ICC what a minimum memory bandwidth
+is needed, preventing FIFO underflows. Thus, now we can use a proper
+count-weight value for Tegra30 and MC_ALL device config needs a bit more
+aggressive boosting.
+
+This patch adds a separate ACTMON driver configuration that is specific
+to Tegra30.
+
+Tested-by: Peter Geis <pgwipeout@gmail.com>
 Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/Kconfig        |   1 +
- drivers/memory/tegra/tegra124-emc.c | 186 +++++++++++++++++++++++++++-
- drivers/memory/tegra/tegra124.c     |  31 +++++
- 3 files changed, 216 insertions(+), 2 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 68 ++++++++++++++++++++++++-------
+ 1 file changed, 54 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 94536dc4c495..3d1ef3ec1a2d 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -34,6 +34,7 @@ config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
- 	depends on TEGRA_MC && ARCH_TEGRA_124_SOC
-+	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
- 	  Tegra124 chips. The EMC controls the external DRAM on the board.
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 2814b1b4a1d9..bdce7bebe0ef 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -12,17 +12,21 @@
- #include <linux/clk/tegra.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-+#include <linux/interconnect-provider.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
- #include <linux/sort.h>
- #include <linux/string.h>
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 1b0b91a71886..95aba89eae88 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -57,13 +57,6 @@
+ #define ACTMON_BELOW_WMARK_WINDOW				3
+ #define ACTMON_BOOST_FREQ_STEP					16000
  
- #include <soc/tegra/fuse.h>
- #include <soc/tegra/mc.h>
- 
-+#include "mc.h"
-+
- #define EMC_FBIO_CFG5				0x104
- #define	EMC_FBIO_CFG5_DRAM_TYPE_MASK		0x3
- #define	EMC_FBIO_CFG5_DRAM_TYPE_SHIFT		0
-@@ -482,6 +486,9 @@ struct tegra_emc {
- 		unsigned long min_rate;
- 		unsigned long max_rate;
- 	} debugfs;
-+
-+	struct opp_table *opp_table;
-+	struct icc_provider provider;
- };
- 
- /* Timing change sequence functions */
-@@ -1177,6 +1184,169 @@ static void emc_debugfs_init(struct device *dev, struct tegra_emc *emc)
- 			    emc, &tegra_emc_debug_max_rate_fops);
- }
- 
-+static inline struct tegra_emc *
-+to_tegra_emc_provider(struct icc_provider *provider)
-+{
-+	return container_of(provider, struct tegra_emc, provider);
-+}
-+
-+static struct icc_node_data *
-+emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+{
-+	struct icc_provider *provider = data;
-+	struct icc_node_data *ndata;
-+	struct icc_node *node;
-+
-+	/* External Memory is the only possible ICC route */
-+	list_for_each_entry(node, &provider->nodes, node_list) {
-+		if (node->id != TEGRA_ICC_EMEM)
-+			continue;
-+
-+		ndata = kzalloc(sizeof(*ndata), GFP_KERNEL);
-+		if (!ndata)
-+			return ERR_PTR(-ENOMEM);
-+
-+		/*
-+		 * SRC and DST nodes should have matching TAG in order to have
-+		 * it set by default for a requested path.
-+		 */
-+		ndata->tag = TEGRA_MC_ICC_TAG_ISO;
-+		ndata->node = node;
-+
-+		return ndata;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct tegra_emc *emc = to_tegra_emc_provider(dst->provider);
-+	unsigned long long peak_bw = icc_units_to_bps(dst->peak_bw);
-+	unsigned long long avg_bw = icc_units_to_bps(dst->avg_bw);
-+	unsigned long long rate = max(avg_bw, peak_bw);
-+	unsigned int dram_data_bus_width_bytes = 8;
-+	unsigned int ddr = 2;
-+	int err;
-+
-+	/*
-+	 * Tegra124 EMC runs on a clock rate of SDRAM bus. This means that
-+	 * EMC clock rate is twice smaller than the peak data rate because
-+	 * data is sample on both EMC clock edges.
-+	 */
-+	do_div(rate, ddr * dram_data_bus_width_bytes);
-+	rate = min_t(u64, rate, U32_MAX);
-+
-+	err = dev_pm_opp_set_rate(emc->dev, rate);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_interconnect_init(struct tegra_emc *emc)
-+{
-+	const struct tegra_mc_soc *soc = emc->mc->soc;
-+	struct icc_node *node;
-+	int err;
-+
-+	emc->provider.dev = emc->dev;
-+	emc->provider.set = emc_icc_set;
-+	emc->provider.data = &emc->provider;
-+	emc->provider.aggregate = soc->icc_ops->aggregate;
-+	emc->provider.xlate_extended = emc_of_icc_xlate_extended;
-+
-+	err = icc_provider_add(&emc->provider);
-+	if (err)
-+		goto err_msg;
-+
-+	/* create External Memory Controller node */
-+	node = icc_node_create(TEGRA_ICC_EMC);
-+	err = PTR_ERR_OR_ZERO(node);
-+	if (err)
-+		goto del_provider;
-+
-+	node->name = "External Memory Controller";
-+	icc_node_add(node, &emc->provider);
-+
-+	/* link External Memory Controller to External Memory (DRAM) */
-+	err = icc_link_create(node, TEGRA_ICC_EMEM);
-+	if (err)
-+		goto remove_nodes;
-+
-+	/* create External Memory node */
-+	node = icc_node_create(TEGRA_ICC_EMEM);
-+	err = PTR_ERR_OR_ZERO(node);
-+	if (err)
-+		goto remove_nodes;
-+
-+	node->name = "External Memory (DRAM)";
-+	icc_node_add(node, &emc->provider);
-+
-+	return 0;
-+
-+remove_nodes:
-+	icc_nodes_remove(&emc->provider);
-+del_provider:
-+	icc_provider_del(&emc->provider);
-+err_msg:
-+	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
-+
-+	return err;
-+}
-+
-+static int tegra_emc_opp_table_init(struct tegra_emc *emc)
-+{
-+	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
-+	struct opp_table *opp_table;
-+	const char *rname = "core";
-+	int err;
-+
-+	/*
-+	 * Legacy device-trees don't have OPP table and EMC driver isn't
-+	 * useful in this case.
-+	 */
-+	if (!device_property_present(emc->dev, "operating-points-v2")) {
-+		dev_err(emc->dev, "OPP table not found\n");
-+		dev_err(emc->dev, "please update your device tree\n");
-+		return -ENODEV;
-+	}
-+
-+	/* voltage scaling is optional */
-+	if (device_property_present(emc->dev, "core-supply"))
-+		emc->opp_table = dev_pm_opp_set_regulators(emc->dev, &rname, 1);
-+	else
-+		emc->opp_table = dev_pm_opp_get_opp_table(emc->dev);
-+
-+	if (IS_ERR(emc->opp_table))
-+		return dev_err_probe(emc->dev, PTR_ERR(emc->opp_table),
-+				     "failed to prepare OPP table\n");
-+
-+	opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
-+	err = PTR_ERR_OR_ZERO(opp_table);
-+	if (err) {
-+		dev_err(emc->dev, "failed to set supported HW: %d\n", err);
-+		goto put_table;
-+	}
-+
-+	err = dev_pm_opp_of_add_table(emc->dev);
-+	if (err) {
-+		dev_err(emc->dev, "failed to add OPP table: %d\n", err);
-+		goto put_hw;
-+	}
-+
-+	dev_info(emc->dev, "OPP HW ver. 0x%x\n", hw_version);
-+
-+	return 0;
-+
-+put_hw:
-+	dev_pm_opp_put_supported_hw(emc->opp_table);
-+put_table:
-+	dev_pm_opp_put_opp_table(emc->opp_table);
-+
-+	return err;
-+}
-+
- static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
-@@ -1226,14 +1396,20 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	platform_set_drvdata(pdev, emc);
+-/*
+- * Activity counter is incremented every 256 memory transactions, and each
+- * transaction takes 4 EMC clocks for Tegra124; So the COUNT_WEIGHT is
+- * 4 * 256 = 1024.
+- */
+-#define ACTMON_COUNT_WEIGHT					0x400
 -
- 	tegra124_clk_set_emc_callbacks(tegra_emc_prepare_timing_change,
- 				       tegra_emc_complete_timing_change);
- 
-+	platform_set_drvdata(pdev, emc);
-+
-+	err = tegra_emc_opp_table_init(emc);
-+	if (err)
-+		goto unset_cb;
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FS))
- 		emc_debugfs_init(&pdev->dev, emc);
- 
-+	tegra_emc_interconnect_init(emc);
-+
- 	/*
- 	 * Don't allow the kernel module to be unloaded. Unloading adds some
- 	 * extra complexity which doesn't really worth the effort in a case of
-@@ -1242,6 +1418,11 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	try_module_get(THIS_MODULE);
- 
- 	return 0;
-+
-+unset_cb:
-+	tegra124_clk_set_emc_callbacks(NULL, NULL);
-+
-+	return err;
+ /*
+  * ACTMON_AVERAGE_WINDOW_LOG2: default value for @DEV_CTRL_K_VAL, which
+  * translates to 2 ^ (K_VAL + 1). ex: 2 ^ (6 + 1) = 128
+@@ -111,7 +104,7 @@ enum tegra_actmon_device {
+ 	MCCPU,
  };
  
- static struct platform_driver tegra_emc_driver = {
-@@ -1250,6 +1431,7 @@ static struct platform_driver tegra_emc_driver = {
- 		.name = "tegra-emc",
- 		.of_match_table = tegra_emc_of_match,
- 		.suppress_bind_attrs = true,
-+		.sync_state = icc_sync_state,
+-static const struct tegra_devfreq_device_config actmon_device_configs[] = {
++static const struct tegra_devfreq_device_config tegra124_device_configs[] = {
+ 	{
+ 		/* MCALL: All memory accesses (including from the CPUs) */
+ 		.offset = 0x1c0,
+@@ -133,6 +126,28 @@ static const struct tegra_devfreq_device_config actmon_device_configs[] = {
  	},
  };
- module_platform_driver(tegra_emc_driver);
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index e2389573d3c0..b69d76cd0411 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1010,6 +1010,35 @@ static const struct tegra_mc_reset tegra124_mc_resets[] = {
- 	TEGRA124_MC_RESET(GPU,       0x970, 0x974,  2),
- };
  
-+static int tegra124_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	/* TODO: program PTSA */
-+	return 0;
-+}
-+
-+static int tegra124_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	/*
-+	 * ISO clients need to reserve extra bandwidth up-front because
-+	 * there could high bandwidth pressure during initial fulling-up
-+	 * of the client's FIFO buffers. Secondly, we need to take into
-+	 * account impurities of the memory subsystem.
-+	 */
-+	if (tag == TEGRA_MC_ICC_TAG_ISO)
-+		peak_bw = tegra_mc_scale_percents(peak_bw, 400);
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static const struct tegra_mc_icc_ops tegra124_mc_icc_ops = {
-+	.aggregate = tegra124_mc_icc_aggreate,
-+	.set = tegra124_mc_icc_set,
++static const struct tegra_devfreq_device_config tegra30_device_configs[] = {
++	{
++		/* MCALL: All memory accesses (including from the CPUs) */
++		.offset = 0x1c0,
++		.irq_mask = 1 << 26,
++		.boost_up_coeff = 200,
++		.boost_down_coeff = 50,
++		.boost_up_threshold = 20,
++		.boost_down_threshold = 10,
++	},
++	{
++		/* MCCPU: memory accesses from the CPUs */
++		.offset = 0x200,
++		.irq_mask = 1 << 25,
++		.boost_up_coeff = 800,
++		.boost_down_coeff = 40,
++		.boost_up_threshold = 27,
++		.boost_down_threshold = 10,
++		.avg_dependency_threshold = 16000, /* 16MHz in kHz units */
++	},
 +};
 +
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- static const unsigned long tegra124_mc_emem_regs[] = {
- 	MC_EMEM_ARB_CFG,
-@@ -1061,6 +1090,7 @@ const struct tegra_mc_soc tegra124_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
-+	.icc_ops = &tegra124_mc_icc_ops,
+ /**
+  * struct tegra_devfreq_device - state specific to an ACTMON device
+  *
+@@ -155,6 +170,12 @@ struct tegra_devfreq_device {
+ 	unsigned long target_freq;
  };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
  
-@@ -1091,5 +1121,6 @@ const struct tegra_mc_soc tegra132_mc_soc = {
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra124_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
-+	.icc_ops = &tegra124_mc_icc_ops,
++struct tegra_devfreq_soc_data {
++	const struct tegra_devfreq_device_config *configs;
++	/* Weight value for count measurements */
++	unsigned int count_weight;
++};
++
+ struct tegra_devfreq {
+ 	struct devfreq		*devfreq;
+ 	struct opp_table	*opp_table;
+@@ -171,11 +192,13 @@ struct tegra_devfreq {
+ 	struct delayed_work	cpufreq_update_work;
+ 	struct notifier_block	cpu_rate_change_nb;
+ 
+-	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
++	struct tegra_devfreq_device devices[ARRAY_SIZE(tegra124_device_configs)];
+ 
+ 	unsigned int		irq;
+ 
+ 	bool			started;
++
++	const struct tegra_devfreq_soc_data *soc;
  };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+ 
+ struct tegra_actmon_emc_ratio {
+@@ -488,7 +511,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+ 	tegra_devfreq_update_avg_wmark(tegra, dev);
+ 	tegra_devfreq_update_wmark(tegra, dev);
+ 
+-	device_writel(dev, ACTMON_COUNT_WEIGHT, ACTMON_DEV_COUNT_WEIGHT);
++	device_writel(dev, tegra->soc->count_weight, ACTMON_DEV_COUNT_WEIGHT);
+ 	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+ 
+ 	val |= ACTMON_DEV_CTRL_ENB_PERIODIC;
+@@ -781,6 +804,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	if (!tegra)
+ 		return -ENOMEM;
+ 
++	tegra->soc = of_device_get_match_data(&pdev->dev);
++
+ 	tegra->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(tegra->regs))
+ 		return PTR_ERR(tegra->regs);
+@@ -858,9 +883,9 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 
+ 	tegra->max_freq = rate / KHZ;
+ 
+-	for (i = 0; i < ARRAY_SIZE(actmon_device_configs); i++) {
++	for (i = 0; i < ARRAY_SIZE(tegra124_device_configs); i++) {
+ 		dev = tegra->devices + i;
+-		dev->config = actmon_device_configs + i;
++		dev->config = tegra->soc->configs + i;
+ 		dev->regs = tegra->regs + dev->config->offset;
+ 	}
+ 
+@@ -925,9 +950,24 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct tegra_devfreq_soc_data tegra124_soc = {
++	.configs = tegra124_device_configs,
++
++	/*
++	 * Activity counter is incremented every 256 memory transactions,
++	 * and each transaction takes 4 EMC clocks.
++	 */
++	.count_weight = 4 * 256,
++};
++
++static const struct tegra_devfreq_soc_data tegra30_soc = {
++	.configs = tegra30_device_configs,
++	.count_weight = 2 * 256,
++};
++
+ static const struct of_device_id tegra_devfreq_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-actmon" },
+-	{ .compatible = "nvidia,tegra124-actmon" },
++	{ .compatible = "nvidia,tegra30-actmon",  .data = &tegra30_soc, },
++	{ .compatible = "nvidia,tegra124-actmon", .data = &tegra124_soc, },
+ 	{ },
+ };
+ 
 -- 
 2.27.0
 
