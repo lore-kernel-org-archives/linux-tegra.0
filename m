@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1A0C388F7
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C677C56201
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA904222D9
+	by mail.kernel.org (Postfix) with ESMTP id EDB1B222D9
 	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDY2uq2k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKDJfgh2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419345AbgJYWSg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:18:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
+        id S1418936AbgJYWT4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419338AbgJYWSd (ORCPT
+        with ESMTP id S1419348AbgJYWSh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:18:33 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8CAC0613D0;
-        Sun, 25 Oct 2020 15:18:33 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id j30so9423753lfp.4;
-        Sun, 25 Oct 2020 15:18:33 -0700 (PDT)
+        Sun, 25 Oct 2020 18:18:37 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79126C0613D0;
+        Sun, 25 Oct 2020 15:18:36 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id 134so6686569ljj.3;
+        Sun, 25 Oct 2020 15:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Jm9YF5Hl5xiQzRyo55jaqGijbDIMmn+mukworT9oCDs=;
-        b=mDY2uq2kL1k4S9q/v2EbI4njrePtAesq0Un2ovdy9jOM7UGItTaLvY80x6Zzq3tAHC
-         tabWFd8/eiWgMmKIGd2UacIC9HsLwCWND9Cmk0JkB2DkKZtfNIXbmQEK8+Vsj1j/s4Zz
-         5Zx7KxmlPREK6CUkPmHOt8nkSuqFtEbFDLpzSWGIbd5o7N3rigR+IUnLauPU6XLXryAT
-         yAUjUGI1OegWu4sLK76cOB055c7ztr5oHX1ffr7AldnPJaje80OkPifMREZAtn0H10lN
-         qGcQFNlAa5e7OFPZGh8ZJiulf20OjaPPs+KYMOwQYTFOI5/OP7z+Z8NTsuzrD7kcGRi1
-         m4+w==
+        bh=KYnDvMkLMERuQbQeyFl4CeENAxlm67gUy3culAwcSN0=;
+        b=hKDJfgh2nxkwmAvNx9C1gAnn5Nt+v/I/UgZKkNCG1j+HeG+8RwQ1IzNefwNFh7Capj
+         37BdEHDnGML8a6bwoSFgHkQNskFux9VLJdGyfaj1mpj4COazb026N5fC8v/RizVRkI99
+         oSXqRmXl1aGU02A2JAH3664aPbjC7Le7+OnocBptZxTCibt9Ew3IzN8MEDt9qE47FSbP
+         fZHWToFepUA2FKOT7+CQyU1cBQc9ex2DcBcfeEAv7uOO0VoDtGcgtNF3EUySAJkAoaat
+         boEsw0R0iEAZl/XVXGVIJgzGud4bpCrlAJ6wG5Y0gg824e+Y4z53hUne6dJ091wOiw4D
+         vuSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Jm9YF5Hl5xiQzRyo55jaqGijbDIMmn+mukworT9oCDs=;
-        b=hrDMF6A9tACIQSuZrC3dXp6mV96ZoDKC/Ew/QkNgDE2zpBvkkPWGXHvUJunOEG8y6s
-         DGr4Iitw40R+GdLNG6/q70L3VjyQAQMB/tkK5iPmk+slw73DyAfbWCMOZ+hj4ECBab6l
-         CZTe5A/Y8Qaef7Ln6ViRe4LSLho4MDBL8IBUkBd+G3fTkCc0J0rrrSSXlcIOrWhr1ncP
-         gVkFe6kIkqUJLXlrCZfVqleS/65ZVofX2LMI8L6AHwCnBPt1p0+6K5ohKN4agkxzy6js
-         RKdSMzk52cK0OlxLeMR4/WAitx3/kQF52TnSXMS4axedbk+gwMHUPoU8Eh/ELU89+K9M
-         cU7g==
-X-Gm-Message-State: AOAM531cvpp70+MH28tfoy5UVfke4PPm5lS31YAdelLeIyFohSl8YSXj
-        VLlyVJnZZyfSb2P/WxOhyxY=
-X-Google-Smtp-Source: ABdhPJxtHxIhWZZjOwiBsRdKvNg9UkDVL7rq3m5XJ0THmxZMcWrYOSL1KvozWahGzovqLpXx0YbxoQ==
-X-Received: by 2002:a19:be02:: with SMTP id o2mr3683087lff.314.1603664311626;
-        Sun, 25 Oct 2020 15:18:31 -0700 (PDT)
+        bh=KYnDvMkLMERuQbQeyFl4CeENAxlm67gUy3culAwcSN0=;
+        b=cq9OvMzvT0z9hNTFcccP7dEX4fg7ua2woGejGPLjLh9tHqqX12R1VN3UqNsm3JEkg2
+         uXeaBZPKsvJm6CIslYohdbiYR4oCu/4Clwb7Lj1sgWLNRI4FsrHNTORkMeKKTiq6BUkU
+         nFnt8ZPeY8wo9cN4DW9BnzWEjSt3sILXvVlEMt0K10gfVZ4faGc9Sq2l4ZVKvSyUIuAL
+         zx3+dNrq2xtEv6S17xoCxOG6XZGYNj55CFuR90UlBho1fw4RRdd/8uyqCwPIIAs6I7Yk
+         OzgKrZY/h4h2uR6izRZ5vDiGaj9JU6BfRXO3lJAMbK+3a/m3mKmkJWxNcJw5kHYNnJBL
+         452g==
+X-Gm-Message-State: AOAM530aH21PQNfKb+oc5eTygBqLtDzqzLKJH6Uq5aWEAA/4V4fqKlYE
+        DWEqS5DJFmjo6uu7O2Xd9iU=
+X-Google-Smtp-Source: ABdhPJz62dra825y4ptqKraHUjLbpgvnCmBJFUqz5R61yS0AG9wXG82ZbNL3B9+Ndg61Wnb5c5d6TA==
+X-Received: by 2002:a2e:920f:: with SMTP id k15mr4274751ljg.355.1603664315036;
+        Sun, 25 Oct 2020 15:18:35 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.30
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:18:31 -0700 (PDT)
+        Sun, 25 Oct 2020 15:18:34 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 38/52] memory: tegra30-emc: Continue probing if timings are missing in device-tree
-Date:   Mon, 26 Oct 2020 01:17:21 +0300
-Message-Id: <20201025221735.3062-39-digetx@gmail.com>
+Subject: [PATCH v6 41/52] memory: tegra124-emc: Use devm_platform_ioremap_resource()
+Date:   Mon, 26 Oct 2020 01:17:24 +0300
+Message-Id: <20201025221735.3062-42-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
 References: <20201025221735.3062-1-digetx@gmail.com>
@@ -90,77 +90,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-EMC driver will become mandatory after turning it into interconnect
-provider because interconnect users, like display controller driver, will
-fail to probe using newer device-trees that have interconnect properties.
-Thus make EMC driver to probe even if timings are missing in device-tree.
+Use devm_platform_ioremap_resource() helper which makes code a bit
+cleaner.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/memory/tegra/tegra124-emc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index b31e11f95462..78f770cf0d64 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
- 	u32 value, ram_code;
- 	int err;
- 
-+	if (of_get_child_count(dev->of_node) == 0) {
-+		dev_info(dev, "device-tree doesn't have memory timings\n");
-+		return NULL;
-+	}
-+
- 	ram_code = tegra_read_ram_code();
- 
- 	for_each_child_of_node(dev->of_node, np) {
-@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
- 	struct tegra_emc *emc = arg;
- 	unsigned int i;
- 
-+	if (!emc->num_timings)
-+		return clk_get_rate(emc->clk);
-+
- 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
- 
- 	for (i = 0; i < emc->num_timings; i++) {
-@@ -1262,16 +1270,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 48e772ec544d..2814b1b4a1d9 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1181,7 +1181,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
  	struct tegra_emc *emc;
+-	struct resource *res;
+ 	u32 ram_code;
  	int err;
  
--	if (of_get_child_count(pdev->dev.of_node) == 0) {
--		dev_info(&pdev->dev,
--			 "device-tree node doesn't have memory timings\n");
--		return -ENODEV;
--	}
--
--	np = emc_find_node_by_ram_code(&pdev->dev);
--	if (!np)
--		return -EINVAL;
--
- 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
- 	if (!emc) {
- 		of_node_put(np);
-@@ -1285,10 +1283,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+@@ -1191,8 +1190,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 
  	emc->dev = &pdev->dev;
  
--	err = emc_load_timings_from_dt(emc, np);
--	of_node_put(np);
--	if (err)
--		return err;
-+	np = emc_find_node_by_ram_code(&pdev->dev);
-+	if (np) {
-+		err = emc_load_timings_from_dt(emc, np);
-+		of_node_put(np);
-+		if (err)
-+			return err;
-+	}
- 
- 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	emc->regs = devm_ioremap_resource(&pdev->dev, res);
++	emc->regs = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(emc->regs))
+ 		return PTR_ERR(emc->regs);
+ 
 -- 
 2.27.0
 
