@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B004C56202
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1A0C388F7
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E05B2222D9
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA904222D9
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vApupjdq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDY2uq2k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419585AbgJYWTu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:19:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35186 "EHLO
+        id S1419345AbgJYWSg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:18:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419261AbgJYWSm (ORCPT
+        with ESMTP id S1419338AbgJYWSd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:18:42 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC3CC0613D0;
-        Sun, 25 Oct 2020 15:18:42 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y16so7734433ljk.1;
-        Sun, 25 Oct 2020 15:18:42 -0700 (PDT)
+        Sun, 25 Oct 2020 18:18:33 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8CAC0613D0;
+        Sun, 25 Oct 2020 15:18:33 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id j30so9423753lfp.4;
+        Sun, 25 Oct 2020 15:18:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Ovd3NfCSdg9bU9dh+4Q2Hup4+qw/LQb8GLpwFqymMtc=;
-        b=vApupjdqceo8kwP7tkGiF+CeQ8HvVO4ehToXNBsBsUmIc4KnM+YJ0S4Y4ArrsEMGjn
-         +BPJRAJRcghbrs0VxErvKhsyNxIp/ZJ23/QrhfQjJ4uJk51ZXep0Z+ZPhPhCmfaoN6Rn
-         eaGHbRlrBGqavhKX+ofjdK9bnocwog2+2nA3fmns0BkNXQAdeQ5ufrg3tih/245qGrOn
-         tGM1NY7Bp50qpSHx0SUuiH2KMsCljtOwXJPwAv9Hm2zUZqQViG0UbP36596PMpPi9dQy
-         x5XDMfT8AplUSiGEnjQB4KLE11Puqq+7Uahrf+KUEqJAtCbDvDrczogIMmKe4iKK/Pn9
-         Zpkw==
+        bh=Jm9YF5Hl5xiQzRyo55jaqGijbDIMmn+mukworT9oCDs=;
+        b=mDY2uq2kL1k4S9q/v2EbI4njrePtAesq0Un2ovdy9jOM7UGItTaLvY80x6Zzq3tAHC
+         tabWFd8/eiWgMmKIGd2UacIC9HsLwCWND9Cmk0JkB2DkKZtfNIXbmQEK8+Vsj1j/s4Zz
+         5Zx7KxmlPREK6CUkPmHOt8nkSuqFtEbFDLpzSWGIbd5o7N3rigR+IUnLauPU6XLXryAT
+         yAUjUGI1OegWu4sLK76cOB055c7ztr5oHX1ffr7AldnPJaje80OkPifMREZAtn0H10lN
+         qGcQFNlAa5e7OFPZGh8ZJiulf20OjaPPs+KYMOwQYTFOI5/OP7z+Z8NTsuzrD7kcGRi1
+         m4+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Ovd3NfCSdg9bU9dh+4Q2Hup4+qw/LQb8GLpwFqymMtc=;
-        b=pyojTumWLkxNe6Q7NRq6kUvKkxpDxs5FEtdGRuDHDK08Hj58+PzSdnGFOwwsiJeCWW
-         3t/G1uOiX45aKQopIzBnDkMCObN0TPok/0KjEDQ5Kix8SVbhAUhH+gKoMycGWc2N9USd
-         rRDRK/UJrv8ybHoTr1QQ4ZlGizHidKNVaaxJxpPeSFkneQ/0XrV3hX1ETr2mIjLomaau
-         4UUGhX+SYbySDlq5eom8N0JaOLx+M3STJwyYxWNKGZmdQHDMzJol4AuWbyeK8VpNzu6j
-         dY83+n0iK75Fj6DHmlptHz9mYTtlht3NRpKhd0gyCrCfGEcqTDw7iyOBQJ1Pn6RqjgI+
-         chSA==
-X-Gm-Message-State: AOAM5328l7r0hVHIdv5H374PAYx5M/L0UUXbWO0Oz52KO9kK0MtG9+it
-        CEKPp3dX8Ag3NT2w2ZdyzSl/Ch9T2zc=
-X-Google-Smtp-Source: ABdhPJzbzWcQnlQaOvimb0g2tW9/XFIjvrZFeaz5eC3PWUlh/rIicLca75To2aVhmYyDwr8FIPqAJg==
-X-Received: by 2002:a2e:a549:: with SMTP id e9mr535291ljn.378.1603664320708;
-        Sun, 25 Oct 2020 15:18:40 -0700 (PDT)
+        bh=Jm9YF5Hl5xiQzRyo55jaqGijbDIMmn+mukworT9oCDs=;
+        b=hrDMF6A9tACIQSuZrC3dXp6mV96ZoDKC/Ew/QkNgDE2zpBvkkPWGXHvUJunOEG8y6s
+         DGr4Iitw40R+GdLNG6/q70L3VjyQAQMB/tkK5iPmk+slw73DyAfbWCMOZ+hj4ECBab6l
+         CZTe5A/Y8Qaef7Ln6ViRe4LSLho4MDBL8IBUkBd+G3fTkCc0J0rrrSSXlcIOrWhr1ncP
+         gVkFe6kIkqUJLXlrCZfVqleS/65ZVofX2LMI8L6AHwCnBPt1p0+6K5ohKN4agkxzy6js
+         RKdSMzk52cK0OlxLeMR4/WAitx3/kQF52TnSXMS4axedbk+gwMHUPoU8Eh/ELU89+K9M
+         cU7g==
+X-Gm-Message-State: AOAM531cvpp70+MH28tfoy5UVfke4PPm5lS31YAdelLeIyFohSl8YSXj
+        VLlyVJnZZyfSb2P/WxOhyxY=
+X-Google-Smtp-Source: ABdhPJxtHxIhWZZjOwiBsRdKvNg9UkDVL7rq3m5XJ0THmxZMcWrYOSL1KvozWahGzovqLpXx0YbxoQ==
+X-Received: by 2002:a19:be02:: with SMTP id o2mr3683087lff.314.1603664311626;
+        Sun, 25 Oct 2020 15:18:31 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.39
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:18:40 -0700 (PDT)
+        Sun, 25 Oct 2020 15:18:31 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 46/52] opp: Put interconnect paths outside of opp_table_lock
-Date:   Mon, 26 Oct 2020 01:17:29 +0300
-Message-Id: <20201025221735.3062-47-digetx@gmail.com>
+Subject: [PATCH v6 38/52] memory: tegra30-emc: Continue probing if timings are missing in device-tree
+Date:   Mon, 26 Oct 2020 01:17:21 +0300
+Message-Id: <20201025221735.3062-39-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
 References: <20201025221735.3062-1-digetx@gmail.com>
@@ -90,63 +90,77 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch fixes lockup which happens when OPP table is released if
-interconnect provider uses OPP in the icc_provider->set() callback
-and bandwidth of the ICC path is set to 0 by the ICC core when path
-is released. The icc_put() doesn't need the opp_table_lock protection,
-hence let's move it outside of the lock in order to resolve the problem.
-
-In particular this fixes tegra-devfreq driver lockup on trying to unload
-the driver module. The devfreq driver uses OPP-bandwidth API and its ICC
-provider also uses OPP for DVFS, hence they both take same opp_table_lock
-when OPP table of the devfreq is released.
+EMC driver will become mandatory after turning it into interconnect
+provider because interconnect users, like display controller driver, will
+fail to probe using newer device-trees that have interconnect properties.
+Thus make EMC driver to probe even if timings are missing in device-tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/core.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 2483e765318a..1134df360fe0 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1187,12 +1187,6 @@ static void _opp_table_kref_release(struct kref *kref)
- 	if (!IS_ERR(opp_table->clk))
- 		clk_put(opp_table->clk);
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index b31e11f95462..78f770cf0d64 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+ 	u32 value, ram_code;
+ 	int err;
  
--	if (opp_table->paths) {
--		for (i = 0; i < opp_table->path_count; i++)
--			icc_put(opp_table->paths[i]);
--		kfree(opp_table->paths);
--	}
--
- 	WARN_ON(!list_empty(&opp_table->opp_list));
- 
- 	list_for_each_entry_safe(opp_dev, temp, &opp_table->dev_list, node) {
-@@ -1209,9 +1203,22 @@ static void _opp_table_kref_release(struct kref *kref)
- 	mutex_destroy(&opp_table->genpd_virt_dev_lock);
- 	mutex_destroy(&opp_table->lock);
- 	list_del(&opp_table->node);
--	kfree(opp_table);
- 
- 	mutex_unlock(&opp_table_lock);
-+
-+	/*
-+	 * Interconnect provider may use OPP too, hence icc_put() needs to be
-+	 * invoked outside of the opp_table_lock in order to prevent nested
-+	 * locking which happens when bandwidth of the ICC path is set to 0
-+	 * by ICC core on release of the path.
-+	 */
-+	if (opp_table->paths) {
-+		for (i = 0; i < opp_table->path_count; i++)
-+			icc_put(opp_table->paths[i]);
-+		kfree(opp_table->paths);
++	if (of_get_child_count(dev->of_node) == 0) {
++		dev_info(dev, "device-tree doesn't have memory timings\n");
++		return NULL;
 +	}
 +
-+	kfree(opp_table);
- }
+ 	ram_code = tegra_read_ram_code();
  
- void dev_pm_opp_put_opp_table(struct opp_table *opp_table)
+ 	for_each_child_of_node(dev->of_node, np) {
+@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
+ 	struct tegra_emc *emc = arg;
+ 	unsigned int i;
+ 
++	if (!emc->num_timings)
++		return clk_get_rate(emc->clk);
++
+ 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
+ 
+ 	for (i = 0; i < emc->num_timings; i++) {
+@@ -1262,16 +1270,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	struct tegra_emc *emc;
+ 	int err;
+ 
+-	if (of_get_child_count(pdev->dev.of_node) == 0) {
+-		dev_info(&pdev->dev,
+-			 "device-tree node doesn't have memory timings\n");
+-		return -ENODEV;
+-	}
+-
+-	np = emc_find_node_by_ram_code(&pdev->dev);
+-	if (!np)
+-		return -EINVAL;
+-
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc) {
+ 		of_node_put(np);
+@@ -1285,10 +1283,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+ 	emc->dev = &pdev->dev;
+ 
+-	err = emc_load_timings_from_dt(emc, np);
+-	of_node_put(np);
+-	if (err)
+-		return err;
++	np = emc_find_node_by_ram_code(&pdev->dev);
++	if (np) {
++		err = emc_load_timings_from_dt(emc, np);
++		of_node_put(np);
++		if (err)
++			return err;
++	}
+ 
+ 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(emc->regs))
 -- 
 2.27.0
 
