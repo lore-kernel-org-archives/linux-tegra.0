@@ -1,109 +1,115 @@
-Return-Path: <SRS0=H3LA=D7=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=lnQj=EA=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BE1C4363A
-	for <linux-tegra@archiver.kernel.org>; Sat, 24 Oct 2020 12:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2CCC388F7
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 16:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CAF12225E
-	for <linux-tegra@archiver.kernel.org>; Sat, 24 Oct 2020 12:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC7C217A0
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 16:29:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="TETUnYOc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Se1LaPaz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1761387AbgJXMeS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 24 Oct 2020 08:34:18 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:18323 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761383AbgJXMeR (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 24 Oct 2020 08:34:17 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4CJLBZ6TxQz5H;
-        Sat, 24 Oct 2020 14:34:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1603542855; bh=ZpKqDVMnGnFJxAu7glq/SOb5QpupbYxViZoh10ycH/Y=;
-        h=Date:From:Subject:To:Cc:From;
-        b=TETUnYOcnj9cUs+MZ6Oz3QIH0Y+RCCi2l6MIfVS8gi4cEq4BFpJNp8T2snJqhT0DX
-         pPQh2lJWjW2qLrJDP4R2NK58o+bGdGbO7GBYhZlLPln4h8xH56txp0JhKpR+Z4nm6z
-         3Kh8ycNzYtCEyr4/WJeObFsAZ9UL6u58Xcf1FAk2rxwCHN6DXez3zHWFXUYZBO6lOU
-         vajF2trceBBjEOLNNZbZAJPRrN0ZNI0R8kSBnz24da4lY5IVIUdRdmRH55y9RKOcT0
-         mmo2oMFcYow2IyIRUe5LnlDf0pe6myAmpoC7d5uo/WlhhRVHAKk0rKIvbv9P06IQOe
-         ir15k4GlbfBPw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Sat, 24 Oct 2020 14:34:14 +0200
-Message-Id: <e6e89abff9004e8ed2e79a9ccf1377eeac9e4134.1603542719.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [RESEND v2] ASoC: tegra20-spdif: remove "default m"
+        id S1417169AbgJYQ3h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 12:29:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1417168AbgJYQ3g (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 25 Oct 2020 12:29:36 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD49C0613CE;
+        Sun, 25 Oct 2020 09:29:35 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id p15so7176503ljj.8;
+        Sun, 25 Oct 2020 09:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8qSpxaySb+J1nC02XHO83Se4mRnezoN9KgwHpLD2zmI=;
+        b=Se1LaPaznM5k8d7fvgW7bMX2O7jJtPZOeH1M+gU3n+lvA3do5YnINdA+Kyj52tf5yq
+         /X0zDLr0nBFVOHtoHdEwwUgBu1KaAkLCciSJVUf/I2usoDkdPVq0Fx6lC4KzwhnyehwW
+         /fbFJeJyanUYbL5/Ea1Js0iqXDZXvqotGxLrLhyZk3s4sdTBGVjdJxYmHI97FYEeacKu
+         vRlkDDvOlZjO/YXQcduOPfWI9OY/1Kv87UxML8+m+fld9i5D6zRs74O4xgEHSEH6fk1i
+         IpEPfoOQwhjcScOoshTdsN5dl9RNjSjcGODptIB8YyQcLTET/H3j0hip+DNjPVYwBopm
+         GKRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8qSpxaySb+J1nC02XHO83Se4mRnezoN9KgwHpLD2zmI=;
+        b=m7Q3qflOBLO6OF2SZyJskTd4uIWM9CrFZzkb+zU4SuG+nUX7CKnajAKy3qqxDeK3aG
+         TdgJqNnbYpSooe16SHszwS3X8JxMWL8bg0yhvgzENuaLvO1l4lBK6MInKvKR/sCwf16Y
+         t6VCdnUuzveWY7Kzlhe1XiG3SZg/xLX5eMLBb5TXDW2iNF4oT9Kzrn2iWcZpB1ZSDpSs
+         YcXJ2D3rkcUpN3DIeGkD0MPGswqD4YB5ED0cBWVqF6v1wRYYnthoG0ORsCCjK5sByq0H
+         ihIBWHvnYYcIS8tpuyGV3aG3NM4e2Weh9ctpFV7KjlJSEr+frEg24t73tRb1EV1PUg3d
+         PdcQ==
+X-Gm-Message-State: AOAM531Iu7yhrgBbAw8IhoGv6T5swhZ2MX7MNHpzcSWWrSJyMXooL5hW
+        oa/kqhXjFKF9ctWuJlwEExE=
+X-Google-Smtp-Source: ABdhPJzzBC72dXIfQIn/FfwS/F0oDDauNBKMlkBBoHJ4W/XNOFPgiqlHxNd1rp03tpCABMF60Xjthg==
+X-Received: by 2002:a2e:864c:: with SMTP id i12mr3978701ljj.396.1603643374287;
+        Sun, 25 Oct 2020 09:29:34 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.googlemail.com with ESMTPSA id v3sm769788lfa.211.2020.10.25.09.29.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Oct 2020 09:29:33 -0700 (PDT)
+Subject: Re: [PATCH v5 1/2] PM / devfreq: Add governor feature flag
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc:     lukasz.luba@arm.com, enric.balletbo@collabora.com,
+        hl@rock-chips.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        abel.vesa@nxp.com, k.konieczny@samsung.com,
+        b.zolnierkie@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+References: <20201023102632.740-1-cw00.choi@samsung.com>
+ <CGME20201023101246epcas1p423f0444201300830fd63f33748dd8952@epcas1p4.samsung.com>
+ <20201023102632.740-2-cw00.choi@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <622cd840-0b09-e377-fbff-dd3e8ef0ff4e@gmail.com>
+Date:   Sun, 25 Oct 2020 19:29:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20201023102632.740-2-cw00.choi@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Stephen Warren <swarren@nvidia.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make tegra20-spdif default to N as all other drivers do.
-Add the selection to defconfigs instead.
+23.10.2020 13:26, Chanwoo Choi пишет:
+> The devfreq governor is able to have the specific flag as follows
+> in order to implement the specific feature. For example, devfreq allows
+> user to change the governors on runtime via sysfs interface.
+> But, if devfreq device uses 'passive' governor, don't allow user to change
+> the governor. For this case, define the DEVFREQ_GOV_FLAG_IMMUTABLE
+> and set it to flag of passive governor.
+> 
+> [Definition for governor flag]
+> - DEVFREQ_GOV_FLAG_IMMUTABLE
+>   : If immutable flag is set, governor is never changeable to other governors.
+> - DEVFREQ_GOV_FLAG_IRQ_DRIVEN
+>   : Devfreq core won't schedule polling work for this governor if value is set.
+> 
+> [Table of governor flag for devfreq governors]
+> ------------------------------------------------------------------------------
+>                       | simple    | perfor | power | user | passive | tegra30
+> 		      | ondemand  | mance  | save  | space|         |
+> ------------------------------------------------------------------------------
+> immutable             | X         | X      | X     | X    | O       | O
+> interrupt_driven      | X(polling)| X      | X     | X    | X       | O (irq)
+> ------------------------------------------------------------------------------
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Fixes: 774fec338bfc ("ASoC: Tegra: Implement SPDIF CPU DAI")
----
- v2: add the symbol to defconfig as suggested by Thierry Reding
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- arch/arm/configs/tegra_defconfig    | 1 +
- sound/soc/tegra/Kconfig             | 1 -
- 3 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e9e76e32f10f..19342ac738a5 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -743,6 +743,7 @@ CONFIG_SND_SOC_STM32_I2S=m
- CONFIG_SND_SUN4I_CODEC=m
- CONFIG_SND_SOC_TEGRA=m
- CONFIG_SND_SOC_TEGRA20_I2S=m
-+CONFIG_SND_SOC_TEGRA20_SPDIF=m
- CONFIG_SND_SOC_TEGRA30_I2S=m
- CONFIG_SND_SOC_TEGRA_RT5640=m
- CONFIG_SND_SOC_TEGRA_WM8753=m
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fff5fae0db30..08526eb50484 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -225,6 +225,7 @@ CONFIG_SND_HDA_CODEC_HDMI=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA20_I2S=y
-+CONFIG_SND_SOC_TEGRA20_SPDIF=y
- CONFIG_SND_SOC_TEGRA30_I2S=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index 3d91bd3e59cd..a62cc87551ac 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -39,7 +39,6 @@ config SND_SOC_TEGRA20_I2S
- config SND_SOC_TEGRA20_SPDIF
- 	tristate "Tegra20 SPDIF interface"
- 	depends on SND_SOC_TEGRA
--	default m
- 	help
- 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
- 	  You will also need to select the individual machine drivers to support
--- 
-2.20.1
-
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
