@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0FEC56202
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF31CC5DF9D
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BACB12240A
-	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 919902231B
+	for <linux-tegra@archiver.kernel.org>; Sun, 25 Oct 2020 22:20:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tve+Sb+9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oWfNh0Tn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1419632AbgJYWUY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:20:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35140 "EHLO
+        id S1419646AbgJYWUg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1419331AbgJYWSb (ORCPT
+        with ESMTP id S1419315AbgJYWSZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 25 Oct 2020 18:18:31 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB07C061755;
-        Sun, 25 Oct 2020 15:18:30 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id h6so9405131lfj.3;
-        Sun, 25 Oct 2020 15:18:30 -0700 (PDT)
+        Sun, 25 Oct 2020 18:18:25 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42721C061755;
+        Sun, 25 Oct 2020 15:18:25 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id l2so9444268lfk.0;
+        Sun, 25 Oct 2020 15:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JH2OsJyWDDEWgdRepQFvBZUrgXbo5q4e/wqbYWmgbhM=;
-        b=Tve+Sb+9kIenJUy9bIr8r8V55BVPyYCD/RtvZld5heW4rxOPpr/TWhyhvPS4uYTT5s
-         7Ret6/dTOWoNNh19DLF9pUgG6OJReNar877uPuF5lQ4Wk8c0zCoybt12h6tJKsNhE5X2
-         etGft3X2nior1lSRAROivRPNoUmtVPOsiLTXfIzHfUml8wQELqNMnlroqrhzsxw3qwrd
-         C9X5MyGurbjATJYR71zGHRdSUFEReXgiixgN8c2V7me67jf410PM+PWn/U5yQv9qF/To
-         xCXMwYunML3yBj1/NE0u7mOjcpAQvNTHB/vZH7wRBxShgHTdtAV3OY2MigLcHzgTYG8m
-         V/sA==
+        bh=SK4mi4uPijedwapHTvsgA4XRJA8rJ81UCcUw/rkRDT0=;
+        b=oWfNh0TnVrlfrER/pSC3S0HngwdJVUEVprw9AJ7ZTjeAZ4ypifGCr4JaLsmtQ5rSMp
+         NP2b/L/QmJ4SJPoiyPPs4DCI2LbdQHK8dn8PJVu8En/xcHBefZK7xnybpEUpsuzWBBPT
+         MJKyawREcvZXsS1o4FGhn7fDCy/pHkvVZ6pZN79murFKRQNNnKfHFsxXc3goXo0cUmwj
+         PqeBM/Q1YtMJXkpMbhJtGTh84uc1Lcq6X8Pu6X3AnwE3zpotj47mq3f6OpQIcI0H1o7e
+         E1xna5MFtAxyiF7tcyKEKEwbo7wYC7EdqpRe7DBZCfjoI56hxcaY6Y7rXrX8Dgp7ugEz
+         slyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JH2OsJyWDDEWgdRepQFvBZUrgXbo5q4e/wqbYWmgbhM=;
-        b=FHB4uyLeIvNtHsZetG27uTkx/hLWcXlDaoGKIxOeZELS81URDSgvaZOWYr8H8VycC6
-         Y00IUeQHpSN5rcOeFtbBKb0J6+BEwF6CvBiTl3+zo9gW3p726j9nPSXY/3DV3/h4FlwT
-         VI+r8G1YreId4duH9sctFlrtp6o3HDEk0rrPlnnMYnVQlOPcYrU4TdFzCm5bkS0+0Ebo
-         MpeYirD+chW43au82KvTLJZ9YFPihhEcq335oZnoHHwBeU9G3pa3KOEi4A1oVxYdvWe8
-         /0YdG94owaCfNmquOS68BHlQzOsqJhWDjrLTgh8KujyDM3Cb5Pl0+06DjJjDQjpCLrX1
-         zDbQ==
-X-Gm-Message-State: AOAM533pVnGOOsbyi8JvkWk+CWinuYfCH0PltQxWwhcEnb2JjqWf4gNC
-        KGVo5n84gtYzOKHNTwiTEzE=
-X-Google-Smtp-Source: ABdhPJz9WbnLeNCB91eplOmHhYjzdg+OSNFr4kWVvQK3D0VgCV6T8hiQ/Z970uvfTqazKH9CHkJg5w==
-X-Received: by 2002:a19:4293:: with SMTP id p141mr4085903lfa.448.1603664309407;
-        Sun, 25 Oct 2020 15:18:29 -0700 (PDT)
+        bh=SK4mi4uPijedwapHTvsgA4XRJA8rJ81UCcUw/rkRDT0=;
+        b=UErpNv1lDQuS2XJ0MN9kWlN739YCp8uwH4u94tF4CNwOvq70dlMR0hgCOEED3CVdz6
+         hkY+mwCV5RrMhSDENLtLwYoZr8SsPT55klRqwhRzx7F4RzeiITlw8odIXXl0IiD5RqKM
+         6iiGe98JNuv+7mi5oxC0quma+VmX7G6bn5eR5TSRgQqBnpQRWXQdsuBufbRdi7FUHzrh
+         2KK+O9kX48yZzMnVC/fiEw37BvoFIyjFRRpypy42ncFy7jxA0tRJaDYrrVRayzUiXTN3
+         lCqH/RBqujF+8XV6IbAgFBBPtyBrtgMKJTxE3omfHWWi3/G4Ct0upQc9Pak42hu/Ibsw
+         i/6Q==
+X-Gm-Message-State: AOAM531Z23vx+r1l9HqBh+Y83yfmuX+mW5X1VWe2vVitqlGVMQdQf1IR
+        NI2cbt1lWtWEXDzG5CRdqkqyfMqLbnI=
+X-Google-Smtp-Source: ABdhPJz8J+3PAUyWg+GX6iBLvZsb4KMZxRBUq+g7QPwhtNzgE5vfBxmo9k+d9RHakO69bfv4wqvYXA==
+X-Received: by 2002:ac2:47f3:: with SMTP id b19mr4296256lfp.192.1603664303791;
+        Sun, 25 Oct 2020 15:18:23 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.28
+        by smtp.gmail.com with ESMTPSA id k13sm932423ljh.136.2020.10.25.15.18.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:18:28 -0700 (PDT)
+        Sun, 25 Oct 2020 15:18:23 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 36/52] memory: tegra: Add FIFO sizes to Tegra30 memory clients
-Date:   Mon, 26 Oct 2020 01:17:19 +0300
-Message-Id: <20201025221735.3062-37-digetx@gmail.com>
+Subject: [PATCH v6 31/52] memory: tegra20-emc: Use devm_platform_ioremap_resource()
+Date:   Mon, 26 Oct 2020 01:17:14 +0300
+Message-Id: <20201025221735.3062-32-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201025221735.3062-1-digetx@gmail.com>
 References: <20201025221735.3062-1-digetx@gmail.com>
@@ -90,545 +90,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The latency allowness is calculated based on buffering capabilities of
-memory clients. This patch adds FIFO sizes to the Tegra30 memory clients.
+Use devm_platform_ioremap_resource() helper which makes code a bit
+cleaner.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30.c | 66 ++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ drivers/memory/tegra/tegra20-emc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
-index b1990b4133d8..05780a0c6d39 100644
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -42,6 +42,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x01,
- 		.name = "display0a",
-@@ -56,6 +57,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 128,
- 	}, {
- 		.id = 0x02,
- 		.name = "display0ab",
-@@ -70,6 +72,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 128,
- 	}, {
- 		.id = 0x03,
- 		.name = "display0b",
-@@ -84,6 +87,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x04,
- 		.name = "display0bb",
-@@ -98,6 +102,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x05,
- 		.name = "display0c",
-@@ -112,6 +117,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 128,
- 	}, {
- 		.id = 0x06,
- 		.name = "display0cb",
-@@ -126,6 +132,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 128,
- 	}, {
- 		.id = 0x07,
- 		.name = "display1b",
-@@ -140,6 +147,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x08,
- 		.name = "display1bb",
-@@ -154,6 +162,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x4e,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x09,
- 		.name = "eppup",
-@@ -168,6 +177,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x17,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x0a,
- 		.name = "g2pr",
-@@ -182,6 +192,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x09,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x0b,
- 		.name = "g2sr",
-@@ -196,6 +207,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x09,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x0c,
- 		.name = "mpeunifbr",
-@@ -210,6 +222,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x50,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x0d,
- 		.name = "viruv",
-@@ -224,6 +237,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x2c,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x0e,
- 		.name = "afir",
-@@ -238,6 +252,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x10,
- 		},
-+		.fifo_size = 16 * 32,
- 	}, {
- 		.id = 0x0f,
- 		.name = "avpcarm7r",
-@@ -252,6 +267,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x04,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x10,
- 		.name = "displayhc",
-@@ -266,6 +282,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x11,
- 		.name = "displayhcb",
-@@ -280,6 +297,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x12,
- 		.name = "fdcdrd",
-@@ -294,6 +312,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0a,
- 		},
-+		.fifo_size = 16 * 96,
- 	}, {
- 		.id = 0x13,
- 		.name = "fdcdrd2",
-@@ -308,6 +327,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0a,
- 		},
-+		.fifo_size = 16 * 96,
- 	}, {
- 		.id = 0x14,
- 		.name = "g2dr",
-@@ -322,6 +342,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0a,
- 		},
-+		.fifo_size = 16 * 48,
- 	}, {
- 		.id = 0x15,
- 		.name = "hdar",
-@@ -336,6 +357,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x16,
- 		.name = "host1xdmar",
-@@ -350,6 +372,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x05,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x17,
- 		.name = "host1xr",
-@@ -364,6 +387,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x50,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x18,
- 		.name = "idxsrd",
-@@ -378,6 +402,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x13,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x19,
- 		.name = "idxsrd2",
-@@ -392,6 +417,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x13,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x1a,
- 		.name = "mpe_ipred",
-@@ -406,6 +432,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x80,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x1b,
- 		.name = "mpeamemrd",
-@@ -420,6 +447,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x42,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x1c,
- 		.name = "mpecsrd",
-@@ -434,6 +462,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x1d,
- 		.name = "ppcsahbdmar",
-@@ -448,6 +477,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x10,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x1e,
- 		.name = "ppcsahbslvr",
-@@ -462,6 +492,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x12,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x1f,
- 		.name = "satar",
-@@ -476,6 +507,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x33,
- 		},
-+		.fifo_size = 16 * 32,
- 	}, {
- 		.id = 0x20,
- 		.name = "texsrd",
-@@ -490,6 +522,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x13,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x21,
- 		.name = "texsrd2",
-@@ -504,6 +537,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x13,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x22,
- 		.name = "vdebsevr",
-@@ -518,6 +552,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x23,
- 		.name = "vdember",
-@@ -532,6 +567,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xd0,
- 		},
-+		.fifo_size = 16 * 4,
- 	}, {
- 		.id = 0x24,
- 		.name = "vdemcer",
-@@ -546,6 +582,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x2a,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x25,
- 		.name = "vdetper",
-@@ -560,6 +597,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x74,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x26,
- 		.name = "mpcorelpr",
-@@ -570,6 +608,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x04,
- 		},
-+		.fifo_size = 16 * 14,
- 	}, {
- 		.id = 0x27,
- 		.name = "mpcorer",
-@@ -580,6 +619,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x04,
- 		},
-+		.fifo_size = 16 * 14,
- 	}, {
- 		.id = 0x28,
- 		.name = "eppu",
-@@ -594,6 +634,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x6c,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x29,
- 		.name = "eppv",
-@@ -608,6 +649,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x6c,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x2a,
- 		.name = "eppy",
-@@ -622,6 +664,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x6c,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x2b,
- 		.name = "mpeunifbw",
-@@ -636,6 +679,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x13,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x2c,
- 		.name = "viwsb",
-@@ -650,6 +694,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x12,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x2d,
- 		.name = "viwu",
-@@ -664,6 +709,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xb2,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x2e,
- 		.name = "viwv",
-@@ -678,6 +724,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xb2,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x2f,
- 		.name = "viwy",
-@@ -692,6 +739,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x12,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x30,
- 		.name = "g2dw",
-@@ -706,6 +754,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x9,
- 		},
-+		.fifo_size = 16 * 128,
- 	}, {
- 		.id = 0x31,
- 		.name = "afiw",
-@@ -720,6 +769,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0c,
- 		},
-+		.fifo_size = 16 * 32,
- 	}, {
- 		.id = 0x32,
- 		.name = "avpcarm7w",
-@@ -734,6 +784,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0e,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x33,
- 		.name = "fdcdwr",
-@@ -748,6 +799,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0a,
- 		},
-+		.fifo_size = 16 * 96,
- 	}, {
- 		.id = 0x34,
- 		.name = "fdcdwr2",
-@@ -762,6 +814,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0a,
- 		},
-+		.fifo_size = 16 * 96,
- 	}, {
- 		.id = 0x35,
- 		.name = "hdaw",
-@@ -776,6 +829,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x36,
- 		.name = "host1xw",
-@@ -790,6 +844,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x10,
- 		},
-+		.fifo_size = 16 * 32,
- 	}, {
- 		.id = 0x37,
- 		.name = "ispw",
-@@ -804,6 +859,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 64,
- 	}, {
- 		.id = 0x38,
- 		.name = "mpcorelpw",
-@@ -814,6 +870,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0e,
- 		},
-+		.fifo_size = 16 * 24,
- 	}, {
- 		.id = 0x39,
- 		.name = "mpcorew",
-@@ -824,6 +881,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x0e,
- 		},
-+		.fifo_size = 16 * 24,
- 	}, {
- 		.id = 0x3a,
- 		.name = "mpecswr",
-@@ -838,6 +896,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 8,
- 	}, {
- 		.id = 0x3b,
- 		.name = "ppcsahbdmaw",
-@@ -852,6 +911,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x10,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x3c,
- 		.name = "ppcsahbslvw",
-@@ -866,6 +926,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x06,
- 		},
-+		.fifo_size = 16 * 4,
- 	}, {
- 		.id = 0x3d,
- 		.name = "sataw",
-@@ -880,6 +941,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x33,
- 		},
-+		.fifo_size = 16 * 32,
- 	}, {
- 		.id = 0x3e,
- 		.name = "vdebsevw",
-@@ -894,6 +956,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 4,
- 	}, {
- 		.id = 0x3f,
- 		.name = "vdedbgw",
-@@ -908,6 +971,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0xff,
- 		},
-+		.fifo_size = 16 * 16,
- 	}, {
- 		.id = 0x40,
- 		.name = "vdembew",
-@@ -922,6 +986,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x42,
- 		},
-+		.fifo_size = 16 * 2,
- 	}, {
- 		.id = 0x41,
- 		.name = "vdetpmw",
-@@ -936,6 +1001,7 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
- 			.mask = 0xff,
- 			.def = 0x2a,
- 		},
-+		.fifo_size = 16 * 16,
- 	},
- };
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 0baa6590adea..ce22ca7cfb77 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -654,7 +654,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+ 	struct tegra_emc *emc;
+-	struct resource *res;
+ 	int irq, err;
+ 
+ 	/* driver has nothing to do in a case of memory timing absence */
+@@ -689,8 +688,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	emc->regs = devm_ioremap_resource(&pdev->dev, res);
++	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(emc->regs))
+ 		return PTR_ERR(emc->regs);
  
 -- 
 2.27.0
