@@ -2,82 +2,78 @@ Return-Path: <SRS0=h/hb=EB=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0888C4363A
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 20:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F56C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 20:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96E0A21D42
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 20:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E8C21D7B
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 20:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603743292;
-	bh=8KLUIb8OS6YSmjZyYN9hokEpdgO30AV/TW7YIz+gh0w=;
+	s=default; t=1603743328;
+	bh=aLwQg/ETardHa8l/G0lzOstsEi4EImSRh619h70oY8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Eyw1VPVisWrcZExTlaZVSqRsbfcGDHkxeXmhMUgQwnEp7QwdS533JChonBMLKB/+I
-	 vr0LCDGNXIyVO25xfuV/vH5v68AqXyM22VGbcSzofELfH+gnu2+WWsiXS2rENuMryH
-	 fbKvpIB45t7z2SdBCe9WhqeJ5Ct+FMWovw0tTfnk=
+	b=FR00cPRUMinIjxM5WLHDaMzvivRtUlqp9oSXOC9XFAxuMlp5hBRbIQZ+6X2rGbJ2Y
+	 6VuHIKnT7Do/HEDjpglc/8NwenPV5nMOMyMMIEgbNSFpR9xDOA9j5AdSbfl4jFpRGe
+	 be/+Q7mDzybnwEacqyX79mftNNc8yiBDLXqZcJ8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbgJZUOw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Oct 2020 16:14:52 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33399 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbgJZUOw (ORCPT
+        id S1730447AbgJZUPY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Oct 2020 16:15:24 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43041 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730393AbgJZUPX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Oct 2020 16:14:52 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w23so10886226edl.0;
-        Mon, 26 Oct 2020 13:14:50 -0700 (PDT)
+        Mon, 26 Oct 2020 16:15:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id dn5so10874124edb.10;
+        Mon, 26 Oct 2020 13:15:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=8KLUIb8OS6YSmjZyYN9hokEpdgO30AV/TW7YIz+gh0w=;
-        b=NkFpjhJITAgp2TIk2nqBl3IOPc/V3uhB3BNZkII+eV0O+K2MVmzcFjE2UzbzWfJYsU
-         o+7XhpVuNiKPxPp+rQwZa0eZy6TN3JnciqRXQ52nYUH4JKYlx0T1wA1lP8YGXabr5kAh
-         94l0uXuerB3H7bqLJVrCnA+jhwghxEDwpfvBI8rmi6y1hk3APcfmn8MVhC5/oM8GjJfY
-         lnLAxzMh/yPJ2mRKjjMP/BHPrm/8IZNoFsS/H7FoWu7spSU+SYL0NYObJ5yjqBALYqCc
-         fzfyfoOIAUixMOJde52i56dpiSDZQIk7l6eGHyKumyKRQnNZyKsu9L5dbj7dKg4hPxrB
-         yvUg==
-X-Gm-Message-State: AOAM530gqqdpKsG5ZA56f7ca5He60Zoyc53reKuusVpKIYS9Wcefogea
-        1g8P47sXe9dIqOpI2aL0gwQHXZivynrUlw==
-X-Google-Smtp-Source: ABdhPJySsYsaA1BUsVpXj0m96ZkfQ1dsjMZpu/rfj7BJFtxxKNSDPXTQT0zTlyptEnWnUYf0iEMJYw==
-X-Received: by 2002:aa7:de97:: with SMTP id j23mr17739492edv.45.1603743289955;
-        Mon, 26 Oct 2020 13:14:49 -0700 (PDT)
+        bh=LYcZ20BNz5H4rzdEtt69INtVa9znhpyNmuJE8/2xo3w=;
+        b=WKSPB+Mojedx0/CtIMFlaOcbPgpXicHNZJBqI4NwF9iU08ZChpV2BwaICT4wXdx+p6
+         6juffmmFEZ23RorHh2068i2ACfGvKITV87ycZHmm3spxVQmuLPqhjFGEtf/LwNAab8oF
+         6G2rWC8h19k5A1whTy1gml+VShabbz6rPmtsd9uIf2Ah3PV1Kw+J1KsUlRGfsGSQFINw
+         EZIMtTcHIWaEc8cKjbTlKpFT8IpCM5JsyFRIlEJftJCk7Catt88g0vokoPM2mYSJJzYG
+         p7MmAPZ0hqmawAl6EHxabqIn35VNJM0oz+9S9tQ6QnOlWufoxs1umwNQouwQYNvyqaZe
+         s4Pw==
+X-Gm-Message-State: AOAM531AUBiri3rlEHv2ZC/tDaxk7MbGkPMpv+IvkyL1Nv3UKBVJ6/Pt
+        JrdXL6vK/l3T+8iUBLmjnfI=
+X-Google-Smtp-Source: ABdhPJwUVIHasurwPlHimiL4eNyqDMCoMudrGD4Wywu8cUDePfrsdT1NdGiifoTp1CA0z6f3X5d8TA==
+X-Received: by 2002:a50:8745:: with SMTP id 5mr17221901edv.49.1603743321408;
+        Mon, 26 Oct 2020 13:15:21 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id k23sm6593061ejk.0.2020.10.26.13.14.47
+        by smtp.googlemail.com with ESMTPSA id os11sm6446166ejb.104.2020.10.26.13.15.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 13:14:48 -0700 (PDT)
-Date:   Mon, 26 Oct 2020 21:14:46 +0100
+        Mon, 26 Oct 2020 13:15:20 -0700 (PDT)
+Date:   Mon, 26 Oct 2020 21:15:18 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Nicolin Chen <nicoleotsuka@gmail.com>
 Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] memory: tegra: Correct la.reg address of seswr
-Message-ID: <20201026201446.GA248919@kozik-lap>
+Subject: Re: [PATCH 2/5] memory: tegra: Correct tegra210_mc_clients def values
+Message-ID: <20201026201518.GB248919@kozik-lap>
 References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-2-nicoleotsuka@gmail.com>
+ <20201008003746.25659-3-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201008003746.25659-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20201008003746.25659-3-nicoleotsuka@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 05:37:42PM -0700, Nicolin Chen wrote:
-> According to Tegra X1 TRM, ALLOWANCE_SESWR is located in field
-> [23:16] of register at address 0x3e0 with a reset value of 0x80
-> at register 0x3e0, while bit-1 of register 0xb98 is for enable
-> bit of seswr.
-
-> So this patch fixes it.
-
-Either use the imperative form ("Fix foo bar register address") or just
-skip the last sentence as it is quite obvious.
-
-https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst#L151
+On Wed, Oct 07, 2020 at 05:37:43PM -0700, Nicolin Chen wrote:
+> Some def values are mismatched with Tegra X1 TRM, probably because
+> being copied from tegra124.c file. So this patch fixes them.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/memory/tegra/tegra210.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 
 Thanks, applied.
 
