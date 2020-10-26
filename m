@@ -2,200 +2,77 @@ Return-Path: <SRS0=h/hb=EB=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91854C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 06:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ED8C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 09:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 541592225C
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 06:55:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="N9n11gZB"
+	by mail.kernel.org (Postfix) with ESMTP id 35B6E2240A
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 09:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1770823AbgJZGz3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Oct 2020 02:55:29 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18194 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1768361AbgJZGz2 (ORCPT
+        id S1772562AbgJZJG7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Oct 2020 05:06:59 -0400
+Received: from cmccmta1.chinamobile.com ([221.176.66.79]:63555 "EHLO
+        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391070AbgJZJG7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Oct 2020 02:55:28 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9672cb0001>; Sun, 25 Oct 2020 23:55:07 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 26 Oct
- 2020 06:55:27 +0000
-Received: from vidyas-desktop.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Mon, 26 Oct 2020 06:55:24 +0000
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <amanharitsh123@gmail.com>,
-        <dinghao.liu@zju.edu.cn>, <kw@linux.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH 4/4] PCI: tegra: Handle error conditions properly
-Date:   Mon, 26 Oct 2020 12:24:59 +0530
-Message-ID: <20201026065459.28509-5-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201026065459.28509-1-vidyas@nvidia.com>
-References: <20201026065459.28509-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 26 Oct 2020 05:06:59 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.3]) by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee35f96919b00c-e1f43; Mon, 26 Oct 2020 17:06:35 +0800 (CST)
+X-RM-TRANSID: 2ee35f96919b00c-e1f43
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.112.105.130])
+        by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee25f969198e03-26d43;
+        Mon, 26 Oct 2020 17:06:35 +0800 (CST)
+X-RM-TRANSID: 2ee25f969198e03-26d43
+From:   Tang Bin <tangbin@cmss.chinamobile.com>
+To:     stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] usb: host: ehci-tegra: Fix error handling in tegra_ehci_probe()
+Date:   Mon, 26 Oct 2020 17:06:57 +0800
+Message-Id: <20201026090657.49988-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.20.1.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603695307; bh=HrV4xUNlix0+NHaugkAxqshy+cP+yr3y7m2Ah0m5Bm4=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=N9n11gZBT59QymATtceA9DjmvE/3DqzMVKCho1o57vf2Rn3jWDpwl0/Bsqui1XJ7S
-         XhEzWZ7Ws+jARojcHgpdGbZ/H2Q0+S20r4GzLQdWYFgDDpCU+9E3rVKwZyO9j9f2SK
-         jeuWrfV4H2aLJmQwvbIvS7slQJ++oFVBVZO9utB4+f3h2a4YnzSf2U+XEg9naWPBn1
-         zW0HkCJUbIc/5jxDZn2GBIMcklZtcrMOYvtnZ+MhUWDJgJUh29mE02f5pqu7CZy+RH
-         Y71qTQmNHhMhvo9Oz2pMK+13NOuku05BmbtommHXbjhQwp8E5JtHnlf/xHwpgFPorG
-         9W7f5vchmwRbw==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently the driver checks for error value of different APIs during the
-uninitialization sequence. It just returns from there if there is any error
-observed for one of those calls. Comparatively it is better to continue the
-uninitialization sequence irrespective of whether some of them are
-returning error. That way, it is more closer to complete uninitialization.
-It also adds checking return value for error for a cleaner exit path.
+If the function platform_get_irq() failed, the negative value
+returned will not be detected here. So fix error handling in
+tegra_ehci_probe().
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Fixes: 79ad3b5add4a ("usb: host: Add EHCI driver for NVIDIA Tegra SoCs")
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 45 ++++++++++------------
- 1 file changed, 20 insertions(+), 25 deletions(-)
+ drivers/usb/host/ehci-tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 253d91033bc3..8c08998b9ce1 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1422,43 +1422,32 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
- 	return ret;
- }
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 75a075daf..7b0efaf15 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -479,9 +479,9 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	u_phy->otg->host = hcd_to_bus(hcd);
  
--static int __deinit_controller(struct tegra_pcie_dw *pcie)
-+static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
- {
- 	int ret;
- 
- 	ret = reset_control_assert(pcie->core_rst);
--	if (ret) {
--		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n",
--			ret);
--		return ret;
--	}
-+	if (ret)
-+		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
- 
- 	tegra_pcie_disable_phy(pcie);
- 
- 	ret = reset_control_assert(pcie->core_apb_rst);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
--		return ret;
--	}
- 
- 	clk_disable_unprepare(pcie->core_clk);
- 
- 	ret = regulator_disable(pcie->pex_ctl_supply);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
--		return ret;
--	}
- 
- 	tegra_pcie_disable_slot_regulators(pcie);
- 
- 	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
- 			pcie->cid, ret);
--		return ret;
--	}
--
--	return ret;
- }
- 
- static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
-@@ -1482,7 +1471,8 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
- 	return 0;
- 
- fail_host_init:
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
-+	return ret;
- }
- 
- static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
-@@ -1551,13 +1541,12 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
- 	appl_writel(pcie, data, APPL_PINMUX);
- }
- 
--static int tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
-+static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
- {
- 	tegra_pcie_downstream_dev_to_D0(pcie);
- 	dw_pcie_host_deinit(&pcie->pci.pp);
- 	tegra_pcie_dw_pme_turnoff(pcie);
--
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- }
- 
- static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
-@@ -1590,7 +1579,11 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
- 		goto fail_pm_get_sync;
+ 	irq = platform_get_irq(pdev, 0);
+-	if (!irq) {
+-		err = -ENODEV;
+-		goto cleanup_phy;
++	if (irq < 0) {
++		err = irq;
++		goto cleanup_phy;
  	}
  
--	tegra_pcie_init_controller(pcie);
-+	ret = tegra_pcie_init_controller(pcie);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to initialize controller: %d\n", ret);
-+		goto fail_pm_get_sync;
-+	}
- 
- 	pcie->link_state = tegra_pcie_dw_link_up(&pcie->pci);
- 	if (!pcie->link_state) {
-@@ -2238,8 +2231,9 @@ static int tegra_pcie_dw_suspend_noirq(struct device *dev)
- 					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
- 	tegra_pcie_downstream_dev_to_D0(pcie);
- 	tegra_pcie_dw_pme_turnoff(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- 
--	return __deinit_controller(pcie);
-+	return 0;
- }
- 
- static int tegra_pcie_dw_resume_noirq(struct device *dev)
-@@ -2267,7 +2261,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
- 	return 0;
- 
- fail_host_init:
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
-+	return ret;
- }
- 
- static int tegra_pcie_dw_resume_early(struct device *dev)
-@@ -2305,7 +2300,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
- 		disable_irq(pcie->pci.pp.msi_irq);
- 
- 	tegra_pcie_dw_pme_turnoff(pcie);
--	__deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- }
- 
- static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
+ 	otg_set_host(u_phy->otg, &hcd->self);
 -- 
-2.17.1
+2.20.1.windows.1
+
+
 
