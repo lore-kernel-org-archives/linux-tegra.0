@@ -2,105 +2,140 @@ Return-Path: <SRS0=h/hb=EB=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D518EC2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 18:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6A3C4363A
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 19:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACA321D7B
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 18:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603737721;
-	bh=ZHnDVzqCmHdL0T1F4BO4Y47EykJ5PDqzneLTnwI6ZRA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CajWSEEhoT/e4a664r9zAzFVHaPkQcuPTyuDQ8TVTMOFFEz+OaHC+DnC+ZavngquO
-	 NihsDc6uRHabKEIwJdK8FwCg4Zy+lRDKc2qy1CDB1imVI+LJhv2yS8fMQwWsc/X2ZK
-	 3IQb2NCqemTygtrVdPSVePXJd6Ze+++EojT3S7II=
+	by mail.kernel.org (Postfix) with ESMTP id E55712080A
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Oct 2020 19:14:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4A23Vom"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1790184AbgJZSl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Oct 2020 14:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1785156AbgJZSl5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Oct 2020 14:41:57 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A9762222C;
-        Mon, 26 Oct 2020 18:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603737716;
-        bh=ZHnDVzqCmHdL0T1F4BO4Y47EykJ5PDqzneLTnwI6ZRA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KdhX4ntAZx6gfgYbRCwmS5ZXbSIhAStlI4WxQZxVot2A6EgEa6Ne+sSA1Jra+zi1C
-         f/EHeO6pkRwGxtqsXP9yTgRA6dUyW+E5MXoSJPn2h0UOmqWCQD/Bako7xNmpTSJwo/
-         L43WN4dpKVOSrCCK72KNcygSYxZkExCxtE2dTy54=
-Received: by mail-ot1-f49.google.com with SMTP id k3so8355984otp.1;
-        Mon, 26 Oct 2020 11:41:56 -0700 (PDT)
-X-Gm-Message-State: AOAM531mtYIMj6PqohlQ5PeVx6q8wObdlwF7gR3GzcGsk3Lf1DKPEj+B
-        GRbxUHDVawr9IunB16pxd1z9Vn9EIVm11rajIQ==
-X-Google-Smtp-Source: ABdhPJyVlgX3wTNwjznavSrjvPKZgPsLOcYRv5S/5h+cGUJY0F3WJM+ZuvefjhUv5JIG7coKD86JdQgouxe51pp7RDU=
-X-Received: by 2002:a9d:62d1:: with SMTP id z17mr15737889otk.192.1603737715454;
- Mon, 26 Oct 2020 11:41:55 -0700 (PDT)
+        id S1792721AbgJZTOQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Oct 2020 15:14:16 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46850 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S367921AbgJZTOP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 26 Oct 2020 15:14:15 -0400
+Received: by mail-lj1-f195.google.com with SMTP id c21so11469335ljn.13;
+        Mon, 26 Oct 2020 12:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dq2PzuCzxyYXjp7izV7Nz4V/toYcZjqA2m1mpqmQcWc=;
+        b=a4A23VompEg7ZU78ZOB4AepZ1yz/UI086hDid7oIuoPSEr3Rt0l3y4puzGzQzMnB7E
+         ulmHkfUh0H5mSv+9leZPOZ0nCacUo7tB6u3bFl0Vqr1CjPOVLLkYjGN0miH+IvFUdvI3
+         QuTJG/Ut1u1hi4MxUWew1UOC9uB3rZni6HYQA/+d34UJNcEYVBQd2umMR2OcvF+v/L20
+         6mYjK3YorWbMAXCk0Z/1+BfGaUW8D1h6sxfupIFpwxeHaYZv6fZhmAIoqomkNeM/9fdD
+         9Qd8F9HXHVGAHJp1rV4zcj4BCeVTU5c+rcujkUM1tE0dsIdSkv2ElWLBn0QWyLbRQDyB
+         FbUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dq2PzuCzxyYXjp7izV7Nz4V/toYcZjqA2m1mpqmQcWc=;
+        b=FUFnwc+PFEt8sM9zqzf7AP2aDjnsLhLE4ppASgEvXGIFxhME1fFe2VVF+vF9ZjhXkE
+         0ld9MuvZdAYv6j9t1Zo9IyEUtufH3ZMDlcIhLDorUWDWgiZ//xI9oRxo/LVAcC1dy+p6
+         yhWUUhu2axMwtxQYwPmh8ORtEbVm7yNOv4nq549gUYmqhxYYsc9APd28H8ylsQ5qcNb8
+         XcTACbrwec48XK8uMu834N1miQyNlTMX9DV3Sl6tVh7RK7sft0W8JhocJ9a28ve62ByZ
+         NTTZZ31WwzcQsEQJMI8YlW/VrmEEOcPG7TuITssGTVGGmA9KvR3KqpQ0mfvDcYYzpAOp
+         GsOQ==
+X-Gm-Message-State: AOAM532qiDOFUyIgxZq4xXd8kYKbV61VVWrScmd4hb+bqEb8wLiIZV72
+        IthCPVbj/9/Vjr45yp0WiV96J3A5iSc=
+X-Google-Smtp-Source: ABdhPJyD0NDjbABoCatjn1w/Ey9Ef6HeuvvsweZ+aBXUAru5GebuoxfPUOebSAQ0Ivmfhv7NpHeadw==
+X-Received: by 2002:a2e:9eca:: with SMTP id h10mr6129956ljk.352.1603739652647;
+        Mon, 26 Oct 2020 12:14:12 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.googlemail.com with ESMTPSA id r19sm1280779ljn.73.2020.10.26.12.14.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2020 12:14:11 -0700 (PDT)
+Subject: Re: [PATCH v6 00/52] Introduce memory interconnect for NVIDIA Tegra
+ SoCs
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201026150845.GA87050@kozik-lap>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <48a5cfdd-c170-f6d3-001a-2d343ecb2c5e@gmail.com>
+Date:   Mon, 26 Oct 2020 22:14:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201026065459.28509-1-vidyas@nvidia.com> <20201026065459.28509-3-vidyas@nvidia.com>
-In-Reply-To: <20201026065459.28509-3-vidyas@nvidia.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 26 Oct 2020 13:41:43 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJdwF26_2Fpz5=jGeLCGkySpdC0ZCJGaMvHFoGwJ898aQ@mail.gmail.com>
-Message-ID: <CAL_JsqJdwF26_2Fpz5=jGeLCGkySpdC0ZCJGaMvHFoGwJ898aQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] PCI: tegra: Map configuration space as strongly ordered
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, amanharitsh123@gmail.com,
-        dinghao.liu@zju.edu.cn, Krzysztof Wilczynski <kw@linux.com>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kthota@nvidia.com, Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        sagar.tv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201026150845.GA87050@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 1:55 AM Vidya Sagar <vidyas@nvidia.com> wrote:
->
-> As specified in the comment for pci_remap_cfgspace() define in
-> arch/arm64/include/asm/io.h file, PCIe configuration space should be
-> mapped as strongly ordered. Hence changing to dev_pci_remap_cfgspace()
+26.10.2020 18:08, Krzysztof Kozlowski пишет:
+> On Mon, Oct 26, 2020 at 01:16:43AM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This series brings initial support for memory interconnect to Tegra20,
+>> Tegra30 and Tegra124 SoCs.
+>>
+>> For the starter only display controllers and devfreq devices are getting
+>> interconnect API support, others could be supported later on. The display
+>> controllers have the biggest demand for interconnect API right now because
+>> dynamic memory frequency scaling can't be done safely without taking into
+>> account bandwidth requirement from the displays. In particular this series
+>> fixes distorted display output on T30 Ouya and T124 TK1 devices.
+> 
+> Hi,
+> 
+> You introduced in v6 multiple new patches. Could you describe the
+> dependencies, if any?
 
-Strictly speaking, strongly ordered is ARMv6/7 terminology. For v8,
-it's 'nGnRnE' which is what the comment says.
+Hello,
 
-> from devm_ioremap_resource() for mapping DBI space as that is nothing
-> but the root port's own configuration space.
->
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index b172b1d49713..7a0c64436861 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -2108,7 +2108,9 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
->         }
->         pcie->dbi_res = dbi_res;
->
-> -       pci->dbi_base = devm_ioremap_resource(dev, dbi_res);
-> +       pci->dbi_base = devm_pci_remap_cfgspace(dev,
-> +                                               dbi_res->start,
-> +                                               resource_size(dbi_res));
+The v6 dropped some older patches and replaced them with the new
+patches. Previously I wanted to postpone the more complex changes for
+later times, like supporting OPP tables and DVFS, but then the review
+started to take more time than was expected and there was enough time to
+complete those features.
 
-This is all going to get removed anyways as I'm working on moving DBI
-and other region setup into the DWC core. I guess better to do this
-change first and make it explicit.
+There are five basic sets of patches:
 
-Rob
+	1. DT bindings
+	2. DT changes
+	3. SoC, clk and memory
+	4. devfreq
+	5. DRM
+
+Each set could be applied separately.
+
+Memory patches have a build dependency on the SoC and clk patches.
+
+The "tegra-mc: Add interconnect framework" and "Add and use
+devm_tegra_get_memory_controller()" are the root build dependencies for
+all memory/ patches. Other patches are grouped per SoC generation
+(Tegra20/30/124), patches within a SoC-gen group are interdependent.
+
+I suppose the best variant would be to merge the whole series via
+tegra-tree in order to preserve logical order of the patches. Although,
+merging each set of patches separately also should be okay to do.
