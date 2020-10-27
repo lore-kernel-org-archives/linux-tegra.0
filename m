@@ -2,82 +2,143 @@ Return-Path: <SRS0=stlo=EC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B335C4363A
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 07:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C71C4363A
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 08:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4132F21556
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 07:05:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cl6cysfh"
+	by mail.kernel.org (Postfix) with ESMTP id 04C772225C
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 08:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603788784;
+	bh=SqUJ9x9risv90uZYTfnyI8hkuL48fOtSxMLCvQ2Gi28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hbmgc1gp5Sj2miuSrGfwSJMG2UiHBhjgXBrkQqTLRD9CfAMzBf+HUe+KWZWcaBPWx
+	 IeMd/wRxRwmOjU09EoB5fuSlt5ESXM5/wCbBX6yi3w0x0m3SW9WBTtwGPUjOQlTHNX
+	 VXes/+zwpSORkz4Mye2yXr5iMaTpDGudMZCLOlMA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507283AbgJ0HFp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 03:05:45 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17141 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2507281AbgJ0HFo (ORCPT
+        id S2895119AbgJ0Iw7 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 04:52:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40599 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2895116AbgJ0Iw7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 03:05:44 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f97c6cc0001>; Tue, 27 Oct 2020 00:05:48 -0700
-Received: from [10.41.23.128] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Oct
- 2020 07:05:38 +0000
-Subject: Re: [PATCH v3] cpufreq: tegra194: get consistent cpuinfo_cur_freq
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     <rjw@rjwysocki.net>, <sudeep.holla@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <bbasu@nvidia.com>,
-        <ksitaraman@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-References: <1602668171-30104-1-git-send-email-sumitg@nvidia.com>
- <c56983dc-dc45-3e8c-a67c-14d7d09464ae@nvidia.com>
- <20201027065855.ghekpybjwtaufwgy@vireshk-i7>
-From:   Sumit Gupta <sumitg@nvidia.com>
-Message-ID: <e3dc2ac5-2561-dd48-5110-918a47b3a473@nvidia.com>
-Date:   Tue, 27 Oct 2020 12:35:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 27 Oct 2020 04:52:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p93so576841edd.7;
+        Tue, 27 Oct 2020 01:52:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=miK2E28wkgKpBF1Fb19w02StT2/a3W+EFB25jg9SneM=;
+        b=Hb8Uuy7WFlcCsoIAS0qHGUuWg/TSfyWokYWQWRHBg0No6zSu+t3giURfdXdtiD+8KP
+         VM6BrJBUrAqFpa9AdN9CH4QPSOHNNCtZx/uu2pJ5Q8mcpTAdUmPRRzhtmvJM1GdhPKKK
+         VdAHIaxuF+oxOy5OTuv1E/kpwt6U7bEHKUmxfjnHrhJNgDp1n3EtTHvLX2VsFPwMxcfF
+         Jp84pvpmKwfG8pzUYcY+9Q/BxwARdmYk+4qRZpBn3K5dRPyknujn4aB2JtZRwnQFDKgj
+         0pzppMv1bkGeKNdbpph1FGIROF0Z2p5VWbSFOJK+nDU2RZw7S4mLDCbPyR2NJr8Q19b2
+         20zA==
+X-Gm-Message-State: AOAM530Z7RhqsvzAjmBYEjZLy65is8zY4j8pqvMc4K4weZFfdJ0F0MtY
+        HAotwad2mJQhFP3mvAgaNzY=
+X-Google-Smtp-Source: ABdhPJx3r/Ivqz3bC6fK7Dk3U50yBK7Yqy4j7oDemcQ7xJqnXXJr2+AP4pt/yaUfzlPS/UM2jTnfbg==
+X-Received: by 2002:a05:6402:135a:: with SMTP id y26mr1113530edw.114.1603788776652;
+        Tue, 27 Oct 2020 01:52:56 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id m25sm503543edp.36.2020.10.27.01.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2020 01:52:55 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 09:52:53 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 00/52] Introduce memory interconnect for NVIDIA Tegra
+ SoCs
+Message-ID: <20201027085253.GC4244@kozik-lap>
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201026150845.GA87050@kozik-lap>
+ <48a5cfdd-c170-f6d3-001a-2d343ecb2c5e@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201027065855.ghekpybjwtaufwgy@vireshk-i7>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603782348; bh=WtJy4r7svb4J2IZUnV3t+9wxR1WW37gNHcX6Awa3jIM=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=cl6cysfhaz4s59yJxqetLooytzBoR9HqHpSZuVGyPoiQOuUDeZN2w5QQQOvgs0VIQ
-         9zVZ6QGS/KW9wiM7GaLx1v45VAZeEpXJKZJIJ+WUoxNhD+x6dyK3jTEhnwyPjfXKmk
-         pqcw8uo5Zkuj13wAP632pxrVqPfsIIEKRUe59TdegqHjtuURz39iq12+e9KgUMk1KW
-         GcNhuFtQT7t3GO7oZAgBi9+PlC7kQb7Nt2xiBkMT3aTEtmYBMI3Kzwk3yRSkAvc9o2
-         MviyljpnMCjpzUugH/WuPt8Jrqr4lf630wV5EG4ho/a9nV34CFn3/ny0JzVccNhsBl
-         Q16BR+95YNx4w==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <48a5cfdd-c170-f6d3-001a-2d343ecb2c5e@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thank you.
+On Mon, Oct 26, 2020 at 10:14:10PM +0300, Dmitry Osipenko wrote:
+> 26.10.2020 18:08, Krzysztof Kozlowski пишет:
+> > On Mon, Oct 26, 2020 at 01:16:43AM +0300, Dmitry Osipenko wrote:
+> >> Hello,
+> >>
+> >> This series brings initial support for memory interconnect to Tegra20,
+> >> Tegra30 and Tegra124 SoCs.
+> >>
+> >> For the starter only display controllers and devfreq devices are getting
+> >> interconnect API support, others could be supported later on. The display
+> >> controllers have the biggest demand for interconnect API right now because
+> >> dynamic memory frequency scaling can't be done safely without taking into
+> >> account bandwidth requirement from the displays. In particular this series
+> >> fixes distorted display output on T30 Ouya and T124 TK1 devices.
+> > 
+> > Hi,
+> > 
+> > You introduced in v6 multiple new patches. Could you describe the
+> > dependencies, if any?
+> 
+> Hello,
+> 
+> The v6 dropped some older patches and replaced them with the new
+> patches. Previously I wanted to postpone the more complex changes for
+> later times, like supporting OPP tables and DVFS, but then the review
+> started to take more time than was expected and there was enough time to
+> complete those features.
+> 
+> There are five basic sets of patches:
+> 
+> 	1. DT bindings
+> 	2. DT changes
+> 	3. SoC, clk and memory
+> 	4. devfreq
+> 	5. DRM
+> 
+> Each set could be applied separately.
+> 
+> Memory patches have a build dependency on the SoC and clk patches.
+> 
+> The "tegra-mc: Add interconnect framework" and "Add and use
+> devm_tegra_get_memory_controller()" are the root build dependencies for
+> all memory/ patches. Other patches are grouped per SoC generation
+> (Tegra20/30/124), patches within a SoC-gen group are interdependent.
+> 
+> I suppose the best variant would be to merge the whole series via
+> tegra-tree in order to preserve logical order of the patches. Although,
+> merging each set of patches separately also should be okay to do.
 
-On 27/10/20 12:28 PM, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 27-10-20, 11:46, Sumit Gupta wrote:
->> Ping.
-> 
-> I was waiting for 5.10-rc1 to be released before I can start applying stuff for
-> 5.11. Now that it is released, I will apply this.
-> 
-> --
-> viresh
-> 
+Thanks for explanation. I already have three patches for Tegra MC (and
+probably two more will be respun) so this might be conflict-prone. The
+easiest in such case is to provide me soc and clk patches on the branch,
+so I could keep all Tegra MC together.
+
+Best regards,
+Krzysztof
+
