@@ -2,228 +2,486 @@ Return-Path: <SRS0=stlo=EC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA7DC55179
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C85C4363A
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 18:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CADDE20727
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B9C121556
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 18:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbUT6LrP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFUyAmdc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1811897AbgJ0Qn0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 12:43:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29770 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1811882AbgJ0QnU (ORCPT
+        id S1826112AbgJ0SQV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 14:16:21 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39552 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756203AbgJ0OMB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 12:43:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603816998;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
-        b=SbUT6LrPKSG/kjhEPSpbNL37X7EqS95pLWLFJN05U8T6IvmsgoI1621azrkHaUCQe2IU+4
-        A+8ip+R7TFhvfL2PFtA2YPAVSij+jMd+5zp3Ro8XdkS11BXJM1Rlv3U/dAVL3h95weU9IY
-        Ml5NELPo7a9T9EfhM60DKYJDO3/RVn0=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-355-Wyr4nn_4Pvq0lx9Bo7dcdA-1; Tue, 27 Oct 2020 12:43:14 -0400
-X-MC-Unique: Wyr4nn_4Pvq0lx9Bo7dcdA-1
-Received: by mail-ot1-f72.google.com with SMTP id e6so603158otk.13
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2020 09:43:14 -0700 (PDT)
+        Tue, 27 Oct 2020 10:12:01 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a6so1592198edx.6;
+        Tue, 27 Oct 2020 07:11:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=orRVVCF+rMM6CLEejDnAwA+y2RO0n8KvYKy9sf+Illo=;
+        b=ZFUyAmdcSuaTryuw+AMgJUSZ9ng9P5+QWJF7nDK+zmeM8HEG2WPF1WdLdzff9cKvX9
+         A8CCkdoGOLH7RwzNeFVE2DyHPFOmquwouV6QrCjTGO5eOInfvJULQ6d0RNCFFRxtjuws
+         DsXpSKMctrmqF2PXc9TDDpp2PcwmNpfldGb5yBZ+98PJApX231yTtQB9u8tI8vj5Vs9S
+         gdU0/8MS6wMBIYa7P7aoTU7lbetu760nlsA3bXOPkspD2YVcbEE5tlRQtDK3i3iyRIpV
+         o//lLuB7e4aG2HLVv2Uekuj9BrrJAm2kg/8AFyiOzKgfwi2h29KMZQbhFZZ85296ieXt
+         mIIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
-        b=fpYC5Vbebb84gTA6/VtwzJt5sW0kQddq+F8XEDshTojCOyCOv85pKtu0UurmxkSwDJ
-         8YM6Rv7yt1OnUvzvZbM3moviu4OFDjQWGYViIul5WlIqxdvRGkqynoh0kzJvNJVU/Tgu
-         dohNQ29KWVuY5qcqF7aeHuLmIdkUWTgOO8xIJ4cVuF6pjDIhnmK1sqbcqZU/HLEQbZHV
-         uDZiTovdgECUK3ijEfR4sZgPkB1AxUD1pHIaTKALqKLwdIFp978jQlnnj9+QV9bHELEp
-         JyvShGzIqar2F3C0f23aRLoQu9IF0SAWm3YgwpCrAhAWyFDBik/9WMcZFkqt4hxt1btJ
-         B1gg==
-X-Gm-Message-State: AOAM533HvHcNX88mWGBHtMvT6BImK3vGy8I4nOsL2oKhOKJ/5g1YRrsG
-        LnXNFp9YZEZqFbqe2nIhumaTITNU/ftGVHASOePHTyInefOs6GoTyWbRUgz+EVIy1DrQPLO44XX
-        eL9YSjLWLb21820pMB9Q3SQI=
-X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048455oih.67.1603816993828;
-        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7y1eCX7WfRNi9tkZnfLpiDio1qtG9FKTpwYlLMD9SlPYp6FIE57BquNUx5oTk2cs+UUc+WA==
-X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048435oih.67.1603816993577;
-        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id l89sm90968otc.6.2020.10.27.09.43.10
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=orRVVCF+rMM6CLEejDnAwA+y2RO0n8KvYKy9sf+Illo=;
+        b=kxNISkyWXsLhEGRWeUHjETOj3laiqMWoXOMgN9d+rjK6vyd0Fc3pcy1d+usFONS021
+         Y4G5i2LLnmXGxgz463lHLvtu+9YZU9xZxvR8r7w2UVqclI0wVxPn9yOmrljhDMfD8lmj
+         +3rGpWyyzhG7wWEx/p+LdnkVLJLiXza7IhgXR82S1t8vF5lYq1NoGvHC90BMX4be9hl+
+         w/yMQMw3GSRx8J+eez4tMfvCb6JKGpMOT4WIb4Mlo418jvuJbbs7H8exirs/GVBonCez
+         bLGw/3hhRvXf6fz5t4JHosPdQITVakNg+spyxe4deq2R3YqxyO8p58/gvLgji3lx+UR6
+         2YHQ==
+X-Gm-Message-State: AOAM532HcZyYW/V/HzcvWxC4ePvOsqgo2McJX2JSQXOSy6DmRmmBYF/k
+        HMPPD+kUCCgfF0QpZ04X6r0=
+X-Google-Smtp-Source: ABdhPJygNBt2zIcdsiaIRtak0ehcne4aFcCD22CIMiesT5KQJbgOk/sJyK6XnUNqiVUAfhTFmli2Jw==
+X-Received: by 2002:a50:8426:: with SMTP id 35mr2464381edp.156.1603807915238;
+        Tue, 27 Oct 2020 07:11:55 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id lj18sm1114839ejb.71.2020.10.27.07.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 09:43:12 -0700 (PDT)
-From:   trix@redhat.com
-To:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        qat-linux@intel.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        =?UTF-8?q?=EF=BB=BFFrom=20=3A=20Tom=20Rix?= <trix@redhat.com>
-Subject: Subject: [RFC] clang tooling cleanups
-Date:   Tue, 27 Oct 2020 09:42:55 -0700
-Message-Id: <20201027164255.1573301-1-trix@redhat.com>
-X-Mailer: git-send-email 2.18.1
+        Tue, 27 Oct 2020 07:11:53 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 15:11:52 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 33/52] memory: tegra20: Support interconnect framework
+Message-ID: <20201027141152.GN1822510@ulmo>
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201025221735.3062-34-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GOzekVbrLdOLv44p"
+Content-Disposition: inline
+In-Reply-To: <20201025221735.3062-34-digetx@gmail.com>
+User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This rfc will describe
-An upcoming treewide cleanup.
-How clang tooling was used to programatically do the clean up.
-Solicit opinions on how to generally use clang tooling.
 
-The clang warning -Wextra-semi-stmt produces about 10k warnings.
-Reviewing these, a subset of semicolon after a switch looks safe to
-fix all the time.  An example problem
+--GOzekVbrLdOLv44p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-void foo(int a) {
-     switch(a) {
-     	       case 1:
-	       ...
-     }; <--- extra semicolon
-}
+On Mon, Oct 26, 2020 at 01:17:16AM +0300, Dmitry Osipenko wrote:
+> Now Internal and External Memory Controllers are memory interconnection
+> providers. This allows us to use interconnect API for tuning of memory
+> configuration. EMC driver now supports OPPs and DVFS.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/Kconfig       |   3 +-
+>  drivers/memory/tegra/mc.h          |  12 ++
+>  drivers/memory/tegra/tegra20-emc.c | 176 +++++++++++++++++++++++++++++
+>  drivers/memory/tegra/tegra20.c     |  34 ++++++
+>  4 files changed, 224 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+> index ff426747cd7d..ac3dfe155505 100644
+> --- a/drivers/memory/tegra/Kconfig
+> +++ b/drivers/memory/tegra/Kconfig
+> @@ -11,7 +11,8 @@ config TEGRA_MC
+>  config TEGRA20_EMC
+>  	tristate "NVIDIA Tegra20 External Memory Controller driver"
+>  	default y
+> -	depends on ARCH_TEGRA_2x_SOC
+> +	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
+> +	select PM_OPP
+>  	help
+>  	  This driver is for the External Memory Controller (EMC) found on
+>  	  Tegra20 chips. The EMC controls the external DRAM on the board.
+> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+> index abeb6a2cc36a..531fb4fb7b17 100644
+> --- a/drivers/memory/tegra/mc.h
+> +++ b/drivers/memory/tegra/mc.h
+> @@ -78,6 +78,18 @@
+> =20
+>  #define MC_TIMING_UPDATE				BIT(0)
+> =20
+> +static inline u32 tegra_mc_scale_percents(u64 val, unsigned int percents)
+> +{
+> +	val =3D val * percents;
+> +	do_div(val, 100);
+> +
+> +	/*
+> +	 * High freq + high boosting percent + large polling interval are
+> +	 * resulting in integer overflow when watermarks are calculated.
+> +	 */
+> +	return min_t(u64, val, U32_MAX);
+> +}
+> +
+>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+>  {
+>  	return readl_relaxed(mc->regs + offset);
+> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/te=
+gra20-emc.c
+> index 34085e26dced..69ccb3fe5b0b 100644
+> --- a/drivers/memory/tegra/tegra20-emc.c
+> +++ b/drivers/memory/tegra/tegra20-emc.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/err.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> @@ -16,11 +17,15 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/slab.h>
+>  #include <linux/sort.h>
+>  #include <linux/types.h>
+> =20
+>  #include <soc/tegra/fuse.h>
+> =20
+> +#include "mc.h"
+> +
+>  #define EMC_INTSTATUS				0x000
+>  #define EMC_INTMASK				0x004
+>  #define EMC_DBG					0x008
+> @@ -144,6 +149,9 @@ struct emc_timing {
+> =20
+>  struct tegra_emc {
+>  	struct device *dev;
+> +	struct tegra_mc *mc;
+> +	struct opp_table *opp_table;
+> +	struct icc_provider provider;
+>  	struct notifier_block clk_nb;
+>  	struct clk *clk;
+>  	void __iomem *regs;
+> @@ -658,6 +666,166 @@ static void tegra_emc_debugfs_init(struct tegra_emc=
+ *emc)
+>  			    emc, &tegra_emc_debug_max_rate_fops);
+>  }
+> =20
+> +static inline struct tegra_emc *
+> +to_tegra_emc_provider(struct icc_provider *provider)
+> +{
+> +	return container_of(provider, struct tegra_emc, provider);
+> +}
+> +
+> +static struct icc_node_data *
+> +emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
+> +{
+> +	struct icc_provider *provider =3D data;
+> +	struct icc_node_data *ndata;
+> +	struct icc_node *node;
+> +
+> +	/* External Memory is the only possible ICC route */
+> +	list_for_each_entry(node, &provider->nodes, node_list) {
+> +		if (node->id !=3D TEGRA_ICC_EMEM)
+> +			continue;
+> +
+> +		ndata =3D kzalloc(sizeof(*ndata), GFP_KERNEL);
+> +		if (!ndata)
+> +			return ERR_PTR(-ENOMEM);
+> +
+> +		/*
+> +		 * SRC and DST nodes should have matching TAG in order to have
+> +		 * it set by default for a requested path.
+> +		 */
+> +		ndata->tag =3D TEGRA_MC_ICC_TAG_ISO;
+> +		ndata->node =3D node;
+> +
+> +		return ndata;
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+> +static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct tegra_emc *emc =3D to_tegra_emc_provider(dst->provider);
+> +	unsigned long long peak_bw =3D icc_units_to_bps(dst->peak_bw);
+> +	unsigned long long avg_bw =3D icc_units_to_bps(dst->avg_bw);
+> +	unsigned long long rate =3D max(avg_bw, peak_bw);
+> +	unsigned int dram_data_bus_width_bytes =3D 4;
 
-Treewide, there are about 100 problems in 50 files for x86_64 allyesconfig.
-These fixes will be the upcoming cleanup.
+Perhaps use something shorter for this variable (like dram_bus_width)? Also,
+since it's never modified, perhaps make it const? Or a #define?
 
-clang already supports fixing this problem. Add to your command line
+> +	long rounded_rate;
+> +	int err;
+> +
+> +	/*
+> +	 * Tegra20 EMC runs on x2 clock rate of SDRAM bus because DDR data
+> +	 * is sampled on both clock edges. This means that EMC clock rate
+> +	 * equals to the peak data rate.
+> +	 */
+> +	do_div(rate, dram_data_bus_width_bytes);
+> +	rate =3D min_t(u64, rate, U32_MAX);
+> +
+> +	rounded_rate =3D emc_round_rate(rate, 0, U32_MAX, emc);
+> +	if (rounded_rate < 0)
+> +		return rounded_rate;
+> +
+> +	err =3D dev_pm_opp_set_rate(emc->dev, rounded_rate);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+> +{
+> +	const struct tegra_mc_soc *soc;
+> +	struct icc_node *node;
+> +	int err;
+> +
+> +	emc->mc =3D devm_tegra_get_memory_controller(emc->dev);
+> +	if (IS_ERR(emc->mc))
+> +		return PTR_ERR(emc->mc);
+> +
+> +	soc =3D emc->mc->soc;
+> +
+> +	emc->provider.dev =3D emc->dev;
+> +	emc->provider.set =3D emc_icc_set;
+> +	emc->provider.data =3D &emc->provider;
+> +	emc->provider.aggregate =3D soc->icc_ops->aggregate;
+> +	emc->provider.xlate_extended =3D emc_of_icc_xlate_extended;
+> +
+> +	err =3D icc_provider_add(&emc->provider);
+> +	if (err)
+> +		goto err_msg;
+> +
+> +	/* create External Memory Controller node */
+> +	node =3D icc_node_create(TEGRA_ICC_EMC);
+> +	err =3D PTR_ERR_OR_ZERO(node);
+> +	if (err)
+> +		goto del_provider;
 
-  clang -c -Wextra-semi-stmt -Xclang -fixit foo.c
+As far as I can tell, icc_node_create() always returns either a valid
+pointer or an ERR_PTR-encoded negative error-code. So I think the more
+idiomatic way to write this would be:
 
-  foo.c:8:3: warning: empty expression statement has no effect;
-    remove unnecessary ';' to silence this warning [-Wextra-semi-stmt]
-        };
-         ^
-  foo.c:8:3: note: FIX-IT applied suggested code changes
-  1 warning generated.
+	node =3D icc_node_create(TEGRA_ICC_EMC);
+	if (IS_ERR(node)) {
+		err =3D PTR_ERR(node);
+		goto del_provider;
+	}
 
-The big problem is using this treewide is it will fix all 10k problems.
-10k changes to analyze and upstream is not practical.
+> +
+> +	node->name =3D "External Memory Controller";
+> +	icc_node_add(node, &emc->provider);
+> +
+> +	/* link External Memory Controller to External Memory (DRAM) */
+> +	err =3D icc_link_create(node, TEGRA_ICC_EMEM);
+> +	if (err)
+> +		goto remove_nodes;
+> +
+> +	/* create External Memory node */
+> +	node =3D icc_node_create(TEGRA_ICC_EMEM);
+> +	err =3D PTR_ERR_OR_ZERO(node);
+> +	if (err)
+> +		goto remove_nodes;
 
-Another problem is the generic fixer only removes the semicolon.
-So empty lines with some tabs need to be manually cleaned.
+Same here.
 
-What is needed is a more precise fixer.
+> +
+> +	node->name =3D "External Memory (DRAM)";
+> +	icc_node_add(node, &emc->provider);
+> +
+> +	return 0;
+> +
+> +remove_nodes:
+> +	icc_nodes_remove(&emc->provider);
+> +del_provider:
+> +	icc_provider_del(&emc->provider);
+> +err_msg:
+> +	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
 
-Enter clang-tidy.
-https://clang.llvm.org/extra/clang-tidy/
+It might be worth duplicating this error message to the failure
+locations so that the exact failure can be identified.
 
-Already part of the static checker infrastructure, invoke on the clang
-build with
-  make clang-tidy
+> +
+> +	return err;
+> +}
+> +
+> +static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+> +{
+> +	const char *rname =3D "core";
+> +	int err;
+> +
+> +	/*
+> +	 * Legacy device-trees don't have OPP table and EMC driver isn't
+> +	 * useful in this case.
+> +	 */
+> +	if (!device_property_present(emc->dev, "operating-points-v2")) {
+> +		dev_err(emc->dev, "OPP table not found\n");
+> +		dev_err(emc->dev, "please update your device tree\n");
 
-It is only a matter of coding up a specific checker for the cleanup.
-Upstream this is review is happening here
-https://reviews.llvm.org/D90180
+This should be a single error message. These messages end up in kmsg
+records and having this split into two dev_err() calls makes them into
+two separate records and that in turn makes it more difficult to
+determine whether they belong together or not.
 
-The development of a checker/fixer is
-Start with a reproducer
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* voltage scaling is optional */
+> +	if (device_property_present(emc->dev, "core-supply"))
+> +		emc->opp_table =3D dev_pm_opp_set_regulators(emc->dev, &rname, 1);
+> +	else
+> +		emc->opp_table =3D dev_pm_opp_get_opp_table(emc->dev);
+> +
+> +	if (IS_ERR(emc->opp_table))
+> +		return dev_err_probe(emc->dev, PTR_ERR(emc->opp_table),
+> +				     "failed to prepare OPP table\n");
+> +
+> +	err =3D dev_pm_opp_of_add_table(emc->dev);
+> +	if (err) {
+> +		dev_err(emc->dev, "failed to add OPP table: %d\n", err);
+> +		goto put_table;
+> +	}
+> +
+> +	return 0;
+> +
+> +put_table:
+> +	dev_pm_opp_put_opp_table(emc->opp_table);
+> +
+> +	return err;
+> +}
+> +
+>  static int tegra_emc_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np;
+> @@ -717,8 +885,13 @@ static int tegra_emc_probe(struct platform_device *p=
+dev)
+>  		goto unset_cb;
+>  	}
+> =20
+> +	err =3D tegra_emc_opp_table_init(emc);
+> +	if (err)
+> +		goto unreg_notifier;
+> +
+>  	platform_set_drvdata(pdev, emc);
+>  	tegra_emc_debugfs_init(emc);
+> +	tegra_emc_interconnect_init(emc);
+> =20
+>  	/*
+>  	 * Don't allow the kernel module to be unloaded. Unloading adds some
+> @@ -729,6 +902,8 @@ static int tegra_emc_probe(struct platform_device *pd=
+ev)
+> =20
+>  	return 0;
+> =20
+> +unreg_notifier:
+> +	clk_notifier_unregister(emc->clk, &emc->clk_nb);
+>  unset_cb:
+>  	tegra20_clk_set_emc_round_callback(NULL, NULL);
+> =20
+> @@ -747,6 +922,7 @@ static struct platform_driver tegra_emc_driver =3D {
+>  		.name =3D "tegra20-emc",
+>  		.of_match_table =3D tegra_emc_of_match,
+>  		.suppress_bind_attrs =3D true,
+> +		.sync_state =3D icc_sync_state,
+>  	},
+>  };
+>  module_platform_driver(tegra_emc_driver);
+> diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra2=
+0.c
+> index a8098bff91d9..5127e8e8250f 100644
+> --- a/drivers/memory/tegra/tegra20.c
+> +++ b/drivers/memory/tegra/tegra20.c
+> @@ -280,6 +280,39 @@ static const struct tegra_mc_reset_ops tegra20_mc_re=
+set_ops =3D {
+>  	.reset_status =3D tegra20_mc_reset_status,
+>  };
+> =20
+> +static int tegra20_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	/*
+> +	 * Technically, it should be possible to tune arbitration knobs here,
+> +	 * but the default values are known to work well on all devices.
+> +	 * Hence nothing to do here so far.
+> +	 */
+> +	return 0;
+> +}
+> +
+> +static int tegra20_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 a=
+vg_bw,
+> +				   u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
+> +{
+> +	/*
+> +	 * ISO clients need to reserve extra bandwidth up-front because
+> +	 * there could high bandwidth pressure during initial fulling-up
 
-void foo (int a) {
-  switch (a) {};
-}
+"filling of the client's FIFO buffers"
 
-Generate the abstract syntax tree (AST)
+> +	 * of the client's FIFO buffers. Secondly, we need to take into
+> +	 * account impurities of the memory subsystem.
+> +	 */
+> +	if (tag =3D=3D TEGRA_MC_ICC_TAG_ISO)
+> +		peak_bw =3D tegra_mc_scale_percents(peak_bw, 300);
 
-  clang -Xclang -ast-dump foo.c
+300% sounds a bit excessive. Do we really need that much?
 
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt 
-    |-SwitchStmt 
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt
+> +
+> +	*agg_avg +=3D avg_bw;
+> +	*agg_peak =3D max(*agg_peak, peak_bw);
 
-Write a matcher to get you most of the way
+I'm not very familiar with ICC, but shouldn't the aggregated peak value
+be the sum of the current aggregated peak and the new peak bandwidth?
+Currently you're selecting the maximum peak bandwidth across all
+clients, so isn't that going to be too small if for whatever reason
+multiple clients need peak bandwidth at the same time?
 
-void SwitchSemiCheck::registerMatchers(MatchFinder *Finder) {
-  Finder->addMatcher(
-      compoundStmt(has(switchStmt().bind("switch"))).bind("comp"), this);
-}
+Thierry
 
-The 'bind' method is important, it allows a string to be associated
-with a node in the AST.  In this case these are
+--GOzekVbrLdOLv44p
+Content-Type: application/pgp-signature; name="signature.asc"
 
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt <-------- comp
-    |-SwitchStmt <-------- switch
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt
+-----BEGIN PGP SIGNATURE-----
 
-When a match is made the 'check' method will be called.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YKqUACgkQ3SOs138+
+s6HRMxAAkFiUAoB+sUnNejlj9cJmOhxaHFBELR+B8z/8a7mlQNwMrnDNnUgSXX0q
+SS9Ji65B+uY/hFQmRcL+D5tW/NL9HHlu7EHTMURjltzx31mU5h2ln5bMZywwIrTm
+pwApnnQzLN1Snr8YkuAjZMM/MOukDc9Mvyvrhno0w+5AE1Ba0QpnumABJUoY4w8N
+qEb9TDyspYiKA4rG/824jDUymMC4nfPGinHkN6zcK/6x9eLDFcvAUI4eWw70pPBe
+xs+qEaZN5tdGxvMKWQzp45hFsogCn8OPx3DujWpmnxI7ADxxdgkocImr51sD3lqV
+z25vvWBeC0AQ8rDOGSnCOJj/oHKTz4lzF5xLCsZY8bVFQcpNppmAfql+zK9IGOHy
+8k/U26EWrg/vA9YtkvRwvMF+kMejSg7HjLREiLKyUIKJcXbgACDUA00C/H3OvtWv
+VASDNK8mxjdACeX9QVSF+/hmzPB480Z0qHfDw4TpQU5S7Y9c9fVIKwqXL1veZTPR
+TZVsQp4fy92957r0rSLMWtLe/8tn/Kl3Xt9h5kkAQKmBaaRdL4q4n/chcpe5Wn62
+2JYpTwdTekI+gyvy56wdhMBgyqbMT9/NuUkbumvZkQUyL0dPrcmO6IHMNQ7p44Qc
+FDNgfmD1gM9e1mwbT7BPCN9p5O+48BkolaEx+ItvZ/b9wW+NzZk=
+=GwaY
+-----END PGP SIGNATURE-----
 
-  void SwitchSemiCheck::check(const MatchFinder::MatchResult &Result) {
-    auto *C = Result.Nodes.getNodeAs<CompoundStmt>("comp");
-    auto *S = Result.Nodes.getNodeAs<SwitchStmt>("switch");
-
-This is where the string in the bind calls are changed to nodes
-
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt <-------- comp, C
-    |-SwitchStmt <-------- switch, S
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt <---------- looking for N
-
-And then more logic to find the NullStmt
-
-  auto Current = C->body_begin();
-  auto Next = Current;
-  Next++;
-  while (Next != C->body_end()) {
-    if (*Current == S) {
-      if (const auto *N = dyn_cast<NullStmt>(*Next)) {
-
-When it is found, a warning is printed and a FixItHint is proposed.
-
-  auto H = FixItHint::CreateReplacement(
-    SourceRange(S->getBody()->getEndLoc(), N->getSemiLoc()), "}");
-  diag(N->getSemiLoc(), "unneeded semicolon") << H;
-
-This fixit replaces from the end of switch to the semicolon with a
-'}'.  Because the end of the switch is '}' this has the effect of
-removing all the whitespace as well as the semicolon.
-
-Because of the checker's placement in clang-tidy existing linuxkernel
-checkers, all that was needed to fix the tree was to add a '-fix'to the
-build's clang-tidy call.
-
-I am looking for opinions on what we want to do specifically with
-cleanups and generally about other source-to-source programmatic
-changes to the code base.
-
-For cleanups, I think we need a new toplevel target
-
-clang-tidy-fix
-
-And an explicit list of fixers that have a very high (100%?) fix rate.
-
-Ideally a bot should make the changes, but a bot could also nag folks.
-Is there interest in a bot making the changes? Does one already exist?
-
-The general source-to-source is a bit blue sky.  Ex/ could automagicly
-refactor api, outline similar cut-n-pasted functions etc. Anything on
-someone's wishlist you want to try out ?
-
-Signed-off-by: Tom Rix <trix@redhat.com>
-
+--GOzekVbrLdOLv44p--
