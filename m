@@ -5,63 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E5BC4363A
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 20:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A156C55179
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 247FB20878
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 20:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3900520747
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:12:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1BlqOi2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6Wr3oaM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504805AbgJ0UnY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 16:43:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46981 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410965AbgJ0UnY (ORCPT
+        id S1832132AbgJ0VMH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 17:12:07 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41178 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2501973AbgJ0VMG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 16:43:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 2so3253565ljj.13;
-        Tue, 27 Oct 2020 13:43:21 -0700 (PDT)
+        Tue, 27 Oct 2020 17:12:06 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p15so3391112ljj.8;
+        Tue, 27 Oct 2020 14:12:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VlRzTBC/wBfxIpRQ0M8e1w6Q9iv9Exe50KxjDSUm4w4=;
-        b=G1BlqOi2pjvzRVs3HvfPFPkqbhpWnWCJiikVWY0XuAuqM2kF+Ylp+lx+m8xXO8j3tc
-         FfClw88SUXnmRYXe0FMsD6HQAG4SRghdehMeuK0zJVRl3sjwXsM6bb9yEFtD4bmGCJgA
-         +DWETyLdbSMC8wm7X0rtyDEf6+L9sxL2MWju8h/QC1mLgPSp1wQHq1hJ7A24lKZM61UH
-         EHukawD/+jWnvnkhA++W0M7yz9LqwPpOxeaJhv2IfZ8tgabsj9J/XOwQ9qD+le2+Ebaz
-         fC6W/2k8GNKYtMgPj2q/p7ic1/0HiJIHyhwtyTtES3vbiTPy5x+kYvyiyaWnRdZgT9W0
-         e/Mg==
+        bh=xx452EybhZY/Be3m6ZPFyPAZdRMh+EqfNW2ocWqJUkQ=;
+        b=D6Wr3oaM9cb6BAmiXy3RkDD4ypsh2yfV8mv0vEtF5pP1za3dGFHgk3xtjw87AkfiqN
+         omzwflvsg5c3541QMlIKkoHT4+D1FIZ2bFGO7nnh7r16tMFPnPouySY0KiZ5B+0yFUzW
+         jAwlJz05zfj7nRFVKSs2LqKL7Xkxs0q+w55fq+OEbWp6C83f1YUR5Z4sd8rvoQQiatgt
+         sRSC/upzBI+sqHvANT1BPo8HtPkXVjBRc9jwm4rpY3tOGQdLsf0lLSaQL1PLASU1v8qu
+         hGfPJkzaUUUVklWeOsK5NV5iT6rRLnCqvMy6tGpA+sbqkn6kkN5iOmAaLWkzt5cdR3/q
+         /WpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VlRzTBC/wBfxIpRQ0M8e1w6Q9iv9Exe50KxjDSUm4w4=;
-        b=S3JClarjrXpLon1bNF1u65eXwjXYniifP8j0Tlj3/sp6UpEd8n5B9XeHQ+XcRhG9Xz
-         8JY9fYHBEdrJKTVak0OZw41REXFbHFALPsvAHCT3c2+t/MP3/+/UvpRG0zIqCeKvubWk
-         mvS5Lg+IqiM0n94pnSPbh1tEObY7YEvUTXDJDZNxIpWKQjvdT+WY9tmX+/DJTJDs3IPV
-         9vnAP1eL09jJVZX/Y7q687q0w9yhzoBQkZ6xyuMKRyn9KsCZXlE1wuX7Q8MioVrqajo8
-         ey5yhJHEdP5de7xUWkVPBcgCvRyC2g/qscRWSzwl4vbm4aDEInDa+Rq3INkQaIOdawbU
-         W2yA==
-X-Gm-Message-State: AOAM532HvH5u1kQouVpkXFrALDGgqqORJynp2qSG4VmLB14JYDjOUwhT
-        oDgnVeE8sROF1jaMXVe6S0RvJeOnzS0=
-X-Google-Smtp-Source: ABdhPJwV7piP5X+R0inxjR4SPntPEKhqLLUshXb2nOipuobs7nneYkUyh3iE9F/yaRbx+xb1ibcoxQ==
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr1904408ljc.313.1603831400162;
-        Tue, 27 Oct 2020 13:43:20 -0700 (PDT)
+        bh=xx452EybhZY/Be3m6ZPFyPAZdRMh+EqfNW2ocWqJUkQ=;
+        b=PtAJfyoJHnWE2jZgaC9V9pbcKZMKpbfXSMGq5/mTUisH5l2m9zPGTtPo0f23LR/rTo
+         /k++nAyjR5HSFfqcKtjuWyyc3g9RSL8KGfIwwjWExm+DboEu0UiFfuUmeqEaSw3UrZVc
+         T9EaMIYH742dKJ3B7Ii0AUqUa2c9hab5DxIG3GiadMiltjQkgOT2uuFVJ2vR/ousl3qO
+         D+hRy0mviLpB2Kj013JriS4FrbwwZljySZpRPp7lWz/i3ees1HeiHeGqXYU8PzvZVH1S
+         Ad5XwGeq3fVY1Nli8no5Fw3sWvHRNbav36sW8lCt88sUS02ZVNkRmBurM4+DTVq+PfMZ
+         gCCw==
+X-Gm-Message-State: AOAM5320kx+BqcBWRUILprcglmsjYW+6ewipODSgDJPCEsoKsAtW+xKO
+        ooRw6xWLs4HhWE/PdegV2nPEG1F/ZGs=
+X-Google-Smtp-Source: ABdhPJwv14XNGp2zM2xoLnCiq9kknsnE1yraNpyVdtEy7elcpP9cB4Kgv07q0csNDEYeh5IGZ093Gg==
+X-Received: by 2002:a05:651c:1291:: with SMTP id 17mr1768187ljc.52.1603833122475;
+        Tue, 27 Oct 2020 14:12:02 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.googlemail.com with ESMTPSA id b2sm313232ljo.5.2020.10.27.13.43.18
+        by smtp.googlemail.com with ESMTPSA id i139sm292785lfi.276.2020.10.27.14.12.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2020 13:43:19 -0700 (PDT)
-Subject: Re: [PATCH v6 20/52] ARM: tegra: Correct EMC registers size in
- Tegra20 device-tree
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tue, 27 Oct 2020 14:12:01 -0700 (PDT)
+Subject: Re: [PATCH v6 33/52] memory: tegra20: Support interconnect framework
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Georgi Djakov <georgi.djakov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -74,18 +72,19 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Viresh Kumar <vireshk@kernel.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
 References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-21-digetx@gmail.com> <20201027091043.GJ4244@kozik-lap>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <42802a15-734e-5531-88fc-c82f0248a9d8@gmail.com>
-Date:   Tue, 27 Oct 2020 23:43:18 +0300
+ <20201025221735.3062-34-digetx@gmail.com> <20201027141152.GN1822510@ulmo>
+ <713bf4eb-dc5b-9c4b-4ab4-23b36ba4fab1@gmail.com>
+Message-ID: <4ff5d718-5e05-fc11-9795-7c3fef4525d3@gmail.com>
+Date:   Wed, 28 Oct 2020 00:12:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201027091043.GJ4244@kozik-lap>
+In-Reply-To: <713bf4eb-dc5b-9c4b-4ab4-23b36ba4fab1@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,17 +92,21 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.10.2020 12:10, Krzysztof Kozlowski пишет:
-> On Mon, Oct 26, 2020 at 01:17:03AM +0300, Dmitry Osipenko wrote:
->> The Tegra20 EMC registers size should be twice bigger. This patch fixes
->> the size.
-> 
-> Don't use "This patch" (this appears here). Better to use:
-> "Fix the size of ..." or just "The size should be twice bigger" as it is
-> obvious that you fix it.
-> 
-> https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst#L151
-> 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+27.10.2020 23:22, Dmitry Osipenko пишет:
+...
+>>> +
+>>> +	*agg_avg += avg_bw;
+>>> +	*agg_peak = max(*agg_peak, peak_bw);
+>>
+>> I'm not very familiar with ICC, but shouldn't the aggregated peak value
+>> be the sum of the current aggregated peak and the new peak bandwidth?
+>> Currently you're selecting the maximum peak bandwidth across all
+>> clients, so isn't that going to be too small if for whatever reason
+>> multiple clients need peak bandwidth at the same time?
 
-Thanks, I wasn't aware that it's a preferred wording style now.
+The current variant with max-peak selection should be okay since it
+takes into account the competing ISO bandwidths of other devices by
+overestimating the bandwidth.
+
+For now we have only display ISO clients and it won't be a problem to
+tune the algorithm later on if it won't work well for other ISO clients.
