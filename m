@@ -7,84 +7,70 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A156C55179
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85155C4363A
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3900520747
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF2620756
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:52:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D6Wr3oaM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4QspCpf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1832132AbgJ0VMH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 17:12:07 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41178 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2501973AbgJ0VMG (ORCPT
+        id S374521AbgJ0Vwm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 17:52:42 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46836 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2902336AbgJ0Vwl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 17:12:06 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p15so3391112ljj.8;
-        Tue, 27 Oct 2020 14:12:03 -0700 (PDT)
+        Tue, 27 Oct 2020 17:52:41 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 2so3437882ljj.13;
+        Tue, 27 Oct 2020 14:52:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xx452EybhZY/Be3m6ZPFyPAZdRMh+EqfNW2ocWqJUkQ=;
-        b=D6Wr3oaM9cb6BAmiXy3RkDD4ypsh2yfV8mv0vEtF5pP1za3dGFHgk3xtjw87AkfiqN
-         omzwflvsg5c3541QMlIKkoHT4+D1FIZ2bFGO7nnh7r16tMFPnPouySY0KiZ5B+0yFUzW
-         jAwlJz05zfj7nRFVKSs2LqKL7Xkxs0q+w55fq+OEbWp6C83f1YUR5Z4sd8rvoQQiatgt
-         sRSC/upzBI+sqHvANT1BPo8HtPkXVjBRc9jwm4rpY3tOGQdLsf0lLSaQL1PLASU1v8qu
-         hGfPJkzaUUUVklWeOsK5NV5iT6rRLnCqvMy6tGpA+sbqkn6kkN5iOmAaLWkzt5cdR3/q
-         /WpA==
+        bh=EOfn+rTY41ZPk98ImlWCzM2uVjjLkgWeTbnbpRiwx94=;
+        b=B4QspCpfrLoBxm8nbt/nY6Vc6pvrNIWz0XoyVAv6U5qDKlIhEpSOmL5MULuDcdRz4J
+         NdVU97JPLEFFINpxs1bR7kXaAKKRc5t1LCYjmSEpeV3k25tRxIfa+w5hulTco0XoPAL5
+         NuYRujrqdYbq/2dROB5gt/BTZEUgllml+clfdS5r0UrbBpE1TBOBE+/PavDPL2xwqXQC
+         X3UQBo8IKouDxrYKv17oC5H+7ff5WfzODsT8VtCHUrF6PnvPf8QBTXbyxtNZxLCHJioF
+         z5+/59liqD8IS9SzzLvJrOgdyLJ3wnvNbwVfCnJVNKk24nRT7n3gjTF0PfTy6hhJpJeE
+         /YcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xx452EybhZY/Be3m6ZPFyPAZdRMh+EqfNW2ocWqJUkQ=;
-        b=PtAJfyoJHnWE2jZgaC9V9pbcKZMKpbfXSMGq5/mTUisH5l2m9zPGTtPo0f23LR/rTo
-         /k++nAyjR5HSFfqcKtjuWyyc3g9RSL8KGfIwwjWExm+DboEu0UiFfuUmeqEaSw3UrZVc
-         T9EaMIYH742dKJ3B7Ii0AUqUa2c9hab5DxIG3GiadMiltjQkgOT2uuFVJ2vR/ousl3qO
-         D+hRy0mviLpB2Kj013JriS4FrbwwZljySZpRPp7lWz/i3ees1HeiHeGqXYU8PzvZVH1S
-         Ad5XwGeq3fVY1Nli8no5Fw3sWvHRNbav36sW8lCt88sUS02ZVNkRmBurM4+DTVq+PfMZ
-         gCCw==
-X-Gm-Message-State: AOAM5320kx+BqcBWRUILprcglmsjYW+6ewipODSgDJPCEsoKsAtW+xKO
-        ooRw6xWLs4HhWE/PdegV2nPEG1F/ZGs=
-X-Google-Smtp-Source: ABdhPJwv14XNGp2zM2xoLnCiq9kknsnE1yraNpyVdtEy7elcpP9cB4Kgv07q0csNDEYeh5IGZ093Gg==
-X-Received: by 2002:a05:651c:1291:: with SMTP id 17mr1768187ljc.52.1603833122475;
-        Tue, 27 Oct 2020 14:12:02 -0700 (PDT)
+        bh=EOfn+rTY41ZPk98ImlWCzM2uVjjLkgWeTbnbpRiwx94=;
+        b=gaNuYylAcbUkjyS2Zztvxv351HMaLvo1yTeBHmjOJojSB+4cD95r6bFbrAqTN9bgFY
+         J1xtPZ2TTmwvMqZbaOEipVz36C2o76Fsc6XJIg4YNkdgSB9vn7mvYVXBkNzz0WlUE1Ut
+         z4/VZjpXYvheBwJrgjjnvhy9h2BLjjeOR/SXEtSlbZ21Q1e0Q7QWQR0bGG4GlNlxnrMi
+         YUsoruxdjl9SVhZjdqP+N7eKsHy5pTBv/5JyP9avxgeVd2mLh/5KfiDvvkdq8ckVexdm
+         3De2tGah4SbDhbCRF3XOKMidqMvzMa2duv0+IrNUI4Eez64RUo1G3kqyG9zoodnU6e+L
+         yuJg==
+X-Gm-Message-State: AOAM530Z3fhEcSBKEWndZ53RHz0F4BiSnKxn95Vusw0y+eqXa3RXCr35
+        cFKKeKOCIj6710yJQ1EEWWo=
+X-Google-Smtp-Source: ABdhPJxqwwB2L+NAENWqofO9hI5lVEPJjt9KYwjz/a5RXKvfYnoEDFODsN2229mWTIkaTH7zqrcUAw==
+X-Received: by 2002:a2e:8985:: with SMTP id c5mr2100186lji.406.1603835559052;
+        Tue, 27 Oct 2020 14:52:39 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.googlemail.com with ESMTPSA id i139sm292785lfi.276.2020.10.27.14.12.00
+        by smtp.googlemail.com with ESMTPSA id v16sm303423lfq.68.2020.10.27.14.52.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2020 14:12:01 -0700 (PDT)
-Subject: Re: [PATCH v6 33/52] memory: tegra20: Support interconnect framework
+        Tue, 27 Oct 2020 14:52:38 -0700 (PDT)
+Subject: Re: [PATCH v3 0/3] implement I2C retries for mXT1368
+To:     "Wang, Jiada" <jiada_wang@mentor.com>, dmitry.torokhov@gmail.com,
+        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     nick@shmanahar.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        erosca@de.adit-jv.com, andrew_gabbasov@mentor.com
+References: <20200930151259.18119-1-jiada_wang@mentor.com>
+ <653c24a4-704a-4d65-2622-49c55a82c901@mentor.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-34-digetx@gmail.com> <20201027141152.GN1822510@ulmo>
- <713bf4eb-dc5b-9c4b-4ab4-23b36ba4fab1@gmail.com>
-Message-ID: <4ff5d718-5e05-fc11-9795-7c3fef4525d3@gmail.com>
-Date:   Wed, 28 Oct 2020 00:12:00 +0300
+Message-ID: <082b9b1c-5f89-7deb-728b-3de4339ac131@gmail.com>
+Date:   Wed, 28 Oct 2020 00:52:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <713bf4eb-dc5b-9c4b-4ab4-23b36ba4fab1@gmail.com>
+In-Reply-To: <653c24a4-704a-4d65-2622-49c55a82c901@mentor.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,21 +78,26 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.10.2020 23:22, Dmitry Osipenko пишет:
-...
->>> +
->>> +	*agg_avg += avg_bw;
->>> +	*agg_peak = max(*agg_peak, peak_bw);
->>
->> I'm not very familiar with ICC, but shouldn't the aggregated peak value
->> be the sum of the current aggregated peak and the new peak bandwidth?
->> Currently you're selecting the maximum peak bandwidth across all
->> clients, so isn't that going to be too small if for whatever reason
->> multiple clients need peak bandwidth at the same time?
+21.10.2020 04:14, Wang, Jiada пишет:
+> Hello Dmitry and all
+> 
+> Kind reminder on this patch-set
 
-The current variant with max-peak selection should be okay since it
-takes into account the competing ISO bandwidths of other devices by
-overestimating the bandwidth.
+Hello Jiada,
 
-For now we have only display ISO clients and it won't be a problem to
-tune the algorithm later on if it won't work well for other ISO clients.
+Thinking a bit more about these patches, I'm coming back to the variant
+with the atmel,wakeup-method property. There are three possible wake-up
+variants for mXT1368:
+
+  - NONE
+  - GPIO
+  - I2C-SCL
+
+and this series covers only the I2C-SCL.
+
+I was also skimming through datasheets of other maxtouch touchscreens
+and noticed that the retries aren't unique to mXT1368. For example
+mXT3432 controller also needs exactly the same retrying logic.
+
+Hence I think it should be better if we could generalize the
+wakeup-method in the device-tree. What do you think?
