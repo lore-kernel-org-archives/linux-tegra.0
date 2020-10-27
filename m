@@ -5,165 +5,140 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF80C388F9
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 12:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9F5C388F9
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F6A622453
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 12:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCC1C2076D
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:01:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKbecVq1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHsHaWhS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2900329AbgJ0MzN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 08:55:13 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:37659 "EHLO
+        id S2900407AbgJ0NBQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 09:01:16 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:44992 "EHLO
         mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439375AbgJ0MzN (ORCPT
+        with ESMTP id S2900405AbgJ0NBQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 08:55:13 -0400
-Received: by mail-ej1-f67.google.com with SMTP id p9so2079801eji.4;
-        Tue, 27 Oct 2020 05:55:10 -0700 (PDT)
+        Tue, 27 Oct 2020 09:01:16 -0400
+Received: by mail-ej1-f67.google.com with SMTP id d6so2053081ejb.11;
+        Tue, 27 Oct 2020 06:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=NmWbBGj0lkHe0t79tv/Jf0SQbBWE8aedRom+eTRmfzc=;
-        b=XKbecVq1Ik0kDILHFzzL8d8bpttLxS6dESkXXO8J4CXuqnb9t6t5hdiFWWhOtsrxGl
-         FfT1Z2nHdRwX41X1K88ruflhzopy8zrF//t+SD242mAlwU+zZ9jiY7vu0rP4YkGGKB2e
-         6UkVAxr/JgGrZxP0YOzvgLTgyb+sFMkpmvl2M2R2FgzHNYkKMCPMZE/No2X6vSYkJsha
-         +3U6G/kklfJ/3i/JzCoTfYQVHfV1rIvs2dycsXJOezsm+jiqnde/tx8G18la6hTkNBDt
-         Ap1jpfkVhgYGFJCnlWTZfPjYdScWsMu8NR5463W1kf2sulLsq7HreIJQA4vfTLU32jvc
-         Gwuw==
+        bh=gijXyxUYg/sm9vcPsGH6rXQSXPD6lE8QK5IFGNpnRWg=;
+        b=eHsHaWhSlzA5RNFo9ar6nqT67tKUnFKILsEFikxKkCKwNxN94ctjT034lltQXn7+7+
+         npEnhpWg2vcyQTDSmovUgwjlwI5aQriLHUPa5YEs72aVkDhlGqHrABxGwzxy4haP6kyI
+         h2oK5NCVGbtj15JGWjLhkkAoLMNBTmynaKNQI9jkKuUq3yfANd06jIe+XN/Jt2ltOOAu
+         HTlOwl2TD+wy9abJYilLu2r3cOVR+2Uwws8GPEhrXXPRQ5lRy5BzbfiVbzPvW15VWXWJ
+         pg15SO5TuUDSbcSCaGbarYG5dFurFV3o3c+hHO03By3oEIQi48QkTGLYV24LyRuNZY5t
+         FR7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NmWbBGj0lkHe0t79tv/Jf0SQbBWE8aedRom+eTRmfzc=;
-        b=WyvSObybhQCAQt4P4AIcM7nDwlLyP4c+o/QlNGKt7bO7/iyf9dPG0e99T4mX+sqUXt
-         jfb1Q6bbzn6DwOH7odZ2N/irT51M6bJrntuAZ9JCkvRel+7cvF1xeVfWDtlkr5dxOvsU
-         yH4TyIYKvb4mgMHEyYIRJVEHwJiDgdIgtHWBEANQMde+zV+3Ies9nPvkJPsaYuqq5vhs
-         02/OqmL39ETv23fxi5yV/iO0uAKHFXQ81qQeD78+5C7bBhbYytS+jOQB+Ubfi1VQmlAS
-         8FyOQ6iZZZHXxSQucZUroi3O4OR6C5262gSiABb5fbz1bLMStN5Nbd4L3LxMat6HKYoE
-         bSCQ==
-X-Gm-Message-State: AOAM5324XTimUFpQdatySTOEG63F9GNVXQB9eZQnrbE5YsVcqCsvADNK
-        D2mSjCS+M6fLiMlbX5w2A+g=
-X-Google-Smtp-Source: ABdhPJz3kwQEXps0U4CXrM9GDXdaXs2o9NBv9jhp3Vmq5iDuCFu/Vxe55NWvsrFgADjy8eqP8FsubQ==
-X-Received: by 2002:a17:907:b19:: with SMTP id h25mr2372404ejl.368.1603803309253;
-        Tue, 27 Oct 2020 05:55:09 -0700 (PDT)
+        bh=gijXyxUYg/sm9vcPsGH6rXQSXPD6lE8QK5IFGNpnRWg=;
+        b=sehqlAF05hqHzRHo3fedgamrwQEeiR1knhLWa4PNmT+9Faf4IhQT6iqrzRxWaqaRzA
+         ddB7fKTJ0npZKlNxZ6j6bQgKVmn01h7DJp5qEsoOhg4fB9NmUefCExw/+bl7lr29zlDc
+         LeK95QHUxMTq5S6DNernYflvxOhDCA6M32LqXEpTQ8brXeM+pPQh8J09nB5h2mNpi9kK
+         FrBh7vNOl5XfDlihIPVKn1xe8q59k1l+ACAlSHIWUbl29LA8PlDAGiD1OOlgMymLY9hs
+         PMJ3EqebvPmW07WeJhWUe5GFM9UfrG6+bvHX3iRmQZbvc4fJh3oPy7Nkcag6XIA3re9E
+         EVQQ==
+X-Gm-Message-State: AOAM530GPT2zKyklI1TiPcpxRfS+uAlnOvIEI6ARdN03Qg41QIQf5Y87
+        2JGpToLDfCEPKHUH+DeHo9g=
+X-Google-Smtp-Source: ABdhPJwp9iGCj0RTXGYDhvmDcSCN2SgHIvLdqu8zXYSMhpZxCkGl3H1UWmcWtsN6ciGICmaYnrCCEA==
+X-Received: by 2002:a17:907:11d0:: with SMTP id va16mr2211187ejb.22.1603803674151;
+        Tue, 27 Oct 2020 06:01:14 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id sb29sm1013080ejb.76.2020.10.27.05.55.07
+        by smtp.gmail.com with ESMTPSA id r24sm914865eds.67.2020.10.27.06.01.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 05:55:07 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 13:55:06 +0100
+        Tue, 27 Oct 2020 06:01:12 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 14:01:11 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, robh+dt@kernel.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: memory: tegra: Add missing swgroups
-Message-ID: <20201027125506.GA1822510@ulmo>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     krzk@kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] memory: tegra: Complete tegra210_swgroups
+Message-ID: <20201027130111.GB1822510@ulmo>
 References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
- <20201008003746.25659-5-nicoleotsuka@gmail.com>
- <20201009122110.GD458338@ulmo>
- <20201009155218.GA4469@Asurada-Nvidia>
- <20201026201758.GD248919@kozik-lap>
+ <20201008003746.25659-6-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+        protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
 Content-Disposition: inline
-In-Reply-To: <20201026201758.GD248919@kozik-lap>
+In-Reply-To: <20201008003746.25659-6-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---cNdxnHkX5QqsyA0e
+--St7VIuEGZ6dlpu13
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 26, 2020 at 09:17:58PM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Oct 09, 2020 at 08:52:18AM -0700, Nicolin Chen wrote:
-> > On Fri, Oct 09, 2020 at 02:21:10PM +0200, Thierry Reding wrote:
-> > > On Wed, Oct 07, 2020 at 05:37:45PM -0700, Nicolin Chen wrote:
-> > > > According to Tegra X1 TRM, there are missing swgroups in the
-> > > > tegra210_swgroups list. So this patch adds them in bindings.
-> > > >=20
-> > > > Note that the TEGRA_SWGROUP_GPU (in list) should be actually
-> > > > TEGRA_SWGROUP_GPUB (in TRM), yet TEGRA_SWGROUP_GPU (in TRM)
-> > > > is not being used -- only TEGRA_SWGROUP_GPUB (in TRM) is. So
-> > > > this patch does not add TEGRA_SWGROUP_GPU (in TRM) and keeps
-> > > > TEGRA_SWGROUP_GPU (in list) as it is.
-> > > >=20
-> > > > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > > > ---
-> > > >  include/dt-bindings/memory/tegra210-mc.h | 10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > >=20
-> > > > diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-=
-bindings/memory/tegra210-mc.h
-> > > > index c226cba9e077..f9fcb18a6d9b 100644
-> > > > --- a/include/dt-bindings/memory/tegra210-mc.h
-> > > > +++ b/include/dt-bindings/memory/tegra210-mc.h
-> > > > @@ -33,6 +33,16 @@
-> > > >  #define TEGRA_SWGROUP_AXIAP	28
-> > > >  #define TEGRA_SWGROUP_ETR	29
-> > > >  #define TEGRA_SWGROUP_TSECB	30
-> > > > +#define TEGRA_SWGROUP_NV	31
-> > > > +#define TEGRA_SWGROUP_NV2	32
-> > > > +#define TEGRA_SWGROUP_PPCS1	33
-> > > > +#define TEGRA_SWGROUP_DC1	34
-> > > > +#define TEGRA_SWGROUP_PPCS2	35
-> > > > +#define TEGRA_SWGROUP_HC1	36
-> > > > +#define TEGRA_SWGROUP_SE1	37
-> > > > +#define TEGRA_SWGROUP_TSEC1	38
-> > > > +#define TEGRA_SWGROUP_TSECB1	39
-> > > > +#define TEGRA_SWGROUP_NVDEC1	40
-> > >=20
-> > > I'm not sure this is right. The existing list is based on "Table 4:
-> > > Client to Software Name Mapping" from page 28 of the Tegra X1 TRM, and
-> > > none of these new swgroups seem to be present in that table.
-> >=20
-> > I went through all the MC_SMMU_XX_ASID_0 registers. All of
-> > them have their own ASID registers that I added in PATCH-5.
+On Wed, Oct 07, 2020 at 05:37:46PM -0700, Nicolin Chen wrote:
+> According to Tegra X1 TRM, there are missing swgroups in the
+> tegra210_swgroups list. So this patch adds them to the list.
 >=20
-> Thierry,
+> Note that the TEGRA_SWGROUP_GPU (in list) should be actually
+> TEGRA_SWGROUP_GPUB (in TRM), yet TEGRA_SWGROUP_GPU (in TRM)
+> is not being used -- only TEGRA_SWGROUP_GPUB (in TRM) is. So
+> this patch does not add TEGRA_SWGROUP_GPU (in TRM) and keeps
+> TEGRA_SWGROUP_GPU (in list) as it is.
 >=20
-> Any follow ups on this topic? Does it require a fix or looks correct?
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/memory/tegra/tegra210.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra=
+210.c
+> index b400802c9f14..b3bbc5a05ba1 100644
+> --- a/drivers/memory/tegra/tegra210.c
+> +++ b/drivers/memory/tegra/tegra210.c
+> @@ -1028,6 +1028,8 @@ static const struct tegra_smmu_swgroup tegra210_swg=
+roups[] =3D {
+>  	{ .name =3D "hda",       .swgroup =3D TEGRA_SWGROUP_HDA,       .reg =3D=
+ 0x254 },
+>  	{ .name =3D "isp2",      .swgroup =3D TEGRA_SWGROUP_ISP2,      .reg =3D=
+ 0x258 },
+>  	{ .name =3D "nvenc",     .swgroup =3D TEGRA_SWGROUP_NVENC,     .reg =3D=
+ 0x264 },
+> +	{ .name =3D "nv",        .swgroup =3D TEGRA_SWGROUP_NV,        .reg =3D=
+ 0x268 },
+> +	{ .name =3D "nv2",       .swgroup =3D TEGRA_SWGROUP_NV2,       .reg =3D=
+ 0x26c },
 
-This does indeed look correct, based on what registers exist for these.
-It'd be good to know how Nicolin expects these to be used, since these
-are currently not listed in device tree. There's certainly some like
-TSEC or NVDEC that we don't support (yet) upstream, but things like DC1
-and HC1 already have equivalents that we use, so I'm not sure how we'll
-integrate these new ones.
+Oddly enough I can see these in the TRM, but they are not in the
+internal reference manuals that are supposed to be the canonical
+reference for the TRM. Perhaps the TRM is out of date?
 
-I suppose it doesn't really matter if any of these end up being unused,
-so:
+Thierry
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---cNdxnHkX5QqsyA0e
+--St7VIuEGZ6dlpu13
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YGKUACgkQ3SOs138+
-s6HdXQ/9GY5+CG+UleVCHEphwtCAPS/kk6cf5OqVlP0/1Txw2gaC5IA0IlgZBcrI
-TB2IxEFKsQQV4yIeGqWfrBpHw3vq3NN0T281dzvp7Qt4L0ZW0ZukGerMJu+OrDEt
-d5nkbkqblillWQtd3Gh42GOxIF5E/ZTFuW+jrSOJZX5Q4Fd6c0nkU9+sUxj+SsD2
-lUX7u+fCYP3U11kx6dxbhTm6cXGDzVNwXUu789DSIq97vL8IpvjlkfM3BGb5P30/
-m0Nxv2YtnxaggYR7jFtxFkZz6mXDlTMsMv4h6EmKGVXPchj8kj8Te7u8IKblX3wC
-yx88smlCqCLhFYhJY/v8kL4oYve6e4FIL1Fl/VbU+1Vy+dOwcx+LMM/gfCIOg6Un
-VMjtNqAa9TOIZxtPTOsRZa6CgY6UzjRzhWPzjhOGFq4ndsvRMNl9al0l9Qu6tFEJ
-BH2uHj8rcAhv8bebLwPhTBYmHciBJL2Rl711LCPY8wubPOwQwAAnf9hwfRAzui+/
-11V3EFh/8LEebyQGzuVc57E5xVKcW9o6IIayZRvI+LZ0eNAJ0E1TGzXePyUv8izY
-QVPUp/bPG0OUCmPM7P2A2c9uDeMO2qI6yGFz1lkG3yvUy+05hTNvuL0oZICNPesz
-LlhxnJ5I8TvPiTTGXn5e7aEGhFSRc0CjAiXFm9rCkiJtMuPbzas=
-=H//q
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YGhcACgkQ3SOs138+
+s6Gs7w/+NnyjKzJTeMqiNTu+JrNR0LUAPyE84D55SoweRFJRqj5qd4QYRmPNxACG
+8ARl63jbR9zR94HplRkUpxvxYd2z+Z9udpg5ADm2TVoj6rSxBksxeNa9XAYZ/S+F
+A5/EUTWbkhqppMyH3TGQn5/l/Gyx6h79dtmmz0BK5dB8KhfQypX6L5TCzuNscS80
+JRJbrtFkiWdR3Z9SnpnPmJD6+1mnJIHnK/3wbVp7TOOUp7VSo/fABJazXr+VXHzB
+8wGxk1h8o220pKAc2WNBmlHdnJUs4FukjRQZ6Skalt1ZRXpe6wIzjG9L0+n6jESP
+hxaPIQ9JdPghTGkusF17CIECe6Ex0H1igvfxK59IXzrTI2tjrkWjIofVyLQ9v0ZH
+45l0/plCrvxoNUtwXRKAxQP+YPQCbQ7MRetuQ2E3WJQBnmZ03M3E9c93ArABtilH
+YMF91N11uOtqLS3wf0+A28/z7saIK8AxYVD/33ep742I4MKtkqj0FS06N33I8y26
+rjPpkdIWhDW0WjVAYuHYX1RgT1VTVPAQdwanpV1GJuX0qk0CM+D7CONUBT+282CA
+wOKjHKi3XcCyLZYw6igetXNJo3JiAjtaoSCDAQVTgyR/9FN+1kwRDBukNLRHxNcx
+IA5jt6ru/tVg6Dne2DQ8sYp8L+2bBNr2vOh93iS7mAc2TTNXxAs=
+=ypbK
 -----END PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e--
+--St7VIuEGZ6dlpu13--
