@@ -2,129 +2,228 @@ Return-Path: <SRS0=stlo=EC=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FF1C388F9
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA7DC55179
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71AF9218AC
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CADDE20727
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwyXkbi/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbUT6LrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502081AbgJ0Nwu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 09:52:50 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:33459 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502073AbgJ0Nwu (ORCPT
+        id S1811897AbgJ0Qn0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 12:43:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29770 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1811882AbgJ0QnU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 09:52:50 -0400
-Received: by mail-ej1-f65.google.com with SMTP id c15so2379359ejs.0;
-        Tue, 27 Oct 2020 06:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4TbXysDqnndpTRF/Rd6isqCmc40s+e6qp/SrBCZya6s=;
-        b=lwyXkbi/gj/HS/sa5ZvZZHWv3isYpIbQNCIWPd3kHp+iv2FtJXwPzAWNcRkUkXvTR8
-         44f1TqgS3Bs2rpkI/0wLJ2Hk71+L3Ar+JX0euHhazOZZfsbBQ0jh4qOrYqZ/IYKprYMR
-         7okL77/0uwXZTkRMwLFRhEHaeE4cEimNfoZ9ZS7H4rHZ5JsJPCXkilBuRfW52+VM3PNz
-         J1cjxhhE3KHS/kc2JF9LiI3m5pFs/I1nntfqvyb8FZOpg/Wn4MwGD/eevDCR7ofLKqo2
-         FY65HzvyUMidkVgJ7hv67tNZM4C41gC/ZJABYJOtFp+NDZvtzNotneRZEPMNdKEaw6wc
-         HRYA==
+        Tue, 27 Oct 2020 12:43:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603816998;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
+        b=SbUT6LrPKSG/kjhEPSpbNL37X7EqS95pLWLFJN05U8T6IvmsgoI1621azrkHaUCQe2IU+4
+        A+8ip+R7TFhvfL2PFtA2YPAVSij+jMd+5zp3Ro8XdkS11BXJM1Rlv3U/dAVL3h95weU9IY
+        Ml5NELPo7a9T9EfhM60DKYJDO3/RVn0=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-355-Wyr4nn_4Pvq0lx9Bo7dcdA-1; Tue, 27 Oct 2020 12:43:14 -0400
+X-MC-Unique: Wyr4nn_4Pvq0lx9Bo7dcdA-1
+Received: by mail-ot1-f72.google.com with SMTP id e6so603158otk.13
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2020 09:43:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4TbXysDqnndpTRF/Rd6isqCmc40s+e6qp/SrBCZya6s=;
-        b=eusKnF3RfVzOdDZEdQy/47MbFChfMi16kwh+A/mZVcnRFQ/AZucH7vWwebN4eeXYce
-         dzg1yUQ3nonBXRlw6g2vgLa0mBAXPAGWeV4mgRxS7WA74Q7XsF4pYbirJx+HmI5qNLZf
-         WPC3cPrWzDzQEe4LbEbvSo7GrBRwF8cRqGx35GKAkbx9se/TGiASbTTDtd930yfKJ8DI
-         +HnIpTLXwJfkO6KkpuihrC+cSuxQFyrUrknaR+zU1BrdrSZOUcE5c0pNJpSaI5rU3qWS
-         lZEr+4gT+Jk8gztjJWy3SFaRiXwGZilI2UretY19MObxcfbXQZcuVW2PyzgfnxE3D9MP
-         kV0A==
-X-Gm-Message-State: AOAM530GiXgN4DKptb3RpB+vIiN5PoiwfeDFbh8blWpwacaMHEDOZ2iu
-        PhQNK1JEBvjSE1HRAKcHTZI=
-X-Google-Smtp-Source: ABdhPJw+wS4M5IdvdBE+C5XCShNKfDZ8hVzHzxdKtDgQPwv8S1CiMKIe82JbF1rjlL+EXlOuu+VahA==
-X-Received: by 2002:a17:906:f8d2:: with SMTP id lh18mr2599173ejb.457.1603806767898;
-        Tue, 27 Oct 2020 06:52:47 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id rs18sm1096635ejb.69.2020.10.27.06.52.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
+        b=fpYC5Vbebb84gTA6/VtwzJt5sW0kQddq+F8XEDshTojCOyCOv85pKtu0UurmxkSwDJ
+         8YM6Rv7yt1OnUvzvZbM3moviu4OFDjQWGYViIul5WlIqxdvRGkqynoh0kzJvNJVU/Tgu
+         dohNQ29KWVuY5qcqF7aeHuLmIdkUWTgOO8xIJ4cVuF6pjDIhnmK1sqbcqZU/HLEQbZHV
+         uDZiTovdgECUK3ijEfR4sZgPkB1AxUD1pHIaTKALqKLwdIFp978jQlnnj9+QV9bHELEp
+         JyvShGzIqar2F3C0f23aRLoQu9IF0SAWm3YgwpCrAhAWyFDBik/9WMcZFkqt4hxt1btJ
+         B1gg==
+X-Gm-Message-State: AOAM533HvHcNX88mWGBHtMvT6BImK3vGy8I4nOsL2oKhOKJ/5g1YRrsG
+        LnXNFp9YZEZqFbqe2nIhumaTITNU/ftGVHASOePHTyInefOs6GoTyWbRUgz+EVIy1DrQPLO44XX
+        eL9YSjLWLb21820pMB9Q3SQI=
+X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048455oih.67.1603816993828;
+        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7y1eCX7WfRNi9tkZnfLpiDio1qtG9FKTpwYlLMD9SlPYp6FIE57BquNUx5oTk2cs+UUc+WA==
+X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048435oih.67.1603816993577;
+        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id l89sm90968otc.6.2020.10.27.09.43.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 06:52:46 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 14:52:44 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 32/52] memory: tegra20-emc: Continue probing if
- timings are missing in device-tree
-Message-ID: <20201027135244.GM1822510@ulmo>
-References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-33-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OQhbRXNHSL5w/5po"
-Content-Disposition: inline
-In-Reply-To: <20201025221735.3062-33-digetx@gmail.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+        Tue, 27 Oct 2020 09:43:12 -0700 (PDT)
+From:   trix@redhat.com
+To:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Cc:     linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        qat-linux@intel.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=EF=BB=BFFrom=20=3A=20Tom=20Rix?= <trix@redhat.com>
+Subject: Subject: [RFC] clang tooling cleanups
+Date:   Tue, 27 Oct 2020 09:42:55 -0700
+Message-Id: <20201027164255.1573301-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This rfc will describe
+An upcoming treewide cleanup.
+How clang tooling was used to programatically do the clean up.
+Solicit opinions on how to generally use clang tooling.
 
---OQhbRXNHSL5w/5po
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The clang warning -Wextra-semi-stmt produces about 10k warnings.
+Reviewing these, a subset of semicolon after a switch looks safe to
+fix all the time.  An example problem
 
-On Mon, Oct 26, 2020 at 01:17:15AM +0300, Dmitry Osipenko wrote:
-> EMC driver will become mandatory after turning it into interconnect
-> provider because interconnect users, like display controller driver, will
-> fail to probe using newer device-trees that have interconnect properties.
-> Thus make EMC driver to probe even if timings are missing in device-tree.
+void foo(int a) {
+     switch(a) {
+     	       case 1:
+	       ...
+     }; <--- extra semicolon
+}
 
-Does it really have to be mandatory? Sounds like that's going to make it
-unnecessarily complicated to merge all of this. Is it complicated to
-make interconnect support optional in consumer drivers?
+Treewide, there are about 100 problems in 50 files for x86_64 allyesconfig.
+These fixes will be the upcoming cleanup.
 
-Thierry
+clang already supports fixing this problem. Add to your command line
 
---OQhbRXNHSL5w/5po
-Content-Type: application/pgp-signature; name="signature.asc"
+  clang -c -Wextra-semi-stmt -Xclang -fixit foo.c
 
------BEGIN PGP SIGNATURE-----
+  foo.c:8:3: warning: empty expression statement has no effect;
+    remove unnecessary ';' to silence this warning [-Wextra-semi-stmt]
+        };
+         ^
+  foo.c:8:3: note: FIX-IT applied suggested code changes
+  1 warning generated.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YJiwACgkQ3SOs138+
-s6H3wA/9G28Ray4Bi6twkE9N7+h/sNEt+7YPAHJDE7CAIf9/VJ6pbfqyZFWHTH++
-/R5TsxsZlomEwSgf41l2E82KzNVLiJ0uRA2aKSS7J+S7navlOQHB2iHA4Mt2L+wm
-z2l48XHXTeN8HT/RZoaPK+ud5dShtzJkyrQ7Iuije9XY2f7EaSogO1be3P6lQTpJ
-L5tf04hyF0l9obliNMBD1kip6SHt/XLVo/Vdkl95GZz4Utu9XNGOBdkQ0jib8DGB
-VTc/qWdeJUlxQBABfFXBGYXoS5x8xkOe0C1ftx+i1fiJpQ4z7QAaHKb6i/h5E4t3
-D1iTraACToaw2f5Rcidkjandfmw2UxeNh1i3Q9eLDFwZhNTnBsXKez2oajbgDDHJ
-3RQZXzm57261eInfCxv1NTLk1TwefZdC6fHMFya/1d71uxpxrKaZOiqI9R/2V35c
-Qu3Bxgktem+U8dVHrsNZwfaXPIafdyPU+SCczsLFNaIerh4HVFan9Pf3ygTb5835
-WMms77JprRuy8oDnApuK2Tx5tRBf1ETy7ATUxIs40dNTQuVj7VT5biBr97LwRyKM
-4O1+PPLbS256d9z7komAWyF1q/gJUCdQRLtaD3HL6WQdFZmZZABv8S5tclu71lPn
-o8htSjXOmi7ZPGn/ipBe0RMBK42ehXK0f2gysAj+YhzVWqva1JU=
-=XJw5
------END PGP SIGNATURE-----
+The big problem is using this treewide is it will fix all 10k problems.
+10k changes to analyze and upstream is not practical.
 
---OQhbRXNHSL5w/5po--
+Another problem is the generic fixer only removes the semicolon.
+So empty lines with some tabs need to be manually cleaned.
+
+What is needed is a more precise fixer.
+
+Enter clang-tidy.
+https://clang.llvm.org/extra/clang-tidy/
+
+Already part of the static checker infrastructure, invoke on the clang
+build with
+  make clang-tidy
+
+It is only a matter of coding up a specific checker for the cleanup.
+Upstream this is review is happening here
+https://reviews.llvm.org/D90180
+
+The development of a checker/fixer is
+Start with a reproducer
+
+void foo (int a) {
+  switch (a) {};
+}
+
+Generate the abstract syntax tree (AST)
+
+  clang -Xclang -ast-dump foo.c
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt 
+    |-SwitchStmt 
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt
+
+Write a matcher to get you most of the way
+
+void SwitchSemiCheck::registerMatchers(MatchFinder *Finder) {
+  Finder->addMatcher(
+      compoundStmt(has(switchStmt().bind("switch"))).bind("comp"), this);
+}
+
+The 'bind' method is important, it allows a string to be associated
+with a node in the AST.  In this case these are
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt <-------- comp
+    |-SwitchStmt <-------- switch
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt
+
+When a match is made the 'check' method will be called.
+
+  void SwitchSemiCheck::check(const MatchFinder::MatchResult &Result) {
+    auto *C = Result.Nodes.getNodeAs<CompoundStmt>("comp");
+    auto *S = Result.Nodes.getNodeAs<SwitchStmt>("switch");
+
+This is where the string in the bind calls are changed to nodes
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt <-------- comp, C
+    |-SwitchStmt <-------- switch, S
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt <---------- looking for N
+
+And then more logic to find the NullStmt
+
+  auto Current = C->body_begin();
+  auto Next = Current;
+  Next++;
+  while (Next != C->body_end()) {
+    if (*Current == S) {
+      if (const auto *N = dyn_cast<NullStmt>(*Next)) {
+
+When it is found, a warning is printed and a FixItHint is proposed.
+
+  auto H = FixItHint::CreateReplacement(
+    SourceRange(S->getBody()->getEndLoc(), N->getSemiLoc()), "}");
+  diag(N->getSemiLoc(), "unneeded semicolon") << H;
+
+This fixit replaces from the end of switch to the semicolon with a
+'}'.  Because the end of the switch is '}' this has the effect of
+removing all the whitespace as well as the semicolon.
+
+Because of the checker's placement in clang-tidy existing linuxkernel
+checkers, all that was needed to fix the tree was to add a '-fix'to the
+build's clang-tidy call.
+
+I am looking for opinions on what we want to do specifically with
+cleanups and generally about other source-to-source programmatic
+changes to the code base.
+
+For cleanups, I think we need a new toplevel target
+
+clang-tidy-fix
+
+And an explicit list of fixers that have a very high (100%?) fix rate.
+
+Ideally a bot should make the changes, but a bot could also nag folks.
+Is there interest in a bot making the changes? Does one already exist?
+
+The general source-to-source is a bit blue sky.  Ex/ could automagicly
+refactor api, outline similar cut-n-pasted functions etc. Anything on
+someone's wishlist you want to try out ?
+
+Signed-off-by: Tom Rix <trix@redhat.com>
+
