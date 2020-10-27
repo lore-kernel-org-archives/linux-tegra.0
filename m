@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3518C388F9
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BA8C5517A
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65FEE22202
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9109E21527
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 13:17:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyA65ZmK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsNia79c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751692AbgJ0NEb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 09:04:31 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:37450 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437290AbgJ0NEb (ORCPT
+        id S1751909AbgJ0NRz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 09:17:55 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:42171 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2441417AbgJ0NRz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 09:04:31 -0400
-Received: by mail-ej1-f68.google.com with SMTP id p9so2124754eji.4;
-        Tue, 27 Oct 2020 06:04:28 -0700 (PDT)
+        Tue, 27 Oct 2020 09:17:55 -0400
+Received: by mail-ej1-f67.google.com with SMTP id h24so2155958ejg.9;
+        Tue, 27 Oct 2020 06:17:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=+uRUeR/hNBQddSgcO166WdWvgbjFImRejeVy9hATgyc=;
-        b=EyA65ZmKIDgbELTunD6eswJw1OFdRTjqZkMMGk12M6zES+zDeaMqPelQX6kKcExW2J
-         sQ8iFJZ9CWPIcrwJS8rtR54Sg2fRDNkjrxoAEr2F1hm2JzunOtnzqJXzvju2QG05bUtV
-         GuETLblQo1JSSU9vVy/dnvp27xbPNFmE++fSxgqQqtJwgTDg0nEX7xkz2kZxT8cNtoFf
-         N+7EJrKUC7Hr8h7m6TKxpVuFKYzjMV9ahPo4r5KCApNmevtp8OuYA43HNmRv3OGOMAuO
-         B5qGrDa1ZA+fd6HNw9RLW4ZSf4OcVGvPVwN3gKJ4mXxFGyJ/PwIf2DVv5+7qtKg3dWC7
-         n5LA==
+        bh=EGpkeOfJT8udzeeIP4D/m8toDPn+ozlWLbY7PJ5zipc=;
+        b=PsNia79cOr0HXyMjtoBqTMfRZXSgpo7wEbpHhVjyO9Twd9DSmEM3Hl84UaG/uw3sqc
+         1LfAfh6BzFS8ZNmoFyerno7f+Lglr1jTDW3AkIyHWzXi5F5PvBQ8PD2cCAtmLLgZ8A2D
+         MFaO5+AJ0NArVLX4FbzPMZVfm4Fx1WEw7j2pp513V6EWviR7Ipn4znFKJ0gVJTjjArQa
+         PUmlExVC6tFALpenIG/SMKdmTivjOLUPgt1sVX4mqR9eSvSStAmKn6Cw7HaqGyuoTLkD
+         smZ4CO5Vw5fWgli6tY6I6NPn2pILXadp/7LRXZZE89cgtmDsrIykazj9sJy5VoD/zoJw
+         TjXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+uRUeR/hNBQddSgcO166WdWvgbjFImRejeVy9hATgyc=;
-        b=hbzdb1nZtenQ3QxE7VW+wUoUtPSBM1cZJvb35zIutlLab0w2oic98COBE3lejppJRI
-         whoQQvsW8hFF/Nth0MxdwB4fk5GL6V8wUOwmbCAdBPcGO9oEMNCeOA4gZRbd77JHraNo
-         Tudmk99Ul4087CGvCTQW6IlP/Hint4OQY66GfoezP9QhYNW9kvz4ZNgpHaVEg/FOYnTs
-         XkKSdpyxJKCY9OZ9cZnxPgpilRx7DpVkpjLQ7DrC2DVAnCP7ZWTFO8y0ozc9jIUt9FRs
-         Ko9JIBFZQGsw4Eva4yR+H6rxUHigzUNc1c1ZVFZnxCCvgItivdXSfxmZLNNzYd3fHjJJ
-         zV1A==
-X-Gm-Message-State: AOAM533CVkNNzs6RTKP3GulXuB16Gd/JeUhChSaPaFV+XnzbPyvuVpLr
-        9yOzRder0TyvtmocW53jwhtFRLrJwoU=
-X-Google-Smtp-Source: ABdhPJyN7OogsAv0LGMxmo8LCCXIRgHg56DytYueYZCsWNSDc01Fl6Cqpqd9fSVylgF/Cd9IrYWOuw==
-X-Received: by 2002:a17:906:76d5:: with SMTP id q21mr2401953ejn.415.1603803868036;
-        Tue, 27 Oct 2020 06:04:28 -0700 (PDT)
+        bh=EGpkeOfJT8udzeeIP4D/m8toDPn+ozlWLbY7PJ5zipc=;
+        b=eftGQEYudxuRCnwIjMmu+NNrjt2qZAZ0viSW2DdWYxvV730zM2w10GKKwrApTxvFkZ
+         38JrBErjSq+wWEY08yMouTmmXM82UL5zKhWclioPiSvXHQ9rfy+mafZq9N7vsc3o4LVU
+         AFHxdgWDVTrsU7A3vWvEnYI/OCvTOHe5aR0dCpMDtbEk/a14JVBSbRoZjU7aJh7amjOW
+         nLo6XeBKiWKsVy7PaqaYNRwCbbamWaidvI5sisrDkbeG8fv/1kYNpdKkkAu9P3WguhpI
+         1qHzbm32lLIEljjLVnCWhPdYpuXveoqlVuiK4H2N7dZaUQ1/iE8SbK1pmaOjkOU7Pacd
+         MsVQ==
+X-Gm-Message-State: AOAM5317Q5ZhmiXSXdW8EH+gZyUooxAeDhlTcm0/FA1PtN3T8EpbemQY
+        qlKJ1LXOW7u789t4QqXFkOU=
+X-Google-Smtp-Source: ABdhPJzjO83UYzZfmiS5gD2nhgDucOtcUmApVHzzYJnXM5u3pHlpkb4B+1kWphmu/QKhI+9fXCU/zA==
+X-Received: by 2002:a17:906:cb82:: with SMTP id mf2mr2280977ejb.435.1603804672760;
+        Tue, 27 Oct 2020 06:17:52 -0700 (PDT)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id p20sm1047296ejd.78.2020.10.27.06.04.25
+        by smtp.gmail.com with ESMTPSA id v1sm936585eds.47.2020.10.27.06.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 06:04:26 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 14:04:24 +0100
+        Tue, 27 Oct 2020 06:17:51 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 14:17:50 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,55 +76,58 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 01/52] clk: tegra: Export Tegra20 EMC kernel symbols
-Message-ID: <20201027130424.GD1822510@ulmo>
+Subject: Re: [PATCH v6 02/52] soc/tegra: fuse: Export tegra_read_ram_code()
+Message-ID: <20201027131750.GE1822510@ulmo>
 References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-2-digetx@gmail.com>
+ <20201025221735.3062-3-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pQhZXvAqiZgbeUkD"
+        protocol="application/pgp-signature"; boundary="47eKBCiAZYFK5l32"
 Content-Disposition: inline
-In-Reply-To: <20201025221735.3062-2-digetx@gmail.com>
+In-Reply-To: <20201025221735.3062-3-digetx@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---pQhZXvAqiZgbeUkD
+--47eKBCiAZYFK5l32
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 26, 2020 at 01:16:44AM +0300, Dmitry Osipenko wrote:
-> We're going to modularize Tegra EMC drivers and some of the EMC clk driver
-> symbols need to be exported, let's export them.
+On Mon, Oct 26, 2020 at 01:16:45AM +0300, Dmitry Osipenko wrote:
+> The tegra_read_ram_code() is used by EMC drivers and we're going to make
+> these driver modular, hence this function needs to be exported.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/clk/tegra/clk-tegra20-emc.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+
+I'm not a big fan of exporting yet another of these tiny helpers, but I
+don't have any better ideas, so:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---pQhZXvAqiZgbeUkD
+--47eKBCiAZYFK5l32
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YGtgACgkQ3SOs138+
-s6FhaQ//XAnzBLQ57FAARJLAiQ/+/J7Z6eHOKF54sUk1tMNp3gRDg1hMQU8FJuhj
-GyqgQyr00w43RXQxTjb3hi27kHTfnRexwVLYwh24TloeOYix2+FYm6IT+eSfOPRJ
-SnjM9Y/ZMWnq914HhBQoy05aOcz1Gy2nS643L68h3yyVlxPWtUBvw/S0YuPbO8MO
-c0R5cXOTwN0RP/HQhnBjFlvP+ICC0yB3vq9q0UQBiZqQfEzXvneIpGPJUpjEMX/u
-uICY++vfNgf+sX4VzvIUegPscYHIziI38tRQ6LkCO4gCfyMluZHPIF4Ko+te3nbs
-eJP2LzTiGrVwaCNT5CY5JCQEtq6HgEDEcJLa/8hUgRGHaiEIOlcZ6MyrO1PXf1/u
-HO7gyh1m/+OVsgA1TJuabKMinojW2y+hdD24FfE8Y8LUOEd+oopV/id+z3Ew/iOi
-61Dk/ZzYyMFvoBTet9W+W9+O0B+j0RIeiaxPZcHrREfn2+kCdrNAadjXUVpOTHpf
-glXrDyEcxHAKtxamXlgqmRFTzt6YTNUDtcqdfXcjGPMwy94un0Tyuff4b15IjEX3
-83y19f9svCLYnPghUhd4/WOHA94lgfZztFs6z+2zM8FHXl/eSwZq7jytrWIWP2Qc
-55r/DZspHda6fZOvFsYkvVDJaiRdZxy8OkfcedC6FWHQJGuhrKs=
-=MO9E
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+YHfsACgkQ3SOs138+
+s6Ge8g/+K11Rea4lesG6yOqiV+tgr808eTB04GzTxW2YHYQXECxOM+h5veIlJO7A
+MNYFWTnWUcUT3fG4FQUhXiy4w1h+1TpkZYiOHRxkmnCGkxhVXm7Tk9w//ndatBIo
+TMSNpgcluGaAz+SZrn08yVu+0Xifrf2QC3SRXEBbYDvV2HjNvHeqSokDG4R8u4at
+RM8krhnRarN612d5xkR09ffTFGdoAtfwrJ+0XS6JJpHQ/djZr2hJhY7h6oYUoz0D
+pOFX1JyXcIeomkw5cKSdyE1KN+VhhsIL5emAdXDrsWdkUIjEvnprBRPDMXQmR57V
+Y0OYvmldkVyDSCznhJtqinLMmXHuRWkD80KvB5sBcgk60AoIDZelvsQlHisSRYIL
+jaMidBbtFkwoBxLPJ+3ReUyx8gWI7HY/bNNI2zpv1NSXdpPtdbAX1J78Fkp/xLKw
+WsriAUbGiZ4WlDcNFVrJZuDSsVd6ZEroRgu1ksHU1tH0Fv8S9q2zNEL7gdR7WX6f
+49mHeSGvNM9JZsVXspMdpqmnW1A8/906ZdxiZQVq6l+7UabjxQt/atWMONdDPtl4
+BOEhsa3H55FM1pnAxhF32Cl98x4hjOqm/dpo0wSmnVKl7fU/dB7uY6UlC6wNbObz
+XdVJigEdvPWZq83816gX5thEgB8Dt4rSzLGbtwoP09PQrjyBUM0=
+=7Edt
 -----END PGP SIGNATURE-----
 
---pQhZXvAqiZgbeUkD--
+--47eKBCiAZYFK5l32--
