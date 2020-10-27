@@ -1,103 +1,113 @@
-Return-Path: <SRS0=stlo=EC=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85155C4363A
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB84C55179
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 01:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF2620756
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Oct 2020 21:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2206C20720
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 01:47:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4QspCpf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5gMs+eO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S374521AbgJ0Vwm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Oct 2020 17:52:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46836 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2902336AbgJ0Vwl (ORCPT
+        id S1726167AbgJ1Bii (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Oct 2020 21:38:38 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40441 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1833055AbgJ0Xrh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Oct 2020 17:52:41 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 2so3437882ljj.13;
-        Tue, 27 Oct 2020 14:52:39 -0700 (PDT)
+        Tue, 27 Oct 2020 19:47:37 -0400
+Received: by mail-pl1-f193.google.com with SMTP id j5so1591254plk.7;
+        Tue, 27 Oct 2020 16:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EOfn+rTY41ZPk98ImlWCzM2uVjjLkgWeTbnbpRiwx94=;
-        b=B4QspCpfrLoBxm8nbt/nY6Vc6pvrNIWz0XoyVAv6U5qDKlIhEpSOmL5MULuDcdRz4J
-         NdVU97JPLEFFINpxs1bR7kXaAKKRc5t1LCYjmSEpeV3k25tRxIfa+w5hulTco0XoPAL5
-         NuYRujrqdYbq/2dROB5gt/BTZEUgllml+clfdS5r0UrbBpE1TBOBE+/PavDPL2xwqXQC
-         X3UQBo8IKouDxrYKv17oC5H+7ff5WfzODsT8VtCHUrF6PnvPf8QBTXbyxtNZxLCHJioF
-         z5+/59liqD8IS9SzzLvJrOgdyLJ3wnvNbwVfCnJVNKk24nRT7n3gjTF0PfTy6hhJpJeE
-         /YcA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/6ryBAjhYQWjKYyZ6Le172OJUQcIiSdBP4BaH3Rlg64=;
+        b=Q5gMs+eOrcdJ0AbdplqdNB3rhSB/lSY5Y1go23d0pWx+kotcrMMZ2eH0eHgM7NQmzQ
+         2z8lGgrFJP1jZ2hPRNzMF2LYKufDydPcmIMcGtlS5rRUb5lQ8batLXTaqeBbKPBYcyuj
+         B9f4eXjn3Yy+MdtRDDgp1EczG9DOIaDVz0+BDjjIF+NG3abqAEM6Y70H+4+TqTMek7RV
+         9NxP+zGtRVhC5Yv/R54iQIQ4KTbzoAko39W2fCG8RzodJyEVMeS8Dcjwzqxch6cOqo8Z
+         RJDVHeUEIVxP7KmDuDr1EgKH3LwYSWX5lqiuQX4O4iejXYWBFj+pgMzUvkOWS3gzUlvP
+         dzag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EOfn+rTY41ZPk98ImlWCzM2uVjjLkgWeTbnbpRiwx94=;
-        b=gaNuYylAcbUkjyS2Zztvxv351HMaLvo1yTeBHmjOJojSB+4cD95r6bFbrAqTN9bgFY
-         J1xtPZ2TTmwvMqZbaOEipVz36C2o76Fsc6XJIg4YNkdgSB9vn7mvYVXBkNzz0WlUE1Ut
-         z4/VZjpXYvheBwJrgjjnvhy9h2BLjjeOR/SXEtSlbZ21Q1e0Q7QWQR0bGG4GlNlxnrMi
-         YUsoruxdjl9SVhZjdqP+N7eKsHy5pTBv/5JyP9avxgeVd2mLh/5KfiDvvkdq8ckVexdm
-         3De2tGah4SbDhbCRF3XOKMidqMvzMa2duv0+IrNUI4Eez64RUo1G3kqyG9zoodnU6e+L
-         yuJg==
-X-Gm-Message-State: AOAM530Z3fhEcSBKEWndZ53RHz0F4BiSnKxn95Vusw0y+eqXa3RXCr35
-        cFKKeKOCIj6710yJQ1EEWWo=
-X-Google-Smtp-Source: ABdhPJxqwwB2L+NAENWqofO9hI5lVEPJjt9KYwjz/a5RXKvfYnoEDFODsN2229mWTIkaTH7zqrcUAw==
-X-Received: by 2002:a2e:8985:: with SMTP id c5mr2100186lji.406.1603835559052;
-        Tue, 27 Oct 2020 14:52:39 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.googlemail.com with ESMTPSA id v16sm303423lfq.68.2020.10.27.14.52.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2020 14:52:38 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] implement I2C retries for mXT1368
-To:     "Wang, Jiada" <jiada_wang@mentor.com>, dmitry.torokhov@gmail.com,
-        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     nick@shmanahar.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        erosca@de.adit-jv.com, andrew_gabbasov@mentor.com
-References: <20200930151259.18119-1-jiada_wang@mentor.com>
- <653c24a4-704a-4d65-2622-49c55a82c901@mentor.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <082b9b1c-5f89-7deb-728b-3de4339ac131@gmail.com>
-Date:   Wed, 28 Oct 2020 00:52:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/6ryBAjhYQWjKYyZ6Le172OJUQcIiSdBP4BaH3Rlg64=;
+        b=GkOAMQeCTwx7e32ECW/lRnlFinH5ZdimUIskp+jMjYCzkX3wGVx5VCTYB4VYunyGdL
+         UhqzYWSaOam5QOEK9WnIjZQFaOlHYmtXmHEb7YkLpiP0Zr2/fWYySBh7CB6U+OtXKrKp
+         fgI+gSZaOlfrm8xpK22dne2E8h3YQSqgTZSkVQHVs/jVHW999iEobCL0FjagCShjgLNt
+         M7db+zPi3wrYaToDMHyejqPUMaBrSBUr6aCYG5ErVNlEJ6S3ZWZduwEO4ub/gpvpRbqW
+         jikIsVBa7lOdP3z7nF0MKOArxuakwycXcqI12Wq1GOt7JUN8T9AqJPtSkuZtobGWsNWt
+         xFYQ==
+X-Gm-Message-State: AOAM532a4pvRC36MEQUDqBoJNu++WJJVvHBWZpE9t6jX2TE37GeOcCZS
+        gjec6pkda2RQMi40zyI5x4g=
+X-Google-Smtp-Source: ABdhPJz/lQbram89lQGpaIKmmR0hCnzx0BFgcEU0n7e10YYJ0CbPFhHKKcYO48buaN6RbQgEtmMO5g==
+X-Received: by 2002:a17:902:bc43:b029:d6:711c:1a77 with SMTP id t3-20020a170902bc43b02900d6711c1a77mr620272plz.43.1603842456452;
+        Tue, 27 Oct 2020 16:47:36 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id b17sm3271543pgb.94.2020.10.27.16.47.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Oct 2020 16:47:36 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 16:37:12 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     krzk@kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] memory: tegra: Complete tegra210_swgroups
+Message-ID: <20201027233711.GB11164@Asurada-Nvidia>
+References: <20201008003746.25659-1-nicoleotsuka@gmail.com>
+ <20201008003746.25659-6-nicoleotsuka@gmail.com>
+ <20201027130111.GB1822510@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <653c24a4-704a-4d65-2622-49c55a82c901@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201027130111.GB1822510@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.10.2020 04:14, Wang, Jiada пишет:
-> Hello Dmitry and all
+On Tue, Oct 27, 2020 at 02:01:11PM +0100, Thierry Reding wrote:
+> On Wed, Oct 07, 2020 at 05:37:46PM -0700, Nicolin Chen wrote:
+> > According to Tegra X1 TRM, there are missing swgroups in the
+> > tegra210_swgroups list. So this patch adds them to the list.
+> > 
+> > Note that the TEGRA_SWGROUP_GPU (in list) should be actually
+> > TEGRA_SWGROUP_GPUB (in TRM), yet TEGRA_SWGROUP_GPU (in TRM)
+> > is not being used -- only TEGRA_SWGROUP_GPUB (in TRM) is. So
+> > this patch does not add TEGRA_SWGROUP_GPU (in TRM) and keeps
+> > TEGRA_SWGROUP_GPU (in list) as it is.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> >  drivers/memory/tegra/tegra210.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+> > index b400802c9f14..b3bbc5a05ba1 100644
+> > --- a/drivers/memory/tegra/tegra210.c
+> > +++ b/drivers/memory/tegra/tegra210.c
+> > @@ -1028,6 +1028,8 @@ static const struct tegra_smmu_swgroup tegra210_swgroups[] = {
+> >  	{ .name = "hda",       .swgroup = TEGRA_SWGROUP_HDA,       .reg = 0x254 },
+> >  	{ .name = "isp2",      .swgroup = TEGRA_SWGROUP_ISP2,      .reg = 0x258 },
+> >  	{ .name = "nvenc",     .swgroup = TEGRA_SWGROUP_NVENC,     .reg = 0x264 },
+> > +	{ .name = "nv",        .swgroup = TEGRA_SWGROUP_NV,        .reg = 0x268 },
+> > +	{ .name = "nv2",       .swgroup = TEGRA_SWGROUP_NV2,       .reg = 0x26c },
 > 
-> Kind reminder on this patch-set
+> Oddly enough I can see these in the TRM, but they are not in the
+> internal reference manuals that are supposed to be the canonical
+> reference for the TRM. Perhaps the TRM is out of date?
 
-Hello Jiada,
-
-Thinking a bit more about these patches, I'm coming back to the variant
-with the atmel,wakeup-method property. There are three possible wake-up
-variants for mXT1368:
-
-  - NONE
-  - GPIO
-  - I2C-SCL
-
-and this series covers only the I2C-SCL.
-
-I was also skimming through datasheets of other maxtouch touchscreens
-and noticed that the retries aren't unique to mXT1368. For example
-mXT3432 controller also needs exactly the same retrying logic.
-
-Hence I think it should be better if we could generalize the
-wakeup-method in the device-tree. What do you think?
+Hmm..I actually have been using the TRM from official site all
+the time. These two aren't being used downstream either; I put
+them in the patch merely because they exist in the TRM. So we
+may drop them if you feel that's better.
