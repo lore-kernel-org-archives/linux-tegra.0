@@ -2,107 +2,95 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116BFC56201
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5123C4363A
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC595206BE
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7CF20809
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:22:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lCmm40q1"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BJvj4eC/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390771AbgJ2AWN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S2388932AbgJ2AWN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 28 Oct 2020 20:22:13 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1414 "EHLO
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1416 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388930AbgJ1WiG (ORCPT
+        with ESMTP id S2388928AbgJ1WiG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Wed, 28 Oct 2020 18:38:06 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9937530001>; Wed, 28 Oct 2020 02:18:11 -0700
-Received: from [10.2.171.164] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
- 2020 09:18:01 +0000
-Subject: Re: [PATCH v4 10/16] dt-bindings: phy: tegra-xusb: Add nvidia,pmc
- prop
-To:     Rob Herring <robh@kernel.org>, <thierry.reding@gmail.com>
-CC:     <gregkh@linuxfoundation.org>, <jonathanh@nvidia.com>,
-        <kishon@ti.com>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <nkristam@nvidia.com>
-References: <20201016130726.1378666-1-jckuo@nvidia.com>
- <20201016130726.1378666-11-jckuo@nvidia.com> <20201019214046.GA3645734@bogus>
-X-Nvconfidentiality: public
-From:   JC Kuo <jckuo@nvidia.com>
-Message-ID: <4d190cc1-d01d-9064-0b28-ed7f48858ebd@nvidia.com>
-Date:   Wed, 28 Oct 2020 17:18:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201019214046.GA3645734@bogus>
+        id <B5f99c6540000>; Wed, 28 Oct 2020 12:28:20 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
+ 2020 19:28:14 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 28 Oct 2020 19:28:13 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.4 000/112] 4.4.241-rc1 review
+In-Reply-To: <20201027134900.532249571@linuxfoundation.org>
+References: <20201027134900.532249571@linuxfoundation.org>
+X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
+MIME-Version: 1.0
+Message-ID: <9ed8282dad0e4d2a8584c7f945df05d6@HQMAIL107.nvidia.com>
+Date:   Wed, 28 Oct 2020 19:28:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603876691; bh=Uicj8tp9XPp1EuN3JiOQD2NdkQG03jiexELbBTYXEFQ=;
-        h=Subject:To:CC:References:X-Nvconfidentiality:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=lCmm40q1pu/ss7empc91Sutt+HYjjOzzxXrZuqa59DIk+5YYJRBGBEU/rGxyI0PqZ
-         zlRqu9mMCv72cKIjAgLv2524f3MbhSAMJG73Bj3CGt7Bdddc2YINS8Rw5WtY3IXQ9D
-         1lAyChykD8CarsLI3vVHxCN70Fkf5DpVZifL017dGi1uBBOEcLxAbReMXAl2Xy+A7m
-         BOhOYGLtGGVTMzpek8DZ+qtGmpPKPWTEZyNSXv+TPVjF7yVeTMT52o/kVJQmFHh936
-         9E3gyu+qopP8HWSF1fXuTGG76wpdHxqdo7yaItJPAmeyOvpWh4wP1vE8hxyWLj91s5
-         zbFQogP8F0/Ow==
+        t=1603913300; bh=gAZ5V/I4BBHhmGZ3N8pIk1htc5MMgW9nFziEoxfx9Lw=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=BJvj4eC/IEBG2DVyRslPcwaTbYmpFB5ukxToC/n40BDEYfVP/QDJdMZ0QxKjqnkZU
+         zpUCMZlZNBneo9/PutyR4drbmyHlIjlcgPTg/e00ewD+k3o9Oa87i50I1Jyh2u91EL
+         VbVVCQ01YOUIJfwPxlME1SBkZtq3V5d1U/l+P49UJ9qRm2s43MUtEnotj8OchPzmLB
+         /slsrxjfDmudIU8vq81zE6haZOtKRa+qgIM5WGRvEAcRzjl8ThoCXo+cG0w3mXX16L
+         MprVttWFsOHkyMS1Sm7QwWQwmhSBz7/KTKeJKT/nLIZch94S5wFOpeFbaSSWrpUqEn
+         xUGFibgdfJ8Vg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/20/20 5:40 AM, Rob Herring wrote:
-> On Fri, Oct 16, 2020 at 09:07:20PM +0800, JC Kuo wrote:
->> This commit describes the "nvidia,pmc" property for Tegra210 tegra-xusb
->> PHY driver. It is a phandle and specifier referring to the Tegra210
->> pmc@7000e400 node.
->>
->> Signed-off-by: JC Kuo <jckuo@nvidia.com>
->> ---
->> v4:
->>    new change to document "nvidia,pmc" prop
->>
->>  .../devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt      | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> index 38c5fa21f435..ea559baeb546 100644
->> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> @@ -54,6 +54,7 @@ For Tegra210:
->>  - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
->>  - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
->>  - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
->> +- nvidia,pmc: phandle and specifier referring to the Tegra210 pmc@7000e400 node.
+On Tue, 27 Oct 2020 14:48:30 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.241 release.
+> There are 112 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> 'Tegra210 pmc@7000e400' is kind of specific. Going to update this for 
-> every address and chip?
+> Responses should be made by Thu, 29 Oct 2020 13:48:36 +0000.
+> Anything received after that time might be too late.
 > 
-> If there's only one PMC, you can just find the compatible PMC node. Then 
-> you don't need a DT update.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.241-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 > 
-> Rob
+> thanks,
 > 
-Hi Rob,
-Thanks for your review and suggestion. Yes, there is only one PMC node. You mean
-I can retrieve the PMC node with the following code and if do do DT update is
-not required, right?
+> greg k-h
 
-	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra210-pmc");
+All tests passing for Tegra ...
 
-JC
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    25 tests:	25 pass, 0 fail
+
+Linux version:	4.4.241-rc1-gb3d9b0c29dc8
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
