@@ -2,97 +2,123 @@ Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEADEC56201
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FEBC4363A
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53FBD20732
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:48:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="CLTm37zS"
+	by mail.kernel.org (Postfix) with ESMTP id 405A820732
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603925463;
+	bh=ib2Mb2Xx+KygaeNGMjyP4pKm03ZIl1AxBoHq6uQ9x2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TpQQJhphit1XrCqc3vdkapE/DJIaq+YFk+LhpFd+U541YmKPDCgPeLFyl+06B8Max
+	 yRY78/w7WTFSmIVhkZbkoiLlZTEyjQwVZaOh/2x+giMZHSjN26e48tlksIA/vf1D6Z
+	 re9EkQr8wiczhRSB/yHsNEeE6epRR9iohINCJEPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388944AbgJ1WsN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:48:13 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:5016 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733025AbgJ1WsK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:48:10 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4CM3d36WwDzBl;
-        Wed, 28 Oct 2020 23:48:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1603925288; bh=GmVRoXMgIpLjRV1MtCfP4Y33+nWTcUFIfZX3NQeEk3Q=;
-        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=CLTm37zSuIC3+w5yRdHbUp6edZU05Jws7T3eCt1u7aw+hkUkozIHLQy8RMe5qwfdl
-         hrjBDnyvZqqbpVLC9Hkx1QcpTaGY3kUntyKExD9b2Dbrbl6cIy2L+z+n6swZcKq7B0
-         zUgE2pH+fk1hZ19epYMWBczaAd27+jQho4DDt4DCTNrUXIytbLWOdfPMfPCp4XghBE
-         EDJn5X6Wc1kgmkEb4Ddc4KLYg9n7XNR7CeskGwN3AgfAIeIPmUMPj8DVInzwxfe+oZ
-         dVCdhG+tvKVlQnGeV0g9bxgPB773VupGMd6cnhr0WhTknaX7MTGurncGHS15KQOVIq
-         unVSscbUrZe4A==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Wed, 28 Oct 2020 23:48:07 +0100
-Message-Id: <eb2ab1666f39575f65467ac6e0dd7d987a35b926.1603925200.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <8756eb5aac561173aa222c9cb64dd314ab1b1f9b.1603925200.git.mirq-linux@rere.qmqm.pl>
-References: <8756eb5aac561173aa222c9cb64dd314ab1b1f9b.1603925200.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v3 2/2] arm: defconfig: enable tegra20-spdif
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S2389465AbgJ1WuD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:50:03 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39865 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389458AbgJ1WtQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:49:16 -0400
+Received: by mail-ua1-f66.google.com with SMTP id t15so188445ual.6;
+        Wed, 28 Oct 2020 15:49:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=QX0ENcNCRgqoRwA+YusJr6c818KTH5LROqERQdCNVs8=;
+        b=eYi/gNGqW3L/aL3r8BxdxzPw+5CvtA96dkSqAy2O7BPeeGsEYeE2MWy03BT1/FvBtN
+         6bBmCNAq04tpaSuAlZcjd9412MiUEOgGuCpgM3lojvXZundsqS5Mutob9hxRpQGulSVU
+         DKVBVtBCKINYj/owHeuf63IAu4pLsexArsREUNY/5RJ4ImgHR8Odt3F74oLfX3sYKZo1
+         aJH9MChccurJNwiZO+hO53LdUicPbyH/9D/LH0t9ftDWy53rnt2mFGh7f13TeFKWi0GC
+         hnkW7LNCx4I6IhQzSS9Q3Ey0+9vyukNDN1IP8IUpWB4x/uQmquzBkYKY9MjLqDEH0Io4
+         B7ug==
+X-Gm-Message-State: AOAM533pfI5njsXu8u5JUH3Kmekl5qJEsFfSajMstaNQuUs6QXC50TmM
+        Q1NFEdIDMcDA/QmQly7iDhbtNRz3+g==
+X-Google-Smtp-Source: ABdhPJyYAHXqPlvZ5xX1GDoTkHk3tTpQd2ChQUyWIgVIOlXap+r02KTeFGDxbyhKGUnxb6HGIN5QrQ==
+X-Received: by 2002:a4a:c68d:: with SMTP id m13mr6136474ooq.64.1603898794592;
+        Wed, 28 Oct 2020 08:26:34 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f13sm2572772oij.0.2020.10.28.08.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 08:26:33 -0700 (PDT)
+Received: (nullmailer pid 4054817 invoked by uid 1000);
+        Wed, 28 Oct 2020 15:26:32 -0000
+Date:   Wed, 28 Oct 2020 10:26:32 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Warren <swarren@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 08/52] dt-bindings: memory: tegra20: emc: Document
+ mfd-simple compatible and statistics sub-device
+Message-ID: <20201028152632.GA4051913@bogus>
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201025221735.3062-9-digetx@gmail.com>
+ <20201027090212.GG4244@kozik-lap>
+ <1cce314a-1eab-61c9-099d-54f987b03761@gmail.com>
+ <20201027194457.GD140636@kozik-lap>
+ <ae06bd70-93f5-abe8-64d9-e5e991cd8ff8@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae06bd70-93f5-abe8-64d9-e5e991cd8ff8@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable tegra20-spdif in tegra and multiplatform defconfigs. The driver
-will be switched to "default n" in another patch.
+On Tue, Oct 27, 2020 at 11:18:34PM +0300, Dmitry Osipenko wrote:
+> 27.10.2020 22:44, Krzysztof Kozlowski пишет:
+> > On Tue, Oct 27, 2020 at 10:22:19PM +0300, Dmitry Osipenko wrote:
+> >> 27.10.2020 12:02, Krzysztof Kozlowski пишет:
+> >>>> @@ -31,17 +32,34 @@ Example:
+> >>>>  		...
+> >>>>  	};
+> >>>>  
+> >>>> +	emc_bw_dfs_opp_table: emc_opp_table1 {
+> >>> Hyphens for node name.
+> >>
+> >> We already use underscores for the Tegra CPU OPP table.
+> >>
+> >> https://elixir.bootlin.com/linux/v5.10-rc1/source/arch/arm/boot/dts/tegra20-cpu-opp.dtsi#L4
+> >>
+> >> What makes you think that hyphens will be a better choice? Is it a
+> >> documented naming convention?
+> > 
+> > Unfortunately that's the source of confusion also for me because
+> > Devicetree spec mentions both of them (and does not specify preferences).
+> > 
+> > The choice of dashes/hyphens comes now explicitly from all dtschema
+> > files.  Previously, the documentation were emails from Rob. :)
+> 
+> Okay, I'll change it in v7. So far I haven't seen warnings about it from
+> the schema-checker.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
-  v3: split from main patch
-  v2: add the symbol to defconfig as suggested by Thierry Reding
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- arch/arm/configs/tegra_defconfig    | 1 +
- 2 files changed, 2 insertions(+)
+dtc with W=2 will warn.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e731cdf7c88c..681742f81c08 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -745,6 +745,7 @@ CONFIG_SND_SOC_STM32_I2S=m
- CONFIG_SND_SUN4I_CODEC=m
- CONFIG_SND_SOC_TEGRA=m
- CONFIG_SND_SOC_TEGRA20_I2S=m
-+CONFIG_SND_SOC_TEGRA20_SPDIF=m
- CONFIG_SND_SOC_TEGRA30_I2S=m
- CONFIG_SND_SOC_TEGRA_RT5640=m
- CONFIG_SND_SOC_TEGRA_WM8753=m
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fff5fae0db30..08526eb50484 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -225,6 +225,7 @@ CONFIG_SND_HDA_CODEC_HDMI=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA20_I2S=y
-+CONFIG_SND_SOC_TEGRA20_SPDIF=y
- CONFIG_SND_SOC_TEGRA30_I2S=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
--- 
-2.20.1
+The bigger issue is the name should be generic.
+
+Rob
 
