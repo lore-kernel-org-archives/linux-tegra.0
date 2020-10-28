@@ -2,96 +2,118 @@ Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834CEC4363A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC46EC55179
 	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 245EF20735
+	by mail.kernel.org (Postfix) with ESMTP id 66AAF20732
 	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:54:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h/RpJarZ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Qitm16SU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389716AbgJ1Wyu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S2389724AbgJ1Wyu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 28 Oct 2020 18:54:50 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16473 "EHLO
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16472 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389711AbgJ1Wyq (ORCPT
+        with ESMTP id S1733260AbgJ1Wyq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Wed, 28 Oct 2020 18:54:46 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f99c6a20000>; Wed, 28 Oct 2020 12:29:38 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
- 2020 19:29:34 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 28 Oct 2020 19:29:34 +0000
+        id <B5f9964a70001>; Wed, 28 Oct 2020 05:31:35 -0700
+Received: from [10.26.45.122] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
+ 2020 12:31:30 +0000
+Subject: Re: [PATCH V2] cpufreq: tegra186: Fix initial frequency
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200824145907.331899-1-jonathanh@nvidia.com>
+ <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
+ <09ac354e-a55b-5300-12ae-3f24c8f8b193@nvidia.com>
+ <20201016040700.wzfegk7hmabxgpff@vireshk-i7>
+ <9c37db70-9406-8005-3478-dc4a5e94c566@nvidia.com>
+ <c6ab92fe-e5ea-4568-6457-7a28c8496114@nvidia.com>
+ <20201028041152.733tkghz4vnqz2io@vireshk-i7>
 From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.19 000/264] 4.19.153-rc1 review
-In-Reply-To: <20201027135430.632029009@linuxfoundation.org>
-References: <20201027135430.632029009@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Message-ID: <382ba642-dbea-c36a-0c71-6e91ccb7b775@nvidia.com>
+Date:   Wed, 28 Oct 2020 12:31:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Message-ID: <4df1955a86a94ebfb6ef8451bf75f57f@HQMAIL105.nvidia.com>
-Date:   Wed, 28 Oct 2020 19:29:34 +0000
+In-Reply-To: <20201028041152.733tkghz4vnqz2io@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603913378; bh=C3GTybsBopaTeKN6PjLOFYbGJ2BKk9Lvc0uvQ3b5/8c=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=h/RpJarZf55+iT0V6NeVpKpg0RQ7KIHxI+Xbu0Gn/qv80Cb3C0IZQhzCtp61sol3A
-         AeQm6TdXizIPs9TOeQo96MW/tYd59cKJq8KVXdXEpkX0H/PBAJJXW/5C79LMiLY+Mp
-         0wRhh5uwIDJWoGW3jlGA4LYmv8raEmuNv0ALMLF+yquP649ErcP5Qe26iId2dKH80r
-         Oth3aL1SLZCzwbdEuztfrOuege5jFcCNUJ89+XvDgF6+S7OAa0LLlRTpzu0diKOsAp
-         zcbV7gqZzLikvXat6hZPFqYcJIj6SOzjlrmqrmXDDNRsEwt2sJ7iocvVY0EDZk9aup
-         2sQvYVo1Tk7qA==
+        t=1603888295; bh=WzzOaEYzIzsUI3cCl2d2uX4B6nM/EI/XkOk1VFdax78=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=Qitm16SUB86mjL+1uY8ctmLnjoeRyRtQ7q3QyhEocvw1dN2ObM8q4aqz+9Wky2kl2
+         DGwT+i5qqMWzB+LlDtkjFxwn86PfWN2tk8GCtyx8yRqIza+j6Ki4f1mZoUHZ2oqVtU
+         x2LcYeP1AG1x9lByZlAfYdpzuFaaivHUwVnj4cOlsSZwrlHFiTCBI5fBNiIJleIOdc
+         XbUZRui/wbJ7eqK2khGoaqy3E3bQYUQZl7jBVF/2km4aH5xemVDJAhcqA5barRBTHd
+         N6DB/GSWllOm6FooPVtMx5+qlPA7WyIs1G6TSjKtsWR3wjGWAwOYZn5L00Qk9/WeIf
+         PUFmVIB3jarYw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 27 Oct 2020 14:50:58 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.153 release.
-> There are 264 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 28/10/2020 04:11, Viresh Kumar wrote:
+> On 26-10-20, 12:57, Jon Hunter wrote:
+>> Thinking about this some more, what are your thoughts on making the
+>> following change? 
+>>
+>> Basically, if the driver sets the CPUFREQ_NEED_INITIAL_FREQ_CHECK,
 > 
-> Responses should be made by Thu, 29 Oct 2020 13:53:47 +0000.
-> Anything received after that time might be too late.
+> This flag only means that the platform would like the core to check
+> the currently programmed frequency and get it in sync with the table.
+
+Yes exactly.
+
+>> then I wonder if we should not fail if the frequency return by
+>>> get() is not known.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.153-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
+> When do we fail if the frequency isn't known ? That's the case where
+> we try to set it to one from the table.
+
+Currently, if the frequency is not known, we fail right before we do the
+initial frequency check [0].
+
+> But (looking at your change), ->get() can't really return 0. We depend
+> on it to get us the exact frequency the hardware is programmed at
+> instead of reading a cached value in the software.
+
+Actually it can and it does currently. Note in tegra186_cpufreq_get()
+the variable 'freq' is initialised to 0, and if no match is found, then
+it returns 0. This is what happens currently on some Tegra186 boards.
+
+>>> This would fix the problem I see on Tegra186
+>> where the initial boot frequency may not be in the frequency table.
 > 
-> thanks,
-> 
-> greg k-h
+> With current mainline, what's the problem you see now ? Sorry I missed
+> track of it a bit :)
 
-All tests passing for Tegra ...
+No problem, this has been an on-going saga now for sometime.
 
-Test results for stable-v4.19:
-    15 builds:	15 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	4.19.153-rc1-g8919185062d4
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
+Cheers
 Jon
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/cpufreq.c#n1429
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/tegra186-cpufreq.c#n95
+
+-- 
+nvpublic
