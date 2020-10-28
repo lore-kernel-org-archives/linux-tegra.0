@@ -2,95 +2,153 @@ Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94446C5DF9D
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975A5C388F7
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3098924759
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hN3ABikB"
+	by mail.kernel.org (Postfix) with ESMTP id 46339246CD
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603922127;
+	bh=HbgKjEA/PYFjQPE2NMiuSnpd7j5N0Pl+TmmK5aOx498=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=M9rW+1t1XHUlJAwibIw6RxDNB+7perHbEE0HRY3ospo0GqsvJoEW/YdgEG0Z4G3mM
+	 sUOAU49nwLlcXWHSqQ+OM4qaFTs+HJArNrmO0tCH5w6NySmRY3fAi55LHQzvUFH3X/
+	 XiJNRpE+Bf02wv/1cjIzysHBrgxPJNoAjnEGkCzs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgJ1VwS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:52:18 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12039 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbgJ1VwR (ORCPT
+        id S1728092AbgJ1Vyt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:54:49 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42979 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728500AbgJ1Vwt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:52:17 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f99c68b0000>; Wed, 28 Oct 2020 12:29:15 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
- 2020 19:29:35 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 28 Oct 2020 19:29:35 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.9 000/139] 4.9.241-rc1 review
-In-Reply-To: <20201027134902.130312227@linuxfoundation.org>
-References: <20201027134902.130312227@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Oct 2020 17:52:49 -0400
+Received: by mail-ua1-f68.google.com with SMTP id f15so140852uaq.9;
+        Wed, 28 Oct 2020 14:52:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fkYpsqioT7Tb7YApRr6kOuIOqhvTBzDRVXioLFVYRRs=;
+        b=k2jYjlcMKpMD2XLjyWigYvkY87yVovtG4wl8FuzmK1dE1jE5i1BrpDypzG1v6Q0mst
+         cQbM+EW8kQbhvEfDQXqd7hc4PiVZJdoSWqHGyS9Fkgk0tfocLRRBgEcjXpUIwXRmpY0S
+         zy0ePDgsJyJL34Zz0JP4BBcX9LbXdkOIas1QciWmqnMqA4NcO+3Z2ybeUsU1FPCSCfwm
+         KZLJmmA+ZPu3+wRvWhJxy4eh6mBDEeK/dtcI2SFRoVoAkQ+odXzcuv2jf7OrMUjbBzOU
+         4KuxNmskXgIPYIN/hh/0Rin/wzGry06MM2MQKtUVtR7wSBVeh9qS80WMtf4LwJIb+w0D
+         ap2w==
+X-Gm-Message-State: AOAM533tu8csPmSwVwbN6+ajQuF8Fb7ZkuCUfnQipkHLzaoRNi//d9yy
+        igsRWRqrNaPLufw3srQNLLmbcQ/2Pw==
+X-Google-Smtp-Source: ABdhPJzUHZm4YYIM4XMiwc5sacukMJ5Sdrdk/i+veAcVoB9ovA+Vih+j4WmB8WVNzg3/epAFFNC3mg==
+X-Received: by 2002:a05:6830:1694:: with SMTP id k20mr912314otr.100.1603918009773;
+        Wed, 28 Oct 2020 13:46:49 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 13:46:49 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>
+Subject: [PATCH 00/13] PCI: dwc: Another round of clean-ups
+Date:   Wed, 28 Oct 2020 15:46:33 -0500
+Message-Id: <20201028204646.356535-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Message-ID: <7b2a57a88c414dc9ad768677907e3671@HQMAIL105.nvidia.com>
-Date:   Wed, 28 Oct 2020 19:29:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603913355; bh=zuBOEKOIxBOIo5Ntq95iJAzkvIxei5tK6Nbd0DUMBIw=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=hN3ABikBDBSLcVco779pyOCf3b65Bhtpam9nqWTZgpt9V5/FAl7Z1Uo3+5BKdAVxs
-         xEal52trBbMilYQJv7+uuCrwvvvJ999hhKay+9GrxJpbGPQC/i4YBuZ+woylkZnqRe
-         TCju3TVatcLh7UIFIaiR/q4lmPcyTCeYCcvr246azfYX9kFsV84Xh+U7T0tzG1svIW
-         iZiiBOJXjVw/67vvZ3YzYMlH0xsGhPHoLbCctCVpNZ+sJR7id9s5ZzRVr8Ba2077YZ
-         uZrW1SfEJ3WDzR3hKPmNCeMxvsBXTiwYWlySSuQRIblKDtVdkngbwgSy2fOTYAmS+H
-         PJPg7s2yH8Rdg==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 27 Oct 2020 14:48:14 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.241 release.
-> There are 139 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 29 Oct 2020 13:48:36 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.241-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Here's another batch of DWC PCI host refactoring. This series primarily
+moves more of the MSI, link up, and resource handling to the core
+code.
 
-All tests passing for Tegra ...
+No doubt I've probably broken something. Please test. A git branch is
+here[1].
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    30 tests:	30 pass, 0 fail
+Rob
 
-Linux version:	4.9.241-rc1-g97bfc73b33b5
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-more-dwc-cleanup
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Rob Herring (13):
+  PCI: dwc/imx6: Drop setting PCI_MSI_FLAGS_ENABLE
+  PCI: dwc/intel-gw: Move ATU offset out of driver match data
+  PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into
+    common code
+  PCI: dwc/intel-gw: Remove some unneeded function wrappers
+  PCI: dwc: Ensure all outbound ATU windows are reset
+  PCI: dwc/dra7xx: Use the common MSI irq_chip
+  PCI: dwc: Drop the .set_num_vectors() host op
+  PCI: dwc: Move MSI interrupt setup into DWC common code
+  PCI: dwc: Rework MSI initialization
+  PCI: dwc: Move link handling into common code
+  PCI: dwc: Move dw_pcie_msi_init() into core
+  PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
+  PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()
 
-Jon
+ drivers/pci/controller/dwc/pci-dra7xx.c       | 141 +-----------------
+ drivers/pci/controller/dwc/pci-exynos.c       |  50 ++-----
+ drivers/pci/controller/dwc/pci-imx6.c         |  51 +------
+ drivers/pci/controller/dwc/pci-keystone.c     |  68 +--------
+ .../pci/controller/dwc/pci-layerscape-ep.c    |  37 +----
+ drivers/pci/controller/dwc/pci-layerscape.c   |  67 +--------
+ drivers/pci/controller/dwc/pci-meson.c        |  53 ++-----
+ drivers/pci/controller/dwc/pcie-al.c          |  29 +---
+ drivers/pci/controller/dwc/pcie-armada8k.c    |  37 ++---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  76 +---------
+ .../pci/controller/dwc/pcie-designware-ep.c   |  29 +++-
+ .../pci/controller/dwc/pcie-designware-host.c |  80 ++++++----
+ .../pci/controller/dwc/pcie-designware-plat.c |  70 +--------
+ drivers/pci/controller/dwc/pcie-designware.h  |  12 +-
+ drivers/pci/controller/dwc/pcie-histb.c       |  37 ++---
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  59 ++------
+ drivers/pci/controller/dwc/pcie-kirin.c       |  62 +-------
+ drivers/pci/controller/dwc/pcie-qcom.c        |  38 +----
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |  62 +++-----
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  40 +----
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c |  38 +----
+ drivers/pci/controller/dwc/pcie-uniphier.c    |  51 +------
+ 22 files changed, 217 insertions(+), 970 deletions(-)
+
+--
+2.25.1
