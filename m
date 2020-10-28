@@ -2,191 +2,306 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E7C55179
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 01:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AECC5517A
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 01:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67E612071A
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 01:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420D120782
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 01:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603933478;
-	bh=M+A5lI39lpqmGPGJFq4MY3NdrLbePWih7kMnf7yCqro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hBuC42KqRV4gFDgsi8wX3gQkWYPNUf7S/8+inWJNaMA/xkLtX3PKC7JyPoy61Di2h
-	 wvRRqv7h4c/tidwYN/McewS1nNxgcHHzJpDHPZBzrnyOxew2gtyc6uXX9+al+OyUJM
-	 AUafpOkJ9sAtNeOinMgZmGRpB95PRigdHC83JJjM=
+	s=default; t=1603936427;
+	bh=N6g38aQSEJAGsUWIkEoQlPsPfHTiWfy9cv+Fw0kVw2Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hxOcJGDnzXgi1lWUadxHscAgQ0B3pQ3p+RyUItWbcjQFhsQIl3JyPsZ8vkXpstW92
+	 0pHza954O5aRNpks7WdGGukhTLxO9vz00wrvY1oVMBkveaQ+xTHQXqB1BUiUevpqsr
+	 UpQ/Omj5SZfsS0p9WxEmtwOYOaXjpnpe/mv6YfOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404123AbgJ2BE3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:04:29 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40036 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729465AbgJ1WGQ (ORCPT
+        id S1728859AbgJ2Bxq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 21:53:46 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46068 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728343AbgJ1V5d (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:06:16 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m128so1173923oig.7;
-        Wed, 28 Oct 2020 15:06:15 -0700 (PDT)
+        Wed, 28 Oct 2020 17:57:33 -0400
+Received: by mail-oi1-f195.google.com with SMTP id j7so1123642oie.12;
+        Wed, 28 Oct 2020 14:57:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=C6fODSQ4vr9/XMdY27bSNaiMwe4c2CZ3zY9crW4kgXQ=;
-        b=giofxv4nCdl9rEPf+VGNNkX/x9gpPIykurn5Pf4IcN2WjrYVxfn1KX65CLar3kDq+l
-         JVFeh1R9YyeWGlOLnqrB3FvqSytHgt4Hy5QWPVg7Y0lOSOD7xpyTo3818mnuwV+aqExj
-         CStrD/ZQGl6A/ZIhJKEmkKEfVfFSc/ahn5CXXgGGoBwgYIaxYMWYD4XxUH/K7D0sxPcF
-         tfUNMRc+xYB04T7Te2JnbDxCLmMM1aqEsruUTWvHe3Yn2GW9Vbf+25FAIZmmwlBFISdj
-         sHOgAnLHK2DUT9T0Z+VUjFim/5G+HHGGU4V6pvqoUJFQ+NuELBJGnpC00JfxqGk2jf2T
-         LyXQ==
-X-Gm-Message-State: AOAM530DQLZc5aVEDcKQhDgmX6hqUlTxwtxQuH2EKEROsAxjOOwU/BFK
-        fTSaXS9+Q75pOYRLB6EofCstx1bRqQ==
-X-Google-Smtp-Source: ABdhPJzrQ/sPPiQh1XWKgR+EAUUZ9HS2ocEuKqdVfGw3aS3RICzkEg8FJnv6OaOSMDEQcXRlXFSJlA==
-X-Received: by 2002:a05:6808:198:: with SMTP id w24mr5539933oic.69.1603898917913;
-        Wed, 28 Oct 2020 08:28:37 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s20sm307873oof.39.2020.10.28.08.28.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JbZEc8Er93jk4a6ztZuKlxbcqfjO3bgt1UlkERsxFZs=;
+        b=Vyhpxn9mv6taMyfqMwrUIsPOl05IwwNNzx0kd/FLPOBGsEf1fDiQmgaiezxaa+CTTU
+         01Lo1PFnXHMyLkkZ6b1VCoDFBtnooqsTrEZKMD4v356y0MRGIFK9KBCRNJLGPrQnJvIh
+         naLFHL59h/eT7dPmti371RS7ljiMZmh1+HYpg0vexvXEb+1WHdH+BlXJK9H7wHplS+qw
+         5oop5FSfMzXd8CGltOqcWsi8MiqGLrebWCJBQ+TY7HZkEg8N+TL5c+2PifDaVHrJpHhV
+         VTv4vM7a18hOzw9IhRpR+FO+cb1zID5v/Ivap5j9Q2Kfr7hx/H62RKbwaIG0j7NFDbNt
+         aoUQ==
+X-Gm-Message-State: AOAM530bRXh7BlllOpbde4i8nEbL+RgddHsa7T+2UhsAopk6JNNmg28Z
+        8T3lE3AEyGBatBFqQCGDDv4i+pDhmQ==
+X-Google-Smtp-Source: ABdhPJy6x7S+eSVx9q7Igzxyr2K1XEbKHIhryPB4QHiwBFsbh27DOpX4yS0+Rq73HgdN+mL57gNq8A==
+X-Received: by 2002:aca:5e03:: with SMTP id s3mr613140oib.125.1603918032930;
+        Wed, 28 Oct 2020 13:47:12 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 08:28:37 -0700 (PDT)
-Received: (nullmailer pid 4057539 invoked by uid 1000);
-        Wed, 28 Oct 2020 15:28:35 -0000
-Date:   Wed, 28 Oct 2020 10:28:35 -0500
+        Wed, 28 Oct 2020 13:47:12 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 08/52] dt-bindings: memory: tegra20: emc: Document
- mfd-simple compatible and statistics sub-device
-Message-ID: <20201028152835.GB4051913@bogus>
-References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-9-digetx@gmail.com>
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>
+Subject: [PATCH 09/13] PCI: dwc: Rework MSI initialization
+Date:   Wed, 28 Oct 2020 15:46:42 -0500
+Message-Id: <20201028204646.356535-10-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
+References: <20201028204646.356535-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201025221735.3062-9-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 01:16:51AM +0300, Dmitry Osipenko wrote:
-> External Memory Controller can gather various hardware statistics that
-> are intended to be used for debugging purposes and for dynamic frequency
-> scaling of memory bus.
-> 
-> Document the new mfd-simple compatible and EMC statistics sub-device.
+There are 3 possible MSI implementations for the DWC host. The first is
+using the built-in DWC MSI controller. The 2nd is a custom MSI
+controller as part of the PCI host (keystone only). The 3rd is an
+external MSI controller (typically GICv3 ITS). Currently, the last 2
+are distinguished with a .msi_host_init() hook with the 3rd option using
+an empty function. However we can detect the 3rd case with the presence
+of 'msi-parent' or 'msi-map' properties, so let's do that instead and
+remove the empty functions.
 
-It's simple-mfd.
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Minghuan Lian <minghuan.Lian@nxp.com>
+Cc: Mingkai Hu <mingkai.hu@nxp.com>
+Cc: Roy Zang <roy.zang@nxp.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/pci/controller/dwc/pci-keystone.c     |  9 -------
+ drivers/pci/controller/dwc/pci-layerscape.c   | 25 -------------------
+ .../pci/controller/dwc/pcie-designware-host.c | 20 +++++++++------
+ drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  9 -------
+ 5 files changed, 13 insertions(+), 51 deletions(-)
 
-That should only be used if the child has no dependencies on the parent 
-node (and driver).
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 9cf14f13798b..784385ae6074 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -272,14 +272,6 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+ 	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
+ }
+ 
+-/*
+- * Dummy function so that DW core doesn't configure MSI
+- */
+-static int ks_pcie_am654_msi_host_init(struct pcie_port *pp)
+-{
+-	return 0;
+-}
+-
+ static void ks_pcie_enable_error_irq(struct keystone_pcie *ks_pcie)
+ {
+ 	ks_pcie_app_writel(ks_pcie, ERR_IRQ_ENABLE_SET, ERR_IRQ_ALL);
+@@ -854,7 +846,6 @@ static const struct dw_pcie_host_ops ks_pcie_host_ops = {
+ 
+ static const struct dw_pcie_host_ops ks_pcie_am654_host_ops = {
+ 	.host_init = ks_pcie_host_init,
+-	.msi_host_init = ks_pcie_am654_msi_host_init,
+ };
+ 
+ static irqreturn_t ks_pcie_err_irq_handler(int irq, void *priv)
+diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
+index 53e56d54c482..0d84986c4c16 100644
+--- a/drivers/pci/controller/dwc/pci-layerscape.c
++++ b/drivers/pci/controller/dwc/pci-layerscape.c
+@@ -168,37 +168,12 @@ static int ls1021_pcie_host_init(struct pcie_port *pp)
+ 	return ls_pcie_host_init(pp);
+ }
+ 
+-static int ls_pcie_msi_host_init(struct pcie_port *pp)
+-{
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct device *dev = pci->dev;
+-	struct device_node *np = dev->of_node;
+-	struct device_node *msi_node;
+-
+-	/*
+-	 * The MSI domain is set by the generic of_msi_configure().  This
+-	 * .msi_host_init() function keeps us from doing the default MSI
+-	 * domain setup in dw_pcie_host_init() and also enforces the
+-	 * requirement that "msi-parent" exists.
+-	 */
+-	msi_node = of_parse_phandle(np, "msi-parent", 0);
+-	if (!msi_node) {
+-		dev_err(dev, "failed to find msi-parent\n");
+-		return -EINVAL;
+-	}
+-
+-	of_node_put(msi_node);
+-	return 0;
+-}
+-
+ static const struct dw_pcie_host_ops ls1021_pcie_host_ops = {
+ 	.host_init = ls1021_pcie_host_init,
+-	.msi_host_init = ls_pcie_msi_host_init,
+ };
+ 
+ static const struct dw_pcie_host_ops ls_pcie_host_ops = {
+ 	.host_init = ls_pcie_host_init,
+-	.msi_host_init = ls_pcie_msi_host_init,
+ };
+ 
+ static const struct dw_pcie_ops dw_ls1021_pcie_ops = {
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 0f77e4d4b385..6cebdd9bbd2e 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -365,6 +365,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		pci->link_gen = of_pci_get_max_link_speed(np);
+ 
+ 	if (pci_msi_enabled()) {
++		pp->has_msi_ctrl = !(pp->ops->msi_host_init ||
++				     of_property_read_bool(np, "msi-parent") ||
++				     of_property_read_bool(np, "msi-map"));
++
+ 		if (!pp->num_vectors) {
+ 			pp->num_vectors = MSI_DEF_NUM_VECTORS;
+ 		} else if (pp->num_vectors > MAX_MSI_IRQS) {
+@@ -372,7 +376,11 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 			return -EINVAL;
+ 		}
+ 
+-		if (!pp->ops->msi_host_init) {
++		if (pp->ops->msi_host_init) {
++			ret = pp->ops->msi_host_init(pp);
++			if (ret < 0)
++				return ret;
++		} else if (pp->has_msi_ctrl) {
+ 			if (!pp->msi_irq) {
+ 				pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+ 				if (pp->msi_irq < 0) {
+@@ -402,10 +410,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 				pp->msi_data = 0;
+ 				goto err_free_msi;
+ 			}
+-		} else {
+-			ret = pp->ops->msi_host_init(pp);
+-			if (ret < 0)
+-				return ret;
+ 		}
+ 	}
+ 
+@@ -426,7 +430,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		return 0;
+ 
+ err_free_msi:
+-	if (pci_msi_enabled() && !pp->ops->msi_host_init)
++	if (pp->has_msi_ctrl)
+ 		dw_pcie_free_msi(pp);
+ 	return ret;
+ }
+@@ -436,7 +440,7 @@ void dw_pcie_host_deinit(struct pcie_port *pp)
+ {
+ 	pci_stop_root_bus(pp->bridge->bus);
+ 	pci_remove_root_bus(pp->bridge->bus);
+-	if (pci_msi_enabled() && !pp->ops->msi_host_init)
++	if (pp->has_msi_ctrl)
+ 		dw_pcie_free_msi(pp);
+ }
+ EXPORT_SYMBOL_GPL(dw_pcie_host_deinit);
+@@ -544,7 +548,7 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 
+ 	dw_pcie_setup(pci);
+ 
+-	if (pci_msi_enabled() && !pp->ops->msi_host_init) {
++	if (pp->has_msi_ctrl) {
+ 		num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+ 
+ 		/* Initialize IRQ Status array */
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 96382dcb2859..5d374bab10d1 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -175,6 +175,7 @@ struct dw_pcie_host_ops {
+ };
+ 
+ struct pcie_port {
++	bool			has_msi_ctrl:1;
+ 	u64			cfg0_base;
+ 	void __iomem		*va_cfg0_base;
+ 	u32			cfg0_size;
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index c562eb7454b1..292b9de86532 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -385,14 +385,6 @@ static int intel_pcie_rc_init(struct pcie_port *pp)
+ 	return intel_pcie_host_setup(lpp);
+ }
+ 
+-/*
+- * Dummy function so that DW core doesn't configure MSI
+- */
+-static int intel_pcie_msi_init(struct pcie_port *pp)
+-{
+-	return 0;
+-}
+-
+ static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
+ {
+ 	return cpu_addr + BUS_IATU_OFFSET;
+@@ -404,7 +396,6 @@ static const struct dw_pcie_ops intel_pcie_ops = {
+ 
+ static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+ 	.host_init =		intel_pcie_rc_init,
+-	.msi_host_init =	intel_pcie_msi_init,
+ };
+ 
+ static const struct intel_pcie_soc pcie_data = {
+-- 
+2.25.1
 
-> The subdev contains EMC DFS OPP table and interconnect paths to be used
-> for dynamic scaling of system's memory bandwidth based on EMC utilization
-> statistics.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../memory-controllers/nvidia,tegra20-emc.txt | 43 +++++++++++++++++--
->  1 file changed, 40 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> index 8d09b228ac42..382aabcd6952 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> @@ -4,7 +4,7 @@ Properties:
->  - name : Should be emc
->  - #address-cells : Should be 1
->  - #size-cells : Should be 0
-> -- compatible : Should contain "nvidia,tegra20-emc".
-> +- compatible : Should contain "nvidia,tegra20-emc" and "simple-mfd".
->  - reg : Offset and length of the register set for the device
->  - nvidia,use-ram-code : If present, the sub-nodes will be addressed
->    and chosen using the ramcode board selector. If omitted, only one
-> @@ -17,7 +17,8 @@ Properties:
->  - core-supply: Phandle of voltage regulator of the SoC "core" power domain.
->  - operating-points-v2: See ../bindings/opp/opp.txt for details.
->  
-> -Child device nodes describe the memory settings for different configurations and clock rates.
-> +Child device nodes describe the memory settings for different configurations and clock rates,
-> +as well as EMC activity statistics collection sub-device.
->  
->  Example:
->  
-> @@ -31,17 +32,34 @@ Example:
->  		...
->  	};
->  
-> +	emc_bw_dfs_opp_table: emc_opp_table1 {
-> +		compatible = "operating-points-v2";
-> +
-> +		opp@36000000 {
-> +			opp-hz = /bits/ 64 <36000000>;
-> +			opp-peak-kBps = <144000>;
-> +		};
-> +		...
-> +	};
-> +
->  	memory-controller@7000f400 {
->  		#address-cells = < 1 >;
->  		#size-cells = < 0 >;
->  		#interconnect-cells = < 0 >;
-> -		compatible = "nvidia,tegra20-emc";
-> +		compatible = "nvidia,tegra20-emc", "simple-mfd";
->  		reg = <0x7000f400 0x400>;
->  		interrupts = <0 78 0x04>;
->  		clocks = <&tegra_car TEGRA20_CLK_EMC>;
->  		nvidia,memory-controller = <&mc>;
->  		core-supply = <&core_vdd_reg>;
->  		operating-points-v2 = <&emc_icc_dvfs_opp_table>;
-> +
-> +		emc-stats {
-> +			compatible = "nvidia,tegra20-emc-statistics";
-> +			operating-points-v2 = <&emc_bw_dfs_opp_table>;
-> +			interconnects = <&mc TEGRA20_MC_MPCORER &emc>;
-> +			interconnect-names = "cpu";
-> +		};
->  	}
->  
->  
-> @@ -120,3 +138,22 @@ Properties:
->  						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
->  						 0 0 0 0 >;
->  		};
-> +
-> +
-> +
-> +Embedded Memory Controller statistics gathering sub-device
-> +
-> +EMC statistics subdev gathers information about hardware utilization
-> +which is intended to be used for debugging purposes and for dynamic
-> +frequency scaling based on the collected stats.
-> +
-> +Properties:
-> +- name : Should be emc-stats.
-> +- compatible : Should contain "nvidia,tegra20-emc-statistics".
-> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
-> +- interconnects: Should contain entries for memory clients sitting on
-> +                 MC->EMC memory interconnect path.
-> +- interconnect-names: Should include name of the interconnect path for each
-> +                      interconnect entry. Consult TRM documentation for
-> +                      information about available memory clients, see MEMORY
-> +                      CONTROLLER section.
-> -- 
-> 2.27.0
-> 
