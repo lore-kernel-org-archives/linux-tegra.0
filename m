@@ -2,110 +2,99 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0EBC4363A
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5126C4363A
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA3B20780
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:15:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rS+WVklm"
+	by mail.kernel.org (Postfix) with ESMTP id 61FD520782
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603930725;
+	bh=TGyKPoPG6H9PIlnWqwyGnTtSWQNb6o25EDsock4bI78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eu+nd6X+TmN9vlcN6e4pNoo3YL703qojPjoIB1ZCzcZ99g9CgjccjXyBdcng16Afv
+	 z6GyXyzu5sP0rCUvkaXVbyxw+GwD/r3/VDKvEgRbimcyQgZZjk08xIgbFHz04kKTjY
+	 NKwf9VgsdKyQwf4EshCK5eKqmUoMDHF75D3htjzA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbgJ2AON (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:14:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbgJ2AMM (ORCPT
+        id S2389214AbgJ1Wq1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:46:27 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39256 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389132AbgJ1Wq1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:12:12 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626E4C0613CF
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Oct 2020 17:12:12 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id b19so458817pld.0
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Oct 2020 17:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cfgFzKKhNnMi/GMVV82Uo8k8bscPVazRnoozeWTLycw=;
-        b=rS+WVklmfAY6KhDUrbki4jt4B18LTB6p22yrLLmnk1UDDko9AbIk1TGEZWZlhqIivC
-         zCU/ojARnMEbsZz7jLseoKhAWaCVUBiQBqiG10bmzVWXbEJeO5wddw/YKCkvJZrQ5cDL
-         64XYdYSl6oBTARNV2zP0QvbVXEb3SNrX5EznPJZK+sPRpxJ2iiAmR6VCPX/nVsNfr3b2
-         gA01p83XGuwkO/GQqc7TsoG4aedAnPeq+5XK+Mi0Aqy9CKyq7U7WchIYEap71a6n2oZ9
-         0KVdoQpuYBvGradBQMMXowW1jSaXt3ejdLogjwP4DwIJhD+DNJOE1N59Xkx+E1WTiINF
-         YXZQ==
+        Wed, 28 Oct 2020 18:46:27 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u127so1276251oib.6;
+        Wed, 28 Oct 2020 15:46:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cfgFzKKhNnMi/GMVV82Uo8k8bscPVazRnoozeWTLycw=;
-        b=cKkAEiD7uNgjPtmTkPqPp1YdSVXSVItJZ+YgHyeCycVyz2RA/WimCxZOj9mYUMLL9t
-         hRdCSfMmqZspNUKvVDSn6qjLBbbcPiVJJoeaFxmDT8WVY0M/zrjjPic5Pbdcv+cdDTeY
-         mO58vtkrgo1276xHQgYyyORO8jSiIa1rd0q/YSawEct9Sl/YdCUdLC8YW7ja1aetVYXL
-         xyNcG+bL1m4v84pFxKXXjlicULJztDAUoSFy8QciselOKpLVWqJYWaoKWeTTe+JNEQpa
-         NEl+edsVQUtCUoS3JJu/0/IG+ADBm8VRZJM9tOV2DE2F2pU3zMz/CZq0VnjXDBgCmoEJ
-         O17Q==
-X-Gm-Message-State: AOAM530fw/XTTtDjip8SLWfaJwm7aVGd2MsNbllk5mfKCr2fE493zPUt
-        SHllQiJyW5hYFJen5OhuzDeQxSVhAQZa6Q==
-X-Google-Smtp-Source: ABdhPJxEyfjVX+9NzhgMjwDCbve9fGqcrs+hg+9fV5pCpQ6gtYvRjQy7s5mLW87vm46wmiqhAncEaQ==
-X-Received: by 2002:a17:902:8341:b029:d4:e3fa:e464 with SMTP id z1-20020a1709028341b02900d4e3fae464mr5788637pln.66.1603858318187;
-        Tue, 27 Oct 2020 21:11:58 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id u194sm2753541pfc.176.2020.10.27.21.11.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Oct 2020 21:11:54 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 09:41:52 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+         :mime-version:content-disposition:in-reply-to;
+        bh=6CzfvnivIEtvj6xKXXqKUjstXdtKoBRAAdit4qN1a2I=;
+        b=TANWwb/Q46eeKQrzUUvsUW5/Wyh401T0N3Ntu7e77muax5MRoSgOhHEBA0pxzS9dK+
+         YhOWRsp9ghpY+8RBoSbmjcH9f6/LzX4qJa4hneI/YR/QR9t+lY1xVwnyBtQdAXejK1mQ
+         xBy7RKYl1DOCSgyjkAtN/1GmzUqOyWpAI5AgtN0lBnjQQn0gkpBoWhv/Nt95NnDhXiCL
+         efpEqCcKQk2JdIz1LtIlNDRIVBsDEy2KPrqC8/OSkEtapnvijPHo1VVF8Q1HaxSMA4iQ
+         DK0eLANuK9KE9qKD5dGfvKLiQTpeQ6sdvkVyaiFFRI/PTBl4jB5fzC5CxNK4abL7LxBR
+         koKQ==
+X-Gm-Message-State: AOAM532/h0OyBvvQbMknI0Q6wEKR1pLREOjUZR32K8jYYPWE3akwYCBA
+        t1Jollp86F+8rzW+BFnelSDDRI0X7A==
+X-Google-Smtp-Source: ABdhPJxE9oU+7OVIoCWc40SC7yS+EHHKpQBId3YfoudCOvuyyuURrzX+lBd6EBrH1r3aDJcLC8qKgw==
+X-Received: by 2002:aca:bfc2:: with SMTP id p185mr5868175oif.60.1603899057838;
+        Wed, 28 Oct 2020 08:30:57 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h14sm2078172otl.0.2020.10.28.08.30.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 08:30:57 -0700 (PDT)
+Received: (nullmailer pid 4060952 invoked by uid 1000);
+        Wed, 28 Oct 2020 15:30:56 -0000
+Date:   Wed, 28 Oct 2020 10:30:56 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] cpufreq: tegra186: Fix initial frequency
-Message-ID: <20201028041152.733tkghz4vnqz2io@vireshk-i7>
-References: <20200824145907.331899-1-jonathanh@nvidia.com>
- <20200825055003.qfsuktsv7cyouxei@vireshk-i7>
- <09ac354e-a55b-5300-12ae-3f24c8f8b193@nvidia.com>
- <20201016040700.wzfegk7hmabxgpff@vireshk-i7>
- <9c37db70-9406-8005-3478-dc4a5e94c566@nvidia.com>
- <c6ab92fe-e5ea-4568-6457-7a28c8496114@nvidia.com>
+        Peter Geis <pgwipeout@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        dri-devel@lists.freedesktop.org, Viresh Kumar <vireshk@kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH v6 15/52] dt-bindings: tegra30-actmon: Document OPP and
+ interconnect properties
+Message-ID: <20201028153056.GA4060899@bogus>
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201025221735.3062-16-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c6ab92fe-e5ea-4568-6457-7a28c8496114@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201025221735.3062-16-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26-10-20, 12:57, Jon Hunter wrote:
-> Thinking about this some more, what are your thoughts on making the
-> following change? 
+On Mon, 26 Oct 2020 01:16:58 +0300, Dmitry Osipenko wrote:
+> Document EMC DFS OPP table and interconnect paths that will be used
+> for scaling of system's memory bandwidth based on memory utilization
+> statistics. Previously ACTMON was supposed to drive EMC clock rate
+> directly, but now it should do it using interconnect framework in order
+> to support shared voltage scaling in addition to the frequency scaling.
 > 
-> Basically, if the driver sets the CPUFREQ_NEED_INITIAL_FREQ_CHECK,
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../arm/tegra/nvidia,tegra30-actmon.txt       | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
 
-This flag only means that the platform would like the core to check
-the currently programmed frequency and get it in sync with the table.
-
-> then I wonder if we should not fail if the frequency return by
-> >get() is not known.
-
-When do we fail if the frequency isn't known ? That's the case where
-we try to set it to one from the table.
-
-But (looking at your change), ->get() can't really return 0. We depend
-on it to get us the exact frequency the hardware is programmed at
-instead of reading a cached value in the software.
-
-> >This would fix the problem I see on Tegra186
-> where the initial boot frequency may not be in the frequency table.
-
-With current mainline, what's the problem you see now ? Sorry I missed
-track of it a bit :)
-
--- 
-viresh
+Reviewed-by: Rob Herring <robh@kernel.org>
