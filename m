@@ -2,148 +2,95 @@ Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD39C4363A
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94446C5DF9D
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9102473C
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603922046;
-	bh=3EQcGOq+enzmDtMJ5qxk9hQrnq9dGZf9POn9m9QJe+M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nEL7RtZWLkuWNfn2pOazku3zs3lobTZ2W4f8NP0HxpnZV+IDm+/4UoDvv30ulFIiK
-	 eTEgEvWQafUaxc0hTTbwVQmoPZsYLM1lStvfDPi113mKG8SFxXNBVjPj5Tfly1r8om
-	 NgEQYJDZPICOzZZs7yjoCflBY+K1HQuEXwlwhBQg=
+	by mail.kernel.org (Postfix) with ESMTP id 3098924759
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hN3ABikB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbgJ1VyE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:54:04 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36927 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728279AbgJ1VyA (ORCPT
+        id S1728295AbgJ1VwS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:52:18 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12039 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbgJ1VwR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:54:00 -0400
-Received: by mail-yb1-f195.google.com with SMTP id h196so458980ybg.4;
-        Wed, 28 Oct 2020 14:54:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KLOvbaset6wV6Dn3/Arex7U+9set4P3J+tKjETLL1EM=;
-        b=FlzEE+8jj9034mP19kbouTyE5SZhdL/H38ORSFswjKNWpKa3uIvJkRETe6hT6cMZYY
-         FomEyKX9HME+zibbu5F+ru2ghkoZNkB1z1bIh8+wFgRLGhlOEGWKYXwS0Ie3HrU8r0Vc
-         VgdLYNOV8MmE5VbNcBNe6BtQz80cQuWBOXOG4LXuyLvasbHRmrvkKpjQRDvqFvbfGge3
-         /BhsN2NgA87XQ9xwjEvc0O10Y/b1OFVMaDyGVG0Zu51H3PGBcYLp+XyZ13vQ+3YGWKi2
-         8NsO10YkJMxE8Ez+gk2yk5WKWcoq8PlKjZKWKI7HuRUksdJ2t+/LyXq6Ym2RYcSJEdrT
-         HVyQ==
-X-Gm-Message-State: AOAM531JCLYlX9vZWlsB3jwmMnlUmqkNi81K6cMy5pza4jXjm8VEMfiW
-        1wexRoBGN6vvynS5GfoSy1jIhQVJdg==
-X-Google-Smtp-Source: ABdhPJzwjKbq7JzT2KR7oH5ul6upvIjlNUB089dgKIfM3L82ah64mMOfdxaaYJTCvyPMxLN4/ugXrg==
-X-Received: by 2002:a05:6830:1c71:: with SMTP id s17mr847498otg.29.1603918012278;
-        Wed, 28 Oct 2020 13:46:52 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 13:46:51 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [PATCH 01/13] PCI: dwc/imx6: Drop setting PCI_MSI_FLAGS_ENABLE
-Date:   Wed, 28 Oct 2020 15:46:34 -0500
-Message-Id: <20201028204646.356535-2-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
-References: <20201028204646.356535-1-robh@kernel.org>
+        Wed, 28 Oct 2020 17:52:17 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f99c68b0000>; Wed, 28 Oct 2020 12:29:15 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Oct
+ 2020 19:29:35 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 28 Oct 2020 19:29:35 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 000/139] 4.9.241-rc1 review
+In-Reply-To: <20201027134902.130312227@linuxfoundation.org>
+References: <20201027134902.130312227@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <7b2a57a88c414dc9ad768677907e3671@HQMAIL105.nvidia.com>
+Date:   Wed, 28 Oct 2020 19:29:35 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1603913355; bh=zuBOEKOIxBOIo5Ntq95iJAzkvIxei5tK6Nbd0DUMBIw=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=hN3ABikBDBSLcVco779pyOCf3b65Bhtpam9nqWTZgpt9V5/FAl7Z1Uo3+5BKdAVxs
+         xEal52trBbMilYQJv7+uuCrwvvvJ999hhKay+9GrxJpbGPQC/i4YBuZ+woylkZnqRe
+         TCju3TVatcLh7UIFIaiR/q4lmPcyTCeYCcvr246azfYX9kFsV84Xh+U7T0tzG1svIW
+         iZiiBOJXjVw/67vvZ3YzYMlH0xsGhPHoLbCctCVpNZ+sJR7id9s5ZzRVr8Ba2077YZ
+         uZrW1SfEJ3WDzR3hKPmNCeMxvsBXTiwYWlySSuQRIblKDtVdkngbwgSy2fOTYAmS+H
+         PJPg7s2yH8Rdg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-No other host driver sets the PCI_MSI_FLAGS_ENABLE bit, so it must not
-be necessary. If it is, a comment is needed.
+On Tue, 27 Oct 2020 14:48:14 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.241 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 29 Oct 2020 13:48:36 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.241-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pci-imx6.c | 8 --------
- 1 file changed, 8 deletions(-)
+All tests passing for Tegra ...
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 5cf1ef12fb9b..7dd137d62dca 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -1002,7 +1002,6 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 	struct resource *dbi_base;
- 	struct device_node *node = dev->of_node;
- 	int ret;
--	u16 val;
- 
- 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
- 	if (!imx6_pcie)
-@@ -1167,13 +1166,6 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	if (pci_msi_enabled()) {
--		u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
--		val = dw_pcie_readw_dbi(pci, offset + PCI_MSI_FLAGS);
--		val |= PCI_MSI_FLAGS_ENABLE;
--		dw_pcie_writew_dbi(pci, offset + PCI_MSI_FLAGS, val);
--	}
--
- 	return 0;
- }
- 
--- 
-2.25.1
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
+Linux version:	4.9.241-rc1-g97bfc73b33b5
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
