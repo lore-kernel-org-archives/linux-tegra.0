@@ -2,136 +2,82 @@ Return-Path: <SRS0=mUr2=ED=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E9DC388F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891BEC4363A
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E52B20878
-	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924871;
-	bh=XIEK/YlIEkhPPCZ0rUMBwvX3G7nZ6I4b2SL5W2aFfRQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xFZDDtRci2kexl2CnCm4FLSE8YUU9E1ULXZg9jhT5tC2LLCyILPGBl4Kw9PMFdb8H
-	 7PpQfwHDf5RvT1Rl+R4kghe2T1mOSfBgTXFeP9IJd7McKGpFbISL4HUz7duAgXSQtI
-	 3mqLorsRpFh8l81o2d0apx72Dupu33qji43BpCaY=
+	by mail.kernel.org (Postfix) with ESMTP id 1E7C720735
+	for <linux-tegra@archiver.kernel.org>; Wed, 28 Oct 2020 22:48:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="VPOzHvI4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389016AbgJ1WkZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:40:25 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37475 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388994AbgJ1Wjr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:39:47 -0400
-Received: by mail-ot1-f65.google.com with SMTP id m22so659757ots.4;
-        Wed, 28 Oct 2020 15:39:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=o6EwXQBfcMS/8hppO1O8Dg2kVJUq26B2UJyAmaDjbzk=;
-        b=sRd22aRNw6zB6w/gluvROBwovTKpgYdsfCTCx/XJI8t+aLYXKHUchELoq+O5iqicEx
-         B3lmmug5j/oQmHOgyR+4/EAJjkhmfhdIMsHp/6Qi3oLmGBh0ojWzA3YKviFFAP1a04v/
-         7rcLJC8RsnISJzeCghZWLhB6iAzqprh88lNEBiTyxQ2chWIZJgVP/zpT1eeDuZ70wxVQ
-         PtqDbYH8RcPaka8eqeLXYF2b5q6k6q/KDgAlJa7nG5dZClgq8jO33lxe7JJmwdRG3wnr
-         A+t4Rfe1J9ufjzfYulrUN6Af1R28k+a4OKB8df/QWV20Bgjgov+LG6Y7+nZGdt9cPqOU
-         P5+g==
-X-Gm-Message-State: AOAM533DGIIz9S5G7j0mqgcBQf66m5C+K1SShYVUAgq+UgoRMcEWrQj8
-        1GVLhzFl7nEc44X3mom8m36PEMobvw==
-X-Google-Smtp-Source: ABdhPJwj/TyDdKmqYTN4xYvs7B9zlCOZD1OUjrbHekbCo/ATjXWibtj5dLIGJwVVW7gCH9am8fXsDQ==
-X-Received: by 2002:a4a:ea4b:: with SMTP id j11mr6145795ooe.56.1603898585153;
-        Wed, 28 Oct 2020 08:23:05 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c20sm2076568otm.49.2020.10.28.08.23.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 08:23:04 -0700 (PDT)
-Received: (nullmailer pid 4050074 invoked by uid 1000);
-        Wed, 28 Oct 2020 15:23:03 -0000
-Date:   Wed, 28 Oct 2020 10:23:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        id S2389430AbgJ1WsN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:48:13 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:62331 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733008AbgJ1WsK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:48:10 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4CM3d21XGFzB1;
+        Wed, 28 Oct 2020 23:48:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1603925287; bh=yHK8V58DLeNnIRye/EkDqjDsAYo8KqTDWpngbFEDW2k=;
+        h=Date:From:Subject:To:Cc:From;
+        b=VPOzHvI4U7ef/1rEvqJRf3fdux2eJp826q9PAo1J5O4m8KX4mWV3CbinyLpt0lbAx
+         Aqy+5jb0yrYvfAf4an6M8ikqvpy3hUJd7PZoQPGBI73Xh83MDgnDK9EZ4kbOOZJwJ/
+         66VYSJozuKlfx1s87uEIgUJ+xBfDe8XgRn3t4+jPs0eWHVHew3Z3f9HOgKGCp7wU7V
+         fMKFrmwSDoCKCMsb5j6odRdgilmk4q5zrxuby5LVgUNBGwWNXKGhGUyfdX4Hr4Ek7I
+         JdJCzqEv8Sg8RTbXRESIf2Y9nAci4V04cRNsSBT2jxDiFqBhQomGUK4p5pb9VOMR3A
+         TNKgvEJCIpTdA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.4 at mail
+Date:   Wed, 28 Oct 2020 23:48:05 +0100
+Message-Id: <8756eb5aac561173aa222c9cb64dd314ab1b1f9b.1603925200.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v3 1/2] ASoC: tegra20-spdif: remove "default m"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 04/52] dt-bindings: memory: tegra20: emc: Document
- nvidia,memory-controller property
-Message-ID: <20201028152303.GA4041470@bogus>
-References: <20201025221735.3062-1-digetx@gmail.com>
- <20201025221735.3062-5-digetx@gmail.com>
- <20201027085417.GD4244@kozik-lap>
- <54191034-dcb9-7cab-333b-5bb2553f0ed1@gmail.com>
- <20201027193039.GA140636@kozik-lap>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201027193039.GA140636@kozik-lap>
+        Stephen Warren <swarren@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 08:30:39PM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Oct 27, 2020 at 10:17:19PM +0300, Dmitry Osipenko wrote:
-> > 27.10.2020 11:54, Krzysztof Kozlowski пишет:
-> > > On Mon, Oct 26, 2020 at 01:16:47AM +0300, Dmitry Osipenko wrote:
-> > >> Tegra20 External Memory Controller talks to DRAM chips and it needs to be
-> > >> reprogrammed when memory frequency changes. Tegra Memory Controller sits
-> > >> behind EMC and these controllers are tightly coupled. This patch adds the
-> > >> new phandle property which allows to properly express connection of EMC
-> > >> and MC hardware in a device-tree, it also put the Tegra20 EMC binding on
-> > >> par with Tegra30+ EMC bindings, which is handy to have.
-> > >>
-> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > >> ---
-> > >>  .../bindings/memory-controllers/nvidia,tegra20-emc.txt          | 2 ++
-> > >>  1 file changed, 2 insertions(+)
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> > >> index 567cffd37f3f..1b0d4417aad8 100644
-> > >> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> > >> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-> > >> @@ -12,6 +12,7 @@ Properties:
-> > >>    irrespective of ram-code configuration.
-> > >>  - interrupts : Should contain EMC General interrupt.
-> > >>  - clocks : Should contain EMC clock.
-> > >> +- nvidia,memory-controller : Phandle of the Memory Controller node.
-> > > 
-> > > It looks like you adding a required property which is an ABI break.
-> > The T20 EMC driver is unused so far in upstream and it will become used
-> > only once this series is applied. Hence it's fine to change the ABI.
-> 
-> The ABI is not about upstream, but downstream. 
+Make tegra20-spdif default to N as all other drivers do.
 
-"If it's not upstream, it doesn't exist."
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Fixes: 774fec338bfc ("ASoC: Tegra: Implement SPDIF CPU DAI")
+---
+v3: split-off the defconfig changes
+v2: add the symbol to defconfig as suggested by Thierry Reding
+---
+ sound/soc/tegra/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Though we do have to account for out of tree users where the DT is not 
-in tree, but upstream drivers are used. Downstream as in vendor kernels 
-typically has loads of other crap.
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 3d91bd3e59cd..a62cc87551ac 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -39,7 +39,6 @@ config SND_SOC_TEGRA20_I2S
+ config SND_SOC_TEGRA20_SPDIF
+ 	tristate "Tegra20 SPDIF interface"
+ 	depends on SND_SOC_TEGRA
+-	default m
+ 	help
+ 	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
+ 	  You will also need to select the individual machine drivers to support
+-- 
+2.20.1
 
-> There are no other
-> upstreams using this ABI. Unless you have in mind that existing T20 EMC
-> driver was a noop, doing absolutely nothing, therefore there is no
-> breakage of any other users?
-
-ABI breaks are ultimately up to the platform maintainers to decide.
-
-Rob
