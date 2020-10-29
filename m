@@ -2,97 +2,130 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384EEC2D0A3
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 09:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0203C5DF9D
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 13:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D05602076B
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 09:07:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hhxjVrvY"
+	by mail.kernel.org (Postfix) with ESMTP id 8ED602087E
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 13:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603976556;
+	bh=OzIlRpXLdeGRcoA/MVFEQyHps4XuaG+UwlBrggFdE0A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=mUy9KGwWQZZPBmAoJazfuUVMPS7kmkGUEAx7D78c9P7Gu0g5xOwI9+jU7SdRCC6SL
+	 lh3dPga+9de4dl5CyHnt4xQH39CQILYwgoQcCCzVFuTBG4ZpVa+gGIPr0l453uhnbp
+	 YKqpVgXY4BYAyYc/nnrdHURdLFLJBmGnS/lbNCiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725497AbgJ2JH6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Oct 2020 05:07:58 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4672 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbgJ2JH5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Oct 2020 05:07:57 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9a86730000>; Thu, 29 Oct 2020 02:08:03 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Oct
- 2020 09:07:56 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 29 Oct 2020 09:07:56 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 000/408] 5.4.73-rc1 review
-In-Reply-To: <20201027135455.027547757@linuxfoundation.org>
-References: <20201027135455.027547757@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1725951AbgJ2NCe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Oct 2020 09:02:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725355AbgJ2NCd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 29 Oct 2020 09:02:33 -0400
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38CD321775;
+        Thu, 29 Oct 2020 13:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603976507;
+        bh=OzIlRpXLdeGRcoA/MVFEQyHps4XuaG+UwlBrggFdE0A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=j1mT2NYHsoJ27PjrIOdCHm29Dr0jIJanUSSvW3ovjtCA+2JsQwP4TF17V8h45KLn6
+         q/rWGnzjK5R5HCKtdT1UjO2CPNs0DlEyYrKGlf249zeQobn/tqoqqoSOkKF0nQ/tJx
+         XzpLkOIXBR85Tjr1fxwi0eRNQozFeZBPxlNnWRvE=
+Received: by mail-ot1-f42.google.com with SMTP id 32so2168065otm.3;
+        Thu, 29 Oct 2020 06:01:47 -0700 (PDT)
+X-Gm-Message-State: AOAM5329DpT5iisbFeMEkjPiTDZobOkh/2X8xi/6R5qq43OgNt+uDnFa
+        blf46M/oSl5GRRIFDY/naVaedT2VoUIM2xChbQ==
+X-Google-Smtp-Source: ABdhPJy/bhS7KTF1WNqgQUUalxQA1GfpAd7FTQIi3yYFWyIBt0GxzCWPuCwRMAMfnaaUFyZdFb4NCZ8rTg453LUEqGQ=
+X-Received: by 2002:a9d:62d1:: with SMTP id z17mr3193317otk.192.1603976506229;
+ Thu, 29 Oct 2020 06:01:46 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <f4e59a627a2d477ea557b9c46829a0e2@HQMAIL111.nvidia.com>
-Date:   Thu, 29 Oct 2020 09:07:56 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603962483; bh=nvZZAqzJ2UlqbtQ1LI81LBmw1HTWRV29bOiu/VUPkLk=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=hhxjVrvY/Z5GFYz6qPs/si9JWcEkeRSxa62/S8E5uq+RAt8UY1izyGhE4XDEBJuyg
-         wut/zSqOih8n8BgAtps6SyI7D0iBMWXPP5KJ8KE5xH2IHJGpCSQ2QSF3NZn0e1cSIx
-         pQ7WvnaQT0co6fQQOz3DLG8vEf3EAFsxQGSd9bBZbR2dJpTGP1DxwW0SD09w5Yjd5C
-         LTZxGl36BTI6A5eEMXrBeYQPjeTJwdN+TT6sWQPSOwKR7U7zrSWMdMfBsTg2jie3+O
-         21sDhJ1q0SU06sRi0n1Q/lxyL0YyypYjPNAsRyuEt/wDM69+xwMatG3izRTj7FV1jO
-         x6sU1dfl2Ro6A==
+References: <20201028204646.356535-1-robh@kernel.org> <20201028204646.356535-2-robh@kernel.org>
+ <87h7qdx4oz.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87h7qdx4oz.fsf@mpe.ellerman.id.au>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 29 Oct 2020 08:01:35 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJWzmGNifrJEKGg582kZNtjnWHaUkG0EinWqjhGaeL1dg@mail.gmail.com>
+Message-ID: <CAL_JsqJWzmGNifrJEKGg582kZNtjnWHaUkG0EinWqjhGaeL1dg@mail.gmail.com>
+Subject: Re: [PATCH 01/13] PCI: dwc/imx6: Drop setting PCI_MSI_FLAGS_ENABLE
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@axis.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 27 Oct 2020 14:48:58 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.73 release.
-> There are 408 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 29 Oct 2020 13:53:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.73-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Oct 28, 2020 at 7:21 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> Rob Herring <robh@kernel.org> writes:
+> > No other host driver sets the PCI_MSI_FLAGS_ENABLE bit, so it must not
+> > be necessary. If it is, a comment is needed.
+>
+> Yeah, but git blame directly points to:
+>
+>   75cb8d20c112 ("PCI: imx: Enable MSI from downstream components")
 
-All tests passing for Tegra ...
+I think I did read this at some point and then forgot about it when I
+made the change later...
 
-Test results for stable-v5.4:
-    15 builds:	15 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
+> Which has a pretty long explanation. The relevant bit probably being:
+>
+>   ... on i.MX6, the MSI Enable bit controls delivery of MSI interrupts
+>   from components below the Root Port.
 
-Linux version:	5.4.73-rc1-gab6643bad070
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+The thing is that all seems not i.MX6 specific but DWC specific given
+MSI handling is contained within the DWC block. So I don't see how
+this could be an integration difference.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+So maybe everyone else is still just setting CONFIG_PCIEPORTBUS
+typically and haven't noticed? Is it correct for the host driver to
+set MSI enable?
 
-Jon
+Rob
