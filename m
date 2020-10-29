@@ -8,29 +8,29 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37897C55179
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C0CC55178
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D157520809
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02DC020809
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:39:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lbji3myH"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="O3HQqD1i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbgJ2IjL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1728030AbgJ2IjL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 29 Oct 2020 04:39:11 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11563 "EHLO
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11553 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbgJ2IjJ (ORCPT
+        with ESMTP id S1727864AbgJ2IjH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Oct 2020 04:39:09 -0400
+        Thu, 29 Oct 2020 04:39:07 -0400
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9a50b00000>; Wed, 28 Oct 2020 22:18:40 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Oct
- 2020 05:18:57 +0000
+        id <B5f9a50b70000>; Wed, 28 Oct 2020 22:18:47 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Oct
+ 2020 05:19:03 +0000
 Received: from vidyas-desktop.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 29 Oct 2020 05:18:53 +0000
+ Transport; Thu, 29 Oct 2020 05:18:59 +0000
 From:   Vidya Sagar <vidyas@nvidia.com>
 To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
         <bhelgaas@google.com>, <thierry.reding@gmail.com>,
@@ -39,9 +39,9 @@ To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
 CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
         <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V2 2/4] PCI: tegra: Map configuration space as nGnRnE
-Date:   Thu, 29 Oct 2020 10:48:37 +0530
-Message-ID: <20201029051839.11245-3-vidyas@nvidia.com>
+Subject: [PATCH V2 3/4] PCI: tegra: Set DesignWare IP version
+Date:   Thu, 29 Oct 2020 10:48:38 +0530
+Message-ID: <20201029051839.11245-4-vidyas@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201029051839.11245-1-vidyas@nvidia.com>
 References: <20201029051839.11245-1-vidyas@nvidia.com>
@@ -49,48 +49,43 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603948720; bh=Z8voXAw6EbjwLVqEHgC9ep3B8F2TRloMTeKeWZiHZOY=;
+        t=1603948727; bh=RQv9cuiDlLNVXnXwNCGYWdbrEe4rjTqds+uRa1jgKgg=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=lbji3myHofempJg4PpP6JxTk2IJUX+VfbBEe5+h5cLW2LV58+2o9k/zHDAcdkxPU8
-         zP52gWcf7AEntxB+a7PE+Nemqr/axvraN27vYehuowG6apDMze216kS9rgsXpzIQja
-         V2Bu1pOrW3WB9SjP9MheozI8k0/nMItG7Q13WRt/intnLrFwPkDmijBQaR39ULFjHY
-         R8Vl4dfQo4S/SwJHrpPDxnMkF3QPW8GdrwaHkdTJ7nSMhDSq0gg5sWz4sYA0aitMRW
-         HpQzl0fUj4PJhfTmsCV2UAbI74dv+a62aKaCO8bFFEiGRxQCvs0gNcAzCsD9jgMDti
-         bkdnqiQkEL9ew==
+        b=O3HQqD1iMaGGMTt3tIm84JhDLm4CCQA3HXwDo2unCR/6Flkri2O49co50Cat0RKr5
+         0khhyMy6liHj/4K4HhmkU+Hf271lrCFEoFvxw7k+2eSJr5tcXbKNPLQwH24wJty7ct
+         DBNJhZ2gE5OzEx2apAWelnpZxrgf//wsbEBmHhC/mnqGXU0YegtQyA56Tjxv3zuTsq
+         ofvs0Zn3B1uovnd/MemYY3tSV3GePcZStVuGjGStHLHUBrvholio7SXt6/qPH+gV+U
+         Ifih2/VmhxYoNq1xJQvMCzMaI/Obo8f56KJozYKYXRtcQ4QrMxNL89KoeRdU430X6f
+         JPGnsB0UAcpfA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-As specified in the comment for pci_remap_cfgspace() define in
-arch/arm64/include/asm/io.h file, PCIe configuration space should be
-mapped as nGnRnE. Hence changing to dev_pci_remap_cfgspace() from
-devm_ioremap_resource() for mapping DBI space as that is nothing but
-the root port's own configuration space.
+Set the DesignWare IP version for Tegra194 to 0x490A. This would be used
+by the DesigWare sub-system to do any version specific configuration
+(Ex:- TD bit programming for ECRC).
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
 V2:
-* Changed 'Strongly Ordered' to 'nGnRnE'
+* None
 
- drivers/pci/controller/dwc/pcie-tegra194.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index b172b1d49713..7a0c64436861 100644
+index 7a0c64436861..253d91033bc3 100644
 --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -2108,7 +2108,9 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
- 	}
- 	pcie->dbi_res = dbi_res;
+@@ -2011,6 +2011,7 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 	pci->ops = &tegra_dw_pcie_ops;
+ 	pci->n_fts[0] = N_FTS_VAL;
+ 	pci->n_fts[1] = FTS_VAL;
++	pci->version = 0x490A;
  
--	pci->dbi_base = devm_ioremap_resource(dev, dbi_res);
-+	pci->dbi_base = devm_pci_remap_cfgspace(dev,
-+						dbi_res->start,
-+						resource_size(dbi_res));
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
- 
+ 	pp = &pci->pp;
+ 	pcie->dev = &pdev->dev;
 -- 
 2.17.1
 
