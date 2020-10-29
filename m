@@ -2,114 +2,97 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73946C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384EEC2D0A3
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 09:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1891E20809
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 08:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D05602076B
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 09:07:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="V+XmfIxF"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hhxjVrvY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgJ2Ij6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Oct 2020 04:39:58 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18654 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729258AbgJ2Iiy (ORCPT
+        id S1725497AbgJ2JH6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Oct 2020 05:07:58 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4672 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbgJ2JH5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Oct 2020 04:38:54 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9a50c00000>; Wed, 28 Oct 2020 22:18:56 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Oct
- 2020 05:18:52 +0000
-Received: from vidyas-desktop.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 29 Oct 2020 05:18:48 +0000
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <amanharitsh123@gmail.com>,
-        <dinghao.liu@zju.edu.cn>, <kw@linux.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V2 1/4] PCI: tegra: Fix ASPM-L1SS advertisement disable code
-Date:   Thu, 29 Oct 2020 10:48:36 +0530
-Message-ID: <20201029051839.11245-2-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201029051839.11245-1-vidyas@nvidia.com>
-References: <20201029051839.11245-1-vidyas@nvidia.com>
+        Thu, 29 Oct 2020 05:07:57 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f9a86730000>; Thu, 29 Oct 2020 02:08:03 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Oct
+ 2020 09:07:56 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 29 Oct 2020 09:07:56 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/408] 5.4.73-rc1 review
+In-Reply-To: <20201027135455.027547757@linuxfoundation.org>
+References: <20201027135455.027547757@linuxfoundation.org>
 X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <f4e59a627a2d477ea557b9c46829a0e2@HQMAIL111.nvidia.com>
+Date:   Thu, 29 Oct 2020 09:07:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603948736; bh=u7cA/MfQqfQQ5BTRPJ65zvlJ3WLKc3dByk1zTUQnz+4=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=V+XmfIxFFMsLu58xOYbj/GwsDc2aN9ykBp5XEAMX77Oe4jAfscmM1gO17Z24l5+TU
-         f5MsiY53H7LT9mQl8sL9qfboUSzd3V8qZxBS5hj3Brk4XpQgOsACv1dsxw2Xb7hwqN
-         k9HM5bZAOgeZkFTgWxz6JP65Xr7lBgGDTC/DyjLM4GPR1bvxNoJln1ML6PoSAMpADc
-         ehM9zLTa8c5aTlE+WVlEkxpzcAWl96yPBm1+nsBZdPOvSqJ+55KmPSYzlKa0W4dS+N
-         DOzdUIQze27m/wuuydNk1EVNz6mzkVOee6YDQdycNwFwCqT/CLGjq9T/rT1tXxpYlE
-         f1OU8BjCoRa9g==
+        t=1603962483; bh=nvZZAqzJ2UlqbtQ1LI81LBmw1HTWRV29bOiu/VUPkLk=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=hhxjVrvY/Z5GFYz6qPs/si9JWcEkeRSxa62/S8E5uq+RAt8UY1izyGhE4XDEBJuyg
+         wut/zSqOih8n8BgAtps6SyI7D0iBMWXPP5KJ8KE5xH2IHJGpCSQ2QSF3NZn0e1cSIx
+         pQ7WvnaQT0co6fQQOz3DLG8vEf3EAFsxQGSd9bBZbR2dJpTGP1DxwW0SD09w5Yjd5C
+         LTZxGl36BTI6A5eEMXrBeYQPjeTJwdN+TT6sWQPSOwKR7U7zrSWMdMfBsTg2jie3+O
+         21sDhJ1q0SU06sRi0n1Q/lxyL0YyypYjPNAsRyuEt/wDM69+xwMatG3izRTj7FV1jO
+         x6sU1dfl2Ro6A==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If the absence of CLKREQ# signal is indicated by the absence of
-"supports-clkreq" in the device-tree node, current driver is disabling
-the advertisement of ASPM-L1 Sub-States *before* the ASPM-L1 Sub-States
-offset is correctly initialized. Since default value of the ASPM-L1SS
-offset is zero, this is causing the Vendor-ID wrongly programmed to 0x10d2
-instead of Nvidia's 0x10de thereby the quirks applicable for Tegra194 are
-not being applied. This patch fixes this issue by refactoring the
-code that disables the ASPM-L1SS advertisement.
+On Tue, 27 Oct 2020 14:48:58 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.73 release.
+> There are 408 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 29 Oct 2020 13:53:50 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.73-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Fixes: 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support")
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-V2:
-* None
+All tests passing for Tegra ...
 
- drivers/pci/controller/dwc/pcie-tegra194.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Test results for stable-v5.4:
+    15 builds:	15 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index aa511ec0d800..b172b1d49713 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -896,6 +896,12 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
- 
- 	init_host_aspm(pcie);
- 
-+	/* Disable ASPM-L1SS advertisement if there is no CLKREQ routing */
-+	if (!pcie->supports_clkreq) {
-+		disable_aspm_l11(pcie);
-+		disable_aspm_l12(pcie);
-+	}
-+
- 	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
- 	val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
- 	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-@@ -1400,12 +1406,6 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
- 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 						      PCI_CAP_ID_EXP);
- 
--	/* Disable ASPM-L1SS advertisement as there is no CLKREQ routing */
--	if (!pcie->supports_clkreq) {
--		disable_aspm_l11(pcie);
--		disable_aspm_l12(pcie);
--	}
--
- 	return ret;
- 
- fail_phy:
--- 
-2.17.1
+Linux version:	5.4.73-rc1-gab6643bad070
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
