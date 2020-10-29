@@ -2,57 +2,65 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0FAC2D0A3
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 18:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C554C55179
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 19:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 376D5207DE
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 18:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603995111;
-	bh=6dmt+ViykJetJznqiUWIx3wG/qlXgsBNfhzNKPEEqUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=e0bIM2i3pwoPatLFCX17RohnjQ7GCWDl6rgEHVvYWwU3qCThYkspZ//mBs+dxj17Q
-	 J7EC8HsgduflO2bJXSpJZ8WjgwIhPopgzI7b45IVX31xDOM0LC3HmqkmdpdMe/7kiA
-	 wJ0JQltHOeTMLZ23e55T08bVFpdjUetjqGK0Fsw4=
+	by mail.kernel.org (Postfix) with ESMTP id E4E3A206DD
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 19:41:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9weLwbp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725788AbgJ2SLu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Oct 2020 14:11:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbgJ2SLA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Oct 2020 14:11:00 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F03020825
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 18:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603995059;
-        bh=6dmt+ViykJetJznqiUWIx3wG/qlXgsBNfhzNKPEEqUs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=R04i5Ag4fGl+Xd0Ff9T/yD6hMVl8zYnt9djlooFofWcra1kv8hOTFsMvdEAelV0M7
-         6NNv5/xkc2ZJ3ZTtpM8REWd1/D6Y5aJ888OZTq6ZNYFeywapJdBPcK4z2VQ+84JTiw
-         YQ8tQ+DReTE3PWaOmvvgBmakNGJh+5uSepkN+iC4=
-Received: by mail-oi1-f179.google.com with SMTP id u127so3950642oib.6
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 11:10:59 -0700 (PDT)
-X-Gm-Message-State: AOAM531GHRDWIC1bbUvd9A8cPkeOtYwzemBQRyY0GTcRd8Tjw9yfjiTg
-        NWKDLERPdx+cjFIRx0D4wwaSJdCxTM9pnBtP08k=
-X-Google-Smtp-Source: ABdhPJxtSs+VvP25g0ELwQwPkkf67h3LovvYDhdX2Mxo6W6LChS1xnEqmuqAW2ItcTJQuDO7uhY+7KkJ+lB6WWw/xeY=
-X-Received: by 2002:aca:2310:: with SMTP id e16mr322570oie.47.1603995058614;
- Thu, 29 Oct 2020 11:10:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201019084140.4532-1-linus.walleij@linaro.org> <c3a17f70-4c7b-55b5-a7ce-373c4ff46b29@gmail.com>
-In-Reply-To: <c3a17f70-4c7b-55b5-a7ce-373c4ff46b29@gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Thu, 29 Oct 2020 19:10:47 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
-Message-ID: <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
+        id S1725902AbgJ2Tlj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Oct 2020 15:41:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbgJ2Tli (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 29 Oct 2020 15:41:38 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46155C0613CF
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 12:41:38 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id m20so4413235ljj.5
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 12:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GPv6of+1cKfDCOPkr1GTvohtUQAFp4ap1kyPWM8roPk=;
+        b=N9weLwbpCwJQyaHogRulkgHBgSlLlTqd1nqhGeke32EIzf4bc8H6FyOsurQN9ewB4Y
+         gYoSRo4JEJExJC+0af3UJ6+UAorm0ab7vJmzXZBK2wM0Q0npK1RVcsg1LqkHVq6a4orN
+         zw+5knNBKiLVur3AANs83SMkkQmVqUJ0iXkqMTm1d5Hsh0ThfwYSTBUy2GPXtiEp5koV
+         Bf8ECq3UeJPpavaUYpj7eSjTSLnSOoP7DslUCeAPldDLApxf5lsqcFpcZE04lueHFsAC
+         nsHhxoCt2MHL3QxXTCBOYvO3Y1I07XbHRVIrpG/qavir06SMWxPhYyjiyVIh0aDFUHFY
+         Cvqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GPv6of+1cKfDCOPkr1GTvohtUQAFp4ap1kyPWM8roPk=;
+        b=KkHi69amGe1ZYbQEy5H+/gOhCLXdn68sxsttzrBhwtvP47x00mvkxvhv85qlOHZgvM
+         S6E1z1K7LPEcQVz5WmVaT9MzvPiADCQRL3wG1JQ5J60/5ULPwsH/jf00y8u1Yfck32Bw
+         hAM/r5vg8irt4H67qUaBz72B8Mz3eI9awpGAeDs0BVmPUagsa88m0exx/B0PRbi8fOkQ
+         gYPZSWYcWlRiHCy2TcMw6YDGmamDqmzDVMWhoJZ1V0RFRq1qiD3k+jQALPMXqjd+t6o2
+         GDTb3mI312UuinTsKR/FOK967teXN0DpW4TTz+MnoYK1KufExfVmc9gmXKYnB+mcCmNl
+         VM1g==
+X-Gm-Message-State: AOAM533LbFVaWUXYNK39iuFkkT+kjpfi+lxN+h9+cc6doKbnBxM1f1kz
+        k5sIXevAtlaqVxgQE50CCKo=
+X-Google-Smtp-Source: ABdhPJw3UtM9PePZa1gFSkCd+JY0GIxznM7SWCvSXx0sHStE3IBqUM5C0V9qsvGZb6ss5pSqsZJj+A==
+X-Received: by 2002:a2e:9a10:: with SMTP id o16mr2418313lji.67.1604000496530;
+        Thu, 29 Oct 2020 12:41:36 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-177.dynamic.spd-mgts.ru. [109.252.193.177])
+        by smtp.googlemail.com with ESMTPSA id b14sm434593ljo.16.2020.10.29.12.41.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Oct 2020 12:41:35 -0700 (PDT)
 Subject: Re: [PATCH 0/5 v16] KASan for Arm
-To:     Dmitry Osipenko <digetx@gmail.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Abbott Liu <liuwenliang@huawei.com>,
@@ -63,138 +71,255 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         Peter Chen <Peter.Chen@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20201019084140.4532-1-linus.walleij@linaro.org>
+ <c3a17f70-4c7b-55b5-a7ce-373c4ff46b29@gmail.com>
+ <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0ef7c2a5-5d8b-c5e0-63fa-31693fd4495c@gmail.com>
+Date:   Thu, 29 Oct 2020 22:41:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 29 Oct 2020 at 18:45, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 19.10.2020 11:41, Linus Walleij =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > This is the 16th and final (knock on wood) version of
-> > KASan for ARM32.
->
-> Hi,
->
-> I tried KASAN on NVIDIA Tegra using next-20201029 and getting a (seems)
-> bogus bug report saying that the bug is in the KASAN code (note
-> udc_irq() belongs to the ChipIdea USB driver), this problem doesn't
-> happen using one of older versions of the KASAN patches.
->
+29.10.2020 21:10, Ard Biesheuvel пишет:
+> On Thu, 29 Oct 2020 at 18:45, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> 19.10.2020 11:41, Linus Walleij пишет:
+>>> This is the 16th and final (knock on wood) version of
+>>> KASan for ARM32.
+>>
+>> Hi,
+>>
+>> I tried KASAN on NVIDIA Tegra using next-20201029 and getting a (seems)
+>> bogus bug report saying that the bug is in the KASAN code (note
+>> udc_irq() belongs to the ChipIdea USB driver), this problem doesn't
+>> happen using one of older versions of the KASAN patches.
+>>
+> 
+> That is probably a coincidence. I ran into the same thing:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20201029001753.717-1-ardb@kernel.org/
+> 
+> I am not sure this is the right fix, but it does silence the warning for me.
 
-That is probably a coincidence. I ran into the same thing:
+Disabling instrumentation for the stacktrace indeed fixes it, thank you.
 
-https://lore.kernel.org/linux-arm-kernel/20201029001753.717-1-ardb@kernel.o=
-rg/
+Now there is another problem.. next-20201029 has the same trouble which
+all previous versions of the KASAN series had, where tasks are hanging
+in unkillable state, eating 100% CPU.
 
-I am not sure this is the right fix, but it does silence the warning for me=
-.
+For example I never managed to get Xorg to work with the ARM32 KASAN,
+this is what happens (sometimes it happens during boot, where systemd
+services hang):
 
-
-> [   27.700859]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [   27.720575] BUG: KASAN: stack-out-of-bounds in save_trace+0xbf/0xf8
-> [   27.740119] Read of size 4 at addr c4dc7038 by task kworker/0:1H/124
->
-> [   27.778724] CPU: 0 PID: 124 Comm: kworker/0:1H Tainted: G        W
->      5.10.0-rc1-next-20201029-00144-g367ba7b6ebb4 #4327
-> [   27.818361] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [   27.838599] Workqueue: mmc_complete mmc_blk_mq_complete_work
-> [   27.858795] [<c0111a05>] (unwind_backtrace) from [<c010c26d>]
-> (show_stack+0x11/0x14)
-> [   27.879038] [<c010c26d>] (show_stack) from [<c0f42e5b>]
-> (dump_stack+0x8b/0xa0)
-> [   27.899374] [<c0f42e5b>] (dump_stack) from [<c031d8f7>]
-> (print_address_description.constprop.0+0x2b/0x360)
-> [   27.939249] [<c031d8f7>] (print_address_description.constprop.0) from
-> [<c031ddab>] (kasan_report+0x103/0x11c)
-> [   27.979769] [<c031ddab>] (kasan_report) from [<c010bddb>]
-> (save_trace+0xbf/0xf8)
-> [   28.000506] [<c010bddb>] (save_trace) from [<c010bd11>]
-> (walk_stackframe+0x19/0x24)
-> [   28.021501] [<c010bd11>] (walk_stackframe) from [<c010bf07>]
-> (__save_stack_trace+0xf3/0xf8)
-> [   28.042658] [<c010bf07>] (__save_stack_trace) from [<c01b8c4d>]
-> (stack_trace_save+0x75/0x8c)
-> [   28.063740] [<c01b8c4d>] (stack_trace_save) from [<c031d019>]
-> (kasan_save_stack+0x11/0x28)
-> [   28.084979] [<c031d019>] (kasan_save_stack) from [<c031d04d>]
-> (kasan_set_track+0x1d/0x20)
-> [   28.106135] [<c031d04d>] (kasan_set_track) from [<c031e461>]
-> (kasan_set_free_info+0x19/0x20)
-> [   28.127351] [<c031e461>] (kasan_set_free_info) from [<c031cfe5>]
-> (__kasan_slab_free+0xa5/0xc8)
-> [   28.148491] [<c031cfe5>] (__kasan_slab_free) from [<c0318b7f>]
-> (kfree+0x7b/0x374)
-> [   28.169910] [<c0318b7f>] (kfree) from [<c09bbe7f>] (udc_irq+0x477/0xe1=
-8)
-> [   28.191214] [<c09bbe7f>] (udc_irq) from [<c019cb09>]
-> (__handle_irq_event_percpu+0x71/0x2d4)
-> [   28.212693] [<c019cb09>] (__handle_irq_event_percpu) from
-> [<c019cde1>] (handle_irq_event_percpu+0x75/0xb8)
-> [   28.255076] [<c019cde1>] (handle_irq_event_percpu) from [<c019ce67>]
-> (handle_irq_event+0x43/0x64)
-> [   28.277174] [<c019ce67>] (handle_irq_event) from [<c01a1bbb>]
-> (handle_fasteoi_irq+0xcf/0x18c)
-> [   28.299436] [<c01a1bbb>] (handle_fasteoi_irq) from [<c019bd4b>]
-> (generic_handle_irq+0x3b/0x44)
-> [   28.321825] [<c019bd4b>] (generic_handle_irq) from [<c019c34b>]
-> (__handle_domain_irq+0x5f/0xa8)
-> [   28.344383] [<c019c34b>] (__handle_domain_irq) from [<c06b30cf>]
-> (gic_handle_irq+0x87/0x9c)
-> [   28.367176] [<c06b30cf>] (gic_handle_irq) from [<c0100b23>]
-> (__irq_svc+0x63/0xb0)
-> [   28.390118] Exception stack(0xc4dc6f58 to 0xc4dc6fa0)
-> [   28.413200] 6f40:
->   c1fa88c4 00000000
-> [   28.436622] 6f60: c1fa88c4 00000000 c5557800 00000000 00000001
-> c5557808 00000001 c1fa88c0
-> [   28.460176] 6f80: 00000000 c466c000 b782c97b c4dc6fac c0bdcfa1
-> c0bdd51e 60070133 ffffffff
-> [   28.484070] [<c0100b23>] (__irq_svc) from [<c0bdd51e>]
-> (__qdisc_run+0x6d2/0x7b8)
-> [   28.508082] [<c0bdd51e>] (__qdisc_run) from [<c0100155>]
-> (ret_from_fork+0x11/0x1c)
-> [   28.532185] Exception stack(0xc4dc6ffc to 0xc4dc7044)
-> [   28.556578] 6fe0:
->            00000000
-> [   28.581249] 7000: c1902d18 c4dc8000 00000000 00000000 00000003
-> 00000000 00000000 00000001
-> [   28.605909] 7020: 41b58ab3 c1864c40 c0b94e6c 00000800 00000000
-> c2c01e00 00000001 c09bbe7f
-> [   28.630740] 7040: fffffff4
->
-> [   28.679636] The buggy address belongs to the page:
-> [   28.704480] page:bc50e6d8 refcount:0 mapcount:0 mapping:00000000
-> index:0x0 pfn:0x84dc7
-> [   28.729687] flags: 0x0()
-> [   28.754372] raw: 00000000 defa7000 defa7000 00000000 00000000
-> 00000000 ffffffff 00000000
-> [   28.779394] raw: 00000000
-> [   28.804339] page dumped because: kasan: bad access detected
->
-> [   28.854326] addr c4dc7038 is located in stack of task
-> kworker/0:1H/124 at offset 24 in frame:
-> [   28.880073]  __dev_queue_xmit+0x0/0x9cc
->
-> [   28.931135] this frame has 4 objects:
-> [   28.956624]  [32, 36) 'rc'
-> [   28.956638]  [48, 52) 'to_free'
-> [   28.981922]  [64, 72) '_udphdr'
-> [   29.007038]  [96, 116) '_tcphdr'
->
-> [   29.081989] Memory state around the buggy address:
-> [   29.106884]  c4dc6f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [   29.132106]  c4dc6f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [   29.157134] >c4dc7000: 00 00 00 00 f1 f1 f1 f1 04 f2 04 f2 00 f2 f2 f2
-> [   29.181980]                                 ^
-> [   29.206867]  c4dc7080: 00 00 04 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-> [   29.231827]  c4dc7100: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 04 f3 f3 f3
-> [   29.257034]
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
+ INFO: task pool-nm-online:448 can't die for more than 61 seconds.
+ task:pool-nm-online  state:R  running task     stack:    0 pid:  448
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c01c3699>]
+(get_futex_value_locked+0xa1/0xb8)
+ [<c01c3699>] (get_futex_value_locked) from [<c01c4a81>]
+(futex_wait_setup+0xc1/0x150)
+ [<c01c4a81>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc648bfa8 to 0xc648bff0)
+ bfa0:                   00000000 acb09e48 acb09e48 00000080 00000002
+00000000
+ bfc0: 00000000 acb09e48 acb09e48 000000f0 ad4f0990 7fffffff 00000001
+00000000
+ bfe0: ad4f0918 ad4f0908 aea1d087 ae924e62
+ INFO: task blueman-mechani:279 can't die for more than 61 seconds.
+ task:blueman-mechani state:R  running task     stack:    0 pid:  279
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31581>]
+(preempt_schedule_common+0x29/0x48)
+ [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
+(futex_wait_setup+0x59/0x150)
+ [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc300bfa8 to 0xc300bff0)
+ bfa0:                   00000000 00538cd0 00538cd0 00000080 00000002
+00000000
+ bfc0: 00000000 00538cd0 00538cd0 000000f0 b6af1320 7fffffff 00000001
+00000000
+ bfe0: b6af12a8 b6af1298 ae3e8087 aed00e62
+ INFO: task polkitd:292 can't die for more than 61 seconds.
+ task:polkitd         state:R  running task     stack:    0 pid:  292
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31581>]
+(preempt_schedule_common+0x29/0x48)
+ [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
+(futex_wait_setup+0x59/0x150)
+ [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc48a3fa8 to 0xc48a3ff0)
+ 3fa0:                   00000000 0043a788 0043a788 00000080 00000002
+00000000
+ 3fc0: 00000000 0043a788 0043a788 000000f0 b67eac70 7fffffff 00000001
+00000000
+ 3fe0: b67eabf8 b67eabe8 aeadd087 ae936e62
+ INFO: task pool-polkitd:315 can't die for more than 61 seconds.
+ task:pool-polkitd    state:R  running task     stack:    0 pid:  315
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31b73>]
+(preempt_schedule_irq+0x6f/0x12c)
+ [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
+(svc_preempt+0x7/0x14)
+ Exception stack(0xc7b57d30 to 0xc7b57d78)
+ 7d20:                                     c7b54004 00000000 c7b54004
+00000007
+ 7d40: c7b54000 00000000 c7b54004 c7b57e20 c7b57e40 c7b57e38 c7b54000
+c2c28e44
+ 7d60: c7b54040 c7b57d80 c0e36849 c0e3684e 20030133 ffffffff
+ [<c0100b77>] (svc_preempt) from [<c0e3684e>] (_raw_spin_unlock+0x42/0x58)
+ [<c0e3684e>] (_raw_spin_unlock) from [<c01c4a19>]
+(futex_wait_setup+0x59/0x150)
+ [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc7b57fa8 to 0xc7b57ff0)
+ 7fa0:                   0007a120 00000000 0043cd1c 00000080 00000000
+add22cec
+ 7fc0: 0007a120 00000000 00000000 000000f0 0043cd10 0043cd18 aeb529b0
+aeb51be0
+ 7fe0: add22cd0 add22cc0 aeadda45 ae936e62
+ INFO: task pool-udisksd:340 can't die for more than 61 seconds.
+ task:pool-udisksd    state:R  running task     stack:    0 pid:  340
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31b73>]
+(preempt_schedule_irq+0x6f/0x12c)
+ [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
+(svc_preempt+0x7/0x14)
+ Exception stack(0xc6abfd40 to 0xc6abfd88)
+ fd40: c6abfe38 00000000 c6abfe38 00000003 c6abfde4 c2c28d00 00546084
+c6abfe20
+ fd60: c6abfe40 c6abfe38 c6abc000 c2c28d04 c6abc040 c6abfd90 c01c4aa7
+c01c4aa6
+ fd80: 000b0133 ffffffff
+ [<c0100b77>] (svc_preempt) from [<c01c4aa6>] (futex_wait_setup+0xe6/0x150)
+ [<c01c4aa6>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc6abffa8 to 0xc6abfff0)
+ ffa0:                   0007a120 00000000 00546084 00000080 00000000
+ad8fecdc
+ ffc0: 0007a120 00000000 00000000 000000f0 00546078 00546080 ae9f79b0
+ae9f6be0
+ ffe0: ad8fecc0 ad8fecb0 ae982a45 ae889e62
+ INFO: task gdbus:433 can't die for more than 61 seconds.
+ task:gdbus           state:R  running task     stack:    0 pid:  433
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31581>]
+(preempt_schedule_common+0x29/0x48)
+ [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
+(futex_wait_setup+0x59/0x150)
+ [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc5b03fa8 to 0xc5b03ff0)
+ 3fa0:                   0054e010 aeb770bc 0054e01c 00000080 00000002
+00000000
+ 3fc0: 0054e010 aeb770bc 0054aef0 000000f0 0054e01c 0055a150 0054aef0
+00000000
+ 3fe0: acefec28 acefec18 ae982087 ae889e62
+ INFO: task probing-thread:551 can't die for more than 61 seconds.
+ task:probing-thread  state:R  running task     stack:    0 pid:  551
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31b73>]
+(preempt_schedule_irq+0x6f/0x12c)
+ [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
+(svc_preempt+0x7/0x14)
+ Exception stack(0xc8cf3d28 to 0xc8cf3d70)
+ 3d20:                   c8cf0000 c8cf0003 c8cf0000 00000003 c8cf0000
+00000000
+ 3d40: c8cf0004 c8cf3e20 c8cf3e40 c8cf3e38 c8cf0000 c2c2a484 c8cf0040
+c8cf3d7c
+ 3d60: c0e36855 c02f2404 800b0133 ffffffff
+ [<c0100b77>] (svc_preempt) from [<c02f2404>] (__asan_load4+0x14/0x60)
+ [<c02f2404>] (__asan_load4) from [<c0e36855>] (_raw_spin_unlock+0x49/0x58)
+ [<c0e36855>] (_raw_spin_unlock) from [<c01c4a19>]
+(futex_wait_setup+0x59/0x150)
+ [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc8cf3fa8 to 0xc8cf3ff0)
+ 3fa0:                   00000000 0056410c 0056410c 00000080 00000000
+00000000
+ 3fc0: 00000000 0056410c 00000000 000000f0 00564114 00564108 00000000
+b6b5e540
+ 3fe0: ac2e9cf8 ac2e9ce8 ae982935 ae889e62
+ INFO: task pool:364 can't die for more than 61 seconds.
+ task:pool            state:R  running task     stack:    0 pid:  364
+ppid:     1 flags:0x00000081
+ [<c0e30e5f>] (__schedule) from [<c0e31b73>]
+(preempt_schedule_irq+0x6f/0x12c)
+ [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
+(svc_preempt+0x7/0x14)
+ Exception stack(0xc73fbd40 to 0xc73fbd88)
+ bd40: c2c28fc0 c16084b0 000003ff 00000001 c73fbde4 c2c28fc0 ad609e80
+c73fbe20
+ bd60: c73fbe40 c73fbe38 c73f8000 c2c28fc4 c73f8040 c73fbd90 c01c3bcf
+c01c4a8e
+ bd80: 200e0133 ffffffff
+ [<c0100b77>] (svc_preempt) from [<c01c4a8e>] (futex_wait_setup+0xce/0x150)
+ [<c01c4a8e>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c010024b>]
+(__sys_trace_return+0x1/0x16)
+ Exception stack(0xc73fbfa8 to 0xc73fbff0)
+ bfa0:                   00000000 ad609e80 ad609e80 00000080 00000002
+00000000
+ bfc0: 00000000 ad609e80 ad609e80 000000f0 adf20be0 7fffffff 00000001
+00000000
+ bfe0: adf20b68 adf20b58 aeb84087 aea48e62
+ INFO: task pool-nm-online:448 can't die for more than 122 seconds.
+ task:pool-nm-online  state:R  running task     stack:    0 pid:  448
+ppid:     1 flags:0x00000001
+ [<c0e30e5f>] (__schedule) from [<c0e31b73>]
+(preempt_schedule_irq+0x6f/0x12c)
+ [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
+(svc_preempt+0x7/0x14)
+ Exception stack(0xc648bd20 to 0xc648bd68)
+ bd20: c648be48 c648be4b c648be48 c648be4d c648bde4 deadcd43 acb09e48
+c648be40
+ bd40: c648be40 c648be38 c6488000 c2c21404 c6488040 c648bd74 c01c3bbd
+c02f2400
+ bd60: 80030133 ffffffff
+ [<c0100b77>] (svc_preempt) from [<c02f2400>] (__asan_load4+0x10/0x60)
+ [<c02f2400>] (__asan_load4) from [<c01c3bbd>] (hash_futex+0x25/0x80)
+ [<c01c3bbd>] (hash_futex) from [<c01c4a81>] (futex_wait_setup+0xc1/0x150)
+ [<c01c4a81>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
+ [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
+ [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
+ [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
+(ret_fast_syscall+0x1/0x26)
+ Exception stack(0xc648bfa8 to 0xc648bff0)
+ bfa0:                   00000000 acb09e48 acb09e48 00000080 00000002
+00000000
+ bfc0: 00000000 acb09e48 acb09e48 000000f0 ad4f0990 7fffffff 00000001
+00000000
+ bfe0: ad4f0918 ad4f0908 aea1d087 ae924e62
