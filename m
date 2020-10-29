@@ -2,324 +2,194 @@ Return-Path: <SRS0=qFEE=EE=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C554C55179
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 19:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768F9C55179
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 22:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4E3A206DD
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 19:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C92621D24
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Oct 2020 22:09:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9weLwbp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHz77CTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725902AbgJ2Tlj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Oct 2020 15:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
+        id S1725843AbgJ2WJa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Oct 2020 18:09:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgJ2Tli (ORCPT
+        with ESMTP id S1725372AbgJ2WJ1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Oct 2020 15:41:38 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46155C0613CF
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 12:41:38 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id m20so4413235ljj.5
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2020 12:41:38 -0700 (PDT)
+        Thu, 29 Oct 2020 18:09:27 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E721C0613D2;
+        Thu, 29 Oct 2020 15:09:27 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id g12so3482578pgm.8;
+        Thu, 29 Oct 2020 15:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GPv6of+1cKfDCOPkr1GTvohtUQAFp4ap1kyPWM8roPk=;
-        b=N9weLwbpCwJQyaHogRulkgHBgSlLlTqd1nqhGeke32EIzf4bc8H6FyOsurQN9ewB4Y
-         gYoSRo4JEJExJC+0af3UJ6+UAorm0ab7vJmzXZBK2wM0Q0npK1RVcsg1LqkHVq6a4orN
-         zw+5knNBKiLVur3AANs83SMkkQmVqUJ0iXkqMTm1d5Hsh0ThfwYSTBUy2GPXtiEp5koV
-         Bf8ECq3UeJPpavaUYpj7eSjTSLnSOoP7DslUCeAPldDLApxf5lsqcFpcZE04lueHFsAC
-         nsHhxoCt2MHL3QxXTCBOYvO3Y1I07XbHRVIrpG/qavir06SMWxPhYyjiyVIh0aDFUHFY
-         Cvqg==
+        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
+         :references:in-reply-to:accept-language:content-language
+         :content-transfer-encoding:mime-version;
+        bh=U8lXi8OOUAKAM9HahPF2MhkRdpGxM+5pjA1LOCJjWUc=;
+        b=CHz77CTXIopVkDxKJbskTpevdxOSErQasxAubh+6XkNKbmt/zLZmVMXibi5/HjH/pS
+         zIbuovqvbQ744DbkJN2jcoQdGJGyQwaAgfc3fjciWEMeOu4Okb0yGJEs6nXkzuKqT2jv
+         95HlWsYsbQYe7Z6O1TyIZfvd0yOeIm5oh4f28/B+3RwEHyqhPQt3QsoK8RoqZySOSGL6
+         iZ5S16MRosVlHePQlw6lxoW05ZwRHCvZ8Zdb3p5J8KoN9KWq899H8ajHZu+9NdJi1LkH
+         Ei4CHD9QIBNsUSZ4b7X4QVRuZv6pl0yk4T1r44uSVYWRc1FlfRksdP88IOS3alDxWRhH
+         YsZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GPv6of+1cKfDCOPkr1GTvohtUQAFp4ap1kyPWM8roPk=;
-        b=KkHi69amGe1ZYbQEy5H+/gOhCLXdn68sxsttzrBhwtvP47x00mvkxvhv85qlOHZgvM
-         S6E1z1K7LPEcQVz5WmVaT9MzvPiADCQRL3wG1JQ5J60/5ULPwsH/jf00y8u1Yfck32Bw
-         hAM/r5vg8irt4H67qUaBz72B8Mz3eI9awpGAeDs0BVmPUagsa88m0exx/B0PRbi8fOkQ
-         gYPZSWYcWlRiHCy2TcMw6YDGmamDqmzDVMWhoJZ1V0RFRq1qiD3k+jQALPMXqjd+t6o2
-         GDTb3mI312UuinTsKR/FOK967teXN0DpW4TTz+MnoYK1KufExfVmc9gmXKYnB+mcCmNl
-         VM1g==
-X-Gm-Message-State: AOAM533LbFVaWUXYNK39iuFkkT+kjpfi+lxN+h9+cc6doKbnBxM1f1kz
-        k5sIXevAtlaqVxgQE50CCKo=
-X-Google-Smtp-Source: ABdhPJw3UtM9PePZa1gFSkCd+JY0GIxznM7SWCvSXx0sHStE3IBqUM5C0V9qsvGZb6ss5pSqsZJj+A==
-X-Received: by 2002:a2e:9a10:: with SMTP id o16mr2418313lji.67.1604000496530;
-        Thu, 29 Oct 2020 12:41:36 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-177.dynamic.spd-mgts.ru. [109.252.193.177])
-        by smtp.googlemail.com with ESMTPSA id b14sm434593ljo.16.2020.10.29.12.41.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Oct 2020 12:41:35 -0700 (PDT)
-Subject: Re: [PATCH 0/5 v16] KASan for Arm
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Abbott Liu <liuwenliang@huawei.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
+         :date:message-id:references:in-reply-to:accept-language
+         :content-language:content-transfer-encoding:mime-version;
+        bh=U8lXi8OOUAKAM9HahPF2MhkRdpGxM+5pjA1LOCJjWUc=;
+        b=f7sY/obVKpu8pVYW+KM20HsuY4X3PHKCAtmTseOusognpDnmt4g4DibTHuEg6uEjb4
+         T99S9uv1080q+WxpfS2EHwLG7Ay3TbRCrtvebDuSanRT/NSH4sBQD3dFQQs/U9f5pUnQ
+         bh3vxwLhepEI+jwKKZttWTDFz4279e86uAy4Y7m4tcqnx+e1M5DKBkbgt5b5qGz2boLw
+         U68CqQa/5/TEvHZArG7ig1KnwumzhdLRew6StP5H8E1ADCTVg6AXaNv8IVkekjsFBk5a
+         mq6/CQ2xzmGgjUsV3EjBDn2oD5fjvHTOxkm8mfzgd+1m6+KcNBVNtbZCfyebH2u8sglq
+         rmUg==
+X-Gm-Message-State: AOAM531xIcKH+i1jOO0mUYnY4Hp7Fg00ypvuYfEt5rY8t+CtL4gQ/UHy
+        ExXajI728I962JJJqeZsEwQ=
+X-Google-Smtp-Source: ABdhPJySlPJX+5wSZiGXs3aTLYF3FP4syhZTj4GSQN2pZhFq/YPl9Z6nMYMsZfnD64YioPfafQ+hGg==
+X-Received: by 2002:a17:90a:ef81:: with SMTP id m1mr1995068pjy.212.1604009367153;
+        Thu, 29 Oct 2020 15:09:27 -0700 (PDT)
+Received: from SL2P216MB0475.KORP216.PROD.OUTLOOK.COM ([2603:1046:100:19::5])
+        by smtp.gmail.com with ESMTPSA id s38sm3556477pgm.62.2020.10.29.15.09.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Oct 2020 15:09:26 -0700 (PDT)
+From:   Jingoo Han <jingoohan1@gmail.com>
+To:     Rob Herring <robh@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>
-References: <20201019084140.4532-1-linus.walleij@linaro.org>
- <c3a17f70-4c7b-55b5-a7ce-373c4ff46b29@gmail.com>
- <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0ef7c2a5-5d8b-c5e0-63fa-31693fd4495c@gmail.com>
-Date:   Thu, 29 Oct 2020 22:41:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAMj1kXGa9sbjQ_OBMcfV7aVoBKMv62HO5T1yEu5t2vXx=xHVEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Han Jingoo <jingoohan1@gmail.com>
+Subject: Re: [PATCH 03/13] PCI: dwc: Move "dbi", "dbi2", and "addr_space"
+ resource setup into common code
+Thread-Topic: [PATCH 03/13] PCI: dwc: Move "dbi", "dbi2", and "addr_space"
+ resource setup into common code
+Thread-Index: AQHWrWt+/uCmOjVzWE+cqKXErEipD6mvJWds
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date:   Thu, 29 Oct 2020 22:09:15 +0000
+Message-ID: <SL2P216MB04752DF9839E1CCC8D1B1706AA140@SL2P216MB0475.KORP216.PROD.OUTLOOK.COM>
+References: <20201028204646.356535-1-robh@kernel.org>
+ <20201028204646.356535-4-robh@kernel.org>
+In-Reply-To: <20201028204646.356535-4-robh@kernel.org>
+Accept-Language: ko-KR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator: 
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-29.10.2020 21:10, Ard Biesheuvel пишет:
-> On Thu, 29 Oct 2020 at 18:45, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 19.10.2020 11:41, Linus Walleij пишет:
->>> This is the 16th and final (knock on wood) version of
->>> KASan for ARM32.
->>
->> Hi,
->>
->> I tried KASAN on NVIDIA Tegra using next-20201029 and getting a (seems)
->> bogus bug report saying that the bug is in the KASAN code (note
->> udc_irq() belongs to the ChipIdea USB driver), this problem doesn't
->> happen using one of older versions of the KASAN patches.
->>
-> 
-> That is probably a coincidence. I ran into the same thing:
-> 
-> https://lore.kernel.org/linux-arm-kernel/20201029001753.717-1-ardb@kernel.org/
-> 
-> I am not sure this is the right fix, but it does silence the warning for me.
+On 10/28/20, 4:46 PM, Rob Herring wrote:
+>=20
+> Most DWC drivers use the common register resource names "dbi", "dbi2", an=
+d
+> "addr_space", so let's move their setup into the DWC common code.
+>
+> This means 'dbi_base' in particular is setup later, but it looks like no
+> drivers touch DBI registers before dw_pcie_host_init or dw_pcie_ep_init.
+>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Murali Karicheri <m-karicheri2@ti.com>
+> Cc: Minghuan Lian <minghuan.Lian@nxp.com>
+> Cc: Mingkai Hu <mingkai.hu@nxp.com>
+> Cc: Roy Zang <roy.zang@nxp.com>
+> Cc: Jonathan Chocron <jonnyc@amazon.com>
+> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
 
-Disabling instrumentation for the stacktrace indeed fixes it, thank you.
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Now there is another problem.. next-20201029 has the same trouble which
-all previous versions of the KASAN series had, where tasks are hanging
-in unkillable state, eating 100% CPU.
+Best regards,
+Jingoo Han
 
-For example I never managed to get Xorg to work with the ARM32 KASAN,
-this is what happens (sometimes it happens during boot, where systemd
-services hang):
+> Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Cc: Xiaowei Song <songxiaowei@hisilicon.com>
+> Cc: Binghui Wang <wangbinghui@hisilicon.com>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
+> Cc: Pratyush Anand <pratyush.anand@gmail.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-arm-kernel@axis.com
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c       |  8 ----
+>  drivers/pci/controller/dwc/pci-keystone.c     | 29 +-----------
+>  .../pci/controller/dwc/pci-layerscape-ep.c    | 37 +--------------
+>  drivers/pci/controller/dwc/pcie-al.c          |  9 +---
+>  drivers/pci/controller/dwc/pcie-artpec6.c     | 43 ++----------------
+>  .../pci/controller/dwc/pcie-designware-ep.c   | 29 ++++++++++--
+>  .../pci/controller/dwc/pcie-designware-host.c |  7 +++
+>  .../pci/controller/dwc/pcie-designware-plat.c | 45 +------------------
+>  drivers/pci/controller/dwc/pcie-intel-gw.c    |  4 --
+>  drivers/pci/controller/dwc/pcie-kirin.c       |  5 ---
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  8 ----
+>  drivers/pci/controller/dwc/pcie-spear13xx.c   | 11 +----
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 22 ---------
+>  drivers/pci/controller/dwc/pcie-uniphier-ep.c | 38 +---------------
+>  drivers/pci/controller/dwc/pcie-uniphier.c    |  6 ---
+>  15 files changed, 47 insertions(+), 254 deletions(-)
 
- INFO: task pool-nm-online:448 can't die for more than 61 seconds.
- task:pool-nm-online  state:R  running task     stack:    0 pid:  448
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c01c3699>]
-(get_futex_value_locked+0xa1/0xb8)
- [<c01c3699>] (get_futex_value_locked) from [<c01c4a81>]
-(futex_wait_setup+0xc1/0x150)
- [<c01c4a81>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc648bfa8 to 0xc648bff0)
- bfa0:                   00000000 acb09e48 acb09e48 00000080 00000002
-00000000
- bfc0: 00000000 acb09e48 acb09e48 000000f0 ad4f0990 7fffffff 00000001
-00000000
- bfe0: ad4f0918 ad4f0908 aea1d087 ae924e62
- INFO: task blueman-mechani:279 can't die for more than 61 seconds.
- task:blueman-mechani state:R  running task     stack:    0 pid:  279
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31581>]
-(preempt_schedule_common+0x29/0x48)
- [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
-(futex_wait_setup+0x59/0x150)
- [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc300bfa8 to 0xc300bff0)
- bfa0:                   00000000 00538cd0 00538cd0 00000080 00000002
-00000000
- bfc0: 00000000 00538cd0 00538cd0 000000f0 b6af1320 7fffffff 00000001
-00000000
- bfe0: b6af12a8 b6af1298 ae3e8087 aed00e62
- INFO: task polkitd:292 can't die for more than 61 seconds.
- task:polkitd         state:R  running task     stack:    0 pid:  292
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31581>]
-(preempt_schedule_common+0x29/0x48)
- [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
-(futex_wait_setup+0x59/0x150)
- [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc48a3fa8 to 0xc48a3ff0)
- 3fa0:                   00000000 0043a788 0043a788 00000080 00000002
-00000000
- 3fc0: 00000000 0043a788 0043a788 000000f0 b67eac70 7fffffff 00000001
-00000000
- 3fe0: b67eabf8 b67eabe8 aeadd087 ae936e62
- INFO: task pool-polkitd:315 can't die for more than 61 seconds.
- task:pool-polkitd    state:R  running task     stack:    0 pid:  315
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31b73>]
-(preempt_schedule_irq+0x6f/0x12c)
- [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
-(svc_preempt+0x7/0x14)
- Exception stack(0xc7b57d30 to 0xc7b57d78)
- 7d20:                                     c7b54004 00000000 c7b54004
-00000007
- 7d40: c7b54000 00000000 c7b54004 c7b57e20 c7b57e40 c7b57e38 c7b54000
-c2c28e44
- 7d60: c7b54040 c7b57d80 c0e36849 c0e3684e 20030133 ffffffff
- [<c0100b77>] (svc_preempt) from [<c0e3684e>] (_raw_spin_unlock+0x42/0x58)
- [<c0e3684e>] (_raw_spin_unlock) from [<c01c4a19>]
-(futex_wait_setup+0x59/0x150)
- [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc7b57fa8 to 0xc7b57ff0)
- 7fa0:                   0007a120 00000000 0043cd1c 00000080 00000000
-add22cec
- 7fc0: 0007a120 00000000 00000000 000000f0 0043cd10 0043cd18 aeb529b0
-aeb51be0
- 7fe0: add22cd0 add22cc0 aeadda45 ae936e62
- INFO: task pool-udisksd:340 can't die for more than 61 seconds.
- task:pool-udisksd    state:R  running task     stack:    0 pid:  340
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31b73>]
-(preempt_schedule_irq+0x6f/0x12c)
- [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
-(svc_preempt+0x7/0x14)
- Exception stack(0xc6abfd40 to 0xc6abfd88)
- fd40: c6abfe38 00000000 c6abfe38 00000003 c6abfde4 c2c28d00 00546084
-c6abfe20
- fd60: c6abfe40 c6abfe38 c6abc000 c2c28d04 c6abc040 c6abfd90 c01c4aa7
-c01c4aa6
- fd80: 000b0133 ffffffff
- [<c0100b77>] (svc_preempt) from [<c01c4aa6>] (futex_wait_setup+0xe6/0x150)
- [<c01c4aa6>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc6abffa8 to 0xc6abfff0)
- ffa0:                   0007a120 00000000 00546084 00000080 00000000
-ad8fecdc
- ffc0: 0007a120 00000000 00000000 000000f0 00546078 00546080 ae9f79b0
-ae9f6be0
- ffe0: ad8fecc0 ad8fecb0 ae982a45 ae889e62
- INFO: task gdbus:433 can't die for more than 61 seconds.
- task:gdbus           state:R  running task     stack:    0 pid:  433
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31581>]
-(preempt_schedule_common+0x29/0x48)
- [<c0e31581>] (preempt_schedule_common) from [<c01c4a19>]
-(futex_wait_setup+0x59/0x150)
- [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc5b03fa8 to 0xc5b03ff0)
- 3fa0:                   0054e010 aeb770bc 0054e01c 00000080 00000002
-00000000
- 3fc0: 0054e010 aeb770bc 0054aef0 000000f0 0054e01c 0055a150 0054aef0
-00000000
- 3fe0: acefec28 acefec18 ae982087 ae889e62
- INFO: task probing-thread:551 can't die for more than 61 seconds.
- task:probing-thread  state:R  running task     stack:    0 pid:  551
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31b73>]
-(preempt_schedule_irq+0x6f/0x12c)
- [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
-(svc_preempt+0x7/0x14)
- Exception stack(0xc8cf3d28 to 0xc8cf3d70)
- 3d20:                   c8cf0000 c8cf0003 c8cf0000 00000003 c8cf0000
-00000000
- 3d40: c8cf0004 c8cf3e20 c8cf3e40 c8cf3e38 c8cf0000 c2c2a484 c8cf0040
-c8cf3d7c
- 3d60: c0e36855 c02f2404 800b0133 ffffffff
- [<c0100b77>] (svc_preempt) from [<c02f2404>] (__asan_load4+0x14/0x60)
- [<c02f2404>] (__asan_load4) from [<c0e36855>] (_raw_spin_unlock+0x49/0x58)
- [<c0e36855>] (_raw_spin_unlock) from [<c01c4a19>]
-(futex_wait_setup+0x59/0x150)
- [<c01c4a19>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc8cf3fa8 to 0xc8cf3ff0)
- 3fa0:                   00000000 0056410c 0056410c 00000080 00000000
-00000000
- 3fc0: 00000000 0056410c 00000000 000000f0 00564114 00564108 00000000
-b6b5e540
- 3fe0: ac2e9cf8 ac2e9ce8 ae982935 ae889e62
- INFO: task pool:364 can't die for more than 61 seconds.
- task:pool            state:R  running task     stack:    0 pid:  364
-ppid:     1 flags:0x00000081
- [<c0e30e5f>] (__schedule) from [<c0e31b73>]
-(preempt_schedule_irq+0x6f/0x12c)
- [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
-(svc_preempt+0x7/0x14)
- Exception stack(0xc73fbd40 to 0xc73fbd88)
- bd40: c2c28fc0 c16084b0 000003ff 00000001 c73fbde4 c2c28fc0 ad609e80
-c73fbe20
- bd60: c73fbe40 c73fbe38 c73f8000 c2c28fc4 c73f8040 c73fbd90 c01c3bcf
-c01c4a8e
- bd80: 200e0133 ffffffff
- [<c0100b77>] (svc_preempt) from [<c01c4a8e>] (futex_wait_setup+0xce/0x150)
- [<c01c4a8e>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c010024b>]
-(__sys_trace_return+0x1/0x16)
- Exception stack(0xc73fbfa8 to 0xc73fbff0)
- bfa0:                   00000000 ad609e80 ad609e80 00000080 00000002
-00000000
- bfc0: 00000000 ad609e80 ad609e80 000000f0 adf20be0 7fffffff 00000001
-00000000
- bfe0: adf20b68 adf20b58 aeb84087 aea48e62
- INFO: task pool-nm-online:448 can't die for more than 122 seconds.
- task:pool-nm-online  state:R  running task     stack:    0 pid:  448
-ppid:     1 flags:0x00000001
- [<c0e30e5f>] (__schedule) from [<c0e31b73>]
-(preempt_schedule_irq+0x6f/0x12c)
- [<c0e31b73>] (preempt_schedule_irq) from [<c0100b77>]
-(svc_preempt+0x7/0x14)
- Exception stack(0xc648bd20 to 0xc648bd68)
- bd20: c648be48 c648be4b c648be48 c648be4d c648bde4 deadcd43 acb09e48
-c648be40
- bd40: c648be40 c648be38 c6488000 c2c21404 c6488040 c648bd74 c01c3bbd
-c02f2400
- bd60: 80030133 ffffffff
- [<c0100b77>] (svc_preempt) from [<c02f2400>] (__asan_load4+0x10/0x60)
- [<c02f2400>] (__asan_load4) from [<c01c3bbd>] (hash_futex+0x25/0x80)
- [<c01c3bbd>] (hash_futex) from [<c01c4a81>] (futex_wait_setup+0xc1/0x150)
- [<c01c4a81>] (futex_wait_setup) from [<c01c4bc3>] (futex_wait+0xb3/0x1d0)
- [<c01c4bc3>] (futex_wait) from [<c01c66d7>] (do_futex+0xcf/0xabc)
- [<c01c66d7>] (do_futex) from [<c01c7285>] (sys_futex_time32+0xbd/0x138)
- [<c01c7285>] (sys_futex_time32) from [<c01000a1>]
-(ret_fast_syscall+0x1/0x26)
- Exception stack(0xc648bfa8 to 0xc648bff0)
- bfa0:                   00000000 acb09e48 acb09e48 00000080 00000002
-00000000
- bfc0: 00000000 acb09e48 acb09e48 000000f0 ad4f0990 7fffffff 00000001
-00000000
- bfe0: ad4f0918 ad4f0908 aea1d087 ae924e62
+[...]
