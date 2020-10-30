@@ -2,107 +2,86 @@ Return-Path: <SRS0=MwlS=EF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FC6C4363A
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Oct 2020 13:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F423FC00A89
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Oct 2020 18:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9686A2083B
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Oct 2020 13:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9302720791
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Oct 2020 18:32:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604066308;
-	bh=adyPaigieWINvpIzCWk3XM6mFalffwbDJrfjZBicvkY=;
+	s=default; t=1604082779;
+	bh=418ZTXMPeQHnL0BZS9vcwOS5LJdprcwiT62MqDCdnXE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1RbTXz2fdlVBUX3XqvxAkDSr3dmn+rW7bIDjXKaj6Yj9TYbOc3GrncYBiNXHUsUdP
-	 UG6/MIlWv7DRtzCTdf18va6ARRBne+oQr7DxYCgC3SedVma0h3SOEStMJwsfqNNDTh
-	 FwedFx6CNRIJu20JNkwmeh2DpBVVlHv7YO+QJqGE=
+	b=cdg2cCfDRQE9Ey1rTV9br6A3dTgR5++XVpAyxvsoLsMjLuL5CSJSiL53KQEsGBgUi
+	 ayk/84eihlZvpaOkecUzYRZijoaEMk+PKpKRlU4JWJ+IqSTGhVDbXQaNrJAolPxcVy
+	 SBESMVFWuaDtaR2tSWJ/HNtUHBWVO5hjvQBd2hok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbgJ3N62 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Oct 2020 09:58:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbgJ3N62 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Oct 2020 09:58:28 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4F552072C;
-        Fri, 30 Oct 2020 13:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604066307;
-        bh=adyPaigieWINvpIzCWk3XM6mFalffwbDJrfjZBicvkY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LssxqxVewnCDY1JEzRLqdoHAD1GDS9d+ghDN2JRk2WfI6f/FIMqucTLWc5iK/D4Fh
-         WtJeaq9SSuBGjWSDn8+lWrYhq62u/c4wjuWuA+oUCLUawzURUyth1ybsuhHMLm84UE
-         UdHPJSJoRMUSKI1Cu7f/aPlNv/fDDPevgVAYG61c=
-Date:   Fri, 30 Oct 2020 13:58:20 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org,
-        kuninori.morimoto.gx@renesas.com,
-        pierre-louis.bossart@linux.intel.com, perex@perex.cz,
-        tiwai@suse.com, p.zabel@pengutronix.de, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sharadg@nvidia.com,
-        mkumard@nvidia.com, viswanathl@nvidia.com, rlokhande@nvidia.com,
-        dramesh@nvidia.com, atalambedu@nvidia.com, nwartikar@nvidia.com,
-        swarren@nvidia.com, nicoleotsuka@gmail.com
-Subject: Re: [PATCH v4 00/15] Audio graph card updates and usage with
- Tegra210 audio
-Message-ID: <20201030135820.GD4405@sirena.org.uk>
-References: <1602859382-19505-1-git-send-email-spujar@nvidia.com>
- <c98d63a7-f311-a94f-abcc-1c5a87ba8025@nvidia.com>
+        id S1726077AbgJ3Sc7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Oct 2020 14:32:59 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39274 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgJ3Sc6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 30 Oct 2020 14:32:58 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z16so1243124otq.6;
+        Fri, 30 Oct 2020 11:32:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U11U1RUcXJQMVTzn4DAQFEhylkdQvUKwt78eo7W7jVI=;
+        b=CChnYa7ay8Edl5BXAL6DeaFawt2YwH85MshKc2TTcZhdZdZYg9VYxtFY+PnCJRbY2A
+         oufEzXsPm8o/MFQONrWpO/BhFC3BnlkLHhW/XSELJSzkdI/13ZvQCwjKVODRvaQoJhg0
+         +88we/St3XurhwdejHwwKKHk7m7oVoS6C4UfgUnGyVa7GRQiC3dkb88LjMUqPKam9U3g
+         uSQhrcBo7/RrdKz1iaOIIkwzWLzcDKTAGtxbFg39muL6zJHChbeL09Ko3MRfu/3K92He
+         eSeHsmz2Dv+Y9EiK8ZaKrtQa9RbGbZqqa31b0+oGh8AePMmL18IQTHtJWB92BN8T563K
+         MBbg==
+X-Gm-Message-State: AOAM533Plz2cSIlXT8JPuAuC1Fdn8U/2fzBOGoED6c6JeiPM3tGyC7+g
+        /KCCVnk+AS5cRwJspFCOBg==
+X-Google-Smtp-Source: ABdhPJydLUAT3cGVwlYDKmLSTYmAxhTmAahEfuKb37pqdf9FFUjUpuAye1WCcA8uXXxsDHaC/qDyow==
+X-Received: by 2002:a05:6830:1089:: with SMTP id y9mr248688oto.191.1604082778089;
+        Fri, 30 Oct 2020 11:32:58 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u22sm1485907oor.13.2020.10.30.11.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 11:32:57 -0700 (PDT)
+Received: (nullmailer pid 4112164 invoked by uid 1000);
+        Fri, 30 Oct 2020 18:32:56 -0000
+Date:   Fri, 30 Oct 2020 13:32:56 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     kyarlagadda@nvidia.com, kthota@nvidia.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        mmaddireddy@nvidia.com, linux-tegra@vger.kernel.org,
+        robh+dt@kernel.org, sagar.tv@gmail.com,
+        amurray@thegoodpenguin.co.uk, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jckuo@nvidia.com, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Fix entry name for I/O High Voltage
+ property
+Message-ID: <20201030183256.GA4112134@bogus>
+References: <20201026063902.14744-1-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rqzD5py0kzyFAOWN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c98d63a7-f311-a94f-abcc-1c5a87ba8025@nvidia.com>
-X-Cookie: Blow it out your ear.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201026063902.14744-1-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, 26 Oct 2020 12:09:01 +0530, Vidya Sagar wrote:
+> Correct the name of the I/O High Voltage Property from
+> 'nvidia,io-high-voltage' to 'nvidia,io-hv'.
+> 
+> Fixes: 2585a584f844 ("pinctrl: Add Tegra194 pinctrl DT bindings")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  .../devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt      | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
---rqzD5py0kzyFAOWN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 30, 2020 at 12:04:50PM +0530, Sameer Pujar wrote:
-> Hi Mark, Morimoto-san,
-
-> > Sameer Pujar (15):
-> >    ASoC: soc-core: Fix component name_prefix parsing
-> >    ASoC: soc-pcm: Get all BEs along DAPM path
-> >    ASoC: audio-graph: Use of_node and DAI for DPCM DAI link names
-> >    ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM
-> >    ASoC: audio-graph: Support empty Codec endpoint
-> >    ASoC: audio-graph: Expose new members for asoc_simple_priv
-> >    ASoC: audio-graph: Expose helpers from audio graph
-
-> Would you suggest to keep above in a separate series and thus not blocked by
-> below doc updates? If so do I need to resend above in a next revision or if
-> these are good to be picked up?
-
-It's probably better to split things up given that the dependencies for
-the last bit are on another series.
-
---rqzD5py0kzyFAOWN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+cG/sACgkQJNaLcl1U
-h9CSfAf/X5PzOOD5Jon1mVsaFPbij6n6esmY9LRtfZ4vDDwLZec683WNghZ/F/R6
-GxeVN81r0vv+6uhh6f4TaTD0+/XU0nc8aXQBgXs/6DHNALqX5b6GWaiCQRioYP6W
-QCD4gpybdIGuWvb2ONWsApLC9ciddNTZvNFeM5RprZQloeMjYUKGiQJ+tzUrTfrs
-Qce0dpEqTMk/37BF9z9fDqOPwScX4a0529QSD7zbAaSDKe4Pfcnad45MnjYprNZk
-Eaf9QiHtxpfvpqrIHvuIhPMgdOWGSsaZKbdQx6p7QLoftcJdFKD6sXjfUuKntPzY
-BY7H6q9Z+nxCOCm3uRkD3YIGXPefqw==
-=mqrB
------END PGP SIGNATURE-----
-
---rqzD5py0kzyFAOWN--
+Acked-by: Rob Herring <robh@kernel.org>
