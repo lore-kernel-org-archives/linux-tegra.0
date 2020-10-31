@@ -2,118 +2,134 @@ Return-Path: <SRS0=KyIL=EG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31076C388F7
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Oct 2020 10:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158E0C388F9
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Oct 2020 19:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE52622202
-	for <linux-tegra@archiver.kernel.org>; Sat, 31 Oct 2020 10:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D8E206ED
+	for <linux-tegra@archiver.kernel.org>; Sat, 31 Oct 2020 19:53:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCemvOV/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbgJaKuK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 31 Oct 2020 06:50:10 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6717 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbgJaKuK (ORCPT
+        id S1728443AbgJaTxV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 31 Oct 2020 15:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52728 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbgJaTxV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 31 Oct 2020 06:50:10 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CNbYB1KMSzkcrd;
-        Sat, 31 Oct 2020 18:50:06 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Sat, 31 Oct 2020
- 18:49:58 +0800
-From:   Yu Kuai <yukuai3@huawei.com>
-To:     <krzk@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <tomeu.vizoso@collabora.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] memory: tegra: add missing put_devcie() call in tegra_emc_probe()
-Date:   Sat, 31 Oct 2020 18:53:55 +0800
-Message-ID: <20201031105355.2303794-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.25.4
+        Sat, 31 Oct 2020 15:53:21 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C58C0617A6;
+        Sat, 31 Oct 2020 12:53:19 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id 126so12221941lfi.8;
+        Sat, 31 Oct 2020 12:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qpW1o+C0PRJ741Jc61rIE1EzSh2oPyJa/Lhh/MjTIEo=;
+        b=kCemvOV/aVgs6jzTk5xs0VLzBdyFrvm75owovIK/xkL6tbC05uav9344WusR7z8ETN
+         suCnr8DigbChM6vHGGn+ppIjhVtviHN4bAvhea/cXJkagsVr2CxVaF7odhorhnb4Q36B
+         BQjYm6NjAl0I3ZEkyhkpo4MYmDrHFMDYkvYCWd9sER/94ftd4VgEuRS46AYN3HdHFO+S
+         tqwd1bRl/QJaUMrXp2RZMaBXFtO58oWvlSmrkAm4mVfuuIrzLF3LU9oY2B2u3YHr/FhD
+         oWbALHqgegg27LIAs7xx8Zb1oYanYNM0St1C8i32EAUAtm0fDKovMHgoNLH2CZESUMyu
+         k7qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qpW1o+C0PRJ741Jc61rIE1EzSh2oPyJa/Lhh/MjTIEo=;
+        b=OBpTo1F4fiutnakq4kV8BTm6ap60B/4IlIyhg6pYlqj1M8npMXOcIc78l4YuO1GL3I
+         V3KXtMaptWsOnm8aGQ++cOGIqcu5gKveJZrw7fm5KGX659dK+IHMwVx9vd7nYZTY5CqW
+         6jST3T7jkihzHJ8hKBlnT/36zngsrPF1JTO46rhTKpLcFQaE5PLsCvG0ZB7GTyUyJpUc
+         AINP4STM8GsTx+4wqilPaWl1Lx/hCUEDOOfydgJnCCTQPR5InfPyeRPaDIJcLowPO+TE
+         8RcfUFpiwSYHAnm1b3010wPcEUM2FQo4x5v9E60/PJnklt25EhFOBArSMAtdCTH+GWrS
+         ae0w==
+X-Gm-Message-State: AOAM530ZA0WyOqiwW4FJ10KM1p6eL0GRyYb0QwmqM9JUCvfvsSAKxe4B
+        L9A4584lwalozM/zfE7wMaJW2WiiQ0c=
+X-Google-Smtp-Source: ABdhPJx51n5KkA8mPRxesb87WniYbQs0YGofYfpwH6xFE7VSriWHy/j/UxCjN08agE3mbG5oAIkFaw==
+X-Received: by 2002:a19:7009:: with SMTP id h9mr3365454lfc.201.1604173997919;
+        Sat, 31 Oct 2020 12:53:17 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-177.dynamic.spd-mgts.ru. [109.252.193.177])
+        by smtp.googlemail.com with ESMTPSA id d16sm926813lfm.55.2020.10.31.12.53.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Oct 2020 12:53:17 -0700 (PDT)
+Subject: Re: [PATCH v6 08/52] dt-bindings: memory: tegra20: emc: Document
+ mfd-simple compatible and statistics sub-device
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+References: <20201025221735.3062-1-digetx@gmail.com>
+ <20201025221735.3062-9-digetx@gmail.com> <20201027090212.GG4244@kozik-lap>
+ <1cce314a-1eab-61c9-099d-54f987b03761@gmail.com>
+ <20201027194457.GD140636@kozik-lap>
+ <ae06bd70-93f5-abe8-64d9-e5e991cd8ff8@gmail.com>
+ <20201028152632.GA4051913@bogus>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a2e7109c-1a31-2b5d-fd1b-b572c654ba82@gmail.com>
+Date:   Sat, 31 Oct 2020 22:53:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20201028152632.GA4051913@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-if of_find_device_by_node() succeed, tegra_emc_probe() doesn't have a
-corresponding put_device(). Thus add jump target to fix the exception
-handling for this function implementation.
+28.10.2020 18:26, Rob Herring пишет:
+> On Tue, Oct 27, 2020 at 11:18:34PM +0300, Dmitry Osipenko wrote:
+>> 27.10.2020 22:44, Krzysztof Kozlowski пишет:
+>>> On Tue, Oct 27, 2020 at 10:22:19PM +0300, Dmitry Osipenko wrote:
+>>>> 27.10.2020 12:02, Krzysztof Kozlowski пишет:
+>>>>>> @@ -31,17 +32,34 @@ Example:
+>>>>>>  		...
+>>>>>>  	};
+>>>>>>  
+>>>>>> +	emc_bw_dfs_opp_table: emc_opp_table1 {
+>>>>> Hyphens for node name.
+>>>>
+>>>> We already use underscores for the Tegra CPU OPP table.
+>>>>
+>>>> https://elixir.bootlin.com/linux/v5.10-rc1/source/arch/arm/boot/dts/tegra20-cpu-opp.dtsi#L4
+>>>>
+>>>> What makes you think that hyphens will be a better choice? Is it a
+>>>> documented naming convention?
+>>>
+>>> Unfortunately that's the source of confusion also for me because
+>>> Devicetree spec mentions both of them (and does not specify preferences).
+>>>
+>>> The choice of dashes/hyphens comes now explicitly from all dtschema
+>>> files.  Previously, the documentation were emails from Rob. :)
+>>
+>> Okay, I'll change it in v7. So far I haven't seen warnings about it from
+>> the schema-checker.
+> 
+> dtc with W=2 will warn.
+> 
+> The bigger issue is the name should be generic.
 
-Fixes: 73a7f0a90641("memory: tegra: Add EMC (external memory controller) driver")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/memory/tegra/tegra124-emc.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 76ace42a688a..831dfca0804c 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1207,8 +1207,10 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 
- 	emc->mc = platform_get_drvdata(mc);
--	if (!emc->mc)
--		return -EPROBE_DEFER;
-+	if (!emc->mc) {
-+		err = -EPROBE_DEFER;
-+		goto put_device;
-+	}
- 
- 	ram_code = tegra_read_ram_code();
- 
-@@ -1217,25 +1219,27 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"no memory timings for RAM code %u found in DT\n",
- 			ram_code);
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto put_device;
- 	}
- 
- 	err = tegra_emc_load_timings_from_dt(emc, np);
- 	of_node_put(np);
- 	if (err)
--		return err;
-+		goto put_device;
- 
- 	if (emc->num_timings == 0) {
- 		dev_err(&pdev->dev,
- 			"no memory timings for RAM code %u registered\n",
- 			ram_code);
--		return -ENOENT;
-+		err = -ENOENT;
-+		goto put_device;
- 	}
- 
- 	err = emc_init(emc);
- 	if (err) {
- 		dev_err(&pdev->dev, "EMC initialization failed: %d\n", err);
--		return err;
-+		goto put_device;
- 	}
- 
- 	platform_set_drvdata(pdev, emc);
-@@ -1244,6 +1248,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		emc_debugfs_init(&pdev->dev, emc);
- 
- 	return 0;
-+put_device:
-+	put_device(&mc->dev);
-+	return err;
- };
- 
- static struct platform_driver tegra_emc_driver = {
--- 
-2.25.4
-
+Indeed, thanks. I'll correct the name.
