@@ -2,123 +2,179 @@ Return-Path: <SRS0=92L0=EH=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62085C388F2
-	for <linux-tegra@archiver.kernel.org>; Sun,  1 Nov 2020 15:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8918BC2D0A3
+	for <linux-tegra@archiver.kernel.org>; Sun,  1 Nov 2020 17:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23D2A206A1
-	for <linux-tegra@archiver.kernel.org>; Sun,  1 Nov 2020 15:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CCA72225C
+	for <linux-tegra@archiver.kernel.org>; Sun,  1 Nov 2020 17:24:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrzcyTOQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UxsJQ+Mx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbgKAP6f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 1 Nov 2020 10:58:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726730AbgKAP6e (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 1 Nov 2020 10:58:34 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058E4C0617A6;
-        Sun,  1 Nov 2020 07:58:32 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id v19so7348200lji.5;
-        Sun, 01 Nov 2020 07:58:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=9w5lqe/JTQMl14qtp1wqbV1q8PlicycEi9x7TwQ3O4I=;
-        b=SrzcyTOQk7M4NCVfGsoyDQqZ6rFb3eZJcZzNQdiSNUT7txNNGhlL0NpT0+LOVda3Ih
-         MiBUFAFrziuKtC1hCr5a+CEaEWrzgJICLO3UevGr9h71XEutrEV0cHH5XzfUCoDohH8E
-         a45GiU+47GmYSJC5/FJSPBiNPS+BW+zygQuK/B9e8hXqfmnzMvhGZiFF4GdJVXlS3tet
-         OXIAqAP/N5ThaauVK3L4z2MuyLnqwYL3XMOTewX8A7/1Tid7b0erQsFJ9lqKusNF0R4a
-         YPiOTsbHK0dGj8R7DKeLodHLpNxXs+/ktqgRnbQMasDwrSlX/7YSgiQGBPol/B0k4Ama
-         wPZA==
+        id S1727028AbgKARYW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 1 Nov 2020 12:24:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:39461 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726790AbgKARYW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 1 Nov 2020 12:24:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604251460;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=ar42oVriuRci3B5JCt0ie/o9rZYCCxXolg155/aarmA=;
+        b=UxsJQ+MxAQM5o4IjHP8nhqiVIWywmDJyMbPmvK61v1CzSfwQbFp74W2t6dOKmtaluZVWT4
+        6c0pD2fQwDnr5sjyt8Q6UEPrnS5E78JWXieKlJ+qanD5wjw3ZGEnMhktNXsxyqQouz1eWK
+        /I6fWF1nz3m/SA0nccdGNGBV/P7RYas=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-300-4SGm4JSvOu-2KTgk_I_yCQ-1; Sun, 01 Nov 2020 12:24:19 -0500
+X-MC-Unique: 4SGm4JSvOu-2KTgk_I_yCQ-1
+Received: by mail-ot1-f70.google.com with SMTP id 5so5284556oti.20
+        for <linux-tegra@vger.kernel.org>; Sun, 01 Nov 2020 09:24:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=9w5lqe/JTQMl14qtp1wqbV1q8PlicycEi9x7TwQ3O4I=;
-        b=sb0Ckl4xj/v6BieRMsyQH/o4DzJcIhqVWb5qBdtZ7SL5I8aHnrHBMpFfFGE/ud0c0+
-         8jgsZ876eRmnN5KcDOSpZWZt2Ugsz2RJrYC1cI3nh92upfT3OvLCGPPOYdpUZOHO8Ufj
-         osWjjlyGex3kBNIWONAqLSEJLxB8Aucg5dnGL7StcUFi872ckD/Ku/gNMi2CyTQgPgJc
-         +5KMljdfb7aJpf9VP3YNYY2ATg9pDKJFbFgK79Xeo3vMuCXBXxIoz7wz/62IViqBern4
-         Czj/WoM3x0PdoESSUdXtuJWWx7KO4Lh5KfivCnzECRmppVwbAcfk4+YPhY5+37Z8lAJJ
-         9hWg==
-X-Gm-Message-State: AOAM530VU73UhycfC+o6WxqrzJPmFKjttqem7WhT9sWaCFrlfLfmwJ3A
-        1rpWoXe3Adj/ux5xJnFGdKyHbBOFM4hi1ZC8qFE=
-X-Google-Smtp-Source: ABdhPJxWcrG0gmpm+NAN1BZS7Iw6tgZ8ick38nOYLMklui1fLFdUIqBpA2BV8e/ASXPN+5HRZr3OVEYaeMhtvt6PCqE=
-X-Received: by 2002:a2e:681a:: with SMTP id c26mr5169187lja.56.1604246311413;
- Sun, 01 Nov 2020 07:58:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20201025221735.3062-1-digetx@gmail.com> <20201025221735.3062-52-digetx@gmail.com>
- <CAGTfZH1PV4r-pD=zTKD71nQb5+UobJKa5mBv-Nb2ZgSubkscjA@mail.gmail.com>
- <2ebd184c-60e8-19e2-9965-19481ced1c70@gmail.com> <CAGTfZH0=6R02euOR3JHgA0iLq5++Yvp3Z_wBCEs7bzkfuorEFQ@mail.gmail.com>
- <5f5a22b1-4d01-5698-1bca-6bcc66c55e6f@gmail.com>
-In-Reply-To: <5f5a22b1-4d01-5698-1bca-6bcc66c55e6f@gmail.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Mon, 2 Nov 2020 00:57:55 +0900
-Message-ID: <CAGTfZH3s-1cROd3_X2weBs6i1irgJQJZP+8G+rj9p3KZMUu2vQ@mail.gmail.com>
-Subject: Re: [PATCH v6 51/52] PM / devfreq: tegra30: Support interconnect and
- OPPs from device-tree
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ar42oVriuRci3B5JCt0ie/o9rZYCCxXolg155/aarmA=;
+        b=hfDtME59YpGKKyBSHfQpGmh4ItnJsiVnxmW4VPnv8zn4hT+pmVLoQsyK7Q94dopZgk
+         Y9X2+DEocgjYe42DTBzNxVm1lWhTfgJzRwa7yl4O5G1pFTgT0Rd7fC1oOlWXqBGhO6NC
+         KKoMVzTJlCFP8YBUvjl8lr+x+UY8E0dsEaILs/S4aNV1bWZ9a1pcohPvp9vuwj+h6CE1
+         eLpBybhPBdjghspZ+g1IpdLfYjLxXgO1H+4nXVDAiH/s4Nx9oxtP7zCJVQBRfuTnn/EN
+         E5fvBQuVEAzOOEq6oIdZCdNgFNg2Hcji3IcXoG7t0Uw24p9h+uwMN/r5PC/F/Od2DWPm
+         BBwg==
+X-Gm-Message-State: AOAM533qepzGkcfFt/D+bwCOy9LcYBuFOtiBNVVd9xu/u7vuItqzD0Ph
+        Zui4jHPMnbeKblOpKFjWBYlBwFJvyav4bbcumIV1UDhDfs8ZNMbKLxLQc0ew4wWUcXQAt6zFpJC
+        X2b2z5UiXQAkEPO+WZ/A5k1c=
+X-Received: by 2002:a05:6830:1254:: with SMTP id s20mr8926217otp.314.1604251458348;
+        Sun, 01 Nov 2020 09:24:18 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzQkolyAC8MckoqHgNScKCXFlJJ5Cm2sr+AdV7ggKnHMboMeTp7z/vvKJ6QiYpG4hS1bmUcUw==
+X-Received: by 2002:a05:6830:1254:: with SMTP id s20mr8926198otp.314.1604251458172;
+        Sun, 01 Nov 2020 09:24:18 -0800 (PST)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id g3sm2941188oif.26.2020.11.01.09.24.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Nov 2020 09:24:17 -0800 (PST)
+From:   trix@redhat.com
+To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        spujar@nvidia.com
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
+Subject: [PATCH] ASoC: tegra: remove unneeded semicolon
+Date:   Sun,  1 Nov 2020 09:24:12 -0800
+Message-Id: <20201101172412.2306144-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 2, 2020 at 12:49 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 01.11.2020 18:44, Chanwoo Choi =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> OPP core will try to grab the clock reference for the table and it may
-> >> cause EPROBE_DEFER. Although, it shouldn't happen here because we have
-> >> devm_clk_get() before the get_opp_table(), hence seems the deferred
-> >> probe indeed shouldn't happen in this case.
-> > It is my missing point. If there, you're right.
-> > Could you provide the code point to check the clock reference on the OP=
-P core?
->
-> Please see it here:
->
-> https://elixir.bootlin.com/linux/v5.10-rc1/source/drivers/opp/core.c#L110=
-1
+From: Tom Rix <trix@redhat.com>
 
-Thanks. It seems that if device tree node contains the any node,
-it is not EPROBE_DEFER because of just using "clk_get(dev, NULL)".
+A semicolon is not needed after a switch statement.
 
-The patch[1] used the 'dev_err_probe' for getting the "emc" clock.
-Do you need to check it more?
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ sound/soc/tegra/tegra186_dspk.c | 6 +++---
+ sound/soc/tegra/tegra210_dmic.c | 6 +++---
+ sound/soc/tegra/tegra210_i2s.c  | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/commi=
-t/?h=3Ddevfreq-next&id=3D09d56d92ad25b58113f4ec677e9b1ac1e2c3072b
+diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
+index 0cbe31e2c7e9..7d9948fb2ca7 100644
+--- a/sound/soc/tegra/tegra186_dspk.c
++++ b/sound/soc/tegra/tegra186_dspk.c
+@@ -310,7 +310,7 @@ static bool tegra186_dspk_wr_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra186_dspk_rd_reg(struct device *dev, unsigned int reg)
+@@ -326,7 +326,7 @@ static bool tegra186_dspk_rd_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra186_dspk_volatile_reg(struct device *dev, unsigned int reg)
+@@ -339,7 +339,7 @@ static bool tegra186_dspk_volatile_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static const struct regmap_config tegra186_dspk_regmap = {
+diff --git a/sound/soc/tegra/tegra210_dmic.c b/sound/soc/tegra/tegra210_dmic.c
+index a661f40bc41c..ead2c99bf72e 100644
+--- a/sound/soc/tegra/tegra210_dmic.c
++++ b/sound/soc/tegra/tegra210_dmic.c
+@@ -322,7 +322,7 @@ static bool tegra210_dmic_wr_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra210_dmic_rd_reg(struct device *dev, unsigned int reg)
+@@ -338,7 +338,7 @@ static bool tegra210_dmic_rd_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra210_dmic_volatile_reg(struct device *dev, unsigned int reg)
+@@ -353,7 +353,7 @@ static bool tegra210_dmic_volatile_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static const struct regmap_config tegra210_dmic_regmap_config = {
+diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2s.c
+index a383bd5c51cd..ca31ec92e508 100644
+--- a/sound/soc/tegra/tegra210_i2s.c
++++ b/sound/soc/tegra/tegra210_i2s.c
+@@ -662,7 +662,7 @@ static bool tegra210_i2s_wr_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra210_i2s_rd_reg(struct device *dev, unsigned int reg)
+@@ -682,7 +682,7 @@ static bool tegra210_i2s_rd_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static bool tegra210_i2s_volatile_reg(struct device *dev, unsigned int reg)
+@@ -701,7 +701,7 @@ static bool tegra210_i2s_volatile_reg(struct device *dev, unsigned int reg)
+ 		return true;
+ 	default:
+ 		return false;
+-	};
++	}
+ }
+ 
+ static const struct regmap_config tegra210_i2s_regmap_config = {
+-- 
+2.18.1
 
-
---=20
-Best Regards,
-Chanwoo Choi
