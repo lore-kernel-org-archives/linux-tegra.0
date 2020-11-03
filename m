@@ -2,193 +2,196 @@ Return-Path: <SRS0=iIVP=EJ=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99939C388F7
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 11:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B60CC388F7
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 15:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C28C22264
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 11:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7C5223FD
+	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 15:29:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="faNEFoQG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cX7YnHDv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbgKCLz1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Nov 2020 06:55:27 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15840 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbgKCLz1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Nov 2020 06:55:27 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa145320001>; Tue, 03 Nov 2020 03:55:30 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Nov
- 2020 11:55:26 +0000
-Received: from localhost.localdomain (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 3 Nov 2020 11:55:24 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        id S1728217AbgKCP3O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 3 Nov 2020 10:29:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728072AbgKCP3N (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 3 Nov 2020 10:29:13 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC838C061A04
+        for <linux-tegra@vger.kernel.org>; Tue,  3 Nov 2020 07:29:11 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id a9so18972196wrg.12
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Nov 2020 07:29:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cinjSse47w4OyBjCwL2P/oafcagxHnLlboUEJDujNWw=;
+        b=cX7YnHDv9m5+T7PbYX1ejAYBuULrQQ+M0omEMTQnojpGH8v/C5HKpdzGwPJOa5ab2J
+         hWvr65vepL8wyiP+0aMOixJkRcMW5S6eaXcMWPrYmd/7G58lnJBRA7mZOEsNleDYa0yr
+         SKIlBUDn2JHHV9/9oFL2tnLHsBG8k26M+lqdFa2vY0c/HN4q7AYGC48aRoGa/vyC4lH/
+         my/WLOeYp1lwX1+QNh/x7yP9dEPhbwuo7fSZHgNeLSf8FfpoUnTAFo5BL3I2Y+E4p++O
+         Hbne+HYaqgTlebyKrpkPS6jDswYcHoysUa1ZTvtvRAVDOBwaryaj9SVgIWvC0yOjixW6
+         hI3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cinjSse47w4OyBjCwL2P/oafcagxHnLlboUEJDujNWw=;
+        b=nEmEr/p2ZKfWiMp0JZuGryD0ArQsDj1Ek2sJeKUMD45oR6vlNqu6UvLq8TDJZbcnYh
+         FYWXE/5TyUMI0SM/Zggh7At2Wozzw7bORcb0O3JXD6soLQfGF3tWWXlfM0zxOVHDKy1A
+         9kof5c39wRVnoxYZrW9NSYm7NXbxFX4qWZX++ooalqmE+BJhcRTn5EH1kHIEGznzNPpT
+         bds+wit6LRzPligbeaqFQ+x8lXUJI+9ZKDds78wXtb+B5ysideNaYLTU7eVD/qQKKGYR
+         HwcyPaQ6jrWS5CP+55CldaJW7YWS6hweecTKw/ZBsYXi0iFy7wSZcCpKxOC4KH0XiGUn
+         K3jA==
+X-Gm-Message-State: AOAM531MPeE1OwVhQh+DCK4gf5LvbVKmz//cMlO97zilOi36Lg652fRP
+        vXFT8J/GNgbosf+lq+T40ZYrXA==
+X-Google-Smtp-Source: ABdhPJyzlV0HXdTidCRBprYLkp0uWjD8RuYpiqDZS7BW//F1Q+dvuU4dB6/3Ff6PqbhKnABb0CWqEw==
+X-Received: by 2002:adf:c803:: with SMTP id d3mr11847040wrh.108.1604417350540;
+        Tue, 03 Nov 2020 07:29:10 -0800 (PST)
+Received: from dell.default ([91.110.221.242])
+        by smtp.gmail.com with ESMTPSA id j127sm3491779wma.31.2020.11.03.07.29.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 07:29:09 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        act <dmalek@jlc.net>, Andy Gross <agross@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Ben Dooks <ben@simtec.co.uk>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Cyril Chemparathy <cyril@ti.com>,
+        Dan Malek <dan@embeddedalley.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Roy Pledge <Roy.Pledge@nxp.com>,
+        Sandeep Nair <sandeep_n@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Scott Wood <scottwood@freescale.com>,
+        "Software, Inc" <source@mvista.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        "Sumit Gupta" <sumitg@nvidia.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] cpufreq: tegra186: Fix get frequency callback
-Date:   Tue, 3 Nov 2020 11:55:14 +0000
-Message-ID: <20201103115514.547047-1-jonathanh@nvidia.com>
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 00/25] Rid W=1 warnings in SoC
+Date:   Tue,  3 Nov 2020 15:28:13 +0000
+Message-Id: <20201103152838.1290217-1-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604404530; bh=Jgcrm1yKr/dhNXDY5sGl6ABti97/ySxjfHG1SGRLdws=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
-        b=faNEFoQGlub74+pHAeDnUNWAqr/EVl4Kbp5oEqncVqFjWKsu9gL6KgGgcKbLVsTQ0
-         Lrrxo+9TkrT1uAVTn26LVR4BGmzWzt+G6/zv40hoTze0MOIzT/VOUWBSIq2x9Fzy68
-         bGySCq5l7xTZ4j1ngB7+Kb8fWZF7FkrG7TQuKwS3j/jqPRmb0AuJELA7dY3x7pGFYH
-         YcAOFd0YPHXrXcAKNstzr5hxFO6pZMdulQnXrbI+5jKupSHHey0SOcsoZxHDrrC5k4
-         Ijw0/lVjMwfkuS0SlBlvAzXJqVgG+uy5SF5Fk7G565SqoC4j3ziisaHdhIuxSJnVLr
-         BalNuTaF5RQUw==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit b89c01c96051 ("cpufreq: tegra186: Fix initial frequency")
-implemented the CPUFREQ 'get' callback to determine the current
-operating frequency for each CPU. This implementation used a simple
-looked up to determine the current operating frequency. The problem
-with this is that frequency table for different Tegra186 devices may
-vary and so the default boot frequency for Tegra186 device may or may
-not be present in the frequency table. If the default boot frequency is
-not present in the frequency table, this causes the function
-tegra186_cpufreq_get() to return 0 and in turn causes cpufreq_online()
-to fail which prevents CPUFREQ from working.
+This set is part of a larger effort attempting to clean-up W=1
+kernel builds, which are currently overwhelmingly riddled with
+niggly little warnings.
 
-Fix this by always calculating the CPU frequency based upon the current
-'ndiv' setting for the CPU. Note that the CPU frequency for Tegra186 is
-calculated by reading the current 'ndiv' setting, multiplying by the
-CPU reference clock and dividing by a constant divisor.
+Lee Jones (25):
+  soc: bcm: brcmstb: pm: pm-arm: Provide prototype for
+    brcmstb_pm_s3_finish()
+  soc: qcom: qcom_aoss: Remove set but unused variable 'tlen'
+  soc: qcom: qcom_aoss: Add missing description for 'cooling_devs'
+  soc: fsl: dpio: qbman-portal: Fix a bunch of kernel-doc misdemeanours
+  soc: rockchip: io-domain: Remove incorrect and incomplete comment
+    header
+  soc: ti: knav_qmss_queue: Remove set but unchecked variable 'ret'
+  soc: ti: knav_qmss_queue: Fix a whole host of function documentation
+    issues
+  soc: ti: knav_dma: Fix a kernel function doc formatting issue
+  soc: ti: pm33xx: Remove set but unused variable 'ret'
+  soc: ti: wkup_m3_ipc: Document 'm3_ipc' parameter throughout
+  soc: fsl: qe: qe_common: Fix misnamed function attribute 'addr'
+  soc: qcom: qcom-geni-se: Fix misnamed function parameter 'rx_rfr'
+  soc: tegra: fuse: speedo-tegra124: Remove some set but unused
+    variables
+  soc: samsung: s3c-pm-check: Fix incorrectly named variable 'val'
+  soc: qcom: rpmh: Fix possible doc-rot in rpmh_write()'s header
+  soc: qcom: smem: Fix formatting and missing documentation issues
+  soc: qcom: smsm: Fix some kernel-doc formatting and naming problems
+  soc: qcom: wcnss_ctrl: Demote non-conformant struct header and fix
+    function headers
+  soc: qcom: smp2p: Remove unused struct attribute provide another
+  soc: qcom: llcc-qcom: Fix expected kernel-doc formatting
+  soc: qcom: rpmhpd: Provide some missing struct member descriptions
+  soc: qcom: kryo-l2-accessors: Fix misnaming of 'val'
+  soc: ti: k3-ringacc: Provide documentation for 'k3_ring's 'state'
+  soc: tegra: fuse: speedo-tegra210: Remove a group of set but unused
+    variables
+  soc: fsl: qbman: qman: Remove unused variable 'dequeue_wq'
 
-Fixes: b89c01c96051 ("cpufreq: tegra186: Fix initial frequency")
+ drivers/soc/bcm/brcmstb/pm/pm-arm.c      |  2 +
+ drivers/soc/fsl/dpio/qbman-portal.c      | 18 +++++--
+ drivers/soc/fsl/qbman/qman.c             |  8 +--
+ drivers/soc/fsl/qe/qe_common.c           |  2 +-
+ drivers/soc/qcom/kryo-l2-accessors.c     |  2 +-
+ drivers/soc/qcom/llcc-qcom.c             |  2 +-
+ drivers/soc/qcom/qcom-geni-se.c          |  5 +-
+ drivers/soc/qcom/qcom_aoss.c             |  4 +-
+ drivers/soc/qcom/rpmh.c                  |  2 +-
+ drivers/soc/qcom/rpmhpd.c                |  3 ++
+ drivers/soc/qcom/smem.c                  |  3 +-
+ drivers/soc/qcom/smp2p.c                 |  3 +-
+ drivers/soc/qcom/smsm.c                  |  4 +-
+ drivers/soc/qcom/wcnss_ctrl.c            |  8 +--
+ drivers/soc/rockchip/io-domain.c         |  3 --
+ drivers/soc/samsung/s3c-pm-check.c       |  2 +-
+ drivers/soc/tegra/fuse/speedo-tegra124.c |  7 ++-
+ drivers/soc/tegra/fuse/speedo-tegra210.c |  8 +--
+ drivers/soc/ti/k3-ringacc.c              |  1 +
+ drivers/soc/ti/knav_dma.c                |  2 +-
+ drivers/soc/ti/knav_qmss_queue.c         | 62 ++++++++++++------------
+ drivers/soc/ti/pm33xx.c                  |  4 +-
+ drivers/soc/ti/wkup_m3_ipc.c             |  8 ++-
+ 23 files changed, 86 insertions(+), 77 deletions(-)
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 33 +++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+Cc: act <dmalek@jlc.net>
+Cc: Andy Gross <agross@kernel.org>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Ben Dooks <ben@simtec.co.uk>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Cyril Chemparathy <cyril@ti.com>
+Cc: Dan Malek <dan@embeddedalley.com>
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: Li Yang <leoyang.li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Roy Pledge <Roy.Pledge@nxp.com>
+Cc: Sandeep Nair <sandeep_n@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Scott Wood <scottwood@freescale.com>
+Cc: "Software, Inc" <source@mvista.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Vitaly Bordug <vbordug@ru.mvista.com>
+Cc: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-=
-cpufreq.c
-index 4b4079f51559..7eb2c56c65de 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -42,6 +42,8 @@ static const struct tegra186_cpufreq_cluster_info tegra18=
-6_clusters[] =3D {
- struct tegra186_cpufreq_cluster {
- 	const struct tegra186_cpufreq_cluster_info *info;
- 	struct cpufreq_frequency_table *table;
-+	u32 ref_clk_khz;
-+	u32 div;
- };
-=20
- struct tegra186_cpufreq_data {
-@@ -94,7 +96,7 @@ static int tegra186_cpufreq_set_target(struct cpufreq_pol=
-icy *policy,
-=20
- static unsigned int tegra186_cpufreq_get(unsigned int cpu)
- {
--	struct cpufreq_frequency_table *tbl;
-+	struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
- 	struct cpufreq_policy *policy;
- 	void __iomem *edvd_reg;
- 	unsigned int i, freq =3D 0;
-@@ -104,17 +106,23 @@ static unsigned int tegra186_cpufreq_get(unsigned int=
- cpu)
- 	if (!policy)
- 		return 0;
-=20
--	tbl =3D policy->freq_table;
- 	edvd_reg =3D policy->driver_data;
- 	ndiv =3D readl(edvd_reg) & EDVD_CORE_VOLT_FREQ_F_MASK;
-=20
--	for (i =3D 0; tbl[i].frequency !=3D CPUFREQ_TABLE_END; i++) {
--		if ((tbl[i].driver_data & EDVD_CORE_VOLT_FREQ_F_MASK) =3D=3D ndiv) {
--			freq =3D tbl[i].frequency;
--			break;
-+	for (i =3D 0; i < data->num_clusters; i++) {
-+		struct tegra186_cpufreq_cluster *cluster =3D &data->clusters[i];
-+		int core;
-+
-+		for (core =3D 0; core < ARRAY_SIZE(cluster->info->cpus); core++) {
-+			if (cluster->info->cpus[core] !=3D policy->cpu)
-+				continue;
-+
-+			freq =3D (cluster->ref_clk_khz * ndiv) / cluster->div;
-+			goto out;
- 		}
- 	}
-=20
-+out:
- 	cpufreq_cpu_put(policy);
-=20
- 	return freq;
-@@ -133,7 +141,7 @@ static struct cpufreq_driver tegra186_cpufreq_driver =
-=3D {
-=20
- static struct cpufreq_frequency_table *init_vhint_table(
- 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
--	unsigned int cluster_id)
-+	struct tegra186_cpufreq_cluster *cluster)
- {
- 	struct cpufreq_frequency_table *table;
- 	struct mrq_cpu_vhint_request req;
-@@ -152,7 +160,7 @@ static struct cpufreq_frequency_table *init_vhint_table=
-(
-=20
- 	memset(&req, 0, sizeof(req));
- 	req.addr =3D phys;
--	req.cluster_id =3D cluster_id;
-+	req.cluster_id =3D cluster->info->bpmp_cluster_id;
-=20
- 	memset(&msg, 0, sizeof(msg));
- 	msg.mrq =3D MRQ_CPU_VHINT;
-@@ -185,6 +193,9 @@ static struct cpufreq_frequency_table *init_vhint_table=
-(
- 		goto free;
- 	}
-=20
-+	cluster->ref_clk_khz =3D data->ref_clk_hz / 1000;
-+	cluster->div =3D data->pdiv * data->mdiv;
-+
- 	for (i =3D data->vfloor, j =3D 0; i <=3D data->vceil; i++) {
- 		struct cpufreq_frequency_table *point;
- 		u16 ndiv =3D data->ndiv[i];
-@@ -202,8 +213,7 @@ static struct cpufreq_frequency_table *init_vhint_table=
-(
-=20
- 		point =3D &table[j++];
- 		point->driver_data =3D edvd_val;
--		point->frequency =3D data->ref_clk_hz * ndiv / data->pdiv /
--			data->mdiv / 1000;
-+		point->frequency =3D (cluster->ref_clk_khz * ndiv) / cluster->div;
- 	}
-=20
- 	table[j].frequency =3D CPUFREQ_TABLE_END;
-@@ -245,8 +255,7 @@ static int tegra186_cpufreq_probe(struct platform_devic=
-e *pdev)
- 		struct tegra186_cpufreq_cluster *cluster =3D &data->clusters[i];
-=20
- 		cluster->info =3D &tegra186_clusters[i];
--		cluster->table =3D init_vhint_table(
--			pdev, bpmp, cluster->info->bpmp_cluster_id);
-+		cluster->table =3D init_vhint_table(pdev, bpmp, cluster);
- 		if (IS_ERR(cluster->table)) {
- 			err =3D PTR_ERR(cluster->table);
- 			goto put_bpmp;
---=20
+-- 
 2.25.1
 
