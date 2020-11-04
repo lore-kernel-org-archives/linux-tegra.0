@@ -5,130 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CBDC388F7
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8C8C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11A842222C
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E9C2236F
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:48:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUYHWfpU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOZnFuQ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbgKDNoX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 08:44:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37646 "EHLO
+        id S1729833AbgKDNsY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 08:48:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbgKDNoW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 08:44:22 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F31C0613D3;
-        Wed,  4 Nov 2020 05:44:22 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id d24so22967660ljg.10;
-        Wed, 04 Nov 2020 05:44:22 -0800 (PST)
+        with ESMTP id S1729309AbgKDNsX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 08:48:23 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB18C0613D3;
+        Wed,  4 Nov 2020 05:48:23 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id o13so14715785ljj.11;
+        Wed, 04 Nov 2020 05:48:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lG8m8t2C1nVbYj88S+huwSckf3svcG0HOa4scIOwtCo=;
-        b=iUYHWfpU1L0CGH8EmSM+0BT/5Si5FL+ncB+hcQFEex4UbnogWuVlMYS/1PW9SjtDbQ
-         1f0WpK7FHbBDKD6vQXiK49W75jrYqjBTub520BSBEtUQMj/hdDD+MmLhnumdFjM5Sgtw
-         u7qo8Thulo9G5EMPCPJxsyW9ZZRzhTAzm+LEm0prgS/7gM1mastOGvrF2V276Oj+AfVP
-         GE5ETCVlhMgC4CUSKXq2Gmt5lBNf2cFFna9WK1hadwofOU+ohVfTZEL5PcmtOeYyLCn8
-         HMmk/4/0PnyTF0D6hZCWPAHz/W3PwnWsbhILkAd6uEhBb6CNvRImhvLPjH7D9hbWI7yU
-         A4vQ==
+        bh=Ytoc8gbQUDyOgaglB+32jBnVlyKYOz5e2vCwW8mLjjo=;
+        b=LOZnFuQ1B28S8e69LNKM/tEzTfNfu/ZOcuYxktkpMk0WVjlJMBHxC6tyTY4IzNwV8h
+         xMf+q/Rh77bRqfW3ityzbjpaxQSGi1s4iZ7m+sVhYe4w+qevk7w0bKcSVsCpcnbL7AQd
+         q14YA+ZtaKvQmuXZO5BQgxceCOacn0EojDRp4P8OmR+VqUWnm+AcnTO1LyitzeAJxPjP
+         5xY1U18OHP6/y6IGl3dBylmq87K0upzgK2p+Zf2bxQ7sxRlIH8Oi0rRD4kvLr6t8ijbG
+         aFhM9xIzTf61jLPEkkI7kQwHA2qDA6Cco+hJox0FLdL5178gKK1XtMeBivHZIWzsdpla
+         mzSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lG8m8t2C1nVbYj88S+huwSckf3svcG0HOa4scIOwtCo=;
-        b=gmFLET84ypxH5Pv20Rs4s823DLpbtShNfjgoefr5dSZvpw84XkN0yW45VforS7t4Ul
-         uff4/xWkeD0hvcQJTqvyoMxUf+RHQr9xpuF48uV/5g9nmj1WVMOm2vtfHIlpmH3IHOPO
-         Dq8Y8lIg5fohqM7p2OAy5x9mzxRP7S7SBtvYW5jgjTeEIFhEjtI6V+oXPiIxSRH9/VAe
-         pRMEmTenO8VnyVvtz8QPXAE62B5q++KZ03e3lincuG+soA8YcpMp8Zr9yc6ZvPyYDrQ9
-         ymTOa8Q6EJT5KY6W4gXrylfn4fPManYKqnieqZuoG2Cm6bhq03IqmZocFUCWznOhTNtB
-         IPJg==
-X-Gm-Message-State: AOAM530WHhvvVO6JufXoCeiIB/pmvovjKAW6ahM+wri3LVAld7HvOvwC
-        OK/YP+uOWZyYnqPl+p4+FHY=
-X-Google-Smtp-Source: ABdhPJxsgKjH0LL5sRzuD8Zd282iKCvLxxZR96OZRsJmrhz9DirmeE8AJF0UHrwhf5fMPwMQxAkdUA==
-X-Received: by 2002:a2e:87d2:: with SMTP id v18mr10046561ljj.371.1604497460963;
-        Wed, 04 Nov 2020 05:44:20 -0800 (PST)
+        bh=Ytoc8gbQUDyOgaglB+32jBnVlyKYOz5e2vCwW8mLjjo=;
+        b=hnK8811UrSp0bAE1MnukUouh6/bne+Vj1U1L6hXVVKNDiwMRruAhxfBCltVgAOpxTB
+         IIck2mK1PFwXwsQn/rV1kR/N0ZD9CF1EnYZYznTWLPhlQSnU4W6GTPSLzmNHlA+trIyi
+         OMaf7IjM2e7rcbbyo18RzD0afyV0T29s80x7JReQo5xZnxzC7cQBagpA4+0+lmacbUsd
+         sVgh8kVdwyDQv2L7DLZmZgz0k4GKaCZKocFhU8fiOq7INUp2VFA7DhP2UV0hRspo2cDT
+         LanKCQSh6MD5w4LVwB8R/dxlMeyVUf4oAaYf0lUp4ILDZdrayOYwIfAHDWdo9d7P8wv+
+         dYjg==
+X-Gm-Message-State: AOAM533GZoOYoL7ihO4FrrJMv7fJoJki0b2xwRY88jGwlw30cqo8ALQ3
+        9dFzTBhfPRPYyICPiGPWI0k=
+X-Google-Smtp-Source: ABdhPJyQSEp+WkiYOYwmRzA0uLKwghwnflPICJVu2nTr07SU14+W1Em1gKcDZIxxgKtGGoO1pTqi2g==
+X-Received: by 2002:a05:651c:1050:: with SMTP id x16mr11573542ljm.100.1604497701949;
+        Wed, 04 Nov 2020 05:48:21 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id c24sm521947ljj.33.2020.11.04.05.44.19
+        by smtp.gmail.com with ESMTPSA id r19sm407350lfi.286.2020.11.04.05.48.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 05:44:20 -0800 (PST)
+        Wed, 04 Nov 2020 05:48:21 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Zack Pearsall <zpearsall@yahoo.com>
-Cc:     linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3] mfd: tps65910: Correct power-off programming sequence
-Date:   Wed,  4 Nov 2020 16:44:08 +0300
-Message-Id: <20201104134408.19911-1-digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra30: Use 300MHz for video decoder by default
+Date:   Wed,  4 Nov 2020 16:48:10 +0300
+Message-Id: <20201104134810.21026-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch fixes system shutdown on a devices that use TPS65910 as a
-system's power controller. In accordance to the TPS65910 datasheet, the
-PMIC's state-machine transitions into the OFF state only when DEV_OFF
-bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
-otherwise PMIC won't get into a proper state on shutdown. Devices like
-Nexus 7 tablet and Ouya game console are now shutting down properly.
+The 600MHz is a too high clock rate for some SoC versions for the video
+decoder hardware and this may cause stability issues. Use 300MHz for the
+video decoder by default, which is supported by all hardware versions.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Zack Pearsall <zpearsall@yahoo.com>
+Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changelog:
-
-v3: - Removed the DEV_SLP_MASK clearing and adding clarifying comment to
-      the code about why clearing PWR_OFF bit needs to be done, which was
-      suggested by  Michał Mirosław in a review comment to v2.
-
-    - Added tested-by from Peter Geis who tested v3 on his Ouya game
-      console.
-
-v2: - Now using a single tps65910_reg_update_bits() instead of set+clear.
-      Thanks to Michał Mirosław for the suggestion.
-
- drivers/mfd/tps65910.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 11959021b50a..388214241558 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -436,12 +436,18 @@ static void tps65910_power_off(void)
- 
- 	tps65910 = dev_get_drvdata(&tps65910_i2c_client->dev);
- 
-+	/*
-+	 * Note that the PWR_OFF bit needs to be set separately, before
-+	 * transitioning to the OFF state. It enables the "sequential"
-+	 * power-off mode on TPS65911, it's a NO-OP on TPS65910.
-+	 */
- 	if (tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
- 			DEVCTRL_PWR_OFF_MASK) < 0)
- 		return;
- 
--	tps65910_reg_clear_bits(tps65910, TPS65910_DEVCTRL,
--			DEVCTRL_DEV_ON_MASK);
-+	tps65910_reg_update_bits(tps65910, TPS65910_DEVCTRL,
-+				 DEVCTRL_DEV_OFF_MASK | DEVCTRL_DEV_ON_MASK,
-+				 DEVCTRL_DEV_OFF_MASK);
- }
- 
- static int tps65910_i2c_probe(struct i2c_client *i2c,
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 37244a7e68c2..98923c4674bf 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1248,7 +1248,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
+-	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
 -- 
 2.27.0
 
