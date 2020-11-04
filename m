@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8FDC2D0A3
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E4CC4741F
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74B1F22280
+	by mail.kernel.org (Postfix) with ESMTP id B88DC223AB
 	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRKOU8vW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFmGr5jD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbgKDONI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1726849AbgKDONI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 4 Nov 2020 09:13:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbgKDONF (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 09:13:05 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2727C0613D3
-        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 06:13:04 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id d24so23073220ljg.10
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 06:13:04 -0800 (PST)
+        with ESMTP id S1729883AbgKDONG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 09:13:06 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29D4C061A4A
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 06:13:05 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id o13so14806804ljj.11
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 06:13:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Xlc0MWHt15HPSLrLzL3s9EyCUnRKIC0CHM1QmQg0a/E=;
-        b=BRKOU8vWfpOZyHqVJlMAa3rHVsBDXJaMUzpVjD9yMrEWRlFTMTjFfeDp0mP5SopyhN
-         hn0EOZFpzdlfUGfbJgzARVl/0BbjsKZaYzhe/nw9HoEyUJeu5GvHwKzd1PRkYfUPF0gp
-         lF5xwEKw/A1O0zOrkYlh+OEUfZdOkoOlLog7GDE5m04ytmCxQ/CYAHEQQnuUlY8P1Jhx
-         9zvemw/ll7ytZqG6dVxCIKk4jt/qSWH76MRYpvLxuyhCyRKNd+Ood75OC60OJpebyRxe
-         NT3ljeQ8XYuHBi/lhXpYZGY9FaK/15tw19Vu3xoUEdVX+72X+cybG8/IQtoHjXT4gMeF
-         M5Xg==
+        bh=k7gw6qW2lC2yTszXrzNJc/JVFfUwx/vfMuC7Ix7Oz4M=;
+        b=GFmGr5jDSACpN8oAnDARj7iSTEIOFtJ6B73rrbijL91JwnqNuaMGSfmisgGVyB5p4M
+         6wn97P9nWMJi6WXJ13H31hBM99sj6d2z4cprrZh0TcOQ834FHVBemckPW5G56rhBjO2o
+         qN/PK5CvNZq+VvKITZKKip20n71bZQvlcnEIZ2h+PY36hYAwMBlCd3D14Q97BP2c0KUu
+         J1Aqjcpn8okh5ZNtMw2wclmZNxnBIqZ/7tNrBZX5ErHBSNKtW12/p+bL0fHl6gu87mY8
+         j9jyGWB3lgdFZX80ERqbk7cSKrWz7kfdq+Y1T8fSJHJ97P1gq1gTMH8Bbb6zswAlCjUR
+         +btg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Xlc0MWHt15HPSLrLzL3s9EyCUnRKIC0CHM1QmQg0a/E=;
-        b=F+68XAJ2EpH2HhxUWDYmsj6pRA2exff/JyHx1PKAUYusgm2YLYKIGYnIzsbek1KZHE
-         3x5KsepVjL5sgGyy82M+sskiu+TFjOKXTqfyCKroNe1pakzCA9VEz1Q+D3fM36otrZHe
-         i1hoF/b6OlMtxj69Veffi82n1bGDVSyor/8lXClgmvIHhgueXmIJ78T48nva8IjdsJHq
-         HULTa9LKV3EiFzv5p38YBjn1mLIwHa7jR16Krl1YGwituAWYLizfwb0C4g09JWWJ95nr
-         EQfbEuCKEcLsxzszPY5oawzKcmeIvKK4dNz5+oHVW8DMcfkbyduOOLIVJ71RPmsKFZIe
-         /yMw==
-X-Gm-Message-State: AOAM532aiNyP/p+MUwaHYsCd5XrsRWluJoNy476j+hMbAiAWfIDrx1gg
-        T36n/WJWRNjPy9cZhD26YoM=
-X-Google-Smtp-Source: ABdhPJzCeTNHBR6t1XYHp7RLl4GctJAKhLggpCMKTbLqI7HjZEz7LVwzPGU+LQ+/SCI9MaCLC4mgOQ==
-X-Received: by 2002:a2e:87c6:: with SMTP id v6mr11256812ljj.233.1604499183354;
-        Wed, 04 Nov 2020 06:13:03 -0800 (PST)
+        bh=k7gw6qW2lC2yTszXrzNJc/JVFfUwx/vfMuC7Ix7Oz4M=;
+        b=MID/dWgg/Jkt7BJZVFBBp1awwz/lbvivgRYb1d/JYjvx7cCuaY6jNcXPTq9Ydlt8jP
+         8eMSNw13qyaDnHQDdSCY+ZdopJO62FKCRv5CJYwNi1eVMEG8ATn4wdxQN7WjZM9CCGpU
+         ke0y3ojavFdMGsF4zwPzfg97qJ0KXacaLoiOHvZeGtgKMDPbXiVg4SkKlSoXbJZVQ28P
+         HfdWobbZa7c7jawdp9FWaKan2dYrnH6SCWBkWLUfkdsVDL8EmaD2sPAUMLfzSKaXuM8T
+         eV5ya2Zyji6kOrRReFngPcz5zErhUtAawUUURx20U+SlcDLjV3Nb74zrrrwU79NwtaHb
+         dqOg==
+X-Gm-Message-State: AOAM533JHwQOOEKxkBTejdEvy6pXdJtGE3sTi/hwIC30l3iXf4K0Fssj
+        d9+3A3d+Mp63BRMg6cz8+3s=
+X-Google-Smtp-Source: ABdhPJyXoOkJBOJqdoJJNg6hl2Q/iHHxnP1HsU458G0D3l9/G4LVPy4LfZLgvKeJSu9xXsftGtAG0A==
+X-Received: by 2002:a2e:8917:: with SMTP id d23mr10290872lji.66.1604499184281;
+        Wed, 04 Nov 2020 06:13:04 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id z10sm411853lfi.76.2020.11.04.06.13.02
+        by smtp.gmail.com with ESMTPSA id z10sm411853lfi.76.2020.11.04.06.13.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 06:13:02 -0800 (PST)
+        Wed, 04 Nov 2020 06:13:03 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org
-Subject: [PATCH v2 2/8] ARM: tegra: acer-a500: Add power-supply to lvds-encoder node
-Date:   Wed,  4 Nov 2020 17:12:45 +0300
-Message-Id: <20201104141251.25834-3-digetx@gmail.com>
+Subject: [PATCH v2 3/8] ARM: tegra: nexus7: Correct thermal zone names
+Date:   Wed,  4 Nov 2020 17:12:46 +0300
+Message-Id: <20201104141251.25834-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104141251.25834-1-digetx@gmail.com>
 References: <20201104141251.25834-1-digetx@gmail.com>
@@ -74,26 +74,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The lvds-encoder binding now supports power-supply property, let's specify
-it in the device-tree for completeness.
+Rename thermal zones in order fix dt_binding_check warning telling that
+names do not match the expected pattern.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 8e3e79b734b0..09329cb4993a 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -950,6 +950,7 @@ lvds-encoder {
- 		compatible = "ti,sn75lvds83", "lvds-encoder";
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index 2b405872ad2d..543c52cd8260 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -1267,14 +1267,14 @@ sound {
+ 	};
  
- 		powerdown-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_LOW>;
-+		power-supply = <&vdd_3v3_sys>;
+ 	thermal-zones {
+-		nct72-local {
++		skin-thermal {
+ 			polling-delay-passive = <1000>; /* milliseconds */
+ 			polling-delay = <0>; /* milliseconds */
  
- 		ports {
- 			#address-cells = <1>;
+ 			thermal-sensors = <&nct72 0>;
+ 		};
+ 
+-		nct72-remote {
++		cpu-thermal {
+ 			polling-delay-passive = <1000>; /* milliseconds */
+ 			polling-delay = <5000>; /* milliseconds */
+ 
 -- 
 2.27.0
 
