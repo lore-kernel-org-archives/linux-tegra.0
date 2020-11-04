@@ -2,110 +2,283 @@ Return-Path: <SRS0=aGvU=EK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8CDC388F9
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 15:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65353C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 15:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2F3E20739
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 15:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE1C620759
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 15:30:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClLCMlLV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bXlLO0NX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbgKDPDM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 10:03:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50824 "EHLO
+        id S1730074AbgKDPak (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 10:30:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbgKDPDM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 10:03:12 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619F0C0613D3;
-        Wed,  4 Nov 2020 07:03:10 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id l28so27494957lfp.10;
-        Wed, 04 Nov 2020 07:03:10 -0800 (PST)
+        with ESMTP id S1726919AbgKDPaj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 10:30:39 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22801C0613D4
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 07:30:39 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id e27so4804617lfn.7
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 07:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gjWP17IJO7VBo6R8hUOdy+1jqM/u8FrFgqOf3bq/Ssc=;
-        b=ClLCMlLV4agLsqlq9876Lswawyy0LlctbGl5UdQggm7P9tz5gve6ro4bS1SDN2l36s
-         sHb/O3E7JituQ67Abmigh1bMcPadmnmJlwhAUA6+bySaX4JT7yrzitDwoGQoSOm24RvH
-         1lVlOsBytBXO64sZ5iPAjiM+WdI3/XYFHk5/pTK6+ta4Wyc0EJCGx4V0Xi3WWz+vKr6e
-         aeEMMiog7uZjC3fQlgQrpEbtxa9lzaP0KqNnwHOq5KPQK9XnWQ+IBnhy3ySO6sMOdmE5
-         KzDAx3mNwI2+szB0xE0o/ycLY3xH3xkNUM+LITJKQOFOxveHApifVu9ABoWJLs3ooC2L
-         IJSw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YNFDsq3jdFeZpaeOwpSCxm4JgaISSNLS4vXfstt0P40=;
+        b=bXlLO0NXI0YW5FyhJt/6D0zer1CIrqMjMu1qSTvBRQ/uDJ+2lMUgQsA4BFHEhkOO2W
+         RRCIovq5cXE3g5BqvsSrpI9CUNFCUvHYNohtZkxO25RV9OkbY9Nw6NKo6bR6lWUDD5c/
+         VLiolvagyMsZtO2/EjBgGw0yXGONzErKjmS7F4mHPDUDdEBmK12oNWiVaCc5mTu+OCx1
+         Q7tc2DEsX8GKOQbdrr7sCCwcWs4ES0I+OMBkxxG3krZD8RIFrCMW7RUI57yS8gk4dAPw
+         tMPwnjg2sphdarBSo29xSHENM8tBeldgnIpre+heXEnOpf32lGe+ILByA+yoHtnRPDA5
+         nVsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gjWP17IJO7VBo6R8hUOdy+1jqM/u8FrFgqOf3bq/Ssc=;
-        b=iSp8nl+xVsCbN73vCj0xxgybrLMrDzEN0UVA9jOeWyivF5It9HMNFOF+rOh99p2A0L
-         i7z58iUwVskvqZIq6mDR4bHmrCwze5TltjAYqvCnP6xKu0uARF8pVsLPIN3OvHcCYoiT
-         +TO1cck+7MfO2+fEExYLPJyvWmxpBwTHxLHG3/IlrDfYRf0H2ZxZTxdpflxi59g3+1hE
-         4EBfXuAPCsEovKA1E+Vgdzp71SjhPab2uPt45fFIeHp5hgn+OnMEKur4AAqeIMU6/uB6
-         HR/MIY0EUdACGrfXAZP+ZXoWrvEFSPS4cXORiAQM4FJOUddpgelWdEBAQRXJHyeNmJfP
-         DNuQ==
-X-Gm-Message-State: AOAM53333AvI7O167i5PJo7PoxXmT8a0gwUsy+pLDb+1jq0i8vhPsKDb
-        bmTdYcVSSlg9aXoiw0nKPUe+sa7vTWc=
-X-Google-Smtp-Source: ABdhPJwJ8A3eIiAPZEhfRhohkACkpIWiuyPBbu0ksy9XDFnhv9iszkLTTjI1rmMULXuzlc0ICQ3txw==
-X-Received: by 2002:ac2:59de:: with SMTP id x30mr9218249lfn.19.1604502188732;
-        Wed, 04 Nov 2020 07:03:08 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.googlemail.com with ESMTPSA id d26sm541500ljj.102.2020.11.04.07.03.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2020 07:03:08 -0800 (PST)
-Subject: Re: [PATCH v1 2/2] gpio: tegra: Use raw_spinlock
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>, linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20201104132624.17168-1-digetx@gmail.com>
- <20201104132624.17168-2-digetx@gmail.com>
- <CAHp75VeJrQCxaCR+6u79=k=EP7y=LpEsytp6MWQ+UGz+oFXP6A@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <274bca60-6a8f-773b-aff1-2a897376a6b1@gmail.com>
-Date:   Wed, 4 Nov 2020 18:03:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        bh=YNFDsq3jdFeZpaeOwpSCxm4JgaISSNLS4vXfstt0P40=;
+        b=XBwGQDTZtCXahWY+5sHF/RYWB2laAzzUNGkiVN12+EhJQeE4nQdhxg8nGbqOiozPq8
+         C0jzPzCV9Mas1Mty8/vZi0n/KkhNs31EoNll2Yv1AP3ND+6h1dQwVVy6/XLr4uJYM1M+
+         PI/pfd9guO8G6TsdrCw2ZzPsc5kUHVebIdWX83IzzkVUOgfiajcdzjuusoBOQXv02hZJ
+         GECdMxNe0PKXUcuAnu4K5qxweDrWYQ054s6n7eudrDo+OkyuK5pTyYuTAQn5G/c7gBHm
+         Bl9dI1JCTLZ9aBbCXwAOuCH3dNI7xAiZLsnOuhaVWTgyeVkcX22NTm1mIXnZJFGBU2aT
+         1ncA==
+X-Gm-Message-State: AOAM532ZAOW8ftIPAuY7fLl64Zwuj78QbxvYqnFNWPZIdbSshasEJGY9
+        g5+LkaTwrGASsXVNwXFd30lBug==
+X-Google-Smtp-Source: ABdhPJxXz5qmnMaPo34MezQWw7phiLpCq1thIFEfq4Xw4KAApl5oyPHGgPVnj4QleHnf3fI/M9Ry/A==
+X-Received: by 2002:a05:6512:47b:: with SMTP id x27mr10120260lfd.157.1604503837512;
+        Wed, 04 Nov 2020 07:30:37 -0800 (PST)
+Received: from localhost.bredbandsbolaget (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
+        by smtp.gmail.com with ESMTPSA id c131sm440453lfg.110.2020.11.04.07.30.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 07:30:36 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH 1/3 v2] Input: atmel_mxt_ts - Fix up inverted RESET handler
+Date:   Wed,  4 Nov 2020 16:30:30 +0100
+Message-Id: <20201104153032.1387747-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeJrQCxaCR+6u79=k=EP7y=LpEsytp6MWQ+UGz+oFXP6A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-04.11.2020 17:47, Andy Shevchenko пишет:
-> On Wed, Nov 4, 2020 at 3:27 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> Use raw_spinlock in order to fix spurious messages about invalid context
->> when spinlock debugging is enabled. This happens because there is a legit
->> nested raw_spinlock->spinlock locking which debug code can't recognize and
->> handle.
-> 
-> This sounds like papering over a problem that exists somewhere else.
-> 
-> What I would rather make as a selling point is that raw spin locks are
-> necessary to be in the RT kernel for IRQ chips.
+This driver uses GPIO descriptors to drive the touchscreen
+RESET line. In the existing device trees this has in
+conflict with intution been flagged as GPIO_ACTIVE_HIGH
+and the driver then applies the reverse action by
+driving the line low (setting to 0) to enter
+reset state and driving the line high (setting to 1) to
+get out of reset state.
 
-This should be a well-known problem because other GPIO drivers also have
-it.
+The correct way to handle active low GPIO lines is to
+provide the GPIO_ACTIVE_LOW in the device tree (thus
+properly describing the hardware) and letting the GPIO
+framework invert the assertion (driving high) to a low
+level and vice versa.
 
-For example this one:
+This is considered a bug since the device trees are
+incorrectly mis-specifying the line as active high.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20201104&id=023892ec80f0efcffe22045e92bb89f3f1480f2d
+Fix the driver and all device trees specifying a reset
+line.
 
-Although, looking at it again, I think there is no real need to change
-the dbc_lock since it doesn't relate to the IRQ. Perhaps this could be
-improved in a v2.
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- New patch fixing this confusion before adding the
+  new YAML bindings.
+- CC some misc maintainers and mailing lists that should
+  be aware that we do this change.
+---
+ arch/arm/boot/dts/imx53-ppd.dts                 | 2 +-
+ arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts    | 2 +-
+ arch/arm/boot/dts/imx6q-apalis-eval.dts         | 2 +-
+ arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts   | 2 +-
+ arch/arm/boot/dts/imx6q-apalis-ixora.dts        | 2 +-
+ arch/arm/boot/dts/imx7-colibri-aster.dtsi       | 2 +-
+ arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi     | 2 +-
+ arch/arm/boot/dts/motorola-mapphone-common.dtsi | 2 +-
+ arch/arm/boot/dts/s5pv210-aries.dtsi            | 2 +-
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c        | 6 ++++--
+ 11 files changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+index f7dcdf96e5c0..8f4a63ea912e 100644
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -589,7 +589,7 @@ &i2c2 {
+ 
+ 	touchscreen@4b {
+ 		compatible = "atmel,maxtouch";
+-		reset-gpio = <&gpio5 19 GPIO_ACTIVE_HIGH>;
++		reset-gpio = <&gpio5 19 GPIO_ACTIVE_LOW>;
+ 		reg = <0x4b>;
+ 		interrupt-parent = <&gpio5>;
+ 		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
+diff --git a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
+index 65359aece950..7da74e6f46d9 100644
+--- a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
+@@ -143,7 +143,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio1>;
+ 		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
+-		reset-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;	/* SODIMM 30 */
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/imx6q-apalis-eval.dts
+index fab83abb6466..a0683b4aeca1 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
+@@ -140,7 +140,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
+-		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
+index 1614b1ae501d..86e84781cf5d 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
+@@ -145,7 +145,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
+-		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora.dts b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
+index fa9f98dd15ac..62e72773e53b 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-ixora.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
+@@ -144,7 +144,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
+-		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/imx7-colibri-aster.dtsi b/arch/arm/boot/dts/imx7-colibri-aster.dtsi
+index 9fa701bec2ec..139188eb9f40 100644
+--- a/arch/arm/boot/dts/imx7-colibri-aster.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-aster.dtsi
+@@ -99,7 +99,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <15 IRQ_TYPE_EDGE_FALLING>;	/* SODIMM 107 */
+-		reset-gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>;	/* SODIMM 106 */
++		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>;	/* SODIMM 106 */
+ 	};
+ 
+ 	/* M41T0M6 real time clock on carrier board */
+diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+index 97601375f264..3caf450735d7 100644
+--- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+@@ -124,7 +124,7 @@ touchscreen@4a {
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpio1>;
+ 		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
+-		reset-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
++		reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;	/* SODIMM 30 */
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/motorola-mapphone-common.dtsi b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
+index d5ded4f794df..5f8f77cfbe59 100644
+--- a/arch/arm/boot/dts/motorola-mapphone-common.dtsi
++++ b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
+@@ -430,7 +430,7 @@ touchscreen@4a {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&touchscreen_pins>;
+ 
+-		reset-gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>; /* gpio173 */
++		reset-gpios = <&gpio6 13 GPIO_ACTIVE_LOW>; /* gpio173 */
+ 
+ 		/* gpio_183 with sys_nirq2 pad as wakeup */
+ 		interrupts-extended = <&gpio6 23 IRQ_TYPE_LEVEL_LOW>,
+diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+index bd4450dbdcb6..4da33d0f2748 100644
+--- a/arch/arm/boot/dts/s5pv210-aries.dtsi
++++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+@@ -632,7 +632,7 @@ touchscreen@4a {
+ 		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ts_irq>;
+-		reset-gpios = <&gpj1 3 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpj1 3 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index a0b829738e8f..10794a870776 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -446,7 +446,7 @@ touchscreen@4c {
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(V, 6) IRQ_TYPE_LEVEL_LOW>;
+ 
+-			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_HIGH>;
++			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_LOW>;
+ 
+ 			avdd-supply = <&vdd_3v3_sys>;
+ 			vdd-supply  = <&vdd_3v3_sys>;
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 98f17fa3a892..ef7915400c9f 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3134,8 +3134,9 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (error)
+ 		return error;
+ 
++	/* Request the RESET line as asserted so we go into reset */
+ 	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
+-						   "reset", GPIOD_OUT_LOW);
++						   "reset", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(data->reset_gpio)) {
+ 		error = PTR_ERR(data->reset_gpio);
+ 		dev_err(&client->dev, "Failed to get reset gpio: %d\n", error);
+@@ -3153,8 +3154,9 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	disable_irq(client->irq);
+ 
+ 	if (data->reset_gpio) {
++		/* Wait a while and then de-assert the RESET GPIO line */
+ 		msleep(MXT_RESET_GPIO_TIME);
+-		gpiod_set_value(data->reset_gpio, 1);
++		gpiod_set_value(data->reset_gpio, 0);
+ 		msleep(MXT_RESET_INVALID_CHG);
+ 	}
+ 
+-- 
+2.26.2
+
