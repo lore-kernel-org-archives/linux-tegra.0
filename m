@@ -2,94 +2,92 @@ Return-Path: <SRS0=aGvU=EK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D64C5517A
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E035C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A91202222C
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8A720786
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:23:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="chFo0XBA"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GlEKN/B+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgKDJE0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 04:04:26 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3931 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbgKDJDq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 04:03:46 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa26e740000>; Wed, 04 Nov 2020 01:03:48 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Nov
- 2020 09:03:45 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 4 Nov 2020 09:03:45 +0000
+        id S1726539AbgKDJXl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 04:23:41 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15071 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbgKDJXk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 04:23:40 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa273200000>; Wed, 04 Nov 2020 01:23:44 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Nov
+ 2020 09:23:40 +0000
+Received: from localhost.localdomain (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 4 Nov 2020 09:23:38 +0000
 From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 000/125] 4.14.204-rc1 review
-In-Reply-To: <20201103203156.372184213@linuxfoundation.org>
-References: <20201103203156.372184213@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2] drm/tegra: sor: Don't warn on probe deferral
+Date:   Wed, 4 Nov 2020 09:23:28 +0000
+Message-ID: <20201104092328.659169-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Message-ID: <38cf8c97840f4fc1a299512a0ba65f1d@HQMAIL107.nvidia.com>
-Date:   Wed, 4 Nov 2020 09:03:45 +0000
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604480628; bh=uqyk5EsAm3JS+SAUJkYeBNbkFjqvqgLZzLQWHe1FHEg=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=chFo0XBA+QZr5Rb+nMSf9wOdCn/9AEmpVVEgg/RmC09rU1Jf0iXjSzd4vj3n+BUJ1
-         WCk1uYmKb8ImXFxeC5mgGAL4OZjjuYHw9ea8Vf9jmK2UGSYCt4no1sp8sgL9RyG+DV
-         PbE4tJBnuiHtBPfD3+07OsdCHBkfgbNd2BLxlQNbhYF4HusmA0eR2a5rT6UaKCMPpS
-         OCaaVvOhorzwZlR2EGJBrY5wfS3WwskcjtP3sNWPPEZ12Fe2wQV32vIXKI1tbKQBgM
-         srb1SqXX7x0CgrJHdmThvymeqa9zDCqIXoqG9aa0fyYYApVTyB9ijJ2tBf7kFkVfXs
-         l+0CcwxafEvDw==
+        t=1604481824; bh=r60uHgnZqlr9l6QYDsoSG53LtdJOyJ+klHDwosPcDnQ=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=GlEKN/B+1SqetmqM+bk/JLQWvScRc/xe4GcBdq35R+5RKQctlWQa3kKJ8BcJGZi9U
+         PAdDUSKwAXN09wj2jP0qiK7+iuF92vBrfis09Nj86KunUfpDvfjj7ybJuHhvTPpdrY
+         wqyC+Gg/3jT3d7DV370Lvwik8PcyvuCV8t+MckHS4sbNswr7Eib9q9O8+ZIWaGJHxF
+         j1w+llMf2vkRa55dop2gMa0VH0Swu6Ixb+JPObVPyUS0YrqoXcdxWOrZVxERMY5TTW
+         MGUXGlj+73cDa8OdRBuWxdNmDAlrZ8EuBCWKpp6/uuJhoOkomDnJTcyGbCv9LfWj6f
+         cl5MQY0IwhUEw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 03 Nov 2020 21:36:17 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.204 release.
-> There are 125 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 05 Nov 2020 20:29:58 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.204-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Deferred probe is an expected return value for tegra_output_probe().
+Given that the driver deals with it properly, there's no need to output
+a warning that may potentially confuse users.
 
-All tests passing for Tegra ...
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    10 boots:	10 pass, 0 fail
-    16 tests:	16 pass, 0 fail
+Changes since V1:
+- This time, I actually validated it!
 
-Linux version:	4.14.204-rc1-g8c25e7a92b2f
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+ drivers/gpu/drm/tegra/sor.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index e88a17c2937f..898a80ca37fa 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3764,10 +3764,9 @@ static int tegra_sor_probe(struct platform_device *p=
+dev)
+ 		return err;
+=20
+ 	err =3D tegra_output_probe(&sor->output);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to probe output: %d\n", err);
+-		return err;
+-	}
++	if (err < 0)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to probe output: %d\n", err);
+=20
+ 	if (sor->ops && sor->ops->probe) {
+ 		err =3D sor->ops->probe(sor);
+--=20
+2.25.1
 
-Jon
