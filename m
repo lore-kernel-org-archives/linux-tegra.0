@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43ACC388F9
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627E0C4742C
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED81206DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 124D8206CA
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEbFYKMc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3LKe/mp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731467AbgKDQtp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:49:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39720 "EHLO
+        id S1731498AbgKDQtv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 11:49:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731442AbgKDQtl (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:41 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C98C0613D3;
-        Wed,  4 Nov 2020 08:49:41 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id l10so2704107lji.4;
-        Wed, 04 Nov 2020 08:49:41 -0800 (PST)
+        with ESMTP id S1731493AbgKDQtu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:50 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF12C0613D4;
+        Wed,  4 Nov 2020 08:49:49 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id y16so23729252ljk.1;
+        Wed, 04 Nov 2020 08:49:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0FVv3BbkAu5vijvZy0/g8D/gSJwLwAaxtQyTiLpi4B8=;
-        b=DEbFYKMcdoH48FN2/uyXUSKvK0hCwgs9jDu+ko+KosDrC62VOnUtAL/3lEG+UwTtTP
-         CRRI84LwRW1IqzJ1qVLNHGzelsTrjKI13WiIYf0t9MJXDrgYs+LdiblQYIbQ5YiaSa78
-         R/fC75sA6xgcPx0AjKdHm+/jXFgBrxjsxXQocUq38LrRsEDQaMN2eRB1gAr9bHzI0ye6
-         p4yCRU+itdACg1YMCB4JYW0hYdlNm2I0VbGJUr1Se3mSy+LasQ9xc0LG1Mnl/knF9Xkh
-         nGf7OUjL1fNakCeZSqPOavJMScyiXtPR9huMzU6AmR+yQZlDnbSbYeJgptPGZQR5GjT5
-         mz5g==
+        bh=d/Sk3dwc3ZzPQh0+4njd7Ejlh1IFm+rB1ccMwqr+vGE=;
+        b=l3LKe/mpPu0S8/dCOq6M2kz5lSPjJIkDiZkJ392mXO0421xd0wR0g+uOXZu3Dp6GNh
+         tig0xwfVmcWuRwSddNabK0tKmD9eiUiHmMnpBBpYyQsiolkHs6ybryKNoGIVmvUoj6mT
+         ZoVdAYiceuqcnDB8+mK/Y52+5BOgvmMeR8RuFYe5GfwIbOlNfG7+BJWLe6WZpsli+6Pf
+         JdpL/bqxj2ePobj0I6x+B4d6skuRAUZdvSHHxJhupeFc3dDdE3n0DFN/kYXJWmBqH0GV
+         6PBYnodpQBz72zJUvr33uIEYqRK5w81me4rBiefPXZLOBAHDnuZCa6+wdwuq0NWJzPtm
+         LWEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0FVv3BbkAu5vijvZy0/g8D/gSJwLwAaxtQyTiLpi4B8=;
-        b=LrDjb4Ac/+OkPmrIjj7rx3Bp59MUuXgH+9Iu3F0CMOCKY9VN54nDuISEmrscV2rpGt
-         WPw4uvVdYMRhHAJVq+F8h6QvgwFGLWvMR6J78TsIAZk32fZ/sZvtn/0iZvtPvWGg6e8c
-         5z9WJcbAD5U3+9Z9CIJaC7q05jh/eghleHmGSDLUfPp3Y/XUnfBV8RoibZEpkJOjgwrT
-         j1N5S6F+Xd0HMvvVLvJ5TPmv7txdKpZvwOoAgyefyJs3jAffEQPng93B49OSTyHKwtC5
-         NfMsGpXtRjRxvClJBZKoPTL4HUiikwMM4LJnEpKSvaYDq2ixTluLhCQ9hgq+ZxyMxOXl
-         CHTg==
-X-Gm-Message-State: AOAM533QBGIfomeHgoyEugI8xw0VS+tGKuVxA/NKCq7+XJroQVX/vDD7
-        iBsoBqoBcSIzMQrpMh862/U=
-X-Google-Smtp-Source: ABdhPJwyAlb0a8HWHX8gVPMOoMubt/guWwT7XX6botKnEiM48IOWNSbdR9Xn4p979LWrEeFoDHl99w==
-X-Received: by 2002:a2e:580a:: with SMTP id m10mr2371255ljb.167.1604508579935;
-        Wed, 04 Nov 2020 08:49:39 -0800 (PST)
+        bh=d/Sk3dwc3ZzPQh0+4njd7Ejlh1IFm+rB1ccMwqr+vGE=;
+        b=qKfTEtsSWSrWgctAWYgOXQ4Jyjah02Nlt4J54rryEd/wAXEM+UYAw2RlsaIugtEbWV
+         CPHSeTaek1Mmjt9PyMO0ImsHrrZGciSb2a7F88XoSyz6ie3fTlh4e9yAXsBg3O5Cmzxz
+         CBIa9/LNz5PQn8LKLncZawHivQt0sWB+ADyClsj4jL8rkzJhSZ1ma6nHmkhd7yx7ITuK
+         ziKT/c5sr0tfmNOBm8vPhONKwz5ER1EQDjqhT6z0eWWHtWW+lro6n00Pk6IVCrGn/KOY
+         yxGC5TfXsjirY+a61vk9PIZv7PCckoHuS2kpZkva65lbvBZ9vt8YvmNEezIQvzL0TC6F
+         npTQ==
+X-Gm-Message-State: AOAM530IG87kQ5oJPmWL0til37cryXF8AgJthnZZjK/coHApI+w4su8v
+        fv2CPrNJ21WKSa/Ww9IWqsI=
+X-Google-Smtp-Source: ABdhPJzOM97kyPaLdS5FBsoSI5pNCOmFXgHHRAlsYMvgYsazvVkHm7oOeCMGO/mgd30CUSSL1TDgdg==
+X-Received: by 2002:a2e:3a08:: with SMTP id h8mr11610597lja.125.1604508588138;
+        Wed, 04 Nov 2020 08:49:48 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.38
+        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 08:49:39 -0800 (PST)
+        Wed, 04 Nov 2020 08:49:47 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v7 08/47] dt-bindings: memory: tegra20: emc: Document OPP table and voltage regulator
-Date:   Wed,  4 Nov 2020 19:48:44 +0300
-Message-Id: <20201104164923.21238-9-digetx@gmail.com>
+Subject: [PATCH v7 15/47] dt-bindings: tegra30-actmon: Document OPP and interconnect properties
+Date:   Wed,  4 Nov 2020 19:48:51 +0300
+Message-Id: <20201104164923.21238-16-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104164923.21238-1-digetx@gmail.com>
 References: <20201104164923.21238-1-digetx@gmail.com>
@@ -89,57 +89,61 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The SoC core voltage can't be changed without taking into account the
-clock rate of External Memory Controller. Document OPP table that will
-be used for dynamic voltage frequency scaling, taking into account EMC
-voltage requirement. Document optional core voltage regulator, which is
-optional because some boards may have a fixed core regulator and still
-frequency scaling may be desired to have.
+Document EMC DFS OPP table and interconnect paths that will be used
+for scaling of system's memory bandwidth based on memory utilization
+statistics. Previously ACTMON was supposed to drive EMC clock rate
+directly, but now it should do it using interconnect framework in order
+to support shared voltage scaling in addition to the frequency scaling.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../memory-controllers/nvidia,tegra20-emc.txt    | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../arm/tegra/nvidia,tegra30-actmon.txt       | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-index 82bc5b2ae7e5..67ac8d1297da 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-@@ -14,11 +14,25 @@ Properties:
- - clocks : Should contain EMC clock.
- - nvidia,memory-controller : Phandle of the Memory Controller node.
- - #interconnect-cells : Should be 0.
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
+index ea670a5d7ee3..897eedfa2bc8 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
+@@ -18,8 +18,30 @@ clock-names. See ../../clock/clock-bindings.txt for details.
+ ../../reset/reset.txt for details.
+ - reset-names: Must include the following entries:
+   - actmon
 +- operating-points-v2: See ../bindings/opp/opp.txt for details.
++- interconnects: Should contain entries for memory clients sitting on
++                 MC->EMC memory interconnect path.
++- interconnect-names: Should include name of the interconnect path for each
++                      interconnect entry. Consult TRM documentation for
++                      information about available memory clients, see MEMORY
++                      CONTROLLER section.
 +
-+Optional properties:
-+- core-supply: Phandle of voltage regulator of the SoC "core" power domain.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
++For each opp entry in 'operating-points-v2' table:
++- opp-supported-hw: bitfield indicating SoC speedo ID mask
++- opp-peak-kBps: peak bandwidth of the memory channel
  
  Example:
- 
-+	opp_table: opp-table {
++	dfs_opp_table: opp-table {
 +		compatible = "operating-points-v2";
 +
-+		opp@36000000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <36000000>;
++		opp@12750000 {
++			opp-hz = /bits/ 64 <12750000>;
++			opp-supported-hw = <0x000F>;
++			opp-peak-kBps = <51000>;
 +		};
 +		...
 +	};
 +
- 	memory-controller@7000f400 {
- 		#address-cells = < 1 >;
- 		#size-cells = < 0 >;
-@@ -28,6 +42,8 @@ Example:
- 		interrupts = <0 78 0x04>;
- 		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 		nvidia,memory-controller = <&mc>;
-+		core-supply = <&core_vdd_reg>;
-+		operating-points-v2 = <&opp_table>;
- 	}
- 
- 
+ 	actmon@6000c800 {
+ 		compatible = "nvidia,tegra124-actmon";
+ 		reg = <0x0 0x6000c800 0x0 0x400>;
+@@ -29,4 +51,7 @@ Example:
+ 		clock-names = "actmon", "emc";
+ 		resets = <&tegra_car 119>;
+ 		reset-names = "actmon";
++		operating-points-v2 = <&dfs_opp_table>;
++		interconnects = <&mc TEGRA124_MC_MPCORER &emc>;
++		interconnect-names = "cpu";
+ 	};
 -- 
 2.27.0
 
