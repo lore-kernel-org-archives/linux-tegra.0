@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9EAC388F9
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA9AC2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73C462080D
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94E41206FA
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVcD04CQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0gsx/WO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbgKDQtx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:49:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
+        id S1731505AbgKDQtw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 11:49:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731326AbgKDQtw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:52 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFBEC0613D3;
-        Wed,  4 Nov 2020 08:49:52 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id p15so23744534ljj.8;
-        Wed, 04 Nov 2020 08:49:52 -0800 (PST)
+        with ESMTP id S1731490AbgKDQtt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:49 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A8EC0613D3;
+        Wed,  4 Nov 2020 08:49:48 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id b1so27962111lfp.11;
+        Wed, 04 Nov 2020 08:49:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oxnHcBpTwsbel9FOdCvOvGcVMdtgauZnQmlNHsVp5Wk=;
-        b=VVcD04CQnH0c3BLQrXh1uddglBv/7SPhavdQ0eJWso/vY0grDbo/Fkxh6Dly4r1flg
-         HoLEVy45sSPa95Cv5f9egO84I0o2e62MNpX/YWIG4fesDCJLNF0ShRD8yI+pXWVTFWDy
-         HIyJVT4NNrK9rCvpaPMA7/C2auJ7b2GUh3S6uzgyJq8mEPtfKAhbeupDW/kygT++WMnH
-         3/lJZcuFt2cbBV3Mjjstc7IYIOGp6oFmRI09L+IQUrYVJ4S/rDLtXMGwJBiw5Y2ptbJS
-         JGcWEX6o5xcSJRblb2Qjej7mGKHIDwNOjFI9JVDBzoI47aw9YYtufsziYW64mkWNSvRN
-         NeYQ==
+        bh=RsEiBNqevS137X8EgsTINN66YSPI6dqy0hGSUXN1Nl4=;
+        b=l0gsx/WOIi+QcOSWIQOGjzVyqftIJLUglBlpPJ+plhlETQraCIxv2lVoACM/kgHZxa
+         siE771TZn8MJ6Xi6lXvO2L0NXhWsDbevsF/Z8vfotFQbjb/3YZwUi0idR6s1e39T1T3N
+         c9Qt0/JexF7OHne5CT/8NdKAx6zc6qhNgCRc7YajWDLGoRidLr24pGHvZgMYgqgr9/pS
+         2lEXNGHw9o2ltXvvPv0yzy1Awe/1+MilQwzp1RCyXnlIsJnPhXQ4YA6EjflowAYuVWyO
+         i7iyg17ZOs7yHYNNhzVZX5JTcHeCkFmnWFjad7pnt6HCMcY5PKx9xZJMJGuZgEtCKkjZ
+         HwSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oxnHcBpTwsbel9FOdCvOvGcVMdtgauZnQmlNHsVp5Wk=;
-        b=Ty2y4Sp12/4+UvenvgPJQ7Q1liGrlMTjEttZBka/CpONTVbHJH3js2DrMpeu+Q9bZZ
-         WsO6Z3RjCprT0UUyDiJyZ0HPR4KWl0KIJO163NM5Ak3VqFvkq+o4151QuGu9hEtOO2ml
-         styiD2y69ex4ZRSnbOVrwVFHc5rDN4B7Q0W1cbHfBV3i5EPVfdwPoTc2jNnq3qdbFE4R
-         i6qK5v94h2cLgX5+p8ldCJVseqIiO/LrmxJXBrE/EqeLQhWPzI27ECn/zYIZR3bQUUFG
-         xrTm0YY0YmKRACoxLzg64dXBfR88hiMXKeUrGkOqyquam+fEPIOi7+2SGT4OQxITQX6s
-         5G3A==
-X-Gm-Message-State: AOAM531d0gWYfebQtmBjmKCveuIUtxkWrms6PymQj45vAEX99Ix1Oz5I
-        vLgz6irIYC9Azp7qUAWzKG8=
-X-Google-Smtp-Source: ABdhPJzhfBMXlYWI18S++MTSPZhU9UyR3dQHKwnTiL0Uyf2OU3YVTGaRl9rOjVXV4E2ZDw6q4aFHtg==
-X-Received: by 2002:a2e:9cd2:: with SMTP id g18mr8150866ljj.164.1604508590557;
-        Wed, 04 Nov 2020 08:49:50 -0800 (PST)
+        bh=RsEiBNqevS137X8EgsTINN66YSPI6dqy0hGSUXN1Nl4=;
+        b=G90YxhDKqOxEV7FUUMn0P2jaNA33azrdLjf5dS+A1bV0/RwSt+Ysw3DP1IU/ltRtpg
+         Y4khDuXw08hC9Acgx4w+WwbVkMa9USmDogyOjfsFl51qp2lM1H7V7kc6LniTGb4omIan
+         eq+7X2t+7D+Ep4Ok6kXUWknIeUk2NTnFJiSe6rYb31KpUS8VMKddhv9m50rpThp+Azvt
+         bzALQ2XQcdTbLU+Xm2FLDpM8UqyVbVzBW8ZO3C2kAUfI8GqLcSPrRhxQus6mHVNRtSdj
+         /A+aTJV6qVSBVaogpG5YpADacK7r13ovdMgoUPzM8rE0vIlzc34rBBAtzXwCt/bduOQi
+         Tp/w==
+X-Gm-Message-State: AOAM530mOnAjfhsZiLCMv8k2Jy+hwWolk/Z54D+kk/IXQcXPMGoVrK4f
+        EqTy9NzX7V5lZZSsPcbxjus=
+X-Google-Smtp-Source: ABdhPJz8Dwjo5uSb78kKmSUyVRABa9SgfHctcnMFRcKzAvnBpwfjqTfXnzmZYZRynjQu1olS+RUcQQ==
+X-Received: by 2002:a19:e014:: with SMTP id x20mr9473796lfg.444.1604508586969;
+        Wed, 04 Nov 2020 08:49:46 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.49
+        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 08:49:50 -0800 (PST)
+        Wed, 04 Nov 2020 08:49:46 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v7 17/47] dt-bindings: memory: tegra20: Add memory client IDs
-Date:   Wed,  4 Nov 2020 19:48:53 +0300
-Message-Id: <20201104164923.21238-18-digetx@gmail.com>
+Subject: [PATCH v7 14/47] dt-bindings: memory: tegra124: emc: Document OPP table and voltage regulator
+Date:   Wed,  4 Nov 2020 19:48:50 +0300
+Message-Id: <20201104164923.21238-15-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104164923.21238-1-digetx@gmail.com>
 References: <20201104164923.21238-1-digetx@gmail.com>
@@ -89,76 +89,54 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Each memory client has unique hardware ID, add these IDs.
+Document new OPP table and voltage regulator properties which are needed
+for supporting dynamic voltage-frequency scaling of the memory controller.
+Some boards may have a fixed core voltage regulator, hence it's optional
+because frequency scaling still may be desired.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/dt-bindings/memory/tegra20-mc.h | 53 +++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ .../memory-controllers/nvidia,tegra124-emc.yaml      | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/dt-bindings/memory/tegra20-mc.h b/include/dt-bindings/memory/tegra20-mc.h
-index 35e131eee198..6f8829508ad0 100644
---- a/include/dt-bindings/memory/tegra20-mc.h
-+++ b/include/dt-bindings/memory/tegra20-mc.h
-@@ -18,4 +18,57 @@
- #define TEGRA20_MC_RESET_VDE		13
- #define TEGRA20_MC_RESET_VI		14
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
+index ac00832ceac1..09bde65e1955 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
+@@ -37,6 +37,15 @@ properties:
+     description:
+       phandle of the memory controller node
  
-+#define TEGRA20_MC_DISPLAY0A		0
-+#define TEGRA20_MC_DISPLAY0AB		1
-+#define TEGRA20_MC_DISPLAY0B		2
-+#define TEGRA20_MC_DISPLAY0BB		3
-+#define TEGRA20_MC_DISPLAY0C		4
-+#define TEGRA20_MC_DISPLAY0CB		5
-+#define TEGRA20_MC_DISPLAY1B		6
-+#define TEGRA20_MC_DISPLAY1BB		7
-+#define TEGRA20_MC_EPPUP		8
-+#define TEGRA20_MC_G2PR			9
-+#define TEGRA20_MC_G2SR			10
-+#define TEGRA20_MC_MPEUNIFBR		11
-+#define TEGRA20_MC_VIRUV		12
-+#define TEGRA20_MC_AVPCARM7R		13
-+#define TEGRA20_MC_DISPLAYHC		14
-+#define TEGRA20_MC_DISPLAYHCB		15
-+#define TEGRA20_MC_FDCDRD		16
-+#define TEGRA20_MC_G2DR			17
-+#define TEGRA20_MC_HOST1XDMAR		18
-+#define TEGRA20_MC_HOST1XR		19
-+#define TEGRA20_MC_IDXSRD		20
-+#define TEGRA20_MC_MPCORER		21
-+#define TEGRA20_MC_MPE_IPRED		22
-+#define TEGRA20_MC_MPEAMEMRD		23
-+#define TEGRA20_MC_MPECSRD		24
-+#define TEGRA20_MC_PPCSAHBDMAR		25
-+#define TEGRA20_MC_PPCSAHBSLVR		26
-+#define TEGRA20_MC_TEXSRD		27
-+#define TEGRA20_MC_VDEBSEVR		28
-+#define TEGRA20_MC_VDEMBER		29
-+#define TEGRA20_MC_VDEMCER		30
-+#define TEGRA20_MC_VDETPER		31
-+#define TEGRA20_MC_EPPU			32
-+#define TEGRA20_MC_EPPV			33
-+#define TEGRA20_MC_EPPY			34
-+#define TEGRA20_MC_MPEUNIFBW		35
-+#define TEGRA20_MC_VIWSB		36
-+#define TEGRA20_MC_VIWU			37
-+#define TEGRA20_MC_VIWV			38
-+#define TEGRA20_MC_VIWY			39
-+#define TEGRA20_MC_G2DW			40
-+#define TEGRA20_MC_AVPCARM7W		41
-+#define TEGRA20_MC_FDCDWR		42
-+#define TEGRA20_MC_HOST1XW		43
-+#define TEGRA20_MC_ISPW			44
-+#define TEGRA20_MC_MPCOREW		45
-+#define TEGRA20_MC_MPECSWR		46
-+#define TEGRA20_MC_PPCSAHBDMAW		47
-+#define TEGRA20_MC_PPCSAHBSLVW		48
-+#define TEGRA20_MC_VDEBSEVW		49
-+#define TEGRA20_MC_VDEMBEW		50
-+#define TEGRA20_MC_VDETPMW		51
++  core-supply:
++    description:
++      Phandle of voltage regulator of the SoC "core" power domain.
 +
- #endif
++  operating-points-v2:
++    description:
++      Should contain freqs and voltages and opp-supported-hw property, which
++      is a bitfield indicating SoC speedo ID mask.
++
+ patternProperties:
+   "^emc-timings-[0-9]+$":
+     type: object
+@@ -331,6 +340,7 @@ required:
+   - clock-names
+   - nvidia,memory-controller
+   - "#interconnect-cells"
++  - operating-points-v2
+ 
+ additionalProperties: false
+ 
+@@ -359,6 +369,8 @@ examples:
+         clock-names = "emc";
+ 
+         nvidia,memory-controller = <&mc>;
++        operating-points-v2 = <&dvfs_opp_table>;
++        core-supply = <&vdd_core>;
+ 
+         #interconnect-cells = <0>;
+ 
 -- 
 2.27.0
 
