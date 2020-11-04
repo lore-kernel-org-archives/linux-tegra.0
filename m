@@ -1,228 +1,90 @@
-Return-Path: <SRS0=iIVP=EJ=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=aGvU=EK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88831C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 21:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE570C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 08:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 323A421556
-	for <linux-tegra@archiver.kernel.org>; Tue,  3 Nov 2020 21:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604440262;
-	bh=wBOQgrsvSB+EWrxY4HKKXxfCeq48t8RSC6a8ercJ4RI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=wn3OJHNAYvY6D6yGxbYCgljkg5ibsoISIUeFIl+dOkdsl89o8j1kfX08aJg+M8Nup
-	 aWAodDWE4dmi9nKUVS+lLmoEtdacNetcww631PLLDGGoJY9m5sVc0aVVS1Phveu0S3
-	 nkl2YYvJnZYYTYdjGmEzNxOc9X6DtsOjhKMpRK34=
+	by mail.kernel.org (Postfix) with ESMTP id 847C22220B
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 08:52:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="OPTuhg9g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbgKCUsi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 3 Nov 2020 15:48:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731508AbgKCUsh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 3 Nov 2020 15:48:37 -0500
-Received: from localhost (230.sub-72-107-127.myvzw.com [72.107.127.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC0F62242E;
-        Tue,  3 Nov 2020 20:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604436517;
-        bh=wBOQgrsvSB+EWrxY4HKKXxfCeq48t8RSC6a8ercJ4RI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=LEWlREtdHTMB9aiAFJ7OeiuwqRzUijgrIO0F4qwuh0367UK5uhJvwc3JeHsCeAIrM
-         o++S1i3RmEEfnoProKDs1/FzqnmGHxGcFfjCIswnjje+K+DqHGP7Z/CcbH82focT2n
-         +J8+E+0aNqjPs+fMagaLRwsfXUG4XnB2h9yK7FLs=
-Date:   Tue, 3 Nov 2020 14:48:35 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V2 4/4] PCI: tegra: Handle error conditions properly
-Message-ID: <20201103204835.GA262610@bjorn-Precision-5520>
+        id S1728287AbgKDIwN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 03:52:13 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5975 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbgKDIwN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 03:52:13 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa26bbb0000>; Wed, 04 Nov 2020 00:52:11 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Nov
+ 2020 08:52:10 +0000
+Received: from vidyas-desktop.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 4 Nov 2020 08:52:05 +0000
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <amanharitsh123@gmail.com>,
+        <dinghao.liu@zju.edu.cn>, <kw@linux.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V3 0/5] Enhancements to Tegra194 PCIe driver
+Date:   Wed, 4 Nov 2020 14:20:13 +0530
+Message-ID: <20201104085018.13021-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201029051839.11245-5-vidyas@nvidia.com>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604479931; bh=4gQ5tWn0Fs6MivWfKflLTNgLOSsVUn4p6ZgXMZgzNKw=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=OPTuhg9gdUUJLZYqI2M/ho6/nCVpxEQTUaOdAceYIVpruqyxVDWZWGvkN86hzVtzs
+         EAy/KR3UbDTUmcd1BhaueP/6VCscRzwQEwgeDXRvBqYBzJ0wKzov48JJgbJqHCHitC
+         vIrfwGobW8L7vP4WQo8UMWRTKVb1BYZT6Ac23CANtwO+tPn/oh4b94EQgenl9pge/T
+         uOXXgPRT/bl9VKg6RoxwtqWPtyWqQPGBqL4ScayDiYqLsoIDqJOIN7wjwmJ1iHKg1N
+         uaG7DijGekckAGeFTNUdwK1Emx0QctrUqcbZG6kIniRZ1dAppVkLGxhdwajYKcLqJY
+         dQ9YieeO89Ewg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Vidya,
+This series of patches do some enhancements and some bug fixes to the
+Tegra194 PCIe platform driver like
+- Fix Vendor-ID corruption
+- Map DBI space correctly
+- Update DWC IP version
+- Continue with uninitialization sequence even if parts fail
+- Check return value of tegra_pcie_init_controller()
 
-Can you update the subject to replace "properly" with more details
-about what the patch is doing?  "Properly" is really meaningless in
-usages like this -- nobody writes patches to do the *wrong* thing, so
-it goes without saying that every patch is intended to things
-"properly".
+V3:
+* Addressed Bjorn's review comments
+* Split earlier patch-4 into two
+  - Continue with the uninitialization sequence even if some parts fail
+  - Check return value of tegra_pcie_init_controller() and exit accordingly
 
-It would also help to have some context.  My first thought was that
-"error conditions" referred to PCIe errors like completion timeouts,
-completer abort, etc.
+V2:
+* Addressed Rob's comments. Changed 'Strongly Ordered' to 'nGnRnE'
 
-Maybe something like:
-
+Vidya Sagar (5):
+  PCI: tegra: Fix ASPM-L1SS advertisement disable code
+  PCI: tegra: Map configuration space as nGnRnE
+  PCI: tegra: Set DesignWare IP version
   PCI: tegra: Continue unconfig sequence even if parts fail
-  PCI: tegra: Return init error (not unconfig error) on init failure
+  PCI: tegra: Check return value of tegra_pcie_init_controller()
 
-On Thu, Oct 29, 2020 at 10:48:39AM +0530, Vidya Sagar wrote:
-> Currently the driver checks for error value of different APIs during the
-> uninitialization sequence. It just returns from there if there is any error
-> observed for one of those calls. Comparatively it is better to continue the
-> uninitialization sequence irrespective of whether some of them are
-> returning error. That way, it is more closer to complete uninitialization.
-> It also adds checking return value for error for a cleaner exit path.
+ drivers/pci/controller/dwc/pcie-tegra194.c | 62 +++++++++++-----------
+ 1 file changed, 30 insertions(+), 32 deletions(-)
 
-This paragraph uses "it" to refer to both "the driver" (second
-sentence) and "this patch" (last sentence).  That's confusing.
-There's no reason to refer to "this patch" at all.  I'd rather have
-"Add checking ..." than "It adds checking ..."
+-- 
+2.17.1
 
-I think that last sentence must be referring to the
-tegra_pcie_init_controller() change to return the initialization error
-rather than the error from __deinit_controller().  That seems right,
-but should be a separate patch.
-
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V2:
-> * None
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 45 ++++++++++------------
->  1 file changed, 20 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 253d91033bc3..8c08998b9ce1 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1422,43 +1422,32 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  	return ret;
->  }
->  
-> -static int __deinit_controller(struct tegra_pcie_dw *pcie)
-> +static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
->  {
->  	int ret;
->  
->  	ret = reset_control_assert(pcie->core_rst);
-> -	if (ret) {
-> -		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
->  
->  	tegra_pcie_disable_phy(pcie);
->  
->  	ret = reset_control_assert(pcie->core_apb_rst);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
-> -		return ret;
-> -	}
->  
->  	clk_disable_unprepare(pcie->core_clk);
->  
->  	ret = regulator_disable(pcie->pex_ctl_supply);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
-> -		return ret;
-> -	}
->  
->  	tegra_pcie_disable_slot_regulators(pcie);
->  
->  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
->  			pcie->cid, ret);
-> -		return ret;
-> -	}
-> -
-> -	return ret;
->  }
->  
->  static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
-> @@ -1482,7 +1471,8 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
->  	return 0;
->  
->  fail_host_init:
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
-> +	return ret;
->  }
->  
->  static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
-> @@ -1551,13 +1541,12 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
->  	appl_writel(pcie, data, APPL_PINMUX);
->  }
->  
-> -static int tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
-> +static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
->  {
->  	tegra_pcie_downstream_dev_to_D0(pcie);
->  	dw_pcie_host_deinit(&pcie->pci.pp);
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> -
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  }
->  
->  static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
-> @@ -1590,7 +1579,11 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->  		goto fail_pm_get_sync;
->  	}
->  
-> -	tegra_pcie_init_controller(pcie);
-> +	ret = tegra_pcie_init_controller(pcie);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to initialize controller: %d\n", ret);
-> +		goto fail_pm_get_sync;
-> +	}
->  
->  	pcie->link_state = tegra_pcie_dw_link_up(&pcie->pci);
->  	if (!pcie->link_state) {
-> @@ -2238,8 +2231,9 @@ static int tegra_pcie_dw_suspend_noirq(struct device *dev)
->  					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
->  	tegra_pcie_downstream_dev_to_D0(pcie);
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  
-> -	return __deinit_controller(pcie);
-> +	return 0;
->  }
->  
->  static int tegra_pcie_dw_resume_noirq(struct device *dev)
-> @@ -2267,7 +2261,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
->  	return 0;
->  
->  fail_host_init:
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
-> +	return ret;
->  }
->  
->  static int tegra_pcie_dw_resume_early(struct device *dev)
-> @@ -2305,7 +2300,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
->  		disable_irq(pcie->pci.pp.msi_irq);
->  
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> -	__deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  }
->  
->  static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
-> -- 
-> 2.17.1
-> 
