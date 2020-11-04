@@ -2,94 +2,96 @@ Return-Path: <SRS0=aGvU=EK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F46C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 08:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847E5C388F7
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 936E02220B
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 08:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 286DA2222C
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 09:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pZrMuYJE"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iIgTv0GB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbgKDIwq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 03:52:46 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2695 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728886AbgKDIwp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 03:52:45 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa26bdf0005>; Wed, 04 Nov 2020 00:52:47 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Nov
- 2020 08:52:42 +0000
-Received: from vidyas-desktop.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Wed, 4 Nov 2020 08:52:37 +0000
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <amanharitsh123@gmail.com>,
-        <dinghao.liu@zju.edu.cn>, <kw@linux.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V3 5/5] PCI: tegra: Check return value of tegra_pcie_init_controller()
-Date:   Wed, 4 Nov 2020 14:20:18 +0530
-Message-ID: <20201104085018.13021-6-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201104085018.13021-1-vidyas@nvidia.com>
-References: <20201104085018.13021-1-vidyas@nvidia.com>
+        id S1728130AbgKDJE0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 04:04:26 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13071 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbgKDJDr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 04:03:47 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa26e760000>; Wed, 04 Nov 2020 01:03:50 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Nov
+ 2020 09:03:46 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 4 Nov 2020 09:03:46 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.9 000/391] 5.9.4-rc1 review
+In-Reply-To: <20201103203348.153465465@linuxfoundation.org>
+References: <20201103203348.153465465@linuxfoundation.org>
 X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <4796280b881e4246a6ad2ae268744c37@HQMAIL105.nvidia.com>
+Date:   Wed, 4 Nov 2020 09:03:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604479967; bh=n8XdfeCZduO7ogcyhJVAlYbsvTFqkbs1wknNZ3ixbf4=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=pZrMuYJElTBvismIA6kjwVHxaFE7FOuOChV1MmIorPgM+RhqDiJy8iiv9KlR5oVNW
-         QylfQbhVrOJU/rAGAJ1+EfK4wzHIz1SnGUDFHuRQOnEd1rgytRVYZv0U5pkTh1fqGO
-         YqSCoHqVq6vEGSApK/hxHN434Qb2o0SCkKN/iN8L7/1lU8ThikxdcfB4mV/J8b+cIM
-         9pYpoI4Ti1QYh6P3JOfOb1IH75RfqD6Q3CdviNkTzHPrXkimf2zwZpynPowkKl0jaS
-         35nqtU/5psp54DQ6LwFO0K/aJSXJg2rylUVTcU0BoRn2Lrb+BbG0di9y1FUBPJhE/t
-         pK41dEitL4G3Q==
+        t=1604480630; bh=0KQdPyrEimHWfurTkSQRPVbheq4kQh2x6yge2jj+NxM=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=iIgTv0GBHyc3/QQVvmUL5k6IZB+ceIyLIqNKorjYF9M4laA7KrpOiw2mGB70a+rma
+         2JrTsmTFSShC94ThGW9aPYMAM/4KfR4k7bZnohAgimShf3Vzc/RbAGr+V8iOw9QNUV
+         3M8ThdpUzdlalP7YVpb8NuoLhsm6EA3YoodaRgLrV21gbTTue4iHK5OgwBPy7uyKq6
+         9EamwxsXp1wq1HqbzvaIPQ7diU6okVqHRI78NQLO7Xdoj479TmcGxQA9CxpXhJhYzp
+         D5Re+bWWFgrvw6eVgTd0z7S2UyWubBbiVSIpyh8n9YOD63WeZY6tE+Ane+/330pclr
+         cxkZdOuEmldMg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The return value of tegra_pcie_init_controller() must be checked before
-PCIe link up check and registering debugfs entries subsequently as it
-doesn't make sense to do these when the controller initialization itself
-has failed.
+On Tue, 03 Nov 2020 21:30:51 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.9.4 release.
+> There are 391 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 05 Nov 2020 20:29:58 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.9.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-V3:
-* New patch in this series
+All tests passing for Tegra ...
 
- drivers/pci/controller/dwc/pcie-tegra194.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Test results for stable-v5.9:
+    15 builds:	15 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    61 tests:	61 pass, 0 fail
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 9be10c8953df..8c08998b9ce1 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1579,7 +1579,11 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
- 		goto fail_pm_get_sync;
- 	}
- 
--	tegra_pcie_init_controller(pcie);
-+	ret = tegra_pcie_init_controller(pcie);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to initialize controller: %d\n", ret);
-+		goto fail_pm_get_sync;
-+	}
- 
- 	pcie->link_state = tegra_pcie_dw_link_up(&pcie->pci);
- 	if (!pcie->link_state) {
--- 
-2.17.1
+Linux version:	5.9.4-rc1-g53574a4c558e
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
