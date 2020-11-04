@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C0CC55178
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC666C4741F
 	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 23:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93D5D20867
+	by mail.kernel.org (Postfix) with ESMTP id 4CFEF21734
 	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 23:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVGF415c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMn9xsQe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733235AbgKDXqf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1733237AbgKDXqf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 4 Nov 2020 18:46:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48334 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733169AbgKDXpi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 18:45:38 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D3FC0613CF;
-        Wed,  4 Nov 2020 15:45:36 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id i6so197314lfd.1;
-        Wed, 04 Nov 2020 15:45:36 -0800 (PST)
+        with ESMTP id S1728416AbgKDXpj (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 18:45:39 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE3FC0613CF;
+        Wed,  4 Nov 2020 15:45:39 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id v144so127177lfa.13;
+        Wed, 04 Nov 2020 15:45:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Gi4Ws1VebKSodZ1aFskWWEY2ENCBRhjpkPkVyE+JZ/s=;
-        b=ZVGF415ceJ5cr2f9Gly+jv4fzQXLlFJzBRcuR2zD4WvgH5zsluXpWCU+Qj1Ax6ZhVf
-         1u0lOZIC13jnHSZyF8YgC9LapKlkjSE2olp5X0VAkAmOHo47oGiOd5KA51jau/9+1r5Q
-         ZeTQKEqrAXOCG4BSyhIC6+s49wRDSmdZMvycdRKpjqSje66qxlJOfAn1erQ73TtXXuaZ
-         iSCWRvM8IOOU+neCqee3lOhq+/lqVKY3CF0lloOJSA1gj7ifC6+jn0RNW/R6aoa+9wD+
-         dgu4HpFxYtEPUrSRWIfoyjVSloujlYPyvV4oLCDPZxUQsNdkHeXL2lcu1JDT6N4vPELD
-         54yA==
+        bh=H3MVi35NrfPSfRw//362HseqQCwlWGtdqp60bFnUhwA=;
+        b=OMn9xsQeCPu/4JinLc/AgoFUYFf1NUAoZIU2Zlu6R9dPQunR73wlhPP73mbb5TTpva
+         8JiMy8NqbA0ZUwEVbGtyIWXt0/tfNkV48rTG7UCuIXLFva4JtNhIA8GqUErMg0IIfKUE
+         OGNdyB9H+gojt3sZ7bQ7bIApJMJ4in5sly2bBNeehvG48k/7mXjUtjndqT8kWTqY/A8g
+         qT2PIZ20opUDRyncNfJ/LO9879zyPy4vHJoeMho7u+q9lf9+ZJxM1tYmJF+TFnEibpMR
+         nv5gAps0odmdCDhcgB3tni2hr1hAyEgQ9NPd3AF9mNe+BxeSr5+mlHHTfY0Od+dUrfDJ
+         v6DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Gi4Ws1VebKSodZ1aFskWWEY2ENCBRhjpkPkVyE+JZ/s=;
-        b=T1W/5H5Whi67trlRA1SViwE9vJeh2sQU+OcIzjhcHqwtcRafuqROA5xIi9T2r7QjiT
-         qBO0QuIdT9DY36ztv3W6ObvuPYMm+vDLORMJPRXCXDJ1UGCvvL2CaI6GWTYhU0JE7yUb
-         gZZnm8StrE/jx3QKMx6rX6u1kqKJC8BEpEJXq5RZNwyg6zT6VKsSkOP7idUMmwr4WX3w
-         jihpXOcGZ4isixkqnjOrfX+8lVx3zdSpptzBC2KgAbonSf2bsRjzD2LM/nkrbBbCZfz/
-         6B//Q5BXcyziEDGkJstGT4wMOmzbdNysm4nR5wC9+tn/TjsTZPmi/8m3x8FFnjWLVvxZ
-         RRcw==
-X-Gm-Message-State: AOAM532sD7lWL7tMwOy6KXt7jmsCKicooBKMN6My4iSEj/tuf6p1Lasc
-        Yz9DWq0E7+oyKGPKnxIUwNw=
-X-Google-Smtp-Source: ABdhPJxSINEdNTI8WAS9/8DNtowjH/ui3U9cyprfFygiShmm4vwewOoOOmbkqukzpRnxz4FsJYlb2g==
-X-Received: by 2002:ac2:5498:: with SMTP id t24mr69465lfk.12.1604533535051;
-        Wed, 04 Nov 2020 15:45:35 -0800 (PST)
+        bh=H3MVi35NrfPSfRw//362HseqQCwlWGtdqp60bFnUhwA=;
+        b=bcCbuF6g2RDnQRMis9eNvfMhoxq3ENTn9eWEqRTouEuAve/039rri5QgKp5o6UR3pi
+         27mub76NpLXwpnIDaHkKMcIdAnXih/Dww4cjXxLpBhDtxTrJU5OITVblqKhD5GWw/HqH
+         HgcQtST8UJs/3vZtQHuZ+SfXzuEJn92y5AQN9vtNlxWzZoYcBJDsTTQQCDKBzo5+EVw7
+         kEgFfJb1Ujux/wbeq4aGAE3q451saZRgDCT+K6wGbq5Dmdx34BKd65BDGqSvdUoBGiWl
+         2JO7kgw1PfSKdXULZUv5y5M7CHPMYfRES3zvjYFbFbX43y2Xr1jEvBzaicEHjHIU1sld
+         iEMw==
+X-Gm-Message-State: AOAM532hdMnQAwwESBVCzEGhUHr3X0de2E9C0IKPDNTxAO6kJ4VMA4KW
+        JkEJDsJu+adTA7y5X+cAfZY=
+X-Google-Smtp-Source: ABdhPJwyQ9D+w6Gwu+oNG3O4q0AAu7yTKLISIo+dIOXhdhlh+KdufIVDxOlsB9IAA16GjdDdX/+EHA==
+X-Received: by 2002:ac2:53a5:: with SMTP id j5mr41614lfh.253.1604533537747;
+        Wed, 04 Nov 2020 15:45:37 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m6sm640725ljc.112.2020.11.04.15.45.33
+        by smtp.gmail.com with ESMTPSA id m6sm640725ljc.112.2020.11.04.15.45.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 15:45:34 -0800 (PST)
+        Wed, 04 Nov 2020 15:45:37 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -82,9 +82,9 @@ Cc:     linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 28/30] ARM: tegra: acer-a500: Add voltage supplies to DVFS-capable devices
-Date:   Thu,  5 Nov 2020 02:44:25 +0300
-Message-Id: <20201104234427.26477-29-digetx@gmail.com>
+Subject: [PATCH v1 30/30] ARM: tegra: nexus7: Add voltage supplies to DVFS-capable devices
+Date:   Thu,  5 Nov 2020 02:44:27 +0300
+Message-Id: <20201104234427.26477-31-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104234427.26477-1-digetx@gmail.com>
 References: <20201104234427.26477-1-digetx@gmail.com>
@@ -95,18 +95,18 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 Add voltage supplies to DVFS-capable devices in order to enable
-system-wide voltage scaling and allow CORE/RTC regulators to go lower.
+system-wide voltage scaling.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../boot/dts/tegra20-acer-a500-picasso.dts    | 30 +++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ .../tegra30-asus-nexus7-grouper-common.dtsi   | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index b4ed88802387..5ab6872cd84c 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -60,7 +60,19 @@ linux,cma@30000000 {
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+index 261e266c61d8..2b405872ad2d 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
+@@ -60,7 +60,19 @@ trustzone@bfe00000 {
  	};
  
  	host1x@50000000 {
@@ -126,25 +126,18 @@ index b4ed88802387..5ab6872cd84c 100644
  			rgb {
  				status = "okay";
  
-@@ -73,12 +85,17 @@ lcd_output: endpoint {
+@@ -72,6 +84,10 @@ lcd_output: endpoint {
+ 				};
  			};
  		};
- 
++
 +		dc@54240000 {
 +			core-supply = <&vdd_core>;
 +		};
-+
- 		hdmi@54280000 {
- 			status = "okay";
+ 	};
  
- 			vdd-supply = <&hdmi_vdd_reg>;
- 			pll-supply = <&hdmi_pll_reg>;
- 			hdmi-supply = <&vdd_5v0_sys>;
-+			core-supply = <&vdd_core>;
- 
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
-@@ -86,6 +103,10 @@ hdmi@54280000 {
+ 	gpio@6000d000 {
+@@ -90,6 +106,10 @@ init-low-power-mode {
  		};
  	};
  
@@ -152,67 +145,33 @@ index b4ed88802387..5ab6872cd84c 100644
 +		core-supply = <&vdd_core>;
 +	};
 +
- 	pinmux@70000014 {
+ 	pinmux@70000868 {
  		pinctrl-names = "default";
  		pinctrl-0 = <&state_default>;
-@@ -565,7 +586,7 @@ sys_reg: sys {
+@@ -835,6 +855,7 @@ bluetooth {
  
- 				vdd_core: sm0 {
- 					regulator-name = "vdd_sm0,vdd_core";
--					regulator-min-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
- 					regulator-coupled-max-spread = <170000 550000>;
-@@ -606,7 +627,7 @@ ldo1 {
+ 	pwm: pwm@7000a000 {
+ 		status = "okay";
++		core-supply = <&vdd_core>;
+ 	};
  
- 				rtc_vdd: ldo2 {
- 					regulator-name = "vdd_ldo2,vdd_rtc";
--					regulator-min-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&vdd_core &vdd_cpu>;
- 					regulator-coupled-max-spread = <170000 550000>;
-@@ -696,6 +717,7 @@ usb@c5000000 {
- 		compatible = "nvidia,tegra20-udc";
+ 	i2c@7000c400 {
+@@ -994,6 +1015,7 @@ sdmmc3: mmc@78000400 {
+ 
+ 		mmc-pwrseq = <&brcm_wifi_pwrseq>;
+ 		vmmc-supply = <&vdd_3v3_sys>;
++		core-supply = <&vdd_core>;
+ 		vqmmc-supply = <&vdd_1v8>;
+ 
+ 		/* Azurewave AW-NH665 BCM4330 */
+@@ -1018,6 +1040,7 @@ usb@7d000000 {
+ 		compatible = "nvidia,tegra30-udc";
  		status = "okay";
  		dr_mode = "peripheral";
 +		core-supply = <&vdd_core>;
  	};
  
- 	usb-phy@c5000000 {
-@@ -709,6 +731,7 @@ usb-phy@c5000000 {
- 
- 	usb@c5008000 {
- 		status = "okay";
-+		core-supply = <&vdd_core>;
- 	};
- 
- 	usb-phy@c5008000 {
-@@ -746,6 +769,7 @@ sdmmc1: mmc@c8000000 {
- 		non-removable;
- 
- 		mmc-pwrseq = <&brcm_wifi_pwrseq>;
-+		core-supply = <&vdd_core>;
- 		vmmc-supply = <&vdd_3v3_sys>;
- 		vqmmc-supply = <&vdd_3v3_sys>;
- 
-@@ -764,6 +788,7 @@ sdmmc3: mmc@c8000400 {
- 		bus-width = <4>;
- 		cd-gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
- 		power-gpios = <&gpio TEGRA_GPIO(I, 6) GPIO_ACTIVE_HIGH>;
-+		core-supply = <&vdd_core>;
- 		vmmc-supply = <&vdd_3v3_sys>;
- 		vqmmc-supply = <&vdd_3v3_sys>;
- 	};
-@@ -771,6 +796,7 @@ sdmmc3: mmc@c8000400 {
- 	sdmmc4: mmc@c8000600 {
- 		status = "okay";
- 		bus-width = <8>;
-+		core-supply = <&vdd_core>;
- 		vmmc-supply = <&vcore_emmc>;
- 		vqmmc-supply = <&vdd_3v3_sys>;
- 		non-removable;
+ 	usb-phy@7d000000 {
 -- 
 2.27.0
 
