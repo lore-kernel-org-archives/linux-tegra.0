@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AB0C4741F
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C37C61DD8
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1722120BED
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BA56207BB
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:52:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaTnuWIB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hl9PYTeG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbgKDQwG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:52:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39850 "EHLO
+        id S1731622AbgKDQuL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 11:50:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731631AbgKDQuM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:50:12 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF43C0613D3;
-        Wed,  4 Nov 2020 08:50:12 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id d24so23660308ljg.10;
-        Wed, 04 Nov 2020 08:50:12 -0800 (PST)
+        with ESMTP id S1731609AbgKDQuK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:50:10 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC40C0613D3;
+        Wed,  4 Nov 2020 08:50:08 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id p15so23745561ljj.8;
+        Wed, 04 Nov 2020 08:50:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+L0AgvSgV5zDZENr7ejMUrE6rVWnjdgbzZcfj8MC1EU=;
-        b=aaTnuWIBAYS6ZP47JBoKRlAsA772cm0hBjPv5pmD2n/04rtLXynK4/jbMzXYWIdbfj
-         ECtqSozu0pCQb/R+fw6CjFP7fapfZhOOS2wJK6cwhfLgWTGZ8aw5+mmoFtF/wXi0sX4G
-         SPVXVdYyjVL0XzK1YHCtaMTyrq21NFCoHd2x7iYe6NPEZf4uGGIacsKCuOXxLSPrKlkZ
-         o9uGZE9fyP6/KvhsBlBC/NN6NBkQdxagl7eI6Nn9fTOVPuK3RIFX8vJ0Cb161CANu7mU
-         a98rRJiNKa4z8ehr/FUT5T27M77a3ZVyopRMqrVfkwTwJaBQtZRbACG2L/IlDDOCAcvO
-         r6Vg==
+        bh=TOGvVUHcibmPsiJFYWy41eUdIfTQfcWXxsgewF1xVKg=;
+        b=hl9PYTeGaxu2o8M5LrEu6BtKQP8m6rA7XTM+RoY50/kPsRxa8J9MTXuP+rCTLD4pPI
+         pcl/iTlEfddLxoJvSDTQMPheJb67tlB86IDV1YHFTv0Wm3/tj1K0nE/nVwYVhPdPaJYO
+         NnCYXIPOOTIAbOp4kEH0pOeZMlF5DTw/3I3HK9+Lh2E52CEKYMxjgguS2YbdTN9m6wv1
+         NPtSS5cdQ9nHITAZMxMqyhbWonBhdZgkc7Bv4mSlbYvQ/7kJwrY7rUXzCOAfmrk6TzBU
+         LghymARrfDpLRWy51/4HibOiUXHV5K2mzHPJyddJU7D/shVzQT3S+jUOgkFUtnIGEflH
+         pR+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+L0AgvSgV5zDZENr7ejMUrE6rVWnjdgbzZcfj8MC1EU=;
-        b=kY+Bm1LP58STV6MQqQH7Mm/FI/FamGwq0hqRNQkQdcXYQ5oah+Lk63wrsqqXbqqLN6
-         GIOackBkw/jQiBF2VVBQCmyFtxPQVb6Tufg2Yea7zd99K8ZsLFzVh6jYkvNElP1b2PeL
-         vEQT4c1uUjXG1NFzDnWU+dRh6pAZ6I/jiE8T2yZCuKvCByR7PTQecSBcSYIZ40f9q5yd
-         S1+8qh0IIWw1098kPk/cyFgkITpf+32qJnZZRrcin/rjsXcT/TB+H8zAG0xRPkGNnHYK
-         S75kXdxz6L55p693JBiqwzTVgVC6+YUuTRaR+Q9oTT9m7KxjdTsMVjC3lO43A8Feqea7
-         ZSUw==
-X-Gm-Message-State: AOAM532f46sOkDwPghb8KdytZsSE3DnBVz5W86D9EtWKb7MFp1EuqYz/
-        dPmEtGz9S2wp6u4tXHcq+98=
-X-Google-Smtp-Source: ABdhPJzeadT0yI0FNCvFtGTGtufHtqnn4HTJnoQtVHPu3f+CnHkT3aKeYE1g2GZ5oC149b6TW41ZFQ==
-X-Received: by 2002:a2e:b04a:: with SMTP id d10mr193119ljl.85.1604508610928;
-        Wed, 04 Nov 2020 08:50:10 -0800 (PST)
+        bh=TOGvVUHcibmPsiJFYWy41eUdIfTQfcWXxsgewF1xVKg=;
+        b=fCvKUaomN7IPSBzd5/2eDKo9407TC/12AJu+LVidHEtc9Bxyn4lZue2NG3MTt5l+fS
+         zlOTOZQZ7FnvopR3l3didOrA8thMQsvt8up6tXZmUAUIb4uEozmIZ6g4HZn0m0YU6wpM
+         GsRsmXGy7m0Jh6M2XeSoO2g8CvZ4WAk+z12uYsn03+1OUed2WOeWx252rtvgYEucTJEF
+         9Wu8KiyrIoOcObg2cXxuh/fiARIwjMuxJ1M0YWVYFrkolyfadbIBg5ScKzDGPc5cYOYR
+         Q9Us09kNnDsouHZ4OrYpLdeQatmHqRx6dnUVDCPE+pToVUxWXV3Kxi02bXEDz3NMZFcV
+         jU4g==
+X-Gm-Message-State: AOAM531kLYEChu722H2Z1yK8gq/jnUR6/lCPXN2qA61s2+kcd8iZGcLH
+        gHf0pOfqlKiHJx6mW9wgzAc=
+X-Google-Smtp-Source: ABdhPJxze63P/PqGfFrXgCrXBjeFwj8H2RVN0iP7KJpDm/DqMJe1meNS4slHrFYeL5pTc5ZW0q+wPw==
+X-Received: by 2002:a2e:5d4:: with SMTP id 203mr577835ljf.137.1604508607389;
+        Wed, 04 Nov 2020 08:50:07 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.50.09
+        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.50.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 08:50:10 -0800 (PST)
+        Wed, 04 Nov 2020 08:50:06 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v7 34/47] memory: tegra20-emc: Continue probing if timings are missing in device-tree
-Date:   Wed,  4 Nov 2020 19:49:10 +0300
-Message-Id: <20201104164923.21238-35-digetx@gmail.com>
+Subject: [PATCH v7 31/47] memory: tegra: Add missing latency allowness entry for Page Table Cache
+Date:   Wed,  4 Nov 2020 19:49:07 +0300
+Message-Id: <20201104164923.21238-32-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104164923.21238-1-digetx@gmail.com>
 References: <20201104164923.21238-1-digetx@gmail.com>
@@ -89,87 +89,71 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-EMC driver will become mandatory after turning it into interconnect
-provider because interconnect users, like display controller driver, will
-fail to probe using newer device-trees that have interconnect properties.
-Thus make EMC driver to probe even if timings are missing in device-tree.
+Add missing PTC memory client latency allowness entry to the Tegra MC
+drivers.
+
+This prevents erroneous clearing of MC_INTSTATUS 0x0 register during
+of the LA programming in tegra_mc_setup_latency_allowance() due to the
+missing entry. Note that this patch doesn't fix any known problems.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 34 ++++++++++++++----------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
+ drivers/memory/tegra/tegra114.c | 6 ++++++
+ drivers/memory/tegra/tegra124.c | 6 ++++++
+ drivers/memory/tegra/tegra30.c  | 6 ++++++
+ 3 files changed, 18 insertions(+)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 88619e3ec435..a49658d217a7 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -383,6 +383,11 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
- 	u32 value, ram_code;
- 	int err;
- 
-+	if (of_get_child_count(dev->of_node) == 0) {
-+		dev_info(dev, "device-tree doesn't have memory timings\n");
-+		return NULL;
-+	}
-+
- 	if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
- 		return of_node_get(dev->of_node);
- 
-@@ -451,6 +456,9 @@ static long emc_round_rate(unsigned long rate,
- 	struct tegra_emc *emc = arg;
- 	unsigned int i;
- 
-+	if (!emc->num_timings)
-+		return clk_get_rate(emc->clk);
-+
- 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
- 
- 	for (i = 0; i < emc->num_timings; i++) {
-@@ -656,36 +664,26 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	struct tegra_emc *emc;
- 	int irq, err;
- 
--	/* driver has nothing to do in a case of memory timing absence */
--	if (of_get_child_count(pdev->dev.of_node) == 0) {
--		dev_info(&pdev->dev,
--			 "EMC device tree node doesn't have memory timings\n");
--		return 0;
--	}
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		dev_err(&pdev->dev, "please update your device tree\n");
- 		return irq;
- 	}
- 
--	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
--	if (!np)
--		return -EINVAL;
--
- 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
--	if (!emc) {
--		of_node_put(np);
-+	if (!emc)
- 		return -ENOMEM;
--	}
- 
- 	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
- 	emc->dev = &pdev->dev;
- 
--	err = tegra_emc_load_timings_from_dt(emc, np);
--	of_node_put(np);
--	if (err)
--		return err;
-+	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
-+	if (np) {
-+		err = tegra_emc_load_timings_from_dt(emc, np);
-+		of_node_put(np);
-+		if (err)
-+			return err;
-+	}
- 
- 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(emc->regs))
+diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
+index 48ef01c3ff90..ed376ba2d2fe 100644
+--- a/drivers/memory/tegra/tegra114.c
++++ b/drivers/memory/tegra/tegra114.c
+@@ -15,6 +15,12 @@ static const struct tegra_mc_client tegra114_mc_clients[] = {
+ 		.id = 0x00,
+ 		.name = "ptcr",
+ 		.swgroup = TEGRA_SWGROUP_PTC,
++		.la = {
++			.reg = 0x34c,
++			.shift = 0,
++			.mask = 0xff,
++			.def = 0x0,
++		},
+ 	}, {
+ 		.id = 0x01,
+ 		.name = "display0a",
+diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
+index 0cede24479bf..e2389573d3c0 100644
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -15,6 +15,12 @@ static const struct tegra_mc_client tegra124_mc_clients[] = {
+ 		.id = 0x00,
+ 		.name = "ptcr",
+ 		.swgroup = TEGRA_SWGROUP_PTC,
++		.la = {
++			.reg = 0x34c,
++			.shift = 0,
++			.mask = 0xff,
++			.def = 0x0,
++		},
+ 	}, {
+ 		.id = 0x01,
+ 		.name = "display0a",
+diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
+index fcdd812eed80..b1990b4133d8 100644
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -36,6 +36,12 @@ static const struct tegra_mc_client tegra30_mc_clients[] = {
+ 		.id = 0x00,
+ 		.name = "ptcr",
+ 		.swgroup = TEGRA_SWGROUP_PTC,
++		.la = {
++			.reg = 0x34c,
++			.shift = 0,
++			.mask = 0xff,
++			.def = 0x0,
++		},
+ 	}, {
+ 		.id = 0x01,
+ 		.name = "display0a",
 -- 
 2.27.0
 
