@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627E0C4742C
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC9DC55179
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 124D8206CA
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38D152071A
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:49:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3LKe/mp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDuOJ5bE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731498AbgKDQtv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:49:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39754 "EHLO
+        id S1731516AbgKDQty (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 11:49:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731493AbgKDQtu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:50 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF12C0613D4;
-        Wed,  4 Nov 2020 08:49:49 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id y16so23729252ljk.1;
-        Wed, 04 Nov 2020 08:49:49 -0800 (PST)
+        with ESMTP id S1731507AbgKDQtx (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:53 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33ACCC0613D3;
+        Wed,  4 Nov 2020 08:49:53 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id p15so23744643ljj.8;
+        Wed, 04 Nov 2020 08:49:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d/Sk3dwc3ZzPQh0+4njd7Ejlh1IFm+rB1ccMwqr+vGE=;
-        b=l3LKe/mpPu0S8/dCOq6M2kz5lSPjJIkDiZkJ392mXO0421xd0wR0g+uOXZu3Dp6GNh
-         tig0xwfVmcWuRwSddNabK0tKmD9eiUiHmMnpBBpYyQsiolkHs6ybryKNoGIVmvUoj6mT
-         ZoVdAYiceuqcnDB8+mK/Y52+5BOgvmMeR8RuFYe5GfwIbOlNfG7+BJWLe6WZpsli+6Pf
-         JdpL/bqxj2ePobj0I6x+B4d6skuRAUZdvSHHxJhupeFc3dDdE3n0DFN/kYXJWmBqH0GV
-         6PBYnodpQBz72zJUvr33uIEYqRK5w81me4rBiefPXZLOBAHDnuZCa6+wdwuq0NWJzPtm
-         LWEg==
+        bh=z5tcRYoYaETfnye1zq3OgDH0gnq/NqbM+qM9FX7h6jk=;
+        b=fDuOJ5bE56TFLZzer6VPBAFv+R4zU1E0sbknvl4azVPznsj06+fjxPCR4zJihgVD+P
+         A+YMWFHiE93qSazYsYL6WmRJOkB/glyrnc7sAMsH9YC9ZnW+SCti5QJwDyfHKsKm9nYI
+         IFI15DNfpT7HQ50Yzd4WDmgQ51AwU8doJMHwCA6RLkDKNTgzxrYL6k1SBrxMd3hjtLyr
+         wsLZ0VOYv2ndgJw0IyyJVSRPAQbul0degBMOV2B0OTk2PjBrJtZ6+2DhOBKt3oDECjdP
+         8/uT0qpKd5MZyFYEBIhr4Jfe1LFu27AykBywCvCWfWMH2vfr+90uKYXEdVby4u3sk+SZ
+         BqNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d/Sk3dwc3ZzPQh0+4njd7Ejlh1IFm+rB1ccMwqr+vGE=;
-        b=qKfTEtsSWSrWgctAWYgOXQ4Jyjah02Nlt4J54rryEd/wAXEM+UYAw2RlsaIugtEbWV
-         CPHSeTaek1Mmjt9PyMO0ImsHrrZGciSb2a7F88XoSyz6ie3fTlh4e9yAXsBg3O5Cmzxz
-         CBIa9/LNz5PQn8LKLncZawHivQt0sWB+ADyClsj4jL8rkzJhSZ1ma6nHmkhd7yx7ITuK
-         ziKT/c5sr0tfmNOBm8vPhONKwz5ER1EQDjqhT6z0eWWHtWW+lro6n00Pk6IVCrGn/KOY
-         yxGC5TfXsjirY+a61vk9PIZv7PCckoHuS2kpZkva65lbvBZ9vt8YvmNEezIQvzL0TC6F
-         npTQ==
-X-Gm-Message-State: AOAM530IG87kQ5oJPmWL0til37cryXF8AgJthnZZjK/coHApI+w4su8v
-        fv2CPrNJ21WKSa/Ww9IWqsI=
-X-Google-Smtp-Source: ABdhPJzOM97kyPaLdS5FBsoSI5pNCOmFXgHHRAlsYMvgYsazvVkHm7oOeCMGO/mgd30CUSSL1TDgdg==
-X-Received: by 2002:a2e:3a08:: with SMTP id h8mr11610597lja.125.1604508588138;
-        Wed, 04 Nov 2020 08:49:48 -0800 (PST)
+        bh=z5tcRYoYaETfnye1zq3OgDH0gnq/NqbM+qM9FX7h6jk=;
+        b=g8kgudPkk6huIxwE/6Zpw+9EFBB8km9e3nbYOEeV2CQ28tYHf9KQpDhHid6tLPkapw
+         OzYcCxKmd8oBRW8u/1Jaiv6cFTkC2iQj3mTNy75NjWyV98jqeb7FIxpaGQgcRK+PTgHz
+         mYFiB7gEJNPzl+DPOc5WD0Dbsygtkqv+HK7v+Bm9XMssyEnz99sMxh2z1FN4Ap9hTBnE
+         IqW3SKyvgMP14nPQWFgvlCRMygedB5UBYoZa29b4fyoR4+ZdGXLHLQoe8XVGD3FW1+eF
+         Txi/qOaeHcYy6MUphe4UKnhPD3iwUAANADi87tY8s+rA/TdDxWqW3Nv3rjqKRY5f9kVu
+         VMrw==
+X-Gm-Message-State: AOAM5304KWDHtMTEBS9pGVF0EMz6zAoO8g+PFGqkj/76PQphKFSxwOuz
+        JDEbWHIjT1UNqjYJa6yfwbo=
+X-Google-Smtp-Source: ABdhPJxr5Kir57PB6ENuAwd451RDsTwXVX/DPXesdFbhzfypeG5ETR3bbP76sqh+00TfwzPRsbV05g==
+X-Received: by 2002:a2e:8998:: with SMTP id c24mr9318237lji.88.1604508591729;
+        Wed, 04 Nov 2020 08:49:51 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.47
+        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 08:49:47 -0800 (PST)
+        Wed, 04 Nov 2020 08:49:51 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v7 15/47] dt-bindings: tegra30-actmon: Document OPP and interconnect properties
-Date:   Wed,  4 Nov 2020 19:48:51 +0300
-Message-Id: <20201104164923.21238-16-digetx@gmail.com>
+Subject: [PATCH v7 18/47] dt-bindings: memory: tegra30: Add memory client IDs
+Date:   Wed,  4 Nov 2020 19:48:54 +0300
+Message-Id: <20201104164923.21238-19-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104164923.21238-1-digetx@gmail.com>
 References: <20201104164923.21238-1-digetx@gmail.com>
@@ -89,61 +89,90 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Document EMC DFS OPP table and interconnect paths that will be used
-for scaling of system's memory bandwidth based on memory utilization
-statistics. Previously ACTMON was supposed to drive EMC clock rate
-directly, but now it should do it using interconnect framework in order
-to support shared voltage scaling in addition to the frequency scaling.
+Each memory client has unique hardware ID, add these IDs.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../arm/tegra/nvidia,tegra30-actmon.txt       | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ include/dt-bindings/memory/tegra30-mc.h | 67 +++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
-index ea670a5d7ee3..897eedfa2bc8 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
-@@ -18,8 +18,30 @@ clock-names. See ../../clock/clock-bindings.txt for details.
- ../../reset/reset.txt for details.
- - reset-names: Must include the following entries:
-   - actmon
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- interconnects: Should contain entries for memory clients sitting on
-+                 MC->EMC memory interconnect path.
-+- interconnect-names: Should include name of the interconnect path for each
-+                      interconnect entry. Consult TRM documentation for
-+                      information about available memory clients, see MEMORY
-+                      CONTROLLER section.
-+
-+For each opp entry in 'operating-points-v2' table:
-+- opp-supported-hw: bitfield indicating SoC speedo ID mask
-+- opp-peak-kBps: peak bandwidth of the memory channel
+diff --git a/include/dt-bindings/memory/tegra30-mc.h b/include/dt-bindings/memory/tegra30-mc.h
+index 169f005fbc78..930f708aca17 100644
+--- a/include/dt-bindings/memory/tegra30-mc.h
++++ b/include/dt-bindings/memory/tegra30-mc.h
+@@ -41,4 +41,71 @@
+ #define TEGRA30_MC_RESET_VDE		16
+ #define TEGRA30_MC_RESET_VI		17
  
- Example:
-+	dfs_opp_table: opp-table {
-+		compatible = "operating-points-v2";
++#define TEGRA30_MC_PTCR			0
++#define TEGRA30_MC_DISPLAY0A		1
++#define TEGRA30_MC_DISPLAY0AB		2
++#define TEGRA30_MC_DISPLAY0B		3
++#define TEGRA30_MC_DISPLAY0BB		4
++#define TEGRA30_MC_DISPLAY0C		5
++#define TEGRA30_MC_DISPLAY0CB		6
++#define TEGRA30_MC_DISPLAY1B		7
++#define TEGRA30_MC_DISPLAY1BB		8
++#define TEGRA30_MC_EPPUP		9
++#define TEGRA30_MC_G2PR			10
++#define TEGRA30_MC_G2SR			11
++#define TEGRA30_MC_MPEUNIFBR		12
++#define TEGRA30_MC_VIRUV		13
++#define TEGRA30_MC_AFIR			14
++#define TEGRA30_MC_AVPCARM7R		15
++#define TEGRA30_MC_DISPLAYHC		16
++#define TEGRA30_MC_DISPLAYHCB		17
++#define TEGRA30_MC_FDCDRD		18
++#define TEGRA30_MC_FDCDRD2		19
++#define TEGRA30_MC_G2DR			20
++#define TEGRA30_MC_HDAR			21
++#define TEGRA30_MC_HOST1XDMAR		22
++#define TEGRA30_MC_HOST1XR		23
++#define TEGRA30_MC_IDXSRD		24
++#define TEGRA30_MC_IDXSRD2		25
++#define TEGRA30_MC_MPE_IPRED		26
++#define TEGRA30_MC_MPEAMEMRD		27
++#define TEGRA30_MC_MPECSRD		28
++#define TEGRA30_MC_PPCSAHBDMAR		29
++#define TEGRA30_MC_PPCSAHBSLVR		30
++#define TEGRA30_MC_SATAR		31
++#define TEGRA30_MC_TEXSRD		32
++#define TEGRA30_MC_TEXSRD2		33
++#define TEGRA30_MC_VDEBSEVR		34
++#define TEGRA30_MC_VDEMBER		35
++#define TEGRA30_MC_VDEMCER		36
++#define TEGRA30_MC_VDETPER		37
++#define TEGRA30_MC_MPCORELPR		38
++#define TEGRA30_MC_MPCORER		39
++#define TEGRA30_MC_EPPU			40
++#define TEGRA30_MC_EPPV			41
++#define TEGRA30_MC_EPPY			42
++#define TEGRA30_MC_MPEUNIFBW		43
++#define TEGRA30_MC_VIWSB		44
++#define TEGRA30_MC_VIWU			45
++#define TEGRA30_MC_VIWV			46
++#define TEGRA30_MC_VIWY			47
++#define TEGRA30_MC_G2DW			48
++#define TEGRA30_MC_AFIW			49
++#define TEGRA30_MC_AVPCARM7W		50
++#define TEGRA30_MC_FDCDWR		51
++#define TEGRA30_MC_FDCDWR2		52
++#define TEGRA30_MC_HDAW			53
++#define TEGRA30_MC_HOST1XW		54
++#define TEGRA30_MC_ISPW			55
++#define TEGRA30_MC_MPCORELPW		56
++#define TEGRA30_MC_MPCOREW		57
++#define TEGRA30_MC_MPECSWR		58
++#define TEGRA30_MC_PPCSAHBDMAW		59
++#define TEGRA30_MC_PPCSAHBSLVW		60
++#define TEGRA30_MC_SATAW		61
++#define TEGRA30_MC_VDEBSEVW		62
++#define TEGRA30_MC_VDEDBGW		63
++#define TEGRA30_MC_VDEMBEW		64
++#define TEGRA30_MC_VDETPMW		65
 +
-+		opp@12750000 {
-+			opp-hz = /bits/ 64 <12750000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <51000>;
-+		};
-+		...
-+	};
-+
- 	actmon@6000c800 {
- 		compatible = "nvidia,tegra124-actmon";
- 		reg = <0x0 0x6000c800 0x0 0x400>;
-@@ -29,4 +51,7 @@ Example:
- 		clock-names = "actmon", "emc";
- 		resets = <&tegra_car 119>;
- 		reset-names = "actmon";
-+		operating-points-v2 = <&dfs_opp_table>;
-+		interconnects = <&mc TEGRA124_MC_MPCORER &emc>;
-+		interconnect-names = "cpu";
- 	};
+ #endif
 -- 
 2.27.0
 
