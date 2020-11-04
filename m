@@ -2,162 +2,136 @@ Return-Path: <SRS0=aGvU=EK=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1EEC4741F
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 20:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4C0C55178
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 20:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F43620782
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 20:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D814C20825
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 20:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2ezc04e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIgUVBFu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732129AbgKDUeU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 15:34:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46554 "EHLO
+        id S1731047AbgKDUkK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 15:40:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732126AbgKDUeU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 15:34:20 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072FDC0613D3;
-        Wed,  4 Nov 2020 12:34:20 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id m16so24407221ljo.6;
-        Wed, 04 Nov 2020 12:34:19 -0800 (PST)
+        with ESMTP id S1730224AbgKDUkJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 15:40:09 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72E4C0613D3
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 12:40:08 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id h6so28951239lfj.3
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 12:40:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uupHzSrvUEtYcD/DIawVysd4yXQgmE4vD+y7+qxt6Iw=;
-        b=U2ezc04ej10ExV+0CyLzp4uqgAZAPzYkXBIJ4y2peICC07SPbkYjroOvm3uO9YeQGv
-         +C8zJxQJMHrt1u+SL3sGbag4fiKg/zfdV+NBK2Hmyfx+3P+DAm4EauKJgbgH023QzoUz
-         ngO3wg82SW46XUV5EyILcGNeGoIowLFVlx93HKv+ZOF5n2sBgDgX49Qw4NUcNVNf2euj
-         wDYK0P88tsu+rGsbPBfCR38tmuWSRzTdhUhiSgXB9z3SnRC3a3kmHBZOH7zrpJxonLX/
-         uAN+pIXl+DwD1nvLF26M0pg02Tos8bGac5euFUTP8LB8mlbFnBFxNIGwDsqFNWTykqCB
-         qiGg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NliwPLOKGr18LLCATSIFLwL/pn/L+wahTkFLHRP/Da8=;
+        b=FIgUVBFuPDpKgqH2FNciNgk6rmmMBKZI4zmPQ4huwl4qVsDTzsNSHyzusnChzuAxRu
+         pTuHLnZ6t0/yZAaLODXnCDPzBfIOcr1AISSau+pIkrR7I2683s2p5zVPxDnrgtzCiL5/
+         yOS2+qBxTPkiKx4m1q24lDBEbLKjrgMTNaNduGO+WTq4zO1r7Qw2vP8sJkE+E0ts9Gdc
+         fRQxd1SRm9pDeEp8maqTm7/TOAremo3UUoKe12hqQd4HcLxAEUVKt2j7FIgSIFHGdux9
+         Ld2r7JL+vfwEVQlXHffBW6Cwca/hwcC3rcs37YxhqQmbZ/dOpw/ddKAAPoDHny5twRgy
+         3Njw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uupHzSrvUEtYcD/DIawVysd4yXQgmE4vD+y7+qxt6Iw=;
-        b=Omou78XoNpjktU7uoFPGxYrcrMOAT0Y9XuLYrRvSdJ5u0UKTT+2sFg3pkuC3RW89jp
-         2kZZYgf3w2api33+OkRYRtj07AsTlmjGvloFo0WkpeZytzNd3rRIR8f3UBFS5DTods5b
-         K3jv6gXFyt54YFneDi7iimg2gIN+Wlp9uppuDerqnjwkklY1+66nAHxOH3xeKGISoJml
-         jubYpsBZ6NH9s2UA2Shn+yzkzKodnkzTnBS0lo9eSomn2ODdaDZ8GorVenpQ95xMoY/L
-         CzfSyLFVc9pN0TCBbupxhVYunhzVqzMNbmMzB7l/r+oUzyKPL3vlhwlXFRbG7d4PXeXl
-         GfTg==
-X-Gm-Message-State: AOAM530L0ZRcljXpgrYhr7iPG5XFH7OKmmMpmpMLJ0D2fV9d+dTsPWQp
-        o6/JcXn+RwJPAKY4iZb6IiE=
-X-Google-Smtp-Source: ABdhPJxGq5biOfdM5okW6Eec6fIh7ZyYN13nU6kKvftLBxvRrRbwWYLAfWcEjdQXJubPSyIqi7160g==
-X-Received: by 2002:a2e:9148:: with SMTP id q8mr11976153ljg.182.1604522058483;
-        Wed, 04 Nov 2020 12:34:18 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id u22sm615084ljk.45.2020.11.04.12.34.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 12:34:17 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NliwPLOKGr18LLCATSIFLwL/pn/L+wahTkFLHRP/Da8=;
+        b=IGkNL/dj1J9ZCp5EVGf3wgTpS4DuRQMGhbF4rQ/Grg0gghEcg2LxlsTx6A7BYeN52V
+         eH4EL/qXH6KmVTYi8dWO7cs46zsjAGp8rghSCSkKKErhaK50HurKXSWlvhX6fghX6hql
+         yig1LxAYSuzncQBQ121H6ApM5iXomA3/8Qo7bkQSarITFCwEgWlCPyW+9hgZIclIt8Xa
+         L4PXpoDeLEHMrRjAX4Zzk4j3/X8IQOfw7ZO/dOT9fBJFYOaGB4mzs9FkA19O4tpf0dIe
+         xGE/PaADg0kzq6MSKIJVS2wguChL9fkz4CylnCtsUSS8pjX29A/80tEN3Nn1Iq/p0mEM
+         kJaw==
+X-Gm-Message-State: AOAM531LbAfdkN2xDWBmWRSxF74rKgTpTsGwpiVGfYiv8XV98n1VMv05
+        fghtAMgiC9CrfZzYhAdHUedzoMF/ZdQ=
+X-Google-Smtp-Source: ABdhPJwu3TQ/tLB4K3f2Nyfg4NwKnLEdIpYeGmzyaja7zK8Us134qteSDx32cuCY0gheFiVQr25suw==
+X-Received: by 2002:a19:740a:: with SMTP id v10mr9723543lfe.315.1604522407296;
+        Wed, 04 Nov 2020 12:40:07 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id v27sm249128lfd.220.2020.11.04.12.40.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2020 12:40:06 -0800 (PST)
+Subject: Re: [PATCH] ARM: uncompress: Enable debug in head.S
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20200901124736.155281-1-linus.walleij@linaro.org>
+ <7e34261d-c7b9-99f9-121e-05da76a8781a@gmail.com>
+ <CACRpkdZnZ0fxU=7_RLMEivvFProa5r9VPpPiHHR_45zzk3_kCA@mail.gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Murphy <dmurphy@ti.com>, Sebastian Reichel <sre@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/4] dt-bindings: mfd: Add ENE KB930 Embedded Controller binding
-Date:   Wed,  4 Nov 2020 23:34:00 +0300
-Message-Id: <20201104203403.24937-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201104203403.24937-1-digetx@gmail.com>
-References: <20201104203403.24937-1-digetx@gmail.com>
+Message-ID: <6877bfc9-3099-226a-7f9c-9f1c488e0872@gmail.com>
+Date:   Wed, 4 Nov 2020 23:40:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <CACRpkdZnZ0fxU=7_RLMEivvFProa5r9VPpPiHHR_45zzk3_kCA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add binding document for the ENE KB930 Embedded Controller.
+29.09.2020 16:48, Linus Walleij пишет:
+> On Wed, Sep 23, 2020 at 12:13 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+> 
+>> I have CONFIG_DEBUG_UNCOMPRESS=y and was trying today's linux-next which
+>> unfortunately doesn't work well on NVIDIA Tegra30 because it's
+>> frequently failing to boot, hanging early during boot, about 1 of 5
+>> boots are failing. Then I also noticed that Tegra20 has a similar
+>> problem, but worse, only 1 of 10 boots succeed.
+> 
+> Hm let's try to fix that.
+> 
+> So you got the "Uncompressing Linux..." message before and all
+> worked fine? So we know the physical UART base is correct.
+> 
+>> I loaded Tegra2 QEMU and got it also hanging on boot. I retried multiple
+>> times and most of the times it's was a silent CPU hang, but one time I
+>> got an endlessly reoccurring debug message from QEMU telling that CPU
+>> tries to write to a wrong/non-existent IO address. Then I attached to
+>> QEMU's GDB session and found that CPU hangs at the busyuart.
+> 
+> Could you try to implement
+> waituarttxrdy in arch/arm/include/debug/tegra.S?
+> A copy of the contents in busyuart should work.
+> 
+> I suspect this could be FIFO overflow making the hardware
+> hang.
+> 
+> If this is trouble to you I can try to make a patch
+> that you can test, just tell me.
+> 
+>> Reverting
+>> this patch resolves the trouble for both QEMU and real HW.
+>>
+>> I also tried to revert only the "ARM: 9006/1: uncompress: Wait for ready
+>> and busy in debug prints" patch and got this in QEMU:
+>>
+>> Starting kernel ...
+>>
+>> DTB:0x016F6A20 (0x00005DA6)
+>> C:0x010000C0-0x016FC820->0x0125AF00-0x01957660
+>> Uncompressing Linux...
+> (...)
+>> LZMA data is corrupt
+>>
+>>  -- System halted
+> 
+> Hmmmm is the physical and virtual address to the UART
+> really correct?
+> 
+> Else it might write in some random memory.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
+Hello Linus,
 
-diff --git a/Documentation/devicetree/bindings/mfd/ene-kb930.yaml b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-new file mode 100644
-index 000000000000..635c8966ca22
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ene-kb930.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ENE KB930 Embedded Controller bindings
-+
-+description: |
-+  This binding describes the ENE KB930 Embedded Controller attached to an
-+  I2C bus.
-+
-+maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+        - acer,a500-iconia-ec # Acer A500 Iconia tablet device
-+      - enum:
-+        - ene,kb930
-+  reg:
-+    maxItems: 1
-+
-+  monitored-battery: true
-+  power-supplies: true
-+  system-power-controller: true
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    battery: battery-cell {
-+      compatible = "simple-battery";
-+      charge-full-design-microamp-hours = <3260000>;
-+      energy-full-design-microwatt-hours = <24000000>;
-+      operating-range-celsius = <0 40>;
-+    };
-+
-+    mains: ac-adapter {
-+      compatible = "gpio-charger";
-+      charger-type = "mains";
-+      gpios = <&gpio 125 0>;
-+    };
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      embedded-controller@58 {
-+        compatible = "acer,a500-iconia-ec", "ene,kb930";
-+        reg = <0x58>;
-+
-+        system-power-controller;
-+
-+        monitored-battery = <&battery>;
-+        power-supplies = <&mains>;
-+      };
-+    };
-+
-+...
--- 
-2.27.0
-
+Just want to let you know that the problem isn't fixed yet and I haven't
+got around to work on yet too. Hopefully next week!
