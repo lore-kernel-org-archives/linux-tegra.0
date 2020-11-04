@@ -5,119 +5,123 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40898C388F9
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E646C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4F8320825
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 16:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5EA2071A
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 17:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XM0pGDcM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moRvfq8Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbgKDQyN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:54:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39690 "EHLO
+        id S1731040AbgKDREv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 12:04:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731403AbgKDQte (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 11:49:34 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA13C0613D3;
-        Wed,  4 Nov 2020 08:49:34 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id l2so28077946lfk.0;
-        Wed, 04 Nov 2020 08:49:34 -0800 (PST)
+        with ESMTP id S1729679AbgKDREv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 12:04:51 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6197C0613D3;
+        Wed,  4 Nov 2020 09:04:50 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id v144so296629lfa.13;
+        Wed, 04 Nov 2020 09:04:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AHtzrrepL8FLGGKPOwuB3OE0fpn5LFvoU4c2khdwzPk=;
-        b=XM0pGDcMd53mhhwvHwq2NuOHBudK621+lRSRX6ORhsBYU/+mmOkgtziFDbI04bAlDd
-         qAHJdK6azj3WR5sywwArvU0OlgtQxXMsZ/utcCcNBveXgtwsiGD2W9kGZ/2rMxlqmeov
-         hNZpXL8P/4NIyQOKW5BKS8TrBGIUx9gzgvr8O/vEQ7lq+OzNEdVLnOyqD45K61A7kFfN
-         6nNUAuvmw708ErfFqgWuzzvzU1kHkKh2ZedrRdqb1HWauu/GK4l9DsB/1OPJTvQGA8Ae
-         fMZfB/IK4UC+rXzjtX0iieh+/OAPCprZ6FR98khPEjEtxcBVnNvV+OVfSI0Lztvyf8Yx
-         Nq+A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PM+5bKcMSZ46q1jbOvyiMjCDhehFrvPVMAJTjDaj6n4=;
+        b=moRvfq8ZkG8t5Kg9Ano7uqKBCHtYd+6/Dh9L3ch0s37yOSHy4Qbkc8V1xCgHUKe9x7
+         FUSpFbY9v/CxFJxXI/WcDDxAWD9eD6d3dq2b/stFKC+3nSUJ7r8YPxVHHrirlaLCnmVB
+         8r2JzG3/3rzRX4aPuDw9cgumrsuyWu1kBsN/TuEdXLkPy2zYO/ewiZ/tUj0Copxl2eb0
+         oy/l7U3epqG7FVcjj7skclXAFYb1V714SHELKvFWEqAky3QJijTy6k76hBZYKjXZ+Vja
+         2njW0tWN17zYJIK1DQSRm4xMU7lT1KfI8h6iT5dCkcL7j8wuzNpU2HA/r5omBI7fUjV4
+         kEpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AHtzrrepL8FLGGKPOwuB3OE0fpn5LFvoU4c2khdwzPk=;
-        b=kEDl/G6fiBerktxrxtntM8Kgg6XzhgJlsoWnAsUfZ+QCH1h5o2tC4JPpKLcY13cxs2
-         vrSJUMtAjZa6J3Wk7haQTlnQIS/TUKZrqUHwvC0K3dTpxfm5vnYn5JZGk2a4SrnhY6lR
-         k9HJVYRlFNcZPT2hW3UjnuHP2JJqqffSh9oyxdo51tjyA6cO2L6Y/bFSbrR9rB6U2hSG
-         ADNWdNJKqNPcy2izaNLneE2kHyKJspBaNhoQEr9QY3SsC6AFShPcJ4I22lT3P2709W+B
-         pUGhoRClNWJ3FRs8IHI3kJDAmOX/5lGRD44x0fntnKz9hIEbFsgz/ITDSHFnV1jazWD7
-         HP9A==
-X-Gm-Message-State: AOAM532ly6Fx7ci+ZEpnOVx2IIqszCGapJXFtwuRzh5c11MNbxZiToqN
-        no9g/ft4JenWl7x9W+YtHTE=
-X-Google-Smtp-Source: ABdhPJzb2kabU1emK04P7CDpE6ygpI0Ouh+Sky5hlfE9yzMJYFBqyj9cy/H74kx+Re6BsAu8ih58Cw==
-X-Received: by 2002:a19:c8c2:: with SMTP id y185mr1328884lff.29.1604508572781;
-        Wed, 04 Nov 2020 08:49:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PM+5bKcMSZ46q1jbOvyiMjCDhehFrvPVMAJTjDaj6n4=;
+        b=eel5+0UHqgD7MdCi6FXWU1WwHLjrjEhRI55vgfWahE8U/VN6Do74qz2SqxboIxfw5D
+         LL+ZNEBmrkbONnum/fe0IEmTvjBmioM5/taeELZgEzJ+5ZClgmh5o8Hy+y9MAxzndI/D
+         wOph2vtdyA2grba4CN9m1AAYGW/Mvt24a9VKjtwcEaAHoHZguj2+bObbMbuOrkTkIaMJ
+         9zTu6VvzPs2jGEmoPFKTNit77hi/NoHa5cnpIucynuWivKXm8BYkXy8y10WIBQeygpAL
+         iulXMzkkfhY15tfCP1VkEsiNmfrtlh+LyzeMMEqTi/yEX0u82F9F8NrHobRNc/PsMpWn
+         pW8Q==
+X-Gm-Message-State: AOAM530Zu9d8gvt8omK9bbf/ueJiE9jT/PEaDieS46iI+786t8+rLati
+        zCyJxstGH5wP2+ICHluedSc=
+X-Google-Smtp-Source: ABdhPJy98s4TXSinPs8ZXdUei0YQUzzDQ+3g2Spn1Am3ie9HfUhnzekmjUi6vDUFCaCiP4WKrNSgNQ==
+X-Received: by 2002:ac2:47f3:: with SMTP id b19mr10509958lfp.192.1604509489374;
+        Wed, 04 Nov 2020 09:04:49 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m2sm454587lfo.25.2020.11.04.08.49.31
+        by smtp.gmail.com with ESMTPSA id c4sm457931lfh.60.2020.11.04.09.04.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 08:49:32 -0800 (PST)
+        Wed, 04 Nov 2020 09:04:48 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v7 02/47] soc/tegra: fuse: Export tegra_read_ram_code()
-Date:   Wed,  4 Nov 2020 19:48:38 +0300
-Message-Id: <20201104164923.21238-3-digetx@gmail.com>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] gpio: tegra: Add lockdep class
+Date:   Wed,  4 Nov 2020 20:04:22 +0300
+Message-Id: <20201104170423.23436-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201104164923.21238-1-digetx@gmail.com>
-References: <20201104164923.21238-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_read_ram_code() is used by EMC drivers and we're going to make
-these driver modular, hence this function needs to be exported.
+Add lockdep class in order to fix debug warnings that are coming from a
+legit nested use of irq_set_irq_wake() by the Tegra GPIO driver.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+ WARNING: possible recursive locking detected
+ ...
+  (irq_set_irq_wake) from (tegra_gpio_irq_set_wake)
+  (tegra_gpio_irq_set_wake) from (irq_set_irq_wake)
+  (irq_set_irq_wake) from (brcmf_sdiod_intr_register [brcmfmac])
+ ...
+
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Reported-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index cee207d10024..590c862538d0 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
-  */
+Changelog:
+
+v2: - No changes.
+
+ drivers/gpio/gpio-tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 86568154cdb3..98fc78739ebf 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -560,6 +560,9 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
  
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -90,6 +91,7 @@ u32 tegra_read_ram_code(void)
++static struct lock_class_key gpio_lock_class;
++static struct lock_class_key gpio_request_class;
++
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_gpio_info *tgi;
+@@ -661,6 +664,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 		bank = &tgi->bank_info[GPIO_BANK(gpio)];
  
- 	return straps >> PMC_STRAPPING_OPT_A_RAM_CODE_SHIFT;
- }
-+EXPORT_SYMBOL_GPL(tegra_read_ram_code);
+ 		irq_set_chip_data(irq, bank);
++		irq_set_lockdep_class(irq, &gpio_lock_class, &gpio_request_class);
+ 		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
+ 	}
  
- static const struct of_device_id apbmisc_match[] __initconst = {
- 	{ .compatible = "nvidia,tegra20-apbmisc", },
 -- 
 2.27.0
 
