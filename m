@@ -5,69 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1545BC4741F
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4752CC2D0A3
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2D820780
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C43E620786
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 13:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUqWxOxG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9g0EG+8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbgKDNVn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 08:21:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34088 "EHLO
+        id S1729794AbgKDN0r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 08:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729795AbgKDNVn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 08:21:43 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40AAC061A4A;
-        Wed,  4 Nov 2020 05:21:42 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id f9so27116526lfq.2;
-        Wed, 04 Nov 2020 05:21:42 -0800 (PST)
+        with ESMTP id S1729089AbgKDN0r (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 08:26:47 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6FDC0613D3;
+        Wed,  4 Nov 2020 05:26:46 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id 11so3397398ljf.2;
+        Wed, 04 Nov 2020 05:26:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8dJEn2vpD69Y57Q7MWBkxBmWLGesZqBQ4JbwthL3OFU=;
-        b=eUqWxOxGe6yzmP3hZAm/EYsVFmmG3wUFYj2lr9Frww5hno5omFxAp4fj2ETrPDkFfz
-         RzfbdMrZiJ0yD1SSbSkpkJ3aquY9UkLex8Wnjrt4f5MWsgMjraH8GjD8eBf68qjrF1o6
-         bbZMkEcZGfPh/dXx/DxklM+xbzgfj0d9PTNjUbCyJOSVC6+f6f1TtWbIaIZfSLVxrXeU
-         tQwdTOUVjvGZTIz0IxxRnP62DBA7H1lrGBwayji4EDJDZvZ3itVVpKvYN7CIPKR3LFj4
-         /4eXIrq1EGpHKzTOuSpQ2ZpPZqe0X/XqO5O3GIbYnhRaB6I3WwYlWelrLZyFb1pZq3Zc
-         XOHQ==
+        bh=p/FZImScqZ2Ir9kpVpIAqsDk+Y2Vxk6wtqjcKHY6zIo=;
+        b=F9g0EG+8zR2NYJrImIcDQGZbG7MXyErEFMGsBf/I9p3sHAWX5ZSv/Fg6H+Yr+Ad8tC
+         WFB3lYP06K16ybBL0BIyB7jcu+XnNfA5EMpeqEAynhIQM74e9xTxJRiqTdwiyKpXhnSb
+         lqIGVvPNkmsQ8AbCGZIEdcMxIXK5quvXMlAJHCnOwvDD99n/dp78kxwjZ6NfxgY3r4f6
+         jCnjHzv4UK89GuEwlfS8YQG0MOrDZG6ekZjjD92jxlOIWiM1u3dCLd2k9r9ZhoGIPXiy
+         +I62eXd4cW7FuymezvaaIYy0tyTZ3XUOKmgCA4NWCo/YMzAtCtUD8VFLinlw82QdalRe
+         oRsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8dJEn2vpD69Y57Q7MWBkxBmWLGesZqBQ4JbwthL3OFU=;
-        b=nlAgt78GH0/6skY+cEltbB1LmUJl+P+iE1RuljP57Z2dQUeY4Cvai7ezYSNDboCi+P
-         k1FkjTZtebnKKj1Z6T4tmxmeZlssupgarWQH0R4N4P9Xz5u+heYnIDYqImJetmX8Oztq
-         duDTpqO7sa7lsSvHa47nAsl1LByEVTGvU45N/tuTFZY+oUWKNX5QUymJHLU89ZzB6Ywj
-         mOpNm9MO+yMKlD6GGYeqKv9EXO8KZ+Lgpzb2a0pcv56NiVsHU4chdqP0aFrw7nQ15kgy
-         fuRBbyTxl84dweTUKOX437vPojYNETLp8fabIU5ge2MeJqgHKInMV6/ofVEN73Stml20
-         5r4g==
-X-Gm-Message-State: AOAM531MuC4bsM5o3Ybk5CE5QrAv3EkK4Q8aFrYDSzDEYr9t54aH5zKB
-        QFhJFgpfkphBm5DoaL5UN+U=
-X-Google-Smtp-Source: ABdhPJxP9N/4DWCr5MV0Dh7G5j4JYZDoRQ2qpZbqtET4FjJqEKaSfpXaxRf488sWyTpMYaSkt5b5WA==
-X-Received: by 2002:a19:2391:: with SMTP id j139mr7798731lfj.339.1604496101285;
-        Wed, 04 Nov 2020 05:21:41 -0800 (PST)
+        bh=p/FZImScqZ2Ir9kpVpIAqsDk+Y2Vxk6wtqjcKHY6zIo=;
+        b=WkAzOC8m+8uAz4AHFWIReDK0ruVfGH/q21o80wFwpYY4rZg3zLRWKvwcZXottCmdqw
+         5fHbiIbu2A1URDcW1OyuVmvx84PxVZnUnfXMbzc+bla1w3nkh2ghkSEereRc6+a+R90r
+         lu1Sg0VkeCh5zZh5iARuoBext6KFxcudei1JHkwXZ3DYAyOovsyc4E93hLQ6zXEUd8d6
+         hsu0Qz1lxTQ00ZcBECaZ6zptn8ltmkpewnqiuPuXq4U+7uRDoX6he8A9sXarRXvmTHF+
+         8nt7r/QUtkKMzoajvGWIUZAQrtYQ3DtD4GSpMegzdrrMmvIPCWRIqbK8IXWJhQCIJCRg
+         U5TQ==
+X-Gm-Message-State: AOAM532iRrRDR0BC6r4HDsVSRL4HR1hBEW3Yl/FUN8SO0OgnoDfncQcE
+        /yTlpbcuCtV7H68tG/aBLZ4=
+X-Google-Smtp-Source: ABdhPJxPrkm3OjW3KcWzFwCqoyXjeoysOxLSdStk0TzFZNuC/QQ0qxmYkRVTKBN/Om1BMw+D6DnoxA==
+X-Received: by 2002:a2e:5742:: with SMTP id r2mr923779ljd.161.1604496405114;
+        Wed, 04 Nov 2020 05:26:45 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id a19sm512975ljb.97.2020.11.04.05.21.40
+        by smtp.gmail.com with ESMTPSA id 82sm409715lfb.12.2020.11.04.05.26.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 05:21:40 -0800 (PST)
+        Wed, 04 Nov 2020 05:26:44 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1] cpuidle: tegra: Annotate tegra_pm_set_cpu_in_lp2() with RCU_NONIDLE
-Date:   Wed,  4 Nov 2020 16:21:26 +0300
-Message-Id: <20201104132126.15943-1-digetx@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] gpio: tegra: Add lockdep class
+Date:   Wed,  4 Nov 2020 16:26:23 +0300
+Message-Id: <20201104132624.17168-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -75,53 +77,45 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Annotate tegra_pm_set[clear]_cpu_in_lp2() with RCU_NONIDLE in order to
-fix lockdep warning about suspicious RCU usage of a spinlock during late
-idling phase.
+Add lockdep class in order to fix debug warnings that are coming from a
+legit nested use of irq_set_irq_wake() by the Tegra GPIO driver.
 
- WARNING: suspicious RCU usage
+ WARNING: possible recursive locking detected
  ...
- include/trace/events/lock.h:13 suspicious rcu_dereference_check() usage!
- ...
-  (dump_stack) from (lock_acquire)
-  (lock_acquire) from (_raw_spin_lock)
-  (_raw_spin_lock) from (tegra_pm_set_cpu_in_lp2)
-  (tegra_pm_set_cpu_in_lp2) from (tegra_cpuidle_enter)
-  (tegra_cpuidle_enter) from (cpuidle_enter_state)
-  (cpuidle_enter_state) from (cpuidle_enter_state_coupled)
-  (cpuidle_enter_state_coupled) from (cpuidle_enter)
-  (cpuidle_enter) from (do_idle)
+  (irq_set_irq_wake) from (tegra_gpio_irq_set_wake)
+  (tegra_gpio_irq_set_wake) from (irq_set_irq_wake)
+  (irq_set_irq_wake) from (brcmf_sdiod_intr_register [brcmfmac])
  ...
 
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Reported-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/cpuidle/cpuidle-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index e8956706a291..191966dc8d02 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -189,7 +189,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 86568154cdb3..98fc78739ebf 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -560,6 +560,9 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
++static struct lock_class_key gpio_lock_class;
++static struct lock_class_key gpio_request_class;
++
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_gpio_info *tgi;
+@@ -661,6 +664,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 		bank = &tgi->bank_info[GPIO_BANK(gpio)];
+ 
+ 		irq_set_chip_data(irq, bank);
++		irq_set_lockdep_class(irq, &gpio_lock_class, &gpio_request_class);
+ 		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
  	}
  
- 	local_fiq_disable();
--	tegra_pm_set_cpu_in_lp2();
-+	RCU_NONIDLE(tegra_pm_set_cpu_in_lp2());
- 	cpu_pm_enter();
- 
- 	switch (index) {
-@@ -207,7 +207,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
- 	}
- 
- 	cpu_pm_exit();
--	tegra_pm_clear_cpu_in_lp2();
-+	RCU_NONIDLE(tegra_pm_clear_cpu_in_lp2());
- 	local_fiq_enable();
- 
- 	return err ?: index;
 -- 
 2.27.0
 
