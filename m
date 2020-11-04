@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07BDC5517A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E715C388F7
 	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8393822280
-	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01A0C22280
+	for <linux-tegra@archiver.kernel.org>; Wed,  4 Nov 2020 14:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPBytRlt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Acmem3jP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbgKDONJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:13:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
+        id S1729883AbgKDONI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 4 Nov 2020 09:13:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729946AbgKDONI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 09:13:08 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61333C0613D3
-        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 06:13:08 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id 23so23079596ljv.7
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 06:13:08 -0800 (PST)
+        with ESMTP id S1729946AbgKDONH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 09:13:07 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FFE7C061A4C
+        for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2020 06:13:06 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id h6so27309316lfj.3
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2020 06:13:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=812JiusyFQ9WrzswHWJkwLDoaqtOd7JdwlMOTUFbkWc=;
-        b=HPBytRltVM9mgvrpEM/ysWt9If/SXR3Tg24Tx0iZtNUScbCVbLVLXMqr4ch5d89cgs
-         zaYBjNHJWwtavUmKV7wDvJyMegReBiBjgzERhfPHnKcT7HfYfJMjunzkZGZRnAdpHdPl
-         GeWjoe1kV2Wni9sNb6+8hXbcq+adSfpyUiZ1pdv3sRbj50Ww3EBcxEYqIkuHEB9aCVm+
-         3jPhaH60cwuqT2TGdOg/BSuE1CBgT/jMEKYcWLXbSBd78msUqZZdVWghkg3YSgtI3MSk
-         AoCR3RaAHtYXlMdGtZfuWyv93tKoTjJNhQMW27+bqHp9TTjXn042Q13dXT9CYVwjTl9j
-         DKqA==
+        bh=wAifmXeGXkLKcRlStaqo6NnKv6GuZb6Fmqv0pUtS5oQ=;
+        b=Acmem3jPGlWPnsON+ExUf4mmNxK1+Wj4bOxP5RIvRtSKAToYA4TLqU3hE4JAoWk8D8
+         SitSE7PxGqq0mAme6dKLS9tONjilwf97j0xFx79/BtrogfXmohSMd4mkxYM2I1ZjL1Vp
+         O4P+V4a7QuMu/hohq2d/Waiak4Vj5dNxjsgiGjUp/WRvD7f5od1MZ7O3MC83uN9MN5ut
+         iEg1vYpvJgzIx/pGkNbksezVxNCUHTzWhyFOIePTzm32Hu/MyrXQS3jZB7vciBVDNn9+
+         p8zUwqaaCVl0ZxsGH/xrQhILbD/IPowdAoJOtGH4pjIMMJL2wJqzFUxahxt9o0aGbb90
+         5PLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=812JiusyFQ9WrzswHWJkwLDoaqtOd7JdwlMOTUFbkWc=;
-        b=raAp3dt4UMhC0Cc0wboIcmWSm0z8Fd5h49ib0tvO9e5EBfvtCuXW4cxniHXB8juFZF
-         B0lPYZzBgpG8M72y41PE0HSu1YQoo2ctMmeKauM+qaxq3sfEn9iGkFQ6wn/JM17ISKyW
-         traRaVA270itN3XEsbMnjT8NlI4k3f+EKRoLXyXsdThZEukXpF8JbDGNDELdO1syJG44
-         nm60ORqp8tZWOD/ioplOQv2nfqXPerpdVmOLjaPD89beeUvhPVFR/sBJblzOQKccakVp
-         aGFHvG/Er9WXSDZlys+UFMsbSseadC59wc/lfkjbix7GEFmZPhzs6oU4yS4rpoSkHKrx
-         LYRw==
-X-Gm-Message-State: AOAM530XksxP4da8D+bHjoSGPMuHl28oQHA45gR2AUbAVpDliU8/4WZE
-        3z/hRQOCDWU1UOmsM8ZQ/K0=
-X-Google-Smtp-Source: ABdhPJwhfwIfdA3jvWMtHDmP4W8goz4d9sPM08et6aUTi8KTk43QtpLyUt4bkrV8G7ggUirX+V7kXQ==
-X-Received: by 2002:a05:651c:30c:: with SMTP id a12mr10352564ljp.230.1604499186940;
-        Wed, 04 Nov 2020 06:13:06 -0800 (PST)
+        bh=wAifmXeGXkLKcRlStaqo6NnKv6GuZb6Fmqv0pUtS5oQ=;
+        b=Ae09HaKFpYffsFz5j3DQ+nIgniZVviCgFMrmNuiOWdeAapwzLiH1hnjAgmljf/RXZ/
+         d9xzfCVL+98COfD5tKfr6pNK0OIPOyMTaovqYlfKC+fgOtVndkkfD120apToZVguQPnI
+         mdw8H3jzihJctBRA9/WN1F0kKsYKeqMctP3c/HVg8PnS2mXWkjmeV4FIaKDGuJ3th817
+         Byg1804yT+kTDYadsn1ks8GMZN2ByfcqJH7BQQ9rKKdBVTKxerKOH569wt/KPSqc6el1
+         c7CX/Kxk+vKrp2xjTSAsugbj/KMwktXj7PdghsCfqRGE6tR2YE1OQ16Pu+Pg+cojfGFh
+         NYTg==
+X-Gm-Message-State: AOAM533JH+plxYGRcKlggr3RNaht9iRP3IWmFFXfAdrW5hm6UDflSF7K
+        6GjPmfE6hyaiSKBi1nF4uzs=
+X-Google-Smtp-Source: ABdhPJzxF/W5piqEQi1x+5UZTiOEhHz6Sxq4REjSL/ufo4cKVvrh55mmiYMkK6wg/+lhNZ4RH5FEyA==
+X-Received: by 2002:a19:5e52:: with SMTP id z18mr10452104lfi.345.1604499185042;
+        Wed, 04 Nov 2020 06:13:05 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id z10sm411853lfi.76.2020.11.04.06.13.06
+        by smtp.gmail.com with ESMTPSA id z10sm411853lfi.76.2020.11.04.06.13.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 06:13:06 -0800 (PST)
+        Wed, 04 Nov 2020 06:13:04 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org
-Subject: [PATCH v2 6/8] ARM: tegra: nexus7: Rename gpio-hog nodes
-Date:   Wed,  4 Nov 2020 17:12:49 +0300
-Message-Id: <20201104141251.25834-7-digetx@gmail.com>
+Subject: [PATCH v2 4/8] ARM: tegra: nexus7: Improve CPU passive-cooling threshold
+Date:   Wed,  4 Nov 2020 17:12:47 +0300
+Message-Id: <20201104141251.25834-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104141251.25834-1-digetx@gmail.com>
 References: <20201104141251.25834-1-digetx@gmail.com>
@@ -74,65 +74,40 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Devicetree schema now requires gpio-hog nodes to have a certain naming
-pattern, like a -hog suffix. This patch fixes dtbs_check warnings about
-the names.
+The current CPU thermal limit is a bit inappropriate for Nexus 7 once
+device is getting used on a daily bases. For example, currently it's may
+be impossible to watch a hardware accelerated 720p video without hitting
+a severe CPU throttling, which ruins user experience. This patch improves
+the thermal throttling thresholds.
+
+In my experience setting CPU thermal threshold to 57C provides the most
+reasonable result, where device is a bit warm under constant load and
+not getting overly hot, in the same time performance is okay. Let's bump
+the passive-cooling threshold from 50C to 57C and also lower the thermal
+hysteresis to 0.2C in order to make throttling more reactive.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi     | 4 ++--
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi | 2 +-
- arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi            | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index c2b1229f0d83..7fe584d69f5d 100644
+index 543c52cd8260..adc708bbfb62 100644
 --- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
 +++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -91,7 +91,7 @@ dc@54240000 {
- 	};
+@@ -1282,9 +1282,9 @@ cpu-thermal {
  
- 	gpio@6000d000 {
--		init-mode {
-+		init-mode-hog {
- 			gpio-hog;
- 			gpios =	<TEGRA_GPIO(DD, 7) GPIO_ACTIVE_HIGH>,
- 				<TEGRA_GPIO(CC, 6) GPIO_ACTIVE_HIGH>,
-@@ -99,7 +99,7 @@ init-mode {
- 			output-low;
- 		};
- 
--		init-low-power-mode {
-+		init-low-power-mode-hog {
- 			gpio-hog;
- 			gpios = <TEGRA_GPIO(I, 6) GPIO_ACTIVE_HIGH>;
- 			input;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
-index b25b3fa90ac6..17b6682ffce8 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-maxim-pmic.dtsi
-@@ -29,7 +29,7 @@ gpio4 {
+ 			trips {
+ 				trip0: cpu-alert0 {
+-					/* start throttling at 50C */
+-					temperature = <50000>;
+-					hysteresis = <3000>;
++					/* throttle at 57C until temperature drops to 56.8C */
++					temperature = <57000>;
++					hysteresis = <200>;
+ 					type = "passive";
  				};
- 			};
  
--			cpu-pwr-req {
-+			cpu-pwr-req-hog {
- 				gpio-hog;
- 				gpios = <6 GPIO_ACTIVE_HIGH>;
- 				input;
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-index e3da89f1941a..a681ad51fddd 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi
-@@ -23,7 +23,7 @@ panel-timing {
- 	};
- 
- 	gpio@6000d000 {
--		init-mode-3g {
-+		init-mode-3g-hog {
- 			gpio-hog;
- 			gpios =	<TEGRA_GPIO(D, 2) GPIO_ACTIVE_HIGH>,
- 				<TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>,
 -- 
 2.27.0
 
