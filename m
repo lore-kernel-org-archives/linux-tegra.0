@@ -2,85 +2,146 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB9FC4741F
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5DBC388F7
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4BFC2087D
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8E922210
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iGG32dca"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiAiD4e1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbgKEKYt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 05:24:49 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5881 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729481AbgKEKYr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 05:24:47 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa3d2ed0000>; Thu, 05 Nov 2020 02:24:45 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Nov
- 2020 10:24:46 +0000
-Received: from audio.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 5 Nov 2020 10:24:43 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <vkoul@kernel.org>, <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <maz@kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 0/4] Convert few Tegra docs to json-schema
-Date:   Thu, 5 Nov 2020 15:54:02 +0530
-Message-ID: <1604571846-14037-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729787AbgKEKfE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 05:35:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbgKEKfD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 05:35:03 -0500
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B194EC0613D3
+        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 02:35:03 -0800 (PST)
+Received: by mail-vs1-xe43.google.com with SMTP id t8so494865vsr.2
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 02:35:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZdAvLjoOXomWCs8t6TmIL4j/I5mepz3FWTuHztdBTlc=;
+        b=BiAiD4e1h7itpTTBhs3DR4K8CfgZymL8qj1e7tZjDyvL22TAbVaJrB6OdCOJ9dCgt8
+         uMo1WI+cg7RQpxF0bBlJEyznK83VkivtEouWpjXE0uDzswIn9ngEEIWZkBVtGoJKPI5a
+         3gYONlFV9O8ISMzu91uUEboniTdwBNNIgS1GVf+ZVCHpgeExfkJ3HUKHZ4pHVFwQwMtx
+         5vGFFB38gJyFP7FBlRczIoGJ/8EUs8e6gc59Rm7O/sKD+Kj4+eFQl2/7R5M52mOjdRQY
+         23FqbRx5TWg7iDot8DaIDKVfEKsFUNqqGSEPkpoltdKL/CwkFxGm9pZGSMzsaqx/PW9N
+         dskg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZdAvLjoOXomWCs8t6TmIL4j/I5mepz3FWTuHztdBTlc=;
+        b=m8zE84AMWvmDNNavKrxDo8KtO/ZdW5pPR1QzB+4HuH7Sn31L7eKQpwUkOjQFAuzzDF
+         6uCg0BCeVC58FHUO0BNohzAf1qWR6OoGzhXDC7IqwMTEE+QVErKc2T6KBpapH1Oc0Pmq
+         dMN8woYarEqT8ZIS/aFdyh4Rf1Iqtbxw4GmcdcWNIdMoVhMVuSTUl8FbsUdhKSN5QQ2V
+         7Dwj7CebLD6cnICohSVz+kEIWGYcEgxGLKk16/VfajeuUUhIOLE7xzI1f4Zb1AtkLrqF
+         CnAXmG/Aky9w5Yv0DlIAHockU/76+MvyWzjYss46UBFKsRYHVjfwWTDLR5DlSVmk/1KK
+         H7iA==
+X-Gm-Message-State: AOAM5325+fhvuq1Lp+dUICsO6uuBS6bsFnY2Z6yicir51jfG99AxnVHm
+        YYk7PkyXoWKHuNQzQRTVAxLxH6ga0L5ZeCrDLxqPcw==
+X-Google-Smtp-Source: ABdhPJxVfapO8HtgRahAnJ4wz7s9HOgbHIAKW7gtu7MmcNt2t4MXd/COFLbP0begvsat+FQbNQGgY8Hv6gEHSKm9IGw=
+X-Received: by 2002:a67:f417:: with SMTP id p23mr725992vsn.42.1604572502741;
+ Thu, 05 Nov 2020 02:35:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604571885; bh=Mz88rgJiAM8warC9rJqbKLXNRMKQw4aydqvOqWr7W5w=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         Content-Type;
-        b=iGG32dcaL0h8qSKjazs3ZV2XOKZOiyIMM3qKIh5SN/CaC5wPM2YwcBpzoKaof+3+r
-         YNX9T9RsDa9fK4BtXsPynO48qNH+eAmI4QKDjy2bCezObwWFpP70USwYbfCh44pqLr
-         MkQCBrsYMXXU0T06A4mdNYkTSnRXnbrIv6OS9J5gOkWRm3Cox56vG6tkvt73SVdzci
-         10DBoOtkIJzDljflpUN5qN0wG+UeJI4VOQI61TlbfAPiag6/EY83g/ARiD51FUVpsQ
-         1gUR9RNBLmMG/CF3ys6AIbJmsbyymPJkPIezryiyeC6MluKeLsWsTYaBcscpjHUxst
-         I2IOR91gwEOyQ==
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <20201105100603.skrirm7uke4s2xyl@vireshk-i7>
+In-Reply-To: <20201105100603.skrirm7uke4s2xyl@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Nov 2020 11:34:26 +0100
+Message-ID: <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Following are the summary of changes.
-* Update ADMA device node names for some of Tegra210 DT files.
-* Convert ADMA, AGIC and ACONNECT docs to YAML.
+On Thu, 5 Nov 2020 at 11:06, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 05-11-20, 10:45, Ulf Hansson wrote:
+> > + Viresh
+>
+> Thanks Ulf. I found a bug in OPP core because you cc'd me here :)
 
-Sameer Pujar (4):
-  arm64: tegra: Rename ADMA device nodes for Tegra210
-  dt-bindings: dma: Convert ADMA doc to json-schema
-  dt-bindings: interrupt-controller: arm,gic: Update Tegra compatibles
-  dt-bindings: bus: Convert ACONNECT doc to json-schema
+Happy to help. :-)
 
- .../bindings/bus/nvidia,tegra210-aconnect.txt      | 44 ----------
- .../bindings/bus/nvidia,tegra210-aconnect.yaml     | 86 ++++++++++++++++++++
- .../bindings/dma/nvidia,tegra210-adma.txt          | 56 -------------
- .../bindings/dma/nvidia,tegra210-adma.yaml         | 95 ++++++++++++++++++++++
- .../bindings/interrupt-controller/arm,gic.yaml     |  9 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +-
- 9 files changed, 193 insertions(+), 105 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
+>
+> > On Thu, 5 Nov 2020 at 00:44, Dmitry Osipenko <digetx@gmail.com> wrote:
+> > I need some more time to review this, but just a quick check found a
+> > few potential issues...
+> >
+> > The "core-supply", that you specify as a regulator for each
+> > controller's device node, is not the way we describe power domains.
+>
+> Maybe I misunderstood your comment here, but there are two ways of
+> scaling the voltage of a device depending on if it is a regulator (and
+> can be modeled as one in the kernel) or a power domain.
 
--- 
-2.7.4
+I am not objecting about scaling the voltage through a regulator,
+that's fine to me. However, encoding a power domain as a regulator
+(even if it may seem like a regulator) isn't. Well, unless Mark Brown
+has changed his mind about this.
 
+In this case, it seems like the regulator supply belongs in the
+description of the power domain provider.
+
+>
+> In case of Qcom earlier (when we added the performance-state stuff),
+> the eventual hardware was out of kernel's control and we didn't wanted
+> (allowed) to model it as a virtual regulator just to pass the votes to
+> the RPM. And so we did what we did.
+>
+> But if the hardware (where the voltage is required to be changed) is
+> indeed a regulator and is modeled as one, then what Dmitry has done
+> looks okay. i.e. add a supply in the device's node and microvolt
+> property in the DT entries.
+
+I guess I haven't paid enough attention how power domain regulators
+are being described then. I was under the impression that the CPUfreq
+case was a bit specific - and we had legacy bindings to stick with.
+
+Can you point me to some other existing examples of where power domain
+regulators are specified as a regulator in each device's node?
+
+Kind regards
+Uffe
