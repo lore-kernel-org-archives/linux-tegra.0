@@ -2,112 +2,103 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92210C56202
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 17:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125DDC55179
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 17:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F40220936
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 17:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6AF2151B
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 17:59:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXHF9HTK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVD0FscP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbgKERyy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 12:54:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
+        id S1731453AbgKER7f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 12:59:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbgKERyx (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 12:54:53 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD3EC0613CF;
-        Thu,  5 Nov 2020 09:54:53 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id u18so3540928lfd.9;
-        Thu, 05 Nov 2020 09:54:52 -0800 (PST)
+        with ESMTP id S1726214AbgKER7f (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 12:59:35 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D27C0613CF;
+        Thu,  5 Nov 2020 09:59:35 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id 1so1158444ple.2;
+        Thu, 05 Nov 2020 09:59:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gA6OLdD6ilrl1MlK7OiJsrdds83PpowmxPmjVFzKPLU=;
-        b=XXHF9HTK2ugJChM+FIFMCW2E53QGEH1yguNWVVsZT4/1tb/wA72NsMDzQdgSY44iRC
-         mV3oLf1MLXH5haz2YuP1CDRT8aUuzPTl7F2/RMHftpwIeYEBCAs3NG+BR4dNeGs187mI
-         XbuGXQroBJTTOWAvgupbT5YRyuuxAIsIhg4fLFlZAAdVH++d1JBlqRiVgDhJ8kvrw9/J
-         CoeoXoFGkh8y4iwGjCRTehbz/gI/F1PorRz0eVlctXoG9S08Uk7T6RBaUSdPCHSWuFmU
-         /CTWZV/yrLcMfC8ZqzKcUNZKBSSDhWAWRgAsWN1XiInqnWC0QIShxySn34YF6hnFOplx
-         3LEQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=9R0Npxph68AU7PWFQ4QRZSNA/O3rcswyVG3VJILrsQM=;
+        b=BVD0FscPMU4YoqUkiSJgwQkIWgQ1LPWJgaG6bhkws4ZZuwvd5jQyHYnGZw1MpT58LM
+         mwviSZzHufvzgRta+8sADHXxn/dh4PlzZ4lvyM8DrkYbUYzZzhrTkIzC5gpokcbkk5SL
+         rXnVTqfNUk+AdJZsKyPPXMRcD4spEBg1nqhT0TSFmDN05qpphrlamFNpEeF+5gdqNFQI
+         h+XcHRq1FDe0B80uL4qeNr5oAgaSfWsjl3RIzh1Lok9kEJHzKkpEq/C533uRdV1NKEPM
+         XTg6tqp8QjmmxOOaRVaMJZ8nKN9kb2Fl3kAcQu6VnbumA1wot/A9ZiztNyrk3WMlgYJE
+         eWmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gA6OLdD6ilrl1MlK7OiJsrdds83PpowmxPmjVFzKPLU=;
-        b=LpDc8mD5HHiK/05L6j9SILjUW7kl9ImPU9DSX3knUp05nIak7YsZwvidw7C966nsEK
-         cF4Qy+7FdJIxKoTJhgwJ9D+6TQFmgJYlS3xa3+yA+4JL0hy2i34V4iXKj94W2oUt8mbj
-         rh+l4iY3ZEhvKP5hwzfenDxIRuc5CFcnstLIFAjv+mJmC8P+hLON9jIOPng+KzO32LtB
-         3CbRN2FONZ+luJ42achnO+4YMRTY1dsl0CZIuZpvdYmbAN4pk6D7G+qGzdNMO7cAVzMO
-         mBYSC/TfUrsELzEauD2eB5bcbs0DHu7GLSQhxv6El7ep4Rpy3fE4Py5x1CprltFrmSEC
-         Xqdg==
-X-Gm-Message-State: AOAM531ZyCewGlIdzS6sTCisd6Xp2UHLMSR55AKBKnHEG9tPyrKYdonF
-        gGAwbsai3pqckEqlLshyKCvBnFQ7tEs=
-X-Google-Smtp-Source: ABdhPJyehz6KeITPmKFKw6lYd3zXe4BcIJiDjnQqHKJZPRp9Z41GNG8/Y3X7JzcgSQn251Z5j8SlyQ==
-X-Received: by 2002:a19:4206:: with SMTP id p6mr1372241lfa.151.1604598890223;
-        Thu, 05 Nov 2020 09:54:50 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.googlemail.com with ESMTPSA id v20sm248899lfd.178.2020.11.05.09.54.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2020 09:54:49 -0800 (PST)
-Subject: Re: [PATCH v1 21/30] usb: host: ehci-tegra: Support OPP and SoC core
- voltage scaling
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=9R0Npxph68AU7PWFQ4QRZSNA/O3rcswyVG3VJILrsQM=;
+        b=fJ2cOsr3szdYpKhr2J4Q4GMVEF3XYL/5SLH4O9kw+UxXTQnCv3GatFoquGH3Pq/IRB
+         XFVJTes8YlZo47UTc7aq6YcXG466AXVSD+a8uOtEfh8+rVS43LkVM1Nm6FaLiwGfU95b
+         Xj2VjJFrHjg1sYGWLo/sLQ82VEiOVNM3UmljKufY8zLKg3DRJ60tnNSAsLI4stmXzD84
+         QdH5Rls4FlRtucK0tEsl9sK+RnmiKuZXSavhxYdTKh3q8F3EaAYN6IAMccsop4lxc3Zb
+         XMzqu47yyQJA5kQq4CxiatmqevOTas0fiZTgcQYW1mACL3An60Ap7y6NlwG05WJD1f24
+         VXQA==
+X-Gm-Message-State: AOAM533//OVFWqkWoC95HA1TOWfkNFwl90viHQImU/YOuaE8EnheOmr6
+        W1ZVwDEAf6o6Sg6QiMSrc0E=
+X-Google-Smtp-Source: ABdhPJzpBzHOyBdbcoJwGu4x2cFAUIHPNF0tW4PfjHkSM901tlp4Uts8ESm2AmMKqTs0Iw8AIWneaA==
+X-Received: by 2002:a17:90a:17ad:: with SMTP id q42mr3643832pja.36.1604599174601;
+        Thu, 05 Nov 2020 09:59:34 -0800 (PST)
+Received: from localhost ([160.202.157.3])
+        by smtp.gmail.com with ESMTPSA id t129sm3350731pfc.140.2020.11.05.09.59.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2020 09:59:34 -0800 (PST)
+Date:   Thu, 5 Nov 2020 23:29:28 +0530
+From:   Deepak R Varma <mh12gx2825@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-22-digetx@gmail.com>
- <20201105160743.GA1613614@rowland.harvard.edu>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cbc6bf1f-eccb-dee5-d2aa-2c60f1d365e2@gmail.com>
-Date:   Thu, 5 Nov 2020 20:54:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     mh12gx2825@gmail.com
+Subject: [PATCH] drm/tegra: replace idr_init() by idr_init_base()
+Message-ID: <20201105175928.GA42488@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20201105160743.GA1613614@rowland.harvard.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-05.11.2020 19:07, Alan Stern пишет:
-> Do you really want to use the same error unwinding for opp_table values 
-> obtained from dev_pm_opp_set_regulators() as from 
-> dev_pm_opp_get_opp_table()?
+idr_init() uses base 0 which is an invalid identifier for this driver.
+The new function idr_init_base allows IDR to set the ID lookup from
+base 1. This avoids all lookups that otherwise starts from 0 since
+0 is always unused.
 
-They both are pointing at the same opp_table, which is refcounted.
+References: commit 6ce711f27500 ("idr: Make 1-based IDRs more efficient")
 
-The dev_pm_opp_set_regulators() is dev_pm_opp_get_opp_table() + it sets
-regulator for the table.
+Signed-off-by: Deepak R Varma <mh12gx2825@gmail.com>
+---
+ drivers/gpu/drm/tegra/drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/opp/core.c#L1756
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index ba9d1c3e7cac..e4baf07992a4 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -90,7 +90,7 @@ static int tegra_drm_open(struct drm_device *drm, struct drm_file *filp)
+ 	if (!fpriv)
+ 		return -ENOMEM;
+ 
+-	idr_init(&fpriv->contexts);
++	idr_init_base(&fpriv->contexts, 1);
+ 	mutex_init(&fpriv->lock);
+ 	filp->driver_priv = fpriv;
+ 
+-- 
+2.25.1
+
