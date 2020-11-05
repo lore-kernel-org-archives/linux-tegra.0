@@ -2,187 +2,118 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4D0C4741F
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACFEC4741F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDEB20936
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC96206B6
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6DX4cMU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/YUri2q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgKEMxR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 07:53:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57606 "EHLO
+        id S1730519AbgKENuN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 08:50:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730501AbgKEMxR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 07:53:17 -0500
-Received: from mail-ua1-x941.google.com (mail-ua1-x941.google.com [IPv6:2607:f8b0:4864:20::941])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC27DC061A4D
-        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 04:53:16 -0800 (PST)
-Received: by mail-ua1-x941.google.com with SMTP id 91so471522uar.5
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 04:53:16 -0800 (PST)
+        with ESMTP id S1725468AbgKENuN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 08:50:13 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3FEC0613D2;
+        Thu,  5 Nov 2020 05:50:13 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id u18so2366442lfd.9;
+        Thu, 05 Nov 2020 05:50:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
-        b=y6DX4cMUVCgpxUKuGqoEligLjI7mP0FgyJ97c7sIUUHZxJlTwtRRakXekgH7YsuigB
-         Na2QU2xZN4x2PfpN6omerSdhzPwwGn9bDYKeR2k6MuBaUl4m5dH4WWWTdnhpeJeXb0wO
-         XSZFej4dNy5nb1iC9xr8tfwJeCBjFjlTzg4qI2DAs6FEDqJOv7dGIgx54zxdVZ6kpJNY
-         qEEM8136+KYXcHo4ba8akOcRfEEQa2WPh8DybrHFK+sabZgBhMR36tCVRG83K7vH1cW2
-         +tAvD7+11Tiw9WmdBdchM838Ksuv8W7UHq8LoeYHHVZz9EZWz0CY4hFIKH9bgfZDnoHM
-         MkFw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BGf3d80TYyIHjeoe0Cx5j/BQSsVOIev2ck0Z+AT+MFA=;
+        b=e/YUri2q0AwoOKKb1hssOsWev/ladQj20yWBAgFxnUNTYPuKAryxtqcYYrUISJJ2vJ
+         a39gIjb9Q6RQodOmBYioJczfUGlxshFy0MIDvx8eciIyRnKwFCz9pYD5SZ5VsLVB0P2d
+         Q7kV7TXr6dL2Din/S+YXymcmnfrKHOT7zNHnfoxy0dNlpav+Mzo404f+CVsqX1zbaJ/g
+         onGRaUTFnfQBBKoENk8PA1NFM291/PawkHb59+q5reczpOTIyfrOlRcn7TgYflcAwMep
+         ThY5zx+sEIT5sFbV4XmKRVPBcNOT3QEfQW5tx/aib/VeQPU8waOAyqnvBsTNdnl/gM+c
+         v9kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
-        b=LQAKH641drSIf6ujHu39ewQG4RzULK+gM2Nqi1HLsJ0EIV2t8UOqV1/hyDSi9GzxyO
-         pHwuaDcBhwmFKBT5G3ivHzZDRjtX1LuR5BO00nL/sp6SnUQtNNcrS8LJB920N6Mm9Bar
-         kGuAmaqetuBFzK5guFyZ/mtuBDtNRIl8njXJNzYBb4ai/LowLo8vXhpxrDTRDZxNEVYq
-         s5QUo7ebosMCd7xXMkeqZ2qTe8GJtJpXtdZFxoqEYob7UepXRJl5yWox3fqUloH+2QBP
-         RszQ1ijqmOKInRf1C362a7t9UCopiKXFTKp1o58W873Sd2CQ+qvl/YqTfpjYSQfVsrR6
-         Pp1A==
-X-Gm-Message-State: AOAM530mfoh4yXv0wrYxZCJElMtUC2HKFMYehQgDQQOZ1oVI7wQsra3S
-        BUbcJFC63t19a6H7hw/To1w3+L4xWO4YKrnxJ7HD5Q==
-X-Google-Smtp-Source: ABdhPJycxdGkrda5dU9htxc/OSwm7s+GQAoBTPW1YXOO/bE03Yfcq+QBohkR+LMOwjYHynIUz7nEwPk/k/ZMFVtVBnc=
-X-Received: by 2002:a9f:2f15:: with SMTP id x21mr833961uaj.104.1604580795669;
- Thu, 05 Nov 2020 04:53:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
- <20201105100603.skrirm7uke4s2xyl@vireshk-i7> <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
- <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7> <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
- <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
-In-Reply-To: <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Nov 2020 13:52:39 +0100
-Message-ID: <CAPDyKFr3LhrnK9mm=RzhZvcnfeAKez3Yzm6HU_oP1bnPokh9vg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BGf3d80TYyIHjeoe0Cx5j/BQSsVOIev2ck0Z+AT+MFA=;
+        b=VMBl1vA/0CZFkUuNLs/bkfUfGtMHCHn0LA5/F8z0F378n5KWTZFKFuRVFsMiYIfkps
+         e1/y5+IyjLOKqf84SOtBZDCWwtrPXmYSiEw+gL9dGn00uSdWOUJ15RcViCi/NyzC8GQX
+         K0cw7PfLIRcJG2BRoAPmN1TDbK0K/PmZNoDSpWJvG6twBVHe5nQ0U1z2fTTIQWLgZo2P
+         vt9byNyTT7JFx1EP0+0CqotagiatkSHIRNh1+4vGOO5BnUiEcb12Uu4OH4niNy8g0L/T
+         pAhqelCRGTMqhl2/lX+ZsuWkiYwOucO7E8px8xnEeyzJ3d0ajmc0g1arLlio0md/QIM/
+         0JEQ==
+X-Gm-Message-State: AOAM531raSJrjzZdtUzHhoyqkvQzNOdLwFHN8HdehFEo8kk5u4MBKt7N
+        jJWjnO1QXv4P6FlAsSKJQXsXJgEv/Es=
+X-Google-Smtp-Source: ABdhPJx4ilpDj4/kx22rJ8VjlNT5VilKN2NSj8RSq3TaJ+NHg1ZFId48j+Ws8coKg74/KdbqiehQTw==
+X-Received: by 2002:a19:8755:: with SMTP id j82mr951404lfd.511.1604584211377;
+        Thu, 05 Nov 2020 05:50:11 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id f9sm155946ljg.53.2020.11.05.05.50.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2020 05:50:10 -0800 (PST)
+Subject: Re: [PATCH v7 47/47] PM / devfreq: tegra20: Deprecate in a favor of
+ emc-stat based driver
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-pwm@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+References: <20201104164923.21238-1-digetx@gmail.com>
+ <CGME20201104165117epcas1p1fe44f76f99454bcbbbf8b26882422224@epcas1p1.samsung.com>
+ <20201104164923.21238-48-digetx@gmail.com>
+ <cdceb3f7-9c58-5d2c-70ab-7947b4cb173e@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <164ea4c7-f770-445a-fe1a-31ddc49068be@gmail.com>
+Date:   Thu, 5 Nov 2020 16:50:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <cdceb3f7-9c58-5d2c-70ab-7947b4cb173e@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 5 Nov 2020 at 12:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 05-11-20, 11:56, Ulf Hansson wrote:
-> > On Thu, 5 Nov 2020 at 11:40, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > Btw, how do we identify if it is a power domain or a regulator ?
->
-> To be honest, I was a bit afraid and embarrassed to ask this question,
-> and was hoping people to make fun of me in return :)
->
-> > Good question. It's not a crystal clear line in between them, I think.
->
-> And I was relieved after reading this :)
->
-> > A power domain to me, means that some part of a silicon (a group of
-> > controllers or just a single piece, for example) needs some kind of
-> > resource (typically a power rail) to be enabled to be functional, to
-> > start with.
->
-> Isn't this what a part of regulator does as well ? i.e.
-> enabling/disabling of the regulator or power to a group of
-> controllers.
+05.11.2020 05:25, Chanwoo Choi пишет:
+> Hi Dmitry,
+> 
+> You need to update the MAINTAINERS file about tegra20-devfreq.c
+> 
+> 11343 MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA                               
+> 11344 M:      Dmitry Osipenko <digetx@gmail.com>                                      
+> 11345 L:      linux-pm@vger.kernel.org                                                
+> 11346 L:      linux-tegra@vger.kernel.org                                             
+> 11347 T:      git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git     
+> 11348 S:      Maintained                                                              
+> 11349 F:      drivers/devfreq/tegra20-devfreq.c                                       
+> 11350 F:      drivers/devfreq/tegra30-devfreq.c 
+> 
+> Except of missing the updating of MAINTAINERS,
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-It could, but it shouldn't.
+Hello Chanwoo,
 
->
-> Over that the regulator does voltage/current scaling as well, which
-> normally the power domains don't do (though we did that in
-> performance-state case).
->
-> > If there are operating points involved, that's also a
-> > clear indication to me, that it's not a regular regulator.
->
-> Is there any example of that? I hope by OPP you meant both freq and
-> voltage here. I am not sure if I know of a case where a power domain
-> handles both of them.
-
-It may be both voltage and frequency - but in some cases only voltage.
-From HW point of view, many ARM legacy platforms have power domains
-that work like this.
-
-As you know, the DVFS case has in many years not been solved in a
-generic way, but mostly via platform specific hacks.
-
-The worst ones are probably those hacking clock drivers (which myself
-also have contributed to). Have a look at clk_prcmu_opp_prepare(), for
-example, which is used by the UX500 platform. Another option has been
-to use the devfreq framework, but it has limitations in regards to
-this too.
-
-That said, I am hoping that people start moving towards the
-deploying/implementing DVFS through the power-domain approach,
-together with the OPPs. Maybe there are still some pieces missing from
-an infrastructure point of view, but that should become more evident
-as more starts using it.
-
->
-> > Maybe we should try to specify this more exactly in some
-> > documentation, somewhere.
->
-> I think yes, it is very much required. And in absence of that I think,
-> many (or most) of the platforms that also need to scale the voltage
-> would have modeled their hardware as a regulator and not a PM domain.
->
-> What I always thought was:
->
-> - Module that can just enable/disable power to a block of SoC is a
->   power domain.
->
-> - Module that can enable/disable as well as scale voltage is a
->   regulator.
->
-> And so I thought that this patchset has done the right thing. This
-> changed a bit with the qcom stuff where the IP to be configured was in
-> control of RPM and not Linux and so we couldn't add it as a regulator.
-> If it was controlled by Linux, it would have been a regulator in
-> kernel for sure :)
-
-In my view, DT bindings have consistently been pushed back during the
-year, if they have tried to model power domains as regulator supplies
-from consumer device nodes. Hence, people have tried other things, as
-I mentioned above.
-
-I definitely agree that we need to update some documentations,
-explaining things more exactly. Additionally, it seems like a talk at
-some conferences should make sense, as a way to spread the word.
-
-Kind regards
-Uffe
+Good catch! Thank you!
