@@ -5,93 +5,77 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E17C55ABD
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28D3C4741F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA5CE21734
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685EA22228
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7qYU/S7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBI+X77X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbgKEN5b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 08:57:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39422 "EHLO
+        id S1730770AbgKEN6i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 08:58:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730676AbgKEN5a (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 08:57:30 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A9DC0613CF;
-        Thu,  5 Nov 2020 05:57:30 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id v144so2385762lfa.13;
-        Thu, 05 Nov 2020 05:57:29 -0800 (PST)
+        with ESMTP id S1730746AbgKEN6i (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 08:58:38 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21584C0613CF;
+        Thu,  5 Nov 2020 05:58:38 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id l10so1669622lji.4;
+        Thu, 05 Nov 2020 05:58:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+oB95VM8Zw9gIAt2FC+TShAF+0gIWo5rt3Q41RXJdtg=;
-        b=k7qYU/S7xIQk2jr0RN0b4YX8DQl0u0bLGIF7BIO03i9ysBwBpKDn2MliLppMdD912h
-         r6BgWfzuRYtSE1eLkUMnbUB/BLsLo+YvOQfwlkgKibkMcVVi1isY/5BggTofJ/y1r0Hm
-         YXTNppZyodPQYF16UO3KTj5p7F89cfzPcpONsMTDz0kZoeDG8Fx0XGembDMrW3FuOzXM
-         jio/WB6mh7LmvjaKoQD27SeVDVB1tKJaInHuJOCXUkAdoOyzgiBYOsX/YjAtCKwJlQaR
-         K889lN9RvZfHHalw/0sSwWgdKgiFdf9q8dpTy6GIkWbl3kBPpBC5N6gEirv5uxbLGA/i
-         qy4g==
+        bh=ua+XqBPg22ryhZgPJww6Uojlz0C1kaQl2r/pK/v+fys=;
+        b=fBI+X77XrljCuJQUBTFf5PQggFuOyq+QXV5hbyuS74jAFpRO59bE2ERGvHoGY0CAvc
+         0oRdE4s8eKfW3gH1wJSnyKiZcCxeeuLiqRckWXJB8oVoQENOBl8FtdP86pRrsV0Q6NWc
+         ndM5fnXHKSDJk5//k1l5Sd/hKB0zjf6gYR5tv2micFUJ2IBqX9FJmxAp/3RDYopf8K5I
+         nMhcC4ESBqtDfmkrnxWbAt3tPmcotxOO6ckZKrfL/BDMJLp6T+1X83Yh/N09R6aCiyq/
+         1ah4XNo+K2RYtXJ4fj8mMYm7Xf5AbZF9c+KQUt3stN2qEypLm1QekSfD25Re1ksVC5io
+         UdpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+oB95VM8Zw9gIAt2FC+TShAF+0gIWo5rt3Q41RXJdtg=;
-        b=LAkh9c++vmxJSnAXiB1xqhPTXTn4TfINks8xtjJrUNHlePux9cmmeS4SC1vlOwc8l/
-         ehqkGpMEQX+IQm1iXV93wYKT4g4sTMvY60FrJe8GisSeHEAngbYqqpvV3MtBmp8fZ4J7
-         rzjoeOT5Dmr9wWWtre/PV2Ua/rOK+hPSvcemCCVAn4pda4AVGHA2BFLQGSEiRjjort9V
-         VBq1zEshzON1llta0pWrh3y7lgWwncfabTlglAHjaqJBjpUgl9on4O27cfQwdL4eTTr2
-         5pcSalCBNF5vNYUrjiMVoSpFN8+5Yjqe4k3eUl6R+da2N/yt98idovbJguXX7SHXvXuT
-         SkGQ==
-X-Gm-Message-State: AOAM532INXx3qDpNEcKJGdVzbINt3P4Kv0OXpx6pJnrFHLljH6WpoIjg
-        D++7dtqY1W3HwUcF/z1IO/DUgke/eBg=
-X-Google-Smtp-Source: ABdhPJy8aDH+pQWACig1gxUeRAo9xbkzKXDLndcNZHc3MgeMS7MQorfWYcYeqkisehyHHQbAhHZsRw==
-X-Received: by 2002:ac2:522a:: with SMTP id i10mr1023516lfl.128.1604584648429;
-        Thu, 05 Nov 2020 05:57:28 -0800 (PST)
+        bh=ua+XqBPg22ryhZgPJww6Uojlz0C1kaQl2r/pK/v+fys=;
+        b=IZgFmGyOOvSPH2VVkisayIEm8zuzBY3K8SlShu0kDw3b7uqpA25FjTDz0lT9zbQkqq
+         /GOUFlaLu3MhQy/dSoiHi1TD6BAt8jGecxNUZlf5Xj28Vh5U6xR6fRtGjLreYdwS4h4S
+         5+kXmdkX4cGASBfG1r1cEfOVfA3k7wqf3SgDB7/W/TO8c1Wzwmd3HP/OQuZscfTyuvCX
+         KO2NDSg2Cw+BiLiQ8+TdshMmpPiDNBOZK4LewKFQlj67eYa2IY7Qxoh92gdka2NrTJuh
+         S6y50YrODyIrZlhHY4PQ0EfZJ2zMQdOtnoqwMq8vemEeFftx+jy3Qdl9kz5KEZJQouYv
+         shBA==
+X-Gm-Message-State: AOAM532UL8l3lya2R9m0XfttgLQG2JIXc9J4L4HeBYf4H4HUgtzsY5eg
+        QxXpV/m8WHbm+I2OZJuStSxDNpn3KvE=
+X-Google-Smtp-Source: ABdhPJzPPD5FYtvWKbpRa9qB0kCASYkqtaVWxPZuIFeF8V5t1el23qhcHAmjRSJgIVs+Irv03CnhMw==
+X-Received: by 2002:a2e:9189:: with SMTP id f9mr874781ljg.295.1604584716456;
+        Thu, 05 Nov 2020 05:58:36 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.googlemail.com with ESMTPSA id h10sm158920ljj.116.2020.11.05.05.57.26
+        by smtp.googlemail.com with ESMTPSA id a15sm190343lfi.165.2020.11.05.05.58.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2020 05:57:27 -0800 (PST)
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
+        Thu, 05 Nov 2020 05:58:35 -0800 (PST)
+Subject: Re: [PATCH v3] mfd: tps65910: Correct power-off programming sequence
 To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+Cc:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201105014502.GB17266@qmqm.qmqm.pl>
+        Zack Pearsall <zpearsall@yahoo.com>,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201104134408.19911-1-digetx@gmail.com>
+ <20201105013319.GA17266@qmqm.qmqm.pl>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <60e6ea6b-3a02-30a1-f0c9-d33ef7906ed6@gmail.com>
-Date:   Thu, 5 Nov 2020 16:57:26 +0300
+Message-ID: <d0f435c7-6c58-b9af-8b08-934ee63e54cf@gmail.com>
+Date:   Thu, 5 Nov 2020 16:58:35 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201105014502.GB17266@qmqm.qmqm.pl>
+In-Reply-To: <20201105013319.GA17266@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,20 +83,18 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-05.11.2020 04:45, Michał Mirosław пишет:
-> On Thu, Nov 05, 2020 at 02:43:57AM +0300, Dmitry Osipenko wrote:
->> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
->> power consumption and heating of the Tegra chips. Tegra SoC has multiple
->> hardware units which belong to a core power domain of the SoC and share
->> the core voltage. The voltage must be selected in accordance to a minimum
->> requirement of every core hardware unit.
+05.11.2020 04:33, Michał Mirosław пишет:
+> On Wed, Nov 04, 2020 at 04:44:08PM +0300, Dmitry Osipenko wrote:
+>> This patch fixes system shutdown on a devices that use TPS65910 as a
+>> system's power controller. In accordance to the TPS65910 datasheet, the
+>> PMIC's state-machine transitions into the OFF state only when DEV_OFF
+>> bit of DEVCTRL_REG is set. The ON / SLEEP states also should be cleared,
+>> otherwise PMIC won't get into a proper state on shutdown. Devices like
+>> Nexus 7 tablet and Ouya game console are now shutting down properly.
 > [...]
 > 
-> Just looked briefly through the series - it looks like there is a lot of
-> code duplication in *_init_opp_table() functions. Could this be made
-> more generic / data-driven?
+> You might want to rebase on https://lkml.org/lkml/2020/9/26/397 as it's
+> probably going to be accepted shortly. This just means replacing
+> register accesses: tps65910_reg_*() -> regmap_*().
 
-Indeed, it should be possible to add a common helper. I had a quick
-thought about doing it too, but then decided to defer for the starter
-since there were some differences among the needs of the drivers. I'll
-take a closer look for the v2, thanks!
+I'll update this patch once yours series will hit linux-next, thanks!
