@@ -2,122 +2,176 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A0AC55179
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 16:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26748C4741F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 16:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16E1320936
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 16:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6BF520756
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 16:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vHRqOwZo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qh8F9+Bv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbgKEQpn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 11:45:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37792 "EHLO
+        id S1727275AbgKEQsr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 11:48:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730504AbgKEQpm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 11:45:42 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A73B5C0613D2;
-        Thu,  5 Nov 2020 08:45:42 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id k9so2240185edo.5;
-        Thu, 05 Nov 2020 08:45:42 -0800 (PST)
+        with ESMTP id S1726557AbgKEQsq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 11:48:46 -0500
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03731C0613CF;
+        Thu,  5 Nov 2020 08:48:45 -0800 (PST)
+Received: by mail-ed1-x541.google.com with SMTP id e18so2250479edy.6;
+        Thu, 05 Nov 2020 08:48:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=CoyVEhjU5+i65+RM5MA24dlJcWVZipl6JTaDi+RPIjA=;
-        b=vHRqOwZoIMPJEdRIUfEm6A0SNzm3v9aEoMVU+lR1YRJ4VECDuDCgesjtek6nQefppP
-         FB7eujDcSbEtiHnoeOFRpm38qCaffocq5PLTEA+Z1wxqLwhWRnA78MPE+s7+SxFcgkV8
-         3CpJI+DeQmwMsERvjUaQIJsom24qXiikOBPkdQi2/FuwFQoltsKGzAwA1PSV2Ai7onxs
-         oVqb7reyJCENcsWymvdE+dj0XxgN2bDckqMaT7dxIwGyrWt4Xum875h8J5X1vKHsSLCy
-         tG5pJX2y95SyxWwJYP/EC6WZhZmUq8wAvO0aT0TO1C1eKLJv63HGrcytU8NCLNLlEeXP
-         qoSw==
+        bh=yX39kTh1HHCiE7a4ozj9S+V+l033SuDnzUBvvzJ5DSA=;
+        b=qh8F9+Bv/qy6tDCwwb+PEaXxyVWA7Xq2gVdU1smCegVmFklmD+gxgnUaRGmQ0LODVr
+         qkTIu7Wtw41lEWjrAiDZJwMwW3H9dXGEvkrVKsnpztVYnkSDHtmSN7nCOa5Xw7DuDU76
+         kYrut4EaLB+TcqA3ukK1Ait/cG9RFUoNe6j6/G2K8guZNGpQj8n5HmE101VfTFgB8Ul+
+         VOlhsdytM53K874JOG4FmneJAL+sErho7nMYAd9Bv8sODNEjbZaTGXHFAzyJM9+Pp7nV
+         ASFaFZjPP3wvQ7VXrcinAw3Cjt3oqvQrhBpl0hphQVGfL0c29ZboNG8h+EuZHVy5fPqp
+         1AIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CoyVEhjU5+i65+RM5MA24dlJcWVZipl6JTaDi+RPIjA=;
-        b=mkaZErdiaEi9fMhb8L0lqGKSgormnFs9UgKokM5Oq2AL/VDxYs/plkragSdUTwR1u/
-         venCE/ibBDHy/5NBqT2E9lJ2fhmK9+bFkNHDSSUaqS1OTDMjnQLMVFLJrLYRykf3RY1A
-         GKe7D0tDY3oVC4UbJe35FPwzHeKW18LRcguEWgGTZ08CrsOJBDNKoO/O3dy4JthxFI3L
-         RSWViFkvvF9nit+YTOL/Akr+gleCtufxo0BXhMaT5Kw5CAkF2UD9o5uZDOq8pissJ6vr
-         bP0F2+y9QxSQeiIOYUefGIbe7B1s/Uwt4rB81IsIgohtFYqHUEmV91WJhF2VhBd1w5IJ
-         7+lQ==
-X-Gm-Message-State: AOAM532ItvzhLKmLZPckcS3jG62MRoaeveM4pXhbIhIn2SFM8nOdIi3A
-        eowB4+YUednye2i6we3l6UM=
-X-Google-Smtp-Source: ABdhPJyDxW7zujCRtV06rwzU0KrdHIuYIJHTTT6PD5zogl77WrCXNxfQoknZW9WEzB9+NEBaak27wQ==
-X-Received: by 2002:a50:950e:: with SMTP id u14mr3469247eda.260.1604594741362;
-        Thu, 05 Nov 2020 08:45:41 -0800 (PST)
+        bh=yX39kTh1HHCiE7a4ozj9S+V+l033SuDnzUBvvzJ5DSA=;
+        b=MIjE74AJ96krtpZeblAHxxsmSF6+EE3vJmxUTVYIYVg2Zsf/YG7K0YlwgQ3aYl2nqU
+         mctUHA5a3XhkbZaIrksUBqkL/ugHeuI5oS0Gr+pRiCQ0SuCOeysUbExkJ+Gw67BUNr7G
+         bhXcrY1M+VM6PEubuAaEmRlyJvdH8yqITHZF+zfjv6kWc2gfu3LtvgUIT+76NjokGBDo
+         Jy/56S4fWfz4q7/2TE958Mg9cy5LKDgjhsUpIRA2qpVyIEHPJUnKeIUTPVcyeegkBkfa
+         gjr0CGPNl4MjW8NC8dhubZlCyfXS0f8ohYBb9M5nLzMw+RIm8fFRVKTf4ztNZrDEw7/h
+         gLQA==
+X-Gm-Message-State: AOAM532cxg0wcopPeWWqL3Olj/ge0SOgXRb6t84VGZebFKi754+B4sW1
+        VJpMkHFHf7Hm2t00ljg/fCo=
+X-Google-Smtp-Source: ABdhPJyiERgZeAUS31dkT4tl4RNTxwY6ZlLP3JkbXUfS5vHH5jSTMFA1rjwEXqQlBo5vKebs0Q+I/g==
+X-Received: by 2002:a50:e041:: with SMTP id g1mr3548640edl.385.1604594923722;
+        Thu, 05 Nov 2020 08:48:43 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id bt16sm1279390ejb.89.2020.11.05.08.45.39
+        by smtp.gmail.com with ESMTPSA id s20sm1222145edw.26.2020.11.05.08.48.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 08:45:40 -0800 (PST)
-Date:   Thu, 5 Nov 2020 17:45:38 +0100
+        Thu, 05 Nov 2020 08:48:42 -0800 (PST)
+Date:   Thu, 5 Nov 2020 17:48:41 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 01/19] gpu: host1x: bus: Add missing description for
- 'driver'
-Message-ID: <20201105164538.GE485884@ulmo>
+Cc:     linux-kernel@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        amd-gfx@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        David Francis <David.Francis@amd.com>,
+        dri-devel@lists.freedesktop.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Gareth Hughes <gareth@valinux.com>,
+        Huang Rui <ray.huang@amd.com>, Jason Yan <yanaijie@huawei.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jingoo Han <jg1.han@samsung.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linaro-mm-sig@lists.linaro.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Lyude Paul <lyude@redhat.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nirmoy Das <nirmoy.aiemd@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <rob.clark@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 00/19] [Set 1] Rid W=1 warnings from GPU
+Message-ID: <20201105164841.GH485884@ulmo>
 References: <20201105144517.1826692-1-lee.jones@linaro.org>
- <20201105144517.1826692-2-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a+b56+3nqLzpiR9O"
+        protocol="application/pgp-signature"; boundary="fd5uyaI9j6xoeUBo"
 Content-Disposition: inline
-In-Reply-To: <20201105144517.1826692-2-lee.jones@linaro.org>
+In-Reply-To: <20201105144517.1826692-1-lee.jones@linaro.org>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---a+b56+3nqLzpiR9O
+--fd5uyaI9j6xoeUBo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 05, 2020 at 02:44:59PM +0000, Lee Jones wrote:
-> Fixes the following W=3D1 kernel build warning(s):
+On Thu, Nov 05, 2020 at 02:44:58PM +0000, Lee Jones wrote:
+> This set is part of a larger effort attempting to clean-up W=3D1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
 >=20
->  drivers/gpu/host1x/bus.c:40: warning: Function parameter or member 'driv=
-er' not described in 'host1x_subdev_add'
+> There are 5000 warnings to work through.
 >=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/gpu/host1x/bus.c | 1 +
->  1 file changed, 1 insertion(+)
+> It will take a couple more sets.
+>=20
+> Lee Jones (19):
+>   gpu: host1x: bus: Add missing description for 'driver'
+>   gpu: ipu-v3: ipu-di: Strip out 2 unused 'di_sync_config' entries
+>   gpu: drm: imx: ipuv3-plane: Mark 'crtc_state' as __always_unused
+>   gpu: drm: omapdrm: omap_irq: Fix a couple of doc-rot issues
+>   gpu: drm: selftests: test-drm_mm: Mark 'hole_end' as always_unused
+>   gpu: drm: scheduler: sched_main: Provide missing description for
+>     'sched' paramter
+>   gpu: drm: scheduler: sched_entity: Demote non-conformant kernel-doc
+>     headers
+>   gpu: drm: omapdrm: dss: dsi: Rework and remove a few unused variables
+>   gpu: drm: selftests: test-drm_framebuffer: Remove set but unused
+>     variable 'fb'
+>   gpu: drm: ttm: ttm_bo: Fix one function header - demote lots of
+>     kernel-doc abuses
+>   gpu: drm: panel: panel-simple: Fix 'struct panel_desc's header
+>   gpu: drm: bridge: analogix: analogix_dp_reg: Remove unused function
+>     'analogix_dp_write_byte_to_dpcd'
+>   gpu: drm: ttm: ttm_tt: Demote kernel-doc header format abuses
+>   gpu: drm: selftests: test-drm_dp_mst_helper: Place 'struct
+>     drm_dp_sideband_msg_req_body' onto the heap
+>   gpu: drm: radeon: radeon_drv: Remove unused variable 'ret'
+>   gpu: drm: panel: panel-ilitek-ili9322: Demote non-conformant
+>     kernel-doc header
+>   gpu: drm: radeon: radeon_device: Fix a bunch of kernel-doc
+>     misdemeanours
+>   gpu: drm: amd: amdgpu: amdgpu: Mark global variables as __maybe_unused
+>   gpu: drm: bridge: analogix: analogix_dp_reg: Remove unused function
+>     'analogix_dp_start_aux_transaction'
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+As commented on the other patches, the subject prefixes on most of these
+look wrong, but it's generally a nice cleanup.
 
---a+b56+3nqLzpiR9O
+Thanks!
+Thierry
+
+--fd5uyaI9j6xoeUBo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+kLDIACgkQ3SOs138+
-s6FfwhAAs7WZQaGt1M9Mff4+rE8bZScWqbl3tzYINl6Z6D0Ghn9KEbM7mKpZBdTv
-iRGkVIKdoSoLZukDA36rYSs5ModiN1tEGtD5XcDEe9tR6JzHbk8L9pE+F9R3Q0LH
-c8DuKIXbXg8jkpvpvN864xOOIGjWPyNYnQa0DG7cq8KNSz6Uk9VOifD2Qngflrt4
-LPZmHQr6hIyU1ULy0P/8Q2fF7fNoUcK5S5TtjpQRmBi7Rjyf5lEiBslQcvoltbJE
-fS85N0+feF+Uv051TNeBf/B5XUaZ70aCBZui9nk09V68t8GywYWUpyLeQ4vV0NGi
-XewL8VRfbpouUSVVPOBi6xTr7knXeFjqQc6uRFtwSMRefn2xPG1yt90/RWVhd29t
-npT1GrWHVbAIsSflOs41ao8Un+PnzRlefNMX0NlKsuEdvKrv68FwPd7JOEkxvsGA
-52oRD8BQQddLoeeJ+iDpKL8ZhVOi3zaw6WxrpNskn9pazDTZImHGP+Q14eLdsNWB
-FQDGdvGsGBJ1/qeA6Ar8cgJvQwjTcVUmrgP0J38/RWfTjeyWrphOT5/PqGhKmSCP
-ME7mQznU6rFsZvOCIzCNTRAoM/tRyuLMnHiKywaKsOFw1sVrvDvDiq1/w/WGxuUK
-1hUN6UEDTbRHeqdlT/PVnqJVaAMDDDki1fBkDWTgL6K8Bcivwgc=
-=sOvt
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+kLOkACgkQ3SOs138+
+s6HE2A/+PdAvZ2+F78DJkdsaNjJu085jUQleXGtXuqh1lQ+yUWWTHYiXOdmLAaru
+GaEmINYkOF2LvdLY5vIwyX+TY2lp9PYd0oo4UHBKei3IrhrHzGM+f1mHxvDfp2fF
+ENihVfG/CNzk1RUnCensuwsBl/NHC/yepie9ykDBthaD5cfAaMpcFxw+KIHErtBh
+I0T8UHO2bbqaU8Oz3r0My3Owk4H/1sNgZ7GBvqKQeWveHpz2FenHke0ZI6tXre2J
+zj1vtgcRPNl6cE3aBxlSd8uIhdjAjGK/iShwI1N868ESy4w4ahGOMdX4i+BRlRL4
+bObmEnqqPIl7n7NxvBvCBZFJQ19RMtkhcAtBT/IbYSiEN4AOS/TFq9iGxXefgNbU
+I3BfMXl4aFQMhIDYHxG97bSr4Njec7KZf1cfTPRaCpcluulvb2geKvwDdDrhtKZW
+LQQjv0hq4l9EDHGMOq5QdyIL9ay13S+ctmBzUN/b5N4YdSyDw9Ixt141zH9Eygdm
+L+BzflS3sGx9roS0adeanIYgqMLV558yzqnC+pg9yaaR/AtaredjWs9+hnpT3XVC
+JltHngRXupmBTRe4i0+YGYrlHFFWTtR+TuWOH4tSHUl5oL5/DL9yjtGLvlB6lNbC
+ohT4UGDQZ8lITaiToRQyBOAh54Zc485krb7QAPVT0HOfLPenxF8=
+=euSt
 -----END PGP SIGNATURE-----
 
---a+b56+3nqLzpiR9O--
+--fd5uyaI9j6xoeUBo--
