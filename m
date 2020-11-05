@@ -2,102 +2,131 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC126C5517A
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 14:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131D2C4741F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 15:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6383B221FA
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 14:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FB2C2224D
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 15:22:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DvX+YFq0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUE+lII3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbgKEOwS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 09:52:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48104 "EHLO
+        id S1731129AbgKEPWR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 10:22:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731074AbgKEOwR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 09:52:17 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB1EC0613CF
-        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 06:52:17 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id h22so1891980wmb.0
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 06:52:17 -0800 (PST)
+        with ESMTP id S1730660AbgKEPWQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 10:22:16 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5261BC0613CF;
+        Thu,  5 Nov 2020 07:22:14 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id l10so1979097lji.4;
+        Thu, 05 Nov 2020 07:22:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7qK4vXzf9k749HbSw+NxCxzFALmYv20LEPAyeYzlRJg=;
-        b=DvX+YFq0boewLykq+SRnhh+o0RblVNOCxqwRFP2HW2CfK8Pmx+3clePTBNvWOqiAlo
-         6iifsKbFhESVU9JX1Qr5PP3j4dk/WVzjt2wT3rOzCJxtGSfqG4Eydl0yANYEeFhEgO6X
-         h8na7H0n4q2V40frBQtsO3lUoXDLl2yfMTqiTyiX7pzXyTwkHKZkku74oLaqgrThJGFI
-         ledlIjIxUT9uBm0nugUaAnD4Lpvzr7y5LnZsQUsg+h/5H3vPdpeq59M69qrP+c8tT58U
-         62w8Eo6U3pbROKNyR3Mk6PqEF6d3dXVYNVkzALqqNEz84J82wk3bz83cXzHDm8kHLD1f
-         qtoA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=L7OVsr5m178XbCaCzAWNkdQoFi3/3zu9mN+yPgl2DUs=;
+        b=ZUE+lII34sxgdJMzK2yn/f7sQCJw/4+mRXBdMBq1/bhBQWtfS/PtExzwYtktIoAWgY
+         SU7g93lwJ2c7NK0CDwzeo+RytY043NhbabYKjJOBr7tIMP5wlLP/u6h82rzBRDjVxP9j
+         EdnAYAZOpmyMs1GUR/kcd37x1kAewnXFex0wqQUKK37hfYXxUIOMvhuhv9Kkm4bWWj03
+         NYOfuJLDcjhyyGqGtJNpIUWkJQCG6veMjv1sZZ5dae38lEVIkii3wjlD54ZKITpqpnKX
+         8VoeiDhs1BxqGTAhX5SPmAP4HQXgACk2ac5ePAi3NeEKCHu2erytV3AEJlNMrsBJq5S8
+         bmSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7qK4vXzf9k749HbSw+NxCxzFALmYv20LEPAyeYzlRJg=;
-        b=eYOILpmfu9TUTroCn9lRTczmmtoA/tFAIyunRM0fB7D1wau7Rb/CLoH14tB3/7ny97
-         2SFLf1bCbwCLCDed+OxHW3I92DY2Ivw1MY6Xr31MtWFJArdVuR9qx0iGZVnSG2llHxF6
-         L/yOkBNAHiOHOxb9Bo8yR/opEHPp+uHaxfJ0QmwQwCRWMXMR7qWQh49oL8fBniTE0XOz
-         s1pCrBBWT0WnyaCPUoTciZ+kzzkcIibP5AH87/YmCsQP+028ajVg8nAqBrL446DVWMAM
-         l/giYdArvQMPVX3bdHlbdnM/bxHV9ea4RP69CNluN0YIfT+sCLvetpy3I43d9F+/Qald
-         HwnA==
-X-Gm-Message-State: AOAM533tijgIljXIqN2iP/SeQCHM2+OcUZ62x2NDtr9esqNAgnqwGcyL
-        MaLN7L97lMDJurgOi/03tPJPjQ==
-X-Google-Smtp-Source: ABdhPJxI3Hz+xthd1AooFfZRJiYYpYQ7WvLLajU3VZosa9/ukoyhZuoZL8CZ36qLvtZ38khO9VAoCA==
-X-Received: by 2002:a1c:4c05:: with SMTP id z5mr3136449wmf.122.1604587935853;
-        Thu, 05 Nov 2020 06:52:15 -0800 (PST)
-Received: from dell.default ([91.110.221.242])
-        by smtp.gmail.com with ESMTPSA id f5sm2631243wmh.16.2020.11.05.06.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 06:52:15 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 01/19] gpu: host1x: bus: Add missing description for 'driver'
-Date:   Thu,  5 Nov 2020 14:44:59 +0000
-Message-Id: <20201105144517.1826692-2-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201105144517.1826692-1-lee.jones@linaro.org>
-References: <20201105144517.1826692-1-lee.jones@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L7OVsr5m178XbCaCzAWNkdQoFi3/3zu9mN+yPgl2DUs=;
+        b=twh5NJEnuJ62dpTxoXovRD4gCmY0BG4D9sS+edVQQaMZPACU1iuomMN04SrNwtNh22
+         xGgIaIIGj3vyBZ9oADNuwuwDVf+fnX79IRtDyPVBi0M7BStghUDNZRkAK7Of7dOgEVq2
+         SIFpM8RU39rOH0UKaL6zhX5IarWKE5o/lAJs701DcXrY8D5qmZXojcDNMiGQbuL4vFlv
+         8D9WQ5rOyXrCiJFoIgj2thbGswp7134dZ+pdmXKUUX7/i80MgJ+K3pCsyLmzkqt0AXue
+         PI8v+6G9SRCSt0uBy0cXjRGyCVaq8m9rxGnt7vnEEBfr03P1sJFKGC2UktRMnFqD8Kr0
+         RDQw==
+X-Gm-Message-State: AOAM533I23gWFQ5iK/2hzADTQc84tAIocMgvEeppzzNkLTtmlUB8KQgy
+        KSeJV8Z1IXgIGjbGxm2PEqKG+a1OJ9E=
+X-Google-Smtp-Source: ABdhPJwC5ZQ/5zYH2nUFCy93HeDhVeV9bcOjajKeeVZadnE++shSnXPj1s2oA0r6x39bDtt0cphAoQ==
+X-Received: by 2002:a2e:9a0e:: with SMTP id o14mr1127768lji.340.1604589731407;
+        Thu, 05 Nov 2020 07:22:11 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id 144sm176642ljj.48.2020.11.05.07.22.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2020 07:22:10 -0800 (PST)
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cd147ab0-1304-a491-7a56-ee6199c02d32@gmail.com>
+Date:   Thu, 5 Nov 2020 18:22:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+05.11.2020 12:45, Ulf Hansson пишет:
+...
+> I need some more time to review this, but just a quick check found a
+> few potential issues...
 
- drivers/gpu/host1x/bus.c:40: warning: Function parameter or member 'driver' not described in 'host1x_subdev_add'
+Thank you for starting the review! I'm pretty sure it will take a couple
+revisions until all the questions will be resolved :)
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/gpu/host1x/bus.c | 1 +
- 1 file changed, 1 insertion(+)
+> The "core-supply", that you specify as a regulator for each
+> controller's device node, is not the way we describe power domains.
+> Instead, it seems like you should register a power-domain provider
+> (with the help of genpd) and implement the ->set_performance_state()
+> callback for it. Each device node should then be hooked up to this
+> power-domain, rather than to a "core-supply". For DT bindings, please
+> have a look at Documentation/devicetree/bindings/power/power-domain.yaml
+> and Documentation/devicetree/bindings/power/power_domain.txt.
+> 
+> In regards to the "sync state" problem (preventing to change
+> performance states until all consumers have been attached), this can
+> then be managed by the genpd provider driver instead.
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index e201f62d62c0c..347fb962b6c93 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -32,6 +32,7 @@ struct host1x_subdev {
- /**
-  * host1x_subdev_add() - add a new subdevice with an associated device node
-  * @device: host1x device to add the subdevice to
-+ * @driver: host1x driver containing the subdevices
-  * @np: device node
-  */
- static int host1x_subdev_add(struct host1x_device *device,
--- 
-2.25.1
+I'll need to take a closer look at GENPD, thank you for the suggestion.
 
+Sounds like a software GENPD driver which manages clocks and voltages
+could be a good idea, but it also could be an unnecessary
+over-engineering. Let's see..
