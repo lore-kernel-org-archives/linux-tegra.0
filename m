@@ -2,319 +2,108 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DC5C388F9
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 02:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E13C4741F
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 08:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDA020739
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 02:16:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="imiHgJQc"
+	by mail.kernel.org (Postfix) with ESMTP id DF794206D4
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 08:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604563745;
+	bh=YbzJesyw4ACSGTbtFNKl5PJvyTdx1czOjNBatdvkiOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Hzxd7uoTAXUuxMFx2qRorDrBMJPGF8ErFm6EUaAb6c4uOO3KMAtRbqZ8T/VWW1B1/
+	 NrUav2YnZc1SnZGaH1bRlOWoM7beyZ4qFlA4ZTAaqppSvpUCQIkVFs7GIfzp9vzEP3
+	 x/m3T/jb2ebvYS8xUPFboD/V8mPdyz2A4HKRB8Mw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387416AbgKECQp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 4 Nov 2020 21:16:45 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:37204 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731327AbgKECQo (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 4 Nov 2020 21:16:44 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201105021641epoutp026d67e8d0af0def3b58bf7bcb0d285f08~Eev6dTWCi1415714157epoutp02X
-        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 02:16:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201105021641epoutp026d67e8d0af0def3b58bf7bcb0d285f08~Eev6dTWCi1415714157epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604542601;
-        bh=jNvW1QYRp55tS9iML16rKRdyc1jSws940X+qvg5l9sU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=imiHgJQcSbLBhwreovbY4886e3vZr5lWRc94I3QHEd03V6ZFKGnat3Oc1jrEO1PlT
-         6L9lPkyW8UZv0zRLMJJmxbRqjx3PqKAMlAj9lFqvuidLykNzFFXs8pr8qQGt26ObbC
-         MBTHpOzLGjIa3WXSoVN43ihoGtODw3NsthLVKSFE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20201105021640epcas1p48c5712936d8c8b5338d6357ddce4e8b6~Eev56-kB90090400904epcas1p4W;
-        Thu,  5 Nov 2020 02:16:40 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4CRRwP742nzMqYm0; Thu,  5 Nov
-        2020 02:16:37 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        00.AF.09582.48063AF5; Thu,  5 Nov 2020 11:16:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20201105021636epcas1p4ac5ca3b02c51ef248a64c1c659484362~Eev142zY03066930669epcas1p4B;
-        Thu,  5 Nov 2020 02:16:36 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201105021636epsmtrp158daa64df16c9d5766645cf7677d3e0a~Eev135Wog0600806008epsmtrp1M;
-        Thu,  5 Nov 2020 02:16:36 +0000 (GMT)
-X-AuditID: b6c32a37-899ff7000000256e-ed-5fa36084dc06
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.90.08745.48063AF5; Thu,  5 Nov 2020 11:16:36 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201105021635epsmtip2f5833d1c0346068df99822f88e5ea2f6~Eev1gCREa1768217682epsmtip2K;
-        Thu,  5 Nov 2020 02:16:35 +0000 (GMT)
-Subject: Re: [PATCH v7 36/47] memory: tegra20-emc: Add devfreq support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <95e289fc-210c-1f8d-1b24-36e33ce96deb@samsung.com>
-Date:   Thu, 5 Nov 2020 11:30:32 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1726626AbgKEIJF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 03:09:05 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43120 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbgKEIJF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 03:09:05 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b9so551018edu.10;
+        Thu, 05 Nov 2020 00:09:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VN2SNhST5biqDVcxltQIhYUxuznuc4xOUZgsRFlyXuE=;
+        b=tyWBKbhe0Mtg8+k1yLlIW+EdnYFeHwrcOgNrwMmrdn8AYH1dCWSaG5KiSGtKPwfbcb
+         zfCEBozp2pJ0LpXSJzQv+2osSP69j9jsacrJWAyrpFizVKzvcUC2B8AdlRobqKMXjAId
+         EVJ9AWPiVBrgQXUe+dQJ2Q5EgjbF3GdR38U1cD/LSgHBY2GxJtsKd3RuWAjNkDT9yN4r
+         bDJiqCZK2vWXGm6dsImJg8Un9c8Um1VstXkq6klY+Dc+pisE0hTPP/vCJgykzmKXhEx9
+         ErPCNpPXxA59Gf1WmZ7+kIFv8Mmv9gALmcrtMuJJImoPcE0WZbkoQBMSLGtd/OnEA6Hw
+         qpJg==
+X-Gm-Message-State: AOAM530dDV8Kx38sNgTYqFEouYt32l0xo+wpGzEvPSV6jKJW6WyWuWKJ
+        iYxq8MUBynd5tDestrcP7rg=
+X-Google-Smtp-Source: ABdhPJxd+6Pg5alxWbpWPvEy7Y+00ctaABN4nx3GTEKIZ2UZaS3xKMNHx8vvlh5hhS/GKjlkhTS7Zg==
+X-Received: by 2002:a05:6402:185:: with SMTP id r5mr1350938edv.263.1604563742891;
+        Thu, 05 Nov 2020 00:09:02 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id a10sm416960edn.77.2020.11.05.00.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2020 00:09:01 -0800 (PST)
+Date:   Thu, 5 Nov 2020 09:09:00 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH 1/3 v2] Input: atmel_mxt_ts - Fix up inverted RESET
+ handler
+Message-ID: <20201105080900.GA17235@kozik-lap>
+References: <20201104153032.1387747-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20201104164923.21238-37-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJsWRmVeSWpSXmKPExsWy7bCmrm5LwuJ4g+WT1S3efXrKajH/yDlW
-        i9UfHzNaXPn6ns1i+t5NbBYtsxaxWJw/v4HdYuvTNUwWZ5vesFtc3jWHzeJz7xFGi84vs9gs
-        Lp5ytbjduILNYtLaqYwWZ595W7TuPcJu8e/aRhaLn7vmsVhsfnCMzUHE4/2NVnaPnbPusntc
-        OveH2WPTqk42jzvX9rB53O8+zuTR2/yOzaNvyypGj8+b5AI4o7JtMlITU1KLFFLzkvNTMvPS
-        bZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4A+U1IoS8wpBQoFJBYXK+nb2RTll5ak
-        KmTkF5fYKqUWpOQUWBboFSfmFpfmpesl5+daGRoYGJkCFSZkZ0z6to+p4IdexcIzSxgbGD+r
-        djFyckgImEg8at/B2MXIxSEksINR4tGWs6wQzidGiffbzrNAOJ+BnF8tTDAt+xofQ1XtYpTY
-        uHwJM4TznlFi1ckWRpAqYQE3iU0n5zGBJEQEbrJILF/xjw0kwSwwg1Hizh5lEJtNQEti/4sb
-        YHF+AUWJqz8egzXzCthJTHt9GizOIqAi0TL7AJgtKhAmcXJbC1SNoMTJmU9YQGxOAXOJe7PP
-        M0PMF5e49WQ+E4QtL7H97Ryw6yQEZnNKnPt/GeoHF4m9D3ZD2cISr45vYYewpSRe9rdB2dUS
-        K08eYYNo7mCU2LL/AitEwlhi/9LJQM0cQBs0Jdbv0ocIK0rs/D2XEWIxn8S7rz2sICUSArwS
-        HW1CECXKEpcf3IVaKymxuL2TbQKj0iwk78xC8sIsJC/MQli2gJFlFaNYakFxbnpqsWGBMXJ8
-        b2IEp3st8x2M095+0DvEyMTBeIhRgoNZSYT3gt+ieCHelMTKqtSi/Pii0pzU4kOMpsAAnsgs
-        JZqcD8w4eSXxhqZGxsbGFiaGZqaGhkrivH+0O+KFBNITS1KzU1MLUotg+pg4OKUamK77/zew
-        vvZte1iL8mPGx5HvbRh0zprbT3f45V56oy563tFNy+8xOv6fOV0usERfpuNCXw+zTPuG3rQb
-        HCx/TU68/uCRavWZbafez4sfZaoci088m/o+cMFxpw2dsr/VGq/O7JtzzjczbUb/n6v6hesy
-        Pii9UTg+s0ms4azCvcQzB8UKrx2e2isre+jh9H3dG/ZuEGCZ+JDfi6dKYGF+wzz7pgmuL9J6
-        2i9bVzbmB3+xnTk5Vuzkr8X9nVysf89E7g/ouVoqaCEivNUpWefabtloxWPHtgi53d66/8eO
-        jfV7ZdTVbZYEnOY52dKo+MNhyYSZB+el19dybvR6maDT/Klb8eqccwr5y63Ez1p93qrEUpyR
-        aKjFXFScCADQiVqvgAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsWy7bCSvG5LwuJ4g0+dvBbvPj1ltZh/5Byr
-        xeqPjxktrnx9z2Yxfe8mNouWWYtYLM6f38BusfXpGiaLs01v2C0u75rDZvG59wijReeXWWwW
-        F0+5WtxuXMFmMWntVEaLs8+8LVr3HmG3+HdtI4vFz13zWCw2PzjG5iDi8f5GK7vHzll32T0u
-        nfvD7LFpVSebx51re9g87ncfZ/LobX7H5tG3ZRWjx+dNcgGcUVw2Kak5mWWpRfp2CVwZk77t
-        Yyr4oVex8MwSxgbGz6pdjJwcEgImEvsaH7N2MXJxCAnsYJS4+7iJDSIhKTHt4lHmLkYOIFtY
-        4vDhYoiat4wSB/tnM4HUCAu4SWw6OY8JJCEicJdFYtKPW2wgDrPADEaJPxs2skO0bGOU6Po8
-        H2wsm4CWxP4XN8BsfgFFias/HjOC2LwCdhLTXp8Gi7MIqEi0zD4AZosKhEnsXPKYCaJGUOLk
-        zCcsIDangLnEvdnnmUFsZgF1iT/zLkHZ4hK3nsxngrDlJba/ncM8gVF4FpL2WUhaZiFpmYWk
-        ZQEjyypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjODI19Lawbhn1Qe9Q4xMHIyHGCU4
-        mJVEeC/4LYoX4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvt11sI4IYH0xJLU7NTUgtQimCwTB6dU
-        A1Pb09c/+28tN5oyUdM8QpLd//W0idcnL22c/OL7iXBn9w/Km4PPyS5Kubx1sXSz1dzrCtnH
-        rlrwH755M/u0gkC6mouKrkvW5c2nBFMStFhSM9YdSmDjTdR+lsB1wvquTOGG77ce31sR/sBI
-        5/3E3RnFL0u9N/i9+e26y9R3AbvDvCWuQeXfBGsCU27I+ipflQt+JfNOwrif75TyBLlnXXyl
-        5Tr/f8vcipfzknaKVjjZ4nO+LajoX8gCr3dOz7xm8vjompy5vWimfVFKuubTSceVJ2cHn05d
-        VNDOJp+0acWvHk7tdZt5rk/4uv/EsmdPne676V+dP9NK4Z+b+nq3kCLdBsYpT3WjjL4sP3xY
-        9Y8SS3FGoqEWc1FxIgCnJdkEawMAAA==
-X-CMS-MailID: 20201105021636epcas1p4ac5ca3b02c51ef248a64c1c659484362
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201104165200epcas1p1c8f692fa2d5a01c01e4f8aca55462fb2
-References: <20201104164923.21238-1-digetx@gmail.com>
-        <CGME20201104165200epcas1p1c8f692fa2d5a01c01e4f8aca55462fb2@epcas1p1.samsung.com>
-        <20201104164923.21238-37-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201104153032.1387747-1-linus.walleij@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11/5/20 1:49 AM, Dmitry Osipenko wrote:
-> Add devfreq support to the Tegra20 EMC driver. Memory utilization
-> statistics will be periodically polled from the memory controller and
-> appropriate minimum clock rate will be selected by the devfreq governor.
+On Wed, Nov 04, 2020 at 04:30:30PM +0100, Linus Walleij wrote:
+> This driver uses GPIO descriptors to drive the touchscreen
+> RESET line. In the existing device trees this has in
+> conflict with intution been flagged as GPIO_ACTIVE_HIGH
+> and the driver then applies the reverse action by
+> driving the line low (setting to 0) to enter
+> reset state and driving the line high (setting to 1) to
+> get out of reset state.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> The correct way to handle active low GPIO lines is to
+> provide the GPIO_ACTIVE_LOW in the device tree (thus
+> properly describing the hardware) and letting the GPIO
+> framework invert the assertion (driving high) to a low
+> level and vice versa.
+> 
+> This is considered a bug since the device trees are
+> incorrectly mis-specifying the line as active high.
+> 
+> Fix the driver and all device trees specifying a reset
+> line.
+> 
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/memory/tegra/Kconfig       |  2 +
->  drivers/memory/tegra/tegra20-emc.c | 92 ++++++++++++++++++++++++++++++
->  2 files changed, 94 insertions(+)
-> 
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index ac3dfe155505..76e9a3b10839 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -12,6 +12,8 @@ config TEGRA20_EMC
->  	tristate "NVIDIA Tegra20 External Memory Controller driver"
->  	default y
->  	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-> +	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +	select PM_DEVFREQ
->  	select PM_OPP
+> ChangeLog v1->v2:
+> - New patch fixing this confusion before adding the
+>   new YAML bindings.
+> - CC some misc maintainers and mailing lists that should
+>   be aware that we do this change.
 
-nitpick. If you select PM_DEVFREQ, don't need to select 'PM_OPP'
-bacause PM_DEVFREQ use OPP as mandatory with 'select PM_OPP' in Kconfig.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
-> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-> index 5e10aa97809f..9946b957bb01 100644
-> --- a/drivers/memory/tegra/tegra20-emc.c
-> +++ b/drivers/memory/tegra/tegra20-emc.c
-> @@ -8,6 +8,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk/tegra.h>
->  #include <linux/debugfs.h>
-> +#include <linux/devfreq.h>
->  #include <linux/err.h>
->  #include <linux/interconnect-provider.h>
->  #include <linux/interrupt.h>
-> @@ -102,6 +103,10 @@
->  
->  #define EMC_FBIO_CFG5_DRAM_WIDTH_X16		BIT(4)
->  
-> +#define EMC_PWR_GATHER_CLEAR			(1 << 8)
-> +#define EMC_PWR_GATHER_DISABLE			(2 << 8)
-> +#define EMC_PWR_GATHER_ENABLE			(3 << 8)
-> +
->  static const u16 emc_timing_registers[] = {
->  	EMC_RC,
->  	EMC_RFC,
-> @@ -157,6 +162,7 @@ struct emc_timing {
->  };
->  
->  enum emc_rate_request_type {
-> +	EMC_RATE_DEVFREQ,
->  	EMC_RATE_DEBUG,
->  	EMC_RATE_ICC,
->  	EMC_RATE_TYPE_MAX,
-> @@ -193,6 +199,9 @@ struct tegra_emc {
->  
->  	/* protect shared rate-change code path */
->  	struct mutex rate_lock;
-> +
-> +	struct devfreq_simple_ondemand_data ondemand_data;
-> +	struct devfreq *devfreq;
->  };
->  
->  static irqreturn_t tegra_emc_isr(int irq, void *data)
-> @@ -952,6 +961,88 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
->  	return err;
->  }
->  
-> +static int tegra_emc_devfreq_target(struct device *dev, unsigned long *freq,
-> +				    u32 flags)
-> +{
-> +	struct tegra_emc *emc = dev_get_drvdata(dev);
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate;
-> +
-> +	opp = devfreq_recommended_opp(dev, freq, flags);
-> +	if (IS_ERR(opp)) {
-> +		dev_err(dev, "failed to find opp for %lu Hz\n", *freq);
-> +		return PTR_ERR(opp);
-> +	}
-> +
-> +	rate = dev_pm_opp_get_freq(opp);
-> +	dev_pm_opp_put(opp);
-> +
-> +	return emc_set_min_rate(emc, rate, EMC_RATE_DEVFREQ);
-> +}
-> +
-> +static int tegra_emc_devfreq_get_dev_status(struct device *dev,
-> +					    struct devfreq_dev_status *stat)
-> +{
-> +	struct tegra_emc *emc = dev_get_drvdata(dev);
-> +
-> +	/* freeze counters */
-> +	writel_relaxed(EMC_PWR_GATHER_DISABLE, emc->regs + EMC_STAT_CONTROL);
-> +
-> +	/*
-> +	 * busy_time:  number of clocks EMC request was accepted
-> +	 * total_time: number of clocks PWR_GATHER control was set to ENABLE
-> +	 */
-> +	stat->busy_time = readl_relaxed(emc->regs + EMC_STAT_PWR_COUNT);
-> +	stat->total_time = readl_relaxed(emc->regs + EMC_STAT_PWR_CLOCKS);
-> +	stat->current_frequency = clk_get_rate(emc->clk);
-> +
-> +	/* clear counters and restart */
-> +	writel_relaxed(EMC_PWR_GATHER_CLEAR, emc->regs + EMC_STAT_CONTROL);
-> +	writel_relaxed(EMC_PWR_GATHER_ENABLE, emc->regs + EMC_STAT_CONTROL);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct devfreq_dev_profile tegra_emc_devfreq_profile = {
-> +	.polling_ms	= 30,
-> +	.target		= tegra_emc_devfreq_target,
-> +	.get_dev_status	= tegra_emc_devfreq_get_dev_status,
-> +};
-> +
-> +static int tegra_emc_devfreq_init(struct tegra_emc *emc)
-> +{
-> +	int err;
-> +
-> +	/*
-> +	 * PWR_COUNT is 1/2 of PWR_CLOCKS at max, and thus, the up-threshold
-> +	 * should be less than 50.  Secondly, multiple active memory clients
-> +	 * may cause over 20% of lost clock cycles due to stalls caused by
-> +	 * competing memory accesses.  This means that threshold should be
-> +	 * set to a less than 30 in order to have a properly working governor.
-> +	 */
-> +	emc->ondemand_data.upthreshold = 20;
-> +
-> +	/*
-> +	 * Reset statistic gathers state, select global bandwidth for the
-> +	 * statistics collection mode and set clocks counter saturation
-> +	 * limit to maximum.
-> +	 */
-> +	writel_relaxed(0x00000000, emc->regs + EMC_STAT_CONTROL);
-> +	writel_relaxed(0x00000000, emc->regs + EMC_STAT_LLMC_CONTROL);
-> +	writel_relaxed(0xffffffff, emc->regs + EMC_STAT_PWR_CLOCK_LIMIT);
-> +
-> +	emc->devfreq = devfreq_add_device(emc->dev, &tegra_emc_devfreq_profile,
-> +					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
-> +					  &emc->ondemand_data);
-
-Do you want to use 'devfreq_add_device' instead of
-'devm_devfreq_add_device()'? If you have to use 'devfreq_add_device'
-due to some reason, you need to call 'devfreq_remove_device' on exit.
-
-> +	if (IS_ERR(emc->devfreq)) {
-> +		err = PTR_ERR(emc->devfreq);
-> +		dev_err(emc->dev, "failed to initialize devfreq: %d", err);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_emc_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np;
-> @@ -1019,6 +1110,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  	tegra_emc_rate_requests_init(emc);
->  	tegra_emc_debugfs_init(emc);
->  	tegra_emc_interconnect_init(emc);
-> +	tegra_emc_devfreq_init(emc);
->  
->  	/*
->  	 * Don't allow the kernel module to be unloaded. Unloading adds some
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Krzysztof
