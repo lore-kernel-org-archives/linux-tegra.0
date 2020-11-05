@@ -2,96 +2,147 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FB2C00A89
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061CCC55179
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA3AA221FA
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604573560;
-	bh=55+dmYNSA4RJNAuski7QzZJVEG3oCdkANHEesZBTeIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=M/zNM/fATLkTWJBo0RhkDqRN7ZIcgw6HK0t5GwPObLm0RP5vYMjKweVk1IM6v7yp9
-	 GllITtKO73ufr45SkVL0gAoc4pZ/IXAl6jlwiiuafMOCBXiWbI7xfpljsNr0eMCCTA
-	 rPKALMxpc3b37vVvWVbfeTUe3ovWqDxpy0ic2jbc=
+	by mail.kernel.org (Postfix) with ESMTP id 952E82072C
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 10:57:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sMrO9GRU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729990AbgKEKwk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 05:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbgKEKwk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 5 Nov 2020 05:52:40 -0500
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49AA321734;
-        Thu,  5 Nov 2020 10:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604573559;
-        bh=55+dmYNSA4RJNAuski7QzZJVEG3oCdkANHEesZBTeIA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l8KAnzVVBHxSqrPJRo+K6WXIk62igcBMBy4re5IgHbsWN5F4zWu3rLREO0YSeAq2H
-         RFfKEwKCVumuIU7XEKPeeVoYkjVg39tTbA1V/iX1AVYgOVVsZs4hK7xXOXc5isf2FA
-         bBvvHGCQ1Z2gC4IOAntSCpwHylawoTRpBCnxFx/s=
-Date:   Thu, 5 Nov 2020 11:53:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.9 000/391] 5.9.4-rc1 review
-Message-ID: <20201105105328.GB4038994@kroah.com>
-References: <20201103203348.153465465@linuxfoundation.org>
- <4796280b881e4246a6ad2ae268744c37@HQMAIL105.nvidia.com>
+        id S1730200AbgKEK5R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 05:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730139AbgKEK5Q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 05:57:16 -0500
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E037AC061A4D
+        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 02:57:14 -0800 (PST)
+Received: by mail-vs1-xe44.google.com with SMTP id t8so524912vsr.2
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 02:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NZmePoLLIiaP7pYwZl5Ym7F23h4GkDT/CkXYHiP4lxo=;
+        b=sMrO9GRUiQTa3qJHIC5F27I3pHGV5/pX9nBuQ9TmRTxE01Ehxii8CB9TiezKwc2tYJ
+         3SHV/Rhxs7BmoKB4aJ9W24W7rjat8dvXU+F20+lfe5dyWM1qwmiRT2/Hz4E+yVMLYnPt
+         b7MnO/qq1/9P+on1rkNYRYvwC+wu1WaH12rx3rIlc9KubXnGg8K8RqrwvSVobVT1eBhL
+         S5jUjJHcPKtkeDXyshEdMUlmsFSrn0JHuPLo57AVegznV5Ma/kMzEcO9yRsB/eDD9c8G
+         VI/lxjTY1cQzy9HDsuMni9iMjRs1YrWj3PYOnqX2Fk0T+EROO60K2racmtEoxOny53Bc
+         Vckg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NZmePoLLIiaP7pYwZl5Ym7F23h4GkDT/CkXYHiP4lxo=;
+        b=dZGKSqj9eS3cFMjL0dadcS1B2RgDYqVRo9GMJvu2xRTe6qE4JxsnE3KqO2YOHwOEOR
+         cHHh+Fd4TArr44rdbQU1uRcTV4/ur0IRbuY3w9+e3wmRMf1nrPStDGaT2ok8x50mX3Yw
+         F9d6y/t9snJX6oNNTlZ1rVl6ImZ7CGVU8wip+UREtLC9tW0yNTF83hgDEDnkxU7pSiCz
+         LKCmqt97vkhLG2l6dHubjfUHK+iatQJWyu+dNl5I9iP3UJCgJSH126jyvpJeu8gGmsLH
+         hkSP32khGsw7C39WnZPa74YP8wq1mQ3W/gMIIicZo29EMd7Bk+sjMySC+/Iii4tUzfLq
+         edWw==
+X-Gm-Message-State: AOAM5319e+Un986QZNWgdj9QnPxaDtGo+DUtFWNTlLVlagA8Pbz4p8Wr
+        1JpmcpE7zsszzx8df0v3xNXr75EfD1b5R+NgGu7taw==
+X-Google-Smtp-Source: ABdhPJxaRHBJV2RUrIs2kqpAdWFFr8Yx3RVQqbiDwrHCSiI8zLcVccVJz2D9BrdKdQ25WwGzjdkbJ1OYioX7LFmCPEw=
+X-Received: by 2002:a67:310d:: with SMTP id x13mr785780vsx.19.1604573833960;
+ Thu, 05 Nov 2020 02:57:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4796280b881e4246a6ad2ae268744c37@HQMAIL105.nvidia.com>
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <20201105100603.skrirm7uke4s2xyl@vireshk-i7> <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
+ <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7>
+In-Reply-To: <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Nov 2020 11:56:37 +0100
+Message-ID: <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 09:03:46AM +0000, Jon Hunter wrote:
-> On Tue, 03 Nov 2020 21:30:51 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.9.4 release.
-> > There are 391 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 05 Nov 2020 20:29:58 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.9.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.9.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.9:
->     15 builds:	15 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     61 tests:	61 pass, 0 fail
-> 
-> Linux version:	5.9.4-rc1-g53574a4c558e
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Thu, 5 Nov 2020 at 11:40, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 05-11-20, 11:34, Ulf Hansson wrote:
+> > I am not objecting about scaling the voltage through a regulator,
+> > that's fine to me. However, encoding a power domain as a regulator
+> > (even if it may seem like a regulator) isn't. Well, unless Mark Brown
+> > has changed his mind about this.
+> >
+> > In this case, it seems like the regulator supply belongs in the
+> > description of the power domain provider.
+>
+> Okay, I wasn't sure if it is a power domain or a regulator here. Btw,
+> how do we identify if it is a power domain or a regulator ?
 
-Great, thanks for testing and letting me know.
+Good question. It's not a crystal clear line in between them, I think.
 
-greg k-h
+A power domain to me, means that some part of a silicon (a group of
+controllers or just a single piece, for example) needs some kind of
+resource (typically a power rail) to be enabled to be functional, to
+start with. If there are operating points involved, that's also a
+clear indication to me, that it's not a regular regulator.
+
+Maybe we should try to specify this more exactly in some
+documentation, somewhere.
+
+>
+> > > In case of Qcom earlier (when we added the performance-state stuff),
+> > > the eventual hardware was out of kernel's control and we didn't wanted
+> > > (allowed) to model it as a virtual regulator just to pass the votes to
+> > > the RPM. And so we did what we did.
+> > >
+> > > But if the hardware (where the voltage is required to be changed) is
+> > > indeed a regulator and is modeled as one, then what Dmitry has done
+> > > looks okay. i.e. add a supply in the device's node and microvolt
+> > > property in the DT entries.
+> >
+> > I guess I haven't paid enough attention how power domain regulators
+> > are being described then. I was under the impression that the CPUfreq
+> > case was a bit specific - and we had legacy bindings to stick with.
+> >
+> > Can you point me to some other existing examples of where power domain
+> > regulators are specified as a regulator in each device's node?
+>
+> No, I thought it is a regulator here and not a power domain.
+
+Okay, thanks!
+
+Kind regards
+Uffe
