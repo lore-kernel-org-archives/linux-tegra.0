@@ -2,185 +2,109 @@ Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CB3C4741F
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 18:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88318C5517A
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 18:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4167021734
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 18:24:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zbOOCp73"
+	by mail.kernel.org (Postfix) with ESMTP id 346792078E
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 18:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604602231;
+	bh=T49aMLVgXEc80rpiS9F7C/3VgT7bEYMX/q0xlSag5LM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O0c6fBvMxg5hnz7giY5aSeR3F2PeiK1pu7/cb789iikoscVs/mi5QXOflEiiZpErH
+	 y+wCB060KJQ35UltomN+GIry75qhCgk7NyzaOxYNpJzKVQwqSlckysXgUCFtZZYcM9
+	 wF5ls/hHjRPdrv58XbQablGd1AIjXQIoMTP5bah8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbgKESYz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 13:24:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbgKESYy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 13:24:54 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E552C0613CF
-        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 10:24:54 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id h62so2544693wme.3
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 10:24:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=7e8j21DIlVBcunOHbbwXMePhmrXVH5+IQyI8wkPXuKI=;
-        b=zbOOCp73xw34Lh9ZE9TmMA17YqxGcG/n++dEYWrXi9dqE1MOd0lEYj1vvi+UNj9QUQ
-         90lixqIWlw9UB6wc0PrwkjTCKT1+fi4eU5o9FOJa/uxXVDX4fXv6frcTQ0mf/t0UsWkd
-         0EN+1xr8MAL6U/VtZ+d7h8NNR/glGlfmPFguvEacM6hMsXANML7oKQ6BSp02R7Lp5C3V
-         MWHYT9DB3OhymND7jnk6G68pw69bodQQf/HsG/77bvSA3n47x2JVL9J1TH4tAs0ErvBk
-         runK6vWTCca3VQCIQVr/ARVEAdg4c3GzpSYqYbVg+b3R0XPgJ+et8BXxm/gMGiActXg2
-         A7Gg==
+        id S1731972AbgKESuV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 13:50:21 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35309 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbgKESuV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 13:50:21 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n11so2409442ota.2;
+        Thu, 05 Nov 2020 10:50:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=7e8j21DIlVBcunOHbbwXMePhmrXVH5+IQyI8wkPXuKI=;
-        b=ZLIvlstsCg+Q6alKxcA9rCKgnm5TDMFJUtgANt42W47rAhw1qqieHTN0jbHZr0xLeP
-         JOoy9aJPDIg/ViVvSwl1RbqJuVxLhxM5JEiTPKM0Yao1Y/Jp2FJhu700bl8FvCZPPqaQ
-         qtrXt7+8EMI9E88BdiHMQ5qCeA3GLxXCXOBESXVW7CvU/TzaNKs9GvOPdO0kPbXGxG1o
-         Pe9ZKxEER/FHJSzuFZfdtq88G117YBcl6r/xGmTByxx3MBYGmQR2sl6SmrKvUNJz9rbd
-         RQ2ikRbRTgzX8D1GQWo/iuJUSSet+sCO4RfcjbYB+tmpegFmB5pyl7WG6F23yX4EsUeq
-         CZ8Q==
-X-Gm-Message-State: AOAM531cg+7a4uwyLfvinmXpeKABkXXn3X9t+fIdB7VAnS6LMEWasHLE
-        ezc1Dr3NXPfgS96Qs9V3/PYeow==
-X-Google-Smtp-Source: ABdhPJwYVvq6FoC+0cr98mQMZnvjXjAJewz6nP8jiRlkwCTioWlJ7DNR13bFrLL5RbyIiktf3wZlPw==
-X-Received: by 2002:a1c:61d4:: with SMTP id v203mr4062598wmb.1.1604600692803;
-        Thu, 05 Nov 2020 10:24:52 -0800 (PST)
-Received: from dell ([91.110.221.242])
-        by smtp.gmail.com with ESMTPSA id z191sm3751615wme.30.2020.11.05.10.24.50
+         :mime-version:content-disposition:in-reply-to;
+        bh=79BiO/+iVQS5f4JE7+Ah5lxHJdkoQWGAWwcqZ3jscHY=;
+        b=TxyGoGBFhVomn80aU+ndXWvvcuVsNq5+RZULh7qRi6I7iYENrlnkYAWTysIhBwqDh4
+         0txfCqqG5uFEuinMKCjNpHRQ7KOVAM45FjeKyYEdlAlfI3BnbKn+UrOs0vGzf2zv6Fko
+         uAKrSYcUTuSs7uhqpwxugChGxpvRbz1Mahk4Q7mSqQuTk4uBtjySKP42THR6Bjw3E6iR
+         Rt+fVJbDh5k1/dhFjdUsZsPa4z4x5PFmxUObY0Xagm1uuiQISvNfgL7u3tgasTxR7AIj
+         37Ky6sAVGhwqdYxkb6svDx2pCQCDGvSlL02HcsX3aeCfWiIFcQYDkN6WNYQp0C6yns5a
+         y0Aw==
+X-Gm-Message-State: AOAM531IEiZiEzvYavUpymFoDfvVDGKnR5fu/4uAPLVp0bAy/EuI/gUg
+        OvCQwj7MaepAxf+H0CzDKQ==
+X-Google-Smtp-Source: ABdhPJz/r3pC7uBbHrTvEghjoX8aLJu/enMy0f17YIwn0JhZKzcM8bcgybDTg2FSAW72nR++OLr4zg==
+X-Received: by 2002:a9d:ae7:: with SMTP id 94mr2509229otq.159.1604602220001;
+        Thu, 05 Nov 2020 10:50:20 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d64sm553166oia.11.2020.11.05.10.50.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 10:24:51 -0800 (PST)
-Date:   Thu, 5 Nov 2020 18:24:49 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        David Francis <David.Francis@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gareth Hughes <gareth@valinux.com>,
-        Huang Rui <ray.huang@amd.com>, Jason Yan <yanaijie@huawei.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jingoo Han <jg1.han@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Nirmoy Das <nirmoy.aiemd@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Clark <rob.clark@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 00/19] [Set 1] Rid W=1 warnings from GPU
-Message-ID: <20201105182449.GR4488@dell>
-References: <20201105144517.1826692-1-lee.jones@linaro.org>
- <20201105164841.GH485884@ulmo>
- <20201105181053.GP4488@dell>
- <CAKMK7uEyW_KJ1qC3gLASDe4Qyk_5UMr+yCu7VVVdAq+Z0J6RwQ@mail.gmail.com>
+        Thu, 05 Nov 2020 10:50:19 -0800 (PST)
+Received: (nullmailer pid 1623074 invoked by uid 1000);
+        Thu, 05 Nov 2020 18:50:18 -0000
+Date:   Thu, 5 Nov 2020 12:50:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     vkoul@kernel.org, jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, jason@lakedaemon.net,
+        linux-tegra@vger.kernel.org, tglx@linutronix.de,
+        robh+dt@kernel.org, maz@kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: dma: Convert ADMA doc to json-schema
+Message-ID: <20201105185018.GA1622537@bogus>
+References: <1604571846-14037-1-git-send-email-spujar@nvidia.com>
+ <1604571846-14037-3-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKMK7uEyW_KJ1qC3gLASDe4Qyk_5UMr+yCu7VVVdAq+Z0J6RwQ@mail.gmail.com>
+In-Reply-To: <1604571846-14037-3-git-send-email-spujar@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 05 Nov 2020, Daniel Vetter wrote:
-
-> On Thu, Nov 5, 2020 at 7:10 PM Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Thu, 05 Nov 2020, Thierry Reding wrote:
-> >
-> > > On Thu, Nov 05, 2020 at 02:44:58PM +0000, Lee Jones wrote:
-> > > > This set is part of a larger effort attempting to clean-up W=1
-> > > > kernel builds, which are currently overwhelmingly riddled with
-> > > > niggly little warnings.
-> > > >
-> > > > There are 5000 warnings to work through.
-> > > >
-> > > > It will take a couple more sets.
-> > > >
-> > > > Lee Jones (19):
-> > > >   gpu: host1x: bus: Add missing description for 'driver'
-> > > >   gpu: ipu-v3: ipu-di: Strip out 2 unused 'di_sync_config' entries
-> > > >   gpu: drm: imx: ipuv3-plane: Mark 'crtc_state' as __always_unused
-> > > >   gpu: drm: omapdrm: omap_irq: Fix a couple of doc-rot issues
-> > > >   gpu: drm: selftests: test-drm_mm: Mark 'hole_end' as always_unused
-> > > >   gpu: drm: scheduler: sched_main: Provide missing description for
-> > > >     'sched' paramter
-> > > >   gpu: drm: scheduler: sched_entity: Demote non-conformant kernel-doc
-> > > >     headers
-> > > >   gpu: drm: omapdrm: dss: dsi: Rework and remove a few unused variables
-> > > >   gpu: drm: selftests: test-drm_framebuffer: Remove set but unused
-> > > >     variable 'fb'
-> > > >   gpu: drm: ttm: ttm_bo: Fix one function header - demote lots of
-> > > >     kernel-doc abuses
-> > > >   gpu: drm: panel: panel-simple: Fix 'struct panel_desc's header
-> > > >   gpu: drm: bridge: analogix: analogix_dp_reg: Remove unused function
-> > > >     'analogix_dp_write_byte_to_dpcd'
-> > > >   gpu: drm: ttm: ttm_tt: Demote kernel-doc header format abuses
-> > > >   gpu: drm: selftests: test-drm_dp_mst_helper: Place 'struct
-> > > >     drm_dp_sideband_msg_req_body' onto the heap
-> > > >   gpu: drm: radeon: radeon_drv: Remove unused variable 'ret'
-> > > >   gpu: drm: panel: panel-ilitek-ili9322: Demote non-conformant
-> > > >     kernel-doc header
-> > > >   gpu: drm: radeon: radeon_device: Fix a bunch of kernel-doc
-> > > >     misdemeanours
-> > > >   gpu: drm: amd: amdgpu: amdgpu: Mark global variables as __maybe_unused
-> > > >   gpu: drm: bridge: analogix: analogix_dp_reg: Remove unused function
-> > > >     'analogix_dp_start_aux_transaction'
-> > >
-> > > As commented on the other patches, the subject prefixes on most of these
-> > > look wrong, but it's generally a nice cleanup.
-> >
-> > The prefixes are automated.  I'll add this to my list of awkward
-> > subsystems and go through them all manually again tomorrow. :D
+On Thu, 05 Nov 2020 15:54:04 +0530, Sameer Pujar wrote:
+> Move ADMA documentation to YAML format.
 > 
-> tbh for autmoation they look really good :-)
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  .../bindings/dma/nvidia,tegra210-adma.txt          | 56 -------------
+>  .../bindings/dma/nvidia,tegra210-adma.yaml         | 95 ++++++++++++++++++++++
+>  2 files changed, 95 insertions(+), 56 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
+>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
+> 
 
-Only the prefixes are automated unfortunately. :)
 
-> I'd say if you replace the intermediate ": " with just a / you'll be
-> perfectly in style for drivers/gpu. But really I think it's ok as-is,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-It's up to you.  Make the call and I'll abide.
+yamllint warnings/errors:
 
-> imo no need to change since this is a giantic tree wide effort.
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml: 'oneOf' conditional failed, one must be fixed:
+	'unevaluatedProperties' is a required property
+	'additionalProperties' is a required property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml: ignoring, error in schema: 
+warning: no schema found in file: ./Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
 
-Yes, you're not kidding, and thanks for noticing.
 
-Only 10,000 (from 18,000) more to go though. :D
+See https://patchwork.ozlabs.org/patch/1394859
 
-GPU is a biggy (5,000), although one patch in [Set 2] fixes 2,000 in
-one hit, which is great!  I'll probably submit that tomorrow.
+The base for the patch is generally the last rc1. Any dependencies
+should be noted.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
