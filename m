@@ -7,85 +7,59 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD87EC63798
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94F3C5DF9D
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 796DD20756
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5505520735
+	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604610743;
-	bh=oe0vogYrTaBp1AJcgxiNsvzv0RMMXVmQWui2Tyj9lto=;
+	s=default; t=1604610750;
+	bh=CD2MPAvQCKbjPewmGto8GSHHimOirVeMivfddURNEYg=;
 	h=From:Cc:Subject:Date:In-Reply-To:References:To:List-ID:From;
-	b=ioM/gvjFpOzdefXfkf70yZ5qtN2pPOTQOFIfTziQhjgXql2GC9plTRS/W5Fo8oEtH
-	 I2BF1/cuftRGsXIFTr2zyyPfzrsQUsG7bXvY1y9eVbz669nKTGhPbSKzZEOH3jNQNR
-	 wvppgA7NVF88yIke7J/4j3q9v/0GxAGgKqsNCIkU=
+	b=KJR+Xqnb+c4R2xdN7baIxdo0+opz1+HpdaRJNaVIufuDQ6gxnQAGZLBIHhLdzKLdK
+	 CPdQsVhQLaJziOu3zJwDrcruLCoRvNngUHI77/0cs+WgKcU9iS38DjUoiPv8HaKuXR
+	 r8TQxbLPYdgBbWjpq4eqzJ+2QWjGPi09c/qP3Xno=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbgKEVMW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 16:12:22 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35316 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732250AbgKEVMV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 16:12:21 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n11so2796627ota.2;
-        Thu, 05 Nov 2020 13:12:20 -0800 (PST)
+        id S1732367AbgKEVM3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 16:12:29 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38477 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732250AbgKEVM3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 16:12:29 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 9so3183067oir.5;
+        Thu, 05 Nov 2020 13:12:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BGG5aLFH7MIcMhwnSLPymZKuREEniuoZvvhDMmhfEIw=;
-        b=Edplcc/ldqE8r0scntx5Okw0BlpHvxqguQs3GCnDYFUzUu0WxnwKvT/lIoQQ5HPLpR
-         WgMu5rwhXhWhGshm8OdwUd40uRdIURHo6dgkWHxxl6D0cbVrWyoaV/nrofnS/6fEyUQN
-         /hle4OVTST0hoD/4/F4VfP6dBC06BMINaE3l08L4oQ0yQBK8PSzvqtb4+hdluNGjZJAN
-         gcEXzdFxt7CfxY1HRcUTcmyCf402vcIcnC33F+nQR1zUSb+CeEpJqbs+L1JAUMsGOGo0
-         oDpDsygBXMvm/Uz89V51kU2FwBCA3fUy3p6Om7HHesvQX0SJTx6ed7d0C0otlvxp4eG6
-         5PZQ==
-X-Gm-Message-State: AOAM532fwe30JuxU936COg540bdC6YG7sZQcobESpyJn1wEvwCOtIrWz
-        T4oWftv8rKTopqZBuF52m1Eq1kqm/NYc
-X-Google-Smtp-Source: ABdhPJx+69Rl2SYMwLdyZSWVW76k8rI5SBWpMMU4pU/p4nc1aBmnFsAnO6+/QoOU2SdWIw9tCavObA==
-X-Received: by 2002:a9d:2255:: with SMTP id o79mr2851578ota.174.1604610739859;
-        Thu, 05 Nov 2020 13:12:19 -0800 (PST)
+        bh=vgOVB7AFIv6XiowVBvShjE3tbQpqnvEkIeeJL20ooNM=;
+        b=HATZSuOqDCH9WMAPVrINU89OSiI8lt8Vh0kCOSIJwwB7mD6l1gLr8IvGhKXuhbZymA
+         RVYotzSrJBAjAhhR5VUd59cfE6jEtPoo39B011t8e4HmQtUYPDwhP+tN+kaqjT1TuxYT
+         JSeJDaVvYbAQtzNjo7NTmRkx+KkFHdaSsDtxUyFZ8g3sU+cXVCwxWabk3DVxoll3l4sw
+         qqEK7IXs62dtXutl3mDNXOhfLPTnsmKY8g2l0HDWhhwZUJoinqEvUnNwYh58x0mBbozM
+         ZreUgD50+DOpyOuSksxkDt+Ws2/4Z0cqMPC8SLRISLZcJ5k4NZg0Qwg61xnv9cZVWh92
+         2Lbw==
+X-Gm-Message-State: AOAM531yUukiUqnDw9Mn55zRfizL0ihjlB0/lj0UzTRLJvY8QwRDtFnx
+        VggjYe50KgXbWSU5IX27TO/0ha+6z/x2
+X-Google-Smtp-Source: ABdhPJxJwJQBPQVeRbzO4wHIcCFwCVwE8sSeftvdcY4UgqcKXeAPg/3iE1vvyAKYwKy1iHAYgoCBvQ==
+X-Received: by 2002:aca:5a43:: with SMTP id o64mr794992oib.89.1604610747588;
+        Thu, 05 Nov 2020 13:12:27 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id z19sm622549ooi.32.2020.11.05.13.12.17
+        by smtp.googlemail.com with ESMTPSA id z19sm622549ooi.32.2020.11.05.13.12.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 13:12:19 -0800 (PST)
+        Thu, 05 Nov 2020 13:12:26 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: [PATCH v2 11/16] PCI: dwc: Move dw_pcie_msi_init() into core
-Date:   Thu,  5 Nov 2020 15:11:54 -0600
-Message-Id: <20201105211159.1814485-12-robh@kernel.org>
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2 16/16] PCI: dwc: Detect number of iATU windows
+Date:   Thu,  5 Nov 2020 15:11:59 -0600
+Message-Id: <20201105211159.1814485-17-robh@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201105211159.1814485-1-robh@kernel.org>
 References: <20201105211159.1814485-1-robh@kernel.org>
@@ -96,301 +70,296 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The host drivers which call dw_pcie_msi_init() are all the ones using
-the built-in MSI controller, so let's move it into the common DWC code.
+Currently the number of inbound and outbound iATU windows are determined
+from DT properties. Unfortunately, there's 'num-viewport' for RC mode
+and 'num-ib-windows' and 'num-ob-windows' for EP mode, yet the number of
+windows is not mode dependent. Also, 'num-viewport' is not clear whether
+that's inbound, outbound or both. We can probably assume it's outbound
+windows as that's all RC mode uses.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
+However, using DT properties isn't really needed as the number of
+regions can be detected at runtime by poking the iATU registers. The
+basic algorithm is just writing a target address and reading back what
+we wrote. In the unrolled ATU case, we have to take care not to go
+past the mapped region.
+
+With this, we can drop num_viewport in favor of num_ob_windows instead.
+
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Yue Wang <yue.wang@Amlogic.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>
-Cc: Binghui Wang <wangbinghui@hisilicon.com>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Pratyush Anand <pratyush.anand@gmail.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@axis.com
-Cc: linux-arm-msm@vger.kernel.org
 Cc: linux-tegra@vger.kernel.org
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 v2:
- - Drop now static dw_pcie_msi_init symbol export
----
- drivers/pci/controller/dwc/pci-dra7xx.c           |  2 --
- drivers/pci/controller/dwc/pci-exynos.c           |  4 ----
- drivers/pci/controller/dwc/pci-imx6.c             |  1 -
- drivers/pci/controller/dwc/pci-meson.c            |  1 -
- drivers/pci/controller/dwc/pcie-artpec6.c         |  1 -
- drivers/pci/controller/dwc/pcie-designware-host.c |  9 +++++----
- drivers/pci/controller/dwc/pcie-designware-plat.c |  1 -
- drivers/pci/controller/dwc/pcie-designware.h      | 10 ----------
- drivers/pci/controller/dwc/pcie-histb.c           |  2 --
- drivers/pci/controller/dwc/pcie-kirin.c           |  1 -
- drivers/pci/controller/dwc/pcie-qcom.c            |  2 --
- drivers/pci/controller/dwc/pcie-spear13xx.c       |  6 +-----
- drivers/pci/controller/dwc/pcie-tegra194.c        |  2 --
- drivers/pci/controller/dwc/pcie-uniphier.c        |  1 -
- 14 files changed, 6 insertions(+), 37 deletions(-)
+ - new patch
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 054423d9646d..72a5a2bf933b 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -182,8 +182,6 @@ static int dra7xx_pcie_host_init(struct pcie_port *pp)
- 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
- 
- 	dw_pcie_setup_rc(pp);
+ .../pci/controller/dwc/pcie-designware-ep.c   | 20 ----
+ .../pci/controller/dwc/pcie-designware-host.c | 14 +--
+ drivers/pci/controller/dwc/pcie-designware.c  | 93 +++++++++++++++++--
+ drivers/pci/controller/dwc/pcie-designware.h  |  2 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  8 --
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  1 +
+ 6 files changed, 93 insertions(+), 45 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 79b998982e41..bcd1cd9ba8c8 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -714,26 +714,6 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+ 	ep->phys_base = res->start;
+ 	ep->addr_size = resource_size(res);
+
+-	ret = of_property_read_u32(np, "num-ib-windows", &pci->num_ib_windows);
+-	if (ret < 0) {
+-		dev_err(dev, "Unable to read *num-ib-windows* property\n");
+-		return ret;
+-	}
+-	if (pci->num_ib_windows > MAX_IATU_IN) {
+-		dev_err(dev, "Invalid *num-ib-windows*\n");
+-		return -EINVAL;
+-	}
 -
--	dw_pcie_msi_init(pp);
- 	dra7xx_pcie_enable_interrupts(dra7xx);
- 
- 	return 0;
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index 6498b615c834..3939fe22e8a2 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -273,12 +273,8 @@ static irqreturn_t exynos_pcie_irq_handler(int irq, void *arg)
- 
- static void exynos_pcie_msi_init(struct exynos_pcie *ep)
- {
--	struct dw_pcie *pci = ep->pci;
--	struct pcie_port *pp = &pci->pp;
- 	u32 val;
- 
--	dw_pcie_msi_init(pp);
+-	ret = of_property_read_u32(np, "num-ob-windows", &pci->num_ob_windows);
+-	if (ret < 0) {
+-		dev_err(dev, "Unable to read *num-ob-windows* property\n");
+-		return ret;
+-	}
+-	if (pci->num_ob_windows > MAX_IATU_OUT) {
+-		dev_err(dev, "Invalid *num-ob-windows*\n");
+-		return -EINVAL;
+-	}
 -
- 	/* enable MSI interrupt */
- 	val = exynos_pcie_readl(ep->mem_res->elbi_base, PCIE_IRQ_EN_LEVEL);
- 	val |= IRQ_MSI_ENABLE;
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 1fe8f3f2c380..9e30fbf4efbe 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -835,7 +835,6 @@ static int imx6_pcie_host_init(struct pcie_port *pp)
- 	imx6_pcie_deassert_core_reset(imx6_pcie);
- 	imx6_setup_phy_mpll(imx6_pcie);
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 41a3351b100b..2df0adcf0bf2 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -381,7 +381,6 @@ static int meson_pcie_host_init(struct pcie_port *pp)
- 	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
- 
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index 8b3da3038ac3..7ee8f3c83f8f 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -329,7 +329,6 @@ static int artpec6_pcie_host_init(struct pcie_port *pp)
- 	artpec6_pcie_deassert_core_reset(artpec6_pcie);
- 	artpec6_pcie_wait_for_phy(artpec6_pcie);
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
+ 	ep->ib_window_map = devm_kcalloc(dev,
+ 					 BITS_TO_LONGS(pci->num_ib_windows),
+ 					 sizeof(long),
 diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 800e7a0415cf..ebea2c814448 100644
+index f2b0a15ad72b..99ef808a40a9 100644
 --- a/drivers/pci/controller/dwc/pcie-designware-host.c
 +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -256,7 +256,7 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
+@@ -356,10 +356,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		}
+ 	}
+
+-	ret = of_property_read_u32(np, "num-viewport", &pci->num_viewport);
+-	if (ret)
+-		pci->num_viewport = 2;
+-
+ 	if (pci->link_gen < 1)
+ 		pci->link_gen = of_pci_get_max_link_speed(np);
+
+@@ -598,7 +594,7 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
+
+ 	/* Ensure all outbound windows are disabled so there are multiple matches */
+-	for (i = 0; i < pci->num_viewport; i++)
++	for (i = 0; i < pci->num_ob_windows; i++)
+ 		dw_pcie_disable_atu(pci, i, DW_PCIE_REGION_OUTBOUND);
+
+ 	/*
+@@ -615,7 +611,7 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 			if (resource_type(entry->res) != IORESOURCE_MEM)
+ 				continue;
+
+-			if (pci->num_viewport <= ++atu_idx)
++			if (pci->num_ob_windows <= ++atu_idx)
+ 				break;
+
+ 			dw_pcie_prog_outbound_atu(pci, atu_idx,
+@@ -625,7 +621,7 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 		}
+
+ 		if (pp->io_size) {
+-			if (pci->num_viewport > ++atu_idx)
++			if (pci->num_ob_windows > ++atu_idx)
+ 				dw_pcie_prog_outbound_atu(pci, atu_idx,
+ 							  PCIE_ATU_TYPE_IO, pp->io_base,
+ 							  pp->io_bus_addr, pp->io_size);
+@@ -633,9 +629,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 				pci->io_cfg_atu_shared = true;
+ 		}
+
+-		if (pci->num_viewport <= atu_idx)
++		if (pci->num_ob_windows <= atu_idx)
+ 			dev_warn(pci->dev, "Resources exceed number of ATU entries (%d)",
+-				 pci->num_viewport);
++				 pci->num_ob_windows);
+ 	}
+
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index c2dea8fc97c8..f4242ec13320 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -544,6 +544,70 @@ static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *pci)
  	return 0;
  }
- 
--void dw_pcie_free_msi(struct pcie_port *pp)
-+static void dw_pcie_free_msi(struct pcie_port *pp)
- {
- 	if (pp->msi_irq) {
- 		irq_set_chained_handler(pp->msi_irq, NULL);
-@@ -275,19 +275,18 @@ void dw_pcie_free_msi(struct pcie_port *pp)
- 	}
- }
- 
--void dw_pcie_msi_init(struct pcie_port *pp)
-+static void dw_pcie_msi_init(struct pcie_port *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	u64 msi_target = (u64)pp->msi_data;
- 
--	if (!IS_ENABLED(CONFIG_PCI_MSI))
-+	if (!pci_msi_enabled() || !pp->has_msi_ctrl)
- 		return;
- 
- 	/* Program the msi_data */
- 	dw_pcie_writel_dbi(pci, PCIE_MSI_ADDR_LO, lower_32_bits(msi_target));
- 	dw_pcie_writel_dbi(pci, PCIE_MSI_ADDR_HI, upper_32_bits(msi_target));
- }
--EXPORT_SYMBOL_GPL(dw_pcie_msi_init);
- 
- int dw_pcie_host_init(struct pcie_port *pp)
- {
-@@ -423,6 +422,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			goto err_free_msi;
- 	}
- 
-+	dw_pcie_msi_init(pp);
+
++static void dw_pcie_iatu_detect_regions_unroll(struct dw_pcie *pci)
++{
++	int max_region, i, ob = 0, ib = 0;
++	u32 val;
 +
- 	if (!dw_pcie_link_up(pci) && pci->ops->start_link) {
- 		ret = pci->ops->start_link(pci);
- 		if (ret)
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index adebcaeb1a6c..dec24e595c3e 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -36,7 +36,6 @@ static const struct of_device_id dw_plat_pcie_of_match[];
- static int dw_plat_pcie_host_init(struct pcie_port *pp)
++	max_region = min((int)pci->atu_size / 512, 256);
++
++	for (i = 0; i < max_region; i++) {
++		dw_pcie_writel_ob_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET,
++					0x11110000);
++
++		val = dw_pcie_readl_ob_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET);
++		if (val == 0x11110000)
++			ob++;
++		else
++			break;
++	}
++
++	for (i = 0; i < max_region; i++) {
++		dw_pcie_writel_ib_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET,
++					0x11110000);
++
++		val = dw_pcie_readl_ib_unroll(pci, i, PCIE_ATU_UNR_LOWER_TARGET);
++		if (val == 0x11110000)
++			ib++;
++		else
++			break;
++	}
++	pci->num_ib_windows = ib;
++	pci->num_ob_windows = ob;
++}
++
++static void dw_pcie_iatu_detect_regions(struct dw_pcie *pci)
++{
++	int max_region, i, ob = 0, ib = 0;
++	u32 val;
++
++	dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, 0xFF);
++	max_region = dw_pcie_readl_dbi(pci, PCIE_ATU_VIEWPORT) + 1;
++
++	for (i = 0; i < max_region; i++) {
++		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, PCIE_ATU_REGION_OUTBOUND | i);
++		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET, 0x11110000);
++		val = dw_pcie_readl_dbi(pci, PCIE_ATU_LOWER_TARGET);
++		if (val == 0x11110000)
++			ob++;
++		else
++			break;
++	}
++
++	for (i = 0; i < max_region; i++) {
++		dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, PCIE_ATU_REGION_INBOUND | i);
++		dw_pcie_writel_dbi(pci, PCIE_ATU_LOWER_TARGET, 0x11110000);
++		val = dw_pcie_readl_dbi(pci, PCIE_ATU_LOWER_TARGET);
++		if (val == 0x11110000)
++			ib++;
++		else
++			break;
++	}
++
++	pci->num_ib_windows = ib;
++	pci->num_ob_windows = ob;
++}
++
+ void dw_pcie_setup(struct dw_pcie *pci)
  {
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
+ 	u32 val;
+@@ -554,15 +618,30 @@ void dw_pcie_setup(struct dw_pcie *pci)
+ 	if (pci->version >= 0x480A || (!pci->version &&
+ 				       dw_pcie_iatu_unroll_enabled(pci))) {
+ 		pci->iatu_unroll_enabled = true;
+-		if (!pci->atu_base)
+-			pci->atu_base =
+-			    devm_platform_ioremap_resource_byname(pdev, "atu");
+-		if (IS_ERR(pci->atu_base))
+-			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
+-	}
+-	dev_dbg(pci->dev, "iATU unroll: %s\n", pci->iatu_unroll_enabled ?
++		if (!pci->atu_base) {
++			struct resource *res =
++				platform_get_resource_byname(pdev, IORESOURCE_MEM, "atu");
++			if (res)
++				pci->atu_size = resource_size(res);
++			pci->atu_base = devm_ioremap_resource(dev, res);
++			if (IS_ERR(pci->atu_base))
++				pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
++		}
++
++		if (!pci->atu_size)
++			/* Pick a minimal default, enough for 8 in and 8 out windows */
++			pci->atu_size = SZ_4K;
++
++		dw_pcie_iatu_detect_regions_unroll(pci);
++	} else
++		dw_pcie_iatu_detect_regions(pci);
++
++	dev_info(pci->dev, "iATU unroll: %s\n", pci->iatu_unroll_enabled ?
+ 		"enabled" : "disabled");
+
++	dev_info(pci->dev, "Detected iATU regions: %u outbound, %u inbound",
++		 pci->num_ob_windows, pci->num_ib_windows);
++
+ 	if (pci->link_gen > 0)
+ 		dw_pcie_link_set_max_speed(pci, pci->link_gen);
+
 diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 5d374bab10d1..57326aebc6e1 100644
+index e4f964e6cabe..ddf1bc733c08 100644
 --- a/drivers/pci/controller/dwc/pcie-designware.h
 +++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -363,8 +363,6 @@ static inline void dw_pcie_dbi_ro_wr_dis(struct dw_pcie *pci)
- 
- #ifdef CONFIG_PCIE_DW_HOST
- irqreturn_t dw_handle_msi_irq(struct pcie_port *pp);
--void dw_pcie_msi_init(struct pcie_port *pp);
--void dw_pcie_free_msi(struct pcie_port *pp);
- void dw_pcie_setup_rc(struct pcie_port *pp);
- int dw_pcie_host_init(struct pcie_port *pp);
- void dw_pcie_host_deinit(struct pcie_port *pp);
-@@ -377,14 +375,6 @@ static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
- 	return IRQ_NONE;
- }
- 
--static inline void dw_pcie_msi_init(struct pcie_port *pp)
--{
--}
--
--static inline void dw_pcie_free_msi(struct pcie_port *pp)
--{
--}
--
- static inline void dw_pcie_setup_rc(struct pcie_port *pp)
- {
- }
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index ece544165059..210777c793ea 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -199,8 +199,6 @@ static int histb_pcie_host_init(struct pcie_port *pp)
- 	/* setup root complex */
- 	dw_pcie_setup_rc(pp);
- 
--	dw_pcie_msi_init(pp);
--
- 	return 0;
- }
- 
-diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-index 675b4d8392d3..f84ac1b36b2c 100644
---- a/drivers/pci/controller/dwc/pcie-kirin.c
-+++ b/drivers/pci/controller/dwc/pcie-kirin.c
-@@ -406,7 +406,6 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
- 	pp->bridge->ops = &kirin_pci_ops;
- 
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 8eb8ac2fb270..eb107179d544 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1281,8 +1281,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
+@@ -260,7 +260,7 @@ struct dw_pcie {
+ 	void __iomem		*dbi_base2;
+ 	/* Used when iatu_unroll_enabled is true */
+ 	void __iomem		*atu_base;
+-	u32			num_viewport;
++	size_t			atu_size;
+ 	u32			num_ib_windows;
+ 	u32			num_ob_windows;
+ 	struct pcie_port	pp;
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index 292b9de86532..0cedd1f95f37 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -58,7 +58,6 @@
+
+ struct intel_pcie_soc {
+ 	unsigned int	pcie_ver;
+-	u32		num_viewport;
+ };
+
+ struct intel_pcie_port {
+@@ -400,7 +399,6 @@ static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+
+ static const struct intel_pcie_soc pcie_data = {
+ 	.pcie_ver =		0x520A,
+-	.num_viewport =		3,
+ };
+
+ static int intel_pcie_probe(struct platform_device *pdev)
+@@ -443,12 +441,6 @@ static int intel_pcie_probe(struct platform_device *pdev)
+ 		return ret;
  	}
- 
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
+
+-	/*
+-	 * Intel PCIe doesn't configure IO region, so set viewport
+-	 * to not perform IO region access.
+-	 */
+-	pci->num_viewport = data->num_viewport;
 -
- 	qcom_ep_reset_deassert(pcie);
- 
  	return 0;
-diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
-index ebbaa06fc8ab..31475e4493a7 100644
---- a/drivers/pci/controller/dwc/pcie-spear13xx.c
-+++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
-@@ -102,16 +102,12 @@ static irqreturn_t spear13xx_pcie_irq_handler(int irq, void *arg)
- 
- static void spear13xx_pcie_enable_interrupts(struct spear13xx_pcie *spear13xx_pcie)
- {
--	struct dw_pcie *pci = spear13xx_pcie->pci;
--	struct pcie_port *pp = &pci->pp;
- 	struct pcie_app_reg *app_reg = spear13xx_pcie->app_base;
- 
- 	/* Enable MSI interrupt */
--	if (IS_ENABLED(CONFIG_PCI_MSI)) {
--		dw_pcie_msi_init(pp);
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
- 		writel(readl(&app_reg->int_mask) |
- 				MSI_CTRL_INT, &app_reg->int_mask);
--	}
  }
- 
- static int spear13xx_pcie_link_up(struct dw_pcie *pci)
+
 diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index f7d7b002a06d..84f3e0bb4c7a 100644
+index 84f3e0bb4c7a..fa54d9aaa430 100644
 --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -765,8 +765,6 @@ static void tegra_pcie_enable_msi_interrupts(struct pcie_port *pp)
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
- 	u32 val;
- 
--	dw_pcie_msi_init(pp);
--
- 	/* Enable MSI interrupt generation */
- 	val = appl_readl(pcie, APPL_INTR_EN_L0_0);
- 	val |= APPL_INTR_EN_L0_0_SYS_MSI_INTR_EN;
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-index f4b776e231d6..e6616408a29c 100644
---- a/drivers/pci/controller/dwc/pcie-uniphier.c
-+++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-@@ -315,7 +315,6 @@ static int uniphier_pcie_host_init(struct pcie_port *pp)
- 	uniphier_pcie_irq_enable(priv);
- 
- 	dw_pcie_setup_rc(pp);
--	dw_pcie_msi_init(pp);
- 
- 	return 0;
- }
--- 
-2.25.1
+@@ -2075,6 +2075,7 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 	}
+ 	pcie->atu_dma_res = atu_dma_res;
 
++	pci->atu_size = resource_size(atu_dma_res);
+ 	pci->atu_base = devm_ioremap_resource(dev, atu_dma_res);
+ 	if (IS_ERR(pci->atu_base))
+ 		return PTR_ERR(pci->atu_base);
+--
+2.25.1
