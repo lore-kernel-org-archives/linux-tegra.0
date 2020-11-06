@@ -2,207 +2,195 @@ Return-Path: <SRS0=26Yb=EM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A0AC55179
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32336C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59F8A2072E
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F1820B80
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hh+lYfEh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HzLmr6Ja"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgKFCQU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 21:16:20 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9190 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbgKFCQL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 21:16:11 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa4b1ee0000>; Thu, 05 Nov 2020 18:16:14 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
- 2020 02:16:10 +0000
-Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 6 Nov 2020 02:16:10 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-ide@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 4/4] ata: ahci_tegra: Add AHCI support for Tegra186
-Date:   Thu, 5 Nov 2020 18:16:08 -0800
-Message-ID: <1604628968-1501-5-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
-References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726447AbgKFGPc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Nov 2020 01:15:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgKFGPR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 01:15:17 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08A0C0613D2
+        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 22:15:17 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id f21so191672plr.5
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 22:15:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
+        b=HzLmr6JaFIcMravMY3wIPry/F1073BkN3VM3cd8Gi2O7jw7et61EBNfNlEzqqyIEDr
+         O9QiSB84NaObwQzvoVVuxKeOGt8VndPGxRzphlfH+7cLMvRgCXLb/PtEMTpcP1H83oxY
+         b+191SXYF8ylE2gKUBgugVqSge7yMZjugqqrlBWgxtA673su21UfCt+IML3oDpN4vxti
+         8gs+7/IuMoCGcBYg+3V7fWv1iCZUsugnMa0A4fQsRR3hvDwRfUGjQ+Urs3m1MNcObuQw
+         SCG2Y8JOLZc95bYGIDT0kkK9vrovP4jkrz7oM7qStmXfzFjQgjgOi7MZJht8PgCtGzrM
+         RfPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
+        b=gzTWXc0UqvTgdX8zkV6PhGJ2t9quSN/VfhLymhYCqE1gwNQre3KAIQc8W/WvW4ySpH
+         AD1vr0zD0We/t0CV3ZjgunipPgY3KCEMBGozEYvR/l7uFa5vOMIaLp4skYLoLAfZZUPa
+         qn3dc6Ia2mW1DHsev/VE34wwsR16g3Hjwn+oqY3ouPubDHhbf65539jxIO4JonHcczng
+         /HZMWSheWqWagSka+cHzOtLzv4/GzZkYSYJystFMG/tvCrh91z80igjLN8VGIojxohRP
+         XeGE+ApwtfkIBj6YCdEW0cOS0KuSmcrsZtD4cftegX+QVIvIOerbbvgdfz/eS7Pyoz6p
+         HNcw==
+X-Gm-Message-State: AOAM530dLlyrQfQBkq3acZXbZe0Pxmdkrow7Fuh61hL1sKH1UAVKJRFh
+        r4t8NKZHKU5YCbmL7uCp4O92mw==
+X-Google-Smtp-Source: ABdhPJxg63tT7kf2/vWsP55uyoDC2lQuTRCTVcejh0K/L0eGZvU7H1zdtru1IjirtMh06PtAF/i6Ug==
+X-Received: by 2002:a17:902:9a83:b029:d6:e05e:c7e9 with SMTP id w3-20020a1709029a83b02900d6e05ec7e9mr430546plp.49.1604643317224;
+        Thu, 05 Nov 2020 22:15:17 -0800 (PST)
+Received: from localhost ([122.172.12.172])
+        by smtp.gmail.com with ESMTPSA id h16sm703800pjz.10.2020.11.05.22.15.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Nov 2020 22:15:15 -0800 (PST)
+Date:   Fri, 6 Nov 2020 11:45:13 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        driver-dev <devel@driverdev.osuosl.org>,
+        linux-pwm@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
+        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage
+ scaling
+Message-ID: <20201106061513.uyys7njcqcdlah67@vireshk-i7>
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-18-digetx@gmail.com>
+ <CAOh2x==sy1w7_oEV8=toC6uQnSN44wyOixbP_X0BrMsnm1AUFg@mail.gmail.com>
+ <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604628974; bh=bqvYhM4gfczmD1UkOCBSQi6kCpayixLg2a8u43aYS8U=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=hh+lYfEhV8FLeCv8AXVzAksSQqoPTkC9vrZw2Y4QRhKLwrYG7oqLyP9fzzIIZ4Bby
-         9vmMvXEy4efwS9qc20oFTctXR5dxFOFcDgSHFJvRMMqYwqEkQyr+/GkViZyIBD/s0Z
-         mmo7SlNzkpYkkaBgdjK9RiGAXOtFzH4VBrxoLngzRTKZLjn/yzGRO45ttz/ddVjQ8O
-         F6395YPreV9L44J6RlCee6U2QpPYU3czoZvSIvI71cU0TBsZGDYs4cK8wO+m15UvJC
-         2Fm/hNorLf5+xD/E5brDtAs4hLyNAxPgYE0b46o3HWJc06PTlrPNfIHjKTHF4ohIy+
-         w+l79lowE8ZaA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds support for AHCI-compliant Serial ATA controller
-on Tegra186 SoC.
+On 05-11-20, 17:18, Dmitry Osipenko wrote:
+> 05.11.2020 12:58, Viresh Kumar пишет:
+> >> +static void sdhci_tegra_deinit_opp_table(void *data)
+> >> +{
+> >> +       struct device *dev = data;
+> >> +       struct opp_table *opp_table;
+> >> +
+> >> +       opp_table = dev_pm_opp_get_opp_table(dev);
+> > So you need to get an OPP table to put one :)
+> > You need to save the pointer returned by dev_pm_opp_set_regulators() instead.
+> 
+> This is intentional because why do we need to save the pointer if we're
+> not using it and we know that we could get this pointer using OPP API?
 
-Tegra186 does not have sata-oob reset.
-Tegra186 SATA_NVOOB register filed COMMA_CNT position and width are
-different compared to Tegra210 and prior.
+Because it is highly inefficient and it doesn't follow the rules set
+by the OPP core. Hypothetically speaking, the OPP core is free to
+allocate the OPP table structure as much as it wants, and if you don't
+use the value returned back to you earlier (think of it as a cookie
+assigned to your driver), then it will eventually lead to memory leak.
 
-So, this patch adds a flag has_sata_oob_rst and tegra_ahci_regs to
-SoC specific strcuture tegra_ahci_soc and updated their implementation
-accordingly.
+> This is exactly the same what I did for the CPUFreq driver [1] :)
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/ata/ahci_tegra.c | 60 +++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 47 insertions(+), 13 deletions(-)
+I will strongly suggest you to save the pointer here and do the same
+in the cpufreq driver as well.
 
-diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
-index cb55ebc1..56612af 100644
---- a/drivers/ata/ahci_tegra.c
-+++ b/drivers/ata/ahci_tegra.c
-@@ -59,8 +59,6 @@
- #define T_SATA0_CFG_PHY_1_PAD_PLL_IDDQ_EN		BIT(22)
- 
- #define T_SATA0_NVOOB                                   0x114
--#define T_SATA0_NVOOB_COMMA_CNT_MASK                    (0xff << 16)
--#define T_SATA0_NVOOB_COMMA_CNT                         (0x07 << 16)
- #define T_SATA0_NVOOB_SQUELCH_FILTER_MODE_MASK          (0x3 << 24)
- #define T_SATA0_NVOOB_SQUELCH_FILTER_MODE               (0x1 << 24)
- #define T_SATA0_NVOOB_SQUELCH_FILTER_LENGTH_MASK        (0x3 << 26)
-@@ -154,11 +152,18 @@ struct tegra_ahci_ops {
- 	int (*init)(struct ahci_host_priv *hpriv);
- };
- 
-+struct tegra_ahci_regs {
-+	unsigned int nvoob_comma_cnt_mask;
-+	unsigned int nvoob_comma_cnt_val;
-+};
-+
- struct tegra_ahci_soc {
- 	const char *const		*supply_names;
- 	u32				num_supplies;
- 	bool				supports_devslp;
-+	bool				has_sata_oob_rst;
- 	const struct tegra_ahci_ops	*ops;
-+	const struct tegra_ahci_regs	*regs;
- };
- 
- struct tegra_ahci_priv {
-@@ -240,11 +245,13 @@ static int tegra_ahci_power_on(struct ahci_host_priv *hpriv)
- 	if (ret)
- 		return ret;
- 
--	ret = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_SATA,
--						tegra->sata_clk,
--						tegra->sata_rst);
--	if (ret)
--		goto disable_regulators;
-+	if (!tegra->pdev->dev.pm_domain) {
-+		ret = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_SATA,
-+							tegra->sata_clk,
-+							tegra->sata_rst);
-+		if (ret)
-+			goto disable_regulators;
-+	}
- 
- 	reset_control_assert(tegra->sata_oob_rst);
- 	reset_control_assert(tegra->sata_cold_rst);
-@@ -330,10 +337,10 @@ static int tegra_ahci_controller_init(struct ahci_host_priv *hpriv)
- 	writel(val, tegra->sata_regs + SCFG_OFFSET + T_SATA_CFG_PHY_0);
- 
- 	val = readl(tegra->sata_regs + SCFG_OFFSET + T_SATA0_NVOOB);
--	val &= ~(T_SATA0_NVOOB_COMMA_CNT_MASK |
-+	val &= ~(tegra->soc->regs->nvoob_comma_cnt_mask |
- 		 T_SATA0_NVOOB_SQUELCH_FILTER_LENGTH_MASK |
- 		 T_SATA0_NVOOB_SQUELCH_FILTER_MODE_MASK);
--	val |= (T_SATA0_NVOOB_COMMA_CNT |
-+	val |= (tegra->soc->regs->nvoob_comma_cnt_val |
- 		T_SATA0_NVOOB_SQUELCH_FILTER_LENGTH |
- 		T_SATA0_NVOOB_SQUELCH_FILTER_MODE);
- 	writel(val, tegra->sata_regs + SCFG_OFFSET + T_SATA0_NVOOB);
-@@ -449,15 +456,35 @@ static const struct tegra_ahci_ops tegra124_ahci_ops = {
- 	.init = tegra124_ahci_init,
- };
- 
-+static const struct tegra_ahci_regs tegra124_ahci_regs = {
-+	.nvoob_comma_cnt_mask = GENMASK(30, 28),
-+	.nvoob_comma_cnt_val = (7 << 28),
-+};
-+
- static const struct tegra_ahci_soc tegra124_ahci_soc = {
- 	.supply_names = tegra124_supply_names,
- 	.num_supplies = ARRAY_SIZE(tegra124_supply_names),
- 	.supports_devslp = false,
-+	.has_sata_oob_rst = true,
- 	.ops = &tegra124_ahci_ops,
-+	.regs = &tegra124_ahci_regs,
- };
- 
- static const struct tegra_ahci_soc tegra210_ahci_soc = {
- 	.supports_devslp = false,
-+	.has_sata_oob_rst = true,
-+	.regs = &tegra124_ahci_regs,
-+};
-+
-+static const struct tegra_ahci_regs tegra186_ahci_regs = {
-+	.nvoob_comma_cnt_mask = GENMASK(23, 16),
-+	.nvoob_comma_cnt_val = (7 << 16),
-+};
-+
-+static const struct tegra_ahci_soc tegra186_ahci_soc = {
-+	.supports_devslp = false,
-+	.has_sata_oob_rst = false,
-+	.regs = &tegra186_ahci_regs,
- };
- 
- static const struct of_device_id tegra_ahci_of_match[] = {
-@@ -469,6 +496,10 @@ static const struct of_device_id tegra_ahci_of_match[] = {
- 		.compatible = "nvidia,tegra210-ahci",
- 		.data = &tegra210_ahci_soc
- 	},
-+	{
-+		.compatible = "nvidia,tegra186-ahci",
-+		.data = &tegra186_ahci_soc
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, tegra_ahci_of_match);
-@@ -518,10 +549,13 @@ static int tegra_ahci_probe(struct platform_device *pdev)
- 		return PTR_ERR(tegra->sata_rst);
- 	}
- 
--	tegra->sata_oob_rst = devm_reset_control_get(&pdev->dev, "sata-oob");
--	if (IS_ERR(tegra->sata_oob_rst)) {
--		dev_err(&pdev->dev, "Failed to get sata-oob reset\n");
--		return PTR_ERR(tegra->sata_oob_rst);
-+	if (tegra->soc->has_sata_oob_rst) {
-+		tegra->sata_oob_rst = devm_reset_control_get(&pdev->dev,
-+							     "sata-oob");
-+		if (IS_ERR(tegra->sata_oob_rst)) {
-+			dev_err(&pdev->dev, "Failed to get sata-oob reset\n");
-+			return PTR_ERR(tegra->sata_oob_rst);
-+		}
- 	}
- 
- 	tegra->sata_cold_rst = devm_reset_control_get(&pdev->dev, "sata-cold");
+> >> +static int devm_sdhci_tegra_init_opp_table(struct device *dev)
+> >> +{
+> >> +       struct opp_table *opp_table;
+> >> +       const char *rname = "core";
+> >> +       int err;
+> >> +
+> >> +       /* voltage scaling is optional */
+> >> +       if (device_property_present(dev, "core-supply"))
+> >> +               opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
+> >> +       else
+> > 
+> >> +               opp_table = dev_pm_opp_get_opp_table(dev);
+
+To make it further clear, this will end up allocating an OPP table for
+you, which it shouldn't have.
+
+> > Nice. I didn't think that someone will end up abusing this API and so made it
+> > available for all, but someone just did that. I will fix that in the OPP core.
+
+To be fair, I allowed the cpufreq-dt driver to abuse it too, which I
+am going to fix shortly.
+
+> The dev_pm_opp_put_regulators() handles the case where regulator is
+> missing by acting as dev_pm_opp_get_opp_table(), but the
+> dev_pm_opp_set_regulators() doesn't do it. Hence I don't think this is
+> an abuse, but the OPP API drawback.
+
+I am not sure what you meant here. Normally you are required to call
+dev_pm_opp_put_regulators() only if you have called
+dev_pm_opp_set_regulators() earlier. And the refcount stays in
+balance.
+
+> > Any idea why you are doing what you are doing here ?
+> 
+> Two reasons:
+> 
+> 1. Voltage regulator is optional, but dev_pm_opp_set_regulators()
+> doesn't support optional regulators.
+> 
+> 2. We need to balance the opp_table refcount in order to use OPP API
+> without polluting code with if(have_regulator), hence the
+> dev_pm_opp_get_opp_table() is needed for taking the opp_table reference
+> to have the same refcount as in the case of the dev_pm_opp_set_regulators().
+
+I am going to send a patchset shortly after which this call to
+dev_pm_opp_get_opp_table() will fail, if it is called before adding
+the OPP table.
+
+> I guess we could make dev_pm_opp_set_regulators(dev, count) to accept
+> regulators count=0 and then act as dev_pm_opp_get_opp_table(dev), will
+> it be acceptable?
+
+Setting regulators for count as 0 doesn't sound good to me.
+
+But, I understand that you don't want to have that if (have_regulator)
+check, and it is a fair request. What I will instead do is, allow all
+dev_pm_opp_put*() API to start accepting a NULL pointer for the OPP
+table and fail silently. And so you won't be required to have this
+unwanted check. But you will be required to save the pointer returned
+back by dev_pm_opp_set_regulators(), which is the right thing to do
+anyways.
+
 -- 
-2.7.4
-
+viresh
