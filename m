@@ -2,110 +2,120 @@ Return-Path: <SRS0=26Yb=EM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E98C388F2
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 09:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130E3C55179
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 13:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 456E822202
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 09:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604656507;
-	bh=fq0Ui8t6PiSDl63PaQnqQ+wD7V5/mQ8ZBFhNNG3yCok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Wt5K7/XQSYjLsEc8uI7XwQ1T879lKtb5iriy5DQNoJLfCBiUU53Jx2i2A4CsebMT3
-	 lt87evNI11wKBLyxwqKLthQWAUxVWgMhgpMFZTSUwgmSW7BkQaP63N8W12FvtUYMEG
-	 duovUWnPffHayBEWEba0zxWPk697zCuJnoHDs858=
+	by mail.kernel.org (Postfix) with ESMTP id A368420720
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 13:17:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lg3hkZm7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgKFJzE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:55:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbgKFJzE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 6 Nov 2020 04:55:04 -0500
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E42C721734;
-        Fri,  6 Nov 2020 09:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604656503;
-        bh=fq0Ui8t6PiSDl63PaQnqQ+wD7V5/mQ8ZBFhNNG3yCok=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iOqu7iq8fkqhQinW+HWeXRONm4gVqP0ORpaGzDUMT9zotN8/ZoAt8k4smbdnLkRfA
-         gQF4QwYnBsQf3JTygZryT4dYi6nYvqpqKGLuqzS6PEjkhnobvGexT83gHte/RclSzw
-         WjuqDzk0ase4qrOZuSmZgJVWNdu/bBS1goiCMzjw=
-Date:   Fri, 6 Nov 2020 10:54:50 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Andrew J. Kroll" <ag784@freenet.buffalo.edu>,
-        Andrew Morton <andrewm@uow.edu.eu>,
-        Andy Gross <agross@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bill Hawes <whawes@star.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "C. Scott Ananian" <cananian@alumni.princeton.edu>,
-        "David A. Hinds" <dahinds@users.sourceforge.net>,
-        dri-devel@lists.freedesktop.org, Filip Aben <f.aben@option.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Jakub Jelinek <jj@ultra.linux.cz>,
-        Jan Dumon <j.dumon@option.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        id S1727410AbgKFNRT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Nov 2020 08:17:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbgKFNRR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 08:17:17 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38995C0613CF;
+        Fri,  6 Nov 2020 05:17:17 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id 126so1860678lfi.8;
+        Fri, 06 Nov 2020 05:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PfeixKrzsL46qhVQbUUdb6DbSd1S0EMYRuybLQNU1/k=;
+        b=lg3hkZm7P25mT76/EiBZKMX9rM35SHKXFtDDMNMyuybG7pZ9GLdujDnb/snXEdZuOE
+         O1XEA9ClNNtaX5qSYh7ncrwbbztO4OLS1Tz0Whoh0CkglFXZtqLJZrGYf4qMX7xbO4N9
+         kP0OrdkSIWnmeqH9Syo0ZE91d0lbC13DJUCcVloa24tNriQ9PbAU1usA16wtQm2RaqeB
+         Q2Vze3+ENHkimZDRFaupbyfMF9A5/sjGDv24PaYkJkspH0+kyNRFWbP7C5sXzxYJK38b
+         RAOCNA6IR6HuCs4WSAyuab6Hb0IKVlIorOLMIzPq7sTruYyAKH9DW8JL59OaCl/toWXN
+         62hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PfeixKrzsL46qhVQbUUdb6DbSd1S0EMYRuybLQNU1/k=;
+        b=Gk/3BEhWYHBYyuhetlW0n6fa7sO3UjNYkLB8/jGxYIMRBDVYIl2lB8BFPATBcXYqjQ
+         rcYm3AOICNrl8l3a44FQpD5R+DQiyHZzm+GrGk2Y6cGPb5G/ZNeTLHnqcfhgiKyx540g
+         2gNDJNRKbY82p/2iAZF6qJuq+SYpDIl5Q9AwhDnijGZpFfPG1lIgi6vnW/IfxjTboicl
+         0vCIXmXv2KAc2fkJM2L2T1czJhakuD0qVYaTzUxaS/A8W9WEzk6or596+T6Rj/+lN/8N
+         sevwbl4iU7x3n7Z98GM4jlkIHHsJDGoLXbfKpGH4qs7a7Zl/ZbITTE94w/faLEjXJkm9
+         HDyQ==
+X-Gm-Message-State: AOAM532D+EkPoYt8CEFxbN9QSbEGmnevZvz5MikjsbwhPH9O3CdslMR7
+        wT4Mu6ANtXLKWLRgQXtkBeIPCOGFiBY=
+X-Google-Smtp-Source: ABdhPJzECHN6OMSqEGY9TM6AG4zUXHGmlFcCs46h2OzcdpdI3/ezCJG0veXmwpdjSihGTDog0yaTzA==
+X-Received: by 2002:a19:f518:: with SMTP id j24mr830455lfb.307.1604668635552;
+        Fri, 06 Nov 2020 05:17:15 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id 9sm159077lfy.251.2020.11.06.05.17.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Nov 2020 05:17:14 -0800 (PST)
+Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage
+ scaling
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Joseph Barrow <d.barow@option.com>,
-        -- <julian@uhunix.uhcc.hawaii.edu>,
-        Kevin Wells <kevin.wells@nxp.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linaro-mm-sig@lists.linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Marko Kohtala <Marko.Kohtala@hut.fi>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Mike Hudson <Exoray@isys.ca>, Miloslav Trmac <mitr@redhat.com>,
-        Nick Holloway <alfie@dcs.warwick.ac.uk>,
-        Palmer Dabbelt <palmer@dabbelt.com>, paulkf@microgate.com,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        processes-Sapan Bhatia <sapan@corewars.org>,
-        Robert Love <rlove@google.com>, Rob Herring <robh@kernel.org>,
-        Roland Stigge <stigge@antcom.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Russell King <rmk@arm.linux.org.uk>,
-        Russ Gorby <russ.gorby@intel.com>,
-        Stanislav Voronyi <stas@cnti.uanet.kharkov.ua>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 00/36] Rid W=1 issues from TTY
-Message-ID: <20201106095450.GA2660312@kroah.com>
-References: <20201104193549.4026187-1-lee.jones@linaro.org>
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        driver-dev <devel@driverdev.osuosl.org>,
+        linux-pwm@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
+        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-18-digetx@gmail.com>
+ <CAOh2x==sy1w7_oEV8=toC6uQnSN44wyOixbP_X0BrMsnm1AUFg@mail.gmail.com>
+ <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
+ <20201106061513.uyys7njcqcdlah67@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
+Date:   Fri, 6 Nov 2020 16:17:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104193549.4026187-1-lee.jones@linaro.org>
+In-Reply-To: <20201106061513.uyys7njcqcdlah67@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 07:35:13PM +0000, Lee Jones wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
+06.11.2020 09:15, Viresh Kumar пишет:
+> Setting regulators for count as 0 doesn't sound good to me.
+> 
+> But, I understand that you don't want to have that if (have_regulator)
+> check, and it is a fair request. What I will instead do is, allow all
+> dev_pm_opp_put*() API to start accepting a NULL pointer for the OPP
+> table and fail silently. And so you won't be required to have this
+> unwanted check. But you will be required to save the pointer returned
+> back by dev_pm_opp_set_regulators(), which is the right thing to do
+> anyways.
 
-Many of these now applied, please update the series against my
-tty-testing branch and resend the rest.
-
-thanks,
-
-greg k-h
+Perhaps even a better variant could be to add a devm versions of the OPP
+API functions, then drivers won't need to care about storing the
+opp_table pointer if it's unused by drivers.
