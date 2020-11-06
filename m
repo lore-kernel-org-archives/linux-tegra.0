@@ -1,89 +1,83 @@
-Return-Path: <SRS0=4JQ8=EL=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=26Yb=EM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71017C388F7
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D48C4742C
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 252FB20728
-	for <linux-tegra@archiver.kernel.org>; Thu,  5 Nov 2020 21:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BDB20735
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VvmE6rdm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732099AbgKEVNp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 16:13:45 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:33640 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbgKEVNp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 16:13:45 -0500
-Received: from ravnborg.org (unknown [188.228.123.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 05DC720068;
-        Thu,  5 Nov 2020 22:13:42 +0100 (CET)
-Date:   Thu, 5 Nov 2020 22:13:41 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 01/19] gpu: host1x: bus: Add missing description for
- 'driver'
-Message-ID: <20201105211341.GB216923@ravnborg.org>
-References: <20201105144517.1826692-1-lee.jones@linaro.org>
- <20201105144517.1826692-2-lee.jones@linaro.org>
+        id S1726727AbgKFCQI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 21:16:08 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12505 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbgKFCQI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 21:16:08 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa4b1ea0000>; Thu, 05 Nov 2020 18:16:10 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
+ 2020 02:16:08 +0000
+Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 6 Nov 2020 02:16:07 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/4] Add AHCI support for Tegra186
+Date:   Thu, 5 Nov 2020 18:16:04 -0800
+Message-ID: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201105144517.1826692-2-lee.jones@linaro.org>
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VbvZwmh9 c=1 sm=1 tr=0
-        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
-        a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8
-        a=KKAkSRfTAAAA:8 a=sND74RDFJ2yv-g6-xkUA:9 a=CjuIK1q_8ugA:10
-        a=Vxmtnl_E_bksehYqCbjh:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=cvBusfyB2V15izCimMoJ:22
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604628970; bh=zD66V8wW3uz/Ur3S9TeficBHrXtG1p0uq70Rmiku/fI=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=VvmE6rdmSyQ2X93l6U8BFP62+eitvoLNlpxyLJL4VQjg96NR38Q41UwVrIcmjTtZX
+         3FNpGKIeHBqCNqiJgjkKkE7gJQxl1gV8HIS98mQrfUn0DbS9WBftg0dNM/zMXyaVc6
+         +Zj2ui3MffUMycAc5cZCYIT/YuNORbOkQFQi68zcoHDC/nPPGsjHu1YgyWWAMjDdW3
+         lh8Wogz0O+NqyL2K/shoMY0M1sVYtzOWN6/bMV9rdROr0hRlw4AZx5vzOvx3YKiX7V
+         nLOq5tXIVWWvM2pBs0HwJo1u7lqWj3wUnndt/IdCQ+IralLHORpOJHGA+TcEQZwaw6
+         rnhfFXsZ2xE6g==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Lee.
-On Thu, Nov 05, 2020 at 02:44:59PM +0000, Lee Jones wrote:
-> Fixes the following W=1 kernel build warning(s):
-> 
->  drivers/gpu/host1x/bus.c:40: warning: Function parameter or member 'driver' not described in 'host1x_subdev_add'
-> 
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+This series adds support for AHCI-compliant SATA to Tegra186 SoC.
 
-Applied to drm-misc-next - should appear in -next within a week.
+This series includes patches for
+- Converting text based dt-binding document to YAML.
+- Adding dt-bindings for Tegra186.
+- Enabling AHCI-compliance SATA for Jetson TX2.
+- Adding Tegra186 support to Tegra AHCI driver.
 
-	Sam
-> ---
->  drivers/gpu/host1x/bus.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> index e201f62d62c0c..347fb962b6c93 100644
-> --- a/drivers/gpu/host1x/bus.c
-> +++ b/drivers/gpu/host1x/bus.c
-> @@ -32,6 +32,7 @@ struct host1x_subdev {
->  /**
->   * host1x_subdev_add() - add a new subdevice with an associated device node
->   * @device: host1x device to add the subdevice to
-> + * @driver: host1x driver containing the subdevices
->   * @np: device node
->   */
->  static int host1x_subdev_add(struct host1x_device *device,
-> -- 
-> 2.25.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Sowjanya Komatineni (4):
+  dt-bindings: ata: tegra: Convert binding documentation to YAML
+  dt-binding: ata: tegra: Add dt-binding documentation for Tegra186
+  arm64: tegra: Enable AHCI on Jetson TX2
+  ata: ahci_tegra: Add AHCI support for Tegra186
+
+ .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 199 +++++++++++++++++++++
+ .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 -----
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   4 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  28 +++
+ drivers/ata/ahci_tegra.c                           |  60 +++++--
+ 5 files changed, 278 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
+
+-- 
+2.7.4
+
