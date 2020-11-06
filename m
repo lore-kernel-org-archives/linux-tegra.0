@@ -7,94 +7,96 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14344C55178
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 16:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED02C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 16:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B39E32065D
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 16:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74F7C2065E
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 16:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604679080;
-	bh=84vRnhbn3UEg5WltlikpYRTkWGVi113MyATUTdXNRnQ=;
+	s=default; t=1604679085;
+	bh=GzgooOezVTJxSV4EgOXNJMv/zxt1Zk20rWu6FcWtaAA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Yiv7rkC20wqql6FsicrtzksAA+LspFUV8RHROitQxEhvgfQYV9XfBCv4nUrp6F1mo
-	 0C0FT/4b0vy9loc++SWFhUswfLcPJAG3ApnkEnt+dVPxp0Ezj9sT4eR1Onxcyed9ym
-	 KykyktRxhDplB1ed4TrbszWVee53AnpzJMZURm1Y=
+	b=E336dzOk4BXjwogK4f2q8qpNJphDbSayqowAI3x72mS/yjQqBJRbdXlz0F/8t1dN9
+	 Ar0HPJdxxhwMY9xBEXjXbKu0PKT6FSNBKXG7sZFTl5f/CN2Qp7BlZ7mL7vlVkbFj09
+	 U15cfiQlBhatMYGTKrkYqrS/MHHMetBTB4hbOKSc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbgKFQLR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Nov 2020 11:11:17 -0500
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:42436 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgKFQLQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 11:11:16 -0500
-Received: by mail-oo1-f67.google.com with SMTP id l26so449077oop.9;
-        Fri, 06 Nov 2020 08:11:14 -0800 (PST)
+        id S1726535AbgKFQLZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Nov 2020 11:11:25 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33724 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbgKFQLY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 11:11:24 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i18so1711636ots.0;
+        Fri, 06 Nov 2020 08:11:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=HN4/Ao9ND5kWPrJpplFKhhNeDLISzsw+TAUT+PBf3p4=;
-        b=UXwW39HyqUV1L2buG2f1HKlCreTav7UNDIhw2ZRSQwKWnXxfB6N7U6hiCY1fM8v6nC
-         mru0LWHS0HTu0ywDcWAyqcUzudtkG6ZiXPQts5I2WSI37r2M1ZJzICfBj9aUdHEd7Jmi
-         bPnDkEg28Twl/AicPjKCwVfxJJ4dz/pLTbrwu3b9bw3j579QieoHL055oSO9g3IZExTR
-         v64lm8E9Yh7hh2QdP8LA974D8qqonGr1dlN4+TEzCXSVhPzUjCW8rA5nYmuZAjQtnHVG
-         4QLkSWzoQszPzIyuZZybYSzwfju4N0JPUkyMbOp5WMlaraUQQFtgI7bEDJrt2sPtt87r
-         LrjQ==
-X-Gm-Message-State: AOAM533V2emhmTGoRqmWx+cT00qZlAtpehxktDDXsvWp+piqa+sUr1Xr
-        6FKKcH39BmabzfDROFlH5w==
-X-Google-Smtp-Source: ABdhPJz1ro/xPYZgk6r7xGiMrr0SAv+jPDZ0HJuQF0/8A2hmlkJcgCQpYNkiQBaIolsmcZwji4ImqQ==
-X-Received: by 2002:a4a:b148:: with SMTP id e8mr1751178ooo.65.1604679073623;
-        Fri, 06 Nov 2020 08:11:13 -0800 (PST)
+        bh=DJzE/KuQ7K18CVtvfLEE+6QUXG1ivVfOIAlgwQBM+y8=;
+        b=inujDl+uhv27tFXmACrXP+ePcSKwFTDwSOYJ7PkYJt37ZCQyF4UIBctpQ25rwogz4f
+         HD1JwevsCWl1fMr5C0eKB6BgCO4W9i/rDXgv+iWxZ+XAL5jqBm/1ysMDKoo9/RCn9G+l
+         sGGSdUvPkjSPAsj43vjZxyWFA6asSuTjs+dT6Uz38e3J9IDUI6AS8js5QNzci6pJN26T
+         aWfD6OUoMoUyOWmQmw5WFFKaeFkRxc2CYOgIflvN8MbLu0qGaH7dxljwu5IIoDMh0t1/
+         4kGOb7q7dXdjTmz/HgvJtVRKVBv6d3Fmbpqt0StkNkVE1hgdlsRO4Ym/MI9G+HM1hbJu
+         6lpA==
+X-Gm-Message-State: AOAM532riGEg+NMRdhFhrWBVxZCp7KN5Q1wDwPcSiGqdoAUytRUVpySC
+        pYrrxXAiKpzbe1mgzzV61CokDKxgLw==
+X-Google-Smtp-Source: ABdhPJzQHAadyaK/sIwKmkNCidTdXTmvxMhCRlyHwqCQusqvJ2wj1rC3GxJuI1keQwv3C+JdqT0+7A==
+X-Received: by 2002:a05:6830:60a:: with SMTP id w10mr1635072oti.104.1604679083780;
+        Fri, 06 Nov 2020 08:11:23 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h136sm355294oib.19.2020.11.06.08.11.11
+        by smtp.gmail.com with ESMTPSA id w8sm377300otm.64.2020.11.06.08.11.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2020 08:11:12 -0800 (PST)
-Received: (nullmailer pid 3290121 invoked by uid 1000);
-        Fri, 06 Nov 2020 16:11:11 -0000
-Date:   Fri, 6 Nov 2020 10:11:11 -0600
+        Fri, 06 Nov 2020 08:11:23 -0800 (PST)
+Received: (nullmailer pid 3290341 invoked by uid 1000);
+        Fri, 06 Nov 2020 16:11:22 -0000
+Date:   Fri, 6 Nov 2020 10:11:22 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Murphy <dmurphy@ti.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: mfd: Add ENE KB930 Embedded
- Controller binding
-Message-ID: <20201106161111.GA3289870@bogus>
-References: <20201104203403.24937-1-digetx@gmail.com>
- <20201104203403.24937-2-digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, linux-tegra@vger.kernel.org,
+        linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+        jonathanh@nvidia.com
+Subject: Re: [PATCH v1 1/4] dt-bindings: ata: tegra: Convert binding
+ documentation to YAML
+Message-ID: <20201106161122.GB3289870@bogus>
+References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
+ <1604628968-1501-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201104203403.24937-2-digetx@gmail.com>
+In-Reply-To: <1604628968-1501-2-git-send-email-skomatineni@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 04 Nov 2020 23:34:00 +0300, Dmitry Osipenko wrote:
-> Add binding document for the ENE KB930 Embedded Controller.
+On Thu, 05 Nov 2020 18:16:05 -0800, Sowjanya Komatineni wrote:
+> This patch converts text based dt-binding document to YAML based
+> dt-binding document.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  .../devicetree/bindings/mfd/ene-kb930.yaml    | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
+>  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 152 +++++++++++++++++++++
+>  .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 ------
+>  2 files changed, 152 insertions(+), 44 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/mfd/ene-kb930.yaml:20:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/mfd/ene-kb930.yaml:22:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
 dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dts:27.31-32 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1364: dt_binding_check] Error 2
 
 
-See https://patchwork.ozlabs.org/patch/1394517
+See https://patchwork.ozlabs.org/patch/1395390
 
 The base for the patch is generally the last rc1. Any dependencies
 should be noted.
