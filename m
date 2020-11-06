@@ -5,38 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65B8C55ABD
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB58C55179
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4262075A
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BB8120759
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 02:16:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jJPyXga4"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nDHroDoe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgKFCQL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 5 Nov 2020 21:16:11 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12511 "EHLO
+        id S1727186AbgKFCQM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 5 Nov 2020 21:16:12 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12513 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbgKFCQK (ORCPT
+        with ESMTP id S1727008AbgKFCQK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 5 Nov 2020 21:16:10 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa4b1eb0003>; Thu, 05 Nov 2020 18:16:11 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
- 2020 02:16:09 +0000
+        id <B5fa4b1ec0000>; Thu, 05 Nov 2020 18:16:12 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
+ 2020 02:16:10 +0000
 Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
  (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 6 Nov 2020 02:16:08 +0000
+ Transport; Fri, 6 Nov 2020 02:16:09 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <robh+dt@kernel.org>
 CC:     <devicetree@vger.kernel.org>, <linux-ide@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/4] dt-binding: ata: tegra: Add dt-binding documentation for Tegra186
-Date:   Thu, 5 Nov 2020 18:16:06 -0800
-Message-ID: <1604628968-1501-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v1 3/4] arm64: tegra: Enable AHCI on Jetson TX2
+Date:   Thu, 5 Nov 2020 18:16:07 -0800
+Message-ID: <1604628968-1501-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
 References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
@@ -44,107 +45,81 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604628971; bh=jTCl6Qui3XoTGmW5zT6XFx017c0RVcq1UfUg5rPZ/6Y=;
+        t=1604628972; bh=r3AVUbvt3RNfrllkiehC3fL0fC0040AbIRoa2VJA/gs=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=jJPyXga4yjtzIteUeGjBqAg1iSwn4oZudVkByinHNF+1+zxs5/vpz3L3hS/HggWtu
-         dfu9C3Rw/47sklgttiud1hze/9mcrbpT9lraEcAffhp47OR6EFRfQDl/99N2OgnUtX
-         nfyyFogd37xKKLsKizf9pKZ6Ax2Bh3pnzGPXXAuY4BUs6EOjzg5KyMtkrc3rwusPQw
-         Fv4ugjkL8belQq8qWNbttljDH5oX2aIA4xCRv2Kjku3iatNwwFk28HZ3+67WMyckLk
-         HFoXLN90VV215IDzQpQkD9tSeNC/joKzPYHEt0zO5K1E8Qo5Q8w1l5UqP4NxZt6GLj
-         ihJQZa6IMzs+A==
+        b=nDHroDoejbEUUp7P4sZcKrbV1s/Y+2GaJiSrVvpZU3h7y372aL6QtnWMh5GYyAYHc
+         TeeZq8JB15LHD5X+8mJtTW4YjPoi4IkGY0qFfQHjTHRrEZSMpS5Q/aXWDNVibKKrbQ
+         ZV7/nx4MFpYsfVduNO+z/kTjJjeU5XpecQQDAXK+pZw2UQvN1B8QuuupLMQziz9pBt
+         IOaqhdMoN56/tHOJYBX3KQT/3ScGLPehM+8fI2c00mUbuOGJUA3DKqjjp/upuQibow
+         1wnMETaUuxQnUQCPm0Cc1FfWG5k57Fzj8/qGRvHt6optQrbsjsTWnuRRQTO3/oJFH+
+         OS6pQq2StCc+Q==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds dt-bindings documentation for Tegra186 AHCI
-controller.
+This patch enables AHCI on Jetson TX2.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 47 ++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |  4 ++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 28 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml b/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-index ac20f6e..db382a0 100644
---- a/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-+++ b/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-@@ -16,6 +16,7 @@ properties:
-       - nvidia,tegra124-ahci
-       - nvidia,tegra132-ahci
-       - nvidia,tegra210-ahci
-+      - nvidia,tegra186-ahci
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index 381a84912..7e1723e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -297,6 +297,10 @@
+ 		};
+ 	};
  
-   reg:
-     minItems: 2
-@@ -41,14 +42,37 @@ properties:
-       See ../clocks/clock-bindings.txt for details.
- 
-   reset-names:
-+    minItems: 2
-     maxItems: 3
- 
-   resets:
-+    minItems: 2
-     maxItems: 3
-     description:
-       Must contain an entry for each entry in reset-names.
-       See ../reset/reset.txt for details.
- 
-+  iommus:
-+    maxItems: 1
-+    description:
-+      A reference to the IOMMU. See ../iommu/iommu.txt for details.
++	sata@3507000 {
++		status = "okay";
++	};
 +
-+  interconnect-names:
-+    items:
-+      - const: dma-mem
-+      - const: write
-+
-+  interconnects:
-+    maxItems: 2
-+    description:
-+      Pairs of phandles and interconnect provider specififer to denote
-+      the edge source and destination ports of the interconnect path.
-+      See ../interconnect/interconnect.txt for details.
-+
-+  power-domains:
-+    items:
-+      - description: SAX power-domain
-+
-   phy-names:
-     items:
-       - const: sata-0
-@@ -129,6 +153,29 @@ allOf:
-         resets:
-           minItems: 3
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra186-ahci
-+    then:
-+      properties:
-+        reg:
-+          minItems: 3
-+        reset-names:
-+          maxItems: 2
-+          items:
-+            - const: sata
-+            - const: sata-cold
-+        resets:
-+          maxItems: 2
-+      required:
-+        - iommus
-+        - interconnect-names
-+        - interconnects
-+        - power-domains
-+
- additionalProperties: true
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 0c46ab7..7f5c002 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1501,6 +1501,34 @@
+ 		};
+ 	};
  
- examples:
++	sata@3507000 {
++		compatible = "nvidia,tegra186-ahci";
++		reg = <0x0 0x03507000 0x0 0x00002000>, /* AHCI */
++		      <0x0 0x03500000 0x0 0x00007000>, /* SATA */
++		      <0x0 0x03A90000 0x0 0x00010000>; /* SATA AUX */
++		interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_SAX>;
++		interconnects = <&mc TEGRA186_MEMORY_CLIENT_SATAR &emc>,
++				<&mc TEGRA186_MEMORY_CLIENT_SATAW &emc>;
++		interconnect-names = "dma-mem", "write";
++		iommus = <&smmu TEGRA186_SID_SATA>;
++
++		clocks = <&bpmp TEGRA186_CLK_SATA>,
++			 <&bpmp TEGRA186_CLK_SATA_OOB>;
++		clock-names = "sata", "sata-oob";
++		assigned-clocks = <&bpmp TEGRA186_CLK_SATA>,
++				  <&bpmp TEGRA186_CLK_SATA_OOB>;
++		assigned-clock-parents = <&bpmp TEGRA186_CLK_PLLP_OUT0>,
++					 <&bpmp TEGRA186_CLK_PLLP>;
++		assigned-clock-rates = <102000000>,
++				       <204000000>;
++		resets = <&bpmp TEGRA186_RESET_SATA>,
++			<&bpmp TEGRA186_RESET_SATACOLD>;
++		reset-names = "sata", "sata-cold";
++		status = "disabled";
++	};
++
+ 	bpmp: bpmp {
+ 		compatible = "nvidia,tegra186-bpmp";
+ 		interconnects = <&mc TEGRA186_MEMORY_CLIENT_BPMPR &emc>,
 -- 
 2.7.4
 
