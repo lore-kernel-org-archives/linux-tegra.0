@@ -2,195 +2,168 @@ Return-Path: <SRS0=26Yb=EM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32336C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1295C388F2
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7F1820B80
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79882208C3
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 06:44:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HzLmr6Ja"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZqU+ReLf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbgKFGPc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Nov 2020 01:15:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgKFGPR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 01:15:17 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08A0C0613D2
-        for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2020 22:15:17 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id f21so191672plr.5
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2020 22:15:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
-        b=HzLmr6JaFIcMravMY3wIPry/F1073BkN3VM3cd8Gi2O7jw7et61EBNfNlEzqqyIEDr
-         O9QiSB84NaObwQzvoVVuxKeOGt8VndPGxRzphlfH+7cLMvRgCXLb/PtEMTpcP1H83oxY
-         b+191SXYF8ylE2gKUBgugVqSge7yMZjugqqrlBWgxtA673su21UfCt+IML3oDpN4vxti
-         8gs+7/IuMoCGcBYg+3V7fWv1iCZUsugnMa0A4fQsRR3hvDwRfUGjQ+Urs3m1MNcObuQw
-         SCG2Y8JOLZc95bYGIDT0kkK9vrovP4jkrz7oM7qStmXfzFjQgjgOi7MZJht8PgCtGzrM
-         RfPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
-        b=gzTWXc0UqvTgdX8zkV6PhGJ2t9quSN/VfhLymhYCqE1gwNQre3KAIQc8W/WvW4ySpH
-         AD1vr0zD0We/t0CV3ZjgunipPgY3KCEMBGozEYvR/l7uFa5vOMIaLp4skYLoLAfZZUPa
-         qn3dc6Ia2mW1DHsev/VE34wwsR16g3Hjwn+oqY3ouPubDHhbf65539jxIO4JonHcczng
-         /HZMWSheWqWagSka+cHzOtLzv4/GzZkYSYJystFMG/tvCrh91z80igjLN8VGIojxohRP
-         XeGE+ApwtfkIBj6YCdEW0cOS0KuSmcrsZtD4cftegX+QVIvIOerbbvgdfz/eS7Pyoz6p
-         HNcw==
-X-Gm-Message-State: AOAM530dLlyrQfQBkq3acZXbZe0Pxmdkrow7Fuh61hL1sKH1UAVKJRFh
-        r4t8NKZHKU5YCbmL7uCp4O92mw==
-X-Google-Smtp-Source: ABdhPJxg63tT7kf2/vWsP55uyoDC2lQuTRCTVcejh0K/L0eGZvU7H1zdtru1IjirtMh06PtAF/i6Ug==
-X-Received: by 2002:a17:902:9a83:b029:d6:e05e:c7e9 with SMTP id w3-20020a1709029a83b02900d6e05ec7e9mr430546plp.49.1604643317224;
-        Thu, 05 Nov 2020 22:15:17 -0800 (PST)
-Received: from localhost ([122.172.12.172])
-        by smtp.gmail.com with ESMTPSA id h16sm703800pjz.10.2020.11.05.22.15.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Nov 2020 22:15:15 -0800 (PST)
-Date:   Fri, 6 Nov 2020 11:45:13 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        driver-dev <devel@driverdev.osuosl.org>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
-        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage
- scaling
-Message-ID: <20201106061513.uyys7njcqcdlah67@vireshk-i7>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-18-digetx@gmail.com>
- <CAOh2x==sy1w7_oEV8=toC6uQnSN44wyOixbP_X0BrMsnm1AUFg@mail.gmail.com>
- <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
+        id S1726205AbgKFGon (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Nov 2020 01:44:43 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7720 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbgKFGon (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 01:44:43 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa4f0de0000>; Thu, 05 Nov 2020 22:44:46 -0800
+Received: from [10.25.102.172] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
+ 2020 06:44:37 +0000
+Subject: Re: [PATCH 4/4] dt-bindings: bus: Convert ACONNECT doc to json-schema
+To:     Rob Herring <robh@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <vkoul@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <maz@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>
+References: <1604571846-14037-1-git-send-email-spujar@nvidia.com>
+ <1604571846-14037-5-git-send-email-spujar@nvidia.com>
+ <20201105190508.GB1633758@bogus>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <8c8c7cc0-881f-5542-f23f-238e5d8608d3@nvidia.com>
+Date:   Fri, 6 Nov 2020 12:14:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201105190508.GB1633758@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604645086; bh=CI65gxif5jEZW4MV9PdM5TeMKbiIlSvnLArX4Xc5ZqQ=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=ZqU+ReLfVjXqg0qIQuZuN8DIM7vlAVZwR4dnEt9OxJyqy43xkyDBi/94aN97BdfPi
+         Ka3qWRhTq5bUPdo9FaKIFYyEvGmoeksKLuchPfopsLafuD6u6bi2ufaFZx4c9rgJRm
+         bLTMcqFXgA0AUewb0VcCKUqWH0lNSZ5cHwqTWJ+llKQXYRYYdMYOPZl5Epp4Nz7PvH
+         8FhqDCd13tqLLjl7xufxIsYBgr7DQ3ChWK/mwFyXvPpi2NCqO+VUzx2gw6sUfvgFuV
+         UubOVO93aQfId03EX4Dv220zJol9c5SNlKAOex4YwaIKtHNPGQ3iwA+VkDaqH3BI6D
+         D/ZM6K+RTDnJA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 05-11-20, 17:18, Dmitry Osipenko wrote:
-> 05.11.2020 12:58, Viresh Kumar пишет:
-> >> +static void sdhci_tegra_deinit_opp_table(void *data)
-> >> +{
-> >> +       struct device *dev = data;
-> >> +       struct opp_table *opp_table;
-> >> +
-> >> +       opp_table = dev_pm_opp_get_opp_table(dev);
-> > So you need to get an OPP table to put one :)
-> > You need to save the pointer returned by dev_pm_opp_set_regulators() instead.
-> 
-> This is intentional because why do we need to save the pointer if we're
-> not using it and we know that we could get this pointer using OPP API?
 
-Because it is highly inefficient and it doesn't follow the rules set
-by the OPP core. Hypothetically speaking, the OPP core is free to
-allocate the OPP table structure as much as it wants, and if you don't
-use the value returned back to you earlier (think of it as a cookie
-assigned to your driver), then it will eventually lead to memory leak.
+>> Move ACONNECT documentation to YAML format.
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> ---
+>>   .../bindings/bus/nvidia,tegra210-aconnect.txt      | 44 -----------
+>>   .../bindings/bus/nvidia,tegra210-aconnect.yaml     | 86 ++++++++++++++++++++++
+>>   2 files changed, 86 insertions(+), 44 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>   create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+>>
 
-> This is exactly the same what I did for the CPUFreq driver [1] :)
+...
 
-I will strongly suggest you to save the pointer here and do the same
-in the cpufreq driver as well.
+>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+>> new file mode 100644
+>> index 0000000..f0161bc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+>> @@ -0,0 +1,86 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bus/nvidia,tegra210-aconnect.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NVIDIA Tegra ACONNECT Bus
+>> +
+>> +description: |
+>> +  The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+>> +  components inside the Audio Processing Engine (APE). All CPU accesses to
+>> +  the APE subsystem go through the ACONNECT via an APB to AXI wrapper. All
+>> +  devices accessed via the ACONNNECT are described by child-nodes.
+>> +
 
-> >> +static int devm_sdhci_tegra_init_opp_table(struct device *dev)
-> >> +{
-> >> +       struct opp_table *opp_table;
-> >> +       const char *rname = "core";
-> >> +       int err;
-> >> +
-> >> +       /* voltage scaling is optional */
-> >> +       if (device_property_present(dev, "core-supply"))
-> >> +               opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
-> >> +       else
-> > 
-> >> +               opp_table = dev_pm_opp_get_opp_table(dev);
+...
 
-To make it further clear, this will end up allocating an OPP table for
-you, which it shouldn't have.
+>> +
+>> +patternProperties:
+>> +  "^dma-controller(@[0-9a-f]+)?$":
+>> +    $ref: /schemas/dma/nvidia,tegra210-adma.yaml#
+>> +  "^interrupt-controller(@[0-9a-f]+)?$":
+>> +    $ref: /schemas/interrupt-controller/arm,gic.yaml#
+>> +  "^ahub(@[0-9a-f]+)?$":
+>> +    $ref: /schemas/sound/nvidia,tegra210-ahub.yaml#
+> These all get applied already since they match on compatible strings. So
+> having them here means the schema is applied twice. There's maybe some
+> value to this if it's always going to be these 3 nodes.
 
-> > Nice. I didn't think that someone will end up abusing this API and so made it
-> > available for all, but someone just did that. I will fix that in the OPP core.
+1) May be this could be dropped with "additionalProperties = true", but 
+that allows any arbitary property to be added for the device. Without 
+this 'make dtbs_check' complains about not matching properties in DT files.
 
-To be fair, I allowed the cpufreq-dt driver to abuse it too, which I
-am going to fix shortly.
+2) These may not be the final list of nodes this device can have. In 
+future if any new device support gets added under this, above needs to 
+be updated. But it will be limited number of devices.
 
-> The dev_pm_opp_put_regulators() handles the case where regulator is
-> missing by acting as dev_pm_opp_get_opp_table(), but the
-> dev_pm_opp_set_regulators() doesn't do it. Hence I don't think this is
-> an abuse, but the OPP API drawback.
+So is [2] fine or you would suggest [1] would be good enough?
 
-I am not sure what you meant here. Normally you are required to call
-dev_pm_opp_put_regulators() only if you have called
-dev_pm_opp_set_regulators() earlier. And the refcount stays in
-balance.
+>
+> Also, the unit-addresses shouldn't be optional.
+>
+> I'd just do:
+>
+> "@[0-9a-f]+$":
+>    type: object
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - clock-names
+>> +  - power-domains
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+>> +  - ranges
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include<dt-bindings/clock/tegra210-car.h>
+>> +
+>> +    aconnect@702c0000 {
+>> +        compatible = "nvidia,tegra210-aconnect";
+>> +        clocks = <&tegra_car TEGRA210_CLK_APE>,
+>> +                 <&tegra_car TEGRA210_CLK_APB2APE>;
+>> +        clock-names = "ape", "apb2ape";
+>> +        power-domains = <&pd_audio>;
+>> +
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +        ranges = <0x702c0000 0x702c0000 0x00040000>;
+>> +
+>> +        // Child device nodes follow ...
+>> +    };
+>> +
+>> +...
+>> --
+>> 2.7.4
+>>
 
-> > Any idea why you are doing what you are doing here ?
-> 
-> Two reasons:
-> 
-> 1. Voltage regulator is optional, but dev_pm_opp_set_regulators()
-> doesn't support optional regulators.
-> 
-> 2. We need to balance the opp_table refcount in order to use OPP API
-> without polluting code with if(have_regulator), hence the
-> dev_pm_opp_get_opp_table() is needed for taking the opp_table reference
-> to have the same refcount as in the case of the dev_pm_opp_set_regulators().
-
-I am going to send a patchset shortly after which this call to
-dev_pm_opp_get_opp_table() will fail, if it is called before adding
-the OPP table.
-
-> I guess we could make dev_pm_opp_set_regulators(dev, count) to accept
-> regulators count=0 and then act as dev_pm_opp_get_opp_table(dev), will
-> it be acceptable?
-
-Setting regulators for count as 0 doesn't sound good to me.
-
-But, I understand that you don't want to have that if (have_regulator)
-check, and it is a fair request. What I will instead do is, allow all
-dev_pm_opp_put*() API to start accepting a NULL pointer for the OPP
-table and fail silently. And so you won't be required to have this
-unwanted check. But you will be required to save the pointer returned
-back by dev_pm_opp_set_regulators(), which is the right thing to do
-anyways.
-
--- 
-viresh
