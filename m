@@ -2,171 +2,179 @@ Return-Path: <SRS0=26Yb=EM=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3DBC55178
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 14:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A8AC5517A
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 14:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0903D2087E
-	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 14:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MJZxZb9N"
+	by mail.kernel.org (Postfix) with ESMTP id DAD4A22202
+	for <linux-tegra@archiver.kernel.org>; Fri,  6 Nov 2020 14:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604673447;
+	bh=dP1smmwQqynJW8vqD8NP9VQ8DjeVdrZFyK1+gpVNs88=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wxrPE02WFz5MNB0ozct5zBHp3mml/cTDwVtir3lNj9cfun8kxJHPplC8SYj8I9N0z
+	 YTxKa6VELySRSt0Uk79GesXeok2Ihbzt/gIm04Fqz3ESG7fadJRSop99awHyL3+EKv
+	 ZPa+tsvoiYOMD+q/GveKllMX5q4J3MnQ8juVkpec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgKFOcD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 6 Nov 2020 09:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbgKFOcB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 6 Nov 2020 09:32:01 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3596BC0613D2
-        for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2020 06:32:00 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id p93so1475391edd.7
-        for <linux-tegra@vger.kernel.org>; Fri, 06 Nov 2020 06:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oB1Imkum9eDeaPIc2hKzTYzV0vCEPBOSK4bPPbyIfFo=;
-        b=MJZxZb9Np7qkyYy2+/tuO+PJ7RD8i5hCMCSDVGIKwTmGEMUp8jBXPxbi+ypenl2uOX
-         qJ+L1g3+lrM0rI9q1py697lLpVRpbpkvaX0ElM8ptuKvrrkiH2JpsDBGnsMgMYG1cxgj
-         rf004YD74RsbNxZw9n64cR/SXbBsAMzl7nmG9y4aWGHYSDiJIASZMOZKw1AJaZ4GgIvq
-         dlNw/F+0nf0rg9hu3C2ImbB6PPdVRLjidafVVXKzFiq/1l+5YdtMlfZc6GuqsDe5Vz4T
-         jjDqLv8LS3Z8+gbHNi8Btm42PrEaRycBGPh5rEGzK7ffR3uGl6alKh5Vqg0qZUM0QFth
-         YvKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oB1Imkum9eDeaPIc2hKzTYzV0vCEPBOSK4bPPbyIfFo=;
-        b=awN1WZhCid7H2mwQWpINd+2SVMHEx4oXd88vzYNgBkehRpIoc6kQQodWtJR/Owls/h
-         dDmbIZ0stn1iFq2MfdkZ987Jt4ISvClEX4wYwe475m9ITidoOP441PW4TJav/dQwlzTG
-         VMcB24iWFPaV0EoIY/ms0RyIJoeh+fGfymUkAu5PjIvitRcGKHUibfUoDZGQIRRxozvX
-         9hjI/kvjqkFaxbydroOYdRRtXFkDGh35WaXyLa9m3Xuefncr2U6s0OXEKJTponlTOf/r
-         Dq8rFvpJ8d2+f2CCbr02V3p+cbazXU14wtZsNVgVmdsBJkvlfHuteGURUP+tPVGKap4w
-         MErQ==
-X-Gm-Message-State: AOAM530bdBl6zGDpx0emgF3QSCizVMgaeaGAef6+UgGKG4nVqEC5XnVO
-        IZY/d65UU00nJOD2iVHWdEjlKh2h2kwVDcpExiySKSbIdc0//A==
-X-Google-Smtp-Source: ABdhPJwN3sBPbMXm3I2rAZin69LJ3GQIjqXtM+gIxWu/GLSx5jjjouxHaYHt0BHaZZKKHv3ulQCoB71rLRAWQxWPAZw=
-X-Received: by 2002:a50:ab15:: with SMTP id s21mr2279062edc.88.1604673118970;
- Fri, 06 Nov 2020 06:31:58 -0800 (PST)
+        id S1727263AbgKFOhZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 6 Nov 2020 09:37:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726694AbgKFOhY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 6 Nov 2020 09:37:24 -0500
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38A242087E;
+        Fri,  6 Nov 2020 14:37:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604673444;
+        bh=dP1smmwQqynJW8vqD8NP9VQ8DjeVdrZFyK1+gpVNs88=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=U+yhaa1ufK/Bal1EEGDAUH6VBZFtPDGfg+7LEzts9I8SAmMYlEfUfpJnOOQQ0pH+e
+         LnmXN29eHhv/sVqU/id9Zkkc9eRzLVFrSFTyeCm3UbWpQQI1xdKVuvQpyb4TYziVl4
+         BBQGR6gYHvv/mGlNZ6ElQBa5pbHGV0yIfgUZa4uc=
+Received: by mail-oi1-f177.google.com with SMTP id t143so1508414oif.10;
+        Fri, 06 Nov 2020 06:37:24 -0800 (PST)
+X-Gm-Message-State: AOAM5306Kv0KvE9jEXn6oxy3h1lbF+kVCz3YhN8LLJNGsgM6zfmSuCL4
+        umGNrXfLmHMhhbfy3iiAJfSsmMHjVc5JDQSM7g==
+X-Google-Smtp-Source: ABdhPJw3cWhsCZcPNg4IJyWZN2TL+gofqSa0ncDGvUn4Sw/pJiYFSswPV7OqbFYXSIMNVivDFm7jQfekowUsKhXPfkc=
+X-Received: by 2002:aca:5dc2:: with SMTP id r185mr1333493oib.106.1604673443324;
+ Fri, 06 Nov 2020 06:37:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20201104170423.23436-1-digetx@gmail.com> <20201104170423.23436-2-digetx@gmail.com>
-In-Reply-To: <20201104170423.23436-2-digetx@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 6 Nov 2020 15:31:48 +0100
-Message-ID: <CAMpxmJVUkXxDkPDKQr98H0uCWJF9zKKzpe9np3McmT3MmeLJ3A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: tegra: Use raw_spinlock
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Peter Geis <pgwipeout@gmail.com>, linux-tegra@vger.kernel.org,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1604571846-14037-1-git-send-email-spujar@nvidia.com>
+ <1604571846-14037-5-git-send-email-spujar@nvidia.com> <20201105190508.GB1633758@bogus>
+ <8c8c7cc0-881f-5542-f23f-238e5d8608d3@nvidia.com>
+In-Reply-To: <8c8c7cc0-881f-5542-f23f-238e5d8608d3@nvidia.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 6 Nov 2020 08:37:12 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKkB03L=jFXTTecpbjS8FqtO72V9EJAWszR12CM4EQChg@mail.gmail.com>
+Message-ID: <CAL_JsqKkB03L=jFXTTecpbjS8FqtO72V9EJAWszR12CM4EQChg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dt-bindings: bus: Convert ACONNECT doc to json-schema
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, Vinod <vkoul@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 4, 2020 at 6:04 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Fri, Nov 6, 2020 at 12:44 AM Sameer Pujar <spujar@nvidia.com> wrote:
 >
-> Use raw_spinlock in order to fix spurious messages about invalid context
-> when spinlock debugging is enabled. This happens because there is a legit
-> nested raw_spinlock->spinlock locking usage within IRQ-related code. IRQ
-> core uses raw spinlock and then Tegra GPIO driver uses a nested spinlock.
-> The debug code can't recognize and handle this case, hence we need to use
-> raw spinlock in the GPIO driver.
 >
->  [ BUG: Invalid wait context ]
->  ...
->   (dump_stack) from (__lock_acquire)
->   (__lock_acquire) from (lock_acquire)
->   (lock_acquire) from (_raw_spin_lock_irqsave)
->   (_raw_spin_lock_irqsave) from (tegra_gpio_irq_set_type)
->   (tegra_gpio_irq_set_type) from (__irq_set_trigger)
->   (__irq_set_trigger) from (__setup_irq)
->   (__setup_irq) from (request_threaded_irq)
->   (request_threaded_irq) from (devm_request_threaded_irq)
->   (devm_request_threaded_irq) from (elants_i2c_probe)
->   (elants_i2c_probe) from (i2c_device_probe)
->  ...
+> >> Move ACONNECT documentation to YAML format.
+> >>
+> >> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> >> ---
+> >>   .../bindings/bus/nvidia,tegra210-aconnect.txt      | 44 -----------
+> >>   .../bindings/bus/nvidia,tegra210-aconnect.yaml     | 86 ++++++++++++++++++++++
+> >>   2 files changed, 86 insertions(+), 44 deletions(-)
+> >>   delete mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+> >>   create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+> >>
 >
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> ...
 >
-> Changelog:
+> >> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+> >> new file mode 100644
+> >> index 0000000..f0161bc
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
+> >> @@ -0,0 +1,86 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/bus/nvidia,tegra210-aconnect.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: NVIDIA Tegra ACONNECT Bus
+> >> +
+> >> +description: |
+> >> +  The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+> >> +  components inside the Audio Processing Engine (APE). All CPU accesses to
+> >> +  the APE subsystem go through the ACONNECT via an APB to AXI wrapper. All
+> >> +  devices accessed via the ACONNNECT are described by child-nodes.
+> >> +
 >
-> v2: - Only lvl_lock is converted to raw_spinlock. The dbc_lock doesn't
->       relate to IRQ and doesn't need the conversion.
+> ...
 >
->     - Improved commit message by clarifying that IRQ core uses raw
->       spinlock.
+> >> +
+> >> +patternProperties:
+> >> +  "^dma-controller(@[0-9a-f]+)?$":
+> >> +    $ref: /schemas/dma/nvidia,tegra210-adma.yaml#
+> >> +  "^interrupt-controller(@[0-9a-f]+)?$":
+> >> +    $ref: /schemas/interrupt-controller/arm,gic.yaml#
+> >> +  "^ahub(@[0-9a-f]+)?$":
+> >> +    $ref: /schemas/sound/nvidia,tegra210-ahub.yaml#
+> > These all get applied already since they match on compatible strings. So
+> > having them here means the schema is applied twice. There's maybe some
+> > value to this if it's always going to be these 3 nodes.
 >
->     - Added clarifying comment to the code for the lvl_lock.
->
->  drivers/gpio/gpio-tegra.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 98fc78739ebf..e19ebff6018c 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -61,8 +61,16 @@ struct tegra_gpio_info;
->  struct tegra_gpio_bank {
->         unsigned int bank;
->         unsigned int irq;
-> -       spinlock_t lvl_lock[4];
-> -       spinlock_t dbc_lock[4]; /* Lock for updating debounce count register */
-> +
-> +       /*
-> +        * IRQ-core code uses raw locking, and thus, nested locking also
-> +        * should be raw in order not to trip spinlock debug warnings.
-> +        */
-> +       raw_spinlock_t lvl_lock[4];
-> +
-> +       /* Lock for updating debounce count register */
-> +       spinlock_t dbc_lock[4];
-> +
->  #ifdef CONFIG_PM_SLEEP
->         u32 cnf[4];
->         u32 out[4];
-> @@ -334,14 +342,14 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->                 return -EINVAL;
->         }
->
-> -       spin_lock_irqsave(&bank->lvl_lock[port], flags);
-> +       raw_spin_lock_irqsave(&bank->lvl_lock[port], flags);
->
->         val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
->         val &= ~(GPIO_INT_LVL_MASK << GPIO_BIT(gpio));
->         val |= lvl_type << GPIO_BIT(gpio);
->         tegra_gpio_writel(tgi, val, GPIO_INT_LVL(tgi, gpio));
->
-> -       spin_unlock_irqrestore(&bank->lvl_lock[port], flags);
-> +       raw_spin_unlock_irqrestore(&bank->lvl_lock[port], flags);
->
->         tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
->         tegra_gpio_enable(tgi, gpio);
-> @@ -675,7 +683,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->                                                  tegra_gpio_irq_handler, bank);
->
->                 for (j = 0; j < 4; j++) {
-> -                       spin_lock_init(&bank->lvl_lock[j]);
-> +                       raw_spin_lock_init(&bank->lvl_lock[j]);
->                         spin_lock_init(&bank->dbc_lock[j]);
->                 }
->         }
-> --
-> 2.27.0
->
+> 1) May be this could be dropped with "additionalProperties = true", but
+> that allows any arbitary property to be added for the device. Without
+> this 'make dtbs_check' complains about not matching properties in DT files.
 
-Patch applied, thanks!
+Not if you do what I suggested below. Then only arbitrary nodes can be added.
 
-Bartosz
+>
+> 2) These may not be the final list of nodes this device can have. In
+> future if any new device support gets added under this, above needs to
+> be updated. But it will be limited number of devices.
+>
+> So is [2] fine or you would suggest [1] would be good enough?
+>
+> >
+> > Also, the unit-addresses shouldn't be optional.
+> >
+> > I'd just do:
+> >
+> > "@[0-9a-f]+$":
+> >    type: object
+> >
+> >> +
+> >> +required:
+> >> +  - compatible
+> >> +  - clocks
+> >> +  - clock-names
+> >> +  - power-domains
+> >> +  - "#address-cells"
+> >> +  - "#size-cells"
+> >> +  - ranges
+> >> +
+> >> +additionalProperties: false
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    #include<dt-bindings/clock/tegra210-car.h>
+> >> +
+> >> +    aconnect@702c0000 {
+> >> +        compatible = "nvidia,tegra210-aconnect";
+> >> +        clocks = <&tegra_car TEGRA210_CLK_APE>,
+> >> +                 <&tegra_car TEGRA210_CLK_APB2APE>;
+> >> +        clock-names = "ape", "apb2ape";
+> >> +        power-domains = <&pd_audio>;
+> >> +
+> >> +        #address-cells = <1>;
+> >> +        #size-cells = <1>;
+> >> +        ranges = <0x702c0000 0x702c0000 0x00040000>;
+> >> +
+> >> +        // Child device nodes follow ...
+> >> +    };
+> >> +
+> >> +...
+> >> --
+> >> 2.7.4
+> >>
+>
