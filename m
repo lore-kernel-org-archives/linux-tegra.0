@@ -2,77 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D7BC2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 21:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17939C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 21:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEAE1206CB
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 21:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB8E420789
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 21:58:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6IRQqb2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbgKIVpx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Nov 2020 16:45:53 -0500
-Received: from mail-oo1-f65.google.com ([209.85.161.65]:33133 "EHLO
-        mail-oo1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbgKIVpw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 16:45:52 -0500
-Received: by mail-oo1-f65.google.com with SMTP id f8so2072853oou.0;
-        Mon, 09 Nov 2020 13:45:52 -0800 (PST)
+        id S1729454AbgKIV6v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Nov 2020 16:58:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbgKIV6v (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 16:58:51 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2796C0613CF;
+        Mon,  9 Nov 2020 13:58:50 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id w142so7654718lff.8;
+        Mon, 09 Nov 2020 13:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TL7a4MNPE4WuOkoIqj/tHlQbdnLK+YvkRnIoJ+IccQA=;
+        b=L6IRQqb2bMDZ7GWkj2nXB2EsOhZYUpVzUlDPmeS7ErwX31j3vhlgooushPwg7Ph148
+         9tZQBhJYu+jYlYQh/LeqV6xKSy6DlsXZM2gM29XGT58c379QPsf5Mj6RHe0qTtN1uAVA
+         mqzMAWABgHvrLZVYf7Ctl1QFraYhlsOEkmwgkRvft/zgyBFvLetu6nvqq2T7J2EdNGWO
+         +FtRrESeFzYQEF4hE2guY9MWm9SsW5GleklegZ7yjUYC+fNgPwXoUPq61iJvfACCcQcR
+         YMSWIYXpeZZZahHuqB3xMt/PnuyA58wxPYnFrrXodXQBu96b+9+bXBME/e/7XfR7X4Ru
+         bSdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d6PCW2KOH0KDLqsVM+6AHC+5drSfLm/w4ypsxg3tiJA=;
-        b=c2+fSU8i6WHN/axX8yU7lf5G8CO4K/YfLwEg2DAhqRybQXhldBVaBGqupjtnCywtpt
-         chj220z0EyIpit/NSgts3vayyXimzOmZ8ptcDOMtknR79Nozrwx7cAYkpM2Nt+F/iR6B
-         KZWDrA9FXYCsr4d6MFW1cHOQSB96fJddfNYB0b6IZX0UOb7SWSwsjKE9r7rB2inniaNq
-         34hjqEOTBYSa2DLWZnFJ58N3fUvsLfJA8W3i39AW3cOfmsWmzslgMga8I4KQYWufGVRo
-         53Ez8uIJ28dUqN7YbMntlLwE4/Dn2tMD3U2qbatzYr9gPZRg6lfY8W6b7tuzi22uVASo
-         2sTg==
-X-Gm-Message-State: AOAM533+3d78v6R2W58v3+8zsBCrYoHEVlfSTHV0WdmoDogyePiF6H8j
-        7NmPo9RnZDQ5w5as9Rxnyw==
-X-Google-Smtp-Source: ABdhPJwsz1sxFO5IB6M0mkPCFruDjPSsYHpFhyA2CUxctoSVTH1f9ZqjFBpNjgMqk/akx34sIhRS8A==
-X-Received: by 2002:a4a:d63a:: with SMTP id n26mr7290006oon.38.1604958352169;
-        Mon, 09 Nov 2020 13:45:52 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d22sm2653060oij.53.2020.11.09.13.45.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TL7a4MNPE4WuOkoIqj/tHlQbdnLK+YvkRnIoJ+IccQA=;
+        b=WggHRKXZ6l0Ab2z1I3laRJewM41IDt2nWNKXG2GpxmVzR7WosUKO4ANu6trT5qUzCq
+         GgwRLuH3j7TfwL1tT3byWQSrZ/lYUsyHA/vcLoRCtv2BvB/X6SwlfU3eDC7pauOGIUK8
+         Vxx8gau1cHO5sbJB9OihM5JSerpPmtSHxU/yMLFrQu7Kx64V5j6/1kSnDpKwCkuG9cGl
+         UV9cu0n/OBRAiYkZa811V+fKVkejuoHtASUolfjIIHKKVfpvLNpQzgj1FlBozF/WQd2y
+         u19fqlgnzxj/u0aNgXXWFLfLNwoV53o+lKl2CJeGv71lx7vBeKUkocxvxHscfvpw6RJB
+         H5nA==
+X-Gm-Message-State: AOAM530i2GyVT4COj66wX2cT1xgxm5bFXOw6F1HJI48RFPISBDiNW80i
+        1+sFQ6pDwvMeJoTNc6UvJzmyn3RXi77xfw==
+X-Google-Smtp-Source: ABdhPJzKIT18ca+jPIcYV3XXRV9f0o4FGHoswN6vE05uYnGEHQnk33qfVZuEsZ2NbO6W38/hZHRJxA==
+X-Received: by 2002:ac2:47eb:: with SMTP id b11mr4326485lfp.512.1604959129295;
+        Mon, 09 Nov 2020 13:58:49 -0800 (PST)
+Received: from localhost.localdomain (h-155-4-221-112.NA.cust.bahnhof.se. [155.4.221.112])
+        by smtp.gmail.com with ESMTPSA id r19sm447777lfm.231.2020.11.09.13.58.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 13:45:51 -0800 (PST)
-Received: (nullmailer pid 1811549 invoked by uid 1000);
-        Mon, 09 Nov 2020 21:45:50 -0000
-Date:   Mon, 9 Nov 2020 15:45:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        vkoul@kernel.org, dmaengine@vger.kernel.org, tglx@linutronix.de,
-        linux-tegra@vger.kernel.org, jason@lakedaemon.net,
-        thierry.reding@gmail.com, maz@kernel.org
-Subject: Re: [PATCH v2 4/4] dt-bindings: bus: Convert ACONNECT doc to
- json-schema
-Message-ID: <20201109214550.GA1811494@bogus>
-References: <1604677413-20411-1-git-send-email-spujar@nvidia.com>
- <1604677413-20411-5-git-send-email-spujar@nvidia.com>
+        Mon, 09 Nov 2020 13:58:48 -0800 (PST)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     JC Kuo <jckuo@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH] phy: tegra: Constify static device_type structs
+Date:   Mon,  9 Nov 2020 22:58:44 +0100
+Message-Id: <20201109215844.167954-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1604677413-20411-5-git-send-email-spujar@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 06 Nov 2020 21:13:33 +0530, Sameer Pujar wrote:
-> Move ACONNECT documentation to YAML format.
-> 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 44 ------------
->  .../bindings/bus/nvidia,tegra210-aconnect.yaml     | 82 ++++++++++++++++++++++
->  2 files changed, 82 insertions(+), 44 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
-> 
+The only usage of tegra_xusb_pad_type and tegra_xusb_port_type is to
+assign their address to the type field in the device struct, which is a
+const pointer. Make them const to allow the compiler to put them in
+read-only memory.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+---
+ drivers/phy/tegra/xusb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index ad88d74c1884..70d95519d281 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -146,7 +146,7 @@ static void tegra_xusb_pad_release(struct device *dev)
+ 	pad->soc->ops->remove(pad);
+ }
+ 
+-static struct device_type tegra_xusb_pad_type = {
++static const struct device_type tegra_xusb_pad_type = {
+ 	.release = tegra_xusb_pad_release,
+ };
+ 
+@@ -513,7 +513,7 @@ static void tegra_xusb_port_release(struct device *dev)
+ 		port->ops->release(port);
+ }
+ 
+-static struct device_type tegra_xusb_port_type = {
++static const struct device_type tegra_xusb_port_type = {
+ 	.release = tegra_xusb_port_release,
+ };
+ 
+-- 
+2.29.2
+
