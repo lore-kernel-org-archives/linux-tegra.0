@@ -8,28 +8,28 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E00DC56202
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80B2C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E151D20E65
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 910AC21D93
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="d2ubCFhF"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XrFDO2ot"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730596AbgKIRUR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Nov 2020 12:20:17 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1345 "EHLO
+        id S1731376AbgKIRU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Nov 2020 12:20:27 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1384 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730768AbgKIRUQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 12:20:16 -0500
+        with ESMTP id S1729999AbgKIRU1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 12:20:27 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa97a4c0001>; Mon, 09 Nov 2020 09:20:12 -0800
+        id <B5fa97a560001>; Mon, 09 Nov 2020 09:20:22 -0800
 Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Nov
- 2020 17:20:11 +0000
+ 2020 17:20:22 +0000
 Received: from vidyas-desktop.nvidia.com (10.124.1.5) by mail.nvidia.com
  (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Mon, 9 Nov 2020 17:20:07 +0000
+ Transport; Mon, 9 Nov 2020 17:20:18 +0000
 From:   Vidya Sagar <vidyas@nvidia.com>
 To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
         <bhelgaas@google.com>, <thierry.reding@gmail.com>,
@@ -38,9 +38,9 @@ To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
 CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
         <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if parts fail
-Date:   Mon, 9 Nov 2020 22:49:35 +0530
-Message-ID: <20201109171937.28326-5-vidyas@nvidia.com>
+Subject: [PATCH V4 6/6] PCI: tegra: Disable LTSSM during L2 entry
+Date:   Mon, 9 Nov 2020 22:49:37 +0530
+Message-ID: <20201109171937.28326-7-vidyas@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201109171937.28326-1-vidyas@nvidia.com>
 References: <20201109171937.28326-1-vidyas@nvidia.com>
@@ -48,151 +48,69 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604942412; bh=d1b5N09A0gDzpFGUT4TW8j2hmyg/v7cQebOOw3h4SNQ=;
+        t=1604942422; bh=K99h23gugfP4Evxq0Qx1iksWffmd1YF23yjNhOHjM18=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=d2ubCFhFk4oRcOCsWTtwq2Zz18GwJ9PVtUNRLVwmb/Fu5A2yQL0g5A23XOHFladcC
-         b7aUjL95jEqOFt1A0VOg6/xXwl+A6Xy9GjMSwBfzfazGoxzhc/FZeeh5mB+f6E5pUV
-         dPo7ZYl+6gw68dlwDvhA4kh7uPjz/LLF9pYXuspny8kkeBjSUnOwOvML4RfGx4kYz0
-         sFTndpVaFVVXCR23WQfxXV+e4OL+2/byXTAhps7l6rOR6hG//QTTjGHjdgpkPCCDT2
-         K7teYaQfg9pxUlCjraToimUheiRcOZwyn0HlCbS3KJ5Gfk3QwA+n0qC0vzNH/P3N7d
-         hhmmTKNojxvmQ==
+        b=XrFDO2otaP7S6Uk1pWnkv/2zx2P3DOrGFJ6BusH33HbJi8LpoorPUDIofWMyCIn25
+         ypnaJZkepwI+8wyYA+MWa195Z1CeyrLs1GJM6x7iWxp265N/DYAqO5Sh+o36+4I9Gk
+         /BvoHWYgnzr5UtNb9meiwzUTdg7LvdwDHijrVxI6sHpni0NQ00f6FbqkvZRG6JbCwE
+         C1KObnvEVUCpDajvW+/cSFAr/QeD23c/vAE7VdSjrMeH0/8V9rJ/UWKCZaDJs/rpDz
+         JFwoIHhMRnU88EQ4h0KifSs3z9Jeyqsp1v675XGbn8XHk1ZeGz22SwYgvBoC46OLOb
+         3DoNoliyC5dNw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently the driver checks for error value of different APIs during the
-uninitialization sequence. It just returns from there if there is any error
-observed for one of those calls. Comparatively it is better to continue the
-uninitialization sequence irrespective of whether some of them are
-returning error. That way, it is more closer to complete uninitialization.
+PCIe cards like Marvell SATA controller and some of the Samsung NVMe
+drives don't support taking the link to L2 state. When the link doesn't
+go to L2 state, Tegra194 requires the LTSSM to be disabled to allow PHY
+to start the next link up process cleanly during suspend/resume sequence.
+Failing to disable LTSSM results in the PCIe link not coming up in the
+next resume cycle.
 
 Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
 V4:
-* None
+* New patch in this series
 
-V3:
-* Modified subject as per Bjorn's suggestion
-* Removed tegra_pcie_init_controller()'s error checking part and pushed
-  a separate patch for it
-
-V2:
-* None
-
- drivers/pci/controller/dwc/pcie-tegra194.c | 39 +++++++++-------------
- 1 file changed, 15 insertions(+), 24 deletions(-)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 253d91033bc3..9be10c8953df 100644
+index 8c08998b9ce1..57ff0657bbe2 100644
 --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1422,43 +1422,32 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
- 	return ret;
- }
+@@ -1513,6 +1513,14 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+ 		data &= ~APPL_PINMUX_PEX_RST;
+ 		appl_writel(pcie, data, APPL_PINMUX);
  
--static int __deinit_controller(struct tegra_pcie_dw *pcie)
-+static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
- {
- 	int ret;
- 
- 	ret = reset_control_assert(pcie->core_rst);
--	if (ret) {
--		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n",
--			ret);
--		return ret;
--	}
-+	if (ret)
-+		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
- 
- 	tegra_pcie_disable_phy(pcie);
- 
- 	ret = reset_control_assert(pcie->core_apb_rst);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
--		return ret;
--	}
- 
- 	clk_disable_unprepare(pcie->core_clk);
- 
- 	ret = regulator_disable(pcie->pex_ctl_supply);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
--		return ret;
--	}
- 
- 	tegra_pcie_disable_slot_regulators(pcie);
- 
- 	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
--	if (ret) {
-+	if (ret)
- 		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
- 			pcie->cid, ret);
--		return ret;
--	}
--
--	return ret;
- }
- 
- static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
-@@ -1482,7 +1471,8 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
- 	return 0;
- 
- fail_host_init:
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
-+	return ret;
- }
- 
- static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
-@@ -1551,13 +1541,12 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
- 	appl_writel(pcie, data, APPL_PINMUX);
- }
- 
--static int tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
-+static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
- {
- 	tegra_pcie_downstream_dev_to_D0(pcie);
- 	dw_pcie_host_deinit(&pcie->pci.pp);
- 	tegra_pcie_dw_pme_turnoff(pcie);
--
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- }
- 
- static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
-@@ -2238,8 +2227,9 @@ static int tegra_pcie_dw_suspend_noirq(struct device *dev)
- 					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
- 	tegra_pcie_downstream_dev_to_D0(pcie);
- 	tegra_pcie_dw_pme_turnoff(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- 
--	return __deinit_controller(pcie);
-+	return 0;
- }
- 
- static int tegra_pcie_dw_resume_noirq(struct device *dev)
-@@ -2267,7 +2257,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
- 	return 0;
- 
- fail_host_init:
--	return __deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
-+	return ret;
- }
- 
- static int tegra_pcie_dw_resume_early(struct device *dev)
-@@ -2305,7 +2296,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
- 		disable_irq(pcie->pci.pp.msi_irq);
- 
- 	tegra_pcie_dw_pme_turnoff(pcie);
--	__deinit_controller(pcie);
-+	tegra_pcie_unconfig_controller(pcie);
- }
- 
- static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
++		/*
++		 * Some cards do not go to detect state even after de-asserting
++		 * PERST#. So, de-assert LTSSM to bring link to detect state.
++		 */
++		data = readl(pcie->appl_base + APPL_CTRL);
++		data &= ~APPL_CTRL_LTSSM_EN;
++		writel(data, pcie->appl_base + APPL_CTRL);
++
+ 		err = readl_poll_timeout_atomic(pcie->appl_base + APPL_DEBUG,
+ 						data,
+ 						((data &
+@@ -1520,14 +1528,8 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+ 						APPL_DEBUG_LTSSM_STATE_SHIFT) ==
+ 						LTSSM_STATE_PRE_DETECT,
+ 						1, LTSSM_TIMEOUT);
+-		if (err) {
++		if (err)
+ 			dev_info(pcie->dev, "Link didn't go to detect state\n");
+-		} else {
+-			/* Disable LTSSM after link is in detect state */
+-			data = appl_readl(pcie, APPL_CTRL);
+-			data &= ~APPL_CTRL_LTSSM_EN;
+-			appl_writel(pcie, data, APPL_CTRL);
+-		}
+ 	}
+ 	/*
+ 	 * DBI registers may not be accessible after this as PLL-E would be
 -- 
 2.17.1
 
