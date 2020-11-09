@@ -2,139 +2,138 @@ Return-Path: <SRS0=hnRp=EP=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0739C4741F
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 11:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36665C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 12:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5588E22228
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 11:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF22E20684
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 12:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivffncbN"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="f2rxywH4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729470AbgKILVE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Nov 2020 06:21:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbgKILVD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 06:21:03 -0500
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09993C0613CF;
-        Mon,  9 Nov 2020 03:21:03 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id cq7so8110153edb.4;
-        Mon, 09 Nov 2020 03:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hU4WYD1KmzG04cSTRa81VB9nMC6JMAr9+qywRmieORQ=;
-        b=ivffncbNBnvqFvOVxqcWbV0hPq/Ltibmf3GHl94bopcm/216grQ+BQGVZlOIbgv5Pf
-         xRNJDqDwIXSwamLbX/p1iygsqawMVvm49RJRIt4tNEMYHQhPpV2SHeOUzuPYfilWXW2T
-         pXypFoju2q10dY4x8VsUNVYWKxHAG9MXjfu3yRhrULwAAouCksLlQxBPC7WijFUkOd8M
-         9rKkcE0TzPGW+Qms+6P/Fg+rjYuLtH/qjYB9Y1dHamslXZILFUGfnOVA2vHYW7hhV+gv
-         tCS0061lKBfO0r7PmZ7sDLio7MMRqxS8zSw/E9vOQXqVzyolJ3sIV+5Qu+KLzXO5iK0O
-         FyvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hU4WYD1KmzG04cSTRa81VB9nMC6JMAr9+qywRmieORQ=;
-        b=eAOEJN2iQukVZu0KnPumTJiaOgk9KJOVKYi8/WKzEZjAwEZNFIO8wOT0h/Q5U3hWKa
-         r/vS6T0+43KFZQm3hBfv+MlHtXlFqD2CCHOKdcYwGhI/AtgyNfIsM2HPkIoNa8zj81HR
-         igIVoaUK0kunj424GhoQLxXur85YJ/3D2nXm7tUgZis8x6HtZZHsJwFB//iwdaFRLOTU
-         Zcm91JgDWWNUvZUT5rPjJsCuUSOl7ei2dYbYUqOEpSVWdZt5SbIsoiqWf+UmOAAj3V1i
-         Wh7725yeQoCXgvjxWPAM3RIlku/A4uBw2pmWnO2go7UgTnfAj8dmM1ctyyRN+8ptlc5j
-         WilA==
-X-Gm-Message-State: AOAM532rGavMzOVMHuLUyJS6FBmNsHx/slH6YrWEXsvH+m6ouIoVFshI
-        tcXWuIX+VjNiMmd72X0mQCgLQYhr9s2BgdV7FmI=
-X-Google-Smtp-Source: ABdhPJxAkJymNqSjR/UljeVLidNDy9Sfi8sdqcClNPJ1jY4tyCrPXVk2ZYZfzUyF8oKh+J89CmDSjJgzBHin8AZGsnU=
-X-Received: by 2002:a50:ef1a:: with SMTP id m26mr5734314eds.144.1604920861806;
- Mon, 09 Nov 2020 03:21:01 -0800 (PST)
+        id S1729445AbgKIMwW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Nov 2020 07:52:22 -0500
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:32927 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729756AbgKIMwU (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 9 Nov 2020 07:52:20 -0500
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id c6eBkxk551R0xc6eEkWiD1; Mon, 09 Nov 2020 13:51:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1604926310; bh=HEsod6KzTyVrakNykX+V821e/fnsm/BbfQS+9POA78g=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=f2rxywH4xGjDZSvNfFWyVWQ/bNcFYnZ0ONtO2bzj4WFTRpw5+x/nrWrl9CN+HvJL2
+         Ts6aUzLTkVXWtv92eu7gBWlSERo7zGIrzAnz7XXcaXjhwVlbHRcCawpYdO+DK870+j
+         WxfkBjXImhTIaQRCba0S6GGJ88CXckyNmDRkj4VJrOStYQgDQ2m4IyTkESy0TbYei/
+         Y6VMnU74J+2cxVe3+dxOdMzJ+z0OwqXpRNobF56pVMVouCPB5SfDAEjLKwNpG6B7Hy
+         ypp41wfX/dmQWcaQusATxwNjej6usS6uvpXX6DrOKadJLBAGeoc0ZyedmfbaWO5U2F
+         RVYR6af9RGUfQ==
+Subject: Re: [PATCH v2 03/10] media: tegra-video: Fix V4L2 pixel format for
+ RGB888_1X24
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1603768763-25590-1-git-send-email-skomatineni@nvidia.com>
+ <1603768763-25590-4-git-send-email-skomatineni@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <38372d8e-ef7f-d940-ac40-f6b5531e6c69@xs4all.nl>
+Date:   Mon, 9 Nov 2020 13:51:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
- <20201106061513.uyys7njcqcdlah67@vireshk-i7> <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
- <CAEExFWsp0DWw1yO84e3vzr_YZkqkd+pyPfQQR3J2W6n3wTX4Jw@mail.gmail.com>
- <20201109050010.g47zojh6wafvwqva@vireshk-i7> <c584b301-e052-7f01-335d-8f9160865198@gmail.com>
- <20201109051014.oa6bt4g3ctm2hnuy@vireshk-i7> <4476fed9-a356-b7f1-32ee-935343e23038@gmail.com>
- <20201109053546.xupmmsx5qccn46tr@vireshk-i7> <33a7ad95-a8cf-7b88-0f78-09086c1a4adf@gmail.com>
- <20201109055320.5y5gf2whwast2mi4@vireshk-i7>
-In-Reply-To: <20201109055320.5y5gf2whwast2mi4@vireshk-i7>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Mon, 9 Nov 2020 19:20:50 +0800
-Message-ID: <CAEExFWuF82B3bPn8T8_vkHODNwP89MDrNOqu-MhObzqTfiYODw@mail.gmail.com>
-Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage scaling
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        driver-dev <devel@driverdev.osuosl.org>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
-        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1603768763-25590-4-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfLfHM7b5R0RPrmyR0Cikqxw/B4yrilAEXtoHM/ncv5WlO9iTgor9rAwd9xnxwvgJ/8103ZVRpFSYhx1KVSQARpCwujcchpuHDSB1Kr2kz0lupCMMw4LD
+ v9GR+vTbNFl2b4tf60MaVyF0KfFr5bGL7Z0K3SkQYbGHSoaJRgsnm8t5aR7HVsPrHYJVCE+iCXAbXNRgQCNqbOdDQrlOnC8hSoREkBZO2jwoAKgw4AuWpNw2
+ QMIEFAyBmZNF+5IUjSu8W0gfzpGvs677EUdfWSqiZr/HsbOHn8lbWGBeb5d3vGgJQm6W+/x5Auilikm/8A/vsUW7iAGL8/D2KuzvLkPVb3Y6IUUxM53rQJfG
+ qn2ZukDqI9nCvTKGcHgefEQh09UON64zfbFlu7h2cNHwxd6RxC9kS88GqB/58K8cOf4+YS+j
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 1:53 PM Viresh Kumar <viresh.kumar@linaro.org> wrote=
-:
->
-> On 09-11-20, 08:44, Dmitry Osipenko wrote:
-> > 09.11.2020 08:35, Viresh Kumar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > On 09-11-20, 08:19, Dmitry Osipenko wrote:
-> > >> Thanks, I made it in a different way by simply adding helpers to the
-> > >> pm_opp.h which use devm_add_action_or_reset(). This doesn't require =
-to
-> > >> add new kernel symbols.
-> > >
-> > > I will prefer to add it in core.c itself, and yes
-> > > devm_add_action_or_reset() looks better. But I am still not sure for
-> > > which helpers do we need the devm_*() variants, as this is only usefu=
-l
-> > > for non-CPU devices. But if we have users that we can add right now,
-> > > why not.
-> >
-> > All current non-CPU drivers (devfreq, mmc, memory, etc) can benefit fro=
-m it.
-> >
-> > For Tegra drivers we need these variants:
-> >
-> > devm_pm_opp_set_supported_hw()
-> > devm_pm_opp_set_regulators() [if we won't use GENPD]
-> > devm_pm_opp_set_clkname()
-> > devm_pm_opp_of_add_table()
->
-> I tried to look earlier for the stuff already merged in and didn't
-> find a lot of stuff where the devm_* could be used, maybe I missed
-> some of it.
->
-> Frank, would you like to refresh your series based on suggestions from
-> Dmitry and make other drivers adapt to the new APIs ?
+On 27/10/2020 04:19, Sowjanya Komatineni wrote:
+> V4L2 pixel format is incorrect for RGB888_1X24.
+> 
+> This patch fixes it.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/staging/media/tegra-video/tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+> index 6b23aa7..c883925 100644
+> --- a/drivers/staging/media/tegra-video/tegra210.c
+> +++ b/drivers/staging/media/tegra-video/tegra210.c
+> @@ -619,7 +619,7 @@ static const struct tegra_video_format tegra210_video_formats[] = {
+>  	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
+>  	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
+>  	/* RGB888 */
+> -	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, RGB24),
+> +	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XRGB32),
 
-I am glad to do this.=EF=BC=9A=EF=BC=89
+This is the wrong way around, it should be XBGR32. V4L2 defines the pixelformat
+as the order of the color components in memory. Typically for a little endian
+system that means that the four bytes are reversed when DMAed.
 
-Yangtao
+The same is true for the YUYV variants.
+
+This patch fixes the order for RGB and YUYV:
+
+--------------------------------------------------------
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index aff56fcdc400..063d0a33bf71 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -693,19 +693,19 @@ static const struct tegra_video_format tegra210_video_formats[] = {
+ 	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
+ 	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
+ 	/* RGB888 */
+-	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XRGB32),
++	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XBGR32),
+ 	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
+-			   XBGR32),
++			   RGBX32),
+ 	/* YUV422 */
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, UYVY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, VYUY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, YUYV),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, YUYV),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, VYUY),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, UYVY),
+ 	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 1, T_Y8__V8U8_N422, NV16),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, UYVY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, VYUY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, YUYV),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, YUYV),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, VYUY),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, UYVY),
+ };
+
+ /* Tegra210 VI operations */
+--------------------------------------------------------
+
+Regards,
+
+	Hans
+
+>  	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
+>  			   XBGR32),
+>  	/* YUV422 */
+> 
+
