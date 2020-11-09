@@ -2,115 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80B2C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9C6C388F7
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 18:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 910AC21D93
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 17:20:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XrFDO2ot"
+	by mail.kernel.org (Postfix) with ESMTP id 7B69A206D8
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 18:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731376AbgKIRU1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Nov 2020 12:20:27 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1384 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729999AbgKIRU1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 12:20:27 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa97a560001>; Mon, 09 Nov 2020 09:20:22 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 9 Nov
- 2020 17:20:22 +0000
-Received: from vidyas-desktop.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Mon, 9 Nov 2020 17:20:18 +0000
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
-        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <amanharitsh123@gmail.com>,
-        <dinghao.liu@zju.edu.cn>, <kw@linux.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V4 6/6] PCI: tegra: Disable LTSSM during L2 entry
-Date:   Mon, 9 Nov 2020 22:49:37 +0530
-Message-ID: <20201109171937.28326-7-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201109171937.28326-1-vidyas@nvidia.com>
-References: <20201109171937.28326-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        id S1729987AbgKIS5a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Nov 2020 13:57:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35826 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729451AbgKIS53 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 13:57:29 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n11so10000353ota.2;
+        Mon, 09 Nov 2020 10:57:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Yp+Myu+RbCp/hhggXGpFgymnJTdUJhcL8XQ+E+Agqsg=;
+        b=uF4ICZHwbNkw+7QU963JESi95i2PMWWRg5B3jNapcoVYnUNZhyHvFCP507UwGqtAUV
+         ZN8PnOGC8FMktOUxkw9j04RYTcPKKTdHS6XQcox8mN+/o8BfxvWPjLQVBVUWTicQKMd5
+         NxVuK/dPL1ETwELkKsyQ20kand+UKcOGVVwY3znsfjO7AAku4U2CE11AiYRlEbcoZqUh
+         ROFm+nulGhwqRdzNwg5xqngAqeek5zhUqVW2A66dh7lzgV3Te6kEJ5qNkJ/0nNkxDHFl
+         3tIXRDYzK+W4cwK8/m/nvbNU9ZlvEhelrA7v8JHyqhzK+m2xTWVFrdnflT7MOT9benoz
+         SXww==
+X-Gm-Message-State: AOAM5339xECIA6+Y8hThpXO0StsvzSD3qk/Rw95Ptp3u5NHP4qSZoaVx
+        2wxQ0Z+Gjq8B7ACJZkpsgg==
+X-Google-Smtp-Source: ABdhPJwTrJM8+DV6yoj0yZkvksdAC3aJsLLLrx1WHxgB39fkbPYVnHOpW6Iq5AkW4A4fHBNfxiLHQg==
+X-Received: by 2002:a05:6830:2093:: with SMTP id y19mr10923388otq.219.1604948248350;
+        Mon, 09 Nov 2020 10:57:28 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o29sm2726530ote.7.2020.11.09.10.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2020 10:57:27 -0800 (PST)
+Received: (nullmailer pid 1586563 invoked by uid 1000);
+        Mon, 09 Nov 2020 18:57:25 -0000
+Date:   Mon, 9 Nov 2020 12:57:25 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>, linux-mmc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v1 01/30] dt-bindings: host1x: Document OPP and voltage
+ regulator properties
+Message-ID: <20201109185725.GA1586511@bogus>
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604942422; bh=K99h23gugfP4Evxq0Qx1iksWffmd1YF23yjNhOHjM18=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=XrFDO2otaP7S6Uk1pWnkv/2zx2P3DOrGFJ6BusH33HbJi8LpoorPUDIofWMyCIn25
-         ypnaJZkepwI+8wyYA+MWa195Z1CeyrLs1GJM6x7iWxp265N/DYAqO5Sh+o36+4I9Gk
-         /BvoHWYgnzr5UtNb9meiwzUTdg7LvdwDHijrVxI6sHpni0NQ00f6FbqkvZRG6JbCwE
-         C1KObnvEVUCpDajvW+/cSFAr/QeD23c/vAE7VdSjrMeH0/8V9rJ/UWKCZaDJs/rpDz
-         JFwoIHhMRnU88EQ4h0KifSs3z9Jeyqsp1v675XGbn8XHk1ZeGz22SwYgvBoC46OLOb
-         3DoNoliyC5dNw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201104234427.26477-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PCIe cards like Marvell SATA controller and some of the Samsung NVMe
-drives don't support taking the link to L2 state. When the link doesn't
-go to L2 state, Tegra194 requires the LTSSM to be disabled to allow PHY
-to start the next link up process cleanly during suspend/resume sequence.
-Failing to disable LTSSM results in the PCIe link not coming up in the
-next resume cycle.
+On Thu, 05 Nov 2020 02:43:58 +0300, Dmitry Osipenko wrote:
+> Document new DVFS OPP table and voltage regulator properties of the
+> Host1x bus and devices sitting on the bus.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-host1x.txt   | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-V4:
-* New patch in this series
-
- drivers/pci/controller/dwc/pcie-tegra194.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 8c08998b9ce1..57ff0657bbe2 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1513,6 +1513,14 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
- 		data &= ~APPL_PINMUX_PEX_RST;
- 		appl_writel(pcie, data, APPL_PINMUX);
- 
-+		/*
-+		 * Some cards do not go to detect state even after de-asserting
-+		 * PERST#. So, de-assert LTSSM to bring link to detect state.
-+		 */
-+		data = readl(pcie->appl_base + APPL_CTRL);
-+		data &= ~APPL_CTRL_LTSSM_EN;
-+		writel(data, pcie->appl_base + APPL_CTRL);
-+
- 		err = readl_poll_timeout_atomic(pcie->appl_base + APPL_DEBUG,
- 						data,
- 						((data &
-@@ -1520,14 +1528,8 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
- 						APPL_DEBUG_LTSSM_STATE_SHIFT) ==
- 						LTSSM_STATE_PRE_DETECT,
- 						1, LTSSM_TIMEOUT);
--		if (err) {
-+		if (err)
- 			dev_info(pcie->dev, "Link didn't go to detect state\n");
--		} else {
--			/* Disable LTSSM after link is in detect state */
--			data = appl_readl(pcie, APPL_CTRL);
--			data &= ~APPL_CTRL_LTSSM_EN;
--			appl_writel(pcie, data, APPL_CTRL);
--		}
- 	}
- 	/*
- 	 * DBI registers may not be accessible after this as PLL-E would be
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
