@@ -2,138 +2,145 @@ Return-Path: <SRS0=hnRp=EP=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36665C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 12:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB5EC2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 13:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF22E20684
-	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 12:52:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="f2rxywH4"
+	by mail.kernel.org (Postfix) with ESMTP id E433C2083B
+	for <linux-tegra@archiver.kernel.org>; Mon,  9 Nov 2020 13:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbgKIMwW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 9 Nov 2020 07:52:22 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:32927 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729756AbgKIMwU (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 9 Nov 2020 07:52:20 -0500
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id c6eBkxk551R0xc6eEkWiD1; Mon, 09 Nov 2020 13:51:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1604926310; bh=HEsod6KzTyVrakNykX+V821e/fnsm/BbfQS+9POA78g=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=f2rxywH4xGjDZSvNfFWyVWQ/bNcFYnZ0ONtO2bzj4WFTRpw5+x/nrWrl9CN+HvJL2
-         Ts6aUzLTkVXWtv92eu7gBWlSERo7zGIrzAnz7XXcaXjhwVlbHRcCawpYdO+DK870+j
-         WxfkBjXImhTIaQRCba0S6GGJ88CXckyNmDRkj4VJrOStYQgDQ2m4IyTkESy0TbYei/
-         Y6VMnU74J+2cxVe3+dxOdMzJ+z0OwqXpRNobF56pVMVouCPB5SfDAEjLKwNpG6B7Hy
-         ypp41wfX/dmQWcaQusATxwNjej6usS6uvpXX6DrOKadJLBAGeoc0ZyedmfbaWO5U2F
-         RVYR6af9RGUfQ==
-Subject: Re: [PATCH v2 03/10] media: tegra-video: Fix V4L2 pixel format for
- RGB888_1X24
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1603768763-25590-1-git-send-email-skomatineni@nvidia.com>
- <1603768763-25590-4-git-send-email-skomatineni@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <38372d8e-ef7f-d940-ac40-f6b5531e6c69@xs4all.nl>
-Date:   Mon, 9 Nov 2020 13:51:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S2387965AbgKINZS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 9 Nov 2020 08:25:18 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7069 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387441AbgKINZQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 9 Nov 2020 08:25:16 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CVBYq5x05zhjXm;
+        Mon,  9 Nov 2020 21:25:03 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Mon, 9 Nov 2020
+ 21:25:01 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <krzk@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <madalin.bucur@nxp.com>,
+        <davem@davemloft.net>, <kuba@kernel.org>, <mperttunen@nvidia.com>,
+        <tomeu.vizoso@collabora.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH V2] memory: tegra: add missing put_devcie() call in error path of tegra_emc_probe()
+Date:   Mon, 9 Nov 2020 21:28:47 +0800
+Message-ID: <20201109132847.1738010-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.25.4
+In-Reply-To: <20201102185216.GB13405@kozik-lap>
+References: <20201102185216.GB13405@kozik-lap>
 MIME-Version: 1.0
-In-Reply-To: <1603768763-25590-4-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfLfHM7b5R0RPrmyR0Cikqxw/B4yrilAEXtoHM/ncv5WlO9iTgor9rAwd9xnxwvgJ/8103ZVRpFSYhx1KVSQARpCwujcchpuHDSB1Kr2kz0lupCMMw4LD
- v9GR+vTbNFl2b4tf60MaVyF0KfFr5bGL7Z0K3SkQYbGHSoaJRgsnm8t5aR7HVsPrHYJVCE+iCXAbXNRgQCNqbOdDQrlOnC8hSoREkBZO2jwoAKgw4AuWpNw2
- QMIEFAyBmZNF+5IUjSu8W0gfzpGvs677EUdfWSqiZr/HsbOHn8lbWGBeb5d3vGgJQm6W+/x5Auilikm/8A/vsUW7iAGL8/D2KuzvLkPVb3Y6IUUxM53rQJfG
- qn2ZukDqI9nCvTKGcHgefEQh09UON64zfbFlu7h2cNHwxd6RxC9kS88GqB/58K8cOf4+YS+j
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 27/10/2020 04:19, Sowjanya Komatineni wrote:
-> V4L2 pixel format is incorrect for RGB888_1X24.
-> 
-> This patch fixes it.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/staging/media/tegra-video/tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-> index 6b23aa7..c883925 100644
-> --- a/drivers/staging/media/tegra-video/tegra210.c
-> +++ b/drivers/staging/media/tegra-video/tegra210.c
-> @@ -619,7 +619,7 @@ static const struct tegra_video_format tegra210_video_formats[] = {
->  	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
->  	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
->  	/* RGB888 */
-> -	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, RGB24),
-> +	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XRGB32),
+The reference to device obtained with of_find_device_by_node() should
+be dropped. Thus add jump target to fix the exception handling for this
+function implementation.
 
-This is the wrong way around, it should be XBGR32. V4L2 defines the pixelformat
-as the order of the color components in memory. Typically for a little endian
-system that means that the four bytes are reversed when DMAed.
+Fixes: 73a7f0a90641("memory: tegra: Add EMC (external memory controller) driver")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/memory/tegra/tegra124-emc.c           | 21 +++++++++++++------
+ .../net/ethernet/freescale/fman/fman_port.c   |  3 +--
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
-The same is true for the YUYV variants.
-
-This patch fixes the order for RGB and YUYV:
-
---------------------------------------------------------
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index aff56fcdc400..063d0a33bf71 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -693,19 +693,19 @@ static const struct tegra_video_format tegra210_video_formats[] = {
- 	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
- 	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
- 	/* RGB888 */
--	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XRGB32),
-+	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XBGR32),
- 	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
--			   XBGR32),
-+			   RGBX32),
- 	/* YUV422 */
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, UYVY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, VYUY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, YUYV),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, YUYV),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, VYUY),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, UYVY),
- 	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 1, T_Y8__V8U8_N422, NV16),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, UYVY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, VYUY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, YUYV),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, YUYV),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, VYUY),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, UYVY),
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 76ace42a688a..7d58a0e0a177 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1207,8 +1207,10 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 
+ 	emc->mc = platform_get_drvdata(mc);
+-	if (!emc->mc)
+-		return -EPROBE_DEFER;
++	if (!emc->mc) {
++		err = -EPROBE_DEFER;
++		goto put_device;
++	}
+ 
+ 	ram_code = tegra_read_ram_code();
+ 
+@@ -1217,25 +1219,27 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"no memory timings for RAM code %u found in DT\n",
+ 			ram_code);
+-		return -ENOENT;
++		err = -ENOENT;
++		goto put_device;
+ 	}
+ 
+ 	err = tegra_emc_load_timings_from_dt(emc, np);
+ 	of_node_put(np);
+ 	if (err)
+-		return err;
++		goto put_device;
+ 
+ 	if (emc->num_timings == 0) {
+ 		dev_err(&pdev->dev,
+ 			"no memory timings for RAM code %u registered\n",
+ 			ram_code);
+-		return -ENOENT;
++		err = -ENOENT;
++		goto put_device;
+ 	}
+ 
+ 	err = emc_init(emc);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "EMC initialization failed: %d\n", err);
+-		return err;
++		goto put_device;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, emc);
+@@ -1244,6 +1248,11 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		emc_debugfs_init(&pdev->dev, emc);
+ 
+ 	return 0;
++
++put_device:
++	put_device(&mc->dev);
++
++	return err;
  };
-
- /* Tegra210 VI operations */
---------------------------------------------------------
-
-Regards,
-
-	Hans
-
->  	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
->  			   XBGR32),
->  	/* YUV422 */
-> 
+ 
+ static struct platform_driver tegra_emc_driver = {
+diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
+index 9790e483241b..fcc59444df17 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_port.c
++++ b/drivers/net/ethernet/freescale/fman/fman_port.c
+@@ -1792,7 +1792,7 @@ static int fman_port_probe(struct platform_device *of_dev)
+ 	if (!fm_node) {
+ 		dev_err(port->dev, "%s: of_get_parent() failed\n", __func__);
+ 		err = -ENODEV;
+-		goto free_port;
++		goto put_node;
+ 	}
+ 
+ 	fm_pdev = of_find_device_by_node(fm_node);
+@@ -1899,7 +1899,6 @@ static int fman_port_probe(struct platform_device *of_dev)
+ 	put_device(&fm_pdev->dev);
+ put_node:
+ 	of_node_put(port_node);
+-free_port:
+ 	kfree(port);
+ 	return err;
+ }
+-- 
+2.25.4
 
