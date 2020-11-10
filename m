@@ -2,123 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D57C388F7
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7869CC388F7
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9863620781
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04E3420809
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBlBITAJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD3EoWTE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbgKJRkB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 12:40:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34026 "EHLO
+        id S1726428AbgKJRmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 12:42:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgKJRkA (ORCPT
+        with ESMTP id S1726400AbgKJRmT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 12:40:00 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE76C0613CF
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 09:40:00 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id p19so2479019wmg.0
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 09:40:00 -0800 (PST)
+        Tue, 10 Nov 2020 12:42:19 -0500
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F04B2C0613CF;
+        Tue, 10 Nov 2020 09:42:18 -0800 (PST)
+Received: by mail-wm1-x342.google.com with SMTP id s13so3922607wmh.4;
+        Tue, 10 Nov 2020 09:42:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=AOGcPID+Yebyl4fgGXyna38EtVydK1CNIaPj0KzoARU=;
-        b=WBlBITAJCb9Sfn7EsbQ64kdixmtTWXXUVBp7u7u7iYOXeTZi6zysw0yb5aniPgHb7A
-         EeROJOzOXePMaJbsjb6W7WokET/DqIEKu0w9ylWTozLa1It6+QwXg+BpUA+PmkjcGp5m
-         Qk1MjuBgLTuCKdJU+rQPv4K/1QSH0Ydah6b5q0HXW+jyiHdS+ZIUWoD0vc8T1tgW1jQA
-         IUi/3FR6iQjK99UUP4O4E55BSBXU7AKBIM1XwdzV3ctiKLMnWToD0UWiXSrbfWfW5oj8
-         lyboesf2rYhvSnVCBDrXCijGvSoN7/iqycISFam7EIk/dMYWb4MJkiAskyM3PhYvj904
-         v+zA==
+        bh=u7PePiutY/L/sMANbIk3Ifrd0U9F0uL2w8ZKdaPSMVA=;
+        b=LD3EoWTE3jCWBub+KgOL5rdsFJCVg5oznIQk26MlvFiS0tiMkKt9PVv9q6Vs+wK7nE
+         BB2WBzukBIPhF8xdZ5iDo5GGZNnU0qxdkVuVQko1/dpmaiTLJXg+kVOSnG6rKxAbC0ua
+         pI/NE80XKis+SKnBJpTPDAc2Vib9auhwTXkSrd1EZT/mFLqHqp03aPXXGfHq6c//Pm5N
+         7z6z7nMm4v8pozeqLX/gzvh7M+lOekC9rd8QZAfn0ZQfDW69fA3qVAy4KlH4yw5R3QCG
+         3XwpxC4hfqIrdaStV0Vu1owQtXF037N3U/s0kQ66nQjSHplugDNSuTBqh0KVV1JET4rj
+         umTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AOGcPID+Yebyl4fgGXyna38EtVydK1CNIaPj0KzoARU=;
-        b=MMPJbbhNSNLz0zDDRJOAJUF15PG+K79JKMGzuGeMLO4YaTLbg9+udag8+4SZdDRgng
-         1UhnVFnzeOLERi/iV21R/tM9Wul21g7Dc/HgOg3m4kdGfLXh6XwdfQCWgueUe+OxLGDQ
-         N7hdF9Wn93cOgbj+phUlpebIs2cnaMh5mszotMMnkZ2vLS8f4NJH5alF7dTh21Xd/hhe
-         5BgqSjM0dW9OvE/24NEicCsValjEaDZ/+rm0tADNO3vr7nIBGcVtfTUqgeVYEhpf+YGL
-         5zQG6Ux7loMuPefU7bd6g85U/RhwfVGuMF9AfL92MpFU7PUrJqsD/1JvnnlVSGpE+G+f
-         vsFA==
-X-Gm-Message-State: AOAM533A19H9JXuqbmhcZ4hrib6mGyZYOYj4bWaSSJ2MhAULjVYDgTP2
-        3P9JkEVKkAD8sRuVAAHYo74=
-X-Google-Smtp-Source: ABdhPJxxr0Qy5/6UDtv3YpAEcs9fMZM5aJf6t/rhu78691g1cWEEk3H5v0W7r41DPBg6Djm3yoevZA==
-X-Received: by 2002:a1c:4ca:: with SMTP id 193mr177752wme.137.1605029999335;
-        Tue, 10 Nov 2020 09:39:59 -0800 (PST)
+        bh=u7PePiutY/L/sMANbIk3Ifrd0U9F0uL2w8ZKdaPSMVA=;
+        b=q6pcnKUHHp61a4PaD8V6ZoROLBcVs9aQD15A+3namnDHZnaYsHJ6xXngiQx7oGWQW7
+         57QpQBmsHR+mDfY1TfnAz5Gpg8ePFwdq4PHM6mMlO1fedcDko63WXRDi3DeAdlobVatC
+         man3O8MyXCtqpxvgomqi46pFN5Xs2F6JD56zunEEjnn555pxPQwwV66jlUSv+VrqLJk5
+         p21TsrMkY+LVix5RoDEpm3JZujp2JgNLSPwQJ3mTlScZxjic7YgTBc+z69Ztn9WeJHr3
+         zcwrUXtVe7UZ/RgRiztrwlJpeh6NeYo8CvMd524+bqozdqbD7iBokWuUQiuI8gZv+4Wh
+         LCyQ==
+X-Gm-Message-State: AOAM531SsaNphAy4qTwSHv3Jvrn1zuZ6Ipuv+ckqJmw6AJGVvHdfdYtZ
+        AbStszCIn+kgLJIGF0KykaM=
+X-Google-Smtp-Source: ABdhPJzuo8WETyEeGZyAxWnfhgSPWgU3u8ajcmBY1cEEYGoaFFyp6xLHj9rsDgmaIzPFXWaoz5ZoxA==
+X-Received: by 2002:a7b:c099:: with SMTP id r25mr178293wmh.189.1605030137748;
+        Tue, 10 Nov 2020 09:42:17 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id x7sm17951355wrt.78.2020.11.10.09.39.57
+        by smtp.gmail.com with ESMTPSA id i10sm9103887wrs.22.2020.11.10.09.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 09:39:58 -0800 (PST)
-Date:   Tue, 10 Nov 2020 18:39:56 +0100
+        Tue, 10 Nov 2020 09:42:16 -0800 (PST)
+Date:   Tue, 10 Nov 2020 18:42:15 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     robh+dt@kernel.org, jonathanh@nvidia.com, mperttunen@nvidia.com,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: tegra: Wrong hsp_aon reg property size
-Message-ID: <20201110173956.GD2297135@ulmo>
-References: <20200912022645.7338-1-dipenp@nvidia.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bob Ham <rah@settrans.net>,
+        Leonardo Bras <leobras.c@gmail.com>,
+        Michael Brougham <jusplainmike@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Support NVIDIA Tegra-based Ouya game console
+Message-ID: <20201110174215.GE2297135@ulmo>
+References: <20201004133114.845230-1-pgwipeout@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
+        protocol="application/pgp-signature"; boundary="BZaMRJmqxGScZ8Mx"
 Content-Disposition: inline
-In-Reply-To: <20200912022645.7338-1-dipenp@nvidia.com>
+In-Reply-To: <20201004133114.845230-1-pgwipeout@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---SO98HVl1bnMOfKZd
+--BZaMRJmqxGScZ8Mx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 11, 2020 at 07:26:45PM -0700, Dipen Patel wrote:
-> The hsp_aon node reg property size 0xa0000 will overlap with other
-> resources. This patch fixes that wrong value with correct size 0x90000.
+On Sun, Oct 04, 2020 at 01:31:11PM +0000, Peter Geis wrote:
+> Good Day,
 >=20
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Dipen Patel <dipenp@nvidia.com>
-> Fixes: a38570c22e9d ("arm64: tegra: Add nodes for TCU on Tegra194")
-> ---
-> Changes in v2:
->   - Remove the space between Fixes and Signed-off-by tags
+> This series introduces upstream kernel support for the Ouya game console =
+device. Please review and apply. Thank you in advance.
 >=20
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changelog:
+> v3: - Reorder aliases per Dmitry Osipenko's review.
+>     - Add sdio clocks per Dmitry Osipenko's review.
+>     - Add missing ti sleep bits per Dmitry Osipenko's review.
+>     - Enable lp1 sleep mode.
+>     - Fix bluetooth comment and add missing power supplies.
+>=20
+> v2: - Update pmic and clock handles per Rob Herring's review.
+>     - Add acks from Rob Herring to patch 2 and 3.
+>=20
+> Peter Geis (3):
+>   ARM: tegra: Add device-tree for Ouya
+>   dt-bindings: Add vendor prefix for Ouya Inc.
+>   dt-bindings: ARM: tegra: Add Ouya game console
+>=20
+>  .../devicetree/bindings/arm/tegra.yaml        |    3 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+>  arch/arm/boot/dts/Makefile                    |    3 +-
+>  arch/arm/boot/dts/tegra30-ouya.dts            | 4511 +++++++++++++++++
+>  4 files changed, 4518 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
 
 Applied, thanks.
 
 Thierry
 
---SO98HVl1bnMOfKZd
+--BZaMRJmqxGScZ8Mx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q0GwACgkQ3SOs138+
-s6EVmw//dgyFvoD/umxDnXRSBf4YNBtqaF8GVhO596Uc1BJj7CCEqFAlUmF4FOXn
-yq4a83zraaoyeSgw7PwOYP6K/zbQm1iFjUyI7GKkbzsqa6GfyFg5UN2Uidl7Xa+W
-E65gK82VIALv5OaHzxlHv6EwdJTY26viMixfBlqlz+LuKYpzqKBKoizIbhau9w6H
-e0BdlSEnZydy6S5XglJWfLhseXdSCTnE2zv58frc9E+aZVbgdOTUD5bXyfVqeMn5
-HM9KwBsm8yBu4yswFILQdaF9MBEjfXI43Cc8IIC9Ujpfh5LduYaFqqrUSDRDHjB1
-8/HmRVYvrJPhTxP1KbnrRdDTCIR/rVRMDWALRLSACChv6rRnnQxkqjLngHifqP5E
-s6Ppz9LOG+U9t8OM3SgU6Hfbl4ahDqgaDqT3a6UZw3obVtpaR4orsw5QxRMt4gsU
-/7mBxcy2B56WNGVMMxQA5PsJg9dbS5QCKyuL1VfO9CFga6TMCMzUfsPMk+LU88oI
-ZjmtDPEAVU5Lm3kPtqlMWFi9lPIFZzJLvjs6D6/hSvmhgb2UIhpU+e3qYsIpCdT6
-xBAf25MHhIQisnH/Coofv+kQ7bjGf5qzMrQRgSunxgXFslev+J1uqbwpTDhvAwSd
-BwrFPE8nKLgN7wwDypk30Sn4tX3cn2zK5q+sSCZ2fu+Pv8m4COg=
-=RJCd
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q0PYACgkQ3SOs138+
+s6HInBAArw5O4bLPyhfu+ViRVz6vcmT3JHr6FZfIpjj8kwHWj4HoUpKMiQqe2tYQ
+RtnBZCnBwxx4ahrghwET/WIcVPeDpJKdS18++i6P7S2YnmMjzQK7MKiLc3i2V5xh
+KAjI/n/pgq9i2Ca0ZnY3cYfXDTMdUBNTwWy3Y4SYUQ4MWdLiVgJ388PHfFC6kW43
+ykeq8/kpKci+Y4rX4CzL8YMNsj+k1Sxu/NekOXjF6F/8KfqkC4vgZ4zbDWpT1CFL
+X4xu0T0vmSZMTObPRZ13Ourk+CCYX8/UJwf/ShABC7j0KGDE0qlGaS3V9LeWQ0VG
+80UFgOkfxpsAPVZ0BacXuBfYgJUv7QUFDJuvzBRsUvSfbGbGaTn2X9okKHE0SvM3
+ioSw8LRUxSkhf3mJxL8ltQ8iGMh4ko581pgHMfJHIZefKhV7L0O9jyhJFMJ8F0FS
+mK82SJbBS4H59AI1M1z+0O9TkBO0t9XSzgNjp2oQNIuCfA3atCm32spwj7oiFPHV
+Tfou3KbqaYpWG4REiuUj3vJA3FQhC7arzY4gEtGElA5Ig6N9HarliXWWSosmO7Ao
+uKck4lmJHq+YmTn0VHCELwsRVsnkRJQlUg4Be0dYfaKikqiJIuD3dyTKfzB+HRN+
+HfgMvAgiHCd30G2vwXwQ34DsnF1dzq9JflEbGQ1XMdR7K/Ko/34=
+=I/ei
 -----END PGP SIGNATURE-----
 
---SO98HVl1bnMOfKZd--
+--BZaMRJmqxGScZ8Mx--
