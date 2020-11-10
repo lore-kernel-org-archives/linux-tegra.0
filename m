@@ -8,147 +8,128 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3C1C388F7
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 19:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383F8C388F7
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 19:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D832520809
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 19:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5E0F20781
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 19:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaI/jNlW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws9vEe1p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbgKJTQR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 14:16:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        id S1726467AbgKJTjU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 14:39:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgKJTQR (ORCPT
+        with ESMTP id S1726307AbgKJTjU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 14:16:17 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA839C0613D1;
-        Tue, 10 Nov 2020 11:16:16 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id a65so4270999wme.1;
-        Tue, 10 Nov 2020 11:16:16 -0800 (PST)
+        Tue, 10 Nov 2020 14:39:20 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2669C0613D1;
+        Tue, 10 Nov 2020 11:39:19 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id p8so13225985wrx.5;
+        Tue, 10 Nov 2020 11:39:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=xa34eP6uVHbH+gi0+6/x5teG09+nE17SF9X2Y3WmGyo=;
-        b=MaI/jNlWicH8l/uFViHq6ikKHrfBk1JoyQ3XVTcQKJC9u81EBiN8HZNbrI+MboqZuC
-         waM5AmHXTtT9SAOey66YUZQROyNlgI2xaLuC86daZF4TKM8EVkLRGLSlwqg5DnUnhLPp
-         4L90yZYckWiW4ucyEw3ZPFK6hJLHRxLNK66hqDctCZS3dVUXslYJSIZaLeOlAW0IfSJh
-         Y2RAjeZsHJNegZqI1mPWZZvalXAKiTDFaoRkdgDQ/F3AyZmWR2q9ELgoZ9FMNRkE8i2H
-         Qr+GkAUUQ0oz4incdmd1GU9siNntaIAXNooCZ5He+AginFSlph6/w4AH28Y439ZV/ND2
-         7XxQ==
+        bh=5J5uwu3m7GcHarRgVyJ/Oom4GJKz9eUsOShnoN96sOA=;
+        b=Ws9vEe1pav/1QAaDxARWbnFxJb4bkcQ6VixB2a1JX3NhYf3y2/BOJxTwZkip9cbUln
+         yiQAi8PrtjC3eKW0dxms1L319RYr/Fv1u3v0TLGfetPGSj8XfU/WbtUGN55OUtFMIZwN
+         doIGJAzNEPdhCx485szJseRMRiCOc+fs0SKN7iqpzn0TrLKVBVDBbixeXMVlH3NA6+bb
+         5xYufwR2aAfzPySItgb732M+uNwoSfFF6f9Yx47jdyWrrMOfgSCIGmujnUPAzWs83VGI
+         P5n6lco7+RkMMlNY4JOWf35UiwmeYhbblB7OECSX0sBRVHfte86tQ6XX32+8Nyb5hy6l
+         VNpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xa34eP6uVHbH+gi0+6/x5teG09+nE17SF9X2Y3WmGyo=;
-        b=qFoJjkqfjzcmvX3oX7nHftoggNCU46yNtlm7V3wEBS+CkTAOatWNpcW445PSNUBpMi
-         FT9L6KHiNOHJ8+rnuriNO2YSVht6aEWEqGLzTw2BO9izHpw1ychEpwgcqVweY6HC9LEL
-         4mrNpBzrtulnCI1TpTtfPfUrbuUXdw5dATGFPkw0q712aiKzcvfyCG79ukojO6t/4epg
-         S364J6ohrUtFmzLl9xgxhVuHNp1oAT4EFUvIEnfHqo5O9r8MVrS2UeSWE1yIjfj2Tp6t
-         z5kOpeR4ityDs7Xq8T6bAOwP/buSv7ZCwQ/f3w0NTpw3QmJJwCp4Qvkn6fmtPq/es9wY
-         x1ug==
-X-Gm-Message-State: AOAM530lyFcylNZxSX8wuhmHfQ3g0rZCjgHt6vA5JadwRMcG8/pi3+UO
-        87J9Pz2ygFSgKLPWil1UiYKCy7EfBZg=
-X-Google-Smtp-Source: ABdhPJyn/qUAH+2E+wGQCjyrtac5k9vK53yHufhlVxMzbvX+4RTB2hGXNMc4ymEmEHBYXgwVJBWL6g==
-X-Received: by 2002:a1c:7202:: with SMTP id n2mr676061wmc.38.1605035775727;
-        Tue, 10 Nov 2020 11:16:15 -0800 (PST)
+        bh=5J5uwu3m7GcHarRgVyJ/Oom4GJKz9eUsOShnoN96sOA=;
+        b=SqObCSSh2YBeKv4QJsMCGiPsYQKlaOxBLVflMWpvhWXcg+dZPUqhIqafbnK1rnvJvK
+         fB/JXczTGuqf+oZlodAsaCy/LLWS5DHW80H5mvUDWSRunhwKG0AX4hMcN7kdls6rNF59
+         sd4OJrL10PQngqWtMn4iuIjYejO+CHHFOLiELdu++ggRPLyKGMjF8XZ+ygYz1HhOdacs
+         OOfxM7Bc+v4dUtPVAL6U4aYZmoeaoW3VDHm7dz9YADNYp5A3UqnMM0MjT15iPaX7MDHR
+         KI+jpE8qeN8gaZu6/JpHtZ/orTAERFiJ5iBR+bnRLECK+eogkxDM1k2jJEmRr1ceLgrA
+         n8lQ==
+X-Gm-Message-State: AOAM531U7NKuOEoD+yqk+M/q2MzT7+riTLlOMcjq/xKV2OTFWhisO90n
+        AinJ7Kfr8LKH204A+rMiIS8=
+X-Google-Smtp-Source: ABdhPJxi9RfDjVoCqexR48y0z3UEQn7ohhiDzBSL1Zo4eBf0BeryLvHjraIWu1JFlKOJZcamnV27+Q==
+X-Received: by 2002:a5d:50d1:: with SMTP id f17mr22801048wrt.264.1605037158703;
+        Tue, 10 Nov 2020 11:39:18 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id p4sm17858957wrm.51.2020.11.10.11.16.13
+        by smtp.gmail.com with ESMTPSA id g17sm18260050wrw.37.2020.11.10.11.39.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 11:16:13 -0800 (PST)
-Date:   Tue, 10 Nov 2020 20:16:12 +0100
+        Tue, 10 Nov 2020 11:39:17 -0800 (PST)
+Date:   Tue, 10 Nov 2020 20:39:16 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Timo Alho <talho@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] firmware: tegra: fix strncpy()/strncat() confusion
-Message-ID: <20201110191612.GA2303484@ulmo>
-References: <20201026164937.3722420-1-arnd@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 13/25] soc: tegra: fuse: speedo-tegra124: Remove some set
+ but unused variables
+Message-ID: <20201110193916.GA2375022@ulmo>
+References: <20201103152838.1290217-1-lee.jones@linaro.org>
+ <20201103152838.1290217-14-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
 Content-Disposition: inline
-In-Reply-To: <20201026164937.3722420-1-arnd@kernel.org>
+In-Reply-To: <20201103152838.1290217-14-lee.jones@linaro.org>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 26, 2020 at 05:49:21PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Nov 03, 2020 at 03:28:26PM +0000, Lee Jones wrote:
+> Fixes the following W=3D1 kernel build warning(s):
 >=20
-> The way that bpmp_populate_debugfs_inband() uses strncpy()
-> and strncat() makes no sense since the size argument for
-> the first is insufficient to contain the trailing '/'
-> and the second passes the length of the input rather than
-> the output, which triggers a warning:
+>  drivers/soc/tegra/fuse/speedo-tegra124.c: In function =E2=80=98tegra124_=
+init_speedo_data=E2=80=99:
+>  drivers/soc/tegra/fuse/speedo-tegra124.c:105:38: warning: variable =E2=
+=80=98soc_iddq_value=E2=80=99 set but not used [-Wunused-but-set-variable]
+>  drivers/soc/tegra/fuse/speedo-tegra124.c:105:22: warning: variable =E2=
+=80=98gpu_iddq_value=E2=80=99 set but not used [-Wunused-but-set-variable]
+>  drivers/soc/tegra/fuse/speedo-tegra124.c:105:6: warning: variable =E2=80=
+=98cpu_iddq_value=E2=80=99 set but not used [-Wunused-but-set-variable]
 >=20
-> In function 'strncat',
->     inlined from 'bpmp_populate_debugfs_inband' at ../drivers/firmware/te=
-gra/bpmp-debugfs.c:422:4:
-> include/linux/string.h:289:30: warning: '__builtin_strncat' specified bou=
-nd depends on the length of the source argument [-Wstringop-overflow=3D]
->   289 | #define __underlying_strncat __builtin_strncat
->       |                              ^
-> include/linux/string.h:367:10: note: in expansion of macro '__underlying_=
-strncat'
->   367 |   return __underlying_strncat(p, q, count);
->       |          ^~~~~~~~~~~~~~~~~~~~
-> drivers/firmware/tegra/bpmp-debugfs.c: In function 'bpmp_populate_debugfs=
-_inband':
-> include/linux/string.h:288:29: note: length computed here
->   288 | #define __underlying_strlen __builtin_strlen
->       |                             ^
-> include/linux/string.h:321:10: note: in expansion of macro '__underlying_=
-strlen'
->   321 |   return __underlying_strlen(p);
->=20
-> Simplify this to use an snprintf() instead.
->=20
-> Fixes: 5e37b9c137ee ("firmware: tegra: Add support for in-band debug")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
-> v2: Use the correct arguments for snprintf(), as pointed out by Arvind Sa=
-nkar
-> ---
->  drivers/firmware/tegra/bpmp-debugfs.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+>  drivers/soc/tegra/fuse/speedo-tegra124.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+Applied and cleaned up a bit more since moste of these register reads
+are completely unnecessary.
 
+Thanks,
 Thierry
 
---/04w6evG8XlLl3ft
+--tKW2IUtsqtDRztdT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q5voACgkQ3SOs138+
-s6F/kA/9G/n73HeUjhQYS1PxKSzJnvsWnUjYOtQqX+Dq7ajfxmT+fBwqKJisBcJD
-1A+VM8ciXWwu6CPqumquS/4CHB9gv4jthTkoL+GLhAxjiesRPpqzCMkkQPaRr9Sf
-BAeCMmrtWet0aWSlikg7ncoHpN1f99gNsEcclrL1eUS0kak5Mmp1PPOZP6xdbRAD
-caLBMF7M7azgiz8/Foacg2uXMyQSBKDexhLfcB1Ff4yAV8iLVQ2t7lyi7Rw4hpSE
-9d3Cr6lx3Z7lwj76WcB5lh1PbZWLaERPcGuYGzhiP50FJVeBicl9vX5AEk4QFhi4
-1xL0kcVmjcMOlZODeyPihuHc5qZwkMx6LnRKtSqiRqAj2m9lOaG5vWD2SfAqxoDi
-W7HNbmVnwR8ch5mnUHjhbPYBnpH016NFZyJ9Bp5JndB8K3xevpRnK1czrTa+gVGH
-dQIzMe9o7mUaGn95dhWpXARDRb+G9Myd2w9PIxL6oOFO3G7j1237oa8iYwMPsPIh
-3wIOERxmc0QRD5SH8vKqXPOr9BMXONWf2LyYgb+lcEFAJEc2BMxXMcZ4tfVwEBNx
-0PH0C2scwHTgGX6WXsyiDj+30Hj5SOe1XrrkupG3iaNVK4hRX3v/5VDh9wHnpBi3
-9DDzDhi/vfIXQX9+7ouM8w6oVN+VTPP/uYNuX8KkyaU9f7hWQ+A=
-=KrgJ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q7GQACgkQ3SOs138+
+s6GtJA//WSsmtdFCLCKnbOCIv0/CXzBrCr6hjeBx1h68CH1/QPPmJ0crgMxSMTfd
+gnQpeENCI/p1CB0o4Y4HFhtm55QEIuHwAFJENzCGLLJEeB4gpxGo+MRxgt606h7N
+3C1jRI1n6eFl+f/P9i3oxDViQNjgGo4bN+OPltQgTPRmXEhZe9BocWHpoYFnMnAB
+sual83j6HzerZJaDnV2WMRoM1L5f3L0BdxTKDJvO4k1Z94fLoPtU6qD3J98Wf/Ie
+BX3WOxnDqa9cwikOUFcgrMxxfo2kOWbxrIdrnzjFTlUIUjAxjyCz2sGdTxfsxBqW
+AYpl9kZyPqdnqz8ZOPxCaEc+mBBClGe6XhHv5FIIC/v9UDeaP/y8G6rOZCPdO/wy
+j61VksBRIL9xgFNeSPPBTnkLTTRvVn5ns5Bm9OjrauUVa9QwN7J/gAmcoG4cBETv
+ngFaTZhAOaNY2ATmvTpub1DOOI/BcEr0HaugMPG3kvFwDqLJtVnA/5kJ/CZlicwT
+sH2A5lCdM45spnIoUqQRq52PYtYYIqI6B2+9EZ/7AkNSNRq/ehdykEgnJ/m4zhiv
+3aS9vCfRG5dnw5cEX8p4CkqVlNmUBHgWXaMWtebUyhUpqAgScf1nlZ1+IFzia90g
+PKUdJFvRSPi9qrIH6714IAH/HH3UC5Lb/pIVxrRpzFDjrNYhdpE=
+=05XB
 -----END PGP SIGNATURE-----
 
---/04w6evG8XlLl3ft--
+--tKW2IUtsqtDRztdT--
