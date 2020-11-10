@@ -2,105 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90055C388F7
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4549EC55ABD
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F23A20731
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D53C320809
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJmDKYdf"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahh06S4Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbgKJVcc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 16:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbgKJVcb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 16:32:31 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD04C0613D1;
-        Tue, 10 Nov 2020 13:32:31 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id i6so233139lfd.1;
-        Tue, 10 Nov 2020 13:32:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Udf8izR79EOqP1ijS53zeM3N/JUnCwVrU1fnKC8yXBM=;
-        b=TJmDKYdfhNndOw9Fc/1HEuqiqmcIfs67XGIMRW/n659q4NI/oyLnPwqYqDHpqqSze4
-         yxRdw/JI8MhkLlhqv01SA66a1lehinyiB40p03H4fmPC4kXqdPdOR9DXXI+CA8FSqBk7
-         w6wChwFGwttwXQX2Xdjz29Y+Hwu/v0WRMXMyYljuqE429oOhuZ7qiOzZFPxi1Rkyq/NW
-         nVGYWY6zZm9eoNwo6SyRQJSccBYBxUNPG9MlrFkc8UTPfeDIiXk0WNTxV7mdyps+2+6X
-         OXy/7b5VqZJ3lgMWmZYzyttqwfgys1sL/l1uEmuidS91VXkM+dhRqONrgFsT4PF6pA+C
-         zF8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Udf8izR79EOqP1ijS53zeM3N/JUnCwVrU1fnKC8yXBM=;
-        b=Sa/uuCxZP4Ptb4d2EkGqIo5mvHCwTvjcX0GOcY8blJ9VGqRI/sCglnNsshb41ZrPpa
-         8wDpnvDc78i92Dl6u5fR0tDsc5qt3lMj34uXKJVdf7qpDeq0ZjOA6Saz80vV7dmK8mX8
-         VlTTkPWWNLpu6yTmugFPICnbMDy/DGStcfM/ye3+r0JymlZGzRdiDI7jGO2Ov2YO6kHo
-         KRjGaMIra+b0+y544PFymU5Glqb3vpjYD5Kdmn/0/XcahIOmyrLMsoSYYBlRXzJo84fr
-         W/BJ47UQaRn7ll3CukfcKKR6nd75/JuQqscxccTSyZBlbUY1lejk0UfGS0w4/MtfNxVa
-         rjgA==
-X-Gm-Message-State: AOAM53201SGdgthvsqceDl90nOoGdj48A35DNQOWHXLUW4hl4V7voN+N
-        PDSfpbRmxgc/LOv3pcBDZHV5RrdE09s=
-X-Google-Smtp-Source: ABdhPJzgddle15uZzQkarcn6HNRYEMFyRgf1xVU2K+91PWIHM5P29WaFydPEJ+nc/MxNTQcdKv1N/w==
-X-Received: by 2002:ac2:5e6e:: with SMTP id a14mr6600177lfr.595.1605043949411;
-        Tue, 10 Nov 2020 13:32:29 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id o12sm2721051ljc.59.2020.11.10.13.32.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2020 13:32:28 -0800 (PST)
-Subject: Re: [PATCH v1 07/30] soc/tegra: Add sync state API
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-8-digetx@gmail.com> <20201110204727.GG2375022@ulmo>
- <71934373-8425-345b-7719-0903f846119f@gmail.com>
-Message-ID: <7b6c7c62-495c-eeb8-9cdb-0c33be653e3d@gmail.com>
-Date:   Wed, 11 Nov 2020 00:32:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727275AbgKJVil (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 16:38:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731788AbgKJViY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 10 Nov 2020 16:38:24 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2678B20797;
+        Tue, 10 Nov 2020 21:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605044303;
+        bh=2QfsYMTIGqExf5FNUHJ1un67gfZSsrKQPoWVhdIAHqk=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=ahh06S4Z3wkwZo6EIiwVGN+Ce0SFmInaxqHOerbq2kKutFpkbJ+9Oul/50G+wurdI
+         R2giXYHGmmyiXsenxUu4Dxl7T2AoNwhyww7zufS0QCm/IWWYs2Sog4rjIt8RIorvGr
+         nBzR+4yxjyd/SGtvJZjMWiefyVrPDODpEcFl84F4=
+Date:   Tue, 10 Nov 2020 21:38:09 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     tiwai@suse.com, pierre-louis.bossart@linux.intel.com,
+        lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
+        perex@perex.cz, Sameer Pujar <spujar@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, sharadg@nvidia.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1604329814-24779-1-git-send-email-spujar@nvidia.com>
+References: <1604329814-24779-1-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH v5 0/7] Audio Graph Updates
+Message-Id: <160504428418.41991.4621142388350710965.b4-ty@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <71934373-8425-345b-7719-0903f846119f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.11.2020 00:22, Dmitry Osipenko пишет:
-> I added a special spell checking rule for this typo, but it does help
-> reliably.
+On Mon, 2 Nov 2020 20:40:07 +0530, Sameer Pujar wrote:
+> This series is a prepraration for using generic graph driver for Tegra210
+> audio. Tegra audio graph series will be sent in a separate series because
+> it has some dependency over other series for documentation work. This
+> series can focus on the generic ASoC driver updates. Below are the summary
+> of changes done.
+> 
+>  * Support multiple instances of a component. For example there can be
+>    multiple I2S devices which can use the same component driver.
+> 
+> [...]
 
-does *not*
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/7] ASoC: soc-core: Fix component name_prefix parsing
+      commit: 3256ef984b016fc8491f34cad594168b4b500317
+[2/7] ASoC: soc-pcm: Get all BEs along DAPM path
+      commit: aa293777bfeb75fb8872565ef99cc0e8b98b5c7d
+[3/7] ASoC: audio-graph: Use of_node and DAI for DPCM DAI link names
+      commit: e6aeb375d25dba56c4089b1d6aa0a77fe218ef3b
+[4/7] ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM
+      commit: c21cbb526c0a105d582299839a9c4244dd6bf38a
+[5/7] ASoC: audio-graph: Support empty Codec endpoint
+      commit: 930dd47d74023e7c94a7c256279e12924c14475d
+[6/7] ASoC: audio-graph: Expose new members for asoc_simple_priv
+      commit: d09c774f2f9ff25817866b70f1fb9603e5196971
+[7/7] ASoC: audio-graph: Expose helpers from audio graph
+      commit: e32b100bc6ecbc390aae728fc7d2a3e247faa8a7
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
