@@ -2,132 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCA4C4742C
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 13:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2552DC4742C
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 13:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7D112068D
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 13:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3EB20797
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 13:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Di+p8tHp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e4qfzc6f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731576AbgKJNMh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 08:12:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58686 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730559AbgKJNMe (ORCPT
+        id S1729898AbgKJN3E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 08:29:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbgKJN3E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 08:12:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605013952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2V11rFQ3FKVTN+koXAVvig/bkOvKVZoOl9jWSSiZ8Ik=;
-        b=Di+p8tHpuaV5rtMlatp24D6j8+WKmCUBtqz8yv0zCEdrS6sGXtBKp/ajiNQKnRgk1iVbBf
-        EPgPhQ0oDcmNLweqKLA2uf1G287zKEdUoDcJ+SAJtNZ7ElvnOQlZ77m+OxtwtGg6hoPAvK
-        H8JUZjK8UjW7EnlIU91t9XZBpHRi/X8=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-477-naUOOh0HPxqf_XNf_7FRwQ-1; Tue, 10 Nov 2020 08:12:31 -0500
-X-MC-Unique: naUOOh0HPxqf_XNf_7FRwQ-1
-Received: by mail-qv1-f71.google.com with SMTP id t13so8032009qvm.14
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 05:12:31 -0800 (PST)
+        Tue, 10 Nov 2020 08:29:04 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D18C0613CF
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 05:29:02 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id 74so17506538lfo.5
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 05:29:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=VpvennLXqd9u8XBAkLNq08P3gs06tYHk1YXS66WYMfA=;
+        b=e4qfzc6fGLSanNKKKH1lMessAnUc6V7lq/QDpUfyCwsButZQXNjlI2Zy+kbN6ShlH8
+         sAwf+KQM/TE+pk+jK+wOShgehU1Ax+FGfNSGRXOji/7RzGqXaubIhXylhZoZbEpBBgnH
+         TkCsZaPqDHElv6Ic6ugy6Moa98kgWmucxwOgEvH53UuFtdOF4yPe9JdoVXhA1lG4g6jg
+         vYbcQP+WbqWBad02yxOyMYuDzyvhpWSHKGTRSNzkQJ5u37+xhKnaHIIyc+xb8cPpkCSr
+         C7e5J5kHc7S3V+ma3OopWpYRxPhcfPm+RqapqZqIVBFYEnwitKfJVtGd0F1U8RvxPcTc
+         CrUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=2V11rFQ3FKVTN+koXAVvig/bkOvKVZoOl9jWSSiZ8Ik=;
-        b=BphQ5OR+4N3/br68B2lXZDSKvlk5Xh9MwJKsIEExo4KsYjyW148zgUkF1Ga/z2EGOj
-         9u2nfgL/0DwqM/wyeix/hskJT91rjbxqEpgQOr2d2D2npzMN1zVfGat4JoIyAOQ0yPM4
-         wWgD8b9iUCKmYiM9RpG2s6cnXlWWnzAZZgWH0IDevP7bzrtTyccVO/RoVV6ylnTi+Ofr
-         otTPezIYLjrWr8mLJfiw0ERqb/QRDiCPMFKbI/SwercEq3wfzj2e1SEJjXPRVeKdsAtr
-         TS9nKhSpFqzw+s01Z4lzMonwukravK0rqCvgLfaPKtoyU74uN6z60/hN3Xu0Sp7kAoZ+
-         ChBw==
-X-Gm-Message-State: AOAM530vXqQVYfpxrk+/kIO+AESj8la7k4tdx2VgmEiW3UbJTbpj+Yzg
-        yV3VHDZ8c7T7N3y6/6e2+RxTmie4xx2CuxAd1kiTLl31KnZr99I4aulbmw1QDXxZsfUbhXc43Ha
-        jViACIpfbntdh5bw91zPpZse1UaN8OwoKNXeTTQHfAcjRqDlEMQ9nvwTXJHXAMv00XNLkMQ==
-X-Received: by 2002:ac8:3621:: with SMTP id m30mr8787112qtb.168.1605013950546;
-        Tue, 10 Nov 2020 05:12:30 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyRnI1rUF5eW2rST1vImtIogpOlMRBum2fO0dVCe+zUlRqVIaRBqmVo31rjlhOk2kmW2Hr8dQ==
-X-Received: by 2002:ac8:3621:: with SMTP id m30mr8787064qtb.168.1605013950178;
-        Tue, 10 Nov 2020 05:12:30 -0800 (PST)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id e8sm7658678qti.28.2020.11.10.05.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2020 05:12:29 -0800 (PST)
-Subject: Re: Subject: [RFC] clang tooling cleanups
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com, cocci <cocci@systeme.lip6.fr>
-Cc:     linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        qat-linux@intel.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20201027164255.1573301-1-trix@redhat.com>
- <3c39c363690d0b46069afddc3ad09213011e5cd4.camel@perches.com>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <cc512954-2e1d-a165-f1f1-2c489fd6d3a9@redhat.com>
-Date:   Tue, 10 Nov 2020 05:12:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VpvennLXqd9u8XBAkLNq08P3gs06tYHk1YXS66WYMfA=;
+        b=L0+nQNXL4ylZC0p50JwlEdJwDxH1jf9YF4dhKZY0au9BfSDgkWt1ZFXKyCBcVlwD7S
+         bhCaS+He9Xr7I5gwdppxIYqgOsJK/YrrZVJNiptLuWjzxP/7xufn57K42B6fC5Qb4D2U
+         x1dxZXJxFLc/Uk1635EVunTOpMYmexkgiVS+wmOY0lSxoENW3EfPfTP9yEAfqGXfO6L5
+         4sABPOpey+pGgQzlNsaoGArlav5uZeRTO7tD2NxA6P0Fr8/qfJ6xv4uQ5pdXd0gaJWaP
+         bm1zxHEP0DjnIjGl0QJZoIMkmg00Qwo+NiwTpftTzrJzSw4/SGV183kxTJrivW1qQsD8
+         Kb0w==
+X-Gm-Message-State: AOAM531wGYDulEf5RaPYmmPSJpEnQz69lt3UaQTqRq8XdO2rX/O6pf0s
+        gx7fR6Q834HXZrJYLqhVgYRF5RBEkGMYlh/yTqjxtjfOApoZrSS1
+X-Google-Smtp-Source: ABdhPJzlApEwfwRGbOpyP6hL+tJ9TQYgfwqBZBfNChK8tlWs+CksUDxUlyUhT9aRZqSe/bM7S8045vtpQdlLTLBS4pQ=
+X-Received: by 2002:a19:5e0b:: with SMTP id s11mr6916846lfb.502.1605014940935;
+ Tue, 10 Nov 2020 05:29:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <3c39c363690d0b46069afddc3ad09213011e5cd4.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200901124736.155281-1-linus.walleij@linaro.org>
+ <7e34261d-c7b9-99f9-121e-05da76a8781a@gmail.com> <CACRpkdZnZ0fxU=7_RLMEivvFProa5r9VPpPiHHR_45zzk3_kCA@mail.gmail.com>
+ <6877bfc9-3099-226a-7f9c-9f1c488e0872@gmail.com>
+In-Reply-To: <6877bfc9-3099-226a-7f9c-9f1c488e0872@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Nov 2020 14:28:50 +0100
+Message-ID: <CACRpkdanP05wN03Ge4Vu4cAxXuOdnGHZrHGNMcw-H3=9ohjx=w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: uncompress: Enable debug in head.S
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Wed, Nov 4, 2020 at 9:40 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+> 29.09.2020 16:48, Linus Walleij =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-On 11/9/20 6:52 PM, Joe Perches wrote:
-> On Tue, 2020-10-27 at 09:42 -0700, trix@redhat.com wrote:
->> This rfc will describe
->> An upcoming treewide cleanup.
->> How clang tooling was used to programatically do the clean up.
->> Solicit opinions on how to generally use clang tooling.
->>
->> The clang warning -Wextra-semi-stmt produces about 10k warnings.
->> Reviewing these, a subset of semicolon after a switch looks safe to
->> fix all the time.  An example problem
->>
->> void foo(int a) {
->>      switch(a) {
->>      	       case 1:
->> 	       ...
->>      }; <--- extra semicolon
->> }
->>
->> Treewide, there are about 100 problems in 50 files for x86_64 allyesconfig.
->> These fixes will be the upcoming cleanup.
-> coccinelle already does some of these.
+> >> I also tried to revert only the "ARM: 9006/1: uncompress: Wait for rea=
+dy
+> >> and busy in debug prints" patch and got this in QEMU:
+> >>
+> >> Starting kernel ...
+> >>
+> >> DTB:0x016F6A20 (0x00005DA6)
+> >> C:0x010000C0-0x016FC820->0x0125AF00-0x01957660
+> >> Uncompressing Linux...
+> > (...)
+> >> LZMA data is corrupt
+> >>
+> >>  -- System halted
+> >
+> > Hmmmm is the physical and virtual address to the UART
+> > really correct?
+> >
+> > Else it might write in some random memory.
 >
-> For instance: scripts/coccinelle/misc/semicolon.cocci
+> Hello Linus,
 >
-> Perhaps some tool coordination can be done here as
-> coccinelle/checkpatch/clang/Lindent call all be used
-> to do some facet or another of these cleanup issues.
+> Just want to let you know that the problem isn't fixed yet and I haven't
+> got around to work on yet too. Hopefully next week!
 
-Thanks for pointing this out.
+OK it's "just" debug code after all but it is working on at least 5
+different platforms I tested with so I strongly suspect something
+fishy with the Tegra include/debug/tegra.S.
 
-I will take a look at it.
+This debug macro file is bigger than any of the others and I
+see some suspicious amount of clock code and what not
+in there so I am not sure what can cause this.
 
-Tom
+I would test to implement waituarttxrdy first and see what
+happens if you just do that. I remember that those early
+debug prints use the macros slightly different from the
+"Uncompressing..." message.
 
->
->
-
+Yours,
+Linus Walleij
