@@ -2,103 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4549EC55ABD
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C384AC61DD8
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D53C320809
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF7220797
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahh06S4Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JajzXzj+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgKJVil (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 16:38:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731788AbgKJViY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 16:38:24 -0500
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2678B20797;
-        Tue, 10 Nov 2020 21:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605044303;
-        bh=2QfsYMTIGqExf5FNUHJ1un67gfZSsrKQPoWVhdIAHqk=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=ahh06S4Z3wkwZo6EIiwVGN+Ce0SFmInaxqHOerbq2kKutFpkbJ+9Oul/50G+wurdI
-         R2giXYHGmmyiXsenxUu4Dxl7T2AoNwhyww7zufS0QCm/IWWYs2Sog4rjIt8RIorvGr
-         nBzR+4yxjyd/SGtvJZjMWiefyVrPDODpEcFl84F4=
-Date:   Tue, 10 Nov 2020 21:38:09 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     tiwai@suse.com, pierre-louis.bossart@linux.intel.com,
-        lgirdwood@gmail.com, kuninori.morimoto.gx@renesas.com,
-        perex@perex.cz, Sameer Pujar <spujar@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, sharadg@nvidia.com,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1604329814-24779-1-git-send-email-spujar@nvidia.com>
-References: <1604329814-24779-1-git-send-email-spujar@nvidia.com>
-Subject: Re: [PATCH v5 0/7] Audio Graph Updates
-Message-Id: <160504428418.41991.4621142388350710965.b4-ty@kernel.org>
+        id S1730894AbgKJVun (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 16:50:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbgKJVum (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 10 Nov 2020 16:50:42 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56985C0613D1;
+        Tue, 10 Nov 2020 13:50:42 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id v18so16546150ljc.3;
+        Tue, 10 Nov 2020 13:50:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QumWPjldyhkIYYrKZybLDjf0NEcp9tE/cFj+ALYFR9A=;
+        b=JajzXzj+taW37LHKKk1rBUu2Z4ElUMNSSHS0K95OnI5UImwAIF74Qu+QTmiVzypvAS
+         gAQiDrdU4a2B6Z9A/XX/OOpJu3zamPLYGVpiOdVUDJw7ZsRpBauLkm/3QQp5PvJ2UM4A
+         LlfneuREhApeooZpB9lnnAX6U7j1XdRX88sCUzdxugTvIG1jP5PTHJPC3/8IUgW/bc/i
+         LWgLoXa7caMAbqITehUnmz/UH2tBulw/gQUU8Cd3shJtQ+zvYfoUG1N8jDZq2ZIllOe/
+         aCD81lT6Dj2NRU8sGRrZHHc26lsCxBQnWNgpAjWLB1z+6WE0AmdSq+A5dXHYbs0KDWUd
+         P/Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QumWPjldyhkIYYrKZybLDjf0NEcp9tE/cFj+ALYFR9A=;
+        b=KtRbblHfKi1Ay5PEaAn1KZJFAZ3msWs02D6BzwC7cpXqRlnOnvOsDkoWebzQgSmqRn
+         D0/46SSJdZtmRc8TYtLDSTqBcdmtD/q0X84oyL6u/lKoxtv+nppRHfvWEano4m6qmEmi
+         rXQQvksoL6RzOfdbBrJHfSycz4On2/LJmHdR2XfZTqHuG++IzKFo82z+nNIQWQIJJ+gC
+         z54/p8NqoA0PQEl1qM9KDrr6k3p55B55fy5vJteEuIRfeWw9c+VaI4mYgd82bPDT/auF
+         QrpRkldWJXDRAM45Qad3pyoo7E/xRG8TWtB25rXPHZpkOFrL4IPkA2bBj06S5X6rNR1s
+         bjyg==
+X-Gm-Message-State: AOAM532fAQDNrGzkhk75e2G6DC7w9w8rVE8dImJHRYvrpFlR5L1Yu6V0
+        q6s7cZc8D4FtniHhyZAm0VzFtSlyNKo=
+X-Google-Smtp-Source: ABdhPJxca3fiSpZnzLwSSmf1STAmFU4WFUoLoBVs2ZCeEEkdDu9neVJtNB2ucZnGCMuP/Af+mNHRXw==
+X-Received: by 2002:a2e:9583:: with SMTP id w3mr9542353ljh.25.1605045040627;
+        Tue, 10 Nov 2020 13:50:40 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id x9sm12074lfg.93.2020.11.10.13.50.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Nov 2020 13:50:39 -0800 (PST)
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-12-digetx@gmail.com> <20201110202945.GF2375022@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7b0052e1-0ea7-b28f-ae46-52e669a980ac@gmail.com>
+Date:   Wed, 11 Nov 2020 00:50:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20201110202945.GF2375022@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2 Nov 2020 20:40:07 +0530, Sameer Pujar wrote:
-> This series is a prepraration for using generic graph driver for Tegra210
-> audio. Tegra audio graph series will be sent in a separate series because
-> it has some dependency over other series for documentation work. This
-> series can focus on the generic ASoC driver updates. Below are the summary
-> of changes done.
+10.11.2020 23:29, Thierry Reding пишет:
+>> +	/* legacy device-trees don't have OPP table */
+>> +	if (!device_property_present(dc->dev, "operating-points-v2"))
+>> +		return 0;
+> "Legacy" is a bit confusing here. For one, no device trees currently
+> have these tables and secondly, for newer SoCs we may never need them.
 > 
->  * Support multiple instances of a component. For example there can be
->    multiple I2S devices which can use the same component driver.
-> 
-> [...]
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/7] ASoC: soc-core: Fix component name_prefix parsing
-      commit: 3256ef984b016fc8491f34cad594168b4b500317
-[2/7] ASoC: soc-pcm: Get all BEs along DAPM path
-      commit: aa293777bfeb75fb8872565ef99cc0e8b98b5c7d
-[3/7] ASoC: audio-graph: Use of_node and DAI for DPCM DAI link names
-      commit: e6aeb375d25dba56c4089b1d6aa0a77fe218ef3b
-[4/7] ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM
-      commit: c21cbb526c0a105d582299839a9c4244dd6bf38a
-[5/7] ASoC: audio-graph: Support empty Codec endpoint
-      commit: 930dd47d74023e7c94a7c256279e12924c14475d
-[6/7] ASoC: audio-graph: Expose new members for asoc_simple_priv
-      commit: d09c774f2f9ff25817866b70f1fb9603e5196971
-[7/7] ASoC: audio-graph: Expose helpers from audio graph
-      commit: e32b100bc6ecbc390aae728fc7d2a3e247faa8a7
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+I had the same thought and already improved such comments a day ago.
