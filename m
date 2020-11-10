@@ -5,121 +5,115 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61DBC4741F
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B90C388F7
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 874A1207D3
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:44:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7416520797
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvb7p+HS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmnKmPnz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbgKJRog (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 12:44:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34752 "EHLO
+        id S1730504AbgKJR6l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 12:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgKJRog (ORCPT
+        with ESMTP id S1726152AbgKJR6k (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 12:44:36 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485BEC0613D1;
-        Tue, 10 Nov 2020 09:44:36 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id c9so3975634wml.5;
-        Tue, 10 Nov 2020 09:44:36 -0800 (PST)
+        Tue, 10 Nov 2020 12:58:40 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD29C0613CF
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 09:58:40 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id a65so3986394wme.1
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 09:58:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=6B8wjHoaVW72XtAVUWe2wZEGfXfDpa4klG93o01JXig=;
-        b=Uvb7p+HSKcUHjRh+IvER/W3ypNASLoZWNd6grwVTGkEVqksXLPBOuqNvCNf9FXwvJN
-         yXHUPecdTwXH+LdCkC6gLyvYBtNDyR/t3hH7Y0QgwFopQisHL2GjVDeOyimnhXN6eBlH
-         ckFSn+omctg7snuH+AMR6cRaE1RhE8GN37bCh5eMfBl1EkupKVEGvtH47stZm1XElDC4
-         B/s3UNRS5/D9t5UYF2YlqrXRYaTsftYdUdskHdVeON9xjXwU48FNf+uuX1mXcR+l1juM
-         rK+gIdwWLw53QiDTDTAb5ysVkAq/GBAl2nuNY/vPKJ3A8fdaTurd8r6R+9Bc6ZcIPVO4
-         WRYA==
+        bh=JQY6R1ElIsTafLLi2mFqPWbFHRtmr4ipw/FCjpAryLI=;
+        b=hmnKmPnzV65p6kFXsWm5T6LHZAgSAZuvMFROS3E3FRPa7MOObj35FBH4L2puAO6M/X
+         c4Zz/tP60RmuO5eRmDBpSIzRFfTvv5Rg1wkltXsMzPQUgpbgBp5KFo2YxZoyC+fUCiXZ
+         0WlGfHcf0PAYECKpnwiVPumXcv9otlFCZOurLkvIC9W1TLtf0Oo25fljIcRyG4snu2SH
+         v1jYqnDwJ6PNcKWfwAWmUraJx2BDteR9aoSQrG4Fen+YGxwysty4hsw5jKrpThoylh1g
+         Un5PFRFJi7SqLd3PhdLGjMhnF0ojkW1XNvS0ia8JiKfMN5ox/hxBqP5wt7FvEC/84TFQ
+         P7hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6B8wjHoaVW72XtAVUWe2wZEGfXfDpa4klG93o01JXig=;
-        b=FzrhFhJ+Tx/8ljeEBlOANXduRYNAqga/NzvxQE5aJ5vJQCHPy3CtlksIOAq0+JVg9V
-         805PbjtF3OqOeP7sG0Uibanqc3dQKkxeFI1FnT65MWcdk94W1V60WnpMzCFydu/Ayjdn
-         5uu5hlfGOPP4fdinNtouDSuIkWJEi7uD8l+27ZgQ94bNYxmV8zyCk2YKr8jwEdlUP3Ow
-         KZ9t5Gx+wvtvYn5sI1WGq2IfSMf5Z0WTd21YhSgX0haTcDJO0FNE0flscxDwgC8bcHHJ
-         YKPhHpctuGvLnBi9sX/WDx+iG6Kon59Cowlc5HD4Cx8SRXYxOZ71nVIcseIbgL3+ryKJ
-         /Qew==
-X-Gm-Message-State: AOAM532BeBwxYqynrkiWu6h4r5Y2lrLA/MRBzzVOqF9aXHi75k6f12Mo
-        UfIXdcojTA+s9jnXG+mA/no=
-X-Google-Smtp-Source: ABdhPJyS1xufnh3qBP9Gnc2AXQ0TUdtpLaeYMga7vvxYO9uMYuHlcQgJtcXEZGynqcG8mIgPkT93YQ==
-X-Received: by 2002:a1c:a445:: with SMTP id n66mr229504wme.51.1605030275015;
-        Tue, 10 Nov 2020 09:44:35 -0800 (PST)
+        bh=JQY6R1ElIsTafLLi2mFqPWbFHRtmr4ipw/FCjpAryLI=;
+        b=XRT/cl96esf0cdBdN5+fJskcl4xRufoLrKVenYlOjRg+fwYRI449g5lsg1My2SRDLV
+         2SdksjAs0InvhJXF1YipTtpoIfo6fIlT+PcLLDT1pin8qHCjfEBgUpgq12O2YRL1Q9JN
+         mRo/85yQiCNyC/fTXv7q2UCuvlR6NY6RgHT5oc8wS2qQ1DVr9gbp7iw6NmaQlpKn76FA
+         AUv15z+hP6+cR5/Vy8rPkUP9CWqiR/lZTaSEjMBnhpPeM/syx35It//Ujl3ynScvTw0M
+         Rbl9Y/J4+oKNd0g/5Wv2FCU4CW4Ygq3SgW1uhxDHnmyQ2b6K1aeptDXj7n47brCzTRsV
+         rSCw==
+X-Gm-Message-State: AOAM530bbrhrIGQcd2JLhsH2pB8YCiNLUZWDy39z8AITpUbCY7EcIY8H
+        2u3SerKfAoRafu+y6JK9px4=
+X-Google-Smtp-Source: ABdhPJzVGHf2zzFTzvHYoF8VWZvMfVcXdP9tFKh9HJyWbf84S5sMgVYblR3YzBJaXazDTjq68jOXqw==
+X-Received: by 2002:a1c:7301:: with SMTP id d1mr247962wmb.141.1605031119423;
+        Tue, 10 Nov 2020 09:58:39 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id q7sm17573896wrg.95.2020.11.10.09.44.33
+        by smtp.gmail.com with ESMTPSA id r18sm19362074wrj.50.2020.11.10.09.58.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 09:44:34 -0800 (PST)
-Date:   Tue, 10 Nov 2020 18:44:32 +0100
+        Tue, 10 Nov 2020 09:58:38 -0800 (PST)
+Date:   Tue, 10 Nov 2020 18:58:36 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     robh+dt@kernel.org, jonathanh@nvidia.com, jckuo@nvidia.com,
-        kyarlagadda@nvidia.com, lorenzo.pieralisi@arm.com,
-        amurray@thegoodpenguin.co.uk, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: Fix entry name for I/O High Voltage
- property
-Message-ID: <20201110174432.GF2297135@ulmo>
-References: <20201026063902.14744-1-vidyas@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] ARM: tegra: nexus7: Set video decoder clock rate
+ to 408MHz
+Message-ID: <20201110175836.GG2297135@ulmo>
+References: <20201104141251.25834-1-digetx@gmail.com>
+ <20201104141251.25834-8-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ExXT7PjY8AI4Hyfa"
+        protocol="application/pgp-signature"; boundary="E69HUUNAyIJqGpVn"
 Content-Disposition: inline
-In-Reply-To: <20201026063902.14744-1-vidyas@nvidia.com>
+In-Reply-To: <20201104141251.25834-8-digetx@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---ExXT7PjY8AI4Hyfa
+--E69HUUNAyIJqGpVn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 26, 2020 at 12:09:01PM +0530, Vidya Sagar wrote:
-> Correct the name of the I/O High Voltage Property from
-> 'nvidia,io-high-voltage' to 'nvidia,io-hv'.
+On Wed, Nov 04, 2020 at 05:12:50PM +0300, Dmitry Osipenko wrote:
+> The default 600MHz is technically unsupported on Nexus 7. Assign VDE clock
+> to 408MHz, which is supported by all hardware versions.
 >=20
-> Fixes: 2585a584f844 ("pinctrl: Add Tegra194 pinctrl DT bindings")
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt      | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Both patches applied, thanks.
+This doesn't seem to apply. Is there another patch that this depends on?
 
 Thierry
 
---ExXT7PjY8AI4Hyfa
+--E69HUUNAyIJqGpVn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q0YAACgkQ3SOs138+
-s6Et1A/+PB1xRpHesNfSuidBntCGoacEg55fAqa+2ElNGdMixsiSP6srYBogQOdE
-pnXgC9qTrAwYOJeTYOao4De56/Wm+eospIjjZIeXsVyMe02tPeR8vNaEQCy9mAA4
-XmXE8BefEos5ZRZ+qDzjj5BW7+fTNedkm94KDj5coR7T3VjvrteVamGP0A8+DEAk
-J0q/tALx0x5A5CXsBLRAtRnbdEmFWR15GAvIYIQLqTGvyFGXrnQNKjI3U0g8PwrJ
-8Bp61grVQeGQvWvYHQcF0/mlSYnLhPQPhhwm9SB1Of5wcqD3Z8L1/NeZ2/8O6PRF
-GaCBK7xs2re4P/B/G+EaKttYLlfy9GxGRljZWFf+QHT3Fi5zvgtHWB3qb9zSH+Op
-KAtmBsamKOczJTIkdo9qkkC2c8/GG010iXNY0Xs+FG3kdUM8p/oxm0tlDthXSLQI
-ChdWfKOWNpOP9U+iM9Qo2zgVbYmm40ADm0cIiIIzP3Er+1GTvgfgtpyFUmB/l6cc
-TAKgoNJuMLXTCGQ+LED9JYg6HITtYihAJUUe9gELjWbEGmoMU71I+NSspPUV5lDb
-pYwU8UPBQ2CS8VdsnOYn06E8xF5lbTysqoxpqezeaRMPN9AS46+QMSmjsdulBgjs
-9DkyOKYomXnWgLFcYOzQNNSOuesAKkFJwyVi0Xvut0a2FwAONpA=
-=e8Li
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q1MoACgkQ3SOs138+
+s6EVDA/9FMz2OC4nE3rn0xkTNQZAuWYIy6GQDHqgiZvRBq/7GY4DYFP2KxTRyYIW
+DeOgDyEYSKrS73w8AIppR5K/QATuU1spJ4HSR2LcYpHUEN1kS56VYzSqLPuL3K4f
+FnhILFWCFFo1f6excYZaurfNdgoGoZarDd7eGWgcKdNvTuXcYVOR8l/0hqToAwYD
+3bCYmpKbc63u1NgKv7lXzWWzo1ljUGZn3Q9IZV3HE8XUgTRMggMZW3aDCGOUrRFG
+zF8Acds/Tc1XVfRj7Qdcn2WsJDR1GGDCegW17SvUZ0/D60J+j317o7mKpKGw/VZZ
+apvsSr+YuQqJD7KAehITO7eoCuqOCgcm7NpD6jpz6lK78YzbxQ9+m3LapYXWVSjH
+TxmAa5GylyBBW4kZhcs1k4VYBASFTAYuJjkc4ZOi00Kkk9mynic9ItOSmmcmakrU
+ZBa1ias6FJmV3D10RClzFsmCHmVvA6aTscLthwbWqrkPinWr0ro3r8NjmUBTZr+7
+SQXCizy1PYoXlj+xzkUr65bs9M+6TT2MJhrKUdvEuhYX/KdQTcEEr726R4R00egT
+Z8e0TURvH5nJmbPv+5PtwNmAHA3hfckIYecKPwszvs6NtY/rFP/S7uf1E6vjW5pj
+PJ2nL3OGhfmvdn2/5gJbFq94rYl2W+QjZwvpVyaeOPwnYurXW7o=
+=+ctb
 -----END PGP SIGNATURE-----
 
---ExXT7PjY8AI4Hyfa--
+--E69HUUNAyIJqGpVn--
