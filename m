@@ -2,144 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7869CC388F7
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D61DBC4741F
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04E3420809
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 874A1207D3
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 17:44:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD3EoWTE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvb7p+HS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgKJRmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 12:42:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
+        id S1730382AbgKJRog (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 12:44:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgKJRmT (ORCPT
+        with ESMTP id S1726400AbgKJRog (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 12:42:19 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F04B2C0613CF;
-        Tue, 10 Nov 2020 09:42:18 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id s13so3922607wmh.4;
-        Tue, 10 Nov 2020 09:42:18 -0800 (PST)
+        Tue, 10 Nov 2020 12:44:36 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485BEC0613D1;
+        Tue, 10 Nov 2020 09:44:36 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id c9so3975634wml.5;
+        Tue, 10 Nov 2020 09:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=u7PePiutY/L/sMANbIk3Ifrd0U9F0uL2w8ZKdaPSMVA=;
-        b=LD3EoWTE3jCWBub+KgOL5rdsFJCVg5oznIQk26MlvFiS0tiMkKt9PVv9q6Vs+wK7nE
-         BB2WBzukBIPhF8xdZ5iDo5GGZNnU0qxdkVuVQko1/dpmaiTLJXg+kVOSnG6rKxAbC0ua
-         pI/NE80XKis+SKnBJpTPDAc2Vib9auhwTXkSrd1EZT/mFLqHqp03aPXXGfHq6c//Pm5N
-         7z6z7nMm4v8pozeqLX/gzvh7M+lOekC9rd8QZAfn0ZQfDW69fA3qVAy4KlH4yw5R3QCG
-         3XwpxC4hfqIrdaStV0Vu1owQtXF037N3U/s0kQ66nQjSHplugDNSuTBqh0KVV1JET4rj
-         umTw==
+        bh=6B8wjHoaVW72XtAVUWe2wZEGfXfDpa4klG93o01JXig=;
+        b=Uvb7p+HSKcUHjRh+IvER/W3ypNASLoZWNd6grwVTGkEVqksXLPBOuqNvCNf9FXwvJN
+         yXHUPecdTwXH+LdCkC6gLyvYBtNDyR/t3hH7Y0QgwFopQisHL2GjVDeOyimnhXN6eBlH
+         ckFSn+omctg7snuH+AMR6cRaE1RhE8GN37bCh5eMfBl1EkupKVEGvtH47stZm1XElDC4
+         B/s3UNRS5/D9t5UYF2YlqrXRYaTsftYdUdskHdVeON9xjXwU48FNf+uuX1mXcR+l1juM
+         rK+gIdwWLw53QiDTDTAb5ysVkAq/GBAl2nuNY/vPKJ3A8fdaTurd8r6R+9Bc6ZcIPVO4
+         WRYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u7PePiutY/L/sMANbIk3Ifrd0U9F0uL2w8ZKdaPSMVA=;
-        b=q6pcnKUHHp61a4PaD8V6ZoROLBcVs9aQD15A+3namnDHZnaYsHJ6xXngiQx7oGWQW7
-         57QpQBmsHR+mDfY1TfnAz5Gpg8ePFwdq4PHM6mMlO1fedcDko63WXRDi3DeAdlobVatC
-         man3O8MyXCtqpxvgomqi46pFN5Xs2F6JD56zunEEjnn555pxPQwwV66jlUSv+VrqLJk5
-         p21TsrMkY+LVix5RoDEpm3JZujp2JgNLSPwQJ3mTlScZxjic7YgTBc+z69Ztn9WeJHr3
-         zcwrUXtVe7UZ/RgRiztrwlJpeh6NeYo8CvMd524+bqozdqbD7iBokWuUQiuI8gZv+4Wh
-         LCyQ==
-X-Gm-Message-State: AOAM531SsaNphAy4qTwSHv3Jvrn1zuZ6Ipuv+ckqJmw6AJGVvHdfdYtZ
-        AbStszCIn+kgLJIGF0KykaM=
-X-Google-Smtp-Source: ABdhPJzuo8WETyEeGZyAxWnfhgSPWgU3u8ajcmBY1cEEYGoaFFyp6xLHj9rsDgmaIzPFXWaoz5ZoxA==
-X-Received: by 2002:a7b:c099:: with SMTP id r25mr178293wmh.189.1605030137748;
-        Tue, 10 Nov 2020 09:42:17 -0800 (PST)
+        bh=6B8wjHoaVW72XtAVUWe2wZEGfXfDpa4klG93o01JXig=;
+        b=FzrhFhJ+Tx/8ljeEBlOANXduRYNAqga/NzvxQE5aJ5vJQCHPy3CtlksIOAq0+JVg9V
+         805PbjtF3OqOeP7sG0Uibanqc3dQKkxeFI1FnT65MWcdk94W1V60WnpMzCFydu/Ayjdn
+         5uu5hlfGOPP4fdinNtouDSuIkWJEi7uD8l+27ZgQ94bNYxmV8zyCk2YKr8jwEdlUP3Ow
+         KZ9t5Gx+wvtvYn5sI1WGq2IfSMf5Z0WTd21YhSgX0haTcDJO0FNE0flscxDwgC8bcHHJ
+         YKPhHpctuGvLnBi9sX/WDx+iG6Kon59Cowlc5HD4Cx8SRXYxOZ71nVIcseIbgL3+ryKJ
+         /Qew==
+X-Gm-Message-State: AOAM532BeBwxYqynrkiWu6h4r5Y2lrLA/MRBzzVOqF9aXHi75k6f12Mo
+        UfIXdcojTA+s9jnXG+mA/no=
+X-Google-Smtp-Source: ABdhPJyS1xufnh3qBP9Gnc2AXQ0TUdtpLaeYMga7vvxYO9uMYuHlcQgJtcXEZGynqcG8mIgPkT93YQ==
+X-Received: by 2002:a1c:a445:: with SMTP id n66mr229504wme.51.1605030275015;
+        Tue, 10 Nov 2020 09:44:35 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id i10sm9103887wrs.22.2020.11.10.09.42.16
+        by smtp.gmail.com with ESMTPSA id q7sm17573896wrg.95.2020.11.10.09.44.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 09:42:16 -0800 (PST)
-Date:   Tue, 10 Nov 2020 18:42:15 +0100
+        Tue, 10 Nov 2020 09:44:34 -0800 (PST)
+Date:   Tue, 10 Nov 2020 18:44:32 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bob Ham <rah@settrans.net>,
-        Leonardo Bras <leobras.c@gmail.com>,
-        Michael Brougham <jusplainmike@gmail.com>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Support NVIDIA Tegra-based Ouya game console
-Message-ID: <20201110174215.GE2297135@ulmo>
-References: <20201004133114.845230-1-pgwipeout@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     robh+dt@kernel.org, jonathanh@nvidia.com, jckuo@nvidia.com,
+        kyarlagadda@nvidia.com, lorenzo.pieralisi@arm.com,
+        amurray@thegoodpenguin.co.uk, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH 1/2] dt-bindings: Fix entry name for I/O High Voltage
+ property
+Message-ID: <20201110174432.GF2297135@ulmo>
+References: <20201026063902.14744-1-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BZaMRJmqxGScZ8Mx"
+        protocol="application/pgp-signature"; boundary="ExXT7PjY8AI4Hyfa"
 Content-Disposition: inline
-In-Reply-To: <20201004133114.845230-1-pgwipeout@gmail.com>
+In-Reply-To: <20201026063902.14744-1-vidyas@nvidia.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---BZaMRJmqxGScZ8Mx
+--ExXT7PjY8AI4Hyfa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 04, 2020 at 01:31:11PM +0000, Peter Geis wrote:
-> Good Day,
+On Mon, Oct 26, 2020 at 12:09:01PM +0530, Vidya Sagar wrote:
+> Correct the name of the I/O High Voltage Property from
+> 'nvidia,io-high-voltage' to 'nvidia,io-hv'.
 >=20
-> This series introduces upstream kernel support for the Ouya game console =
-device. Please review and apply. Thank you in advance.
->=20
-> Changelog:
-> v3: - Reorder aliases per Dmitry Osipenko's review.
->     - Add sdio clocks per Dmitry Osipenko's review.
->     - Add missing ti sleep bits per Dmitry Osipenko's review.
->     - Enable lp1 sleep mode.
->     - Fix bluetooth comment and add missing power supplies.
->=20
-> v2: - Update pmic and clock handles per Rob Herring's review.
->     - Add acks from Rob Herring to patch 2 and 3.
->=20
-> Peter Geis (3):
->   ARM: tegra: Add device-tree for Ouya
->   dt-bindings: Add vendor prefix for Ouya Inc.
->   dt-bindings: ARM: tegra: Add Ouya game console
->=20
->  .../devicetree/bindings/arm/tegra.yaml        |    3 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
->  arch/arm/boot/dts/Makefile                    |    3 +-
->  arch/arm/boot/dts/tegra30-ouya.dts            | 4511 +++++++++++++++++
->  4 files changed, 4518 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
+> Fixes: 2585a584f844 ("pinctrl: Add Tegra194 pinctrl DT bindings")
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  .../devicetree/bindings/pinctrl/nvidia,tegra194-pinmux.txt      | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Both patches applied, thanks.
 
 Thierry
 
---BZaMRJmqxGScZ8Mx
+--ExXT7PjY8AI4Hyfa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q0PYACgkQ3SOs138+
-s6HInBAArw5O4bLPyhfu+ViRVz6vcmT3JHr6FZfIpjj8kwHWj4HoUpKMiQqe2tYQ
-RtnBZCnBwxx4ahrghwET/WIcVPeDpJKdS18++i6P7S2YnmMjzQK7MKiLc3i2V5xh
-KAjI/n/pgq9i2Ca0ZnY3cYfXDTMdUBNTwWy3Y4SYUQ4MWdLiVgJ388PHfFC6kW43
-ykeq8/kpKci+Y4rX4CzL8YMNsj+k1Sxu/NekOXjF6F/8KfqkC4vgZ4zbDWpT1CFL
-X4xu0T0vmSZMTObPRZ13Ourk+CCYX8/UJwf/ShABC7j0KGDE0qlGaS3V9LeWQ0VG
-80UFgOkfxpsAPVZ0BacXuBfYgJUv7QUFDJuvzBRsUvSfbGbGaTn2X9okKHE0SvM3
-ioSw8LRUxSkhf3mJxL8ltQ8iGMh4ko581pgHMfJHIZefKhV7L0O9jyhJFMJ8F0FS
-mK82SJbBS4H59AI1M1z+0O9TkBO0t9XSzgNjp2oQNIuCfA3atCm32spwj7oiFPHV
-Tfou3KbqaYpWG4REiuUj3vJA3FQhC7arzY4gEtGElA5Ig6N9HarliXWWSosmO7Ao
-uKck4lmJHq+YmTn0VHCELwsRVsnkRJQlUg4Be0dYfaKikqiJIuD3dyTKfzB+HRN+
-HfgMvAgiHCd30G2vwXwQ34DsnF1dzq9JflEbGQ1XMdR7K/Ko/34=
-=I/ei
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+q0YAACgkQ3SOs138+
+s6Et1A/+PB1xRpHesNfSuidBntCGoacEg55fAqa+2ElNGdMixsiSP6srYBogQOdE
+pnXgC9qTrAwYOJeTYOao4De56/Wm+eospIjjZIeXsVyMe02tPeR8vNaEQCy9mAA4
+XmXE8BefEos5ZRZ+qDzjj5BW7+fTNedkm94KDj5coR7T3VjvrteVamGP0A8+DEAk
+J0q/tALx0x5A5CXsBLRAtRnbdEmFWR15GAvIYIQLqTGvyFGXrnQNKjI3U0g8PwrJ
+8Bp61grVQeGQvWvYHQcF0/mlSYnLhPQPhhwm9SB1Of5wcqD3Z8L1/NeZ2/8O6PRF
+GaCBK7xs2re4P/B/G+EaKttYLlfy9GxGRljZWFf+QHT3Fi5zvgtHWB3qb9zSH+Op
+KAtmBsamKOczJTIkdo9qkkC2c8/GG010iXNY0Xs+FG3kdUM8p/oxm0tlDthXSLQI
+ChdWfKOWNpOP9U+iM9Qo2zgVbYmm40ADm0cIiIIzP3Er+1GTvgfgtpyFUmB/l6cc
+TAKgoNJuMLXTCGQ+LED9JYg6HITtYihAJUUe9gELjWbEGmoMU71I+NSspPUV5lDb
+pYwU8UPBQ2CS8VdsnOYn06E8xF5lbTysqoxpqezeaRMPN9AS46+QMSmjsdulBgjs
+9DkyOKYomXnWgLFcYOzQNNSOuesAKkFJwyVi0Xvut0a2FwAONpA=
+=e8Li
 -----END PGP SIGNATURE-----
 
---BZaMRJmqxGScZ8Mx--
+--ExXT7PjY8AI4Hyfa--
