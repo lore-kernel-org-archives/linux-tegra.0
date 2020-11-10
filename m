@@ -2,109 +2,160 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE8BC55ABD
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EC0C56201
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1C721741
-	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3995206D8
+	for <linux-tegra@archiver.kernel.org>; Tue, 10 Nov 2020 21:17:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t0KEjfmx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAjhIP+3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbgKJVDA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 16:03:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
+        id S1731735AbgKJVRN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 16:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730164AbgKJVDA (ORCPT
+        with ESMTP id S1725862AbgKJVRM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 16:03:00 -0500
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C375C0613D3
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 13:03:00 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id o15so6412274wru.6
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 13:03:00 -0800 (PST)
+        Tue, 10 Nov 2020 16:17:12 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8960C0613D1;
+        Tue, 10 Nov 2020 13:17:10 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id v144so88828lfa.13;
+        Tue, 10 Nov 2020 13:17:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=cl7mu1oJmxHryxTnp1BFFDbppYfx4b3GmLjMWirrXpA=;
-        b=t0KEjfmxLppQcRxfnYEcNWIZBmLHP7HXMRFKhC00W8Hp2KWhozDeUsxelrXqVMzcQj
-         KXlmUYDPtPDEwdE3/ExohP+t2Xww0n4xcP+FBpqavG04n6y5GiytgkVIG4n/EqJSONvf
-         +m4TuIGfaeOetLwKfABy+Qp7zMYmclssGNjqBVoh+AsCJ2Dd4LnEe4EnARmZPrLESRds
-         ZBTP2N7MC236DxwF6/J2KrS4Pr+VX8ALzm+efyx22XsYuS91JDGoRtTkwVrpLKd+C1MK
-         ED4EYR5QKYe3n6p3p8i7rLWBGr4YqxonTyfAqxCtiQrBByo0eM9c4xp/kjNYVpX7x8tQ
-         J0MQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EGw/lJ2fFtGQXxuehfGhLjJtLJBME8AehCZBZ0GpWKM=;
+        b=NAjhIP+3pP7247wVyMNIoqS0eBQ6Ub6VXzYDVkDW5hh7OeVhZnrCfqxE2LxWyJsKMV
+         90KLTj2Sz4TgROVkbS2FdYgKiKElggblFjPltnMdRMP+LsofRfySn0ZAVRiZ/rJhCxi6
+         Ihb4k6looEtRmT1ELEZ0lM7wPWjSKyFQbZqNuGGZWJnLFo6POVOBCZ35lDBdx6WUlyZo
+         hFkkJUxBTXfhYM1L6nmK/Cdx6WzQfwcvnzNWLiRd/LuWn+G/zTP5qT4snC3j+huX+nYr
+         tA9dCLNuMRHfewvKYy4Ua/ksZbn9fdwQO2uPYg+XI2muKxWHeQxfYp9b34Tx6cpXjg8z
+         oyIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=cl7mu1oJmxHryxTnp1BFFDbppYfx4b3GmLjMWirrXpA=;
-        b=HqUvUTLUxdFRDvLbC73X/0fVGuufZVgmn1OcpuXQQG2IoAb68JAuyyprH6B78/o4P/
-         kXkG0YB08EcHANh7mEMl55NcX76WHhm+dyDTTknDFR4h85UmQQo0o8JDCP2phJ2d+Gju
-         cR70Bi6Z6SZuraGzlmJtgTyp3OlkfjX41P3U8TGe3Jw6P9if8h8RBBP8m0lTsyRcXjyt
-         V9wbLCJnItPsvJ+VhZARb4G3UroW6EtzChWyJ/lS2jdJ0Gh8xzb6v5iys6NmtP4cymwC
-         njglgQrSgDGsPfrfrfjObl0bPapJSPkGOQ4U/P2Z38W6Ox1bKONinwqiL+msHLV87hU/
-         d7Nw==
-X-Gm-Message-State: AOAM5323raynHcQ9Ef5QUAwXJxeRWb8EYyAO3xXpPz4GX5UuJ2s4wjvm
-        klLiFsRu3CE2L4KTwkjJlyc/Og==
-X-Google-Smtp-Source: ABdhPJwIsCLVZUJBtrdWyW3Ob7YqHeqsWN46NIYBEC8Ip4Zj9vK+XjNlJtGBKT0A6Vdthxqmn7lVPQ==
-X-Received: by 2002:adf:db4a:: with SMTP id f10mr11091524wrj.420.1605042178875;
-        Tue, 10 Nov 2020 13:02:58 -0800 (PST)
-Received: from dell ([91.110.221.159])
-        by smtp.gmail.com with ESMTPSA id p13sm18415385wrt.73.2020.11.10.13.02.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 13:02:58 -0800 (PST)
-Date:   Tue, 10 Nov 2020 21:02:56 +0000
-From:   Lee Jones <lee.jones@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EGw/lJ2fFtGQXxuehfGhLjJtLJBME8AehCZBZ0GpWKM=;
+        b=YZRECcJ7PAUTjtP9s4dxXu0vwXJ/TdAvaawxP8WYuIH35iAxGEkfgMhKtPeollmBlq
+         D0Qaih+nf+WySiB7fzwV4vbdpVo7CgtuMXDuqD5CaOA9pKgiBMnw434KzQ5ohbAzJzJW
+         7xgONDva+SlzjQcT/NZPUlnhzdC1Y2iIVtGTBNAohYMX4G4AoX0BTHUd7CWQ8LZAnt1m
+         gPiv9H8Kt9OKrJ46bW6paHblxjXWSurUJXrDTe7nIlvGp3o8QcHAp2Sj8FWlGpMtJEmb
+         QEUoyraWHs9KfeB8iZkiiHusWiIsraLDqtiyixaMkfmwcXuGJtwTGSS3fN+NNqxlFcM8
+         6SzQ==
+X-Gm-Message-State: AOAM531Ih9D4P6xzza1CqNOLFm42BFxdGp2niDJ2OPFi26saNnNkZaka
+        L6NBIndpt1aCVG3h4aOr84fWlsM3ldE=
+X-Google-Smtp-Source: ABdhPJy9MxQ9JDqgbUxs5iJjOZhvvAhbIb4SB90wBtvxj6i+Z1NqL4Sgmd5xFUlSjTl9BiZi3p2X+g==
+X-Received: by 2002:a19:6a07:: with SMTP id u7mr4706867lfu.252.1605043028710;
+        Tue, 10 Nov 2020 13:17:08 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id m7sm1658405ljb.37.2020.11.10.13.17.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Nov 2020 13:17:07 -0800 (PST)
+Subject: Re: [PATCH v1 18/30] pwm: tegra: Support OPP and core voltage scaling
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 24/25] soc: tegra: fuse: speedo-tegra210: Remove a group
- of set but unused variables
-Message-ID: <20201110210256.GK2063125@dell>
-References: <20201103152838.1290217-1-lee.jones@linaro.org>
- <20201103152838.1290217-25-lee.jones@linaro.org>
- <20201110194134.GB2375022@ulmo>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-19-digetx@gmail.com> <20201110205057.GH2375022@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a3bf156d-17b8-0edd-9981-a17991266e1d@gmail.com>
+Date:   Wed, 11 Nov 2020 00:17:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201110205057.GH2375022@ulmo>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201110194134.GB2375022@ulmo>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 10 Nov 2020, Thierry Reding wrote:
-
-> On Tue, Nov 03, 2020 at 03:28:37PM +0000, Lee Jones wrote:
-> > Fixes the following W=1 kernel build warning(s):
-> > 
-> >  drivers/soc/tegra/fuse/speedo-tegra210.c: In function ‘tegra210_init_speedo_data’:
-> >  drivers/soc/tegra/fuse/speedo-tegra210.c:105:56: warning: variable ‘soc_iddq’ set but not used [-Wunused-but-set-variable]
-> >  drivers/soc/tegra/fuse/speedo-tegra210.c:105:46: warning: variable ‘gpu_iddq’ set but not used [-Wunused-but-set-variable]
-> >  drivers/soc/tegra/fuse/speedo-tegra210.c:105:36: warning: variable ‘cpu_iddq’ set but not used [-Wunused-but-set-variable]
-> > 
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: linux-tegra@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/soc/tegra/fuse/speedo-tegra210.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
+10.11.2020 23:50, Thierry Reding пишет:
+> On Thu, Nov 05, 2020 at 02:44:15AM +0300, Dmitry Osipenko wrote:
+> [...]
+>> +static void tegra_pwm_deinit_opp_table(void *data)
+>> +{
+>> +	struct device *dev = data;
+>> +	struct opp_table *opp_table;
+>> +
+>> +	opp_table = dev_pm_opp_get_opp_table(dev);
+>> +	dev_pm_opp_of_remove_table(dev);
+>> +	dev_pm_opp_put_regulators(opp_table);
+>> +	dev_pm_opp_put_opp_table(opp_table);
+>> +}
+>> +
+>> +static int devm_tegra_pwm_init_opp_table(struct device *dev)
+>> +{
+>> +	struct opp_table *opp_table;
+>> +	const char *rname = "core";
+>> +	int err;
+>> +
+>> +	/* voltage scaling is optional */
+>> +	if (device_property_present(dev, "core-supply"))
+>> +		opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
+>> +	else
+>> +		opp_table = dev_pm_opp_get_opp_table(dev);
+>> +
+>> +	if (IS_ERR(opp_table))
+>> +		return dev_err_probe(dev, PTR_ERR(opp_table),
+>> +				     "failed to prepare OPP table\n");
+>> +
+>> +	/*
+>> +	 * OPP table presence is optional and we want the set_rate() of OPP
+>> +	 * API to work similarly to clk_set_rate() if table is missing in a
+>> +	 * device-tree.  The add_table() errors out if OPP is missing in DT.
+>> +	 */
+>> +	if (device_property_present(dev, "operating-points-v2")) {
+>> +		err = dev_pm_opp_of_add_table(dev);
+>> +		if (err) {
+>> +			dev_err(dev, "failed to add OPP table: %d\n", err);
+>> +			goto put_table;
+>> +		}
+>> +	}
+>> +
+>> +	err = devm_add_action(dev, tegra_pwm_deinit_opp_table, dev);
+>> +	if (err)
+>> +		goto remove_table;
+>> +
+>> +	return 0;
+>> +
+>> +remove_table:
+>> +	dev_pm_opp_of_remove_table(dev);
+>> +put_table:
+>> +	dev_pm_opp_put_regulators(opp_table);
+>> +
+>> +	return err;
+>> +}
 > 
-> Sam as for the previous patch, I applied this and removed the register
-> reads altogether, since there aren't any side-effects.
+> These two functions seem to be heavily boilerplate across all these
+> drivers. Have you considered splitting these out into separate helpers?
 
-Perfect.  Thanks Thierry.
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The helper is already prepared for v2.
