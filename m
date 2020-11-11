@@ -2,151 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69701C56202
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 09:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D5AC388F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12A8420759
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 09:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF472075A
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:25:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KF1FscfS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHudV4l+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgKKJ3v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 04:29:51 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:56398 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbgKKJ3t (ORCPT
+        id S1727017AbgKKKZj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 05:25:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbgKKKZi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 04:29:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AB99meS132651;
-        Wed, 11 Nov 2020 09:28:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=5jkDrh9VUno5wDztTu7VDqalYM6QsS2FNOf4jWeicfM=;
- b=KF1FscfSPqR/jGnEnLVwcEnqGoTHFz4Z2rOgEGN8IMIFxCLnarNmEf6yLZt+ubgc38ju
- FF6+4F5J68sfFBDifPqGnH5V3uPfk4w6FD5FUr0QS2M/Zdgwq3QISc6uHMw4K+crIWBZ
- ONnZvtCoT0yED3aryMEFwF8QMGQ8kCWuXGE+ZzejvBwaV98VPCaKj4q8/Jm2eCyVb7sS
- 0immoY8DntMHZsgAYS5RiANXtfW+vb+GUtthRzQTWbtXxy8A/ct0GwGlCNpnAmiN35xV
- +MFF8KI2mIgs2JJHTTFMaUrCEPh7GBQi8YyI0SPwXnsO/TJHMLq8dD9Hgr9flHokCiDv Zg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 34p72ep4py-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Nov 2020 09:28:56 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AB9BEYR035947;
-        Wed, 11 Nov 2020 09:28:55 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 34p55pqrs2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Nov 2020 09:28:55 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AB9Sllj029705;
-        Wed, 11 Nov 2020 09:28:47 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Nov 2020 01:28:47 -0800
-Date:   Wed, 11 Nov 2020 12:28:32 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        devicetree@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wed, 11 Nov 2020 05:25:38 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2F4C0613D1;
+        Wed, 11 Nov 2020 02:25:38 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id r9so2421177lfn.11;
+        Wed, 11 Nov 2020 02:25:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YDPQOCu1Q0bKCPL6C42R2nt86MKzHJcXkgJe5Eo+/zI=;
+        b=nHudV4l+RFcBpr3axrfNNEScRTyu6drP6JREhMmAoVRKbdS57PvlkXk9toKfclED2s
+         5G/GJ7KJRJsFYOl4i6+hz5/nD17g2tiqobNLOl91ANza33Te94/voQb5CZ0zp8lD2BIl
+         PU7rMO+1CqahgPqwQycUOiQXXBNmJQk5SzllsR4JSzuOTWV21BW2AOMl66pxwuXjhOh/
+         Vjvfq/UE6EkhNOnrClbk3roh6SxJVnCQ9D2Ww2U+TE3x7kVzsAdfFNebF1olzKADUOvJ
+         t9JGDbP2u/DDS6t4RZ6L5CjtUW62hY2Z2f/G4Lmf7wPuz8IPXZquX5zg6jtdtLe8EzzV
+         WHIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YDPQOCu1Q0bKCPL6C42R2nt86MKzHJcXkgJe5Eo+/zI=;
+        b=m76ZrIGuZ980yAWKz1yFwTgrCiIPxwEMyEVEb17o+Ta4y/Y/bmkjAB9DOM+m/ZEzsJ
+         XKZDkMmGy4ryp5nCp8cOYROit8neLzq5xu9NxjgOMeRdw4AVrjiJgGIKSVs/pTMrgoV5
+         PlUMgLZFKfxF5XDo3nXTiJgvj5myQX+yJ85LjH/LRvXdqGhO58Gzf5WRrwAVM3ELmx4z
+         I41LRsYIk4fquZa6xg5VAnhSm/g2aQVEZ8k4VfEFgtIWoKGdJYutHA6Iaw83b3BS5Xcc
+         5RWLCtdT5Sr1mDGqmGgyQ3c2oGAZ4P5Ni6w2DAX4TKoXzTG1DbaPjN3r9lsuo3p5Kmzc
+         BxwQ==
+X-Gm-Message-State: AOAM530PAsYMwTQ+eij4Y/U+nFhhflS6JtV4d8rabMZx6d68uUtV8xUN
+        aRwxSM5mudlnEKXO6GgRfoQ=
+X-Google-Smtp-Source: ABdhPJzTv9Jyb7R3JTGhtKOKkgm12/bRzXfaFk0KiQNWX12jN9WFCPB0iS0jN9FOqsksEXFAwAJolg==
+X-Received: by 2002:ac2:53a1:: with SMTP id j1mr8775060lfh.236.1605090336653;
+        Wed, 11 Nov 2020 02:25:36 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id t13sm62578lfl.294.2020.11.11.02.25.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Nov 2020 02:25:35 -0800 (PST)
+Subject: Re: [PATCH v8 11/26] memory: tegra124-emc: Make driver modular
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-media@vger.kernel.org,
-        linux-pwm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
- scaling
-Message-ID: <20201111092832.GI29398@kadam>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-12-digetx@gmail.com>
- <20201110202945.GF2375022@ulmo>
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201111011456.7875-1-digetx@gmail.com>
+ <20201111011456.7875-12-digetx@gmail.com> <20201111090434.GB4050@kozik-lap>
+ <f44b64f5-6b08-5f1e-4f9b-a73a1705d493@gmail.com>
+ <20201111092619.GD4050@kozik-lap>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a75e72b9-273a-4492-09e6-d02a5ea58482@gmail.com>
+Date:   Wed, 11 Nov 2020 13:25:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201110202945.GF2375022@ulmo>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011110051
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011110051
+In-Reply-To: <20201111092619.GD4050@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 09:29:45PM +0100, Thierry Reding wrote:
-> > +	err = dev_pm_opp_of_add_table(dc->dev);
-> > +	if (err) {
-> > +		dev_err(dc->dev, "failed to add OPP table: %d\n", err);
-> > +		goto put_hw;
-> > +	}
-> > +
-> > +	err = devm_add_action(dc->dev, tegra_dc_deinit_opp_table, dc);
-> > +	if (err)
-> > +		goto remove_table;
-> 
-> Do these functions return positive values? If not, I'd prefer if this
-> check was more explicit (i.e. err < 0) for consistency with the rest of
-> this code.
+11.11.2020 12:26, Krzysztof Kozlowski пишет:
+>> 11.11.2020 12:04, Krzysztof Kozlowski пишет:
+>>>> -obj-$(CONFIG_TEGRA124_EMC)		+= clk-tegra124-emc.o
+>>>> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-emc.o
+>>>> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124-emc.o
+>>> How is it related to modularization? It looks like different issue is
+>>> fixed here.
+>> The CONFIG_TEGRA124_EMC now could be 'm', while the clock code must be
+>> built-in. The TEGRA124 EMC driver is used by T124 and T132 SoCs.\
+> Mhmm,  the CONFIG_TEGRA124_EMC depends on ARCH_TEGRA_124_SOC so on the
+> config !ARCH_TEGRA_124_SOC && ARCH_TEGRA_132_SOC this was not
+> selected. Now it will be selected.
 > 
 
-Isn't it the other way around?  It's only when the check is explicitly
-for "if (ret < 0)" that we have to wonder about positives. If the codes
-says "if (ret)" then we know that it doesn't return positive values and
-every non-zero is an error.
-
-In the kernel "if (ret)" is way more popular than "if (ret < 0)":
-
-    $ git grep 'if (\(ret\|rc\|err\))' | wc -l
-    92927
-    $ git grep 'if (\(ret\|rc\|err\) < 0)' | wc -l
-    36577
-
-And some of those are places where "ret" can be positive so we are
-forced to use the "if (ret < 0)" format.
-
-Checking for "if (ret)" is easier from a static analysis perspective.
-If it's one style is used consistently then they're the same but when
-there is a mismatch the "if (ret < 0) " will trigger a false positive
-and the "if (ret) " will not.
-
-	int var;
-
-	ret = frob(&var);
-	if (ret < 0)
-		return ret;
-
-Smatch thinks positive returns are not handled so it complains that
-"var can be uninitialized".
-
-regards,
-dan carpenter
-
+The driver isn't exposed on ARM64 probably because nobody bothered to do
+it so far. But it's not also the memory driver which depends on
+clk-tegra124-emc.o, it's also the main clk/tegra/clk-tegra124.c driver
+itself, which is also used by both T124/132.
