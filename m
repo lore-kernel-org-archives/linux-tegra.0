@@ -2,311 +2,208 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BDCC55ABD
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 02:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6EB1C388F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 05:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2869221F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 02:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B72420797
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 05:25:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L4nqxU0u"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k0+kPp4Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732404AbgKKCJd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 21:09:33 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:46534 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731788AbgKKCJc (ORCPT
+        id S1725849AbgKKFZp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 00:25:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgKKFZo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 21:09:32 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20201111020928epoutp036babcfdc74e0a0f3b4cdca882367136b~GUhVYsHYw2173321733epoutp03E
-        for <linux-tegra@vger.kernel.org>; Wed, 11 Nov 2020 02:09:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20201111020928epoutp036babcfdc74e0a0f3b4cdca882367136b~GUhVYsHYw2173321733epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1605060568;
-        bh=Csn/cqRn3+rUu2rUtsuFOoivp5DIY/z59son7POnhhU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=L4nqxU0uET+adSFrWhIKoKPfYfyMADqoGDI4iy+CODNBEUQJj0sP93qFiLinTnCXq
-         KIyd6Jfwws5aCECaG6EGKdRz6s3AoFDmAIhdeOd3Isi57niwM3zumjV43kFXGcYD/l
-         FC8bxjAigKdSDHhID8clpA0Jctr6YD+NA5fyVSsw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201111020927epcas1p21b51ddd7de205b331c96a2859fc12671~GUhUguu9F1119211192epcas1p2K;
-        Wed, 11 Nov 2020 02:09:27 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4CW7TJ3lq6zMqYkk; Wed, 11 Nov
-        2020 02:09:24 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        43.94.09577.4D74BAF5; Wed, 11 Nov 2020 11:09:24 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20201111020923epcas1p49951ed258308caa8719e38af71c6b61b~GUhQiErJ72680926809epcas1p4l;
-        Wed, 11 Nov 2020 02:09:23 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201111020923epsmtrp22a6b63747203ec5b96faeda8dfe8bb4d~GUhQhKC5Z0448104481epsmtrp24;
-        Wed, 11 Nov 2020 02:09:23 +0000 (GMT)
-X-AuditID: b6c32a39-c13ff70000002569-5e-5fab47d4cee1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AA.EC.13470.3D74BAF5; Wed, 11 Nov 2020 11:09:23 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201111020923epsmtip21142f987743c58bcf90b0ca44379b8de~GUhQJ2q8q3219032190epsmtip2m;
-        Wed, 11 Nov 2020 02:09:23 +0000 (GMT)
-Subject: Re: [PATCH v8 04/26] memory: tegra20-emc: Add devfreq support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Wed, 11 Nov 2020 00:25:44 -0500
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ACD4C0613D1
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 21:25:44 -0800 (PST)
+Received: by mail-ot1-x344.google.com with SMTP id g19so1026902otp.13
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 21:25:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=y2ndxJgHEnHcPZgvTcxab2Vcfl3sIpgvRbePyhc7fWA=;
+        b=k0+kPp4QegQ8x48cvtzhFv/+5D9Dzcc/GkW9H2cVvWdsV62FFEeh5SomjgkF6ArEbs
+         SALg/lHidLzXzKJDPe75nRCtJMKl+T1DXOhFkqJgHeGSByWcQswiWqNS9RdS1OPCxVY9
+         sheWT6Xmes3YqryK1wzNDycXLFQMTTFdw1Q0QOtfv332yhZEihs5rlicmJNnJ4aqKofH
+         3PQM44SvKJ1pzUNDJ9DmQTiwaoEuFLpE7r53YAHQgZeAjyY0+vMVtM542WaJkvkneani
+         PJVq5THlhQ9375G7mmtdr4YMQ4Nn+5e7cVKti3uV2mwvfz15gwZMliWxEHK9fXeLku9O
+         ODyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y2ndxJgHEnHcPZgvTcxab2Vcfl3sIpgvRbePyhc7fWA=;
+        b=c+zzyVm5goJC59oESZwcE0ud/4cIcQbZ4LnPcCrKjZUyed8hb+GJyiKx/lNmYmp6at
+         qimIMUhXSut1OOsTF0ou2rALSPJZ92gjMKaD75bIlp4HYoIYoIRbGoxD4ACnyciFPDlA
+         bv9ArNJj5Eykq3vK2hLZw98VpY1o9n6XT1g7MkpdCnLKUMEbj0etHwwjDAp0fIuzQw1q
+         jrrp/+izPIMQXUJ4GmN/uLvCIECoG83yh+Z2tbV7nP89CuX+cWiCKB7xnbRP7PXgioXF
+         RLw5FmrANRXWCmFDhH6WWWHVM97Qpa/Vtr2Q+I93SxRfd7AkdXhd1NYRP9SNT+rntoh5
+         W2tQ==
+X-Gm-Message-State: AOAM533dvQ+y0njUYFYMwXzFaaSbDp00bDAj2HPbi4KlVyfnKuyOuTDV
+        g5Dr8bljmBZ5ErM8XYXXhKpsJQ==
+X-Google-Smtp-Source: ABdhPJxYlw4HOIVtNlSAXCpvPkLgs0k9q7yaxQqFlvLOOSr3etHIDMddV04BFhc/FMfh+dl4z1o0rw==
+X-Received: by 2002:a9d:62c1:: with SMTP id z1mr15982440otk.108.1605072343541;
+        Tue, 10 Nov 2020 21:25:43 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id h136sm224748oib.19.2020.11.10.21.25.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2020 21:25:42 -0800 (PST)
+Date:   Tue, 10 Nov 2020 23:25:40 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        act <dmalek@jlc.net>, Andy Gross <agross@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Ben Dooks <ben@simtec.co.uk>, Cyril Chemparathy <cyril@ti.com>,
+        Dan Malek <dan@embeddedalley.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <964ec213-5d1a-c0aa-28d8-2e16330e36d1@samsung.com>
-Date:   Wed, 11 Nov 2020 11:23:13 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Roy Pledge <Roy.Pledge@nxp.com>,
+        Sandeep Nair <sandeep_n@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Scott Wood <scottwood@freescale.com>,
+        "Software, Inc" <source@mvista.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH 00/25] Rid W=1 warnings in SoC
+Message-ID: <20201111052540.GH173948@builder.lan>
+References: <20201103152838.1290217-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20201111011456.7875-5-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHc/va15ZY9ywyL2yZ8JQY2PhRsHAxQMwQ1wWzQAzEzCzlQd+A
-        AG3X1xJlyyYOGFARUAzSASMzZlpGgApCGZWsEBU3hEFhCFQcP1ZiFCY/nGxA1vIw47/POfd7
-        7jnf+0OAiR24lyBDqaU1SiqLxN24t3v8ggNsHzTIg1fyvdDC0hwPNbyYAci2uoijKosJR/mG
-        77loYKCZj9rmfuSg/vPP+Gi4swZHy6W9ABWvGHD024NYNJF3A0eXGq8A1P9nHCqw9PLR5mgL
-        F6111nHRrSd38aPussWxAr7MbLDzZUMP1zGZyViMyyZHu3DZlP4eR1b69QIuu9hqBLJl0zvx
-        wo8zI9NpSkFrvGllqkqRoUyLIuNOymPk0rBgSYAkAoWT3koqm44ij52IDziekeU0RXrnUFk6
-        ZyqeYhgyKDpSo9Jpae90FaONImm1IksdoQ5kqGxGp0wLTFVlH5EEB4dIncLkzPTHdjOmLg84
-        YzD9wT0HOg+WAKEAEodh2cY4KAFuAjHRAeDVuRWcDZYAnB+b4LHBSwCvl9ZyX5f8bBrZLrEA
-        WNo8uh0sAjjdVcFzqdyJ49Bo6tla2Es84sIfbmw6NxYIMCIXmtbjXBqc8Ifd82O4i98gfODI
-        qxngYhERDbsK+7byXMIXdjZZOC72IJJg3+38bc0e2Fc9uzWRkJBCY4V+izFiHxyf/Y7D8n7Y
-        /rwGc80AiTIhbF5dxlkLx2BjXSvGsjt8eq+Vz7IXXF6wbGs+hzf7enG2uAjA1u5BHrsQCruv
-        X+awZvxgU2cQm/aB5n9rAdt4N1xYvcBzSSAhgkWFYlZyAA4/sXNY9oTXvinGywFp2GHHsMOC
-        YYcFw//N6gHXCN6k1Ux2Gs1I1NKd120CWy/eP6IDVD3/K9AKOAJgBVCAkXtFnEKjXCxSUGdz
-        aY1KrtFl0YwVSJ0HXIF5eaSqnF9GqZVLpCGhoaHosCRMKpGQ+0Tr7xbJxUQapaUzaVpNa17X
-        cQRCr3Oc0IRYXsPjuhz7RMJifU2KZtK8a0L3KtnXZlDd36zc1YO9d7fl5BGzvqz/WU6taDAy
-        UezwFLaht6Y7QizVmSnjvtFNuYmOl9oZvcjjqq3kQdvB2BQPpmR+89En9NDNmITYS5W1G/+8
-        mFN85juz9tOXs7cehssqku4g+m3wUd6Jts2aC/Urwr9j9vjpWpYcv5aerc44HxNVdrTdbl1t
-        h1LyvudUkltqpuP3oE+n9NqU6OkYNSW8Zi/wCbdYU6p/0XmecQyfHi14/8OWlrG1040j5lzP
-        U9/qw/dfPFSeaCorqLcMJK8/TcvT3JHsTjr0xVd5k1iX3FY5dKDK1lp/JezU4AbJZdIpiT+m
-        Yaj/AJhtIYJ6BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCSvO5l99XxBjevylu8+/SU1WL1x8eM
-        Fle+vmezmL53E5tFy6xFLBbnz29gt9j6dA2TxdmmN+wWl3fNYbP43HuE0aLzyyw2i4unXC1u
-        N65gs5i0diqjxdln3hate4+wW/y7tpHF4ueueSwWmx8cY3MQ9nh/o5XdY+esu+wel879YfbY
-        tKqTzePOtT1sHve7jzN59Da/Y/Po27KK0ePzJrkAzigum5TUnMyy1CJ9uwSujHt3dzIXTNCt
-        mLXpIUsD4y6VLkZODgkBE4mDm64ydjFycQgJ7GaUaF6+mx0iISkx7eJR5i5GDiBbWOLw4WKI
-        mrdANS/XMIPUCAu4SazadBisWUTgLovEpB+32EASzAJVEgvXLgazhQQ2M0q8u6wEYrMJaEns
-        f3EDLM4voChx9cdjRhCbV8BOYk/bSbA4i4CqxK71e5lAbFGBMImdSx4zQdQISpyc+YQFxOYU
-        MJVYNbGbBWKXusSfeZeYIWxxiVtP5jNB2PIS29/OYZ7AKDwLSfssJC2zkLTMQtKygJFlFaNk
-        akFxbnpusWGBYV5quV5xYm5xaV66XnJ+7iZGcKxrae5g3L7qg94hRiYOxkOMEhzMSiK8TG2r
-        4oV4UxIrq1KL8uOLSnNSiw8xSnOwKInz3ihcGCckkJ5YkpqdmlqQWgSTZeLglGpgKrvIc7v9
-        ThGXVV+D1f3tC6IObTGKeKdYHZ95YSbzMgHNXRrduU9fX+W0fvlfuJFba6JlR53R4kkXorvT
-        Jx3RMTQqcGC7Md1Twl9iKuvi2VM8z7C8nnFF8N5Sx2s7zh74Ichi+E7KWMT+5rOoJ1f/xbhf
-        euC45uXuUjbNu/x7Os8ur1E+wmeyQitTmrvszcoV4Y9sOkRLCm9u7pzcJpU77V+SmfDvT5e/
-        an8IDP13mt/GMDe2rXWdiEJ54J6yl4Z5HBcYuG7uyhfSZkqPUWqb/KI4YaXDzlrn7vNHClme
-        Ln95Yu89R880e+Xa+Z9ebed+tXm1jvCjje7l4Q9Cd8c+v9H8PJvzUBjjM6P/zrUuSizFGYmG
-        WsxFxYkAzjPG9WQDAAA=
-X-CMS-MailID: 20201111020923epcas1p49951ed258308caa8719e38af71c6b61b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201111011522epcas1p2b4933f8332c20de155483f8436736a4c
-References: <20201111011456.7875-1-digetx@gmail.com>
-        <CGME20201111011522epcas1p2b4933f8332c20de155483f8436736a4c@epcas1p2.samsung.com>
-        <20201111011456.7875-5-digetx@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201103152838.1290217-1-lee.jones@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On Tue 03 Nov 09:28 CST 2020, Lee Jones wrote:
 
-On 11/11/20 10:14 AM, Dmitry Osipenko wrote:
-> Add devfreq support to the Tegra20 EMC driver. Memory utilization
-> statistics will be periodically polled from the memory controller and
-> appropriate minimum clock rate will be selected by the devfreq governor.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/Kconfig       |  3 +-
->  drivers/memory/tegra/tegra20-emc.c | 90 ++++++++++++++++++++++++++++++
->  2 files changed, 92 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index ac3dfe155505..8cc1ec5be443 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -12,7 +12,8 @@ config TEGRA20_EMC
->  	tristate "NVIDIA Tegra20 External Memory Controller driver"
->  	default y
->  	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-> -	select PM_OPP
-> +	select DEVFREQ_GOV_SIMPLE_ONDEMAND
-> +	select PM_DEVFREQ
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra20 chips. The EMC controls the external DRAM on the board.
-> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-> index d01b556a6d06..b9cd965980e2 100644
-> --- a/drivers/memory/tegra/tegra20-emc.c
-> +++ b/drivers/memory/tegra/tegra20-emc.c
-> @@ -8,6 +8,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk/tegra.h>
->  #include <linux/debugfs.h>
-> +#include <linux/devfreq.h>
->  #include <linux/err.h>
->  #include <linux/interconnect-provider.h>
->  #include <linux/interrupt.h>
-> @@ -102,6 +103,10 @@
->  
->  #define EMC_FBIO_CFG5_DRAM_WIDTH_X16		BIT(4)
->  
-> +#define EMC_PWR_GATHER_CLEAR			(1 << 8)
-> +#define EMC_PWR_GATHER_DISABLE			(2 << 8)
-> +#define EMC_PWR_GATHER_ENABLE			(3 << 8)
-> +
->  static const u16 emc_timing_registers[] = {
->  	EMC_RC,
->  	EMC_RFC,
-> @@ -157,6 +162,7 @@ struct emc_timing {
->  };
->  
->  enum emc_rate_request_type {
-> +	EMC_RATE_DEVFREQ,
->  	EMC_RATE_DEBUG,
->  	EMC_RATE_ICC,
->  	EMC_RATE_TYPE_MAX,
-> @@ -193,6 +199,8 @@ struct tegra_emc {
->  
->  	/* protect shared rate-change code path */
->  	struct mutex rate_lock;
-> +
-> +	struct devfreq_simple_ondemand_data ondemand_data;
->  };
->  
->  static irqreturn_t tegra_emc_isr(int irq, void *data)
-> @@ -1003,6 +1011,87 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
->  	return 0;
->  }
->  
-> +static int tegra_emc_devfreq_target(struct device *dev, unsigned long *freq,
-> +				    u32 flags)
-> +{
-> +	struct tegra_emc *emc = dev_get_drvdata(dev);
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate;
-> +
-> +	opp = devfreq_recommended_opp(dev, freq, flags);
-> +	if (IS_ERR(opp)) {
-> +		dev_err(dev, "failed to find opp for %lu Hz\n", *freq);
-> +		return PTR_ERR(opp);
-> +	}
-> +
-> +	rate = dev_pm_opp_get_freq(opp);
-> +	dev_pm_opp_put(opp);
-> +
-> +	return emc_set_min_rate(emc, rate, EMC_RATE_DEVFREQ);
-> +}
-> +
-> +static int tegra_emc_devfreq_get_dev_status(struct device *dev,
-> +					    struct devfreq_dev_status *stat)
-> +{
-> +	struct tegra_emc *emc = dev_get_drvdata(dev);
-> +
-> +	/* freeze counters */
-> +	writel_relaxed(EMC_PWR_GATHER_DISABLE, emc->regs + EMC_STAT_CONTROL);
-> +
-> +	/*
-> +	 *  busy_time: number of clocks EMC request was accepted
-> +	 * total_time: number of clocks PWR_GATHER control was set to ENABLE
-> +	 */
-> +	stat->busy_time = readl_relaxed(emc->regs + EMC_STAT_PWR_COUNT);
-> +	stat->total_time = readl_relaxed(emc->regs + EMC_STAT_PWR_CLOCKS);
-> +	stat->current_frequency = clk_get_rate(emc->clk);
-> +
-> +	/* clear counters and restart */
-> +	writel_relaxed(EMC_PWR_GATHER_CLEAR, emc->regs + EMC_STAT_CONTROL);
-> +	writel_relaxed(EMC_PWR_GATHER_ENABLE, emc->regs + EMC_STAT_CONTROL);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct devfreq_dev_profile tegra_emc_devfreq_profile = {
-> +	.polling_ms = 30,
-> +	.target = tegra_emc_devfreq_target,
-> +	.get_dev_status = tegra_emc_devfreq_get_dev_status,
-> +};
-> +
-> +static int tegra_emc_devfreq_init(struct tegra_emc *emc)
-> +{
-> +	struct devfreq *devfreq;
-> +
-> +	/*
-> +	 * PWR_COUNT is 1/2 of PWR_CLOCKS at max, and thus, the up-threshold
-> +	 * should be less than 50.  Secondly, multiple active memory clients
-> +	 * may cause over 20% of lost clock cycles due to stalls caused by
-> +	 * competing memory accesses.  This means that threshold should be
-> +	 * set to a less than 30 in order to have a properly working governor.
-> +	 */
-> +	emc->ondemand_data.upthreshold = 20;
-> +
-> +	/*
-> +	 * Reset statistic gathers state, select global bandwidth for the
-> +	 * statistics collection mode and set clocks counter saturation
-> +	 * limit to maximum.
-> +	 */
-> +	writel_relaxed(0x00000000, emc->regs + EMC_STAT_CONTROL);
-> +	writel_relaxed(0x00000000, emc->regs + EMC_STAT_LLMC_CONTROL);
-> +	writel_relaxed(0xffffffff, emc->regs + EMC_STAT_PWR_CLOCK_LIMIT);
-> +
-> +	devfreq = devm_devfreq_add_device(emc->dev, &tegra_emc_devfreq_profile,
-> +					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
-> +					  &emc->ondemand_data);
-> +	if (IS_ERR(devfreq)) {
-> +		dev_err(emc->dev, "failed to initialize devfreq: %pe", devfreq);
-> +		return PTR_ERR(devfreq);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int tegra_emc_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np;
-> @@ -1058,6 +1147,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  	tegra_emc_rate_requests_init(emc);
->  	tegra_emc_debugfs_init(emc);
->  	tegra_emc_interconnect_init(emc);
-> +	tegra_emc_devfreq_init(emc);
->  
->  	/*
->  	 * Don't allow the kernel module to be unloaded. Unloading adds some
+> This set is part of a larger effort attempting to clean-up W=1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
 > 
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+For patches 2, 3, 12, 15, 16, 17, 18, 19, 20, 21, 22 (i.e. the soc/qcom
+patches):
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+and applied towards 5.11
+
+Regards,
+Bjorn
+
+> Lee Jones (25):
+>   soc: bcm: brcmstb: pm: pm-arm: Provide prototype for
+>     brcmstb_pm_s3_finish()
+>   soc: qcom: qcom_aoss: Remove set but unused variable 'tlen'
+>   soc: qcom: qcom_aoss: Add missing description for 'cooling_devs'
+>   soc: fsl: dpio: qbman-portal: Fix a bunch of kernel-doc misdemeanours
+>   soc: rockchip: io-domain: Remove incorrect and incomplete comment
+>     header
+>   soc: ti: knav_qmss_queue: Remove set but unchecked variable 'ret'
+>   soc: ti: knav_qmss_queue: Fix a whole host of function documentation
+>     issues
+>   soc: ti: knav_dma: Fix a kernel function doc formatting issue
+>   soc: ti: pm33xx: Remove set but unused variable 'ret'
+>   soc: ti: wkup_m3_ipc: Document 'm3_ipc' parameter throughout
+>   soc: fsl: qe: qe_common: Fix misnamed function attribute 'addr'
+>   soc: qcom: qcom-geni-se: Fix misnamed function parameter 'rx_rfr'
+>   soc: tegra: fuse: speedo-tegra124: Remove some set but unused
+>     variables
+>   soc: samsung: s3c-pm-check: Fix incorrectly named variable 'val'
+>   soc: qcom: rpmh: Fix possible doc-rot in rpmh_write()'s header
+>   soc: qcom: smem: Fix formatting and missing documentation issues
+>   soc: qcom: smsm: Fix some kernel-doc formatting and naming problems
+>   soc: qcom: wcnss_ctrl: Demote non-conformant struct header and fix
+>     function headers
+>   soc: qcom: smp2p: Remove unused struct attribute provide another
+>   soc: qcom: llcc-qcom: Fix expected kernel-doc formatting
+>   soc: qcom: rpmhpd: Provide some missing struct member descriptions
+>   soc: qcom: kryo-l2-accessors: Fix misnaming of 'val'
+>   soc: ti: k3-ringacc: Provide documentation for 'k3_ring's 'state'
+>   soc: tegra: fuse: speedo-tegra210: Remove a group of set but unused
+>     variables
+>   soc: fsl: qbman: qman: Remove unused variable 'dequeue_wq'
+> 
+>  drivers/soc/bcm/brcmstb/pm/pm-arm.c      |  2 +
+>  drivers/soc/fsl/dpio/qbman-portal.c      | 18 +++++--
+>  drivers/soc/fsl/qbman/qman.c             |  8 +--
+>  drivers/soc/fsl/qe/qe_common.c           |  2 +-
+>  drivers/soc/qcom/kryo-l2-accessors.c     |  2 +-
+>  drivers/soc/qcom/llcc-qcom.c             |  2 +-
+>  drivers/soc/qcom/qcom-geni-se.c          |  5 +-
+>  drivers/soc/qcom/qcom_aoss.c             |  4 +-
+>  drivers/soc/qcom/rpmh.c                  |  2 +-
+>  drivers/soc/qcom/rpmhpd.c                |  3 ++
+>  drivers/soc/qcom/smem.c                  |  3 +-
+>  drivers/soc/qcom/smp2p.c                 |  3 +-
+>  drivers/soc/qcom/smsm.c                  |  4 +-
+>  drivers/soc/qcom/wcnss_ctrl.c            |  8 +--
+>  drivers/soc/rockchip/io-domain.c         |  3 --
+>  drivers/soc/samsung/s3c-pm-check.c       |  2 +-
+>  drivers/soc/tegra/fuse/speedo-tegra124.c |  7 ++-
+>  drivers/soc/tegra/fuse/speedo-tegra210.c |  8 +--
+>  drivers/soc/ti/k3-ringacc.c              |  1 +
+>  drivers/soc/ti/knav_dma.c                |  2 +-
+>  drivers/soc/ti/knav_qmss_queue.c         | 62 ++++++++++++------------
+>  drivers/soc/ti/pm33xx.c                  |  4 +-
+>  drivers/soc/ti/wkup_m3_ipc.c             |  8 ++-
+>  23 files changed, 86 insertions(+), 77 deletions(-)
+> 
+> Cc: act <dmalek@jlc.net>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Ben Dooks <ben@simtec.co.uk>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Cyril Chemparathy <cyril@ti.com>
+> Cc: Dan Malek <dan@embeddedalley.com>
+> Cc: Dave Gerlach <d-gerlach@ti.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Li Yang <leoyang.li@nxp.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: Roy Pledge <Roy.Pledge@nxp.com>
+> Cc: Sandeep Nair <sandeep_n@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: Scott Wood <scottwood@freescale.com>
+> Cc: "Software, Inc" <source@mvista.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Vitaly Bordug <vbordug@ru.mvista.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>
+> 
+> -- 
+> 2.25.1
+> 
