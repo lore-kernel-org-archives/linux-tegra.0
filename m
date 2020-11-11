@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE716C55ABD
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6BFC56202
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F991221F9
+	by mail.kernel.org (Postfix) with ESMTP id ED7FD221FC
 	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcfAfEc6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuenlxOl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732737AbgKKBP2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 20:15:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48752 "EHLO
+        id S1732759AbgKKBP3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 20:15:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732668AbgKKBP2 (ORCPT
+        with ESMTP id S1732704AbgKKBPY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:15:28 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944CBC0613D1;
-        Tue, 10 Nov 2020 17:15:27 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id 33so732280wrl.7;
-        Tue, 10 Nov 2020 17:15:27 -0800 (PST)
+        Tue, 10 Nov 2020 20:15:24 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD08FC0613D4;
+        Tue, 10 Nov 2020 17:15:23 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id d12so688816wrr.13;
+        Tue, 10 Nov 2020 17:15:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tGnE/w0793PmiZunMZUFRQQsSOAX6VpoE5tQ0qL0TNQ=;
-        b=CcfAfEc6Wxuq43NPB2gcWjtzwD+rbTxfWxHbeLec/lZwZ6dFPoXjmeEUgLjljQgcld
-         8bVDr2hyPhV0gPawzmCUcXpu5S1kfmWxH0asby0EFWuIEvCGEIWJH0Fhyg66gyRTdZVh
-         QoDQo7/B8uOk3Ag8f5qy05A0PJa7Xj3rv7xDKjTcwC68fYmEhbnd+s/XpaMfFWtqb+Pl
-         +6VLSz3am4vwEWBFThAUB2PPFLh8DnT4pMDBmJl3eRlLSiAhHxWaxZZAtuv50i8MBKxf
-         g3j7DQA8P/hivATvNN7WiIbLK6ZOjG00myzY8WtM134yExNprTRQQQsid2x2eCZv3FLk
-         tDSA==
+        bh=fyu/TRO5yWpBbQQ0dTrByo3SnRiUtLscyENKkMxzI64=;
+        b=TuenlxOlgQMKeVdC1fXwNuNOwbZY0XCdF44y8OROIBuEb5jOSLndWxohPt4/ZeL26w
+         z3c9uSIcdUaN5Z0QeZKkhMU+MFd4iIwPSWnDhdbNEJ/+PaRJf1OqJWAmN3y9/IpgYNOm
+         sgvJnLOR5ZF+QZFJ0lCRypdanpM5xsBHbItJrlNUCEH9g1J2uBsv1Hn1fzoCL86dcumv
+         a1V3eKEiH4o83PUH4gMwP0lSdmZhgVAqvdBtrbxB4X7vIBzMYeB95BYEbCOtNzr6X2F1
+         B1TDWGfGhEe6Da6USBAXp6//8nI3KLuTUNTFBCTJt5J2iEzaU2gL6uiSCbloPpMGSfaJ
+         hdQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tGnE/w0793PmiZunMZUFRQQsSOAX6VpoE5tQ0qL0TNQ=;
-        b=J2F/wJphY5rOooEcPqQmU94Yncif4cQgexsb9fo/1ZDhmRTQSb4iGmVaRlebZkKJBu
-         J4iXNeSLnyc6RJHQ1YSssXb8equzV0HItrg6PT7/sWeseu8IgsopUguj678qAjNrNk23
-         x/y5zNQj2qobVykr5O/JiCyUxU0IdypnXs6mPk0fKO3w+UEpIIwN6GzwsdI2aDQOKdIs
-         bbOx5vYSAu9QzMs4Ym15ClwRgBlqz3JavOqLulB1ZUKRfguclkAR10giEsdXd+TkNITt
-         oCOW6+SUgAsLfE6aBVfcc1r70x6fdjXuHVwDE1WePzw2N+Nyi4K1Pg8RngQDJPtbGVli
-         x9aA==
-X-Gm-Message-State: AOAM531gZ+cImgW1/XEaiHtZh+G0FdgxcKoBiRap6fhBZoK8fNw44UD1
-        8yal7OXfD3WmV2DmievhHzQ=
-X-Google-Smtp-Source: ABdhPJxT2Qem7xK8FMBf7L9oqeIzo9kSbIvbZEskaZoYi7GPZRzXLlBpaEcV3CmGbBmP3438ikSLUQ==
-X-Received: by 2002:adf:ecc9:: with SMTP id s9mr24606051wro.246.1605057326400;
-        Tue, 10 Nov 2020 17:15:26 -0800 (PST)
+        bh=fyu/TRO5yWpBbQQ0dTrByo3SnRiUtLscyENKkMxzI64=;
+        b=AllM3kraJxnZyor/mJ2t509CxYyGLx55AMzWmfw5joBp321AknSklgs5AsSBwdkYlS
+         gu58ohChEGM1t5gEPznE/BNmTc6pch4JMLVO/sfA3gkFN1kTctaXGO/KBt0uwjz+mIPx
+         4E8nFfctPJAfr5RXjaGsJM5TtpEwvNprd/J2/tyx93vZNv3Uavr2NGWrZmdUuwlNYpQ0
+         IXbIyENxWDPogF7XBTnkaeAbyD8xRfM/dDDvFnXU95FhQH3E8YR4ocBt6fqcMDIZcMXu
+         wALrCn4jewOBop0Kelm10u+8tZh3O+qYH4mzG4SO5YFjygWz9YgqdoywYVVw6nzIpHX2
+         KiaQ==
+X-Gm-Message-State: AOAM5332N7GnmQsjnUVPm7Fdga2DhRjMz0CO72p0w58ETtDPcNhIOS7u
+        yVLA8qhvTueeG1v3qW6p+5ahz2VD2Ig=
+X-Google-Smtp-Source: ABdhPJw4wDgLBVIYiU/vXdLuuIS/i2yBD21T0D7MBVqlG5B36sFE29nf56BchuMNs4ai+gb6a1jG+g==
+X-Received: by 2002:adf:e74d:: with SMTP id c13mr11217777wrn.277.1605057322702;
+        Tue, 10 Nov 2020 17:15:22 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.24
+        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 17:15:25 -0800 (PST)
+        Tue, 10 Nov 2020 17:15:22 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v8 10/26] memory: tegra30-emc: Factor out clk initialization
-Date:   Wed, 11 Nov 2020 04:14:40 +0300
-Message-Id: <20201111011456.7875-11-digetx@gmail.com>
+Subject: [PATCH v8 08/26] memory: tegra30-emc: Continue probing if timings are missing in device-tree
+Date:   Wed, 11 Nov 2020 04:14:38 +0300
+Message-Id: <20201111011456.7875-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201111011456.7875-1-digetx@gmail.com>
 References: <20201111011456.7875-1-digetx@gmail.com>
@@ -89,112 +89,77 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Factor out clk initialization and make it resource-managed. This makes
-easier to follow code and will help to make further changes cleaner.
+EMC driver will become mandatory after turning it into interconnect
+provider because interconnect users, like display controller driver, will
+fail to probe using newer device-trees that have interconnect properties.
+Thus make EMC driver to probe even if timings are missing in device-tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 70 ++++++++++++++++++++----------
- 1 file changed, 47 insertions(+), 23 deletions(-)
+ drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index d27df842a667..1df42e212d73 100644
+index d0926088360a..3488786da03b 100644
 --- a/drivers/memory/tegra/tegra30-emc.c
 +++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1550,6 +1550,49 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- 	return err;
- }
+@@ -988,6 +988,11 @@ static struct device_node *emc_find_node_by_ram_code(struct device *dev)
+ 	u32 value, ram_code;
+ 	int err;
  
-+static void devm_tegra_emc_unset_callback(void *data)
-+{
-+	tegra20_clk_set_emc_round_callback(NULL, NULL);
-+}
-+
-+static void devm_tegra_emc_unreg_clk_notifier(void *data)
-+{
-+	struct tegra_emc *emc = data;
-+
-+	clk_notifier_unregister(emc->clk, &emc->clk_nb);
-+}
-+
-+static int tegra_emc_init_clk(struct tegra_emc *emc)
-+{
-+	int err;
-+
-+	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
-+
-+	err = devm_add_action_or_reset(emc->dev, devm_tegra_emc_unset_callback,
-+				       NULL);
-+	if (err)
-+		return err;
-+
-+	emc->clk = devm_clk_get(emc->dev, NULL);
-+	if (IS_ERR(emc->clk)) {
-+		dev_err(emc->dev, "failed to get EMC clock: %pe\n", emc->clk);
-+		return PTR_ERR(emc->clk);
++	if (of_get_child_count(dev->of_node) == 0) {
++		dev_info(dev, "device-tree doesn't have memory timings\n");
++		return NULL;
 +	}
 +
-+	err = clk_notifier_register(emc->clk, &emc->clk_nb);
-+	if (err) {
-+		dev_err(emc->dev, "failed to register clk notifier: %d\n", err);
-+		return err;
+ 	ram_code = tegra_read_ram_code();
+ 
+ 	for_each_child_of_node(dev->of_node, np) {
+@@ -1057,6 +1062,9 @@ static long emc_round_rate(unsigned long rate,
+ 	struct tegra_emc *emc = arg;
+ 	unsigned int i;
+ 
++	if (!emc->num_timings)
++		return clk_get_rate(emc->clk);
++
+ 	min_rate = min(min_rate, emc->timings[emc->num_timings - 1].rate);
+ 
+ 	for (i = 0; i < emc->num_timings; i++) {
+@@ -1262,16 +1270,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	struct tegra_emc *emc;
+ 	int err;
+ 
+-	if (of_get_child_count(pdev->dev.of_node) == 0) {
+-		dev_info(&pdev->dev,
+-			 "device-tree node doesn't have memory timings\n");
+-		return -ENODEV;
+-	}
+-
+-	np = emc_find_node_by_ram_code(&pdev->dev);
+-	if (!np)
+-		return -EINVAL;
+-
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+ 	if (!emc) {
+ 		of_node_put(np);
+@@ -1285,10 +1283,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	emc->clk_nb.notifier_call = emc_clk_change_notify;
+ 	emc->dev = &pdev->dev;
+ 
+-	err = emc_load_timings_from_dt(emc, np);
+-	of_node_put(np);
+-	if (err)
+-		return err;
++	np = emc_find_node_by_ram_code(&pdev->dev);
++	if (np) {
++		err = emc_load_timings_from_dt(emc, np);
++		of_node_put(np);
++		if (err)
++			return err;
 +	}
-+
-+	err = devm_add_action_or_reset(emc->dev,
-+				       devm_tegra_emc_unreg_clk_notifier, emc);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
- static int tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
-@@ -1599,25 +1642,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return err;
- 	}
  
--	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
--
--	emc->clk = devm_clk_get(&pdev->dev, "emc");
--	if (IS_ERR(emc->clk)) {
--		err = PTR_ERR(emc->clk);
--		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
--		goto unset_cb;
--	}
--
--	err = clk_notifier_register(emc->clk, &emc->clk_nb);
--	if (err) {
--		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
--			err);
--		goto unset_cb;
--	}
-+	err = tegra_emc_init_clk(emc);
-+	if (err)
-+		return err;
- 
- 	err = tegra_emc_opp_table_init(emc);
- 	if (err)
--		goto unreg_notifier;
-+		return err;
- 
- 	platform_set_drvdata(pdev, emc);
- 	tegra_emc_rate_requests_init(emc);
-@@ -1632,13 +1663,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	try_module_get(THIS_MODULE);
- 
- 	return 0;
--
--unreg_notifier:
--	clk_notifier_unregister(emc->clk, &emc->clk_nb);
--unset_cb:
--	tegra20_clk_set_emc_round_callback(NULL, NULL);
--
--	return err;
- }
- 
- static int tegra_emc_suspend(struct device *dev)
+ 	emc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(emc->regs))
 -- 
 2.29.2
 
