@@ -2,62 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B0EC388F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B91C388F7
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94159221F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E650C221F7
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZeXs811q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qF7inbuZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732542AbgKKBPK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 20:15:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
+        id S1732632AbgKKBPO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 20:15:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732471AbgKKBPK (ORCPT
+        with ESMTP id S1732618AbgKKBPN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:15:10 -0500
+        Tue, 10 Nov 2020 20:15:13 -0500
 Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30AFC0613D3;
-        Tue, 10 Nov 2020 17:15:09 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id c16so557184wmd.2;
-        Tue, 10 Nov 2020 17:15:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F268C0613D1;
+        Tue, 10 Nov 2020 17:15:13 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id h2so569214wmm.0;
+        Tue, 10 Nov 2020 17:15:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yWy0jS3uOBmOClD+6tlZ3ZyzkxvorDo2b8v+9CLbSUY=;
-        b=ZeXs811qmAd8eFTi3qIsbEfXYdu2cgoWjmZTdwr17unMQcI5e15tFGnNjAor8PUQYv
-         ldXZ9w3u4wX2Iij5QDdvNOS0obd/0MgzNaO20nssVCtadSAeyxsdCPzwgQssVx/rl+Zh
-         pjZ/+nDS0K5TJnIsM4ZWXEslg3ZhBP+YD38lYww9cleitLMR43ddnfncUUkWLyLs+u28
-         RlFBcxgBZRx6NUFWZXtZ1qP2r08q6P4hnvmeoijdDelfgObkGk5MFwiAjYUjIrmzkW+E
-         HVxi/DZYNd558CoMlIUhaUTIobalgek/Seeh5kKWxW6YDztIpm/vyFoOXNaO50kUZJhp
-         r/Zw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GjtsQsCJihSVkHPvVSyTh7Vo5P6YOsjZY4JHUUyWhBM=;
+        b=qF7inbuZED40ZBEQgZcwkqESS4IjxsImcS2LNNhro247GdyhS6mRzfBj2+cwCOhgB9
+         4nIJmO+mxfdP6vrPAljdcRNmyebyAFGRENHzzyVGH3qCfMsLANCqNmhy7YZJoL1yTOS0
+         RYsTdfsSftdj/R+USlBrsoDaC/UiplaNwmVKBu8umu8ur9d0iRXQUWDFpqB8yEXwvbTj
+         NnFEzT3C3mcUapMKQLMDqLrZ8QN8naKTBNY07osHlStGlUr3z45FILOnlDmU7LdUi0LB
+         NjyxgInWCLa79c6IywQRax0SxuDEfFbgLEMxyEt5PDOtLzyUUVHOapmvbD23JTAlg4bN
+         z0pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yWy0jS3uOBmOClD+6tlZ3ZyzkxvorDo2b8v+9CLbSUY=;
-        b=la3qQkLUJ8ZIvePqezbTIuR8PEnpTVQLudNS9TDaPMv+qGciwgAHTGr7CkpElVwURM
-         BK/YG3ypdb/01KRz8Ut1U8AfkAA3TDzxamFguN1b3+OUAP2AiYCMJsjWE89l5MaZB2x1
-         PI28NsabnFageFHM5DLUHrmMYP3J7btm+6m3DjGU0NK64txqnQAcl8N99WopQABhnyal
-         RD0LQr9dM6XqfxXjBozOh+5LbOOGUk2mL+Za3OALkvbsuTHUt4YokYm2x54rLH358JWB
-         stXISL+Pyzjuy/n1VfsowJoxT5U+PyYgS7cetRnj2KSCksYSh4jG+Eq80CyKD067VMS3
-         Mg4Q==
-X-Gm-Message-State: AOAM533R+XOHZ1wOXwEk7LBbJjwD2C2pX7ljS+SxCaPBs81Zm90pfu0S
-        O/Cs43gMp5FOqqtV+bY/OmI=
-X-Google-Smtp-Source: ABdhPJwfFe41HRMpB4RcaGsjLNpSv1VBTsXR2iVFVBGsBpIcOU2lcc40D6Nj2ZSCL+ZpUoRkL1c9xg==
-X-Received: by 2002:a1c:bd0b:: with SMTP id n11mr918758wmf.111.1605057308488;
-        Tue, 10 Nov 2020 17:15:08 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GjtsQsCJihSVkHPvVSyTh7Vo5P6YOsjZY4JHUUyWhBM=;
+        b=AEfuTcX/jjMhzd8XXuaDDwjbmtxy+gwfz9T2FyWshu2qkbHVXiEmN9c7XHSag4lTja
+         z7WRybC7WAq3DUn2Jc59igMVaBhMJhAFUYuEY28mc/TBdxLvZL+6JUz1WWGUg0sZsBjT
+         dg5VI2hIQtVnfFGvXLukrlVuYBar87JVBthSywS9iHt3kwmb7I7PZtS53nZmdGiFXVkm
+         IEoycBMJRbRwVvgGikDp01MYyimYDPDwhAPpPX5jgOHhCUkPQ9U2K4r9954YGrVLX4S6
+         OS13WbHjVcZ+qJSY+lQ+7rtuNdYbJlSK4GHM78niNtRWCYV0objbL0NdpeA9fw2iMNLP
+         ZhmA==
+X-Gm-Message-State: AOAM530R/QSo0J8KETXHQ6KUyWvGduXEbasocVJbhZaZ1g1A1EV0Mql8
+        H8KUmhbU0IKIx8XNPLLQ0wY=
+X-Google-Smtp-Source: ABdhPJyZqr0B5HiYFrwPQUJcJTg6auyvSPy/3Lsois7R4I91PYn27QXinYePPmkAhhFSbVJzzb1LyA==
+X-Received: by 2002:a1c:99d3:: with SMTP id b202mr939369wme.0.1605057312178;
+        Tue, 10 Nov 2020 17:15:12 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.06
+        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 17:15:07 -0800 (PST)
+        Tue, 10 Nov 2020 17:15:11 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -76,151 +77,87 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v8 00/26] Introduce memory interconnect for NVIDIA Tegra SoCs
-Date:   Wed, 11 Nov 2020 04:14:30 +0300
-Message-Id: <20201111011456.7875-1-digetx@gmail.com>
+Subject: [PATCH v8 02/26] memory: tegra20-emc: Use dev_pm_opp_set_clkname()
+Date:   Wed, 11 Nov 2020 04:14:32 +0300
+Message-Id: <20201111011456.7875-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201111011456.7875-1-digetx@gmail.com>
+References: <20201111011456.7875-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series brings initial support for memory interconnect to Tegra20,
-Tegra30 and Tegra124 SoCs.
+The dev_pm_opp_get_opp_table() shouldn't be used by drivers, use
+dev_pm_opp_set_clkname() instead.
 
-For the starter only display controllers and devfreq devices are getting
-interconnect API support, others could be supported later on. The display
-controllers have the biggest demand for interconnect API right now because
-dynamic memory frequency scaling can't be done safely without taking into
-account bandwidth requirement from the displays. In particular this series
-fixes distorted display output on T30 Ouya and T124 TK1 devices.
+Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/tegra20-emc.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-Changelog:
-
-v8: - Patches that are already applied by Krzysztof Kozlowski not included.
-
-    - Removed tegra20-devfreq.c from MAINTAINERS, suggested by Chanwoo Choi.
-
-    - The patch "memory: tegra20-emc: Add devfreq support" now removes
-      PM_OPP for Tegra20 EMC driver from Kconfig, suggested by Chanwoo Choi.
-
-    - Now using devm_devfreq_add_device() for Tegra20 devfreq, suggested by
-      Chanwoo Choi.
-
-    - Added acks from Chanwoo Choi. Although, devfreq patches probably
-      should go via devfreq tree in order to avoid conflicts with the
-      other previously-applied patches by Chanwoo.
-
-    - Dropped superfluous dev_pm_opp_get_opp_table() from patch "devfreq:
-      tegra30: Support interconnect and OPPs from device-tree".
-
-    - Silenced another minor W=1 compilation warning reported by kernel
-      test robot.
-
-    - Added couple extra minor clean-up changes, including those that will
-      ease further code changes. Added these new patches:
-
-        memory: tegra20-emc: Remove IRQ number from error message
-        memory: tegra20-emc: Factor out clk initialization
-        memory: tegra30-emc: Factor out clk initialization
-
-      Note that some of the new T124 changes are compile-tested only,
-      but I expect that we will re-test them fully soon.
-
-    - Added patch that fixes compilation of a non-Tegra kernels.
-
-        memory: tegra: Correct stub of devm_tegra_memory_controller_get()
-
-    - Replaced dev_pm_opp_get_opp_table() with dev_pm_opp_set_clkname(),
-      as was suggested by Viresh Kumar in other thread.
-
-    - Added patch that will allow T124 EMC driver to probe even if DT
-      doesn't have memory timings, this was missed by accident previously.
-
-        memory: tegra124-emc: Continue probing if timings are missing in device-tree
-
-Dmitry Osipenko (26):
-  memory: tegra: Correct stub of devm_tegra_memory_controller_get()
-  memory: tegra20-emc: Use dev_pm_opp_set_clkname()
-  memory: tegra20-emc: Factor out clk initialization
-  memory: tegra20-emc: Add devfreq support
-  memory: tegra20-emc: Remove IRQ number from error message
-  memory: tegra30: Add FIFO sizes to memory clients
-  memory: tegra30-emc: Make driver modular
-  memory: tegra30-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra30: Support interconnect framework
-  memory: tegra30-emc: Factor out clk initialization
-  memory: tegra124-emc: Make driver modular
-  memory: tegra124-emc: Continue probing if timings are missing in
-    device-tree
-  memory: tegra124: Support interconnect framework
-  drm/tegra: dc: Support memory bandwidth management
-  drm/tegra: dc: Extend debug stats with total number of events
-  PM / devfreq: tegra30: Support interconnect and OPPs from device-tree
-  PM / devfreq: tegra30: Separate configurations per-SoC generation
-  PM / devfreq: tegra20: Deprecate in a favor of emc-stat based driver
-  ARM: tegra: Correct EMC registers size in Tegra20 device-tree
-  ARM: tegra: Add interconnect properties to Tegra20 device-tree
-  ARM: tegra: Add interconnect properties to Tegra30 device-tree
-  ARM: tegra: Add interconnect properties to Tegra124 device-tree
-  ARM: tegra: Add nvidia,memory-controller phandle to Tegra20 EMC
-    device-tree
-  ARM: tegra: Add DVFS properties to Tegra20 EMC device-tree node
-  ARM: tegra: Add DVFS properties to Tegra30 EMC and ACTMON device-tree
-    nodes
-  ARM: tegra: Add DVFS properties to Tegra124 EMC and ACTMON device-tree
-    nodes
-
- MAINTAINERS                                   |   1 -
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |   8 +
- .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |   8 +
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  |  10 +
- .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  10 +
- .../boot/dts/tegra124-peripherals-opp.dtsi    | 419 ++++++++++++++++++
- arch/arm/boot/dts/tegra124.dtsi               |  31 ++
- .../boot/dts/tegra20-acer-a500-picasso.dts    |   7 +
- arch/arm/boot/dts/tegra20-colibri.dtsi        |   4 +
- arch/arm/boot/dts/tegra20-paz00.dts           |   6 +
- .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  92 ++++
- arch/arm/boot/dts/tegra20.dtsi                |  33 +-
- .../tegra30-asus-nexus7-grouper-common.dtsi   |   4 +
- ...30-asus-nexus7-grouper-memory-timings.dtsi |  12 +
- .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 383 ++++++++++++++++
- arch/arm/boot/dts/tegra30.dtsi                |  33 +-
- drivers/clk/tegra/Makefile                    |   3 +-
- drivers/clk/tegra/clk-tegra124-emc.c          |  41 +-
- drivers/clk/tegra/clk-tegra124.c              |  27 +-
- drivers/clk/tegra/clk.h                       |  16 +-
- drivers/devfreq/Kconfig                       |  10 -
- drivers/devfreq/Makefile                      |   1 -
- drivers/devfreq/tegra20-devfreq.c             | 210 ---------
- drivers/devfreq/tegra30-devfreq.c             | 154 ++++---
- drivers/gpu/drm/tegra/Kconfig                 |   1 +
- drivers/gpu/drm/tegra/dc.c                    | 359 +++++++++++++++
- drivers/gpu/drm/tegra/dc.h                    |  19 +
- drivers/gpu/drm/tegra/drm.c                   |  14 +
- drivers/gpu/drm/tegra/hub.c                   |   3 +
- drivers/gpu/drm/tegra/plane.c                 | 121 +++++
- drivers/gpu/drm/tegra/plane.h                 |  15 +
- drivers/memory/tegra/Kconfig                  |   9 +-
- drivers/memory/tegra/mc.c                     |   3 +
- drivers/memory/tegra/tegra124-emc.c           | 395 +++++++++++++++--
- drivers/memory/tegra/tegra124.c               |  82 +++-
- drivers/memory/tegra/tegra20-emc.c            | 192 ++++++--
- drivers/memory/tegra/tegra30-emc.c            | 406 +++++++++++++++--
- drivers/memory/tegra/tegra30.c                | 239 +++++++++-
- include/linux/clk/tegra.h                     |   8 +
- include/soc/tegra/emc.h                       |  16 -
- include/soc/tegra/mc.h                        |   2 +-
- 41 files changed, 2971 insertions(+), 436 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra124-peripherals-opp.dtsi
- create mode 100644 arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
- create mode 100644 arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
- delete mode 100644 drivers/devfreq/tegra20-devfreq.c
- delete mode 100644 include/soc/tegra/emc.h
-
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index 5e10aa97809f..bb3f315c9587 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -902,7 +902,7 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+ 
+ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+ {
+-	struct opp_table *opp_table;
++	struct opp_table *reg_opp_table = NULL, *clk_opp_table;
+ 	const char *rname = "core";
+ 	int err;
+ 
+@@ -917,19 +917,24 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+ 	}
+ 
+ 	/* voltage scaling is optional */
+-	if (device_property_present(emc->dev, "core-supply"))
+-		opp_table = dev_pm_opp_set_regulators(emc->dev, &rname, 1);
+-	else
+-		opp_table = dev_pm_opp_get_opp_table(emc->dev);
++	if (device_property_present(emc->dev, "core-supply")) {
++		reg_opp_table = dev_pm_opp_set_regulators(emc->dev, &rname, 1);
++		if (IS_ERR(reg_opp_table))
++			return dev_err_probe(emc->dev, PTR_ERR(reg_opp_table),
++					     "failed to set OPP regulator\n");
++	}
+ 
+-	if (IS_ERR(opp_table))
+-		return dev_err_probe(emc->dev, PTR_ERR(opp_table),
+-				     "failed to prepare OPP table\n");
++	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
++	err = PTR_ERR_OR_ZERO(clk_opp_table);
++	if (err) {
++		dev_err(emc->dev, "failed to set OPP clk: %d\n", err);
++		goto put_reg_table;
++	}
+ 
+ 	err = dev_pm_opp_of_add_table(emc->dev);
+ 	if (err) {
+ 		dev_err(emc->dev, "failed to add OPP table: %d\n", err);
+-		goto put_table;
++		goto put_clk_table;
+ 	}
+ 
+ 	dev_info(emc->dev, "current clock rate %lu MHz\n",
+@@ -946,8 +951,11 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+ 
+ remove_table:
+ 	dev_pm_opp_of_remove_table(emc->dev);
+-put_table:
+-	dev_pm_opp_put_regulators(opp_table);
++put_clk_table:
++	dev_pm_opp_put_clkname(clk_opp_table);
++put_reg_table:
++	if (reg_opp_table)
++		dev_pm_opp_put_regulators(reg_opp_table);
+ 
+ 	return err;
+ }
 -- 
 2.29.2
 
