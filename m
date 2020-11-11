@@ -2,114 +2,251 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D5AC388F9
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6DBC388F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF472075A
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C268206FB
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:32:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHudV4l+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fGCU7at5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbgKKKZj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 05:25:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbgKKKZi (ORCPT
+        id S1727413AbgKKKc5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 05:32:57 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8056 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbgKKKc5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 05:25:38 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2F4C0613D1;
-        Wed, 11 Nov 2020 02:25:38 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id r9so2421177lfn.11;
-        Wed, 11 Nov 2020 02:25:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YDPQOCu1Q0bKCPL6C42R2nt86MKzHJcXkgJe5Eo+/zI=;
-        b=nHudV4l+RFcBpr3axrfNNEScRTyu6drP6JREhMmAoVRKbdS57PvlkXk9toKfclED2s
-         5G/GJ7KJRJsFYOl4i6+hz5/nD17g2tiqobNLOl91ANza33Te94/voQb5CZ0zp8lD2BIl
-         PU7rMO+1CqahgPqwQycUOiQXXBNmJQk5SzllsR4JSzuOTWV21BW2AOMl66pxwuXjhOh/
-         Vjvfq/UE6EkhNOnrClbk3roh6SxJVnCQ9D2Ww2U+TE3x7kVzsAdfFNebF1olzKADUOvJ
-         t9JGDbP2u/DDS6t4RZ6L5CjtUW62hY2Z2f/G4Lmf7wPuz8IPXZquX5zg6jtdtLe8EzzV
-         WHIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YDPQOCu1Q0bKCPL6C42R2nt86MKzHJcXkgJe5Eo+/zI=;
-        b=m76ZrIGuZ980yAWKz1yFwTgrCiIPxwEMyEVEb17o+Ta4y/Y/bmkjAB9DOM+m/ZEzsJ
-         XKZDkMmGy4ryp5nCp8cOYROit8neLzq5xu9NxjgOMeRdw4AVrjiJgGIKSVs/pTMrgoV5
-         PlUMgLZFKfxF5XDo3nXTiJgvj5myQX+yJ85LjH/LRvXdqGhO58Gzf5WRrwAVM3ELmx4z
-         I41LRsYIk4fquZa6xg5VAnhSm/g2aQVEZ8k4VfEFgtIWoKGdJYutHA6Iaw83b3BS5Xcc
-         5RWLCtdT5Sr1mDGqmGgyQ3c2oGAZ4P5Ni6w2DAX4TKoXzTG1DbaPjN3r9lsuo3p5Kmzc
-         BxwQ==
-X-Gm-Message-State: AOAM530PAsYMwTQ+eij4Y/U+nFhhflS6JtV4d8rabMZx6d68uUtV8xUN
-        aRwxSM5mudlnEKXO6GgRfoQ=
-X-Google-Smtp-Source: ABdhPJzTv9Jyb7R3JTGhtKOKkgm12/bRzXfaFk0KiQNWX12jN9WFCPB0iS0jN9FOqsksEXFAwAJolg==
-X-Received: by 2002:ac2:53a1:: with SMTP id j1mr8775060lfh.236.1605090336653;
-        Wed, 11 Nov 2020 02:25:36 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id t13sm62578lfl.294.2020.11.11.02.25.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 02:25:35 -0800 (PST)
-Subject: Re: [PATCH v8 11/26] memory: tegra124-emc: Make driver modular
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20201111011456.7875-1-digetx@gmail.com>
- <20201111011456.7875-12-digetx@gmail.com> <20201111090434.GB4050@kozik-lap>
- <f44b64f5-6b08-5f1e-4f9b-a73a1705d493@gmail.com>
- <20201111092619.GD4050@kozik-lap>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a75e72b9-273a-4492-09e6-d02a5ea58482@gmail.com>
-Date:   Wed, 11 Nov 2020 13:25:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Wed, 11 Nov 2020 05:32:57 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fabbddd0000>; Wed, 11 Nov 2020 02:33:01 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Nov
+ 2020 10:32:56 +0000
+Received: from moonraker.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 11 Nov 2020 10:32:55 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] ASoC: tegra: Don't warn on probe deferral
+Date:   Wed, 11 Nov 2020 10:32:45 +0000
+Message-ID: <20201111103245.152189-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20201111092619.GD4050@kozik-lap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605090781; bh=umwC4KXImamx+HDRSlrnQ73F0EgY86+D9nhOjECGVGg=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=fGCU7at5YjtTsspyHCZlXxfGrWS9+bUSh19oedTijGoL3nYcalSftka7k+pHzJcQz
+         Eu6acrnohu2Q8bKj7IAn007FtHpy8wm5r1vr9i1txDp1GGPItlEkM1KJUWE11g8zEN
+         RzSiFl9GBk8fdnrekTC6lZdeUl4m0dnNy4x4jKgVn1LeBBDQJPwtJuGsgMwoYJ0q7g
+         o87J6Ha0XPXu93O2sGuB9sFbVHKbQR4NNOP/dMxNejy8i+GyCoWqq6S4IB0/tcRqjJ
+         O0yIrBsVCVzmdDZL64jJdjyAOhuvgCk+nxwPnOyPu/hfHzXd4XiepzTPeqC39RlG5a
+         akLMSgZ74+k7w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.11.2020 12:26, Krzysztof Kozlowski пишет:
->> 11.11.2020 12:04, Krzysztof Kozlowski пишет:
->>>> -obj-$(CONFIG_TEGRA124_EMC)		+= clk-tegra124-emc.o
->>>> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-emc.o
->>>> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124-emc.o
->>> How is it related to modularization? It looks like different issue is
->>> fixed here.
->> The CONFIG_TEGRA124_EMC now could be 'm', while the clock code must be
->> built-in. The TEGRA124 EMC driver is used by T124 and T132 SoCs.\
-> Mhmm,  the CONFIG_TEGRA124_EMC depends on ARCH_TEGRA_124_SOC so on the
-> config !ARCH_TEGRA_124_SOC && ARCH_TEGRA_132_SOC this was not
-> selected. Now it will be selected.
-> 
+Deferred probe is an expected return value for snd_soc_register_card().
+Given that the driver deals with it properly, there's no need to output
+a warning that may potentially confuse users.
 
-The driver isn't exposed on ARM64 probably because nobody bothered to do
-it so far. But it's not also the memory driver which depends on
-clk-tegra124-emc.o, it's also the main clk/tegra/clk-tegra124.c driver
-itself, which is also used by both T124/132.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ sound/soc/tegra/tegra_alc5632.c  | 4 ++--
+ sound/soc/tegra/tegra_max98090.c | 8 +++-----
+ sound/soc/tegra/tegra_rt5640.c   | 8 +++-----
+ sound/soc/tegra/tegra_rt5677.c   | 4 ++--
+ sound/soc/tegra/tegra_sgtl5000.c | 4 ++--
+ sound/soc/tegra/tegra_wm8753.c   | 8 +++-----
+ sound/soc/tegra/tegra_wm8903.c   | 8 +++-----
+ sound/soc/tegra/tegra_wm9712.c   | 4 ++--
+ sound/soc/tegra/trimslice.c      | 8 +++-----
+ 9 files changed, 23 insertions(+), 33 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc563=
+2.c
+index 8661877bf4c6..0a0efd24e4b0 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -203,8 +203,8 @@ static int tegra_alc5632_probe(struct platform_device *=
+pdev)
+=20
+ 	ret =3D snd_soc_register_card(card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
++		dev_err_probe(&pdev->dev, ret,
++			      "snd_soc_register_card failed\n");
+ 		goto err_put_cpu_of_node;
+ 	}
+=20
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98=
+090.c
+index 9d8e16473ab9..00c19704057b 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -247,11 +247,9 @@ static int tegra_max98090_probe(struct platform_device=
+ *pdev)
+ 		return ret;
+=20
+ 	ret =3D devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "snd_soc_register_card failed\n");
+=20
+ 	return 0;
+ }
+diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.=
+c
+index c73bd23b3d67..9afba37a3b08 100644
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -193,11 +193,9 @@ static int tegra_rt5640_probe(struct platform_device *=
+pdev)
+ 		return ret;
+=20
+ 	ret =3D devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "snd_soc_register_card failed\n");
+=20
+ 	return 0;
+ }
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.=
+c
+index 7504507dd8b8..d30f8b6deda4 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -268,8 +268,8 @@ static int tegra_rt5677_probe(struct platform_device *p=
+dev)
+=20
+ 	ret =3D snd_soc_register_card(card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
++		dev_err_probe(&pdev->dev, ret,
++			      "snd_soc_register_card failed\n");
+ 		goto err_put_cpu_of_node;
+ 	}
+=20
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5=
+000.c
+index e1dc8e7d337a..885332170c77 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -154,8 +154,8 @@ static int tegra_sgtl5000_driver_probe(struct platform_=
+device *pdev)
+=20
+ 	ret =3D snd_soc_register_card(card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
++		dev_err_probe(&pdev->dev, ret,
++			      "snd_soc_register_card failed\n");
+ 		goto err_put_cpu_of_node;
+ 	}
+=20
+diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.=
+c
+index fa41fa366daf..efd793886689 100644
+--- a/sound/soc/tegra/tegra_wm8753.c
++++ b/sound/soc/tegra/tegra_wm8753.c
+@@ -156,11 +156,9 @@ static int tegra_wm8753_driver_probe(struct platform_d=
+evice *pdev)
+ 		return ret;
+=20
+ 	ret =3D devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "snd_soc_register_card failed\n");
+=20
+ 	return 0;
+ }
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.=
+c
+index ef6652aaac9b..e4863fa37b0c 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -352,11 +352,9 @@ static int tegra_wm8903_driver_probe(struct platform_d=
+evice *pdev)
+ 		return ret;
+=20
+ 	ret =3D devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
+-		dev_err(&pdev->dev, "devm_snd_soc_register_card failed (%d)\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "snd_soc_register_card failed\n");
+=20
+ 	return 0;
+ }
+diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.=
+c
+index 726edfa21a29..4f09a178049d 100644
+--- a/sound/soc/tegra/tegra_wm9712.c
++++ b/sound/soc/tegra/tegra_wm9712.c
+@@ -117,8 +117,8 @@ static int tegra_wm9712_driver_probe(struct platform_de=
+vice *pdev)
+=20
+ 	ret =3D snd_soc_register_card(card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
++		dev_err_probe(&pdev->dev, ret,
++			      "snd_soc_register_card failed\n");
+ 		goto codec_unregister;
+ 	}
+=20
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index baae4cce7fc6..6c1cc3d0ac33 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -144,11 +144,9 @@ static int tegra_snd_trimslice_probe(struct platform_d=
+evice *pdev)
+ 		return ret;
+=20
+ 	ret =3D devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "snd_soc_register_card failed\n");
+=20
+ 	return 0;
+ }
+--=20
+2.25.1
+
