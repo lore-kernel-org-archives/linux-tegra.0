@@ -2,121 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59984C388F9
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AFFC56202
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAAA52075A
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BB65207BB
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDHfOsx5"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNDu7zw9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbgKKLxK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 06:53:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38320 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgKKLxI (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 06:53:08 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 827B0C0613D1;
-        Wed, 11 Nov 2020 03:53:08 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id e27so2772155lfn.7;
-        Wed, 11 Nov 2020 03:53:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7ZZROP0sgrWHXocXnplwQP153jh2UvOQmbtx2+3HJts=;
-        b=VDHfOsx5tdF1+TEbA9a+WK+1K/9Tb7pL4h4a0lCdKYC9AvhOD1vNem3XsG1qco/wvO
-         0xKNAMrZQtWJ16M27HgiN1ZxuC3w58O6aJ6bNOlWyExcY+HC90ZFuJGsKVtSGBk1pF7+
-         3BdhUwuyIUIGw5RSwlLwTdwrG98bLKoJkO/Zwa+tGJkGb+oHhlVZni64NU0YI+jpucTx
-         fqqE9Yk3E/N8zSaBoghyH3PPfKznx7gx8jYb3kRPBQ/GGGIUCge6ZLRdNYptenj83Abg
-         whPrhOqDaNe8xG3lgtJsgN0b/p8IBPuSnRj4jZ+Zj0zI9TKLSnoD880LA7NJqmCN5Eok
-         Cmnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7ZZROP0sgrWHXocXnplwQP153jh2UvOQmbtx2+3HJts=;
-        b=DG3XYIP1n/QQdlBuLdNueQ4vvDEqA/+/MUQgFWT28gyh2ckluHrAkIEsBIyOlxqJvZ
-         HGPIoOm11OJe3/z7M3QVnAd2PrWPaSCAiePJi0rcd4i7kbFG6ItDL8FXsiWVr+ExrrcV
-         +Df4XIe1q3tMlpBibY4TAjieBqSM3kRF/FdIwI1+sRs3jn53yxI2rEaqfbovu6AvceFW
-         8EbNlaDkd0HfxJeNb0YrnrfDake5ziSRMYN+AubeuXx3jJyZNVW2xAVDBzlSadStJhlj
-         UPYWiI4ONeKJ1JF0Kj/HC1Hk5j9Efo31LQ7H7AuwjcWAaFh77qn75c6hNmeFBJEK6zhv
-         3BSw==
-X-Gm-Message-State: AOAM532NgJyXJUGfj7gXbLlDtJcbQIoQIkmgSibpgv2UxyeIASGADcpP
-        bjsH3GNQ90xdh1T7k5Wx2iw=
-X-Google-Smtp-Source: ABdhPJys5kC2mfxaGiOj4U9JzSI2ZsqED+u2tQRuzy4x85ctO/59VCN+LkZEfQ5NBKjvOOJscwMFxw==
-X-Received: by 2002:a19:f510:: with SMTP id j16mr8923883lfb.389.1605095586937;
-        Wed, 11 Nov 2020 03:53:06 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id 3sm208760ljq.96.2020.11.11.03.53.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 03:53:06 -0800 (PST)
-Subject: Re: [PATCH v8 11/26] memory: tegra124-emc: Make driver modular
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+        id S1726499AbgKKLzv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 06:55:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725995AbgKKLzu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 11 Nov 2020 06:55:50 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB5A32075A;
+        Wed, 11 Nov 2020 11:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605095749;
+        bh=E+ly9ONWTiIZggNniJcApnyy3E6yqB0BJhEeVuwf6a8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rNDu7zw94N4bZLodrCeHyIJ7vJNyhJ86AqVVUXxbfWXwe3kmN8aHYbMyE79lDIAVJ
+         U//1q2PZZNQKS7NWkJLc5cU3FdavNRU69OF11MYqFfm6gLE6mUcQFHwIDVTaIZQG1g
+         rB6oruPIYVSGgedkrijP4GnWAAoahL9Jn5/5VUw8=
+Date:   Wed, 11 Nov 2020 11:55:34 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20201111011456.7875-1-digetx@gmail.com>
- <20201111011456.7875-12-digetx@gmail.com> <20201111090434.GB4050@kozik-lap>
- <f44b64f5-6b08-5f1e-4f9b-a73a1705d493@gmail.com>
- <20201111092619.GD4050@kozik-lap>
- <a75e72b9-273a-4492-09e6-d02a5ea58482@gmail.com>
-Message-ID: <79a2f436-93f6-e461-fb12-6d7c8a8cfac5@gmail.com>
-Date:   Wed, 11 Nov 2020 14:53:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+Message-ID: <20201111115534.GA4847@sirena.org.uk>
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-12-digetx@gmail.com>
+ <20201110202945.GF2375022@ulmo>
+ <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <a75e72b9-273a-4492-09e6-d02a5ea58482@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Disposition: inline
+In-Reply-To: <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+X-Cookie: I'm not available for comment..
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.11.2020 13:25, Dmitry Osipenko пишет:
-> 11.11.2020 12:26, Krzysztof Kozlowski пишет:
->>> 11.11.2020 12:04, Krzysztof Kozlowski пишет:
->>>>> -obj-$(CONFIG_TEGRA124_EMC)		+= clk-tegra124-emc.o
->>>>> +obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-emc.o
->>>>> +obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124-emc.o
->>>> How is it related to modularization? It looks like different issue is
->>>> fixed here.
->>> The CONFIG_TEGRA124_EMC now could be 'm', while the clock code must be
->>> built-in. The TEGRA124 EMC driver is used by T124 and T132 SoCs.\
->> Mhmm,  the CONFIG_TEGRA124_EMC depends on ARCH_TEGRA_124_SOC so on the
->> config !ARCH_TEGRA_124_SOC && ARCH_TEGRA_132_SOC this was not
->> selected. Now it will be selected.
->>
-> 
-> The driver isn't exposed on ARM64 probably because nobody bothered to do
-> it so far. But it's not also the memory driver which depends on
-> clk-tegra124-emc.o, it's also the main clk/tegra/clk-tegra124.c driver
-> itself, which is also used by both T124/132.
-> 
 
-Actually, it shouldn't be difficult to keep the old condition for
-clk-tegra124-emc.o by slightly improving the Kconfig. I'll do it in the
-next revision.
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 11, 2020 at 12:23:41AM +0300, Dmitry Osipenko wrote:
+> 10.11.2020 23:32, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+
+> >>> +	if (!device_property_present(dc->dev, "core-supply"))
+> >>> +		return;
+
+> >> This is a potentially heavy operation, so I think we should avoid that
+> >> here. How about you use devm_regulator_get_optional() in ->probe()? Th=
+at
+> >> returns -ENODEV if no regulator was specified, in which case you can s=
+et
+> >> dc->core_reg =3D NULL and use that as the condition here.
+
+> > Or enumerate the configurable voltages after getting the regulator and
+> > handle that appropriately which would be more robust in case there's
+> > missing or unusual constraints.
+
+> I already changed that code to use regulator_get_optional() for v2.
+
+That doesn't look entirely appropriate given that the core does most
+likely require some kind of power to operate.
+
+> Regarding the enumerating supported voltage.. I think this should be
+> done by the OPP core, but regulator core doesn't work well if
+> regulator_get() is invoked more than one time for the same device, at
+> least there is a loud debugfs warning about an already existing
+
+I don't understand why this would be an issue - if nothing else the core
+could just offer an interface to trigger the check.
+
+> directory for a regulator. It's easy to check whether the debug
+> directory exists before creating it, like thermal framework does it for
+> example, but then there were some other more difficult issues.. I don't
+> recall what they were right now. Perhaps will be easier to simply get a
+> error from regulator_set_voltage() for now because it shouldn't ever
+> happen in practice, unless device-tree has wrong constraints.
+
+The constraints might not be wrong, there might be some board which has
+a constraint somewhere for=20
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+r0TUACgkQJNaLcl1U
+h9DWcQf+JKUKAAmCRoCIJy9RMbwbcNzS1ehBtOpcozk+MMyJ3P+dgcBahHKBBMnb
+2YhGKsKdqzaBELqpXe/hFWKxA6hYHTpyIwMRTywEojcGmDs9uiuCKocCerJTuVTF
+c7JBE5R3F/wViCJVqkKUG3nJ+lD6uzzbhw7EcuFL6JVLHZOkHoaRaETw80+7VEIq
+7vhNoSmt6p8IBr/zqV8bM+x5x0dsI4IArhh1ATC/NHeoZ4SHMbpLFYN5nGbiJwGA
+sHHjt0L1+msYcrgr36dQPACoykphP2BAa+7Yp09e8YGXThSsIhDCBQi5ouFpQa4k
+3/iI/vaOSikf2BEi1DqjIHKngrsjBQ==
+=Ohk2
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
