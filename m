@@ -2,66 +2,47 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6F1C4742C
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 07:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA2C56201
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 08:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80DA220795
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 07:54:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SeyOkpJ8"
+	by mail.kernel.org (Postfix) with ESMTP id EC8BB206FB
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 08:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbgKKHyH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 02:54:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbgKKHyG (ORCPT
+        id S1726113AbgKKIvW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 03:51:22 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39571 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbgKKIvU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 02:54:06 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88C91C0613D4
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 23:54:06 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id x15so570420pll.2
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 23:54:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BR1T4epV+HHBrX5I3Lx7g9aCKzjxl36+gayU6Vo90zk=;
-        b=SeyOkpJ8VAnb9K1v6QHwyuE+XDQ7Xb5qgsNsN17V6pSCy+q1aUZltHVrwUB6hoVNUJ
-         kyi1hz3GZB0PUzYnYm5NHuDH4DtZLQ6r7LinuCTWmBnv++Pcns6Z44NLADK8nCUPq+2Z
-         lUAZJJD/ofBTydNaZsP70StUTV3P14W4YTnOf2MmHlIO00RSoHGw/LnoMgUFva/t02jt
-         Cq7ItmcBBwiJsCiFGCnQ6OwdXO7K2pdOTRCxVVRlJlC9Ivp6OLV2wqZm0q7JGzPRVz7B
-         ewCJe+iAbFC6PK7GZk/6Vnj4udyUn6bTmvaD+GiJHFydjtBRGzYuyAAJkgFvEKUueX/h
-         fT3Q==
+        Wed, 11 Nov 2020 03:51:20 -0500
+Received: by mail-ed1-f66.google.com with SMTP id e18so1439470edy.6;
+        Wed, 11 Nov 2020 00:51:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=BR1T4epV+HHBrX5I3Lx7g9aCKzjxl36+gayU6Vo90zk=;
-        b=rBJbUhHbnYmp4imZ/oHo/I5Aiu7tVLSCbZFyiN4kpFD7+1VzgxXcaRm1PVDwzwZtCn
-         xFuauJGc2Yy1ux5Deog1RqG20ZmD004lpd5c+UAE38G2XE9i0/fK67geY1u4Lb0AUawD
-         /Rs2LV1rGJ/lKv89SOCZmwxx8GR+xGQi0DwVYMTxvcunXHgiVxjxo+PgQX4270LAuFuh
-         A+omjqW8CZfFOx74SNImhPyFGxsPMUWLGYhIaRwTaQx8CsknxdtMc8VpfUOj/uW/ulgP
-         FkI3G1kLgZTZMPjf4uimAaUw6REKR95ON7lI12qLVQhMWH5hTdkZpMIcF2xTEVRDnfUw
-         Ck3w==
-X-Gm-Message-State: AOAM532LPYcpEdLYltbB9akcvABFCSD+X/lsSM0tWRr2TyvjorpBEdF6
-        qqx2XjQpTDukAYeEQ0pNyj29dw==
-X-Google-Smtp-Source: ABdhPJxOHg/sWON4ePkTuSAP4y8SzDQlWRi72cjAP6aV88j0N4jbC+I/d/e9bu0uQlLakGN5MNj7pg==
-X-Received: by 2002:a17:902:82c3:b029:d6:c377:c87d with SMTP id u3-20020a17090282c3b02900d6c377c87dmr19915711plz.37.1605081245903;
-        Tue, 10 Nov 2020 23:54:05 -0800 (PST)
-Received: from localhost ([122.172.12.172])
-        by smtp.gmail.com with ESMTPSA id v18sm1450609pfn.35.2020.11.10.23.54.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Nov 2020 23:54:04 -0800 (PST)
-Date:   Wed, 11 Nov 2020 13:24:02 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
+         :mime-version:content-disposition:in-reply-to;
+        bh=fcsUtbmIi6pFoAIg04QDTS8zIxpoVv9zR1KLLhX/rbU=;
+        b=DWnx559xWzavUW3mDHZY7RMcpsXEQEFYw9Zrl56yOVM/WyYeGHsVM14CJWmKcP6ATi
+         IUZNB/IJL+WLT/NwtNEu2HF8+hbetKsxV2xZXFqGzRsOGOFkJo9FsJfOyQUlfOHSGjp+
+         qxsjjV8jIKRTC9/jkF+a8pbVAw/Zp/AOJ6NT//pQDW2Czz9TNi5gDaqK+rUbbLk3UOVU
+         Bb+xA1K6JiJ5mTI2R3R+JOkuZJcvHutEHMCw/6QVo50PZVnuGakU/22k2a+VmXqYIVSH
+         pTAmqB+sGVlSobzpk3itpc/+XJI4WYBC/QD3RHyVqMB2sUEu6kyYH7PzLzLb94Sc8bym
+         6jog==
+X-Gm-Message-State: AOAM533Alu/v958Pxh5TLVAxLfmSuUOCbzOXTZK+JgO78+FmlTNUU/XV
+        FoHTUxrPW4VB9X0PQCxj/miLw+wD0rE=
+X-Google-Smtp-Source: ABdhPJyosmQwjhLlFhsYwZ0U8CJ9JICx9URz6T+qKYOPqiXzdUHJVKdbracph63JeRVetfKsp0cT0g==
+X-Received: by 2002:a05:6402:17ad:: with SMTP id j13mr3701504edy.347.1605084678122;
+        Wed, 11 Nov 2020 00:51:18 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id m27sm575741eji.64.2020.11.11.00.51.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2020 00:51:16 -0800 (PST)
+Date:   Wed, 11 Nov 2020 09:51:15 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,61 +58,129 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Viresh Kumar <vireshk@kernel.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v8 09/26] memory: tegra30: Support interconnect framework
-Message-ID: <20201111075402.y52c2zwcw74eeyko@vireshk-i7>
+Subject: Re: [PATCH v8 10/26] memory: tegra30-emc: Factor out clk
+ initialization
+Message-ID: <20201111085115.GA4050@kozik-lap>
 References: <20201111011456.7875-1-digetx@gmail.com>
- <20201111011456.7875-10-digetx@gmail.com>
- <20201111055313.tefidnmc7f4yb3jk@vireshk-i7>
- <185e9140-fdce-29ef-68c3-aa7da02b249d@gmail.com>
- <20201111061855.2azilyhfoxwzpoir@vireshk-i7>
- <7f5c15c6-44d2-c997-442c-8f6670794f0e@gmail.com>
+ <20201111011456.7875-11-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f5c15c6-44d2-c997-442c-8f6670794f0e@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201111011456.7875-11-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11-11-20, 10:32, Dmitry Osipenko wrote:
-> 11.11.2020 09:18, Viresh Kumar пишет:
-> > On 11-11-20, 09:14, Dmitry Osipenko wrote:
-> >> The dev_pm_opp_of_add_table() will produce a error message which doesn't
-> >> give a clue about what's wrong, i.e. that device-tree needs to be updated.
-> > 
-> > If you think that you need to print something more, then you can do
-> > that in the error message you print when dev_pm_opp_of_add_table()
-> > fails. I would suggest to drop this redundant check here.
-> > 
+On Wed, Nov 11, 2020 at 04:14:40AM +0300, Dmitry Osipenko wrote:
+> Factor out clk initialization and make it resource-managed. This makes
+> easier to follow code and will help to make further changes cleaner.
 > 
-> Please give the rationale.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/tegra30-emc.c | 70 ++++++++++++++++++++----------
+>  1 file changed, 47 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+> index d27df842a667..1df42e212d73 100644
+> --- a/drivers/memory/tegra/tegra30-emc.c
+> +++ b/drivers/memory/tegra/tegra30-emc.c
+> @@ -1550,6 +1550,49 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+>  	return err;
+>  }
+>  
+> +static void devm_tegra_emc_unset_callback(void *data)
+> +{
+> +	tegra20_clk_set_emc_round_callback(NULL, NULL);
+> +}
+> +
+> +static void devm_tegra_emc_unreg_clk_notifier(void *data)
+> +{
+> +	struct tegra_emc *emc = data;
+> +
+> +	clk_notifier_unregister(emc->clk, &emc->clk_nb);
+> +}
+> +
+> +static int tegra_emc_init_clk(struct tegra_emc *emc)
+> +{
+> +	int err;
+> +
+> +	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
+> +
+> +	err = devm_add_action_or_reset(emc->dev, devm_tegra_emc_unset_callback,
+> +				       NULL);
+> +	if (err)
+> +		return err;
+> +
+> +	emc->clk = devm_clk_get(emc->dev, NULL);
+> +	if (IS_ERR(emc->clk)) {
+> +		dev_err(emc->dev, "failed to get EMC clock: %pe\n", emc->clk);
+> +		return PTR_ERR(emc->clk);
+> +	}
+> +
+> +	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+> +	if (err) {
+> +		dev_err(emc->dev, "failed to register clk notifier: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	err = devm_add_action_or_reset(emc->dev,
+> +				       devm_tegra_emc_unreg_clk_notifier, emc);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+>  static int tegra_emc_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np;
+> @@ -1599,25 +1642,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
+> -
+> -	emc->clk = devm_clk_get(&pdev->dev, "emc");
+> -	if (IS_ERR(emc->clk)) {
+> -		err = PTR_ERR(emc->clk);
+> -		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
+> -		goto unset_cb;
+> -	}
+> -
+> -	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+> -	if (err) {
+> -		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
+> -			err);
+> -		goto unset_cb;
+> -	}
+> +	err = tegra_emc_init_clk(emc);
+> +	if (err)
+> +		return err;
+>  
+>  	err = tegra_emc_opp_table_init(emc);
+>  	if (err)
+> -		goto unreg_notifier;
+> +		return err;
+>  
+>  	platform_set_drvdata(pdev, emc);
+>  	tegra_emc_rate_requests_init(emc);
+> @@ -1632,13 +1663,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+>  	try_module_get(THIS_MODULE);
+>  
+>  	return 0;
+> -
+> -unreg_notifier:
+> -	clk_notifier_unregister(emc->clk, &emc->clk_nb);
 
-The rationale is that the check is already performed by
-dev_pm_opp_of_add_table() and it isn't going to add *any* benefit to
-check it again here. Such a check for matching compatible platforms is
-normally fine, but not for this. This is like open coding part of
-dev_pm_opp_of_add_table(), and so is redundant. The
-dev_pm_opp_of_add_table() helper also checks for OPPv1 bindings in the
-DT (yes you won't be using them on your platform) and so relying on
-that API is a better thing to do.
+You added this code in patch #8, so adding-and-removing a piece of code
+is a nice hint that this patch should be before. Don't add new code
+which later you simplify. Move all bugfixes and all simplifications to
+beginning of patchset.
 
-As you already said, you just wanted a better print message and so you
-have added this check. If you really care only about the print
-message, then you can add a print of your choice in the driver but
-otherwise this check is not going to benefit you much I am afraid.
+That's quite similar case to v6 where you put bugfixes in the middle
+of patchset.
 
-Having said that, this isn't the code I maintain. I need to guarantee
-that the OPP core APIs are used properly and are not misused and so I
-have a higher say there. But in this case all I can do is _suggest_
-and not enforce. And as I said earlier, I suggest to drop this
-redundant check in order to make your code better and faster.
-
-Thanks.
-
--- 
-viresh
+Best regards,
+Krzysztof
