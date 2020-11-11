@@ -2,92 +2,213 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59962C388F9
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD320C56202
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6D742063A
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 10:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885D32074B
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 11:39:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Tpi31tAi"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eHuOUIaS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725959AbgKKKmW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 05:42:22 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3844 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgKKKmV (ORCPT
+        id S1726316AbgKKLjG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 06:39:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgKKLjC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 05:42:21 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fabc0080000>; Wed, 11 Nov 2020 02:42:16 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Nov
- 2020 10:42:21 +0000
-Received: from moonraker.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Wed, 11 Nov 2020 10:42:19 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH] ARM64: tegra: Correct the UART for Jetson Xavier NX
-Date:   Wed, 11 Nov 2020 10:41:17 +0000
-Message-ID: <20201111104117.153020-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 11 Nov 2020 06:39:02 -0500
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8B7C0617A6
+        for <linux-tegra@vger.kernel.org>; Wed, 11 Nov 2020 03:39:01 -0800 (PST)
+Received: by mail-vs1-xe44.google.com with SMTP id u24so959705vsl.9
+        for <linux-tegra@vger.kernel.org>; Wed, 11 Nov 2020 03:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=T0V5oiWQkvHXwmhtDU+OoF9iMxPj6y0LTly2Lqt4DuE=;
+        b=eHuOUIaS6IQ/Oqu0OgOBN3unkL3XIi+Fk4dITGJA16P8o+NlqUHYybky26m5NVdFR3
+         nEj77IcCvuVVn+06U+bT8lGz7uajjKyyW7FwNmgKPtbnVhkVbc/cbaQN9K5iNZEDqwN8
+         nVQaDyp75O3xA21xpf2HF2/4nmB5ZZWZ4qIBAUAFOV005XJOvP7dFdsSa13fRian8kWs
+         nlTaeO+OWJaahsba2PoUYHfcaaNFyOAgkVI/2smnCnTClDA1XqlICigzABWFlOngodfE
+         4zfFtHsuUV8spOrU42OjsyzgiiWT7pqurb12j6T+fkPcno/GvbG0zKznsHZsamzHUppY
+         mnLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=T0V5oiWQkvHXwmhtDU+OoF9iMxPj6y0LTly2Lqt4DuE=;
+        b=Wc6O8+b6S8SkHs1k1ql544aK+uaKEdMMRRjPvzregp2k6YMhoC6MGXNWTEfavB02JZ
+         oF0C8RHs6z5YeByYGAWzMAixONKFgUgcKxA21sb3V6r03M6eyiYBqnfqKG1g394Az+lC
+         J9TQjreDhjxV8xb43V+mFy0OKSM1Rrf7B+vXricp3hBz2E+c28zPBs+qj5mb1ybrv6m1
+         AVBPrFd8P7F+Gk7yCERHaAJbSUySlgzfmtkXTMykDeIitO7tdhrwRykNvoo5DRyaOz3n
+         Z7j+RrSKn5NzHw+t6Jf8MlEeQ11hKOT92AWlvOyamLfDDHEU0FectRJNw26hgSvHXVbd
+         WCUA==
+X-Gm-Message-State: AOAM532C66nOSBYrt3jJEObwrXZO0nRJUnz3sb32V9IUBz3Gejn1f/en
+        sww7ZihSHHSc3B5Yqd7EY0VBwyqIWiu15QC5+K1SC5h5TUIrm1Ho
+X-Google-Smtp-Source: ABdhPJycXgZgkNrggh2D47nvGhRFVQi/de+PIfj6XhXa1n8Wfiv9NfQ9xufbyRB0WVwWMZQ6Ct+Whjrl/7D/IIfrgqM=
+X-Received: by 2002:a67:f417:: with SMTP id p23mr14435741vsn.42.1605094740774;
+ Wed, 11 Nov 2020 03:39:00 -0800 (PST)
 MIME-Version: 1.0
-X-NVConfidentiality: public
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <cd147ab0-1304-a491-7a56-ee6199c02d32@gmail.com> <2716c195-083a-112f-f1e5-2f6b7152a4b5@gmail.com>
+In-Reply-To: <2716c195-083a-112f-f1e5-2f6b7152a4b5@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Nov 2020 12:38:23 +0100
+Message-ID: <CAPDyKFqUMsH9dCZ=OYqfdLt==+-8NjK9n=S5jGGNXZu6Y9q=2w@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605091336; bh=r4fMM7xgP6lLcIwOOTHqiwhWzQEK5LAvY225pbt0k64=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
-        b=Tpi31tAieoFTOX5KYcUukdtvJxIh5HVaV65segZ4VhUt7uqyIBHY1kw3UvR35Ga5o
-         QVfzyjJeYXyS2kKdraTTvqWviN0jD7IMK4Ad5KdiPZMJgRTBDSjL0YCKmEctnP1k+4
-         b/6ez6bXNeKCUPr2qDjC5++q8ZakSSY6kLbsudQ9T1odVzG6/e5awI8ZTxnx8V/u0j
-         OdMDIspRq1xMXmFr5V+1vEdsYdJ0rKpHXWzeq5VqGXj6CqCakhzjjrU9ePSAziT5q+
-         tEaLym9e2dqPRRzQSy6pKfSWTwuUbONlLWKQc/DQoGaMIky4tenuJrpc4f+fvavRes
-         yTi7ETedLwo4w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The Jetson Xavier NX board routes UARTA to the 40-pin header and UARTC
-to a 12-pin debug header. The UARTs can be used by either the Tegra
-Combined UART (TCU) driver or the Tegra 8250 driver. By default, the
-TCU will use UARTC on Jetson Xavier NX. Currently, device-tree for
-Xavier NX enables the TCU and the Tegra 8250 node for UARTC. Fix this
-by disabling the Tegra 8250 node for UARTC and enabling the Tegra 8250
-node for UARTA.
+On Sun, 8 Nov 2020 at 13:19, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 05.11.2020 18:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 05.11.2020 12:45, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > ...
+> >> I need some more time to review this, but just a quick check found a
+> >> few potential issues...
+> >
+> > Thank you for starting the review! I'm pretty sure it will take a coupl=
+e
+> > revisions until all the questions will be resolved :)
+> >
+> >> The "core-supply", that you specify as a regulator for each
+> >> controller's device node, is not the way we describe power domains.
+> >> Instead, it seems like you should register a power-domain provider
+> >> (with the help of genpd) and implement the ->set_performance_state()
+> >> callback for it. Each device node should then be hooked up to this
+> >> power-domain, rather than to a "core-supply". For DT bindings, please
+> >> have a look at Documentation/devicetree/bindings/power/power-domain.ya=
+ml
+> >> and Documentation/devicetree/bindings/power/power_domain.txt.
+> >>
+> >> In regards to the "sync state" problem (preventing to change
+> >> performance states until all consumers have been attached), this can
+> >> then be managed by the genpd provider driver instead.
+> >
+> > I'll need to take a closer look at GENPD, thank you for the suggestion.
+> >
+> > Sounds like a software GENPD driver which manages clocks and voltages
+> > could be a good idea, but it also could be an unnecessary
+> > over-engineering. Let's see..
+> >
+>
+> Hello Ulf and all,
+>
+> I took a detailed look at the GENPD and tried to implement it. Here is
+> what was found:
+>
+> 1. GENPD framework doesn't aggregate performance requests from the
+> attached devices. This means that if deviceA requests performance state
+> 10 and then deviceB requests state 3, then framework will set domain's
+> state to 3 instead of 10.
+>
+> https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/base/power/doma=
+in.c#L376
 
-Fixes: 3f9efbbe57bc ("arm64: tegra: Add support for Jetson Xavier NX")
-Cc: stable@vger.kernel.org
+As Viresh also stated, genpd does aggregate the votes. It even
+performs aggregation hierarchy (a genpd is allowed to have parent(s)
+to model a topology).
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> 2. GENPD framework has a sync() callback in the genpd.domain structure,
+> but this callback isn't allowed to be used by the GENPD implementation.
+> The GENPD framework always overrides that callback for its own needs.
+> Hence GENPD doesn't allow to solve the bootstrapping
+> state-synchronization problem in a nice way.
+>
+> https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/base/power/doma=
+in.c#L2606
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi b/arch/arm=
-64/boot/dts/nvidia/tegra194-p3668-0000.dtsi
-index a2893be80507..0dc8304a2edd 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi
-@@ -54,7 +54,7 @@ memory-controller@2c00000 {
- 			status =3D "okay";
- 		};
-=20
--		serial@c280000 {
-+		serial@3100000 {
- 			status =3D "okay";
- 		};
-=20
---=20
-2.25.1
+That ->sync() callback isn't the callback you are looking for, it's a
+PM domain specific callback - and has other purposes.
 
+To solve the problem you refer to, your genpd provider driver (a
+platform driver) should assign its ->sync_state() callback. The
+->sync_state() callback will be invoked, when all consumer devices
+have been attached (and probed) to their corresponding provider.
+
+You may have a look at drivers/cpuidle/cpuidle-psci-domain.c, to see
+an example of how this works. If there is anything unclear, just tell
+me and I will try to help.
+
+>
+> 3. Tegra doesn't have a dedicated hardware power-controller for the core
+> domain, instead there is only an external voltage regulator. Hence we
+> will need to create a phony device-tree node for the virtual power
+> domain, which is probably a wrong thing to do.
+
+No, this is absolutely the correct thing to do.
+
+This isn't a virtual power domain, it's a real power domain. You only
+happen to model the control of it as a regulator, as it fits nicely
+with that for *this* SoC. Don't get me wrong, that's fine as long as
+the supply is specified only in the power-domain provider node.
+
+On another SoC, you might have a different FW interface for the power
+domain provider that doesn't fit well with the regulator. When that
+happens, all you need to do is to implement a new power domain
+provider and potentially re-define the power domain topology. More
+importantly, you don't need to re-invent yet another slew of device
+specific bindings - for each SoC.
+
+>
+> =3D=3D=3D
+>
+> Perhaps it should be possible to create some hacks to work around
+> bullets 2 and 3 in order to achieve what we need for DVFS on Tegra, but
+> bullet 1 isn't solvable without changing how the GENPD core works.
+>
+> Altogether, the GENPD in its current form is a wrong abstraction for a
+> system-wide DVFS in a case where multiple devices share power domain and
+> this domain is a voltage regulator. The regulator framework is the
+> correct abstraction in this case for today.
+
+Well, I admit it's a bit complex. But it solves the problem in a
+nicely abstracted way that should work for everybody, at least in my
+opinion.
+
+Although, let's not exclude that there are pieces missing in genpd or
+the opp layer, as this DVFS feature is rather new - but then we should
+just extend/fix it.
+
+Kind regards
+Uffe
