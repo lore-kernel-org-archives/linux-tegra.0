@@ -2,65 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BBFC388F9
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 05:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E89BC388F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 06:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DFD2075A
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 05:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C01A220797
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 06:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X8GTCLnV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u3C6K+j1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbgKKFyF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 00:54:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36062 "EHLO
+        id S1725895AbgKKGOq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 01:14:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbgKKFyF (ORCPT
+        with ESMTP id S1725468AbgKKGOq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 00:54:05 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1DBC0613D1
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 21:54:03 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id z3so939923pfb.10
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2020 21:54:03 -0800 (PST)
+        Wed, 11 Nov 2020 01:14:46 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8971EC0613D1;
+        Tue, 10 Nov 2020 22:14:44 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id e27so1621827lfn.7;
+        Tue, 10 Nov 2020 22:14:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z9P2/0O75mWnsAx8oZbLnThzZUiIC3AEplGBmhCEgMc=;
-        b=X8GTCLnVhPTHspNJxX3km3UYVp4nyC6BpfIOKE/DdY+uRQjvemgYnXh8VFokLkJrAS
-         ZqtHrunQPVA9pFblN+6OYjTpS27k+3qzxsRuUbq4xgpRKXK+MQAEhjzLGXROppqWR9D0
-         5jdgnPnuQCRevLav+EcdMJ4IWzhFftP3TpovBCaNjMjTSrs7yC7Sk5VEVbDt+MzoCUXt
-         D6rESQcjx+u3Y2fMR5OPaJ2B4YTZ8PyAUAjs5NFDAJZU5Qrvtoa6xjdZuBPIoyggPRl9
-         JHkOBKUfFnzo79XoomjoJgY7H3V/Q9sVxWPcTdq+Nyv3t8MJb6qbybYDXvP5J6cgEFKD
-         XKQA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lEYEjKzJU66Ij93I8jWPRFuo7Pd1or5OxSnq43v1nCk=;
+        b=u3C6K+j11FR9CFXaV+VOXGecYwd6QzEZya9r+zI3shRFCtNk2YKCxN+0npZuwEIP5C
+         y824Nl/hx8yxsqA1zs7NdnQQ4rjDBNU4CDXEzxLFmOIjQEHkbFj0vh08mhIAruNoNkjO
+         JSe6AuXggENBuikW7sMzMCwIVyV9mtMmIloNPUUfztbhK64OEhp8qhVFjdBPfwSDtzv0
+         CFx1SNiEriNpMPICEFaLSNdvh/j6gevGUy5KZA5Itd0a6X6GNXIcEkEO8JXVXlPkWTEo
+         pjW2AYh/fOcg+V51KLFlt9rZc091RaXAK5VssQMSItVKHd9NLTURjirC8byG1kwfQB4c
+         hgCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z9P2/0O75mWnsAx8oZbLnThzZUiIC3AEplGBmhCEgMc=;
-        b=SKp8zFhs46SSOA6V20wHSD2SyoNWJELw5zHTY6oMbF4LTmPMEBkUgVONtEwWAApCB+
-         dFAmJIoGrlFITHhEgHys202bqJeu5RfFjQHmABaAkk7ve6sTdXnSlGmhwAbSPhICX5Q8
-         1iikDF4Qr3zF2iEl0r52D+I4XQGzUARKtF0DaCWWiyr5wfeSyA7kkeNdvk/bNaBiQplh
-         g/eogzuAZDMctQGLVXuhewBYm0/Ygywe16bnHmTmR+/gUTywvWOyXLXiBpo6zLlXYump
-         2XIl8XeQjGjyGpZfdQY+V6oV/STp11zfnTCEpgz6oA0/5hd4Yl0yQS1QFp4kkT/asFHx
-         yrRw==
-X-Gm-Message-State: AOAM5326ONcXMI/NLpUkZi4y8E6iF8szUZogpHwZMWr2ZAMsdtMxDfp+
-        2RGYy7NdXCagNsbUBbHmlRztrQ==
-X-Google-Smtp-Source: ABdhPJzCesDnaFKRgNtLIoN64pjuJ7aVVMAE9U+58KC8+aSCcNQm9J/waPMH5YmalfzWdRrq03fmZw==
-X-Received: by 2002:a62:7883:0:b029:18a:e054:edf1 with SMTP id t125-20020a6278830000b029018ae054edf1mr21361245pfc.70.1605074042985;
-        Tue, 10 Nov 2020 21:54:02 -0800 (PST)
-Received: from localhost ([122.172.12.172])
-        by smtp.gmail.com with ESMTPSA id p4sm909594pjo.6.2020.11.10.21.54.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Nov 2020 21:54:02 -0800 (PST)
-Date:   Wed, 11 Nov 2020 11:24:00 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lEYEjKzJU66Ij93I8jWPRFuo7Pd1or5OxSnq43v1nCk=;
+        b=aDAWuX5F5ejlDA2d7EN7Ygm2Dk8aEgUVnLPN4kjzIBiDwBwgMrpja6n1iAIJtYyHNj
+         CmLxc/5NkAY3tnp7RKh4nkFFXOU7SyIRzD0JMv8rt75+K18ji00OUV0LABg00hKqxOWB
+         s3hqC+ylzq138cKWnBD/F5P38sn9z9tIrS6hyP+f/1Nh7YNqoWwq15I65ZwIMjGVH5qE
+         gRZM9KkrM44+2pTZhWCj/yUcKGecadCj9Pqi7vtNXuuCrGJ2ArPGbTVYRaC1G5F1c5Tk
+         qOexjEo+WmZKLZ0WhhZHEzDNfyBLG3batB0t4jQ5e88fJRtwOgvSfy+vWFidpgHE+WOZ
+         1gKA==
+X-Gm-Message-State: AOAM532FSqu5iPQNuFHE0Rp6EWHqho+3Zm8yFABuoWgd1Z7V8a0FWF1k
+        3QrpZlhkHT6iMAylFtwq0WA=
+X-Google-Smtp-Source: ABdhPJzLehGf18xxtBKtRyrfI/6NG1g3yu2AS/fS5MEUZSbxrjK+f66FKyA/QSbiAyVs+WiZ9diPdA==
+X-Received: by 2002:a19:8854:: with SMTP id k81mr2400616lfd.195.1605075283102;
+        Tue, 10 Nov 2020 22:14:43 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id s5sm121375lfd.58.2020.11.10.22.14.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Nov 2020 22:14:42 -0800 (PST)
+Subject: Re: [PATCH v8 09/26] memory: tegra30: Support interconnect framework
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Georgi Djakov <georgi.djakov@linaro.org>,
@@ -78,69 +78,40 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v8 02/26] memory: tegra20-emc: Use
- dev_pm_opp_set_clkname()
-Message-ID: <20201111055400.7lnooqnxo3yy4gif@vireshk-i7>
 References: <20201111011456.7875-1-digetx@gmail.com>
- <20201111011456.7875-3-digetx@gmail.com>
- <20201111054541.hstqrlvtpwxxbv4m@vireshk-i7>
+ <20201111011456.7875-10-digetx@gmail.com>
+ <20201111055313.tefidnmc7f4yb3jk@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <185e9140-fdce-29ef-68c3-aa7da02b249d@gmail.com>
+Date:   Wed, 11 Nov 2020 09:14:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201111054541.hstqrlvtpwxxbv4m@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201111055313.tefidnmc7f4yb3jk@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 11-11-20, 11:15, Viresh Kumar wrote:
-> On 11-11-20, 04:14, Dmitry Osipenko wrote:
-> > The dev_pm_opp_get_opp_table() shouldn't be used by drivers, use
-> > dev_pm_opp_set_clkname() instead.
-> > 
-> > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/memory/tegra/tegra20-emc.c | 30 +++++++++++++++++++-----------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-> > index 5e10aa97809f..bb3f315c9587 100644
-> > --- a/drivers/memory/tegra/tegra20-emc.c
-> > +++ b/drivers/memory/tegra/tegra20-emc.c
-> > @@ -902,7 +902,7 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
-> >  
-> >  static int tegra_emc_opp_table_init(struct tegra_emc *emc)
-> >  {
-> > -	struct opp_table *opp_table;
-> > +	struct opp_table *reg_opp_table = NULL, *clk_opp_table;
-> >  	const char *rname = "core";
-> >  	int err;
-> >  
-> > @@ -917,19 +917,24 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
-> >  	}
-> >  
-> >  	/* voltage scaling is optional */
-> > -	if (device_property_present(emc->dev, "core-supply"))
-> > -		opp_table = dev_pm_opp_set_regulators(emc->dev, &rname, 1);
-> > -	else
-> > -		opp_table = dev_pm_opp_get_opp_table(emc->dev);
-> > +	if (device_property_present(emc->dev, "core-supply")) {
-> > +		reg_opp_table = dev_pm_opp_set_regulators(emc->dev, &rname, 1);
-> > +		if (IS_ERR(reg_opp_table))
-> > +			return dev_err_probe(emc->dev, PTR_ERR(reg_opp_table),
-> > +					     "failed to set OPP regulator\n");
-> > +	}
-> >  
-> > -	if (IS_ERR(opp_table))
-> > -		return dev_err_probe(emc->dev, PTR_ERR(opp_table),
-> > -				     "failed to prepare OPP table\n");
-> > +	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
-> > +	err = PTR_ERR_OR_ZERO(clk_opp_table);
+11.11.2020 08:53, Viresh Kumar пишет:
+>> +static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+>> +{
+>> +	struct opp_table *reg_opp_table = NULL, *clk_opp_table, *hw_opp_table;
+>> +	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+>> +	const char *rname = "core";
+>> +	int err;
+>> +
+>> +	/*
+>> +	 * Legacy device-trees don't have OPP table and EMC driver isn't
+>> +	 * useful in this case.
+>> +	 */
+>> +	if (!device_property_present(emc->dev, "operating-points-v2")) {
+> I don't understand why you want to check this ? The below call to
+> dev_pm_opp_of_add_table() will fail anyway and that should be good for
+> you.
 > 
-> Don't check for NULL here.
 
-My bad. You aren't checking but just converting to err. Its fine.
-
--- 
-viresh
+The dev_pm_opp_of_add_table() will produce a error message which doesn't
+give a clue about what's wrong, i.e. that device-tree needs to be updated.
