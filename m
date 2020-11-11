@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FE1C388F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE716C55ABD
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3DCA221F1
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F991221F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 01:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrJAgroa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcfAfEc6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732651AbgKKBPS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 10 Nov 2020 20:15:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48708 "EHLO
+        id S1732737AbgKKBP2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 10 Nov 2020 20:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732618AbgKKBPR (ORCPT
+        with ESMTP id S1732668AbgKKBP2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:15:17 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B411C0613D1;
-        Tue, 10 Nov 2020 17:15:15 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id c17so698690wrc.11;
-        Tue, 10 Nov 2020 17:15:15 -0800 (PST)
+        Tue, 10 Nov 2020 20:15:28 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944CBC0613D1;
+        Tue, 10 Nov 2020 17:15:27 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id 33so732280wrl.7;
+        Tue, 10 Nov 2020 17:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TaEGNlagm12rE9D/Wwm7i6p9QUikpwKV1tx7Tt13Q1s=;
-        b=FrJAgroaw87i4Fom8Zp2mStkjQuZklEi5B+Wzm5MqgQs7TVYDTSIIBbx8YrnX5gn9n
-         W19VdWJ0NghMs3ldUZhf94DBe38JAZUnfdV/pLY8AOQuEwaVhsdF0UuJuYNCjwLEdgLX
-         VVEGnqNad6r0IrG6A1QTL+HKoEecxVT2nzEQToOLfEQqAbjVfaslUJVXmaNUzmGhe0Yi
-         gJNqGxwCepBRYKLMDSOCI/vnrn4PCJgoWmKxUWaLwFcVaPEElizMhsDJoI9USkQtsA/v
-         dV2C5+G4V2FXfZX5+cubMaFSkDDQXMFebzF1s2ykwGJKfIJcZ6kELhT1SfE4K7VPcSdo
-         hcBw==
+        bh=tGnE/w0793PmiZunMZUFRQQsSOAX6VpoE5tQ0qL0TNQ=;
+        b=CcfAfEc6Wxuq43NPB2gcWjtzwD+rbTxfWxHbeLec/lZwZ6dFPoXjmeEUgLjljQgcld
+         8bVDr2hyPhV0gPawzmCUcXpu5S1kfmWxH0asby0EFWuIEvCGEIWJH0Fhyg66gyRTdZVh
+         QoDQo7/B8uOk3Ag8f5qy05A0PJa7Xj3rv7xDKjTcwC68fYmEhbnd+s/XpaMfFWtqb+Pl
+         +6VLSz3am4vwEWBFThAUB2PPFLh8DnT4pMDBmJl3eRlLSiAhHxWaxZZAtuv50i8MBKxf
+         g3j7DQA8P/hivATvNN7WiIbLK6ZOjG00myzY8WtM134yExNprTRQQQsid2x2eCZv3FLk
+         tDSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TaEGNlagm12rE9D/Wwm7i6p9QUikpwKV1tx7Tt13Q1s=;
-        b=sBAkMrLOlaNcpUcSbl7fYCIlS63GC83zzX3YkcyuS8BCLOs8dN5AMLIcIqfC+hfZuw
-         qmq1+Rd3Hj26H+k3uHOS5y1M9kO3ScD2XgfweVe/gzlE8cNr1sMop7GuYtC0P6KpGtGe
-         8bT3aAYnYUo/sozPLeCS44vOvKJ8jrftpJxBfDVSgzSdsFT4NirnfzVYHSUotnEkUbhy
-         pBOJ+uK6PWt42U9au0S8ztm4D8dIED/5VvsvkJIen7/WMaFJWdqjpBDlmmgZS2DWUvnP
-         z9djFbP2MFWsqclhOItalMeKb2sCVGdxOyNcuvPId9V0Y8Tfn/IKEXCONyJBat8Z7tfV
-         ZLxA==
-X-Gm-Message-State: AOAM5315meWRk8hclNLb+efNEGLEmU5aBp3ILyxXl9GyG/SQYX3L637l
-        CSJ6iO201JW1grHv4VxGBlA=
-X-Google-Smtp-Source: ABdhPJz6ljHmxkfhc3SNdcEVqNIvy7oRVDOWk6rMWdNFVJu/Q0bDA/QujtchGwgSZQUeFOX3HhhX3g==
-X-Received: by 2002:a5d:4e48:: with SMTP id r8mr25595932wrt.141.1605057313860;
-        Tue, 10 Nov 2020 17:15:13 -0800 (PST)
+        bh=tGnE/w0793PmiZunMZUFRQQsSOAX6VpoE5tQ0qL0TNQ=;
+        b=J2F/wJphY5rOooEcPqQmU94Yncif4cQgexsb9fo/1ZDhmRTQSb4iGmVaRlebZkKJBu
+         J4iXNeSLnyc6RJHQ1YSssXb8equzV0HItrg6PT7/sWeseu8IgsopUguj678qAjNrNk23
+         x/y5zNQj2qobVykr5O/JiCyUxU0IdypnXs6mPk0fKO3w+UEpIIwN6GzwsdI2aDQOKdIs
+         bbOx5vYSAu9QzMs4Ym15ClwRgBlqz3JavOqLulB1ZUKRfguclkAR10giEsdXd+TkNITt
+         oCOW6+SUgAsLfE6aBVfcc1r70x6fdjXuHVwDE1WePzw2N+Nyi4K1Pg8RngQDJPtbGVli
+         x9aA==
+X-Gm-Message-State: AOAM531gZ+cImgW1/XEaiHtZh+G0FdgxcKoBiRap6fhBZoK8fNw44UD1
+        8yal7OXfD3WmV2DmievhHzQ=
+X-Google-Smtp-Source: ABdhPJxT2Qem7xK8FMBf7L9oqeIzo9kSbIvbZEskaZoYi7GPZRzXLlBpaEcV3CmGbBmP3438ikSLUQ==
+X-Received: by 2002:adf:ecc9:: with SMTP id s9mr24606051wro.246.1605057326400;
+        Tue, 10 Nov 2020 17:15:26 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.12
+        by smtp.gmail.com with ESMTPSA id g131sm564329wma.35.2020.11.10.17.15.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 17:15:13 -0800 (PST)
+        Tue, 10 Nov 2020 17:15:25 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v8 03/26] memory: tegra20-emc: Factor out clk initialization
-Date:   Wed, 11 Nov 2020 04:14:33 +0300
-Message-Id: <20201111011456.7875-4-digetx@gmail.com>
+Subject: [PATCH v8 10/26] memory: tegra30-emc: Factor out clk initialization
+Date:   Wed, 11 Nov 2020 04:14:40 +0300
+Message-Id: <20201111011456.7875-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201111011456.7875-1-digetx@gmail.com>
 References: <20201111011456.7875-1-digetx@gmail.com>
@@ -94,14 +94,14 @@ easier to follow code and will help to make further changes cleaner.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 70 ++++++++++++++++++++----------
+ drivers/memory/tegra/tegra30-emc.c | 70 ++++++++++++++++++++----------
  1 file changed, 47 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index bb3f315c9587..d01b556a6d06 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -960,6 +960,49 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index d27df842a667..1df42e212d73 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1550,6 +1550,49 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
  	return err;
  }
  
@@ -151,7 +151,7 @@ index bb3f315c9587..d01b556a6d06 100644
  static int tegra_emc_probe(struct platform_device *pdev)
  {
  	struct device_node *np;
-@@ -1003,25 +1046,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
+@@ -1599,25 +1642,13 @@ static int tegra_emc_probe(struct platform_device *pdev)
  		return err;
  	}
  
@@ -181,7 +181,7 @@ index bb3f315c9587..d01b556a6d06 100644
  
  	platform_set_drvdata(pdev, emc);
  	tegra_emc_rate_requests_init(emc);
-@@ -1036,13 +1067,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+@@ -1632,13 +1663,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
  	try_module_get(THIS_MODULE);
  
  	return 0;
@@ -194,7 +194,7 @@ index bb3f315c9587..d01b556a6d06 100644
 -	return err;
  }
  
- static const struct of_device_id tegra_emc_of_match[] = {
+ static int tegra_emc_suspend(struct device *dev)
 -- 
 2.29.2
 
