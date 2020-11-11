@@ -2,78 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E0BC61DD8
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 13:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F028FC5517A
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 14:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE60E20756
-	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 13:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC7F2074B
+	for <linux-tegra@archiver.kernel.org>; Wed, 11 Nov 2020 14:08:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZQkLQM8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9cD5jln"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbgKKNsJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 11 Nov 2020 08:48:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56100 "EHLO
+        id S1727135AbgKKOIO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 11 Nov 2020 09:08:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbgKKNrd (ORCPT
+        with ESMTP id S1727123AbgKKOIL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 11 Nov 2020 08:47:33 -0500
+        Wed, 11 Nov 2020 09:08:11 -0500
 Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D071C0613D1;
-        Wed, 11 Nov 2020 05:47:31 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id v144so3157593lfa.13;
-        Wed, 11 Nov 2020 05:47:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE4EC0613D1;
+        Wed, 11 Nov 2020 06:08:11 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id a9so2311518lfh.2;
+        Wed, 11 Nov 2020 06:08:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YBHMNmAOhYdHvBHjnStemujfpU3IXRUzuSHXrC3Zax0=;
-        b=ZZQkLQM8NNjkbIRP3s5mXJa/90H1xB+lYkX/FspeQruHDmbVRV32zpRoG5PJB4T5Ji
-         Mb9l+3zYUIWpTm4DQfWkVsVvA8qHcYG3L8t0x88ydanm8ljeX+69uR4szGvVc+fLJBuu
-         dZ0yDkM4q3jgjaStXdPuQIq5unESa/+e8OevoKIA4MCsc4MpPFaxDg94R5y2lABk/dFe
-         pw3JWoTP9f9xXO8JW3le5NeP6K5dvvmdPh6x77yoTaqVxQ053ldLOoQlvlH/PGi16xgn
-         RGlEtHpgKrbgCjfvzmc/cQDOXsoEHTAlSCU9rF2ubcvUKJZgZYcL06GDY3yG0qC+KQyY
-         BqAQ==
+        bh=LHvXV2kmqfCvFfKCOYzmtXPEAteV60xqIVKGiujdMpY=;
+        b=U9cD5jlnZqzk6ZCMmI2ELj+L2+qxFbClK/3/2fRC5UhG+8kSOaSIhEDeImnrtZ442B
+         4ehc0ZUi0WycwJd6FABCVOSUmCQIQJvaTRz3nTFEKZzMEy/GQVxE/teL37gy2EmbsnDY
+         TLoaD4KbOM1SvFQdmTdpPhb1AJF21ZfAHLLQdLQmDZGXKVdKIqYkPN8kdsy0/rt0DCqi
+         Ttv7PT+23g5FO7QLZPv8e8B5p/I38/sTTEFmOI9MddGrCIUJDDtc4x36pJ3XzktySr5F
+         TSj8SkePimEGsCznB1AcTSHmkxBEabttgzce3OGZsGXN/v7vcmZTcyDNTmGVbnFaWRG1
+         hIpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YBHMNmAOhYdHvBHjnStemujfpU3IXRUzuSHXrC3Zax0=;
-        b=MKSUhNBpCUDgOFYRFN3S5dG7LyXZznQZ29tlha3/iSC5TyFPHyvTE1unCxRA575KZ/
-         o4rWDzeEi2FLDQHJtry7tLyJL95pFAlEy/0/IKpNM81Ucj7Z0fDfIcqhIRdrWsEgwFRn
-         SGcYKPT/EAmUBucZpTHPqqlCIIAQL7KKTlGJn2IIfVdxbb6FV/wTwP+99snLLccNKmBV
-         EHm2745m7txfNOc0dzmt9m2dbQqD+QdtDsqU0leQoBrCpharC224Rpc2XRqTajvUVCBH
-         RuSjnW8w1a9lYXflQ/KamHN7Z8C9jBl5b10ObfQA/KbM0Iixl9xHBqpG7uuVb9BzjjmV
-         LAqw==
-X-Gm-Message-State: AOAM531NLWLUpKrzAioB6ulEbtXHLATMFF30Q08Hd4C/IYBrGwG1uS5H
-        Y4+Hs/doHyxGsx4lkQNHVlEioZcBtis=
-X-Google-Smtp-Source: ABdhPJz1/b/zPAQ3KPPZ/x+HTmaWiJjAvrsEWiPZes7SQg69AfTivBIpYr5HUtTo/l2OpD232Rt3gg==
-X-Received: by 2002:ac2:57c7:: with SMTP id k7mr10005249lfo.20.1605102449554;
-        Wed, 11 Nov 2020 05:47:29 -0800 (PST)
+        bh=LHvXV2kmqfCvFfKCOYzmtXPEAteV60xqIVKGiujdMpY=;
+        b=PKZd6GC1N/RAgnlmGVLiQnv6nPUNL7d2bptOm8gCUIHpumFA4384WcZ1GmbK+OHl9M
+         5b+NXXkGPSSwCaGrusdyHDU/wWV0OjS3blzABHNbxP7VAVXjgr0n5vDekulU5aTdM1Ld
+         mD/345TuY2G78oU0EcGu+4q8Eug3AmJ3Zmhm8EkeynSuUSqqr9VCmzQ7KhExbZc3PKJG
+         K5c5sEVcUajDCvafgGLuUiiOyQ4kUjb16GR3ywFVWTzItSt3Pq/wtPXESoRIZWKZwCMN
+         /RYWvoFpnFoChGxifqs9ZG+ZZYYcT04xMNBHYR/QMXXVdoTpk8FY4oPr4xvysBiB0Xj6
+         ueow==
+X-Gm-Message-State: AOAM532cce6rr6CIMYXAd3MsN6PASIgmlDGuTFMkYhEr3FJhQK9hMQz/
+        DWkEFWCu7UzyVrHMcSQrRxA=
+X-Google-Smtp-Source: ABdhPJyJuXZQ+wqXZ67sRla82+eaC3FA04CxCwIzaymyQabbK1aGONYj5LMmAEiiozxq/aRiBW7laA==
+X-Received: by 2002:a19:6551:: with SMTP id c17mr5471726lfj.46.1605103689744;
+        Wed, 11 Nov 2020 06:08:09 -0800 (PST)
 Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id 16sm223765lfk.186.2020.11.11.05.47.28
+        by smtp.googlemail.com with ESMTPSA id 136sm232266lfb.62.2020.11.11.06.08.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 05:47:28 -0800 (PST)
-Subject: Re: [PATCH] ARM: tegra: Populate OPP table for Tegra20 Ventana
-To:     Jon Hunter <jonathanh@nvidia.com>,
+        Wed, 11 Nov 2020 06:08:08 -0800 (PST)
+Subject: Re: [PATCH v8 09/26] memory: tegra30: Support interconnect framework
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20201111103847.152721-1-jonathanh@nvidia.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201111011456.7875-1-digetx@gmail.com>
+ <20201111011456.7875-10-digetx@gmail.com>
+ <20201111055313.tefidnmc7f4yb3jk@vireshk-i7>
+ <185e9140-fdce-29ef-68c3-aa7da02b249d@gmail.com>
+ <20201111061855.2azilyhfoxwzpoir@vireshk-i7>
+ <7f5c15c6-44d2-c997-442c-8f6670794f0e@gmail.com>
+ <20201111075402.y52c2zwcw74eeyko@vireshk-i7>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7e40cd3e-7c34-c9a9-bf00-ba7d507a2d6b@gmail.com>
-Date:   Wed, 11 Nov 2020 16:47:27 +0300
+Message-ID: <406ecffe-6df5-0fbf-b608-606372ed95dc@gmail.com>
+Date:   Wed, 11 Nov 2020 17:08:07 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20201111103847.152721-1-jonathanh@nvidia.com>
+In-Reply-To: <20201111075402.y52c2zwcw74eeyko@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -81,61 +99,44 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.11.2020 13:38, Jon Hunter пишет:
-> Commit 9ce274630495 ("cpufreq: tegra20: Use generic cpufreq-dt driver
-> (Tegra30 supported now)") update the Tegra20 CPUFREQ driver to use the
-> generic CPUFREQ device-tree driver. Since this change CPUFREQ support
-> on the Tegra20 Ventana platform has been broken because the necessary
-> device-tree nodes with the operating point information are not populated
-> for this platform. Fix this by updating device-tree for Venata to
-> include the operating point informration for Tegra20.
+11.11.2020 10:54, Viresh Kumar пишет:
+> On 11-11-20, 10:32, Dmitry Osipenko wrote:
+>> 11.11.2020 09:18, Viresh Kumar пишет:
+>>> On 11-11-20, 09:14, Dmitry Osipenko wrote:
+>>>> The dev_pm_opp_of_add_table() will produce a error message which doesn't
+>>>> give a clue about what's wrong, i.e. that device-tree needs to be updated.
+>>>
+>>> If you think that you need to print something more, then you can do
+>>> that in the error message you print when dev_pm_opp_of_add_table()
+>>> fails. I would suggest to drop this redundant check here.
+>>>
+>>
+>> Please give the rationale.
 > 
-> Fixes: 9ce274630495 ("cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported now)")
-> Cc: stable@vger.kernel.org
+> The rationale is that the check is already performed by
+> dev_pm_opp_of_add_table() and it isn't going to add *any* benefit to
+> check it again here. Such a check for matching compatible platforms is
+> normally fine, but not for this. This is like open coding part of
+> dev_pm_opp_of_add_table(), and so is redundant. The
+> dev_pm_opp_of_add_table() helper also checks for OPPv1 bindings in the
+> DT (yes you won't be using them on your platform) and so relying on
+> that API is a better thing to do.
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm/boot/dts/tegra20-ventana.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> As you already said, you just wanted a better print message and so you
+> have added this check. If you really care only about the print
+> message, then you can add a print of your choice in the driver but
+> otherwise this check is not going to benefit you much I am afraid.
 > 
-> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-> index b158771ac0b7..055334ae3d28 100644
-> --- a/arch/arm/boot/dts/tegra20-ventana.dts
-> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
-> @@ -3,6 +3,7 @@
->  
->  #include <dt-bindings/input/input.h>
->  #include "tegra20.dtsi"
-> +#include "tegra20-cpu-opp.dtsi"
->  
->  / {
->  	model = "NVIDIA Tegra20 Ventana evaluation board";
-> @@ -592,6 +593,16 @@ clk32k_in: clock@0 {
->  		#clock-cells = <0>;
->  	};
->  
-> +	cpus {
-> +		cpu0: cpu@0 {
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@1 {
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
-> +
->  	gpio-keys {
->  		compatible = "gpio-keys";
->  
+> Having said that, this isn't the code I maintain. I need to guarantee
+> that the OPP core APIs are used properly and are not misused and so I
+> have a higher say there. But in this case all I can do is _suggest_
+> and not enforce. And as I said earlier, I suggest to drop this
+> redundant check in order to make your code better and faster.
+> 
+> Thanks.
 > 
 
-This could be wrong to do because CPU voltage is fixed to 1000mV in
-Ventana's DT, are you sure that higher clock rates don't require higher
-voltages? What is the CPU process ID and SoC speedo ID on Ventana?
-
-You could easily hook up CPU voltage scaling, please see acer-500 DT and
-patch [1] for examples of how to set up regulators in DT. But then it
-shouldn't be a stable patch.
-
-[1]
-https://patchwork.ozlabs.org/project/linux-tegra/patch/20201104234427.26477-27-digetx@gmail.com/
+I took a closer look and turned out that devm_pm_opp_of_add_table()
+silently returns -ENODEV if OPP is missing in a DT. Hence indeed it
+should be good to drop the property-check. I'll improve it in the next
+revision, thank you.
