@@ -2,153 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D59C61DD8
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 17:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDCC2D0E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 18:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55F9D21556
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 17:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 310962223F
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 18:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xe2x5M1t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fr5l0fBA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbgKLRQT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 12:16:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbgKLRQS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 12:16:18 -0500
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 666A9216FD;
-        Thu, 12 Nov 2020 17:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605201377;
-        bh=lxI2SWRNu/vNMf3oMbzXFnq0SSD1w9QmvZ1Ujav1o8I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xe2x5M1t18yJCKwVuL2NfQxj5Wr2gJMA2Gdc1O2AMfcZWsfxd8by8nRE2Mgl14ITQ
-         YMJY1x709L8eGOFJ9b4e5+b+CEIDYbpiAtu37j1IxdZcUfsYJ+JNEDrtHsgeAnKobT
-         hNNMtYZLOBGU52c9s3omM5ptGSNIrsuMJAWqI3q4=
-Date:   Thu, 12 Nov 2020 17:16:00 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
- scaling
-Message-ID: <20201112171600.GD4742@sirena.org.uk>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-12-digetx@gmail.com>
- <20201110202945.GF2375022@ulmo>
- <20201110203257.GC5957@sirena.org.uk>
- <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
- <20201111115534.GA4847@sirena.org.uk>
- <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+        id S1726219AbgKLSfg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 13:35:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgKLSfg (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 12 Nov 2020 13:35:36 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5A9C0613D1
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 10:35:35 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id o24so7364376ljj.6
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 10:35:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=miIu13KxlSOBKHhTLoXa2WQbRM17FuJOoRdz4AkNItI=;
+        b=fr5l0fBAq2ZmeoxgV+JJ0kcApWaUf08Oml/ufjfvroOXOng1hAGXJ8QoJUr6kK1NWD
+         JtAg0c6r03I0AeN3xAYZ9+driV8BKfbzKasKnmZr7gd5RREdIvP1QRUIzVe8Isq+84JA
+         sukx9nHj+EB6o1gERkPJQEN/fBtIcYTB+LqKzcCXZDDUduQHyt8KE5Az/MO4DJacAVj3
+         eUgWptNjBAngAg67NqLTZlV39nvaN+Ow9S6EK1j03fiNYUqigSxvS81bVknHd9cZZ9Fu
+         R39M4uWekRUVWA9i58vTMBEpb3Nb+TFhFjLkcRxu0kSyXWranJZguS8oKgq90CoL3Vqg
+         rpVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=miIu13KxlSOBKHhTLoXa2WQbRM17FuJOoRdz4AkNItI=;
+        b=lpkWsSyRQD0DXhMj+oUAd8Q07WrjB1wTZ22X0/xg0eNAVX+DL+/QjeHeBt3JFnha0M
+         pmEnUL42Q8tR4qMf8ERodvgFPpRQIKS5z23Vy9gHhU8UpaFx9z1QMTwK5jzPS/3XMrJI
+         fjmUcmz+6kDI3bFS73ogc4vLy3FKokWZiayLKPRHhFHeDRx8BrrXcUNWsLkDV0Ig0MMq
+         sDftG9RcVlMvvV47awjhcQdrP5qorRjimZ7VlKAhJv6Pj6rxaiTxlYEK7GV1s/Di+CbP
+         kchGgNPhF5CwizDDeVPgrHSp9M1KwTAxE3LZvr6ZBU89VrzEElECSwKIxongi+odHgk/
+         EZyw==
+X-Gm-Message-State: AOAM533PSYSuOoPVKdZWK0TDkt6zEtmFGeMRprwbeUepHwv2oa86mxzX
+        c/mbgfg3rllLXzkvSz3a2HQ=
+X-Google-Smtp-Source: ABdhPJxvidQKpVH9KguGEtW2lNOcIPN6PI+8msmeYNakuq2X2PmLasc5jQ4UbxhPMnfF/riuT73D/g==
+X-Received: by 2002:a05:651c:1122:: with SMTP id e2mr335918ljo.317.1605206134426;
+        Thu, 12 Nov 2020 10:35:34 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id r9sm767192ljd.23.2020.11.12.10.35.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Nov 2020 10:35:33 -0800 (PST)
+Subject: Re: [PATCH v3 19/20] drm/tegra: Implement new UAPI
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com
+References: <20201007171238.1795964-1-mperttunen@nvidia.com>
+ <20201007171238.1795964-20-mperttunen@nvidia.com>
+ <dd13ec2c-1e01-ca61-656c-b23b156b100f@gmail.com>
+ <b33a5084-7dc3-a865-2f36-274ecebf2ee7@kapsi.fi>
+ <1f3267a9-37b4-2cff-08a2-2ca7c905ce01@gmail.com>
+ <6a7b4d4e-8d4a-416e-9789-45282b44bce5@kapsi.fi>
+ <48f5bbac-3955-c227-dbe1-d987b4ec5bd0@gmail.com>
+ <414b4943-265d-3735-c115-d54469018d8c@kapsi.fi>
+ <e8afd710-de37-f1c5-f61c-ed97c07370bf@gmail.com>
+ <6ef6337d-3bb5-bbba-f39c-6de1722ddc44@kapsi.fi>
+ <0f1c8226-4960-aa35-9436-2361fc8fb6ae@gmail.com>
+ <6aad99a9-a9a2-498b-9834-9314a6fa9af6@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b73ea2ff-59c5-929c-ebbc-b7bc25c9105e@gmail.com>
+Date:   Thu, 12 Nov 2020 21:35:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6WlEvdN9Dv0WHSBl"
-Content-Disposition: inline
-In-Reply-To: <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
-X-Cookie: Danger: do not shake.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6aad99a9-a9a2-498b-9834-9314a6fa9af6@kapsi.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+09.11.2020 17:53, Mikko Perttunen пишет:
+...
+> I guess for the channel_map we can drop the offset/length, I just think
+> it's fairly obvious that an IOMMU mapping API lets you specify from
+> where and how much you want to map. Sure, it's not a functionality
+> blocker as it can simply be implemented in userspace by shifting the
+> reloc offset / IOVA equivalently, but it will reduce IO address space
+> usage and prevent access to memory that was not intended to be mapped to
+> the engine.
 
---6WlEvdN9Dv0WHSBl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It could be a good feature, but I'd want to see how userspace will
+benefit from using it in practice before putting effort into it.
 
-On Thu, Nov 12, 2020 at 07:59:36PM +0300, Dmitry Osipenko wrote:
-> 11.11.2020 14:55, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Wed, Nov 11, 2020 at 12:23:41AM +0300, Dmitry Osipenko wrote:
+Could you please give examples of how this feature will be useful for
+userspace? What is the use-case for allocating a single buffer and then
+mapping it partially? Is this needed for a userspace memory pool or
+something else?
 
-> >> I already changed that code to use regulator_get_optional() for v2.
+...
+> I am well aware of that. I'm not saying that we should copy the
+> downstream stack. I am saying that when designing an ABI, we should
+> consider all information available on what kind of features would be
+> required from it.
+> 
+> Going through the proposed TegraDRM UAPI, there are some features that
+> would probably not be immediately used by userspace, or supported in a
+> non-NOOP fashion by the kernel:
+> * Map offset/length
+> * IOVA of mapping
+> * Creation of sync_file postfence
+> * Waiting for sync_file prefences
+> * SUBMIT_CONTEXT_SETUP flag
+> * Having two syncpt_incrs
+> * Reservations?
+> 
+> I suppose we can remove all of that for now, as long as we ensure that
+> there is a path to add them back. I'm just a bit concerned that we'll
+> end up with 10 different ABI revisions and userspace will have to do a
+> version detection dance and enable things depending on driver version.
+> 
+> Anything else to remove?
 
-> > That doesn't look entirely appropriate given that the core does most
-> > likely require some kind of power to operate.
+I guess it should be enough for now.
 
-> We will need to do this because older DTBs won't have that regulator and
-> we want to keep them working.
+Reservations are needed for the grate drivers, but they need to be done
+in conjunction with the DRM scheduler. I guess it should be fine if
+you'll remove reservations, I'll then take a look at how to integrate
+them and drm-sched on top of yours changes.
 
-> Also, some device-trees won't have that regulator anyways because board
-> schematics isn't available, and thus, we can't fix them.
+> Regarding things like explicit channel_map, sure, we could map things
+> implicitly at submit time, but it is a huge performance improvement on
+> newer chips, at least. So technically userspace doesn't need it, but
+> going by that argument, we can get rid of a lot of kernel functionality
+> -- after all, it's only needed if you want your hardware to perform well.
 
-This is what dummy supplies are for?
+I have no doubt that it's better to have static mappings, but it's not
+obvious how it should be implemented without seeing a full picture. I
+mean that maybe it could be possible to avoid having these special
+IOCTLs by changing the way of how hardware is exposed to userspace such
+that generic UAPI could be used in order to achieve the same goals.
 
-> >> Regarding the enumerating supported voltage.. I think this should be
-> >> done by the OPP core, but regulator core doesn't work well if
-> >> regulator_get() is invoked more than one time for the same device, at
-> >> least there is a loud debugfs warning about an already existing
+...
+> If it is known to deadlock, we should fix it. In any case, which kind of
+> scheduler is used shouldn't affect the ABI, and we already have a
+> functional implemention in the Host1x driver, so we should merge the ABI
+> first rather than wait for another year while the rest of the driver is
+> redesigned and rewritten.
 
-> > I don't understand why this would be an issue - if nothing else the core
-> > could just offer an interface to trigger the check.
-
-> It's not an issue, I just described what happens when device driver
-> tries to get a regulator twice.
-
-> There was an issue once that check is added to the regulator core code.
-> But perhaps not worth to discuss it for now because I don't remember
-> details.
-
-So there's no known obstacle to putting enumeration of supported
-voltages into the OPP core then?  I'm a bit confused here.
-
-> >> directory for a regulator. It's easy to check whether the debug
-> >> directory exists before creating it, like thermal framework does it for
-> >> example, but then there were some other more difficult issues.. I don't
-> >> recall what they were right now. Perhaps will be easier to simply get a
-> >> error from regulator_set_voltage() for now because it shouldn't ever
-> >> happen in practice, unless device-tree has wrong constraints.
-
-> > The constraints might not be wrong, there might be some board which has
-> > a constraint somewhere for=20
-
-> In this case board's DT shouldn't specify unsupportable OPPs.
-
-Ah, so each board duplicates the OPP tables then, or there's an
-expectation that if there's some limit then they'll copy and modify the
-table?  If that's the case then it's a bit redundant to do filtering
-indeed.
-
---6WlEvdN9Dv0WHSBl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+tbc8ACgkQJNaLcl1U
-h9DMCwgAg/TVHTXmevYwD5s1Ajz8QKM96GSjHTvRKagWLF+y+O7/6SvbHmWmiMqD
-72lNxOyhMyrHsB/r2SJfYiZnTaxPvDwxTdU9CzTHTAPUdapJ6qyV0iuMkQHGTGKN
-SYqZvJhMfwBpvhvMDaUiOMYQ9uTqipBCfhqgXNhQaGfnIco6awkwlY3AKGp+50pg
-XKM7DBdL0naY0/Mog4jbOjAo3Np4dTsY/CPaIh/QPQe4p2lHaBmWLjobDZOlzEXI
-kZlYkHPdsANUEzVh7uuTgqYPs+WfxLW89lNjqL2/if0+KF5dNmcHORIOsJ5GQlQb
-J3JAZ0VQrlO7gydHgdEneannVwSdIg==
-=CmJu
------END PGP SIGNATURE-----
-
---6WlEvdN9Dv0WHSBl--
+Perhaps should be fine to start extending the ABI, but then it should
+stay under DRM_TEGRA_STAGING until we will be confident that it's all good.
