@@ -2,114 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8776C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 11:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D87AC56201
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 11:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7783C22228
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 11:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2677822247
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 11:34:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JejLUMD3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbgKLLQO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 06:16:14 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:49094 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbgKLLQO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 06:16:14 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1kdAaB-0000QA-9Q; Thu, 12 Nov 2020 12:16:03 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Scott Wood <scottwood@freescale.com>,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Roy Pledge <Roy.Pledge@nxp.com>,
-        Dan Malek <dan@embeddedalley.com>,
-        Cyril Chemparathy <cyril@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-rockchip@lists.infradead.org, Ben Dooks <ben@simtec.co.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Andy Gross <agross@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sandeep Nair <sandeep_n@ti.com>,
-        Mark Brown <broonie@kernel.org>, act <dmalek@jlc.net>,
-        "Software, Inc" <source@mvista.com>
-Subject: Re: [PATCH 00/25] Rid W=1 warnings in SoC
-Date:   Thu, 12 Nov 2020 12:16:00 +0100
-Message-Id: <160517975455.81506.16289432612279089945.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201103152838.1290217-1-lee.jones@linaro.org>
-References: <20201103152838.1290217-1-lee.jones@linaro.org>
+        id S1727822AbgKLLep (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 06:34:45 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:18871 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbgKLLeo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 12 Nov 2020 06:34:44 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fad1ddb0001>; Thu, 12 Nov 2020 03:34:51 -0800
+Received: from [10.26.72.124] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Nov
+ 2020 11:34:40 +0000
+Subject: Re: [PATCH] ARM: tegra: Populate OPP table for Tegra20 Ventana
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20201111103847.152721-1-jonathanh@nvidia.com>
+ <7e40cd3e-7c34-c9a9-bf00-ba7d507a2d6b@gmail.com>
+ <5409bbb4-d3f9-ccc9-ac3e-6344975bd58e@nvidia.com>
+ <acadbf40-5dea-eee1-b05e-ad788df56bf7@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <21158311-2843-0c83-2fd5-19dacdd9c21a@nvidia.com>
+Date:   Thu, 12 Nov 2020 11:34:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <acadbf40-5dea-eee1-b05e-ad788df56bf7@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605180891; bh=IHvwAMbKqrHNR5N1GZkSBeag2qQBKHNZAPTqztYrHTU=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=JejLUMD3iIlG0EXmEkmkcOEyW9xqomHi32i6ZOZooYeCh5yNBkqofLz3lghjx2vey
+         ghDkxXewIjzZpzFHvLonRj9dKvuT1o4m6XGaFxiBWGdfQBG7HCH3ZIrXVFyIvgbQQP
+         6ZYJK6c45fqo7eO9f2AKl+ieZf8bPeFhHafymoOzGIwMrDPanL4MwET1z0W0WuWYES
+         N56FXGBD9oYGv5m7+8c/P/ZLnqw6NnWoBY59+GdzhF/sE6fwzW74dmBER1wrl9Vbdy
+         gb8gZDuRt5Y8hPNi0Ls0p7qAuRTNUrIJfNgg9x0WdkxjtcRvfXkzogq/7ZLYvUjn5W
+         ef2Y+P0RqENog==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 3 Nov 2020 15:28:13 +0000, Lee Jones wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
-> 
-> Lee Jones (25):
->   soc: bcm: brcmstb: pm: pm-arm: Provide prototype for
->     brcmstb_pm_s3_finish()
->   soc: qcom: qcom_aoss: Remove set but unused variable 'tlen'
->   soc: qcom: qcom_aoss: Add missing description for 'cooling_devs'
->   soc: fsl: dpio: qbman-portal: Fix a bunch of kernel-doc misdemeanours
->   soc: rockchip: io-domain: Remove incorrect and incomplete comment
->     header
->   soc: ti: knav_qmss_queue: Remove set but unchecked variable 'ret'
->   soc: ti: knav_qmss_queue: Fix a whole host of function documentation
->     issues
->   soc: ti: knav_dma: Fix a kernel function doc formatting issue
->   soc: ti: pm33xx: Remove set but unused variable 'ret'
->   soc: ti: wkup_m3_ipc: Document 'm3_ipc' parameter throughout
->   soc: fsl: qe: qe_common: Fix misnamed function attribute 'addr'
->   soc: qcom: qcom-geni-se: Fix misnamed function parameter 'rx_rfr'
->   soc: tegra: fuse: speedo-tegra124: Remove some set but unused
->     variables
->   soc: samsung: s3c-pm-check: Fix incorrectly named variable 'val'
->   soc: qcom: rpmh: Fix possible doc-rot in rpmh_write()'s header
->   soc: qcom: smem: Fix formatting and missing documentation issues
->   soc: qcom: smsm: Fix some kernel-doc formatting and naming problems
->   soc: qcom: wcnss_ctrl: Demote non-conformant struct header and fix
->     function headers
->   soc: qcom: smp2p: Remove unused struct attribute provide another
->   soc: qcom: llcc-qcom: Fix expected kernel-doc formatting
->   soc: qcom: rpmhpd: Provide some missing struct member descriptions
->   soc: qcom: kryo-l2-accessors: Fix misnaming of 'val'
->   soc: ti: k3-ringacc: Provide documentation for 'k3_ring's 'state'
->   soc: tegra: fuse: speedo-tegra210: Remove a group of set but unused
->     variables
->   soc: fsl: qbman: qman: Remove unused variable 'dequeue_wq'
-> 
-> [...]
 
-Applied, thanks!
+On 12/11/2020 10:51, Dmitry Osipenko wrote:
 
-[1/1] soc: rockchip: io-domain: Remove incorrect and incomplete comment header
-      commit: a6a3a24c129d229a0eb26b329ab617e2a04245dd
+...
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+> If you don't see a message in KMSG saying "bringing vdd_cpu to
+> 1000000uV", then should be good.
+
+The bootlog shows ...
+
+[    2.271768] tps6586x 3-0034: Found TPS658621C/D, VERSIONCRC is 2c
+
+[    2.280320] vdd_sys: supplied by vdd_5v0
+
+[    2.285153] vdd_sm0,vdd_core: supplied by vdd_sys
+
+[    2.294231] vdd_sm1,vdd_cpu: supplied by vdd_sys
+
+[    2.299984] vdd_sm2,vin_ldo*: supplied by vdd_sys
+
+[    2.305285] REG-LDO_0: supplied by vdd_sm2,vin_ldo*
+
+[    2.311492] vdd_ldo1,avdd_pll*: supplied by vdd_sm2,vin_ldo*
+
+[    2.318053] vdd_ldo2,vdd_rtc: supplied by vdd_sm2,vin_ldo*
+
+[    2.324786] vdd_ldo3,avdd_usb*: supplied by vdd_sm2,vin_ldo*
+
+[    2.331848] vdd_ldo4,avdd_osc,vddio_sys: supplied by vdd_sm2,vin_ldo*
+
+[    2.339104] vdd_ldo5,vcore_mmc: supplied by vdd_sys
+
+[    2.344447] vdd_ldo6,avdd_vdac: Bringing 2850000uV into 1800000-1800000uV
+
+[    2.352226] vdd_ldo6,avdd_vdac: supplied by vdd_sm2,vin_ldo*
+
+[    2.358814] vdd_ldo7,avdd_hdmi,vdd_fuse: supplied by vdd_sm2,vin_ldo*
+
+[    2.366176] vdd_ldo8,avdd_hdmi_pll: supplied by vdd_sm2,vin_ldo*
+
+[    2.372959] vdd_ldo9,avdd_2v85,vdd_ddr_rx: supplied by vdd_sm2,vin_ldo*
+
+[    2.380373] vdd_rtc_out,vdd_cell: supplied by vdd_sys
+
+
+Jon
