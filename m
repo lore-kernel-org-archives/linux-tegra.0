@@ -2,131 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA161C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 12:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB007C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 13:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9934021D91
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 12:52:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Gs/gWqN1"
+	by mail.kernel.org (Postfix) with ESMTP id 885282085B
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 13:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbgKLMws (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 07:52:48 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7638 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbgKLMwo (ORCPT
+        id S1727822AbgKLNb5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 08:31:57 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7219 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbgKLNb4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 07:52:44 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fad301f0002>; Thu, 12 Nov 2020 04:52:47 -0800
-Received: from [10.26.72.124] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Nov
- 2020 12:52:41 +0000
-Subject: Re: [PATCH] ARM: tegra: Populate OPP table for Tegra20 Ventana
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20201111103847.152721-1-jonathanh@nvidia.com>
- <ea73403a-a248-cd2e-b0af-aeb246801054@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <9adf5175-d77b-5a50-8cb3-18305582a57b@nvidia.com>
-Date:   Thu, 12 Nov 2020 12:52:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 12 Nov 2020 08:31:56 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CX2Z501t4zkjk8;
+        Thu, 12 Nov 2020 21:31:41 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Thu, 12 Nov 2020
+ 21:31:48 +0800
+From:   Zhang Qilong <zhangqilong3@huawei.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH] usb: gadget: tegra-xudc: Fix PM disable depth imbalance on error path
+Date:   Thu, 12 Nov 2020 21:35:33 +0800
+Message-ID: <20201112133533.1793971-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <ea73403a-a248-cd2e-b0af-aeb246801054@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605185567; bh=8DfHoZREZ/l0HtR64GiqLrX+xk3X9RCijo+BL6PuSZk=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=Gs/gWqN11KclIRM9X4ObMAlFz3tDXrxihkTR3fzZWiaANV0S8BQcs91k3yVZGSDli
-         NTuR3paPm6MifiqdrSlZlawcrjZkkhtNkxrY4/9kUE+iuGhZcDUq7OYmGaTt7Kw+Z8
-         /5TjAZCuwujpWAPvsP7kSOXsaEtc76BDS3e+LVM8ZQl3QDLoOlbkTKgs7Oq6M5Jj1v
-         RHybgVu7qi0V7YqU6f45Xclz4aVPyl9vGvIEp7WFr4WAF3fdEbfiOqeTYvnPYOj1BK
-         WOAr3tpdpIEfZTxI+pzpiM4yBZZsOa445G5FWQ/6imyUgqwO9n+L6UoeJ3K4aRj7na
-         z4JzPahp6q96A==
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The pm_runtime_enable will increase power disable depth. Imbalance
+depth will resulted in enabling runtime PM of device fails later.
+Thus a pairing decrement must be needed on the error handling path
+to keep it balanced.
 
-On 12/11/2020 12:11, Dmitry Osipenko wrote:
-> 11.11.2020 13:38, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Commit 9ce274630495 ("cpufreq: tegra20: Use generic cpufreq-dt driver
->> (Tegra30 supported now)") update the Tegra20 CPUFREQ driver to use the
->> generic CPUFREQ device-tree driver. Since this change CPUFREQ support
->> on the Tegra20 Ventana platform has been broken because the necessary
->> device-tree nodes with the operating point information are not populated
->> for this platform. Fix this by updating device-tree for Venata to
->> include the operating point informration for Tegra20.
->>
->> Fixes: 9ce274630495 ("cpufreq: tegra20: Use generic cpufreq-dt driver (T=
-egra30 supported now)")
->> Cc: stable@vger.kernel.org
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  arch/arm/boot/dts/tegra20-ventana.dts | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/t=
-egra20-ventana.dts
->> index b158771ac0b7..055334ae3d28 100644
->> --- a/arch/arm/boot/dts/tegra20-ventana.dts
->> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
->> @@ -3,6 +3,7 @@
->> =20
->>  #include <dt-bindings/input/input.h>
->>  #include "tegra20.dtsi"
->> +#include "tegra20-cpu-opp.dtsi"
->> =20
->>  / {
->>  	model =3D "NVIDIA Tegra20 Ventana evaluation board";
->> @@ -592,6 +593,16 @@ clk32k_in: clock@0 {
->>  		#clock-cells =3D <0>;
->>  	};
->> =20
->> +	cpus {
->> +		cpu0: cpu@0 {
->=20
-> I assume you're going to use this cpu0 handle later on.
+Fixes: 49db427232fe2 ("usb: gadget: Add UDC driver for tegra XUSB device mode controller")
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+ drivers/usb/gadget/udc/tegra-xudc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Opps, I will remove that.
+diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
+index 580bef8eb4cb..ad205e178033 100644
+--- a/drivers/usb/gadget/udc/tegra-xudc.c
++++ b/drivers/usb/gadget/udc/tegra-xudc.c
+@@ -3861,6 +3861,7 @@ static int tegra_xudc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ free_eps:
++	pm_runtime_disable(&pdev->dev);
+ 	tegra_xudc_free_eps(xudc);
+ free_event_ring:
+ 	tegra_xudc_free_event_ring(xudc);
+-- 
+2.25.4
 
->=20
->> +			operating-points-v2 =3D <&cpu0_opp_table>;
->> +		};
->> +
->> +		cpu@1 {
->> +			operating-points-v2 =3D <&cpu0_opp_table>;
->> +		};
->> +	};
->> +
->>  	gpio-keys {
->>  		compatible =3D "gpio-keys";
->> =20
->>
->=20
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->=20
-
-Thanks!
-Jon
-
---=20
-nvpublic
