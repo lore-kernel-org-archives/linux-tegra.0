@@ -2,111 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB5BC56201
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 542CEC63697
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB0C720759
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D3022227
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbgKLQEJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 11:04:09 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37601 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbgKLQEJ (ORCPT
+        id S1728233AbgKLQOd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 11:14:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728906AbgKLQOc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 11:04:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id l36so6059242ota.4;
-        Thu, 12 Nov 2020 08:04:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Dh+IYRtEiWg2FAJshN1OCW4IcCJdA74FHicoJTj/Wg=;
-        b=A0pna/EH7xoQaCexyhKH5PpmzOty+IJ9n55EPcJIAg+bu/bv2vM3826BF7XHlTN6XW
-         G2ExrgwCgFUyzIQAnDmsCW1/jEQTv3Mc0qpzSqmZkUpqTMQI/G7PT1OyWLeiOsAWouIx
-         ofmir2DaVOCJzAcvcLhZJE4HZ47BNcVgeMQxSvDZP3bYeZVCtDGKXLc8i8Vqzap2LkOx
-         bOyE4mwWJiTg48/th+dLBUANro+weULSc8vH86+BFtBT8I7BalTSA+oVNFc7y/2DqmCM
-         2nGD3sHOgl2YmI3/3R8ElICIsgJDlN8B42UK5j+iQ6Wzr4abfrJHQ6z9p6n8dHyYAgPx
-         dn0g==
-X-Gm-Message-State: AOAM531g8JF9efUxUl3TkLrUZfoU2aSCQ9PUSR+UHPO/EkltYdG5yVdP
-        v33/knqyK9xeLW6rH0Vsfgz8nibIB/aNOwi30B+dRUin
-X-Google-Smtp-Source: ABdhPJzDqLH/D6b11M3EbFlXd1opsl7D+7lY4VSegjro9tq9JSXU+cHNN0YeJ3CVaPtu6yi4KOfZmSZOnhNNa4oeKm4=
-X-Received: by 2002:a9d:16f:: with SMTP id 102mr23141676otu.206.1605197048152;
- Thu, 12 Nov 2020 08:04:08 -0800 (PST)
+        Thu, 12 Nov 2020 11:14:32 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F18C0613D1
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 08:14:32 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kdFEO-0004TX-DA; Thu, 12 Nov 2020 17:13:52 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kdFEK-0003CG-Jf; Thu, 12 Nov 2020 17:13:48 +0100
+Date:   Thu, 12 Nov 2020 17:13:46 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Yangtao Li <tiny.windzz@gmail.com>, thierry.reding@gmail.com
+Cc:     claudiu.beznea@microchip.com, thierry.reding@gmail.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        f.fainelli@gmail.com, nsaenzjulienne@suse.de, shc_work@mail.ru,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com,
+        slemieux.tyco@gmail.com, khilman@baylibre.com,
+        matthias.bgg@gmail.com, heiko@sntech.de, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, mripard@kernel.org, wens@csie.org,
+        jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 01/32] pwm: sun4i: convert to
+ devm_platform_ioremap_resource
+Message-ID: <20201112161346.gp5nenuagx5wmwl2@pengutronix.de>
+References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-References: <20201104132126.15943-1-digetx@gmail.com>
-In-Reply-To: <20201104132126.15943-1-digetx@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 12 Nov 2020 17:03:57 +0100
-Message-ID: <CAJZ5v0iauVV7cBT5Aj8Qa_yyjPTwbK6uD5b5kJLMKzcP+V8=Tw@mail.gmail.com>
-Subject: Re: [PATCH v1] cpuidle: tegra: Annotate tegra_pm_set_cpu_in_lp2()
- with RCU_NONIDLE
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rowms2wq4q6swhwc"
+Content-Disposition: inline
+In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 4, 2020 at 2:21 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> Annotate tegra_pm_set[clear]_cpu_in_lp2() with RCU_NONIDLE in order to
-> fix lockdep warning about suspicious RCU usage of a spinlock during late
-> idling phase.
->
->  WARNING: suspicious RCU usage
->  ...
->  include/trace/events/lock.h:13 suspicious rcu_dereference_check() usage!
->  ...
->   (dump_stack) from (lock_acquire)
->   (lock_acquire) from (_raw_spin_lock)
->   (_raw_spin_lock) from (tegra_pm_set_cpu_in_lp2)
->   (tegra_pm_set_cpu_in_lp2) from (tegra_cpuidle_enter)
->   (tegra_cpuidle_enter) from (cpuidle_enter_state)
->   (cpuidle_enter_state) from (cpuidle_enter_state_coupled)
->   (cpuidle_enter_state_coupled) from (cpuidle_enter)
->   (cpuidle_enter) from (do_idle)
->  ...
->
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Reported-by: Peter Geis <pgwipeout@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpuidle/cpuidle-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-> index e8956706a291..191966dc8d02 100644
-> --- a/drivers/cpuidle/cpuidle-tegra.c
-> +++ b/drivers/cpuidle/cpuidle-tegra.c
-> @@ -189,7 +189,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
->         }
->
->         local_fiq_disable();
-> -       tegra_pm_set_cpu_in_lp2();
-> +       RCU_NONIDLE(tegra_pm_set_cpu_in_lp2());
->         cpu_pm_enter();
->
->         switch (index) {
-> @@ -207,7 +207,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
->         }
->
->         cpu_pm_exit();
-> -       tegra_pm_clear_cpu_in_lp2();
-> +       RCU_NONIDLE(tegra_pm_clear_cpu_in_lp2());
->         local_fiq_enable();
->
->         return err ?: index;
-> --
 
-Applied as a fix for 5.10-rc, thanks!
+--rowms2wq4q6swhwc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Thierry,
+
+On Sun, Dec 29, 2019 at 08:05:39AM +0000, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/pwm/pwm-sun4i.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+> index 581d23287333..f2afd312f77c 100644
+> --- a/drivers/pwm/pwm-sun4i.c
+> +++ b/drivers/pwm/pwm-sun4i.c
+> @@ -344,7 +344,6 @@ MODULE_DEVICE_TABLE(of, sun4i_pwm_dt_ids);
+>  static int sun4i_pwm_probe(struct platform_device *pdev)
+>  {
+>  	struct sun4i_pwm_chip *pwm;
+> -	struct resource *res;
+>  	int ret;
+> =20
+>  	pwm =3D devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
+> @@ -355,8 +354,7 @@ static int sun4i_pwm_probe(struct platform_device *pd=
+ev)
+>  	if (!pwm->data)
+>  		return -ENODEV;
+> =20
+> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	pwm->base =3D devm_ioremap_resource(&pdev->dev, res);
+> +	pwm->base =3D devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(pwm->base))
+>  		return PTR_ERR(pwm->base);
+
+Can you please comment why you don't apply this series?
+
+My point of view is:
+
+devm_platform_ioremap_resource is the designated wrapper to replace
+platform_get_resource() and devm_ioremap_resource(). So I don't see a
+good reason to continue open coding it.
+
+The patch series doesn't apply to 5.10-rc1 as is. (pwm-puv3 was removed
+and a simple conflict in the pwm-rockchip driver.) The overall diffstat
+(of the fixed series applied on top of 5.10-rc1) is
+
+	31 files changed, 32 insertions(+), 96 deletions(-)
+
+and it converts all of drivers/pwm but a single instance of
+platform_get_resource() + devm_ioremap_resource() (for pwm-lpss where
+platform_get_resource and devm_ioremap_resource are in different
+functions (different files even)) which isn't trivial to fix.
+
+So in my eyes applying this series is the right thing to do.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--rowms2wq4q6swhwc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+tXzcACgkQwfwUeK3K
+7AnalAf/SZzHfPm53CAOPulFIMZojirosLfMqF/CurOTWDa4pXeZLIfqJ3XR0lAd
+1A30iOU6Z6gsaXDu200KL3PWJ4aUlySBGynRmyn7mwEiHcoyNcuatCW2hIxQPptf
+dIDBPh0Sz3nVjS3asUQnerG/hBoF4uOOMdH0zLLOgLIdX5sIYvN8A4UHIlcTrCXz
+Am34c7Q2xtG+FheEtp4ytEFQ3TC4tZnOuam6jTUwRFRvHmXmhXQvWx6aRE/m+rz+
+Sz9XQNgfwmLfEjdUiHzBzEXuhwC2bhndg5imcT3t6djVcxLqqqAL6zsd7n6myzan
+2ry03AJ4yF68gU5nJbV8yuc9VDeqgg==
+=2Q4E
+-----END PGP SIGNATURE-----
+
+--rowms2wq4q6swhwc--
