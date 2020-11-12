@@ -2,153 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542CEC63697
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5191C63697
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06D3022227
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DE2421D40
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 16:59:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHDLJ02X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbgKLQOd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 11:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        id S1726091AbgKLQ7l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 11:59:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728906AbgKLQOc (ORCPT
+        with ESMTP id S1725965AbgKLQ7l (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 11:14:32 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F18C0613D1
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 08:14:32 -0800 (PST)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kdFEO-0004TX-DA; Thu, 12 Nov 2020 17:13:52 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kdFEK-0003CG-Jf; Thu, 12 Nov 2020 17:13:48 +0100
-Date:   Thu, 12 Nov 2020 17:13:46 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Yangtao Li <tiny.windzz@gmail.com>, thierry.reding@gmail.com
-Cc:     claudiu.beznea@microchip.com, thierry.reding@gmail.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, rjui@broadcom.com,
-        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        f.fainelli@gmail.com, nsaenzjulienne@suse.de, shc_work@mail.ru,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, vz@mleia.com,
-        slemieux.tyco@gmail.com, khilman@baylibre.com,
-        matthias.bgg@gmail.com, heiko@sntech.de, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, mripard@kernel.org, wens@csie.org,
-        jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 01/32] pwm: sun4i: convert to
- devm_platform_ioremap_resource
-Message-ID: <20201112161346.gp5nenuagx5wmwl2@pengutronix.de>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
+        Thu, 12 Nov 2020 11:59:41 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C78C0613D1;
+        Thu, 12 Nov 2020 08:59:40 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id y16so7019915ljk.1;
+        Thu, 12 Nov 2020 08:59:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Xt95colZf33mgot8tELeNlRansGBvck/Mt4yELIIDqY=;
+        b=fHDLJ02XfofqPoW/m/ty+7VMDDU5x/EGpHV/+Yy5G1qvgpLWH4Bj6qirnIfR2GOFHY
+         H2rsWty5fFNMq6aCx6XdDWhpV6BR3+tvp61A5zWYd6mxO3JGE39IAl69QXwXp/OPSLOc
+         dbjrfCbzaQBa8KcMu6SiyVtP5+MIJvDirOdjY9sY049RqEx6eY2eqm19yoWcz95sPsLg
+         NScSb7Br1t6cH2J6CRqeJIQlDccMferVM5GcIzWR9yGjzpka13Dd7CaUaJF4CwdiAUzW
+         byu4iX3gr3BVLIGe/LU4yPecdAgxDUtNUIthKeuggKFO5txc0jODLiR2lG9aCqUdXeXb
+         ScEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Xt95colZf33mgot8tELeNlRansGBvck/Mt4yELIIDqY=;
+        b=Quc5cZb8N4+lSjAXByxBevRjhOn/VQ2Thrux0j8xs6bVFAUTeqtv9SgrxK5/4P/ZQm
+         BM0ABVbCKLlQDSG2C3qu62ywTK8eWCuERI9B84iBATWsv8ujKu5EMW8HFnd4I3vvxnSf
+         Bszh8r3WtDjMFk1JZfaKCI3DWQuSalenbqtbgdcbM95CNeS1kTehqRXC9zQcvdtbgwAC
+         cYh4RaeIuuCJQtjuOvErAXiH0gcfZhrMniJIu//GRgzwDjWF1lVwEnlpGDm7V4u5bwWy
+         RkTNUnYqRT6cpl4BdnatDzQkwe0raEEu0zaPEf4ryEXsHq0QH5V750YBoBctnljBU3W9
+         5viA==
+X-Gm-Message-State: AOAM532B78c8CxzTjvVOmWdO915+aRw58/d2m59OVUEwXXbc7SvDqQ63
+        jbYG3IstePgOaAwD/vqnB4B0dvICp2E=
+X-Google-Smtp-Source: ABdhPJyl96aYzliFwkLljLShw56ErRaoK0Xab1vQjJi14A44PY75rTZLE8QOeBZnDRsExRlkCgmYqg==
+X-Received: by 2002:a2e:8315:: with SMTP id a21mr166883ljh.29.1605200379012;
+        Thu, 12 Nov 2020 08:59:39 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id t5sm691068lfc.75.2020.11.12.08.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Nov 2020 08:59:38 -0800 (PST)
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-12-digetx@gmail.com> <20201110202945.GF2375022@ulmo>
+ <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+ <20201111115534.GA4847@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+Date:   Thu, 12 Nov 2020 19:59:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rowms2wq4q6swhwc"
-Content-Disposition: inline
-In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20201111115534.GA4847@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+11.11.2020 14:55, Mark Brown пишет:
+> On Wed, Nov 11, 2020 at 12:23:41AM +0300, Dmitry Osipenko wrote:
+>> 10.11.2020 23:32, Mark Brown пишет:
+> 
+>>>>> +	if (!device_property_present(dc->dev, "core-supply"))
+>>>>> +		return;
+> 
+>>>> This is a potentially heavy operation, so I think we should avoid that
+>>>> here. How about you use devm_regulator_get_optional() in ->probe()? That
+>>>> returns -ENODEV if no regulator was specified, in which case you can set
+>>>> dc->core_reg = NULL and use that as the condition here.
+> 
+>>> Or enumerate the configurable voltages after getting the regulator and
+>>> handle that appropriately which would be more robust in case there's
+>>> missing or unusual constraints.
+> 
+>> I already changed that code to use regulator_get_optional() for v2.
+> 
+> That doesn't look entirely appropriate given that the core does most
+> likely require some kind of power to operate.
 
---rowms2wq4q6swhwc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We will need to do this because older DTBs won't have that regulator and
+we want to keep them working.
 
-Hello Thierry,
+Also, some device-trees won't have that regulator anyways because board
+schematics isn't available, and thus, we can't fix them.
 
-On Sun, Dec 29, 2019 at 08:05:39AM +0000, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/pwm/pwm-sun4i.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-> index 581d23287333..f2afd312f77c 100644
-> --- a/drivers/pwm/pwm-sun4i.c
-> +++ b/drivers/pwm/pwm-sun4i.c
-> @@ -344,7 +344,6 @@ MODULE_DEVICE_TABLE(of, sun4i_pwm_dt_ids);
->  static int sun4i_pwm_probe(struct platform_device *pdev)
->  {
->  	struct sun4i_pwm_chip *pwm;
-> -	struct resource *res;
->  	int ret;
-> =20
->  	pwm =3D devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
-> @@ -355,8 +354,7 @@ static int sun4i_pwm_probe(struct platform_device *pd=
-ev)
->  	if (!pwm->data)
->  		return -ENODEV;
-> =20
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	pwm->base =3D devm_ioremap_resource(&pdev->dev, res);
-> +	pwm->base =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(pwm->base))
->  		return PTR_ERR(pwm->base);
+>> Regarding the enumerating supported voltage.. I think this should be
+>> done by the OPP core, but regulator core doesn't work well if
+>> regulator_get() is invoked more than one time for the same device, at
+>> least there is a loud debugfs warning about an already existing
+> 
+> I don't understand why this would be an issue - if nothing else the core
+> could just offer an interface to trigger the check.
 
-Can you please comment why you don't apply this series?
+It's not an issue, I just described what happens when device driver
+tries to get a regulator twice.
 
-My point of view is:
+There was an issue once that check is added to the regulator core code.
+But perhaps not worth to discuss it for now because I don't remember
+details.
 
-devm_platform_ioremap_resource is the designated wrapper to replace
-platform_get_resource() and devm_ioremap_resource(). So I don't see a
-good reason to continue open coding it.
+>> directory for a regulator. It's easy to check whether the debug
+>> directory exists before creating it, like thermal framework does it for
+>> example, but then there were some other more difficult issues.. I don't
+>> recall what they were right now. Perhaps will be easier to simply get a
+>> error from regulator_set_voltage() for now because it shouldn't ever
+>> happen in practice, unless device-tree has wrong constraints.
+> 
+> The constraints might not be wrong, there might be some board which has
+> a constraint somewhere for 
+> 
 
-The patch series doesn't apply to 5.10-rc1 as is. (pwm-puv3 was removed
-and a simple conflict in the pwm-rockchip driver.) The overall diffstat
-(of the fixed series applied on top of 5.10-rc1) is
-
-	31 files changed, 32 insertions(+), 96 deletions(-)
-
-and it converts all of drivers/pwm but a single instance of
-platform_get_resource() + devm_ioremap_resource() (for pwm-lpss where
-platform_get_resource and devm_ioremap_resource are in different
-functions (different files even)) which isn't trivial to fix.
-
-So in my eyes applying this series is the right thing to do.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---rowms2wq4q6swhwc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+tXzcACgkQwfwUeK3K
-7AnalAf/SZzHfPm53CAOPulFIMZojirosLfMqF/CurOTWDa4pXeZLIfqJ3XR0lAd
-1A30iOU6Z6gsaXDu200KL3PWJ4aUlySBGynRmyn7mwEiHcoyNcuatCW2hIxQPptf
-dIDBPh0Sz3nVjS3asUQnerG/hBoF4uOOMdH0zLLOgLIdX5sIYvN8A4UHIlcTrCXz
-Am34c7Q2xtG+FheEtp4ytEFQ3TC4tZnOuam6jTUwRFRvHmXmhXQvWx6aRE/m+rz+
-Sz9XQNgfwmLfEjdUiHzBzEXuhwC2bhndg5imcT3t6djVcxLqqqAL6zsd7n6myzan
-2ry03AJ4yF68gU5nJbV8yuc9VDeqgg==
-=2Q4E
------END PGP SIGNATURE-----
-
---rowms2wq4q6swhwc--
+In this case board's DT shouldn't specify unsupportable OPPs.
