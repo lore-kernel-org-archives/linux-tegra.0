@@ -2,208 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58882C388F7
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 13:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16065C6369E
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 14:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 064172222F
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 13:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6EBE22242
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 14:29:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuM3bbMr"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdIPXjqe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgKMN7n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Nov 2020 08:59:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
+        id S1726603AbgKMO3y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Nov 2020 09:29:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726594AbgKMN7n (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Nov 2020 08:59:43 -0500
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726278AbgKMO3y (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 13 Nov 2020 09:29:54 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DD3420797;
-        Fri, 13 Nov 2020 13:59:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2EB220715;
+        Fri, 13 Nov 2020 14:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605275982;
-        bh=5zh5U6QQTfrb1zJ1Qx6ri3/VJb6vcNkANMos1Y8u4Yk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AuM3bbMr1Y8rDFBUhaaWssTCj0V8b0g406jdEEsSbegNHXbcomzAKdFvFtY9pE+Jm
-         asDr3mJLRtlQM52OXAe9BuYUrtqVd75lkT7xtn2oY9hZyKRQtAOIfYc+C3eYCOFGHV
-         0wLy4TAWYo162p9Ev7CCTe0GcIXi8/GDKbSXsVK4=
-Received: by mail-ot1-f52.google.com with SMTP id g19so8940647otp.13;
-        Fri, 13 Nov 2020 05:59:42 -0800 (PST)
-X-Gm-Message-State: AOAM530PDLXA8cXJx83/jsJVnCDnhGl4whnPMHm07Uni9BG8CxYIaL2e
-        ywURLtIr4kLgl1QUZRi6cqMgxlG/J32LdJU8fQ==
-X-Google-Smtp-Source: ABdhPJxBUIJ2lKibMEAtB+Y6lMxOKxXu95T92jIViUP4LWwGjEKihU7Jf+EZChksfqcYHoyBhuXZQIfesQ+odI9lj/0=
-X-Received: by 2002:a05:6830:2259:: with SMTP id t25mr1630402otd.192.1605275981804;
- Fri, 13 Nov 2020 05:59:41 -0800 (PST)
-MIME-Version: 1.0
-References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
- <1604628968-1501-2-git-send-email-skomatineni@nvidia.com> <20201106161122.GB3289870@bogus>
- <f8ba33f1-90fa-a9f0-5834-9de23fc8ad31@nvidia.com> <d0a42b1c-8ddc-fc97-c675-70a5b7601580@nvidia.com>
- <f7ccb10e-e375-d6a9-78b3-21a9f85a0148@nvidia.com>
-In-Reply-To: <f7ccb10e-e375-d6a9-78b3-21a9f85a0148@nvidia.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 13 Nov 2020 07:59:30 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+g_sXp4t9dPq5LOrhKrsXyu+3-ZCRFqw-AZJs_S=6M=A@mail.gmail.com>
-Message-ID: <CAL_Jsq+g_sXp4t9dPq5LOrhKrsXyu+3-ZCRFqw-AZJs_S=6M=A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] dt-bindings: ata: tegra: Convert binding
- documentation to YAML
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+        s=default; t=1605277793;
+        bh=e3QjDJePQNmrQAx9u96nNaIxxOGo5XiKT36hOiGvu+M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qdIPXjqeu0rWfbDhg94jLjPcBpmjZIBwHLLPLWv8P6x9WxP7WDJlLcmQsmpV8vRGt
+         OMAvIEyxcmZ1NB/z1oI3hSi74zITJffw9hIAMOQqum4nnm6Zfcb2rB+ZZN/WE/Zl+v
+         9Wu52UzARkZm/5A7M04ywnI3+F30eZJLDlreIMsY=
+Date:   Fri, 13 Nov 2020 14:29:37 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>, devicetree@vger.kernel.org,
-        Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+Message-ID: <20201113142937.GB4828@sirena.org.uk>
+References: <20201104234427.26477-12-digetx@gmail.com>
+ <20201110202945.GF2375022@ulmo>
+ <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+ <20201111115534.GA4847@sirena.org.uk>
+ <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+ <20201112171600.GD4742@sirena.org.uk>
+ <b4b06c1d-c9d4-43b2-c6eb-93f8cb6c677d@gmail.com>
+ <20201112200123.GF4742@sirena.org.uk>
+ <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Content-Disposition: inline
+In-Reply-To: <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
+X-Cookie: No solicitors.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 9:54 PM Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
->
-> Hi Rob,
->
-> Updated yamllint and dt-schema as well.
->
-> When I do make dt_binding_check, I see it failed as
-> processed-schema-examples.json is not generated.
-> Any idea of what I may be missing?
->
-> Also it did not go thru bindings/ata path. Tried with DT_SCHEMA_FILES to
-> tegra-ahci.yaml as well and I see same.
-> make dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
->
-> LINT    Documentation/devicetree/bindings
-> ./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:20:9: [warning]
-> wrong indentation: expected 10 but found 8 (indentation)
-> ./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:30:9: [warning]
-> wrong indentation: expected 10 but found 8 (indentation)
-> ./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:33:9: [warning]
-> wrong indentation: expected 10 but found 8 (indentation)
-> ./Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.yaml:37:2:
-> [error] syntax error: expected <block end>, but found '<scalar>' (syntax)
 
-I believe this error only occurred on linux-next. linux-next is not a
-base you should develop on (usually). rc2 is good. Unfortunately
-someone broke rc3.
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ./Documentation/devicetree/bindings/soc/aspeed/xdma.yaml:10:2: [warning]
-> wrong indentation: expected 2 but found 1 (indentation)
-> ./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:10:4:
-> [warning] wrong indentation: expected 2 but found 3 (indentation)
-> ./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:18:7:
-> [warning] wrong indentation: expected 4 but found 6 (indentation)
-> ./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:10:4:
-> [warning] wrong indentation: expected 2 but found 3 (indentation)
-> ./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:15:7:
-> [warning] wrong indentation: expected 4 but found 6 (indentation)
-> ./Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml:25:10:
-> [warning] wrong indentation: expected 10 but found 9 (indentation)
-> ./Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml:52:9:
-> [warning] wrong indentation: expected 6 but found 8 (indentation)
-> ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:32:13:
-> [warning] wrong indentation: expected 14 but found 12 (indentation)
-> ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:35:9:
-> [warning] wrong indentation: expected 10 but found 8 (indentation)
-> Documentation/devicetree/bindings/Makefile:59: recipe for target
-> 'Documentation/devicetree/bindings/processed-schema-examples.json' failed
-> make[1]: ***
-> [Documentation/devicetree/bindings/processed-schema-examples.json] Error 123
-> Makefile:1362: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
+On Fri, Nov 13, 2020 at 01:37:01AM +0300, Dmitry Osipenko wrote:
+> 12.11.2020 23:01, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> But it's not allowed to change voltage of a dummy regulator, is it
+> >> intentional?
 
-Use 'make -k' if there are unrelated errors.
+> > Of course not, we can't know if the requested new voltage is valid - the
+> > driver would have to have explict support for handling situations where
+> > it's not possible to change the voltage (which it can detect through
+> > enumerating the values it wants to set at startup).
 
->
-> When I do dtbs_check, I see
-> Documentation/devicetree/bindings/processed-schema.json generated and
-> also it passes for tegra-ahci.yaml
+> > [Requesting the same supply multiple times]
 
-Then it should be good.
+> But how driver is supposed to recognize that it's a dummy or buggy
+> regulator if it rejects all voltages?
 
-Rob
+It's not clear if it matters - it's more a policy decision on the part
+of the driver about what it thinks safe error handling is.  If it's not
+possible to read voltages from the regulator the consumer driver has to
+decide what it thinks it's safe for it to do, either way it has no idea
+what the actual current voltage is.  It could assume that it's something
+that supports all the use cases it wants to use and just carry on with
+no configuration of voltages, it could decide that it might not support
+everything and not make any changes to be safe, or do something like
+try to figure out that if we're currently at a given OPP that's the top
+OPP possible.  Historically when we've not had regulator control in
+these drivers so they have effectively gone with the first option of
+just assuming it's a generally safe value, this often aligns with what
+the power on requirements for SoCs are so it's not unreasonable.
 
->
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
->
-> Regards,
->
-> Sowjanya
->
->
-> On 11/6/20 9:18 AM, Sowjanya Komatineni wrote:
-> >
-> > On 11/6/20 8:41 AM, Sowjanya Komatineni wrote:
-> >>
-> >> On 11/6/20 8:11 AM, Rob Herring wrote:
-> >>> On Thu, 05 Nov 2020 18:16:05 -0800, Sowjanya Komatineni wrote:
-> >>>> This patch converts text based dt-binding document to YAML based
-> >>>> dt-binding document.
-> >>>>
-> >>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> >>>> ---
-> >>>>   .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 152
-> >>>> +++++++++++++++++++++
-> >>>>   .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 ------
-> >>>>   2 files changed, 152 insertions(+), 44 deletions(-)
-> >>>>   create mode 100644
-> >>>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-> >>>>   delete mode 100644
-> >>>> Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-> >>>>
-> >>>
-> >>> My bot found errors running 'make dt_binding_check' on your patch:
-> >>>
-> >>> yamllint warnings/errors:
-> >>>
-> >>> dtschema/dtc warnings/errors:
-> >>> Error:
-> >>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dts:27.31-32
-> >>> syntax error
-> >>> FATAL ERROR: Unable to parse input tree
-> >>> make[1]: *** [scripts/Makefile.lib:342:
-> >>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dt.yaml]
-> >>> Error 1
-> >>> make[1]: *** Waiting for unfinished jobs....
-> >>> make: *** [Makefile:1364: dt_binding_check] Error 2
-> >>>
-> >>>
-> >>> See https://patchwork.ozlabs.org/patch/1395390
-> >>>
-> >>> The base for the patch is generally the last rc1. Any dependencies
-> >>> should be noted.
-> >>>
-> >>> If you already ran 'make dt_binding_check' and didn't see the above
-> >>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> >>> date:
-> >>>
-> >>> pip3 install dtschema --upgrade
-> >>>
-> >>> Please check and re-submit.
-> >> Thanks Rob. Will re-try after installing up-to-date.
-> >
-> > Somehow running 'make dt_binding_check' gives below error.
-> >
-> > I have yamllint newest version (1.2.1-1). Any specific version of
-> > yamllint is needed?
-> >
-> >  LINT    Documentation/devicetree/bindings
-> > invalid config: unknown option "max-spaces-inside-empty" for rule
-> > "braces"
-> > xargs: /usr/bin/yamllint: exited with status 255; aborting
-> > Documentation/devicetree/bindings/Makefile:59: recipe for target
-> > 'Documentation/devicetree/bindings/processed-schema-examples.json' failed
-> > make[1]: ***
-> > [Documentation/devicetree/bindings/processed-schema-examples.json]
-> > Error 124
-> > Makefile:1362: recipe for target 'dt_binding_check' failed
-> > make: *** [dt_binding_check] Error 2
-> >
+--CdrF4e02JqNVZeln
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+umFAACgkQJNaLcl1U
+h9DRnAf/TT8I9XDaCoZsP58r0YQKOYiW9tWOMx5iUwJFikxSUl6upudJ8HrbvhS/
+O1evWVxr6jTg2q8A2Rq24+SXSF7KEAINXdggEQ+N4q8l5CzBXLA84C+z5IRIb6lL
+dgWqTg93CtK+XCEAKGWhAXn/nNFv8p9nol6fYYw6k8h00DJ+v04vDE/U+oofX1nn
+bOkrueTE3zsDh0U6tHC2dXK7hZX5s8j+g5aN4C5B27Xip+nGg6iiGHUQmsNP33Vc
+SLN6fJ7s1iNF+YNZBQLPWAeVTz44INs/8yIA6KTemFKz2lNUCozTaACHiLZTlyM2
+/pcp+qCaLayuAuXMCA2bNUT5gef9cg==
+=G9Fp
+-----END PGP SIGNATURE-----
+
+--CdrF4e02JqNVZeln--
