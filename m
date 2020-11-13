@@ -2,118 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 189C6C63697
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23673C388F7
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D20DD208D5
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC6820B1F
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:16:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="coTGEDtP"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMzBr7E+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgKMQMr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Nov 2020 11:12:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbgKMQMq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Nov 2020 11:12:46 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F99C0613D1;
-        Fri, 13 Nov 2020 08:12:45 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id h2so8611161wmm.0;
-        Fri, 13 Nov 2020 08:12:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CakwW7tKQkKgc/ZBPIhzjJYO+PtF41K8nuvggL/VjBc=;
-        b=coTGEDtPvY9yrOhi7tgtaU225fE5k95RMp14nkTYej0QI5kxtFmESPoVZG04LntsqE
-         uE4v7u62xf5JeO7Ec/W7HdDLK7qgB/WNPlgmwZOHfjqckb/M1kVKE1/IzUKsgYf96WeL
-         OxE5diXuIaIMtJuaciNk6bKtcy4A2kIAOpNIe298Xw5AVapOxeZLU09g2s8nlAnNHbuJ
-         ieVxqa6BnWeCvplTtnFcAI/HM/OAjXsxu5pGS4g1LNpGCND48GBTyaSnvy3PCAhPOQbd
-         VqioKv9nxZSsnjvxBEtYS9wyzertRL6HLS3unYjMLFHLY1QDcWW3eEDnXLt0risFG5Ax
-         BDDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CakwW7tKQkKgc/ZBPIhzjJYO+PtF41K8nuvggL/VjBc=;
-        b=RtFQTnAx8+vCLmdSJuuVHfbhBrZvroNnNH/v3GVCpfrHrr8EynwmzMIgofbSG27U2c
-         OKsBJdGDisdKeFT45PTfbTzhzUUoDTMJRsV29/qUx2dFgyRSd2x7M1kb0uf6afqVvSc7
-         ABVnAl/AoQ1J8iHJTt3yubFQOHvIpkIMglvpMjEixzUOsY6armZXJVM7zUK6dzMlT9x5
-         wSsVQqGLCp+qeDNLvji2wcnBgnJkX8kSFDb/f0DxJytL/ozeAWmNHunmRmE0Og6pP/sG
-         7vlRc79lT8+QpRI9LjZl9HTnvNjq2Zl01WSTGa6LSGY2zwPII3PPHDSHsLQz+mcsVgIy
-         N7HQ==
-X-Gm-Message-State: AOAM532rHG0wjrOUOQxATb61MGsgZwKECSfFn1s+xkrL82q2uiqFMr/z
-        dMjI5RFcYWyqIPbSwBopm/I=
-X-Google-Smtp-Source: ABdhPJzcRR3mEng2UqvOD/Bm3K2jgd5QNhROpMotvDCIX4axf7wNYWduUdvhoNCTeu/v2ThQxhtHUw==
-X-Received: by 2002:a1c:5f45:: with SMTP id t66mr3080688wmb.132.1605283959662;
-        Fri, 13 Nov 2020 08:12:39 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id u16sm11427512wrn.55.2020.11.13.08.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2020 08:12:38 -0800 (PST)
-Date:   Fri, 13 Nov 2020 17:12:37 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] phy: tegra: Don't warn on probe deferral
-Message-ID: <20201113161237.GC1408970@ulmo>
-References: <20201111103708.152566-1-jonathanh@nvidia.com>
+        id S1726437AbgKMQQI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Nov 2020 11:16:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725866AbgKMQQH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 13 Nov 2020 11:16:07 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 630DC2076E;
+        Fri, 13 Nov 2020 16:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605284166;
+        bh=A78YcjU5wXa8tlzrOpaXDNnSzLAvardtp8E9bjbkobU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CMzBr7E+FDS6ZgWNYaYY3g8HwzJPjCCycp7a2gmh7cOvce7d+siQhoXfXognj2qzp
+         pOGN3bp7VECK6K7YnDSdbMnw2aziHM6PtIwEwXTG+V8K8/U6wr3sW76YvNpadEF11r
+         zy7FZ9Dl6HkgEn015hlL9KrIauCdzqRkLRZJSiqA=
+Date:   Fri, 13 Nov 2020 16:15:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+Message-ID: <20201113161550.GC4828@sirena.org.uk>
+References: <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+ <20201111115534.GA4847@sirena.org.uk>
+ <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+ <20201112171600.GD4742@sirena.org.uk>
+ <b4b06c1d-c9d4-43b2-c6eb-93f8cb6c677d@gmail.com>
+ <20201112200123.GF4742@sirena.org.uk>
+ <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
+ <20201113142937.GB4828@sirena.org.uk>
+ <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7gGkHNMELEOhSGF6"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
 Content-Disposition: inline
-In-Reply-To: <20201111103708.152566-1-jonathanh@nvidia.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
+X-Cookie: No solicitors.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7gGkHNMELEOhSGF6
-Content-Type: text/plain; charset=us-ascii
+--adJ1OR3c6QgCpb/j
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 11, 2020 at 10:37:08AM +0000, Jon Hunter wrote:
-> Deferred probe is an expected return value for devm_regulator_bulk_get().
-> Given that the driver deals with it properly, there's no need to output a
-> warning that may potentially confuse users.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/phy/tegra/xusb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Nov 13, 2020 at 06:55:27PM +0300, Dmitry Osipenko wrote:
+> 13.11.2020 17:29, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> > It's not clear if it matters - it's more a policy decision on the part
+> > of the driver about what it thinks safe error handling is.  If it's not
 
---7gGkHNMELEOhSGF6
+> If regulator_get() returns a dummy regulator, then this means that
+> regulator isn't specified in a device-tree. But then the only way for a
+> consumer driver to check whether regulator is dummy, is to check
+> presence of the supply property in a device-tree.
+
+My point here is that the driver shouldn't be checking for a dummy
+regulator, the driver should be checking the features that are provided
+to it by the regulator and handling those.  It doesn't matter if this is
+a dummy regulator or an actual regulator with limited features, the
+effect is the same and the handling should be the same.  If the driver
+is doing anything to handle dummy regulators explicitly as dummy
+regulators it is doing it wrong.
+
+> We want to emit error messages when something goes wrong, for example
+> when regulator voltage fails to change. It's fine that voltage changes
+> are failing for a dummy regulator, but then consumer driver shouldn't
+> recognize it as a error condition.
+
+If you're fine with that you should also be fine with any other
+regulator for which you failed to enumerate any voltages which you can
+set.
+
+> The regulator_get_optional() provides a more consistent and
+> straightforward way for consumer drivers to check presence of a physical
+> voltage regulator in comparison to dealing with a regulator_get(). The
+> dummy regulator is nice to use when there is no need to change
+> regulator's voltage, which doesn't work for a dummy regulator.
+
+To repeat you should *only* be using regulator_get_optional() in the
+case where the supply may be physically absent which is not the case
+here.
+
+--adJ1OR3c6QgCpb/j
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+usHUACgkQ3SOs138+
-s6E1CRAAvsRmuOGUR8FxLS27FAWqc3pLS6sBP4J/7BifRoxzn/D0AFNrDwgWZtjF
-KcNWJcf5J8/0/5inQFqAuNjpFYztIayMmmfs56JxWnhuvFPUu66B60GBwb4g852A
-Oy251Mfb8JxDQStuqauK8RODcTGQq/oEftt2inQM47jtqH9MwoAphE+lcZNFxaX4
-ayc3gWaTcxL78TftVA3UnErOCwplV+U5oTGpMb2aCiugOfgBnNxxv5C9zBTw8Kyc
-g3o2rYACboFgsG6NNxB/IJcREVVO1EsGxOzgbFpS4PrD1M+BLSVpLeDVEynyDG9p
-QbGaXlJFx7I6FEYgl83pMwk19zDMN+zoXrL6pDUn3JNC7uBTMecarPcBZp7KicmW
-yBEEEWFWHJshkcpDx96/H69PwrRGnjg2ty84j667qM0cLA8MRl318OG8LWd0TTw0
-/6YhfPLZltrfQ81FPVTTrK609VUGYY1XA3Zps1TdagMcckQ39tuXsO91OJvKmA7k
-bLjjv8qNb8MMHlit6pEFwCknusrWO9PDULPJ5TLcOPFraAQi+qaIaXRbcWVKMjSC
-jB92R1615jaxHNx5EJ4mUTTdX/mgThmcr36k29sbMkDvOjGdRSE/EAZm16x4umk6
-XHVSQiObWSBZpMD3kiW7+Ht5aMMnz4mIM73m4Z7F5Jo8GtooVwo=
-=pkpI
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+usTYACgkQJNaLcl1U
+h9Cdtgf+KPTFZMOoWB6AmVx7uO9sDi9hMEVVCzp/m6ePr9MDeju+i5ix2FQINkxE
+D3+IHQpy5uNaihmetU14FQqj46ci6B9LfYY2bJ83O4DQbLGFBp4IjfGHUZHSrG/H
+uOlmTAln3D7hJvmlexfC3pr/DaCmS29p9Zr9/jI7m96gq+QpksXL8vK347+CUcZi
+HB5BciEamTey+AESLGu13X9rEPhkyLuNpU3N53bp6rg+jZqEqXJz8NCfQ0DeGbRU
+ssePVo1EThW95vi1G7cQCi9XO+MaNQFp7YRQ91nQMfeY6UMgF6TCUvBB31A9U0BF
+N1T5iPikwB5hLC/LTyappOFpxG0AMw==
+=4ogU
 -----END PGP SIGNATURE-----
 
---7gGkHNMELEOhSGF6--
+--adJ1OR3c6QgCpb/j--
