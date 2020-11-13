@@ -2,107 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE8FC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 23:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2881CC388F9
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 03:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 713C720A8B
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Nov 2020 23:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09B422241
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 03:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oy5fulZH"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GZRQqzdO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbgKLXDX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 18:03:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54454 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbgKLXDW (ORCPT
+        id S1726090AbgKMDyj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Nov 2020 22:54:39 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:15624 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbgKMDyi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 18:03:22 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6505AC0613D1
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 15:03:22 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id w15so3061598lji.10
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 15:03:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Azk0A7jVz4n0xFGnPcd+eF6bF32aasHnRZB1lZqJcBE=;
-        b=oy5fulZHJGw1VEKjko86q9Fecu/ZYihWolk3QCZBJXfrJlyQM7waUXFFyrtX1h9e2J
-         NuNY1ne9KHHtbI22rZwtKCQfzyGG09oy7ay4DAy5/BOsD9PEHGmWJdk8v26K7/kBrsW2
-         WufDtfFrxxheJ89oJ2nxg8qkheBzLPjuJc6Va81ZWcJ6QxRM+0EwJrba6DfAYtcRrYyt
-         J4K9UC8wEcRNhwiDBGB/XUiCQEA6bKad5bjHVKVNdKTkRgKMmBusGkvvvqOyTXuZVaxK
-         AJGL7DIKs1DaJbkUoPBhFvQiGTAqrnkvS/40kbefseRNULN3BTa7VxUY4SQsSvd25UPK
-         1obg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Azk0A7jVz4n0xFGnPcd+eF6bF32aasHnRZB1lZqJcBE=;
-        b=LvONJQOro8imUQFFbKgkr/+3H6iXDbUdt0YMJXw0yUTlYVM0HUz8IH+tj69BAKAPOI
-         Cu6rrpd34NwZoT2DlFiAOBUthP66iZqpmGJGB5joWYx16mZ+fXzfQnrSzm9ipjmkDUwE
-         /RVnnaQdyFlmmcMuaVWYICUtMyBUWCaKWuSFGWEq28PoqaiS/JtbeBXhF7lQdS8B58k5
-         wd65cS4MPLrutO7LHm+E7VCAUoHgpB6K7133eyhkBjGZSWA2EjFTcRY/077NNpT5xxFS
-         ypycFHYM+zzj1Zf13CC5Wsz9R48EQBcp3zETgXn12dA3ia8vqsTLhFw1iD7bF/RjbKz5
-         ZC9g==
-X-Gm-Message-State: AOAM5304zu3XBknqI8Ldtzx1ZMxoWxCInUoHuBFerD29zVLUTcILbUYU
-        EGMdF4OGgK/QttKcLWOw7/o=
-X-Google-Smtp-Source: ABdhPJy7DYrgeZ9jxNBessBirD+DaqvaXRJMulhkugXMDwd16pjYWPwS51COVYi+ELKlYMhHAWzB6w==
-X-Received: by 2002:a2e:8816:: with SMTP id x22mr821061ljh.78.1605222200965;
-        Thu, 12 Nov 2020 15:03:20 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.gmail.com with ESMTPSA id s26sm905126ljj.105.2020.11.12.15.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2020 15:03:20 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org
-Subject: [PATCH v3] ARM: tegra: nexus7: Set video decoder clock rate to 408MHz
-Date:   Fri, 13 Nov 2020 02:02:57 +0300
-Message-Id: <20201112230257.30430-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        Thu, 12 Nov 2020 22:54:38 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fae03780000>; Thu, 12 Nov 2020 19:54:32 -0800
+Received: from [10.2.50.194] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
+ 2020 03:54:33 +0000
+Subject: Re: [PATCH v1 1/4] dt-bindings: ata: tegra: Convert binding
+ documentation to YAML
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     <thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-ide@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <jonathanh@nvidia.com>
+References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
+ <1604628968-1501-2-git-send-email-skomatineni@nvidia.com>
+ <20201106161122.GB3289870@bogus>
+ <f8ba33f1-90fa-a9f0-5834-9de23fc8ad31@nvidia.com>
+ <d0a42b1c-8ddc-fc97-c675-70a5b7601580@nvidia.com>
+Message-ID: <f7ccb10e-e375-d6a9-78b3-21a9f85a0148@nvidia.com>
+Date:   Thu, 12 Nov 2020 19:54:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d0a42b1c-8ddc-fc97-c675-70a5b7601580@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605239672; bh=y9M0Fcn36/SC16+7wkHJ4+Z0grI9AV23OMNrrku0Fw8=;
+        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=GZRQqzdO5zNyf7+zJteLqdzDboMjcnAztm+r9Mgi8ttmSj3i4UzwepmYd6H78e9cD
+         FoRAV+V+Tx1SxrgeMOv1/1HohNwdTXR8BZuBnhgFjzl8YO4jcQVIArEUAVeOkNjPjr
+         TklNtxKZa+ASn2JJdXaBTmDE0V2+alQVUqFqDHPh8DUHa0ivvBJ9vql7M2grwnzDWb
+         3Kt9wS5Kz9VpCZoM4cN8uq3yAGxOkbzmsnhL07RmLOOljOGxRwCGAsLjoDHolLM5vE
+         00xG3VPN1AFKGnl0eCsrOpPNZECxoFXlFOBSlkOLunSqKtd0Px1MiUE7bTV1j7M7Xe
+         1DiJrpK4JFUdg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The default 600MHz is technically unsupported on Nexus 7. Assign VDE clock
-to 408MHz, which is supported by all hardware versions.
+Hi Rob,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+Updated yamllint and dt-schema as well.
 
-Changelog:
+When I do make dt_binding_check, I see it failed as=20
+processed-schema-examples.json is not generated.
+Any idea of what I may be missing?
 
-v3: - Rebased patch properly, fixed merge conflict.
+Also it did not go thru bindings/ata path. Tried with DT_SCHEMA_FILES to=20
+tegra-ahci.yaml as well and I see same.
+make dt_binding_check=20
+DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/ata/nvidia,tegra-ahci.y=
+aml
 
- arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+LINT=C2=A0=C2=A0=C2=A0 Documentation/devicetree/bindings
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:20:9: [warning]=20
+wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:30:9: [warning]=20
+wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:33:9: [warning]=20
+wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.yaml:3=
+7:2:=20
+[error] syntax error: expected <block end>, but found '<scalar>' (syntax)
+./Documentation/devicetree/bindings/soc/aspeed/xdma.yaml:10:2: [warning]=20
+wrong indentation: expected 2 but found 1 (indentation)
+./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:=
+10:4:=20
+[warning] wrong indentation: expected 2 but found 3 (indentation)
+./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:=
+18:7:=20
+[warning] wrong indentation: expected 4 but found 6 (indentation)
+./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:10:4:=20
+[warning] wrong indentation: expected 2 but found 3 (indentation)
+./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:15:7:=20
+[warning] wrong indentation: expected 4 but found 6 (indentation)
+./Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml:25:=
+10:=20
+[warning] wrong indentation: expected 10 but found 9 (indentation)
+./Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml:52=
+:9:=20
+[warning] wrong indentation: expected 6 but found 8 (indentation)
+./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:32:13:=20
+[warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:35:9:=20
+[warning] wrong indentation: expected 10 but found 8 (indentation)
+Documentation/devicetree/bindings/Makefile:59: recipe for target=20
+'Documentation/devicetree/bindings/processed-schema-examples.json' failed
+make[1]: ***=20
+[Documentation/devicetree/bindings/processed-schema-examples.json] Error 12=
+3
+Makefile:1362: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index 8def1d2e34f9..b284e32debca 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -90,6 +90,12 @@ init-low-power-mode-hog {
- 		};
- 	};
- 
-+	vde@6001a000 {
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_VDE>;
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>;
-+		assigned-clock-rates = <408000000>;
-+	};
-+
- 	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
--- 
-2.29.2
 
+When I do dtbs_check, I see=20
+Documentation/devicetree/bindings/processed-schema.json generated and=20
+also it passes for tegra-ahci.yaml
+
+make ARCH=3Darm64 dtbs_check=20
+DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/ata/nvidia,tegra-ahci.y=
+aml
+
+Regards,
+
+Sowjanya
+
+
+On 11/6/20 9:18 AM, Sowjanya Komatineni wrote:
+>
+> On 11/6/20 8:41 AM, Sowjanya Komatineni wrote:
+>>
+>> On 11/6/20 8:11 AM, Rob Herring wrote:
+>>> On Thu, 05 Nov 2020 18:16:05 -0800, Sowjanya Komatineni wrote:
+>>>> This patch converts text based dt-binding document to YAML based
+>>>> dt-binding document.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>> =C2=A0 .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 152=20
+>>>> +++++++++++++++++++++
+>>>> =C2=A0 .../bindings/ata/nvidia,tegra124-ahci.txt=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 44 ------
+>>>> =C2=A0 2 files changed, 152 insertions(+), 44 deletions(-)
+>>>> =C2=A0 create mode 100644=20
+>>>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
+>>>> =C2=A0 delete mode 100644=20
+>>>> Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
+>>>>
+>>>
+>>> My bot found errors running 'make dt_binding_check' on your patch:
+>>>
+>>> yamllint warnings/errors:
+>>>
+>>> dtschema/dtc warnings/errors:
+>>> Error:=20
+>>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dts:27.=
+31-32=20
+>>> syntax error
+>>> FATAL ERROR: Unable to parse input tree
+>>> make[1]: *** [scripts/Makefile.lib:342:=20
+>>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dt.yaml=
+]=20
+>>> Error 1
+>>> make[1]: *** Waiting for unfinished jobs....
+>>> make: *** [Makefile:1364: dt_binding_check] Error 2
+>>>
+>>>
+>>> See https://patchwork.ozlabs.org/patch/1395390
+>>>
+>>> The base for the patch is generally the last rc1. Any dependencies
+>>> should be noted.
+>>>
+>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>> date:
+>>>
+>>> pip3 install dtschema --upgrade
+>>>
+>>> Please check and re-submit.
+>> Thanks Rob. Will re-try after installing up-to-date.
+>
+> Somehow running 'make dt_binding_check' gives below error.
+>
+> I have yamllint newest version (1.2.1-1). Any specific version of=20
+> yamllint is needed?
+>
+> =C2=A0LINT=C2=A0=C2=A0=C2=A0 Documentation/devicetree/bindings
+> invalid config: unknown option "max-spaces-inside-empty" for rule=20
+> "braces"
+> xargs: /usr/bin/yamllint: exited with status 255; aborting
+> Documentation/devicetree/bindings/Makefile:59: recipe for target=20
+> 'Documentation/devicetree/bindings/processed-schema-examples.json' failed
+> make[1]: ***=20
+> [Documentation/devicetree/bindings/processed-schema-examples.json]=20
+> Error 124
+> Makefile:1362: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
