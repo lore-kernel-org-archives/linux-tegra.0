@@ -2,207 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2881CC388F9
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 03:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04C6C55ABD
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 07:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B09B422241
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 03:54:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GZRQqzdO"
+	by mail.kernel.org (Postfix) with ESMTP id B8D1C221E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 07:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgKMDyj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Nov 2020 22:54:39 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:15624 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbgKMDyi (ORCPT
+        id S1726112AbgKMHES (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Nov 2020 02:04:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgKMHES (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Nov 2020 22:54:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fae03780000>; Thu, 12 Nov 2020 19:54:32 -0800
-Received: from [10.2.50.194] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
- 2020 03:54:33 +0000
-Subject: Re: [PATCH v1 1/4] dt-bindings: ata: tegra: Convert binding
- documentation to YAML
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-ide@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <jonathanh@nvidia.com>
-References: <1604628968-1501-1-git-send-email-skomatineni@nvidia.com>
- <1604628968-1501-2-git-send-email-skomatineni@nvidia.com>
- <20201106161122.GB3289870@bogus>
- <f8ba33f1-90fa-a9f0-5834-9de23fc8ad31@nvidia.com>
- <d0a42b1c-8ddc-fc97-c675-70a5b7601580@nvidia.com>
-Message-ID: <f7ccb10e-e375-d6a9-78b3-21a9f85a0148@nvidia.com>
-Date:   Thu, 12 Nov 2020 19:54:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 13 Nov 2020 02:04:18 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C43C2C0613D6
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Nov 2020 23:04:16 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kdT7e-0002r8-3x; Fri, 13 Nov 2020 08:03:50 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kdT7Z-0004f0-FQ; Fri, 13 Nov 2020 08:03:45 +0100
+Date:   Fri, 13 Nov 2020 08:03:43 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     alexandre.belloni@bootlin.com, heiko@sntech.de,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        nicolas.ferre@microchip.com, matthias.bgg@gmail.com,
+        linux-riscv@lists.infradead.org, festevam@gmail.com,
+        f.fainelli@gmail.com, shc_work@mail.ru, khilman@baylibre.com,
+        ludovic.desroches@microchip.com, jonathanh@nvidia.com,
+        linux-rockchip@lists.infradead.org, wens@csie.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com,
+        slemieux.tyco@gmail.com, linux-pwm@vger.kernel.org,
+        rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org,
+        vz@mleia.com, linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com,
+        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, sbranden@broadcom.com,
+        linux-kernel@vger.kernel.org, palmer@dabbelt.com,
+        kernel@pengutronix.de, shawnguo@kernel.org,
+        claudiu.beznea@microchip.com, nsaenzjulienne@suse.de,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: About devm_platform_ioremap_resource [Was: Re: [PATCH 01/32] pwm:
+ sun4i: convert to devm_platform_ioremap_resource]
+Message-ID: <20201113070343.lhcsbyvi5baxn3lq@pengutronix.de>
+References: <20191229080610.7597-1-tiny.windzz@gmail.com>
+ <20201112161346.gp5nenuagx5wmwl2@pengutronix.de>
+ <20201112190649.GA908613@ulmo>
+ <20201112211429.kfyqzkmmchjo6pll@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <d0a42b1c-8ddc-fc97-c675-70a5b7601580@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605239672; bh=y9M0Fcn36/SC16+7wkHJ4+Z0grI9AV23OMNrrku0Fw8=;
-        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=GZRQqzdO5zNyf7+zJteLqdzDboMjcnAztm+r9Mgi8ttmSj3i4UzwepmYd6H78e9cD
-         FoRAV+V+Tx1SxrgeMOv1/1HohNwdTXR8BZuBnhgFjzl8YO4jcQVIArEUAVeOkNjPjr
-         TklNtxKZa+ASn2JJdXaBTmDE0V2+alQVUqFqDHPh8DUHa0ivvBJ9vql7M2grwnzDWb
-         3Kt9wS5Kz9VpCZoM4cN8uq3yAGxOkbzmsnhL07RmLOOljOGxRwCGAsLjoDHolLM5vE
-         00xG3VPN1AFKGnl0eCsrOpPNZECxoFXlFOBSlkOLunSqKtd0Px1MiUE7bTV1j7M7Xe
-         1DiJrpK4JFUdg==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bfm7upvbg2x7q3rm"
+Content-Disposition: inline
+In-Reply-To: <20201112211429.kfyqzkmmchjo6pll@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rob,
 
-Updated yamllint and dt-schema as well.
+--bfm7upvbg2x7q3rm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When I do make dt_binding_check, I see it failed as=20
-processed-schema-examples.json is not generated.
-Any idea of what I may be missing?
+Hello,
 
-Also it did not go thru bindings/ata path. Tried with DT_SCHEMA_FILES to=20
-tegra-ahci.yaml as well and I see same.
-make dt_binding_check=20
-DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/ata/nvidia,tegra-ahci.y=
-aml
+[Added lkml and the people involved in commit 7945f929f1a7
+("drivers: provide devm_platform_ioremap_resource()") to Cc:. For the
+new readers: This is about patches making use of
+devm_platform_ioremap_resource() instead of open coding it. Full context
+at https://lore.kernel.org/r/20201112190649.GA908613@ulmo]
 
-LINT=C2=A0=C2=A0=C2=A0 Documentation/devicetree/bindings
-./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:20:9: [warning]=20
-wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:30:9: [warning]=20
-wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:33:9: [warning]=20
-wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.yaml:3=
-7:2:=20
-[error] syntax error: expected <block end>, but found '<scalar>' (syntax)
-./Documentation/devicetree/bindings/soc/aspeed/xdma.yaml:10:2: [warning]=20
-wrong indentation: expected 2 but found 1 (indentation)
-./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:=
-10:4:=20
-[warning] wrong indentation: expected 2 but found 3 (indentation)
-./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:=
-18:7:=20
-[warning] wrong indentation: expected 4 but found 6 (indentation)
-./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:10:4:=20
-[warning] wrong indentation: expected 2 but found 3 (indentation)
-./Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml:15:7:=20
-[warning] wrong indentation: expected 4 but found 6 (indentation)
-./Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml:25:=
-10:=20
-[warning] wrong indentation: expected 10 but found 9 (indentation)
-./Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml:52=
-:9:=20
-[warning] wrong indentation: expected 6 but found 8 (indentation)
-./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:32:13:=20
-[warning] wrong indentation: expected 14 but found 12 (indentation)
-./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:35:9:=20
-[warning] wrong indentation: expected 10 but found 8 (indentation)
-Documentation/devicetree/bindings/Makefile:59: recipe for target=20
-'Documentation/devicetree/bindings/processed-schema-examples.json' failed
-make[1]: ***=20
-[Documentation/devicetree/bindings/processed-schema-examples.json] Error 12=
-3
-Makefile:1362: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+On Thu, Nov 12, 2020 at 10:14:29PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Thu, Nov 12, 2020 at 08:06:49PM +0100, Thierry Reding wrote:
+> > I also think that it's overly narrow is scope, so you can't actually
+> > "blindly" use this helper and I've seen quite a few cases where this was
+> > unknowingly used for cases where it shouldn't have been used and then
+> > broke things (because some drivers must not do the request_mem_region()
+> > for example).
+>=20
+> You have a link to such an accident?
 
+I got a hint in private here: https://lore.kernel.org/r/1555670144-24220-1-=
+git-send-email-aisheng.dong@nxp.com
 
-When I do dtbs_check, I see=20
-Documentation/devicetree/bindings/processed-schema.json generated and=20
-also it passes for tegra-ahci.yaml
+devm_platform_ioremap_resource() is platform_get_resource() +
+devm_ioremap_resource() and here it was used to replace
+platform_get_resource() + devm_ioremap().
 
-make ARCH=3Darm64 dtbs_check=20
-DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/ata/nvidia,tegra-ahci.y=
-aml
+IMHO the unlucky thing in this situation is that devm_ioremap_resource()
+and devm_ioremap() are different by more than just how they get the area
+to remap. (i.e. devm_ioremap_resource() also does
+devm_request_mem_region().)
 
-Regards,
+So the problem is not the added wrapper, but unclear semantics in the
+functions it uses. In my eyes devm_ioremap() and
+devm_platform_ioremap_resource() should better be named
+devm_request_ioremap() and devm_platform_request_ioremap_resource()
+respectively. Is it worth to rename these for clearity?
 
-Sowjanya
+Best regards
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-On 11/6/20 9:18 AM, Sowjanya Komatineni wrote:
->
-> On 11/6/20 8:41 AM, Sowjanya Komatineni wrote:
->>
->> On 11/6/20 8:11 AM, Rob Herring wrote:
->>> On Thu, 05 Nov 2020 18:16:05 -0800, Sowjanya Komatineni wrote:
->>>> This patch converts text based dt-binding document to YAML based
->>>> dt-binding document.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>> =C2=A0 .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 152=20
->>>> +++++++++++++++++++++
->>>> =C2=A0 .../bindings/ata/nvidia,tegra124-ahci.txt=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 44 ------
->>>> =C2=A0 2 files changed, 152 insertions(+), 44 deletions(-)
->>>> =C2=A0 create mode 100644=20
->>>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
->>>> =C2=A0 delete mode 100644=20
->>>> Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->>>>
->>>
->>> My bot found errors running 'make dt_binding_check' on your patch:
->>>
->>> yamllint warnings/errors:
->>>
->>> dtschema/dtc warnings/errors:
->>> Error:=20
->>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dts:27.=
-31-32=20
->>> syntax error
->>> FATAL ERROR: Unable to parse input tree
->>> make[1]: *** [scripts/Makefile.lib:342:=20
->>> Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dt.yaml=
-]=20
->>> Error 1
->>> make[1]: *** Waiting for unfinished jobs....
->>> make: *** [Makefile:1364: dt_binding_check] Error 2
->>>
->>>
->>> See https://patchwork.ozlabs.org/patch/1395390
->>>
->>> The base for the patch is generally the last rc1. Any dependencies
->>> should be noted.
->>>
->>> If you already ran 'make dt_binding_check' and didn't see the above
->>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->>> date:
->>>
->>> pip3 install dtschema --upgrade
->>>
->>> Please check and re-submit.
->> Thanks Rob. Will re-try after installing up-to-date.
->
-> Somehow running 'make dt_binding_check' gives below error.
->
-> I have yamllint newest version (1.2.1-1). Any specific version of=20
-> yamllint is needed?
->
-> =C2=A0LINT=C2=A0=C2=A0=C2=A0 Documentation/devicetree/bindings
-> invalid config: unknown option "max-spaces-inside-empty" for rule=20
-> "braces"
-> xargs: /usr/bin/yamllint: exited with status 255; aborting
-> Documentation/devicetree/bindings/Makefile:59: recipe for target=20
-> 'Documentation/devicetree/bindings/processed-schema-examples.json' failed
-> make[1]: ***=20
-> [Documentation/devicetree/bindings/processed-schema-examples.json]=20
-> Error 124
-> Makefile:1362: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
->
+--bfm7upvbg2x7q3rm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+uL8wACgkQwfwUeK3K
+7AmhFQf/UMY3Z/O4ajFXsCh5aeqAW1EKy0wv+YtVLmLASYlkvBQ5OpoaFH6U7oZY
+a1BVjZ2I3q3pi1zMs+2dPAkylNi0VEIERvwncqHOfYN4FjdNsI85rKbxu4DNsWHJ
+wlaQxLwmUmDXDESpJ4RN8JqF/V/nPZfj/4V52ANK31PZ+i4fYnIlW6TU0cJwoJ9s
+aGSM2QwTb27uaRg5hqZqfOyIkt3wwkDJIF65H/vi64r0Gtm3c+0iKbEmlXr2XZCh
+APhFgQQDGFOMXdSBZeFxTtuLCzuG/RA3Fxb+7okleZUL6GrSwq7xWHJGorO136kq
+mo88jw2ceYf/qJA9E4atasOfbQUtlg==
+=gJ1m
+-----END PGP SIGNATURE-----
+
+--bfm7upvbg2x7q3rm--
