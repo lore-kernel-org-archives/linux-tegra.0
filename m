@@ -4,231 +4,165 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CD1C388F7
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BF9C388F7
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 17:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDC142137B
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 16:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6632621D7F
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 17:13:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyeS1LLD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vf9aLrdM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbgKMQpG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Nov 2020 11:45:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
+        id S1726255AbgKMRNl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Nov 2020 12:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbgKMQpG (ORCPT
+        with ESMTP id S1725981AbgKMRNk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Nov 2020 11:45:06 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741FBC0613D1;
-        Fri, 13 Nov 2020 08:45:04 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id s13so9038339wmh.4;
-        Fri, 13 Nov 2020 08:45:04 -0800 (PST)
+        Fri, 13 Nov 2020 12:13:40 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8ACC0613D1;
+        Fri, 13 Nov 2020 09:13:54 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id 11so11601082ljf.2;
+        Fri, 13 Nov 2020 09:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w3tTeimsV7KGyYQSPfv9SeS1lBQXGPjuqYfC+5XH5KI=;
-        b=iyeS1LLDqzvM9Nzps8PD90IxAbzzRzoR5CT+0pS0zuFTgHzaUu+KZrjWfP8nf4S2Bi
-         l9/eAFV507IbALmpVOnFWchGR8VYr/wLxxj2BHQ1b1ZBrPfLIkMobEJUvpsR6S2ejCRq
-         yAaxzYIJSZ5PxuqY/fBLLVkNyre0ALqD6d14ykDgOQXV7Tn6f242FYVjMkDsnHhJHQaJ
-         VifX4MHW3wVNXpVCbcOv6qHz1SSxO1rlZhV/golqJO3ifOOxrnnMBrBK1s94P1SnxHVt
-         lDL5LgyNH3nP7YuwfJDBN1cYQ4PQ80pKsX8y+uZq0kFS2YLEhPUM5fQ59/n4gxa9CLmP
-         oC+g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uHdzUd8NUNc0lpDwmppHgQMHGeLwwBEPsQiuUdFVMn0=;
+        b=Vf9aLrdMygr+pSOB4syQyMMFa9s3Y8gg9aPfdkjSqO0uUp6X42pZjw6A0oiO8Qo79g
+         VMYB6KWyUWYTFP9RCfvpj6vzwpPwW2W6oCelyU8g7orM2z47YMOnDHg3C2g50zzfEusG
+         nqvrEWPVjXN4vLqhpx0/KIK4pqj8V71LUjcbnFJPdOHtrUJArcFLXTfdV2HqqJ/fhuLd
+         vr4HQXG4TCfqEDnWPBvTd1hixQrQx+II8BCVSHa4t4TrMZyTNIez047wBg702EUCXj6X
+         1iA+hxDZ1SNCWmtV7FjSRYfemkBuFRiPD2NRufuDZeWZswgy5d+Dy8jmCiBsIO+6SJAx
+         soQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w3tTeimsV7KGyYQSPfv9SeS1lBQXGPjuqYfC+5XH5KI=;
-        b=VL7qENfLSQVRgMABPl1GQNZwHgN9Tpk58iSBzcVz0ljiQnnjukTgoP9SdKSHt4Lq3h
-         2eD+4Zrzwqg0XI2JGM7Ch3AEjeo1RaV5E/CDsgCVJyZG5xs+Gry7wnOuJY9mH/7lLIez
-         zBq49yNuJteSL6jhruMnufzNNVpBXHhNXn8hizHv0Q7JWySn4eyEGO40Dn9MVeiQOUJ+
-         CjCUdoUpk0l2q3EGz3uwkd6I3vrQMxYbhypfuJot6Yt1I3DzS++3oqazlnjyPTOpkpv2
-         HfCe7S84CYBGuzOOnmwV6ib0BOI8LmpmS9fjbhJcuKED0qGUW1A351fWETz6jaKZt0ZN
-         UlQw==
-X-Gm-Message-State: AOAM531g0uCkHnU3X+PFTl78nV6ZedfQeZ5QTINA8j46nBYjeRpc0tH9
-        AD90mI/V/LP+FsbXShVVPlY=
-X-Google-Smtp-Source: ABdhPJz5G5ud1mfgz5CSN1RmYNnQ+Xy235w4dA9chcJ0UI8urW/wzporWQvrWq5O71L2s5nPFnI6JQ==
-X-Received: by 2002:a05:600c:218a:: with SMTP id e10mr419285wme.73.1605285898183;
-        Fri, 13 Nov 2020 08:44:58 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c6sm12442041wrh.74.2020.11.13.08.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2020 08:44:56 -0800 (PST)
-Date:   Fri, 13 Nov 2020 17:44:55 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, robh@kernel.org, jonathanh@nvidia.com,
-        kishon@ti.com, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, nkristam@nvidia.com
-Subject: Re: [PATCH v4 00/16] Tegra XHCI controller ELPG support
-Message-ID: <20201113164455.GG1408970@ulmo>
-References: <20201016130726.1378666-1-jckuo@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uHdzUd8NUNc0lpDwmppHgQMHGeLwwBEPsQiuUdFVMn0=;
+        b=rVRDgvOf0bEMMb0CqQ+L0HbzzUNylTEQTMR3sPIDTci0bmywnuHRF7DV0r4m61JvkB
+         4cwq+RD87pnzW3j3cYQ0NFj3w6eoJyXF9c39AG6JjVaRZw+EM+ZRxfTFBs91MGapriu4
+         tpWQL/UWTtldxwmEnaJZJ2Xq+8txmmDJDw23RkJRkDqc4itkXuDvpI/nriWl/J0Uq03N
+         KL6MPI5S0nroh5KVtmB0qM1tjEn0drwfPLwzlwA8YcK6AXZfdF4yHMJKWCTlTD3XaP7G
+         HfN9Rgb2Pgy6LdXsPtfO3I6xdvOV5NUgJBvchI7Zu73jk0pTtGk6JyOckzfBJ74YPuSv
+         5/4Q==
+X-Gm-Message-State: AOAM53312YFbTzJn/WE8TkbN/RGdntjYHAJGxy+MxAUDw6Gb2K7X2gWQ
+        xDc37NNoNLMOi+lI//u40YlhqZHN4Ao=
+X-Google-Smtp-Source: ABdhPJyHpSg50GBIXMPXL7aP9qtANQ43u803+eBAONtCmTaJb6C6zR3PWcQF6qlWhad3UtWFiD81wQ==
+X-Received: by 2002:a2e:3503:: with SMTP id z3mr1395526ljz.70.1605287631533;
+        Fri, 13 Nov 2020 09:13:51 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id e10sm1617281lfn.115.2020.11.13.09.13.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Nov 2020 09:13:50 -0800 (PST)
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+ <20201111115534.GA4847@sirena.org.uk>
+ <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+ <20201112171600.GD4742@sirena.org.uk>
+ <b4b06c1d-c9d4-43b2-c6eb-93f8cb6c677d@gmail.com>
+ <20201112200123.GF4742@sirena.org.uk>
+ <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
+ <20201113142937.GB4828@sirena.org.uk>
+ <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
+ <20201113161550.GC4828@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3beaa12b-4a50-a3b6-fc43-ebb5ce7a8db7@gmail.com>
+Date:   Fri, 13 Nov 2020 20:13:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NPukt5Otb9an/u20"
-Content-Disposition: inline
-In-Reply-To: <20201016130726.1378666-1-jckuo@nvidia.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <20201113161550.GC4828@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+13.11.2020 19:15, Mark Brown пишет:
+> On Fri, Nov 13, 2020 at 06:55:27PM +0300, Dmitry Osipenko wrote:
+>> 13.11.2020 17:29, Mark Brown пишет:
+> 
+>>> It's not clear if it matters - it's more a policy decision on the part
+>>> of the driver about what it thinks safe error handling is.  If it's not
+> 
+>> If regulator_get() returns a dummy regulator, then this means that
+>> regulator isn't specified in a device-tree. But then the only way for a
+>> consumer driver to check whether regulator is dummy, is to check
+>> presence of the supply property in a device-tree.
+> 
+> My point here is that the driver shouldn't be checking for a dummy
+> regulator, the driver should be checking the features that are provided
+> to it by the regulator and handling those.
 
---NPukt5Otb9an/u20
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I understand yours point, but then we need dummy regulator to provide
+all the features, and currently it does the opposite.
 
-On Fri, Oct 16, 2020 at 09:07:10PM +0800, JC Kuo wrote:
-> Tegra XHCI controler can be placed in ELPG (Engine Level PowerGated)
-> state for power saving when all of the connected USB devices are in
-> suspended state. This patch series includes clk, phy and pmc changes
-> that are required for properly place controller in ELPG and bring
-> controller out of ELPG.
->=20
-> JC Kuo (16):
->   clk: tegra: Add PLLE HW power sequencer control
->   clk: tegra: Don't enable PLLE HW sequencer at init
->   phy: tegra: xusb: Move usb3 port init for Tegra210
->   phy: tegra: xusb: tegra210: Do not reset UPHY PLL
->   phy: tegra: xusb: Rearrange UPHY init on Tegra210
->   phy: tegra: xusb: Add Tegra210 lane_iddq operation
->   phy: tegra: xusb: Add sleepwalk and suspend/resume
->   soc/tegra: pmc: Provide USB sleepwalk register map
->   arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
->   dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
->   phy: tegra: xusb: Add wake/sleepwalk for Tegra210
->   phy: tegra: xusb: Tegra210 host mode VBUS control
->   phy: tegra: xusb: Add wake/sleepwalk for Tegra186
->   arm64: tegra210/tegra186/tegra194: XUSB PADCTL irq
->   usb: host: xhci-tegra: Unlink power domain devices
->   xhci: tegra: Enable ELPG for runtime/system PM
->=20
->  .../phy/nvidia,tegra124-xusb-padctl.txt       |    1 +
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |    1 +
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |    1 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    2 +
->  drivers/clk/tegra/clk-pll.c                   |   12 -
->  drivers/clk/tegra/clk-tegra210.c              |   53 +-
->  drivers/phy/tegra/xusb-tegra186.c             |  558 ++++-
->  drivers/phy/tegra/xusb-tegra210.c             | 1889 +++++++++++++----
->  drivers/phy/tegra/xusb.c                      |   92 +-
->  drivers/phy/tegra/xusb.h                      |   22 +-
->  drivers/soc/tegra/pmc.c                       |   94 +
->  drivers/usb/host/xhci-tegra.c                 |  610 ++++--
->  include/linux/clk/tegra.h                     |    4 +-
->  include/linux/phy/tegra/xusb.h                |   10 +-
->  14 files changed, 2785 insertions(+), 564 deletions(-)
+> It doesn't matter if this is
+> a dummy regulator or an actual regulator with limited features, the
+> effect is the same and the handling should be the same.  If the driver
+> is doing anything to handle dummy regulators explicitly as dummy
+> regulators it is doing it wrong.
 
-I've been testing this, but I keep seeing the following oops on suspend
-on a Jetson TX1:
+It matters because dummy regulator errors out all checks and changes
+other than enable/disable, instead of accepting them. If we could add an
+option for dummy regulator to succeed all the checks and accept all the
+values, then it could become more usable.
 
-[  153.451108] tegra-xusb-padctl phy-usb2.0: > tegra_xusb_padctl_suspend_no=
-irq(dev=3Dffff000080917000)
-[  153.460353] tegra-xusb-padctl phy-usb2.0:   driver: ffff8000114453e0 (te=
-gra_xusb_padctl_driver)
-[  153.469245] tegra-xusb-padctl phy-usb2.0:   padctl: ffff0000829f6480
-[  153.475772] tegra-xusb-padctl phy-usb2.0:     soc: ef7bdd7fffffffff (0xe=
-f7bdd7fffffffff)
-[  153.484061] Unable to handle kernel paging request at virtual address 00=
-7bdd800000004f
-[  153.492132] Mem abort info:
-[  153.495083]   ESR =3D 0x96000004
-[  153.498308]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[  153.503771]   SET =3D 0, FnV =3D 0
-[  153.506979]   EA =3D 0, S1PTW =3D 0
-[  153.510260] Data abort info:
-[  153.513200]   ISV =3D 0, ISS =3D 0x00000004
-[  153.517181]   CM =3D 0, WnR =3D 0
-[  153.520302] [007bdd800000004f] address between user and kernel address r=
-anges
-[  153.527600] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[  153.533231] Modules linked in: nouveau panel_simple tegra_video(C) tegra=
-_drm drm_ttm_helper videobuf2_dma_contig ttm videobuf2_memops cec videobuf2=
-_v4l2 videobuf2_common drm_kms_helper v4l2_fwnode videodev drm mc snd_hda_c=
-odec_hdmi cdc_ether usbnet snd_hda_tegra r8152 crct10dif_ce snd_hda_codec s=
-nd_hda_core tegra_xudc host1x lp855x_bl at24 ip_tables x_tables ipv6
-[  153.566417] CPU: 0 PID: 300 Comm: systemd-sleep Tainted: G         C    =
-    5.10.0-rc3-next-20201113-00019-g5c064d5372b0-dirty #624
-[  153.578283] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-[  153.584281] pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=3D--)
-[  153.590381] pc : tegra_xusb_padctl_suspend_noirq+0x88/0x100
-[  153.596016] lr : tegra_xusb_padctl_suspend_noirq+0x80/0x100
-[  153.601632] sp : ffff8000120dbb60
-[  153.604999] x29: ffff8000120dbb60 x28: ffff000080a1df00
-[  153.610430] x27: 0000000000000002 x26: ffff8000106f8540
-[  153.615858] x25: ffff8000113ac4a4 x24: ffff80001148c198
-[  153.621277] x23: ffff800010c4538c x22: 0000000000000002
-[  153.626692] x21: ffff800010ccde80 x20: ffff0000829f6480
-[  153.632107] x19: ffff000080917000 x18: 0000000000000030
-[  153.637521] x17: 0000000000000000 x16: 0000000000000000
-[  153.642933] x15: ffff000080a1e380 x14: 74636461702d6273
-[  153.648346] x13: ffff8000113ad058 x12: 0000000000000f39
-[  153.653759] x11: 0000000000000513 x10: ffff800011405058
-[  153.659176] x9 : 00000000fffff000 x8 : ffff8000113ad058
-[  153.664590] x7 : ffff800011405058 x6 : 0000000000000000
-[  153.670002] x5 : 0000000000000000 x4 : ffff0000fe908bc0
-[  153.675414] x3 : ffff0000fe910228 x2 : 162ef67e0581e700
-[  153.680826] x1 : 162ef67e0581e700 x0 : ef7bdd7fffffffff
-[  153.686241] Call trace:
-[  153.688769]  tegra_xusb_padctl_suspend_noirq+0x88/0x100
-[  153.694077]  __device_suspend_noirq+0x68/0x1cc
-[  153.698594]  dpm_noirq_suspend_devices+0x10c/0x1d0
-[  153.703456]  dpm_suspend_noirq+0x28/0xa0
-[  153.707461]  suspend_devices_and_enter+0x234/0x4bc
-[  153.712314]  pm_suspend+0x1e4/0x270
-[  153.715868]  state_store+0x8c/0x110
-[  153.719440]  kobj_attr_store+0x1c/0x30
-[  153.723259]  sysfs_kf_write+0x4c/0x7c
-[  153.726981]  kernfs_fop_write+0x124/0x240
-[  153.731065]  vfs_write+0xe4/0x204
-[  153.734449]  ksys_write+0x6c/0x100
-[  153.737925]  __arm64_sys_write+0x20/0x30
-[  153.741931]  el0_svc_common.constprop.0+0x78/0x1a0
-[  153.746789]  do_el0_svc+0x24/0x90
-[  153.750181]  el0_sync_handler+0x254/0x260
-[  153.754251]  el0_sync+0x174/0x180
-[  153.757663] Code: aa0303e2 94000f64 f9405680 b40000e0 (f9402803)
-[  153.763826] ---[ end trace 81543a3394cb409d ]---
+>> We want to emit error messages when something goes wrong, for example
+>> when regulator voltage fails to change. It's fine that voltage changes
+>> are failing for a dummy regulator, but then consumer driver shouldn't
+>> recognize it as a error condition.
+> 
+> If you're fine with that you should also be fine with any other
+> regulator for which you failed to enumerate any voltages which you can
+> set.
 
-Note that I've added a bit of debug information there to show what's
-going on. See how tegra_xusb_padctl_suspend_noirq() is being called for
-the phy-usb2.0 device? That's one of the PHYs that's being created for
-the USB2 lanes. Sometimes I do see that padctl->soc ends up being NULL
-for that device and in that case the function just aborts early and then
-tegra_xusb_padctl_suspend_noirq() will get called again for the padctl
-device and succeed.
+It's not fine.
 
-I can't explain what's happening here. tegra_xusb_padctl_driver never
-binds to the phy-usb2.0 device, so I don't understand how it could end
-up suspending the device with that set of dev_pm_ops. Perhaps this is
-some weird type of corruption somewhere?
+In the case of this driver the dummy regulator should succeed instead of
+failing.
 
-Thierry
+>> The regulator_get_optional() provides a more consistent and
+>> straightforward way for consumer drivers to check presence of a physical
+>> voltage regulator in comparison to dealing with a regulator_get(). The
+>> dummy regulator is nice to use when there is no need to change
+>> regulator's voltage, which doesn't work for a dummy regulator.
+> 
+> To repeat you should *only* be using regulator_get_optional() in the
+> case where the supply may be physically absent which is not the case
+> here.
+> 
 
---NPukt5Otb9an/u20
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+uuAcACgkQ3SOs138+
-s6HhJRAAhIzGiht64leNoRXPprKnW6lHKN1r2ajglsfVhD33Vz6ZN7y7Lj4o0vBo
-5KzmMKHASLMs6sCtpCH/8lIsvyh2r78gUg7wAam2XxkEOFbcMJHGXQAwXcwwPZCc
-BjqOULXVOSS4aXpuZN/0KeMmZE3DJ4k7WJ6VuNzfs9zVK9Hain7JKmIILZFQN/V+
-+cUThQtOt11R8f/Bc2Z99sunlJhaH7SXt4mU8jZVTACOh9Z47bQYqAa79VpoFzoC
-PAT1fLqNTDUez30psdqQT/vbbx85OP7dZNJroFhU4m9b/rWXO3dnnTEZ8+Sjq9gk
-KGd1OtJoE4bvhsC0nepyQkOoISP8qZQlqeteDXWSjAEgKskfbz+c1B0DdXHpyXUb
-6kKl3NR5FTWX4P4dF5VNwZlnDfc7rqtKdzSbPRMUQCGo9PvHht9pjriu+Cv8Rc6+
-7+1IqMH2SA2ylFZ0I8/BI5qwrayEKJH9fOEZ9GXCeaTqN96gBnlJMhUZsTdFMUjy
-3uquBOOVOkhUMw1tkdyOYdJ6g9kFZgcZvNSQdoUgBNxf5FxGOcMZWGPq+jtLWtLB
-HG8/w3xMqVqQbNskrdCTpkQJyoej7IvI/rSOtxEmYX8FsEkUwLZENS5NOfnQ8lWL
-4+s3PoH2Buu3Q+W7iojUkHVO+k7sjpjhNBtJvIIuJfPJz7lqKSg=
-=OrSO
------END PGP SIGNATURE-----
-
---NPukt5Otb9an/u20--
+Alright, but then we either need to improve regulator core to make dummy
+regulator a bit more usable, or continue to work around it in drivers.
+What should we do?
