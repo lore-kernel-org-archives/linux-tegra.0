@@ -2,107 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ECFC55ABD
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A5DC55ABD
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 19:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE5DE206FB
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 18:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D5B22240
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Nov 2020 19:36:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MZUcf7VE"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KMSZSn/t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbgKMSe0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Nov 2020 13:34:26 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12698 "EHLO
+        id S1726081AbgKMTgy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Nov 2020 14:36:54 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17898 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbgKMSe0 (ORCPT
+        with ESMTP id S1726028AbgKMTgy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Nov 2020 13:34:26 -0500
+        Fri, 13 Nov 2020 14:36:54 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5faed1ba0003>; Fri, 13 Nov 2020 10:34:34 -0800
-Received: from [10.2.50.194] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
- 2020 18:34:22 +0000
-Subject: Re: [RFC PATCH] mmc: sdhci: tegra: fix wrong unit with busy_timeout
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Ulf Hansson" <ulf.hansson@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>
-References: <20201113125354.3507-1-wsa+renesas@sang-engineering.com>
- <20201113163846.GF1408970@ulmo>
+        id <B5faee05e0000>; Fri, 13 Nov 2020 11:37:02 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
+ 2020 19:36:54 +0000
+Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 13 Nov 2020 19:36:53 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <728ad4ee-c5a2-65a6-c037-689bc77acbdf@nvidia.com>
-Date:   Fri, 13 Nov 2020 10:34:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/6] Add AHCI support for Tegra186
+Date:   Fri, 13 Nov 2020 11:36:52 -0800
+Message-ID: <1605296218-2510-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20201113163846.GF1408970@ulmo>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605292474; bh=RMh5cHeRnFMp4PmO2fhDfKqsLtUARA3uOLfJuAQxxmY=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=MZUcf7VEiSWrii73CUBJX2iPkP6yTOseinDekLEhebQ9MLuB33kKHSJSbPHgs5vgn
-         zX+oz1vWnQBPC9NsB42bqYSbvVHK8v76I5haqqDCc2W9CzejzbV9IG6nivm9H3i3MW
-         9AGMVzzkBJiN3OroASjFa+bST+A82hoeGWoK9tC/XALvV2AMW0T+Ax1YhrNjSCTGE5
-         6Wk5rmvL+jMP6gj08ig2oAlBMQHCc4l4yP/5SLK+raXsF36sZOwbro6t/Lwso53tnS
-         Gnck3W8MtToJ1/ld7OSiDmQ1zdFunKdhZC/7p4m/GEk01dak4h72Tfq1b38VQsap14
-         SdVCxKUIWJ92A==
+        t=1605296222; bh=mhFqHEDQm14ydpJ90cQFJG0t5wKwiepPStGAkF4xtuU=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=KMSZSn/tKTUBWB/AFJu2qQd1Mwp/20jm3ZCjR3Fp0alPCLp9clDJvLLytdidWwp1a
+         IF87JzJuvqaQF6V9WKqODHMISPJ/ezayiRtr1CsDb5N009UAz9xtQi5+wCHF63yVyy
+         XWepCw/3Qy+0aO23V7uQuPYDOin1SqjeVHSQrsZAjYsWt8JrkY/KkFEKNVbKNwuAY2
+         Dtn1CFXXYK7twRT93mPOqYXYD6ywxbMC/uSzrB2f3EZ0i8DLbVYmN5SC96qRVxKT29
+         g0BKyBbSHC7jd/NtylRFLSrsPsLBztaF8AilzvMS/s5n3//Mru7hyMvoEltwGyhnuu
+         La4/ZILaTbq/Q==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series adds support for AHCI-compliant SATA to Tegra186 SoC.
 
-On 11/13/20 8:38 AM, Thierry Reding wrote:
-> On Fri, Nov 13, 2020 at 01:53:30PM +0100, Wolfram Sang wrote:
->> 'busy_timeout' is in msecs, not in jiffies. Use the correct factor.
->>
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> ---
->>
->> Not tested. Found by code investigation about 'busy_timeout'. A quick
->> grep showed no other problematic code within the MMC host drivers.
->>
->>   drivers/mmc/host/sdhci-tegra.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
-> Sowjanya, can you take a look at this?
->
-> Thierry
+This series includes patches for
+- Converting text based dt-binding document to YAML.
+- Adding dt-bindings for Tegra186.
+- Enabling AHCI-compliance SATA for Jetson TX2.
+- Adding Tegra186 support to Tegra AHCI driver.
 
-Thanks Wolfram.
+Delta between patch versions:
+[v2]:	v1 feedback related to yaml dt-binding.
+	Removed conditional reset order in yaml and updated dts files
+	to maintain same order for commonly available resets across
+	Tegra124 thru Tegra186.
 
-Right cmd busy_timeout is in msec and we have to enable 
-ERASE_TIMEOUT_LIMIT bit for more than 11s busy operations.
 
-So it should be MSEC_PER_SEC.
+Sowjanya Komatineni (6):
+  arm: tegra: Change order of SATA resets for Tegra124
+  arm64: tegra: Change order of SATA resets for Tegra132 and Tegra210
+  dt-bindings: ata: tegra: Convert binding documentation to YAML
+  dt-binding: ata: tegra: Add dt-binding documentation for Tegra186
+  arm64: tegra: Enable AHCI on Jetson TX2
+  ata: ahci_tegra: Add AHCI support for Tegra186
 
->
->> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->> index ed12aacb1c73..ad0dc3adc7d1 100644
->> --- a/drivers/mmc/host/sdhci-tegra.c
->> +++ b/drivers/mmc/host/sdhci-tegra.c
->> @@ -1272,7 +1272,7 @@ static void tegra_sdhci_set_timeout(struct sdhci_host *host,
->>   	 * busy wait mode.
->>   	 */
->>   	val = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
->> -	if (cmd && cmd->busy_timeout >= 11 * HZ)
->> +	if (cmd && cmd->busy_timeout >= 11 * MSECS_PER_SEC)
->>   		val |= SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
->>   	else
->>   		val &= ~SDHCI_MISC_CTRL_ERASE_TIMEOUT_LIMIT;
->> -- 
->> 2.28.0
+ .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 175 +++++++++++++++++++++
+ .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 ------
+ arch/arm/boot/dts/tegra124.dtsi                    |   6 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   6 +-
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |   4 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  28 ++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
+ drivers/ata/ahci_tegra.c                           |  60 +++++--
+ 8 files changed, 263 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
+
+-- 
+2.7.4
+
