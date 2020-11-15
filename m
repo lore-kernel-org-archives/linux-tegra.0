@@ -2,82 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879E3C2D0E4
-	for <linux-tegra@archiver.kernel.org>; Sun, 15 Nov 2020 09:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF04AC2D0E4
+	for <linux-tegra@archiver.kernel.org>; Sun, 15 Nov 2020 09:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B59F24197
-	for <linux-tegra@archiver.kernel.org>; Sun, 15 Nov 2020 09:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C71D222EC
+	for <linux-tegra@archiver.kernel.org>; Sun, 15 Nov 2020 09:26:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lieK4LR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgKOJKw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 15 Nov 2020 04:10:52 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7541 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbgKOJKu (ORCPT
+        id S1726644AbgKOJ0H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 15 Nov 2020 04:26:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbgKOJ0B (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 15 Nov 2020 04:10:50 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CYmB70TpqzhZ5N;
-        Sun, 15 Nov 2020 16:50:23 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.487.0; Sun, 15 Nov 2020
- 16:50:25 +0800
-From:   Wang ShaoBo <bobo.shaobowang@huawei.com>
-To:     <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <olof@lixom.net>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huawei.libin@huawei.com>, <cj.chengjian@huawei.com>
-Subject: [PATCH] soc/tegra: fuse: Fix build with Tegra234 configuration
-Date:   Sun, 15 Nov 2020 16:50:21 +0800
-Message-ID: <20201115085021.42100-1-bobo.shaobowang@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 15 Nov 2020 04:26:01 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2026C0613D1;
+        Sun, 15 Nov 2020 01:25:58 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id 142so2482267ljj.10;
+        Sun, 15 Nov 2020 01:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1l1hwffIjqjNt9GhUbePPVmTyJTeUW4Yv+243TWcPf4=;
+        b=lieK4LR33y1aZ1fap+D73ZumMoVL6M6468po+NR+gyGMCEQBUSJjgqTFMr6hER6WfB
+         U/oEFvAuY+SrclwCLNpGUMrex3vA1wy59VOYYk7fZNpc57VlEVHtj6RKqpsAn80oM0Z2
+         Mo+p0cSbnAnQGOau+OjoIyQFeCcrmmveBOMzHv5D/OCZhYZtF4Tc7TZgEQxqouMcvULn
+         9V70vXKnmnjwHw412JpQiKAtzWYPr4LXwz6zZqCPP36mY4krJyjfujSJAeSH3zHMtpDB
+         o+DUoAUq5Ry6GcotqKtVg31Q+MvRKmZQQ9QT2dV0mpmKH/sNPWbmqtXHpi8uf6Fg+n+S
+         RYbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1l1hwffIjqjNt9GhUbePPVmTyJTeUW4Yv+243TWcPf4=;
+        b=SdD6p+Ar91ILLUhDGtYxHPjsUmZta53CyFBAgeiQuh2mjSwIdAOq3W8Ied7kXR0lRE
+         y9OIfQWMaey/5muFC4hW1CKjsORcosLl4Vkq3USEMqNdBRUbaLtxvA6nZaCAB6Lu20xp
+         3BO2IeKKRuCFTkfXE4NVGX4exxPUjqis2KTft7+pRyKUZ13f2ma7ZaNdIbXfscfA86tV
+         6FddSHaj+VNWsmYEKJJ330F84DRRjdJQ7ic+6MxUBvzeEevEEBWHHy/UMSeyA9QidRkL
+         RdqsAS+5cNVJnpNFXphShpN7dmb8cATAZBBgsNkFNB+3JU4ZCke/IcQJiYd64BRgbKgN
+         Z8+g==
+X-Gm-Message-State: AOAM533VpKif+RzGR2zmty2Ebp7d+NAy5k/eLinxbMml3lBr/blb1cdo
+        kmBMztWTB2Lqr8/eWhGdVZM=
+X-Google-Smtp-Source: ABdhPJx1nXm+/KmGOYLgm50Vcu3V6KYIGD4YCXPL3AWVXb0ez8GMZN7O40WHA127zZg9J7ACD8dKCQ==
+X-Received: by 2002:a2e:bc1a:: with SMTP id b26mr4226326ljf.359.1605432357253;
+        Sun, 15 Nov 2020 01:25:57 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id j25sm1170497lja.98.2020.11.15.01.25.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Nov 2020 01:25:56 -0800 (PST)
+Subject: Re: [PATCH v8 08/26] memory: tegra30-emc: Continue probing if timings
+ are missing in device-tree
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201111011456.7875-1-digetx@gmail.com>
+ <20201111011456.7875-9-digetx@gmail.com> <20201114154227.GB14208@kozik-lap>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <90201243-b31e-29fc-a3e6-337f78afa9d2@gmail.com>
+Date:   Sun, 15 Nov 2020 12:25:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201114154227.GB14208@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.124.27]
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If only Tegra234 support is enabled, the tegra30_fuse_read() and
-tegra30_fuse_init() function are not declared and cause a build failure.
+14.11.2020 18:42, Krzysztof Kozlowski пишет:
+> On Wed, Nov 11, 2020 at 04:14:38AM +0300, Dmitry Osipenko wrote:
+>> EMC driver will become mandatory after turning it into interconnect
+>> provider because interconnect users, like display controller driver, will
+>> fail to probe using newer device-trees that have interconnect properties.
+>> Thus make EMC driver to probe even if timings are missing in device-tree.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/memory/tegra/tegra30-emc.c | 29 +++++++++++++++--------------
+>>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> Thanks, applied 1-8.  For the rest I see discussion on going, so I guess
+> there will be a v9.
 
-drivers/soc/tegra/fuse/fuse-tegra30.c:376:10: error: ‘tegra30_fuse_read’
- undeclared here (not in a function); did you mean ‘tegra_fuse_readl’?
-  .read = tegra30_fuse_read,
-          ^~~~~~~~~~~~~~~~~
-          tegra_fuse_readl
-drivers/soc/tegra/fuse/fuse-tegra30.c:382:10: error: ‘tegra30_fuse_init’
- undeclared here (not in a function); did you mean ‘tegra30_fuse_read’?
-  .init = tegra30_fuse_init,
-          ^~~~~~~~~~~~~~~~~
-          tegra30_fuse_read
-
-Fixes: 1f44febf71ba ("soc/tegra: fuse: Add Tegra234 support")
-Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
----
- drivers/soc/tegra/fuse/fuse-tegra30.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index 9ea7f0168457..c1aa7815bd6e 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -37,7 +37,8 @@
-     defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_210_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_186_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_194_SOC)
-+    defined(CONFIG_ARCH_TEGRA_194_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_234_SOC)
- static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned int offset)
- {
- 	if (WARN_ON(!fuse->base))
--- 
-2.17.1
-
+The v9 will be ready soon, thank you.
