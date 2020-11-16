@@ -2,47 +2,43 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6001BC5519F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 15:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486A4C6379D
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1793A221F9
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 15:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F194222265
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:18:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cnzTumrN"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KShxaOqu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbgKPPz1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Nov 2020 10:55:27 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12832 "EHLO
+        id S1731843AbgKPQRv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Nov 2020 11:17:51 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15356 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730305AbgKPPz1 (ORCPT
+        with ESMTP id S1730948AbgKPQRv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Nov 2020 10:55:27 -0500
+        Mon, 16 Nov 2020 11:17:51 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb2a0f30000>; Mon, 16 Nov 2020 07:55:31 -0800
+        id <B5fb2a6320000>; Mon, 16 Nov 2020 08:17:54 -0800
 Received: from [10.26.75.250] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 16 Nov
- 2020 15:55:25 +0000
-Subject: Re: [PATCH] cpufreq: tegra186: Fix get frequency callback
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Sumit Gupta <sumitg@nvidia.com>, <linux-pm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20201103115514.547047-1-jonathanh@nvidia.com>
- <20201104093349.l3r3eftwyvaoqjf2@vireshk-i7>
+ 2020 16:17:48 +0000
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c4c384cd-2d8f-6f19-cd6b-18450cbf957b@nvidia.com>
-Date:   Mon, 16 Nov 2020 15:55:23 +0000
+Subject: [RFC] PM Domains: Ensure the provider is resumed first
+Message-ID: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
+Date:   Mon, 16 Nov 2020 16:17:46 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201104093349.l3r3eftwyvaoqjf2@vireshk-i7>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,57 +46,42 @@ X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605542131; bh=prnEH1LcsAwXu7hHuEMMYjPWoCkjQia/rAmzh/Hqu/I=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=cnzTumrNVjfPzHypZW9c1rPcTi06Rp1UkpXmERZtXndKM4iBoFvFQwti5imoRl98O
-         vCtILSa5k4EILJAqQkvHuOnYuYVNo0gw6Mbi8i0I52pbMNpGssMnsLmIFUJnepJclt
-         GTpK+geDVI5SPAzPQVtJunGM1UJitW/bxSby0zFWbzosvrxrSaU7NcH/MV49K5/XJQ
-         zJH0tYvtgHZ5+YXpj22+MFrb6Dz+DsWYJDWcx10/JFiyIhsyHNoRaWoL1mzkqEfnB0
-         D6vy3JnAFL7LMY4vBUJJYQH9Pp1kyk1P6IJ2DQequk9sEZkTIaeLQ+CZ62WSsTvAwd
-         PaQjSgoJoqaJw==
+        t=1605543474; bh=HWmpB7A736rXF29IkvUu++PAsgVlkACbRKRu4ThLeuo=;
+        h=To:From:Subject:Message-ID:Date:User-Agent:MIME-Version:
+         Content-Type:Content-Language:Content-Transfer-Encoding:
+         X-Originating-IP:X-ClientProxiedBy;
+        b=KShxaOquI6H9aqIZak0H0wTZgrIjJmRQl+aV/+1uJ0mGhqBV4w/Rire8/H3W6m3WT
+         C5LmO8xiwd7YfjSqc7VtlnLqnQiJaosspT5GfqdwNgrrRFHsG8unLjbUDO58WunXwV
+         aW274dZ3nYC9DCQbboVAasoupFmJSQBCfdZJmuQV2KZtnHxAfqsUsyymoetpH6zbGq
+         8m8Mr7UbxU4RH4y3L7wrD/M0Y65tOGbGt5DdBcuGlPTaiicvFHqq+G+agCz25++50I
+         luM+xYuaMDCriUluOP2WMHuTp2rrrDkNnzg6wMa/8T7GuHBgwnqw4DGTffeJQM+01u
+         Bv6XarQgtc8ng==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Rafael,
+Hi all,
 
-On 04/11/2020 09:33, Viresh Kumar wrote:
-> On 03-11-20, 11:55, Jon Hunter wrote:
->> Commit b89c01c96051 ("cpufreq: tegra186: Fix initial frequency")
->> implemented the CPUFREQ 'get' callback to determine the current
->> operating frequency for each CPU. This implementation used a simple
->> looked up to determine the current operating frequency. The problem
->> with this is that frequency table for different Tegra186 devices may
->> vary and so the default boot frequency for Tegra186 device may or may
->> not be present in the frequency table. If the default boot frequency is
->> not present in the frequency table, this causes the function
->> tegra186_cpufreq_get() to return 0 and in turn causes cpufreq_online()
->> to fail which prevents CPUFREQ from working.
->>
->> Fix this by always calculating the CPU frequency based upon the current
->> 'ndiv' setting for the CPU. Note that the CPU frequency for Tegra186 is
->> calculated by reading the current 'ndiv' setting, multiplying by the
->> CPU reference clock and dividing by a constant divisor.
->>
->> Fixes: b89c01c96051 ("cpufreq: tegra186: Fix initial frequency")
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/cpufreq/tegra186-cpufreq.c | 33 +++++++++++++++++++-----------
->>  1 file changed, 21 insertions(+), 12 deletions(-)
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Rafael: This needs to go in the next rc and so I am not applying it
-> in my tree as this is the only fix I have for now.
+We recently ran into a problem on Tegra186 where it was failing to
+resume from suspend. It turned out that a driver, the Tegra ACONNECT
+(drivers/bus/tegra-aconnect.c), was being resumed before the PM domain
+provider, the BPMP (drivers/firmware/tegra/bpmp.c), and the Tegra
+ACONNECT was trying to enable the PM domain before the provider had been
+resumed.
 
+According to commit 4d23a5e84806 it states that 'genpd powers on the PM
+domain unconditionally in the system PM resume "noirq" phase'. However,
+what I don't see is anything that guarantees that the provider is
+resumed before any device that requires power domains. Unless there is
+something that I am missing?
 
-Are you able to pick this up for v5.10 fixes?
+Now by default the ACONNECT is resumed during the noirq phase, but I
+have tried making it and its child devices, suspend/resume in the normal
+system phase but this does not seem to make a difference. So I am
+looking for a bit of guidance on how best to fix this.
 
 Thanks
 Jon
 
--- 
-nvpublic
+
+
