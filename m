@@ -2,156 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60292C2D0A3
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 19:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0F5C61DD8
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 19:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13C522225E
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 19:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC7B620797
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 19:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j00ser3I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sS/d5ozC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbgKPTQh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Nov 2020 14:16:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33256 "EHLO
+        id S1730203AbgKPTsi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Nov 2020 14:48:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbgKPTQh (ORCPT
+        with ESMTP id S1726156AbgKPTsh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Nov 2020 14:16:37 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD868C0613CF
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 11:16:35 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id y16so21437302ljh.0
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 11:16:35 -0800 (PST)
+        Mon, 16 Nov 2020 14:48:37 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8788EC0613CF;
+        Mon, 16 Nov 2020 11:48:37 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id l10so21521166lji.4;
+        Mon, 16 Nov 2020 11:48:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kvaxviO7BiQzvISqbhoHjHqNzxDUY0/V0uMNpsyJv20=;
-        b=j00ser3ImM8d0ZanCDxGUmu7L6Q61EdycCzhqxwQoO7vUMTBjOF8tBNwwekdZAiy3K
-         LLMG3K3DVdy9DTn4dqcp0T20y5kwgXKCb1S+j1sEIiZxicAX4YP3vLxqnw4FFXtQTQhw
-         dc+UAUcF44A/C2pmIC/uOmU8JifIKoWLxALjHBjhF9S/47NjNgbdVgNP6Q2EZmHSBG/7
-         KokZznXjrnbkxq4M8P50lsoqgheI+Hy7Tzl68M/rq7d92nINJOEwQXRFuK3NsHqVABix
-         3IShHXEbrZ/ZVo+wgEw+aLN5nts5L6pUONrRUgp5yZXE5pUjwvFlE0jWKowE8Eg/WJQN
-         wuvg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tPhbBtY24leD6EYjNk4lZTpgtDU5k3awjWfX3kBti/E=;
+        b=sS/d5ozCmT1WlBzzt0I/v5pN/qs2V9wYs5BYxc9uvrZguVwfhBLuRck4/4WliimdIs
+         REasW796idVIkAaTlIFGvmWhF1Ej0NU8ytKq9p32yxrxPr4gDWBr6yKzPDYJDFAEahET
+         WRP75CeY9HTd6cIzG23tbzXb1205tQUHrRgmhKUrUUH5u/2UizcStuejW0fQLfRsvTNx
+         JW26axPjz0YNfXaijwykRn+y5L79XZaxU1VNAF5UFLRXX9YGgEfssF2v7VWgYNzn5EI2
+         j9wJ3iHDbvrBaZFoLWICauF0w+cjPVPJ2AWTuahKADGQHx/nILRc2a/irM8ZdfPqDxep
+         wzpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kvaxviO7BiQzvISqbhoHjHqNzxDUY0/V0uMNpsyJv20=;
-        b=En7sttPwu97Zj8rHEWfCX28C3JaXRdZGRyehlgE61FKGziPy8rs9E18JAjj//vKjii
-         v9hiv2Cov9VD/iqvqj8vJMj+xDTwT91dLRHlBPwRaR9WTYZJOWi9qa6IcLLU52+LzlW1
-         7QCDfd2YfXjx+htnqToDRd+7PDjIhY9B1MNCQ/ZWJNFzmVcDQsEo9FtBnh0LjC88n3sU
-         HTp3LHllH9xler5yy9GWG2NG87S4EDJBHu6w3+WuE1npo2232PuoAVJM1/XWNTFcfC+U
-         3onIyAIMCugS6lD+Gpo/KtUe3eBqw4znGY7ndGb9iXNfcxKBLtjHN7au87RURFi/BtKa
-         6DEA==
-X-Gm-Message-State: AOAM533T/LxEfV8fGopRR3u/FncDYlInqsakSvYuuvpDUGkdca5NWuaR
-        dfTxgNQsE0gMYumjKEcC78H5G73xxhE=
-X-Google-Smtp-Source: ABdhPJzTpJBjm2JOYoOdCvkVPAA44FURpTStYMu481jUHdt3L/5HeRUKKJXU8qcAARMSo1aj7d+sgQ==
-X-Received: by 2002:a2e:91d6:: with SMTP id u22mr325935ljg.206.1605554193917;
-        Mon, 16 Nov 2020 11:16:33 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id l17sm2862053lfc.221.2020.11.16.11.16.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2020 11:16:33 -0800 (PST)
-Subject: Re: [PATCH v1] soc/tegra: fuse: Drop Kconfig dependency on
- TEGRA20_APB_DMA
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        linux-tegra@vger.kernel.org
-References: <20200923003421.4561-1-digetx@gmail.com>
- <20201116132005.GD2224373@ulmo>
- <4699e7eb-ac82-4666-9bca-7692d5441b3f@gmail.com>
- <20201116164947.GB2584498@ulmo>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tPhbBtY24leD6EYjNk4lZTpgtDU5k3awjWfX3kBti/E=;
+        b=uJGu7NfVHG3CJU63ocyhJGqpdFG5lHPMTZwnbW9TUb6m01dGwIvlGxdHsrJUFem3Yn
+         Wuq0bE3kBR3NoY37j7cjD4CaOMngdGrVM8UCxgfVYNnuuiZBWFepVzJbZ4Iq63oJ7BoX
+         8O8a6BxmS+/vlhTVLE4CWTyCId32j02NnvV67dwAiRnA7ssfKNYUiuwvEDaJWdvOdtj0
+         erTNIho3RxFCc3JDbaPD/r13r/TuZdHXe+F066LEO+x8pyiFhp7BtLfLrNK/0kEYQ8LS
+         fWuIy6QspJQw4lGS2pgsmz7hZFWj4NV/3+5WIf07/i9yTMw877knBbEva45V4x1Vrmjp
+         crBQ==
+X-Gm-Message-State: AOAM530/fNZChpi/uYgFaVYglS9O1SqXsfaF78k+b3fREuHSS58Z6BQX
+        sATvPoh+vD5fp0oKn7N++NU=
+X-Google-Smtp-Source: ABdhPJw/HQXTrEal7cje7AKUV5k2FWJFmFAwN4f9rUq/dt2O4wrdEwwIRSzKh9X0UGFnQLX4xgNwvg==
+X-Received: by 2002:a05:651c:203:: with SMTP id y3mr370608ljn.66.1605556114482;
+        Mon, 16 Nov 2020 11:48:34 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.gmail.com with ESMTPSA id n5sm2864286lfb.306.2020.11.16.11.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2020 11:48:34 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9a3705d0-43ba-73b8-3195-176e7aa5c718@gmail.com>
-Date:   Mon, 16 Nov 2020 22:16:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dan Murphy <dmurphy@ti.com>, Sebastian Reichel <sre@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 1/4] dt-bindings: mfd: Add ENE KB930 Embedded Controller binding
+Date:   Mon, 16 Nov 2020 22:48:24 +0300
+Message-Id: <20201116194827.28947-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201116194827.28947-1-digetx@gmail.com>
+References: <20201116194827.28947-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201116164947.GB2584498@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.11.2020 19:49, Thierry Reding пишет:
-> On Mon, Nov 16, 2020 at 04:48:39PM +0300, Dmitry Osipenko wrote:
->> 16.11.2020 16:20, Thierry Reding пишет:
->>> On Wed, Sep 23, 2020 at 03:34:21AM +0300, Dmitry Osipenko wrote:
->>>> The DMA subsystem could be entirely disabled in Kconfig and then the
->>>> TEGRA20_APB_DMA option isn't available too. Hence kernel configuration
->>>> fails if DMADEVICES Kconfig option is disabled due to the unsatisfiable
->>>> dependency.
->>>>
->>>> The FUSE driver isn't a critical driver and currently it only provides
->>>> NVMEM interface to userspace which isn't known to be widely used, and
->>>> thus, it's fine if FUSE driver fails to load.
->>>
->>> This isn't entirely accurate. The FUSE driver also provides SKU specific
->>> information via tegra_sku_info and exposes some of the FUSE registers to
->>> other drivers, such as the calibration data for XUSB.
->>
->> The SKU data is read out only once during early boot and the DMA is not
->> used for this. The FUSE platform driver exists separately from the early
->> FUSE code.
-> 
-> True, but the commit message isn't entirely accurate as-is, because on
-> later Tegra SoCs the driver does a bit more than that. So if you don't
-> mind I'll reword this to be a little more accurate if I end up deciding
-> to apply it.
+Add binding document for the ENE KB930 Embedded Controller.
 
-Please feel free to edit it as yo wish.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../devicetree/bindings/mfd/ene-kb930.yaml    | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ene-kb930.yaml
 
->>> The APB DMA is really only needed to work around an issue on Tegra20, so
->>> perhaps this really is okay. On the other hand, could we not just change
->>> the dependency to something like
->>>
->>> 	select DMADEVICES if ARCH_TEGRA_2x_SOC
->>> 	select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
->>>
->>> to fix the Kconfig issue but keep the explicit documentation of this
->>> dependency?
->>
->> On Tegra20, the APB DMA is used only for by NVMEM which is exposed via
->> sysfs. If DMA is disabled, then NVMEM isn't registered because
->> tegra20_fuse_probe() returns -EPROBE_DEFER.
-> 
-> Again, true. But -EPROBE_DEFER is a silent error, so if somebody indeed
-> has DMADEVICES disabled and TEGRA20_APB_DMA is not available, then they
-> will not get FUSE support and they are going to struggle to find out why
-> that's not working.
-> 
->> Hence there is no real need to enforce the extra dependencies. It's
->> always better to allow minimizing the build dependencies whenever
->> possible, IMO, and it's possible to do it in this case.
-> 
-> I don't entirely agree with this. Dependencies (and especially selects)
-> are used to pull in driver and/or features that are generally considered
-> useful. In this particular case, TEGRA20_APB_DMA is needed for the FUSE
-> driver to work correctly on Tegra20. Whether FUSE support on Tegra20 is
-> useful or not isn't quite relevant at this point.
-> 
-> There's also a balance as to what makes sense and what doesn't. APB DMA
-> is a useful feature in itself and disabling it is very much discouraged
-> because there are plenty of other drivers that can make use of it. That
-> is also the reason why we enable it in the default configuration. So I
-> don't consider a select on a symbol that's enabled by default an extra
-> dependency. Instead it's more of an explicit statement that you really
-> do want this enabled if you want that driver to work.
-> 
-> And like I said, if we don't have this and the driver will fail to probe
-> because of -EPROBE_DEFER, the user is going to have a very difficult
-> time of finding out why exactly that's happening. We're not even
-> emitting an error for this, so there's no way of knowing, even if they
-> enable driver debugging, /why/ the FUSE driver isn't working.
+diff --git a/Documentation/devicetree/bindings/mfd/ene-kb930.yaml b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
+new file mode 100644
+index 000000000000..06ed9ec8f4bb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ene-kb930.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/ene-kb930.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ENE KB930 Embedded Controller bindings
++
++description: |
++  This binding describes the ENE KB930 Embedded Controller attached to an
++  I2C bus.
++
++maintainers:
++  - Dmitry Osipenko <digetx@gmail.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - acer,a500-iconia-ec # Acer A500 Iconia tablet device
++      - const: ene,kb930
++  reg:
++    maxItems: 1
++
++  monitored-battery: true
++  power-supplies: true
++  system-power-controller: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    battery: battery-cell {
++      compatible = "simple-battery";
++      charge-full-design-microamp-hours = <3260000>;
++      energy-full-design-microwatt-hours = <24000000>;
++      operating-range-celsius = <0 40>;
++    };
++
++    mains: ac-adapter {
++      compatible = "gpio-charger";
++      charger-type = "mains";
++      gpios = <&gpio 125 0>;
++    };
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      embedded-controller@58 {
++        compatible = "acer,a500-iconia-ec", "ene,kb930";
++        reg = <0x58>;
++
++        system-power-controller;
++
++        monitored-battery = <&battery>;
++        power-supplies = <&mains>;
++      };
++    };
++
++...
+-- 
+2.29.2
 
-Recent kernels have /sys/kernel/debug/devices_deferred.
