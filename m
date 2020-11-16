@@ -2,178 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D55C4742C
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88915C2D0A3
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55DBF20776
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4547F2076E
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7nC7WUp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4iHLOz/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbgKPQtw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Nov 2020 11:49:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
+        id S1731706AbgKPQ4L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Nov 2020 11:56:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730741AbgKPQtw (ORCPT
+        with ESMTP id S1729841AbgKPQ4L (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Nov 2020 11:49:52 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F005C0613CF
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 08:49:52 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id d12so19377582wrr.13
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 08:49:51 -0800 (PST)
+        Mon, 16 Nov 2020 11:56:11 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3D5C0613CF;
+        Mon, 16 Nov 2020 08:56:10 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id m6so2258630wrg.7;
+        Mon, 16 Nov 2020 08:56:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F1wZgVirySN2dgENiDlcVdO081kMB2zHL970Q+yNMAE=;
-        b=E7nC7WUptMx3ZPwbhTYTSkDU7zqRrFqVL+KVdneUUI7kE6Bh3F9OHe30viojPYMuGj
-         IObcRykBtO0ubyNcP8qMnHtcZHYhOmKFfVnQFucNWzbMn+JwMetZ4XRCYzt+Iq8ChrJz
-         WcBajZIEtUehWrHhgtU+kYkCncHvzwNWKUlpUdDpZdi4WVk7UNTPWh9InB1ZE+j1WXuf
-         pk1IxNPHg8bGY45Fa2nw25xdi11BGwkMDvnB5LSbbZwObLwjHhUyIwzg36XdTiR0C1SX
-         SglzbtsLTyzdpAPRiB+perQVk+ncdXb0Zgb+GgPbMHtsb1UDGuHdfneYEMEN3FfmxMK3
-         U9wA==
+        h=from:to:cc:subject:date:message-id;
+        bh=rgqx75mWHRgXFv0CwsRMCHA+Jcb7vaejQXT/lvk4loI=;
+        b=R4iHLOz/BtXQffuiBz0GFIa0q6Lg5X2oAtQfBOGQDXzIe7Mk9aRwyl4IuT2aiNOTER
+         uCgxNsY75kHGqbARXkCeKliXExFRpdBRzqZa4znrXAPHSI8Q08RQibOiZMCFaBx4+WZZ
+         vCqpygSaD+QLP0HOcqTAQWgXVV/tyPRdk4VJtt0GNJhh6g3/SfLMdGpl7XggqqWYWA6N
+         ZGtawuIpnNbLiWV0LJguJir7mP5dYJxNB3gVDbMzYJII9YfOWHD0SfsMcu6OMwY02wES
+         U7dx4hXvHUEa9XDUjv0lwv/DQXHrMlE5mc7YPavRRfP9PHiN5yjotVvZ9VQah3U357aQ
+         hDJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F1wZgVirySN2dgENiDlcVdO081kMB2zHL970Q+yNMAE=;
-        b=F5FboQGBS8i+Zv/okZSJqPa2B+Ngb6BvUM/GsSGzAh9+Gt6F50OncQfvsLZJNg4aq6
-         yz38HvAOkiAdb+gXhocO0YPfXM60h/idzuM++orIB0gK8k+Elpo6+n/ro31xplD2k6Um
-         qSulyhXU/awOga89Wo+A/6w00NQRkH14fqAPdzQ8MqBaOo8t0xjdYAk+aTMnHRD+lYbi
-         kgi4GH4/x6TRs36zkygOGkYEOWXckuYEU9W6BwtR9Yvr/p53fHHSsGkYUvzl5n4bKNTT
-         LrQ6uwTiqwvYTq2TovwmMtL1Nel6XrK/7NMJGAGfcLm11H62TGEtSuH54LtES76BYzow
-         5nsw==
-X-Gm-Message-State: AOAM532c+O3B5S2HLFyp9atl9bQsU4Ks/DkwElVX62bfDB8A7C77sOqD
-        xBIli+iesOZijRzwUit02i0=
-X-Google-Smtp-Source: ABdhPJxoZPUxP23osCZh2p3L+EvA93T0+SvaJC8nEjo8QPz96v83lFP+snxRu1cL4kZjjpH1SPHoDQ==
-X-Received: by 2002:a5d:474b:: with SMTP id o11mr19499394wrs.235.1605545390767;
-        Mon, 16 Nov 2020 08:49:50 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id n128sm21115280wmb.46.2020.11.16.08.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2020 08:49:49 -0800 (PST)
-Date:   Mon, 16 Nov 2020 17:49:47 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1] soc/tegra: fuse: Drop Kconfig dependency on
- TEGRA20_APB_DMA
-Message-ID: <20201116164947.GB2584498@ulmo>
-References: <20200923003421.4561-1-digetx@gmail.com>
- <20201116132005.GD2224373@ulmo>
- <4699e7eb-ac82-4666-9bca-7692d5441b3f@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Pd0ReVV5GZGQvF3a"
-Content-Disposition: inline
-In-Reply-To: <4699e7eb-ac82-4666-9bca-7692d5441b3f@gmail.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rgqx75mWHRgXFv0CwsRMCHA+Jcb7vaejQXT/lvk4loI=;
+        b=PRPP8OctNcP1Sv5F9oHUZZwND5F38cejGLB7auF5EGS1ZeGd2wxV9WixVQeScn9Jd3
+         uUGmBxHfTicbHtelqEPSzlTHxD69oUyi0XsCyEjfFiGCFR+XOurOeAcfPyxG2qG+fXkm
+         lyCKJ4NKLg6MhEEDIFRR0fSiJyDHX+WkcOQl1Dt2WSfMXsnuQ35iLaE2BpoUb2H1O8R4
+         ik1yxQ2ta4ENfrjuwji9X8df5hMVK45Yjk30tlWwQrtwGf8zH4DThXcdSe3uT5DCqjDD
+         zALwzYczqjjGOBTkEs1VBF4vYneXklYic6UiS/+7XfpUzB4bl7Od7O+Zp97X81gVYjzs
+         gzDA==
+X-Gm-Message-State: AOAM530pa+sHvVkujolv5LpiFtZ82KIVQV4Brnskt+87tktdF/+UnM6J
+        rvvGSUw5xoAAZ0RHKxCj0PK0HWcgtoIjow==
+X-Google-Smtp-Source: ABdhPJxU6kxyRt4iLAsiDSGX2pIkswZYteymqDmfvEZ7u7/u0Yo6zB0NJQktTFsMB/UVTXHFnHIElQ==
+X-Received: by 2002:adf:ea91:: with SMTP id s17mr20593129wrm.349.1605545769524;
+        Mon, 16 Nov 2020 08:56:09 -0800 (PST)
+Received: from localhost.localdomain (host-92-5-241-147.as43234.net. [92.5.241.147])
+        by smtp.gmail.com with ESMTPSA id d2sm19314593wra.73.2020.11.16.08.56.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Nov 2020 08:56:09 -0800 (PST)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] PCI: tegra: Use PTR_ERR_OR_ZERO
+Date:   Mon, 16 Nov 2020 16:54:07 +0000
+Message-Id: <20201116165407.8050-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Coccinelle suggested using PTR_ERR_OR_ZERO() and looking at the code,
+we can use PTR_ERR_OR_ZERO() instead of checking IS_ERR() and then
+doing 'return 0'.
 
---Pd0ReVV5GZGQvF3a
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/pci/controller/pci-tegra.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On Mon, Nov 16, 2020 at 04:48:39PM +0300, Dmitry Osipenko wrote:
-> 16.11.2020 16:20, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Wed, Sep 23, 2020 at 03:34:21AM +0300, Dmitry Osipenko wrote:
-> >> The DMA subsystem could be entirely disabled in Kconfig and then the
-> >> TEGRA20_APB_DMA option isn't available too. Hence kernel configuration
-> >> fails if DMADEVICES Kconfig option is disabled due to the unsatisfiable
-> >> dependency.
-> >>
-> >> The FUSE driver isn't a critical driver and currently it only provides
-> >> NVMEM interface to userspace which isn't known to be widely used, and
-> >> thus, it's fine if FUSE driver fails to load.
-> >=20
-> > This isn't entirely accurate. The FUSE driver also provides SKU specific
-> > information via tegra_sku_info and exposes some of the FUSE registers to
-> > other drivers, such as the calibration data for XUSB.
->=20
-> The SKU data is read out only once during early boot and the DMA is not
-> used for this. The FUSE platform driver exists separately from the early
-> FUSE code.
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 8fcabed7c6a6..4c52b2d58645 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -1308,10 +1308,8 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
+ 		return PTR_ERR(pcie->afi_rst);
+ 
+ 	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
+-	if (IS_ERR(pcie->pcie_xrst))
+-		return PTR_ERR(pcie->pcie_xrst);
+ 
+-	return 0;
++	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
+ }
+ 
+ static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
+-- 
+2.11.0
 
-True, but the commit message isn't entirely accurate as-is, because on
-later Tegra SoCs the driver does a bit more than that. So if you don't
-mind I'll reword this to be a little more accurate if I end up deciding
-to apply it.
-
-> > The APB DMA is really only needed to work around an issue on Tegra20, so
-> > perhaps this really is okay. On the other hand, could we not just change
-> > the dependency to something like
-> >=20
-> > 	select DMADEVICES if ARCH_TEGRA_2x_SOC
-> > 	select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
-> >=20
-> > to fix the Kconfig issue but keep the explicit documentation of this
-> > dependency?
->=20
-> On Tegra20, the APB DMA is used only for by NVMEM which is exposed via
-> sysfs. If DMA is disabled, then NVMEM isn't registered because
-> tegra20_fuse_probe() returns -EPROBE_DEFER.
-
-Again, true. But -EPROBE_DEFER is a silent error, so if somebody indeed
-has DMADEVICES disabled and TEGRA20_APB_DMA is not available, then they
-will not get FUSE support and they are going to struggle to find out why
-that's not working.
-
-> Hence there is no real need to enforce the extra dependencies. It's
-> always better to allow minimizing the build dependencies whenever
-> possible, IMO, and it's possible to do it in this case.
-
-I don't entirely agree with this. Dependencies (and especially selects)
-are used to pull in driver and/or features that are generally considered
-useful. In this particular case, TEGRA20_APB_DMA is needed for the FUSE
-driver to work correctly on Tegra20. Whether FUSE support on Tegra20 is
-useful or not isn't quite relevant at this point.
-
-There's also a balance as to what makes sense and what doesn't. APB DMA
-is a useful feature in itself and disabling it is very much discouraged
-because there are plenty of other drivers that can make use of it. That
-is also the reason why we enable it in the default configuration. So I
-don't consider a select on a symbol that's enabled by default an extra
-dependency. Instead it's more of an explicit statement that you really
-do want this enabled if you want that driver to work.
-
-And like I said, if we don't have this and the driver will fail to probe
-because of -EPROBE_DEFER, the user is going to have a very difficult
-time of finding out why exactly that's happening. We're not even
-emitting an error for this, so there's no way of knowing, even if they
-enable driver debugging, /why/ the FUSE driver isn't working.
-
-Thierry
-
---Pd0ReVV5GZGQvF3a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+yrakACgkQ3SOs138+
-s6H81A//VQ5QaxfXZqlyASyuYASrc9HaBKVSgsyX1TtSWod2caQUodH4eti19c7H
-+a0xA3ZjEMgLL5dCpTxqF0ZvROt5zkI5Ps8dnb7UdMhoisu0QNX/4TP3dTFfRk1S
-vXD/7dS7sKj1ulTy3hHsevJukdWvErVyLMU9cUQ1rwyKw2LDIfqKohX/9NSySnG/
-kJKHM+/cn3c0uvCdmwA1Jzg1F/2TJawRWAGSxbkeV8SCglcMTAdxGq/ePbmZv8pM
-XqnHD9/lAUM01uy9DPygyFGxUtC2ySK4wYqhpVhh1b7cbqsV+udtG12QhjO/M392
-+fe0kemB/3S4ckW2AaLpxhFWxS++LMkcoWQ1/QMWl593yrNpiFbTPs6x2cHxICTn
-fqTdGWk6S3QJm3lbwCxxlVZFTMofKxrdvUbCVSUTM8GlM9t0e048ByWXMhE0MFt1
-xIDP8IUPM3NnHtJg2Ybmy3OOvrfbcPNIXeCet3fr+fZwc5y+Qn4hV36pDHGfumiO
-CdAsvAKix14mKK3pfUswXflSouS+Y41DgOAoydTtIV5nDdx/HofSkDg9ReumkXGG
-ObOuaZv1PlESI8OSdOD5Z+ZWw2TaNJta3y7+U7fWwRUIpqi2xM4GgSfpz8mg/xwU
-n/UF9a/ZjQWMfI00XHFQ91KGpya6omQZ1LFdb7BZMfZaut/s1dk=
-=5Gbn
------END PGP SIGNATURE-----
-
---Pd0ReVV5GZGQvF3a--
