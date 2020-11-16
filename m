@@ -2,129 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D816BC6369E
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D55C4742C
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAD120776
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55DBF20776
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 16:50:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxBYdxDX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7nC7WUp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732112AbgKPQ2m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Nov 2020 11:28:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34990 "EHLO
+        id S1727499AbgKPQtw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Nov 2020 11:49:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730795AbgKPQ2m (ORCPT
+        with ESMTP id S1730741AbgKPQtw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Nov 2020 11:28:42 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D46C0613CF;
-        Mon, 16 Nov 2020 08:28:40 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id d142so24300305wmd.4;
-        Mon, 16 Nov 2020 08:28:40 -0800 (PST)
+        Mon, 16 Nov 2020 11:49:52 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F005C0613CF
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 08:49:52 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id d12so19377582wrr.13
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 08:49:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=kc1ukQL6kODEhYMjeZ7pxJqnx32Rr60HwhEN3ntpjVc=;
-        b=UxBYdxDXJqyuI9q1ZSGmjgAUJ4mL+wy4j4uuuWqfc4yEwtZ10juLennZBZTj7M1uyz
-         J1aJoJjcw6tMmTizfzahUIp1EE9twSatetgO3KoKmr9MZFX6GkMe9KPCfN54Rl/gIQqZ
-         bbcNnh6jJP4xtjTWw6CuN/Ymf8NKE5J3v4jcqILCiXe7VjnapOP3SuVG2fx9JO2W3q4W
-         SGEW49mharcANcfNwrt4FegjKfklH64NT2ydo3iBfgWQB7lD4mWTc/f7qivs9xPHujpy
-         iioN+HWyAq86yCGdkEbDF2uZQYAijZ0t3oQaGCGfs9GolKBlIG53xyJy3oyszRR1q7wF
-         ODcg==
+        bh=F1wZgVirySN2dgENiDlcVdO081kMB2zHL970Q+yNMAE=;
+        b=E7nC7WUptMx3ZPwbhTYTSkDU7zqRrFqVL+KVdneUUI7kE6Bh3F9OHe30viojPYMuGj
+         IObcRykBtO0ubyNcP8qMnHtcZHYhOmKFfVnQFucNWzbMn+JwMetZ4XRCYzt+Iq8ChrJz
+         WcBajZIEtUehWrHhgtU+kYkCncHvzwNWKUlpUdDpZdi4WVk7UNTPWh9InB1ZE+j1WXuf
+         pk1IxNPHg8bGY45Fa2nw25xdi11BGwkMDvnB5LSbbZwObLwjHhUyIwzg36XdTiR0C1SX
+         SglzbtsLTyzdpAPRiB+perQVk+ncdXb0Zgb+GgPbMHtsb1UDGuHdfneYEMEN3FfmxMK3
+         U9wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kc1ukQL6kODEhYMjeZ7pxJqnx32Rr60HwhEN3ntpjVc=;
-        b=hKnZUmZN98T+GThpd2JUWBw9zY/DPzNizuBbhyjQxGwxcMT8duj1BKvLz12EahDrUl
-         Ly3hMfuE5/kT+bYl//PNidlKiNKlUXlBh3bzgdVi0EmnDyBM34HjitJN3zaVY9OSuqnj
-         ZvZCWBj8r0SljK8lDUxn5fXWViWCz85lp/uF3+ZmafE9bhUuvqAhg60uod/l8N8lDGip
-         kPr+6fV5bmW3G4OOQ/Xc/EeSx8qVqHNzcRLWsLbXA/fDQCStyvhB3PEEQiR2x0dOvqVe
-         IlNCHhTnLL+5MzQ1U/WaCZNRdCWKFlXhsSErA3VTQ7tN236dGst+Ype15LflhrVf3i/D
-         EItQ==
-X-Gm-Message-State: AOAM530LL7O+2Zcl/n7WsPIddSJOzkrBwx2HbqKYbGDJSvPeBsbV8H7q
-        EP5VEm2WYKYYxJNlM2XUSy4=
-X-Google-Smtp-Source: ABdhPJxKuChqUtkDnjK9Sld3PAl+AhOvfZ1+a8Q+TWJTveN8BrHyvOHpKKlNCUQ5gyrEg8tY19Phpw==
-X-Received: by 2002:a1c:67d5:: with SMTP id b204mr16685204wmc.92.1605544119102;
-        Mon, 16 Nov 2020 08:28:39 -0800 (PST)
+        bh=F1wZgVirySN2dgENiDlcVdO081kMB2zHL970Q+yNMAE=;
+        b=F5FboQGBS8i+Zv/okZSJqPa2B+Ngb6BvUM/GsSGzAh9+Gt6F50OncQfvsLZJNg4aq6
+         yz38HvAOkiAdb+gXhocO0YPfXM60h/idzuM++orIB0gK8k+Elpo6+n/ro31xplD2k6Um
+         qSulyhXU/awOga89Wo+A/6w00NQRkH14fqAPdzQ8MqBaOo8t0xjdYAk+aTMnHRD+lYbi
+         kgi4GH4/x6TRs36zkygOGkYEOWXckuYEU9W6BwtR9Yvr/p53fHHSsGkYUvzl5n4bKNTT
+         LrQ6uwTiqwvYTq2TovwmMtL1Nel6XrK/7NMJGAGfcLm11H62TGEtSuH54LtES76BYzow
+         5nsw==
+X-Gm-Message-State: AOAM532c+O3B5S2HLFyp9atl9bQsU4Ks/DkwElVX62bfDB8A7C77sOqD
+        xBIli+iesOZijRzwUit02i0=
+X-Google-Smtp-Source: ABdhPJxoZPUxP23osCZh2p3L+EvA93T0+SvaJC8nEjo8QPz96v83lFP+snxRu1cL4kZjjpH1SPHoDQ==
+X-Received: by 2002:a5d:474b:: with SMTP id o11mr19499394wrs.235.1605545390767;
+        Mon, 16 Nov 2020 08:49:50 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id s133sm20597171wmf.30.2020.11.16.08.28.37
+        by smtp.gmail.com with ESMTPSA id n128sm21115280wmb.46.2020.11.16.08.49.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2020 08:28:37 -0800 (PST)
-Date:   Mon, 16 Nov 2020 17:28:36 +0100
+        Mon, 16 Nov 2020 08:49:49 -0800 (PST)
+Date:   Mon, 16 Nov 2020 17:49:47 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: Re: [PATCH] ARM64: tegra: Disable the ACONNECT for Jetson TX2
-Message-ID: <20201116162836.GA2584498@ulmo>
-References: <20201116162026.5324-1-jonathanh@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1] soc/tegra: fuse: Drop Kconfig dependency on
+ TEGRA20_APB_DMA
+Message-ID: <20201116164947.GB2584498@ulmo>
+References: <20200923003421.4561-1-digetx@gmail.com>
+ <20201116132005.GD2224373@ulmo>
+ <4699e7eb-ac82-4666-9bca-7692d5441b3f@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+        protocol="application/pgp-signature"; boundary="Pd0ReVV5GZGQvF3a"
 Content-Disposition: inline
-In-Reply-To: <20201116162026.5324-1-jonathanh@nvidia.com>
+In-Reply-To: <4699e7eb-ac82-4666-9bca-7692d5441b3f@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
+--Pd0ReVV5GZGQvF3a
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 16, 2020 at 04:20:26PM +0000, Jon Hunter wrote:
-> Commit ff4c371d2bc0 ("arm64: defconfig: Build ADMA and ACONNECT driver")
-> enable the Tegra ADMA and ACONNECT drivers and this is causing resume
-> from system suspend to fail on Jetson TX2. Resume is failing because the
-> ACONNECT driver is being resumed before the BPMP driver, and the ACONNECT
-> driver is attempting to power on a power-domain that is provided by the
-> BPMP. While a proper fix for the resume sequencing problem is identified,
-> disable the ACONNECT for Jetson TX2 temporarily to avoid breaking system
-> suspend.
+On Mon, Nov 16, 2020 at 04:48:39PM +0300, Dmitry Osipenko wrote:
+> 16.11.2020 16:20, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Sep 23, 2020 at 03:34:21AM +0300, Dmitry Osipenko wrote:
+> >> The DMA subsystem could be entirely disabled in Kconfig and then the
+> >> TEGRA20_APB_DMA option isn't available too. Hence kernel configuration
+> >> fails if DMADEVICES Kconfig option is disabled due to the unsatisfiable
+> >> dependency.
+> >>
+> >> The FUSE driver isn't a critical driver and currently it only provides
+> >> NVMEM interface to userspace which isn't known to be widely used, and
+> >> thus, it's fine if FUSE driver fails to load.
+> >=20
+> > This isn't entirely accurate. The FUSE driver also provides SKU specific
+> > information via tegra_sku_info and exposes some of the FUSE registers to
+> > other drivers, such as the calibration data for XUSB.
 >=20
-> Please note that ACONNECT driver is used by the Audio Processing Engine
-> (APE) on Tegra, but because there is no mainline support for APE on
-> Jetson TX2 currently, disabling the ACONNECT does not disable any useful
-> feature at the moment.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ------------
->  1 file changed, 12 deletions(-)
+> The SKU data is read out only once during early boot and the DMA is not
+> used for this. The FUSE platform driver exists separately from the early
+> FUSE code.
 
-Applied, thanks.
+True, but the commit message isn't entirely accurate as-is, because on
+later Tegra SoCs the driver does a bit more than that. So if you don't
+mind I'll reword this to be a little more accurate if I end up deciding
+to apply it.
+
+> > The APB DMA is really only needed to work around an issue on Tegra20, so
+> > perhaps this really is okay. On the other hand, could we not just change
+> > the dependency to something like
+> >=20
+> > 	select DMADEVICES if ARCH_TEGRA_2x_SOC
+> > 	select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
+> >=20
+> > to fix the Kconfig issue but keep the explicit documentation of this
+> > dependency?
+>=20
+> On Tegra20, the APB DMA is used only for by NVMEM which is exposed via
+> sysfs. If DMA is disabled, then NVMEM isn't registered because
+> tegra20_fuse_probe() returns -EPROBE_DEFER.
+
+Again, true. But -EPROBE_DEFER is a silent error, so if somebody indeed
+has DMADEVICES disabled and TEGRA20_APB_DMA is not available, then they
+will not get FUSE support and they are going to struggle to find out why
+that's not working.
+
+> Hence there is no real need to enforce the extra dependencies. It's
+> always better to allow minimizing the build dependencies whenever
+> possible, IMO, and it's possible to do it in this case.
+
+I don't entirely agree with this. Dependencies (and especially selects)
+are used to pull in driver and/or features that are generally considered
+useful. In this particular case, TEGRA20_APB_DMA is needed for the FUSE
+driver to work correctly on Tegra20. Whether FUSE support on Tegra20 is
+useful or not isn't quite relevant at this point.
+
+There's also a balance as to what makes sense and what doesn't. APB DMA
+is a useful feature in itself and disabling it is very much discouraged
+because there are plenty of other drivers that can make use of it. That
+is also the reason why we enable it in the default configuration. So I
+don't consider a select on a symbol that's enabled by default an extra
+dependency. Instead it's more of an explicit statement that you really
+do want this enabled if you want that driver to work.
+
+And like I said, if we don't have this and the driver will fail to probe
+because of -EPROBE_DEFER, the user is going to have a very difficult
+time of finding out why exactly that's happening. We're not even
+emitting an error for this, so there's no way of knowing, even if they
+enable driver debugging, /why/ the FUSE driver isn't working.
 
 Thierry
 
---6c2NcOVqGQ03X4Wi
+--Pd0ReVV5GZGQvF3a
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+yqLEACgkQ3SOs138+
-s6Hpcw/+Iu/rWot+hOpP6WeujWh6gTdlJ+IGP2y3hjXg3r5lSOQXG3VuFiT0dgmg
-Mt7eQuJdHOKMe5r4+CD28sS6KXxd7UDcjZvfq0xf0wEz8jL0eSttbypeR/Z5Fh6E
-MG5YDIQwJZt1uQlEeErR1lwNyKl++IJpfccIiJPgl2jeSaOECQeECK8O3SdfZEAJ
-cLjxOADSGmFqTCw8JqbTXhaRotY7wTUgm/adXuXoIrfjXNuJSnSBnk3C3qxIbD4p
-eIymWbSCsfR5JZxarJkpbjZSRMguDt643xNEWKukSw+JbNRGt4XPym56RsG23+LE
-7+p/ZMMwbLf4H7M5YUaP4j+vo88z71s2HwiMIn2W4Bxl7I0oEymAY9IkUfBZ2DpB
-Wo9YbrKQhcwKsUuWfZyDTsG/hVWxc6lOTPqXq+Il6bhhHBaSSqHKyitqcSDKk/0t
-VAknYpAv+xXzPTks6zquGVLYpIdhMoDiA3QNOTgl1xYq24EripZwZkPxdKY+njA5
-6dcFvMjoZf3TeeC/JWw/iO7lT75mSdh2cRZn4juh5iwMsJMmO8K+Vhs3DVR1cijr
-5U+GK9bcYID7mJ6NlG3Q80/BOEzhgGo2wjfcmkp2PF8Oy0+AvBtYePa8lxP1VV7a
-ZADisDv3RniYRwPwwCtW2qrhTRnEJWUI7Mlf5bUplcPMgZkGROs=
-=gD68
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+yrakACgkQ3SOs138+
+s6H81A//VQ5QaxfXZqlyASyuYASrc9HaBKVSgsyX1TtSWod2caQUodH4eti19c7H
++a0xA3ZjEMgLL5dCpTxqF0ZvROt5zkI5Ps8dnb7UdMhoisu0QNX/4TP3dTFfRk1S
+vXD/7dS7sKj1ulTy3hHsevJukdWvErVyLMU9cUQ1rwyKw2LDIfqKohX/9NSySnG/
+kJKHM+/cn3c0uvCdmwA1Jzg1F/2TJawRWAGSxbkeV8SCglcMTAdxGq/ePbmZv8pM
+XqnHD9/lAUM01uy9DPygyFGxUtC2ySK4wYqhpVhh1b7cbqsV+udtG12QhjO/M392
++fe0kemB/3S4ckW2AaLpxhFWxS++LMkcoWQ1/QMWl593yrNpiFbTPs6x2cHxICTn
+fqTdGWk6S3QJm3lbwCxxlVZFTMofKxrdvUbCVSUTM8GlM9t0e048ByWXMhE0MFt1
+xIDP8IUPM3NnHtJg2Ybmy3OOvrfbcPNIXeCet3fr+fZwc5y+Qn4hV36pDHGfumiO
+CdAsvAKix14mKK3pfUswXflSouS+Y41DgOAoydTtIV5nDdx/HofSkDg9ReumkXGG
+ObOuaZv1PlESI8OSdOD5Z+ZWw2TaNJta3y7+U7fWwRUIpqi2xM4GgSfpz8mg/xwU
+n/UF9a/ZjQWMfI00XHFQ91KGpya6omQZ1LFdb7BZMfZaut/s1dk=
+=5Gbn
 -----END PGP SIGNATURE-----
 
---6c2NcOVqGQ03X4Wi--
+--Pd0ReVV5GZGQvF3a--
