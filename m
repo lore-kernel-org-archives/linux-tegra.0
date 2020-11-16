@@ -2,118 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE2AC5519F
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 10:44:58 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1C812223C
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 10:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01FCC4742C
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 11:45:30 +0000 (UTC)
+Received: from vger.kernel.org (unknown [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 551C922245
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Nov 2020 11:45:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uHzE8FQm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RftIK7kd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 551C922245
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-tegra-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgKPKEe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Nov 2020 05:04:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59764 "EHLO
+        id S1728688AbgKPK3G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Nov 2020 05:29:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbgKPKEe (ORCPT
+        with ESMTP id S1727192AbgKPK3G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Nov 2020 05:04:34 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3886C0613CF
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 02:04:33 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id x9so19440613ljc.7
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 02:04:33 -0800 (PST)
+        Mon, 16 Nov 2020 05:29:06 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40A5C0613D3
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 02:29:05 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id k2so18128531wrx.2
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2020 02:29:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZmjIGIJvWbNwTcs6wY2yBaK3bpVv+OHvz7tH87YwYZc=;
-        b=uHzE8FQmyD1MvhqMopD3KicuEX7NxcYe8dEMPD/1rXqAKs4DANWOrWu4JpbcHVbvuE
-         537ZyNer4tnhhyoR5oHzmcrWOsRY8ncJsUweqzCcWZrneRZz8XKh0OCGUIhFbuCM/d38
-         Bb9ujsyBW8vVK0a5h8Cp8/AQ+at7cFA1KlDRTeoxMtvf2cj7aY8KuGvqTI+oCZsIwiRK
-         /216JimzStgjngSyTeLl2lxI6FEj8KDmF07LVfNEdHy7SOT9XoFD8ATl89Wr3harXcFY
-         H6R+Kgf/8GMVGk+DUSDVkG8VWJ2p1Q0g0inYV4I/rBQcw4I5W8u+t3HN0RVB1oSuHOBC
-         wdyw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=wmRBhZj7/1pxfeVgZYMcCYX2nwmFSv/2NvPyqCkbFzU=;
+        b=RftIK7kde9WlaffU9j38KVk/J1NaQLQ8CtGJGBdkT6P0pW5BBCOZSJWa0IsAikZWXG
+         LP6YzPgeM64MOgYeHsbLkqf7irgCQPXs6gB8XR9HmviYbDsS6B8NFD4iKj9H8O8HHFjr
+         zX0YaqHR6UWwBE40vsDO9aM9BjUL1K7o+hSq5MpkHo7uJiAbo+8u69fZ2+dFHc/Btcf3
+         TG23NOv0/v/5C32hSU7zxy6vFqfKJ71hhCLbfDzOIWexlhnDFrK0xcssVxKzorIR9om1
+         kq8llc5d3qMDCEG5NzlwZJLL8eFweqXr6df0oS1FV2pp8RoAxw5PmDcF/2jbM/Evsjn6
+         Qs4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZmjIGIJvWbNwTcs6wY2yBaK3bpVv+OHvz7tH87YwYZc=;
-        b=DdFnTmkZu+vJl6d9ujj+aFx3MXxuwKg+Oi1xhObg85L+BHVNnhsJ0H09CM06Icav9X
-         Ce87bx/GYYI4S8obb6DNM50ZWwSuaQ2IRi0ERJH/00G47VhhYQzeTHAO8urJiUSlKEnR
-         2G5XWTAIJdK+TUGap5MVje2+5MYBDIQWlUeDyYgg303MxD0f7nv0aLfiy7+dUQtG5wDV
-         B+53pVHYgrdqoVUoeZCIp/DUY3xR48UwKXJEERRn4vNerbmnKNFMWg8bJC5w1KiLefrK
-         OrHoB+g0oCXAdafCQ+aWU33h8LBpEdCP5x8QjOMGgx8BMdCnAKbuhKMRHwBuvbgHWgXy
-         X2Dw==
-X-Gm-Message-State: AOAM531928kPzzKJlfO4Eh0g7ZgSzoab6vu6HM1iu4Ho2NMij0GOPkHH
-        +x2fXwk0LYOeYBNc5zfnT7nbXPNS8O8=
-X-Google-Smtp-Source: ABdhPJyg1BMZz6Mc8XBdU0zWAHOXlE7aHbeutDuLv7uEX6cVzSZJhaRg/Kir+syodlX7d5JBE270Eg==
-X-Received: by 2002:a2e:8e6c:: with SMTP id t12mr2295042ljk.441.1605521071856;
-        Mon, 16 Nov 2020 02:04:31 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id 80sm2680260lfa.276.2020.11.16.02.04.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Nov 2020 02:04:31 -0800 (PST)
-Subject: Re: [PATCH v1] soc/tegra: fuse: Drop Kconfig dependency on
- TEGRA20_APB_DMA
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=wmRBhZj7/1pxfeVgZYMcCYX2nwmFSv/2NvPyqCkbFzU=;
+        b=bKA/qyVlpatBa+C24Zfsbfnj7BYFKzMCrSfysSgsmNG64yDHJTFNacE2OY6MxWRqNA
+         Eolvtt6NqT8e4JmOaZqRz6+25BhR5SC2/1xJArqoSOxgaXaqs5tAjYmPi/pnunD4YGHt
+         wXXLh3ApHRMC2BGGHVfts7ojPh918tOoVuOsmqXbvqbP8WC3kEOcxYbpdpX/uCyCLWjC
+         43djDU/n9AKDxkBV8HWSGnPFNQjA+XAXFKlU8myl2ohnEauijcoy1eBrN6Jli+E85nos
+         IKTs43mwfuSK2DNiPhPNktVAhjZsBZOhxmMCApWBS2U5ZAhQ+Hc7QCXVAT4nprpNrq5+
+         Risw==
+X-Gm-Message-State: AOAM533dbmrXjvabtGnBptSx6XjMdVouNktTawaMZRB/g9zC9w+09Jc/
+        hpsi4JaZN9qNjsjPH5JOqbU+kA==
+X-Google-Smtp-Source: ABdhPJx++ca5WSk2zevIOD5mCC/jI7JYS7KLm3+x6zUCHUrs4kWmF68X4YCcaDImcIZKjO0Vln2cOA==
+X-Received: by 2002:adf:f208:: with SMTP id p8mr17519290wro.280.1605522544279;
+        Mon, 16 Nov 2020 02:29:04 -0800 (PST)
+Received: from dell ([91.110.221.159])
+        by smtp.gmail.com with ESMTPSA id c8sm21329564wrv.26.2020.11.16.02.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2020 02:29:03 -0800 (PST)
+Date:   Mon, 16 Nov 2020 10:29:01 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>
-Cc:     linux-tegra@vger.kernel.org
-References: <20200923003421.4561-1-digetx@gmail.com>
-Message-ID: <9c7ddaf0-5c74-7450-958a-a34918d08146@gmail.com>
-Date:   Mon, 16 Nov 2020 13:04:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Dan Murphy <dmurphy@ti.com>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] mfd: Add driver for Embedded Controller found on
+ Acer Iconia Tab A500
+Message-ID: <20201116102901.GO3718728@dell>
+References: <20201104203403.24937-1-digetx@gmail.com>
+ <20201104203403.24937-3-digetx@gmail.com>
+ <20201113093747.GJ2787115@dell>
+ <3ad644fd-cd03-a1e1-36d9-014304fdfcee@gmail.com>
+ <20201116084837.GM3718728@dell>
+ <0e795281-ca18-fca6-1585-a487bcfabb86@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200923003421.4561-1-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <0e795281-ca18-fca6-1585-a487bcfabb86@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.09.2020 03:34, Dmitry Osipenko пишет:
-> The DMA subsystem could be entirely disabled in Kconfig and then the
-> TEGRA20_APB_DMA option isn't available too. Hence kernel configuration
-> fails if DMADEVICES Kconfig option is disabled due to the unsatisfiable
-> dependency.
+On Mon, 16 Nov 2020, Dmitry Osipenko wrote:
+> ...
+> >>>> +	while (retries-- > 0) {
+> >>>> +		ret = i2c_smbus_read_word_data(client, reg);
+> >>>> +		if (ret >= 0)
+> >>>> +			break;
+> >>>> +
+> >>>> +		msleep(A500_EC_I2C_ERR_TIMEOUT);
+> >>>> +	}
+> ...
+> >>> I'm surprised there isn't a generic function which does this kind of
+> >>> read.  Seems like pretty common/boilerplate stuff.
+> >>
+> >> I'm not quite sure that this is a really very common pattern which
+> >> deserves a generic helper.
+> > 
+> > What?  Read from I2C a few times, then sleep sounds like a pretty
+> > common pattern to me.
 > 
-> The FUSE driver isn't a critical driver and currently it only provides
-> NVMEM interface to userspace which isn't known to be widely used, and
-> thus, it's fine if FUSE driver fails to load.
-> 
-> Let's remove the erroneous Kconfig dependency and let the FUSE driver to
-> fail the probing if DMA is unavailable.
-> 
-> Fixes: 19d41e5e9c68 ("soc/tegra: fuse: Add APB DMA dependency for Tegra20")
-> Reported-by: Necip Fazil Yildiran <fazilyildiran@gmail.com>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=209301
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/soc/tegra/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-> index 976dee036470..676807c5a215 100644
-> --- a/drivers/soc/tegra/Kconfig
-> +++ b/drivers/soc/tegra/Kconfig
-> @@ -136,7 +136,6 @@ config SOC_TEGRA_FUSE
->  	def_bool y
->  	depends on ARCH_TEGRA
->  	select SOC_BUS
-> -	select TEGRA20_APB_DMA if ARCH_TEGRA_2x_SOC
->  
->  config SOC_TEGRA_FLOWCTRL
->  	bool
-> 
+> Maybe the read_poll_timeout() helper could be used for that, but I think
+> the open-coded variant is much easier to perceive, don't you agree?
 
-Thierry, a reminder ping.
+I haven't looked into it.  My comment was more general in nature.
+
+As a general rule, helpers are better than open coding, but there are
+always exceptions.  There may not even be a suitable helper for this
+use-case.  As I say, the comment was more of a passing remark.
+
+[...]
+
+> >> These are the values which controller's firmware wants to see, otherwise
+> >> it will reject command as invalid. I'll add a clarifying comment to the
+> >> code.
+> > 
+> > Thanks.  Hopefully with a bit more information as to why the firmware
+> > expects to see them.  Hopefully they're not random.
+> 
+> These are the firmware-defined specific command opcodes, I'll add
+> defines for them to make it more clear, thanks.
+
+That'll do.
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
