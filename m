@@ -2,95 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AE7C63697
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 19:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B019C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 20:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3617B22228
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 19:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A61EC22202
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 20:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jfCo7aQk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vJmRBtG5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgKQTLV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 14:11:21 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13611 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbgKQTLU (ORCPT
+        id S1726682AbgKQUYn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 15:24:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgKQUYm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 14:11:20 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb4205c0000>; Tue, 17 Nov 2020 11:11:24 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Nov
- 2020 19:11:20 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 17 Nov 2020 19:11:20 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.4 00/64] 4.4.244-rc1 review
-In-Reply-To: <20201117122106.144800239@linuxfoundation.org>
-References: <20201117122106.144800239@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Nov 2020 15:24:42 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13154C0617A7
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2020 12:24:41 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id p22so4696649wmg.3
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2020 12:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=uFgfIH0qmM2n17BDKaKrcq4LBODq5k4QOoezQr/yK4Q=;
+        b=vJmRBtG5Y4PKYnYzUVh08Dqvpcn/A+iQlTefDkvBSaY/otn7EDLv0dIIj3ExHDw5TK
+         DJhn0fmMls/fo3Ji04nfqYpC6VAJIrSLNF1zevXLRp+Mqs0gIX3k1ay250TfmDCvRB05
+         +OFGUIWqHJivI8tvxU/N+BXqMuYAmxnqziUr/zXER+4xntRWIfLL4Km6b98Y3TvV59GU
+         eCTzi5TRJcLVXq0HVatVqEhWOZJHM4JeETvtJEpY6E3ejXSsyHLJMnRl9ptM2VzXUngX
+         y3G3hvj79F6xHWtKigSGV3YGOmPS8F7zoviWPz5zt2J2EGLFG8jcg5kblMW5AUYS5yq7
+         YUCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uFgfIH0qmM2n17BDKaKrcq4LBODq5k4QOoezQr/yK4Q=;
+        b=BDb4ekBaKXi8hT22RWqxr92CbvxhqVUSxGn9gOFGXJuMzvhNf52sbI6fmQMhg0I3Dc
+         r7wbkQeyPuh9nfb3Q1+h9QPhHwCCOg5ciTzLhmBynKR/94VV56xGdvk7cno/Jg9UNqz1
+         Mp6B29vm8TBOUbpRElANpmJlUKYm3FMbCR56JrwxQCnbNwy57QojQufyvU9hG8mmHV7C
+         UGIDUcRKBJetUlivWhXQIvFnQGy+UhFQa30XF4nCmLfYaQqCcMPLQEClzZxq332S4Ckj
+         1nUsL5rsBN222C2pC2uwgxQnoLbQ85gfIHdYMSZR/nm2Bf4DCQI56EZjwYbHbB3K5z3f
+         nosQ==
+X-Gm-Message-State: AOAM533FexQJGqH9OAu+G0NtvWbS9N/5SdIsstFSBiLnYtopG6qiZBXB
+        7SeuYqNYyAsYbsCj8ZeGDVtN0w==
+X-Google-Smtp-Source: ABdhPJwcGefASVcjHgpreQsZnk+jCTM8HC7WIOgyOmgrLL/gpuFF2XEZQHvIGAjfywFtjECtmDfZ7g==
+X-Received: by 2002:a1c:2643:: with SMTP id m64mr903602wmm.28.1605644679580;
+        Tue, 17 Nov 2020 12:24:39 -0800 (PST)
+Received: from MacBook-Pro.local ([212.45.64.13])
+        by smtp.googlemail.com with ESMTPSA id m18sm27902466wru.37.2020.11.17.12.24.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2020 12:24:38 -0800 (PST)
+Subject: Re: [PATCH v9 01/17] memory: tegra30: Support interconnect framework
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201115212922.4390-1-digetx@gmail.com>
+ <20201115212922.4390-2-digetx@gmail.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <61e777d9-b730-02c6-cedf-cf0aa1a50fb8@linaro.org>
+Date:   Tue, 17 Nov 2020 22:24:37 +0200
 MIME-Version: 1.0
-Message-ID: <8e1c6d9035784ea0b4d73d3afc02a194@HQMAIL101.nvidia.com>
-Date:   Tue, 17 Nov 2020 19:11:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605640284; bh=AAg3cJakkXhNTeRlH+i7/RjlVt2i1hdzZ6ZoQV/PUsU=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=jfCo7aQkJwRiPBodHWlpez05UD/C0/2R/TU6xlCpKDSsVRPZKHM23bD5TNAOxojN9
-         qrn2IoB9NJ8l8qmuktx1LRtr3UhgHCf2UM7vdF9K1ejFlZQ9U9JhpiZpJWZWw7MqfS
-         B2AyyDp4bYkFjLjyRCaBug6BzmMRxhZC8WDpay4hH8l22oqbPDtVLD78ryFNF1G/xL
-         SFb/eH4G8huLW4DwbO8m0Pxtr2hD7vHjoHpysBMAr5mkI/e9lFgVK7956352Hr4sBP
-         mdlY9OCPDjjxXqi2Nf1e4IkcIaGu2AlpwEYQChtUcE36rAs8DerRyOto/GjFnjT6eS
-         M+aOt+mHzBX6A==
+In-Reply-To: <20201115212922.4390-2-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 17 Nov 2020 14:04:23 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.244 release.
-> There are 64 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Dmitry,
+
+Thank you working on this!
+
+On 15.11.20 23:29, Dmitry Osipenko wrote:
+> Now Internal and External memory controllers are memory interconnection
+> providers. This allows us to use interconnect API for tuning of memory
+> configuration. EMC driver now supports OPPs and DVFS. MC driver now
+> supports tuning of memory arbitration latency, which needs to be done
+> for ISO memory clients, like a Display client for example.
 > 
-> Responses should be made by Thu, 19 Nov 2020 12:20:51 +0000.
-> Anything received after that time might be too late.
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>   drivers/memory/tegra/Kconfig       |   1 +
+>   drivers/memory/tegra/tegra30-emc.c | 349 +++++++++++++++++++++++++++--
+>   drivers/memory/tegra/tegra30.c     | 173 +++++++++++++-
+>   3 files changed, 501 insertions(+), 22 deletions(-)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.244-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+[..]> diff --git a/drivers/memory/tegra/tegra30.c 
+b/drivers/memory/tegra/tegra30.c
+> index d0314f29608d..ea849003014b 100644
+> --- a/drivers/memory/tegra/tegra30.c
+> +++ b/drivers/memory/tegra/tegra30.c
+[..]
+> +
+> +static int tegra30_mc_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct tegra_mc *mc = icc_provider_to_tegra_mc(src->provider);
+> +	const struct tegra_mc_client *client = &mc->soc->clients[src->id];
+> +	u64 peak_bandwidth = icc_units_to_bps(src->peak_bw);
+> +
+> +	/*
+> +	 * Skip pre-initialization that is done by icc_node_add(), which sets
+> +	 * bandwidth to maximum for all clients before drivers are loaded.
+> +	 *
+> +	 * This doesn't make sense for us because we don't have drivers for all
+> +	 * clients and it's okay to keep configuration left from bootloader
+> +	 * during boot, at least for today.
+> +	 */
+> +	if (src == dst)
+> +		return 0;
 
-All tests passing for Tegra ...
+Nit: The "proper" way to express this should be to implement the
+.get_bw() callback to return zero as initial average/peak bandwidth.
+I'm wondering if this will work here?
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    25 tests:	25 pass, 0 fail
+The rest looks good to me!
 
-Linux version:	4.4.244-rc1-g5c64a4febafe
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Thanks,
+Georgi
