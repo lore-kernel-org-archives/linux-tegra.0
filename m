@@ -2,125 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFFBC56202
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 16:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2D2C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 16:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E9BC24655
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 16:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E4424655
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 16:44:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cdn4ijPz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccOT9e4C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbgKQQPf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 11:15:35 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7429 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbgKQQPe (ORCPT
+        id S1727402AbgKQQou (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 11:44:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727251AbgKQQou (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 11:15:34 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb3f72a0000>; Tue, 17 Nov 2020 08:15:38 -0800
-Received: from [10.2.53.74] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Nov
- 2020 16:15:32 +0000
-Subject: Re: [PATCH v2 3/6] dt-bindings: ata: tegra: Convert binding
- documentation to YAML
-To:     Rob Herring <robh@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-ide@vger.kernel.org>, <thierry.reding@gmail.com>,
-        <devicetree@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>
-References: <1605296218-2510-1-git-send-email-skomatineni@nvidia.com>
- <1605296218-2510-4-git-send-email-skomatineni@nvidia.com>
- <20201116150022.GA1642318@bogus>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <4b1d90b7-63e7-8b32-16f8-a1020827f207@nvidia.com>
-Date:   Tue, 17 Nov 2020 08:15:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 17 Nov 2020 11:44:50 -0500
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC86FC0613CF;
+        Tue, 17 Nov 2020 08:44:49 -0800 (PST)
+Received: by mail-pj1-x1044.google.com with SMTP id oc3so800361pjb.4;
+        Tue, 17 Nov 2020 08:44:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B8QzwI2A4JiMjBdpbYfzTZikgzOSJPgc8kyE3psYOaY=;
+        b=ccOT9e4Cq3nEg1uwVEtpv1U8N4LontAVmAzlX5HUNjjcXHx5n/NZNL9SRvY+Dd1vrm
+         Wab0TbCtv/RB2fqIYXQ2+5cQoWXCPUR5mGj1/HJkYwnfw2FLRJYXaTUuWBsYtUUmVe59
+         4EaLdkrcGNnETkIRr6RCMMp2/DRjEGZoLAO94SbuivESyoQphgeg3WuqtfKoNOkQxjja
+         tbbXCtdfs8nio7bMoHtA3hKEdPZvxdqEwO1S1ofu3Ryl+GcDr5Ig9v8e7hgk5FVgIT6N
+         bz5mV4/qPRABguAyyP+L5gCq4aXEht8Ryu6CHMoT9V1mie7wg+ZtNRyKuRx4HoUsLOnH
+         5fYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B8QzwI2A4JiMjBdpbYfzTZikgzOSJPgc8kyE3psYOaY=;
+        b=nvbHNDugd/Qp16/alLMb9yxjXFhrS8EBuX1h5ZmTsF3ZsqXOygm3Qw4DTEqYQQF5kb
+         Do+7pmOtGnIpgZWkd6C/5+xvQ7OqHD+KGYGr5w4vLSb2r8gULgfpQAUnXay4ZVvwLGaO
+         qVuI8W+taag9EODJeY4B4aj7zpBNbE4YevQ83tlU4AyvYkikexhRGm1KMNhhkdbUPsuA
+         GQyunNpY0TsNGWlw2DzrjmRJOLVn+tQVOsJjAgjNWolywTY2ldlGRJ2mZmQ5V1OKQ/7J
+         c2k7sYQXU//4rcduIR0ONn73m145is2QsDUP2kdxkSy2Ukj+BJFvGcFUGIUuCsYK0pP9
+         4oqQ==
+X-Gm-Message-State: AOAM533br2oZ2N56/R06n8VI+vWxjhoClEStA9ckp23SEDmSwUnxvaYw
+        3asTTAXMk89mmIRuQeCHoDDyuTLLtd/g1K7Uwf8=
+X-Google-Smtp-Source: ABdhPJwvYdEFzP8xHWLyXY+/m9CfiCPoozx6BGYVNLVbOYR5fdvQzRfgXO1baMYIKH18JHEtpDcfCR9bmqf6oaksZPY=
+X-Received: by 2002:a17:90a:d90a:: with SMTP id c10mr231762pjv.129.1605631489523;
+ Tue, 17 Nov 2020 08:44:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201116150022.GA1642318@bogus>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605629738; bh=18wsPT8+1d4fVxmKRiuoV3ixoFKxrPxACtJejsOp+Cs=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=cdn4ijPz1qfOZvWGWdxjHT625Z1ufEtVZ9AB32TR8/QeyhoszmT/8P6Iyf9hfSBE4
-         aLJFxnC2TKZio3rNBSN49G00embWxfZl6+3nAu0hm2gAiA894An0BYRx+BiivWJOQR
-         hNqtCcB2DDnuezHzLKw2QDVb+2zRVctAqVI9nQ4cWhU1SX/0Ko+8+Fh/EFHrim1wDw
-         Q2nOr1nu5eBhMRFWs4F3RnfmG+UKOFAm/cMktiRPKX/Z81+DMt5VhH9SeAsu2OFkpf
-         eRSKvo521m8Zjdkwii6o3LdQmajp8f5HDs2ag6HIXn7mgga96697oM9BsFd1NM10JV
-         B0djcb3m7Vx+w==
+References: <20201117154340.18216-1-info@metux.net>
+In-Reply-To: <20201117154340.18216-1-info@metux.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 17 Nov 2020 18:45:37 +0200
+Message-ID: <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
+Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Jonathan Cameron <jic23@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Serge Semin <fancer.lancer@gmail.com>, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Tue, Nov 17, 2020 at 5:45 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
+>
+> The of_match_ptr(foo) macro evaluates to foo, only if
+> CONFIG_OF is set, otherwise to NULL. Same does ACPI_PTR with
+> CONFIG_ACPI. That's very helpful for drivers that can be used
+> with or without oftree / acpi.
+>
+> Even though most of the drivers touched here probably don't
+> actually need that, it's also nice for consistency to make it
+> the de-facto standard and change all drivers to use the
+> of_match_ptr() and ACPI_PTR() macros.
+>
+> A nice side effect: in some situations, when compiled w/o
+> CONFIG_OF/CONFIG_ACPI, the corresponding match tables could
+> automatically become unreferenced and optimized-away by the
+> compiler, w/o explicitly cluttering the code w/ ifdef's.
 
-On 11/16/20 7:00 AM, Rob Herring wrote:
-> On Fri, 13 Nov 2020 11:36:55 -0800, Sowjanya Komatineni wrote:
->> This patch converts text based dt-binding document to YAML based
->> dt-binding document.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 137 +++++++++++++++++++++
->>   .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 -------
->>   2 files changed, 137 insertions(+), 44 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
->>   delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->>
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> Error: Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dts:27.31-32 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.example.dt.yaml] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:1364: dt_binding_check] Error 2
->
->
-> See https://patchwork.ozlabs.org/patch/1400065
->
-> The base for the patch is generally the last rc1. Any dependencies
-> should be noted.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit.
+NAK.
 
-Hi Rob,
+It prevents using DT-enabled drivers on ACPI based platforms.
 
-make dt_binding_check shows other yaml warmings and didn't go thru 
-tegra-ahci.yaml even with specifying DT_SHHEMA_FILES
++Cc: Jonathan who had done the opposite in the entire IIO subsystem.
 
-But, When I do dtbs_check, I see
-Documentation/devicetree/bindings/processed-schema.json generated and
-also it passes for tegra-ahci.yaml
-
-
-In v1 feedback discussion, you mentioned it should be good if dtbs_check 
-passes.
-
-Regards,
-
-Sowjanya
-
->
+-- 
+With Best Regards,
+Andy Shevchenko
