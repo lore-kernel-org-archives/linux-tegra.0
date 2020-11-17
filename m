@@ -2,170 +2,225 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAE1C64EBC
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 13:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF33C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 14:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCFC9208B8
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 13:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85775221F9
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 14:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnUVFJQu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tpbjSkvU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731831AbgKQN2O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 08:28:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60442 "EHLO
+        id S1729229AbgKQORd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 09:17:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731287AbgKQN2N (ORCPT
+        with ESMTP id S1728971AbgKQORc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 08:28:13 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86256C0613CF;
-        Tue, 17 Nov 2020 05:28:13 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id h2so3263359wmm.0;
-        Tue, 17 Nov 2020 05:28:13 -0800 (PST)
+        Tue, 17 Nov 2020 09:17:32 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C583C0613CF;
+        Tue, 17 Nov 2020 06:17:32 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id x9so24435722ljc.7;
+        Tue, 17 Nov 2020 06:17:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z5nRMWqZ/QN9od2roRxZfjfshzdwEOeik0u1h7RtLqk=;
-        b=LnUVFJQudTGPlJLNQZt7o64p1he3iEd7YJ3J7L8W3PbzVfyvvRAf/x7q3jBC//Vg3T
-         ZvN0qwGSJuBC8FKB9onCNPhrylSwWKmtNc73E8eumXOVwQzxzssSMuvlHF3loy9AoGnf
-         /+gA68keY+49yUb62QkdLRxS8E6eXeZIiL4Yg/hhvDDuiCdtqs6RhOc1cza/85lVEL26
-         MBxM0WjtvSnpijicIuRgO9LdJZXABaXbqKl94cx4u0fihizDeWNIoCnfLVkrj+saCkBh
-         SdvAlqsPcH5fx4uEiXjDYcrMkXByv9vawkXhSyorOnQvNTaRa1IpzDtWQ77IzV2W0uKW
-         VfsQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=q2TfPNwbFsY7QYd8sTzRZEObhYP03ZOzna0totkapw8=;
+        b=tpbjSkvU+/U5bphneMP5zx1QauR++bqzsNpKNWwGkCa+PufVLU6GU2WjJ9CT9ETQLG
+         Qr6LmuKTCBC4gjIM9iQ45WLnY6WugGpP7V0JhxxL+f3xrcC+yT2Tc6dwG1BEPQK7Ffbq
+         2fUN+9u4h3aF5li4Lrb6Yzcbeurz6YqqGo3uq4IyMd8C5RcNn1cX5SGIiEdz38rmRftB
+         jWb011jbyhiyX0Ekj6ReRtAcUXsnnaNzHyMougSnniv5DqFm0paq7PSsVfMnDEZ6bYDr
+         hjahkG3/GVm95dt2nJFJnFel61dr9CMeRWr6cZmgn/m7peRvbeMxTm5t31eK9ckl4Oar
+         vfzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z5nRMWqZ/QN9od2roRxZfjfshzdwEOeik0u1h7RtLqk=;
-        b=TfIGTUxQ2aiYA7/6ORviJBQ4r/q3X+Iv8SZX/BZfvZOnncdwZNMkRIahRvV5fWpYA+
-         lw0rG35nHo84F4tgfktlAJc5BJjOsZgV8dJJlvqQSZgLy8kJ7rKANYy6VTNYJCWMgEwH
-         7xldgsRubfAoV+fSzq0X2QTYJON8hr8AYFeIgath2Cf8yR0dTANweJu57tlTUShyhIpw
-         3Dki6qcnBLMywUzDe7+U7i8aGK0Kc0mHuOzRY1qNv+CNSWxjLeabFgKVBcvGfKxTJU7W
-         cxcAYFESKD46JSDQvnoIWB0Z1Uh7SM3ICGUGb5KmHDjO2JEBd9R6X56iFeVSgc85kRR8
-         pzrA==
-X-Gm-Message-State: AOAM531musz9z3pl3oBlWpZJxgZjj0w657ktiELrH6gwE8ne4tCsEimV
-        +6RMHQCmlgDS1r1sUtFmMzgLgYwtpGI=
-X-Google-Smtp-Source: ABdhPJwxZd5OKOFCfzdN5THixhJIOUQljAUuFfJBmIWkACqNW8fk7frok9BvJUtCzHC7pWUyx7mB9A==
-X-Received: by 2002:a7b:c24b:: with SMTP id b11mr4222312wmj.109.1605619692243;
-        Tue, 17 Nov 2020 05:28:12 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id r8sm27375773wrq.14.2020.11.17.05.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2020 05:28:10 -0800 (PST)
-Date:   Tue, 17 Nov 2020 14:28:09 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=q2TfPNwbFsY7QYd8sTzRZEObhYP03ZOzna0totkapw8=;
+        b=MKULtg6h88rLP2SyY9DKNWk5xgsZ0AaHxKczOhN4iS3lpPQKOJVnWPUtLI6IOZi79T
+         X1EaMPKiP24E9oHfTRNzKYH9D3Cbf5Fv3yhRqcpfbC5/FdXglRV/C0AIHIz6a2BfiKVC
+         neWPcwIh+pn/n1LRWdmR0pgqu2MibryPfZF7lbKxR5U2vQgyY5k9dwNAPCe313zjA87f
+         qEGUuR0Qcl7/OBivUqXLlD6Qmlx4hFw8FU2tCbW9N76/hwtyJw6lJ9Z2ypq8c6twHXIF
+         pTMsSEpArBldOTIXe3zquGxqkv2LSg57vP4ttDORytvnCg8bts8yisFeKonId7nyYQ7u
+         eRYA==
+X-Gm-Message-State: AOAM531s+MrBy7COsYfNp9NloHKE74kIoz5QDFHCTn9DFWVcaiVuzbOM
+        69bRHPjdR3fM6Xtzc009UTE=
+X-Google-Smtp-Source: ABdhPJxSxv4CgsznF1M5m0HlswEk+5u5gaPfsgzrL0V1ke3IMer28jKI+apmnEdu3Hxzfog3p84yag==
+X-Received: by 2002:a2e:b164:: with SMTP id a4mr1931742ljm.115.1605622650853;
+        Tue, 17 Nov 2020 06:17:30 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id u12sm3170887lfm.39.2020.11.17.06.17.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2020 06:17:29 -0800 (PST)
+Subject: Re: [PATCH v9 07/17] PM / devfreq: tegra30: Support interconnect and
+ OPPs from device-tree
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] phy: fix ptr_ret.cocci warnings
-Message-ID: <20201117132809.GA2589875@ulmo>
-References: <202011170710.Dsd9lxrR-lkp@intel.com>
- <20201116230032.GA34534@8312513de428>
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201115212922.4390-1-digetx@gmail.com>
+ <20201115212922.4390-8-digetx@gmail.com>
+ <20201117100705.i62qr4gosvu76o22@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <956315a9-e806-3b18-6792-f01057a6c511@gmail.com>
+Date:   Tue, 17 Nov 2020 17:17:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
-In-Reply-To: <20201116230032.GA34534@8312513de428>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <20201117100705.i62qr4gosvu76o22@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+17.11.2020 13:07, Viresh Kumar пишет:
+> On 16-11-20, 00:29, Dmitry Osipenko wrote:
+>> This patch moves ACTMON driver away from generating OPP table by itself,
+>> transitioning it to use the table which comes from device-tree. This
+>> change breaks compatibility with older device-trees in order to bring
+>> support for the interconnect framework to the driver. This is a mandatory
+>> change which needs to be done in order to implement interconnect-based
+>> memory DVFS. Users of legacy device-trees will get a message telling that
+>> theirs DT needs to be upgraded. Now ACTMON issues memory bandwidth request
+>> using dev_pm_opp_set_bw(), instead of driving EMC clock rate directly.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 86 ++++++++++++++++---------------
+>>  1 file changed, 44 insertions(+), 42 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index 38cc0d014738..ed6d4469c8c7 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -19,6 +19,8 @@
+>>  #include <linux/reset.h>
+>>  #include <linux/workqueue.h>
+>>  
+>> +#include <soc/tegra/fuse.h>
+>> +
+>>  #include "governor.h"
+>>  
+>>  #define ACTMON_GLB_STATUS					0x0
+>> @@ -155,6 +157,7 @@ struct tegra_devfreq_device {
+>>  
+>>  struct tegra_devfreq {
+>>  	struct devfreq		*devfreq;
+>> +	struct opp_table	*opp_table;
+>>  
+>>  	struct reset_control	*reset;
+>>  	struct clk		*clock;
+>> @@ -612,34 +615,19 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  				u32 flags)
+>>  {
+>> -	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+>> -	struct devfreq *devfreq = tegra->devfreq;
+>>  	struct dev_pm_opp *opp;
+>> -	unsigned long rate;
+>> -	int err;
+>> +	int ret;
+>>  
+>>  	opp = devfreq_recommended_opp(dev, freq, flags);
+>>  	if (IS_ERR(opp)) {
+>>  		dev_err(dev, "Failed to find opp for %lu Hz\n", *freq);
+>>  		return PTR_ERR(opp);
+>>  	}
+>> -	rate = dev_pm_opp_get_freq(opp);
+>> -	dev_pm_opp_put(opp);
+>> -
+>> -	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
+>> -	if (err)
+>> -		return err;
+>> -
+>> -	err = clk_set_rate(tegra->emc_clock, 0);
+>> -	if (err)
+>> -		goto restore_min_rate;
+>>  
+>> -	return 0;
+>> -
+>> -restore_min_rate:
+>> -	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
+>> +	ret = dev_pm_opp_set_bw(dev, opp);
+>> +	dev_pm_opp_put(opp);
+>>  
+>> -	return err;
+>> +	return ret;
+>>  }
+>>  
+>>  static int tegra_devfreq_get_dev_status(struct device *dev,
+>> @@ -655,7 +643,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>>  	stat->private_data = tegra;
+>>  
+>>  	/* The below are to be used by the other governors */
+>> -	stat->current_frequency = cur_freq;
+>> +	stat->current_frequency = cur_freq * KHZ;
+>>  
+>>  	actmon_dev = &tegra->devices[MCALL];
+>>  
+>> @@ -705,7 +693,12 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>>  		target_freq = max(target_freq, dev->target_freq);
+>>  	}
+>>  
+>> -	*freq = target_freq;
+>> +	/*
+>> +	 * tegra-devfreq driver operates with KHz units, while OPP table
+>> +	 * entries use Hz units. Hence we need to convert the units for the
+>> +	 * devfreq core.
+>> +	 */
+>> +	*freq = target_freq * KHZ;
+>>  
+>>  	return 0;
+>>  }
+>> @@ -774,6 +767,7 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>>  
+>>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  {
+>> +	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+>>  	struct tegra_devfreq_device *dev;
+>>  	struct tegra_devfreq *tegra;
+>>  	struct devfreq *devfreq;
+>> @@ -781,6 +775,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  	long rate;
+>>  	int err;
+>>  
+>> +	/* legacy device-trees don't have OPP table and must be updated */
+>> +	if (!device_property_present(&pdev->dev, "operating-points-v2")) {
+>> +		dev_err(&pdev->dev,
+>> +			"OPP table not found, please update your device tree\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+> 
+> You forgot to remove this ?
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 17, 2020 at 07:00:32AM +0800, kernel test robot wrote:
-> From: kernel test robot <lkp@intel.com>
->=20
-> drivers/phy/tegra/phy-tegra194-p2u.c:95:1-3: WARNING: PTR_ERR_OR_ZERO can=
- be used
->=20
->=20
->  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
->=20
-> Generated by: scripts/coccinelle/api/ptr_ret.cocci
->=20
-> Fixes: 133552bf03ed ("phy: Remove CONFIG_ARCH_* check for related subdir =
-in Makefile")
-> CC: Tiezhu Yang <yangtiezhu@loongson.cn>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: kernel test robot <lkp@intel.com>
-> ---
->=20
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   09162bc32c880a791c6c0668ce0745cf7958f576
-> commit: 133552bf03edbe3892767a4b64c56e3bed746374 phy: Remove CONFIG_ARCH_=
-* check for related subdir in Makefile
->=20
->  phy-tegra194-p2u.c |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-
-A similar patch was recently sent out against the pci-tegra driver. That
-was perhaps the third time or so that it happened and both the Bjorn
-(the PCI maintainer) and I have agreed multiple times in the past that
-this isn't an actual improvement.
-
-There are two reasons why I think this is actually worse than the
-original: 1) this doesn't look like regular error handling and therefore
-becomes more difficult to read and 2) if we ever need to add code
-between the devm_of_phy_provider_register() and the final successful
-return, we need to go and effectively revert this patch again.
-
-I wonder if there's enough consensus that PTR_ERR_OR_ZERO() is really
-that useful.
-
-Thierry
-
->=20
-> --- a/drivers/phy/tegra/phy-tegra194-p2u.c
-> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
-> @@ -92,10 +92,7 @@ static int tegra_p2u_probe(struct platfo
->  	phy_set_drvdata(generic_phy, phy);
-> =20
->  	phy_provider =3D devm_of_phy_provider_register(dev, of_phy_simple_xlate=
-);
-> -	if (IS_ERR(phy_provider))
-> -		return PTR_ERR(phy_provider);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(phy_provider);
->  }
-> =20
->  static const struct of_device_id tegra_p2u_id_table[] =3D {
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+zz+YACgkQ3SOs138+
-s6H3qA//T55kxtKknEYR7KaVhn2x64lQhioo/LzvB8cgfUaUNm6MC4jCRLLKWjAD
-V0T2XG3qn50sZBZVqbhKJ4T0ULQGB1GHUJquUBhh/VPIQTsJXt3pI7kqLJU5n8oQ
-D8KQJQAWMPuPr3vbsTnMxM7YAzDB+FCZjazVByZ/T0wEhdCZqHYT6XkJ4nhA79cN
-LV9GnpxDKsHHjEae50TT7VVvvhaTmlOT30wVLpYqqrAu+kY7as6KbxgsSgpEbJz7
-/OH8PHVvvsHs8Lmz8kVP1mbZmQxeZeyf422btsA9sANdxXHyUS/hUK93tAD7h3dN
-lqrRCG1tDK9NUR9u5/fIdLIIhjahrzmtPsGGDDDF9+Wz84SQ/0nK1ZhksIDYVm4X
-g4BUtmoNlrdsr5yRAw5ke52qZbm3FANRpnkF/727duD8d+rXxf5TOurvhNqqJqre
-Kk+OJ2Gy8BFNBbZFp+cLdYSrrudyFG8bfczafUjnxeSAlInWMpFjIT+eAV9h0sUU
-KrZl5lrcVVN0+p0CGFCWwawsUcMrGDGxaJGIhz0iJ4EVEcSThPEEXABVezq9VTDE
-3stXCZjQgVrMfDyxHcTKaXU09WFwOwQPdXANN++73ksp0WwPvzzDWwXdOqDGbjUc
-VZi4wjF1SkyglN4DokQoL8OxojozJP1o2XDmJT91V2PUvRKPZEw=
-=vWPq
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+Yes, good catch. I'm planning to replace this code with a common helper
+sometime soon, so if there won't be another reasons to make a new
+revision, then I'd prefer to keep it as-is for now.
