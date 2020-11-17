@@ -2,162 +2,309 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162EBC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 08:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7861C5519F
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 10:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92D822467B
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 08:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E8D223BD
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 10:07:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="M+f2iO3l"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2kVKHsv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbgKQIiJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 03:38:09 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6970 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbgKQIiJ (ORCPT
+        id S1727779AbgKQKHN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 05:07:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbgKQKHK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 03:38:09 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb38be70000>; Tue, 17 Nov 2020 00:37:59 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Nov
- 2020 08:38:07 +0000
-Received: from jckuo-lt.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 17 Nov 2020 08:38:05 +0000
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <kishon@ti.com>, <vkoul@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v1] phy: tegra: xusb: Fix usb_phy device driver field
-Date:   Tue, 17 Nov 2020 16:38:03 +0800
-Message-ID: <20201117083803.185209-1-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 17 Nov 2020 05:07:10 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5852C0617A6
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2020 02:07:08 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id b3so9947575pls.11
+        for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2020 02:07:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zDO/TYpqBjmcYMHioNqIZuUjbpR+6v11u2ajK5HGwak=;
+        b=j2kVKHsvyPuW4TDoJ5BP//mL+ksNhHdSc2ZBZWPScdQ2jZIts6ntDXd2+J63MUJV8t
+         HRTbq8mx6qTfzgXHQiRl4fMa+WvbnP/LeyC1YMaEYd8aC9j2Cr/db3o3npmopsFCSzWs
+         ym/WQEMe6VXS+cQNu2CMGhPkm0akAgSp1QhkYbIDXhlys1ybehAe0dKIXpm4fvnAujct
+         MF2GWB77hza8pcpL2wrYNDZDxGw1ecHBfyW8VUStTXsbYV/Za2yd6Tick3n+d0EmTYmj
+         p0Yd+Uq3IZ6k4m/8k+q3dCYHQWvtmgkk07AZgXiJKH6GO4vdyqd57ZaFKKtRPUZx9trc
+         BzTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zDO/TYpqBjmcYMHioNqIZuUjbpR+6v11u2ajK5HGwak=;
+        b=TeOCnjNNtHBZi2Vfhy9yzs9FfkyERK/CwWJdOkqTCh8Cv3QSa6xcZ9VFzQH+QNqZ4i
+         xK1sGdPN95jrVHt09mXvTuichFx/aIo1BLSwAJW6R4XHRj52BtoxZBUMLBBTrOYvTboE
+         Su2Ltruoiniy0t6vPyx1nBRbuIE2o7p33Mdv+zcX6yqOHuF7nsppRf2cDNxBpxTw3R88
+         mrEGlu+gc8J9rQslzTQljjdK8pd7gALB5Q0f3WSeEgbRoL/PQb6Fjff7Po2R6uhPTngz
+         xq65DrqtoA0J+2VI6Mpy/pwhKqh6uxf7NFr2fG6XsJevMiQEeZLrJgI4PZqfdFgNVpYb
+         ykJw==
+X-Gm-Message-State: AOAM5311QE2Gkju5ET00voLrYMi1Tjbj5XWBeq6QzM0MOPV5PF0fOkDe
+        JBT6sjOGdQnAUCA7NE1Qb1jBOg==
+X-Google-Smtp-Source: ABdhPJyJ6tjgZVNUAp3v1jcIXODPPSj506Em6+r/KEB8PPBt691bL5Vm0hi+UoZwIT3mJxFLcb8oLg==
+X-Received: by 2002:a17:90a:7409:: with SMTP id a9mr3934084pjg.48.1605607628171;
+        Tue, 17 Nov 2020 02:07:08 -0800 (PST)
+Received: from localhost ([122.172.12.172])
+        by smtp.gmail.com with ESMTPSA id c28sm22436619pfj.108.2020.11.17.02.07.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Nov 2020 02:07:07 -0800 (PST)
+Date:   Tue, 17 Nov 2020 15:37:05 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v9 07/17] PM / devfreq: tegra30: Support interconnect and
+ OPPs from device-tree
+Message-ID: <20201117100705.i62qr4gosvu76o22@vireshk-i7>
+References: <20201115212922.4390-1-digetx@gmail.com>
+ <20201115212922.4390-8-digetx@gmail.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605602279; bh=eRjgCKXXvY73ClLCAEsF2Rjn8XJRFex977OZk+wXtq4=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
-        b=M+f2iO3llrdDlcM/KChFW8YcvFpgFY9oRBYtCF6bZThSPg7/Y+F4TdzHiLz5QSDV0
-         BovKSQsowASiEwpp/Buub/kh4+wZ7s0vlZ2Nqz3EV/WoFsnZhBdLAnFC4UMVbgwaDd
-         /eXRd6Ri783ag/IUR/MFVain5m4jQg1+NKxZWER6FVKmgqAwFGQxzWKP0mmz6OWXp4
-         /YhWkm58E91mgWhFr6uaVnNU8oylUFmbA/fEJdwid6V0nbk9jh3+mPOMOQKjg4Oq3k
-         2teRzPhFC3NJqs03QcFv6pIm+yZWSoZc/XAMyIFd2fQIFwj328PrwLOMe8YzrFBeSO
-         omnrVLZ7RNivQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201115212922.4390-8-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-In commit "phy: tegra: xusb: Add usb-phy support", an OTG capable PHY
-device, such as phy-usb2.0 device of Jetson-TX1 platform, will be
-bound to the tegra-xusb-padctl driver by the following line in
-tegra_xusb_setup_usb_role_switch().
+On 16-11-20, 00:29, Dmitry Osipenko wrote:
+> This patch moves ACTMON driver away from generating OPP table by itself,
+> transitioning it to use the table which comes from device-tree. This
+> change breaks compatibility with older device-trees in order to bring
+> support for the interconnect framework to the driver. This is a mandatory
+> change which needs to be done in order to implement interconnect-based
+> memory DVFS. Users of legacy device-trees will get a message telling that
+> theirs DT needs to be upgraded. Now ACTMON issues memory bandwidth request
+> using dev_pm_opp_set_bw(), instead of driving EMC clock rate directly.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 86 ++++++++++++++++---------------
+>  1 file changed, 44 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 38cc0d014738..ed6d4469c8c7 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -19,6 +19,8 @@
+>  #include <linux/reset.h>
+>  #include <linux/workqueue.h>
+>  
+> +#include <soc/tegra/fuse.h>
+> +
+>  #include "governor.h"
+>  
+>  #define ACTMON_GLB_STATUS					0x0
+> @@ -155,6 +157,7 @@ struct tegra_devfreq_device {
+>  
+>  struct tegra_devfreq {
+>  	struct devfreq		*devfreq;
+> +	struct opp_table	*opp_table;
+>  
+>  	struct reset_control	*reset;
+>  	struct clk		*clock;
+> @@ -612,34 +615,19 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
+>  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>  				u32 flags)
+>  {
+> -	struct tegra_devfreq *tegra = dev_get_drvdata(dev);
+> -	struct devfreq *devfreq = tegra->devfreq;
+>  	struct dev_pm_opp *opp;
+> -	unsigned long rate;
+> -	int err;
+> +	int ret;
+>  
+>  	opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(opp)) {
+>  		dev_err(dev, "Failed to find opp for %lu Hz\n", *freq);
+>  		return PTR_ERR(opp);
+>  	}
+> -	rate = dev_pm_opp_get_freq(opp);
+> -	dev_pm_opp_put(opp);
+> -
+> -	err = clk_set_min_rate(tegra->emc_clock, rate * KHZ);
+> -	if (err)
+> -		return err;
+> -
+> -	err = clk_set_rate(tegra->emc_clock, 0);
+> -	if (err)
+> -		goto restore_min_rate;
+>  
+> -	return 0;
+> -
+> -restore_min_rate:
+> -	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
+> +	ret = dev_pm_opp_set_bw(dev, opp);
+> +	dev_pm_opp_put(opp);
+>  
+> -	return err;
+> +	return ret;
+>  }
+>  
+>  static int tegra_devfreq_get_dev_status(struct device *dev,
+> @@ -655,7 +643,7 @@ static int tegra_devfreq_get_dev_status(struct device *dev,
+>  	stat->private_data = tegra;
+>  
+>  	/* The below are to be used by the other governors */
+> -	stat->current_frequency = cur_freq;
+> +	stat->current_frequency = cur_freq * KHZ;
+>  
+>  	actmon_dev = &tegra->devices[MCALL];
+>  
+> @@ -705,7 +693,12 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>  		target_freq = max(target_freq, dev->target_freq);
+>  	}
+>  
+> -	*freq = target_freq;
+> +	/*
+> +	 * tegra-devfreq driver operates with KHz units, while OPP table
+> +	 * entries use Hz units. Hence we need to convert the units for the
+> +	 * devfreq core.
+> +	 */
+> +	*freq = target_freq * KHZ;
+>  
+>  	return 0;
+>  }
+> @@ -774,6 +767,7 @@ static struct devfreq_governor tegra_devfreq_governor = {
+>  
+>  static int tegra_devfreq_probe(struct platform_device *pdev)
+>  {
+> +	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+>  	struct tegra_devfreq_device *dev;
+>  	struct tegra_devfreq *tegra;
+>  	struct devfreq *devfreq;
+> @@ -781,6 +775,13 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	long rate;
+>  	int err;
+>  
+> +	/* legacy device-trees don't have OPP table and must be updated */
+> +	if (!device_property_present(&pdev->dev, "operating-points-v2")) {
+> +		dev_err(&pdev->dev,
+> +			"OPP table not found, please update your device tree\n");
+> +		return -ENODEV;
+> +	}
+> +
 
-	port->usb_phy.dev->driver =3D port->padctl->dev->driver;
+You forgot to remove this ?
 
-With this, dev_pm_ops set of tegra-xusb-padctl driver will be invoked
-for the OTG capable PHY incorrectly as below logs show.
+>  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+>  	if (!tegra)
+>  		return -ENOMEM;
+> @@ -822,11 +823,25 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> +	tegra->opp_table = dev_pm_opp_set_supported_hw(&pdev->dev,
+> +						       &hw_version, 1);
+> +	err = PTR_ERR_OR_ZERO(tegra->opp_table);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	err = dev_pm_opp_of_add_table(&pdev->dev);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+> +		goto put_hw;
+> +	}
+> +
+>  	err = clk_prepare_enable(tegra->clock);
+>  	if (err) {
+>  		dev_err(&pdev->dev,
+>  			"Failed to prepare and enable ACTMON clock\n");
+> -		return err;
+> +		goto remove_table;
+>  	}
+>  
+>  	err = reset_control_reset(tegra->reset);
+> @@ -850,23 +865,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		dev->regs = tegra->regs + dev->config->offset;
+>  	}
+>  
+> -	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+> -		rate = clk_round_rate(tegra->emc_clock, rate);
+> -
+> -		if (rate < 0) {
+> -			dev_err(&pdev->dev,
+> -				"Failed to round clock rate: %ld\n", rate);
+> -			err = rate;
+> -			goto remove_opps;
+> -		}
+> -
+> -		err = dev_pm_opp_add(&pdev->dev, rate / KHZ, 0);
+> -		if (err) {
+> -			dev_err(&pdev->dev, "Failed to add OPP: %d\n", err);
+> -			goto remove_opps;
+> -		}
+> -	}
+> -
+>  	platform_set_drvdata(pdev, tegra);
+>  
+>  	tegra->clk_rate_change_nb.notifier_call = tegra_actmon_clk_notify_cb;
+> @@ -882,7 +880,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
+> -	tegra_devfreq_profile.initial_freq /= KHZ;
+>  
+>  	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
+>  				     "tegra_actmon", NULL);
+> @@ -902,6 +899,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  	reset_control_reset(tegra->reset);
+>  disable_clk:
+>  	clk_disable_unprepare(tegra->clock);
+> +remove_table:
+> +	dev_pm_opp_of_remove_table(&pdev->dev);
+> +put_hw:
+> +	dev_pm_opp_put_supported_hw(tegra->opp_table);
+>  
+>  	return err;
+>  }
+> @@ -913,11 +914,12 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
+>  	devfreq_remove_device(tegra->devfreq);
+>  	devfreq_remove_governor(&tegra_devfreq_governor);
+>  
+> -	dev_pm_opp_remove_all_dynamic(&pdev->dev);
+> -
+>  	reset_control_reset(tegra->reset);
+>  	clk_disable_unprepare(tegra->clock);
+>  
+> +	dev_pm_opp_of_remove_table(&pdev->dev);
+> +	dev_pm_opp_put_supported_hw(tegra->opp_table);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.29.2
 
-This commit fixes the issue by assigning an empty driver to it.
-
-[  153.451108] tegra-xusb-padctl phy-usb2.0: > tegra_xusb_padctl_suspend_no=
-irq(dev=3Dffff000080917000)
-[  153.460353] tegra-xusb-padctl phy-usb2.0:   driver: ffff8000114453e0 (te=
-gra_xusb_padctl_driver)
-[  153.469245] tegra-xusb-padctl phy-usb2.0:   padctl: ffff0000829f6480
-[  153.475772] tegra-xusb-padctl phy-usb2.0:     soc: ef7bdd7fffffffff (0xe=
-f7bdd7fffffffff)
-[  153.484061] Unable to handle kernel paging request at virtual address 00=
-7bdd800000004f
-[  153.492132] Mem abort info:
-[  153.495083]   ESR =3D 0x96000004
-[  153.498308]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[  153.503771]   SET =3D 0, FnV =3D 0
-[  153.506979]   EA =3D 0, S1PTW =3D 0
-[  153.510260] Data abort info:
-[  153.513200]   ISV =3D 0, ISS =3D 0x00000004
-[  153.517181]   CM =3D 0, WnR =3D 0
-[  153.520302] [007bdd800000004f] address between user and kernel address r=
-anges
-[  153.527600] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[  153.533231] Modules linked in: nouveau panel_simple tegra_video(C) tegra=
-_drm drm_ttm_helper videobuf2_dma_contig ttm videobuf2_memops cec videobuf2=
-_v4l2 videobuf2_common drm_kms_helper v4l2_fwnode videodev drm mc snd_hda_c=
-odec_hdmi cdc_ether usbnet snd_hda_tegra r8152 crct10dif_ce snd_hda_codec s=
-nd_hda_core tegra_xudc host1x lp855x_bl at24 ip_tables x_tables ipv6
-[  153.566417] CPU: 0 PID: 300 Comm: systemd-sleep Tainted: G         C    =
-    5.10.0-rc3-next-20201113-00019-g5c064d5372b0-dirty #624
-[  153.578283] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-[  153.584281] pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=3D--)
-[  153.590381] pc : tegra_xusb_padctl_suspend_noirq+0x88/0x100
-[  153.596016] lr : tegra_xusb_padctl_suspend_noirq+0x80/0x100
-[  153.601632] sp : ffff8000120dbb60
-[  153.604999] x29: ffff8000120dbb60 x28: ffff000080a1df00
-[  153.610430] x27: 0000000000000002 x26: ffff8000106f8540
-[  153.615858] x25: ffff8000113ac4a4 x24: ffff80001148c198
-[  153.621277] x23: ffff800010c4538c x22: 0000000000000002
-[  153.626692] x21: ffff800010ccde80 x20: ffff0000829f6480
-[  153.632107] x19: ffff000080917000 x18: 0000000000000030
-[  153.637521] x17: 0000000000000000 x16: 0000000000000000
-[  153.642933] x15: ffff000080a1e380 x14: 74636461702d6273
-[  153.648346] x13: ffff8000113ad058 x12: 0000000000000f39
-[  153.653759] x11: 0000000000000513 x10: ffff800011405058
-[  153.659176] x9 : 00000000fffff000 x8 : ffff8000113ad058
-[  153.664590] x7 : ffff800011405058 x6 : 0000000000000000
-[  153.670002] x5 : 0000000000000000 x4 : ffff0000fe908bc0
-[  153.675414] x3 : ffff0000fe910228 x2 : 162ef67e0581e700
-[  153.680826] x1 : 162ef67e0581e700 x0 : ef7bdd7fffffffff
-[  153.686241] Call trace:
-[  153.688769]  tegra_xusb_padctl_suspend_noirq+0x88/0x100
-[  153.694077]  __device_suspend_noirq+0x68/0x1cc
-[  153.698594]  dpm_noirq_suspend_devices+0x10c/0x1d0
-[  153.703456]  dpm_suspend_noirq+0x28/0xa0
-[  153.707461]  suspend_devices_and_enter+0x234/0x4bc
-[  153.712314]  pm_suspend+0x1e4/0x270
-[  153.715868]  state_store+0x8c/0x110
-[  153.719440]  kobj_attr_store+0x1c/0x30
-[  153.723259]  sysfs_kf_write+0x4c/0x7c
-[  153.726981]  kernfs_fop_write+0x124/0x240
-[  153.731065]  vfs_write+0xe4/0x204
-[  153.734449]  ksys_write+0x6c/0x100
-[  153.737925]  __arm64_sys_write+0x20/0x30
-[  153.741931]  el0_svc_common.constprop.0+0x78/0x1a0
-[  153.746789]  do_el0_svc+0x24/0x90
-[  153.750181]  el0_sync_handler+0x254/0x260
-[  153.754251]  el0_sync+0x174/0x180
-[  153.757663] Code: aa0303e2 94000f64 f9405680 b40000e0 (f9402803)
-[  153.763826] ---[ end trace 81543a3394cb409d ]---
-
-Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
-
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- drivers/phy/tegra/xusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index ad88d74c1884..181a1be5f491 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -688,7 +688,7 @@ static int tegra_xusb_setup_usb_role_switch(struct tegr=
-a_xusb_port *port)
- 	 * reference to retrieve usb-phy details.
- 	 */
- 	port->usb_phy.dev =3D &lane->pad->lanes[port->index]->dev;
--	port->usb_phy.dev->driver =3D port->padctl->dev->driver;
-+	port->usb_phy.dev->driver =3D port->dev.driver;
- 	port->usb_phy.otg->usb_phy =3D &port->usb_phy;
- 	port->usb_phy.otg->set_peripheral =3D tegra_xusb_set_peripheral;
- 	port->usb_phy.otg->set_host =3D tegra_xusb_set_host;
---=20
-2.25.1
-
+-- 
+viresh
