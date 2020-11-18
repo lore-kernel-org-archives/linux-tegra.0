@@ -2,124 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CB0C63697
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 11:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084D5C5519F
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 15:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 377CE2075A
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 11:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9DE324769
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 15:30:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hZrIzEPe"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1BytoB6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgKRLYm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Nov 2020 06:24:42 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2269 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbgKRLYm (ORCPT
+        id S1727386AbgKRPa3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Nov 2020 10:30:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbgKRPa1 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Nov 2020 06:24:42 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb504700001>; Wed, 18 Nov 2020 03:24:32 -0800
-Received: from [10.26.72.203] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Nov
- 2020 11:24:39 +0000
-Subject: Re: [PATCH v1] arm64: tegra: jetson-tx1: Fix USB_VBUS_EN0 regulator
-To:     JC Kuo <jckuo@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20201118034631.74127-1-jckuo@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6e21646a-a687-65b7-cd69-2c15e29e8241@nvidia.com>
-Date:   Wed, 18 Nov 2020 11:24:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 18 Nov 2020 10:30:27 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C02C0613D4
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2020 07:30:26 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id w24so3112491wmi.0
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2020 07:30:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=/SDkP0vkKcya+FIJEA+cPnvkReKH8EFRybVcIu9lk9M=;
+        b=D1BytoB6O03jBcACE4ZhAx92rosgf9wYS2rPHzrBHSfzKSQ0rUMTzY3xFt8TEHE9k0
+         YIIiPTr94Bc7PUn7zwCH9EE+zMbRYo4nnn12/5TpwUogKdAUXolEut/KGLgjD8p1u9z+
+         dAYzFovYhNWO+3rZhx7IoAOF+fVoq+FdKg0mn20a1XWJUdbwnQ20TZzHguw90k+BaASf
+         7P+5q6YagtEKTiL9MoxhoA0aKwhwyc39dlKHA6piMdU8eOhplAdHXaNEcJpNvodiG8QL
+         JTVWIUvFDbkbxf7qqsJ2NSlEFEvArxEdy8Xn4hO7Lb5vG6HcO7PIrZcevw0aveSWR9kJ
+         kERw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/SDkP0vkKcya+FIJEA+cPnvkReKH8EFRybVcIu9lk9M=;
+        b=FZff+gewMSR8JmtS/8+MEu2GlQIC0PoDURw0XLGn70RfxiClYvUVIl8u8JF6aRKebn
+         za6/tNHXdb5Ehie2dGeq7FMXQ7cCA5FM01/K5wYnTDLgfhZT8J+VJGT+eHeHfcyplS/r
+         VhOmDuXa5us3B1w1O3FiGFvZWeqNrYzgHillP4Y87nCXwuoMXe5X5yT95O2WdooB0fji
+         rtjx5fC0hGKfdahoAFyVXmJ4MJB8Ri4WNwNz8O6qjq9pieGYFAUs9q2MUhRsa3FdwTCV
+         YHBoyKGArSlSN341+DxKkNKS7a0C4mLrfsjE4R+E86MdeTL3BNri9+HKdot+xgYmnLVx
+         ngWA==
+X-Gm-Message-State: AOAM530dxM+pfuBvPdzRzMIS5lGNUrB2LLfdgLGfFl1D/EBsMMVxpksW
+        KnhcoHLuyNFpzB5szIoOPh/WiQb74wvFVw==
+X-Google-Smtp-Source: ABdhPJzFItfcbj1D5GPsiBo7RkrZes7kt1MjC/X61M/dwKw8ehmZ/XH4IHzsd6fKnSmspZvESraPog==
+X-Received: by 2002:a1c:790c:: with SMTP id l12mr560063wme.47.1605713425424;
+        Wed, 18 Nov 2020 07:30:25 -0800 (PST)
+Received: from MacBook-Pro.local ([212.45.64.13])
+        by smtp.googlemail.com with ESMTPSA id w11sm4405479wmg.36.2020.11.18.07.30.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Nov 2020 07:30:24 -0800 (PST)
+Subject: Re: [PATCH v9 01/17] memory: tegra30: Support interconnect framework
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201115212922.4390-1-digetx@gmail.com>
+ <20201115212922.4390-2-digetx@gmail.com>
+ <61e777d9-b730-02c6-cedf-cf0aa1a50fb8@linaro.org>
+ <7e484678-43cc-e612-1017-73ed580f9840@gmail.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <83a3f33b-3695-2a40-1c2b-5c38d117c1ad@linaro.org>
+Date:   Wed, 18 Nov 2020 17:30:22 +0200
 MIME-Version: 1.0
-In-Reply-To: <20201118034631.74127-1-jckuo@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <7e484678-43cc-e612-1017-73ed580f9840@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605698672; bh=TUjCCZUUH8OLh6XZB6NhWxcK+9KqFaUWGef66hapmRY=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=hZrIzEPeYhFGw4XLwx/xe/xVyM5uCQRQCHsl1+ykjNO8At70Fscu6wgAd67OpdQHi
-         tXpb4gX05KvY9UMGEtcDop+4Jz7B3KYeqziSlNkab29jyU9/GVv51WoAOrE2homzHz
-         D/+VjIQgjQ+wOGu+CC4PHmfhmSTDACuU0RWZ9IXSaDFaF6DoEm6llOiyRMroh+KXUd
-         mDgTY2nFbrG3UG/z00vYuhV2GMbbng3Z/BdDhrppXhq7oF3P9xLc6OjHObB9/nFgRB
-         0E4yur7zNwGZk/n7rI3cKfXy5eh3E20Du0awTw/dLMjEsJLI6fBQgM0w9NOlpqJPT5
-         GcXibjsIO6o8w==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 18/11/2020 03:46, JC Kuo wrote:
-> USB_VBUS_EN0 regulator (regulator@11) is being overwritten by vdd-cam-1v2
-> regulator. This commit rearrange USB_VBUS_EN0 to be regulator@14.
+On 18.11.20 0:02, Dmitry Osipenko wrote:
+> 17.11.2020 23:24, Georgi Djakov пишет:
+>> Hi Dmitry,
+>>
+>> Thank you working on this!
+>>
+>> On 15.11.20 23:29, Dmitry Osipenko wrote:
+>>> Now Internal and External memory controllers are memory interconnection
+>>> providers. This allows us to use interconnect API for tuning of memory
+>>> configuration. EMC driver now supports OPPs and DVFS. MC driver now
+>>> supports tuning of memory arbitration latency, which needs to be done
+>>> for ISO memory clients, like a Display client for example.
+>>>
+>>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>    drivers/memory/tegra/Kconfig       |   1 +
+>>>    drivers/memory/tegra/tegra30-emc.c | 349 +++++++++++++++++++++++++++--
+>>>    drivers/memory/tegra/tegra30.c     | 173 +++++++++++++-
+>>>    3 files changed, 501 insertions(+), 22 deletions(-)
+>>>
+>> [..]> diff --git a/drivers/memory/tegra/tegra30.c
+>> b/drivers/memory/tegra/tegra30.c
+>>> index d0314f29608d..ea849003014b 100644
+>>> --- a/drivers/memory/tegra/tegra30.c
+>>> +++ b/drivers/memory/tegra/tegra30.c
+>> [..]
+>>> +
+>>> +static int tegra30_mc_icc_set(struct icc_node *src, struct icc_node
+>>> *dst)
+>>> +{
+>>> +    struct tegra_mc *mc = icc_provider_to_tegra_mc(src->provider);
+>>> +    const struct tegra_mc_client *client = &mc->soc->clients[src->id];
+>>> +    u64 peak_bandwidth = icc_units_to_bps(src->peak_bw);
+>>> +
+>>> +    /*
+>>> +     * Skip pre-initialization that is done by icc_node_add(), which
+>>> sets
+>>> +     * bandwidth to maximum for all clients before drivers are loaded.
+>>> +     *
+>>> +     * This doesn't make sense for us because we don't have drivers
+>>> for all
+>>> +     * clients and it's okay to keep configuration left from bootloader
+>>> +     * during boot, at least for today.
+>>> +     */
+>>> +    if (src == dst)
+>>> +        return 0;
+>>
+>> Nit: The "proper" way to express this should be to implement the
+>> .get_bw() callback to return zero as initial average/peak bandwidth.
+>> I'm wondering if this will work here?
+>>
+>> The rest looks good to me!
 > 
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> ---
->  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 20 +++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+> Hello Georgi,
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> index e18e1a9a3011..a9caaf7c0d67 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> @@ -1663,16 +1663,6 @@ vdd_usb_vbus: regulator@9 {
->  		vin-supply = <&vdd_5v0_sys>;
->  	};
->  
-> -	vdd_usb_vbus_otg: regulator@11 {
-> -		compatible = "regulator-fixed";
-> -		regulator-name = "USB_VBUS_EN0";
-> -		regulator-min-microvolt = <5000000>;
-> -		regulator-max-microvolt = <5000000>;
-> -		gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-> -		enable-active-high;
-> -		vin-supply = <&vdd_5v0_sys>;
-> -	};
-> -
->  	vdd_hdmi: regulator@10 {
->  		compatible = "regulator-fixed";
->  		regulator-name = "VDD_HDMI_5V0";
-> @@ -1712,4 +1702,14 @@ vdd_cam_1v8: regulator@13 {
->  		enable-active-high;
->  		vin-supply = <&vdd_3v3_sys>;
->  	};
-> +
-> +	vdd_usb_vbus_otg: regulator@14 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "USB_VBUS_EN0";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		vin-supply = <&vdd_5v0_sys>;
-> +	};
->  };
+> Returning zeros doesn't allow us to skip the initialization that is done
+> by provider->set(node, node) in icc_node_add(). It will reconfigure
+> memory latency in accordance to a zero memory bandwidth, which is wrong
+> to do.
 > 
+> It actually should be more preferred to preset bandwidth to a maximum
+> before all drivers are synced, but this should be done only once we will
+> wire up all drivers to use ICC framework. For now it's safer to keep the
+> default hardware configuration untouched.
 
-Thanks for catching this! We should add the 'Fixes:' tag.
+Ok, thanks for clarifying! Is there a way to read this hardware 
+configuration and convert it to initial bandwidth? That's the
+idea of the get_bw() callback actually. I am just curious and
+trying to get a better understanding how this works and if it
+would be useful for Tegra.
 
-By the way, I assume that VBUS is currently broken for the OTG port.
-Without this change is that USB port completely broken? I am wondering
-if we need to CC stable@vger.kernel.org on this.
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+Thanks,
+Georgi
