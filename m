@@ -2,160 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848EDC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 22:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A736C56202
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2012B241A7
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Nov 2020 22:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 284DA241A7
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUPTRert"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="prPzbxB8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbgKQWCh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 17:02:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbgKQWCh (ORCPT
+        id S1727246AbgKRBi7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 20:38:59 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:41203 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725767AbgKRBi7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 17:02:37 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBBA0C0613CF;
-        Tue, 17 Nov 2020 14:02:36 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id b17so16550ljf.12;
-        Tue, 17 Nov 2020 14:02:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=W5om3zQzsHiBGMpHdWoQikEGL2r18KBMb1Ag+GnaG08=;
-        b=aUPTRertfb05h4PXQBp+XblhFmhkq3dYxYo19vCMmRFRwFfo3o1IW4o98iLAok03IX
-         SB7/dAIf/DxDZrSAmId3g1EI40aBDac3fFJ5YPVvSW4ZcmMmQ1/fZT7zXo9ji1tnSBH2
-         2ryoHGWBmcPCOGGdekoRik9gvEfoJIq1jigT730xbZyGcrmpeGU4NrOrXGvOplzotgE/
-         YujRyvzI7YgCBSKphSJsvHJdJaz64JVUE1DdR45WFz0QWc2ezvGHPVWoY5Lg6HFf46Nl
-         0V2nRoj5jQVYhYcul1ZHcmKsPqCQgZ5dqIGEIVHgEXRfIfsykIDOct6IpeM1FbHDQTJX
-         oN4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=W5om3zQzsHiBGMpHdWoQikEGL2r18KBMb1Ag+GnaG08=;
-        b=Ue1BuOWJ5esZvC4xTAbhknFSXbd5ZEjvBF0Z0EzmHKQgLAE25nteGP60PitT7U5xtx
-         Ni30aY5XdRyyLCCu/O+8xujmhLSTUsadauTIfMhnlMCIvMHo8frwgV8A8DEMTAZmFJBz
-         tZQglRBPi8FxjI8pW2YUTvpnZAb9/QTcLmm6qqZnIkasyKMcOkxjxJWQSkPMa3zv/T4l
-         92w7keejWhlc7RZqID5OF412FqEmlrOWT+iHEmHgHnjG5Itkan8NjB+6VOC10FM9nPKe
-         HYqGCYlRUvrSi1PT53jYoQLbtw+5mAqRncx5i/auDPd2zVOMN6cSXlOmvN4h76fHcvCV
-         3iqg==
-X-Gm-Message-State: AOAM530Q/iTPEWsZaEltAKuHfYU0u5d7Uyr3uI8BYoD46z3NTII/bZgu
-        LZw8EnL0BcEwmj4QYxQ5kKE=
-X-Google-Smtp-Source: ABdhPJxGxTDDbi0d8oMMgkGSyKhMr/XNvJc72UcmGlAMm4SW4FF2fTuHTUsirRfiv8AMfkDsmlK1rg==
-X-Received: by 2002:a05:651c:30d:: with SMTP id a13mr2849268ljp.386.1605650555139;
-        Tue, 17 Nov 2020 14:02:35 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id v16sm3215544ljj.0.2020.11.17.14.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 14:02:34 -0800 (PST)
-Subject: Re: [PATCH v9 01/17] memory: tegra30: Support interconnect framework
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20201115212922.4390-1-digetx@gmail.com>
- <20201115212922.4390-2-digetx@gmail.com>
- <61e777d9-b730-02c6-cedf-cf0aa1a50fb8@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7e484678-43cc-e612-1017-73ed580f9840@gmail.com>
-Date:   Wed, 18 Nov 2020 01:02:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Tue, 17 Nov 2020 20:38:59 -0500
+X-UUID: 630185640108402a83ff2c8a81bef551-20201118
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VQSP1sH4CqMAhG3prd+7/b/qG6Nz5rZr5wJPtTA6ytA=;
+        b=prPzbxB8X79spbx4u3Y3tAouEp30AENJqm6rlTVLRN1wGwg5kXiB7WzqfJIfPzGn1auqofhq8g0WiGg4tyuA479gQpruShQYS1EVQdEYQa6J24IzQTq2RdM4k1nbTt1sqpZUbD5xK4dZ5nckjiLy6T1+Y0rgwwgA31I9agzLiKk=;
+X-UUID: 630185640108402a83ff2c8a81bef551-20201118
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1400451792; Wed, 18 Nov 2020 09:38:53 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 18 Nov
+ 2020 09:38:48 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 18 Nov 2020 09:38:50 +0800
+Message-ID: <1605663530.31607.40.camel@mhfsdcap03>
+Subject: Re: [PATCH] dt-bindings: arm: add additionalProperties
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        <linux-unisoc@lists.infradead.org>,
+        <linux-realtek-soc@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Wed, 18 Nov 2020 09:38:50 +0800
+In-Reply-To: <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
+References: <20201117103123.3938-1-chunfeng.yun@mediatek.com>
+         <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <61e777d9-b730-02c6-cedf-cf0aa1a50fb8@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 5DF35A84F2346C88C9B1BA1AEF6C513A344973A569469D1148B07A014C4095D62000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.11.2020 23:24, Georgi Djakov пишет:
-> Hi Dmitry,
-> 
-> Thank you working on this!
-> 
-> On 15.11.20 23:29, Dmitry Osipenko wrote:
->> Now Internal and External memory controllers are memory interconnection
->> providers. This allows us to use interconnect API for tuning of memory
->> configuration. EMC driver now supports OPPs and DVFS. MC driver now
->> supports tuning of memory arbitration latency, which needs to be done
->> for ISO memory clients, like a Display client for example.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>   drivers/memory/tegra/Kconfig       |   1 +
->>   drivers/memory/tegra/tegra30-emc.c | 349 +++++++++++++++++++++++++++--
->>   drivers/memory/tegra/tegra30.c     | 173 +++++++++++++-
->>   3 files changed, 501 insertions(+), 22 deletions(-)
->>
-> [..]> diff --git a/drivers/memory/tegra/tegra30.c
-> b/drivers/memory/tegra/tegra30.c
->> index d0314f29608d..ea849003014b 100644
->> --- a/drivers/memory/tegra/tegra30.c
->> +++ b/drivers/memory/tegra/tegra30.c
-> [..]
->> +
->> +static int tegra30_mc_icc_set(struct icc_node *src, struct icc_node
->> *dst)
->> +{
->> +    struct tegra_mc *mc = icc_provider_to_tegra_mc(src->provider);
->> +    const struct tegra_mc_client *client = &mc->soc->clients[src->id];
->> +    u64 peak_bandwidth = icc_units_to_bps(src->peak_bw);
->> +
->> +    /*
->> +     * Skip pre-initialization that is done by icc_node_add(), which
->> sets
->> +     * bandwidth to maximum for all clients before drivers are loaded.
->> +     *
->> +     * This doesn't make sense for us because we don't have drivers
->> for all
->> +     * clients and it's okay to keep configuration left from bootloader
->> +     * during boot, at least for today.
->> +     */
->> +    if (src == dst)
->> +        return 0;
-> 
-> Nit: The "proper" way to express this should be to implement the
-> .get_bw() callback to return zero as initial average/peak bandwidth.
-> I'm wondering if this will work here?
-> 
-> The rest looks good to me!
+T24gVHVlLCAyMDIwLTExLTE3IGF0IDExOjM3ICswMTAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
+dGU6DQo+IEhpIENodW5mZW5nLA0KPiANCj4gT24gVHVlLCBOb3YgMTcsIDIwMjAgYXQgMTE6MzIg
+QU0gQ2h1bmZlbmcgWXVuIDxjaHVuZmVuZy55dW5AbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiBB
+ZGQgYW4gZXhwbGljaXQgImFkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlIiB0byBhdm9pZA0KPiA+
+IGR0X2JpbmRpbmdfY2hlY2sgZXJyb3IgY2F1c2VkIGJ5Og0KPiA+ICdhZGRpdGlvbmFsUHJvcGVy
+dGllcycgaXMgYSByZXF1aXJlZCBwcm9wZXJ0eQ0KPiA+DQo+ID4gVGhpcyB3aWxsIG5vdCBjaGFu
+Z2UgZnVuY3Rpb24sIGR1ZSB0byBhZGRpdGlvbmFsUHJvcGVydGllcw0KPiA+IGlzIHRydWUgYnkg
+ZGVmYXVsdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENodW5mZW5nIFl1biA8Y2h1bmZlbmcu
+eXVuQG1lZGlhdGVrLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+ID4g
+LS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9hY3Rpb25zLnlhbWwN
+Cj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2FjdGlvbnMu
+eWFtbA0KPiA+IEBAIC00OSwzICs0OSw1IEBAIHByb3BlcnRpZXM6DQo+ID4gICAgICAgICAgICAt
+IGVudW06DQo+ID4gICAgICAgICAgICAgICAgLSB1Y3JvYm90aWNzLGJ1YmJsZWd1bS05NiAjIHVD
+Um9ib3RpY3MgQnViYmxlZ3VtLTk2DQo+ID4gICAgICAgICAgICAtIGNvbnN0OiBhY3Rpb25zLHM5
+MDANCj4gPiArDQo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlDQo+IA0KPiBMb29rcyB2
+ZXJ5IHNpbWlsYXIgdG8gY29tbWl0IDYyMjk4MzY0YmQ0ODliMDYgKCJkdC1iaW5kaW5nczogRXhw
+bGljaXRseQ0KPiBhbGxvdyBhZGRpdGlvbmFsIHByb3BlcnRpZXMgaW4gYm9hcmQvU29DIHNjaGVt
+YXMiKSBpbiB2NS4xMC1yYzI/DQpZZXMsIGluZGVlZCwgdGhhbmtzIGZvciB5b3VyIGluZm8uDQoN
+Cj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+R2VlcnQNCj4gDQoNCg==
 
-Hello Georgi,
-
-Returning zeros doesn't allow us to skip the initialization that is done
-by provider->set(node, node) in icc_node_add(). It will reconfigure
-memory latency in accordance to a zero memory bandwidth, which is wrong
-to do.
-
-It actually should be more preferred to preset bandwidth to a maximum
-before all drivers are synced, but this should be done only once we will
-wire up all drivers to use ICC framework. For now it's safer to keep the
-default hardware configuration untouched.
