@@ -2,94 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A736C56202
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71968C6369E
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 03:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 284DA241A7
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B402465E
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 03:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="prPzbxB8"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="puHw6YQp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbgKRBi7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Nov 2020 20:38:59 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:41203 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725767AbgKRBi7 (ORCPT
+        id S1726629AbgKRDqe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Nov 2020 22:46:34 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19297 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbgKRDqe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Nov 2020 20:38:59 -0500
-X-UUID: 630185640108402a83ff2c8a81bef551-20201118
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VQSP1sH4CqMAhG3prd+7/b/qG6Nz5rZr5wJPtTA6ytA=;
-        b=prPzbxB8X79spbx4u3Y3tAouEp30AENJqm6rlTVLRN1wGwg5kXiB7WzqfJIfPzGn1auqofhq8g0WiGg4tyuA479gQpruShQYS1EVQdEYQa6J24IzQTq2RdM4k1nbTt1sqpZUbD5xK4dZ5nckjiLy6T1+Y0rgwwgA31I9agzLiKk=;
-X-UUID: 630185640108402a83ff2c8a81bef551-20201118
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1400451792; Wed, 18 Nov 2020 09:38:53 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 18 Nov
- 2020 09:38:48 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 18 Nov 2020 09:38:50 +0800
-Message-ID: <1605663530.31607.40.camel@mhfsdcap03>
-Subject: Re: [PATCH] dt-bindings: arm: add additionalProperties
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        <linux-unisoc@lists.infradead.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 18 Nov 2020 09:38:50 +0800
-In-Reply-To: <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
-References: <20201117103123.3938-1-chunfeng.yun@mediatek.com>
-         <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 17 Nov 2020 22:46:34 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fb499240000>; Tue, 17 Nov 2020 19:46:44 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Nov
+ 2020 03:46:34 +0000
+Received: from jckuo-lt.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 18 Nov 2020 03:46:32 +0000
+From:   JC Kuo <jckuo@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, JC Kuo <jckuo@nvidia.com>
+Subject: [PATCH v1] arm64: tegra: jetson-tx1: Fix USB_VBUS_EN0 regulator
+Date:   Wed, 18 Nov 2020 11:46:31 +0800
+Message-ID: <20201118034631.74127-1-jckuo@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 5DF35A84F2346C88C9B1BA1AEF6C513A344973A569469D1148B07A014C4095D62000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605671204; bh=CzEJnQTXpaO+zvL/bMVWDJgq8PsKnA/5HnYumHPgzos=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=puHw6YQpo6zExa7fqJPCEvC4oHAeYV6V9kQKoRBtW8PbWqDLK3HgFLlgvuDK1MZZN
+         4YwwKAUVseZb4MKaSTdE/PHgZAxA0ehwfU4AC2q2v97jdmlfAf0E5oPR5KRxWL42by
+         ZxHjTBGTGPcOdpmIHIBeNkRCRay49Xt7/LKMn344t9QNyqDxkI/f10d8F7oLmkuVjp
+         xPzONMHi1HYclOHfMGhKY/QOaNqoLV2llDgsNYMppE2cv8GdCSOFvyFS42PVhkrgWH
+         3y+bfYfGhjojlurO1IB0W5v/HhcBFyjSqKBzppVnaWa5TQPwKoc89RM0rCT6IhxaTc
+         C5zYSHfoDWqBg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTExLTE3IGF0IDExOjM3ICswMTAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
-dGU6DQo+IEhpIENodW5mZW5nLA0KPiANCj4gT24gVHVlLCBOb3YgMTcsIDIwMjAgYXQgMTE6MzIg
-QU0gQ2h1bmZlbmcgWXVuIDxjaHVuZmVuZy55dW5AbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiBB
-ZGQgYW4gZXhwbGljaXQgImFkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlIiB0byBhdm9pZA0KPiA+
-IGR0X2JpbmRpbmdfY2hlY2sgZXJyb3IgY2F1c2VkIGJ5Og0KPiA+ICdhZGRpdGlvbmFsUHJvcGVy
-dGllcycgaXMgYSByZXF1aXJlZCBwcm9wZXJ0eQ0KPiA+DQo+ID4gVGhpcyB3aWxsIG5vdCBjaGFu
-Z2UgZnVuY3Rpb24sIGR1ZSB0byBhZGRpdGlvbmFsUHJvcGVydGllcw0KPiA+IGlzIHRydWUgYnkg
-ZGVmYXVsdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENodW5mZW5nIFl1biA8Y2h1bmZlbmcu
-eXVuQG1lZGlhdGVrLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+ID4g
-LS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9hY3Rpb25zLnlhbWwN
-Cj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2FjdGlvbnMu
-eWFtbA0KPiA+IEBAIC00OSwzICs0OSw1IEBAIHByb3BlcnRpZXM6DQo+ID4gICAgICAgICAgICAt
-IGVudW06DQo+ID4gICAgICAgICAgICAgICAgLSB1Y3JvYm90aWNzLGJ1YmJsZWd1bS05NiAjIHVD
-Um9ib3RpY3MgQnViYmxlZ3VtLTk2DQo+ID4gICAgICAgICAgICAtIGNvbnN0OiBhY3Rpb25zLHM5
-MDANCj4gPiArDQo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlDQo+IA0KPiBMb29rcyB2
-ZXJ5IHNpbWlsYXIgdG8gY29tbWl0IDYyMjk4MzY0YmQ0ODliMDYgKCJkdC1iaW5kaW5nczogRXhw
-bGljaXRseQ0KPiBhbGxvdyBhZGRpdGlvbmFsIHByb3BlcnRpZXMgaW4gYm9hcmQvU29DIHNjaGVt
-YXMiKSBpbiB2NS4xMC1yYzI/DQpZZXMsIGluZGVlZCwgdGhhbmtzIGZvciB5b3VyIGluZm8uDQoN
-Cj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-R2VlcnQNCj4gDQoNCg==
+USB_VBUS_EN0 regulator (regulator@11) is being overwritten by vdd-cam-1v2
+regulator. This commit rearrange USB_VBUS_EN0 to be regulator@14.
+
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
+---
+ .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/bo=
+ot/dts/nvidia/tegra210-p2597.dtsi
+index e18e1a9a3011..a9caaf7c0d67 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1663,16 +1663,6 @@ vdd_usb_vbus: regulator@9 {
+ 		vin-supply =3D <&vdd_5v0_sys>;
+ 	};
+=20
+-	vdd_usb_vbus_otg: regulator@11 {
+-		compatible =3D "regulator-fixed";
+-		regulator-name =3D "USB_VBUS_EN0";
+-		regulator-min-microvolt =3D <5000000>;
+-		regulator-max-microvolt =3D <5000000>;
+-		gpio =3D <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
+-		enable-active-high;
+-		vin-supply =3D <&vdd_5v0_sys>;
+-	};
+-
+ 	vdd_hdmi: regulator@10 {
+ 		compatible =3D "regulator-fixed";
+ 		regulator-name =3D "VDD_HDMI_5V0";
+@@ -1712,4 +1702,14 @@ vdd_cam_1v8: regulator@13 {
+ 		enable-active-high;
+ 		vin-supply =3D <&vdd_3v3_sys>;
+ 	};
++
++	vdd_usb_vbus_otg: regulator@14 {
++		compatible =3D "regulator-fixed";
++		regulator-name =3D "USB_VBUS_EN0";
++		regulator-min-microvolt =3D <5000000>;
++		regulator-max-microvolt =3D <5000000>;
++		gpio =3D <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		vin-supply =3D <&vdd_5v0_sys>;
++	};
+ };
+--=20
+2.25.1
 
