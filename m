@@ -2,141 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A378C5519F
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 10:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CB0C63697
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 11:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98EF722227
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 10:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 377CE2075A
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 11:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPTRWJnY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hZrIzEPe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbgKRKOT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Nov 2020 05:14:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgKRKOS (ORCPT
+        id S1727202AbgKRLYm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Nov 2020 06:24:42 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2269 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727187AbgKRLYm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Nov 2020 05:14:18 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048C4C0613D4;
-        Wed, 18 Nov 2020 02:14:17 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id y7so1102340pfq.11;
-        Wed, 18 Nov 2020 02:14:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HN6u+FaAjlCZ1H4jPrUouV4ZFgMNcWdPZdmdiKhmcQE=;
-        b=WPTRWJnYWV1uyEiESoGUSJC5xeaHrjCL0uIuthI6VL4iIXHMc3a8Yx/9DjzmyWshCj
-         kfusP6YtKW1SPZAnAz6d+4ZLHBsZi+Gd7G0eRO1+CmutyJnJ0iOENrRWBsQEc7z8ZN+0
-         xpWbVFCntQRGMvBzJiRJEe5eXiVgQ9eZcMTM/cF0ay9hto/A1EJ8rYzwAv2CA842w3iI
-         V2Z34PviqHHx8+YmrrDLc+E236LZ3V8nlyHhTzyMFuULO1KTWeqhd3wamNX+dK+grvw4
-         N2KcO5xRBO0k2Wu5ss4tXaK9IjIQTHShhesm0IjxdpH/guK/H5+MXKnVDACQZuEtmnSr
-         BJ+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HN6u+FaAjlCZ1H4jPrUouV4ZFgMNcWdPZdmdiKhmcQE=;
-        b=n5V77fBaGGxraE0RIJDO/w4CF/TRVgPMZkyHUzvUrTW0dScQg5seDhWIXGH0B+W/74
-         JjUzWw0ZvE15DtHQZ/4N4tLCUc30Ai0YeAaTzEjbPB32niMIQPUwG+DceeoNIZpnV3vH
-         k/CzlSTmgVkYJEzz110HXg/2MhaQk0SE7S4xspB6ktvJ/QaiMlRoKGbSCQHRgul7zYdX
-         vYcrKk3FBonwOdS6lvtTgDNaWmJBXkEl8XiR1sE9UJWRqBt/wH4I3DazimpmNejh23M8
-         ylinTu67aD1/4O9JWOHigzTAIfCPRVIdOQ0kBC8uU33LaoCRAgpVkoC75WjMJefUVoqR
-         xmaQ==
-X-Gm-Message-State: AOAM532BD47Q/QtrYaINrlF4EWUE9JU5suczZte8f/Jsc4IyJnCudI7d
-        x9hr32akYistepd8TQERQsoB8jNIFj0NdT41EYM=
-X-Google-Smtp-Source: ABdhPJwgZoth9XotQe6oYHEscjQKz6WMp04ErJrrau3wx2TytZxtGiTtOJ0WqYvYj0mKnzMPvmckakWe+5SXArELSW0=
-X-Received: by 2002:a62:7c95:0:b029:18c:5002:a1ab with SMTP id
- x143-20020a627c950000b029018c5002a1abmr3757599pfc.40.1605694456561; Wed, 18
- Nov 2020 02:14:16 -0800 (PST)
+        Wed, 18 Nov 2020 06:24:42 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fb504700001>; Wed, 18 Nov 2020 03:24:32 -0800
+Received: from [10.26.72.203] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Nov
+ 2020 11:24:39 +0000
+Subject: Re: [PATCH v1] arm64: tegra: jetson-tx1: Fix USB_VBUS_EN0 regulator
+To:     JC Kuo <jckuo@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20201118034631.74127-1-jckuo@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6e21646a-a687-65b7-cd69-2c15e29e8241@nvidia.com>
+Date:   Wed, 18 Nov 2020 11:24:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201117154340.18216-1-info@metux.net> <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
- <20201118095342.sviuxvfsbmmn22mo@pengutronix.de> <CAHp75Vd9QUCcUoPLUW3kkJC0h=mPUqHNqNJPY74gDGSu67t8Hw@mail.gmail.com>
- <CAHp75Vcdu1aOLuF+EFDZibbi0OwGH4QfBhJQm9VZQkeEGEeKDQ@mail.gmail.com> <20201118100856.GQ1869941@dell>
-In-Reply-To: <20201118100856.GQ1869941@dell>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 Nov 2020 12:15:05 +0200
-Message-ID: <CAHp75VcO6Abz5=go0w2Vg6uTEuTw59fZ-yHfFCY9CQ=_JZXWFg@mail.gmail.com>
-Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alban Bedel <albeu@free.fr>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>, zhang.lyra@gmail.com,
-        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        dl-linux-imx <linux-imx@nxp.com>, orsonzhai@gmail.com,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-pwm@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Sascha Hauer <kernel@pengutronix.de>, baolin.wang7@gmail.com,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201118034631.74127-1-jckuo@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605698672; bh=TUjCCZUUH8OLh6XZB6NhWxcK+9KqFaUWGef66hapmRY=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=hZrIzEPeYhFGw4XLwx/xe/xVyM5uCQRQCHsl1+ykjNO8At70Fscu6wgAd67OpdQHi
+         tXpb4gX05KvY9UMGEtcDop+4Jz7B3KYeqziSlNkab29jyU9/GVv51WoAOrE2homzHz
+         D/+VjIQgjQ+wOGu+CC4PHmfhmSTDACuU0RWZ9IXSaDFaF6DoEm6llOiyRMroh+KXUd
+         mDgTY2nFbrG3UG/z00vYuhV2GMbbng3Z/BdDhrppXhq7oF3P9xLc6OjHObB9/nFgRB
+         0E4yur7zNwGZk/n7rI3cKfXy5eh3E20Du0awTw/dLMjEsJLI6fBQgM0w9NOlpqJPT5
+         GcXibjsIO6o8w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 12:09 PM Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 18 Nov 2020, Andy Shevchenko wrote:
-> > On Wed, Nov 18, 2020 at 11:56 AM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Wed, Nov 18, 2020 at 11:54 AM Uwe Kleine-K=C3=B6nig
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > On Tue, Nov 17, 2020 at 06:45:37PM +0200, Andy Shevchenko wrote:
-> >
-> > ...
-> >
-> > > > So a system without CONFIG_OF might still make use of .of_match_tab=
-le?
-> > >
-> > > Yep!
-> >
-> > If you are curious:
-> > https://elixir.bootlin.com/linux/latest/source/drivers/acpi/bus.c#L615
->
-> This still doesn't sit quite well with me.
->
-> Not the process of ACPI using OF artifacts or the possibilty to embed
-> OF type structures into ACPI tables, but the fact that an OF-only user
-> (or so they think) should have to care about that special use-case.
 
-OF-only users shouldn't take care about this. If you are sure that the
-driver may not be used on a non-OF platform.
+On 18/11/2020 03:46, JC Kuo wrote:
+> USB_VBUS_EN0 regulator (regulator@11) is being overwritten by vdd-cam-1v2
+> regulator. This commit rearrange USB_VBUS_EN0 to be regulator@14.
+> 
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 20 +++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> index e18e1a9a3011..a9caaf7c0d67 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> @@ -1663,16 +1663,6 @@ vdd_usb_vbus: regulator@9 {
+>  		vin-supply = <&vdd_5v0_sys>;
+>  	};
+>  
+> -	vdd_usb_vbus_otg: regulator@11 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "USB_VBUS_EN0";
+> -		regulator-min-microvolt = <5000000>;
+> -		regulator-max-microvolt = <5000000>;
+> -		gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
+> -		enable-active-high;
+> -		vin-supply = <&vdd_5v0_sys>;
+> -	};
+> -
+>  	vdd_hdmi: regulator@10 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "VDD_HDMI_5V0";
+> @@ -1712,4 +1702,14 @@ vdd_cam_1v8: regulator@13 {
+>  		enable-active-high;
+>  		vin-supply = <&vdd_3v3_sys>;
+>  	};
+> +
+> +	vdd_usb_vbus_otg: regulator@14 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "USB_VBUS_EN0";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&gpio TEGRA_GPIO(CC, 4) GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +		vin-supply = <&vdd_5v0_sys>;
+> +	};
+>  };
+> 
 
-> What if we make ACPI select OF?  Or handle the ACPI case explicitly in
-> the of_match_ptr() declaration?
+Thanks for catching this! We should add the 'Fixes:' tag.
 
-I guess you are a bit late, but you always may propose patches to ACPI
-maintainers.
+By the way, I assume that VBUS is currently broken for the OTG port.
+Without this change is that USB port completely broken? I am wondering
+if we need to CC stable@vger.kernel.org on this.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
