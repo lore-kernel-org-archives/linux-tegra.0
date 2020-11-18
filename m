@@ -2,219 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDC8C64E7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 08:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 938F5C63697
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 09:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3390A21D7A
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 08:07:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mY8ZItWG"
+	by mail.kernel.org (Postfix) with ESMTP id 4492222210
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Nov 2020 09:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbgKRIGo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Nov 2020 03:06:44 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12005 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbgKRIGm (ORCPT
+        id S1727205AbgKRJyC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Nov 2020 04:54:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbgKRJyB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Nov 2020 03:06:42 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb4d6070000>; Wed, 18 Nov 2020 00:06:31 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Nov
- 2020 08:06:40 +0000
-Received: from audio.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Wed, 18 Nov 2020 08:06:38 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <broonie@kernel.org>
-CC:     <jonathanh@nvidia.com>, <sharadg@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 2/3] dt-bindings: tegra: Convert HDA doc to json-schema
-Date:   Wed, 18 Nov 2020 13:36:21 +0530
-Message-ID: <1605686782-29469-3-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1605686782-29469-1-git-send-email-spujar@nvidia.com>
-References: <1605686782-29469-1-git-send-email-spujar@nvidia.com>
+        Wed, 18 Nov 2020 04:54:01 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05B5C0613D4
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2020 01:54:01 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfK9t-0003br-T9; Wed, 18 Nov 2020 10:53:49 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfK9p-00087c-1n; Wed, 18 Nov 2020 10:53:45 +0100
+Date:   Wed, 18 Nov 2020 10:53:42 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alban Bedel <albeu@free.fr>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>, zhang.lyra@gmail.com,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>, orsonzhai@gmail.com,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-pwm@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Sascha Hauer <kernel@pengutronix.de>, baolin.wang7@gmail.com,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
+Message-ID: <20201118095342.sviuxvfsbmmn22mo@pengutronix.de>
+References: <20201117154340.18216-1-info@metux.net>
+ <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605686791; bh=aoJcYwi5/UenP9bLitxom4hRAg/DI2I1tYEOVWyMeuY=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Type;
-        b=mY8ZItWGAP8elYufCNd5Da4m3C0jLMu3TUT4NZZ5gFwbs69X2J6nsxOaDAkCDHZet
-         t0XkD16DGDNCoQ9JLY9QRff4VAkLekBCyEg247QccWeqG/jGu9BLtzuOJuZp8Wauwl
-         OHwKJCQ2U6j9plHPXuYjCv5PqNQIey0lA0ziJxvpgsslAlsO65lK8cGLhd6s2eb6x4
-         uA4ypVrUvviaIvL7+m5xx5445OKu9rOdVQlDi3AcIRMceORHDW3Q1YUsYASraTzKu4
-         PJrMAvvEyN+4TSTeQRG7xC5ptVDzT/Eaex2fFq05v1SZHqYOqvL1Qg0KFcJ147qi38
-         BdL2BFMv+l/Uw==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jrmdeyhh5m52oxeb"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert Tegra HDA doc to YAML format.
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- .../bindings/sound/nvidia,tegra30-hda.txt          | 35 --------
- .../bindings/sound/nvidia,tegra30-hda.yaml         | 98 ++++++++++++++++++++++
- 2 files changed, 98 insertions(+), 35 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
+--jrmdeyhh5m52oxeb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-deleted file mode 100644
-index 21cd310..0000000
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
-+++ /dev/null
-@@ -1,35 +0,0 @@
--NVIDIA Tegra30 HDA controller
--
--Required properties:
--- compatible : For Tegra30, must contain "nvidia,tegra30-hda".  Otherwise,
--  must contain '"nvidia,<chip>-hda", "nvidia,tegra30-hda"', where <chip> is
--  tegra114, tegra124, or tegra132.
--- reg : Should contain the HDA registers location and length.
--- interrupts : The interrupt from the HDA controller.
--- clocks : Must contain an entry for each required entry in clock-names.
--  See ../clocks/clock-bindings.txt for details.
--- clock-names : Must include the following entries: hda, hda2hdmi, hda2codec_2x
--- resets : Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names : Must include the following entries: hda, hda2hdmi, hda2codec_2x
--
--Optional properties:
--- nvidia,model : The user-visible name of this sound complex. Since the property
--  is optional, legacy boards can use default name provided in hda driver.
--
--Example:
--
--hda@70030000 {
--	compatible = "nvidia,tegra124-hda", "nvidia,tegra30-hda";
--	reg = <0x0 0x70030000 0x0 0x10000>;
--	interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
--	clocks = <&tegra_car TEGRA124_CLK_HDA>,
--		 <&tegra_car TEGRA124_CLK_HDA2HDMI>,
--		 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
--	clock-names = "hda", "hda2hdmi", "hda2codec_2x";
--	resets = <&tegra_car 125>, /* hda */
--		 <&tegra_car 128>, /* hda2hdmi */
--		 <&tegra_car 111>; /* hda2codec_2x */
--	reset-names = "hda", "hda2hdmi", "hda2codec_2x";
--	nvidia,model = "jetson-tk1-hda";
--};
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-new file mode 100644
-index 0000000..3059bc3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-@@ -0,0 +1,98 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra30-hda.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra HDA controller
-+
-+description: |
-+  The High Definition Audio (HDA) block provides a serial interface to
-+  audio codec. It supports multiple input and output streams.
-+
-+maintainers:
-+  - Thierry Reding <treding@nvidia.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  $nodename:
-+    pattern: "^hda@[0-9a-f]*$"
-+
-+  compatible:
-+    oneOf:
-+      - const: nvidia,tegra30-hda
-+      - items:
-+          - enum:
-+              - nvidia,tegra194-hda
-+              - nvidia,tegra186-hda
-+              - nvidia,tegra210-hda
-+              - nvidia,tegra124-hda
-+          - const: nvidia,tegra30-hda
-+      - items:
-+          - const: nvidia,tegra132-hda
-+          - const: nvidia,tegra124-hda
-+          - const: nvidia,tegra30-hda
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description: The interrupt from the HDA controller
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 3
-+
-+  clock-names:
-+    maxItems: 3
-+    items:
-+      - const: hda
-+      - const: hda2hdmi
-+      - const: hda2codec_2x
-+
-+  resets:
-+    maxItems: 3
-+
-+  reset-names:
-+    maxItems: 3
-+    items:
-+      - const: hda
-+      - const: hda2hdmi
-+      - const: hda2codec_2x
-+
-+  nvidia,model:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: |
-+      The user-visible name of this sound complex. If this property is
-+      not specified then boards can use default name provided in hda driver.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include<dt-bindings/clock/tegra124-car-common.h>
-+    #include<dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    hda@70030000 {
-+        compatible = "nvidia,tegra124-hda", "nvidia,tegra30-hda";
-+        reg = <0x70030000 0x10000>;
-+        interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA124_CLK_HDA>,
-+                 <&tegra_car TEGRA124_CLK_HDA2HDMI>,
-+                 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
-+        clock-names = "hda", "hda2hdmi", "hda2codec_2x";
-+        resets = <&tegra_car 125>, /* hda */
-+                 <&tegra_car 128>, /* hda2hdmi */
-+                 <&tegra_car 111>; /* hda2codec_2x */
-+        reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-+        nvidia,model = "jetson-tk1-hda";
-+    };
-+
-+...
--- 
-2.7.4
+On Tue, Nov 17, 2020 at 06:45:37PM +0200, Andy Shevchenko wrote:
+> On Tue, Nov 17, 2020 at 5:45 PM Enrico Weigelt, metux IT consult
+> <info@metux.net> wrote:
+> >
+> > The of_match_ptr(foo) macro evaluates to foo, only if
+> > CONFIG_OF is set, otherwise to NULL. Same does ACPI_PTR with
+> > CONFIG_ACPI. That's very helpful for drivers that can be used
+> > with or without oftree / acpi.
+> >
+> > Even though most of the drivers touched here probably don't
+> > actually need that, it's also nice for consistency to make it
+> > the de-facto standard and change all drivers to use the
+> > of_match_ptr() and ACPI_PTR() macros.
+> >
+> > A nice side effect: in some situations, when compiled w/o
+> > CONFIG_OF/CONFIG_ACPI, the corresponding match tables could
+> > automatically become unreferenced and optimized-away by the
+> > compiler, w/o explicitly cluttering the code w/ ifdef's.
+>=20
+> NAK.
+>=20
+> It prevents using DT-enabled drivers on ACPI based platforms.
 
+So a system without CONFIG_OF might still make use of .of_match_table?
+
+If so: TIL ...
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--jrmdeyhh5m52oxeb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+07yIACgkQwfwUeK3K
+7Ak+4Af/S4LACdOy4WkgBIlg0vOjRAgAtSXuRqE7DZpYrEDA16Jf1/hvxQgwZgoQ
+2gZ2CszqBXhxH94X4GFtm7veiGfXquPsf0qlQ31Ou2yDIIv0+oXBBrSi78lwesD1
+1s6fYmYnp+Oijt1tRIg+euHAWOyIIyavCIBFkoFVIOvlux7JMc7pQZrdTGuiHJP1
+6c6F0G+G2nlLQtmwsR4Jm2vERKNDy3X87PdQANsH4ipSsIFyxTH/5Mgx4kLRZ/sg
+prSguvAIqgH+3KyVK9w454gWpqQJrGiCa7CEybzjNjAnjCAoxnnJ8SQ1/Ys27Y5L
+O0PgX1tM/ulriSZe+T5UUlYqGZyBAw==
+=A5vw
+-----END PGP SIGNATURE-----
+
+--jrmdeyhh5m52oxeb--
