@@ -2,116 +2,130 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80FBC388F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D19C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57F5B24698
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16848246EF
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tVfxs5rY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOwMUqi6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbgKSKPz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 05:15:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
+        id S1726592AbgKSKlu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 05:41:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbgKSKPy (ORCPT
+        with ESMTP id S1725905AbgKSKlu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 05:15:54 -0500
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29820C0613CF
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2020 02:15:53 -0800 (PST)
-Received: by mail-ua1-x934.google.com with SMTP id t15so1733644ual.6
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2020 02:15:53 -0800 (PST)
+        Thu, 19 Nov 2020 05:41:50 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6A4C0613CF;
+        Thu, 19 Nov 2020 02:41:49 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id p1so5839488wrf.12;
+        Thu, 19 Nov 2020 02:41:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JUmWc2XKIjJhAgxg0BgLz+A6fjAIS+8ifWZYZHlV0nQ=;
-        b=tVfxs5rYGV+5I4KM/S7o9qrAgrRbQDNUaPpL3Dit+Ylc6MPdqx5YbIgSeJ/t8WMut9
-         8M66JnK+gyOTf1i29p2NPWj3zDHdHXEJi3AWvIOmp5YEGpE0hg16eszjySjW317LkNWw
-         NLPI03IaIiDr1qXibEpwPyDQ7pzVoRqw+TtMUjFGDE+Ys8hwMF4xJyxtJPDS984GNNMm
-         YbY+Ki4eL+YvIOGUQs9A8TX63nAeMUAb1E0LQqVA270lio/j3Dn6hYjFSqTZGM25SjMH
-         BkukA/yE1K7Md49Ri3nJh4+8CuD7a5rUsamj0hWjo2JJ0csZeMpTBCbf5oTGd4cLxR1N
-         bceA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MHnEOrvbhSGLANAE+Q8C5QoyY9bWqAkkZShUSQ8tDPw=;
+        b=aOwMUqi6ySn9E5v+v354chGwzw4NAxicuP1Dlbo815E1QJ2MJmueKxnMK5+6hb7aDg
+         98Acb3w11R3Od8qNR0PuEYTKwbSH4R21rLCmhtVbHk37qoqzIQzqN+lCC4OqFHqMMHej
+         pNkZa7tBWlh7BZZ33T+XEKiXKC1rKQWNoHHUptFkDt+tuUno0hdN8dXxx8kUT4K6jUM+
+         +xTA+pNiKkehIoHCiO2ErriO6akMaY7hIyu7OaXgHXTWeZlre7lwy8cJ9xiOvUi25C6H
+         E9KCf/xcGrnr+0e3nP32LpKth8WTLhTkvhmrq80KXtQIFfP6GUHO4ROUt2skIOn9x+FM
+         CexA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JUmWc2XKIjJhAgxg0BgLz+A6fjAIS+8ifWZYZHlV0nQ=;
-        b=rYhMrwBIofs//J4tELVJvwv6jB22SrmHJm+YAjWHY8v8JBwY2mETRVFN8rBcslCq11
-         Pw/qEfv7j9WaLXxK1JR1iCVZvnBUkf1VBcSNuNJ5L/D9wkZRlICJm/2Q3K9szblX8POn
-         KoXMwTCuHnFClHmFjuoA67p+g9eq1JkPAqWRMkBpIOxxWKJx2dnqmB0vda0HgBHB9h7o
-         n8mBlrUmqbnxOuP8lbBxPnRWGcyFVVKJzIcO/wv3niPd89S/FHGeGpQsX5riKMa0lkff
-         PI/qV8/xoNKweAhZupisOkffAUFYUclYtaW3kQKv6xYp4rTWaRY/N2JCmwn1Q7lrAoj4
-         wAqw==
-X-Gm-Message-State: AOAM531OK/MxoeobV3Pe/PDIyrK72R9DBD0iXxQXQwMdRblU/kWMYXwd
-        p9MmwmtFjqDJHNSX3zct6VOtoU75c+D9nZBwdPvZVJa5JERRQPC9
-X-Google-Smtp-Source: ABdhPJxoBl6cqBmyLED2zsGA36KTPasXoGegyZurZ3XSaVqXFD6afg5iUYvM4AwdnhHjazJ6GXLCRdFloYsnkcOejPg=
-X-Received: by 2002:ab0:754f:: with SMTP id k15mr8175598uaq.15.1605780952243;
- Thu, 19 Nov 2020 02:15:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MHnEOrvbhSGLANAE+Q8C5QoyY9bWqAkkZShUSQ8tDPw=;
+        b=Ltu5UJPpnJBO6zIZ6Ek1g60CbNqrOZIe2G3b/YaHgDmcRy/2Y7gBYWNoAM1OOaATfD
+         XP2V18kaJ4hF0AmMTyfMFj5HivqjzcMLOEmiliJu6FnzJ75wPGGOwq2GyxuasWxi7peZ
+         Y7tK7Sp1KGo7oDXQMNsE48fkXLzuWbmj4GxdL5mlrhE8NHceqkE3OamLs5HqNNn9a9py
+         6Cju1pQ0vZGZuhV8GRHBxfx+rp8wx7bC7YzIHq4/SDGrhIiiDyanyaIBVxC1qHFo2xhE
+         14Sg16OgiHRS2rc+u4eUJGvZWQO3skPjinT8HokzDNTnFQeEhvl9vIC9IeEWNABet4kh
+         r6MQ==
+X-Gm-Message-State: AOAM53346bg9MUFN7N1dr93bAAn5noNqQXaKndG4xZksSQY9ayjV3BIR
+        59PydIkbzbOoTisYVbQvm40=
+X-Google-Smtp-Source: ABdhPJzkcln9b61qXWm4b6rcBoHmz0B4k78//yNJQV2rRUVSxv/jIkZUVrCbcFlDY7IwkvnKZecX7g==
+X-Received: by 2002:adf:f542:: with SMTP id j2mr9431236wrp.107.1605782508408;
+        Thu, 19 Nov 2020 02:41:48 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id v8sm9267340wmg.28.2020.11.19.02.41.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2020 02:41:47 -0800 (PST)
+Date:   Thu, 19 Nov 2020 11:41:45 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     JC Kuo <jckuo@nvidia.com>
+Cc:     gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: tegra: jetson-tx1: Fix USB_VBUS_EN0 regulator
+Message-ID: <20201119104145.GA3559705@ulmo>
+References: <20201119072345.447793-1-jckuo@nvidia.com>
 MIME-Version: 1.0
-References: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
-In-Reply-To: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 19 Nov 2020 11:15:15 +0100
-Message-ID: <CAPDyKFrxKhO0V-uTDLDV6RFQFwhjesE0zfnuBLfYs-n5bNxXtg@mail.gmail.com>
-Subject: Re: [RFC] PM Domains: Ensure the provider is resumed first
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Disposition: inline
+In-Reply-To: <20201119072345.447793-1-jckuo@nvidia.com>
+User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 16 Nov 2020 at 17:17, Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Hi all,
->
-> We recently ran into a problem on Tegra186 where it was failing to
-> resume from suspend. It turned out that a driver, the Tegra ACONNECT
-> (drivers/bus/tegra-aconnect.c), was being resumed before the PM domain
-> provider, the BPMP (drivers/firmware/tegra/bpmp.c), and the Tegra
-> ACONNECT was trying to enable the PM domain before the provider had been
-> resumed.
->
-> According to commit 4d23a5e84806 it states that 'genpd powers on the PM
-> domain unconditionally in the system PM resume "noirq" phase'. However,
-> what I don't see is anything that guarantees that the provider is
-> resumed before any device that requires power domains. Unless there is
-> something that I am missing?
 
-The genpd provider's ->power_on() callback should be invoked as soon
-as an attached device gets resumed via the ->resume_noirq() callback
-(genpd_resume_noirq). Have you verified that this is working as
-expected for you?
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that, if there is no device attached to the genpd, the
-->power_on() callback may not be invoked - unless there is a child
-domain being powered on.
+On Thu, Nov 19, 2020 at 03:23:45PM +0800, JC Kuo wrote:
+> USB Host mode is broken at OTG port of Jetson-TX1 platform because
+> USB_VBUS_EN0 regulator (regulator@11) is being overwritten by vdd-cam-1v2
+> regulator. This commit rearrange USB_VBUS_EN0 to be regulator@14.
+>=20
+> Fixes: 257c8047be44 ("arm64: tegra: jetson-tx1: Add camera supplies")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> v3:
+>     add 'Cc: stable@vger.kernel.org' tag
+> v2:
+>     add 'Fixes:' tag
+>     add Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>=20
+>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 20 +++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 
-From the genpd provider driver point of view - why do you need to
-implement system suspend/resume callbacks at all? Do you have some
-additional operations to run, besides those executed from the
-->power_on|off() callbacks?
+Applied, thanks.
 
->
-> Now by default the ACONNECT is resumed during the noirq phase, but I
-> have tried making it and its child devices, suspend/resume in the normal
-> system phase but this does not seem to make a difference. So I am
-> looking for a bit of guidance on how best to fix this.
+Thierry
 
-The order of suspend/resume of devices are based upon the order the
-devices get stored in the "dpm list" - unless there are child/parents
-relationships or device-links that the PM core also takes into
-account.
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Kind regards
-Uffe
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+2S+cACgkQ3SOs138+
+s6HYIRAAq92ZFhrbwrU0jsQytIdgpzznSQqFr8t3RAw/JxmWcR0UhY2Zavv3OjRg
+z/pj0hVWdBYLboF8m7794n5yL7E2e2KjntsKrd2nquXQNt+XKeZhlg3loRzc8J1x
+ZUO2jWn3TxGowKbMhm7w1LLSo52nWN5+VNux8rC6WM+Y3EBTZ3/byof0bmiTb3Fd
+NI6/HwitV3K+YOiPq1ZUVldz5ZEFrTu2gH/Vmv6PPTrLqCqdJkKLNrAMqVxFweYx
+KXt+pdaxCWR/A8U7E96MmqBRK1naRU7yqaZZoU1lyiPV5tG2U5eZYCnhrWYkAl0h
+vycVFHNhn3P/Gtd6QkALR0zJNA/q27/YG1agsZqMN0vF61VxOceQp2x34mtT9TQD
+e7WEQ1zySu0OJJg/4MxMChsIgPniWxEdtKxNVAQ2AreSC5+sZCbzK9/4C2xFCrYE
+x8A3vP0PaLG3Noi7uOfoyc1sEJY6rCXmCl1IqQdDRgIBeJ11uVdA3PWuYHCB5pQ1
+cT/quo0tHvgZTKS3uqzRuTuN55FMlcq4+l6dlNuOpHYeWDsIkEXtwX7wsvsrPw0X
+JAtDpupIcN+07c04R8rjDNPPEuITfFIkZRiciECnip7JMZqG4nKgVl2UaWMNNV8B
+9SsWS/FfcKt2bsO6YM37fEHTLfrRP+OeLKURMjc0tSwcl8BDEz0=
+=O36O
+-----END PGP SIGNATURE-----
+
+--bp/iNruPH9dso1Pn--
