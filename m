@@ -8,39 +8,38 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A5EC2D0E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B57C6379D
 	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A05524654
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8003624654
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="K3jLRzde"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="R1KCd2WE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbgKSIyT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 03:54:19 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6176 "EHLO
+        id S1726618AbgKSIyV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 03:54:21 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6184 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbgKSIyT (ORCPT
+        with ESMTP id S1726375AbgKSIyV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 03:54:19 -0500
+        Thu, 19 Nov 2020 03:54:21 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb632be0001>; Thu, 19 Nov 2020 00:54:22 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
- 2020 08:54:13 +0000
+        id <B5fb632c00001>; Thu, 19 Nov 2020 00:54:24 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
+ 2020 08:54:17 +0000
 Received: from jckuo-lt.nvidia.com (10.124.1.5) by mail.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 19 Nov 2020 08:54:11 +0000
+ Transport; Thu, 19 Nov 2020 08:54:16 +0000
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
 CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v5 02/16] clk: tegra: Don't enable PLLE HW sequencer at init
-Date:   Thu, 19 Nov 2020 16:53:51 +0800
-Message-ID: <20201119085405.556138-3-jckuo@nvidia.com>
+        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
+Subject: [PATCH v5 04/16] phy: tegra: xusb: tegra210: Do not reset UPHY PLL
+Date:   Thu, 19 Nov 2020 16:53:53 +0800
+Message-ID: <20201119085405.556138-5-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201119085405.556138-1-jckuo@nvidia.com>
 References: <20201119085405.556138-1-jckuo@nvidia.com>
@@ -49,62 +48,60 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605776063; bh=K6oHMTweFEihdXXYvcyusOm93g9OypwM/eKOtaoVQow=;
+        t=1605776064; bh=Lb6CUM5xzjsJ/3rF72AFs1BvgdwDxUt+jwEIxP8Cz+4=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=K3jLRzde6YkPB1QkfVKuVtU+NYIIWeuEjLNfqVDULzz1JHiMeehqzp++oc5gFG5gk
-         8dO/Ur6VwKhUO0X2qwKkweoffY7q8wIyMmAmc7Wl5/kohSgxvGS3Oxut/o/BSmwREZ
-         lIllM+tYe0PF2sfKJlbWWb4D++A/jxNYjUgpjJsfee583dgVQz93qegLw3sDxuLz0z
-         9So5y+Y0g1PrOaOPk/JnFTJunGx8V7vAqiG4mM/MQrWwGPrHr2bEGI/y8K/ocFgwUj
-         Jid1ap5eMjGtmxTbwj/4Xom2GVTj9OERrPLLmJcvm8bJBMzOsIIPWEvePWr6L+U9MS
-         EG82LMqC3X2Mg==
+        b=R1KCd2WEF7B70YxsQOFCyD5yrMsXhr7bkZOfKDW9C1muhMEMeQKBofGpb3kZFjHBg
+         sYqbQ2iFFz8P61ndpbRpuR9nl184HnlHUlS90Dxtafl16FGe3yOJNsn+BpOLYpviE8
+         JjmL4v+RjQPCKXVIXYO4ll7DNluhwTXPUHE5TryQZOb0Ea84eQwx7WNoQsluKMHJXC
+         kNC5/7OaV8CAu0n5m+/WK2vdVpvIStEqUj6hzcgxlT+RamHKGkrJMPQ7MRuISgj6BN
+         +NEgafhfAEztv98ptpJ+bwSOPQKoawZwIsd0HFEND4Oe5k9C/aYDEd+0P9BySKcFfZ
+         Q8i8soDBH8zwg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-PLLE hardware power sequencer references PEX/SATA UPHY PLL hardware
-power sequencers' output to enable/disable PLLE. PLLE hardware power
-sequencer has to be enabled only after PEX/SATA UPHY PLL's sequencers
-are enabled.
+Once UPHY PLL hardware power sequencer is enabled, do not assert
+reset to PEX/SATA PLLs, otherwise UPHY PLL operation will be broken.
+This commit removes reset_control_assert(pcie->rst) and
+reset_control_assert(sata->rst) from PEX/SATA UPHY disable procedure.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
 ---
 v5:
    no change
 v4:
-   no change=20
-v3:
    no change
+v3:
+   new, was a part of "phy: tegra: xusb: Rearrange UPHY init on Tegra210"
 
- drivers/clk/tegra/clk-pll.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ drivers/phy/tegra/xusb-tegra210.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c5cc0a2dac6f..0193cebe8c5a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2515,18 +2515,6 @@ static int clk_plle_tegra210_enable(struct clk_hw *h=
-w)
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	udelay(1);
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-teg=
+ra210.c
+index 4dc9286ec1b8..9bfecdfecf35 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -502,7 +502,6 @@ static void tegra210_pex_uphy_disable(struct tegra_xusb=
+_padctl *padctl)
+ 	if (--pcie->enable > 0)
+ 		return;
 =20
--	val =3D pll_readl_misc(pll);
--	val &=3D ~PLLE_MISC_IDDQ_SW_CTRL;
--	pll_writel_misc(val, pll);
--
--	val =3D pll_readl(pll->params->aux_reg, pll);
--	val |=3D (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SS_SEQ_INCLUDE);
--	val &=3D ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--	val |=3D PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--
- out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
+-	reset_control_assert(pcie->rst);
+ 	clk_disable_unprepare(pcie->pll);
+ }
+=20
+@@ -739,7 +738,6 @@ static void tegra210_sata_uphy_disable(struct tegra_xus=
+b_padctl *padctl)
+ 	if (--sata->enable > 0)
+ 		return;
+=20
+-	reset_control_assert(sata->rst);
+ 	clk_disable_unprepare(sata->pll);
+ }
+=20
 --=20
 2.25.1
 
