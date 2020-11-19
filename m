@@ -2,143 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D680C6379F
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 15:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9F5C63697
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 17:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03D5C246D1
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 15:20:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJc09AJA"
+	by mail.kernel.org (Postfix) with ESMTP id A0B1D2467A
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 17:08:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbgKSPTk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 10:19:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34222 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728062AbgKSPTk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 10:19:40 -0500
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6E4F24654;
-        Thu, 19 Nov 2020 15:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605799178;
-        bh=0W6X+yvUpSkdAAGKagVENpsqMNRqNF4X/9HGlBkWMgk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MJc09AJAL2xk01qiS05ieRaCGIlLeUWY/cvod14/kBGzC1gFcG/mDtMvf8iSA9QUD
-         jSD4dFUuEnrjJi4GroCmvV7jayJepAbLbLZeNgzQ9BKU3QE60JUhIRrlYDwHw/JhIU
-         B+8st17jTJ6Z1DYEmUVIDvIfP/2L0eFW2zmF94NU=
-Date:   Thu, 19 Nov 2020 15:19:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1729199AbgKSRIS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 12:08:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60372 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729198AbgKSRIS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 19 Nov 2020 12:08:18 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317BBC0613CF
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2020 09:08:18 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfnPk-0003Hr-8W; Thu, 19 Nov 2020 18:08:08 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kfnPg-0005S4-75; Thu, 19 Nov 2020 18:08:04 +0100
+Date:   Thu, 19 Nov 2020 18:08:02 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     alexandre.belloni@bootlin.com, heiko@sntech.de,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-riscv@lists.infradead.org, festevam@gmail.com,
+        f.fainelli@gmail.com, shc_work@mail.ru,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        khilman@baylibre.com, wens@csie.org, jonathanh@nvidia.com,
+        linux-rockchip@lists.infradead.org,
+        ludovic.desroches@microchip.com,
+        bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com,
+        slemieux.tyco@gmail.com, linux-pwm@vger.kernel.org,
+        rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org,
+        vz@mleia.com, linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com,
+        matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org,
         Lee Jones <lee.jones@linaro.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
- scaling
-Message-ID: <20201119151918.GA5554@sirena.org.uk>
-References: <20201112200123.GF4742@sirena.org.uk>
- <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
- <20201113142937.GB4828@sirena.org.uk>
- <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
- <20201113161550.GC4828@sirena.org.uk>
- <3beaa12b-4a50-a3b6-fc43-ebb5ce7a8db7@gmail.com>
- <20201113172859.GF4828@sirena.org.uk>
- <74cfc6a9-3f59-d679-14b7-51102a6f11b3@gmail.com>
- <20201116133311.GB4739@sirena.org.uk>
- <332ab946-daee-bb83-24ab-0bda4fd8e1ef@gmail.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, sbranden@broadcom.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.ferre@microchip.com, palmer@dabbelt.com,
+        kernel@pengutronix.de, shawnguo@kernel.org,
+        claudiu.beznea@microchip.com, nsaenzjulienne@suse.de
+Subject: Re: About devm_platform_ioremap_resource [Was: Re: [PATCH 01/32]
+ pwm: sun4i: convert to devm_platform_ioremap_resource]
+Message-ID: <20201119170802.bup5foltlhrg5576@pengutronix.de>
+References: <20191229080610.7597-1-tiny.windzz@gmail.com>
+ <20201112161346.gp5nenuagx5wmwl2@pengutronix.de>
+ <20201112190649.GA908613@ulmo>
+ <20201112211429.kfyqzkmmchjo6pll@pengutronix.de>
+ <20201113070343.lhcsbyvi5baxn3lq@pengutronix.de>
+ <20201113161153.GB1408970@ulmo>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+        protocol="application/pgp-signature"; boundary="mpmylxzqzkfzclys"
 Content-Disposition: inline
-In-Reply-To: <332ab946-daee-bb83-24ab-0bda4fd8e1ef@gmail.com>
-X-Cookie: Chocolate chip.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201113161153.GB1408970@ulmo>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=utf-8
+--mpmylxzqzkfzclys
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 19, 2020 at 05:22:43PM +0300, Dmitry Osipenko wrote:
-> 16.11.2020 16:33, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Hello,
 
-> > No, you are failing to understand the purpose of this code.  To
-> > reiterate unless the device supports operating with the supply
-> > physically absent then the driver should not be attempting to use
-> > regulator_get_optional().  That exists specifically for the case where
+On Fri, Nov 13, 2020 at 05:11:53PM +0100, Thierry Reding wrote:
+> I think function names are always a compromise between giving you the
+> gist of what the implementation does and being short enough so it
+> doesn't become difficult to read or use.
 
-> The original intention of regulator_get_optional() is clear to me, but
-> nothing really stops drivers from slightly re-purposing this API, IMO.
+Right. In my eyes if you have=20
 
-> Drivers should be free to assume that if regulator isn't defined by
-> firmware, then it's physically absent if this doesn't break anything. Of
-> course in some cases it's unsafe to make such assumptions. I think it's
-> a bit unpractical to artificially limit API usage without a good reason,
-> i.e. if nothing breaks underneath of a driver.
+ - devm_platform_ioremap_resource
+ - devm_platform_get_and_ioremap_resource
+ - devm_ioremap_resource
+ - devm_ioremap
 
-If the supply can be physically absent without breaking anything then
-this is the intended use case for optional regulators.  This is a *very*
-uncommon.
+(to list just a few) with the current semantics, the compromise is badly
+shifted into the "short name" direction however; and that was the
+motivation for this patch set. In my eyes it must be more obvious which
+of these functions include devm_request_mem_region() and which don't.
 
-> > Regulators that are present but not described by the firmware are a
-> > clearly different case to regulators that are not physically there,
-> > hardware with actually optional regulators will generally require some
-> > configuration for this case.
+And note, my patch series doesn't introduce new helpers, just renames
+them to have a better name (and adds compat glue for the old names).
 
-> I have good news. After spending some more time on trying out different
-> things, I found that my previous assumption about the fixed-regulator
-> was wrong, it actually accepts voltage changes, i.e. regulator consumer
-> doesn't get a error on a voltage-change. This is exactly what is needed
-> for the OPP core to work properly.
+> One of the reasons why I dislike the addition of helpers for every
+> common special case (like devm_platform_ioremap_resource()) is because
+> it doesn't (always) actually make things easier for developers and/or
+> maintainers. Replacing three lines of code with one is a minor
+> improvement, even though there may be many callsites and therefore in
+> the sum this being a fairly sizeable reduction. The flip side is that
+> now we've got an extra symbol with an unwieldy name that people need
+> to become familiar with, and then, like the link above shows, it doesn't
+> work in all cases, so you either need to fall back to the open-coded
+> version or you keep adding helpers until you've covered all cases. And
+> then we end up with a bunch of helpers that you actually have to go and
+> read the documentation for in order to find out which one exactly fits
+> your use-case.
 
-To be clear when you set a voltage range you will get the minimum
-voltage that can be supported within that range on the system given all
-the other constraints the system has.  For fixed voltage regulators or
-regulators constraints to not change voltage this means that if whatever
-voltage they are fixed at is in the range requested then the API will
-report success.
+This is indeed a relevant point. An alternative is to make the helper
+more flexible. This complicates the API, too, however, so this isn't
+always gold, either.
+=20
+> Without the helpers it's pretty simple to write, even if a little
+> repetitive:
+>=20
+>   1) get the resource you want to map
+>   2) request the resource
+>   3) map the resource
+>=20
+> 2) & 3) are very commonly done together, so it makes sense to have a
+> generic helper for them. If you look at the implementation, the
+> devm_ioremap_request() implementation does quite a bit of things in
+> addition to just requesting and remapping, and that's the reason why
+> that helper makes sense.
+>=20
+> For me personally, devm_platform_ioremap_resource() is just not adding
+> enough value to justify its existence. And then we get all these other
+> variants that operate on the resource name (_byname) and those which
+> remap write-combined (_wc). But don't we also need a _byname_wc()
+> variant for the combination? Where does it stop?
 
---G4iJoqBmSsgzjUCe
+I'm on your side for the _wc stuff, looking at next-20201119:
+
+ - devm_ioremap_resource_wc has a single user:
+   devm_platform_ioremap_resource_wc
+ - devm_platform_ioremap_resource_wc has a single user:
+   drivers/misc/sram.c
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--mpmylxzqzkfzclys
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+2jPUACgkQJNaLcl1U
-h9Cg3Qf/ScTE8SCsHJLjKatjArehtbhKoUyG6aFABrEI/v3bjsqKt/Sq0WjEm255
-nKAu6jVgldwyJP7JR+NQvS2KTy6/Ai/3r+U/lyG8X0xthT14nzXhC6QSAIfukqgq
-JHderVdLXa+mc9bZ4vJ8AzG88ImFulrVA84t2cIuHOU27i4wVx5oQJZoRquB5JdJ
-jAPleN81AYXwTdcJkckY0QoHEFVz55g/4xI2cuh9onlNHbt8eVr7FGsswsNnATrv
-DlAATwOrW84BJnGHjaB0vfWLRx75q3bJ1z62kbdf0VqU5rYaVUppa5a+8eHY6i4V
-A1ZTgD1YjmUvJjo2cbBpm7mJsYOinA==
-=tj+B
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+2pm8ACgkQwfwUeK3K
+7Anx6gf/afcuCS6ctL6YtwVi/Z9EkHHcNA1X6g1BHEYgptvB5jElIwju5FwCP1Mr
+dFL0pNAhpH9f0DppbH2oLUVOCNyD1ZfgQGWqGvcrFY+T/cx7wNOTgF7Meq/DMeH4
+Btkjn4WlVzI342o84E+DOy1HLsqFio7btNOVl/UtRWOJXeiebIbTd8ees4f4Y89q
+W9/WHyX7vHoJ3Xr+o2U+sdGrP8yZv+rZ+5LqrHCFhbPQIRXcdf37e2BINTBY5R/d
+ceVKdUCv+pHJAc096R4R4t2vc42sG7OfOJzSDndG4B/duKHoL+v79d8ocfUpaO58
+3CubdcFfVk/uoUX+9qYPjwKoWefCBw==
+=OAoV
 -----END PGP SIGNATURE-----
 
---G4iJoqBmSsgzjUCe--
+--mpmylxzqzkfzclys--
