@@ -2,131 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A583BC388F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 11:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377A2C388F9
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 11:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42A8F246DC
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 11:00:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiFxYI1b"
+	by mail.kernel.org (Postfix) with ESMTP id D39C8246EE
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 11:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgKSLAc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 06:00:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbgKSLAc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 06:00:32 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F15C0613CF;
-        Thu, 19 Nov 2020 03:00:32 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id v22so5350081edt.9;
-        Thu, 19 Nov 2020 03:00:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Av5BBTuM7evlD9VDFh0arYTaJ+OsyfG556KZW1pXB0Y=;
-        b=TiFxYI1bViNz37ZEsTLEkKJY3THx8Px85R0+qnM2hQGrayt7lfRBlVaQh7pKVY2ByR
-         hec8Phqn/3AmEmZdZsDFZ15adLWjKVvWrV/WVfY9GxIPz0etf77yD7g6BhKwAzLFig/R
-         krRauaKrbzszuL/ccEd1O/n4hX6QoHCpFHsgZFNr0wD8NmWVBM13vFYHWH7mbg4YEqJv
-         zaTM2pC9NbLdU1WrBthq0XOgGxOlgLKQcD4Vcd2t6tPWPD6kqQR48wkCXr9gQSUXnl7b
-         hoI2djvVEFF9IWhsUC3WTJTmuojU3qZcknGKqwyCmIFjMh3iQF8xbw3qmckLXLyYAnhL
-         LVHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Av5BBTuM7evlD9VDFh0arYTaJ+OsyfG556KZW1pXB0Y=;
-        b=pz48BvyGg313ia6iNa9GXrkEYpb++jbc9wjnUaGj2+51ivrZrW4rbvMM90+3TSbHa3
-         +ufN6OLzBNFOQ6tgLL9jzyOMAG1+Oi4uk4jmfClSititd2Aeo1binBgF0x7cNBiUA2Kk
-         tYrYloUwz2wXBeqtp1bPxHd3KGlT3Il8ylkGr3BQxoD16HoUtidHLIhckcMfSK1SUFJD
-         873G920I80AOeXs9pObVT+nUE2mMZW8OckOvO6WH9tRvj19B9KNoNBY1lim+FlxYcxbH
-         ISSNjUrovfhpGZM6aTqazcpm4ykZCJbo1eq677N6Lo/XydcnovoOc6iStFp57xIcyoLa
-         1TNg==
-X-Gm-Message-State: AOAM532igl1GYo1RjspgSKUE5NonDX5pLb2b8BinW/3JUUgXn7rsw79R
-        zzhbX3gXiw4kUYrURqbWKWyatjXzJ6WMRx1S/sU=
-X-Google-Smtp-Source: ABdhPJwN/JLb7YSmhKyM+E3M5dXfAHScFA1CNYKfSOJmfUGoTa9bYF+YAHGrJLRmY2GEjm1y8Gj+sOwI3plcEp6Rb5U=
-X-Received: by 2002:a05:6402:2365:: with SMTP id a5mr577181eda.268.1605783631085;
- Thu, 19 Nov 2020 03:00:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20200927150956.34609-1-kwizart@gmail.com>
-In-Reply-To: <20200927150956.34609-1-kwizart@gmail.com>
-From:   Nicolas Chauvet <kwizart@gmail.com>
-Date:   Thu, 19 Nov 2020 12:00:19 +0100
-Message-ID: <CABr+WTnftetrMzC8bq+=RqOxqJ9EvYsU1LEZ5bVv-OptVksbjA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] thermal: tegra: soctherm bugfixes
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1726163AbgKSLCN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 06:02:13 -0500
+Received: from foss.arm.com ([217.140.110.172]:53128 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbgKSLCM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 19 Nov 2020 06:02:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 627981396;
+        Thu, 19 Nov 2020 03:02:11 -0800 (PST)
+Received: from red-moon.arm.com (unknown [10.57.61.203])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02D183F718;
+        Thu, 19 Nov 2020 03:02:03 -0800 (PST)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Murali Karicheri <m-karicheri2@ti.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-tegra@vger.kernel.org, Roy Zang <roy.zang@nxp.com>,
+        linux-amlogic@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@axis.com, Jerome Brunet <jbrunet@baylibre.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pci@vger.kernel.org, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        linux-omap@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-samsung-soc@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2 00/16] PCI: dwc: Another round of clean-ups
+Date:   Thu, 19 Nov 2020 11:01:58 +0000
+Message-Id: <160578351748.1677.14217204071434748520.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20201105211159.1814485-1-robh@kernel.org>
+References: <20201105211159.1814485-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Le dim. 27 sept. 2020 =C3=A0 17:10, Nicolas Chauvet <kwizart@gmail.com> a =
-=C3=A9crit :
->
-> When using tegra_soctherm driver on jetson-tk1, the following messages
-> can be seen:
-> from kernel: tegra_soctherm 700e2000.thermal-sensor:
->  throttle-cfg: heavy: no throt prop or invalid prop
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when cpu reaches 101000 mC
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when gpu reaches 101000 mC
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when pll reaches 103000 mC
->  throttrip: pll: missing hot temperature
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when mem reaches 101000 mC
->  throttrip: mem: missing hot temperature
->  IRQ index 1 not found
->
-> This serie fixes two errors and two warnings that are reported in dmesg
-> It was compiled and tested at runtime on jetson-tk1 only.
->
->
-> v2:
->  * Add missing tegra210 device-tree properties
->  * Add the appropriate prefix for tegra soctherm
->  * Use SoCs condition over of_compatible
->
->
-> Nicolas Chauvet (6):
->   ARM: tegra: Add missing gpu-throt-level to tegra124 soctherm
->   ARM: tegra: Add missing hot temperatures to tegra124 thermal-zones
->   arm64: tegra: Add missing hot temperatures to tegra132 thermal-zones
->   arm64: tegra: Add missing gpu-throt-level to tegra210 soctherm
->   arm64: tegra: Add missing hot temperatures to tegra210 thermal-zones
->   thermal: tegra: Avoid setting edp_irq when not relevant
->
->  arch/arm/boot/dts/tegra124.dtsi           | 11 +++++++
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi  | 10 ++++++
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi  | 13 ++++++++
->  drivers/thermal/tegra/soctherm.c          | 38 +++++++++++++----------
->  drivers/thermal/tegra/soctherm.h          |  1 +
->  drivers/thermal/tegra/tegra124-soctherm.c |  1 +
->  drivers/thermal/tegra/tegra132-soctherm.c |  1 +
->  drivers/thermal/tegra/tegra210-soctherm.c |  1 +
->  8 files changed, 60 insertions(+), 16 deletions(-)
->
-> --
-> 2.25.4
+On Thu, 5 Nov 2020 15:11:43 -0600, Rob Herring wrote:
+> Here's another batch of DWC PCI host refactoring. This series primarily
+> moves more of the MSI, link up, and resource handling to the core
+> code. Beyond a couple of minor fixes, new in this version is runtime
+> detection of iATU regions instead of using DT properties.
+> 
+> No doubt I've probably broken something. Please test. I've run this thru
+> kernelci and checked boards with DWC PCI which currently is just
+> Layerscape boards (hint: add boards and/or enable PCI). A git branch is
+> here[1].
+> 
+> [...]
 
-Hello,
-This series is still pending review.
+Applied to pci/dwc, thanks!
 
-Thierry, do you expect some reviewers from the linux-pm (Zhang, Daniel ?)
-To me it seems like tegra specific changes, so maybe a Nvidia reviewer
-is awaited ?
+[01/16] PCI: dwc: Support multiple ATU memory regions
+        https://git.kernel.org/lpieralisi/pci/c/9f9e59a480
+[02/16] PCI: dwc/intel-gw: Move ATU offset out of driver match data
+        https://git.kernel.org/lpieralisi/pci/c/1d567aac46
+[03/16] PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into common code
+        https://git.kernel.org/lpieralisi/pci/c/a0fd361db8
+[04/16] PCI: dwc/intel-gw: Remove some unneeded function wrappers
+        https://git.kernel.org/lpieralisi/pci/c/1cc9a55999
+[05/16] PCI: dwc: Ensure all outbound ATU windows are reset
+        https://git.kernel.org/lpieralisi/pci/c/458ad06c4c
+[06/16] PCI: dwc/dra7xx: Use the common MSI irq_chip
+        https://git.kernel.org/lpieralisi/pci/c/7f170d35f5
+[07/16] PCI: dwc: Drop the .set_num_vectors() host op
+        https://git.kernel.org/lpieralisi/pci/c/331e9bcead
+[08/16] PCI: dwc: Move MSI interrupt setup into DWC common code
+        https://git.kernel.org/lpieralisi/pci/c/5bcb1757e6
+[09/16] PCI: dwc: Rework MSI initialization
+        https://git.kernel.org/lpieralisi/pci/c/f78f02638a
+[10/16] PCI: dwc: Move link handling into common code
+        https://git.kernel.org/lpieralisi/pci/c/886a9c1347
+[11/16] PCI: dwc: Move dw_pcie_msi_init() into core
+        https://git.kernel.org/lpieralisi/pci/c/59fbab1ae4
+[12/16] PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
+        https://git.kernel.org/lpieralisi/pci/c/b9ac0f9dc8
+[13/16] PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()
+        https://git.kernel.org/lpieralisi/pci/c/60f5b73fa0
+[14/16] Revert "PCI: dwc/keystone: Drop duplicated 'num-viewport'"
+        https://git.kernel.org/lpieralisi/pci/c/fcde397422
+[15/16] PCI: dwc: Move inbound and outbound windows to common struct
+        https://git.kernel.org/lpieralisi/pci/c/9ca17af552
+[16/16] PCI: dwc: Detect number of iATU windows
+        https://git.kernel.org/lpieralisi/pci/c/281f1f99cf
 
-Thanks.
+Thanks,
+Lorenzo
