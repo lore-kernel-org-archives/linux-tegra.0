@@ -2,174 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9F5C63697
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 17:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAC5C388F9
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0B1D2467A
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 17:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ED7622267
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:16:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CH01VTU1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgKSRIS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 12:08:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60372 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729198AbgKSRIS (ORCPT
+        id S1727989AbgKSTPk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 14:15:40 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4203 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbgKSTPk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 12:08:18 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317BBC0613CF
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2020 09:08:18 -0800 (PST)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kfnPk-0003Hr-8W; Thu, 19 Nov 2020 18:08:08 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kfnPg-0005S4-75; Thu, 19 Nov 2020 18:08:04 +0100
-Date:   Thu, 19 Nov 2020 18:08:02 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     alexandre.belloni@bootlin.com, heiko@sntech.de,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-riscv@lists.infradead.org, festevam@gmail.com,
-        f.fainelli@gmail.com, shc_work@mail.ru,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        khilman@baylibre.com, wens@csie.org, jonathanh@nvidia.com,
-        linux-rockchip@lists.infradead.org,
-        ludovic.desroches@microchip.com,
-        bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com,
-        slemieux.tyco@gmail.com, linux-pwm@vger.kernel.org,
-        rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org,
-        vz@mleia.com, linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com,
-        matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, sbranden@broadcom.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.ferre@microchip.com, palmer@dabbelt.com,
-        kernel@pengutronix.de, shawnguo@kernel.org,
-        claudiu.beznea@microchip.com, nsaenzjulienne@suse.de
-Subject: Re: About devm_platform_ioremap_resource [Was: Re: [PATCH 01/32]
- pwm: sun4i: convert to devm_platform_ioremap_resource]
-Message-ID: <20201119170802.bup5foltlhrg5576@pengutronix.de>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
- <20201112161346.gp5nenuagx5wmwl2@pengutronix.de>
- <20201112190649.GA908613@ulmo>
- <20201112211429.kfyqzkmmchjo6pll@pengutronix.de>
- <20201113070343.lhcsbyvi5baxn3lq@pengutronix.de>
- <20201113161153.GB1408970@ulmo>
+        Thu, 19 Nov 2020 14:15:40 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fb6c4600001>; Thu, 19 Nov 2020 11:15:44 -0800
+Received: from [10.26.75.251] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
+ 2020 19:15:34 +0000
+Subject: Re: [PATCH v2 6/6] thermal: tegra: Avoid setting edp_irq when not
+ relevant
+To:     Nicolas Chauvet <kwizart@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20200927150956.34609-1-kwizart@gmail.com>
+ <20200927150956.34609-7-kwizart@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1ddb2245-fde0-644c-e89a-5f94015fc682@nvidia.com>
+Date:   Thu, 19 Nov 2020 19:15:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mpmylxzqzkfzclys"
-Content-Disposition: inline
-In-Reply-To: <20201113161153.GB1408970@ulmo>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20200927150956.34609-7-kwizart@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605813344; bh=P8wOcgzHDHysvM8DY3r9OjnAvldoeo1HaRws/7olnzk=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=CH01VTU1yk62xWDzFhYBAQDNIm3Mvs9desaptzLSFYzvwpr+hZVXezGSoHtgC+CcM
+         +MtAg8In8yk1AQX78dNipQFYuLZB+JN7PlAGJapCVQehuWPIkFmQBRHNT97M6U21/6
+         MLHNkjQClI+FmimiHEwv+HidDUaXenXtBS5cELxnFH+vSY6wuzz1xvC9UOKu/ml+jU
+         j2Wd4PyLPVUGjqu4oJpWwC2nI4lth6Bc7fQjqLIFUmLrnjXi1knd4WN3zjBM2xDLAk
+         od2C+br5Semsr8k4EJR2NLr18UPqEPwxgjNkl1pkwndUTrZQ/kaYY5+EuKnlM6Lpfs
+         7IyBcrkwFoWBw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---mpmylxzqzkfzclys
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On 27/09/2020 16:09, Nicolas Chauvet wrote:
+> According to the binding, the edp_irq is not available on tegra124/132
 
-On Fri, Nov 13, 2020 at 05:11:53PM +0100, Thierry Reding wrote:
-> I think function names are always a compromise between giving you the
-> gist of what the implementation does and being short enough so it
-> doesn't become difficult to read or use.
+It appears that the binding doc is not update to date or missing the
+relevant information. Looking at the Tegra124 TRM I see that there is a
+SOCTHERM EDP IRQ (51) and so maybe the correct fix is to add this.
 
-Right. In my eyes if you have=20
+Cheers
+Jon
 
- - devm_platform_ioremap_resource
- - devm_platform_get_and_ioremap_resource
- - devm_ioremap_resource
- - devm_ioremap
-
-(to list just a few) with the current semantics, the compromise is badly
-shifted into the "short name" direction however; and that was the
-motivation for this patch set. In my eyes it must be more obvious which
-of these functions include devm_request_mem_region() and which don't.
-
-And note, my patch series doesn't introduce new helpers, just renames
-them to have a better name (and adds compat glue for the old names).
-
-> One of the reasons why I dislike the addition of helpers for every
-> common special case (like devm_platform_ioremap_resource()) is because
-> it doesn't (always) actually make things easier for developers and/or
-> maintainers. Replacing three lines of code with one is a minor
-> improvement, even though there may be many callsites and therefore in
-> the sum this being a fairly sizeable reduction. The flip side is that
-> now we've got an extra symbol with an unwieldy name that people need
-> to become familiar with, and then, like the link above shows, it doesn't
-> work in all cases, so you either need to fall back to the open-coded
-> version or you keep adding helpers until you've covered all cases. And
-> then we end up with a bunch of helpers that you actually have to go and
-> read the documentation for in order to find out which one exactly fits
-> your use-case.
-
-This is indeed a relevant point. An alternative is to make the helper
-more flexible. This complicates the API, too, however, so this isn't
-always gold, either.
-=20
-> Without the helpers it's pretty simple to write, even if a little
-> repetitive:
->=20
->   1) get the resource you want to map
->   2) request the resource
->   3) map the resource
->=20
-> 2) & 3) are very commonly done together, so it makes sense to have a
-> generic helper for them. If you look at the implementation, the
-> devm_ioremap_request() implementation does quite a bit of things in
-> addition to just requesting and remapping, and that's the reason why
-> that helper makes sense.
->=20
-> For me personally, devm_platform_ioremap_resource() is just not adding
-> enough value to justify its existence. And then we get all these other
-> variants that operate on the resource name (_byname) and those which
-> remap write-combined (_wc). But don't we also need a _byname_wc()
-> variant for the combination? Where does it stop?
-
-I'm on your side for the _wc stuff, looking at next-20201119:
-
- - devm_ioremap_resource_wc has a single user:
-   devm_platform_ioremap_resource_wc
- - devm_platform_ioremap_resource_wc has a single user:
-   drivers/misc/sram.c
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---mpmylxzqzkfzclys
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+2pm8ACgkQwfwUeK3K
-7Anx6gf/afcuCS6ctL6YtwVi/Z9EkHHcNA1X6g1BHEYgptvB5jElIwju5FwCP1Mr
-dFL0pNAhpH9f0DppbH2oLUVOCNyD1ZfgQGWqGvcrFY+T/cx7wNOTgF7Meq/DMeH4
-Btkjn4WlVzI342o84E+DOy1HLsqFio7btNOVl/UtRWOJXeiebIbTd8ees4f4Y89q
-W9/WHyX7vHoJ3Xr+o2U+sdGrP8yZv+rZ+5LqrHCFhbPQIRXcdf37e2BINTBY5R/d
-ceVKdUCv+pHJAc096R4R4t2vc42sG7OfOJzSDndG4B/duKHoL+v79d8ocfUpaO58
-3CubdcFfVk/uoUX+9qYPjwKoWefCBw==
-=OAoV
------END PGP SIGNATURE-----
-
---mpmylxzqzkfzclys--
+-- 
+nvpublic
