@@ -5,41 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB28C8300C
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62D6C83012
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6E9124654
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71ED624655
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:54:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XEmt4HKJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pJX+bOIX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbgKSIyf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 03:54:35 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6216 "EHLO
+        id S1726891AbgKSIyp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 03:54:45 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6228 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbgKSIye (ORCPT
+        with ESMTP id S1726858AbgKSIyo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 03:54:34 -0500
+        Thu, 19 Nov 2020 03:54:44 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb632cd0000>; Thu, 19 Nov 2020 00:54:37 -0800
+        id <B5fb632d80000>; Thu, 19 Nov 2020 00:54:48 -0800
 Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
- 2020 08:54:31 +0000
+ 2020 08:54:42 +0000
 Received: from jckuo-lt.nvidia.com (10.124.1.5) by mail.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 19 Nov 2020 08:54:29 +0000
+ Transport; Thu, 19 Nov 2020 08:54:40 +0000
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
 CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v5 10/16] dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
-Date:   Thu, 19 Nov 2020 16:53:59 +0800
-Message-ID: <20201119085405.556138-11-jckuo@nvidia.com>
+Subject: [PATCH v5 15/16] usb: host: xhci-tegra: Unlink power domain devices
+Date:   Thu, 19 Nov 2020 16:54:04 +0800
+Message-ID: <20201119085405.556138-16-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201119085405.556138-1-jckuo@nvidia.com>
 References: <20201119085405.556138-1-jckuo@nvidia.com>
@@ -48,51 +47,383 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605776078; bh=/25Z1zzMaL8p7xwbvJ82Qyyi/mNswl6YKDmpc3+Tezc=;
+        t=1605776088; bh=UpO7OPmpegk6q7F1fiwNpai41Pk2mzEBjv0zKz9lN+4=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=XEmt4HKJyGYwQHzbWke2MFGU/SlGsCpn1c2n4OV6AgwYvKNOghGX9Baj4HO78o3sN
-         1pl2sZOAGoIvg15wefbbCCLBwuhhCF4mcoWQxa6gllvub7DVYuS5f/qU8z50M0JsMf
-         3pJdZpeoYvzp9c7VIHgbL7uq+Z6YrZiA/rGu5WiAgGHERCz05FQog5dYejpHvW5cp6
-         UzgBtTf32sGgYz1j0QLa7D2eX5pkl93EiGsuLTL2DpVt9cBXGhX0IJrU5ioICGD6CS
-         RRh12n0u6xp45gQ7u9/W3Iua7T2C+v0l0kSqpTbjK4YpATzijbiJkpnF2kF6FLgSl4
-         Y9VnyxMvlHhCA==
+        b=pJX+bOIXVC8fLi3W9ATpdRcqWSHXX4DVGD6om9/JLRwGTvbzJCq+HXdJAH6OH4oA8
+         Yg8pkuYbrp+q4ZulU9nHZx2ldF26wx4jOTi77pu1ZYN/V9XKvnw2HlyXwAA8yBA2dT
+         Oj+hba1ximW6RVM0r7aBgICRnnyWOpEpfMzym6TRTGrKebsyLL8dz2DKHWrmPAYGnt
+         Q3nRuxZyveZ06pjp4G0prZxkpv4G7/rbgvT7JlxToKDKn1DWjZQJHfuWgI08eUa4oI
+         HvOTCdNRqGgPRP3jrVk5uZPmESFJfuktPxKAeOItl1vozYKvYfoedWDaAcel7d5551
+         Acd+dh/tE7yhw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit describes the "nvidia,pmc" property for Tegra210 tegra-xusb
-PHY driver. It is a phandle and specifier referring to the Tegra210
-pmc@7000e400 node.
+This commit unlinks xhci-tegra platform device with SS/host power
+domain devices. Reasons for this change is - at ELPG entry, PHY
+sleepwalk and wake configuration need to be done before powering
+down SS/host partitions, and PHY need be powered off after powering
+down SS/host partitions. Sequence looks like roughly below:
+
+  tegra_xusb_enter_elpg() -> xhci_suspend()
+                          -> enable PHY sleepwalk and wake if needed
+                          -> power down SS/host partitions
+                          -> power down PHY
+
+If SS/host power domains are linked to xhci-tegra platform device, we
+are not able to perform the sequence like above.
+
+This commit introduces:
+  1. tegra_xusb_unpowergate_partitions() to power up SS and host
+     partitions together. If SS/host power domain devices are
+     available, it invokes pm_runtime_get_sync() to request power
+     driver to power up partitions; If power domain devices are not
+     available, tegra_powergate_sequence_power_up() will be used to
+     power up partitions.
+
+  2. tegra_xusb_powergate_partitions() to power down SS and host
+     partitions together. If SS/host power domain devices are
+     available, it invokes pm_runtime_put_sync() to request power
+     driver to power down partitions; If power domain devices are not
+     available, tegra_powergate_power_off() will be used to power down
+     partitions.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
 v5:
-   replace "pmc@7000e400 node" -> with "PMC node"
+   no change
 v4:
-   new change to document "nvidia,pmc" prop
+   commit message improvement
+   update copyright string
+v3:
+   use 'unsigned int' for PHY index
+   remove unnecessary 'else'
+   drop IRQF_TRIGGER_HIGH when invokes devm_request_threaded_irq()
 
- .../devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt      | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-tegra.c | 206 ++++++++++++++++++----------------
+ 1 file changed, 112 insertions(+), 94 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-pad=
-ctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl=
-.txt
-index 38c5fa21f435..b62397d2bb0c 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-@@ -54,6 +54,7 @@ For Tegra210:
- - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.0=
-5 V.
- - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
- - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V=
-.
-+- nvidia,pmc: phandle and specifier referring to the Tegra210 PMC node.
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 934be1686352..375aaf4d22dc 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -2,7 +2,7 @@
+ /*
+  * NVIDIA Tegra xHCI host controller driver
+  *
+- * Copyright (C) 2014 NVIDIA Corporation
++ * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
+  * Copyright (C) 2014 Google, Inc.
+  */
 =20
- For Tegra186:
- - avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI =
-PHY
+@@ -249,8 +249,7 @@ struct tegra_xusb {
+=20
+ 	struct device *genpd_dev_host;
+ 	struct device *genpd_dev_ss;
+-	struct device_link *genpd_dl_host;
+-	struct device_link *genpd_dl_ss;
++	bool use_genpd;
+=20
+ 	struct phy **phys;
+ 	unsigned int num_phys;
+@@ -814,36 +813,12 @@ static void tegra_xusb_phy_disable(struct tegra_xusb =
+*tegra)
+=20
+ static int tegra_xusb_runtime_suspend(struct device *dev)
+ {
+-	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+-
+-	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+-	tegra_xusb_clk_disable(tegra);
+-
+ 	return 0;
+ }
+=20
+ static int tegra_xusb_runtime_resume(struct device *dev)
+ {
+-	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+-	int err;
+-
+-	err =3D tegra_xusb_clk_enable(tegra);
+-	if (err) {
+-		dev_err(dev, "failed to enable clocks: %d\n", err);
+-		return err;
+-	}
+-
+-	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+-	if (err) {
+-		dev_err(dev, "failed to enable regulators: %d\n", err);
+-		goto disable_clk;
+-	}
+-
+ 	return 0;
+-
+-disable_clk:
+-	tegra_xusb_clk_disable(tegra);
+-	return err;
+ }
+=20
+ #ifdef CONFIG_PM_SLEEP
+@@ -1019,10 +994,9 @@ static int tegra_xusb_load_firmware(struct tegra_xusb=
+ *tegra)
+ static void tegra_xusb_powerdomain_remove(struct device *dev,
+ 					  struct tegra_xusb *tegra)
+ {
+-	if (tegra->genpd_dl_ss)
+-		device_link_del(tegra->genpd_dl_ss);
+-	if (tegra->genpd_dl_host)
+-		device_link_del(tegra->genpd_dl_host);
++	if (!tegra->use_genpd)
++		return;
++
+ 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_ss))
+ 		dev_pm_domain_detach(tegra->genpd_dev_ss, true);
+ 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_host))
+@@ -1048,20 +1022,84 @@ static int tegra_xusb_powerdomain_init(struct devic=
+e *dev,
+ 		return err;
+ 	}
+=20
+-	tegra->genpd_dl_host =3D device_link_add(dev, tegra->genpd_dev_host,
+-					       DL_FLAG_PM_RUNTIME |
+-					       DL_FLAG_STATELESS);
+-	if (!tegra->genpd_dl_host) {
+-		dev_err(dev, "adding host device link failed!\n");
+-		return -ENODEV;
++	tegra->use_genpd =3D true;
++
++	return 0;
++}
++
++static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
++{
++	struct device *dev =3D tegra->dev;
++	int rc;
++
++	if (tegra->use_genpd) {
++		rc =3D pm_runtime_get_sync(tegra->genpd_dev_ss);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB SS partition\n");
++			return rc;
++		}
++
++		rc =3D pm_runtime_get_sync(tegra->genpd_dev_host);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB Host partition\n");
++			pm_runtime_put_sync(tegra->genpd_dev_ss);
++			return rc;
++		}
++	} else {
++		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
++							tegra->ss_clk,
++							tegra->ss_rst);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB SS partition\n");
++			return rc;
++		}
++
++		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
++							tegra->host_clk,
++							tegra->host_rst);
++		if (rc < 0) {
++			dev_err(dev, "failed to enable XUSB Host partition\n");
++			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
++			return rc;
++		}
+ 	}
+=20
+-	tegra->genpd_dl_ss =3D device_link_add(dev, tegra->genpd_dev_ss,
+-					     DL_FLAG_PM_RUNTIME |
+-					     DL_FLAG_STATELESS);
+-	if (!tegra->genpd_dl_ss) {
+-		dev_err(dev, "adding superspeed device link failed!\n");
+-		return -ENODEV;
++	return 0;
++}
++
++static int tegra_xusb_powergate_partitions(struct tegra_xusb *tegra)
++{
++	struct device *dev =3D tegra->dev;
++	int rc;
++
++	if (tegra->use_genpd) {
++		rc =3D pm_runtime_put_sync(tegra->genpd_dev_host);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB Host partition\n");
++			return rc;
++		}
++
++		rc =3D pm_runtime_put_sync(tegra->genpd_dev_ss);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB SS partition\n");
++			pm_runtime_get_sync(tegra->genpd_dev_host);
++			return rc;
++		}
++	} else {
++		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB Host partition\n");
++			return rc;
++		}
++
++		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
++		if (rc < 0) {
++			dev_err(dev, "failed to disable XUSB SS partition\n");
++			tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
++							  tegra->host_clk,
++							  tegra->host_rst);
++			return rc;
++		}
+ 	}
+=20
+ 	return 0;
+@@ -1425,25 +1463,6 @@ static int tegra_xusb_probe(struct platform_device *=
+pdev)
+ 				err);
+ 			goto put_padctl;
+ 		}
+-
+-		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
+-							tegra->ss_clk,
+-							tegra->ss_rst);
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"failed to enable XUSBA domain: %d\n", err);
+-			goto put_padctl;
+-		}
+-
+-		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
+-							tegra->host_clk,
+-							tegra->host_rst);
+-		if (err) {
+-			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-			dev_err(&pdev->dev,
+-				"failed to enable XUSBC domain: %d\n", err);
+-			goto put_padctl;
+-		}
+ 	} else {
+ 		err =3D tegra_xusb_powerdomain_init(&pdev->dev, tegra);
+ 		if (err)
+@@ -1518,10 +1537,22 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 	 */
+ 	platform_set_drvdata(pdev, tegra);
+=20
++	err =3D tegra_xusb_clk_enable(tegra);
++	if (err) {
++		dev_err(tegra->dev, "failed to enable clocks: %d\n", err);
++		goto put_hcd;
++	}
++
++	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
++	if (err) {
++		dev_err(tegra->dev, "failed to enable regulators: %d\n", err);
++		goto disable_clk;
++	}
++
+ 	err =3D tegra_xusb_phy_enable(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
+-		goto put_hcd;
++		goto disable_regulator;
+ 	}
+=20
+ 	/*
+@@ -1540,30 +1571,22 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 		goto disable_phy;
+ 	}
+=20
+-	pm_runtime_enable(&pdev->dev);
+-
+-	if (!pm_runtime_enabled(&pdev->dev))
+-		err =3D tegra_xusb_runtime_resume(&pdev->dev);
+-	else
+-		err =3D pm_runtime_get_sync(&pdev->dev);
+-
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
++	err =3D tegra_xusb_unpowergate_partitions(tegra);
++	if (err)
+ 		goto free_firmware;
+-	}
+=20
+ 	tegra_xusb_config(tegra);
+=20
+ 	err =3D tegra_xusb_load_firmware(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+-		goto put_rpm;
++		goto powergate;
+ 	}
+=20
+ 	err =3D usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto put_rpm;
++		goto powergate;
+ 	}
+=20
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1615,24 +1638,21 @@ static int tegra_xusb_probe(struct platform_device =
+*pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-put_rpm:
+-	if (!pm_runtime_status_suspended(&pdev->dev))
+-		tegra_xusb_runtime_suspend(&pdev->dev);
+-put_hcd:
+-	usb_put_hcd(tegra->hcd);
++powergate:
++	tegra_xusb_powergate_partitions(tegra);
+ free_firmware:
+ 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
+ 			  tegra->fw.phys);
+ disable_phy:
+ 	tegra_xusb_phy_disable(tegra);
+-	pm_runtime_disable(&pdev->dev);
++disable_regulator:
++	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
++disable_clk:
++	tegra_xusb_clk_disable(tegra);
++put_hcd:
++	usb_put_hcd(tegra->hcd);
+ put_powerdomains:
+-	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-	} else {
+-		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+-	}
++	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 	return err;
+@@ -1657,15 +1677,13 @@ static int tegra_xusb_remove(struct platform_device=
+ *pdev)
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+=20
+-	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+-		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+-	} else {
+-		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+-	}
++	tegra_xusb_powergate_partitions(tegra);
+=20
+-	tegra_xusb_phy_disable(tegra);
++	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
+=20
++	tegra_xusb_phy_disable(tegra);
++	tegra_xusb_clk_disable(tegra);
++	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ 	tegra_xusb_padctl_put(tegra->padctl);
+=20
+ 	return 0;
 --=20
 2.25.1
 
