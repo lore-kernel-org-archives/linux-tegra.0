@@ -2,95 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDE0C2D0E4
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 04:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E46C63697
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 05:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191C3246E8
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 04:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15D51246F1
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 05:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+m6UTeo"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Yb5KFb6b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbgKSEpY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Nov 2020 23:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgKSEpY (ORCPT
+        id S1725890AbgKSF2m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 00:28:42 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11052 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbgKSF2m (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Nov 2020 23:45:24 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBC1C0613D4;
-        Wed, 18 Nov 2020 20:45:24 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id q10so3272874pfn.0;
-        Wed, 18 Nov 2020 20:45:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/68HdcONNdfxqmI5NXeK/Rq9pZHHixki1T94CcD+01g=;
-        b=I+m6UTeofulo4NbM+pe+OCPDHvY5PVoyljlaDLItiCEtvcMIx7voSoITiJ4KOXHr19
-         9E4ndoNIrVfNmjyzkFvaVIbgDesdNcszk7aaxTZt1OQKzLUgkCV9kyFHBqr1Jl2+IRuS
-         2WuUe1jZCM8lois0B/NG/9hxnTssX21aftln+ElA8eEe6/Z5vJEZrmebRKa9hIbSq+VZ
-         CMwUoM44uIyckbOplWHponYuxlv2b8CAqGAWwL4Mw7auuIs3AJy2L6HQfM2X88U/cmYy
-         uVcMSLM9HSJ91Dc68SS7siWSZTx2IYCbVGVbCeFBK7jQ+WssLuHtfeStH16N8LxmC3JS
-         R6cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/68HdcONNdfxqmI5NXeK/Rq9pZHHixki1T94CcD+01g=;
-        b=bYjasS78Z0KeXwdKMraYaitMTHeAb91ynykkaSuI780OtYWFFP3hdp7Wafbp1bDYqS
-         ArdhGrBDjMaM7PYvviN7XW68yX/NePLa4d4K5u1lI7oMyzEX5zmeitAh27opPjj5xAE8
-         oRY49FFeoxEuEhCyaj+8+BwphOKv9Vix/KJhEXkGjkBh9Mce9jkZhXUJNpwjG8QgUQ/s
-         Z86fWb6x9Q77FNMil57SVMalZJO7sqEmKHOWYbL3XptAds+WWkjsjfqPlfouoSFgxCTy
-         RUxzidNusZ8uhV9IuDNbZYtRSJLpH+qJbOMFC8fC6Ih4OpPt63pc0ur7cNi6fdOkI+CV
-         DiHw==
-X-Gm-Message-State: AOAM530kgOCGIYtWOtQAqgr0FCtok3dmERnClQHZwOSovIZarYAXmzn8
-        uC1+KCUpNzC0v4Edqdrrey7qy3AV/yZpVg==
-X-Google-Smtp-Source: ABdhPJyy17LiL37vAytwsAgqZW3JtdBC8BRpGixmXQp0VAbXDX9xkvgUfy6ztTCaAJVm0AXTbB7BHg==
-X-Received: by 2002:a17:90b:1218:: with SMTP id gl24mr2377843pjb.131.1605761123713;
-        Wed, 18 Nov 2020 20:45:23 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id r36sm24662974pgb.75.2020.11.18.20.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 20:45:23 -0800 (PST)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: fuse: Fix index bug in get_process_id
-Date:   Wed, 18 Nov 2020 20:44:57 -0800
-Message-Id: <20201119044457.29528-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 19 Nov 2020 00:28:42 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fb602800000>; Wed, 18 Nov 2020 21:28:32 -0800
+Received: from [10.19.109.31] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
+ 2020 05:28:35 +0000
+Subject: Re: [PATCH v4 10/16] dt-bindings: phy: tegra-xusb: Add nvidia,pmc
+ prop
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh@kernel.org>
+CC:     <gregkh@linuxfoundation.org>, <jonathanh@nvidia.com>,
+        <kishon@ti.com>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <nkristam@nvidia.com>
+References: <20201016130726.1378666-1-jckuo@nvidia.com>
+ <20201016130726.1378666-11-jckuo@nvidia.com> <20201019214046.GA3645734@bogus>
+ <20201113162043.GD1408970@ulmo>
+X-Nvconfidentiality: public
+From:   JC Kuo <jckuo@nvidia.com>
+Message-ID: <6e5f8508-3781-a747-acc2-e627f35bf0e8@nvidia.com>
+Date:   Thu, 19 Nov 2020 13:28:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201113162043.GD1408970@ulmo>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605763712; bh=TbSd8j4mjbxV6TDL5wwizNGDRQJcKzqBjWD7XgjSVPc=;
+        h=Subject:To:CC:References:X-Nvconfidentiality:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=Yb5KFb6b9NSX7LVRKYw4Atmfq3fprFwu5Qkau6fLngaF/8lW1vkBliquNLBHDLwrF
+         LsliIIUqMWd+abYAwNSUN5T1FTHMkp6ks5A2EjFmeoJUSexLazEwOEaSbGhSu2QAb3
+         oXKMaOQktc9aeYCtBommyOxvdJaU7Mblf9UgmKpUMUOkv6b6aUGI8zYdAnMGLYMPv6
+         TbCImitP0XRNODoEvhIA0fRZTliFvlcMe10QjLeYn5jiRK0MZqOda0fAx/DDwl4uTa
+         CUS4jGJjmkpZVdgq+6+eOalWFr/etbigfoTfac7QuofUjoEcchiT+YcN1zM1OSnxRI
+         EyzfKyhWBMFJA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch simply fixes a bug of referencing speedos[num] in every
-for-loop iteration in get_process_id function.
+On 11/14/20 12:20 AM, Thierry Reding wrote:
+> On Mon, Oct 19, 2020 at 04:40:46PM -0500, Rob Herring wrote:
+>> On Fri, Oct 16, 2020 at 09:07:20PM +0800, JC Kuo wrote:
+>>> This commit describes the "nvidia,pmc" property for Tegra210 tegra-xusb
+>>> PHY driver. It is a phandle and specifier referring to the Tegra210
+>>> pmc@7000e400 node.
+>>>
+>>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+>>> ---
+>>> v4:
+>>>    new change to document "nvidia,pmc" prop
+>>>
+>>>  .../devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt      | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>>> index 38c5fa21f435..ea559baeb546 100644
+>>> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>>> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+>>> @@ -54,6 +54,7 @@ For Tegra210:
+>>>  - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+>>>  - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+>>>  - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
+>>> +- nvidia,pmc: phandle and specifier referring to the Tegra210 pmc@7000e400 node.
+>>
+>> 'Tegra210 pmc@7000e400' is kind of specific. Going to update this for 
+>> every address and chip?
+>>
+>> If there's only one PMC, you can just find the compatible PMC node. Then 
+>> you don't need a DT update.
+> 
+> I did advise against doing the lookup by compatible string because I
+> think it has a couple of downsides. On one hand it's going to create an
+> additional maintenance burden on the XUSB pad controller driver because
+> the PMC is usually not compatible between SoC versions, so for every new
+> SoC generation we'll have to add the PMC compatible string to the XUSB
+> pad controller driver.
+> 
+> On the other hand, this is new functionality and we can easily gate that
+> on the existence of this phandle, so it doesn't impact DT backwards
+> compatibility. That also has the advantage of explicitly listing the
+> dependency between the PMC and the XUSB pad controller in DT, so if we
+> ever do get around to come up with an even better mechanism to resolve
+> these dependencies than deferred probe, we do have the data already
+> available.
+> 
+> Thierry
+> 
+Hi Thierry,
+Thanks for the ideas. I will stay with the adding "nvidia,pmc" phandle property
+implementation. As for the DT document change, I will modify it with below.
 
-Fixes: 0dc5a0d83675 ("soc/tegra: fuse: Add Tegra210 support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/soc/tegra/fuse/speedo-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+nvidia,pmc: phandle and specifier referring to the Tegra210 PMC node.
 
-diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
-index 7394a8d694cb..695d0b7f9a8a 100644
---- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-+++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-@@ -94,7 +94,7 @@ static int get_process_id(int value, const u32 *speedos, unsigned int num)
- 	unsigned int i;
- 
- 	for (i = 0; i < num; i++)
--		if (value < speedos[num])
-+		if (value < speedos[i])
- 			return i;
- 
- 	return -EINVAL;
--- 
-2.17.1
-
+Thanks,
+JC
