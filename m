@@ -5,122 +5,117 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41232C388F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08595C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA480246D3
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96AB1246CE
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 10:48:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRFdj+Uv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwNq3gNS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbgKSKm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 05:42:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57006 "EHLO
+        id S1726648AbgKSKsL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 05:48:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgKSKm2 (ORCPT
+        with ESMTP id S1726407AbgKSKsL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 05:42:28 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB114C0613CF;
-        Thu, 19 Nov 2020 02:42:27 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id c9so6684999wml.5;
-        Thu, 19 Nov 2020 02:42:27 -0800 (PST)
+        Thu, 19 Nov 2020 05:48:11 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4428EC0613CF;
+        Thu, 19 Nov 2020 02:48:11 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id d142so6709904wmd.4;
+        Thu, 19 Nov 2020 02:48:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/WONwk1Hznyqszgzhf5qjgOB9DvKw5VGORxSmu4+MKA=;
-        b=eRFdj+UvfzGwds5oGwr/4cHpPz6kn8I1nEmfy0qfrEF5n70moLdo5kKaLmCf9W/mNY
-         d+lrEuKio5oxayKqHkbmG7mX8DrFalYExO6rhsHsbDHTEJ0up029sRkYdI8sIjZLi054
-         Jnk38oB+9zrGEazBM2E/UgAqpi+CO8hC0x4BwI3h0Ut7eDdaRcmzi+vxPZBB6tjKebRr
-         8sYx+kB6vg9MT49hmW/sSWO47F0JdB5ixNYgD1b9niNjleRe7SFTpkraKwIZuGerI/8f
-         2K68DNLLTFASnFhojfSpv/numHzINs0LqKHqJBMSMx1zmWfvAB1Z3kanSPoGeavE07Ub
-         IUtA==
+        bh=0oiSOde3ukUdcW4AaR1Bcp0zwTptRMD9+MwlC9b8EXA=;
+        b=dwNq3gNSdLSLMHFiIRSZdeVYmIyCSlCPaJpEMuU0a7cY1zCA+Liivh/uoEFlcHX8U1
+         ao3dLEsceMZ50qmChMah17laga7xiTYDtATAjGnOF83GucLlyErEhJ7YJ/5uF+RTDlyt
+         ZrHLzvJQ46/MZsG7fj9GALoFRUKxvSzfv1eYt2DZcZZooDtl0jUP3JTg6PkxVJLHBvC6
+         NfIthf5XJYcbEAc0ybyfwi1sowODLCexwwStnPZsrrsctCkqXq7xZ9pZMX9GpWzLOcaL
+         pcJnBL4+gmkI76lzUQAdWS5jNsTQqTSDRMqDHRvu+YZhIQO7HEjl/TVl7mH6V0e37fLG
+         aKSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/WONwk1Hznyqszgzhf5qjgOB9DvKw5VGORxSmu4+MKA=;
-        b=VtravYydtvbTyMXt39G+fgH2mUM/ydHtdiNkBGrtgJmJjbuC9Bpx2ymRo4GBFLToBJ
-         5U6jMQtL3oRHdmxt3tlTV7C6EYojU/F0cMjL+ENFzKumF2Zq5zL/sP2uC/pwXhaLcQ4V
-         7SAwkDIDKy9Z14/m6m37oXDyguWjsg/A2Y1Vip/MsgNZtF+0QG85aGjBHgWZK/cA91cC
-         WZ+uK1+nolqb0hKFF8a2dHdrp4Zc8vS7xAYunf2W6cY7wP3jurPYsxiiOE/T2SnRUqBI
-         oICSySX4ryh7tsTetBK6xGRtMBRmM5SXqFLbbVgi9K/ivBMpRntuxyZGxdEAIr9G9pXV
-         j5WA==
-X-Gm-Message-State: AOAM532oCOPOzp54j/jRPdavGkyyX1XORVf+3GY42X/2ylU+sHb7jJre
-        v/WETO3ek0jerOFHl40qPVs=
-X-Google-Smtp-Source: ABdhPJw8+Y9LRkMlJt0Eijs7lVZt7EnNnkOlXMLpkOFCCbQXI03qicotYJCJimOQkZZCGzFJ6Kou9g==
-X-Received: by 2002:a1c:490b:: with SMTP id w11mr3823868wma.101.1605782546625;
-        Thu, 19 Nov 2020 02:42:26 -0800 (PST)
+        bh=0oiSOde3ukUdcW4AaR1Bcp0zwTptRMD9+MwlC9b8EXA=;
+        b=rLEZLUVypPz3zqdA5PnMz+sk5rg4SJpsey6xpY3FCYveH10E9a0AQHRsnsODT5VhYW
+         LxgNjZSucOQCqcKowlbi5pTVxBD2W7qEhXYsLa95Z5Xv3WVzEAfbGTSEwjcRUuhyG9QJ
+         Nk2WN56FUZS42T1fJk209t8++15/BzNTh7fNGx1la4AxaECgPJNDdxAuo9NlKKKGuZPl
+         JxspouzEjR9NhE+vENfYTXkEoVygQ3D25EznN4YgbwjZ55X1raidlO+vJa+l+DVWZjw3
+         TgRCP8xmtvYLhvVhHCiiFX5D+nMp5dmVS7IX4jeGgeBEsj97GjTFcpaEcdiCAPFfm44y
+         6MvA==
+X-Gm-Message-State: AOAM530PLMjvXIVXHe+560qQvcLwb4gn0z2nG21SrhDVWxfKI+Yoo+WZ
+        JFXQxpSVZvgGZl2sv46+ck/s/ndVOfA=
+X-Google-Smtp-Source: ABdhPJy7FA7YOl/ouCKQDzY9pwrfgXBwGzFQSG5LKeKYRw4JElSG96VmFwazErvLl8FPKWgZjOJ7Gg==
+X-Received: by 2002:a1c:4909:: with SMTP id w9mr3811365wma.15.1605782889972;
+        Thu, 19 Nov 2020 02:48:09 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id f13sm33363763wrq.78.2020.11.19.02.42.25
+        by smtp.gmail.com with ESMTPSA id q66sm9561801wme.6.2020.11.19.02.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2020 02:42:25 -0800 (PST)
-Date:   Thu, 19 Nov 2020 11:42:24 +0100
+        Thu, 19 Nov 2020 02:48:08 -0800 (PST)
+Date:   Thu, 19 Nov 2020 11:48:07 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Ashish Singhal <ashishsingha@nvidia.com>
-Subject: Re: [PATCH] arm64: tegra: Fix Tegra234 VDK node names
-Message-ID: <20201119104224.GB3559705@ulmo>
-References: <20201118160458.659517-1-jonathanh@nvidia.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: fuse: Fix index bug in get_process_id
+Message-ID: <20201119104807.GC3559705@ulmo>
+References: <20201119044457.29528-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
 Content-Disposition: inline
-In-Reply-To: <20201118160458.659517-1-jonathanh@nvidia.com>
+In-Reply-To: <20201119044457.29528-1-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---wq9mPyueHGvFACwf
+--oJ71EGRlYNjSvfq7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 18, 2020 at 04:04:58PM +0000, Jon Hunter wrote:
-> When the device-tree board file was added for the Tegra234 VDK simulator
-> it incorrectly used the names 'cbb' and 'sdhci' instead of 'bus' and
-> 'mmc', respectively. The names 'bus' and 'mmc' are required by the
-> device-tree json-schema validation tools. Therefore, fix this by
-> renaming these nodes accordingly.
+On Wed, Nov 18, 2020 at 08:44:57PM -0800, Nicolin Chen wrote:
+> This patch simply fixes a bug of referencing speedos[num] in every
+> for-loop iteration in get_process_id function.
 >=20
-> Fixes: 639448912ba1 ("arm64: tegra: Initial Tegra234 VDK support")
->=20
-> Reported-by: Ashish Singhal <ashishsingha@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Fixes: 0dc5a0d83675 ("soc/tegra: fuse: Add Tegra210 support")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/soc/tegra/fuse/speedo-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Good catch! Applied, thanks.
 
 Thierry
 
---wq9mPyueHGvFACwf
+--oJ71EGRlYNjSvfq7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+2TA8ACgkQ3SOs138+
-s6HnUBAAjjPXSbIhIkf8alADwJrvzITS9Fcq/iQGk4AYdmFkhWVo2LswHLeTCWwo
-HfsQnwExEYaUiB92b4miSnCwAdq6nrTMId44XgaVX0oo9WzwJioMsvCFi896TzH+
-Jm+cYEHz+q2yAdJuYBTUrKp6Gcr03X75/FTNK47k8n3qgHQkAvLs0H4orLuciZQ+
-ITmhCtgrvEG3UO2C9RahEmBk5zIpdGjICIPBOU28AvleI8lyvuvBJDWb1aS/cTZw
-su1452dECW+XW2rCp4m+ronK5rN8HgmKRA8Tygx+xY84ScfTGZL9r2UMx/IZiJMd
-y+V+RY5vota5dRLojDyZUHE0boSk8OBLoCGOZOJFVJ7R63GlH9p15OQ9Jsfki60Q
-NfytqEPBdmefttskD48XGQQUQcjF5qd44+pGHavcBcwSpAk4jXtU2ufUH8HWouqb
-KmC9oHyggpWvruQv/LDkEhywQwryMOEJZTezhBXOOcZB7DO1mTj/JOx93Ig2hqYv
-pOchnWBLO7VD6cjK2c4NydUAJaJx+CzMbdFh4FKkbENGFkWabhXZBANJvKZcC/kd
-TAkRV5Ft4/EcyXP94JDk8T2bzVJxGdYS9VIhfoqzckLqXuHdBlXrpsJPN2gG+lSw
-x9fgHa6BZhv80H+XiOn+bSq2PdHTnXHgPnF7nQz7wHinyuYbpIQ=
-=3jwx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+2TWYACgkQ3SOs138+
+s6Fn0BAAjQeG/dgCzE7gY76KXQXtr9WvpHe6/WxAws8BjmNl1RQqIgs8NMsmmyOE
+0U2bzhyHD7FQQf5BFxAhpgEcwV3G3vk737mbovsO9HPYFgU6DkYtxXAMrLt1HsEX
+7Icc8TtTdmB9p9C3Yucl73FiYohLx/dAsA3ruaE3O679fOopL7l1H3xxcFGUg6GK
+4mDymqorTp+pMIAUT2p+CRONp8d/3bp4SqNo8N5lTC6GyeBvVZSW+ZpIsbhXDuxr
+bfz6h+KtleTymeTzRaaN7GQtqjvt4qxgXV4+ftwZb+HQcPbW8PqwGJDfKspHVAAv
+eFSiGYGXpdXnwbUcNYotek1/hevwJwseSkS7Owu1xhJ8z84ayb8rXPORfYPqsuAp
+1uBB/BLSMKyjoS+9TVYQs6qH37mLSfnGy94bV5lWRgHg9GcmH2SgF1mOrMlpy9Ie
+buZ5jTJgPKGZULzhGgxf9zJMJVzCdERGS8NYP9us0zvq4jxDrqcesYGEPiSve+G3
+sbZtnPUlHRFiIuAbchBNPet7hhQzXoiH1OdLu6wzrDj7nrgNUTbP9lmwMwk8ZlCM
+t3IIk+/8VrW392Z2Mfgwc0lfpX7rPulXsU8vjyQ7uWcr1NDJOuGQsBbM2kyKumHe
+ow2KPCjqbUZztsutQN2Ib0F4swR7hiJQCitvl/K9oIj9l9l6t5I=
+=R6rf
 -----END PGP SIGNATURE-----
 
---wq9mPyueHGvFACwf--
+--oJ71EGRlYNjSvfq7--
