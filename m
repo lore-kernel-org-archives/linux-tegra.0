@@ -2,124 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E289C6379D
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBB8C6379D
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 09:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2DD6246B8
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 08:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0AA246B8
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 09:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qFv3+3um"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LCPMoJEa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbgKSIyw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 03:54:52 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16354 "EHLO
+        id S1726457AbgKSJKZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 04:10:25 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18082 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbgKSIyl (ORCPT
+        with ESMTP id S1726433AbgKSJKY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 03:54:41 -0500
+        Thu, 19 Nov 2020 04:10:24 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb632c70001>; Thu, 19 Nov 2020 00:54:31 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
- 2020 08:54:40 +0000
-Received: from jckuo-lt.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 19 Nov 2020 08:54:38 +0000
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v5 14/16] arm64: tegra210/tegra186/tegra194: XUSB PADCTL irq
-Date:   Thu, 19 Nov 2020 16:54:03 +0800
-Message-ID: <20201119085405.556138-15-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201119085405.556138-1-jckuo@nvidia.com>
-References: <20201119085405.556138-1-jckuo@nvidia.com>
+        id <B5fb636760002>; Thu, 19 Nov 2020 01:10:14 -0800
+Received: from [10.25.102.126] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
+ 2020 09:10:20 +0000
+Subject: Re: [PATCH v5 1/6] ASoC: dt-bindings: tegra: Add graph bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     <broonie@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <kuninori.morimoto.gx@renesas.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>
+References: <1605119676-32273-1-git-send-email-spujar@nvidia.com>
+ <1605119676-32273-2-git-send-email-spujar@nvidia.com>
+ <20201112143855.GA3553055@bogus>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <bfac9d56-7cb5-6c75-6f1b-48f8ab43fa1c@nvidia.com>
+Date:   Thu, 19 Nov 2020 14:40:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
+In-Reply-To: <20201112143855.GA3553055@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605776071; bh=p3G5cNbZuLAIZnD4SsYSRHa4gkTHlp53w4tnFKRGbvQ=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=qFv3+3um4dSijIXZn+vQ558rKJX5sOLYOey1ox1rQQZVl3MSii0QVKgR2IqnlWSO8
-         Dc9Kl9Y3MKeyQPQ1xo/F333Fgyisau4FC921a9kkbqfNd+KP88WbRrzjFwYdF+wC6Y
-         koUzPIjVkNJ/D1gYvnOzz16WZ9BC1dxn5LTqpWptOQqLxaVFlT2nhFLR+6uwoRrYVk
-         V5N04H3fRG0IqoESqbDxaD2kAEEXwg66K6bj6gYGCTNVjM+xotbsiGnUXStISTDizX
-         WOlW79IN0xaccmOprhvUuzWzJ0SQXLLSC/JBiz/j3G7jCbrRsnAJ1asKbiaoosFlRO
-         EnV630uvlq43g==
+        t=1605777014; bh=utlwG7nu71X3qIUCNZ88e7I6oHNRaiQbemkseQHnGtM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=LCPMoJEay/B07UbKTKJ7s0fDXmJl0skB1I4MjEijOeUVHpdnQXbgAi4stdGZJG2zR
+         uMG8K5NwzXuBeIoZx6nMmfbp5vbNhsQuqxG7nLh04LLJFOb6e3yyDBVfZgXjrIjCu0
+         Iq66N5LIyX4aFoj1GyvG65kMYL5wFiaBkWezf+c0+WK+X3cDralim8KETTze1X0//+
+         yc1M1U9hxk8J3AeKj+/lmXp5pjIFKWy5Xq1cZeM1XREtZtRgjzXWW25VFQDhCPmzX1
+         A3TqPg/kc0iGNGR1fjs5BefmJiXBnhmaWj0KxM6MWAUb98KvgVvZPdC7PKbmSzChU6
+         bd9svJgRQNtQA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit adds "interrupts" property to Tegra210/Tegra186/Tegra194
-XUSB PADCTL node. XUSB PADCTL interrupt will be raised when USB wake
-event happens. This is required for supporting XUSB host controller
-ELPG.
+Hi Rob,
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
-v5:
-   no change
-v4:
-   no change
-v3:
-   no change
+>> Add device tree binding properties of generic graph to ASoC component
+>> devices. This allows to define audio ports out of these components or
+>> DAIs and audio graph based sound card can be realised with this.
+> This is all dependent on graph.yaml being applied which hasn't happened
+> yet. I guess I'll need to provide a branch as there's multiple
+> subsystems needing it.
+>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> ---
+>>   .../devicetree/bindings/sound/nvidia,tegra186-dspk.yaml     |  6 ++++++
+>>   .../devicetree/bindings/sound/nvidia,tegra210-admaif.yaml   |  6 ++++++
+>>   .../devicetree/bindings/sound/nvidia,tegra210-ahub.yaml     | 13 +++++++++++--
+>>   .../devicetree/bindings/sound/nvidia,tegra210-dmic.yaml     |  6 ++++++
+>>   .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml      |  6 ++++++
+>>   5 files changed, 35 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+>> index ed2fb32..3c9364d 100644
+>> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+>> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+>> @@ -55,6 +55,12 @@ properties:
+>>         The name can be "DSPK1" or "DSPKx", where x depends on the maximum
+>>         available instances on a Tegra SoC.
 
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 3 files changed, 3 insertions(+)
+>>
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+> If you have 'ports', then that means you have multiple ports and you
+> have to enumerate what each port is.
+>
+>> +
+>> +  port:
+>> +    $ref: /schemas/sound/audio-graph.yaml#/properties/port
+> If you only have 1 port then, you can use 'port'.
+>
+>
+> So listing both is an error.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra186.dtsi
-index 98544d16d01b..53ab8e5487e0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -685,6 +685,7 @@ padctl: padctl@3520000 {
- 		reg =3D <0x0 0x03520000 0x0 0x1000>,
- 		      <0x0 0x03540000 0x0 0x1000>;
- 		reg-names =3D "padctl", "ao";
-+		interrupts =3D <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 		resets =3D <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
- 		reset-names =3D "padctl";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra194.dtsi
-index 6946fb210e48..c84d1f040111 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -801,6 +801,7 @@ xusb_padctl: padctl@3520000 {
- 			reg =3D <0x03520000 0x1000>,
- 			      <0x03540000 0x1000>;
- 			reg-names =3D "padctl", "ao";
-+			interrupts =3D <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 			resets =3D <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
- 			reset-names =3D "padctl";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts=
-/nvidia/tegra210.dtsi
-index 88e778655e99..b4537671a6ca 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1043,6 +1043,7 @@ padctl: padctl@7009f000 {
- 		resets =3D <&tegra_car 142>;
- 		reset-names =3D "padctl";
- 		nvidia,pmc =3D  <&tegra_pmc>;
-+		interrupts =3D <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-=20
- 		status =3D "disabled";
-=20
---=20
-2.25.1
+Since "ASoC: graph card schema rework" series is merged now, referencing 
+"audio-graph-port.yaml" should be sufficient here?
 
+...
