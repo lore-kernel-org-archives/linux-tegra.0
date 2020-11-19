@@ -2,80 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAC5C388F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2593C388F9
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED7622267
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8C22145D
+	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 19:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CH01VTU1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vn4OOjo2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgKSTPk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 14:15:40 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4203 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbgKSTPk (ORCPT
+        id S1727429AbgKSTxE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 19 Nov 2020 14:53:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727289AbgKSTxD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 14:15:40 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb6c4600001>; Thu, 19 Nov 2020 11:15:44 -0800
-Received: from [10.26.75.251] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Nov
- 2020 19:15:34 +0000
-Subject: Re: [PATCH v2 6/6] thermal: tegra: Avoid setting edp_irq when not
- relevant
-To:     Nicolas Chauvet <kwizart@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20200927150956.34609-1-kwizart@gmail.com>
- <20200927150956.34609-7-kwizart@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1ddb2245-fde0-644c-e89a-5f94015fc682@nvidia.com>
-Date:   Thu, 19 Nov 2020 19:15:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 19 Nov 2020 14:53:03 -0500
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CB3C0613CF;
+        Thu, 19 Nov 2020 11:53:02 -0800 (PST)
+Received: by mail-qt1-x842.google.com with SMTP id u22so1684755qtw.4;
+        Thu, 19 Nov 2020 11:53:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7S/5MWDMjdajarfdTqOLA2n8yq2i+b3zMxZHmMoo6Rs=;
+        b=Vn4OOjo2ycsAqPRthUzLIMNPySfRsUiUG8Ff3APPVrpbtUTfXBoMsMMaCLio3YkWO4
+         Lxr9NmGbodiRW+mz21tkbswW/qr1Ng2+3CM+Kl6Eegb82iUgoB/zfO1jzcvZNI///oF/
+         FI1Sc4H0CML0kP7bRd0q9VFiMwuiB4k3KY4pcj/YZ/63JBGBPBbY8G+04TLEVu29UdDB
+         +LPIZtrkmw+//AWUzE63egh2rPnn0s7bPqCdZ2u36XuUU67lVPa1ZnPkvnO2XpJFPirV
+         FBFLgrwCcq6KcJDh5Ch6zcrQEM1OAFc8+huLrsCXy4oLWRtkO0HX8KSDHR4d9tMfRhTy
+         rP3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7S/5MWDMjdajarfdTqOLA2n8yq2i+b3zMxZHmMoo6Rs=;
+        b=lw7a9svB1ceSnZ/JbcjOwyUMZs6Mq4ofreTLt59LiFwi4fcHC6t7jpcCCaO6gCqcaL
+         jr3w/7tNT1bQeHTwjxWbF81QUcJF6J4NKb+XwAhgOGgyJDG9W4mZJWBv3vdpdpPMYFSX
+         69C2oAgm4VDGj7heRheQf9FMiBMaYKySxaorrfd8mog+id05fPfMw8J4XBhoC8SqRvgh
+         iuLaRaAmy0JCd+gkmFuFwtY7rtuqJkqSxdJki0Fm9QGeU9LITDVggOauy4CdeMmCUjAE
+         cXoL1xatKH25ZwcS2Iqew842Eon4eNnXABX/3oqlS+YPLtjM6O0OMoYHwWWKZayos7Ik
+         LHqw==
+X-Gm-Message-State: AOAM533YugPF9vi51dyfMRGx8JXuc7T9ClFH7dUqmWvdZ1xZwDV6i1RA
+        bZdUlbZj8RXe/hPfvUc25Do=
+X-Google-Smtp-Source: ABdhPJzJlw02fSuUlPACTULyiASbsbyRFTNoZ09SU20Km5FiDjnoIpSNh24UAi417JrqZEN1Xqbfwg==
+X-Received: by 2002:ac8:6d03:: with SMTP id o3mr12953600qtt.305.1605815581413;
+        Thu, 19 Nov 2020 11:53:01 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:45f1:1d00::1])
+        by smtp.gmail.com with ESMTPSA id h26sm566543qkh.127.2020.11.19.11.53.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2020 11:53:00 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] memory: tegra30-emc: Remove unnecessary of_node_put in tegra_emc_probe
+Date:   Thu, 19 Nov 2020 12:52:44 -0700
+Message-Id: <20201119195244.1517236-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <20200927150956.34609-7-kwizart@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605813344; bh=P8wOcgzHDHysvM8DY3r9OjnAvldoeo1HaRws/7olnzk=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=CH01VTU1yk62xWDzFhYBAQDNIm3Mvs9desaptzLSFYzvwpr+hZVXezGSoHtgC+CcM
-         +MtAg8In8yk1AQX78dNipQFYuLZB+JN7PlAGJapCVQehuWPIkFmQBRHNT97M6U21/6
-         MLHNkjQClI+FmimiHEwv+HidDUaXenXtBS5cELxnFH+vSY6wuzz1xvC9UOKu/ml+jU
-         j2Wd4PyLPVUGjqu4oJpWwC2nI4lth6Bc7fQjqLIFUmLrnjXi1knd4WN3zjBM2xDLAk
-         od2C+br5Semsr8k4EJR2NLr18UPqEPwxgjNkl1pkwndUTrZQ/kaYY5+EuKnlM6Lpfs
-         7IyBcrkwFoWBw==
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Clang warns:
 
+drivers/memory/tegra/tegra30-emc.c:1275:15: warning: variable 'np' is
+uninitialized when used here [-Wuninitialized]
+                of_node_put(np);
+                            ^~
+drivers/memory/tegra/tegra30-emc.c:1269:24: note: initialize the
+variable 'np' to silence this warning
+        struct device_node *np;
+                              ^
+                               = NULL
+1 warning generated.
 
-On 27/09/2020 16:09, Nicolas Chauvet wrote:
-> According to the binding, the edp_irq is not available on tegra124/132
+There does not need to be an of_node_put call in this error handling
+block after the shuffling of the np assignment. Remove it so there is
+no use of uninitialized memory.
 
-It appears that the binding doc is not update to date or missing the
-relevant information. Looking at the Tegra124 TRM I see that there is a
-SOCTHERM EDP IRQ (51) and so maybe the correct fix is to add this.
+Fixes: 5e00fd90183a ("memory: tegra30-emc: Continue probing if timings are missing in device-tree")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1203
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/memory/tegra/tegra30-emc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Cheers
-Jon
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 3488786da03b..93f9002d32ad 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1271,10 +1271,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	int err;
+ 
+ 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+-	if (!emc) {
+-		of_node_put(np);
++	if (!emc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	emc->mc = devm_tegra_memory_controller_get(&pdev->dev);
+ 	if (IS_ERR(emc->mc))
 
+base-commit: 5e00fd90183ab0103b9f403ce73cb8407ebeb145
 -- 
-nvpublic
+2.29.2
+
