@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FADFC8300A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1F6C71155
 	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 100C222253
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E6722244
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="LdKV/Ihp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="iUlngNRc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgKTL04 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1728423AbgKTL04 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 20 Nov 2020 06:26:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbgKTL0z (ORCPT
+        with ESMTP id S1726614AbgKTL0z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 20 Nov 2020 06:26:55 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B434AC0617A7
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCCBC0613CF
         for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -31,26 +31,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=9yWqsBDCvMRE4PY96lV7QIe+iiGLPtjl2UbVb1hYLKU=; b=LdKV/IhpIZpd8iN47kZQX0e7uj
-        xFtlBBEVjAl2u0QEKMZEEx+JeWONCu1slXDhwDDzi1QaLD/XgI2KDFoaXSG7HLXDnhoR4XYz4tPRl
-        4gXXRgOFp08Xvb8tjx5nxKahAvPPNIlcT/3nefFWQFqgXalAkyyEqsKIaxwbu4wRfE/HkHNBDo4wP
-        VIWglX4og0HND1pB2NQ7NoTe715YTlQyQLeEg1OnHkfur1Ajb/9+ExMjR/8sAllgzlLM/A2V4kicK
-        bkTtDVNXID8nU+HK0uvt6eMP14i9HmsP4e06yf7lx76si8MOMTPSTlnDcaSP7rhiNCU3TB74cxi1d
-        UsI5exCw==;
+        bh=U0U501AraComKjFEK+F6SB8fwI7prlj4y6pDTeKJfUQ=; b=iUlngNRca4sUL7xUVYHef3OroY
+        fuW1FOOtL6Ycs0CWKoA+l0gbgMEAZ4g1pYKiroghQVrOcAy6QUCxXsofe42HXDHZhM+K/D3CWKBg9
+        DsIma/tN9vbt6dOEH/bMo+kyFYVoxrbRzE/4BEKRnSt971uTIO2ni/DrdHofb3da2XY+T11A2DNRC
+        UpRPeDnZagC+0XXyTqlyewv2IQG3iwrlMzzrkU8dYWaOvjWmv7+2WQrHH9E0TBJaX7XyxsMiL1/kI
+        7XhCy/IK/7BjuUTxcCRiRKfZoCdtodZl3CS9rYN9HTfv1rMppO0Vy8Yt/XWl/yKyQC+DchRuUEtYB
+        3fcHRUWg==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kg4Yr-0003lG-4J; Fri, 20 Nov 2020 13:26:41 +0200
+        id 1kg4Yr-0003lG-Nc; Fri, 20 Nov 2020 13:26:41 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 10/21] gpu: host1x: Add no-recovery mode
-Date:   Fri, 20 Nov 2020 13:25:49 +0200
-Message-Id: <20201120112600.935082-11-mperttunen@nvidia.com>
+Subject: [PATCH v4 16/21] drm/tegra: Boot VIC during runtime PM resume
+Date:   Fri, 20 Nov 2020 13:25:55 +0200
+Message-Id: <20201120112600.935082-17-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201120112600.935082-1-mperttunen@nvidia.com>
 References: <20201120112600.935082-1-mperttunen@nvidia.com>
@@ -63,250 +63,199 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a new property for jobs to enable or disable recovery i.e.
-CPU increments of syncpoints to max value on job timeout. This
-allows for a more solid model for hanged jobs, where userspace
-doesn't need to guess if a syncpoint increment happened because
-the job completed, or because job timeout was triggered.
-
-On job timeout, we stop the channel, NOP all future jobs on the
-channel using the same syncpoint, mark the syncpoint as locked
-and resume the channel from the next job, if any.
-
-The future jobs are NOPed, since because we don't do the CPU
-increments, the value of the syncpoint is no longer synchronized,
-and any waiters would become confused if a future job incremented
-the syncpoint. The syncpoint is marked locked to ensure that any
-future jobs cannot increment the syncpoint either, until the
-application has recognized the situation and reallocated the
-syncpoint.
+With the new UAPI implementation, engines are powered on and off
+when there are active jobs, and the core code handles channel
+allocation. To accommodate that, boot the engine as part of
+runtime PM instead of using the open_channel callback, which is
+not used by the new submit path.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
 v3:
-* Move 'locked' check inside CDMA lock to prevent race
-* Add clarifying comment to NOP-patching code
+* runtime_get/put is now done directly from submit path, so no
+  callbacks are added
+* Reworded.
 ---
- drivers/gpu/drm/tegra/drm.c        |  1 +
- drivers/gpu/host1x/cdma.c          | 58 ++++++++++++++++++++++++++----
- drivers/gpu/host1x/hw/channel_hw.c |  2 +-
- drivers/gpu/host1x/job.c           |  4 +++
- drivers/gpu/host1x/syncpt.c        |  2 ++
- drivers/gpu/host1x/syncpt.h        | 12 +++++++
- include/linux/host1x.h             |  9 +++++
- 7 files changed, 81 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/tegra/vic.c | 114 +++++++++++++++++-------------------
+ 1 file changed, 53 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ceea9db341f0..7437c67924aa 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -197,6 +197,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
- 	job->client = client;
- 	job->class = client->class;
- 	job->serialize = true;
-+	job->syncpt_recovery = true;
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index cb476da59adc..5d2ad125dca3 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -29,7 +29,6 @@ struct vic_config {
  
- 	/*
- 	 * Track referenced BOs so that they can be unreferenced after the
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 6e6ca774f68d..bd151c3a2a5f 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -312,10 +312,6 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 	bool signal = false;
- 	struct host1x_job *job, *n;
+ struct vic {
+ 	struct falcon falcon;
+-	bool booted;
  
--	/* If CDMA is stopped, queue is cleared and we can return */
--	if (!cdma->running)
--		return;
+ 	void __iomem *regs;
+ 	struct tegra_drm_client client;
+@@ -52,48 +51,6 @@ static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
+ 	writel(value, vic->regs + offset);
+ }
+ 
+-static int vic_runtime_resume(struct device *dev)
+-{
+-	struct vic *vic = dev_get_drvdata(dev);
+-	int err;
 -
- 	/*
- 	 * Walk the sync queue, reading the sync point registers as necessary,
- 	 * to consume as many sync queue entries as possible without blocking
-@@ -324,7 +320,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 		struct host1x_syncpt *sp = job->syncpt;
+-	err = clk_prepare_enable(vic->clk);
+-	if (err < 0)
+-		return err;
+-
+-	usleep_range(10, 20);
+-
+-	err = reset_control_deassert(vic->rst);
+-	if (err < 0)
+-		goto disable;
+-
+-	usleep_range(10, 20);
+-
+-	return 0;
+-
+-disable:
+-	clk_disable_unprepare(vic->clk);
+-	return err;
+-}
+-
+-static int vic_runtime_suspend(struct device *dev)
+-{
+-	struct vic *vic = dev_get_drvdata(dev);
+-	int err;
+-
+-	err = reset_control_assert(vic->rst);
+-	if (err < 0)
+-		return err;
+-
+-	usleep_range(2000, 4000);
+-
+-	clk_disable_unprepare(vic->clk);
+-
+-	vic->booted = false;
+-
+-	return 0;
+-}
+-
+ static int vic_boot(struct vic *vic)
+ {
+ #ifdef CONFIG_IOMMU_API
+@@ -103,9 +60,6 @@ static int vic_boot(struct vic *vic)
+ 	void *hdr;
+ 	int err = 0;
  
- 		/* Check whether this syncpt has completed, and bail if not */
--		if (!host1x_syncpt_is_expired(sp, job->syncpt_end)) {
-+		if (!host1x_syncpt_is_expired(sp, job->syncpt_end) &&
-+		    !job->cancelled) {
- 			/* Start timer on next pending syncpt */
- 			if (job->timeout)
- 				cdma_start_timer_locked(cdma, job);
-@@ -413,8 +410,11 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 	else
- 		restart_addr = cdma->last_pos;
- 
-+	if (!job)
-+		goto resume;
-+
- 	/* do CPU increments for the remaining syncpts */
--	if (job) {
-+	if (job->syncpt_recovery) {
- 		dev_dbg(dev, "%s: perform CPU incr on pending buffers\n",
- 			__func__);
- 
-@@ -433,8 +433,44 @@ void host1x_cdma_update_sync_queue(struct host1x_cdma *cdma,
- 
- 		dev_dbg(dev, "%s: finished sync_queue modification\n",
- 			__func__);
-+	} else {
-+		struct host1x_job *failed_job = job;
-+
-+		host1x_job_dump(dev, job);
-+
-+		host1x_syncpt_set_locked(job->syncpt);
-+		failed_job->cancelled = true;
-+
-+		list_for_each_entry_continue(job, &cdma->sync_queue, list) {
-+			unsigned int i;
-+
-+			if (job->syncpt != failed_job->syncpt)
-+				continue;
-+
-+			for (i = 0; i < job->num_slots; i++) {
-+				unsigned int slot = (job->first_get/8 + i) %
-+						    HOST1X_PUSHBUFFER_SLOTS;
-+				u32 *mapped = cdma->push_buffer.mapped;
-+
-+				/*
-+				 * Overwrite opcodes with 0 word writes to
-+				 * to offset 0xbad. This does nothing but
-+				 * has a easily detected signature in debug
-+				 * traces.
-+				 */
-+				mapped[2*slot+0] = 0x1bad0000;
-+				mapped[2*slot+1] = 0x1bad0000;
-+			}
-+
-+			job->cancelled = true;
-+		}
-+
-+		wmb();
-+
-+		update_cdma_locked(cdma);
+-	if (vic->booted)
+-		return 0;
+-
+ #ifdef CONFIG_IOMMU_API
+ 	if (vic->config->supports_sid && spec) {
+ 		u32 value;
+@@ -153,8 +107,6 @@ static int vic_boot(struct vic *vic)
+ 		return err;
  	}
  
-+resume:
- 	/* roll back DMAGET and start up channel again */
- 	host1x_hw_cdma_resume(host1x, cdma, restart_addr);
- }
-@@ -490,6 +526,16 @@ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job)
- 
- 	mutex_lock(&cdma->lock);
- 
-+	/*
-+	 * Check if syncpoint was locked due to previous job timeout.
-+	 * This needs to be done within the cdma lock to avoid a race
-+	 * with the timeout handler.
-+	 */
-+	if (job->syncpt->locked) {
-+		mutex_unlock(&cdma->lock);
-+		return -EPERM;
-+	}
-+
- 	if (job->timeout) {
- 		/* init state on first submit with timeout value */
- 		if (!cdma->timeout.initialized) {
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index d4c28faf27d1..bf21512e5078 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -191,7 +191,7 @@ static int channel_submit(struct host1x_job *job)
- 	/* schedule a submit complete interrupt */
- 	err = host1x_intr_add_action(host, sp, syncval,
- 				     HOST1X_INTR_ACTION_SUBMIT_COMPLETE, ch,
--				     completed_waiter, NULL);
-+				     completed_waiter, &job->waiter);
- 	completed_waiter = NULL;
- 	WARN(err, "Failed to set submit complete interrupt");
- 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index d8345d3bf0b3..e4f16fc899b0 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -79,6 +79,10 @@ static void job_free(struct kref *ref)
- {
- 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
- 
-+	if (job->waiter)
-+		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
-+				    job->waiter);
-+
- 	if (job->syncpt)
- 		host1x_syncpt_put(job->syncpt);
- 
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index c7b910e413d8..8d658e5f7db2 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -385,6 +385,8 @@ static void syncpt_release(struct kref *ref)
- {
- 	struct host1x_syncpt *sp = container_of(ref, struct host1x_syncpt, ref);
- 
-+	sp->locked = false;
-+
- 	mutex_lock(&sp->host->syncpt_mutex);
- 
- 	host1x_syncpt_base_free(sp->base);
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index a6766f8d55ee..93e894677d89 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -40,6 +40,13 @@ struct host1x_syncpt {
- 
- 	/* interrupt data */
- 	struct host1x_syncpt_intr intr;
-+
-+	/* 
-+	 * If a submission incrementing this syncpoint fails, lock it so that
-+	 * further submission cannot be made until application has handled the
-+	 * failure.
-+	 */
-+	bool locked;
- };
- 
- /* Initialize sync point array  */
-@@ -115,4 +122,9 @@ static inline int host1x_syncpt_is_valid(struct host1x_syncpt *sp)
- 	return sp->id < host1x_syncpt_nb_pts(sp->host);
+-	vic->booted = true;
+-
+ 	return 0;
  }
  
-+static inline void host1x_syncpt_set_locked(struct host1x_syncpt *sp)
-+{
-+	sp->locked = true;
+@@ -308,35 +260,76 @@ static int vic_load_firmware(struct vic *vic)
+ 	return err;
+ }
+ 
+-static int vic_open_channel(struct tegra_drm_client *client,
+-			    struct tegra_drm_context *context)
++
++static int vic_runtime_resume(struct device *dev)
+ {
+-	struct vic *vic = to_vic(client);
++	struct vic *vic = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = pm_runtime_get_sync(vic->dev);
++	err = clk_prepare_enable(vic->clk);
+ 	if (err < 0)
+ 		return err;
+ 
++	usleep_range(10, 20);
++
++	err = reset_control_deassert(vic->rst);
++	if (err < 0)
++		goto disable;
++
++	usleep_range(10, 20);
++
+ 	err = vic_load_firmware(vic);
+ 	if (err < 0)
+-		goto rpm_put;
++		goto assert;
+ 
+ 	err = vic_boot(vic);
+ 	if (err < 0)
+-		goto rpm_put;
++		goto assert;
++
++	return 0;
++
++assert:
++	reset_control_assert(vic->rst);
++disable:
++	clk_disable_unprepare(vic->clk);
++	return err;
 +}
 +
- #endif
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index bcfb1cc9a1c1..fb62cc8b77dd 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -233,9 +233,15 @@ struct host1x_job {
- 	u32 syncpt_incrs;
- 	u32 syncpt_end;
- 
-+	/* Completion waiter ref */
-+	void *waiter;
++static int vic_runtime_suspend(struct device *dev)
++{
++	struct vic *vic = dev_get_drvdata(dev);
++	int err;
 +
- 	/* Maximum time to wait for this job */
- 	unsigned int timeout;
- 
-+	/* Job has timed out and should be released */
-+	bool cancelled;
++	err = reset_control_assert(vic->rst);
++	if (err < 0)
++		return err;
 +
- 	/* Index and number of slots used in the push buffer */
- 	unsigned int first_get;
- 	unsigned int num_slots;
-@@ -256,6 +262,9 @@ struct host1x_job {
- 
- 	/* Add a channel wait for previous ops to complete */
- 	bool serialize;
++	usleep_range(2000, 4000);
 +
-+	/* Fast-forward syncpoint increments on job timeout */
-+	bool syncpt_recovery;
- };
++	clk_disable_unprepare(vic->clk);
++
++	return 0;
++}
++
++static int vic_open_channel(struct tegra_drm_client *client,
++			    struct tegra_drm_context *context)
++{
++	struct vic *vic = to_vic(client);
++	int err;
++
++	err = pm_runtime_get_sync(vic->dev);
++	if (err < 0) {
++		pm_runtime_put(vic->dev);
++		return err;
++	}
  
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 	context->channel = host1x_channel_get(vic->channel);
+ 	if (!context->channel) {
+-		err = -ENOMEM;
+-		goto rpm_put;
++		pm_runtime_put(vic->dev);
++		return -ENOMEM;
+ 	}
+ 
+ 	return 0;
+-
+-rpm_put:
+-	pm_runtime_put(vic->dev);
+-	return err;
+ }
+ 
+ static void vic_close_channel(struct tegra_drm_context *context)
+@@ -344,7 +337,6 @@ static void vic_close_channel(struct tegra_drm_context *context)
+ 	struct vic *vic = to_vic(context->client);
+ 
+ 	host1x_channel_put(context->channel);
+-
+ 	pm_runtime_put(vic->dev);
+ }
+ 
 -- 
 2.29.2
 
