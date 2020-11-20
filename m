@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AC1C64EBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC79C64E8A
 	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8700D22253
+	by mail.kernel.org (Postfix) with ESMTP id 0AB1022253
 	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="vNwZd/7M"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="qvxCy82g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbgKTL0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1728305AbgKTL0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 20 Nov 2020 06:26:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60306 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbgKTL0x (ORCPT
+        with ESMTP id S1728366AbgKTL0x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 20 Nov 2020 06:26:53 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94993C061A49
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9354BC061A48
         for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -31,26 +31,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=ukr5r2fpELqLoPeBw3sd2dPB5EEwH2lsgAcbX2vBL6c=; b=vNwZd/7M6+3TQA2M/FByyI7PX3
-        ocLe3Jka1a444bTtv9GxuLNlcEjcH3pc9L0Wozh/wFy5mf+98KPoIOtJ6cM+WpFx0AH+N96yqbQrA
-        xotKlSTAMPYmRlGNcXHYP47EDFCrp5129bZrioIGpPN+F5hyMwSFunUEhL7eR5KRUPaRnLXwhQDtT
-        4eAn4pX8p+CtTMTbPH17+Z4otoHPwfYEDD+zoFRtf98Gj0QUkNNl3m+K8rPrwgoS9AWd82auTjWGu
-        U3Gzd/4DV/ZBMf12x8+d3iImE5Vc2uVxmjs8ZNo578+QsY7i764ulwV5/lV1H4vfAbz8B+HUjoLmk
-        L26bCzwg==;
+        bh=cokdvMihJkuDSU0p90rUvSOE2j6zLc/cBaWABNbhCE0=; b=qvxCy82gnswtnz6ihBhFW9ncRG
+        ZFe0YfTy4nFyfrzPmKPppzJee71SNZMFuNuYH4dkBx6IOWH4W0Px1egxaEUdMGl+JfFrw3HUflL+u
+        SUDD6bk/wBCTEr4rRRoR1Aj2j2nmZ5BxZh7piuCMMXAxUyEOmpaI+GFnuW7To0YGCxb0k0CxVAZTk
+        Ov8xpd2bbAkIDM+ZXPfVHjLg1JXztRPlBIVyI5yNw3Ip3wvAJXMPDeKp+Wd6Wi8xn+wsMk1ii6mkH
+        4IIrSe9Cpk4GsYh5uNnRFfKm8lQXNaLMlaWeIrgmslOggXQo4SjIen5MrjwTVNL/mX+JrbWm5cJZF
+        wZqWFqcw==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kg4Yr-0003lG-US; Fri, 20 Nov 2020 13:26:42 +0200
+        id 1kg4Yr-0003lG-12; Fri, 20 Nov 2020 13:26:41 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 19/21] drm/tegra: Implement new UAPI
-Date:   Fri, 20 Nov 2020 13:25:58 +0200
-Message-Id: <20201120112600.935082-20-mperttunen@nvidia.com>
+Subject: [PATCH v4 09/21] gpu: host1x: DMA fences and userspace fence creation
+Date:   Fri, 20 Nov 2020 13:25:48 +0200
+Message-Id: <20201120112600.935082-10-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201120112600.935082-1-mperttunen@nvidia.com>
 References: <20201120112600.935082-1-mperttunen@nvidia.com>
@@ -63,557 +63,472 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the non-submission parts of the new UAPI, including
-channel management and memory mapping. The UAPI is under the
-CONFIG_DRM_TEGRA_STAGING config flag for now.
+Add an implementation of dma_fences based on syncpoints. Syncpoint
+interrupts are used to signal fences. Additionally, after
+software signaling has been enabled, a 30 second timeout is started.
+If the syncpoint threshold is not reached within this period,
+the fence is signalled with an -ETIMEDOUT error code. This is to
+allow fences that would never reach their syncpoint threshold to
+be cleaned up.
+
+Additionally, add a new /dev/host1x IOCTL for creating sync_file
+file descriptors backed by syncpoint fences.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
 v4:
-* New patch, split out from combined UAPI + submit patch.
+* Fix _signal prototype and include it to avoid warning
+* Remove use of unused local in error path
+v3:
+* Move declaration of host1x_fence_extract to public header
 ---
- drivers/gpu/drm/tegra/Makefile    |   1 +
- drivers/gpu/drm/tegra/drm.c       |  41 ++--
- drivers/gpu/drm/tegra/drm.h       |   5 +
- drivers/gpu/drm/tegra/uapi.h      |  63 ++++++
- drivers/gpu/drm/tegra/uapi/uapi.c | 306 ++++++++++++++++++++++++++++++
- 5 files changed, 400 insertions(+), 16 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/uapi.h
- create mode 100644 drivers/gpu/drm/tegra/uapi/uapi.c
+ drivers/gpu/host1x/Makefile |   1 +
+ drivers/gpu/host1x/fence.c  | 208 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/fence.h  |  13 +++
+ drivers/gpu/host1x/intr.c   |   9 ++
+ drivers/gpu/host1x/intr.h   |   2 +
+ drivers/gpu/host1x/uapi.c   | 103 ++++++++++++++++++
+ include/linux/host1x.h      |   4 +
+ 7 files changed, 340 insertions(+)
+ create mode 100644 drivers/gpu/host1x/fence.c
+ create mode 100644 drivers/gpu/host1x/fence.h
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index d6cf202414f0..0abdb21b38b9 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -3,6 +3,7 @@ ccflags-$(CONFIG_DRM_TEGRA_DEBUG) += -DDEBUG
- 
- tegra-drm-y := \
- 	drm.o \
-+	uapi/uapi.o \
- 	gem.o \
- 	fb.o \
- 	dp.o \
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 7124b0b0154b..79416b6b6715 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -20,6 +20,7 @@
- #include <drm/drm_prime.h>
- #include <drm/drm_vblank.h>
- 
-+#include "uapi.h"
- #include "drm.h"
- #include "gem.h"
- 
-@@ -33,11 +34,6 @@
- #define CARVEOUT_SZ SZ_64M
- #define CDMA_GATHER_FETCHES_MAX_NB 16383
- 
--struct tegra_drm_file {
--	struct idr contexts;
--	struct mutex lock;
--};
--
- static int tegra_atomic_check(struct drm_device *drm,
- 			      struct drm_atomic_state *state)
- {
-@@ -90,7 +86,8 @@ static int tegra_drm_open(struct drm_device *drm, struct drm_file *filp)
- 	if (!fpriv)
- 		return -ENOMEM;
- 
--	idr_init(&fpriv->contexts);
-+	idr_init(&fpriv->legacy_contexts);
-+	xa_init_flags(&fpriv->contexts, XA_FLAGS_ALLOC1);
- 	mutex_init(&fpriv->lock);
- 	filp->driver_priv = fpriv;
- 
-@@ -432,7 +429,7 @@ static int tegra_client_open(struct tegra_drm_file *fpriv,
- 	if (err < 0)
- 		return err;
- 
--	err = idr_alloc(&fpriv->contexts, context, 1, 0, GFP_KERNEL);
-+	err = idr_alloc(&fpriv->legacy_contexts, context, 1, 0, GFP_KERNEL);
- 	if (err < 0) {
- 		client->ops->close_channel(context);
- 		return err;
-@@ -487,13 +484,13 @@ static int tegra_close_channel(struct drm_device *drm, void *data,
- 
- 	mutex_lock(&fpriv->lock);
- 
--	context = idr_find(&fpriv->contexts, args->context);
-+	context = idr_find(&fpriv->legacy_contexts, args->context);
- 	if (!context) {
- 		err = -EINVAL;
- 		goto unlock;
- 	}
- 
--	idr_remove(&fpriv->contexts, context->id);
-+	idr_remove(&fpriv->legacy_contexts, context->id);
- 	tegra_drm_context_free(context);
- 
- unlock:
-@@ -512,7 +509,7 @@ static int tegra_get_syncpt(struct drm_device *drm, void *data,
- 
- 	mutex_lock(&fpriv->lock);
- 
--	context = idr_find(&fpriv->contexts, args->context);
-+	context = idr_find(&fpriv->legacy_contexts, args->context);
- 	if (!context) {
- 		err = -ENODEV;
- 		goto unlock;
-@@ -541,7 +538,7 @@ static int tegra_submit(struct drm_device *drm, void *data,
- 
- 	mutex_lock(&fpriv->lock);
- 
--	context = idr_find(&fpriv->contexts, args->context);
-+	context = idr_find(&fpriv->legacy_contexts, args->context);
- 	if (!context) {
- 		err = -ENODEV;
- 		goto unlock;
-@@ -566,7 +563,7 @@ static int tegra_get_syncpt_base(struct drm_device *drm, void *data,
- 
- 	mutex_lock(&fpriv->lock);
- 
--	context = idr_find(&fpriv->contexts, args->context);
-+	context = idr_find(&fpriv->legacy_contexts, args->context);
- 	if (!context) {
- 		err = -ENODEV;
- 		goto unlock;
-@@ -735,10 +732,21 @@ static int tegra_gem_get_flags(struct drm_device *drm, void *data,
- 
- static const struct drm_ioctl_desc tegra_drm_ioctls[] = {
- #ifdef CONFIG_DRM_TEGRA_STAGING
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_gem_create,
-+	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_OPEN, tegra_drm_ioctl_channel_open,
-+			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_CLOSE, tegra_drm_ioctl_channel_close,
-+			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_MAP, tegra_drm_ioctl_channel_map,
- 			  DRM_RENDER_ALLOW),
--	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_gem_mmap,
-+	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_UNMAP, tegra_drm_ioctl_channel_unmap,
- 			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_drm_ioctl_gem_create,
-+			  DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_drm_ioctl_gem_mmap,
-+			  DRM_RENDER_ALLOW),
-+
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE_LEGACY, tegra_gem_create, DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP_LEGACY, tegra_gem_mmap, DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_READ, tegra_syncpt_read,
- 			  DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(TEGRA_SYNCPT_INCR, tegra_syncpt_incr,
-@@ -792,10 +800,11 @@ static void tegra_drm_postclose(struct drm_device *drm, struct drm_file *file)
- 	struct tegra_drm_file *fpriv = file->driver_priv;
- 
- 	mutex_lock(&fpriv->lock);
--	idr_for_each(&fpriv->contexts, tegra_drm_context_cleanup, NULL);
-+	idr_for_each(&fpriv->legacy_contexts, tegra_drm_context_cleanup, NULL);
-+	tegra_drm_uapi_close_file(fpriv);
- 	mutex_unlock(&fpriv->lock);
- 
--	idr_destroy(&fpriv->contexts);
-+	idr_destroy(&fpriv->legacy_contexts);
- 	mutex_destroy(&fpriv->lock);
- 	kfree(fpriv);
- }
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 3fc42fd97911..42f8a301555c 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -58,6 +58,11 @@ struct tegra_drm {
- 	struct tegra_display_hub *hub;
- };
- 
-+static inline struct host1x *tegra_drm_to_host1x(struct tegra_drm *tegra)
-+{
-+	return dev_get_drvdata(tegra->drm->dev->parent);
-+}
-+
- struct tegra_drm_client;
- 
- struct tegra_drm_context {
-diff --git a/drivers/gpu/drm/tegra/uapi.h b/drivers/gpu/drm/tegra/uapi.h
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index 882f928d75e1..a48af2cefae1 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -10,6 +10,7 @@ host1x-y = \
+ 	debug.o \
+ 	mipi.o \
+ 	uapi.o \
++	fence.o \
+ 	hw/host1x01.o \
+ 	hw/host1x02.o \
+ 	hw/host1x04.o \
+diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
 new file mode 100644
-index 000000000000..5c422607e8fa
+index 000000000000..b2484606c311
 --- /dev/null
-+++ b/drivers/gpu/drm/tegra/uapi.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#ifndef _TEGRA_DRM_UAPI_H
-+#define _TEGRA_DRM_UAPI_H
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/idr.h>
-+#include <linux/kref.h>
-+#include <linux/xarray.h>
-+
-+#include <drm/drm.h>
-+
-+struct drm_file;
-+struct drm_device;
-+
-+struct tegra_drm_file {
-+	/* Legacy UAPI state */
-+	struct idr legacy_contexts;
-+	struct mutex lock;
-+
-+	/* New UAPI state */
-+	struct xarray contexts;
-+};
-+
-+struct tegra_drm_channel_ctx {
-+	struct tegra_drm_client *client;
-+	struct host1x_channel *channel;
-+	struct xarray mappings;
-+};
-+
-+struct tegra_drm_mapping {
-+	struct kref ref;
-+
-+	struct device *dev;
-+	struct host1x_bo *bo;
-+	struct sg_table *sgt;
-+	enum dma_data_direction direction;
-+	dma_addr_t iova;
-+	dma_addr_t iova_end;
-+};
-+
-+int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data,
-+				 struct drm_file *file);
-+int tegra_drm_ioctl_channel_close(struct drm_device *drm, void *data,
-+				  struct drm_file *file);
-+int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data,
-+				struct drm_file *file);
-+int tegra_drm_ioctl_channel_unmap(struct drm_device *drm, void *data,
-+				struct drm_file *file);
-+int tegra_drm_ioctl_channel_submit(struct drm_device *drm, void *data,
-+				   struct drm_file *file);
-+int tegra_drm_ioctl_gem_create(struct drm_device *drm, void *data,
-+				struct drm_file *file);
-+int tegra_drm_ioctl_gem_mmap(struct drm_device *drm, void *data,
-+				struct drm_file *file);
-+
-+void tegra_drm_uapi_close_file(struct tegra_drm_file *file);
-+void tegra_drm_mapping_put(struct tegra_drm_mapping *mapping);
-+struct tegra_drm_channel_ctx *
-+tegra_drm_channel_ctx_lock(struct tegra_drm_file *file, u32 id);
-+
-+#endif
-diff --git a/drivers/gpu/drm/tegra/uapi/uapi.c b/drivers/gpu/drm/tegra/uapi/uapi.c
-new file mode 100644
-index 000000000000..bcc9011924d8
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/uapi/uapi.c
-@@ -0,0 +1,306 @@
++++ b/drivers/gpu/host1x/fence.c
+@@ -0,0 +1,208 @@
 +// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2020 NVIDIA Corporation */
++/*
++ * Syncpoint dma_fence implementation
++ *
++ * Copyright (c) 2020, NVIDIA Corporation.
++ */
 +
-+#include <linux/host1x.h>
-+#include <linux/iommu.h>
-+#include <linux/list.h>
++#include <linux/dma-fence.h>
++#include <linux/file.h>
++#include <linux/fs.h>
++#include <linux/slab.h>
++#include <linux/sync_file.h>
 +
-+#include <drm/drm_drv.h>
-+#include <drm/drm_file.h>
++#include "fence.h"
++#include "intr.h"
++#include "syncpt.h"
 +
-+#include "../uapi.h"
-+#include "../drm.h"
++DEFINE_SPINLOCK(lock);
 +
-+struct tegra_drm_channel_ctx *
-+tegra_drm_channel_ctx_lock(struct tegra_drm_file *file, u32 id)
++struct host1x_syncpt_fence {
++	struct dma_fence base;
++
++	atomic_t signaling;
++
++	struct host1x_syncpt *sp;
++	u32 threshold;
++
++	struct host1x_waitlist *waiter;
++	void *waiter_ref;
++
++	struct delayed_work timeout_work;
++};
++
++static const char *syncpt_fence_get_driver_name(struct dma_fence *f)
 +{
-+	struct tegra_drm_channel_ctx *ctx;
-+
-+	mutex_lock(&file->lock);
-+	ctx = xa_load(&file->contexts, id);
-+	if (!ctx)
-+		mutex_unlock(&file->lock);
-+
-+	return ctx;
++	return "host1x";
 +}
 +
-+static void tegra_drm_mapping_release(struct kref *ref)
++static const char *syncpt_fence_get_timeline_name(struct dma_fence *f)
 +{
-+	struct tegra_drm_mapping *mapping =
-+		container_of(ref, struct tegra_drm_mapping, ref);
-+
-+	if (mapping->sgt)
-+		dma_unmap_sgtable(mapping->dev, mapping->sgt,
-+				  mapping->direction, DMA_ATTR_SKIP_CPU_SYNC);
-+
-+	host1x_bo_unpin(mapping->dev, mapping->bo, mapping->sgt);
-+	host1x_bo_put(mapping->bo);
-+
-+	kfree(mapping);
++	return "syncpoint";
 +}
 +
-+void tegra_drm_mapping_put(struct tegra_drm_mapping *mapping)
++static bool syncpt_fence_enable_signaling(struct dma_fence *f)
 +{
-+	kref_put(&mapping->ref, tegra_drm_mapping_release);
-+}
-+
-+static void tegra_drm_channel_ctx_close(struct tegra_drm_channel_ctx *ctx)
-+{
-+	unsigned long mapping_id;
-+	struct tegra_drm_mapping *mapping;
-+
-+	xa_for_each(&ctx->mappings, mapping_id, mapping)
-+		tegra_drm_mapping_put(mapping);
-+
-+	xa_destroy(&ctx->mappings);
-+
-+	host1x_channel_put(ctx->channel);
-+
-+	kfree(ctx);
-+}
-+
-+int close_channel_ctx(int id, void *p, void *data)
-+{
-+	struct tegra_drm_channel_ctx *ctx = p;
-+
-+	tegra_drm_channel_ctx_close(ctx);
-+
-+	return 0;
-+}
-+
-+void tegra_drm_uapi_close_file(struct tegra_drm_file *file)
-+{
-+	unsigned long ctx_id;
-+	struct tegra_drm_channel_ctx *ctx;
-+
-+	xa_for_each(&file->contexts, ctx_id, ctx)
-+		tegra_drm_channel_ctx_close(ctx);
-+
-+	xa_destroy(&file->contexts);
-+}
-+
-+int tegra_drm_ioctl_channel_open(struct drm_device *drm, void *data,
-+				 struct drm_file *file)
-+{
-+	struct tegra_drm_file *fpriv = file->driver_priv;
-+	struct tegra_drm *tegra = drm->dev_private;
-+	struct drm_tegra_channel_open *args = data;
-+	struct tegra_drm_client *client = NULL;
-+	struct tegra_drm_channel_ctx *ctx;
++	struct host1x_syncpt_fence *sf =
++		container_of(f, struct host1x_syncpt_fence, base);
 +	int err;
 +
-+	if (args->flags)
-+		return -EINVAL;
++	if (host1x_syncpt_is_expired(sf->sp, sf->threshold))
++		return false;
 +
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
++	dma_fence_get(f);
++
++	/*
++	 * The dma_fence framework requires the fence driver to keep a
++	 * reference to any fences for which 'enable_signaling' has been
++	 * called (and that have not been signalled).
++	 * 
++	 * We provide a userspace API to create arbitrary syncpoint fences,
++	 * so we cannot normally guarantee that all fences get signalled.
++	 * As such, setup a timeout, so that long-lasting fences will get
++	 * reaped eventually.
++	 */
++	schedule_delayed_work(&sf->timeout_work, msecs_to_jiffies(30000));
++
++	err = host1x_intr_add_action(sf->sp->host, sf->sp, sf->threshold,
++				     HOST1X_INTR_ACTION_SIGNAL_FENCE, f,
++				     sf->waiter, &sf->waiter_ref);
++	if (err) {
++		cancel_delayed_work_sync(&sf->timeout_work);
++		dma_fence_put(f);
++		return false;
++	}
++
++	/* intr framework takes ownership of waiter */
++	sf->waiter = NULL;
++
++	/*
++	 * The fence may get signalled at any time after the above call,
++	 * so we need to initialize all state used by signalling
++	 * before it.
++	 */
++
++	return true;
++}
++
++static void syncpt_fence_release(struct dma_fence *f)
++{
++	struct host1x_syncpt_fence *sf =
++		container_of(f, struct host1x_syncpt_fence, base);
++
++	if (sf->waiter)
++		kfree(sf->waiter);
++
++	dma_fence_free(f);
++}
++
++const struct dma_fence_ops syncpt_fence_ops = {
++	.get_driver_name = syncpt_fence_get_driver_name,
++	.get_timeline_name = syncpt_fence_get_timeline_name,
++	.enable_signaling = syncpt_fence_enable_signaling,
++	.release = syncpt_fence_release,
++};
++
++void host1x_fence_signal(struct host1x_syncpt_fence *f)
++{
++	if (atomic_xchg(&f->signaling, 1))
++		return;
++
++	/*
++	 * Cancel pending timeout work - if it races, it will
++	 * not get 'f->signaling' and return.
++	 */
++	cancel_delayed_work_sync(&f->timeout_work);
++
++	host1x_intr_put_ref(f->sp->host, f->sp->id, f->waiter_ref);
++
++	dma_fence_signal(&f->base);
++	dma_fence_put(&f->base);
++}
++
++static void do_fence_timeout(struct work_struct *work)
++{
++	struct delayed_work *dwork = (struct delayed_work *)work;
++	struct host1x_syncpt_fence *f =
++		container_of(dwork, struct host1x_syncpt_fence, timeout_work);
++
++	if (atomic_xchg(&f->signaling, 1))
++		return;
++
++	/*
++	 * Cancel pending timeout work - if it races, it will
++	 * not get 'f->signaling' and return.
++	 */
++	host1x_intr_put_ref(f->sp->host, f->sp->id, f->waiter_ref);
++
++	dma_fence_set_error(&f->base, -ETIMEDOUT);
++	dma_fence_signal(&f->base);
++	dma_fence_put(&f->base);
++}
++
++struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold)
++{
++	struct host1x_syncpt_fence *fence;
++
++	fence = kzalloc(sizeof(*fence), GFP_KERNEL);
++	if (!fence)
++		return ERR_PTR(-ENOMEM);
++
++	fence->waiter = kzalloc(sizeof(*fence->waiter), GFP_KERNEL);
++	if (!fence->waiter)
++		return ERR_PTR(-ENOMEM);
++
++	fence->sp = sp;
++	fence->threshold = threshold;
++
++	dma_fence_init(&fence->base, &syncpt_fence_ops, &lock,
++		       dma_fence_context_alloc(1), 0);
++
++	INIT_DELAYED_WORK(&fence->timeout_work, do_fence_timeout);
++
++	return &fence->base;
++}
++EXPORT_SYMBOL(host1x_fence_create);
++
++int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
++{
++	struct sync_file *file;
++	struct dma_fence *f;
++	int fd;
++
++	f = host1x_fence_create(sp, threshold);
++	if (IS_ERR(f))
++		return PTR_ERR(f);
++
++	fd = get_unused_fd_flags(O_CLOEXEC);
++	if (fd < 0) {
++		dma_fence_put(f);
++		return fd;
++	}
++
++	file = sync_file_create(f);
++	dma_fence_put(f);
++	if (!file)
 +		return -ENOMEM;
 +
-+	err = -ENODEV;
-+	list_for_each_entry(client, &tegra->clients, list) {
-+		if (client->base.class == args->host1x_class) {
-+			err = 0;
-+			break;
-+		}
-+	}
-+	if (err)
-+		goto free_ctx;
++	fd_install(fd, file->file);
 +
-+	if (client->shared_channel) {
-+		ctx->channel = host1x_channel_get(client->shared_channel);
-+	} else {
-+		ctx->channel = host1x_channel_request(&client->base);
-+		if (!ctx->channel) {
-+			err = -EBUSY;
-+			goto free_ctx;
-+		}
-+	}
-+
-+	err = xa_alloc(&fpriv->contexts, &args->channel_ctx, ctx,
-+		       XA_LIMIT(1, U32_MAX), GFP_KERNEL);
-+	if (err < 0)
-+		goto put_channel;
-+
-+	ctx->client = client;
-+	xa_init_flags(&ctx->mappings, XA_FLAGS_ALLOC1);
-+
-+	args->hardware_version = client->version;
-+
-+	return 0;
-+
-+put_channel:
-+	host1x_channel_put(ctx->channel);
-+free_ctx:
-+	kfree(ctx);
-+
-+	return err;
++	return fd;
 +}
++EXPORT_SYMBOL(host1x_fence_create_fd);
 +
-+int tegra_drm_ioctl_channel_close(struct drm_device *drm, void *data,
-+				  struct drm_file *file)
++int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold)
 +{
-+	struct tegra_drm_file *fpriv = file->driver_priv;
-+	struct drm_tegra_channel_close *args = data;
-+	struct tegra_drm_channel_ctx *ctx;
++	struct host1x_syncpt_fence *f;
 +
-+	ctx = tegra_drm_channel_ctx_lock(fpriv, args->channel_ctx);
-+	if (!ctx)
++	if (fence->ops != &syncpt_fence_ops)
 +		return -EINVAL;
 +
-+	xa_erase(&fpriv->contexts, args->channel_ctx);
++	f = container_of(fence, struct host1x_syncpt_fence, base);
 +
-+	mutex_unlock(&fpriv->lock);
-+
-+	tegra_drm_channel_ctx_close(ctx);
++	*id = f->sp->id;
++	*threshold = f->threshold;
 +
 +	return 0;
 +}
++EXPORT_SYMBOL(host1x_fence_extract);
+diff --git a/drivers/gpu/host1x/fence.h b/drivers/gpu/host1x/fence.h
+new file mode 100644
+index 000000000000..70c91de82f14
+--- /dev/null
++++ b/drivers/gpu/host1x/fence.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2020, NVIDIA Corporation.
++ */
 +
-+int tegra_drm_ioctl_channel_map(struct drm_device *drm, void *data,
-+				struct drm_file *file)
++#ifndef HOST1X_FENCE_H
++#define HOST1X_FENCE_H
++
++struct host1x_syncpt_fence;
++
++void host1x_fence_signal(struct host1x_syncpt_fence *fence);
++
++#endif
+diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
+index 5d328d20ce6d..19b59c5c94d0 100644
+--- a/drivers/gpu/host1x/intr.c
++++ b/drivers/gpu/host1x/intr.c
+@@ -13,6 +13,7 @@
+ #include <trace/events/host1x.h>
+ #include "channel.h"
+ #include "dev.h"
++#include "fence.h"
+ #include "intr.h"
+ 
+ /* Wait list management */
+@@ -121,12 +122,20 @@ static void action_wakeup_interruptible(struct host1x_waitlist *waiter)
+ 	wake_up_interruptible(wq);
+ }
+ 
++static void action_signal_fence(struct host1x_waitlist *waiter)
 +{
-+	struct tegra_drm_file *fpriv = file->driver_priv;
-+	struct drm_tegra_channel_map *args = data;
-+	struct tegra_drm_channel_ctx *ctx;
-+	struct tegra_drm_mapping *mapping;
-+	struct drm_gem_object *gem;
-+	u32 mapping_id;
-+	int err = 0;
++	struct host1x_syncpt_fence *f = waiter->data;
 +
-+	if (args->flags & ~DRM_TEGRA_CHANNEL_MAP_READWRITE)
++	host1x_fence_signal(f);
++}
++
+ typedef void (*action_handler)(struct host1x_waitlist *waiter);
+ 
+ static const action_handler action_handlers[HOST1X_INTR_ACTION_COUNT] = {
+ 	action_submit_complete,
+ 	action_wakeup,
+ 	action_wakeup_interruptible,
++	action_signal_fence,
+ };
+ 
+ static void run_handlers(struct list_head completed[HOST1X_INTR_ACTION_COUNT])
+diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
+index aac38194398f..dedbd0f700fb 100644
+--- a/drivers/gpu/host1x/intr.h
++++ b/drivers/gpu/host1x/intr.h
+@@ -33,6 +33,8 @@ enum host1x_intr_action {
+ 	 */
+ 	HOST1X_INTR_ACTION_WAKEUP_INTERRUPTIBLE,
+ 
++	HOST1X_INTR_ACTION_SIGNAL_FENCE,
++
+ 	HOST1X_INTR_ACTION_COUNT
+ };
+ 
+diff --git a/drivers/gpu/host1x/uapi.c b/drivers/gpu/host1x/uapi.c
+index 27b8761c3f35..e931756a5e16 100644
+--- a/drivers/gpu/host1x/uapi.c
++++ b/drivers/gpu/host1x/uapi.c
+@@ -11,8 +11,10 @@
+ #include <linux/fs.h>
+ #include <linux/host1x.h>
+ #include <linux/nospec.h>
++#include <linux/sync_file.h>
+ 
+ #include "dev.h"
++#include "fence.h"
+ #include "syncpt.h"
+ #include "uapi.h"
+ 
+@@ -195,6 +197,99 @@ static int dev_file_ioctl_alloc_syncpoint(struct host1x *host1x,
+ 	return err;
+ }
+ 
++static int dev_file_ioctl_create_fence(struct host1x *host1x, void __user *data)
++{
++	struct host1x_create_fence args;
++	unsigned long copy_err;
++	int fd;
++
++	copy_err = copy_from_user(&args, data, sizeof(args));
++	if (copy_err)
++		return -EFAULT;
++
++	if (args.reserved[0])
 +		return -EINVAL;
 +
-+	ctx = tegra_drm_channel_ctx_lock(fpriv, args->channel_ctx);
-+	if (!ctx)
++	if (args.id >= host1x_syncpt_nb_pts(host1x))
 +		return -EINVAL;
 +
-+	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
-+	if (!mapping) {
-+		err = -ENOMEM;
-+		goto unlock;
-+	}
++	args.id = array_index_nospec(args.id, host1x_syncpt_nb_pts(host1x));
 +
-+	kref_init(&mapping->ref);
++	fd = host1x_fence_create_fd(&host1x->syncpt[args.id], args.threshold);
++	if (fd < 0)
++		return fd;
 +
-+	gem = drm_gem_object_lookup(file, args->handle);
-+	if (!gem) {
-+		err = -EINVAL;
-+		goto unlock;
-+	}
++	args.fence_fd = fd;
 +
-+	mapping->dev = ctx->client->base.dev;
-+	mapping->bo = &container_of(gem, struct tegra_bo, gem)->base;
++	copy_err = copy_to_user(data, &args, sizeof(args));
++	if (copy_err)
++		return -EFAULT;
 +
-+	if (!iommu_get_domain_for_dev(mapping->dev) ||
-+	    ctx->client->base.group) {
-+		host1x_bo_pin(mapping->dev, mapping->bo,
-+			      &mapping->iova);
++	return 0;
++}
++
++static int dev_file_ioctl_fence_extract(struct host1x *host1x, void __user *data)
++{
++	struct host1x_fence_extract_fence __user *fences_user_ptr;
++	struct dma_fence *fence, **fences;
++	struct host1x_fence_extract args;
++	struct dma_fence_array *array;
++	unsigned int num_fences, i;
++	unsigned long copy_err;
++	int err;
++
++	copy_err = copy_from_user(&args, data, sizeof(args));
++	if (copy_err)
++		return -EFAULT;
++
++	fences_user_ptr = u64_to_user_ptr(args.fences_ptr);
++
++	if (args.reserved[0] || args.reserved[1])
++		return -EINVAL;
++
++	fence = sync_file_get_fence(args.fence_fd);
++	if (!fence)
++		return -EINVAL;
++
++	array = to_dma_fence_array(fence);
++	if (array) {
++		fences = array->fences;
++		num_fences = array->num_fences;
 +	} else {
-+		mapping->direction = DMA_TO_DEVICE;
-+		if (args->flags & DRM_TEGRA_CHANNEL_MAP_READWRITE)
-+			mapping->direction = DMA_BIDIRECTIONAL;
++		fences = &fence;
++		num_fences = 1;
++	}
 +
-+		mapping->sgt =
-+			host1x_bo_pin(mapping->dev, mapping->bo, NULL);
-+		if (IS_ERR(mapping->sgt)) {
-+			err = PTR_ERR(mapping->sgt);
-+			goto put_gem;
-+		}
++	for (i = 0; i < min(num_fences, args.num_fences); i++) {
++		struct host1x_fence_extract_fence f;
 +
-+		err = dma_map_sgtable(mapping->dev, mapping->sgt,
-+				      mapping->direction,
-+				      DMA_ATTR_SKIP_CPU_SYNC);
++		err = host1x_fence_extract(fences[i], &f.id, &f.threshold);
 +		if (err)
-+			goto unpin;
++			goto put_fence;
 +
-+		/* TODO only map the requested part */
-+		mapping->iova = sg_dma_address(mapping->sgt->sgl);
-+		mapping->iova_end = mapping->iova + gem->size;
++		copy_err = copy_to_user(fences_user_ptr + i, &f, sizeof(f));
++		if (copy_err) {
++			err = -EFAULT;
++			goto put_fence;
++		}
 +	}
 +
-+	mutex_unlock(&fpriv->lock);
++	args.num_fences = i+1;
 +
-+	err = xa_alloc(&ctx->mappings, &mapping_id, mapping,
-+		       XA_LIMIT(1, U32_MAX), GFP_KERNEL);
-+	if (err < 0)
-+		goto unmap;
-+
-+	args->mapping_id = mapping_id;
++	copy_err = copy_to_user(data, &args, sizeof(args));
++	if (copy_err) {
++		err = -EFAULT;
++		goto put_fence;
++	}
 +
 +	return 0;
 +
-+unmap:
-+	if (mapping->sgt) {
-+		dma_unmap_sgtable(mapping->dev, mapping->sgt,
-+				  mapping->direction, DMA_ATTR_SKIP_CPU_SYNC);
-+	}
-+unpin:
-+	host1x_bo_unpin(mapping->dev, mapping->bo, mapping->sgt);
-+put_gem:
-+	drm_gem_object_put(gem);
-+	kfree(mapping);
-+unlock:
-+	mutex_unlock(&fpriv->lock);
++put_fence:
++	dma_fence_put(fence);
++
 +	return err;
 +}
 +
-+int tegra_drm_ioctl_channel_unmap(struct drm_device *drm, void *data,
-+				  struct drm_file *file)
-+{
-+	struct tegra_drm_file *fpriv = file->driver_priv;
-+	struct drm_tegra_channel_unmap *args = data;
-+	struct tegra_drm_channel_ctx *ctx;
-+	struct tegra_drm_mapping *mapping;
+ static long dev_file_ioctl(struct file *file, unsigned int cmd,
+ 			   unsigned long arg)
+ {
+@@ -210,6 +305,14 @@ static long dev_file_ioctl(struct file *file, unsigned int cmd,
+ 		err = dev_file_ioctl_alloc_syncpoint(file->private_data, data);
+ 		break;
+ 
++	case HOST1X_IOCTL_CREATE_FENCE:
++		err = dev_file_ioctl_create_fence(file->private_data, data);
++		break;
 +
-+	ctx = tegra_drm_channel_ctx_lock(fpriv, args->channel_ctx);
-+	if (!ctx)
-+		return -EINVAL;
++	case HOST1X_IOCTL_FENCE_EXTRACT:
++		err = dev_file_ioctl_fence_extract(file->private_data, data);
++		break;
 +
-+	mapping = xa_erase(&ctx->mappings, args->mapping_id);
+ 	default:
+ 		err = -ENOTTY;
+ 	}
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 8f6d61e13e05..bcfb1cc9a1c1 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -165,6 +165,10 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
+ 
+ struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
+ 
++struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
++int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold);
++int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold);
 +
-+	mutex_unlock(&fpriv->lock);
-+
-+	if (mapping) {
-+		tegra_drm_mapping_put(mapping);
-+		return 0;
-+	} else {
-+		return -EINVAL;
-+	}
-+}
-+
-+int tegra_drm_ioctl_gem_create(struct drm_device *drm, void *data,
-+			       struct drm_file *file)
-+{
-+	struct drm_tegra_gem_create *args = data;
-+	struct tegra_bo *bo;
-+
-+	if (args->flags)
-+		return -EINVAL;
-+
-+	bo = tegra_bo_create_with_handle(file, drm, args->size, args->flags,
-+					 &args->handle);
-+	if (IS_ERR(bo))
-+		return PTR_ERR(bo);
-+
-+	return 0;
-+}
-+
-+int tegra_drm_ioctl_gem_mmap(struct drm_device *drm, void *data,
-+			     struct drm_file *file)
-+{
-+	struct drm_tegra_gem_mmap *args = data;
-+	struct drm_gem_object *gem;
-+	struct tegra_bo *bo;
-+
-+	gem = drm_gem_object_lookup(file, args->handle);
-+	if (!gem)
-+		return -EINVAL;
-+
-+	bo = to_tegra_bo(gem);
-+
-+	args->offset = drm_vma_node_offset_addr(&bo->gem.vma_node);
-+
-+	drm_gem_object_put(gem);
-+
-+	return 0;
-+}
+ /*
+  * host1x channel
+  */
 -- 
 2.29.2
 
