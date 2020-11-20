@@ -2,149 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC3CC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 16:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A817BC63798
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 16:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 561A3223FD
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 16:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B363223BE
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 16:17:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQGp8pIU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVGYXx4D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgKTQOx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Nov 2020 11:14:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48622 "EHLO
+        id S1728773AbgKTQRB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Nov 2020 11:17:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbgKTQOw (ORCPT
+        with ESMTP id S1728695AbgKTQRA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Nov 2020 11:14:52 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74621C0613CF;
-        Fri, 20 Nov 2020 08:14:52 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id s13so10277029wmh.4;
-        Fri, 20 Nov 2020 08:14:52 -0800 (PST)
+        Fri, 20 Nov 2020 11:17:00 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 644CDC0613CF;
+        Fri, 20 Nov 2020 08:17:00 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id m6so10572467wrg.7;
+        Fri, 20 Nov 2020 08:17:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FFWnWYZcQ5avXl3lvd2ucy1Id+Wc6XT8WzFu7vwWU4Y=;
-        b=eQGp8pIUeuaEQeX98mp3aS2FUAXx4MX9UiGAGO7Yo1MJwb29xTS78eD7US7mJoUuwp
-         yTQu4jTqmMToVTJbfQ4shkcYXkCfoP7eOyX40A3InPqgm2qfZTMEdbAqHX0gEsMngnGi
-         Q17tGnJTYTd5CknrfcI1Bsooz6jwmgE9tmQVFt1BrXh7azL3Z94gjEzgp/HHBRsrSwSJ
-         b4uXLFynD2SLH96WUGaKmT2x0TWgKZV/u4u8uZ+QxG+EWNV8V9q+GAXH95oyGwtoD38S
-         vLZTrZv7qEfE6NKWo936w+lHvbuuxfbnR2C6orhh3E3wKCWnPpHy/qiFRod1y/iAVSpm
-         FoCA==
+        bh=UXb4/nAfsSHc/KSXI19AdT/2G62OQwwUOqOXfXRHMvg=;
+        b=dVGYXx4DAaO7XnUh9GkMjFjcqd7hTM1jHTUOf+BSPDF113TM6zkR9EXTqhT1125sRA
+         a103NyMr2KyFFDlHhF88CiiyyjFNXgARb4qULqL1+FK6nfECGWHAVd2grj6w6agxIbBD
+         knXiRrAro9M00wcHDUL1wHWKjcdzzo+G7PPvQQUR1kMQGjajfVNAmWTKYCBQqhiuw8xs
+         HxVn3dI6iX8eCS39P1qOFhv7IlHbZZbhTq6FZZ2kdM5emrIbS5jlP5wPfPyamGkN/3rZ
+         /4Pj/4/pjNjQp/AbLESYIY5ePis9a3eu0JIpQcI3BDax1vH2cqlEXRr4Ek3GY7sFECHj
+         K7VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FFWnWYZcQ5avXl3lvd2ucy1Id+Wc6XT8WzFu7vwWU4Y=;
-        b=hMiKGtZ9mV7F75VJLo0ReYwmBE0M/rlFQFNY1IkC+z/P09eHC7KQ4FyejeFn1XZD/g
-         RD0wejHkF8Qt6owgtQ6N8J76QFZGyB3jSgZF163IY7p4fnrGYx4NQI01R9W/Up6+zTxc
-         /0S1N1YUTI8q92i9kp5SMRp7nIzRdlU8EI+++ULOXayLHbZPfx3wa0/pSzbrmCpoAT0B
-         en4n1pLK097HjNKQdwJxBWc/T1LmCwj/ftPjIgqlZ/P9XWsKJAez+shREioA6LWOABb+
-         pRM0Od3EswHL8LFwdsdL/qVJU/fIrbKXIswwhEqO2wPpiIHqg1Rr0TK87DaH4YyFLi4j
-         cubw==
-X-Gm-Message-State: AOAM532l69EuXFiynSssOqF3dEtzkOVx72EnCgrCYgedbyFh1zzIK2IZ
-        nTvJXjTNBfsktOjUPpJEN9E=
-X-Google-Smtp-Source: ABdhPJy2XDgwijo8VaB2DZKlnUp9CeN+gXcDNcwMD49y9cuFoUIVK5sJ09f1xY7XwSVPO2PjwcMEsA==
-X-Received: by 2002:a1c:98c7:: with SMTP id a190mr10185952wme.7.1605888891255;
-        Fri, 20 Nov 2020 08:14:51 -0800 (PST)
+        bh=UXb4/nAfsSHc/KSXI19AdT/2G62OQwwUOqOXfXRHMvg=;
+        b=GkqqvkjfOj6CDabRQarpg1RQzoVB6QoTDSuujGtaMQU1ay+PDLg/J8rTGK2z1DaZ37
+         cbLCAEaJHtc4yw4VNpKyUq3991XyZgWRkYsxTjXbs+jyE3jTTalDL5+0JJZmtUNvYQG8
+         X9u5FcmSUclTkO0yXq0YjiRM91C3QuhnXuzQboflN7VsSKhy4syjctESmQbA4cQli2rD
+         6gvRaHR6o85V2TYbBUNUqxpbJ1KmESBmtC63u31Vu2cKDxkh3FeMKVRdHBW7fjNB6Ddy
+         BWAFmt2j+U0bGt+aNfeRl6Wm0dMPChIYonizn9CZIuYgHdMDPFO1mj0Lf1QPAYSzAgkU
+         aBLQ==
+X-Gm-Message-State: AOAM5319fFUC2J2MukzCJAf/xEun1Y0YeViZ0QR9sKvr+VVhPf+f6lRF
+        sGu29wCz2ywSnqB50lGEQNI=
+X-Google-Smtp-Source: ABdhPJwX4TJbjRvvaC1CP/xTB8APxeECkF8Hw9WV/wlsYmp4lAbyIDuQXVQ2sd4X0KM/9uqysJdCxA==
+X-Received: by 2002:adf:dc4b:: with SMTP id m11mr16014557wrj.328.1605889019174;
+        Fri, 20 Nov 2020 08:16:59 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id i16sm5521078wru.92.2020.11.20.08.14.49
+        by smtp.gmail.com with ESMTPSA id q5sm5768056wrf.41.2020.11.20.08.16.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 08:14:50 -0800 (PST)
-Date:   Fri, 20 Nov 2020 17:14:48 +0100
+        Fri, 20 Nov 2020 08:16:57 -0800 (PST)
+Date:   Fri, 20 Nov 2020 17:16:56 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nicolas Chauvet <kwizart@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] thermal: tegra: soctherm bugfixes
-Message-ID: <20201120161448.GB3870099@ulmo>
-References: <20200927150956.34609-1-kwizart@gmail.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jonathanh@nvidia.com, sboyd@kernel.org, mturquette@baylibre.com,
+        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Do not return 0 on failure
+Message-ID: <20201120161656.GC3870099@ulmo>
+References: <20201029004820.9062-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
+        protocol="application/pgp-signature"; boundary="KDt/GgjP6HVcx58l"
 Content-Disposition: inline
-In-Reply-To: <20200927150956.34609-1-kwizart@gmail.com>
+In-Reply-To: <20201029004820.9062-1-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---SkvwRMAIpAhPCcCJ
+--KDt/GgjP6HVcx58l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 27, 2020 at 05:09:50PM +0200, Nicolas Chauvet wrote:
-> When using tegra_soctherm driver on jetson-tk1, the following messages
-> can be seen:
-> from kernel: tegra_soctherm 700e2000.thermal-sensor:
->  throttle-cfg: heavy: no throt prop or invalid prop
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when cpu reaches 101000 mC
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when gpu reaches 101000 mC
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when pll reaches 103000 mC
->  throttrip: pll: missing hot temperature
->  soctherm: trip temperature -2147483647 forced to -127000
->  thermtrip: will shut down when mem reaches 101000 mC
->  throttrip: mem: missing hot temperature
->  IRQ index 1 not found
+On Wed, Oct 28, 2020 at 05:48:20PM -0700, Nicolin Chen wrote:
+> Return values from read_dt_param() will be either TRUE (1) or
+> FALSE (0), while dfll_fetch_pwm_params() returns 0 on success
+> or an ERR code on failure.
 >=20
-> This serie fixes two errors and two warnings that are reported in dmesg
-> It was compiled and tested at runtime on jetson-tk1 only.
+> So this patch fixes the bug of returning 0 on failure.
 >=20
->=20
-> v2:
->  * Add missing tegra210 device-tree properties
->  * Add the appropriate prefix for tegra soctherm
->  * Use SoCs condition over of_compatible
->=20
->=20
-> Nicolas Chauvet (6):
->   ARM: tegra: Add missing gpu-throt-level to tegra124 soctherm
->   ARM: tegra: Add missing hot temperatures to tegra124 thermal-zones
->   arm64: tegra: Add missing hot temperatures to tegra132 thermal-zones
->   arm64: tegra: Add missing gpu-throt-level to tegra210 soctherm
->   arm64: tegra: Add missing hot temperatures to tegra210 thermal-zones
+> Fixes: 36541f0499fe ("clk: tegra: dfll: support PWM regulator control")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I've applied all these...
+Mike, Stephen,
 
->   thermal: tegra: Avoid setting edp_irq when not relevant
-
-and sent out a couple of patches that should make this obsolete since
-the EDP IRQ does exist on Tegra124/Tegra132 according to the TRM.
+if you don't mind, I'll pick this up in the Tegra tree since there are a
+few other Tegra clock patches on the list that may require coordination
+inside the Tegra tree.
 
 Thierry
 
---SkvwRMAIpAhPCcCJ
+--KDt/GgjP6HVcx58l
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+363gACgkQ3SOs138+
-s6H2pQ/+MMxiIBRFmy/6/dypVrPooc60WsIjc80GtgWVNO+IPPV5ul7P/WWg3f0s
-8v5ouEIeZxJgI/EV1mpXaDH4GjQfCFacRyxE/PcjFywqGduF8NhvvwIjnoAboQKK
-FIzVrbZfsq0uc/2i9p+d1O7YFS+WJze4calgn37qY4qMdMBesiuZoLx06Pqa35P8
-KO2/h6EsnokqmQMivYuu2ilkk9c44sCgGJ0cfJv8FLsLFYvEnWYZYvmoZ+y23SDO
-aJhgAirhjq9HRt82kKIxU0jQnxdtiJlbaM4EYxthFTypXUHTI2+ma70Q1B7U2JJU
-ElbfGdrtU9QnAVR1v9xAMVwwVKPe0JKWFC54uZauxE3MWtw1OZEnv66z8lmhvN7G
-EiNS5TYUCItV4LYopqGOxTiGXhsMmrSwbqgeSHrnnKG23ha7OfBGx9QPNatsCnJP
-3fpymVo+dKpEoDlB8gTZJ7F2cNxBOqSiK50cy9+vn52AzI5LG0jLq6uwZD8AtaZZ
-Z5/jtgpMqWQaqSdQtj///19fGI2fwX51rNjvjSVFPx0dhuXuco7P+GKHgePCvZDR
-HMDlHqelHsB7AH5369diVMtTo8Eby/HUzCKGnc2IwEdBCB56b6gJsyA3pYTJ8m7/
-jsoT7fpA2h1dCxmkSmwFI/GQhmvGFOhvxEa0IFnhj6mia22zq+M=
-=7fGd
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+36/gACgkQ3SOs138+
+s6GoBA//f7gMWWZXjGr+n7voZIht8iquSb+hUuax+QT4Qvhr9K9TdgS00AX/hqKn
+E1JDtJ2keLRhD4irovMNjnh+dwtT9N5SvmcvWp0M/uHPTYH+0udOQ77WJ3RwYMLq
+QpxCA76zwmET819g5tfI69UwmVc8RL6CdXe3/Ubzw2q52ppvBs6HXucOGzYb7pA/
+NyD6Td2lkH8+hXpGBlvGxvL5a5Tiw8V9CfDxULcQEx8S2h0sE7fnoP2aXgcjdx1k
+vml+EUsbUWSvHeuBOJR2Uy60sAbZhhCzUAgAFohZ2qqfoqO2mGYQIYME4/ZnPoC2
+w1m4bLmy5ezH9FIgj0LfQMsjEjGFfjSSYYzK4PMMLgsjVmogEzhLZIqps/4Fr1YL
+4qAw5qWYPuXOgEamYUp6pUr2h1rb2utHm5LCA+vdLgzK/7ehh0gMJgG5ruC6oXA5
+lyhYuNt+JWswwncng4L60ov1bf0GBe0q3s66hze5/Y23wE4OZQwiaBykUM212p+h
+DvpyBoV/XvmGlR5UipFzhRVM/EkTkoXdDJuP0ZUvv/NV9SIi0qjN4VanTwn7hndB
+RwWCEtit//ihpMup//cn8z4XdER+gj7FLHgnIsZxv5aFPVSdQEFvkPBsEP5BxBIn
+Y4FQUyMd8v5cMTuKfK3YAcPn+C+FL4Kuyzunh5OxYlercfQAwow=
+=mgBq
 -----END PGP SIGNATURE-----
 
---SkvwRMAIpAhPCcCJ--
+--KDt/GgjP6HVcx58l--
