@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EA7C64E75
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05535C63777
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 109E522253
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92BD22244
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="QBHKXs2A"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Xku4MQQG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbgKTL0t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Nov 2020 06:26:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60262 "EHLO
+        id S1727784AbgKTL0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Nov 2020 06:26:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728271AbgKTL0r (ORCPT
+        with ESMTP id S1728296AbgKTL0w (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 20 Nov 2020 06:26:47 -0500
+        Fri, 20 Nov 2020 06:26:52 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2146C061A49
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FF4C061A4C
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=Ph9LD47itePmwEUd3FNLpbfW+nz6z7YRE2hHDL9kgWk=; b=QBHKXs2AtxkPLveJg/FHC5dlEU
-        7qrA4CQI467gED7PsQWnkM3B2yvCVixUdeVT1emladJJDjL74WBu2o4kaFI0GwILAPLJEYGLzMTW3
-        n8dTblilMuLOKPnJSPSZPK2gGwrgWHOUgXPxfS7sS0ntF0p9G11+FY4R/Is1WFZsI6hVwWroePKEH
-        7SN5wsocphCtee2eBmkK+q9DWXC/Kef0aiDx2TVqvzA4IhYGqoY5g6DZPZHp9F2HW+13hj3sAvGcE
-        gkTZ1bIELzXs4Pv0okNvfo9C6h4KoKGqY9j7PG40jZYRuWcdiR70e8ylQNIFH0qtVrqYE1do7iQsN
-        +dbETHbw==;
+        bh=fMJF/+k3zpk9u6+rh/fo6naTrLRrrE4PquH0RJQFQ8g=; b=Xku4MQQGBtO/JioWxWhPydlxw4
+        qhgBZIuSOBkLSs2IthEYxfUotsUMIzbvfvU1cklfDxx6r8egkPKzqJxJ7OaSssjB3EiItz56Bc4ei
+        Pou0XFnbNH5GXvEwIGbRtTvtiJsQKXuTNXzg6dt3ANjI5F2FHFNeHbuENTTUJXA4JraFVyqC6QiUE
+        jtvnidprfRz+iMH8fGsrg76jmBPlnQRV5+UIhy0y4BrLLSva2nf9nVBuxl5KqbMBl4CH9sDcAZ570
+        frJqhWr/1OsM+xFFS/wPfOgWalWcVIDZhjBCe38kkVLnxaieRiLzFFSYZL3Zi/Ruz+HUT4hpDI06U
+        FpTmqNlQ==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kg4Yq-0003lG-Rg; Fri, 20 Nov 2020 13:26:40 +0200
+        id 1kg4Yq-0003lG-EQ; Fri, 20 Nov 2020 13:26:40 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 07/21] gpu: host1x: Introduce UAPI header
-Date:   Fri, 20 Nov 2020 13:25:46 +0200
-Message-Id: <20201120112600.935082-8-mperttunen@nvidia.com>
+Subject: [PATCH v4 02/21] gpu: host1x: Allow syncpoints without associated client
+Date:   Fri, 20 Nov 2020 13:25:41 +0200
+Message-Id: <20201120112600.935082-3-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201120112600.935082-1-mperttunen@nvidia.com>
 References: <20201120112600.935082-1-mperttunen@nvidia.com>
@@ -63,157 +63,122 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the userspace interface header, specifying interfaces
-for allocating and accessing syncpoints from userspace,
-and for creating sync_file based fences based on syncpoint
-thresholds.
+Syncpoints don't need to be associated with any client,
+so remove the property, and expose host1x_syncpt_alloc.
+This will allow allocating syncpoints without prior knowledge
+of the engine that it will be used with.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- include/uapi/linux/host1x.h | 134 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 134 insertions(+)
- create mode 100644 include/uapi/linux/host1x.h
+v3:
+* Clean up host1x_syncpt_alloc signature to allow specifying
+  a name for the syncpoint.
+* Export the function.
+---
+ drivers/gpu/host1x/syncpt.c | 22 ++++++++++------------
+ drivers/gpu/host1x/syncpt.h |  1 -
+ include/linux/host1x.h      |  3 +++
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/include/uapi/linux/host1x.h b/include/uapi/linux/host1x.h
-new file mode 100644
-index 000000000000..9c8fb9425cb2
---- /dev/null
-+++ b/include/uapi/linux/host1x.h
-@@ -0,0 +1,134 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* Copyright (c) 2020 NVIDIA Corporation */
-+
-+#ifndef _UAPI__LINUX_HOST1X_H
-+#define _UAPI__LINUX_HOST1X_H
-+
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
-+
-+#if defined(__cplusplus)
-+extern "C" {
-+#endif
-+
-+struct host1x_allocate_syncpoint {
-+	/**
-+	 * @fd: [out]
-+	 *
-+	 * New file descriptor representing the allocated syncpoint.
-+	 */
-+	__s32 fd;
-+
-+	__u32 reserved[3];
-+};
-+
-+struct host1x_syncpoint_info {
-+	/**
-+	 * @id: [out]
-+	 *
-+	 * System-global ID of the syncpoint.
-+	 */
-+	__u32 id;
-+
-+	__u32 reserved[3];
-+};
-+
-+struct host1x_syncpoint_increment {
-+	/**
-+	 * @count: [in]
-+	 *
-+	 * Number of times to increment the syncpoint. The syncpoint can
-+	 * be observed at in-between values, but each increment is atomic.
-+	 */
-+	__u32 count;
-+};
-+
-+struct host1x_read_syncpoint {
-+	/**
-+	 * @id: [in]
-+	 *
-+	 * ID of the syncpoint to read.
-+	 */
-+	__u32 id;
-+
-+	/**
-+	 * @value: [out]
-+	 *
-+	 * Current value of the syncpoint.
-+	 */
-+	__u32 value;
-+};
-+
-+struct host1x_create_fence {
-+	/**
-+	 * @id: [in]
-+	 *
-+	 * ID of the syncpoint to create a fence for.
-+	 */
-+	__u32 id;
-+
-+	/**
-+	 * @threshold: [in]
-+	 *
-+	 * When the syncpoint reaches this value, the fence will be signaled.
-+	 * The syncpoint is considered to have reached the threshold when the
-+	 * following condition is true:
-+	 *
-+	 * 	((value - threshold) & 0x80000000U) == 0U
-+	 *
-+	 */
-+	__u32 threshold;
-+
-+	/**
-+	 * @fence_fd: [out]
-+	 *
-+	 * New sync_file file descriptor containing the created fence.
-+	 */
-+	__s32 fence_fd;
-+
-+	__u32 reserved[1];
-+};
-+
-+struct host1x_fence_extract_fence {
-+	__u32 id;
-+	__u32 threshold;
-+};
-+
-+struct host1x_fence_extract {
-+	/**
-+	 * @fence_fd: [in]
-+	 *
-+	 * sync_file file descriptor
-+	 */
-+	__s32 fence_fd;
-+
-+	/**
-+	 * @num_fences: [in,out]
-+	 *
-+	 * In: size of the `fences_ptr` array counted in elements.
-+	 * Out: required size of the `fences_ptr` array counted in elements.
-+	 */
-+	__u32 num_fences;
-+
-+	/**
-+	 * @fences_ptr: [in]
-+	 *
-+	 * Pointer to array of `struct host1x_fence_extract_fence`.
-+	 */
-+	__u64 fences_ptr;
-+
-+	__u32 reserved[2];
-+};
-+
-+#define HOST1X_IOCTL_ALLOCATE_SYNCPOINT  _IOWR('X', 0x00, struct host1x_allocate_syncpoint)
-+#define HOST1X_IOCTL_READ_SYNCPOINT      _IOR ('X', 0x01, struct host1x_read_syncpoint)
-+#define HOST1X_IOCTL_CREATE_FENCE        _IOWR('X', 0x02, struct host1x_create_fence)
-+#define HOST1X_IOCTL_SYNCPOINT_INFO      _IOWR('X', 0x03, struct host1x_syncpoint_info)
-+#define HOST1X_IOCTL_SYNCPOINT_INCREMENT _IOWR('X', 0x04, struct host1x_syncpoint_increment)
-+#define HOST1X_IOCTL_FENCE_EXTRACT       _IOWR('X', 0x05, struct host1x_fence_extract)
-+
-+#if defined(__cplusplus)
-+}
-+#endif
-+
-+#endif
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index fce7892d5137..5982fdf64e1c 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -42,13 +42,13 @@ static void host1x_syncpt_base_free(struct host1x_syncpt_base *base)
+ 		base->requested = false;
+ }
+ 
+-static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+-						 struct host1x_client *client,
+-						 unsigned long flags)
++struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
++					  unsigned long flags,
++					  const char *name)
+ {
+ 	struct host1x_syncpt *sp = host->syncpt;
++	char *full_name;
+ 	unsigned int i;
+-	char *name;
+ 
+ 	mutex_lock(&host->syncpt_mutex);
+ 
+@@ -64,13 +64,11 @@ static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 			goto unlock;
+ 	}
+ 
+-	name = kasprintf(GFP_KERNEL, "%02u-%s", sp->id,
+-			 client ? dev_name(client->dev) : NULL);
+-	if (!name)
++	full_name = kasprintf(GFP_KERNEL, "%u-%s", sp->id, name);
++	if (!full_name)
+ 		goto free_base;
+ 
+-	sp->client = client;
+-	sp->name = name;
++	sp->name = full_name;
+ 
+ 	if (flags & HOST1X_SYNCPT_CLIENT_MANAGED)
+ 		sp->client_managed = true;
+@@ -87,6 +85,7 @@ static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 	mutex_unlock(&host->syncpt_mutex);
+ 	return NULL;
+ }
++EXPORT_SYMBOL(host1x_syncpt_alloc);
+ 
+ /**
+  * host1x_syncpt_id() - retrieve syncpoint ID
+@@ -401,7 +400,7 @@ int host1x_syncpt_init(struct host1x *host)
+ 	host1x_hw_syncpt_enable_protection(host);
+ 
+ 	/* Allocate sync point to use for clearing waits for expired fences */
+-	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
++	host->nop_sp = host1x_syncpt_alloc(host, 0, "reserved-nop");
+ 	if (!host->nop_sp)
+ 		return -ENOMEM;
+ 
+@@ -423,7 +422,7 @@ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
+ {
+ 	struct host1x *host = dev_get_drvdata(client->host->parent);
+ 
+-	return host1x_syncpt_alloc(host, client, flags);
++	return host1x_syncpt_alloc(host, flags, dev_name(client->dev));
+ }
+ EXPORT_SYMBOL(host1x_syncpt_request);
+ 
+@@ -447,7 +446,6 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
+ 	host1x_syncpt_base_free(sp->base);
+ 	kfree(sp->name);
+ 	sp->base = NULL;
+-	sp->client = NULL;
+ 	sp->name = NULL;
+ 	sp->client_managed = false;
+ 
+diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
+index 8e1d04dacaa0..3aa6b25b1b9c 100644
+--- a/drivers/gpu/host1x/syncpt.h
++++ b/drivers/gpu/host1x/syncpt.h
+@@ -33,7 +33,6 @@ struct host1x_syncpt {
+ 	const char *name;
+ 	bool client_managed;
+ 	struct host1x *host;
+-	struct host1x_client *client;
+ 	struct host1x_syncpt_base *base;
+ 
+ 	/* interrupt data */
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index f711fc0154f4..099eff8a06d2 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -154,6 +154,9 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
+ 					    unsigned long flags);
+ void host1x_syncpt_free(struct host1x_syncpt *sp);
++struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
++					  unsigned long flags,
++					  const char *name);
+ 
+ struct host1x_syncpt_base *host1x_syncpt_get_base(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
 -- 
 2.29.2
 
