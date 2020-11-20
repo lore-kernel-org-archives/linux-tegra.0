@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC79C64E8A
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD1BC64E7D
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB1022253
-	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D5F322253
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="qvxCy82g"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="uxRbstEW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbgKTL0z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 20 Nov 2020 06:26:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
+        id S1728297AbgKTL0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Nov 2020 06:26:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbgKTL0x (ORCPT
+        with ESMTP id S1728338AbgKTL0x (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 20 Nov 2020 06:26:53 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9354BC061A48
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91665C0617A7
         for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -31,26 +31,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=cokdvMihJkuDSU0p90rUvSOE2j6zLc/cBaWABNbhCE0=; b=qvxCy82gnswtnz6ihBhFW9ncRG
-        ZFe0YfTy4nFyfrzPmKPppzJee71SNZMFuNuYH4dkBx6IOWH4W0Px1egxaEUdMGl+JfFrw3HUflL+u
-        SUDD6bk/wBCTEr4rRRoR1Aj2j2nmZ5BxZh7piuCMMXAxUyEOmpaI+GFnuW7To0YGCxb0k0CxVAZTk
-        Ov8xpd2bbAkIDM+ZXPfVHjLg1JXztRPlBIVyI5yNw3Ip3wvAJXMPDeKp+Wd6Wi8xn+wsMk1ii6mkH
-        4IIrSe9Cpk4GsYh5uNnRFfKm8lQXNaLMlaWeIrgmslOggXQo4SjIen5MrjwTVNL/mX+JrbWm5cJZF
-        wZqWFqcw==;
+        bh=hIVBFR9akmgrdI5jQ6ElYNCyPKqzH682dBNu6d+YQmc=; b=uxRbstEWDUqBlPobvSjT20O2qW
+        gct7oR7DI3RCvD7OenYjsAvfeRUE9bCI3k2UAp1ma7irn7eKNZrCDxe+ysNrDTT1DGM1f3uLNzVDH
+        Sklln088lT6ltR0n2O8TkGsL8Y1tBbirt/TPD0hdCNmGMguvL1Nz9oaVqxHw04yxa2LRSNjLhKcMP
+        XvcWkDlCEIj4RCjXcEiGef7Py+RgaSzXKhCeITyOPE+4fVSnS4V84e9rNyJroFFFtnKqgbzBk7IKe
+        xhAnBZ28j/INqQwnpdzoKhhhnjAwGKtd4mQ/Z2e7Hboo/9kvE9Pzb/foWVemYYp/lad7V6geB26DF
+        n9Lja+mg==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kg4Yr-0003lG-12; Fri, 20 Nov 2020 13:26:41 +0200
+        id 1kg4Yq-0003lG-NV; Fri, 20 Nov 2020 13:26:40 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v4 09/21] gpu: host1x: DMA fences and userspace fence creation
-Date:   Fri, 20 Nov 2020 13:25:48 +0200
-Message-Id: <20201120112600.935082-10-mperttunen@nvidia.com>
+Subject: [PATCH v4 06/21] gpu: host1x: Cleanup and refcounting for syncpoints
+Date:   Fri, 20 Nov 2020 13:25:45 +0200
+Message-Id: <20201120112600.935082-7-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201120112600.935082-1-mperttunen@nvidia.com>
 References: <20201120112600.935082-1-mperttunen@nvidia.com>
@@ -63,472 +63,561 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add an implementation of dma_fences based on syncpoints. Syncpoint
-interrupts are used to signal fences. Additionally, after
-software signaling has been enabled, a 30 second timeout is started.
-If the syncpoint threshold is not reached within this period,
-the fence is signalled with an -ETIMEDOUT error code. This is to
-allow fences that would never reach their syncpoint threshold to
-be cleaned up.
-
-Additionally, add a new /dev/host1x IOCTL for creating sync_file
-file descriptors backed by syncpoint fences.
+Add reference counting for allocated syncpoints to allow keeping
+them allocated while jobs are referencing them. Additionally,
+clean up various places using syncpoint IDs to use host1x_syncpt
+pointers instead.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v4:
-* Fix _signal prototype and include it to avoid warning
-* Remove use of unused local in error path
-v3:
-* Move declaration of host1x_fence_extract to public header
+v4: Update from _free to _put in VI driver as well
 ---
- drivers/gpu/host1x/Makefile |   1 +
- drivers/gpu/host1x/fence.c  | 208 ++++++++++++++++++++++++++++++++++++
- drivers/gpu/host1x/fence.h  |  13 +++
- drivers/gpu/host1x/intr.c   |   9 ++
- drivers/gpu/host1x/intr.h   |   2 +
- drivers/gpu/host1x/uapi.c   | 103 ++++++++++++++++++
- include/linux/host1x.h      |   4 +
- 7 files changed, 340 insertions(+)
- create mode 100644 drivers/gpu/host1x/fence.c
- create mode 100644 drivers/gpu/host1x/fence.h
+ drivers/gpu/drm/tegra/dc.c             |  4 +-
+ drivers/gpu/drm/tegra/drm.c            | 17 +++---
+ drivers/gpu/drm/tegra/gr2d.c           |  4 +-
+ drivers/gpu/drm/tegra/gr3d.c           |  4 +-
+ drivers/gpu/drm/tegra/vic.c            |  4 +-
+ drivers/gpu/host1x/cdma.c              | 11 ++--
+ drivers/gpu/host1x/dev.h               |  7 ++-
+ drivers/gpu/host1x/hw/cdma_hw.c        |  2 +-
+ drivers/gpu/host1x/hw/channel_hw.c     | 10 ++--
+ drivers/gpu/host1x/hw/debug_hw.c       |  2 +-
+ drivers/gpu/host1x/job.c               |  5 +-
+ drivers/gpu/host1x/syncpt.c            | 75 +++++++++++++++++++-------
+ drivers/gpu/host1x/syncpt.h            |  3 ++
+ drivers/staging/media/tegra-video/vi.c |  8 +--
+ include/linux/host1x.h                 |  8 +--
+ 15 files changed, 103 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index 882f928d75e1..a48af2cefae1 100644
---- a/drivers/gpu/host1x/Makefile
-+++ b/drivers/gpu/host1x/Makefile
-@@ -10,6 +10,7 @@ host1x-y = \
- 	debug.o \
- 	mipi.o \
- 	uapi.o \
-+	fence.o \
- 	hw/host1x01.o \
- 	hw/host1x02.o \
- 	hw/host1x04.o \
-diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-new file mode 100644
-index 000000000000..b2484606c311
---- /dev/null
-+++ b/drivers/gpu/host1x/fence.c
-@@ -0,0 +1,208 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Syncpoint dma_fence implementation
-+ *
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#include <linux/dma-fence.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
-+#include <linux/slab.h>
-+#include <linux/sync_file.h>
-+
-+#include "fence.h"
-+#include "intr.h"
-+#include "syncpt.h"
-+
-+DEFINE_SPINLOCK(lock);
-+
-+struct host1x_syncpt_fence {
-+	struct dma_fence base;
-+
-+	atomic_t signaling;
-+
-+	struct host1x_syncpt *sp;
-+	u32 threshold;
-+
-+	struct host1x_waitlist *waiter;
-+	void *waiter_ref;
-+
-+	struct delayed_work timeout_work;
-+};
-+
-+static const char *syncpt_fence_get_driver_name(struct dma_fence *f)
-+{
-+	return "host1x";
-+}
-+
-+static const char *syncpt_fence_get_timeline_name(struct dma_fence *f)
-+{
-+	return "syncpoint";
-+}
-+
-+static bool syncpt_fence_enable_signaling(struct dma_fence *f)
-+{
-+	struct host1x_syncpt_fence *sf =
-+		container_of(f, struct host1x_syncpt_fence, base);
-+	int err;
-+
-+	if (host1x_syncpt_is_expired(sf->sp, sf->threshold))
-+		return false;
-+
-+	dma_fence_get(f);
-+
-+	/*
-+	 * The dma_fence framework requires the fence driver to keep a
-+	 * reference to any fences for which 'enable_signaling' has been
-+	 * called (and that have not been signalled).
-+	 * 
-+	 * We provide a userspace API to create arbitrary syncpoint fences,
-+	 * so we cannot normally guarantee that all fences get signalled.
-+	 * As such, setup a timeout, so that long-lasting fences will get
-+	 * reaped eventually.
-+	 */
-+	schedule_delayed_work(&sf->timeout_work, msecs_to_jiffies(30000));
-+
-+	err = host1x_intr_add_action(sf->sp->host, sf->sp, sf->threshold,
-+				     HOST1X_INTR_ACTION_SIGNAL_FENCE, f,
-+				     sf->waiter, &sf->waiter_ref);
-+	if (err) {
-+		cancel_delayed_work_sync(&sf->timeout_work);
-+		dma_fence_put(f);
-+		return false;
-+	}
-+
-+	/* intr framework takes ownership of waiter */
-+	sf->waiter = NULL;
-+
-+	/*
-+	 * The fence may get signalled at any time after the above call,
-+	 * so we need to initialize all state used by signalling
-+	 * before it.
-+	 */
-+
-+	return true;
-+}
-+
-+static void syncpt_fence_release(struct dma_fence *f)
-+{
-+	struct host1x_syncpt_fence *sf =
-+		container_of(f, struct host1x_syncpt_fence, base);
-+
-+	if (sf->waiter)
-+		kfree(sf->waiter);
-+
-+	dma_fence_free(f);
-+}
-+
-+const struct dma_fence_ops syncpt_fence_ops = {
-+	.get_driver_name = syncpt_fence_get_driver_name,
-+	.get_timeline_name = syncpt_fence_get_timeline_name,
-+	.enable_signaling = syncpt_fence_enable_signaling,
-+	.release = syncpt_fence_release,
-+};
-+
-+void host1x_fence_signal(struct host1x_syncpt_fence *f)
-+{
-+	if (atomic_xchg(&f->signaling, 1))
-+		return;
-+
-+	/*
-+	 * Cancel pending timeout work - if it races, it will
-+	 * not get 'f->signaling' and return.
-+	 */
-+	cancel_delayed_work_sync(&f->timeout_work);
-+
-+	host1x_intr_put_ref(f->sp->host, f->sp->id, f->waiter_ref);
-+
-+	dma_fence_signal(&f->base);
-+	dma_fence_put(&f->base);
-+}
-+
-+static void do_fence_timeout(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = (struct delayed_work *)work;
-+	struct host1x_syncpt_fence *f =
-+		container_of(dwork, struct host1x_syncpt_fence, timeout_work);
-+
-+	if (atomic_xchg(&f->signaling, 1))
-+		return;
-+
-+	/*
-+	 * Cancel pending timeout work - if it races, it will
-+	 * not get 'f->signaling' and return.
-+	 */
-+	host1x_intr_put_ref(f->sp->host, f->sp->id, f->waiter_ref);
-+
-+	dma_fence_set_error(&f->base, -ETIMEDOUT);
-+	dma_fence_signal(&f->base);
-+	dma_fence_put(&f->base);
-+}
-+
-+struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold)
-+{
-+	struct host1x_syncpt_fence *fence;
-+
-+	fence = kzalloc(sizeof(*fence), GFP_KERNEL);
-+	if (!fence)
-+		return ERR_PTR(-ENOMEM);
-+
-+	fence->waiter = kzalloc(sizeof(*fence->waiter), GFP_KERNEL);
-+	if (!fence->waiter)
-+		return ERR_PTR(-ENOMEM);
-+
-+	fence->sp = sp;
-+	fence->threshold = threshold;
-+
-+	dma_fence_init(&fence->base, &syncpt_fence_ops, &lock,
-+		       dma_fence_context_alloc(1), 0);
-+
-+	INIT_DELAYED_WORK(&fence->timeout_work, do_fence_timeout);
-+
-+	return &fence->base;
-+}
-+EXPORT_SYMBOL(host1x_fence_create);
-+
-+int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold)
-+{
-+	struct sync_file *file;
-+	struct dma_fence *f;
-+	int fd;
-+
-+	f = host1x_fence_create(sp, threshold);
-+	if (IS_ERR(f))
-+		return PTR_ERR(f);
-+
-+	fd = get_unused_fd_flags(O_CLOEXEC);
-+	if (fd < 0) {
-+		dma_fence_put(f);
-+		return fd;
-+	}
-+
-+	file = sync_file_create(f);
-+	dma_fence_put(f);
-+	if (!file)
-+		return -ENOMEM;
-+
-+	fd_install(fd, file->file);
-+
-+	return fd;
-+}
-+EXPORT_SYMBOL(host1x_fence_create_fd);
-+
-+int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold)
-+{
-+	struct host1x_syncpt_fence *f;
-+
-+	if (fence->ops != &syncpt_fence_ops)
-+		return -EINVAL;
-+
-+	f = container_of(fence, struct host1x_syncpt_fence, base);
-+
-+	*id = f->sp->id;
-+	*threshold = f->threshold;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(host1x_fence_extract);
-diff --git a/drivers/gpu/host1x/fence.h b/drivers/gpu/host1x/fence.h
-new file mode 100644
-index 000000000000..70c91de82f14
---- /dev/null
-+++ b/drivers/gpu/host1x/fence.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2020, NVIDIA Corporation.
-+ */
-+
-+#ifndef HOST1X_FENCE_H
-+#define HOST1X_FENCE_H
-+
-+struct host1x_syncpt_fence;
-+
-+void host1x_fence_signal(struct host1x_syncpt_fence *fence);
-+
-+#endif
-diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-index 5d328d20ce6d..19b59c5c94d0 100644
---- a/drivers/gpu/host1x/intr.c
-+++ b/drivers/gpu/host1x/intr.c
-@@ -13,6 +13,7 @@
- #include <trace/events/host1x.h>
- #include "channel.h"
- #include "dev.h"
-+#include "fence.h"
- #include "intr.h"
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 9a0b3240bc58..efb41c10dad4 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2127,7 +2127,7 @@ static int tegra_dc_init(struct host1x_client *client)
+ 		drm_plane_cleanup(primary);
  
- /* Wait list management */
-@@ -121,12 +122,20 @@ static void action_wakeup_interruptible(struct host1x_waitlist *waiter)
- 	wake_up_interruptible(wq);
- }
+ 	host1x_client_iommu_detach(client);
+-	host1x_syncpt_free(dc->syncpt);
++	host1x_syncpt_put(dc->syncpt);
  
-+static void action_signal_fence(struct host1x_waitlist *waiter)
-+{
-+	struct host1x_syncpt_fence *f = waiter->data;
-+
-+	host1x_fence_signal(f);
-+}
-+
- typedef void (*action_handler)(struct host1x_waitlist *waiter);
- 
- static const action_handler action_handlers[HOST1X_INTR_ACTION_COUNT] = {
- 	action_submit_complete,
- 	action_wakeup,
- 	action_wakeup_interruptible,
-+	action_signal_fence,
- };
- 
- static void run_handlers(struct list_head completed[HOST1X_INTR_ACTION_COUNT])
-diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
-index aac38194398f..dedbd0f700fb 100644
---- a/drivers/gpu/host1x/intr.h
-+++ b/drivers/gpu/host1x/intr.h
-@@ -33,6 +33,8 @@ enum host1x_intr_action {
- 	 */
- 	HOST1X_INTR_ACTION_WAKEUP_INTERRUPTIBLE,
- 
-+	HOST1X_INTR_ACTION_SIGNAL_FENCE,
-+
- 	HOST1X_INTR_ACTION_COUNT
- };
- 
-diff --git a/drivers/gpu/host1x/uapi.c b/drivers/gpu/host1x/uapi.c
-index 27b8761c3f35..e931756a5e16 100644
---- a/drivers/gpu/host1x/uapi.c
-+++ b/drivers/gpu/host1x/uapi.c
-@@ -11,8 +11,10 @@
- #include <linux/fs.h>
- #include <linux/host1x.h>
- #include <linux/nospec.h>
-+#include <linux/sync_file.h>
- 
- #include "dev.h"
-+#include "fence.h"
- #include "syncpt.h"
- #include "uapi.h"
- 
-@@ -195,6 +197,99 @@ static int dev_file_ioctl_alloc_syncpoint(struct host1x *host1x,
  	return err;
  }
- 
-+static int dev_file_ioctl_create_fence(struct host1x *host1x, void __user *data)
-+{
-+	struct host1x_create_fence args;
-+	unsigned long copy_err;
-+	int fd;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	if (args.reserved[0])
-+		return -EINVAL;
-+
-+	if (args.id >= host1x_syncpt_nb_pts(host1x))
-+		return -EINVAL;
-+
-+	args.id = array_index_nospec(args.id, host1x_syncpt_nb_pts(host1x));
-+
-+	fd = host1x_fence_create_fd(&host1x->syncpt[args.id], args.threshold);
-+	if (fd < 0)
-+		return fd;
-+
-+	args.fence_fd = fd;
-+
-+	copy_err = copy_to_user(data, &args, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int dev_file_ioctl_fence_extract(struct host1x *host1x, void __user *data)
-+{
-+	struct host1x_fence_extract_fence __user *fences_user_ptr;
-+	struct dma_fence *fence, **fences;
-+	struct host1x_fence_extract args;
-+	struct dma_fence_array *array;
-+	unsigned int num_fences, i;
-+	unsigned long copy_err;
-+	int err;
-+
-+	copy_err = copy_from_user(&args, data, sizeof(args));
-+	if (copy_err)
-+		return -EFAULT;
-+
-+	fences_user_ptr = u64_to_user_ptr(args.fences_ptr);
-+
-+	if (args.reserved[0] || args.reserved[1])
-+		return -EINVAL;
-+
-+	fence = sync_file_get_fence(args.fence_fd);
-+	if (!fence)
-+		return -EINVAL;
-+
-+	array = to_dma_fence_array(fence);
-+	if (array) {
-+		fences = array->fences;
-+		num_fences = array->num_fences;
-+	} else {
-+		fences = &fence;
-+		num_fences = 1;
-+	}
-+
-+	for (i = 0; i < min(num_fences, args.num_fences); i++) {
-+		struct host1x_fence_extract_fence f;
-+
-+		err = host1x_fence_extract(fences[i], &f.id, &f.threshold);
-+		if (err)
-+			goto put_fence;
-+
-+		copy_err = copy_to_user(fences_user_ptr + i, &f, sizeof(f));
-+		if (copy_err) {
-+			err = -EFAULT;
-+			goto put_fence;
-+		}
-+	}
-+
-+	args.num_fences = i+1;
-+
-+	copy_err = copy_to_user(data, &args, sizeof(args));
-+	if (copy_err) {
-+		err = -EFAULT;
-+		goto put_fence;
-+	}
-+
-+	return 0;
-+
-+put_fence:
-+	dma_fence_put(fence);
-+
-+	return err;
-+}
-+
- static long dev_file_ioctl(struct file *file, unsigned int cmd,
- 			   unsigned long arg)
- {
-@@ -210,6 +305,14 @@ static long dev_file_ioctl(struct file *file, unsigned int cmd,
- 		err = dev_file_ioctl_alloc_syncpoint(file->private_data, data);
- 		break;
- 
-+	case HOST1X_IOCTL_CREATE_FENCE:
-+		err = dev_file_ioctl_create_fence(file->private_data, data);
-+		break;
-+
-+	case HOST1X_IOCTL_FENCE_EXTRACT:
-+		err = dev_file_ioctl_fence_extract(file->private_data, data);
-+		break;
-+
- 	default:
- 		err = -ENOTTY;
+@@ -2152,7 +2152,7 @@ static int tegra_dc_exit(struct host1x_client *client)
  	}
+ 
+ 	host1x_client_iommu_detach(client);
+-	host1x_syncpt_free(dc->syncpt);
++	host1x_syncpt_put(dc->syncpt);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index ba9d1c3e7cac..ceea9db341f0 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -171,7 +171,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	struct drm_tegra_syncpt syncpt;
+ 	struct host1x *host1x = dev_get_drvdata(drm->dev->parent);
+ 	struct drm_gem_object **refs;
+-	struct host1x_syncpt *sp;
++	struct host1x_syncpt *sp = NULL;
+ 	struct host1x_job *job;
+ 	unsigned int num_refs;
+ 	int err;
+@@ -298,8 +298,8 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		goto fail;
+ 	}
+ 
+-	/* check whether syncpoint ID is valid */
+-	sp = host1x_syncpt_get(host1x, syncpt.id);
++	/* Syncpoint ref will be dropped on job release. */
++	sp = host1x_syncpt_get_by_id(host1x, syncpt.id);
+ 	if (!sp) {
+ 		err = -ENOENT;
+ 		goto fail;
+@@ -308,7 +308,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	job->is_addr_reg = context->client->ops->is_addr_reg;
+ 	job->is_valid_class = context->client->ops->is_valid_class;
+ 	job->syncpt_incrs = syncpt.incrs;
+-	job->syncpt_id = syncpt.id;
++	job->syncpt = sp;
+ 	job->timeout = 10000;
+ 
+ 	if (args->timeout && args->timeout < 10000)
+@@ -327,6 +327,9 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	args->fence = job->syncpt_end;
+ 
+ fail:
++	if (sp)
++		host1x_syncpt_put(sp);
++
+ 	while (num_refs--)
+ 		drm_gem_object_put(refs[num_refs]);
+ 
+@@ -380,7 +383,7 @@ static int tegra_syncpt_read(struct drm_device *drm, void *data,
+ 	struct drm_tegra_syncpt_read *args = data;
+ 	struct host1x_syncpt *sp;
+ 
+-	sp = host1x_syncpt_get(host, args->id);
++	sp = host1x_syncpt_get_by_id_noref(host, args->id);
+ 	if (!sp)
+ 		return -EINVAL;
+ 
+@@ -395,7 +398,7 @@ static int tegra_syncpt_incr(struct drm_device *drm, void *data,
+ 	struct drm_tegra_syncpt_incr *args = data;
+ 	struct host1x_syncpt *sp;
+ 
+-	sp = host1x_syncpt_get(host1x, args->id);
++	sp = host1x_syncpt_get_by_id_noref(host1x, args->id);
+ 	if (!sp)
+ 		return -EINVAL;
+ 
+@@ -409,7 +412,7 @@ static int tegra_syncpt_wait(struct drm_device *drm, void *data,
+ 	struct drm_tegra_syncpt_wait *args = data;
+ 	struct host1x_syncpt *sp;
+ 
+-	sp = host1x_syncpt_get(host1x, args->id);
++	sp = host1x_syncpt_get_by_id_noref(host1x, args->id);
+ 	if (!sp)
+ 		return -EINVAL;
+ 
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 1a0d3ba6e525..d857a99b21a7 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -67,7 +67,7 @@ static int gr2d_init(struct host1x_client *client)
+ detach:
+ 	host1x_client_iommu_detach(client);
+ free:
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ put:
+ 	host1x_channel_put(gr2d->channel);
+ 	return err;
+@@ -86,7 +86,7 @@ static int gr2d_exit(struct host1x_client *client)
+ 		return err;
+ 
+ 	host1x_client_iommu_detach(client);
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ 	host1x_channel_put(gr2d->channel);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index b0b8154e8104..24442ade0da3 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -76,7 +76,7 @@ static int gr3d_init(struct host1x_client *client)
+ detach:
+ 	host1x_client_iommu_detach(client);
+ free:
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ put:
+ 	host1x_channel_put(gr3d->channel);
+ 	return err;
+@@ -94,7 +94,7 @@ static int gr3d_exit(struct host1x_client *client)
+ 		return err;
+ 
+ 	host1x_client_iommu_detach(client);
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ 	host1x_channel_put(gr3d->channel);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index ade56b860cf9..cb476da59adc 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -197,7 +197,7 @@ static int vic_init(struct host1x_client *client)
+ 	return 0;
+ 
+ free_syncpt:
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ free_channel:
+ 	host1x_channel_put(vic->channel);
+ detach:
+@@ -221,7 +221,7 @@ static int vic_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	host1x_syncpt_free(client->syncpts[0]);
++	host1x_syncpt_put(client->syncpts[0]);
+ 	host1x_channel_put(vic->channel);
+ 	host1x_client_iommu_detach(client);
+ 
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index e8d3fda91d8a..6e6ca774f68d 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -273,15 +273,13 @@ static int host1x_cdma_wait_pushbuffer_space(struct host1x *host1x,
+ static void cdma_start_timer_locked(struct host1x_cdma *cdma,
+ 				    struct host1x_job *job)
+ {
+-	struct host1x *host = cdma_to_host1x(cdma);
+-
+ 	if (cdma->timeout.client) {
+ 		/* timer already started */
+ 		return;
+ 	}
+ 
+ 	cdma->timeout.client = job->client;
+-	cdma->timeout.syncpt = host1x_syncpt_get(host, job->syncpt_id);
++	cdma->timeout.syncpt = job->syncpt;
+ 	cdma->timeout.syncpt_val = job->syncpt_end;
+ 	cdma->timeout.start_ktime = ktime_get();
+ 
+@@ -312,7 +310,6 @@ static void stop_cdma_timer_locked(struct host1x_cdma *cdma)
+ static void update_cdma_locked(struct host1x_cdma *cdma)
+ {
+ 	bool signal = false;
+-	struct host1x *host1x = cdma_to_host1x(cdma);
+ 	struct host1x_job *job, *n;
+ 
+ 	/* If CDMA is stopped, queue is cleared and we can return */
+@@ -324,8 +321,7 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
+ 	 * to consume as many sync queue entries as possible without blocking
+ 	 */
+ 	list_for_each_entry_safe(job, n, &cdma->sync_queue, list) {
+-		struct host1x_syncpt *sp =
+-			host1x_syncpt_get(host1x, job->syncpt_id);
++		struct host1x_syncpt *sp = job->syncpt;
+ 
+ 		/* Check whether this syncpt has completed, and bail if not */
+ 		if (!host1x_syncpt_is_expired(sp, job->syncpt_end)) {
+@@ -499,8 +495,7 @@ int host1x_cdma_begin(struct host1x_cdma *cdma, struct host1x_job *job)
+ 		if (!cdma->timeout.initialized) {
+ 			int err;
+ 
+-			err = host1x_hw_cdma_timeout_init(host1x, cdma,
+-							  job->syncpt_id);
++			err = host1x_hw_cdma_timeout_init(host1x, cdma);
+ 			if (err) {
+ 				mutex_unlock(&cdma->lock);
+ 				return err;
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index f781a9b0f39d..63010ae37a97 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -37,7 +37,7 @@ struct host1x_cdma_ops {
+ 	void (*start)(struct host1x_cdma *cdma);
+ 	void (*stop)(struct host1x_cdma *cdma);
+ 	void (*flush)(struct  host1x_cdma *cdma);
+-	int (*timeout_init)(struct host1x_cdma *cdma, unsigned int syncpt);
++	int (*timeout_init)(struct host1x_cdma *cdma);
+ 	void (*timeout_destroy)(struct host1x_cdma *cdma);
+ 	void (*freeze)(struct host1x_cdma *cdma);
+ 	void (*resume)(struct host1x_cdma *cdma, u32 getptr);
+@@ -261,10 +261,9 @@ static inline void host1x_hw_cdma_flush(struct host1x *host,
+ }
+ 
+ static inline int host1x_hw_cdma_timeout_init(struct host1x *host,
+-					      struct host1x_cdma *cdma,
+-					      unsigned int syncpt)
++					      struct host1x_cdma *cdma)
+ {
+-	return host->cdma_op->timeout_init(cdma, syncpt);
++	return host->cdma_op->timeout_init(cdma);
+ }
+ 
+ static inline void host1x_hw_cdma_timeout_destroy(struct host1x *host,
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 2f3bf94cf365..e49cd5b8f735 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -295,7 +295,7 @@ static void cdma_timeout_handler(struct work_struct *work)
+ /*
+  * Init timeout resources
+  */
+-static int cdma_timeout_init(struct host1x_cdma *cdma, unsigned int syncpt)
++static int cdma_timeout_init(struct host1x_cdma *cdma)
+ {
+ 	INIT_DELAYED_WORK(&cdma->timeout.wq, cdma_timeout_handler);
+ 	cdma->timeout.initialized = true;
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index 5eaa29d171c9..d4c28faf27d1 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -86,8 +86,7 @@ static void submit_gathers(struct host1x_job *job)
+ 
+ static inline void synchronize_syncpt_base(struct host1x_job *job)
+ {
+-	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+-	struct host1x_syncpt *sp = host->syncpt + job->syncpt_id;
++	struct host1x_syncpt *sp = job->syncpt;
+ 	unsigned int id;
+ 	u32 value;
+ 
+@@ -118,7 +117,7 @@ static void host1x_channel_set_streamid(struct host1x_channel *channel)
+ static int channel_submit(struct host1x_job *job)
+ {
+ 	struct host1x_channel *ch = job->channel;
+-	struct host1x_syncpt *sp;
++	struct host1x_syncpt *sp = job->syncpt;
+ 	u32 user_syncpt_incrs = job->syncpt_incrs;
+ 	u32 prev_max = 0;
+ 	u32 syncval;
+@@ -126,10 +125,9 @@ static int channel_submit(struct host1x_job *job)
+ 	struct host1x_waitlist *completed_waiter = NULL;
+ 	struct host1x *host = dev_get_drvdata(ch->dev->parent);
+ 
+-	sp = host->syncpt + job->syncpt_id;
+ 	trace_host1x_channel_submit(dev_name(ch->dev),
+ 				    job->num_gathers, job->num_relocs,
+-				    job->syncpt_id, job->syncpt_incrs);
++				    job->syncpt->id, job->syncpt_incrs);
+ 
+ 	/* before error checks, return current max */
+ 	prev_max = job->syncpt_end = host1x_syncpt_read_max(sp);
+@@ -163,7 +161,7 @@ static int channel_submit(struct host1x_job *job)
+ 		host1x_cdma_push(&ch->cdma,
+ 				 host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
+ 					host1x_uclass_wait_syncpt_r(), 1),
+-				 host1x_class_host_wait_syncpt(job->syncpt_id,
++				 host1x_class_host_wait_syncpt(job->syncpt->id,
+ 					host1x_syncpt_read_max(sp)));
+ 	}
+ 
+diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
+index f31bcfa1b837..ceb48229d14b 100644
+--- a/drivers/gpu/host1x/hw/debug_hw.c
++++ b/drivers/gpu/host1x/hw/debug_hw.c
+@@ -204,7 +204,7 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
+ 		unsigned int i;
+ 
+ 		host1x_debug_output(o, "\n%p: JOB, syncpt_id=%d, syncpt_val=%d, first_get=%08x, timeout=%d num_slots=%d, num_handles=%d\n",
+-				    job, job->syncpt_id, job->syncpt_end,
++				    job, job->syncpt->id, job->syncpt_end,
+ 				    job->first_get, job->timeout,
+ 				    job->num_slots, job->num_unpins);
+ 
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 89b6c14b7392..d8345d3bf0b3 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
+ {
+ 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
+ 
++	if (job->syncpt)
++		host1x_syncpt_put(job->syncpt);
++
+ 	kfree(job);
+ }
+ 
+@@ -680,7 +683,7 @@ EXPORT_SYMBOL(host1x_job_unpin);
+  */
+ void host1x_job_dump(struct device *dev, struct host1x_job *job)
+ {
+-	dev_dbg(dev, "    SYNCPT_ID   %d\n", job->syncpt_id);
++	dev_dbg(dev, "    SYNCPT_ID   %d\n", job->syncpt->id);
+ 	dev_dbg(dev, "    SYNCPT_VAL  %d\n", job->syncpt_end);
+ 	dev_dbg(dev, "    FIRST_GET   0x%x\n", job->first_get);
+ 	dev_dbg(dev, "    TIMEOUT     %d\n", job->timeout);
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 9ca0d852e32f..c7b910e413d8 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -75,6 +75,8 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 	else
+ 		sp->client_managed = false;
+ 
++	kref_init(&sp->ref);
++
+ 	mutex_unlock(&host->syncpt_mutex);
+ 	return sp;
+ 
+@@ -368,7 +370,7 @@ int host1x_syncpt_init(struct host1x *host)
+  * host1x client drivers can use this function to allocate a syncpoint for
+  * subsequent use. A syncpoint returned by this function will be reserved for
+  * use by the client exclusively. When no longer using a syncpoint, a host1x
+- * client driver needs to release it using host1x_syncpt_free().
++ * client driver needs to release it using host1x_syncpt_put().
+  */
+ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
+ 					    unsigned long flags)
+@@ -379,20 +381,9 @@ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
+ }
+ EXPORT_SYMBOL(host1x_syncpt_request);
+ 
+-/**
+- * host1x_syncpt_free() - free a requested syncpoint
+- * @sp: host1x syncpoint
+- *
+- * Release a syncpoint previously allocated using host1x_syncpt_request(). A
+- * host1x client driver should call this when the syncpoint is no longer in
+- * use. Note that client drivers must ensure that the syncpoint doesn't remain
+- * under the control of hardware after calling this function, otherwise two
+- * clients may end up trying to access the same syncpoint concurrently.
+- */
+-void host1x_syncpt_free(struct host1x_syncpt *sp)
++static void syncpt_release(struct kref *ref)
+ {
+-	if (!sp)
+-		return;
++	struct host1x_syncpt *sp = container_of(ref, struct host1x_syncpt, ref);
+ 
+ 	mutex_lock(&sp->host->syncpt_mutex);
+ 
+@@ -404,7 +395,23 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
+ 
+ 	mutex_unlock(&sp->host->syncpt_mutex);
+ }
+-EXPORT_SYMBOL(host1x_syncpt_free);
++
++/**
++ * host1x_syncpt_put() - free a requested syncpoint
++ * @sp: host1x syncpoint
++ *
++ * Release a syncpoint previously allocated using host1x_syncpt_request(). A
++ * host1x client driver should call this when the syncpoint is no longer in
++ * use.
++ */
++void host1x_syncpt_put(struct host1x_syncpt *sp)
++{
++	if (!sp)
++		return;
++
++	kref_put(&sp->ref, syncpt_release);
++}
++EXPORT_SYMBOL(host1x_syncpt_put);
+ 
+ void host1x_syncpt_deinit(struct host1x *host)
+ {
+@@ -471,16 +478,48 @@ unsigned int host1x_syncpt_nb_mlocks(struct host1x *host)
+ }
+ 
+ /**
+- * host1x_syncpt_get() - obtain a syncpoint by ID
++ * host1x_syncpt_get_by_id() - obtain a syncpoint by ID
++ * @host: host1x controller
++ * @id: syncpoint ID
++ */
++struct host1x_syncpt *host1x_syncpt_get_by_id(struct host1x *host,
++					      unsigned int id)
++{
++	if (id >= host->info->nb_pts)
++		return NULL;
++
++	if (kref_get_unless_zero(&host->syncpt[id].ref))
++		return &host->syncpt[id];
++	else
++		return NULL;
++}
++EXPORT_SYMBOL(host1x_syncpt_get_by_id);
++
++/**
++ * host1x_syncpt_get_by_id_noref() - obtain a syncpoint by ID but don't
++ * 	increase the refcount.
+  * @host: host1x controller
+  * @id: syncpoint ID
+  */
+-struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, unsigned int id)
++struct host1x_syncpt *host1x_syncpt_get_by_id_noref(struct host1x *host,
++						    unsigned int id)
+ {
+ 	if (id >= host->info->nb_pts)
+ 		return NULL;
+ 
+-	return host->syncpt + id;
++	return &host->syncpt[id];
++}
++EXPORT_SYMBOL(host1x_syncpt_get_by_id_noref);
++
++/**
++ * host1x_syncpt_get() - increment syncpoint refcount
++ * @sp: syncpoint
++ */
++struct host1x_syncpt *host1x_syncpt_get(struct host1x_syncpt *sp)
++{
++	kref_get(&sp->ref);
++
++	return sp;
+ }
+ EXPORT_SYMBOL(host1x_syncpt_get);
+ 
+diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
+index 3aa6b25b1b9c..a6766f8d55ee 100644
+--- a/drivers/gpu/host1x/syncpt.h
++++ b/drivers/gpu/host1x/syncpt.h
+@@ -11,6 +11,7 @@
+ #include <linux/atomic.h>
+ #include <linux/host1x.h>
+ #include <linux/kernel.h>
++#include <linux/kref.h>
+ #include <linux/sched.h>
+ 
+ #include "intr.h"
+@@ -26,6 +27,8 @@ struct host1x_syncpt_base {
+ };
+ 
+ struct host1x_syncpt {
++	struct kref ref;
++
+ 	unsigned int id;
+ 	atomic_t min_val;
+ 	atomic_t max_val;
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 1b5e660155f5..f52377e4959e 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -618,8 +618,8 @@ static void tegra_channel_cleanup(struct tegra_vi_channel *chan)
+ {
+ 	v4l2_ctrl_handler_free(&chan->ctrl_handler);
+ 	media_entity_cleanup(&chan->video.entity);
+-	host1x_syncpt_free(chan->mw_ack_sp);
+-	host1x_syncpt_free(chan->frame_start_sp);
++	host1x_syncpt_put(chan->mw_ack_sp);
++	host1x_syncpt_put(chan->frame_start_sp);
+ 	mutex_destroy(&chan->video_lock);
+ }
+ 
+@@ -733,9 +733,9 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ cleanup_media:
+ 	media_entity_cleanup(&chan->video.entity);
+ free_mw_ack_syncpt:
+-	host1x_syncpt_free(chan->mw_ack_sp);
++	host1x_syncpt_put(chan->mw_ack_sp);
+ free_fs_syncpt:
+-	host1x_syncpt_free(chan->frame_start_sp);
++	host1x_syncpt_put(chan->frame_start_sp);
+ 	return ret;
+ }
+ 
 diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 8f6d61e13e05..bcfb1cc9a1c1 100644
+index 099eff8a06d2..c222cf61b70b 100644
 --- a/include/linux/host1x.h
 +++ b/include/linux/host1x.h
-@@ -165,6 +165,10 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
+@@ -142,7 +142,9 @@ struct host1x_syncpt_base;
+ struct host1x_syncpt;
+ struct host1x;
  
- struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
+-struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, u32 id);
++struct host1x_syncpt *host1x_syncpt_get_by_id(struct host1x *host, u32 id);
++struct host1x_syncpt *host1x_syncpt_get_by_id_noref(struct host1x *host, u32 id);
++struct host1x_syncpt *host1x_syncpt_get(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_id(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_min(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_read_max(struct host1x_syncpt *sp);
+@@ -153,7 +155,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		       u32 *value);
+ struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
+ 					    unsigned long flags);
+-void host1x_syncpt_free(struct host1x_syncpt *sp);
++void host1x_syncpt_put(struct host1x_syncpt *sp);
+ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 					  unsigned long flags,
+ 					  const char *name);
+@@ -221,7 +223,7 @@ struct host1x_job {
+ 	dma_addr_t *reloc_addr_phys;
  
-+struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
-+int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold);
-+int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshold);
-+
- /*
-  * host1x channel
-  */
+ 	/* Sync point id, number of increments and end related to the submit */
+-	u32 syncpt_id;
++	struct host1x_syncpt *syncpt;
+ 	u32 syncpt_incrs;
+ 	u32 syncpt_end;
+ 
 -- 
 2.29.2
 
