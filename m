@@ -2,123 +2,245 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D5BC388F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 21:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7284C56202
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB4832224A
-	for <linux-tegra@archiver.kernel.org>; Thu, 19 Nov 2020 21:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FA6E22244
+	for <linux-tegra@archiver.kernel.org>; Fri, 20 Nov 2020 11:26:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7nCUKE/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="U90FEDvs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbgKSVEP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 19 Nov 2020 16:04:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40326 "EHLO
+        id S1728282AbgKTL0r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 20 Nov 2020 06:26:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgKSVEP (ORCPT
+        with ESMTP id S1727887AbgKTL0r (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 19 Nov 2020 16:04:15 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC926C0613CF;
-        Thu, 19 Nov 2020 13:04:14 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id d17so10279226lfq.10;
-        Thu, 19 Nov 2020 13:04:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vuoOcEDX9Qk97tEXio5KifV8glbdNQVJZyvTphvDqvk=;
-        b=Z7nCUKE/RQ9qg0YGyxWOSuPZzYClCIPVG4dDKfgZzvnvTz+99/YQDvGHCnf2I8CnGW
-         pkAsHgEoGSwjk8OYL63JspMqMqxAzRUP5d0wxkfE4lVzgYFcZMXxvfmRsSvUvWQPyP7x
-         LahO0WpXbtbIKsm9ZwYvUbynYvK0V0wg/JbPCCP5/9fsQDK9lQ3hCVM+eaEDvrFjMMMt
-         DjRG4PfvdeoM2ECV8SP01up2ardmTKM4KOC/SwGwFlTeWnVtvfcswkdL+mxdxijByohA
-         49fnigdv7xhIi6jPOhXAN2/jDVK5yfVH2dXU5Zi4oxPj+yCg+xe9hQfco0qZEaGUeZfI
-         NVkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vuoOcEDX9Qk97tEXio5KifV8glbdNQVJZyvTphvDqvk=;
-        b=IL18VSMELiBKzlrzQTROIRGPzjCEsSsWVOwCNma7bbBc5V6UAS+YcGgW5z+RYr4FFu
-         xg2SZyYE6jhawyAc6paOBQ7n/uhimPK4uPRV0OyuIC4VyWEwB8xaHlZhmPdHavooJ5dt
-         yWvtkrag/sW77jzkrHHCyYmyha3rQMW/h1tmG5UDEH7cABaAJJ2JK5ksO7M7+uG9PQed
-         3qB3qLXzhzKA37IOxnqYEqwaGiXlmjrFAxALAC25hQ74OmtrkUZZr7IxvQKYKYlNzcOr
-         lkg/zNEkpXa/hTXotE8bv6914PXiArLfO912DEXKcJizs2vPsbSQFIdrymNSN1U5Octn
-         gWyg==
-X-Gm-Message-State: AOAM530hYJWAzCZXHlAZMsujzYI6v7wUhBL9jBvUNr0SuKVDyjxuaSTp
-        sJKoiOGjKq5e9Vl55xMm4q7XXL4wVDw=
-X-Google-Smtp-Source: ABdhPJy+CtxWZMIEcLdTw+ve3E4A1aRfbrnZczo8enZeKkTgfMpY2z1d+lCeAwy727IwHQB3omIh1g==
-X-Received: by 2002:a19:2390:: with SMTP id j138mr6480480lfj.390.1605819853222;
-        Thu, 19 Nov 2020 13:04:13 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id y11sm91684lfl.119.2020.11.19.13.04.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2020 13:04:12 -0800 (PST)
-Subject: Re: [PATCH v9 07/17] PM / devfreq: tegra30: Support interconnect and
- OPPs from device-tree
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20201115212922.4390-1-digetx@gmail.com>
- <20201115212922.4390-8-digetx@gmail.com>
- <20201117100705.i62qr4gosvu76o22@vireshk-i7>
- <956315a9-e806-3b18-6792-f01057a6c511@gmail.com>
- <20201118042117.q6nkwm7exakgfvu3@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <150be162-cb1a-4e30-8937-e99cd1c4255b@gmail.com>
-Date:   Fri, 20 Nov 2020 00:04:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Fri, 20 Nov 2020 06:26:47 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D293DC0613CF
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2020 03:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=d8vhsL9oQ8SkqtoVDpeUGoyLkLmbhzKZtlQX5CG6vZs=; b=U90FEDvsQF+HxF4dHk9EW322Ew
+        G9sW8zm8jwKUd2kjKJOwMeLRgYAYanONFCgCwWgYQsmmcv2do67C72imZZTAowD8bD/2KbrmbHbTV
+        ks3SeBs5IO1VWobHA02HK+1Nsa/BhNSop/hLNqJgeZW7awF6uXRyxOn1rLcUYQJKZ80hkujAYe9nN
+        1TfBqKIgpuF0Mov91OV6Eye8oSXnYwcEqcdE0LS6LGv2UGp0ema5dur+sMrJ53zPR7hCuSTR5sLGn
+        Qe9BDSzoROTRr5WwwYwEtqLFgLXTNywqEdVR8+hzGUjv/gUf6rFi7+R2quWj60IS+LxgvFaoCB38G
+        q4K0F/Og==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1kg4Yr-0003lG-EV; Fri, 20 Nov 2020 13:26:41 +0200
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v4 14/21] gpu: host1x: Reserve VBLANK syncpoints at initialization
+Date:   Fri, 20 Nov 2020 13:25:53 +0200
+Message-Id: <20201120112600.935082-15-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201120112600.935082-1-mperttunen@nvidia.com>
+References: <20201120112600.935082-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20201118042117.q6nkwm7exakgfvu3@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.11.2020 07:21, Viresh Kumar пишет:
-...
->>>> +	/* legacy device-trees don't have OPP table and must be updated */
->>>> +	if (!device_property_present(&pdev->dev, "operating-points-v2")) {
->>>> +		dev_err(&pdev->dev,
->>>> +			"OPP table not found, please update your device tree\n");
->>>> +		return -ENODEV;
->>>> +	}
->>>> +
->>>
->>> You forgot to remove this ?
->>
->> Yes, good catch. I'm planning to replace this code with a common helper
->> sometime soon, so if there won't be another reasons to make a new
->> revision, then I'd prefer to keep it as-is for now.
-> 
-> You should just replace this patch only with a version of V9.1 and you
-> aren't really required to resend the whole series. And you should fix
-> it before it gets merged. This isn't a formatting issue which we just
-> let through. I trust you when you say that you will fix it, but this
-> must be fixed now.
-> 
+On T20-T148 chips, the bootloader can set up a boot splash
+screen with DC configured to increment syncpoint 26/27
+at VBLANK. Because of this we shouldn't allow these syncpoints
+to be allocated until DC has been reset and will no longer
+increment them in the background.
 
-Should be easier to resend it all. I'll update it over the weekend, thanks.
+As such, on these chips, reserve those two syncpoints at
+initialization, and only mark them free once the DC
+driver has indicated it's safe to do so.
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+v3:
+* New patch
+---
+ drivers/gpu/drm/tegra/dc.c  |  6 ++++++
+ drivers/gpu/host1x/dev.c    |  6 ++++++
+ drivers/gpu/host1x/dev.h    |  6 ++++++
+ drivers/gpu/host1x/syncpt.c | 34 +++++++++++++++++++++++++++++++++-
+ include/linux/host1x.h      |  3 +++
+ 5 files changed, 54 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index efb41c10dad4..0b23e0922c25 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2031,6 +2031,12 @@ static int tegra_dc_init(struct host1x_client *client)
+ 	struct drm_plane *cursor = NULL;
+ 	int err;
+ 
++	/*
++	 * DC has been reset by now, so VBLANK syncpoint can be released
++	 * for general use.
++	 */
++	host1x_syncpt_release_vblank_reservation(client, 26 + dc->pipe);
++
+ 	/*
+ 	 * XXX do not register DCs with no window groups because we cannot
+ 	 * assign a primary plane to them, which in turn will cause KMS to
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 641317d23828..8b50fbb22846 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -77,6 +77,7 @@ static const struct host1x_info host1x01_info = {
+ 	.has_hypervisor = false,
+ 	.num_sid_entries = 0,
+ 	.sid_table = NULL,
++	.reserve_vblank_syncpts = true,
+ };
+ 
+ static const struct host1x_info host1x02_info = {
+@@ -91,6 +92,7 @@ static const struct host1x_info host1x02_info = {
+ 	.has_hypervisor = false,
+ 	.num_sid_entries = 0,
+ 	.sid_table = NULL,
++	.reserve_vblank_syncpts = true,
+ };
+ 
+ static const struct host1x_info host1x04_info = {
+@@ -105,6 +107,7 @@ static const struct host1x_info host1x04_info = {
+ 	.has_hypervisor = false,
+ 	.num_sid_entries = 0,
+ 	.sid_table = NULL,
++	.reserve_vblank_syncpts = false,
+ };
+ 
+ static const struct host1x_info host1x05_info = {
+@@ -119,6 +122,7 @@ static const struct host1x_info host1x05_info = {
+ 	.has_hypervisor = false,
+ 	.num_sid_entries = 0,
+ 	.sid_table = NULL,
++	.reserve_vblank_syncpts = false,
+ };
+ 
+ static const struct host1x_sid_entry tegra186_sid_table[] = {
+@@ -142,6 +146,7 @@ static const struct host1x_info host1x06_info = {
+ 	.has_hypervisor = true,
+ 	.num_sid_entries = ARRAY_SIZE(tegra186_sid_table),
+ 	.sid_table = tegra186_sid_table,
++	.reserve_vblank_syncpts = false,
+ };
+ 
+ static const struct host1x_sid_entry tegra194_sid_table[] = {
+@@ -165,6 +170,7 @@ static const struct host1x_info host1x07_info = {
+ 	.has_hypervisor = true,
+ 	.num_sid_entries = ARRAY_SIZE(tegra194_sid_table),
+ 	.sid_table = tegra194_sid_table,
++	.reserve_vblank_syncpts = false,
+ };
+ 
+ static const struct of_device_id host1x_of_match[] = {
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 7b8b7e20e32b..e360bc4a25f6 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -102,6 +102,12 @@ struct host1x_info {
+ 	bool has_hypervisor; /* has hypervisor registers */
+ 	unsigned int num_sid_entries;
+ 	const struct host1x_sid_entry *sid_table;
++	/*
++	 * On T20-T148, the boot chain may setup DC to increment syncpoints
++	 * 26/27 on VBLANK. As such we cannot use these syncpoints until
++	 * the display driver disables VBLANK increments.
++	 */
++	bool reserve_vblank_syncpts;
+ };
+ 
+ struct host1x {
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 99d31932eb34..d0be7bdbc6c9 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -52,7 +52,7 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ 
+ 	mutex_lock(&host->syncpt_mutex);
+ 
+-	for (i = 0; i < host->info->nb_pts && sp->name; i++, sp++)
++	for (i = 0; i < host->info->nb_pts && kref_read(&sp->ref); i++, sp++)
+ 		;
+ 
+ 	if (i >= host->info->nb_pts)
+@@ -359,6 +359,11 @@ int host1x_syncpt_init(struct host1x *host)
+ 	if (!host->nop_sp)
+ 		return -ENOMEM;
+ 
++	if (host->info->reserve_vblank_syncpts) {
++		kref_init(&host->syncpt[26].ref);
++		kref_init(&host->syncpt[27].ref);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -545,3 +550,30 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base)
+ 	return base->id;
+ }
+ EXPORT_SYMBOL(host1x_syncpt_base_id);
++
++static void do_nothing(struct kref *ref)
++{
++}
++
++/**
++ * host1x_syncpt_release_vblank_reservation() - Make VBLANK syncpoint
++ *   available for allocation
++ *
++ * @client: host1x bus client
++ *
++ * Makes VBLANK<i> syncpoint available for allocatation if it was
++ * reserved at initialization time. This should be called by the display
++ * driver after it has ensured that any VBLANK increment programming configured
++ * by the boot chain has been disabled.
++ */
++void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
++					      u32 syncpt_id)
++{
++	struct host1x *host = dev_get_drvdata(client->host->parent);
++
++	if (!host->info->reserve_vblank_syncpts)
++		return;
++
++	kref_put(&host->syncpt[syncpt_id].ref, do_nothing);
++}
++EXPORT_SYMBOL(host1x_syncpt_release_vblank_reservation);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 59296d3346fe..ff2a23cd6bb0 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -163,6 +163,9 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
+ struct host1x_syncpt_base *host1x_syncpt_get_base(struct host1x_syncpt *sp);
+ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
+ 
++void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
++					      u32 syncpt_id);
++
+ struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
+ 
+ struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
+-- 
+2.29.2
+
