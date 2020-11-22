@@ -2,75 +2,253 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3027C56202
-	for <linux-tegra@archiver.kernel.org>; Sat, 21 Nov 2020 14:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C17C56202
+	for <linux-tegra@archiver.kernel.org>; Sun, 22 Nov 2020 01:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F45822210
-	for <linux-tegra@archiver.kernel.org>; Sat, 21 Nov 2020 14:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB51A20855
+	for <linux-tegra@archiver.kernel.org>; Sun, 22 Nov 2020 01:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="gl5hVqbv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgKUOEw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 21 Nov 2020 09:04:52 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41996 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727741AbgKUOEw (ORCPT
+        id S1727021AbgKVBC3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 21 Nov 2020 20:02:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40238 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbgKVBC3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 21 Nov 2020 09:04:52 -0500
-Received: by mail-qk1-f195.google.com with SMTP id z188so422624qke.9;
-        Sat, 21 Nov 2020 06:04:51 -0800 (PST)
+        Sat, 21 Nov 2020 20:02:29 -0500
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAEF4C061A4A
+        for <linux-tegra@vger.kernel.org>; Sat, 21 Nov 2020 17:02:28 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id o9so18301971ejg.1
+        for <linux-tegra@vger.kernel.org>; Sat, 21 Nov 2020 17:02:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K9oj1jZNjwyubHbEqnynv/Se7vgMAMWMdAYmcz95zz4=;
+        b=gl5hVqbvJq6lGDv65VLLiqYwVVAm7B6II0IjXvMyOIrz+3IEyepw7gAW8PJjwh6EWH
+         rAE63Vkk5piYgj1aF6EuSNhUVZXT5367JFsQm1+XuX3FOUPZ8xTZUUSbncx0M33JRfDU
+         vQfKgKTc9ApnZ5kGFQLD/ICX8UYq+LRLSQd2rS+fXDXSGZtnb4uOsPNUVpjX51E2O9hC
+         ooCOZi9K4UnJ1OjYY19DRHqQ/vEG5E/+juICcTKi5ay5uDX1rQPX+eeAYtiWxWcBGIOY
+         J89iSrgf0gTCXFVtNYfyKzueS5eslYawQ5k538XhMAHXdZ3fTi0nu9dn1VJA9dGEyyJC
+         aOTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wwSyffURhFDeBnrx6J6OeK2E2lbKIqJMz9PrJJH/RC0=;
-        b=KfF7C+61OQ5acci9uhIeITn7Weo+a5/kN9rT0EMmmEJYpPpwt4bl07YfvpR6TVqdK5
-         Vex0/MsDI1SDKChWwHxTm/bDgcvYuo9HRgPvP696PGWTEFgs7VpUuVvzisysJGYMT1hB
-         gTRDZMXPlAlAxtFNgpM6huLkzAmELID9m7HD8tdFirLNKFG4KIZmf5GJuBHtXJD0uCK6
-         70ii5Y5nuGKqFNbWapLpiaxinN5hpp0RI5GmHjdJFxU6He2RaNfS6S26pVrGd1RL7ud6
-         6bjgpBJj149ZCEWWgo/isb9O3+eK+nh9eru/PfAmWno/enZpKDfHyxAQGlSLPXwKACfQ
-         h+JQ==
-X-Gm-Message-State: AOAM530x7OAiDQ0cb2V56mC4JyHTNwnk/xdklh5cwukh8eRJNo+aHL7m
-        lsCQLXlNOF/XEsYKrpj99Q==
-X-Google-Smtp-Source: ABdhPJynrIKv2Ye3GvsMlDEoJ/XAMOUbvNz3bmZkSg/xPEZNu9UzBQz8diHoAS1DsNu0usRPer7Pbw==
-X-Received: by 2002:a37:5242:: with SMTP id g63mr22162778qkb.317.1605967491394;
-        Sat, 21 Nov 2020 06:04:51 -0800 (PST)
-Received: from xps15 ([172.58.99.230])
-        by smtp.gmail.com with ESMTPSA id w192sm4131343qka.68.2020.11.21.06.04.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2020 06:04:50 -0800 (PST)
-Received: (nullmailer pid 2173568 invoked by uid 1000);
-        Sat, 21 Nov 2020 14:04:47 -0000
-Date:   Sat, 21 Nov 2020 08:04:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        linux-ide@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] dt-binding: ata: tegra: Add dt-binding
- documentation for Tegra186
-Message-ID: <20201121140447.GA2173518@robh.at.kernel.org>
-References: <1605296218-2510-1-git-send-email-skomatineni@nvidia.com>
- <1605296218-2510-5-git-send-email-skomatineni@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K9oj1jZNjwyubHbEqnynv/Se7vgMAMWMdAYmcz95zz4=;
+        b=cXoqpnNK+lhv1Kp8Pmvl+BM+JP8TF6eq2s6Ciyb9bxw2FqfxZiE0UooIE11Z/P4Unz
+         BMMUNgd/DSG2liLgglkQKw2LAW7B1tkIahH3mGNgumckzfQrk2tLGX9jI0KjbtIk2ifJ
+         I+hXRDSv+0uMZ60/iiZtxPdmeBcV9VcY66inYrIO9RQ3As4Q3IsTgxCXaFhKSWu56oBo
+         f1CI1xs0Ml8qynp04SiyRqLfiYUsvInuWI3k/iiKDoR1wPIeyAwlXYHUpzk+s2glmJCi
+         r9Cfy+nKP+y++bkFHU/Hocb3HbNGc0Gk/ypqxLUivD+3SkPqJHiU8VNqzVfgEXkUegU6
+         A1nA==
+X-Gm-Message-State: AOAM530Djl+6mj3hdWoVAlSCBix5v38jwCpbJW9Shgo9v9KKfnA+bvXN
+        WnjOOCfkj3ey0pts/FGMTLNbP0dTw2h7fhutktbZJw==
+X-Google-Smtp-Source: ABdhPJwtHhPutwaLggyGRigreNs+Yh/IGc/u3dvhTaCjpSNNitrzRtnUzEaROcW0wXLe6/ECG/ujJxHoUFAXGP6U7ok=
+X-Received: by 2002:a17:906:1945:: with SMTP id b5mr38468149eje.388.1606006947375;
+ Sat, 21 Nov 2020 17:02:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1605296218-2510-5-git-send-email-skomatineni@nvidia.com>
+References: <cover.1513038011.git.digetx@gmail.com> <3d565db80f8dccafd14224924305243b37b75a07.1513038011.git.digetx@gmail.com>
+In-Reply-To: <3d565db80f8dccafd14224924305243b37b75a07.1513038011.git.digetx@gmail.com>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Sat, 21 Nov 2020 22:02:15 -0300
+Message-ID: <CAAEAJfBZD0u6MDxcp3See-agzyCSJS7dKpwK28LMJwPvE9DLtQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] staging: media: Introduce NVIDIA Tegra video
+ decoder driver
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 13 Nov 2020 11:36:56 -0800, Sowjanya Komatineni wrote:
-> This patch adds dt-bindings documentation for Tegra186 AHCI
-> controller.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
+Hi Dmitry,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Mon, 11 Dec 2017 at 21:27, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> NVIDIA Tegra20/30/114/124/132 SoC's have video decoder engine that
+> supports standard set of video formats like H.264 / MPEG-4 / WMV / VC1.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  MAINTAINERS                                 |    9 +
+>  drivers/staging/media/Kconfig               |    2 +
+>  drivers/staging/media/Makefile              |    1 +
+>  drivers/staging/media/tegra-vde/Kconfig     |    7 +
+>  drivers/staging/media/tegra-vde/Makefile    |    1 +
+>  drivers/staging/media/tegra-vde/TODO        |    4 +
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 1213 +++++++++++++++++++++++++++
+>  drivers/staging/media/tegra-vde/uapi.h      |   78 ++
+>  8 files changed, 1315 insertions(+)
+>  create mode 100644 drivers/staging/media/tegra-vde/Kconfig
+>  create mode 100644 drivers/staging/media/tegra-vde/Makefile
+>  create mode 100644 drivers/staging/media/tegra-vde/TODO
+>  create mode 100644 drivers/staging/media/tegra-vde/tegra-vde.c
+>  create mode 100644 drivers/staging/media/tegra-vde/uapi.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7d195739f892..7f7c24949a06 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8706,6 +8706,15 @@ T:       git git://linuxtv.org/media_tree.git
+>  S:     Maintained
+>  F:     drivers/media/dvb-frontends/stv6111*
+>
+> +MEDIA DRIVERS FOR NVIDIA TEGRA - VDE
+> +M:     Dmitry Osipenko <digetx@gmail.com>
+> +L:     linux-media@vger.kernel.org
+> +L:     linux-tegra@vger.kernel.org
+> +T:     git git://linuxtv.org/media_tree.git
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+> +F:     drivers/staging/media/tegra-vde/
+> +
+>  MEDIA INPUT INFRASTRUCTURE (V4L/DVB)
+>  M:     Mauro Carvalho Chehab <mchehab@s-opensource.com>
+>  M:     Mauro Carvalho Chehab <mchehab@kernel.org>
+> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
+> index 3a09140700e6..227437f22acf 100644
+> --- a/drivers/staging/media/Kconfig
+> +++ b/drivers/staging/media/Kconfig
+> @@ -31,4 +31,6 @@ source "drivers/staging/media/imx/Kconfig"
+>
+>  source "drivers/staging/media/omap4iss/Kconfig"
+>
+> +source "drivers/staging/media/tegra-vde/Kconfig"
+> +
+>  endif
+> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
+> index f25327163c67..59a47f69884f 100644
+> --- a/drivers/staging/media/Makefile
+> +++ b/drivers/staging/media/Makefile
+> @@ -5,3 +5,4 @@ obj-$(CONFIG_VIDEO_IMX_MEDIA)   += imx/
+>  obj-$(CONFIG_VIDEO_DM365_VPFE) += davinci_vpfe/
+>  obj-$(CONFIG_VIDEO_OMAP4)      += omap4iss/
+>  obj-$(CONFIG_INTEL_ATOMISP)     += atomisp/
+> +obj-$(CONFIG_TEGRA_VDE)                += tegra-vde/
+> diff --git a/drivers/staging/media/tegra-vde/Kconfig b/drivers/staging/media/tegra-vde/Kconfig
+> new file mode 100644
+> index 000000000000..ec3ddddebdaa
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/Kconfig
+> @@ -0,0 +1,7 @@
+> +config TEGRA_VDE
+> +       tristate "NVIDIA Tegra Video Decoder Engine driver"
+> +       depends on ARCH_TEGRA || COMPILE_TEST
+> +       select SRAM
+> +       help
+> +           Say Y here to enable support for the NVIDIA Tegra video decoder
+> +           driver.
+> diff --git a/drivers/staging/media/tegra-vde/Makefile b/drivers/staging/media/tegra-vde/Makefile
+> new file mode 100644
+> index 000000000000..444c1d62daa1
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_TEGRA_VDE)        += tegra-vde.o
+> diff --git a/drivers/staging/media/tegra-vde/TODO b/drivers/staging/media/tegra-vde/TODO
+> new file mode 100644
+> index 000000000000..31aaa3e66d80
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/TODO
+> @@ -0,0 +1,4 @@
+> +TODO:
+> +       - Implement V4L2 API once it gains support for stateless decoders.
+> +
+> +Contact: Dmitry Osipenko <digetx@gmail.com>
+
+The API for H264 stateless decoding is ready.
+See https://lkml.org/lkml/2020/11/18/795.
+
+One minor comment below.
+
+> diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
+> new file mode 100644
+> index 000000000000..a50c7bcae057
+> --- /dev/null
+> +++ b/drivers/staging/media/tegra-vde/uapi.h
+> @@ -0,0 +1,78 @@
+> +/*
+> + * Copyright (C) 2016-2017 Dmitry Osipenko <digetx@gmail.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the License, or (at your option) any later version.
+> + */
+> +
+> +#ifndef _UAPI_TEGRA_VDE_H_
+> +#define _UAPI_TEGRA_VDE_H_
+> +
+> +#include <linux/types.h>
+> +#include <asm/ioctl.h>
+> +
+> +#define FLAG_B_FRAME           (1 << 0)
+> +#define FLAG_REFERENCE         (1 << 1)
+> +
+> +struct tegra_vde_h264_frame {
+> +       __s32 y_fd;
+> +       __s32 cb_fd;
+> +       __s32 cr_fd;
+> +       __s32 aux_fd;
+> +       __u32 y_offset;
+> +       __u32 cb_offset;
+> +       __u32 cr_offset;
+> +       __u32 aux_offset;
+> +       __u32 frame_num;
+> +       __u32 flags;
+> +
+> +       __u32 reserved;
+> +} __attribute__((packed));
+> +
+> +struct tegra_vde_h264_decoder_ctx {
+> +       __s32 bitstream_data_fd;
+> +       __u32 bitstream_data_offset;
+> +
+> +       __u64 dpb_frames_ptr;
+> +       __u8  dpb_frames_nb;
+> +       __u8  dpb_ref_frames_with_earlier_poc_nb;
+> +
+> +       // SPS
+> +       __u8  baseline_profile;
+> +       __u8  level_idc;
+> +       __u8  log2_max_pic_order_cnt_lsb;
+> +       __u8  log2_max_frame_num;
+> +       __u8  pic_order_cnt_type;
+> +       __u8  direct_8x8_inference_flag;
+> +       __u8  pic_width_in_mbs;
+> +       __u8  pic_height_in_mbs;
+> +
+> +       // PPS
+> +       __u8  pic_init_qp;
+> +       __u8  deblocking_filter_control_present_flag;
+> +       __u8  constrained_intra_pred_flag;
+> +       __u8  chroma_qp_index_offset;
+> +       __u8  pic_order_present_flag;
+> +
+
+This seems to be bottom_field_pic_order_in_frame_present_flag,
+as there is no "pic_order_present_flag" syntax element.
+
+Thanks,
+Ezequiel
