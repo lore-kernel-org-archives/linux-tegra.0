@@ -2,207 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7229BC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30519C56202
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BA6E20781
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6A02083E
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:32:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aJ1HCIIq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uDQ5uZPG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731325AbgKWORY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Nov 2020 09:17:24 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17530 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731202AbgKWORY (ORCPT
+        id S2389241AbgKWOcf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Nov 2020 09:32:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729794AbgKWOce (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Nov 2020 09:17:24 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fbbc4750000>; Mon, 23 Nov 2020 06:17:25 -0800
-Received: from [10.25.102.126] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Nov
- 2020 14:17:19 +0000
-Subject: Re: [PATCH v5 3/6] ASoC: tegra: Add audio graph based card driver
-To:     Jon Hunter <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>
-CC:     <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>
-References: <1605119676-32273-1-git-send-email-spujar@nvidia.com>
- <1605119676-32273-4-git-send-email-spujar@nvidia.com>
- <46aa4d68-03e9-72e9-51f9-e67dba15f5d3@nvidia.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <43ace5b2-b3ff-ea7c-dbc4-38833a9c873d@nvidia.com>
-Date:   Mon, 23 Nov 2020 19:47:16 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 23 Nov 2020 09:32:34 -0500
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C19C061A4D
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2020 06:32:34 -0800 (PST)
+Received: by mail-ua1-x944.google.com with SMTP id y26so1817584uan.5
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2020 06:32:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OgGZW3WpDuLDw5ozZE+5u59qz60QMyQHd0baZzhIOdY=;
+        b=uDQ5uZPGj1q/JbChhqx9aCaS3qRHgKQbTp+mI6Eouz/FB1nvFjhFfQqazSviWmOuNi
+         k6AW9L1f3Uqd1KrAIkBzlPQIjaET0KkCApC18XyyxG1iZa4m2/hUuzUTvnjqC6x/8XGp
+         TNVXALu4nKnUgnDr6daqWte+mvSnCmA174Z0wcDy+NjHbbjzEy6m5XBEefSpWQkpq9Zv
+         7bymDueIrRVokSxDIsOtvz2Ci+wMhDllib3xZDei66EGUUfzGRf0bZmNAGQ1J3SBQKHd
+         0+b9MNwsnB0zng8Bem71joPDnC/YvKT0RGibO3VyCq4vgp55DUvab7RpVa2KUjTP9hjo
+         r+ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OgGZW3WpDuLDw5ozZE+5u59qz60QMyQHd0baZzhIOdY=;
+        b=Px+iniRe+0pW3pTOWhzPR2/S/Mh6TD8sSKOBp+cLdatD+z6RLn6BgKt0KGxBbl3T7W
+         XT3ckLHy070Tm1MH8bymuZJuajtZ+oN+7/X8obth8+WcKtbco5iVc3Kify4ju6N41d49
+         aSFrVChX73stB2/A1OFYTqoeDYEDDKFrYz1fe3rKpr+P61vdyEGpgDD5KTPnmonLei7h
+         fgv9dMqL7w+rW4nSIPIO8PNyegqU4QCjgrncpFPf1Az0y1cznc+HH8A1xz+T1zaIq9eu
+         QO/UyD4dJJ+D14rBJkVYr87JNt5u4UpAYXPFt8z3wrfLf9/BNuG/r5MsvVe/CQg7axMv
+         odwg==
+X-Gm-Message-State: AOAM531yQPO4wjLLMCDZy5EDazjW+1EKxy3NdNxOXwpWDHFWzqc2cF+o
+        rn/03fMlG2sYOw5GhQEjUbM2GKYCLh+DkVtB/HJBA9xYZfloJk2w
+X-Google-Smtp-Source: ABdhPJxUUEeuuHWxDeiHXjQmA0ZxOSr84nq7YWX2icdEkJnskSn55gR/J2//1O4Hx4x7PB/TuoG5VIyVBvTf/npMBlI=
+X-Received: by 2002:ab0:c12:: with SMTP id a18mr17768135uak.19.1606141953595;
+ Mon, 23 Nov 2020 06:32:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <46aa4d68-03e9-72e9-51f9-e67dba15f5d3@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1606141045; bh=xe5FC1ykPtZxtumbq2Zvv2h2gJPih65n9frebEMU8cw=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=aJ1HCIIqacDVI3gmgvyRLBcakVhyHFl2DIzv76Hok5W3VzK9xcKQTBThyKERrfUTK
-         boKNmEuS3G7cq5TV7wCUvwKDf72RlO4g6ZG/lKTVAWUL1kI4+CtFv7RY+LqxklCxo0
-         MBpoRiiIYD1RuUCxDbqCNIi1/zuZ5rbC2aoMPFHyl6jnT82GQ3EO0OKjhYF2JvbYe9
-         TslGSMdqueoU7z9LdXmzEDgQq1Nz6mzYlWKTP7p231IiVPiTeC5hBCREdZdcgq7QEc
-         71J0oDVUFoDLzNBr9/GkXriKR2Lb72aLfG3E7PsHyyDFsRi+VBaeW7Kxlsqrd2Aihe
-         7RbERH/TSkC2g==
+References: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
+ <CAPDyKFrxKhO0V-uTDLDV6RFQFwhjesE0zfnuBLfYs-n5bNxXtg@mail.gmail.com> <35721978-d166-c5d9-06f6-45cec0d835ad@nvidia.com>
+In-Reply-To: <35721978-d166-c5d9-06f6-45cec0d835ad@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 23 Nov 2020 15:31:55 +0100
+Message-ID: <CAPDyKFoVQ=D96KtFnmjMh6R7=PrCvTLWqUAPAYsRrVOg2dFFTA@mail.gmail.com>
+Subject: Re: [RFC] PM Domains: Ensure the provider is resumed first
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
++ Saravana
 
->> Add Tegra audio machine driver which is based on generic audio graph card
->> driver. It re-uses most of the common stuff from audio graph driver and
->> uses the same DT binding. Required Tegra specific customizations are done
->> in the driver and additional DT bindings are required for clock handling.
->>
->> Details on the customizations done:
->>
->>   - Update PLL rates at runtime: Tegra HW supports multiple sample rates
->>     (multiples of 8x and 11.025x) and both of these groups require different
->>     PLL rates. Hence there is a requirement to update this at runtime.
->>     This is achieved by providing a custom 'snd_soc_ops' and in hw_param()
->>     callback PLL rate is updated as per the sample rate.
->>
->>   - Internal structure 'tegra_audio_graph_data' is used to maintain clock
->>     handles of PLL.
->>
->>   - The 'force_dpcm' flag is set to use DPCM for all DAI links.
->>
->>   - The 'component_chaining' flag is set to use DPCM with component model.
->>
->> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->> ---
->>   sound/soc/tegra/Kconfig                  |   9 ++
->>   sound/soc/tegra/Makefile                 |   2 +
->>   sound/soc/tegra/tegra_audio_graph_card.c | 255 +++++++++++++++++++++++++++++++
->>   3 files changed, 266 insertions(+)
->>   create mode 100644 sound/soc/tegra/tegra_audio_graph_card.c
->>
->> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
->> index a62cc87..6dc83ad 100644
->> --- a/sound/soc/tegra/Kconfig
->> +++ b/sound/soc/tegra/Kconfig
->> @@ -117,6 +117,15 @@ config SND_SOC_TEGRA210_ADMAIF
->>   	  channel. Buffer size is configurable for each ADMAIIF channel.
->>   	  Say Y or M if you want to add support for Tegra210 ADMAIF module.
->>   
->> +config SND_SOC_TEGRA_AUDIO_GRAPH_CARD
->> +	tristate "Audio Graph Card based Tegra driver"
->> +	depends on SND_AUDIO_GRAPH_CARD
->> +	help
->> +	  Config to enable Tegra audio machine driver based on generic
->> +	  audio graph driver. It is a thin driver written to customize
->> +	  few things for Tegra audio. Most of the code is re-used from
->> +	  audio graph driver and the same DT bindings are used.
->> +
->>   config SND_SOC_TEGRA_RT5640
->>   	tristate "SoC Audio support for Tegra boards using an RT5640 codec"
->>   	depends on SND_SOC_TEGRA && I2C && GPIOLIB
->> diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
->> index 60040a0..b17dd6e 100644
->> --- a/sound/soc/tegra/Makefile
->> +++ b/sound/soc/tegra/Makefile
->> @@ -38,6 +38,7 @@ snd-soc-tegra-trimslice-objs := trimslice.o
->>   snd-soc-tegra-alc5632-objs := tegra_alc5632.o
->>   snd-soc-tegra-max98090-objs := tegra_max98090.o
->>   snd-soc-tegra-sgtl5000-objs := tegra_sgtl5000.o
->> +snd-soc-tegra-audio-graph-card-objs := tegra_audio_graph_card.o
->>   
->>   obj-$(CONFIG_SND_SOC_TEGRA_RT5640) += snd-soc-tegra-rt5640.o
->>   obj-$(CONFIG_SND_SOC_TEGRA_RT5677) += snd-soc-tegra-rt5677.o
->> @@ -48,3 +49,4 @@ obj-$(CONFIG_SND_SOC_TEGRA_TRIMSLICE) += snd-soc-tegra-trimslice.o
->>   obj-$(CONFIG_SND_SOC_TEGRA_ALC5632) += snd-soc-tegra-alc5632.o
->>   obj-$(CONFIG_SND_SOC_TEGRA_MAX98090) += snd-soc-tegra-max98090.o
->>   obj-$(CONFIG_SND_SOC_TEGRA_SGTL5000) += snd-soc-tegra-sgtl5000.o
->> +obj-$(CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD) += snd-soc-tegra-audio-graph-card.o
->> diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
->> new file mode 100644
->> index 0000000..f4d826d
->> --- /dev/null
->> +++ b/sound/soc/tegra/tegra_audio_graph_card.c
->> @@ -0,0 +1,255 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +//
->> +// tegra_audio_graph_card.c - Audio Graph based Tegra Machine Driver
->> +//
->> +// Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
->> +
->> +#include <linux/math64.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <sound/graph_card.h>
->> +#include <sound/pcm_params.h>
->> +
->> +#define MAX_PLLA_OUT0_DIV 128
->> +
->> +#define simple_to_tegra_priv(simple) \
->> +		container_of(simple, struct tegra_audio_priv, simple)
->> +
->> +enum srate_type {
->> +	/*
->> +	 * Sample rates multiple of 8000 Hz and below are supported:
->> +	 * ( 8000, 16000, 32000, 48000, 96000, 192000 Hz )
->> +	 */
->> +	x8_RATE,
->> +
->> +	/*
->> +	 * Sample rates multiple of 11025 Hz and below are supported:
->> +	 * ( 11025, 22050, 44100, 88200, 176400 Hz )
->> +	 */
->> +	x11_RATE,
->> +
->> +	NUM_RATE_TYPE,
->> +};
->> +
->> +struct tegra_audio_priv {
->> +	struct asoc_simple_priv simple;
->> +	struct clk *clk_plla_out0;
->> +	struct clk *clk_plla;
->> +};
->> +
->> +/* Tegra audio chip data */
->> +struct tegra_audio_cdata {
->> +	unsigned int plla_rates[NUM_RATE_TYPE];
->> +	unsigned int plla_out0_rates[NUM_RATE_TYPE];
->> +};
->> +
->> +/* Setup PLL clock as per the given sample rate */
->> +static int tegra_audio_graph_update_pll(struct snd_pcm_substream *substream,
->> +					struct snd_pcm_hw_params *params)
->> +{
->> +	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
->> +	struct asoc_simple_priv *simple = snd_soc_card_get_drvdata(rtd->card);
->> +	struct tegra_audio_priv *priv = simple_to_tegra_priv(simple);
->> +	struct device *dev = rtd->card->dev;
->> +	const struct tegra_audio_cdata *data = of_device_get_match_data(dev);
->> +	unsigned int plla_rate, plla_out0_rate, bclk;
->> +	unsigned int srate = params_rate(params);
->> +	int err;
->> +
->> +	/* There is nothing to configure */
->> +	if (!data)
->> +		return 0;
+On Mon, 23 Nov 2020 at 14:09, Jon Hunter <jonathanh@nvidia.com> wrote:
 >
-> Seems like this should never happen and so if it did this is an error.
-> Any reason why we don't return an error here?
+> Hi Ulf,
+>
+> On 19/11/2020 10:15, Ulf Hansson wrote:
+> > On Mon, 16 Nov 2020 at 17:17, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> We recently ran into a problem on Tegra186 where it was failing to
+> >> resume from suspend. It turned out that a driver, the Tegra ACONNECT
+> >> (drivers/bus/tegra-aconnect.c), was being resumed before the PM domain
+> >> provider, the BPMP (drivers/firmware/tegra/bpmp.c), and the Tegra
+> >> ACONNECT was trying to enable the PM domain before the provider had been
+> >> resumed.
+> >>
+> >> According to commit 4d23a5e84806 it states that 'genpd powers on the PM
+> >> domain unconditionally in the system PM resume "noirq" phase'. However,
+> >> what I don't see is anything that guarantees that the provider is
+> >> resumed before any device that requires power domains. Unless there is
+> >> something that I am missing?
+> >
+> > The genpd provider's ->power_on() callback should be invoked as soon
+> > as an attached device gets resumed via the ->resume_noirq() callback
+> > (genpd_resume_noirq). Have you verified that this is working as
+> > expected for you?
+>
+> Yes this is working as expected. The problem is that the ->power_on
+> callback for a device is occurring before the provider itself has been
+> resumed.
 
-I was thinking it is OK for platforms to use fixed PLL rates and in such 
-cases they don't have to define chip data. But yes currently there is no 
-case for it and I will simply drop this check in v6.
+I see.
+
+>
+> > Note that, if there is no device attached to the genpd, the
+> > ->power_on() callback may not be invoked - unless there is a child
+> > domain being powered on.
+> >
+> > From the genpd provider driver point of view - why do you need to
+> > implement system suspend/resume callbacks at all? Do you have some
+> > additional operations to run, besides those executed from the
+> > ->power_on|off() callbacks?
+>
+> The provider in this case is an embedded controller, the BPMP, and it
+> needs to be resumed [0] prior to calling the provider callbacks. I am
+> wondering if any other providers have this requirement?
+
+It seems like it should be a rather common requirement for a genpd
+provider - at least for those providers that need to run some
+additional operations at system suspend/resume.
+
+I guess the reason for this problem is that the order of how the
+devices end up in the dpm_list, doesn't fit well for your case.
+Normally, a provider should be registered prior and the consumer, as
+that would probably lead to that the provider becomes resumed first.
+
+In any case, to make sure the order becomes correct, a device link
+should be created between the genpd domain provider and the consumer
+device. As a matter of fact, this is done "automagically" during boot
+for DT based platforms, see of_link_property() in
+drivers/of/property.c.
+
+Currently these device links are created with DL_FLAG_SYNC_STATE_ONLY,
+unless the "fw_devlink" kernel command line specifies a different
+option (on == DL_FLAG_AUTOPROBE_CONSUMER). I would try to play with
+that and see how that turns out.
+
+>
+> Thanks
+> Jon
+>
+> [0]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/firmware/tegra/bpmp.c#n797
+
+Kind regards
+Uffe
