@@ -2,74 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EE5C2D0E4
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D87AC2D0E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDCBC20773
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69E620658
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 14:57:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="crIUkPwv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730483AbgKWOvO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Nov 2020 09:51:14 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:38948 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730644AbgKWOvO (ORCPT
+        id S1730863AbgKWO5H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Nov 2020 09:57:07 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13479 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729772AbgKWO5G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Nov 2020 09:51:14 -0500
-Received: from host-92-5-241-147.as43234.net ([92.5.241.147] helo=[192.168.1.13])
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1khDBN-0001yu-Fh; Mon, 23 Nov 2020 14:51:09 +0000
-Subject: Re: [linux-safety] [PATCH] PCI: tegra: Use PTR_ERR_OR_ZERO
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20201116165407.8050-1-sudipm.mukherjee@gmail.com>
- <20201116170137.GA2587640@ulmo>
-From:   Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Message-ID: <0ef6fc37-4e91-68a1-0744-90b4093ce5ba@codethink.co.uk>
-Date:   Mon, 23 Nov 2020 14:51:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Mon, 23 Nov 2020 09:57:06 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fbbcdc40002>; Mon, 23 Nov 2020 06:57:08 -0800
+Received: from [10.26.72.66] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Nov
+ 2020 14:57:04 +0000
+Subject: Re: [RFC] PM Domains: Ensure the provider is resumed first
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+References: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
+ <CAPDyKFrxKhO0V-uTDLDV6RFQFwhjesE0zfnuBLfYs-n5bNxXtg@mail.gmail.com>
+ <35721978-d166-c5d9-06f6-45cec0d835ad@nvidia.com>
+ <CAPDyKFoVQ=D96KtFnmjMh6R7=PrCvTLWqUAPAYsRrVOg2dFFTA@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d51fd10f-864a-f7ea-4b8b-006351a16a05@nvidia.com>
+Date:   Mon, 23 Nov 2020 14:57:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201116170137.GA2587640@ulmo>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAPDyKFoVQ=D96KtFnmjMh6R7=PrCvTLWqUAPAYsRrVOg2dFFTA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606143429; bh=ZBmMr6d9no4mjeUSMuUqGJ+blESX06XSSZt5vp2y2dw=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=crIUkPwvOWIEHiLQLydibYfwNHZeUJZRBB6/ZqHv6mlVcEi6ZyDgWHcjfRKuTf9e1
+         uqE84BU8KYcudiKdRPYRcbzVzmaMGPuGbSa0WLM0ZjGdoFR/3xuKYshVKNjclsM+4E
+         Oh8BI/YJ9Hw8cTsWlFdHVXqBi8Z1/dRkqL/hn10ojEgsCg0C0G6+LF6s296Pi+ztrB
+         r9K1v1gyRasq2M7VM0uWAesavMJPc7MoaPvD1jM+LEGKGVmC9rT340qB1E41lkJyP+
+         TwSW833u784YlNM3Lj6w9S2D3oXcpKR8ISZFJ7DgCFIi22+WxGxu6BU+FuyY3ZLtA4
+         ZfwbSARAx8B1A==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 16/11/2020 17:01, Thierry Reding wrote:
-> On Mon, Nov 16, 2020 at 04:54:07PM +0000, Sudip Mukherjee wrote:
->> Coccinelle suggested using PTR_ERR_OR_ZERO() and looking at the code,
->> we can use PTR_ERR_OR_ZERO() instead of checking IS_ERR() and then
->> doing 'return 0'.
+On 23/11/2020 14:31, Ulf Hansson wrote:
+
+...
+
+>>> Note that, if there is no device attached to the genpd, the
+>>> ->power_on() callback may not be invoked - unless there is a child
+>>> domain being powered on.
+>>>
+>>> From the genpd provider driver point of view - why do you need to
+>>> implement system suspend/resume callbacks at all? Do you have some
+>>> additional operations to run, besides those executed from the
+>>> ->power_on|off() callbacks?
 >>
->> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
->> ---
->>  drivers/pci/controller/pci-tegra.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
+>> The provider in this case is an embedded controller, the BPMP, and it
+>> needs to be resumed [0] prior to calling the provider callbacks. I am
+>> wondering if any other providers have this requirement?
 > 
-> This has been proposed multiple times in the past and Bjorn and I have
-> agreed every time that this is not an improvement, so sorry, but NAK.
+> It seems like it should be a rather common requirement for a genpd
+> provider - at least for those providers that need to run some
+> additional operations at system suspend/resume.
+> 
+> I guess the reason for this problem is that the order of how the
+> devices end up in the dpm_list, doesn't fit well for your case.
+> Normally, a provider should be registered prior and the consumer, as
+> that would probably lead to that the provider becomes resumed first.
 
-Thanks Thierry and Neil. I have now added a blacklist script in our CI
-so "PTR_ERR_OR_ZERO" will not be flagged for anything in drivers/pci/*
-anymore in our testing.
+Yes it does appear that way. The BPMP (genpd provider) is probed before
+the ACONNECT (consumer) but still the order in which they end up in is
+not what we want.
 
+> In any case, to make sure the order becomes correct, a device link
+> should be created between the genpd domain provider and the consumer
+> device. As a matter of fact, this is done "automagically" during boot
+> for DT based platforms, see of_link_property() in
+> drivers/of/property.c.
+> 
+> Currently these device links are created with DL_FLAG_SYNC_STATE_ONLY,
+> unless the "fw_devlink" kernel command line specifies a different
+> option (on == DL_FLAG_AUTOPROBE_CONSUMER). I would try to play with
+> that and see how that turns out.
 
+OK, good to know. I will take a look at that. Thanks for the inputs.
+
+Jon
 
 -- 
-Regards
-Sudip
+nvpublic
