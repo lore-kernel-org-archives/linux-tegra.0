@@ -2,113 +2,210 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3FDC63777
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 06:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731C6C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 10:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4186320773
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 06:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15D392076E
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 10:36:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYMS5tzY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kAEUdK2R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbgKWGsf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Nov 2020 01:48:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbgKWGsf (ORCPT
+        id S1728628AbgKWKfj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Nov 2020 05:35:39 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3712 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbgKWKfj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Nov 2020 01:48:35 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A2DC0613CF;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id l1so126266pld.5;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PJ6JaHRxor/ka0JdqIrqxbD/WGFaxB9On6PE/7mwuFQ=;
-        b=XYMS5tzYB1db+4HRLPGMZ6FL5f1juIfSv/FApljURg0meQvGkiDEuFZ54vN5rtTgEj
-         rKKcf25pAoLQEKlcFKjsYOpw21tUMZgdY/WqxMyiDNf0wfDyjHju0OMSm56n4Sfq6pA/
-         nt1BmRy2l5WXG5fmjeaBP80o8M4/dz29UbJn6atWupWnL+lZGVbd6cgfF3NUfYbRGuMD
-         G2cYiAUh1mK/WxX9PW8VZD5SOmE5MCWhji+AYddIo9aeOpR5pls5YyOoVyWPpTgU1R5f
-         1kSOmRSEGs8TW6Wojj6NS13uktjjbeWPfjNzDOqZdM1v6n8yLhgeKj6ebdT8rvQp8wag
-         HpPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PJ6JaHRxor/ka0JdqIrqxbD/WGFaxB9On6PE/7mwuFQ=;
-        b=XVU5SdrLC/yWBlCTVD4Em60lglUQICdPZnGSICQv/xVdeaiLmwEkVVS7RN2em9GnWV
-         uRDCtRLW1RLiBELzc8wIBQ2n7IybUo41lus85KA7fU534ppz9EdH6Hc+ZzFgB2A7x2wW
-         HLAqPvuWFdduwgfwUAN5jDQHcPIcrCmsSv34fau1qNciPCY9L8VBXYCSmJTixSP+gBpH
-         aANR07NuDJcGFmwNB/KiiSR+Wvrqg6LNHdk+Cc/lM2EJVPR73SRLToQBu0HZJKim9DCv
-         xJWqMPFtmmx1z+CRaDuOQz2GXzetuqYtoRPR7I3cAAbGnCNv5bbYjD1+njVTxHHZx/BX
-         9SJA==
-X-Gm-Message-State: AOAM530fzXbPpyW8z0IL/09wZ6nQnoerJrmxmL5NxBziFyku4Oj71WY+
-        tfZgCEJ0mjn1n8t4Jmr5Cx1Fit6Fe1M=
-X-Google-Smtp-Source: ABdhPJy/4jDe0Ku9Pn49P4SSO2HrfayI73kSBKrChviAZvZl4QhUhlWxRpjvJa9Ahc8AwXb0XUbvDQ==
-X-Received: by 2002:a17:902:a9c7:b029:d6:da66:253c with SMTP id b7-20020a170902a9c7b02900d6da66253cmr22954681plr.19.1606114114340;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id b29sm9660730pgn.87.2020.11.22.22.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2020 22:48:33 -0800 (PST)
-Date:   Sun, 22 Nov 2020 22:48:31 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-input@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 1/3 v2] Input: atmel_mxt_ts - Fix up inverted RESET
- handler
-Message-ID: <20201123064831.GZ2034289@dtor-ws>
-References: <20201104153032.1387747-1-linus.walleij@linaro.org>
+        Mon, 23 Nov 2020 05:35:39 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fbb907d0000>; Mon, 23 Nov 2020 02:35:41 -0800
+Received: from [10.26.72.66] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Nov
+ 2020 10:35:36 +0000
+Subject: Re: [PATCH v5 3/6] ASoC: tegra: Add audio graph based card driver
+To:     Sameer Pujar <spujar@nvidia.com>, <broonie@kernel.org>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>
+CC:     <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>
+References: <1605119676-32273-1-git-send-email-spujar@nvidia.com>
+ <1605119676-32273-4-git-send-email-spujar@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <46aa4d68-03e9-72e9-51f9-e67dba15f5d3@nvidia.com>
+Date:   Mon, 23 Nov 2020 10:35:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104153032.1387747-1-linus.walleij@linaro.org>
+In-Reply-To: <1605119676-32273-4-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606127741; bh=uMDIowN3wpMWfJH47P7VBkUozBmVOf28BCnQ/0Jg7dM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=kAEUdK2R/aWUfXr+TRSWtdJ0VtB+URhq7Y92DufuUpzrPqL8o2YjNcgiRC9XLzQ6M
+         ar9rzb3qPFGBwKAyhleD7EgEryZZzhBeqP7bfCm12dBu72kK9emFDjOpTKYh3VPHk5
+         dGYpULQVhOGCunoz9X4/uL9WXnT4cVdapjca4Dhzvks4UCg37SPpg4W7PzHphjrv1B
+         Jbd9ggOSUbnyL/OiYjAQ92vxlRWFcN+IzvVAgWj04P7sp/hzv2fDztd8riInzpeHNX
+         QwWgUBqDqCSq2DB52fVgFbgJ6wEChQypb0DYklILjRzg4t1WI4+V83BeqBYkIphBp4
+         2GIaqS0iH1zng==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 04:30:30PM +0100, Linus Walleij wrote:
-> This driver uses GPIO descriptors to drive the touchscreen
-> RESET line. In the existing device trees this has in
-> conflict with intution been flagged as GPIO_ACTIVE_HIGH
-> and the driver then applies the reverse action by
-> driving the line low (setting to 0) to enter
-> reset state and driving the line high (setting to 1) to
-> get out of reset state.
-> 
-> The correct way to handle active low GPIO lines is to
-> provide the GPIO_ACTIVE_LOW in the device tree (thus
-> properly describing the hardware) and letting the GPIO
-> framework invert the assertion (driving high) to a low
-> level and vice versa.
-> 
-> This is considered a bug since the device trees are
-> incorrectly mis-specifying the line as active high.
-> 
-> Fix the driver and all device trees specifying a reset
-> line.
-> 
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Applied, thank you.
+On 11/11/2020 18:34, Sameer Pujar wrote:
+> Add Tegra audio machine driver which is based on generic audio graph card
+> driver. It re-uses most of the common stuff from audio graph driver and
+> uses the same DT binding. Required Tegra specific customizations are done
+> in the driver and additional DT bindings are required for clock handling.
+> 
+> Details on the customizations done:
+> 
+>  - Update PLL rates at runtime: Tegra HW supports multiple sample rates
+>    (multiples of 8x and 11.025x) and both of these groups require different
+>    PLL rates. Hence there is a requirement to update this at runtime.
+>    This is achieved by providing a custom 'snd_soc_ops' and in hw_param()
+>    callback PLL rate is updated as per the sample rate.
+> 
+>  - Internal structure 'tegra_audio_graph_data' is used to maintain clock
+>    handles of PLL.
+> 
+>  - The 'force_dpcm' flag is set to use DPCM for all DAI links.
+> 
+>  - The 'component_chaining' flag is set to use DPCM with component model.
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  sound/soc/tegra/Kconfig                  |   9 ++
+>  sound/soc/tegra/Makefile                 |   2 +
+>  sound/soc/tegra/tegra_audio_graph_card.c | 255 +++++++++++++++++++++++++++++++
+>  3 files changed, 266 insertions(+)
+>  create mode 100644 sound/soc/tegra/tegra_audio_graph_card.c
+> 
+> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+> index a62cc87..6dc83ad 100644
+> --- a/sound/soc/tegra/Kconfig
+> +++ b/sound/soc/tegra/Kconfig
+> @@ -117,6 +117,15 @@ config SND_SOC_TEGRA210_ADMAIF
+>  	  channel. Buffer size is configurable for each ADMAIIF channel.
+>  	  Say Y or M if you want to add support for Tegra210 ADMAIF module.
+>  
+> +config SND_SOC_TEGRA_AUDIO_GRAPH_CARD
+> +	tristate "Audio Graph Card based Tegra driver"
+> +	depends on SND_AUDIO_GRAPH_CARD
+> +	help
+> +	  Config to enable Tegra audio machine driver based on generic
+> +	  audio graph driver. It is a thin driver written to customize
+> +	  few things for Tegra audio. Most of the code is re-used from
+> +	  audio graph driver and the same DT bindings are used.
+> +
+>  config SND_SOC_TEGRA_RT5640
+>  	tristate "SoC Audio support for Tegra boards using an RT5640 codec"
+>  	depends on SND_SOC_TEGRA && I2C && GPIOLIB
+> diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+> index 60040a0..b17dd6e 100644
+> --- a/sound/soc/tegra/Makefile
+> +++ b/sound/soc/tegra/Makefile
+> @@ -38,6 +38,7 @@ snd-soc-tegra-trimslice-objs := trimslice.o
+>  snd-soc-tegra-alc5632-objs := tegra_alc5632.o
+>  snd-soc-tegra-max98090-objs := tegra_max98090.o
+>  snd-soc-tegra-sgtl5000-objs := tegra_sgtl5000.o
+> +snd-soc-tegra-audio-graph-card-objs := tegra_audio_graph_card.o
+>  
+>  obj-$(CONFIG_SND_SOC_TEGRA_RT5640) += snd-soc-tegra-rt5640.o
+>  obj-$(CONFIG_SND_SOC_TEGRA_RT5677) += snd-soc-tegra-rt5677.o
+> @@ -48,3 +49,4 @@ obj-$(CONFIG_SND_SOC_TEGRA_TRIMSLICE) += snd-soc-tegra-trimslice.o
+>  obj-$(CONFIG_SND_SOC_TEGRA_ALC5632) += snd-soc-tegra-alc5632.o
+>  obj-$(CONFIG_SND_SOC_TEGRA_MAX98090) += snd-soc-tegra-max98090.o
+>  obj-$(CONFIG_SND_SOC_TEGRA_SGTL5000) += snd-soc-tegra-sgtl5000.o
+> +obj-$(CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD) += snd-soc-tegra-audio-graph-card.o
+> diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
+> new file mode 100644
+> index 0000000..f4d826d
+> --- /dev/null
+> +++ b/sound/soc/tegra/tegra_audio_graph_card.c
+> @@ -0,0 +1,255 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +//
+> +// tegra_audio_graph_card.c - Audio Graph based Tegra Machine Driver
+> +//
+> +// Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
+> +
+> +#include <linux/math64.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <sound/graph_card.h>
+> +#include <sound/pcm_params.h>
+> +
+> +#define MAX_PLLA_OUT0_DIV 128
+> +
+> +#define simple_to_tegra_priv(simple) \
+> +		container_of(simple, struct tegra_audio_priv, simple)
+> +
+> +enum srate_type {
+> +	/*
+> +	 * Sample rates multiple of 8000 Hz and below are supported:
+> +	 * ( 8000, 16000, 32000, 48000, 96000, 192000 Hz )
+> +	 */
+> +	x8_RATE,
+> +
+> +	/*
+> +	 * Sample rates multiple of 11025 Hz and below are supported:
+> +	 * ( 11025, 22050, 44100, 88200, 176400 Hz )
+> +	 */
+> +	x11_RATE,
+> +
+> +	NUM_RATE_TYPE,
+> +};
+> +
+> +struct tegra_audio_priv {
+> +	struct asoc_simple_priv simple;
+> +	struct clk *clk_plla_out0;
+> +	struct clk *clk_plla;
+> +};
+> +
+> +/* Tegra audio chip data */
+> +struct tegra_audio_cdata {
+> +	unsigned int plla_rates[NUM_RATE_TYPE];
+> +	unsigned int plla_out0_rates[NUM_RATE_TYPE];
+> +};
+> +
+> +/* Setup PLL clock as per the given sample rate */
+> +static int tegra_audio_graph_update_pll(struct snd_pcm_substream *substream,
+> +					struct snd_pcm_hw_params *params)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
+> +	struct asoc_simple_priv *simple = snd_soc_card_get_drvdata(rtd->card);
+> +	struct tegra_audio_priv *priv = simple_to_tegra_priv(simple);
+> +	struct device *dev = rtd->card->dev;
+> +	const struct tegra_audio_cdata *data = of_device_get_match_data(dev);
+> +	unsigned int plla_rate, plla_out0_rate, bclk;
+> +	unsigned int srate = params_rate(params);
+> +	int err;
+> +
+> +	/* There is nothing to configure */
+> +	if (!data)
+> +		return 0;
+
+
+Seems like this should never happen and so if it did this is an error.
+Any reason why we don't return an error here?
+
+Cheers
+Jon
 
 -- 
-Dmitry
+nvpublic
