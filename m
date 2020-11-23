@@ -2,141 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD3AC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFB9C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A9A1206E5
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F76C206F9
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fcF5rVix"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="STKTnHR6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbgKWUXx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Nov 2020 15:23:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728586AbgKWUXx (ORCPT
+        id S1728721AbgKWUyS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Nov 2020 15:54:18 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5287 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbgKWUyS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Nov 2020 15:23:53 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3464AC0613CF
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2020 12:23:52 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id x17so17130029ybr.8
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2020 12:23:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ytY0TjIQhQqzTgq9pErBBYZkvIrInUjx/HXC7cUTubA=;
-        b=fcF5rVixvJS1RPyLEtzot26wp8NLskDRniD1rrQvQ+0hOA9PXrl0jMDmVRZ111Qpyu
-         pKjYgzqNoeZs/Fb1E/DTkjPe4l8xRZ6YwpwB84Pw1HAmDgHMttUW5jCWVhCQRkf2gV3p
-         cw4BgP/LjRhy6g9QeBJxtge8QPljEIC0HtGFxl9AhYV4lUg8KEobFxncG91bSa/RPNCX
-         61bMqmrVY26TYlh/d/niiqEvXEH1g4LoQzS5l4Ma0SWgbyWSrHxOSa5OyV1qrpjIl1Zs
-         /b/H1ct1eOib+WeIDRUeYzGZCjuPbVfgcXpZuuura8V19KEUWFY+JOGsZb08Y600KOf8
-         p28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ytY0TjIQhQqzTgq9pErBBYZkvIrInUjx/HXC7cUTubA=;
-        b=h+XHa/QZbwkq2IDBqbx/5XLfjuRtp+E9CmFD7cCyjMiuj5QXhcRe36UW1T3Jx61guE
-         7xFHKbZ2Tcfkpo/nd66MU/hme9T6gkTusZi6ls0vcam2ianhSDkbYs+M01viFF8TDXlz
-         OcpPI8x6iVM173WQ+xY9h3SJOmphL07XDWMNsHgwqXuXI+F6bmLwMyqjm8nGnKdKMDD8
-         svHvGoMq3LFEfwiSyUCCMtfW742685+L5PJ8REMcSnk9vSS/WwrZpyhhFS/vX3dCbWA4
-         HKkudRhnBwXbnrTJe7G0U0V6AgprfbE4bvAGf/lPV5LfqaBuJKVOArblANQE2l2Xz9oT
-         z83w==
-X-Gm-Message-State: AOAM532iCWbD/ReqJYbAptPRPSj987FncW/TkC2Kw67sR5l1FLIHA/Rs
-        Hu5XTBcGA7aRw/75FySZbKwXrr6ybqNRXKKdYrDvGQ==
-X-Google-Smtp-Source: ABdhPJy1VdCSDZJoaQJrbvD7tv+fVQria0lHcg1KbPvsx75dm9PwFWebGVaHYVcWqpwJmWEaK1TMqP/F+3wSvKGdz0o=
-X-Received: by 2002:a25:5b89:: with SMTP id p131mr2099411ybb.310.1606163031206;
- Mon, 23 Nov 2020 12:23:51 -0800 (PST)
+        Mon, 23 Nov 2020 15:54:18 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fbc21800001>; Mon, 23 Nov 2020 12:54:24 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Nov
+ 2020 20:54:17 +0000
+Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 23 Nov 2020 20:54:17 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/47] 4.9.246-rc1 review
+In-Reply-To: <20201123121805.530891002@linuxfoundation.org>
+References: <20201123121805.530891002@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <0e00f9ba-571a-23a0-7774-84f893ce6bd5@nvidia.com>
- <CAPDyKFrxKhO0V-uTDLDV6RFQFwhjesE0zfnuBLfYs-n5bNxXtg@mail.gmail.com>
- <35721978-d166-c5d9-06f6-45cec0d835ad@nvidia.com> <CAPDyKFoVQ=D96KtFnmjMh6R7=PrCvTLWqUAPAYsRrVOg2dFFTA@mail.gmail.com>
- <d51fd10f-864a-f7ea-4b8b-006351a16a05@nvidia.com>
-In-Reply-To: <d51fd10f-864a-f7ea-4b8b-006351a16a05@nvidia.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 23 Nov 2020 12:23:15 -0800
-Message-ID: <CAGETcx-4C41FHO-Ou9AcmYNaWr9Q+WRoNUUmoYmG+-SOKxbtxA@mail.gmail.com>
-Subject: Re: [RFC] PM Domains: Ensure the provider is resumed first
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <ba1a981894cf4427b2aba49aa2ef366f@HQMAIL111.nvidia.com>
+Date:   Mon, 23 Nov 2020 20:54:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606164864; bh=NIA+zH31HF4Qm5OBnIXl3RfGlbJ+dwpwEGly4APM7IY=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=STKTnHR6qfNMZ+KjW4XthsFcHzf8cUehK/gw7BEJUDfJulcEH2cfAofSFuipucUZD
+         ewmF1uIlze12JDhWt2wCm+NAbG9yTh6hss2tPZE1MxliPc6LYziDfCHfYr110sQ+Nc
+         G52nhaEqn2JfOhBkhz0+laQrjUlPBx64XsYoxQdwS4xKfQQTwHSPq8IK90VZkkdFbM
+         HB12qbgxKGc9XVZ31MHZgL9sIuG96BxMRNeWx3gUjVtvvFR8xFdmkJ4Oi/OXDH84YV
+         WY7e5DEFihYyh+7v53uuSwyzUOKOnz2b5ZL8+EM4L9OtLsxLqRaosIw+V1uoZERVNT
+         +LHoesmrcLzJQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 6:57 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 23/11/2020 14:31, Ulf Hansson wrote:
->
-> ...
->
-> >>> Note that, if there is no device attached to the genpd, the
-> >>> ->power_on() callback may not be invoked - unless there is a child
-> >>> domain being powered on.
-> >>>
-> >>> From the genpd provider driver point of view - why do you need to
-> >>> implement system suspend/resume callbacks at all? Do you have some
-> >>> additional operations to run, besides those executed from the
-> >>> ->power_on|off() callbacks?
-> >>
-> >> The provider in this case is an embedded controller, the BPMP, and it
-> >> needs to be resumed [0] prior to calling the provider callbacks. I am
-> >> wondering if any other providers have this requirement?
-> >
-> > It seems like it should be a rather common requirement for a genpd
-> > provider - at least for those providers that need to run some
-> > additional operations at system suspend/resume.
-> >
-> > I guess the reason for this problem is that the order of how the
-> > devices end up in the dpm_list, doesn't fit well for your case.
-> > Normally, a provider should be registered prior and the consumer, as
-> > that would probably lead to that the provider becomes resumed first.
->
-> Yes it does appear that way. The BPMP (genpd provider) is probed before
-> the ACONNECT (consumer) but still the order in which they end up in is
-> not what we want.
->
-> > In any case, to make sure the order becomes correct, a device link
-> > should be created between the genpd domain provider and the consumer
-> > device. As a matter of fact, this is done "automagically" during boot
-> > for DT based platforms, see of_link_property() in
-> > drivers/of/property.c.
+On Mon, 23 Nov 2020 13:21:46 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.246 release.
+> There are 47 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 25 Nov 2020 12:17:50 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.246-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Ulf, thanks for adding me and pointing people to fw_devlink.
+All tests passing for Tegra ...
 
-> >
-> > Currently these device links are created with DL_FLAG_SYNC_STATE_ONLY,
-> > unless the "fw_devlink" kernel command line specifies a different
-> > option (on == DL_FLAG_AUTOPROBE_CONSUMER). I would try to play with
-> > that and see how that turns out.
->
-> OK, good to know. I will take a look at that. Thanks for the inputs.
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    10 boots:	10 pass, 0 fail
+    16 tests:	16 pass, 0 fail
 
-Jon,
+Linux version:	4.9.246-rc1-g1a0738f3aaf5
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Let me know if you run into issues with fw_devlink. I can try to help
-you address them. If you hit issues, it's going to be one of these two
-cases below.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Known issues with fw_devlink:
-1. It doesn't like cycles in dependencies in DT (it does the right
-thing for some of them, but not all).
-2. If a DT device node has a driver that "probes" it without using
-driver core/struct device, it blocks the probing of all its consumers.
-
-(1) is on my TODO list of things to fix
-(2) needs the driver to be fixed to not do this.
-
--Saravana
+Jon
