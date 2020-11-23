@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1F6C8300E
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 00:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55271C63777
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 00:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90BF320936
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 00:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 243262076E
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 00:32:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBUSFql/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YufEOZGl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbgKWAbf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 22 Nov 2020 19:31:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58584 "EHLO
+        id S1727384AbgKWAbd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 22 Nov 2020 19:31:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbgKWAbe (ORCPT
+        with ESMTP id S1727119AbgKWAbc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 22 Nov 2020 19:31:34 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473F0C0613CF;
-        Sun, 22 Nov 2020 16:31:34 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id e139so21472995lfd.1;
-        Sun, 22 Nov 2020 16:31:34 -0800 (PST)
+        Sun, 22 Nov 2020 19:31:32 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14982C0613CF;
+        Sun, 22 Nov 2020 16:31:32 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id r18so1385730ljc.2;
+        Sun, 22 Nov 2020 16:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=F4lu70q76wttiD4daoWhN3gO8Tpkf8A/mm/9ivX7uhk=;
-        b=CBUSFql/urOfwSudKzXoynlCS5pyFxbsUvjbKpfGH/VXttnCRv1K3KH8JqtyxXtUIv
-         90aAzQh9y5yYo8QCgar1gnFtkRvYHAnuN9UPRdaWjSCQlSdReP3g8MNEL+k/zENa3Yn0
-         2B6hgBiHdUIcHjLdunS9B8ZFeXXd9fo5KHnvszUy8gDVpf/ciGkYvFVLn5o7T3bJGi6Q
-         Tcg6FhlCACnnpsJqlBqgfXxq+qBAs1LeehNl9Kw36JVBp5g/cwQLPCZBhQFzD7flO1LA
-         m5S56GnUKfUZfv1xm/1Kb8rkbpwu+Plgw2YrSjvQi0WUhAJxOey10l+aYwEAU5qssO6J
-         agYw==
+        bh=pLbRWZodAWHryje7XdgngwZooRzE7B+sWeFpLwWIFLg=;
+        b=YufEOZGlcie2JDpQAxDfwDTP/9PGmFqD1aL94c96xtWFoZ9+VeGl/wyxS1ZXO6h5Tx
+         3OCD7XeGobT/HJcOVPfQ+POUnxXMJnKN6zlOSrPAtLNWr9Ex/Szu8Bz2OEdKDW1DA/fs
+         y1Sho+MhZEZ2dE8WdYqDyGrtQd/HOQo/ppbwCfaJvvd+UHsRW7+f/KCuEJRrckJGO91d
+         BbyAoZ7zQSu++obmcY7YbEsaQKGprDAltUFh3nE9TGDgxkD2l4S5sTJLaVrxDEmuIF/Q
+         wF8a1nn8iGTValzQ04cBO6nuXlCIfnbD+XNDlmtH7UtT+izKD4nLQAHj+PrVdPskTbE9
+         0JvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=F4lu70q76wttiD4daoWhN3gO8Tpkf8A/mm/9ivX7uhk=;
-        b=K4lEPbn+dMS9rFh3lTdagnRTmOPDgXPnXLe5vj0HHqiWCvCCg+h0RCuWd5kwinMfOr
-         bnQr3Kr/Y7rM/0//8bXXL8pKhM9cXmho5ykBaSahpsIZl98mZ8zO3RQKyLwCDRq5r0Xa
-         lcwWXlMgGyHoMcH0AaPI9bBMuOtt01yxAK8k6NgYqvZdu4MuGZtbPK6HuW0xYhr8y7tC
-         xi0eJqmchLr62xuhe7OJRHyNCw8TD1ZJ5GS8SZd0rLvOABAbOihlgVzwQMYQcO38FJRi
-         w8B8ZnKxZTRExYMmjJTZ66qhqupWoPLPY0M6RC+oGMyIH9/bwS7PkawjnlMzKYYLCA3+
-         CsdA==
-X-Gm-Message-State: AOAM5305XzGXyngrEKUv3S9OuIMdev3bxnZiE5G5El2rHpExxlHwwgk6
-        OQmI+X3eeKaplKDcVIEbP5M=
-X-Google-Smtp-Source: ABdhPJyaimJijkWdRgfZpRHSe52jm6egKYIITaw34fkGokzZpEk82OGraeQlmql5c/0mF54D540pHg==
-X-Received: by 2002:a19:42d2:: with SMTP id p201mr2193580lfa.273.1606091492816;
-        Sun, 22 Nov 2020 16:31:32 -0800 (PST)
+        bh=pLbRWZodAWHryje7XdgngwZooRzE7B+sWeFpLwWIFLg=;
+        b=oRxhUCZQsONpO8s0pF8GhqRMgX+HG+nEwcu0LO78vFxzBIa0vT93hVrJSdbfdZv4Jo
+         +Buv5UbaJbX6d7R9lQpjfoD3H/Zy/fbXRrueDSgXx7d5UqRom4GwmwbPXuFjtjKclHf4
+         q+oC9S7WQdRW0KBeBjueXHp5jaNUY77SK3mYahoneS4pjMrlse8u3jEGXnb8n4eOSrh9
+         RXSo4HTlbQ2tDkGE3GTvEpNt4xWIFzxBlFGyvAjdoxrgHxlfUvgFrHpC50trRJoBgLuR
+         P7mOhxQQ3I2LoUZQJr9yU7TebnFJO/zJtA+TZ2Ej+NgFa2B1XSdw9fDu7vKT34UvoUYK
+         G37w==
+X-Gm-Message-State: AOAM532CO/Giyxqsu1qQhWs1f0MmekSEZmXT9IxDcK+sijfMGtrzFiXM
+        ZeoY9f5r4vfnP+tcPHOV1lg=
+X-Google-Smtp-Source: ABdhPJzlbOW1fWwxx4IasK5xVIghnxNQsUMTnkUV04K/2TB50nUcGltAPpOpooNRptnY6x45PgCotA==
+X-Received: by 2002:a2e:b16a:: with SMTP id a10mr1407672ljm.446.1606091490637;
+        Sun, 22 Nov 2020 16:31:30 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.gmail.com with ESMTPSA id r27sm1225823lfn.290.2020.11.22.16.31.31
+        by smtp.gmail.com with ESMTPSA id r27sm1225823lfn.290.2020.11.22.16.31.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2020 16:31:32 -0800 (PST)
+        Sun, 22 Nov 2020 16:31:30 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v10 17/19] ARM: tegra: Add EMC OPP properties to Tegra20 device-trees
-Date:   Mon, 23 Nov 2020 03:27:21 +0300
-Message-Id: <20201123002723.28463-18-digetx@gmail.com>
+Subject: [PATCH v10 15/19] ARM: tegra: Add interconnect properties to Tegra124 device-tree
+Date:   Mon, 23 Nov 2020 03:27:19 +0300
+Message-Id: <20201123002723.28463-16-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201123002723.28463-1-digetx@gmail.com>
 References: <20201123002723.28463-1-digetx@gmail.com>
@@ -89,195 +89,72 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add EMC OPP DVFS tables and update board device-trees by removing
-unsupported OPPs.
+Add interconnect properties to the Memory Controller, External Memory
+Controller and the Display Controller nodes in order to describe hardware
+interconnection.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../boot/dts/tegra20-acer-a500-picasso.dts    |   5 +
- arch/arm/boot/dts/tegra20-colibri.dtsi        |   4 +
- arch/arm/boot/dts/tegra20-paz00.dts           |   4 +
- .../arm/boot/dts/tegra20-peripherals-opp.dtsi | 109 ++++++++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                |   3 +
- 5 files changed, 125 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+ arch/arm/boot/dts/tegra124.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 827e029281e0..f418e8647d82 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -1451,3 +1451,8 @@ emc-table@300000 {
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 64f488ba1e72..1801e30b1d3a 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -113,6 +113,19 @@ dc@54200000 {
+ 			iommus = <&mc TEGRA_SWGROUP_DC>;
+ 
+ 			nvidia,head = <0>;
++
++			interconnects = <&mc TEGRA124_MC_DISPLAY0A &emc>,
++					<&mc TEGRA124_MC_DISPLAY0B &emc>,
++					<&mc TEGRA124_MC_DISPLAY0C &emc>,
++					<&mc TEGRA124_MC_DISPLAYHC &emc>,
++					<&mc TEGRA124_MC_DISPLAYD &emc>,
++					<&mc TEGRA124_MC_DISPLAYT &emc>;
++			interconnect-names = "wina",
++					     "winb",
++					     "winc",
++					     "cursor",
++					     "wind",
++					     "wint";
  		};
- 	};
- };
-+
-+&emc_icc_dvfs_opp_table {
-+	/delete-node/ opp@666000000;
-+	/delete-node/ opp@760000000;
-+};
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 6162d193e12c..585a5b441cf6 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -742,6 +742,10 @@ sound {
- 	};
- };
  
-+&emc_icc_dvfs_opp_table {
-+	/delete-node/ opp@760000000;
-+};
+ 		dc@54240000 {
+@@ -127,6 +140,15 @@ dc@54240000 {
+ 			iommus = <&mc TEGRA_SWGROUP_DCB>;
+ 
+ 			nvidia,head = <1>;
 +
- &gpio {
- 	lan-reset-n {
- 		gpio-hog;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index ada2bed8b1b5..7e49112cd9a1 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -662,3 +662,7 @@ cpu@1 {
++			interconnects = <&mc TEGRA124_MC_DISPLAY0AB &emc>,
++					<&mc TEGRA124_MC_DISPLAY0BB &emc>,
++					<&mc TEGRA124_MC_DISPLAY0CB &emc>,
++					<&mc TEGRA124_MC_DISPLAYHCB &emc>;
++			interconnect-names = "wina",
++					     "winb",
++					     "winc",
++					     "cursor";
  		};
+ 
+ 		hdmi: hdmi@54280000 {
+@@ -628,6 +650,7 @@ mc: memory-controller@70019000 {
+ 
+ 		#iommu-cells = <1>;
+ 		#reset-cells = <1>;
++		#interconnect-cells = <1>;
  	};
- };
-+
-+&emc_icc_dvfs_opp_table {
-+	/delete-node/ opp@760000000;
-+};
-diff --git a/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
-new file mode 100644
-index 000000000000..b84afecea154
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	emc_icc_dvfs_opp_table: emc-dvfs-opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp@36000000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <36000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@47500000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <47500000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@50000000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <50000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@54000000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <54000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@57000000 {
-+			opp-microvolt = <950000 950000 1300000>;
-+			opp-hz = /bits/ 64 <57000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@100000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <100000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@108000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <108000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@126666000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <126666000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@150000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <150000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@190000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <190000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@216000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <216000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@300000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@333000000 {
-+			opp-microvolt = <1000000 1000000 1300000>;
-+			opp-hz = /bits/ 64 <333000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@380000000 {
-+			opp-microvolt = <1100000 1100000 1300000>;
-+			opp-hz = /bits/ 64 <380000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@600000000 {
-+			opp-microvolt = <1200000 1200000 1300000>;
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@666000000 {
-+			opp-microvolt = <1200000 1200000 1300000>;
-+			opp-hz = /bits/ 64 <666000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp@760000000 {
-+			opp-microvolt = <1300000 1300000 1300000>;
-+			opp-hz = /bits/ 64 <760000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 8f8ad81916e7..6ce498178105 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -6,6 +6,8 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/tegra-pmc.h>
  
-+#include "tegra20-peripherals-opp.dtsi"
-+
- / {
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&lic>;
-@@ -664,6 +666,7 @@ emc: memory-controller@7000f400 {
- 		#size-cells = <0>;
- 		#interconnect-cells = <0>;
+ 	emc: external-memory-controller@7001b000 {
+@@ -637,6 +660,8 @@ emc: external-memory-controller@7001b000 {
+ 		clock-names = "emc";
  
-+		operating-points-v2 = <&emc_icc_dvfs_opp_table>;
  		nvidia,memory-controller = <&mc>;
++
++		#interconnect-cells = <0>;
  	};
  
+ 	sata@70020000 {
 -- 
 2.29.2
 
