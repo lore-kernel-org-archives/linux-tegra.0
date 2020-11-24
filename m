@@ -2,95 +2,168 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8CDC2D0E4
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC33FC63697
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Nov 2020 00:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A26A6206E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Nov 2020 20:55:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="B5U1pzW7"
+	by mail.kernel.org (Postfix) with ESMTP id 744E320715
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Nov 2020 00:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbgKWUzE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Nov 2020 15:55:04 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2629 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728975AbgKWUzE (ORCPT
+        id S1727553AbgKXAu1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Nov 2020 19:50:27 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46382 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbgKXAu0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Nov 2020 15:55:04 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fbc21a80000>; Mon, 23 Nov 2020 12:55:04 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Nov
- 2020 20:55:03 +0000
-Received: from jonathanh-vm-01.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 23 Nov 2020 20:55:03 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.4 00/38] 4.4.246-rc1 review
-In-Reply-To: <20201123121804.306030358@linuxfoundation.org>
-References: <20201123121804.306030358@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 23 Nov 2020 19:50:26 -0500
+Received: by mail-oi1-f196.google.com with SMTP id q206so21832565oif.13;
+        Mon, 23 Nov 2020 16:50:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gI7zhBhIP0+6Xsp8/COOViVeUh5gtUo2CsgJ6HRlj/M=;
+        b=U3KYKXzLKSRpowRZ44/7lM+eVbTnJ/e/+EQxQn8Tt7Y7eH/CDFvLc61ST67JgfsMpx
+         T5Y7YI+NdiVH23ZagCwDs+BlqW0qivMIp4z82xOrEXo35nqZz9fLKcNfM9Ex6R8aTres
+         ir8iHLbmEMIo+DvV9VcMUSnNXA7qis4iLXC+DTWCR1Ox4lxN7JHaPtekoVl/IWDlh78r
+         RcCjgp9B0/b4mDDLb/lRekyMMl4eNA0mWWKCrh+9AUQAxDDbkCeZS13eLXlWvqalJyBH
+         3lUJz52yFnRwnpMQbzMvSm4iJBjPySGQnHq1bU1MfzdlvVh/87Opa32Xz1C8Wi5vtu+n
+         cCWg==
+X-Gm-Message-State: AOAM533bpRXZuj/oyUo6+XCEqnIaKYyswf8AEXtjA1+1V9uX4q+P9Xqs
+        SsNlf755KMq6p0LhXckBfLOf+RkUbPavHw==
+X-Google-Smtp-Source: ABdhPJwJWyBDfbJ4UWMzCUO8Aw1qkmKHgxsqLfkxp072xhp3wemr1BTakI+3GYQ7JEeJp1ZvZfsTQA==
+X-Received: by 2002:aca:af88:: with SMTP id y130mr1150530oie.81.1606179024831;
+        Mon, 23 Nov 2020 16:50:24 -0800 (PST)
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com. [209.85.167.174])
+        by smtp.gmail.com with ESMTPSA id j23sm7796970otr.80.2020.11.23.16.50.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2020 16:50:24 -0800 (PST)
+Received: by mail-oi1-f174.google.com with SMTP id q206so21832522oif.13;
+        Mon, 23 Nov 2020 16:50:24 -0800 (PST)
+X-Received: by 2002:aca:4cf:: with SMTP id 198mr1036440oie.175.1606178695336;
+ Mon, 23 Nov 2020 16:44:55 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <e6fb22d0fc7a471f8947c90d78e9c0a7@HQMAIL111.nvidia.com>
-Date:   Mon, 23 Nov 2020 20:55:03 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1606164904; bh=TbBuZ55kpO5eA5PgDxUojXepq6FbzlKCmRPDxJafc0o=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=B5U1pzW7jzICzeeVPuuYncrukF/Bs561U/LTyalMrpCxHRwjdvlsqMpriwmpBzh8P
-         I5bZC0zNhtfHR5N5RZTdKTAIVSNA7MFXfqMSpN/pl7LSESYmsYx9A/UW2B3DQtyFH+
-         Zg1v6UcTW4Sy0FUSFqWNOMW23LQXcdyWjRFPYku00cfpSF8OSDjC1rdhBxxx7z4bvg
-         GHxXgKGiHkcWCPhHPUtNWXbap55NlVw3Yk/N/QGWf2fvO7TWU3s8bjs4w4XOUfe6tT
-         uMHBOecOxeR8JRoqe925KcZjqukePEcVaaZg4xIRPnMpdxBH/xMs3QR162b8I25CKX
-         DA/wT7oxTQHww==
+References: <20201103152838.1290217-1-lee.jones@linaro.org>
+In-Reply-To: <20201103152838.1290217-1-lee.jones@linaro.org>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Mon, 23 Nov 2020 18:44:43 -0600
+X-Gmail-Original-Message-ID: <CADRPPNQx2=f46EQOvYLZUMbL+4qyDXUyvzjsKqFLC-iuQFRAQQ@mail.gmail.com>
+Message-ID: <CADRPPNQx2=f46EQOvYLZUMbL+4qyDXUyvzjsKqFLC-iuQFRAQQ@mail.gmail.com>
+Subject: Re: [PATCH 00/25] Rid W=1 warnings in SoC
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>, act <dmalek@jlc.net>,
+        Andy Gross <agross@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Ben Dooks <ben@simtec.co.uk>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Cyril Chemparathy <cyril@ti.com>,
+        Dan Malek <dan@embeddedalley.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Roy Pledge <Roy.Pledge@nxp.com>,
+        Sandeep Nair <sandeep_n@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Scott Wood <scottwood@freescale.com>,
+        "Software, Inc" <source@mvista.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vitaly Bordug <vbordug@ru.mvista.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 Nov 2020 13:21:46 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.246 release.
-> There are 38 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 25 Nov 2020 12:17:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.246-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, Nov 3, 2020 at 9:29 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> This set is part of a larger effort attempting to clean-up W=1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
+>
+> Lee Jones (25):
 
-All tests passing for Tegra ...
+>   soc: fsl: dpio: qbman-portal: Fix a bunch of kernel-doc misdemeanours
+>   soc: fsl: qe: qe_common: Fix misnamed function attribute 'addr'
+>   soc: fsl: qbman: qman: Remove unused variable 'dequeue_wq'
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    25 tests:	25 pass, 0 fail
+The above are applied for next.  Thanks.
 
-Linux version:	4.4.246-rc1-g4524983a3596
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Regards,
+Leo
+>
+>  drivers/soc/bcm/brcmstb/pm/pm-arm.c      |  2 +
+>  drivers/soc/fsl/dpio/qbman-portal.c      | 18 +++++--
+>  drivers/soc/fsl/qbman/qman.c             |  8 +--
+>  drivers/soc/fsl/qe/qe_common.c           |  2 +-
+>  drivers/soc/qcom/kryo-l2-accessors.c     |  2 +-
+>  drivers/soc/qcom/llcc-qcom.c             |  2 +-
+>  drivers/soc/qcom/qcom-geni-se.c          |  5 +-
+>  drivers/soc/qcom/qcom_aoss.c             |  4 +-
+>  drivers/soc/qcom/rpmh.c                  |  2 +-
+>  drivers/soc/qcom/rpmhpd.c                |  3 ++
+>  drivers/soc/qcom/smem.c                  |  3 +-
+>  drivers/soc/qcom/smp2p.c                 |  3 +-
+>  drivers/soc/qcom/smsm.c                  |  4 +-
+>  drivers/soc/qcom/wcnss_ctrl.c            |  8 +--
+>  drivers/soc/rockchip/io-domain.c         |  3 --
+>  drivers/soc/samsung/s3c-pm-check.c       |  2 +-
+>  drivers/soc/tegra/fuse/speedo-tegra124.c |  7 ++-
+>  drivers/soc/tegra/fuse/speedo-tegra210.c |  8 +--
+>  drivers/soc/ti/k3-ringacc.c              |  1 +
+>  drivers/soc/ti/knav_dma.c                |  2 +-
+>  drivers/soc/ti/knav_qmss_queue.c         | 62 ++++++++++++------------
+>  drivers/soc/ti/pm33xx.c                  |  4 +-
+>  drivers/soc/ti/wkup_m3_ipc.c             |  8 ++-
+>  23 files changed, 86 insertions(+), 77 deletions(-)
+>
+> Cc: act <dmalek@jlc.net>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Ben Dooks <ben@simtec.co.uk>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Cyril Chemparathy <cyril@ti.com>
+> Cc: Dan Malek <dan@embeddedalley.com>
+> Cc: Dave Gerlach <d-gerlach@ti.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Li Yang <leoyang.li@nxp.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: Roy Pledge <Roy.Pledge@nxp.com>
+> Cc: Sandeep Nair <sandeep_n@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: Scott Wood <scottwood@freescale.com>
+> Cc: "Software, Inc" <source@mvista.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Vitaly Bordug <vbordug@ru.mvista.com>
+> Cc: YueHaibing <yuehaibing@huawei.com>
+>
+> --
+> 2.25.1
+>
