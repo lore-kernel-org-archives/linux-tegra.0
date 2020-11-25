@@ -2,82 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59E1C64E7A
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 14:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3FCC64E7D
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 15:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A61020684
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 14:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E4B206CA
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 15:42:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="urmeyfJA"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aw+AJlSs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729884AbgKYOFe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Nov 2020 09:05:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36324 "EHLO mail.kernel.org"
+        id S1731746AbgKYPmL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Nov 2020 10:42:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbgKYOFe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Nov 2020 09:05:34 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S1730501AbgKYPgZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 25 Nov 2020 10:36:25 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 047E720684;
-        Wed, 25 Nov 2020 14:05:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8966921D1A;
+        Wed, 25 Nov 2020 15:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606313133;
-        bh=nlropR2GVshViNQ37mRXiDY92PPVrpHL27XsaeQ2YQo=;
+        s=default; t=1606318584;
+        bh=RMrGW5fUW+s/0FXfRqugpnfe2Ya9KtsxGllhgvAD7i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=urmeyfJAGKiqg0PdUHFJzhGcTKe5Nb2ymqRQJpmLq1BY+8OJlFntcjnjMjO3ksliE
-         pMnsTccb9vj9awndZMZjxQA85RPe+X2PrUtn33+WI3AcDJcaNTWEj1M1cqY9+pc93+
-         2+pjUsoWb/N+LmmpW+osDxnaZ3JePZNdLJLQwNjg=
-From:   Will Deacon <will@kernel.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, thierry.reding@gmail.com
-Subject: Re: [PATCH RESEND v2 0/5] iommu/tegra-smmu: Some pending reviewed changes
-Date:   Wed, 25 Nov 2020 14:05:18 +0000
-Message-Id: <160630228218.3309190.17273821531692081062.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201125101013.14953-1-nicoleotsuka@gmail.com>
-References: <20201125101013.14953-1-nicoleotsuka@gmail.com>
+        b=Aw+AJlSs8MfW4pDekDU0mEXzNzH7cz2w+yYif5/D2bTvg95jXrBcGVVT0s4Xvy597
+         rdn0c4suSfwRcH3Ry/H9HjOJGBCgfiFKFLxUGNOoCs2zT4tG2CmPfTQLULe6rUutvQ
+         HzzSt3owMP4L8S71s1nB13u/FrlD1+gHxyQZLX1Q=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.9 24/33] cpuidle: tegra: Annotate tegra_pm_set_cpu_in_lp2() with RCU_NONIDLE
+Date:   Wed, 25 Nov 2020 10:35:41 -0500
+Message-Id: <20201125153550.810101-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201125153550.810101-1-sashal@kernel.org>
+References: <20201125153550.810101-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 25 Nov 2020 02:10:08 -0800, Nicolin Chen wrote:
-> Changelog
-> v1->v2:
->  * Added Thierry's acks to PATCH-3~5
-> 
-> This is a merged set of resend for previously two series of patches
-> that were reviewed/acked a month ago yet have not got applied.
-> 
-> [...]
+From: Dmitry Osipenko <digetx@gmail.com>
 
-Applied to arm64 (for-next/iommu/tegra-smmu), thanks!
+[ Upstream commit c39de538a06e76d89b7e598a71e16688009cd56c ]
 
-[1/5] iommu/tegra-smmu: Unwrap tegra_smmu_group_get
-      https://git.kernel.org/arm64/c/cf910f61aff3
-[2/5] iommu/tegra-smmu: Expand mutex protection range
-      https://git.kernel.org/arm64/c/d5f583bf8654
-[3/5] iommu/tegra-smmu: Use fwspec in tegra_smmu_(de)attach_dev
-      https://git.kernel.org/arm64/c/8750d207dc98
-[4/5] iommu/tegra-smmu: Rework tegra_smmu_probe_device()
-      https://git.kernel.org/arm64/c/25938c73cd79
-[5/5] iommu/tegra-smmu: Add PCI support
-      https://git.kernel.org/arm64/c/541f29bb0643
+Annotate tegra_pm_set[clear]_cpu_in_lp2() with RCU_NONIDLE in order to
+fix lockdep warning about suspicious RCU usage of a spinlock during late
+idling phase.
 
-Cheers,
+ WARNING: suspicious RCU usage
+ ...
+ include/trace/events/lock.h:13 suspicious rcu_dereference_check() usage!
+ ...
+  (dump_stack) from (lock_acquire)
+  (lock_acquire) from (_raw_spin_lock)
+  (_raw_spin_lock) from (tegra_pm_set_cpu_in_lp2)
+  (tegra_pm_set_cpu_in_lp2) from (tegra_cpuidle_enter)
+  (tegra_cpuidle_enter) from (cpuidle_enter_state)
+  (cpuidle_enter_state) from (cpuidle_enter_state_coupled)
+  (cpuidle_enter_state_coupled) from (cpuidle_enter)
+  (cpuidle_enter) from (do_idle)
+ ...
+
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Reported-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/cpuidle/cpuidle-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index e8956706a2917..191966dc8d023 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -189,7 +189,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 	}
+ 
+ 	local_fiq_disable();
+-	tegra_pm_set_cpu_in_lp2();
++	RCU_NONIDLE(tegra_pm_set_cpu_in_lp2());
+ 	cpu_pm_enter();
+ 
+ 	switch (index) {
+@@ -207,7 +207,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
+ 	}
+ 
+ 	cpu_pm_exit();
+-	tegra_pm_clear_cpu_in_lp2();
++	RCU_NONIDLE(tegra_pm_clear_cpu_in_lp2());
+ 	local_fiq_enable();
+ 
+ 	return err ?: index;
 -- 
-Will
+2.27.0
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
