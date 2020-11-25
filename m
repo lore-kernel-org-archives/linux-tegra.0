@@ -2,111 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3FCC64E7D
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 15:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36662C56201
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84E4B206CA
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 15:42:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAFD1206D9
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aw+AJlSs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSInxctv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731746AbgKYPmL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Nov 2020 10:42:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730501AbgKYPgZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Nov 2020 10:36:25 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8966921D1A;
-        Wed, 25 Nov 2020 15:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606318584;
-        bh=RMrGW5fUW+s/0FXfRqugpnfe2Ya9KtsxGllhgvAD7i0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Aw+AJlSs8MfW4pDekDU0mEXzNzH7cz2w+yYif5/D2bTvg95jXrBcGVVT0s4Xvy597
-         rdn0c4suSfwRcH3Ry/H9HjOJGBCgfiFKFLxUGNOoCs2zT4tG2CmPfTQLULe6rUutvQ
-         HzzSt3owMP4L8S71s1nB13u/FrlD1+gHxyQZLX1Q=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 24/33] cpuidle: tegra: Annotate tegra_pm_set_cpu_in_lp2() with RCU_NONIDLE
-Date:   Wed, 25 Nov 2020 10:35:41 -0500
-Message-Id: <20201125153550.810101-24-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201125153550.810101-1-sashal@kernel.org>
-References: <20201125153550.810101-1-sashal@kernel.org>
+        id S1730269AbgKYRDP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Nov 2020 12:03:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730921AbgKYRDP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 25 Nov 2020 12:03:15 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A7EC0613D4
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2020 09:03:15 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id m6so2602079wrg.7
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2020 09:03:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7blJLYjMdEaNh2dhpLR9C25RvuF/uzuAZi3O9yu30Pc=;
+        b=KSInxctvqK6IH23Or4fmcxwpwf0vChowIU4vqx95ZTDXmmTcV6W8i5lZ52bsepEjIN
+         qTU3BHq5ruk1bQpMOw0vHkfhZCotzNiTx+QJVIhjw0Gp6f6NKB7NsTi7gWkzQsHxwGaE
+         b5xRFXgCZiilsfeTyMFHIRBTcZIUvSoqtGps4XPYowi0ToDmjJE6YUsXWSA2DV+rDiDF
+         Vn+qHdQWzTpeszppPyjDeaKrEGT9HSKCgbrFGRdkJ9RffKR5NNU/aO8XrxtzZeuZV135
+         dzWbHv7mdhuJlCBxvpLqHIwYnUAOL3/3OGs+Wxm7z/flKXJdGNrr0FzByE+/ZcRzCgmU
+         ElWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7blJLYjMdEaNh2dhpLR9C25RvuF/uzuAZi3O9yu30Pc=;
+        b=QoZ3g5V8q3TIljofvOTYjquTFg2YOyt0cpS6krT+gtdKc/VazLKay9hFyh8f33RuQv
+         nzD5gRUEtdfZJ0xmPmq92ydLA9fjF3yVHbMeOO4zIAzTIKaHESSGny9GZBnn2IqLieqC
+         +8QfFVGVPOF8I8HmRBSQpF2+OJ1OxVU9JJ9nNhk6N9K4cJ6O96SF/yJLqKx2vrWilTLt
+         /AafVQNmq0N8oNR3Nd3Igk4s1yt47c8+bPFkGMuZzTbr3oAyZ6VvJfIn1iFZj2VAmErk
+         macxgDOv+oGL8tFhdPTkreNU70080A69/HOIjNcn3gPkf47ApbYGLhUg//c0E91qlQbT
+         jOMw==
+X-Gm-Message-State: AOAM5324iqkm1KbdHO0qNGnymnCYTmSdUjnmUvRX0gyTEvlbFK2N8q7J
+        R82zZ2CTttOnl5SRgkyq8ZE=
+X-Google-Smtp-Source: ABdhPJwJr0K/LRFhc3WnoWvK0FIoEdzUN5Tr2Ir8zxu5h7zWxOUDXxi82ErHH16eNiIi2xv7uxccOg==
+X-Received: by 2002:adf:b310:: with SMTP id j16mr5146756wrd.293.1606323793830;
+        Wed, 25 Nov 2020 09:03:13 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id q16sm5672793wrn.13.2020.11.25.09.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2020 09:03:13 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+List-Id: <soc.lore.kernel.org>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] arm64: tegra: Device tree fixes for v5.10-rc6
+Date:   Wed, 25 Nov 2020 18:03:06 +0100
+Message-Id: <20201125170306.1095734-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Hi ARM SoC maintainers,
 
-[ Upstream commit c39de538a06e76d89b7e598a71e16688009cd56c ]
+The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
-Annotate tegra_pm_set[clear]_cpu_in_lp2() with RCU_NONIDLE in order to
-fix lockdep warning about suspicious RCU usage of a spinlock during late
-idling phase.
+  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
 
- WARNING: suspicious RCU usage
- ...
- include/trace/events/lock.h:13 suspicious rcu_dereference_check() usage!
- ...
-  (dump_stack) from (lock_acquire)
-  (lock_acquire) from (_raw_spin_lock)
-  (_raw_spin_lock) from (tegra_pm_set_cpu_in_lp2)
-  (tegra_pm_set_cpu_in_lp2) from (tegra_cpuidle_enter)
-  (tegra_cpuidle_enter) from (cpuidle_enter_state)
-  (cpuidle_enter_state) from (cpuidle_enter_state_coupled)
-  (cpuidle_enter_state_coupled) from (cpuidle_enter)
-  (cpuidle_enter) from (do_idle)
- ...
+are available in the Git repository at:
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Reported-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/cpuidle/cpuidle-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-arm64-dt-fixes
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index e8956706a2917..191966dc8d023 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -189,7 +189,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
- 	}
- 
- 	local_fiq_disable();
--	tegra_pm_set_cpu_in_lp2();
-+	RCU_NONIDLE(tegra_pm_set_cpu_in_lp2());
- 	cpu_pm_enter();
- 
- 	switch (index) {
-@@ -207,7 +207,7 @@ static int tegra_cpuidle_state_enter(struct cpuidle_device *dev,
- 	}
- 
- 	cpu_pm_exit();
--	tegra_pm_clear_cpu_in_lp2();
-+	RCU_NONIDLE(tegra_pm_clear_cpu_in_lp2());
- 	local_fiq_enable();
- 
- 	return err ?: index;
--- 
-2.27.0
+for you to fetch changes up to d98bccf10dd0f36cabee71a425381fce0908de3b:
 
+  arm64: tegra: Fix Tegra234 VDK node names (2020-11-25 15:33:30 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+arm64: tegra: Device tree fixes for v5.10-rc6
+
+This contains a couple of fixes to device trees. Among other things,
+this restores suspend/resume on Jetson TX2 and makes USB OTG work on
+Jetson TX1.
+
+----------------------------------------------------------------
+Dipen Patel (1):
+      arm64: tegra: Wrong AON HSP reg property size
+
+JC Kuo (1):
+      arm64: tegra: Fix USB_VBUS_EN0 regulator on Jetson TX1
+
+Jon Hunter (3):
+      arm64: tegra: Disable the ACONNECT for Jetson TX2
+      arm64: tegra: Correct the UART for Jetson Xavier NX
+      arm64: tegra: Fix Tegra234 VDK node names
+
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts  | 12 ------------
+ arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi            |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi      | 20 ++++++++++----------
+ arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts     |  6 +++---
+ 5 files changed, 15 insertions(+), 27 deletions(-)
