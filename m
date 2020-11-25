@@ -2,118 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36662C56201
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D96C56201
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAFD1206D9
-	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 852C8206F9
+	for <linux-tegra@archiver.kernel.org>; Wed, 25 Nov 2020 17:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSInxctv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n5OYgJGV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbgKYRDP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Nov 2020 12:03:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
+        id S1730118AbgKYR5O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Nov 2020 12:57:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730921AbgKYRDP (ORCPT
+        with ESMTP id S1729631AbgKYR5O (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Nov 2020 12:03:15 -0500
+        Wed, 25 Nov 2020 12:57:14 -0500
 Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A7EC0613D4
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2020 09:03:15 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id m6so2602079wrg.7
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2020 09:03:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 004BAC0613D4;
+        Wed, 25 Nov 2020 09:57:13 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id l1so2758638wrb.9;
+        Wed, 25 Nov 2020 09:57:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7blJLYjMdEaNh2dhpLR9C25RvuF/uzuAZi3O9yu30Pc=;
-        b=KSInxctvqK6IH23Or4fmcxwpwf0vChowIU4vqx95ZTDXmmTcV6W8i5lZ52bsepEjIN
-         qTU3BHq5ruk1bQpMOw0vHkfhZCotzNiTx+QJVIhjw0Gp6f6NKB7NsTi7gWkzQsHxwGaE
-         b5xRFXgCZiilsfeTyMFHIRBTcZIUvSoqtGps4XPYowi0ToDmjJE6YUsXWSA2DV+rDiDF
-         Vn+qHdQWzTpeszppPyjDeaKrEGT9HSKCgbrFGRdkJ9RffKR5NNU/aO8XrxtzZeuZV135
-         dzWbHv7mdhuJlCBxvpLqHIwYnUAOL3/3OGs+Wxm7z/flKXJdGNrr0FzByE+/ZcRzCgmU
-         ElWw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q76sCAQCkbjrxEHa/bTijZbpnPeUzggOKoo+w3D3/HM=;
+        b=n5OYgJGV8H6PWOguZUEL23o87v2w0KJvjoG+jc6amL3kRcDtzk7+LbgjCFg1o/F6fk
+         HoDsjw3QlIZgPqSgRLIFMZT/fZj2ZeZ1kHmrCDJZaBzMyVQs1oceX+nE2qOE0BFGlDlJ
+         SEm/EbxKf+NwYil3vkaegA6yob0vnH5DHRgr9SCKvYyKPZ9bPE2BVb7PeeZgRgxxumY1
+         ++cVG5nhbtkE8Ci9uDNH8Zi/cqUgQ3/0/RnWc5uLtWLK8SAYbrRiZVSQp1jcixmYqYZ6
+         xSRqJAcQDdLWUVn6mOcCJ9+DIJ10ntsKBLGvvJxS09K/w5L8wfp5YKg0/KnBkoM1tyUB
+         W0lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7blJLYjMdEaNh2dhpLR9C25RvuF/uzuAZi3O9yu30Pc=;
-        b=QoZ3g5V8q3TIljofvOTYjquTFg2YOyt0cpS6krT+gtdKc/VazLKay9hFyh8f33RuQv
-         nzD5gRUEtdfZJ0xmPmq92ydLA9fjF3yVHbMeOO4zIAzTIKaHESSGny9GZBnn2IqLieqC
-         +8QfFVGVPOF8I8HmRBSQpF2+OJ1OxVU9JJ9nNhk6N9K4cJ6O96SF/yJLqKx2vrWilTLt
-         /AafVQNmq0N8oNR3Nd3Igk4s1yt47c8+bPFkGMuZzTbr3oAyZ6VvJfIn1iFZj2VAmErk
-         macxgDOv+oGL8tFhdPTkreNU70080A69/HOIjNcn3gPkf47ApbYGLhUg//c0E91qlQbT
-         jOMw==
-X-Gm-Message-State: AOAM5324iqkm1KbdHO0qNGnymnCYTmSdUjnmUvRX0gyTEvlbFK2N8q7J
-        R82zZ2CTttOnl5SRgkyq8ZE=
-X-Google-Smtp-Source: ABdhPJwJr0K/LRFhc3WnoWvK0FIoEdzUN5Tr2Ir8zxu5h7zWxOUDXxi82ErHH16eNiIi2xv7uxccOg==
-X-Received: by 2002:adf:b310:: with SMTP id j16mr5146756wrd.293.1606323793830;
-        Wed, 25 Nov 2020 09:03:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q76sCAQCkbjrxEHa/bTijZbpnPeUzggOKoo+w3D3/HM=;
+        b=h5iPK+T6s7Kh3jFMnxzfrBNDRYAfHELhj0QPbvBcWgdsghabnnlTbXMXz0itdClU74
+         C7VD1ihAIjkO31f5SBmeuiuY9kKm+zwnHVPg8Mk9x9u0XaS1zB+ur8B1TxG+c9fXLrN6
+         5MSM75meptcBwrePjIEG5tQ0oKPKqEAWDmsKmgY848s1tF93pPOM8hRT/gxeVE6E8nl5
+         ahCFyIuB89MxK8fdXHsDFhEoYGegLuA1kAPPrGNBYq9gpj2Br9ty1Vrk1oNGVGHOFFr2
+         nNsXLlvWa5KYEVvMZR6H8djI/dThoLBV8sZ9BlV/DHlB6hIsYciFSzxfiuhJuse6wQqk
+         e6OQ==
+X-Gm-Message-State: AOAM531VoTxKj9yERQ9vm9ddGimQFjH67yAYweQaQKZfCJQXsL/j9pma
+        w8ByiDDIiobjXnjsk9dwKZ4=
+X-Google-Smtp-Source: ABdhPJwa7NIE+RcUsUdPvZObLxpIFG/9Y9a3ASL99KFq/0C/ef7BT+f2k2yWIftSiz0/aTmv6RRD9A==
+X-Received: by 2002:a5d:474d:: with SMTP id o13mr5468292wrs.178.1606327032727;
+        Wed, 25 Nov 2020 09:57:12 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id q16sm5672793wrn.13.2020.11.25.09.03.12
+        by smtp.gmail.com with ESMTPSA id 6sm7363753wrn.72.2020.11.25.09.57.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2020 09:03:13 -0800 (PST)
+        Wed, 25 Nov 2020 09:57:11 -0800 (PST)
+Date:   Wed, 25 Nov 2020 18:57:09 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] arm64: tegra: Device tree fixes for v5.10-rc6
-Date:   Wed, 25 Nov 2020 18:03:06 +0100
-Message-Id: <20201125170306.1095734-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.29.2
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
+        jonathanh@nvidia.com, amanharitsh123@gmail.com,
+        dinghao.liu@zju.edu.cn, kw@linux.com, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4 0/6] Enhancements to Tegra194 PCIe driver
+Message-ID: <20201125175709.GA1274379@ulmo>
+References: <20201109171937.28326-1-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+Content-Disposition: inline
+In-Reply-To: <20201109171937.28326-1-vidyas@nvidia.com>
+User-Agent: Mutt/1.14.7 (2020-08-29)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
 
-The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+On Mon, Nov 09, 2020 at 10:49:31PM +0530, Vidya Sagar wrote:
+> This series of patches do some enhancements and some bug fixes to the
+> Tegra194 PCIe platform driver like
+> - Fix Vendor-ID corruption
+> - Map DBI space correctly
+> - Update DWC IP version
+> - Continue with uninitialization sequence even if parts fail
+> - Check return value of tegra_pcie_init_controller()
+>=20
+> V4:
+> * Added a new patch to address link-up issues with some of the cards
+>=20
+> V3:
+> * Addressed Bjorn's review comments
+> * Split earlier patch-4 into two
+>   - Continue with the uninitialization sequence even if some parts fail
+>   - Check return value of tegra_pcie_init_controller() and exit according=
+ly
+>=20
+> V2:
+> * Addressed Rob's comments. Changed 'Strongly Ordered' to 'nGnRnE'
+>=20
+> Vidya Sagar (6):
+>   PCI: tegra: Fix ASPM-L1SS advertisement disable code
+>   PCI: tegra: Map configuration space as nGnRnE
+>   PCI: tegra: Set DesignWare IP version
+>   PCI: tegra: Continue unconfig sequence even if parts fail
+>   PCI: tegra: Check return value of tegra_pcie_init_controller()
+>   PCI: tegra: Disable LTSSM during L2 entry
+>=20
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 78 +++++++++++-----------
+>  1 file changed, 39 insertions(+), 39 deletions(-)
 
-are available in the Git repository at:
+I was going to test this series, but then I noticed that PCI is causing
+a crash on linux-next (as of fairly recently). So I tried applying this
+on top of v5.10-rc1, but that gives me the following:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.10-arm64-dt-fixes
+	[    3.595161] ahci 0001:01:00.0: version 3.0
+	[    3.595726] ahci 0001:01:00.0: SSS flag set, parallel bus scan disabled
+	[    4.609923] ahci 0001:01:00.0: controller reset failed (0xffffffff)
+	[    4.610343] ahci: probe of 0001:01:00.0 failed with error -5
 
-for you to fetch changes up to d98bccf10dd0f36cabee71a425381fce0908de3b:
+So the device enumerates fine, but it's not able to reset the SATA
+controller. That said, this seems to happen regardless of this patch
+series, so plain v5.10-rc1 also shows the above.
 
-  arm64: tegra: Fix Tegra234 VDK node names (2020-11-25 15:33:30 +0100)
+Given the above, I think we should hold off on applying this series
+until we've fixed PCI on linux-next and made sure that SATA also works
+properly, otherwise we don't have a known good baseline to test this
+against.
 
-Thanks,
 Thierry
 
-----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v5.10-rc6
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This contains a couple of fixes to device trees. Among other things,
-this restores suspend/resume on Jetson TX2 and makes USB OTG work on
-Jetson TX1.
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Dipen Patel (1):
-      arm64: tegra: Wrong AON HSP reg property size
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl++mvIACgkQ3SOs138+
+s6EVyA//ZYXqrHEduwNS64esp1K3n48t+o8TCFlc26DLQCic8L/f8Ee8RbhoEbBn
+lOliWwSmJZQYKU23LH061nTmJu/cWfoGOAPaWLegGwd+fKo+EZgw9IA0ofbWBYDd
+Mbty8mDQ4+SXw/QwatP3LES9riqBqNoeJAQ7ZaT1HpdK1DNR75kHMs5DZnayLO55
+re/aTEX5kV+qIW/+E5PKAwoU27r/3kf+GwuKkSHGjIWtOUhYCqmLWolCpielF1Br
+2TelZqoQz+BBVAHmW9Z1ecdOfPtUZuubx0pGcboW7uNUEi5P++a2TZg7WiMPYjX6
+WJboe62zo12+46le9alchetsgfN4Nlo5VuOlM/EqCJ7+wCcsifFoTIK+EvuNLX2a
+nd6TlJPLFsdzv4jFoRfgdRiBASjMFTXSmBqSYFd741jF5XZaIkL8dVWVN92k7BZf
+b7BZAkDP+qiCizwsBQF0klJb/qzeZS4IYn5zEZj25mQ+mgqEDy85bk2puvlPqeXM
+l+Koqd4YpqPo53HFxGUdF4nSVlfjDzIfVEyordGskZcB/a8KXaJdCGEcRngRPGqQ
+h176Hzgo+uG8YGod4bwkQE992XEhkSl8oB/nvXCatFRq/inZOjP1Ni5juGfyhsTI
+USuJLwSc75rq8zX0vHdr2ZrazFx0i3nVxLF370nxBFoBFUs/okU=
+=ddHn
+-----END PGP SIGNATURE-----
 
-JC Kuo (1):
-      arm64: tegra: Fix USB_VBUS_EN0 regulator on Jetson TX1
-
-Jon Hunter (3):
-      arm64: tegra: Disable the ACONNECT for Jetson TX2
-      arm64: tegra: Correct the UART for Jetson Xavier NX
-      arm64: tegra: Fix Tegra234 VDK node names
-
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts  | 12 ------------
- arch/arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi            |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi      | 20 ++++++++++----------
- arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts     |  6 +++---
- 5 files changed, 15 insertions(+), 27 deletions(-)
+--n8g4imXOkfNTN/H1--
