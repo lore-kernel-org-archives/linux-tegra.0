@@ -2,177 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87411C63697
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 18:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB42C63697
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 18:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3666021D7E
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 18:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D190207BC
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 18:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edsYOVIO"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Gaheu44a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404654AbgKZSDA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Nov 2020 13:03:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404651AbgKZSDA (ORCPT
+        id S2404672AbgKZSDv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Nov 2020 13:03:51 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6242 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404669AbgKZSDu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Nov 2020 13:03:00 -0500
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C0DC0613D4;
-        Thu, 26 Nov 2020 10:03:00 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id z7so3064810wrn.3;
-        Thu, 26 Nov 2020 10:02:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KCIFTIKdiTLQ7RBGiS17aYYYkXPMsSyAUycnWynj4NU=;
-        b=edsYOVIOCEWiXs+uDSXXPTClxHFbJTTe4UmFJ/B3uWEesOzFfGBUu4BvzNzppU8GCR
-         T1R9M5o65kPn5GdH7x5t6CWstEtPuq1ZygYIlUU4ZOD7DMrcIX6oiyScXLH+Nm9P4RyY
-         atx+Jm2FHT5+WkcuW6q5IPpbayL5sqbyiiOfX1p+F3YKBW+wpUorThBBphaCDAOfPTPM
-         vLERAy6UuwPYFR/CeZYdsMgcCwilvw92+IhoanpIKJsHgwO9SuhDMjfAr4p6yFpv6rxq
-         IPJpLuI9fIo2t4W6ObEr0gSHl9ofwdYs3nE3Hmuh+jzKFEvxwPt3JQLR+NdKWgK2dJgH
-         uqmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KCIFTIKdiTLQ7RBGiS17aYYYkXPMsSyAUycnWynj4NU=;
-        b=DrE+2CN28PflUn4nR0APIgjm1vm8sytAI2HiYfI8jlvsJLHKXPIE+rBAY56mjAdgUE
-         DKpTD02iVdQ9VpfSVR3sDs90R+LbvoWN733//974EgRDi9PNq6nmT064KCXPiAOc/If+
-         QJZW42J4OrKAXdqo2APkZqgvrnTgpkzroaz+a9yct2csEtx30XlgLj7wrKwTvrkfbDHI
-         /tt9WWgB2sHcBI7GUKrsEfsSXBv81JtRTmuIn/qCU62NkP4d0IlNYF+6QO4qb8pwOpre
-         /PioX2jmRkV8HRrhDRf8M7n2R7jPaPv+97D141JRBySo1NPeEc5Mjtaj1BGXj0N47COp
-         FLLA==
-X-Gm-Message-State: AOAM532vd5Rvyu+zBSv3ymZDMYyuiKghJG4EKyVMwIK0LYgCswDe9iSG
-        o/M5nKth0LRAyCEWpOqBavE=
-X-Google-Smtp-Source: ABdhPJx3NzSy7dWcWv10tXnuy+HO3uIq/rvc1ScDj1tBBUvgfWkRz4C0ZwV80uNZePoQIb134m4gvQ==
-X-Received: by 2002:a5d:6783:: with SMTP id v3mr5332228wru.45.1606413778716;
-        Thu, 26 Nov 2020 10:02:58 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id c190sm3666653wme.19.2020.11.26.10.02.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2020 10:02:57 -0800 (PST)
-Date:   Thu, 26 Nov 2020 19:02:55 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 17/47] dt-bindings: memory: tegra20: Add memory client
- IDs
-Message-ID: <X7/tz8KwCBEgA6vi@ulmo>
-References: <20201104164923.21238-1-digetx@gmail.com>
- <20201104164923.21238-18-digetx@gmail.com>
- <X7/lLaZJNp+Vfczk@ulmo>
- <20201126173922.GA7048@kozik-lap>
+        Thu, 26 Nov 2020 13:03:50 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fbfee090001>; Thu, 26 Nov 2020 10:03:53 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 26 Nov
+ 2020 18:03:49 +0000
+Received: from audio.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Thu, 26 Nov 2020 18:03:46 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <kuninori.morimoto.gx@renesas.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH v6 0/6] Tegra210 audio graph card
+Date:   Thu, 26 Nov 2020 23:33:37 +0530
+Message-ID: <1606413823-19885-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="abXpfoLbeV2BRxSZ"
-Content-Disposition: inline
-In-Reply-To: <20201126173922.GA7048@kozik-lap>
-User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606413833; bh=8OQvUag+VIOkBSL/Xs+fpm1/r54yHxPZtytXE4/baQo=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         Content-Type;
+        b=Gaheu44a5O24LIg2sjtCFwm/6MxFhEc860Y2HkwapkXOvRoVFz54gQEPiNrelNY9l
+         9M3jCG6VTbIAsF8m1Gt64d6eCFiODoq8fkg8QvTNxBJ6dPXBu+eWuqjoL+RJ3VKOFW
+         2E/1YqfeBT/m9GHYQ2Y1uEeX7sjo/z/6u1YFroFt/lIAzeOhYqVdamwMdwUqxgipS7
+         E73ao+a+6qyGxpqLlLthQ7sFVbrapgXn6x/fwBPEMVzIwtblJIyrNaKu/xbxMyrUfk
+         eMbOW6cFw+YtoGPQQJSklkATk76K4gZ9R6Ko3QrXF6TejWz/J+rbwV+r3y5qT+1qBc
+         RhALOAg9hNOXw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series adds audio graph based sound card support for Tegra210
+platforms like Jetson-TX1 an Jetson-Nano. The following preparatory
+audio graph enhancement series is already merged.
+ * https://patchwork.kernel.org/project/alsa-devel/list/?series=375629&state=*
 
---abXpfoLbeV2BRxSZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Following are the summary of changes:
+ * Add graph/audio-graph based schemas or schema updates for Tegra210
+   component and machine drivers.
+ * Add Tegra audio graph machine driver.
+ * Add required DT support for Jetson-TX1/Nano.
 
-On Thu, Nov 26, 2020 at 06:39:22PM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Nov 26, 2020 at 06:26:05PM +0100, Thierry Reding wrote:
-> > On Wed, Nov 04, 2020 at 07:48:53PM +0300, Dmitry Osipenko wrote:
-> > > Each memory client has unique hardware ID, add these IDs.
-> > >=20
-> > > Acked-by: Rob Herring <robh@kernel.org>
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > ---
-> > >  include/dt-bindings/memory/tegra20-mc.h | 53 +++++++++++++++++++++++=
-++
-> > >  1 file changed, 53 insertions(+)
-> >=20
-> > Is there any chance you could drop these dt-bindings include patches
-> > (17, 18 and 19) so that I can pick them up into the Tegra tree? The
-> > device tree changes that I was going to pick up depend on this and
-> > fail to build if applied as-is.
-> >=20
-> > I was looking at your linux-mem-ctrl tree and had initially thought I
-> > could just pull in one of the branches to get these dependencies, but it
-> > looks like the dt-bindings patches are on the for-v5.11/tegra-mc branch,
-> > which the ARM SoC maintainers wouldn't like to see me pull in for a
-> > dependency on device tree changes.
->=20
-> Partially you answered here. :) Since you should not pull my branch into
-> a DT branch, you also should not put these include/dt-bindings patches
-> there.  SoC guys will complain about this as well.
->=20
-> These patches are also needed for the driver, so if you take them, I
-> would need them back in a pull request. SoC folks could spot it as well
-> and point that such merge should not happen.
->=20
-> > If this is all fixed at this point, I'll just have to push back the
-> > device tree changes to v5.12, or perhaps see if the ARM SoC maintainers
-> > are willing to take a late pull request that's based on v5.11-rc1.
->=20
-> Yeah, that's a known problem. I asked about this Arnd and Olof in the
-> past and got reply with two solutions:
-> 1. Apply current version of patch without defines, just hard-coded
->    numbers. After merging to Linus, replace the numbers with defines.
->=20
-> 2. Wait with DTS till dependencies reach Linus.
+This work is based on earlier discussion of DPCM usage for Tegra
+and simple card driver updates.
+ * https://lkml.org/lkml/2020/4/30/519
+ * https://lkml.org/lkml/2020/6/27/4
 
-What I've done occasionally in the past was to put these kinds of
-patches into a separate "dt-bindings" branch that I could use to resolve
-dependencies from device tree files. The ARM SoC maintainers never had
-any issues with that approach.
+This series depends on following patch from Rob Herring:
+https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20201117013349.2458416-3-robh@kernel.org/
 
-I guess this is a bit of a special case, because the DT includes are
-ultimately really a part of the device tree, so mixing them both isn't
-problematic.
+Changelog
+=========
 
-Thierry
+v5 -> v6
+--------
+ * Added ports or port description in YAML docs for Tegra AHUB
+   devices and graph card in patch 1/6 and 2/6. Reference of
+   audio-graph-port.yaml is used for AHUB devices.
+ * Dropped redundant NULL check return for of_device_get_match_data()
+   in patch 3/6.
+ * Added 'Reviewed-by' tag from Jon Hunter.
+ * No changes in remaining patches.
 
---abXpfoLbeV2BRxSZ
-Content-Type: application/pgp-signature; name="signature.asc"
+v4 -> v5
+--------
+ * Audio graph related changes were sent in separate v5 series as
+   mentioned above and are dropped from current series.
+ * Graph and audio graph doc patches are dropped from this series
+   and are sent separately as mentioned above.
+ * Minor change with phandle label for TX1 and Nano platform DT files.
+ * No changes in other patches.
 
------BEGIN PGP SIGNATURE-----
+v3 -> v4
+--------
+ * Added new patches to convert graph.txt and audio-graph-card.txt
+   to corresponding json-schema files. Later these references
+   are used in Tegra audio graph schema.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+/7c8ACgkQ3SOs138+
-s6GvWhAAhYKoK8A9tZy063DCPqqf86bEShf5PNCBAoCHKugibe2N4Zlj8bv5XFFz
-l3Z6p7r0GpSIJM6gHoM+HRzRuN/E2NPE6SMnRCS8aIYoCD3BoTHTzJ7UcTHCc6Wf
-4BnFEomaF7Fmm/Ad2TKacDsPu3SXNfeWNOGIzGzMExpege12kd2tOZ2dfZmINgC3
-fMG3C0muiu045x1PARJQbjkWfB3ND3QtCAgru5MMw/gYwD7rosIKYHdftmYjNLOX
-X0wc1FwVejm4yoOYsMWrNWTzs5tX8ptDrdgwCKz7hJRHGInoDrgGN/vxNMZhbtLW
-SV/BiqsQEoEfYf51PCC77FPZe0F+pQlve4XG2sOKCmH4ULJKgzKfDumAUaCmCRbs
-FfqpD42Ec88gwXxgJegvlg0NI2ox+t4sIDIPSSwpM+jugMnbrxR6H96jXUABhOXx
-rGyOCrOkANmbFLORyCG5+WfG4CntJvXJnUWA9OzNk+UXen7vs55R/8oISeV+gegS
-p1FLTXeXsMUCSSts7va7xg6Kcei15TaU1eA7G36SIU2f216pzogO4mFhccz+6YY6
-PM7VZXibb/f6nyY9sz3wqAwk4RylS1D/JVMRer5vwxKl0ZBRsHCIfQCDX/0QUteb
-PNv2UxrFhaHfUog8rr3/b1hp/1PiGGdXMTUvG6h+JA1xiAF3ct0=
-=AuDL
------END PGP SIGNATURE-----
+ * AHUB component binding docs are updated to reflect the usage
+   of ports/port/endpoint
 
---abXpfoLbeV2BRxSZ--
+ * More common stuff is moved into graph_parse_of() and this is
+   used by both generic and Tegra audio graph.
+
+ * DT binding for Tegra audio graph is updated to included "ports { }"
+
+ * As per the suggestion 'void *data' member is dropped from
+   'asoc_simple_priv' and instead container method is used to
+   maintain required custom data internal to Tegra audio graph. 
+
+v2 -> v3
+--------
+ * Dropped new compatible addition in generic graph driver
+   after reviewing it with Morimoto-san. Instead added Tegra
+   audio graph driver and new compatibles are added in the same.
+ * Added new patches to expose new members for customization
+   in audio graph driver.
+ * Added new patch for Tegra audio graph driver and related
+   documentation.
+ * Minor change in below commit where mutex version of helper is used
+   "ASoC: audio-graph: Identify 'no_pcm' DAI links for DPCM"
+ * DT binding is updated to use the newly exposed compatibles
+ * No changes in other patches
+
+v1 -> v2
+--------
+ * Re-organized ports/endpoints description for ADMAIF and XBAR.
+   Updated DT patches accordingly.
+ * After above change, multiple Codec endpoint support is not
+   required and hence dropped for now. This will be considered
+   separately if at all required in future.
+ * Re-ordered patches in the series.
+
+Sameer Pujar (6):
+  ASoC: dt-bindings: tegra: Add graph bindings
+  ASoC: dt-bindings: tegra: Add json-schema for Tegra audio graph card
+  ASoC: tegra: Add audio graph based card driver
+  arm64: defconfig: Enable Tegra audio graph card driver
+  arm64: tegra: Audio graph header for Tegra210
+  arm64: tegra: Audio graph sound card for Jetson Nano and TX1
+
+ .../sound/nvidia,tegra-audio-graph-card.yaml       | 187 +++++++++++++++
+ .../bindings/sound/nvidia,tegra186-dspk.yaml       |  18 +-
+ .../bindings/sound/nvidia,tegra210-admaif.yaml     |  13 +-
+ .../bindings/sound/nvidia,tegra210-ahub.yaml       |  13 +-
+ .../bindings/sound/nvidia,tegra210-dmic.yaml       |  18 +-
+ .../bindings/sound/nvidia,tegra210-i2s.yaml        |  18 +-
+ .../boot/dts/nvidia/tegra210-audio-graph.dtsi      | 153 ++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 262 +++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 146 ++++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ sound/soc/tegra/Kconfig                            |   9 +
+ sound/soc/tegra/Makefile                           |   2 +
+ sound/soc/tegra/tegra_audio_graph_card.c           | 251 ++++++++++++++++++++
+ 13 files changed, 1085 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-graph-card.yaml
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
+ create mode 100644 sound/soc/tegra/tegra_audio_graph_card.c
+
+-- 
+2.7.4
+
