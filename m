@@ -5,61 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1717FC56202
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 11:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1EDC64E75
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 11:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6A22173E
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 11:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0BD220DD4
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Nov 2020 11:35:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Akn8QULD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7Izq4ml"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730660AbgKZLei (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Nov 2020 06:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38814 "EHLO
+        id S2389407AbgKZLfF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Nov 2020 06:35:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729812AbgKZLeh (ORCPT
+        with ESMTP id S2389343AbgKZLfF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Nov 2020 06:34:37 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA2BC0613D4;
-        Thu, 26 Nov 2020 03:34:37 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id a186so1848142wme.1;
-        Thu, 26 Nov 2020 03:34:37 -0800 (PST)
+        Thu, 26 Nov 2020 06:35:05 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED34C0613D4;
+        Thu, 26 Nov 2020 03:35:03 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id z7so1789046wrn.3;
+        Thu, 26 Nov 2020 03:35:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=LHMrZYQSpBWE8KyWLwu7SZUG92Z521sLF1XKsVV5/ZQ=;
-        b=Akn8QULDOMymmpBvL4moJ0rUwM4KzBv7vR9/bMxB6j4BP8EnR0RT4vM2YYL6c+YR1D
-         tLP1q0Ovqzwxfzc1OvYn42PmgjR/rW2fPwSRXA05kpf9FHJ+OGQ1jdSJL1AY8tUQxO6P
-         9gi2xmW4zhFzOyIccmNMCtHJRUM6RBZO1ob3ceEV9bvqWWsjQNttjK5MBLeVAUYCKp/R
-         c9bfoxqL9NH2Lc1/m5+EmLgsyDZ6V7oK1uEzkPbZ/6wbX3b63ELjLKbXA+pAMVlc5sdg
-         a4som28Qx2ZkzXaJGY6IiHjXKdCkfP6yuugyBcziyknf7bL/3yHy6uZZnAEf/AWfWZVt
-         2Rbw==
+        bh=Z19SPR6q6e8Z9xOoOmzg+BC0gL5sGSxj/oGtziiuYnk=;
+        b=l7Izq4ml+1f2ymIxiuDN4cgzVb9JASeqNvJpmeMOUNV2iqF147AgiaO+5sD/7fs55V
+         SrfZsFc+tpUi+BVtQ0zKRjH2WTPSPahCAYsdbfQ3hy1ZuGuEB2HSiDoQRo2GG997o2BB
+         AMoMixXRvuksK99nWzp8/WbDQFOk5V6EIQclCUhtzzPdslHswGP9EaBjxicPJZdrZyuT
+         garek/Te++SZZO3lDs074Et1dWpNLEdQRUaQ5QujE6mxeuAxawHjSm5gdPUZl8N6I9SW
+         mWIlkxMrGmGlcaSdJLG2mjRwW9sSDqQdjtqQR32E6gtRDXTRPjZF5kA/E2YK8PTTbaEz
+         X75g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LHMrZYQSpBWE8KyWLwu7SZUG92Z521sLF1XKsVV5/ZQ=;
-        b=HD8OK9/Gd//bZ63cJAZAQoY1ynlEhkzumGe0j5+jg9qKZzqhX5GxFDDwy8oGj0WTQG
-         ubrkT93yVrrQufVOvSa+i6n6+IMQ7E/f94Hj5AQFSiuK0n1D2uCyR5rvLgctpaAb2bRX
-         LvS/BBrqd4uo5wSa8UK/1NS8U/0jw9wT8uW0XZX4VG+qc1q6GRzwZ+TKbCMZ3LF1fun9
-         u3UUGFJxAQ6wOcW/1Inafy8XMAyrgS8HR043NdhWsLXFs4PRUpj7SsgQCMXPR6TSgcA9
-         pNkIDi+rOJp1s4bhEiIhijji+yciV7cEqrlsDDtlYwGTNFOSUR4K4A+mmBII0eeT78as
-         8f+Q==
-X-Gm-Message-State: AOAM5308hiW5AvYQ20OYtkpKpJTvOmINVDbUytPsPZ8UQpwlSeF6nnKG
-        M9wZrhxjBeWTKsr9nSVoM/A=
-X-Google-Smtp-Source: ABdhPJwB+AJVfv9TVZ+zFl+NJsUna1+N0PrJ72whTkDQZqf4JR/DfSQPvcavy97tLCcphPqNxTze6A==
-X-Received: by 2002:a05:600c:218c:: with SMTP id e12mr2906036wme.28.1606390475985;
-        Thu, 26 Nov 2020 03:34:35 -0800 (PST)
+        bh=Z19SPR6q6e8Z9xOoOmzg+BC0gL5sGSxj/oGtziiuYnk=;
+        b=dD6vY9/7xOJiyG2TOTOg69gFRdVufM3Saa+hAqhr4FN/9TCSnUhMpaqWkOW+US2KFN
+         q5hQLjlrheJK9v+H/ts3ZcklUQZa8tN5rqdqJ6yAZIgo1AXWt22PGoYjbwNz99YH00WL
+         WAeCIHqUGIssslf7Tb5+MUXFasfmFjS6+beS2zYyj1954BvE8meslTirYQCEQGrh1xgn
+         qzIKcmNfWeFN4eOidil33rBbxgctr8DBmWWKxwu2yvOXDjAuiAqPliDpINjqhPsxbYAK
+         7N5zhSulM1/nWNutF3WD5kChyTZZKl7kBtKniHtf7FddKF6pbwZ7gNNhs+tE/AmEiZf+
+         Imbg==
+X-Gm-Message-State: AOAM5312hv2GaYk8gcI8lD+kiH22y6OKyIZgtvL0tQepBMbYgV8Ckour
+        P5gFEIUxe8QjZvrIU9OJDeQ=
+X-Google-Smtp-Source: ABdhPJwZXHg4ZJWcakRzIulaHmsv4hAGkYwZ41zkrRjyhjdWAfGZONYO6etLS0xyYGoR8ShgdGLHFQ==
+X-Received: by 2002:adf:e544:: with SMTP id z4mr3401462wrm.83.1606390502518;
+        Thu, 26 Nov 2020 03:35:02 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id s2sm8189990wmh.37.2020.11.26.03.34.34
+        by smtp.gmail.com with ESMTPSA id 2sm10188934wrq.87.2020.11.26.03.35.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2020 03:34:34 -0800 (PST)
-Date:   Thu, 26 Nov 2020 12:34:33 +0100
+        Thu, 26 Nov 2020 03:35:01 -0800 (PST)
+Date:   Thu, 26 Nov 2020 12:34:59 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Vidya Sagar <vidyas@nvidia.com>
 Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
@@ -67,73 +67,63 @@ Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
         dinghao.liu@zju.edu.cn, kw@linux.com, linux-pci@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
- parts fail
-Message-ID: <X7+SyTFHOaAchPMo@ulmo>
+Subject: Re: [PATCH V4 6/6] PCI: tegra: Disable LTSSM during L2 entry
+Message-ID: <X7+S4zQhxaS8tAcd@ulmo>
 References: <20201109171937.28326-1-vidyas@nvidia.com>
- <20201109171937.28326-5-vidyas@nvidia.com>
+ <20201109171937.28326-7-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="88F82UcEPkRGOirN"
+        protocol="application/pgp-signature"; boundary="DJczW5l7OJTAN39l"
 Content-Disposition: inline
-In-Reply-To: <20201109171937.28326-5-vidyas@nvidia.com>
+In-Reply-To: <20201109171937.28326-7-vidyas@nvidia.com>
 User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---88F82UcEPkRGOirN
+--DJczW5l7OJTAN39l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
-> Currently the driver checks for error value of different APIs during the
-> uninitialization sequence. It just returns from there if there is any err=
-or
-> observed for one of those calls. Comparatively it is better to continue t=
-he
-> uninitialization sequence irrespective of whether some of them are
-> returning error. That way, it is more closer to complete uninitialization.
+On Mon, Nov 09, 2020 at 10:49:37PM +0530, Vidya Sagar wrote:
+> PCIe cards like Marvell SATA controller and some of the Samsung NVMe
+> drives don't support taking the link to L2 state. When the link doesn't
+> go to L2 state, Tegra194 requires the LTSSM to be disabled to allow PHY
+> to start the next link up process cleanly during suspend/resume sequence.
+> Failing to disable LTSSM results in the PCIe link not coming up in the
+> next resume cycle.
 >=20
 > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
 > V4:
-> * None
+> * New patch in this series
 >=20
-> V3:
-> * Modified subject as per Bjorn's suggestion
-> * Removed tegra_pcie_init_controller()'s error checking part and pushed
->   a separate patch for it
->=20
-> V2:
-> * None
->=20
->  drivers/pci/controller/dwc/pcie-tegra194.c | 39 +++++++++-------------
->  1 file changed, 15 insertions(+), 24 deletions(-)
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
 
 Tested-by: Thierry Reding <treding@nvidia.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---88F82UcEPkRGOirN
+--DJczW5l7OJTAN39l
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+/kskACgkQ3SOs138+
-s6FRXxAAkGRigbdoBOKnM0ls2I7F3/4agtBW4wMRk2OxpVb8iIIjSKZw7Aqd/0Y8
-Z2erjVDK8e0okun22p9Irf0oieq5z2orh8X5S1T0izOKXCFsGu97Vk9UKfWZI0/e
-PGfERH4L5yVgkiHYSwl9byksmf454fvHRPQdbT/UjXmqlpbgqdPIMeBxsxn+p6pj
-3zkaJ1BjsT7Tw5NUaw756NEOsKtm/K7uXDFZwGklGBfhA5vi6J0ABTOWzoHpOrXr
-OOa+nY780Aq5xY355ZKc641f6FfgPvmUDYfKBCh1Vv2/OGm1bOM2ejG02Bn+aOzX
-71mGBNgeZWvVGDZMvyn+iLRlLCe3Mf6JpTkFYzQOQK1AdYO71gK8DClzQsehE23V
-IZKBJ22MluSDRzQH0RpmHFZeKPY+zCG836XXqJTlxSUSUdVpAoWA3r5RyR7YiHXb
-gL9VrsBSstob/zS4jkkWEkwITGBBD1Yix67XMWDLp30MnembSbPKqUmJxZQ8XLCj
-VDCBEaUrVKwOXlNKQcZKTabhHM1pgCVPSHNmqlaqhpgY3tvkprxA5pguHlQKa26f
-Irtp4gxqtOAKdSzWIB78VnicWie4dDRSCu3qY/tvwA13panBzDJPds+bJUxO4ayO
-H7PqzzmIK5NaVUCM0e2wSSQzgBuU9NKZKqaI9A4i8xJ+Ng8lN2c=
-=zAZa
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+/kuMACgkQ3SOs138+
+s6FZFRAAoKuhItsnD+04VnXQVd9OUoqSlKDlETyOKeRM2QXoffIKz2Ls9oK8hjCq
+ff8dclM/AMZYYklT/Qg3VQrU2Duq2VDapMXyswUernO5cTSk62tciOF/pPc+BuBA
+ZRSs9swDi5O4LhcCmWpMYaP+fx3ZqexPczpVc/GYOMZYF/mGr0U8grZpONmCeX0K
+x1uc85AWb5ClCkBpe/MVxNlfCoiMJW8hIG7SndaJUxLxS+ggAVpARW8IcSGqyS0z
+9OwyB/II4sb3bHBFXlg2g/g4wO43i8XQTO/ufGrBRnvTRCGWDu1GSIvDdKvU6udV
+9MkNKXRROJMLK5d5VXLn5xHR8sDX0RhGv2zjJT/UF8fn9xoJewsLJbemogI1O0j9
+1nFOwGyWgQ+wPvbLtHSY2J2VjI3mVB8oraNpAlN9o47wScKKHMOGKfVDL+UA4LBx
+mRGH9XlLdx3blfmN0w6X5bMTupyEtHsOx7mKxugos7fv1+z9QQbR+zEuoSV3U6av
+jU6aHu0uxUL0jVgFJkg+Wjut+XAXGbZekpy6HL6vF4I0tABqSNM5np59J79qzUEm
+n1SLWEJgu3YlFfAvMicDHo1Sglo3V49By4gNG7rRUY2eGQBi7M4CAezg6Zrx9s7A
+BCyoqf/xl0zQJYHTVrSRmGvrnP1QUAtDa4k6ptHBIafpc0j6H5A=
+=p4tA
 -----END PGP SIGNATURE-----
 
---88F82UcEPkRGOirN--
+--DJczW5l7OJTAN39l--
