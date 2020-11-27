@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0455CC2D0E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D33C64E75
 	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A68D120B1F
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE6620B1F
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ttCs+eVU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIg1Y7US"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbgK0Onn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 09:43:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
+        id S1730924AbgK0Ono (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Nov 2020 09:43:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730899AbgK0Onm (ORCPT
+        with ESMTP id S1730899AbgK0Onn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 09:43:42 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88722C0613D2
+        Fri, 27 Nov 2020 09:43:43 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B0E3C0613D1
         for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:42 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id x22so5315401wmc.5
+Received: by mail-wr1-x42d.google.com with SMTP id l1so5815809wrb.9
         for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uX/GVbnqAzBXx0E85jAnDMgOaxp18AQUYwU0Wycd3tw=;
-        b=ttCs+eVUAu/Nlj0Q3UhP7icO8sHCRwrehl0jqHQmJ6mA6K6zIR3xr9VXXGB+GJfIKu
-         F2YRz8viDwXvk+GiLfJlcAJaLcPMkZCAtcb5TDoXj+lrr8ClLb+cnzkA3xrO/Eh8Gzgs
-         NN2mvcfFhNobc6K4dpDq1Cl0qXUVMRiXW5VV7eb/6ev4UKgvD3fjz4uAOKjuNzal+Q7q
-         MfMGEx5JrpDyAGvD4jP01QOH0h/+zJZ9xixbNPWFU1shWZeTnf04YC8xGsXFoFVjf+MB
-         ydR2bZXI6xsQqizuwUHZSJ8/zfm9aNiy3jGWG6EjLnact8NFsNtbkMIAAuuWHB3tVJPr
-         GzqA==
+        bh=+Kh9Jm7QmiQmxxud+Xmj5HmTaSKRgMJx1GoEcOwNpSA=;
+        b=kIg1Y7USHaGtQqdqcIAdKsL/Bt7Egm1i7QJhhYQu5XWbcy4jtVvhKiVJShmaIeZvMc
+         tjdqV8zt6WAi16p+XJrhKGx8J9oTcYIDT432nR8JQAtgjUPON6egJsy+utnpN1vyF63W
+         Rw+Xeycfauh6cY9QMvBQKi+nGWBfcGy1jwI/BbcIWu4SphOgDP44T3AozXeGAyJtI+he
+         RqTdj5n8nsINHRmXBVkFcoHFHupFmeXIMU3t8CrSv68FpyrCzqUR2LUp9zL78fA9myWy
+         /L0qApICyRpkoYLaUHMWxvEs9sft9ZKRwp6EyBZYQAMrbKyu+9IunMXfjueq+iyjzC/i
+         tPSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uX/GVbnqAzBXx0E85jAnDMgOaxp18AQUYwU0Wycd3tw=;
-        b=MZ5uV+LpJIHc+kmexr5ysAnRsRVZimXKLnAJN2krLHyE0hVyI+4NoJW2oRSbC2UyuZ
-         YO3TX0Tiue2ulaX5/mqXuUUeAsSqbLuRYQmGTWHYkeBeWlxegSEcooOmjOLLThUCqvIX
-         hAqCxWOnknfDK0EZP1I07lhDQTrm8rvfpPmKVuu0bvWToTRWvM1foApjg+npZUxyEegl
-         sMcJBqSX9enTlFy6RRNu9m2FB+py3u7WIbR7FbwX2AM7ER7dL3dgAVsdiAS6zA5bQvLd
-         CznP9vUyg44+pEr8RlGaH/IwLcO3Pvy1CwsMCTn1v1GXyL6vqdQgA7ef7lEn9TMNChMc
-         BtIg==
-X-Gm-Message-State: AOAM5337qaZh6M2BlzA8pmbWKZGWXCkmBxinqBszpC9UM/9rMgELbxSy
-        jeSMLEQjntRMeAAriT2v74w=
-X-Google-Smtp-Source: ABdhPJzl20W3YHhp9wpXMsQPwnEu/2ZLBS4mjNLkOLU/zk+AOSHSHT9E1+wHKIdHfcW1s19Mob2d8g==
-X-Received: by 2002:a7b:c0d7:: with SMTP id s23mr9503850wmh.54.1606488221257;
-        Fri, 27 Nov 2020 06:43:41 -0800 (PST)
+        bh=+Kh9Jm7QmiQmxxud+Xmj5HmTaSKRgMJx1GoEcOwNpSA=;
+        b=m2gnGO3wZ2rIHm5DGPCTQ0RGSZ6nmvjSNmqR528JQRNt30SNnu7j5sqTYsupCcxlJn
+         pXhe4nmbfVO1jSa9ZLVvUFeCF/Is9/9ry73bUCbqV9hN15k0IvurpgW+Rla48kvsbyNg
+         B0jQXc8iEH64NMoDEmhaZtacieBRg8Xl06XPs9bo9RMiw+bza0BiXGxKlMfq1G6/FMUf
+         lHBj/yLXPF3QKuAWrCNYN3NRP97ilKUdEdZoD5M7g3MVgl0m26XER365SMcD+JStMPl6
+         48gStHU/d+mvcUcXd0Cm+P49wir5pp1/FxaeL4Q9cZ7ohjLtGcGZkDp6GrCGxBv1Gy0g
+         jaqg==
+X-Gm-Message-State: AOAM530l6vwbmCh0IAsG1fR/tXjoRKpZjG/6z4GV0J8KjeXHXIp+ptT1
+        zf7gbbrCBLvn2R1lM2DWU4s=
+X-Google-Smtp-Source: ABdhPJwBbG6Rmkf63OlbL6061dO06RQMCvwkMraAf6Tou26N8eZMn+8B0JaTqq4zxWCgmtaJYJWCSg==
+X-Received: by 2002:a5d:56cb:: with SMTP id m11mr11463040wrw.346.1606488218698;
+        Fri, 27 Nov 2020 06:43:38 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id v1sm14934804wrr.48.2020.11.27.06.43.40
+        by smtp.gmail.com with ESMTPSA id 2sm17797811wrq.87.2020.11.27.06.43.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 06:43:40 -0800 (PST)
+        Fri, 27 Nov 2020 06:43:37 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/6] arm64: tegra: Device tree changes for v5.11-rc1
-Date:   Fri, 27 Nov 2020 15:43:28 +0100
-Message-Id: <20201127144329.124891-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/6] ARM: tegra: Device tree changes for v5.11-rc1
+Date:   Fri, 27 Nov 2020 15:43:27 +0100
+Message-Id: <20201127144329.124891-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201127144329.124891-1-thierry.reding@gmail.com>
 References: <20201127144329.124891-1-thierry.reding@gmail.com>
@@ -86,71 +86,91 @@ The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.11-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.11-arm-dt
 
-for you to fetch changes up to 48f6e195039486bc303118948f49a9873acc888f:
+for you to fetch changes up to d63250d7fd49503bac48099fcef24ba7985009a3:
 
-  arm64: tegra: Fix Tegra194 HDA {clock,reset}-names ordering (2020-11-26 16:33:04 +0100)
+  ARM: tegra: Add EMC OPP and ICC properties to Tegra124 EMC and ACTMON device-tree nodes (2020-11-26 19:08:39 +0100)
 
-Note that you've already pulled part of this earlier as fixes for
-v5.10-rc6, but I've included the whole lot for completeness. Let me know
-if that doesn't work for you and you'd rather have a completely separate
-branch.
+Note that this pull in a subset of the tegra-for-5.11-dt-bindings PR to
+satisfy a build dependency on the memory client IDs used in some of the
+patches from Dmitry in this set.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree changes for v5.11-rc1
+ARM: tegra: Device tree changes for v5.11-rc1
 
-These changes are mostly minor fixes across the board, but they also
-enable PMUs on Tegra186 and enable SATA support on Jetson TX2.
+This adds support for the Tegra30-based Ouya game console and enhances a
+number of existing device trees. It also fixes a couple of minor issues
+that were found during DT validation.
 
 ----------------------------------------------------------------
-Dipen Patel (1):
-      arm64: tegra: Wrong AON HSP reg property size
+Dmitry Osipenko (19):
+      dt-bindings: memory: tegra20: Add memory client IDs
+      dt-bindings: memory: tegra30: Add memory client IDs
+      dt-bindings: memory: tegra124: Add memory client IDs
+      ARM: tegra: acer-a500: Correct thermal zone names
+      ARM: tegra: acer-a500: Add power-supply to lvds-encoder node
+      ARM: tegra: nexus7: Correct thermal zone names
+      ARM: tegra: nexus7: Improve CPU passive-cooling threshold
+      ARM: tegra: nexus7: Add power-supply to lvds-encoder node
+      ARM: tegra: nexus7: Rename gpio-hog nodes
+      ARM: tegra: nexus7: Use panel-lvds as the only panel compatible
+      ARM: tegra: Correct EMC registers size in Tegra20 device-tree
+      ARM: tegra: acer-a500: Add Embedded Controller
+      ARM: tegra: Add interconnect properties to Tegra20 device-tree
+      ARM: tegra: Add interconnect properties to Tegra30 device-tree
+      ARM: tegra: Add interconnect properties to Tegra124 device-tree
+      ARM: tegra: Add nvidia,memory-controller phandle to Tegra20 EMC device-tree
+      ARM: tegra: Add EMC OPP properties to Tegra20 device-trees
+      ARM: tegra: Add EMC OPP and ICC properties to Tegra30 EMC and ACTMON device-tree nodes
+      ARM: tegra: Add EMC OPP and ICC properties to Tegra124 EMC and ACTMON device-tree nodes
 
-JC Kuo (2):
-      arm64: tegra: Fix USB_VBUS_EN0 regulator on Jetson TX1
-      arm64: tegra: Add XUSB pad controller interrupt
+Jon Hunter (1):
+      ARM: tegra: Populate OPP table for Tegra20 Ventana
 
-Jon Hunter (3):
-      arm64: tegra: Disable the ACONNECT for Jetson TX2
-      arm64: tegra: Correct the UART for Jetson Xavier NX
-      arm64: tegra: Fix Tegra234 VDK node names
+Nicolas Chauvet (2):
+      ARM: tegra: Add missing gpu-throt-level to Tegra124 soctherm
+      ARM: tegra: Add missing hot temperatures to Tegra124 thermal-zones
 
-Marc Zyngier (2):
-      arm64: tegra: Add missing CPU PMUs on Tegra186
-      arm64: tegra: Fix GIC400 missing GICH/GICV register regions
+Peter Geis (1):
+      ARM: tegra: Add device-tree for Ouya
 
-Nicolas Chauvet (3):
-      arm64: tegra: Add missing hot temperatures to Tegra132 thermal-zones
-      arm64: tegra: Add missing gpu-throt-level to Tegra210 soctherm
-      arm64: tegra: Add missing hot temperatures to Tegra210 thermal-zones
+Sowjanya Komatineni (1):
+      ARM: tegra: Change order of SATA resets for Tegra124
 
-Sameer Pujar (2):
-      arm64: tegra: Rename ADMA device nodes for Tegra210
-      arm64: tegra: Fix Tegra194 HDA {clock,reset}-names ordering
+Thierry Reding (3):
+      Merge branch 'for-5.11/dt-bindings' into for-5.11/arm/dt
+      ARM: tegra: Hook up edp interrupt on Tegra124 SOCTHERM
+      ARM: tegra: Properly align clocks for SOCTHERM
 
-Sowjanya Komatineni (2):
-      arm64: tegra: Change order of SATA resets for Tegra132 and Tegra210
-      arm64: tegra: Enable AHCI on Jetson TX2
-
-Thierry Reding (1):
-      arm64: tegra: Hook up edp interrupt on Tegra132 SOCTHERM
-
-Vidya Sagar (1):
-      arm64: tegra: Fix DT binding for IO High Voltage entry
-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           | 20 +++++--
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 16 ++----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 61 +++++++++++++++++++---
- .../arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi |  2 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 19 +++----
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 20 +++----
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 22 ++++++--
- arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts    |  6 +--
- 11 files changed, 119 insertions(+), 53 deletions(-)
+ arch/arm/boot/dts/Makefile                         |    3 +-
+ arch/arm/boot/dts/tegra124-apalis-emc.dtsi         |    8 +
+ arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi     |    8 +
+ arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi       |   10 +
+ arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi     |   10 +
+ arch/arm/boot/dts/tegra124-peripherals-opp.dtsi    |  419 ++
+ arch/arm/boot/dts/tegra124.dtsi                    |   54 +-
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts    |   27 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi             |    4 +
+ arch/arm/boot/dts/tegra20-paz00.dts                |    4 +
+ arch/arm/boot/dts/tegra20-peripherals-opp.dtsi     |  109 +
+ arch/arm/boot/dts/tegra20-ventana.dts              |   11 +
+ arch/arm/boot/dts/tegra20.dtsi                     |   33 +-
+ .../dts/tegra30-asus-nexus7-grouper-common.dtsi    |   27 +-
+ .../tegra30-asus-nexus7-grouper-maxim-pmic.dtsi    |    2 +-
+ ...tegra30-asus-nexus7-grouper-memory-timings.dtsi |   12 +
+ arch/arm/boot/dts/tegra30-asus-nexus7-tilapia.dtsi |    2 +-
+ arch/arm/boot/dts/tegra30-ouya.dts                 | 4519 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra30-peripherals-opp.dtsi     |  383 ++
+ arch/arm/boot/dts/tegra30.dtsi                     |   33 +-
+ include/dt-bindings/memory/tegra124-mc.h           |   68 +
+ include/dt-bindings/memory/tegra20-mc.h            |   53 +
+ include/dt-bindings/memory/tegra30-mc.h            |   67 +
+ 23 files changed, 5844 insertions(+), 22 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra124-peripherals-opp.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra30-ouya.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
