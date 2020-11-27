@@ -8,67 +8,69 @@ X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F39C2D0E4
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0DEC64E7A
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2B27221EB
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E07420B1F
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koz+rTEI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9SqskTS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbgK0One (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 09:43:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35508 "EHLO
+        id S1730908AbgK0Ong (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Nov 2020 09:43:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730899AbgK0Ond (ORCPT
+        with ESMTP id S1730899AbgK0Onf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 09:43:33 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C756C0613D1
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:33 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id f190so3730715wme.1
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:33 -0800 (PST)
+        Fri, 27 Nov 2020 09:43:35 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE6EC0613D1
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:35 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id 10so5320155wml.2
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Bf87zhRXj1rB+Q0/Jbp6kaz21nB1VmzfJGAWcV08pV8=;
-        b=koz+rTEItqetq/eUpUIOGTf2gtphqXfcldhFP2SUliEtfI7lCgdq+qyTToo6numRV0
-         WJ2arQnN9Re2cT+qH9lNEyrHML0BE2fScIK/IBGHfwiBYNXvSsRALvgOy56dmB/Mxc8Z
-         4w8ctPmgmAyDo4wvcG5VDA6TX42dwy1afOWoQwSosT7lP3CaajIPkTadWCcH6mFfCsJY
-         9hN/Zpb5zjavnOFdRX10EOCrP9dKiDsAVReXQaCWMzxtrZCVHMzCPbGvYhOeukD9txKL
-         1n49WYVCxBlCdtrh/RVDBkY7BvMpCvmkc2Mq5BHgEl/nlQEDRzcEpMknSYV9dP5g0mqo
-         z1hw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kmILkMTyoFSh8KUN/oBiKweVuctrEgzCw8JtH2R1a8E=;
+        b=H9SqskTS/zs6NgiGlTwctg9G3N+OwvL6AStD7fUJIVKzsPFM1iLkeHiFMb+Hts3hsJ
+         sqT5kTKbrs5G6RYDT+I+LTZbyuXoI1MZojE7ieaTncG6jx+7sjCBoPNRoXIO71CwkG/b
+         S/mMWl6821V5Wat2szh5VkYc8LI6SiMliC8jbrx+q6GiDF5dkoSKvisuqfmX4d42cZk6
+         FEDutGX5atvyxpgZaGA2uTW5NP516NaCJDEs6882IJpLMSjKc+RC9hK5hB99Og5uBozA
+         e5CFSNziK0Ufmwk+fo/7xzp5XoOVlGHcNfp2+T9c5jpnRohTBw34rQaS+WW3Kr83GiAK
+         yaNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Bf87zhRXj1rB+Q0/Jbp6kaz21nB1VmzfJGAWcV08pV8=;
-        b=fC54JFyD7gK3jZozebVFLbk6twxdrAoJiNgI64joD7UaPFoCQZ5fdOdCf+/wvCFTYs
-         yJJaB6w1TL1VsWu8WHeI2Jem6/+KGOnb+ro3Q13FrDHsHkkDb1hUUPj6EcWDe/MTUOmH
-         j3sOW7XI8rHlQWP6p4eQTKG3bsXCt8tRZ0LWuY4RLPCAOCcC73kp1qzZbwRjpCMkl6CM
-         wb8+5UK8jX6WlpofW+2Zl5RbwN9wPxNiSHTnRIsJXkwmktLpMw97vB49nRUmCNwD9wWY
-         QMgcrZWWfEB+5s6l423627c5fwg8aC0rg9gprzO1DH3dChrSymugQw52pv2Bxw4RnlWd
-         RmLw==
-X-Gm-Message-State: AOAM533eaOnAi3p15WkXSYn+mxZpxblyAWUS26sKEn41/4VFMbuoOpCY
-        HkhhrXgkunPVR/Gq+LjYHys=
-X-Google-Smtp-Source: ABdhPJzzWo2ewKAb9VDawTiZppvz/xBeR51gfT45me7w/214qIt65/PViSk/oq+lk89ZZDcaDkisUA==
-X-Received: by 2002:a1c:7f81:: with SMTP id a123mr9635757wmd.6.1606488212258;
-        Fri, 27 Nov 2020 06:43:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kmILkMTyoFSh8KUN/oBiKweVuctrEgzCw8JtH2R1a8E=;
+        b=j6XjOHKQs0Aa+cTcLOioIdLFUpTu8L9EEUN5EPJAeTOwPXaOIYKyaxo/5Ml65B3QsV
+         ktLvTpNNOOcje2BKGYnIm21jxrtywA9T0u8gHPQdsM15vlkxCRiBU4dIIZYymA99iU79
+         aExCM3SBzRGTLPac3OQBKX+bxJXvmO9iNsQAM5HATzl7pdFGd9esXvzx0A+O/1Z3s6al
+         p2LcbzYi3oUI/T7Wnpem5OVJRZRVjvqtMFGjUB/PtCSRe+gTi5NCG8HXmGbXsvUJ9e0H
+         tvXHIV8p0fUPAfAcWk584ctvvH4u6vqbSKRGAypIn9Hz4xvd3ggWvIfwNMHvkjoL8I7Y
+         yqcQ==
+X-Gm-Message-State: AOAM532iUMQKUdEoD5m8r/Xxy8k3J5gf0NYHHcDITpqaWkLwk3WIk2sP
+        kFKMDfV9KQcvtFXYi3urZAQ=
+X-Google-Smtp-Source: ABdhPJxq0c+uoa2BKNWyG9kqene0iZGI5CKPKW3iTmgscQI7KT4rOSfergEXR3rrSEhOOeNymtyvTg==
+X-Received: by 2002:a05:600c:219a:: with SMTP id e26mr9667529wme.168.1606488214360;
+        Fri, 27 Nov 2020 06:43:34 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id i16sm15265995wru.92.2020.11.27.06.43.30
+        by smtp.gmail.com with ESMTPSA id p11sm15368298wrj.14.2020.11.27.06.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 06:43:31 -0800 (PST)
+        Fri, 27 Nov 2020 06:43:33 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/6] dt-bindings: Changes for v5.11-rc1
-Date:   Fri, 27 Nov 2020 15:43:24 +0100
-Message-Id: <20201127144329.124891-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] soc/tegra: Changes for v5.11-rc1
+Date:   Fri, 27 Nov 2020 15:43:25 +0100
+Message-Id: <20201127144329.124891-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201127144329.124891-1-thierry.reding@gmail.com>
+References: <20201127144329.124891-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -84,55 +86,29 @@ The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.11-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.11-soc
 
-for you to fetch changes up to e36f9381420b28e1785d7900d4c1d9db6149cbcd:
+for you to fetch changes up to b9ce9b0f83b536a4ac7de7567a265d28d13e5bea:
 
-  dt-bindings: bus: Convert ACONNECT doc to json-schema (2020-11-26 19:05:17 +0100)
+  soc/tegra: fuse: Fix index bug in get_process_id (2020-11-19 11:43:49 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v5.11-rc1
+soc/tegra: Changes for v5.11-rc1
 
-This contains a couple of conversions of bindings to json-schema, as
-well as symbolic names for the various memory clients on Tegra20,
-Tegra30 and Tegra124. There's also a couple of fixes for Tegra194
-pinmux and ARM GIC bindings. Finally, a new vendor prefix is added
-for Ouya and the Ouya game console compatible string is defined.
+This contains a couple of warning fixes and a fix for a mostly harmless
+bug in the process ID retrieval code.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (3):
-      dt-bindings: memory: tegra20: Add memory client IDs
-      dt-bindings: memory: tegra30: Add memory client IDs
-      dt-bindings: memory: tegra124: Add memory client IDs
+Lee Jones (2):
+      soc: tegra: fuse: speedo-tegra124: Remove some set but unused variables
+      soc: tegra: fuse: speedo-tegra210: Remove a group of set but unused variables
 
-Peter Geis (2):
-      dt-bindings: Add vendor prefix for Ouya Inc.
-      dt-bindings: ARM: tegra: Add Ouya game console
+Nicolin Chen (1):
+      soc/tegra: fuse: Fix index bug in get_process_id
 
-Sameer Pujar (3):
-      dt-bindings: dma: Convert ADMA doc to json-schema
-      dt-bindings: interrupt-controller: arm,gic: Update Tegra compatibles
-      dt-bindings: bus: Convert ACONNECT doc to json-schema
-
-Vidya Sagar (1):
-      dt-bindings: Fix entry name for I/O High Voltage property
-
- Documentation/devicetree/bindings/arm/tegra.yaml   |  3 +
- .../bindings/bus/nvidia,tegra210-aconnect.txt      | 44 ----------
- .../bindings/bus/nvidia,tegra210-aconnect.yaml     | 82 ++++++++++++++++++
- .../bindings/dma/nvidia,tegra210-adma.txt          | 56 ------------
- .../bindings/dma/nvidia,tegra210-adma.yaml         | 99 ++++++++++++++++++++++
- .../bindings/interrupt-controller/arm,gic.yaml     |  9 +-
- .../bindings/pinctrl/nvidia,tegra194-pinmux.txt    |  2 +-
- .../devicetree/bindings/vendor-prefixes.yaml       |  2 +
- include/dt-bindings/memory/tegra124-mc.h           | 68 +++++++++++++++
- include/dt-bindings/memory/tegra20-mc.h            | 53 ++++++++++++
- include/dt-bindings/memory/tegra30-mc.h            | 67 +++++++++++++++
- 11 files changed, 383 insertions(+), 102 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
+ drivers/soc/tegra/fuse/speedo-tegra124.c | 21 ++++++---------------
+ drivers/soc/tegra/fuse/speedo-tegra210.c |  8 ++------
+ 2 files changed, 8 insertions(+), 21 deletions(-)
