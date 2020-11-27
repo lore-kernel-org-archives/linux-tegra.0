@@ -8,69 +8,65 @@ X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F94C64E7A
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C574EC64E75
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 663ED20B1F
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9222222C
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:45:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qTX5yluJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMHA1L+0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730935AbgK0Onq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 09:43:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35548 "EHLO
+        id S1730767AbgK0Opv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Nov 2020 09:45:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730899AbgK0Onp (ORCPT
+        with ESMTP id S1729913AbgK0Opu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 09:43:45 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3ECC0613D1
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:45 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id 3so3016341wmg.4
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 06:43:45 -0800 (PST)
+        Fri, 27 Nov 2020 09:45:50 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C814C0613D1;
+        Fri, 27 Nov 2020 06:45:50 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id k14so5860656wrn.1;
+        Fri, 27 Nov 2020 06:45:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=E66e82fRjbScow6xJT3yXxFBjbOJVfEEhjtAQriMYH0=;
-        b=qTX5yluJTR+gjG559VMKxKyB4azDDrCkoBv4QeHOuvJsl/hdRLroqXxdcgFbibuPQW
-         sDsJqJ+hJjMYrtAXOTioDlimkwRtePMOgDvGCl34gekXWxAoqWam3/2sKhVlX7gnGPPy
-         KA3KrUR89Fp1YBPuIwTL3C8fi4RRjWLt3YCgpw4T5jCSuot8hbarevvjzRODRC3TdY8K
-         blnaKCZZ2joawr1sOBCOPPYf0ZDA1xp3iaJSYgpre+6pQ+yiTuv6fM0JD2jxZg0ePlQx
-         /16fnLAn7Jkl9ARJN1XhGAz5XPSuxth8aof5YY/1R1jKFRbYzn1xDUgH2oM0gbY2GcxT
-         WYoQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eD5tyVoTAsH68bnD9XqzP45KTYtONvr8pYzSU1Ul9rs=;
+        b=nMHA1L+07mGv+MoJykXr0hd+aH3HOW1MGET4akb9R/oSNitI5ojZlzd5glc7pDMcxJ
+         1YyEFa3Omsci/1E2nZUwv+Mdo7zB3pNGeE4H0lKXZmyR5/EUCEAIhlM9AA6gRxvb7e15
+         l5oVmjHwc4a6m5yFAGo/6cJSLyqG7rXOP8C7kLpx6EGc0N7zIz+T8U/SXzW80HLIFrx0
+         NL64AabRiBhUkj4DLd46oo6c36cLuXVt5yjYJ8+ZNQKxiYgUNExcHOSd+Q2VAz7CkJ+4
+         eNAdz4JTnkBYjb/IgS06vM2cxqu++SVXDCYkS/vUujpsbeuLI9tYY5nKGOs96vgG7QZ6
+         s8+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=E66e82fRjbScow6xJT3yXxFBjbOJVfEEhjtAQriMYH0=;
-        b=BhW/5axe6fqBEX14EbhlN43iliQRbdMVdUWiJQoNAfWNJyvU+0SUOXM5NDSC5473TU
-         wjI0vNSUkkIVF9KcWDiBR4gUxspDCoHOjyXhHog1KdiovKo3zLcHzHu5i+SwIFJDts3F
-         AXPgLmtbeOJoXBiHne49HLuQPseaztTeHUgs0uMTPPHDslPtGmykm4m2CppAS2x+y31F
-         DSnXu4mAsygZqSPBNT1ESLTpaLvvlrzFI2+vRF/rYEebYTVjuxFjpchuEX8E41O2WKwP
-         ZdMtIp//WG7Wvwkuzmqv0C4N82eX0MX0apeWULFS/r5/LJrV26emRwyfb3atruSh7x6V
-         amzg==
-X-Gm-Message-State: AOAM530Dnzpm1PV82/Tib26xJLAkKKoUYwruABOKuUDH9Jul+7gtcFSG
-        G7Q3NqhgcVHlhJsJ1qGcTBY=
-X-Google-Smtp-Source: ABdhPJxHL8Adqw3W9Pc3nfQUhEt5UkMZSbh7wTnVWWyn5qeMtorPwq0+Qy62YalbVE+PugUEqqWylQ==
-X-Received: by 2002:a05:600c:2314:: with SMTP id 20mr5521494wmo.92.1606488224183;
-        Fri, 27 Nov 2020 06:43:44 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eD5tyVoTAsH68bnD9XqzP45KTYtONvr8pYzSU1Ul9rs=;
+        b=koq9kPqhebj0PviLTIfRoGEx+MwTVE7Tgk7oQRJbmKW2lNL+qek1tvIa8HzqoozD0/
+         TV+6Vjn2v6gPOvwtaPrpx6OLs95amgjyP6HzuJ29UjNJZfErG0Zdmc/5jXmaqUKfUQSF
+         TIb7MkenHmD+ooFzii997T1dAb4yW1VTzEzsLXHZKadJ6n2ILuhRYc6E3xKtqMiOXs6J
+         pz7+mIlJsxWttCBy0rjIT+qe7rkiHPQqpTq0btrBRbAMK9uaMuTgUSU7+h3LzGFPCMzf
+         kvM1/r+sdF+cDpFpHOImGHI06+B2h0L7cV8wsDsXhz3uO64RiiCJU4s82mMbXKdVbkr0
+         Vwbg==
+X-Gm-Message-State: AOAM532cW5oJ17wfIQVin32LSlOOK1iuXSH/nrmt/OipFCGvMzGS1DnB
+        RDinQXU5nsDAYgP7EOREBjQ=
+X-Google-Smtp-Source: ABdhPJwXWq6wpQCFtmwkrGwPJD6N7a8201FeIg5KdL1EPAjhzHMv7QA17z422m2U5bS6UeYd30vGjQ==
+X-Received: by 2002:a5d:4141:: with SMTP id c1mr5084872wrq.80.1606488347985;
+        Fri, 27 Nov 2020 06:45:47 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id i11sm15366030wrm.1.2020.11.27.06.43.42
+        by smtp.gmail.com with ESMTPSA id f18sm14847542wru.42.2020.11.27.06.45.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 06:43:42 -0800 (PST)
+        Fri, 27 Nov 2020 06:45:46 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-To:     arm@kernel.org, soc@kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 6/6] arm64: tegra: Default configuration changes for v5.11-rc1
-Date:   Fri, 27 Nov 2020 15:43:29 +0100
-Message-Id: <20201127144329.124891-6-thierry.reding@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v5.11-rc1
+Date:   Fri, 27 Nov 2020 15:45:45 +0100
+Message-Id: <20201127144545.125335-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201127144329.124891-1-thierry.reding@gmail.com>
-References: <20201127144329.124891-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,7 +74,7 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hi Mike, Stephen,
 
 The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
@@ -86,24 +82,32 @@ The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.11-arm64-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.11-clk
 
-for you to fetch changes up to 35552c7cb672d2cfd6c4aa2e28b15fdd12315555:
+for you to fetch changes up to a886c310d9fcb0e66253d4af225cba13f9bdf5d2:
 
-  arm64: defconfig: Enable Tegra234 support (2020-11-18 11:51:53 +0100)
+  clk: tegra: bpmp: Clamp clock rates on requests (2020-11-26 16:28:07 +0100)
+
+Turns out there were fewer patches than I thought. Some of the patches
+I was planning to pick up will be going in through the memory controller
+tree as dependencies, so here's the rest that are independent.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Default configuration changes for v5.11-rc1
+clk: tegra: Changes for v5.11-rc1
 
-The Tegra234 VDK support that was introduced in v5.10-rc1 is now enabled
-by default.
+This set consists of two fixes for minor issues that rarely, if ever,
+happen, so not urgent enough for these to go into v5.10.
 
 ----------------------------------------------------------------
-Thierry Reding (1):
-      arm64: defconfig: Enable Tegra234 support
+Nicolin Chen (1):
+      clk: tegra: Do not return 0 on failure
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Sivaram Nair (1):
+      clk: tegra: bpmp: Clamp clock rates on requests
+
+ drivers/clk/tegra/clk-bpmp.c | 6 +++---
+ drivers/clk/tegra/clk-dfll.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
