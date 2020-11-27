@@ -2,123 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41D7C63798
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 12:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7144C2D0E4
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D64222245
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 12:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FDC1206D8
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 14:09:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoQ8Bvsx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbgK0Mps (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 07:45:48 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:54913 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbgK0Mpr (ORCPT
+        id S1730049AbgK0OI7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Nov 2020 09:08:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730041AbgK0OI7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 07:45:47 -0500
-Received: from [192.168.1.155] ([95.114.158.11]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MPp0l-1kWAmh23Dn-00Mw0R; Fri, 27 Nov 2020 13:45:20 +0100
-Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alban Bedel <albeu@free.fr>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>, zhang.lyra@gmail.com,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        dl-linux-imx <linux-imx@nxp.com>, orsonzhai@gmail.com,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-pwm@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Sascha Hauer <kernel@pengutronix.de>, baolin.wang7@gmail.com,
-        Shawn Guo <shawnguo@kernel.org>
-References: <20201117154340.18216-1-info@metux.net>
- <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
- <20201118095342.sviuxvfsbmmn22mo@pengutronix.de>
- <CAHp75Vd9QUCcUoPLUW3kkJC0h=mPUqHNqNJPY74gDGSu67t8Hw@mail.gmail.com>
- <CAHp75Vcdu1aOLuF+EFDZibbi0OwGH4QfBhJQm9VZQkeEGEeKDQ@mail.gmail.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <40d468a6-f8ba-7535-55dd-e91ba8299958@metux.net>
-Date:   Fri, 27 Nov 2020 13:45:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Fri, 27 Nov 2020 09:08:59 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4708C0613D1;
+        Fri, 27 Nov 2020 06:08:58 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id h21so6638311wmb.2;
+        Fri, 27 Nov 2020 06:08:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GhG55MQHgqw8eiTwjvqStLw5a3ohAB5jEbTPCiqfZCw=;
+        b=EoQ8BvsxruUJyTimV6AVWytBEIYLkmCkD/RLU9C7USblg8sdjx7ZDhoXSJXLWQBsvc
+         t3bG7gdzawEcl1YVL1PTnzCnbrhT3icurrx7JxAbSAezFbBUk7NaWclX7JUHHbazhneR
+         iNsJebsGBNfjzIqdlLEK2tQPuXOFsHZ5PPE8+//iDKGHEMk1gJVaD6vuPajTts3k9GVH
+         zAixYavwZZxThsJQ3EUT1q2Vl2ksMR/iTxl8nA2k6F80L0oNKzQEMZfqi1LuEzbl4iLt
+         iBM15G44F5cJZ89qw1b1oQ2BVJmMfIyhJiQtbiL2lWAop/taDUW8ynmwMQ9/j1jVrFAd
+         cJBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GhG55MQHgqw8eiTwjvqStLw5a3ohAB5jEbTPCiqfZCw=;
+        b=oxhzERbtbjIy1ggat0ZavsDGlbTce4tuI/Ie0Q4+SBV4NxPrnv7D1oQ7zgwjq7y4vq
+         DsDLuQCXpPO8w+Yo4gXqSs2BK/RdUScTXjqZkTjVHuXcIEVDbHTl+lmQBV3NFut2jExR
+         Yy2zo5YjNmS7/8dAM7mfCINzOjCs/hDQJjR8ZgjDjoufnTbrJMN9hGn/KDT31c1FImnr
+         GvOQT8RcFdP2UgQFKSMZygatGUzQ2NiexJwwA+1xNkdb7FefqzJe1FiOOleUuIWkK72n
+         FQxQSahO66LrTq/2O5kVUPD1rz90DyI8fiuUtp4gYaQnDzyhTv4djrSLYr8lHHniklIe
+         Ap4w==
+X-Gm-Message-State: AOAM532mwtzrVmO7nRUcMXHp7IkJXkzAVXRxxQDtAduls1ArXlSLngyB
+        nStoUicgIww6m16DbmE70Ko=
+X-Google-Smtp-Source: ABdhPJzFgj6t1hMJviAZcoTHhibL2AztyJjOHzqzcdI1IqcBoj8WsGac8IGEhK3y/xGA44cFSqFaaQ==
+X-Received: by 2002:a1c:a507:: with SMTP id o7mr8202524wme.164.1606486137652;
+        Fri, 27 Nov 2020 06:08:57 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id n123sm8065073wmn.7.2020.11.27.06.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2020 06:08:56 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 0/2] gpio: tegra: Convert to gpio_irq_chip
+Date:   Fri, 27 Nov 2020 15:08:50 +0100
+Message-Id: <20201127140852.123192-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcdu1aOLuF+EFDZibbi0OwGH4QfBhJQm9VZQkeEGEeKDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:yMIP6nH7cKntCrJuLgf/M3+4XwFIPkg7UfYtSb9J0SkpG6sGOv7
- /IR7PEjcUkbXZfn95xvF9kPZZUOb9RUnvrwEmPu6rP+AgFH9G1KbtEQbrGI6dOjDEAwqV/E
- EczzEgEJ3pvoStGVhjYfBSBY8R6QOUQt5Ao1T/pFBNKAztiWswegrgTUhY7Sz/LsMkjc4PG
- AXU7u5vqunrqkbLcYUoQg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:m5fjPJhCYJQ=:4vrnvGfA8e+95x4fem3OkF
- DfLkWIz4U0aBa8HLZrIOXcD4NWRi5pMo8Oa4rh/JJ6ngXDJTm/+FAY8quNYB/ANwdfDZQe48s
- k2CqQzxtZtilcnmHKe3lkzxpcwcFbAmCgCYFK3D/auj506nTbYO4c624QAzeKlxqJ9aCHd+Wt
- hI3o1ZxJl9DrzDwcoXjkznsF6FbhuSIoOss3ewNaFyBSbu3g2nqwNlNyj2HOFbPxM+r/J2tuu
- bZJU0A6yKpvQn5LrOthHb8IMcDYU+ctkst0nQXTHzlI8rZMMh1Y6r4K/vLbyb1aJ7BZlF8YaF
- Qx59hp3Vk6LqR7JSnkqsESRE70Qu6MnElAe5u2/7HTI9LGVM6UaRVUiDMjxUT4psNxVyefUaX
- /w7EbD7LArRl27YIShkQumClWDiabxBy/5FbFvypZGCtrLVGaftrxq8KTeQFL
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18.11.20 11:01, Andy Shevchenko wrote:
+From: Thierry Reding <treding@nvidia.com>
 
->>> So a system without CONFIG_OF might still make use of .of_match_table?
->>
->> Yep!
-> 
-> If you are curious:
-> https://elixir.bootlin.com/linux/latest/source/drivers/acpi/bus.c#L615
+Hi Linus, Bartosz,
 
-Phuh, this changes everything ... sorry, didn't know that.
+This set of patches is in preparation for making use of the IRQ
+hierarchical domains on pre-Tegra186 and bring the support up to par
+with Tegra186 and later.
 
-If ACPI now can contain OF pieces, we should ask the question whether
-of_match_ptr() should be used at all.
+The plan is to get this into v5.11 and then add the missing PMC pieces
+that allow wake events in v5.12. In order to prepare for this, I've
+included a DT include patch that allows tegra-gpio.h to be included at
+the same time as tegra186-gpio.h from the PMC driver. If you don't want
+to pick that up, I can take that through the Tegra tree for v5.12 along
+with the PMC driver changes.
 
-Would it be a compromise introducing a new macro (eg. "OF_MATCH_PTR()")
-which passes through the pointer if either OF or ACPI is enabled.
-Maybe we could introduce a new config item (eg "OF_MATCH_TABLE") for
-that, which is enabled by both OF and ACPI. And maybe add an option for
-of-compatible checking in ACPI.
+Thierry
 
-How do you folks think about that ?
+Thierry Reding (2):
+  dt-bindings: gpio: Use Tegra186-specific include guard
+  gpio: tegra: Convert to gpio_irq_chip
 
-
---mtx
+ drivers/gpio/gpio-tegra.c                | 218 +++++++++++++++--------
+ include/dt-bindings/gpio/tegra186-gpio.h |   4 +-
+ 2 files changed, 148 insertions(+), 74 deletions(-)
 
 -- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+2.29.2
+
