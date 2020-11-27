@@ -2,92 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC8EC63777
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 09:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41D7C63798
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 12:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05FD721D91
-	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 09:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D64222245
+	for <linux-tegra@archiver.kernel.org>; Fri, 27 Nov 2020 12:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgK0JkY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 04:40:24 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8048 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgK0JkX (ORCPT
+        id S1729580AbgK0Mps (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 27 Nov 2020 07:45:48 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:54913 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbgK0Mpr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 04:40:23 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Cj8jr16FBzhjGL;
-        Fri, 27 Nov 2020 17:40:00 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 27 Nov 2020 17:40:15 +0800
-From:   Qinglang Miao <miaoqinglang@huawei.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Qinglang Miao <miaoqinglang@huawei.com>
-Subject: [PATCH] dmaengine: tegra-apb: fix reference leak in tegra_dma_issue_pending and tegra_dma_synchronize
-Date:   Fri, 27 Nov 2020 17:44:31 +0800
-Message-ID: <20201127094431.120771-1-miaoqinglang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 27 Nov 2020 07:45:47 -0500
+Received: from [192.168.1.155] ([95.114.158.11]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MPp0l-1kWAmh23Dn-00Mw0R; Fri, 27 Nov 2020 13:45:20 +0100
+Subject: Re: [PATCH] drivers: gpio: use of_match_ptr() and ACPI_PTR() macros
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alban Bedel <albeu@free.fr>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>, zhang.lyra@gmail.com,
+        =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>, orsonzhai@gmail.com,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-pwm@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Sascha Hauer <kernel@pengutronix.de>, baolin.wang7@gmail.com,
+        Shawn Guo <shawnguo@kernel.org>
+References: <20201117154340.18216-1-info@metux.net>
+ <CAHp75VfPio=TacTTrY=vZp8vZ7qst_7zWeXKDpYvJ6q7oh2Hdw@mail.gmail.com>
+ <20201118095342.sviuxvfsbmmn22mo@pengutronix.de>
+ <CAHp75Vd9QUCcUoPLUW3kkJC0h=mPUqHNqNJPY74gDGSu67t8Hw@mail.gmail.com>
+ <CAHp75Vcdu1aOLuF+EFDZibbi0OwGH4QfBhJQm9VZQkeEGEeKDQ@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <40d468a6-f8ba-7535-55dd-e91ba8299958@metux.net>
+Date:   Fri, 27 Nov 2020 13:45:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAHp75Vcdu1aOLuF+EFDZibbi0OwGH4QfBhJQm9VZQkeEGEeKDQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:yMIP6nH7cKntCrJuLgf/M3+4XwFIPkg7UfYtSb9J0SkpG6sGOv7
+ /IR7PEjcUkbXZfn95xvF9kPZZUOb9RUnvrwEmPu6rP+AgFH9G1KbtEQbrGI6dOjDEAwqV/E
+ EczzEgEJ3pvoStGVhjYfBSBY8R6QOUQt5Ao1T/pFBNKAztiWswegrgTUhY7Sz/LsMkjc4PG
+ AXU7u5vqunrqkbLcYUoQg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:m5fjPJhCYJQ=:4vrnvGfA8e+95x4fem3OkF
+ DfLkWIz4U0aBa8HLZrIOXcD4NWRi5pMo8Oa4rh/JJ6ngXDJTm/+FAY8quNYB/ANwdfDZQe48s
+ k2CqQzxtZtilcnmHKe3lkzxpcwcFbAmCgCYFK3D/auj506nTbYO4c624QAzeKlxqJ9aCHd+Wt
+ hI3o1ZxJl9DrzDwcoXjkznsF6FbhuSIoOss3ewNaFyBSbu3g2nqwNlNyj2HOFbPxM+r/J2tuu
+ bZJU0A6yKpvQn5LrOthHb8IMcDYU+ctkst0nQXTHzlI8rZMMh1Y6r4K/vLbyb1aJ7BZlF8YaF
+ Qx59hp3Vk6LqR7JSnkqsESRE70Qu6MnElAe5u2/7HTI9LGVM6UaRVUiDMjxUT4psNxVyefUaX
+ /w7EbD7LArRl27YIShkQumClWDiabxBy/5FbFvypZGCtrLVGaftrxq8KTeQFL
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-pm_runtime_get_sync will increment pm usage counter even it
-failed. Forgetting to putting operation will result in a
-reference leak here.
+On 18.11.20 11:01, Andy Shevchenko wrote:
 
-A new function pm_runtime_resume_and_get is introduced in
-[0] to keep usage counter balanced. So We fix the reference
-leak by replacing it with new funtion.
+>>> So a system without CONFIG_OF might still make use of .of_match_table?
+>>
+>> Yep!
+> 
+> If you are curious:
+> https://elixir.bootlin.com/linux/latest/source/drivers/acpi/bus.c#L615
 
-[0] dd8088d5a896 ("PM: runtime: Add  pm_runtime_resume_and_get to deal with usage counter")
+Phuh, this changes everything ... sorry, didn't know that.
 
-Fixes: 84a3f375eea9 ("dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer")
-Fixes: 664475cffb8c ("dmaengine: tegra-apb: Ensure that clock is enabled during of DMA synchronization")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
----
- drivers/dma/tegra20-apb-dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If ACPI now can contain OF pieces, we should ask the question whether
+of_match_ptr() should be used at all.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 71827d9b0..b7260749e 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -723,7 +723,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
- 		goto end;
- 	}
- 	if (!tdc->busy) {
--		err = pm_runtime_get_sync(tdc->tdma->dev);
-+		err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 		if (err < 0) {
- 			dev_err(tdc2dev(tdc), "Failed to enable DMA\n");
- 			goto end;
-@@ -818,7 +818,7 @@ static void tegra_dma_synchronize(struct dma_chan *dc)
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	int err;
- 
--	err = pm_runtime_get_sync(tdc->tdma->dev);
-+	err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 	if (err < 0) {
- 		dev_err(tdc2dev(tdc), "Failed to synchronize DMA: %d\n", err);
- 		return;
+Would it be a compromise introducing a new macro (eg. "OF_MATCH_PTR()")
+which passes through the pointer if either OF or ACPI is enabled.
+Maybe we could introduce a new config item (eg "OF_MATCH_TABLE") for
+that, which is enabled by both OF and ACPI. And maybe add an option for
+of-compatible checking in ACPI.
+
+How do you folks think about that ?
+
+
+--mtx
+
 -- 
-2.23.0
-
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
