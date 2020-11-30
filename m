@@ -2,108 +2,273 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F799C3E8C5
-	for <linux-tegra@archiver.kernel.org>; Sat, 28 Nov 2020 00:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81773C83012
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 08:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CDC822242
-	for <linux-tegra@archiver.kernel.org>; Sat, 28 Nov 2020 00:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3245020731
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 08:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adbqpcz5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c0tNLxwR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbgK0UCm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 27 Nov 2020 15:02:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730858AbgK0UCJ (ORCPT
+        id S1727460AbgK3Iav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 03:30:51 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:46512 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727189AbgK3Iau (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 27 Nov 2020 15:02:09 -0500
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D95C0613D4
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 12:02:07 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id u4so5324266qkk.10
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2020 12:02:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1ierPRC6nwVyKGRAu13wlHhtdFpPWvdfztnJfDJ7P5k=;
-        b=adbqpcz5StDJ/7sO/HcY1M3HeMCEvOKMopLbVzYqvr8DuTWDtHShOF67zz36MzfRe5
-         t2aw+JoCucITUY95bg7pxzutUXuirVT7EIV1WSoNZJA8nX0f4ygJDjDSXZOno8k5oW9D
-         Jtzz8fHYqIdERRz0fdicANbA0w+BB5I2DT8iLJHqCbH/GFukUqxFcflyfdbsDCOAdQV9
-         GRF90brf6GcD3FLGpUrkZKjOij9tKDrcYyOCXgUHHAiE758b1xe9HcumZ3DM90lRUIze
-         thaBqw68ZvsOttceqe05DlRwkvsns99ccVfe+vX7jl8L9EL9bAUgtABQKXNeZLtyCdWM
-         kY+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1ierPRC6nwVyKGRAu13wlHhtdFpPWvdfztnJfDJ7P5k=;
-        b=DK0pNwupWRFjmY+CzX83nfZ9adj3SKF4/3EKAVINKyer+AnKrL2+AKpUmSnRGYXQL9
-         GuqfJ82PwdxsYVAkVX+pXBebSgeeRIA0DcCBnIfQFL1RuTwghRhbgRj6d9HqgyZdI6Wz
-         Au1OBUKFda5yZ/e62Rhnp3Sjtbimunbb1jEriErye1SXn5xDrBm50voVdBd3uDUGDEJz
-         e6hLfYAqIN89EQ85btqJykUnRBEMkwN0feUJ4fqKJizLjBoMpl6HO6uLzw+Kx3evUNnS
-         XDzDHcgv1QFqGFfdbvisZ0QAuR3O9QVgq+SGNMSpWC4WkJj8O1PgrXKGf39jwHr0qVpU
-         z0hg==
-X-Gm-Message-State: AOAM531aYI2AW0KaXQGdNNKev8EZBida2+8hnyBJPtCb0gO/iZiWceJm
-        U2LOPotrCXAD25MA4KYy2hy0QZgOg/RsjQ==
-X-Google-Smtp-Source: ABdhPJznECkXi93FlMhXalnZlb/UXYwv6ULAkbiD9RS2tuU0uifzOGhIVCoLfGu8PYCsroy/uCS/hA==
-X-Received: by 2002:a05:620a:11a4:: with SMTP id c4mr10377463qkk.8.1606507326586;
-        Fri, 27 Nov 2020 12:02:06 -0800 (PST)
-Received: from rockpro64.sparksnet ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id i203sm6684736qke.49.2020.11.27.12.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 12:02:06 -0800 (PST)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Subject: [PATCH] ARM: tegra: fix emmc on specific bootloaders
-Date:   Fri, 27 Nov 2020 20:01:46 +0000
-Message-Id: <20201127200146.25625-1-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 30 Nov 2020 03:30:50 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201130083006epoutp029985d2f1982a0b36f05a212d09453236~MO_F5oG2O3077630776epoutp02F
+        for <linux-tegra@vger.kernel.org>; Mon, 30 Nov 2020 08:30:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201130083006epoutp029985d2f1982a0b36f05a212d09453236~MO_F5oG2O3077630776epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1606725006;
+        bh=Mt/gdIsFl1M12MFRytnwm1abg7voXmSQOUlTijrF/j0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=c0tNLxwRL6vnJ4bVraRUOGFIW9tS1CI4ZkPOkDqhPU0HyxViSVDAN0V5iteGeupAa
+         kdYvZdlaaUlnCIrY4ye0HFg38Np30JFL62smFYrzL3orB+aEsCZ5dIaLYJAEIxhykH
+         pv5LR0yBMkvPcPpk1+ePrDoQyHUHYOtegcJ7lG7g=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20201130083005epcas1p480f9d22c867543847495688f7331db92~MO_E2dxFa0894908949epcas1p4p;
+        Mon, 30 Nov 2020 08:30:05 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Ckz1l1yvtz4x9QC; Mon, 30 Nov
+        2020 08:30:03 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BF.F7.63458.B8DA4CF5; Mon, 30 Nov 2020 17:30:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201130083001epcas1p22f14f300f10546db02dc53183e8c196c~MO_BcgFtV1026010260epcas1p2r;
+        Mon, 30 Nov 2020 08:30:01 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201130083001epsmtrp12bba35f31748f0e58ac47cddc8699ce0~MO_BaMzuj3161831618epsmtrp1Y;
+        Mon, 30 Nov 2020 08:30:01 +0000 (GMT)
+X-AuditID: b6c32a36-6dfff7000000f7e2-a0-5fc4ad8b140e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B8.54.13470.98DA4CF5; Mon, 30 Nov 2020 17:30:01 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201130083001epsmtip1b15540c60c5e93579b52f1ed5fe124d5~MO_Ay9IdD3262532625epsmtip1X;
+        Mon, 30 Nov 2020 08:30:01 +0000 (GMT)
+Subject: Re: [PATCH v10 00/19] Introduce memory interconnect for NVIDIA
+ Tegra SoCs
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <d12880ba-6780-cfee-7667-3723fcad9f3a@samsung.com>
+Date:   Mon, 30 Nov 2020 17:44:39 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201123002723.28463-1-digetx@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJsWRmVeSWpSXmKPExsWy7bCmvm732iPxBu9WcFq8+/SU1WL1x8eM
+        Fle+vmezmL53E5tFy6xFLBbnz29gt9j6dA2TxdmmN+wWl3fNYbP43HuE0aLzyyw2i4unXC1u
+        N65gs5i0diqjxdln3hate4+wW/y7tpHF4ueueSwWmx8cY3MQ9nh/o5XdY+esu+wel879YfbY
+        tKqTzePOtT1sHve7jzN59Da/Y/Po27KK0ePzJrkAzqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B4
+        53hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygp5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUl
+        tkqpBSk5BZYFesWJucWleel6yfm5VoYGBkamQIUJ2Rl/W66zFuwxrzh7YRNLA+NyzS5GTg4J
+        AROJb3NXsnUxcnEICexglHjxaB4LhPOJUeLJtm4o5xujxOydF9lgWtZvXMUKkdjLKPFtRxMj
+        hPOeUWLJ7DUsIFXCAiESd/+8BqsSEbjJIrF8xT+gdg4OZoEqiU1/vEFq2AS0JPa/uAE2lV9A
+        UeLqj8eMIDavgJ1E45QTTCA2i4CqxK8ri8FsUYEwiZPbWqBqBCVOznwCtotTwEzi5+GjYDaz
+        gLjErSfzmSBseYntb+cwg9wgIdDPKXFpyj9miBdcJFbNmghlC0u8Or6FHcKWknjZ3wZlV0us
+        PHmEDaK5g1Fiy/4LrBAJY4n9SyczQTyjKbF+lz5EWFFi5++5jBCL+STefe1hBSmREOCV6GgT
+        gihRlrj84C4ThC0psbi9k20Co9IsJO/MQvLCLCQvzEJYtoCRZRWjWGpBcW56arFhgRFydG9i
+        BKd4LbMdjJPeftA7xMjEwXiIUYKDWUmEN4PjYLwQb0piZVVqUX58UWlOavEhRlNgAE9klhJN
+        zgdmmbySeENTI2NjYwsTQzNTQ0Mlcd4/2h3xQgLpiSWp2ampBalFMH1MHJxSDUxy7tfXVRZO
+        WnV33a2YCY8PpxXIeaUHpHDlf0t8sPNSeM2JlYltSoX/7OpOFv588HK1x8PJ3w/t6Z2p+LVv
+        RV3kR6sj08MPCD+rMDgZ5/84QXi3YoWLbv724vh9W7TfxKiFla75tm/JvG92qUs/3ZV+n7h+
+        tWD8tdQK5aMBWxdaC9xfU7H9bc2DLoaIhmvbg06yrNZ48Nq0aPKFAnvvu4wRix5n7zyuNtvn
+        v2bB+bu257+yxYkzCr6J1vM8Zbq479OKyyUNtbF2D1p/3DGSm9xtzr9lxezgtZ8yVmz4lvjh
+        07En2xiilibbTbiX9Izv0yNzGT22nq9mNUEC6aF7pXqeyc+Rt3XSF9lRK/a6572KEktxRqKh
+        FnNRcSIAjXo+K3oEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCSnG7n2iPxBque6Vi8+/SU1WL1x8eM
+        Fle+vmezmL53E5tFy6xFLBbnz29gt9j6dA2TxdmmN+wWl3fNYbP43HuE0aLzyyw2i4unXC1u
+        N65gs5i0diqjxdln3hate4+wW/y7tpHF4ueueSwWmx8cY3MQ9nh/o5XdY+esu+wel879YfbY
+        tKqTzePOtT1sHve7jzN59Da/Y/Po27KK0ePzJrkAzigum5TUnMyy1CJ9uwSujL8t11kL9phX
+        nL2wiaWBcblmFyMnh4SAicT6jatYQWwhgd2MEhPfWEPEJSWmXTzK3MXIAWQLSxw+XNzFyAVU
+        8pZRYun5JrB6YYEQiWk3PjGDJEQE7rJITPpxiw0kwSxQJbFw7WI2iI5ORon2hqOMIAk2AS2J
+        /S9ugBXxCyhKXP3xGCzOK2An0TjlBBOIzSKgKvHrymIwW1QgTGLnksdMEDWCEidnPmEBsTkF
+        zCR+Hj7KArFMXeLPvEvMELa4xK0n85kgbHmJ7W/nME9gFJ6FpH0WkpZZSFpmIWlZwMiyilEy
+        taA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjONa1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHeDI6D
+        8UK8KYmVValF+fFFpTmpxYcYpTlYlMR5bxQujBMSSE8sSc1OTS1ILYLJMnFwSjUwJQrLxCjf
+        2mfh4JjsG2A2IfRLBpu+XduNphWrtW45y59/nTsnVGKOsKWPa6NY2Z/k+Gb2sy0iXzbHPLg9
+        5ew9i4sn3f6pG7xp2iL31iIy3eSe1OcXhb8+HvmywSx3o+Hq/cz5ZbG/LYWTNHT+v1jecXnn
+        j1krpIMr56lauH/xNbxq0Fl7+tg9Zseij6fSn/AWLQ9alFfTsOuHhrGkrPTT3ubFTrKzjRKe
+        yJ/LSL/hGcd/Sm2h6c0vvB2lGd9WbxVk22xxuGHNJq8Qf446Q1n1rHfMYuuf//W5bzn9S9cZ
+        +Qh+2cyUOfN4NWI0mOJ9L5RUHfmxJDE12mDT0anl/5T3t9yXPDttsY7d/DMGPySVWIozEg21
+        mIuKEwGzxjm4ZAMAAA==
+X-CMS-MailID: 20201130083001epcas1p22f14f300f10546db02dc53183e8c196c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201123003254epcas1p1763e1ce693d7cb8e2f20d521e701ad5f
+References: <CGME20201123003254epcas1p1763e1ce693d7cb8e2f20d521e701ad5f@epcas1p1.samsung.com>
+        <20201123002723.28463-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Ouya fails to detect the emmc module when booting from specific bootloaders.
-Fastboot and hard-kexec bootloaders have observed failures while u-boot does not have this issue.
-It was discovered that if the sdmmc4 alternate configuration clock pin is input disabled the issue manifests.
-Ouya uses sdmmc4 in the primary pin configuration so it is unknown why this occurs.
-It is likely related to the other emmc limitations we have on Ouya.
+Hi Dmitry,
 
-For now, fix it by enabling input on cam_mclk_pcc0.
+The v5.10-rc6 was released from linus git tree.
+Generally, I will send the pull-quest about devfreq to linux-pm.git maintainer
+after releasing the v5.1-rc7 for the integration test on linux-pm.git.
 
-Fixes: d7195ac5c9c5 ("ARM: tegra: Add device-tree for Ouya")
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
----
- arch/arm/boot/dts/tegra30-ouya.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The icc patches in this patch have not yet merged. If these patches
+are not merged before v5.10-rc7, Maybe, I'll apply the devfreq patches
+for v5.12-rc1.
 
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index 74da1360d297..0368b3b816ef 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -4352,8 +4352,8 @@ cam_mclk_pcc0 {
- 		nvidia,pins = "cam_mclk_pcc0";
- 		nvidia,function = "vi_alt3";
- 		nvidia,pull = <TEGRA_PIN_PULL_NONE>;
--		nvidia,tristate = <TEGRA_PIN_ENABLE>;
--		nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+		nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 	};
- 	pcc1 {
- 		nvidia,pins = "pcc1";
--- 
-2.25.1
+Best Regards,
+Chanwoo Choi
 
+
+On 11/23/20 9:27 AM, Dmitry Osipenko wrote:
+> This series brings initial support for memory interconnect to Tegra20,
+> Tegra30 and Tegra124 SoCs.
+> 
+> For the starter only display controllers and devfreq devices are getting
+> interconnect API support, others could be supported later on. The display
+> controllers have the biggest demand for interconnect API right now because
+> dynamic memory frequency scaling can't be done safely without taking into
+> account bandwidth requirement from the displays. In particular this series
+> fixes distorted display output on T30 Ouya and T124 TK1 devices.
+> 
+> Changelog:
+> 
+> v10 - In a longer run it will be much nicer if we could support EMC
+>       hardware versioning on Tegra20 and it's not late to support it now.
+>       Hence I added these new patches:
+> 
+>         dt-bindings: memory: tegra20: emc: Document opp-supported-hw property
+>         memory: tegra20: Support hardware versioning and clean up OPP table initialization
+> 
+>     - Removed error message from tegra30-devfreq driver about missing OPP
+>       properties in a device-tree because EMC driver already prints that
+>       message and it uses OPP API error code instead of checking DT directly,
+>       which is a more correct way of doing that.
+> 
+> v9: - Squashed "memory: tegra30-emc: Factor out clk initialization" into
+>       patch "tegra30: Support interconnect framework".
+>       Suggested by Krzysztof Kozlowski.
+> 
+>     - Improved Kconfig in the patch "memory: tegra124-emc: Make driver modular"
+>       by adding CONFIG_TEGRA124_CLK_EMC entry, which makes clk-driver changes
+>       to look a bit more cleaner. Suggested by Krzysztof Kozlowski.
+> 
+>     - Dropped voltage regulator support from ICC and DT patches for now
+>       because there is a new discussion about using a power domain abstraction
+>       for controlling the regulator, which is likely to happen.
+> 
+>     - Replaced direct "operating-points-v2" property checking in EMC drivers
+>       with checking of a returned error code from dev_pm_opp_of_add_table().
+>       Note that I haven't touched T20 EMC driver because it's very likely
+>       that we'll replace that code with a common helper soon anyways.
+>       Suggested by Viresh Kumar.
+> 
+>     - The T30 DT patches now include EMC OPP changes for Ouya board, which
+>       is available now in linux-next.
+> 
+> Dmitry Osipenko (19):
+>   dt-bindings: memory: tegra20: emc: Document opp-supported-hw property
+>   memory: tegra20: Support hardware versioning and clean up OPP table
+>     initialization
+>   memory: tegra30: Support interconnect framework
+>   memory: tegra124-emc: Make driver modular
+>   memory: tegra124-emc: Continue probing if timings are missing in
+>     device-tree
+>   memory: tegra124: Support interconnect framework
+>   drm/tegra: dc: Support memory bandwidth management
+>   drm/tegra: dc: Extend debug stats with total number of events
+>   PM / devfreq: tegra30: Support interconnect and OPPs from device-tree
+>   PM / devfreq: tegra30: Separate configurations per-SoC generation
+>   PM / devfreq: tegra20: Deprecate in a favor of emc-stat based driver
+>   ARM: tegra: Correct EMC registers size in Tegra20 device-tree
+>   ARM: tegra: Add interconnect properties to Tegra20 device-tree
+>   ARM: tegra: Add interconnect properties to Tegra30 device-tree
+>   ARM: tegra: Add interconnect properties to Tegra124 device-tree
+>   ARM: tegra: Add nvidia,memory-controller phandle to Tegra20 EMC
+>     device-tree
+>   ARM: tegra: Add EMC OPP properties to Tegra20 device-trees
+>   ARM: tegra: Add EMC OPP and ICC properties to Tegra30 EMC and ACTMON
+>     device-tree nodes
+>   ARM: tegra: Add EMC OPP and ICC properties to Tegra124 EMC and ACTMON
+>     device-tree nodes
+> 
+>  .../memory-controllers/nvidia,tegra20-emc.txt |   6 +
+>  MAINTAINERS                                   |   1 -
+>  arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |   8 +
+>  .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |   8 +
+>  arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  |  10 +
+>  .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |  10 +
+>  .../boot/dts/tegra124-peripherals-opp.dtsi    | 419 ++++++++++++++++++
+>  arch/arm/boot/dts/tegra124.dtsi               |  31 ++
+>  .../boot/dts/tegra20-acer-a500-picasso.dts    |   5 +
+>  arch/arm/boot/dts/tegra20-colibri.dtsi        |   4 +
+>  arch/arm/boot/dts/tegra20-paz00.dts           |   4 +
+>  .../arm/boot/dts/tegra20-peripherals-opp.dtsi | 109 +++++
+>  arch/arm/boot/dts/tegra20.dtsi                |  33 +-
+>  ...30-asus-nexus7-grouper-memory-timings.dtsi |  12 +
+>  arch/arm/boot/dts/tegra30-ouya.dts            |   8 +
+>  .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 383 ++++++++++++++++
+>  arch/arm/boot/dts/tegra30.dtsi                |  33 +-
+>  drivers/clk/tegra/Kconfig                     |   3 +
+>  drivers/clk/tegra/Makefile                    |   2 +-
+>  drivers/clk/tegra/clk-tegra124-emc.c          |  41 +-
+>  drivers/clk/tegra/clk-tegra124.c              |  26 +-
+>  drivers/clk/tegra/clk.h                       |  18 +-
+>  drivers/devfreq/Kconfig                       |  10 -
+>  drivers/devfreq/Makefile                      |   1 -
+>  drivers/devfreq/tegra20-devfreq.c             | 210 ---------
+>  drivers/devfreq/tegra30-devfreq.c             | 147 +++---
+>  drivers/gpu/drm/tegra/Kconfig                 |   1 +
+>  drivers/gpu/drm/tegra/dc.c                    | 359 +++++++++++++++
+>  drivers/gpu/drm/tegra/dc.h                    |  19 +
+>  drivers/gpu/drm/tegra/drm.c                   |  14 +
+>  drivers/gpu/drm/tegra/hub.c                   |   3 +
+>  drivers/gpu/drm/tegra/plane.c                 | 121 +++++
+>  drivers/gpu/drm/tegra/plane.h                 |  15 +
+>  drivers/memory/tegra/Kconfig                  |   5 +-
+>  drivers/memory/tegra/tegra124-emc.c           | 377 ++++++++++++++--
+>  drivers/memory/tegra/tegra124.c               |  82 +++-
+>  drivers/memory/tegra/tegra20-emc.c            |  48 +-
+>  drivers/memory/tegra/tegra30-emc.c            | 344 +++++++++++++-
+>  drivers/memory/tegra/tegra30.c                | 173 +++++++-
+>  include/linux/clk/tegra.h                     |   8 +
+>  include/soc/tegra/emc.h                       |  16 -
+>  41 files changed, 2725 insertions(+), 402 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra124-peripherals-opp.dtsi
+>  create mode 100644 arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+>  create mode 100644 arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+>  delete mode 100644 drivers/devfreq/tegra20-devfreq.c
+>  delete mode 100644 include/soc/tegra/emc.h
+> 
