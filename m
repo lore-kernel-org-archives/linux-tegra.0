@@ -2,68 +2,249 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8B4C8301A
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A07C63777
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB40520855
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:38:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJNutTEN"
+	by mail.kernel.org (Postfix) with ESMTP id 60EAD205F4
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:57:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbgK3PiK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Nov 2020 10:38:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728156AbgK3PiI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Nov 2020 10:38:08 -0500
-Received: from localhost (unknown [122.171.214.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9140020725;
-        Mon, 30 Nov 2020 15:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606750647;
-        bh=17KfgSyzR01zJgRuyyJ5oyibbOOrqhUpARQ2iG03vzQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TJNutTENGTfuQZKw+RIkJji45vVDS0Hs2s8Pj9ywQt1eR04niSRjPljQh+4gAV2r9
-         6HAB/eBcla8On1Epw0kdke1h56rbDGFn7QSaGzP9OIVZpJwakNOxhw/NZU+pXhSDfn
-         t5E8q4ZfpimAViGKrVNf0/MSERKyv2wEwK8yngnA=
-Date:   Mon, 30 Nov 2020 21:07:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     kishon@ti.com, gregkh@linuxfoundation.org,
+        id S1726737AbgK3P5S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 10:57:18 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:54984 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgK3P5S (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Nov 2020 10:57:18 -0500
+Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id B961B3E4608;
+        Mon, 30 Nov 2020 15:38:52 +0000 (UTC)
+X-Originating-IP: 86.194.74.19
+Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C9B63240008;
+        Mon, 30 Nov 2020 15:37:43 +0000 (UTC)
+Date:   Mon, 30 Nov 2020 16:37:43 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Cc:     linux@armlinux.org.uk, nicolas.ferre@microchip.com,
+        ludovic.desroches@microchip.com, tony@atomide.com,
+        mripard@kernel.org, wens@csie.org, jernej.skrabec@siol.net,
         thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        nkristam@nvidia.com
-Subject: Re: [PATCH v1] phy: tegra: xusb: Fix usb_phy device driver field
-Message-ID: <20201130153722.GU8403@vkoul-mobl>
-References: <20201117083803.185209-1-jckuo@nvidia.com>
+        catalin.marinas@arm.com, will@kernel.org,
+        tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, lee.jones@linaro.org, sam@ravnborg.org,
+        emil.l.velikov@gmail.com, daniel.thompson@linaro.org,
+        krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
+Message-ID: <20201130153743.GO1296649@piout.net>
+References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
+ <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201117083803.185209-1-jckuo@nvidia.com>
+In-Reply-To: <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-11-20, 16:38, JC Kuo wrote:
-> In commit "phy: tegra: xusb: Add usb-phy support", an OTG capable PHY
-> device, such as phy-usb2.0 device of Jetson-TX1 platform, will be
-> bound to the tegra-xusb-padctl driver by the following line in
-> tegra_xusb_setup_usb_role_switch().
+On 30/11/2020 15:21:33+0000, Andrey Zhizhikin wrote:
+> Commit 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is
+> unused") removed geenric_bl driver from the tree, together with
+> corresponding config option.
 > 
-> 	port->usb_phy.dev->driver = port->padctl->dev->driver;
+> Remove BACKLIGHT_GENERIC config item from all ARM configurations.
 > 
-> With this, dev_pm_ops set of tegra-xusb-padctl driver will be invoked
-> for the OTG capable PHY incorrectly as below logs show.
-> 
-> This commit fixes the issue by assigning an empty driver to it.
+> Fixes: 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is unused")
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Applied, thanks
+> ---
+>  arch/arm/configs/at91_dt_defconfig        | 1 -
+>  arch/arm/configs/cm_x300_defconfig        | 1 -
+>  arch/arm/configs/colibri_pxa300_defconfig | 1 -
+>  arch/arm/configs/jornada720_defconfig     | 1 -
+>  arch/arm/configs/magician_defconfig       | 1 -
+>  arch/arm/configs/mini2440_defconfig       | 1 -
+>  arch/arm/configs/omap2plus_defconfig      | 1 -
+>  arch/arm/configs/pxa3xx_defconfig         | 1 -
+>  arch/arm/configs/qcom_defconfig           | 1 -
+>  arch/arm/configs/sama5_defconfig          | 1 -
+>  arch/arm/configs/sunxi_defconfig          | 1 -
+>  arch/arm/configs/tegra_defconfig          | 1 -
+>  arch/arm/configs/u8500_defconfig          | 1 -
+>  13 files changed, 13 deletions(-)
+> 
+> diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
+> index 4a0ba2ae1a25..6e52c9c965e6 100644
+> --- a/arch/arm/configs/at91_dt_defconfig
+> +++ b/arch/arm/configs/at91_dt_defconfig
+> @@ -132,7 +132,6 @@ CONFIG_DRM_ATMEL_HLCDC=y
+>  CONFIG_DRM_PANEL_SIMPLE=y
+>  CONFIG_FB_ATMEL=y
+>  CONFIG_BACKLIGHT_ATMEL_LCDC=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_LOGO=y
+> diff --git a/arch/arm/configs/cm_x300_defconfig b/arch/arm/configs/cm_x300_defconfig
+> index 2f7acde2d921..502a9d870ca4 100644
+> --- a/arch/arm/configs/cm_x300_defconfig
+> +++ b/arch/arm/configs/cm_x300_defconfig
+> @@ -87,7 +87,6 @@ CONFIG_FB=y
+>  CONFIG_FB_PXA=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_LCD_TDO24M=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_DA903X=m
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> diff --git a/arch/arm/configs/colibri_pxa300_defconfig b/arch/arm/configs/colibri_pxa300_defconfig
+> index 0dae3b185284..26e5a67f8e2d 100644
+> --- a/arch/arm/configs/colibri_pxa300_defconfig
+> +++ b/arch/arm/configs/colibri_pxa300_defconfig
+> @@ -34,7 +34,6 @@ CONFIG_FB=y
+>  CONFIG_FB_PXA=y
+>  # CONFIG_LCD_CLASS_DEVICE is not set
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  # CONFIG_VGA_CONSOLE is not set
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_LOGO=y
+> diff --git a/arch/arm/configs/jornada720_defconfig b/arch/arm/configs/jornada720_defconfig
+> index 9f079be2b84b..069f60ffdcd8 100644
+> --- a/arch/arm/configs/jornada720_defconfig
+> +++ b/arch/arm/configs/jornada720_defconfig
+> @@ -48,7 +48,6 @@ CONFIG_FB=y
+>  CONFIG_FB_S1D13XXX=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  # CONFIG_VGA_CONSOLE is not set
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> diff --git a/arch/arm/configs/magician_defconfig b/arch/arm/configs/magician_defconfig
+> index d2e684f6565a..b4670d42f378 100644
+> --- a/arch/arm/configs/magician_defconfig
+> +++ b/arch/arm/configs/magician_defconfig
+> @@ -95,7 +95,6 @@ CONFIG_FB_PXA_OVERLAY=y
+>  CONFIG_FB_W100=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  # CONFIG_VGA_CONSOLE is not set
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+> diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
+> index 301f29a1fcc3..898490aaa39e 100644
+> --- a/arch/arm/configs/mini2440_defconfig
+> +++ b/arch/arm/configs/mini2440_defconfig
+> @@ -158,7 +158,6 @@ CONFIG_FB_S3C2410=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_LCD_PLATFORM=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+> index de3b7813a1ce..7eae097a75d2 100644
+> --- a/arch/arm/configs/omap2plus_defconfig
+> +++ b/arch/arm/configs/omap2plus_defconfig
+> @@ -388,7 +388,6 @@ CONFIG_FB_TILEBLITTING=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_LCD_PLATFORM=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -CONFIG_BACKLIGHT_GENERIC=m
+>  CONFIG_BACKLIGHT_PWM=m
+>  CONFIG_BACKLIGHT_PANDORA=m
+>  CONFIG_BACKLIGHT_GPIO=m
+> diff --git a/arch/arm/configs/pxa3xx_defconfig b/arch/arm/configs/pxa3xx_defconfig
+> index 06bbc7a59b60..f0c34017f2aa 100644
+> --- a/arch/arm/configs/pxa3xx_defconfig
+> +++ b/arch/arm/configs/pxa3xx_defconfig
+> @@ -74,7 +74,6 @@ CONFIG_FB_PXA=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_LCD_TDO24M=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_DA903X=y
+>  # CONFIG_VGA_CONSOLE is not set
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+> index c882167e1496..d6733e745b80 100644
+> --- a/arch/arm/configs/qcom_defconfig
+> +++ b/arch/arm/configs/qcom_defconfig
+> @@ -159,7 +159,6 @@ CONFIG_FB=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  # CONFIG_LCD_CLASS_DEVICE is not set
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_LM3630A=y
+>  CONFIG_BACKLIGHT_LP855X=y
+>  CONFIG_SOUND=y
+> diff --git a/arch/arm/configs/sama5_defconfig b/arch/arm/configs/sama5_defconfig
+> index 037d3a718a60..0a167891eb05 100644
+> --- a/arch/arm/configs/sama5_defconfig
+> +++ b/arch/arm/configs/sama5_defconfig
+> @@ -161,7 +161,6 @@ CONFIG_DRM_ATMEL_HLCDC=y
+>  CONFIG_DRM_PANEL_SIMPLE=y
+>  CONFIG_LCD_CLASS_DEVICE=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_SOUND=y
+> diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
+> index 244126172fd6..af6e80d1a0f2 100644
+> --- a/arch/arm/configs/sunxi_defconfig
+> +++ b/arch/arm/configs/sunxi_defconfig
+> @@ -111,7 +111,6 @@ CONFIG_DRM_SIMPLE_BRIDGE=y
+>  CONFIG_DRM_LIMA=y
+>  CONFIG_FB_SIMPLE=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  CONFIG_SOUND=y
+>  CONFIG_SND=y
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index fff5fae0db30..74739a52a8ad 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -205,7 +205,6 @@ CONFIG_DRM_PANEL_SIMPLE=y
+>  CONFIG_DRM_LVDS_CODEC=y
+>  # CONFIG_LCD_CLASS_DEVICE is not set
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -# CONFIG_BACKLIGHT_GENERIC is not set
+>  CONFIG_BACKLIGHT_PWM=y
+>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>  CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+> diff --git a/arch/arm/configs/u8500_defconfig b/arch/arm/configs/u8500_defconfig
+> index 28dd7cf56048..24aacc255021 100644
+> --- a/arch/arm/configs/u8500_defconfig
+> +++ b/arch/arm/configs/u8500_defconfig
+> @@ -92,7 +92,6 @@ CONFIG_DRM_PANEL_SONY_ACX424AKP=y
+>  CONFIG_DRM_LIMA=y
+>  CONFIG_DRM_MCDE=y
+>  CONFIG_BACKLIGHT_CLASS_DEVICE=y
+> -CONFIG_BACKLIGHT_GENERIC=m
+>  CONFIG_BACKLIGHT_GPIO=y
+>  CONFIG_LOGO=y
+>  CONFIG_SOUND=y
+> -- 
+> 2.17.1
+> 
 
 -- 
-~Vinod
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
