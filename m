@@ -2,94 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14E6C83013
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 18:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 057E0C83011
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 18:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64C72206F9
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 18:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A742F2073C
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 18:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388115AbgK3SYg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Nov 2020 13:24:36 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38077 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388112AbgK3SYg (ORCPT
+        id S1728782AbgK3SxO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 13:53:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33281 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbgK3SxO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Nov 2020 13:24:36 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y4so17472354edy.5;
-        Mon, 30 Nov 2020 10:24:13 -0800 (PST)
+        Mon, 30 Nov 2020 13:53:14 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u12so17644296wrt.0;
+        Mon, 30 Nov 2020 10:52:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=I9ONVBtfScKIMTye82bfGQ5rddLKQrmuSaE2Zj5EgGI=;
-        b=irAHwtaB9jiuv+vG00w505UybL5aiKHDguodT6LJytjnXVtNtlwJ76oRFwituz8twK
-         WEPEW0R6JStai9TjYrNdp2xpsuZL7WgA/sRsUW7E6KdmtetiXt/tURyp4XuPYCpfqU8P
-         ABz3fqwZ6TKFKv5glz0IsRpd4miRvplFOKliaYL92niQOKVnogCK92Je/nJ75o6LYtEc
-         sNEMz1lQgDvtpgqAE+hccYt7VFx+OX87lUVhXvfxhg2GJsEIrcOSTNYgR+nbSV4wBKEi
-         l7NdNWUkryCRWIkformrHmA9jBPxXIk9IKbcrfwfUhq/CnqwW7be6khT7zadS96PwKCn
-         gSig==
-X-Gm-Message-State: AOAM533PavAV4lPijyay5l0BGiK+ve6wAtdtYgnN1skGvu5hg0laMHsG
-        kO21O1iyYd2qEoVvX0TR5WU=
-X-Google-Smtp-Source: ABdhPJwYHGbHVMApFqE392EkdKd4CbGtej8nEk3tKKJMIPVxgXA2gu998VoT05uHS0KZ4By5J9o3BA==
-X-Received: by 2002:a50:8f64:: with SMTP id 91mr23297490edy.310.1606760628069;
-        Mon, 30 Nov 2020 10:23:48 -0800 (PST)
+        bh=GEH2GiLihB/we0wTKIA4s4JgPz0UXo9ohOBmB1H6nPM=;
+        b=V+rF0pza/okMpu2aZmpaMNubmUnOIFjkhuuyu1XDNgS6rguJEgw5LouLfCTDfBhCc2
+         k5sW/aEZBGG/L9nGxvhY+NLU2bi082eT9b9z5VqKZHrGhEMZd3UByx3dl5alrGd0Xlgr
+         9PKoUPCs5TpFq+bKYMpH1W4OvUi2U1U0e3FFkZ8MB6lKFiYjs8B+EXlVFGCGsdqKeKBC
+         9qp43T7E5PXarXuRVwlcaXtXGZ5LyeTuvp6GSMlLCNxLFHvedUtfEMaIQw3tRBK7cLnz
+         zfYsjSjAEj9LGXl9noORIy79oYyB0sNDdDbQ+L+kIR4tfVSuncns4AkRJiqIvtQ2nYGA
+         Gw3Q==
+X-Gm-Message-State: AOAM532ajNItpPPkE4KoCpgoqvJDnRGmEx3iBtblw9oHmuhKw/R/c3Yc
+        TGzufi6piJZ6byIDgjkjzdo=
+X-Google-Smtp-Source: ABdhPJz821U/zJI64E/s1m2nEjCfNrUEUrLV+rXCVRdKBs+Xe9IzhenHRej5zcolpGNDRBBoo4I2dA==
+X-Received: by 2002:adf:f9c4:: with SMTP id w4mr29689107wrr.64.1606762350398;
+        Mon, 30 Nov 2020 10:52:30 -0800 (PST)
 Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id v18sm789274edx.30.2020.11.30.10.23.46
+        by smtp.googlemail.com with ESMTPSA id q25sm258812wmq.37.2020.11.30.10.52.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 10:23:47 -0800 (PST)
-Date:   Mon, 30 Nov 2020 20:23:45 +0200
+        Mon, 30 Nov 2020 10:52:29 -0800 (PST)
+Date:   Mon, 30 Nov 2020 20:52:27 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v10 01/19] dt-bindings: memory: tegra20: emc: Document
- opp-supported-hw property
-Message-ID: <20201130182345.GA28450@kozik-lap>
-References: <20201123002723.28463-1-digetx@gmail.com>
- <20201123002723.28463-2-digetx@gmail.com>
- <46b3bab7-1c2c-2f50-6e41-f411e532357b@linaro.org>
+To:     Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+Cc:     linux@armlinux.org.uk, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        tony@atomide.com, mripard@kernel.org, wens@csie.org,
+        jernej.skrabec@siol.net, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
+        tsbogend@alpha.franken.de, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, lee.jones@linaro.org, sam@ravnborg.org,
+        emil.l.velikov@gmail.com, daniel.thompson@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
+Message-ID: <20201130185227.GA29434@kozik-lap>
+References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
+ <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <46b3bab7-1c2c-2f50-6e41-f411e532357b@linaro.org>
+In-Reply-To: <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 11:48:18AM +0200, Georgi Djakov wrote:
-> On 23.11.20 2:27, Dmitry Osipenko wrote:
-> > Document opp-supported-hw property, which is not strictly necessary to
-> > have on Tegra20, but it's very convenient to have because all other SoC
-> > core devices will use hardware versioning, and thus, it's good to maintain
-> > the consistency.
+On Mon, Nov 30, 2020 at 03:21:33PM +0000, Andrey Zhizhikin wrote:
+> Commit 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is
+> unused") removed geenric_bl driver from the tree, together with
+> corresponding config option.
 > 
-> Hi Dmitry,
+> Remove BACKLIGHT_GENERIC config item from all ARM configurations.
 > 
-> I believe Krzysztof is waiting for Ack on the binding before merging
-> this patch (and the rest), but unfortunately it was not sent to the
-> DT mailing list for review.
+> Fixes: 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is unused")
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+> ---
+>  arch/arm/configs/at91_dt_defconfig        | 1 -
+>  arch/arm/configs/cm_x300_defconfig        | 1 -
+>  arch/arm/configs/colibri_pxa300_defconfig | 1 -
+>  arch/arm/configs/jornada720_defconfig     | 1 -
+>  arch/arm/configs/magician_defconfig       | 1 -
+>  arch/arm/configs/mini2440_defconfig       | 1 -
+>  arch/arm/configs/omap2plus_defconfig      | 1 -
+>  arch/arm/configs/pxa3xx_defconfig         | 1 -
+>  arch/arm/configs/qcom_defconfig           | 1 -
+>  arch/arm/configs/sama5_defconfig          | 1 -
+>  arch/arm/configs/sunxi_defconfig          | 1 -
+>  arch/arm/configs/tegra_defconfig          | 1 -
+>  arch/arm/configs/u8500_defconfig          | 1 -
+>  13 files changed, 13 deletions(-)
 
-Indeed I am still waiting for Rob's and Thierry's acks for this and the
-following patches.  It has been just a week so I'll give it few more
-days.
+You need to send it to arm-soc maintainers, otherwise no one might feel
+responsible enough to pick it up.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
++CC Arnd and Olof,
+
+Dear Arnd and Olof,
+
+Maybe it is worth to add arm-soc entry to the MAINTAINERS file?
+Otherwise how one could get your email address? Not mentioning the
+secret-soc address. :)
 
 Best regards,
 Krzysztof
-
