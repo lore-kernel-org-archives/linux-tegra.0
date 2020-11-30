@@ -2,225 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40536C64E7B
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 19:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C66C63777
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 20:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D641320679
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 19:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83AB1206C1
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 20:04:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="MaHvElaO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBOB4vH5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbgK3T5O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Nov 2020 14:57:14 -0500
-Received: from mail-eopbgr60114.outbound.protection.outlook.com ([40.107.6.114]:48517
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388227AbgK3T5O (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:57:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DLMfzGHuxOn5o9oM4YJa3jXFq9ELMjVQitkM2685ou8604CzRimDJzDE3KFDcLkVadht7VJdtFdU3fzcKIW3Gc5/j6hSYx7o0MZCNO2qI0fFYVBe/PInJn+qXgRIdEEms7cOfxIg+26pEspJRp346cgZBNCpdD1jABviwabPLyXueOIdoGQe72UVf622fVLG0/3zIygCxxgMHVPP5KhuwUUwIgx6WEtSthw4shdYC3rFjBhinL2ooOfB3LYUCrAv4D78vW7sUPZJJ5EQhDUYfq1civ6BrRHgneOW/puVHB7mrJDVHsYVCeEYqyZOqEUrZT3HR7hivNrFyEUV4XHEFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A78VugkOTTnzeNaYAqQxwrLsF9uKh/sVxRzDgzyqCmE=;
- b=aPlFnG5vLvdHdlDVxSDNU11BG5FhdSK8U/eyaO0CVc+IQB2Cdx015hpaKUcuNZOXYRBW5B6nolchYTtP8ONqYJZbcliYQJyEKxhwvSvBHVF8vhBZ0Z2nXmYno1ci7CoQR7lDM+IFtqO1VNZNIX4cVx9VBcH+Ay20xssYaFIBmyCJTPBJ/yIdIw78Q/+F2tDcLWrMgL/CL0UiVvH7Rdt89fBQfE9mwjAaGMGUq58p5bRiQHm7f3EUqrhmOcm00Jld9dMUL+2UGe+TXcUB6/xJsOrFgFgbAOdq8+VeMyD/D+3qA0pA2+49aEyZ+sCUSw4i3tL3oOIs90C5L6ogSn7/Cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
- header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A78VugkOTTnzeNaYAqQxwrLsF9uKh/sVxRzDgzyqCmE=;
- b=MaHvElaOVIwmcsxbvcyCTsg8SXDSXQU22NzK4FD374sgZKBW9iMQDRgNXbyBvn35iA3oVyOvCiEteRfQnNNw9JnA89zSmXwxvF/X795eFZO2ieZoq72qrd7/TZNvEsVQyPwenVDpDlCPLsQ+WpmBrvnI0j6Sk6wR9nETjmuUKT8=
-Received: from AM6PR06MB4691.eurprd06.prod.outlook.com (2603:10a6:20b:37::25)
- by AM6PR0602MB3384.eurprd06.prod.outlook.com (2603:10a6:209:a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.23; Mon, 30 Nov
- 2020 19:56:22 +0000
-Received: from AM6PR06MB4691.eurprd06.prod.outlook.com
- ([fe80::b073:9747:410c:12c6]) by AM6PR06MB4691.eurprd06.prod.outlook.com
- ([fe80::b073:9747:410c:12c6%6]) with mapi id 15.20.3611.025; Mon, 30 Nov 2020
- 19:56:22 +0000
-From:   ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: RE: [PATCH 0/5] drop unused BACKLIGHT_GENERIC option
-Thread-Topic: [PATCH 0/5] drop unused BACKLIGHT_GENERIC option
-Thread-Index: AQHWx0yl6YXgCwFOFUu+M4mDBYt7v6nhFYrA
-Date:   Mon, 30 Nov 2020 19:56:22 +0000
-Message-ID: <AM6PR06MB46919E26FEB046D0B523DD37A6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
-References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
- <20201130191133.GA1565464@ravnborg.org>
-In-Reply-To: <20201130191133.GA1565464@ravnborg.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: ravnborg.org; dkim=none (message not signed)
- header.d=none;ravnborg.org; dmarc=none action=none
- header.from=leica-geosystems.com;
-x-originating-ip: [146.185.2.7]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 47c9e12c-177b-44f2-9c88-08d8956a02f4
-x-ms-traffictypediagnostic: AM6PR0602MB3384:
-x-microsoft-antispam-prvs: <AM6PR0602MB3384AE238F976808C6A16DE6A6F50@AM6PR0602MB3384.eurprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: g4Bp6bKrEFlPls3Ds/hbsXrs1YGseZvkMaLchBVMb1sby49uB8JxBgmpmrAcCCVaP3vNhcGovL4QWK2wCJJG9DqrWqU3o1XUV5eDqwSYthmrbnzf74YKfgaMNo4jbDwnqYxHGyIxUUtqOgXN4fAO6/g5Vg4fT8z6BkI/U9ZCQl5rK0ocK568tVmXDTw8fBgHngSWWlQ1eUG9AST6gEgvKdNP92l46r5WHaHHEPh9wIgyClXz5uEjqNXfUflujvNP+MXWSmvu4nUwOWxOKragP9e/Tp35nJtkmuL97JBTuwKvnopHqloLwxXVXb2DsFGoTGVbnAtxoTal8tGRkJ5uZheQ9/ukpyTchd25ISXvIl8hzfaDvEJBNKuapZb46OWJ
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR06MB4691.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(376002)(39850400004)(366004)(346002)(66556008)(66446008)(64756008)(478600001)(76116006)(186003)(8936002)(66946007)(8676002)(66476007)(52536014)(5660300002)(54906003)(316002)(83380400001)(6916009)(55016002)(33656002)(9686003)(71200400001)(4326008)(7696005)(86362001)(7416002)(6506007)(53546011)(7406005)(2906002)(26005)(41533002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?RGlBTHp5OTU1WkFnUk5mVmYzZUJ2U1hVSXpYZjM1cndWZzBxZmJ6WmNIUWRT?=
- =?utf-8?B?WWtsdnI3WUIvek1LUi9obGIzMXVoNzdiR1dpdEVVWDVNYklkbWNUK3d5dmps?=
- =?utf-8?B?ckRuZWpLa240UTRsVDZGWmhyUld2cHZNTjFqOXVIK0VZS0hTSUMyekdhUWl4?=
- =?utf-8?B?Q3BCNk1hd2dieW1sS1laR2VGd0xZc29vaG5WVFpEa2sxTzlvMy92MEFBUlUz?=
- =?utf-8?B?aU1XMUVtc2t5MkJIdXZ6ZVoyZFV6SjdlTkw5UW9oOFBIUkFHeU93M0FyTEcz?=
- =?utf-8?B?R3RRWjcrSHZpaVFvK1dxUmRSK2d2QWVHcDRwVTdLVm5LNDdjZGt1U2o2Z1RV?=
- =?utf-8?B?MU5NWnF6ekpSTDltUytodEdFTkQxMlRWeHVNVm1RNE5QL1FuRW1KOTVKWHFq?=
- =?utf-8?B?aXJyNjRhT2UrT0svYlBOZXdCOEhKNmF3OGV3RE1tQWdFcm9YMnBibXNsUGhD?=
- =?utf-8?B?ZkdNanFtZjNJaWJNa0hZcjhRMXdsZWVxbnV1WHdJb1ZNZmZIaHFuVDlMZmhr?=
- =?utf-8?B?d3NRdFJ0bnFnUzc5R0dhQjlSOHNKU0N6RCtpMHhpNElQNVAwTFVUbzBvR0ty?=
- =?utf-8?B?UHRNc2YyQ29lMm1zSm5mTXJXOXZNRnB3a1BwR2lWNVkzKzg0RjJRR0JvR1Ry?=
- =?utf-8?B?eXF4ekVrTUZhVDFWeWlKakV4WGFqenVTOUVRNW00aGhVS1dIWVdCWi80d2JZ?=
- =?utf-8?B?aktrcWlwVnFFL1doWjZmZ2Ryd29mdjM4MG5mL1RxS2NWbURJTEFta2w3Wld6?=
- =?utf-8?B?b0tOVExyS002bVQvdmhuencxNzlwZ2tXbnBxVUxSdFhuNzF3L0VCRElVK1dx?=
- =?utf-8?B?emU1TEhJamVtSTFyOGxLNXgzVjc5Wis3bnZLZjZuYk9qTXpadlJQbGRSaWVC?=
- =?utf-8?B?UEVybzZlOXJ1cFVBS1hyYU1XVVV4UjlkL0ZBUjg4L0RlWExlb254QmtPVkho?=
- =?utf-8?B?L0ZUZlBzaXN5cWtHQXR5V3pIckQ4bHVxN2kvTkZZeFA3aG5ndExUbEN0Wlg2?=
- =?utf-8?B?TWQ4cXJjeThEb0NQRmpRZ3FFMVh1MGpUaW95aDBpWmFXZTZNbURjWmluUUcv?=
- =?utf-8?B?QzJrUGV2ZU1WMitNWmtJTzZqbjAybCtzbkNZeTlvYS9XMEpWQktoMTZEZXYx?=
- =?utf-8?B?ZmFPNEVXUTBIc0Q1VlNLcHRjbG5Yby9GUVEyZUVMWnlMOHpZd3YyRzVobU5M?=
- =?utf-8?B?WllsWHFsUEdxSmxYU2hqKy9ReW1LUGxBQjBRNTZOaVVQcnJ2N29uMnNmdjVP?=
- =?utf-8?B?ZkpOVSsyZWE1bHdoeUxobysrd2Z5SFNaQW14aGZXa2EwR3I4R3pHc1hHeC9y?=
- =?utf-8?Q?IuUEk+JY11vzA=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2387411AbgK3UEa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 15:04:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgK3UE3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Nov 2020 15:04:29 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4328DC061A48;
+        Mon, 30 Nov 2020 12:03:49 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id q8so10919021ljc.12;
+        Mon, 30 Nov 2020 12:03:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vEhR+Du89PZ5uHlmTZPVOeMBpk4ZhmnPvG7++GYzT48=;
+        b=nBOB4vH5fDSmMiI/v/KOP5Ztcc6gTG6ASlCRAPZhAb9QgYDhofOwwasWO/d1BRsUkk
+         Cnupc2ovJEBaBFe93fntQP+ZixTtvkH5q6FIHboY6BK87SY4WkJ9fFWtR9ZFnw1dj+Sf
+         J4ys4VkWRj+fnHA8vvebgnOgB0bML3F69nf786Y/dESEr9E6R9oVuV213MrxeuGCkMDN
+         QLcHFPwJgjO9/9+MHinqfxKIJmcmWdFOlYB5/N1bMSPckEB1yIP5Ye/GlqAwp7GiTNPU
+         NPUIIzw57SzwVWTkj5WmK1U8g4O1qfaIUQE6qimGPW4DPikyT7bO5mbHN2ckFEAqX2jQ
+         DWHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vEhR+Du89PZ5uHlmTZPVOeMBpk4ZhmnPvG7++GYzT48=;
+        b=AuzXTAJsAhKhMFVqZpJqg/hNvK9MS/9lOILWZ5UBaTc9ylg6FxQdHVGXmkXy+NHQgD
+         RiIrTC7jQqkdBteqruvjaqj3OXuDPB0fB5Myrq/CRxsK0ZUKvNwNy3PNN1wXInfixZqU
+         a17oV53tY4qcJi6zlBtkqLgmrYiVWDdT5jwzwLcxhAJPvpITF7fWdCsvyiZfnb5eGki9
+         RU58nZKBJvW5SjjzM9INCwg1dctwn3OnF4M2UwUMUN6tSffnNgvw7ZUWmi/M2a2EWyJn
+         KKTKdkhSiEOdjEPO+g2R6KTDfJLNMdOotK5CcW4Se/j9RIbOY/+i1SS9m4OftMr9/2cx
+         /Xvw==
+X-Gm-Message-State: AOAM531GlsEPj1VczE1o7RmRrwpGLHdY+9d5RpdhmGIdCN2yKEJ6juR+
+        qGOsW3Yi835jjiF117vK9+s=
+X-Google-Smtp-Source: ABdhPJwUMn+ecDX4H4n6Wk18z6ki+FFE/Gwq+LcNPFp5nQTq6WKmEZqr7eMcBen1vKLu0kYmPs69jA==
+X-Received: by 2002:a2e:b386:: with SMTP id f6mr10398273lje.320.1606766627766;
+        Mon, 30 Nov 2020 12:03:47 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id l6sm2606668lfk.150.2020.11.30.12.03.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Nov 2020 12:03:46 -0800 (PST)
+Subject: Re: [PATCH v10 01/19] dt-bindings: memory: tegra20: emc: Document
+ opp-supported-hw property
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20201123002723.28463-1-digetx@gmail.com>
+ <20201123002723.28463-2-digetx@gmail.com>
+ <46b3bab7-1c2c-2f50-6e41-f411e532357b@linaro.org>
+ <20201130182345.GA28450@kozik-lap>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4ff3fe7f-ec17-dd89-3cde-d677b3a92104@gmail.com>
+Date:   Mon, 30 Nov 2020 23:03:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR06MB4691.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47c9e12c-177b-44f2-9c88-08d8956a02f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 19:56:22.0413
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EhUux8HXzjRu7RpgANenbYkE690f+SzZjPJqJLU23bx2WrMRn0L7kQMD/WiBHAC56kxWJdZDLEH08ESurvnLD2Vnnqetdeti6Pzy669w48/SYfEXlqDzevM/AedF8D6H
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0602MB3384
+In-Reply-To: <20201130182345.GA28450@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-SGVsbG8gU2FtLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFNhbSBS
-YXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4NCj4gU2VudDogTW9uZGF5LCBOb3ZlbWJlciAzMCwg
-MjAyMCA4OjEyIFBNDQo+IFRvOiBaSElaSElLSU4gQW5kcmV5IDxhbmRyZXkuemhpemhpa2luQGxl
-aWNhLWdlb3N5c3RlbXMuY29tPg0KPiBDYzogbGludXhAYXJtbGludXgub3JnLnVrOyBuaWNvbGFz
-LmZlcnJlQG1pY3JvY2hpcC5jb207DQo+IGFsZXhhbmRyZS5iZWxsb25pQGJvb3RsaW4uY29tOyBs
-dWRvdmljLmRlc3JvY2hlc0BtaWNyb2NoaXAuY29tOw0KPiB0b255QGF0b21pZGUuY29tOyBtcmlw
-YXJkQGtlcm5lbC5vcmc7IHdlbnNAY3NpZS5vcmc7DQo+IGplcm5lai5za3JhYmVjQHNpb2wubmV0
-OyB0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb207IGpvbmF0aGFuaEBudmlkaWEuY29tOw0KPiBjYXRh
-bGluLm1hcmluYXNAYXJtLmNvbTsgd2lsbEBrZXJuZWwub3JnOyB0c2JvZ2VuZEBhbHBoYS5mcmFu
-a2VuLmRlOw0KPiBKYW1lcy5Cb3R0b21sZXlAaGFuc2VucGFydG5lcnNoaXAuY29tOyBkZWxsZXJA
-Z214LmRlOw0KPiBtcGVAZWxsZXJtYW4uaWQuYXU7IGJlbmhAa2VybmVsLmNyYXNoaW5nLm9yZzsg
-cGF1bHVzQHNhbWJhLm9yZzsNCj4gbGVlLmpvbmVzQGxpbmFyby5vcmc7IGVtaWwubC52ZWxpa292
-QGdtYWlsLmNvbTsNCj4gZGFuaWVsLnRob21wc29uQGxpbmFyby5vcmc7IGtyemtAa2VybmVsLm9y
-ZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IG9tYXBAdmdlci5rZXJuZWwub3JnOyBsaW51eC10
-ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBtaXBzQHZnZXIua2VybmVsLm9yZzsgbGlu
-dXgtcGFyaXNjQHZnZXIua2VybmVsLm9yZzsgbGludXhwcGMtDQo+IGRldkBsaXN0cy5vemxhYnMu
-b3JnOyBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPjsgT2xvZiBKb2hhbnNzb24NCj4gPG9s
-b2ZAbGl4b20ubmV0Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvNV0gZHJvcCB1bnVzZWQgQkFD
-S0xJR0hUX0dFTkVSSUMgb3B0aW9uDQo+IA0KPiANCj4gT24gTW9uLCBOb3YgMzAsIDIwMjAgYXQg
-MDM6MjE6MzJQTSArMDAwMCwgQW5kcmV5IFpoaXpoaWtpbiB3cm90ZToNCj4gPiBTaW5jZSB0aGUg
-cmVtb3ZhbCBvZiBnZW5lcmljX2JsIGRyaXZlciBmcm9tIHRoZSBzb3VyY2UgdHJlZSBpbiBjb21t
-aXQNCj4gPiA3ZWNkZWE0YTAyMjYgKCJiYWNrbGlnaHQ6IGdlbmVyaWNfYmw6IFJlbW92ZSB0aGlz
-IGRyaXZlciBhcyBpdCBpcw0KPiA+IHVudXNlZCIpIEJBQ0tMSUdIVF9HRU5FUklDIGNvbmZpZyBv
-cHRpb24gYmVjYW1lIG9ic29sZXRlIGFzIHdlbGwgYW5kDQo+ID4gdGhlcmVmb3JlIHN1YmplY3Qg
-dG8gY2xlYW4tdXAgZnJvbSBhbGwgY29uZmlndXJhdGlvbiBmaWxlcy4NCj4gPg0KPiA+IFRoaXMg
-c2VyaWVzIGludHJvZHVjZXMgcGF0Y2hlcyB0byBhZGRyZXNzIHRoaXMgcmVtb3ZhbCwgc2VwYXJh
-dGVkIGJ5DQo+ID4gYXJjaGl0ZWN0dXJlcyBpbiB0aGUga2VybmVsIHRyZWUuDQo+ID4NCj4gPiBB
-bmRyZXkgWmhpemhpa2luICg1KToNCj4gPiAgIEFSTTogY29uZmlnczogZHJvcCB1bnVzZWQgQkFD
-S0xJR0hUX0dFTkVSSUMgb3B0aW9uDQo+ID4gICBhcm02NDogZGVmY29uZmlnOiBkcm9wIHVudXNl
-ZCBCQUNLTElHSFRfR0VORVJJQyBvcHRpb24NCj4gPiAgIE1JUFM6IGNvbmZpZ3M6IGRyb3AgdW51
-c2VkIEJBQ0tMSUdIVF9HRU5FUklDIG9wdGlvbg0KPiA+ICAgcGFyaXNjOiBjb25maWdzOiBkcm9w
-IHVudXNlZCBCQUNLTElHSFRfR0VORVJJQyBvcHRpb24NCj4gPiAgIHBvd2VycGMvY29uZmlnczog
-ZHJvcCB1bnVzZWQgQkFDS0xJR0hUX0dFTkVSSUMgb3B0aW9uDQo+IA0KPiBGb3IgZGVmY29uZmln
-cyBJIGV4cGVjdCBhcmNoIG1haW50YWluZXJzIHRvIGRvIGEgbWFrZSB4eHhkZWZjb25maWcgLyBt
-YWtlDQo+IHNhdmVkZWZjb25maWcgLyBjcCBkZWZjb25maWcgLi4uIHJ1biBub3cgYW5kIHRoZW4g
-LSB0aGlzIHdpbGwgcmVtb3ZlIGFsbCBzdWNoDQo+IHN5bWJvbHMuDQoNClRoaXMgc2VyaWVzIHN0
-cmV0Y2hlcyBhY3Jvc3Mgc2V2ZXJhbCBhcmNocywgc28gSSB3b3VsZCBleHBlY3QgdGhhdCBpdCBj
-b3VsZCd2ZSBiZWVuIGFkZHJlc3NlZCBmb3Igc29tZSBvZiB0aGVtIGJ1dCB3b3VsZCB0YWtlIG1v
-cmUgdGltZSB0aGFuIHN1Ym1pdHRpbmcgdGhpcyAicG9pbnQgZml4IiBub3csIHRhcmdldGluZyBv
-bmUgb2Jzb2xldGUgY29uZmlnIG9wdGlvbi4NCg0KSSd2ZSBwZXJzb25hbGx5IGhpdCBpdCBmb3Ig
-YXJtNjQgb24gdGhlIGZpcnN0IHBsYWNlLCBhbmQgbG9va2luZyBmdXJ0aGVyIGludG8gdGhlIG9w
-dGlvbiBpdHNlbGYgSSByZWFsaXplZCB0aGF0IGl0IGlzIG1pc3NpbmcgZnJvbSB0aGUga2VybmVs
-IHRyZWUgY29tcGxldGVseSBhbmQgZGVjaWRlZCB0byBmaXggYWxsIGFyY2hzIGFmZmVjdGVkIGF0
-IG9uY2UuDQoNCj4gDQo+IElmIHRoZSBwYXRjaGVzIGdvZXMgaW4gbGlrZSB0aGV5IGFyZSBzdWJt
-aXR0ZWQgdGhlbjoNCj4gQWNrZWQtYnk6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4N
-Cj4gDQo+ID4NCj4gPiAgYXJjaC9hcm0vY29uZmlncy9hdDkxX2R0X2RlZmNvbmZpZyAgICAgICAg
-ICB8IDEgLQ0KPiA+ICBhcmNoL2FybS9jb25maWdzL2NtX3gzMDBfZGVmY29uZmlnICAgICAgICAg
-IHwgMSAtDQo+ID4gIGFyY2gvYXJtL2NvbmZpZ3MvY29saWJyaV9weGEzMDBfZGVmY29uZmlnICAg
-fCAxIC0NCj4gPiAgYXJjaC9hcm0vY29uZmlncy9qb3JuYWRhNzIwX2RlZmNvbmZpZyAgICAgICB8
-IDEgLQ0KPiA+ICBhcmNoL2FybS9jb25maWdzL21hZ2ljaWFuX2RlZmNvbmZpZyAgICAgICAgIHwg
-MSAtDQo+ID4gIGFyY2gvYXJtL2NvbmZpZ3MvbWluaTI0NDBfZGVmY29uZmlnICAgICAgICAgfCAx
-IC0NCj4gPiAgYXJjaC9hcm0vY29uZmlncy9vbWFwMnBsdXNfZGVmY29uZmlnICAgICAgICB8IDEg
-LQ0KPiA+ICBhcmNoL2FybS9jb25maWdzL3B4YTN4eF9kZWZjb25maWcgICAgICAgICAgIHwgMSAt
-DQo+ID4gIGFyY2gvYXJtL2NvbmZpZ3MvcWNvbV9kZWZjb25maWcgICAgICAgICAgICAgfCAxIC0N
-Cj4gPiAgYXJjaC9hcm0vY29uZmlncy9zYW1hNV9kZWZjb25maWcgICAgICAgICAgICB8IDEgLQ0K
-PiA+ICBhcmNoL2FybS9jb25maWdzL3N1bnhpX2RlZmNvbmZpZyAgICAgICAgICAgIHwgMSAtDQo+
-ID4gIGFyY2gvYXJtL2NvbmZpZ3MvdGVncmFfZGVmY29uZmlnICAgICAgICAgICAgfCAxIC0NCj4g
-PiAgYXJjaC9hcm0vY29uZmlncy91ODUwMF9kZWZjb25maWcgICAgICAgICAgICB8IDEgLQ0KPiA+
-ICBhcmNoL2FybTY0L2NvbmZpZ3MvZGVmY29uZmlnICAgICAgICAgICAgICAgIHwgMSAtDQo+ID4g
-IGFyY2gvbWlwcy9jb25maWdzL2djdzBfZGVmY29uZmlnICAgICAgICAgICAgfCAxIC0NCj4gPiAg
-YXJjaC9taXBzL2NvbmZpZ3MvZ3ByX2RlZmNvbmZpZyAgICAgICAgICAgICB8IDEgLQ0KPiA+ICBh
-cmNoL21pcHMvY29uZmlncy9sZW1vdGUyZl9kZWZjb25maWcgICAgICAgIHwgMSAtDQo+ID4gIGFy
-Y2gvbWlwcy9jb25maWdzL2xvb25nc29uM19kZWZjb25maWcgICAgICAgfCAxIC0NCj4gPiAgYXJj
-aC9taXBzL2NvbmZpZ3MvbXR4MV9kZWZjb25maWcgICAgICAgICAgICB8IDEgLQ0KPiA+ICBhcmNo
-L21pcHMvY29uZmlncy9yczkwX2RlZmNvbmZpZyAgICAgICAgICAgIHwgMSAtDQo+ID4gIGFyY2gv
-cGFyaXNjL2NvbmZpZ3MvZ2VuZXJpYy02NGJpdF9kZWZjb25maWcgfCAxIC0NCj4gPiAgYXJjaC9w
-b3dlcnBjL2NvbmZpZ3MvcG93ZXJudl9kZWZjb25maWcgICAgICB8IDEgLQ0KPiA+ICAyMiBmaWxl
-cyBjaGFuZ2VkLCAyMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+DQo+ID4gYmFzZS1jb21taXQ6IGI2
-NTA1NDU5Nzg3MmNlM2FlZmJjNmE2NjYzODVlYWJkZjllMjg4ZGENCj4gPiBwcmVyZXF1aXNpdGUt
-cGF0Y2gtaWQ6IGJmZDM4MmNmMWRjMDIxZDIwMjA0ZjEwZWE5NDAzMzE5YzFjMzJiMTINCj4gPiBw
-cmVyZXF1aXNpdGUtcGF0Y2gtaWQ6IDUzOTdjMGM4NjQ4YmIzZTBiODMwMjA3ZWE4NjcxMzhjMTFj
-NmU2NDQNCj4gPiBwcmVyZXF1aXNpdGUtcGF0Y2gtaWQ6IGEzYzI4NGRmZjVmZTZkMDI4Mjg5MThh
-ODg2ZGI2YThlZDMxOTdlMjANCj4gPiAtLQ0KPiA+IDIuMTcuMQ0KDQpSZWdhcmRzLA0KQW5kcmV5
-DQo=
+30.11.2020 21:23, Krzysztof Kozlowski пишет:
+> On Mon, Nov 30, 2020 at 11:48:18AM +0200, Georgi Djakov wrote:
+>> On 23.11.20 2:27, Dmitry Osipenko wrote:
+>>> Document opp-supported-hw property, which is not strictly necessary to
+>>> have on Tegra20, but it's very convenient to have because all other SoC
+>>> core devices will use hardware versioning, and thus, it's good to maintain
+>>> the consistency.
+>>
+>> Hi Dmitry,
+>>
+>> I believe Krzysztof is waiting for Ack on the binding before merging
+>> this patch (and the rest), but unfortunately it was not sent to the
+>> DT mailing list for review.
+
+Good catch, thank you.
+
+> Indeed I am still waiting for Rob's and Thierry's acks for this and the
+> following patches.  It has been just a week so I'll give it few more
+> days.
+
+Rob doesn't review patches which aren't sent to the DT ML, which isn't
+cc'ed in v10 by accident. I'll make v11.
