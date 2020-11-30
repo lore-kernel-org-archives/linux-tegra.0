@@ -2,197 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 236A4C64E7B
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 12:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C8BC83019
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAC7E2074A
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 12:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9487420731
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 15:22:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="smh/9VAd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbgK3MK6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Nov 2020 07:10:58 -0500
-Received: from foss.arm.com ([217.140.110.172]:53558 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbgK3MK5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Nov 2020 07:10:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4B0730E;
-        Mon, 30 Nov 2020 04:10:11 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A0273F66B;
-        Mon, 30 Nov 2020 04:10:09 -0800 (PST)
-Date:   Mon, 30 Nov 2020 12:10:07 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     robh+dt@kernel.org, bhelgaas@google.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, amanharitsh123@gmail.com,
-        dinghao.liu@zju.edu.cn, kw@linux.com, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
- parts fail
-Message-ID: <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
-References: <20201109171937.28326-1-vidyas@nvidia.com>
- <20201109171937.28326-5-vidyas@nvidia.com>
+        id S1728157AbgK3PWg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 10:22:36 -0500
+Received: from mail-eopbgr80122.outbound.protection.outlook.com ([40.107.8.122]:22176
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726769AbgK3PWe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Nov 2020 10:22:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YH2MNBgbN1y//UqnRkt+4+Q8QOHB5J+SrJDlmpbFbRfzh6Rmk9Q1dAmURn492rWqzVLEXnFAWQyNJOihsa4sakbPAib2oryTczf0SZt+BmT8gEkFwHsKWHXNbl3hhzVi9HFTDbgiB3hkx/ljXeI24oc51aSHm38ssWUO0n0sa8FGpues5eQXiFq7KlbfpPvhpVTAqHfKUPaAELvulj/78gYcCZwg87NZb1VZhMhfSOy0E0qBYr+ilPi47w2KmBpI4mnIcKmQgGgTBUKAwNT0URX1OvHZAE+YHVCOXpcAMKHXR+KApKz4cTcrIWeGK4gyYY38/fG7rnBcyt8/dya1qQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JYFF0S35be+pE4+Hs+KM/e13O4Xj03iMy1mvVlKlyMg=;
+ b=fhKz5MblxEMvIAlFMXZzPX1JLYKr0j5QDo3jH/gvVLF0vL1eClrb+5BYzCcKl/NcQS7U5BUA8kui+Q7XqhEt+iBYwOBps0fPuK7tEd8uDgfkRRR4c+GhN3AptHT6V707H+ZKqdFOgdy2PpUfm/05B02U6YDYVPvy0jUvK8pqj1EoDH//c3WNcO15OuVruc1seoSCm+N4MPiTzAEt+eJnCUm+SFNsp4iEoseULQjOZknkgnWh8Ov/a7Qu1OdHtbeg32A8rosSbfoMswKwHjlvPblgFtI1g63S/BdAGwVKCD7s227FZrUouC6AdGBBbVZ6I3Dhv3rB3nqtaDK26E3/Ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass action=none
+ header.from=leica-geosystems.com; dkim=pass header.d=leica-geosystems.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JYFF0S35be+pE4+Hs+KM/e13O4Xj03iMy1mvVlKlyMg=;
+ b=smh/9VAdWgcG1D9dJ0gWO6DXa1E4U+VmEpj5NTC/P6Abw2NbB+efRz7VI5jIk/E93kuxq10FaOwVCiEDl6Z59sBmnGRPCaYT3YihPiny8JZGIHJA6S64b7pTlz9Ud2T22NXBFhsRTSnv4EPOOaji627cuY//AditXkHX2Ml3jGM=
+Authentication-Results: armlinux.org.uk; dkim=none (message not signed)
+ header.d=none;armlinux.org.uk; dmarc=none action=none
+ header.from=leica-geosystems.com;
+Received: from DB6PR0602MB2886.eurprd06.prod.outlook.com (2603:10a6:4:9b::11)
+ by DB6PR0602MB2887.eurprd06.prod.outlook.com (2603:10a6:4:9a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.25; Mon, 30 Nov
+ 2020 15:21:44 +0000
+Received: from DB6PR0602MB2886.eurprd06.prod.outlook.com
+ ([fe80::49c3:4b5b:289c:d62c]) by DB6PR0602MB2886.eurprd06.prod.outlook.com
+ ([fe80::49c3:4b5b:289c:d62c%12]) with mapi id 15.20.3611.025; Mon, 30 Nov
+ 2020 15:21:44 +0000
+From:   Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
+To:     linux@armlinux.org.uk, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        tony@atomide.com, mripard@kernel.org, wens@csie.org,
+        jernej.skrabec@siol.net, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, catalin.marinas@arm.com, will@kernel.org,
+        tsbogend@alpha.franken.de, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, lee.jones@linaro.org, sam@ravnborg.org,
+        emil.l.velikov@gmail.com, daniel.thompson@linaro.org,
+        krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/5] drop unused BACKLIGHT_GENERIC option
+Date:   Mon, 30 Nov 2020 15:21:32 +0000
+Message-Id: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-Originating-IP: [193.8.40.112]
+X-ClientProxiedBy: ZRAP278CA0002.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::12) To DB6PR0602MB2886.eurprd06.prod.outlook.com
+ (2603:10a6:4:9b::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201109171937.28326-5-vidyas@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from aherlnxbspsrv01.lgs-net.com (193.8.40.112) by ZRAP278CA0002.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.20 via Frontend Transport; Mon, 30 Nov 2020 15:21:43 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 95d7b698-5292-4930-f51d-08d89543a538
+X-MS-TrafficTypeDiagnostic: DB6PR0602MB2887:
+X-Microsoft-Antispam-PRVS: <DB6PR0602MB2887AD8134FEDEE884AD46CEA6F50@DB6PR0602MB2887.eurprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1169;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Nd3loQ15nj+k6hYQLhmPL9e6smY/UmSaTcWyqEPpv13qIpQHfXiHzpKmYs6yRY88IoM7OA8EI+HInQSY0+DDtLAvWit+QiYWdpsGKxJTeX5U2pkZjvq03zh3TDujFKSB5IMcr3NH8p8c6Pp9HkrgJuvY+qAR3DAWW7u5Ft/oxRZAQMHMNbSxpCfBpbKDHoNdni18QjUyxFT5diCDmw/8NFm/fQm4VBwJeoyPGTbRerF/DcsG8p4qkR3T0tolmusJrEw1Y+JWCi8iT2A891VKG0HsArjY+t3AFkSnoVnD6br7Knj3HjMBXvVvMx5zWqne0cRIBj92zEorv3wzAVExcT6BRWXtEz/xR5uGystDlu7jLgCN/v9mRu1s6xKj0/GE4WbBjPdN667LxTpLcIcrgw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0602MB2886.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(366004)(136003)(396003)(39860400002)(5660300002)(2616005)(1076003)(52116002)(6506007)(16526019)(956004)(26005)(186003)(7406005)(7416002)(36756003)(2906002)(316002)(6666004)(44832011)(86362001)(83380400001)(6486002)(6512007)(921005)(66946007)(478600001)(8676002)(8936002)(66556008)(66476007)(41533002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?kitQGbAHk3EE3Ey9YOYZ7O8FLyJVuIMD1TiiWcmL9t1mNsQjrB4jtGmbTHNl?=
+ =?us-ascii?Q?BMursxnuITuEajAo6wSx6Z9SsYtX4l2T+R+7R2lNDa/81FA+Bo3GMT+NqSWf?=
+ =?us-ascii?Q?dxiKc7Fg7DO3u5sAv37BjM/JiqRiwBy/lfxzQ6wAyiF8uqsZwa8Ji/Kmb6p9?=
+ =?us-ascii?Q?xDbRMAgpNHBHQIHQXqU+4/19o8V3G/T7nK4J9RoRaSGMRgoSON98yvuX2qmR?=
+ =?us-ascii?Q?hyOgfIfExql8V+hBO5mLO5bzK26KWqhXLljT5/+tml4gFV+uIPkDvMWxKDrT?=
+ =?us-ascii?Q?iV4nXHvZTBIeU4u+p9m9k686qgHh20bQnrvHaoULkKpPbye811iNYqvARczh?=
+ =?us-ascii?Q?B9RyPYsB3mP82COFVkIsI7hjdFYNQaXum8+T8LqqUCoiQ1Njlw+kihsqHEmh?=
+ =?us-ascii?Q?g1bIHw0R7zxGmUG5H+03cFMO20XpvbrM/avQ3orGP36/4T1uRT6MQLFb/OK8?=
+ =?us-ascii?Q?LxiEn5z5KvoENpEG5SSjehnRxmUMcSPZuw17yjVAPmArN/shoCI2cvNUPCU5?=
+ =?us-ascii?Q?0IjipO4xhampV+3d3Nw+GiTRpKPmyzeaKSlxgLc0jKtuq6178DTXzM+0WQ//?=
+ =?us-ascii?Q?jdcLDl4KEPjmsshx/4CgCtkMQ6Y4bG8JQh+6ScX+G13uc6flF1KbZDNPnygO?=
+ =?us-ascii?Q?lyC+trjlg298EN6jEliGM3n4mhstypRQoLQJCvq36/4bGcZYDe3W5qTbR+rT?=
+ =?us-ascii?Q?MA5BsGvM6TKrzeGJ+lmboFadqXB/JC6b4g3XAfBZmbA1bPYDxLnjeZ/Uu/Ak?=
+ =?us-ascii?Q?209edxpv6/zl8+Bi2H92im7c7B5dVlAjB9Njif94cFamVeXDRuqg8R2v/EzA?=
+ =?us-ascii?Q?KOLaXTfMvh1Flzjg0nuQFalsliJP1hud6MdceJVmU8L9x0B1JFD3vixKeJKX?=
+ =?us-ascii?Q?fm8GjVbaEQs6oZZuc200FYIzeOPphD9uNY7jJXFMBQSKG8UlIWqzqjNlamdp?=
+ =?us-ascii?Q?20XrACDjUK4kLAkEs5EDustyLpTxtxycPGD0ze1wLgF3KF5AjmX7wPuPuWv1?=
+ =?us-ascii?Q?6MVd?=
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d7b698-5292-4930-f51d-08d89543a538
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0602MB2886.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2020 15:21:44.1425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z2W1ShaxXCjALLxQbLA6jmqUp8Gi08QpaeQ8KWrj3vdSv3nL/R6SJp8BNxNRSjHk1dDcifGMCRU3GPdULbk7pR062FCDnmHrSD8upGxQrEw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0602MB2887
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
-> Currently the driver checks for error value of different APIs during the
-> uninitialization sequence. It just returns from there if there is any error
-> observed for one of those calls. Comparatively it is better to continue the
-> uninitialization sequence irrespective of whether some of them are
-> returning error. That way, it is more closer to complete uninitialization.
+Since the removal of generic_bl driver from the source tree in commit
+7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is
+unused") BACKLIGHT_GENERIC config option became obsolete as well and
+therefore subject to clean-up from all configuration files.
 
-Hi Vidya, Thierry,
+This series introduces patches to address this removal, separated by
+architectures in the kernel tree.
 
-I can apply this series (dropping patches as suggested by Thierry),
-before though I wanted to ask you if this patch is really an
-improvement, it is hard to understand why skipping some error
-codes is OK for device correct operations to continue, maybe it
-is worth describing why some of those failures aren't really
-fatal.
+Andrey Zhizhikin (5):
+  ARM: configs: drop unused BACKLIGHT_GENERIC option
+  arm64: defconfig: drop unused BACKLIGHT_GENERIC option
+  MIPS: configs: drop unused BACKLIGHT_GENERIC option
+  parisc: configs: drop unused BACKLIGHT_GENERIC option
+  powerpc/configs: drop unused BACKLIGHT_GENERIC option
 
-Please let me know, thanks.
+ arch/arm/configs/at91_dt_defconfig          | 1 -
+ arch/arm/configs/cm_x300_defconfig          | 1 -
+ arch/arm/configs/colibri_pxa300_defconfig   | 1 -
+ arch/arm/configs/jornada720_defconfig       | 1 -
+ arch/arm/configs/magician_defconfig         | 1 -
+ arch/arm/configs/mini2440_defconfig         | 1 -
+ arch/arm/configs/omap2plus_defconfig        | 1 -
+ arch/arm/configs/pxa3xx_defconfig           | 1 -
+ arch/arm/configs/qcom_defconfig             | 1 -
+ arch/arm/configs/sama5_defconfig            | 1 -
+ arch/arm/configs/sunxi_defconfig            | 1 -
+ arch/arm/configs/tegra_defconfig            | 1 -
+ arch/arm/configs/u8500_defconfig            | 1 -
+ arch/arm64/configs/defconfig                | 1 -
+ arch/mips/configs/gcw0_defconfig            | 1 -
+ arch/mips/configs/gpr_defconfig             | 1 -
+ arch/mips/configs/lemote2f_defconfig        | 1 -
+ arch/mips/configs/loongson3_defconfig       | 1 -
+ arch/mips/configs/mtx1_defconfig            | 1 -
+ arch/mips/configs/rs90_defconfig            | 1 -
+ arch/parisc/configs/generic-64bit_defconfig | 1 -
+ arch/powerpc/configs/powernv_defconfig      | 1 -
+ 22 files changed, 22 deletions(-)
 
-Lorenzo
 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V4:
-> * None
-> 
-> V3:
-> * Modified subject as per Bjorn's suggestion
-> * Removed tegra_pcie_init_controller()'s error checking part and pushed
->   a separate patch for it
-> 
-> V2:
-> * None
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 39 +++++++++-------------
->  1 file changed, 15 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 253d91033bc3..9be10c8953df 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1422,43 +1422,32 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  	return ret;
->  }
->  
-> -static int __deinit_controller(struct tegra_pcie_dw *pcie)
-> +static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
->  {
->  	int ret;
->  
->  	ret = reset_control_assert(pcie->core_rst);
-> -	if (ret) {
-> -		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
->  
->  	tegra_pcie_disable_phy(pcie);
->  
->  	ret = reset_control_assert(pcie->core_apb_rst);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
-> -		return ret;
-> -	}
->  
->  	clk_disable_unprepare(pcie->core_clk);
->  
->  	ret = regulator_disable(pcie->pex_ctl_supply);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
-> -		return ret;
-> -	}
->  
->  	tegra_pcie_disable_slot_regulators(pcie);
->  
->  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
-> -	if (ret) {
-> +	if (ret)
->  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
->  			pcie->cid, ret);
-> -		return ret;
-> -	}
-> -
-> -	return ret;
->  }
->  
->  static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
-> @@ -1482,7 +1471,8 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
->  	return 0;
->  
->  fail_host_init:
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
-> +	return ret;
->  }
->  
->  static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
-> @@ -1551,13 +1541,12 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
->  	appl_writel(pcie, data, APPL_PINMUX);
->  }
->  
-> -static int tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
-> +static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
->  {
->  	tegra_pcie_downstream_dev_to_D0(pcie);
->  	dw_pcie_host_deinit(&pcie->pci.pp);
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> -
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  }
->  
->  static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
-> @@ -2238,8 +2227,9 @@ static int tegra_pcie_dw_suspend_noirq(struct device *dev)
->  					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
->  	tegra_pcie_downstream_dev_to_D0(pcie);
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  
-> -	return __deinit_controller(pcie);
-> +	return 0;
->  }
->  
->  static int tegra_pcie_dw_resume_noirq(struct device *dev)
-> @@ -2267,7 +2257,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
->  	return 0;
->  
->  fail_host_init:
-> -	return __deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
-> +	return ret;
->  }
->  
->  static int tegra_pcie_dw_resume_early(struct device *dev)
-> @@ -2305,7 +2296,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
->  		disable_irq(pcie->pci.pp.msi_irq);
->  
->  	tegra_pcie_dw_pme_turnoff(pcie);
-> -	__deinit_controller(pcie);
-> +	tegra_pcie_unconfig_controller(pcie);
->  }
->  
->  static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
-> -- 
-> 2.17.1
-> 
+base-commit: b65054597872ce3aefbc6a666385eabdf9e288da
+prerequisite-patch-id: bfd382cf1dc021d20204f10ea9403319c1c32b12
+prerequisite-patch-id: 5397c0c8648bb3e0b830207ea867138c11c6e644
+prerequisite-patch-id: a3c284dff5fe6d02828918a886db6a8ed3197e20
+-- 
+2.17.1
+
