@@ -2,118 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FD7C64E7B
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 11:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236A4C64E7B
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 12:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6BE207F7
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 11:13:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DEtXi/tG"
+	by mail.kernel.org (Postfix) with ESMTP id CAC7E2074A
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Nov 2020 12:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbgK3LNk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Nov 2020 06:13:40 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3205 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbgK3LNk (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Nov 2020 06:13:40 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc4d3be0000>; Mon, 30 Nov 2020 03:13:03 -0800
-Received: from [10.26.72.142] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Nov
- 2020 11:12:48 +0000
-Subject: Re: [PATCH] dmaengine: tegra-apb: fix reference leak in
- tegra_dma_issue_pending and tegra_dma_synchronize
-To:     Qinglang Miao <miaoqinglang@huawei.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20201127094431.120771-1-miaoqinglang@huawei.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b7871cf9-9f3e-1b8e-028b-73bd703411f7@nvidia.com>
-Date:   Mon, 30 Nov 2020 11:12:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728345AbgK3MK6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Nov 2020 07:10:58 -0500
+Received: from foss.arm.com ([217.140.110.172]:53558 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726385AbgK3MK5 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 30 Nov 2020 07:10:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4B0730E;
+        Mon, 30 Nov 2020 04:10:11 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A0273F66B;
+        Mon, 30 Nov 2020 04:10:09 -0800 (PST)
+Date:   Mon, 30 Nov 2020 12:10:07 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     robh+dt@kernel.org, bhelgaas@google.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, amanharitsh123@gmail.com,
+        dinghao.liu@zju.edu.cn, kw@linux.com, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
+ parts fail
+Message-ID: <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
+References: <20201109171937.28326-1-vidyas@nvidia.com>
+ <20201109171937.28326-5-vidyas@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20201127094431.120771-1-miaoqinglang@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1606734783; bh=lcK1YEl/L4MjUjqxhnW4k9aJmOIQTqHyqj06Q0RHP44=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=DEtXi/tG6kC58tw1ZuacwKWGo+iXVKxDmmpsOwQ3kvJAbRttpcvB67IWOjwY91L5r
-         I40RfErKGaO6ruhTvW5bQXrfK7rqIsFSF+dGVPnkPTxt5lSONG1zROIZySaeC3aBPz
-         cEGR6CVt2FqZd+rxmL8xNUjEyRL+41qMFNRNFFI3y58mW6Q8YW/T7wfQjSJCs3yEeB
-         Y+8s59VZECNFx/GymDRUrzTd66yK11CtJZzLeSV5+6i/1SI2e2VRgY3BXRHMDuvAgD
-         CzlAlVa0w+1eucmF8/6ustl1YzsQd7jgwA7CRrMcC0FNhOSe+VlSY0fPLO0ls+G7nU
-         dDcrQSjIDlsFA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201109171937.28326-5-vidyas@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
+> Currently the driver checks for error value of different APIs during the
+> uninitialization sequence. It just returns from there if there is any error
+> observed for one of those calls. Comparatively it is better to continue the
+> uninitialization sequence irrespective of whether some of them are
+> returning error. That way, it is more closer to complete uninitialization.
 
-On 27/11/2020 09:44, Qinglang Miao wrote:
-> pm_runtime_get_sync will increment pm usage counter even it
-> failed. Forgetting to putting operation will result in a
-> reference leak here.
-> 
-> A new function pm_runtime_resume_and_get is introduced in
-> [0] to keep usage counter balanced. So We fix the reference
-> leak by replacing it with new funtion.
-> 
-> [0] dd8088d5a896 ("PM: runtime: Add  pm_runtime_resume_and_get to deal with usage counter")
-> 
-> Fixes: 84a3f375eea9 ("dmaengine: tegra-apb: Keep clock enabled only during of DMA transfer")
-> Fixes: 664475cffb8c ("dmaengine: tegra-apb: Ensure that clock is enabled during of DMA synchronization")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+Hi Vidya, Thierry,
+
+I can apply this series (dropping patches as suggested by Thierry),
+before though I wanted to ask you if this patch is really an
+improvement, it is hard to understand why skipping some error
+codes is OK for device correct operations to continue, maybe it
+is worth describing why some of those failures aren't really
+fatal.
+
+Please let me know, thanks.
+
+Lorenzo
+
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
->  drivers/dma/tegra20-apb-dma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 71827d9b0..b7260749e 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -723,7 +723,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
->  		goto end;
->  	}
->  	if (!tdc->busy) {
-> -		err = pm_runtime_get_sync(tdc->tdma->dev);
-> +		err = pm_runtime_resume_and_get(tdc->tdma->dev);
->  		if (err < 0) {
->  			dev_err(tdc2dev(tdc), "Failed to enable DMA\n");
->  			goto end;
-> @@ -818,7 +818,7 @@ static void tegra_dma_synchronize(struct dma_chan *dc)
->  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->  	int err;
+> V4:
+> * None
+> 
+> V3:
+> * Modified subject as per Bjorn's suggestion
+> * Removed tegra_pcie_init_controller()'s error checking part and pushed
+>   a separate patch for it
+> 
+> V2:
+> * None
+> 
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 39 +++++++++-------------
+>  1 file changed, 15 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 253d91033bc3..9be10c8953df 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1422,43 +1422,32 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>  	return ret;
+>  }
 >  
-> -	err = pm_runtime_get_sync(tdc->tdma->dev);
-> +	err = pm_runtime_resume_and_get(tdc->tdma->dev);
->  	if (err < 0) {
->  		dev_err(tdc2dev(tdc), "Failed to synchronize DMA: %d\n", err);
->  		return;
-
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+> -static int __deinit_controller(struct tegra_pcie_dw *pcie)
+> +static void tegra_pcie_unconfig_controller(struct tegra_pcie_dw *pcie)
+>  {
+>  	int ret;
+>  
+>  	ret = reset_control_assert(pcie->core_rst);
+> -	if (ret) {
+> -		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		dev_err(pcie->dev, "Failed to assert \"core\" reset: %d\n", ret);
+>  
+>  	tegra_pcie_disable_phy(pcie);
+>  
+>  	ret = reset_control_assert(pcie->core_apb_rst);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(pcie->dev, "Failed to assert APB reset: %d\n", ret);
+> -		return ret;
+> -	}
+>  
+>  	clk_disable_unprepare(pcie->core_clk);
+>  
+>  	ret = regulator_disable(pcie->pex_ctl_supply);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(pcie->dev, "Failed to disable regulator: %d\n", ret);
+> -		return ret;
+> -	}
+>  
+>  	tegra_pcie_disable_slot_regulators(pcie);
+>  
+>  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
+>  			pcie->cid, ret);
+> -		return ret;
+> -	}
+> -
+> -	return ret;
+>  }
+>  
+>  static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
+> @@ -1482,7 +1471,8 @@ static int tegra_pcie_init_controller(struct tegra_pcie_dw *pcie)
+>  	return 0;
+>  
+>  fail_host_init:
+> -	return __deinit_controller(pcie);
+> +	tegra_pcie_unconfig_controller(pcie);
+> +	return ret;
+>  }
+>  
+>  static int tegra_pcie_try_link_l2(struct tegra_pcie_dw *pcie)
+> @@ -1551,13 +1541,12 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+>  	appl_writel(pcie, data, APPL_PINMUX);
+>  }
+>  
+> -static int tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
+> +static void tegra_pcie_deinit_controller(struct tegra_pcie_dw *pcie)
+>  {
+>  	tegra_pcie_downstream_dev_to_D0(pcie);
+>  	dw_pcie_host_deinit(&pcie->pci.pp);
+>  	tegra_pcie_dw_pme_turnoff(pcie);
+> -
+> -	return __deinit_controller(pcie);
+> +	tegra_pcie_unconfig_controller(pcie);
+>  }
+>  
+>  static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+> @@ -2238,8 +2227,9 @@ static int tegra_pcie_dw_suspend_noirq(struct device *dev)
+>  					       PORT_LOGIC_MSI_CTRL_INT_0_EN);
+>  	tegra_pcie_downstream_dev_to_D0(pcie);
+>  	tegra_pcie_dw_pme_turnoff(pcie);
+> +	tegra_pcie_unconfig_controller(pcie);
+>  
+> -	return __deinit_controller(pcie);
+> +	return 0;
+>  }
+>  
+>  static int tegra_pcie_dw_resume_noirq(struct device *dev)
+> @@ -2267,7 +2257,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
+>  	return 0;
+>  
+>  fail_host_init:
+> -	return __deinit_controller(pcie);
+> +	tegra_pcie_unconfig_controller(pcie);
+> +	return ret;
+>  }
+>  
+>  static int tegra_pcie_dw_resume_early(struct device *dev)
+> @@ -2305,7 +2296,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
+>  		disable_irq(pcie->pci.pp.msi_irq);
+>  
+>  	tegra_pcie_dw_pme_turnoff(pcie);
+> -	__deinit_controller(pcie);
+> +	tegra_pcie_unconfig_controller(pcie);
+>  }
+>  
+>  static const struct tegra_pcie_dw_of_data tegra_pcie_dw_rc_of_data = {
+> -- 
+> 2.17.1
+> 
