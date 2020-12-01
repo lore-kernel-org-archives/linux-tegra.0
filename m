@@ -2,120 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E7EC64E7A
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 20:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 343F9C71156
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB68206E0
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 20:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FEE20671
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:13:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwlru6BY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="izDY+Qlu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgLAUp3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 15:45:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727764AbgLAUp3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Dec 2020 15:45:29 -0500
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295B422250;
-        Tue,  1 Dec 2020 20:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606855488;
-        bh=UFEBHXg8TVXYu2V42/6zenhsEaO7jAcjOCzMkhg+LBE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lwlru6BYBaQkldbv5U24rjcM8VjychQZXi28eVSbUL5E58zO63hAOFrsZ5UmxL/b/
-         6qjv7C7dxujv3yUoZVgH3BWI7DuQik/X+pk21WSsPL+iXb/qGJIT0jhf4F/pRRcuBy
-         NO5ghpzT4kdg2RcruQ/Sg3hqAyPMNEr1E/aa4JBw=
-Received: by mail-oi1-f175.google.com with SMTP id t9so2136694oic.2;
-        Tue, 01 Dec 2020 12:44:48 -0800 (PST)
-X-Gm-Message-State: AOAM531znyYIoZ+Mwh+hmrK5GRtkyR9drbk6GVT+GcdK6rrHM5xKZosX
-        lPPy4cYzdnU9nRawuD3NYvaBfxhbAjzO0IXFr5c=
-X-Google-Smtp-Source: ABdhPJx3HpJhpKp7V1wx4hETSd/vq2BWsy3Lzp9NXDHTg0LYmh47Db0gDHt2H1j7zyKtvEwaw8HufP+JviyrmLq6s74=
-X-Received: by 2002:a05:6808:9a9:: with SMTP id e9mr3002783oig.4.1606855486726;
- Tue, 01 Dec 2020 12:44:46 -0800 (PST)
+        id S1729183AbgLAVN3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 16:13:29 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6347 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbgLAVN3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 16:13:29 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc6b1d10000>; Tue, 01 Dec 2020 13:12:49 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Dec
+ 2020 21:12:48 +0000
+Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Tue, 1 Dec 2020 21:12:47 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>
+CC:     <skomatineni@nvidia.com>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v1 0/7] Add Tegra QSPI driver
+Date:   Tue, 1 Dec 2020 13:12:41 -0800
+Message-ID: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
- <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
- <20201130185227.GA29434@kozik-lap> <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
- <20201201144052.GE31404@gaia> <20201201154139.GF2401593@piout.net>
- <CAK8P3a0N24zuQ+CM-_t66CS8AprzdtdfirfLWwGpjgcXjWjn=Q@mail.gmail.com> <AM6PR06MB4691A5E1603BBE57F35F3B17A6F40@AM6PR06MB4691.eurprd06.prod.outlook.com>
-In-Reply-To: <AM6PR06MB4691A5E1603BBE57F35F3B17A6F40@AM6PR06MB4691.eurprd06.prod.outlook.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 1 Dec 2020 21:44:30 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1QC+582vyxiGOtE3-17m8rbadtrN4yyaGozOP+fEf-3A@mail.gmail.com>
-Message-ID: <CAK8P3a1QC+582vyxiGOtE3-17m8rbadtrN4yyaGozOP+fEf-3A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
-To:     ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm-soc <arm@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606857169; bh=w7tL6QnuzjoQfGsnhBR3YMrteB+mcNdxFdHtHsE02aU=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
+         MIME-Version:Content-Type;
+        b=izDY+QluDpDh7CRvSlNwYQG7tBCIlP5eqSTLeHHTWE8BETzNAH5ved2X2XaQPB+p+
+         i+IzRYqj1MyREW4PCW+HeCpuJECJV8CxVb667bwK2ZPKWW9RACxDJSZQyW76rWPLsp
+         qSDRWp0WhE8lUxVQwshoJIdSAaV158t63obDvGpM1ub6QHVBrfCI0PWuLVXNYIBMJr
+         sz2HctDnSM4Bu93GF75YGUFPupSoJ3wQOneKUn2GyP5cZgb5pLJ2e0qs/ALH+awChE
+         DDU5r7+ZVVNg/t3B9HGWhZYA28fpHZNFpIeFy7TbyDgdUK23dQj3XmzdZ+GWcbBax5
+         xKVioGUYy8JHQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Dec 1, 2020 at 8:48 PM ZHIZHIKIN Andrey
-<andrey.zhizhikin@leica-geosystems.com> wrote:
-> Hello Arnd,
-> > > > Or rather, SoC-specific patches, even to defconfig, should go
-> > > > through the specific SoC maintainers. However, there are occasional
-> > > > defconfig patches which are more generic or affecting multiple SoCs.
-> > > > I just ignore them as the arm64 defconfig is usually handled by the
-> > > > arm-soc folk (when I need a defconfig change, I go for
-> > > > arch/arm64/Kconfig directly ;)).
-> > >
-> > > IIRC, the plan was indeed to get defconfig changes through the
-> > > platform sub-trees. It is also supposed to be how multi_v5 and
-> > > multi_v7 are handled and they will take care of the merge.
-> >
-> > For cross-platform changes like this one, I'm definitely happy to pick up the
-> > patch directly from soc@kernel.org, or from mailing list if I know about it.
->
-> Should I collect all Ack's and re-send this series including the list "nobody
-> talks about" :), or the series can be picked up as-is?
->
-> Your advice would be really welcomed here!
+This series adds Tegra210, Tegra186, and Tehra194 QSPI driver and
+enables QSPI on Jetson Nano and Jetson Xavier NX.
 
-Yes, please do, that makes my life easier. I would apply the patches
-for arch/arm and arch/arm64 when you send them to soc@kernel.org,
-the others go to the respective architecture maintainers, unless they
-want me to pick up the whole series.
+QSPI controller is available on Tegra210, Tegra186 and Tegra194.
 
-      Arnd
+Tegra186 and Tegra194 has additional feature of combined sequence mode
+where command, address and data can all be transferred in a single transfer.
+
+Combined sequence mode is useful with DMA mode transfer.
+
+This series does not have combined sequence mode feature as Tegra186/Tegra194
+GPCDMA driver is not upstreamed yet.
+
+This series includes
+- dt-binding document
+- QSPI driver for Tegra210/Tegra186/Tegra194
+- Enables QSPI on Jetson Nano and Jetson Xavier NX.
+
+Sowjanya Komatineni (7):
+  MAINTAINERS: Add Tegra QSPI driver section
+  dt-bindings: spi: Add Tegra QSPI device tree binding
+  spi: qspi-tegra: Add support for Tegra210 QSPI controller
+  spi: qspi-tegra: Add Tegra186 and Tegra194 QSPI compatibles
+  arm64: tegra: Enable QSPI on Jetson Nano
+  arm64: tegra: Add QSPI nodes on Tegra194
+  arm64: tegra: Enable QSPI on Jetson Xavier NX
+
+ .../devicetree/bindings/spi/nvidia,tegra-qspi.yaml |   77 ++
+ MAINTAINERS                                        |    8 +
+ .../dts/nvidia/tegra194-p3509-0000+p3668-0000.dts  |   12 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   26 +
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   12 +
+ drivers/spi/Kconfig                                |    9 +
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/qspi-tegra.c                           | 1420 ++++++++++++++++++++
+ 8 files changed, 1565 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+ create mode 100644 drivers/spi/qspi-tegra.c
+
+-- 
+2.7.4
+
