@@ -2,93 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476CEC64E7A
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DA4C83014
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2F97208FE
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046042084C
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tllgianM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391267AbgLAOpN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:45:13 -0500
-Received: from foss.arm.com ([217.140.110.172]:44166 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387462AbgLAOpN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Dec 2020 09:45:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A91FC30E;
-        Tue,  1 Dec 2020 06:44:27 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2E5E3F718;
-        Tue,  1 Dec 2020 06:44:25 -0800 (PST)
-Date:   Tue, 1 Dec 2020 14:44:20 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
-        bhelgaas@google.com, jonathanh@nvidia.com,
-        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
- parts fail
-Message-ID: <20201201144420.GA4397@e121166-lin.cambridge.arm.com>
-References: <20201109171937.28326-1-vidyas@nvidia.com>
- <20201109171937.28326-5-vidyas@nvidia.com>
- <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
- <X8ZSGCdp3lqORsPh@ulmo>
+        id S2403860AbgLAOpV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 09:45:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387462AbgLAOpT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 09:45:19 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C484C0613CF;
+        Tue,  1 Dec 2020 06:44:33 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id y7so3288440lji.8;
+        Tue, 01 Dec 2020 06:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y9EUIaQ8GAN124ZcC2ubYB5qyTvd2qS6h+7s4S3ERhc=;
+        b=tllgianMmrwuVpg6r3EmSTbKQSrPwzHyLcVAGFGi8/j+Pv2v6Gawoxml6JypW3e/Fu
+         uMD0+CCTqDUo+pboGZDab1cgowlL44vTGDNNLVM87U+vO9qW04DMZQ5er5jwhoSwo+C2
+         oDGz0FNJVfUs4T4OhzqtNobs6ut7R+2vCjVg8XmISnlQwEvbL5+UbB7Ge/dl49yB1TDK
+         LYr25AZKa89UDlsmo2lD+gB7fYf6oEybJdqrCla7h3Sbvu7NLCHdyfDEaEBGwRbk0p3k
+         4dHDlgZcvIAPJ7Rwh3E87FaAedb6Zaw4q8ebIT4+AAar4b0q2P++jCQn5/vGXhYLTolq
+         mhEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y9EUIaQ8GAN124ZcC2ubYB5qyTvd2qS6h+7s4S3ERhc=;
+        b=pjaS6bnJCoTQHoR49nAedYDB+HWZNNiuOz3xhQSWQITsNKQ0EMw0zc10upNEoZ1smX
+         Vlv0yAy0ADokwHRjbiN4Nw95aiELAz1B3Sr1EuBtYi9lHVzG1tbNVQb22IT2+kBwOFrF
+         wpPOjwjoS3soLt+TIbkmYRY6L+0TN5L5b0ZmOTh2mlNT+aYp6QVPQghsqlktSDHu9p+j
+         10YIzTsz3UDvvq+HykGFk9TqIXmy5zFQt8W9sNh1sBirWEmqaTdJlT3UNzlrLqSX29r4
+         MDigxKmtzuI+pLy6vjo0C82mcz5hehOQgamvOvR0jIuiMQMT1mp5XDZMRrDnBjjb00Fn
+         9ZmA==
+X-Gm-Message-State: AOAM532uixEYChSTPpJSmFkHf4/KPEvhmt1WU0xctGEVYL6YfwJdJSkp
+        +Fxy4w/5vjPuQu/aM1YOxwBr2gHOzmo=
+X-Google-Smtp-Source: ABdhPJx2qDWHfrVca/Vv8M2UHUKK2ubeA/h9klMOPlTpcfO8LtF0Sa0uJ6QnKT2b0Nx9rH1QAeJ6mg==
+X-Received: by 2002:a2e:9c51:: with SMTP id t17mr1411950ljj.302.1606833871765;
+        Tue, 01 Dec 2020 06:44:31 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
+        by smtp.googlemail.com with ESMTPSA id c14sm224862lfp.7.2020.12.01.06.44.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Dec 2020 06:44:30 -0800 (PST)
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
+ <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
+ <20201201143420.GD5239@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2349ba09-95bf-1e2f-68ae-deea36805628@gmail.com>
+Date:   Tue, 1 Dec 2020 17:44:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X8ZSGCdp3lqORsPh@ulmo>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20201201143420.GD5239@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 03:24:24PM +0100, Thierry Reding wrote:
-> On Mon, Nov 30, 2020 at 12:10:07PM +0000, Lorenzo Pieralisi wrote:
-> > On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
-> > > Currently the driver checks for error value of different APIs during the
-> > > uninitialization sequence. It just returns from there if there is any error
-> > > observed for one of those calls. Comparatively it is better to continue the
-> > > uninitialization sequence irrespective of whether some of them are
-> > > returning error. That way, it is more closer to complete uninitialization.
-> > 
-> > Hi Vidya, Thierry,
-> > 
-> > I can apply this series (dropping patches as suggested by Thierry),
-> > before though I wanted to ask you if this patch is really an
-> > improvement, it is hard to understand why skipping some error
-> > codes is OK for device correct operations to continue, maybe it
-> > is worth describing why some of those failures aren't really
-> > fatal.
-> > 
-> > Please let me know, thanks.
+01.12.2020 17:34, Mark Brown пишет:
+> On Tue, Dec 01, 2020 at 05:17:20PM +0300, Dmitry Osipenko wrote:
+>> 01.12.2020 16:57, Mark Brown пишет:
 > 
-> As explained in the commit message, the idea is to continue tearing
-> down even if things fail somewhere in the middle, because that ensures
-> that the hardware gets as close to an "uninitialized" state as possible.
-> If for example the first reset assert were to fail, then none of the
-> PHYs get disabled, the regulator stays on and the clocks stays on, all
-> of which can continue draining power after the controller has already
-> been torn down.
+>>> [1/1] regulator: Allow skipping disabled regulators in regulator_check_consumers()
+>>>       (no commit info)
+> 
+>> Could you please hold on this patch? It won't be needed in a v2, which
+>> will use power domains.
+> 
+>> Also, I'm not sure whether the "sound" tree is suitable for any of the
+>> patches in this series.
+> 
+> It didn't actually get applied (note the "no commit info") - it looks
+> like b4's matching code got confused and decided to generate mails for
+> anything that I've ever downloaded and not posted.
+> 
 
-Understood. By reading the code it looked weird that eg a reset failure
-was tolerable - I thought an error would be fatal (I don't know what are
-the consequences for instance on a subsequent resume) but it looks like
-it actually is not, that's the only point I raised.
-
-> So yes, I think this is an improvement. It's unclear to me what you're
-> asking for, though. Would you rather have a comment somewhere near the
-> tegra_pcie_unconfig_controller() function that states the same thing as
-> the commit message?
-
-It could be useful but it is up to you, I will merge the series as-is
-or I can add it myself, as you wish.
-
-Thanks,
-Lorenzo
+Alright, thank you for the clarification.
