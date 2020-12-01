@@ -2,115 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D383C64E7A
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6B7C71156
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1748D20758
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:35:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dk2mKbi0"
+	by mail.kernel.org (Postfix) with ESMTP id BA00420757
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387835AbgLAOfb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:35:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54520 "EHLO mail.kernel.org"
+        id S2389082AbgLAOlm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 09:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbgLAOfa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Dec 2020 09:35:30 -0500
-Received: from localhost (cpc102334-sgyl38-2-0-cust884.18-2.cable.virginm.net [92.233.91.117])
+        id S2387462AbgLAOlm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Dec 2020 09:41:42 -0500
+Received: from gaia (unknown [95.146.230.165])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DDAA20757;
-        Tue,  1 Dec 2020 14:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606833289;
-        bh=MyXMx5yXcwhyHoSDPi4JqwtH6IbreqZ2dffpm2rMrnA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dk2mKbi0tMydQDEKwILrugaQ4+lDOei99EiGyEzw8miGGC/enajtGKrNxNAgOh19d
-         bUolBQkpIVH3Hui3nBJELnqmmCNUkGvsVFhpqQ5K0vNjOLXzgTLtjz0BPDjBiyCFTO
-         H6YlxqFYzbMW5dFfkwv/1U0YroBSdxaecQ6rhs4U=
-Date:   Tue, 1 Dec 2020 14:34:20 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20201201143420.GD5239@sirena.org.uk>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
- <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A2B720757;
+        Tue,  1 Dec 2020 14:40:55 +0000 (UTC)
+Date:   Tue, 1 Dec 2020 14:40:53 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "tony@atomide.com" <tony@atomide.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+        "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "deller@gmx.de" <deller@gmx.de>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
+Message-ID: <20201201144052.GE31404@gaia>
+References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
+ <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
+ <20201130185227.GA29434@kozik-lap>
+ <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
-X-Cookie: Who was that masked man?
+In-Reply-To: <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, Nov 30, 2020 at 07:50:25PM +0000, ZHIZHIKIN Andrey wrote:
+> From Krzysztof Kozlowski <krzk@kernel.org>:
+> > On Mon, Nov 30, 2020 at 03:21:33PM +0000, Andrey Zhizhikin wrote:
+> > > Commit 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is
+> > > unused") removed geenric_bl driver from the tree, together with
+> > > corresponding config option.
+> > >
+> > > Remove BACKLIGHT_GENERIC config item from all ARM configurations.
+> > >
+> > > Fixes: 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it
+> > > is unused")
+> > > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > > Signed-off-by: Andrey Zhizhikin
+> > > <andrey.zhizhikin@leica-geosystems.com>
+> > > ---
+> > >  arch/arm/configs/at91_dt_defconfig        | 1 -
+> > >  arch/arm/configs/cm_x300_defconfig        | 1 -
+> > >  arch/arm/configs/colibri_pxa300_defconfig | 1 -
+> > >  arch/arm/configs/jornada720_defconfig     | 1 -
+> > >  arch/arm/configs/magician_defconfig       | 1 -
+> > >  arch/arm/configs/mini2440_defconfig       | 1 -
+> > >  arch/arm/configs/omap2plus_defconfig      | 1 -
+> > >  arch/arm/configs/pxa3xx_defconfig         | 1 -
+> > >  arch/arm/configs/qcom_defconfig           | 1 -
+> > >  arch/arm/configs/sama5_defconfig          | 1 -
+> > >  arch/arm/configs/sunxi_defconfig          | 1 -
+> > >  arch/arm/configs/tegra_defconfig          | 1 -
+> > >  arch/arm/configs/u8500_defconfig          | 1 -
+> > >  13 files changed, 13 deletions(-)
+> > 
+> > You need to send it to arm-soc maintainers, otherwise no one might feel
+> > responsible enough to pick it up.
+> 
+> Good point, thanks a lot!
+> 
+> I was not aware of the fact that there is a separate ML that should
+> receive patches targeted ARM SOCs. Can you (or anyone else) please
+> share it, so I can re-send it there as well?
 
---SO98HVl1bnMOfKZd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's not a mailing list as such (with archives etc.), just an alias to
+the arm-soc maintainers: arm@kernel.org.
 
-On Tue, Dec 01, 2020 at 05:17:20PM +0300, Dmitry Osipenko wrote:
-> 01.12.2020 16:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > +CC Arnd and Olof,
+> > 
+> > Dear Arnd and Olof,
+> > 
+> > Maybe it is worth to add arm-soc entry to the MAINTAINERS file?
+> > Otherwise how one could get your email address? Not mentioning the
+> > secret-soc address. :)
 
-> > [1/1] regulator: Allow skipping disabled regulators in regulator_check_=
-consumers()
-> >       (no commit info)
+I tried to convince them before, it didn't work. I guess they don't like
+to be spammed ;). Or rather, SoC-specific patches, even to defconfig,
+should go through the specific SoC maintainers. However, there are
+occasional defconfig patches which are more generic or affecting
+multiple SoCs. I just ignore them as the arm64 defconfig is usually
+handled by the arm-soc folk (when I need a defconfig change, I go for
+arch/arm64/Kconfig directly ;)).
 
-> Could you please hold on this patch? It won't be needed in a v2, which
-> will use power domains.
+Anyway, I still think that we should add a MAINTAINERS entry for
+arch/arm64/configs/defconfig and arch/arm64/Kconfig.platforms.
 
-> Also, I'm not sure whether the "sound" tree is suitable for any of the
-> patches in this series.
-
-It didn't actually get applied (note the "no commit info") - it looks
-like b4's matching code got confused and decided to generate mails for
-anything that I've ever downloaded and not posted.
-
---SO98HVl1bnMOfKZd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/GVGsACgkQJNaLcl1U
-h9BikAf/buTRpKtsLDzFSoQBjj73gw+9m/quyO+03JWRrvv3U6Me8tZmCZHGcAhJ
-5+PFS79ESOLZrypMM4IE6HEK1cq0AFNjUDMqVKtWFP4GgZ8LBjcLvSF8OYkdHwo7
-TiUsxAOnhequj3OhP46T/AuusHAX53D4Fg4rLsJMCrJygo0e6kAaOB7F9ZlJqNQt
-A3pk4g+mC153uBGhCsZRWQmj93R9SxH6vUd3g6ePE0jIZAqa3LSJHdYX3xRSfQWd
-Iojrsh3QYMFNdrajfbhAcn9hyXU1O2Zy0NadudYbqOIYWBQ5TEbW8z55BJLr1a2O
-09Ob2CqfLC5c6oPrJJtjRMGm4w8iaw==
-=1gdB
------END PGP SIGNATURE-----
-
---SO98HVl1bnMOfKZd--
+-- 
+Catalin
