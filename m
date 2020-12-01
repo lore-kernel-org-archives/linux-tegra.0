@@ -2,144 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FC3C83013
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D29C64E7B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 305702080A
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:18:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C77C20757
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:25:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFS1gJ6q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o1IEm/1x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388705AbgLAOSF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:18:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
+        id S1729216AbgLAOZJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 09:25:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728702AbgLAOSE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 09:18:04 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6302C0613D4;
-        Tue,  1 Dec 2020 06:17:23 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id j205so4441170lfj.6;
-        Tue, 01 Dec 2020 06:17:23 -0800 (PST)
+        with ESMTP id S1729083AbgLAOZI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 09:25:08 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68408C0613CF;
+        Tue,  1 Dec 2020 06:24:28 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id y22so3524730edv.1;
+        Tue, 01 Dec 2020 06:24:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+/VDVLzOBDjqiEu/N1C0eMmuynbTWK2RMfkKzr3b440=;
-        b=NFS1gJ6qIMEM0tjrCNFlTLXIiKzLUz8Gnm9RoDkDgAGoOrAmFH665FazAn65xfep9j
-         q1MzYJOj3Zlv/6l+94KjbYlkwVpip2977xGSaKfNO/trDYc5k7c4/WcDtCzjHhJivaw4
-         R3wSqZQpSfK8urUC+KUWSI03zjKLD2qUjSA1Sh36Vv3gkEPtGffag2dP6CvSTvSq3UKY
-         YylNKX7Dx4eifs+51m341bLnClw1F91DSN9xMT666b1NKXE2m8BabsDyn4Az/aDh03d7
-         EAnoQKdNqE2iVos9mifhxROnB6lM4QDKR2vwmfs0SCZYZPWhyhwrUHdSXnF5Z6q3a5OU
-         KfeA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rMaczZz3F2b2Ujyj8LLGrM+0aK5nS9GJNY08T7j6uOs=;
+        b=o1IEm/1xLUTk3YAvobHtX61owC6BxYTGclPQEvFgRSq6xfI4uv8qbzFwe6PxQcACsp
+         sUcsjqELr1CQemk27rLVp5+NT+yhckzvj4sngML0eWVa0b1MNPfq2FzuO1jX9Mk2RGaS
+         G+5VHQ3mEqzwWS8n2HNEVEaG03EZR5MuCC9EZ+0LwBOZzMxJmcVH/yLa0xljatwMqrMc
+         yrGh451P7i9zivuRLB8EAZCWMmJPObwsqpcgW+4JcQFnlfXL79X8FNWvJjX3Ghg3xfVU
+         H3NzL5BGqjjp4euKYwYMwKDNSPwVjTYUzpPI75bImQiUpuzzQpELmd4eJuryCc2bUd4T
+         1EVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+/VDVLzOBDjqiEu/N1C0eMmuynbTWK2RMfkKzr3b440=;
-        b=LdNCmRtHMzL2CqWs+Cppu8mR/wz1IRS+Q3HJ6rWJ4WI1lx9muj5HlNQJ974cTIIXgD
-         AFb/Rwop+vGgpCExbZLizRj4hdcjyLrPmrVptyWgLLd5FO472G4U4dmpg/bRIThDT/tz
-         lJCHymwruUxKSZD4uk7zIWt5Yb1GHUlGwcl5TgMn39C79RhCX0ori5L5je3JdROGWnzB
-         awLwEMYRElFPSpi+OeEjEPwmAYiP8aJRgzUNKOLnUH6AbqtkzzoPjSk3GoSclkIiof6P
-         81wBEar6Zb2y+leq85hAgHPfW1xQMUTi8+nfr/yqMni7mmp1vNj0lXm2tNqIIz5NXLDX
-         JL5g==
-X-Gm-Message-State: AOAM530E8mB5IY9b0+f5BrpGPt4Ed00Qk19r7ox/PNJzObu5RUHGXCiI
-        IKifSrFP1lWbaplpkpllVzWjOsdpv+M=
-X-Google-Smtp-Source: ABdhPJy45twU6WKpFARyvJXmOYuPohM+PTgEg36doZmYuxa+KLwfB3LOW5+S25YIdNCijAJHOc0fgg==
-X-Received: by 2002:ac2:5503:: with SMTP id j3mr1305836lfk.94.1606832242037;
-        Tue, 01 Dec 2020 06:17:22 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
-        by smtp.googlemail.com with ESMTPSA id p16sm214803lfe.255.2020.12.01.06.17.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Dec 2020 06:17:21 -0800 (PST)
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-References: <20201104234427.26477-1-digetx@gmail.com>
- <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
-Date:   Tue, 1 Dec 2020 17:17:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rMaczZz3F2b2Ujyj8LLGrM+0aK5nS9GJNY08T7j6uOs=;
+        b=KrStr8n5Q/hMD0JhYwvhESw3Y9/041Ibu7gCVU2uEE9sRRWV0vs8G9u2P9anw963wp
+         EfWm/tXKEVilgoT5akz6MRNYacXMuiK9GVk087UZs+s/6w4D6LDrmpwRNHGiJubZXtCD
+         D0r2K8eyqdPYGslRZQ2KCF7ksFopg67kshstc2n1C7FKdATXMxiQGbv8bNxVFEzABmNY
+         Fps/qEBbztZAKGC/7gjLF9OM3pmHRuwt1N4idgAOQ7P6HmbZSYkiLtqfiM9zFIWt11rv
+         rc25lyFY20VTGK71nLihG5Tp2XYLTFcNHU5hmiLG3VvAOI3yVnZwbnW+U0PA8zMkgaf1
+         bEtA==
+X-Gm-Message-State: AOAM532DXmAo1iIp9jR8D0OMo+9XpGmmi+/SvDPX2+E2VmaIRd/EuHJ9
+        IFa+QGzUHvIY6borFbStqWwgmUmPqxM=
+X-Google-Smtp-Source: ABdhPJybpmPSuQPlnJ3jwcOIABm4FhUW/eH3DUAXnaJ0RD4eLrOdJR31u1x095pdnxyp3XsE6H5AtQ==
+X-Received: by 2002:aa7:cb4a:: with SMTP id w10mr3226084edt.343.1606832667045;
+        Tue, 01 Dec 2020 06:24:27 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id t11sm910827ejx.68.2020.12.01.06.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Dec 2020 06:24:25 -0800 (PST)
+Date:   Tue, 1 Dec 2020 15:24:24 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
+        bhelgaas@google.com, jonathanh@nvidia.com,
+        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
+ parts fail
+Message-ID: <X8ZSGCdp3lqORsPh@ulmo>
+References: <20201109171937.28326-1-vidyas@nvidia.com>
+ <20201109171937.28326-5-vidyas@nvidia.com>
+ <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8ArMwWOicASd/TWL"
+Content-Disposition: inline
+In-Reply-To: <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
+User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.12.2020 16:57, Mark Brown пишет:
-> On Thu, 5 Nov 2020 02:43:57 +0300, Dmitry Osipenko wrote:
->> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
->> power consumption and heating of the Tegra chips. Tegra SoC has multiple
->> hardware units which belong to a core power domain of the SoC and share
->> the core voltage. The voltage must be selected in accordance to a minimum
->> requirement of every core hardware unit.
->>
->> The minimum core voltage requirement depends on:
->>
->> [...]
-> 
-> Applied to
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-> 
-> Thanks!
-> 
-> [1/1] regulator: Allow skipping disabled regulators in regulator_check_consumers()
->       (no commit info)
-> 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
 
-Hello Mark,
+--8ArMwWOicASd/TWL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you please hold on this patch? It won't be needed in a v2, which
-will use power domains.
+On Mon, Nov 30, 2020 at 12:10:07PM +0000, Lorenzo Pieralisi wrote:
+> On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
+> > Currently the driver checks for error value of different APIs during the
+> > uninitialization sequence. It just returns from there if there is any e=
+rror
+> > observed for one of those calls. Comparatively it is better to continue=
+ the
+> > uninitialization sequence irrespective of whether some of them are
+> > returning error. That way, it is more closer to complete uninitializati=
+on.
+>=20
+> Hi Vidya, Thierry,
+>=20
+> I can apply this series (dropping patches as suggested by Thierry),
+> before though I wanted to ask you if this patch is really an
+> improvement, it is hard to understand why skipping some error
+> codes is OK for device correct operations to continue, maybe it
+> is worth describing why some of those failures aren't really
+> fatal.
+>=20
+> Please let me know, thanks.
 
-Also, I'm not sure whether the "sound" tree is suitable for any of the
-patches in this series.
+As explained in the commit message, the idea is to continue tearing
+down even if things fail somewhere in the middle, because that ensures
+that the hardware gets as close to an "uninitialized" state as possible.
+If for example the first reset assert were to fail, then none of the
+PHYs get disabled, the regulator stays on and the clocks stays on, all
+of which can continue draining power after the controller has already
+been torn down.
+
+So yes, I think this is an improvement. It's unclear to me what you're
+asking for, though. Would you rather have a comment somewhere near the
+tegra_pcie_unconfig_controller() function that states the same thing as
+the commit message?
+
+Thierry
+
+--8ArMwWOicASd/TWL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/GUhUACgkQ3SOs138+
+s6GeEBAAlVMVuTOa7hJH0+TLdbBweBhIYaaTZnWzPfk4nkQ6e+KkyABp6qKX9U7x
+Jnt+YtAx69WxUTX9tLmVlT/DBrOudl5HEU6H2zzuIa0WKe2e55fb32RmW7aV8qo2
+gIPEThyNqn8t6dxXI8wnIID/92NTX0wp2zs+m1lBxRLFn+X+KXuJBC2BIqG0w7wm
+LpfMXLVTxWxwZbpQVIzTFxwiN51/c/wXzi3e6rC+L6TRo14j1wpyfpMXbCAqOOWD
+KAm/iitS3k2OTGf04Bg3g6+D10nBGWBzj5JKnrWxRdtBHh6K9ZdudG2JDZYulV7b
+99RCy9wjAamkFr/TvBq9ZHssB4f7UOWSqdDyLEYTq/P6OU1u2NHCd9uj1Q8VeA35
+UAobY84T9cyIYOxYZ45n2m93y5mISbV8NKevwVmPi2HJE1KRLUSxoJ3OfcaliD9+
+Slqe+h/+IxXEeBTdnLRDWuD7B2igpxDIK/rUGOtC6XpTvz2uFHfFuUxdte0rXSRV
+x04/L0zTOdxQeiHOzp9Jh0ws9XhqxW8456UI/FBNT0PkCXSTPHWRB53kThzhVRfL
+VgLC2EoO08huGoP9eWfdstv2IBQNb3B4XiSH5hMPBg0eLOIGG9XCpdKZmgHRCaQU
+4Dbq3kz48mTqAPTW1KxvBCrxHd7VhzwvZLYoLr7Hpk+3SVVleUI=
+=am4l
+-----END PGP SIGNATURE-----
+
+--8ArMwWOicASd/TWL--
