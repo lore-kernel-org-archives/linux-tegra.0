@@ -2,120 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DA4C83014
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEEFC64E7B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 15:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 046042084C
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E03B20758
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 15:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tllgianM"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="M6GzMfZ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403860AbgLAOpV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:45:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48454 "EHLO
+        id S2391528AbgLAPJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 10:09:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387462AbgLAOpT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 09:45:19 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C484C0613CF;
-        Tue,  1 Dec 2020 06:44:33 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id y7so3288440lji.8;
-        Tue, 01 Dec 2020 06:44:33 -0800 (PST)
+        with ESMTP id S2390172AbgLAPJr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 10:09:47 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE43C0613D4
+        for <linux-tegra@vger.kernel.org>; Tue,  1 Dec 2020 07:09:07 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id b2so3655098edy.13
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Dec 2020 07:09:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=y9EUIaQ8GAN124ZcC2ubYB5qyTvd2qS6h+7s4S3ERhc=;
-        b=tllgianMmrwuVpg6r3EmSTbKQSrPwzHyLcVAGFGi8/j+Pv2v6Gawoxml6JypW3e/Fu
-         uMD0+CCTqDUo+pboGZDab1cgowlL44vTGDNNLVM87U+vO9qW04DMZQ5er5jwhoSwo+C2
-         oDGz0FNJVfUs4T4OhzqtNobs6ut7R+2vCjVg8XmISnlQwEvbL5+UbB7Ge/dl49yB1TDK
-         LYr25AZKa89UDlsmo2lD+gB7fYf6oEybJdqrCla7h3Sbvu7NLCHdyfDEaEBGwRbk0p3k
-         4dHDlgZcvIAPJ7Rwh3E87FaAedb6Zaw4q8ebIT4+AAar4b0q2P++jCQn5/vGXhYLTolq
-         mhEg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RTOWmJcTi6tDwprZNdib9Hdn63NVGgGhw7pXQyKPyrk=;
+        b=M6GzMfZ6FF7DbGPeP3NnXgxaIiQw4pdouFhBBJ+/YkU0qgns2g9J910z6UaG/504fR
+         yo6SiAO+F9hFvvdZHOS29XEzYnpQF/JgL7IjpVsTFAxFmioDZAJZzqAzUMjgyqEOvEC5
+         KVfjAE9Mb4jFaoBgbnn9qb4Zk8l74i2mShu2CaY9zJ2ORIYkDzUcMEnwwbfEwFzVmY87
+         dEWsQPiu7OjYl5oV0BB5vAV0lxVVuHhfikU3wBXiO49UJedrpXtnthVuj2xNhDAcPqvl
+         tySGoyMX+FBR6krNlJr/HrBybicyTg2y6RgT1lpI1UwWsxcwStC0FDcPZGl//6n8iklx
+         2vgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y9EUIaQ8GAN124ZcC2ubYB5qyTvd2qS6h+7s4S3ERhc=;
-        b=pjaS6bnJCoTQHoR49nAedYDB+HWZNNiuOz3xhQSWQITsNKQ0EMw0zc10upNEoZ1smX
-         Vlv0yAy0ADokwHRjbiN4Nw95aiELAz1B3Sr1EuBtYi9lHVzG1tbNVQb22IT2+kBwOFrF
-         wpPOjwjoS3soLt+TIbkmYRY6L+0TN5L5b0ZmOTh2mlNT+aYp6QVPQghsqlktSDHu9p+j
-         10YIzTsz3UDvvq+HykGFk9TqIXmy5zFQt8W9sNh1sBirWEmqaTdJlT3UNzlrLqSX29r4
-         MDigxKmtzuI+pLy6vjo0C82mcz5hehOQgamvOvR0jIuiMQMT1mp5XDZMRrDnBjjb00Fn
-         9ZmA==
-X-Gm-Message-State: AOAM532uixEYChSTPpJSmFkHf4/KPEvhmt1WU0xctGEVYL6YfwJdJSkp
-        +Fxy4w/5vjPuQu/aM1YOxwBr2gHOzmo=
-X-Google-Smtp-Source: ABdhPJx2qDWHfrVca/Vv8M2UHUKK2ubeA/h9klMOPlTpcfO8LtF0Sa0uJ6QnKT2b0Nx9rH1QAeJ6mg==
-X-Received: by 2002:a2e:9c51:: with SMTP id t17mr1411950ljj.302.1606833871765;
-        Tue, 01 Dec 2020 06:44:31 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
-        by smtp.googlemail.com with ESMTPSA id c14sm224862lfp.7.2020.12.01.06.44.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Dec 2020 06:44:30 -0800 (PST)
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-References: <20201104234427.26477-1-digetx@gmail.com>
- <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
- <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
- <20201201143420.GD5239@sirena.org.uk>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2349ba09-95bf-1e2f-68ae-deea36805628@gmail.com>
-Date:   Tue, 1 Dec 2020 17:44:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RTOWmJcTi6tDwprZNdib9Hdn63NVGgGhw7pXQyKPyrk=;
+        b=sP2OrOUF7wxsMn3/IwSljia1ma+zK+zDA+IOf52B3GtXfjnzxdqmyMtSjwekEqNVSp
+         SJhgrXxtCwsh2Zo7qvbNhbE41aDNwuMsfNDPikoUn3MxzxYoXG4iVBYp0k6Ob+9exC19
+         cgdWiO2gG/C0BNkywNlbCvPIVCO/KUHS0Uyv53zpucqOlQVTf0pCoWZ7JRqGhhB0zYQN
+         50jgDTT4Q0kP6Gs0Y19bO8sKPHNLOtiO1ghSNHCmoC3FVECeBslSkB7H239ypyzyS/Jl
+         e2HF8Y9OFCCOWqWl0NU9djYoQgoAjOITEK58y8ayaftDxcT/bYlu/2qcC5ukq4KvSvVf
+         Z2xw==
+X-Gm-Message-State: AOAM533WBN2+zCDRrQ2UtXMCjWwcbFmtA784jIo9N8ugUYGyiT9DbkGd
+        OiNskhbIQB+iRZ1Df4Lzyp4o6jIWy88zY8RRL/6wqg==
+X-Google-Smtp-Source: ABdhPJzrWBdQJnmW0BM0NTPvh2J75LukiUCSsiOAD+wTKDT0AULBU0OK7XeO2+V7DnpJ+Qa4WT6COZy0AbS/GJiikqY=
+X-Received: by 2002:a05:6402:88c:: with SMTP id e12mr3532883edy.88.1606835346190;
+ Tue, 01 Dec 2020 07:09:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201201143420.GD5239@sirena.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20201127140852.123192-1-thierry.reding@gmail.com> <20201127140852.123192-3-thierry.reding@gmail.com>
+In-Reply-To: <20201127140852.123192-3-thierry.reding@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 1 Dec 2020 16:08:55 +0100
+Message-ID: <CAMpxmJVDo9DmKLsDzRH75GNzRAu2OTGOfEcPz6oEj55tvSFtEA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: tegra: Convert to gpio_irq_chip
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.12.2020 17:34, Mark Brown пишет:
-> On Tue, Dec 01, 2020 at 05:17:20PM +0300, Dmitry Osipenko wrote:
->> 01.12.2020 16:57, Mark Brown пишет:
-> 
->>> [1/1] regulator: Allow skipping disabled regulators in regulator_check_consumers()
->>>       (no commit info)
-> 
->> Could you please hold on this patch? It won't be needed in a v2, which
->> will use power domains.
-> 
->> Also, I'm not sure whether the "sound" tree is suitable for any of the
->> patches in this series.
-> 
-> It didn't actually get applied (note the "no commit info") - it looks
-> like b4's matching code got confused and decided to generate mails for
-> anything that I've ever downloaded and not posted.
-> 
+On Fri, Nov 27, 2020 at 3:09 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Convert the Tegra GPIO driver to use the gpio_irq_chip infrastructure.
+> This allows a bit of boiler plate to be removed and while at it enables
+> support for hierarchical domains, which is useful to support PMC wake
+> events on Tegra210 and earlier.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-Alright, thank you for the clarification.
+This looks good to me but Linus is much better versed in hierarchical
+domains so I'll let him take a look before picking it up.
+
+Bartosz
