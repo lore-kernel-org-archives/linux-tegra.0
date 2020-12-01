@@ -2,94 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E9EC8300F
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33C5C64E7A
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2BDD20705
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:14:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="eW8Npzw8"
+	by mail.kernel.org (Postfix) with ESMTP id 94BAE2076C
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 21:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388802AbgLAVOM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 16:14:12 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14599 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388499AbgLAVOL (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 16:14:11 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc6b1d90000>; Tue, 01 Dec 2020 13:12:57 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Dec
- 2020 21:12:57 +0000
-Received: from skomatineni-linux.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 1 Dec 2020 21:12:56 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>
-CC:     <skomatineni@nvidia.com>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v1 7/7] arm64: tegra: Enable QSPI on Jetson Xavier NX
-Date:   Tue, 1 Dec 2020 13:12:48 -0800
-Message-ID: <1606857168-5839-8-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1729885AbgLAVTg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 16:19:36 -0500
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:45945 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbgLAVTf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 16:19:35 -0500
+Received: by mail-ej1-f66.google.com with SMTP id qw4so7277470ejb.12;
+        Tue, 01 Dec 2020 13:19:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jryqI5sQqWi4PXznClcMpjDSZfGYWOSS95XBGrU9xYM=;
+        b=GkhvCORVvg1kt+1N8y3nenDNiyBtA5+59dHp9uQqPpLMnY8Xld+GUV2p93cPPy7cuk
+         /NKYKy/yK+iMWN7SU5Pl1IQAo38eviLMQIWXTP1HxbZI3LKFJ4VR9OwYkPdhpxm1SWOn
+         XHh4ZQLffJiLtbMXa1rxxUpNT6nklJEP29kiJOvSQbSVip+eDe9uBagIDxtwZQZ0KcHA
+         3MuPcGePNTzyBgMPm5RnpOr6PoJXJm9aDTUZOjRt5DXhiUnwabMN65q7XlmGOLcw6w/2
+         hBAg/ic6XwhiaBmrPAEWGGVFxA6P2Q9/60CCPazGFLAymLJVvXXPJ4XzH66Takwc6mFU
+         YKPA==
+X-Gm-Message-State: AOAM53249uaSjuQdkhcIj/EWk83n7xNCxL01ylhu1EFY5DA92SIzc2Et
+        SeXfGIlGwUimfkb9k15+wOQ=
+X-Google-Smtp-Source: ABdhPJwVCwY+a1v0Hv+LTfv/oplZ+OnT3nmymHRP5j+/8a+SofJfABEbDHeJGwHTKrcOyfGOWnoRIA==
+X-Received: by 2002:a17:906:2e16:: with SMTP id n22mr5070528eji.477.1606857532633;
+        Tue, 01 Dec 2020 13:18:52 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id d14sm484594edu.63.2020.12.01.13.18.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Dec 2020 13:18:51 -0800 (PST)
+Date:   Tue, 1 Dec 2020 23:18:49 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "tony@atomide.com" <tony@atomide.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+        "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "deller@gmx.de" <deller@gmx.de>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm-soc <arm@kernel.org>
+Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
+Message-ID: <20201201211849.GA23379@kozik-lap>
+References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
+ <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
+ <20201130185227.GA29434@kozik-lap>
+ <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
+ <20201201144052.GE31404@gaia>
+ <20201201154139.GF2401593@piout.net>
+ <CAK8P3a0N24zuQ+CM-_t66CS8AprzdtdfirfLWwGpjgcXjWjn=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1606857177; bh=GInpj6T70m3778V+Yp4yxBHh4Eak5vnqih3rso+ksSM=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=eW8Npzw8B40MM4rQ3VDIkyU+x34hszglC4gYigZsT0HqtmQRoY2GvArnxxWNWTOV5
-         T/Kc5S9jgxphi8uN2BX/dWllgBTNa1UYw+DHtvYbzXcWhog9dmgjqL0VLzrPE3aLKS
-         XOQ5Q4E0PaIcqLae1OlhZZoNzzrIC99pGuQofPBYCPvpHBgiAL/5qW5/Gd0w1pkKSU
-         26dDPvy9mXcFh60kzBENWi2wpKRlSVGmjLTFtOGk+EXGRGetlNTwuWbs1SfoKsZ+5r
-         /D0LcTkA6bTp5okfC8nyd94My1ycDtgzzQxkmwAZfYPiq0V9nwHEv00SHABnFbvb0g
-         6f58HXHk8cXEQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0N24zuQ+CM-_t66CS8AprzdtdfirfLWwGpjgcXjWjn=Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Jetson Xavier NX has Spansion S25FS26S Quad SPI Flash.
+On Tue, Dec 01, 2020 at 04:50:22PM +0100, Arnd Bergmann wrote:
+> On Tue, Dec 1, 2020 at 4:41 PM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> > On 01/12/2020 14:40:53+0000, Catalin Marinas wrote:
+> > > On Mon, Nov 30, 2020 at 07:50:25PM +0000, ZHIZHIKIN Andrey wrote:
+> > > > From Krzysztof Kozlowski <krzk@kernel.org>:
+> 
+> > > I tried to convince them before, it didn't work. I guess they don't like
+> > > to be spammed ;).
+> >
+> > The first rule of arm-soc is: you do not talk about arm@ and soc@
+> 
+> I don't mind having the addresses documented better, but it needs to
+> be done in a way that avoids having any patch for arch/arm*/boot/dts
+> and arch/arm/*/configs Cc:d to soc@kernel.org.
+> 
+> If anyone has suggestions for how to do that, let me know.
 
-This patch enables QSPI on Jetson Xavier NX.
+Not a perfect solution but something. How about:
+https://lore.kernel.org/linux-arm-kernel/20201201211516.24921-2-krzk@kernel.org/T/#u
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Would not work on defconfigs but there is a chance someone will find
+your addresses this way. Should not cause to much additional traffic.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-index 7f97b34..f1053e7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-@@ -100,6 +100,18 @@
- 			phy-names = "usb2-1", "usb2-2", "usb3-2";
- 		};
- 
-+		spi@3270000 {
-+			status = "okay";
-+
-+			flash@0 {
-+				compatible = "spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <102000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
-+			};
-+		};
-+
- 		pwm@32d0000 {
- 			status = "okay";
- 		};
--- 
-2.7.4
+Best regards,
+Krzysztof
 
