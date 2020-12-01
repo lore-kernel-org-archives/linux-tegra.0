@@ -2,129 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91709C83016
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 15:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17328C64E7A
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 18:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30C2F2080A
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 15:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5EB62151B
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 18:13:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0BXfp9B"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Pv2b7mFp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391685AbgLAPvX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 10:51:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbgLAPvW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Dec 2020 10:51:22 -0500
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6382220B;
-        Tue,  1 Dec 2020 15:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606837841;
-        bh=ocP+REHyvc3INvCyRToWa0BDelMYpVNAD4Ht4bVMxw4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=d0BXfp9B678drYtWqDBUlknaZrgIENz3/9P8PkQTHdjgiToHebGZd6AT15QYDi9o3
-         of85a0gKvoI/ETgfnp9XrwnI4Xto0nyM976m+c8Ye8M6eJpwXu4nGmsJDnNTU34Hh9
-         6/i/TQQ1NbuyKJYpe4hPrtWe70ECqRFJoCOWZgsU=
-Received: by mail-yb1-f172.google.com with SMTP id s8so2225238yba.13;
-        Tue, 01 Dec 2020 07:50:41 -0800 (PST)
-X-Gm-Message-State: AOAM531/SlNtlJFYd/kTkfrc/cZXJFH5SwYLrnrnu5J1G/KMaGl006sl
-        fXZmBkJ8IerwiGIcUvSYdkExIqBsAjD55hbuBjw=
-X-Google-Smtp-Source: ABdhPJwlRbiyuko5jdeqhi5YEFdXPQ6zEuSN349AgsmyyWjcElmhcbPPjEuYreBsAU023iCYpnCQs8p8Rs/BnCHJ/AM=
-X-Received: by 2002:a4a:eac1:: with SMTP id s1mr2310247ooh.15.1606837839133;
- Tue, 01 Dec 2020 07:50:39 -0800 (PST)
+        id S1728310AbgLASMs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 13:12:48 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15776 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbgLASMs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 1 Dec 2020 13:12:48 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc687770000>; Tue, 01 Dec 2020 10:12:07 -0800
+Received: from [10.26.72.142] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Dec
+ 2020 18:11:59 +0000
+Subject: Re: [PATCH net-next 4/6] net: ipa: add support to code for IPA v4.5
+To:     Alex Elder <elder@linaro.org>, <davem@davemloft.net>,
+        <kuba@kernel.org>
+CC:     <evgreen@chromium.org>, <subashab@codeaurora.org>,
+        <cpratapa@codeaurora.org>, <bjorn.andersson@linaro.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20201125204522.5884-1-elder@linaro.org>
+ <20201125204522.5884-5-elder@linaro.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5b5d9d40-94d5-5dad-b861-fd9bef8260e2@nvidia.com>
+Date:   Tue, 1 Dec 2020 18:11:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
- <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
- <20201130185227.GA29434@kozik-lap> <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
- <20201201144052.GE31404@gaia> <20201201154139.GF2401593@piout.net>
-In-Reply-To: <20201201154139.GF2401593@piout.net>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 1 Dec 2020 16:50:22 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0N24zuQ+CM-_t66CS8AprzdtdfirfLWwGpjgcXjWjn=Q@mail.gmail.com>
-Message-ID: <CAK8P3a0N24zuQ+CM-_t66CS8AprzdtdfirfLWwGpjgcXjWjn=Q@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm-soc <arm@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201125204522.5884-5-elder@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606846327; bh=/D27y9r+pShq7ay9aYZhLt2r9FM2Jf0ooHB+jAavkBM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=Pv2b7mFpB9VseLXJGAz/zIg5f00sqtHxchoQ86LxP3FddDa9FsQwi/Wfze+IEzAQ+
+         KXkbjYRy57Gav896beABqu/EaH8OwamsJWLAUj87pC/PjQzRfBzVX7ytOKaYgAUAki
+         wYApKu1tpMoXA1IH2s9r29A/B7vafueHxWK4TdUcY+osVdqsQYAUU6OAFSB54FWqOD
+         IzIT04q+0Q2feW1bUE6sinMsn489L7R0gs6g0KIxVy6GYymzldno9ucqoZfBsJ1jpD
+         etpCYQ6RHR1OPR+qnSokGQmdxX/r7nuAYJ6GdQR471bvcHTSyfF1WHht/AgXe7mjcl
+         5LigkIA13UqQg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Dec 1, 2020 at 4:41 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 01/12/2020 14:40:53+0000, Catalin Marinas wrote:
-> > On Mon, Nov 30, 2020 at 07:50:25PM +0000, ZHIZHIKIN Andrey wrote:
-> > > From Krzysztof Kozlowski <krzk@kernel.org>:
 
-> > I tried to convince them before, it didn't work. I guess they don't like
-> > to be spammed ;).
->
-> The first rule of arm-soc is: you do not talk about arm@ and soc@
+On 25/11/2020 20:45, Alex Elder wrote:
+> Update the IPA code to make use of the updated IPA v4.5 register
+> definitions.  Generally what this patch does is, if IPA v4.5
+> hardware is in use:
+>   - Ensure new registers or fields in IPA v4.5 are updated where
+>     required
+>   - Ensure registers or fields not supported in IPA v4.5 are not
+>     examined when read, or are set to 0 when written
+> It does this while preserving the existing functionality for IPA
+> versions lower than v4.5.
+>=20
+> The values to program for QSB_MAX_READS and QSB_MAX_WRITES and the
+> source and destination resource counts are updated to be correct for
+> all versions through v4.5 as well.
+>=20
+> Note that IPA_RESOURCE_GROUP_SRC_MAX and IPA_RESOURCE_GROUP_DST_MAX
+> already reflect that 5 is an acceptable number of resources (which
+> IPA v4.5 implements).
+>=20
+> Signed-off-by: Alex Elder <elder@linaro.org>
 
-I don't mind having the addresses documented better, but it needs to
-be done in a way that avoids having any patch for arch/arm*/boot/dts
-and arch/arm/*/configs Cc:d to soc@kernel.org.
 
-If anyone has suggestions for how to do that, let me know.
+This change is generating the following build error on ARM64 ...
 
-> > Or rather, SoC-specific patches, even to defconfig,
-> > should go through the specific SoC maintainers. However, there are
-> > occasional defconfig patches which are more generic or affecting
-> > multiple SoCs. I just ignore them as the arm64 defconfig is usually
-> > handled by the arm-soc folk (when I need a defconfig change, I go for
-> > arch/arm64/Kconfig directly ;)).
->
-> IIRC, the plan was indeed to get defconfig changes through the platform
-> sub-trees. It is also supposed to be how multi_v5 and multi_v7 are
-> handled and they will take care of the merge.
+In file included from drivers/net/ipa/ipa_main.c:9:0:
+In function =E2=80=98u32_encode_bits=E2=80=99,
+    inlined from =E2=80=98ipa_hardware_config_qsb.isra.7=E2=80=99 at driver=
+s/net/ipa/ipa_main.c:286:6,
+    inlined from =E2=80=98ipa_hardware_config=E2=80=99 at drivers/net/ipa/i=
+pa_main.c:363:2,
+    inlined from =E2=80=98ipa_config.isra.12=E2=80=99 at drivers/net/ipa/ip=
+a_main.c:555:2,
+    inlined from =E2=80=98ipa_probe=E2=80=99 at drivers/net/ipa/ipa_main.c:=
+835:6:
+./include/linux/bitfield.h:131:3: error: call to =E2=80=98__field_overflow=
+=E2=80=99 declared with attribute error: value doesn't fit into mask
+   __field_overflow();     \
+   ^~~~~~~~~~~~~~~~~~
+./include/linux/bitfield.h:151:2: note: in expansion of macro =E2=80=98____=
+MAKE_OP=E2=80=99
+  ____MAKE_OP(u##size,u##size,,)
+  ^~~~~~~~~~~
+./include/linux/bitfield.h:154:1: note: in expansion of macro =E2=80=98__MA=
+KE_OP=E2=80=99
+ __MAKE_OP(32)
+ ^~~~~~~~~
 
-For cross-platform changes like this one, I'm definitely happy to
-pick up the patch directly from soc@kernel.org, or from mailing
-list if I know about it.
+Cheers
+Jon
 
-We usually do the merges for the soc tree in batches and rely
-on patchwork to keep track of what I'm missing, so if Olof and
-I are just on Cc to a mail, we might have forgotten about it
-by the time we do the next merges.
-
-      Arnd
+--=20
+nvpublic
