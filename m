@@ -2,141 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6B7C71156
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476CEC64E7A
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA00420757
-	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F97208FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  1 Dec 2020 14:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389082AbgLAOlm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:41:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57168 "EHLO mail.kernel.org"
+        id S2391267AbgLAOpN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 1 Dec 2020 09:45:13 -0500
+Received: from foss.arm.com ([217.140.110.172]:44166 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387462AbgLAOlm (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 1 Dec 2020 09:41:42 -0500
-Received: from gaia (unknown [95.146.230.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A2B720757;
-        Tue,  1 Dec 2020 14:40:55 +0000 (UTC)
-Date:   Tue, 1 Dec 2020 14:40:53 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     ZHIZHIKIN Andrey <andrey.zhizhikin@leica-geosystems.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "emil.l.velikov@gmail.com" <emil.l.velikov@gmail.com>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Subject: Re: [PATCH 1/5] ARM: configs: drop unused BACKLIGHT_GENERIC option
-Message-ID: <20201201144052.GE31404@gaia>
-References: <20201130152137.24909-1-andrey.zhizhikin@leica-geosystems.com>
- <20201130152137.24909-2-andrey.zhizhikin@leica-geosystems.com>
- <20201130185227.GA29434@kozik-lap>
- <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
+        id S2387462AbgLAOpN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 1 Dec 2020 09:45:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A91FC30E;
+        Tue,  1 Dec 2020 06:44:27 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2E5E3F718;
+        Tue,  1 Dec 2020 06:44:25 -0800 (PST)
+Date:   Tue, 1 Dec 2020 14:44:20 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
+        bhelgaas@google.com, jonathanh@nvidia.com,
+        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4 4/6] PCI: tegra: Continue unconfig sequence even if
+ parts fail
+Message-ID: <20201201144420.GA4397@e121166-lin.cambridge.arm.com>
+References: <20201109171937.28326-1-vidyas@nvidia.com>
+ <20201109171937.28326-5-vidyas@nvidia.com>
+ <20201130121007.GC16758@e121166-lin.cambridge.arm.com>
+ <X8ZSGCdp3lqORsPh@ulmo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM6PR06MB4691EC52BA41B86AB16EE14FA6F50@AM6PR06MB4691.eurprd06.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <X8ZSGCdp3lqORsPh@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 07:50:25PM +0000, ZHIZHIKIN Andrey wrote:
-> From Krzysztof Kozlowski <krzk@kernel.org>:
-> > On Mon, Nov 30, 2020 at 03:21:33PM +0000, Andrey Zhizhikin wrote:
-> > > Commit 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it is
-> > > unused") removed geenric_bl driver from the tree, together with
-> > > corresponding config option.
-> > >
-> > > Remove BACKLIGHT_GENERIC config item from all ARM configurations.
-> > >
-> > > Fixes: 7ecdea4a0226 ("backlight: generic_bl: Remove this driver as it
-> > > is unused")
-> > > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > > Signed-off-by: Andrey Zhizhikin
-> > > <andrey.zhizhikin@leica-geosystems.com>
-> > > ---
-> > >  arch/arm/configs/at91_dt_defconfig        | 1 -
-> > >  arch/arm/configs/cm_x300_defconfig        | 1 -
-> > >  arch/arm/configs/colibri_pxa300_defconfig | 1 -
-> > >  arch/arm/configs/jornada720_defconfig     | 1 -
-> > >  arch/arm/configs/magician_defconfig       | 1 -
-> > >  arch/arm/configs/mini2440_defconfig       | 1 -
-> > >  arch/arm/configs/omap2plus_defconfig      | 1 -
-> > >  arch/arm/configs/pxa3xx_defconfig         | 1 -
-> > >  arch/arm/configs/qcom_defconfig           | 1 -
-> > >  arch/arm/configs/sama5_defconfig          | 1 -
-> > >  arch/arm/configs/sunxi_defconfig          | 1 -
-> > >  arch/arm/configs/tegra_defconfig          | 1 -
-> > >  arch/arm/configs/u8500_defconfig          | 1 -
-> > >  13 files changed, 13 deletions(-)
+On Tue, Dec 01, 2020 at 03:24:24PM +0100, Thierry Reding wrote:
+> On Mon, Nov 30, 2020 at 12:10:07PM +0000, Lorenzo Pieralisi wrote:
+> > On Mon, Nov 09, 2020 at 10:49:35PM +0530, Vidya Sagar wrote:
+> > > Currently the driver checks for error value of different APIs during the
+> > > uninitialization sequence. It just returns from there if there is any error
+> > > observed for one of those calls. Comparatively it is better to continue the
+> > > uninitialization sequence irrespective of whether some of them are
+> > > returning error. That way, it is more closer to complete uninitialization.
 > > 
-> > You need to send it to arm-soc maintainers, otherwise no one might feel
-> > responsible enough to pick it up.
+> > Hi Vidya, Thierry,
+> > 
+> > I can apply this series (dropping patches as suggested by Thierry),
+> > before though I wanted to ask you if this patch is really an
+> > improvement, it is hard to understand why skipping some error
+> > codes is OK for device correct operations to continue, maybe it
+> > is worth describing why some of those failures aren't really
+> > fatal.
+> > 
+> > Please let me know, thanks.
 > 
-> Good point, thanks a lot!
-> 
-> I was not aware of the fact that there is a separate ML that should
-> receive patches targeted ARM SOCs. Can you (or anyone else) please
-> share it, so I can re-send it there as well?
+> As explained in the commit message, the idea is to continue tearing
+> down even if things fail somewhere in the middle, because that ensures
+> that the hardware gets as close to an "uninitialized" state as possible.
+> If for example the first reset assert were to fail, then none of the
+> PHYs get disabled, the regulator stays on and the clocks stays on, all
+> of which can continue draining power after the controller has already
+> been torn down.
 
-It's not a mailing list as such (with archives etc.), just an alias to
-the arm-soc maintainers: arm@kernel.org.
+Understood. By reading the code it looked weird that eg a reset failure
+was tolerable - I thought an error would be fatal (I don't know what are
+the consequences for instance on a subsequent resume) but it looks like
+it actually is not, that's the only point I raised.
 
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > +CC Arnd and Olof,
-> > 
-> > Dear Arnd and Olof,
-> > 
-> > Maybe it is worth to add arm-soc entry to the MAINTAINERS file?
-> > Otherwise how one could get your email address? Not mentioning the
-> > secret-soc address. :)
+> So yes, I think this is an improvement. It's unclear to me what you're
+> asking for, though. Would you rather have a comment somewhere near the
+> tegra_pcie_unconfig_controller() function that states the same thing as
+> the commit message?
 
-I tried to convince them before, it didn't work. I guess they don't like
-to be spammed ;). Or rather, SoC-specific patches, even to defconfig,
-should go through the specific SoC maintainers. However, there are
-occasional defconfig patches which are more generic or affecting
-multiple SoCs. I just ignore them as the arm64 defconfig is usually
-handled by the arm-soc folk (when I need a defconfig change, I go for
-arch/arm64/Kconfig directly ;)).
+It could be useful but it is up to you, I will merge the series as-is
+or I can add it myself, as you wish.
 
-Anyway, I still think that we should add a MAINTAINERS entry for
-arch/arm64/configs/defconfig and arch/arm64/Kconfig.platforms.
-
--- 
-Catalin
+Thanks,
+Lorenzo
