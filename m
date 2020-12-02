@@ -2,96 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447B5C64E8A
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 09:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EEEC64E7B
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 17:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA91022202
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 09:15:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024AB21741
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 17:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387975AbgLBJPy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Dec 2020 04:15:54 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11563 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387755AbgLBJPy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Dec 2020 04:15:54 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc75b020000>; Wed, 02 Dec 2020 01:14:42 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Dec
- 2020 09:14:42 +0000
-Received: from moonraker.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Wed, 2 Dec 2020 09:14:40 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 4/4] cpufreq: tegra194: Rename tegra194_get_speed_common function
-Date:   Wed, 2 Dec 2020 09:14:19 +0000
-Message-ID: <20201202091419.307192-5-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201202091419.307192-1-jonathanh@nvidia.com>
-References: <20201202091419.307192-1-jonathanh@nvidia.com>
+        id S1727692AbgLBRHf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Dec 2020 12:07:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34746 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726525AbgLBRHf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 2 Dec 2020 12:07:35 -0500
+Date:   Wed, 2 Dec 2020 17:06:22 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606928814;
+        bh=MyMwYBkiI14vmyyRX388WZLYw4mGzAn+6NXmfixPeqw=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hzMrq/jDD66p/nF8elHTEQO7zhdO0esGBN10Qp2oGZUOT7D9Xn16VVN1T3YqXAgiK
+         uysHBq9Y7rL7kiwacQEf9+Li0JryPwcgAPdY3cKX9lXciJ2gV592RL6SbJhC2fJPX6
+         89bsjgEnV+EwpzVzJDqrXp0y6q4yihOW7Zsf8KJo=
+From:   Mark Brown <broonie@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 4/7] spi: qspi-tegra: Add Tegra186 and Tegra194 QSPI
+ compatibles
+Message-ID: <20201202170622.GK5560@sirena.org.uk>
+References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
+ <1606857168-5839-5-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1606900482; bh=S8sJJMoQpyzSm2gQKsnuGora2uy6mUIWNJQuzPmFQqk=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=laPZy85I7Cdd2CB8DCAOXWVuNop35dgr7a2LLpT9X056I0HfG1Q1D6pExk58J4mTZ
-         sEg7i87a28P120ORHRQhAaNrlmlWhh154yBrSWPxJV6ozwxskqYhEVslBjLnBZtFgc
-         6KtWnXY8aRbQYADy0YpjBf4adWxepYRQc7JdOrJiiy5/22CNChHZ8nqKmbe85gV5E0
-         pmwwpEzyGDlqbCWXr1dB3NDKRvz3Uc5wZwoPww/0pKuz99ORvOatPUATxGV60nswVt
-         iH85DATGzD985xc9EHD6LaSWWzeOlX+GP9VCFZU2cNhJ9Gh9jQEbZRAvaD8TMB1QMF
-         kVOQD4vLEop3w==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YZQs1kEQY307C4ut"
+Content-Disposition: inline
+In-Reply-To: <1606857168-5839-5-git-send-email-skomatineni@nvidia.com>
+X-Cookie: Sauron is alive in Argentina!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The function tegra194_get_speed_common() uses hardware timers to
-calculate the current CPUFREQ and so rename this function to be
-tegra194_calculate_speed() to reflect what it does.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/cpufreq/tegra194-cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--YZQs1kEQY307C4ut
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-=
-cpufreq.c
-index a706ba929424..6a67f36f3b80 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -137,7 +137,7 @@ static void tegra_read_counters(struct work_struct *wor=
-k)
-  * @cpu - logical cpu whose freq to be updated
-  * Returns freq in KHz on success, 0 if cpu is offline
-  */
--static unsigned int tegra194_get_speed_common(u32 cpu)
-+static unsigned int tegra194_calculate_speed(u32 cpu)
- {
- 	struct read_counters_work read_counters_work;
- 	struct tegra_cpu_ctr c;
-@@ -206,7 +206,7 @@ static unsigned int tegra194_get_speed(u32 cpu)
- 	smp_call_function_single(cpu, get_cpu_cluster, &cl, true);
-=20
- 	/* reconstruct actual cpu freq using counters */
--	rate =3D tegra194_get_speed_common(cpu);
-+	rate =3D tegra194_calculate_speed(cpu);
-=20
- 	/* get last written ndiv value */
- 	ret =3D smp_call_function_single(cpu, get_cpu_ndiv, &ndiv, true);
---=20
-2.25.1
+On Tue, Dec 01, 2020 at 01:12:45PM -0800, Sowjanya Komatineni wrote:
+> QSPI controller on Tegra186 and Tegra194 is similar to Tegra210
+> QSPI controller in terms of transferring command, address and data
+> in multiple transfers.
 
+Given that you're adding the driver in the same series this doesn't
+really seem like it needs a separate patch.
+
+--YZQs1kEQY307C4ut
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/HyY0ACgkQJNaLcl1U
+h9Co/Qf+Jqs5JNbV6+G1TiKNUxPzvyD8sydxRs+VmNiHFqZ5Xfswl3n6LRW32tqQ
+dDbESVZRPBzoFPBjnrCAiFgOWZz526xSfGhdGjdGY2fVswWGsDs8Q4IfBz0hUzgH
+Z3uZ56o07LflmtTuNfNGYxU6Ia2vmsdo6m0R5YNb4tm8OmgYtWshxluG9pk+dBoF
++gEWOyaMKzHNRtD/mLmerLqI6+K8QstyAfyU/RWA+V7QgsrBnwBZOAszi+0MuUiZ
+X8pYZAfmoruH0+PMtNUOnPp0vm5afuR/tLeu9Esk2fzz8soy/gtfgOupvzZZ1Cr7
+1Dqvolk32ARjxrce/IAczi37gUmWDA==
+=k4Cc
+-----END PGP SIGNATURE-----
+
+--YZQs1kEQY307C4ut--
