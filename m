@@ -2,141 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AECEC64E7C
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 08:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF63C64E7C
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 09:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DACB120DD4
-	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 08:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC0E8221FB
+	for <linux-tegra@archiver.kernel.org>; Wed,  2 Dec 2020 09:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbgLBIQi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 2 Dec 2020 03:16:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41352 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728960AbgLBIQh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Dec 2020 03:16:37 -0500
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DEFC0613CF
-        for <linux-tegra@vger.kernel.org>; Wed,  2 Dec 2020 00:15:57 -0800 (PST)
-Received: by mail-wm1-x341.google.com with SMTP id e25so5086677wme.0
-        for <linux-tegra@vger.kernel.org>; Wed, 02 Dec 2020 00:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hxJnMGt2KDgNIihAgZquJcCD+5vdun+/UIpInThRpcw=;
-        b=Vn8Ro5FOY8w2LaBjs4BdoaWTxJTCQAnHB6UPwBPZrUwRZLppMLtfv17nqYkYdASnuT
-         sBKgfaK8pL4p0QVVkHNPe0/5d/GhaihSuJQtgMR7qoLCpKheLVq2cwg+b9YToV/P1eVJ
-         rUuIWDBQZwoaGPJVE4wmcHheCtAtRdAoFja2HKvb0buMuMZkAexcZ26q3fB3Sym/MZk6
-         n/dfT+0VG3wDAQcZ5wLFm0j/X1KsTfVwRk+29Sk+a49crBKTxXaQ4a3e4YGslDhZJZzu
-         3m/qwNPIK1JW4IxYwu37LryKO6UcnSKoLXVFQAu5GVjJzBCITxS9iAtjBBN7rS6cUuqF
-         dAjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hxJnMGt2KDgNIihAgZquJcCD+5vdun+/UIpInThRpcw=;
-        b=JVFXaMmOm0G+yr9Rj983Hy1hRMQy4KeRSRHxuyNCRj58RgoA8ahvM3irzQaBjG6JJj
-         DaUpWa783j54eLzhmw0oxuptnM+wGPL4LgleAMK1dlhoa/tvsumxnnZGkTuEl2K0dZQn
-         74AQ1e6S4ZcqIJJISgICY02YstTGoQ1yEApzi1aAB2fP/1F1LJJea0i0eEiHSfdhhkAD
-         dZ6ysungfisP1WU6QgcA+8BWMWWOmwQ8BRwTv1lfZMh8OwTAM7KxIOmTwCioxC4Zhl4y
-         BBPZoLbsFhGmTaQtXsFbQdK7dwVEZwqjfUVC9U+oeVbw6JaYwCIT3JR6RHYdMPXpfzCu
-         RkTQ==
-X-Gm-Message-State: AOAM531nm9E0f/3EO6YsFDgEpnw3fvkO6LBDAaWdp9cpeLJA33G8dUdv
-        fpT818cTrBms9WWaOjF7IApKM4cMLJRrzA==
-X-Google-Smtp-Source: ABdhPJw68GVoM4YaRNPSbiTqsk5jLOJHJe91pKfZPQJmqXWyCFz1tLx8X90hJxHjib7bHXKAM25cTA==
-X-Received: by 2002:a1c:2e16:: with SMTP id u22mr1774676wmu.149.1606896955490;
-        Wed, 02 Dec 2020 00:15:55 -0800 (PST)
-Received: from stefan-nb.local (77-57-203-148.dclient.hispeed.ch. [77.57.203.148])
-        by smtp.gmail.com with ESMTPSA id o67sm1029010wmo.31.2020.12.02.00.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 00:15:54 -0800 (PST)
-From:   eichest@gmail.com
-X-Google-Original-From: stefan.eichenberger@toradex.com
-To:     linux-tegra@vger.kernel.org
-Cc:     jonathanh@nvidia.com, thierry.reding@gmail.com,
-        Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: [PATCH] ARM: tegra: add usb-role-switch property to usb otg ports
-Date:   Wed,  2 Dec 2020 09:15:38 +0100
-Message-Id: <20201202081538.86822-1-stefan.eichenberger@toradex.com>
+        id S1729057AbgLBJBY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 2 Dec 2020 04:01:24 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9207 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbgLBJBY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 2 Dec 2020 04:01:24 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc757bc0000>; Wed, 02 Dec 2020 01:00:44 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Dec
+ 2020 09:00:43 +0000
+Received: from moonraker.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 2 Dec 2020 09:00:42 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, "Jon Hunter" <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] arm64: defconfig: Enable Tegra SoC Thermal driver
+Date:   Wed, 2 Dec 2020 09:00:11 +0000
+Message-ID: <20201202090012.306327-1-jonathanh@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606899644; bh=HZof7pDj52cslU0wQrFct0+zLVBBix8axsqJzdzx9Xw=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=IEv6YHl4oyXAJ2Vt7Aaq6UqHGb3j8F+qGIuvKTKDFTD0CiIKvGG6uA+t+dSaNITkZ
+         LtLJpXpwXkbCJ0wFvTIEI5T0ji4dMgqoA1kaJwRmSpJMbp2X+iTzB1fnCR0NSUysdY
+         v7kv0ZogmO0Myfr3/AeinVsVSsvMDJIueyGZ5ZfjfxWumm03YCKH6RPeY0KgCfidGS
+         Xeqqf7ISeTjg4SevucSTVmRs/+SGd9efsQjJeLgFkDFHq4KwnWIVd1xWZVNgT2rD9n
+         KsWhadAc2+boHxRuNAFHbLC24BWwGO4OiCuz9rLREbfPR2uMC9hCfp/+5SV2rvgfn8
+         ofluahgHnoTVw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Enable the Tegra SoC Thermal driver that is used by Tegra132 and
+Tegra210 platforms to be built as a module by default for ARM64 builds.
 
-If an usb port is an otg port we should add the usb-role-switch
-property. If it is not set xusb will fail and therefore padctl will
-never be able to setup the ports. This will lead to broken usb and
-broken pcie.
-The error message shown without this patch is e.g:
-usb2-0: usb-role-switch not found for otg mode
-
-Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
- arch/arm/boot/dts/tegra124-nyan.dtsi        | 1 +
- arch/arm/boot/dts/tegra124-venice2.dts      | 2 +-
- 4 files changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 1e30fa405fa0..3c31bcc79c48 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1885,6 +1885,7 @@ ports {
- 			usb2-0 {
- 				status = "okay";
- 				mode = "otg";
-+				usb-role-switch;
- 				vbus-supply = <&reg_usbo1_vbus>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 608896f8dd52..4a23b26b0eef 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1877,6 +1877,7 @@ ports {
- 			usb2-0 {
- 				status = "okay";
- 				mode = "otg";
-+				usb-role-switch;
- 				vbus-supply = <&reg_usbo1_vbus>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index 5f71add38dfe..5ba5c6ef6285 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -466,6 +466,7 @@ usb2-0 {
- 				vbus-supply = <&vdd_usb1_vbus>;
- 				status = "okay";
- 				mode = "otg";
-+				usb-role-switch;
- 			};
- 
- 			usb2-1 {
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index e6b54ac1ebd1..de8c18e6b7e6 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -972,7 +972,7 @@ ports {
- 			usb2-0 {
- 				status = "okay";
- 				mode = "otg";
--
-+				usb-role-switch;
- 				vbus-supply = <&vdd_usb1_vbus>;
- 			};
- 
--- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 867cc4a5f00f..079d2762ce20 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -550,6 +550,7 @@ CONFIG_BCM2835_THERMAL=3Dm
+ CONFIG_BRCMSTB_THERMAL=3Dm
+ CONFIG_EXYNOS_THERMAL=3Dy
+ CONFIG_TEGRA_BPMP_THERMAL=3Dm
++CONFIG_TEGRA_SOCTHERM=3Dm
+ CONFIG_QCOM_TSENS=3Dy
+ CONFIG_QCOM_SPMI_TEMP_ALARM=3Dm
+ CONFIG_UNIPHIER_THERMAL=3Dy
+--=20
 2.25.1
 
