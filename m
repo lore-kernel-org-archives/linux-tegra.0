@@ -2,116 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F74C63777
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 06:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB9DC63777
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 12:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5060C206E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 06:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA9FE21D91
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 12:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbgLCG17 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 01:27:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729565AbgLCG16 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 01:27:58 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E394C061A4E;
-        Wed,  2 Dec 2020 22:27:18 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id v1so547823pjr.2;
-        Wed, 02 Dec 2020 22:27:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JIdff1VBF+uP5SziDcHY7x/1uDEIyNK1HGkkO+Ce1xk=;
-        b=IofT99cLgaFaJORr+HbK7jwv4M7wNQrOzi+3OMaqTH2qKYyxCTOR/4n75dJV550QTZ
-         esfx/SEMJNju/ZaA5nlmWN/s3dBlE2mITEbov+NZCL1L3+ZGV3+IfQ/WFQqKF0h8B/Xk
-         QoCKlrelkKy0dcHuagzdWnsZnqLfPdk8J6aghrhpF0U80hxw1SRt9fbiT0EpN1CAvtJO
-         LtpR/nTDt3KyIJGP4cAPTtAR3PxSYLkd7foCS9vfpjZFaEHFL5tRG68mUeJLrUPV56vH
-         1DK4PWNB/GQPqJMsuRTCarqVp+nPOz9R0ckl03ZSxeLtNWcZOP6I+EcC68YoCLLRB1Vq
-         DZog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JIdff1VBF+uP5SziDcHY7x/1uDEIyNK1HGkkO+Ce1xk=;
-        b=GiLNyANFO1n1EBwu3YWnpcSstxSF7NWPUm5hY6CudIUczKZYlvKqEnyLmg/nzsrCO5
-         ai5C264zJVDWqhtadbGGeYt4d3pwg7OJHctVBMnCwU1FooinsFtOW+sppv+z1+IAAXS8
-         nA+f1al88D++/dCNoGPq+aENLQb1p/W7G0y5ibfnArGRFs6oYwRdP+hexICN5oHK9t8k
-         JHx97hJszl5LqqFmIe/fzd1vZtf+uC2n7O3p4CQ9GjlARoxDv3l2HLoDE7rcwTAVR9QC
-         KgvFr7e48g5PLzpowpzBw0EAh5a6MDZta5ShuA9AQmMyAj4Sim9PL3jP/LOV/ROtisuv
-         0S9g==
-X-Gm-Message-State: AOAM533THHdYPQfdy5ueGM7TqZeH+24jYDrwbolRM7QxvURZnsWFJyDv
-        xIIL5g5d3S4Q0IVs7nFAI3Y=
-X-Google-Smtp-Source: ABdhPJyjSNv/C2l8ZtaC9KjD/0k/cr478E0J4aUuV0nD73oFdnOeF77Iv6agw2RiQxq+Tc6d+K+PHg==
-X-Received: by 2002:a17:902:9891:b029:d8:fdf6:7c04 with SMTP id s17-20020a1709029891b02900d8fdf67c04mr1727757plp.54.1606976837830;
-        Wed, 02 Dec 2020 22:27:17 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id o9sm277249pjl.11.2020.12.02.22.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 22:27:17 -0800 (PST)
-Date:   Wed, 2 Dec 2020 22:27:13 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        id S1728472AbgLCMh1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 07:37:27 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14390 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbgLCMh0 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 07:37:26 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc8dbdd0002>; Thu, 03 Dec 2020 04:36:45 -0800
+Received: from [10.25.75.116] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
+ 2020 12:36:37 +0000
+Subject: Re: [PATCH V4 1/6] PCI: tegra: Fix ASPM-L1SS advertisement disable
+ code
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        kernel@collabora.com
-Subject: Re: [PATCH v2] Input: document inhibiting
-Message-ID: <X8iFQfsZSh0aV+pX@google.com>
-References: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
- <20200617101822.8558-1-andrzej.p@collabora.com>
+        "amanharitsh123@gmail.com" <amanharitsh123@gmail.com>,
+        "dinghao.liu@zju.edu.cn" <dinghao.liu@zju.edu.cn>,
+        "kw@linux.com" <kw@linux.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krishna Thota <kthota@nvidia.com>,
+        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+        "sagar.tv@gmail.com" <sagar.tv@gmail.com>
+References: <20201109171937.28326-1-vidyas@nvidia.com>
+ <20201109171937.28326-2-vidyas@nvidia.com> <X7+Sc5Mtp4OvrO4P@ulmo>
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <595c4616-71b9-e8bc-3300-c1c04503b850@nvidia.com>
+Date:   Thu, 3 Dec 2020 18:06:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617101822.8558-1-andrzej.p@collabora.com>
+In-Reply-To: <X7+Sc5Mtp4OvrO4P@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1606999005; bh=Ghno+0cw8VXLyR9YQiz+AJ5XgUJGy4a+e880bHMHFfc=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=Qlpx4OVoWkjIieVyxRsOLiyKJ6yry2N4poCWtoYDtPmp2LZVvqCiZARKJbGLwzUTq
+         TQRx8ocQe3YxH/aUxY1Jzvpxi1QsT1DjAUagqCi8PPoly5P05QzU39ONESEIOEwPeq
+         /uejJMxNciNEM/l2elVBJyBKNlp0cKpAroXrSr8vo5qpkdgZ2mHw/rgLUW2p7mQpWC
+         qHa+x/HzmdTO7Ba+kEIpwtvSzDIKnXp4lMT15+RdwOmJAvNsHLT/W1CyaKGuL3IJKh
+         JHbLoqdGYxRiZjrz/RHU40P5te31f8cKyaEdXCWZMDTv8CNO72d4mWVxhHOmz0Y8Mr
+         4Rs/D0K0WGzHg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 12:18:22PM +0200, Andrzej Pietrasiewicz wrote:
-> Document inhibiting input devices and its relation to being
-> a wakeup source.
+
+
+> -----Original Message-----
+> From: Thierry Reding <thierry.reding@gmail.com>
+> Sent: Thursday, November 26, 2020 5:03 PM
+> To: Vidya Sagar <vidyas@nvidia.com>
+> Cc: lorenzo.pieralisi@arm.com; robh+dt@kernel.org; bhelgaas@google.com;
+> Jonathan Hunter <jonathanh@nvidia.com>; amanharitsh123@gmail.com;
+> dinghao.liu@zju.edu.cn; kw@linux.com; linux-pci@vger.kernel.org; linux-
+> tegra@vger.kernel.org; linux-kernel@vger.kernel.org; Krishna Thota
+> <kthota@nvidia.com>; Manikanta Maddireddy <mmaddireddy@nvidia.com>;
+> sagar.tv@gmail.com
+> Subject: Re: [PATCH V4 1/6] PCI: tegra: Fix ASPM-L1SS advertisement disable
+> code
 > 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> On Mon, Nov 09, 2020 at 10:49:32PM +0530, Vidya Sagar wrote:
+> > If the absence of CLKREQ# signal is indicated by the absence of
+> > "supports-clkreq" in the device-tree node, current driver is disabling
+> > the advertisement of ASPM-L1 Sub-States *before* the ASPM-L1
+> > Sub-States offset is correctly initialized. Since default value of the
+> > ASPM-L1SS offset is zero, this is causing the Vendor-ID wrongly
+> > programmed to 0x10d2 instead of Nvidia's 0x10de thereby the quirks
+> > applicable for Tegra194 are not being applied. This patch fixes this
+> > issue by refactoring the code that disables the ASPM-L1SS advertisement.
+> >
+> > Fixes: 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support")
+> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> > ---
+> > V4:
+> > * None
+> >
+> > V3:
+> > * None
+> >
+> > V2:
+> > * None
+> >
+> >  drivers/pci/controller/dwc/pcie-tegra194.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> Looks like this no longer applies cleanly after that other fix that you sent earlier.
+> But looking more closely, that's because that other fix already incorporates an
+> equivalent change, so I think this can be dropped from this series.
+Yes. This is no longer applies cleanly and I'll fix it in the next 
+series, but, the current patch is still required.
+The other change I pushed is taking care of getting a valid 'dbi' 
+address before accessing the dbi region, but, this current change would 
+make sure that 'pcie->cfg_link_cap_l1sub' would have a valid value 
+before calling disable_aspm_l1/2() APIs.
 
-Applied, thank you.
-
--- 
-Dmitry
+Thanks,
+Vidya Sagar
+> 
+> Thierry
