@@ -5,28 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C44C1B0E3
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B76CC433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F251F20C56
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C29E920C56
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731807AbgLCTBb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 14:01:31 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18470 "EHLO
+        id S1731796AbgLCTB2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 14:01:28 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18458 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731806AbgLCTBa (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:01:30 -0500
+        with ESMTP id S1731699AbgLCTB1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:01:27 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc935c10000>; Thu, 03 Dec 2020 11:00:17 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 19:00:14 +0000
+        id <B5fc935c00000>; Thu, 03 Dec 2020 11:00:16 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
+ 2020 19:00:11 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 19:00:12 +0000
+ Transport; Thu, 3 Dec 2020 19:00:10 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -34,9 +35,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
         <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 10/13] media: v4l2-fwnode: Update V4L2_FWNODE_CSI2_MAX_DATA_LANES to 8
-Date:   Thu, 3 Dec 2020 10:59:59 -0800
-Message-ID: <1607022002-26575-11-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 08/13] media: tegra-video: Add support for V4L2_EVENT_SOURCE_CHANGE
+Date:   Thu, 3 Dec 2020 10:59:57 -0800
+Message-ID: <1607022002-26575-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
 References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
@@ -44,55 +45,61 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607022017; bh=0r1CsjXAcGhStr4lTll4w2YEjN3lzY3myJy7gJpTSd0=;
+        t=1607022016; bh=N2+onGn+P/wtgXxXpkvV3u/wLb5I44E5LjNI+JkjEcA=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=FLA6zt4bNo4HUuBxxWxqVcnEn/mDagSr61KhfzzFhxTii8sn0v6S0WM1dzxZb7Yxf
-         lu8xoIfsDM2g7b6AQr5bVlT9nm3ryIUbOsTtshMZK6rtd5q/rrybctr98wiCyo5cix
-         76k0s94mD4c41bky/oqv2dqCKQsbyQhLere7JaSsCMy15Wq+h5HsJ05eAhHBwpzB4b
-         dEq29VGh9FJJ9Yu2c6gMyWT4TKprGpukzSupuPZ9PhAO3D7aU5viNZdnOHObqetGhG
-         ptJEnXccaI0OB2hv3DxR4D3eZIL5ISi/g1TWlFtYQKa+xzO7pal76nSlIFS4uKkxeC
-         1oz6iDIXZcU8A==
+        b=P2srQbxkV+ko79JDl9AUr7NjObxkL3cn9YnU+qeq5bkpZhAtDZUNb1K+/C40OuZ5b
+         uLmoV5peKXuMA3c02m7QlfUZZaNCxyxELeVw3rggAvasQJlZfUiQqlzSBmNsFLzqQm
+         D3LeInr9mLvKXisZb/qxX0Nrd117bNS8xZw/k4NWHHFA9Eima5NHhjFVdIjvAZJ4so
+         5nNInJ84bVpBOAX+gVxrNblAAq3QATn/2soWX1LesEr4Vn9Cm5Mvuy1mQmsG+DuyY8
+         D3KGCYUFbiTcpSWqQkKsAn4uaPA7RYuJtKMBmjIyXr48RHfFGIYQ0JrjeFG3r3vIT2
+         8y94V4clYS1hg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Some CSI2 receivers support 8 data lanes.
+Current implementation uses v4l2_ctrl_subscribe_event() and this
+does not handle V4L2_EVENT_SOURCE_CHANGE.
 
-So, this patch updates CSI2 maximum data lanes to be 8.
+So, update driver to handle V4L2_EVENT_SOURCE_CHANGE.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/media/platform/ti-vpe/cal-camerarx.c | 2 +-
- include/media/v4l2-fwnode.h                  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/ti-vpe/cal-camerarx.c b/drivers/media/platform/ti-vpe/cal-camerarx.c
-index 806cbf1..47e2143 100644
---- a/drivers/media/platform/ti-vpe/cal-camerarx.c
-+++ b/drivers/media/platform/ti-vpe/cal-camerarx.c
-@@ -534,7 +534,7 @@ static int cal_camerarx_parse_dt(struct cal_camerarx *phy)
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index c280117..0a85e52 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -642,6 +642,18 @@ static int tegra_channel_set_subdev_active_fmt(struct tegra_vi_channel *chan)
+ 	return 0;
+ }
+ 
++static int
++tegra_channel_subscribe_event(struct v4l2_fh *fh,
++			      const struct v4l2_event_subscription *sub)
++{
++	switch (sub->type) {
++	case V4L2_EVENT_SOURCE_CHANGE:
++		return v4l2_event_subscribe(fh, sub, 4, NULL);
++	}
++
++	return v4l2_ctrl_subscribe_event(fh, sub);
++}
++
+ static int tegra_channel_g_selection(struct file *file, void *priv,
+ 				     struct v4l2_selection *sel)
  {
- 	struct v4l2_fwnode_endpoint *endpoint = &phy->endpoint;
- 	struct device_node *ep_node;
--	char data_lanes[V4L2_FWNODE_CSI2_MAX_DATA_LANES * 2];
-+	char data_lanes[V4L2_FWNODE_CSI2_MAX_DATA_LANES];
- 	unsigned int i;
- 	int ret;
- 
-diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-index 4e1f6e1d..92401c1 100644
---- a/include/media/v4l2-fwnode.h
-+++ b/include/media/v4l2-fwnode.h
-@@ -25,7 +25,7 @@ struct fwnode_handle;
- struct v4l2_async_notifier;
- struct v4l2_async_subdev;
- 
--#define V4L2_FWNODE_CSI2_MAX_DATA_LANES	4
-+#define V4L2_FWNODE_CSI2_MAX_DATA_LANES	8
- 
- /**
-  * struct v4l2_fwnode_bus_mipi_csi2 - MIPI CSI-2 bus data structure
+@@ -904,7 +916,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_expbuf			= vb2_ioctl_expbuf,
+ 	.vidioc_streamon		= vb2_ioctl_streamon,
+ 	.vidioc_streamoff		= vb2_ioctl_streamoff,
+-	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
++	.vidioc_subscribe_event		= tegra_channel_subscribe_event,
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+ 	.vidioc_g_selection		= tegra_channel_g_selection,
+ 	.vidioc_s_selection		= tegra_channel_s_selection,
 -- 
 2.7.4
 
