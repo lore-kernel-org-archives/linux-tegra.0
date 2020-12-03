@@ -2,133 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8265C64E7A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 12:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D00E6C83028
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 13:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE4B21D91
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 12:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E54620449
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 13:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbgLCM5l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 07:57:41 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16395 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730563AbgLCM5l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 07:57:41 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc8e09c0001>; Thu, 03 Dec 2020 04:57:00 -0800
-Received: from [10.25.75.116] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 12:56:50 +0000
-Subject: Re: [PATCH V4 2/6] PCI: tegra: Map configuration space as nGnRnE
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "amanharitsh123@gmail.com" <amanharitsh123@gmail.com>,
-        "dinghao.liu@zju.edu.cn" <dinghao.liu@zju.edu.cn>,
-        "kw@linux.com" <kw@linux.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krishna Thota <kthota@nvidia.com>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        "sagar.tv@gmail.com" <sagar.tv@gmail.com>
-References: <20201109171937.28326-1-vidyas@nvidia.com>
- <20201109171937.28326-3-vidyas@nvidia.com> <X7+SmtN+8T4HQb/M@ulmo>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <c36d8e4b-cdd4-e42e-9424-0a244a3c20c8@nvidia.com>
-Date:   Thu, 3 Dec 2020 18:26:46 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S2389227AbgLCNeY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 08:34:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436811AbgLCNa7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 3 Dec 2020 08:30:59 -0500
+From:   Sasha Levin <sashal@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 16/23] arm64: tegra: Disable the ACONNECT for Jetson TX2
+Date:   Thu,  3 Dec 2020 08:29:28 -0500
+Message-Id: <20201203132935.931362-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201203132935.931362-1-sashal@kernel.org>
+References: <20201203132935.931362-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <X7+SmtN+8T4HQb/M@ulmo>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607000220; bh=n6Q1Iq8q+gYcIzMJQwIa1nPLvmmTFkNyl7Hkc2iQziY=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=U0O6Uf4HWJsHuzsN2bV/Dfgn1Q1qYeAYGeT/zWqDXH5Cn37wg0C0XQ0jELSYILpnN
-         FU0loNp9T7lKlDPwcrvTsWzHGLL7IJDPz9gVeHOGplPj7jlS75FPWFhMNDHDT21kz3
-         fXF22JQgBa2kD3gZSl9GjegNFZj1zGnbhoXWmSPLhnrH90QBGF6jR22T6GN9UGSRG2
-         By+8AFmR/HgpHyGuri6Oq5C0JVl8Y1IMWRF1mEQvEbOhvJA1rI+vuvQrrDbQDbLueZ
-         eyou36V1ZFOhnLFE1FpoGNYTtRWN6TwmmPMEoEtOdzFmKvjUrGO8N2NSFwVZGXu/oA
-         zRUo9+TAFjy6A==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Jon Hunter <jonathanh@nvidia.com>
 
+[ Upstream commit fb319496935b7475a863a00c76895e8bb3216704 ]
 
-> -----Original Message-----
-> From: Thierry Reding <thierry.reding@gmail.com>
-> Sent: Thursday, November 26, 2020 5:04 PM
-> To: Vidya Sagar <vidyas@nvidia.com>
-> Cc: lorenzo.pieralisi@arm.com; robh+dt@kernel.org; bhelgaas@google.com;
-> Jonathan Hunter <jonathanh@nvidia.com>; amanharitsh123@gmail.com;
-> dinghao.liu@zju.edu.cn; kw@linux.com; linux-pci@vger.kernel.org; linux-
-> tegra@vger.kernel.org; linux-kernel@vger.kernel.org; Krishna Thota
-> <kthota@nvidia.com>; Manikanta Maddireddy <mmaddireddy@nvidia.com>;
-> sagar.tv@gmail.com
-> Subject: Re: [PATCH V4 2/6] PCI: tegra: Map configuration space as nGnRnE
-> 
-> On Mon, Nov 09, 2020 at 10:49:33PM +0530, Vidya Sagar wrote:
-> > As specified in the comment for pci_remap_cfgspace() define in
-> > arch/arm64/include/asm/io.h file, PCIe configuration space should be
-> > mapped as nGnRnE. Hence changing to dev_pci_remap_cfgspace() from
-> > devm_ioremap_resource() for mapping DBI space as that is nothing but
-> > the root port's own configuration space.
-> >
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > ---
-> > V4:
-> > * None
-> >
-> > V3:
-> > * None
-> >
-> > V2:
-> > * Changed 'Strongly Ordered' to 'nGnRnE'
-> >
-> >  drivers/pci/controller/dwc/pcie-tegra194.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > index b172b1d49713..7a0c64436861 100644
-> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > @@ -2108,7 +2108,9 @@ static int tegra_pcie_dw_probe(struct
-> platform_device *pdev)
-> >  	}
-> >  	pcie->dbi_res = dbi_res;
-> >
-> > -	pci->dbi_base = devm_ioremap_resource(dev, dbi_res);
-> > +	pci->dbi_base = devm_pci_remap_cfgspace(dev,
-> > +						dbi_res->start,
-> > +						resource_size(dbi_res));
-> >  	if (IS_ERR(pci->dbi_base))
-> >  		return PTR_ERR(pci->dbi_base);
-> >
-> 
-> Similarly to patch 1/6, this is no longer required because it's already part of one
-> of Rob's earlier patches, so this, too, can be dropped.
-Yes. This patch is not required now. I'll drop it from the next patch 
-series.
+Commit ff4c371d2bc0 ("arm64: defconfig: Build ADMA and ACONNECT driver")
+enable the Tegra ADMA and ACONNECT drivers and this is causing resume
+from system suspend to fail on Jetson TX2. Resume is failing because the
+ACONNECT driver is being resumed before the BPMP driver, and the ACONNECT
+driver is attempting to power on a power-domain that is provided by the
+BPMP. While a proper fix for the resume sequencing problem is identified,
+disable the ACONNECT for Jetson TX2 temporarily to avoid breaking system
+suspend.
 
-Thanks,
-Vidya Sagar
-> 
-> Thierry
+Please note that ACONNECT driver is used by the Audio Processing Engine
+(APE) on Tegra, but because there is no mainline support for APE on
+Jetson TX2 currently, disabling the ACONNECT does not disable any useful
+feature at the moment.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+index bdace01561bab..9df4782c90f35 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -10,18 +10,6 @@ / {
+ 	model = "NVIDIA Jetson TX2 Developer Kit";
+ 	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+ 
+-	aconnect {
+-		status = "okay";
+-
+-		dma-controller@2930000 {
+-			status = "okay";
+-		};
+-
+-		interrupt-controller@2a40000 {
+-			status = "okay";
+-		};
+-	};
+-
+ 	i2c@3160000 {
+ 		power-monitor@42 {
+ 			compatible = "ti,ina3221";
+-- 
+2.27.0
+
