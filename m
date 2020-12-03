@@ -2,132 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDF3C4361A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 18:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54036C197BF
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76DF4206CA
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 18:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D9CA20C56
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgLCSS3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 13:18:29 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33047 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgLCSS2 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 13:18:28 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b18so2674185ots.0;
-        Thu, 03 Dec 2020 10:18:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aNOzNwHkOuGXa7Fh+2VeICnOxC6RLTqC8+Fsh7pbYpc=;
-        b=B54bQ7wQTclSsqMy240SK/TtJfK0nPoRMY/LwoFzOoc2GE+dxlW35rkRMz+Ha6FPbK
-         oFs5EuYqg+0Wt98ZGw95Xowi3To7JzhlxNdQeD2zs4+C0rsPNfhHm1MkMzRcnZlcNk9P
-         O4cNuG3/+x5GHlFNEAR8fNg8kIc3pbkEeh0JSmo4LfGJzb50auj+J0Z+DzGPM9FIWtHT
-         LMIWYUl/dNhx1z5nBoiECk4i0zsNDDUxAWvb+HYG462ZCbiah3lLFLNsaUm8C3UGIF1f
-         yxV9KF+m21BfJwKCvWxTA8wiPypgCE7bw0u/jgYnH61NGnrDJp/1h6PkvUImbv3NRkiE
-         e59A==
-X-Gm-Message-State: AOAM531CzQZ5Bw+1otAso2BqqqDf/vH9TK/0FynsMrl0ESv3KDR9zA0Y
-        DMtI5+8jYh3YN39I/dnp6vpnOArt2/I8LaznR+U=
-X-Google-Smtp-Source: ABdhPJwqemI0nHjABZ8DB7T9ID8g6r75bCjCbsZsgEY3dEVpaIf5c1RYqBLsK8j8uDjbk+vtzho1oSX9qn3XWGdKszQ=
-X-Received: by 2002:a05:6830:2385:: with SMTP id l5mr342208ots.321.1607019461761;
- Thu, 03 Dec 2020 10:17:41 -0800 (PST)
+        id S1731179AbgLCTAu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 14:00:50 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18309 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbgLCTAt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:00:49 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc935b80001>; Thu, 03 Dec 2020 11:00:08 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
+ 2020 19:00:05 +0000
+Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Thu, 3 Dec 2020 19:00:04 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>
+CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 04/13] media: tegra-video: Add support for V4L2_PIX_FMT_NV16
+Date:   Thu, 3 Dec 2020 10:59:53 -0800
+Message-ID: <1607022002-26575-5-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
+References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20201203175756.1405564-1-thierry.reding@gmail.com>
-In-Reply-To: <20201203175756.1405564-1-thierry.reding@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Dec 2020 19:17:30 +0100
-Message-ID: <CAJZ5v0g_FC6Pikrvk2PK=XMvAwqjaNOcYXHYS6eqv6Zc0JgqNQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Reorder devices on successful probe
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Saravana Kannan <saravanak@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1607022008; bh=KU4kkKyfxjB47xZSqJdcMrFYTj+ssTxcvqFUoz12xtg=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:X-NVConfidentiality:MIME-Version:Content-Type;
+        b=ImQ8f5t/c41iPkMOLFI9rTPRcfEQwElpk45j2M7bJ49+hBz8QMXz05vMDkjhxzmi+
+         uR5diDl6kTwE1ypebPQf0BG5+jI5yohcDSprgOY4lFhWpi6WgtZucD1XVcgenQGO5x
+         vRTwRp07qSs1iJuCbSy+Jd6gPgSNyzE0hJceaOUtzpRm82RbiSqyLU9UmxVPSkbcsx
+         6cvohCP2Uh29D33hl1FQjd2q922IHYv8OKxexNIhNcELcYvfWRWc6Lp0i0kD9KLIgn
+         Cqr9XAWaPwdAQvipH8Fga6vF3q27WTyNiFhACyj8RGnuLkwv9LA/3R0KtMqPTmF4X2
+         JjBkXGQWSd3kQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 3, 2020 at 6:58 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
-> Device drivers usually depend on the fact that the devices that they
-> control are suspended in the same order that they were probed in. In
-> most cases this is already guaranteed via deferred probe.
->
-> However, there's one case where this can still break: if a device is
-> instantiated before a dependency (for example if it appears before the
-> dependency in device tree) but gets probed only after the dependency is
-> probed. Instantiation order would cause the dependency to get probed
-> later, in which case probe of the original device would be deferred and
-> the suspend/resume queue would get reordered properly. However, if the
-> dependency is provided by a built-in driver and the device depending on
-> that driver is controlled by a loadable module, which may only get
-> loaded after the root filesystem has become available, we can be faced
-> with a situation where the probe order ends up being different from the
-> suspend/resume order.
->
-> One example where this happens is on Tegra186, where the ACONNECT is
-> listed very early in device tree (sorted by unit-address) and depends on
-> BPMP (listed very late because it has no unit-address) for power domains
-> and clocks/resets. If the ACONNECT driver is built-in, there is no
-> problem because it will be probed before BPMP, causing a probe deferral
-> and that in turn reorders the suspend/resume queue. However, if built as
-> a module, it will end up being probed after BPMP, and therefore not
-> result in a probe deferral, and therefore the suspend/resume queue will
-> stay in the instantiation order. This in turn causes problems because
-> ACONNECT will be resumed before BPMP, which will result in a hang
-> because the ACONNECT's power domain cannot be powered on as long as the
-> BPMP is still suspended.
->
-> Fix this by always reordering devices on successful probe. This ensures
-> that the suspend/resume queue is always in probe order and hence meets
-> the natural expectations of drivers vs. their dependencies.
->
-> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+NV16 are two-plane versions of YUV422 format.
 
-Saravana had submitted a very similar patch (I don't have a pointer to
-that one though) and I was against it at that time due to
-overhead-related concerns.  There still are some, but maybe that
-doesn't matter in practice.
+VI/CSI surface0 registers corresponds to first Y plane and
+surface1 registers corresponds to seconds UV plane.
 
-Also, I kind of expect this to blow up somewhere, but since I have no
-examples ready from the top of my head, I think let's try and see, so:
+This patch updates image size for NV16 format to include both planes
+and programs VI/CSI surface1 registers for UV plane capture.
 
-Acked-by: Rafael. J. Wysocki <rafael@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/staging/media/tegra-video/tegra210.c | 13 +++++++++++++
+ drivers/staging/media/tegra-video/vi.c       |  2 ++
+ 2 files changed, 15 insertions(+)
 
-> ---
->  drivers/base/dd.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 148e81969e04..cfc079e738bb 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -370,6 +370,13 @@ static void driver_bound(struct device *dev)
->
->         device_pm_check_callbacks(dev);
->
-> +       /*
-> +        * Reorder successfully probed devices to the end of the device list.
-> +        * This ensures that suspend/resume order matches probe order, which
-> +        * is usually what drivers rely on.
-> +        */
-> +       device_pm_move_to_tail(dev);
-> +
->         /*
->          * Make sure the device is no longer in one of the deferred lists and
->          * kick off retrying all pending devices
-> --
-> 2.29.2
->
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 68f09e4..b731aa5 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -287,6 +287,7 @@ static int tegra_channel_capture_frame(struct tegra_vi_channel *chan,
+ {
+ 	u32 thresh, value, frame_start, mw_ack_done;
+ 	int bytes_per_line = chan->format.bytesperline;
++	u32 sizeimage = chan->format.sizeimage;
+ 	int err;
+ 
+ 	/* program buffer address by using surface 0 */
+@@ -296,6 +297,18 @@ static int tegra_channel_capture_frame(struct tegra_vi_channel *chan,
+ 	vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_STRIDE, bytes_per_line);
+ 
+ 	/*
++	 * Program surface 1 for UV plane with offset sizeimage from Y plane.
++	 */
++	if (chan->fmtinfo->fourcc == V4L2_PIX_FMT_NV16) {
++		vi_csi_write(chan, TEGRA_VI_CSI_SURFACE1_OFFSET_MSB,
++			     ((u64)buf->addr + sizeimage / 2) >> 32);
++		vi_csi_write(chan, TEGRA_VI_CSI_SURFACE1_OFFSET_LSB,
++			     buf->addr + sizeimage / 2);
++		vi_csi_write(chan, TEGRA_VI_CSI_SURFACE1_STRIDE,
++			     bytes_per_line);
++	}
++
++	/*
+ 	 * Tegra VI block interacts with host1x syncpt for synchronizing
+ 	 * programmed condition of capture state and hardware operation.
+ 	 * Frame start and Memory write acknowledge syncpts has their own
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 7edd35c..525c087 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -484,6 +484,8 @@ static void tegra_channel_fmt_align(struct tegra_vi_channel *chan,
+ 
+ 	pix->bytesperline = clamp(bpl, min_bpl, max_bpl);
+ 	pix->sizeimage = pix->bytesperline * pix->height;
++	if (pix->pixelformat == V4L2_PIX_FMT_NV16)
++		pix->sizeimage *= 2;
+ }
+ 
+ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
+-- 
+2.7.4
+
