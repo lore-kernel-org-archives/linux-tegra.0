@@ -8,26 +8,26 @@ X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA646C4361A
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39531C4167B
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 489F3217BA
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DD5217BA
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbgLCTAr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1727816AbgLCTAr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 3 Dec 2020 14:00:47 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18299 "EHLO
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18301 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727718AbgLCTAq (ORCPT
+        with ESMTP id S1727010AbgLCTAq (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:00:46 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc935b60001>; Thu, 03 Dec 2020 11:00:06 -0800
+        id <B5fc935b60002>; Thu, 03 Dec 2020 11:00:06 -0800
 Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 19:00:01 +0000
+ 2020 19:00:02 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 19:00:00 +0000
+ Transport; Thu, 3 Dec 2020 19:00:01 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -35,9 +35,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
         <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 01/13] media: tegra-video: Use zero crop settings if subdev has no get_selection
-Date:   Thu, 3 Dec 2020 10:59:50 -0800
-Message-ID: <1607022002-26575-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 02/13] media: tegra-video: Enable VI pixel transform for YUV and RGB formats
+Date:   Thu, 3 Dec 2020 10:59:51 -0800
+Message-ID: <1607022002-26575-3-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
 References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
@@ -45,63 +45,65 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607022006; bh=ERCkCneZmXlmcSkkK9fGRHPBppn9DardS4Sr/wZUI/E=;
+        t=1607022006; bh=3KvReLIRXcuW/kRnBsqtVyD+GiWXJeSQRRku54/yeMg=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=hp+9vWAsmZRaQ5XaJvFVOeiNkH1BS6XZYb3wesU99yy5mVXOWBpTfJUn+34UhqgmC
-         34x1ftz3R/jeV56KvA7pIayHb8JHJMoD5jlvuln/zoCDdj2U160TYVI1WWxo0llggr
-         f4XPsEH0xeXUwkHLN/tD0N+Grpu4NIyaZ2GUvj/OCePIveScHtKFjzXDTE6aAnIbZX
-         zX6TL9okwMm5mXrc0QG9+KcXu9J9c8UdXJNc3+jbrM5xV1ZKfCH+rVWK4WOV97LyuA
-         lzRWXO0UcN0eZzAQaYasHBeHAvKR7Afmi8xUk50jMIe7Yh9ZuaW5RBl+ZzDqnRkKrP
-         KAXzoPMSmgrDQ==
+        b=qpY7VaVJB1mUY6k5CwE8i2LCBqJjlP7r0PwhCy4qgEhEBOL4nMvEeBfSDZ9KZeQ15
+         1b+xPZHpTPzK4xBTtAZZXAk+YSjb4FeqbDPsGS4gIYeyO6FJrT1Ql6IG6unlP+uWRq
+         GRM+9rsElqAxnuXzmEsDQnFd73KFZ1sN4sADjGuJWHQSLdC1OFBI1lWGaXTwSDhNtF
+         PW1OFLPhqdluRMv85HAi82IZgQQFvT1UqwZd+/4146Yr4FasBF9CESfUHG+8Q2SNAY
+         s/Lg75xNCIUzeTq6pNLgDSduhkOFrC/T9t5IZiHswec0YZPPQfYsffXnOVb4+/sDCw
+         8pZrJOU6PuX7A==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently try format implementation doesn't check if subdevice has
-get_selection ops implemented and returns -EINVAL on error from
-direct v4l2_subdev_call of get_selection.
+VI Pixel transforms converts source pixel data to selected
+destination pixel formats in memory and aligns properly.
 
-Selection API's are not mandatory for all V4L2 subdevices.
+YUV and RGB formats need this pixel transform to be enabled.
 
-This patch fixes it by adding v4l2_subdev_has_ops check prior to
-calling get_selection ops and continues with try or set format with
-zero crop settings for subdevices that don't have get_selection and
-returns -EINVAL only for subdevices that has get_selection ops.
+RAW formats use T_R16_I destination pixel format in memory and
+does not need pixel transform as they support direct write to
+memory.
+
+So, this patch enables pixel transform for YUV and RGB and keeps
+it bypass for RAW formats.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/staging/media/tegra-video/tegra210.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 560d8b3..7edd35c 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -533,11 +533,18 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	fse.code = fmtinfo->code;
- 	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, pad_cfg, &fse);
- 	if (ret) {
--		ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel);
--		if (ret)
--			return -EINVAL;
--		pad_cfg->try_crop.width = sdsel.r.width;
--		pad_cfg->try_crop.height = sdsel.r.height;
-+		if (!v4l2_subdev_has_op(subdev, pad, get_selection)) {
-+			pad_cfg->try_crop.width = 0;
-+			pad_cfg->try_crop.height = 0;
-+		} else {
-+			ret = v4l2_subdev_call(subdev, pad, get_selection,
-+					       NULL, &sdsel);
-+			if (ret)
-+				return -EINVAL;
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index ac066c0..6b23aa7 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -178,10 +178,23 @@ static int tegra_channel_capture_setup(struct tegra_vi_channel *chan)
+ 	u32 format = chan->fmtinfo->img_fmt;
+ 	u32 data_type = chan->fmtinfo->img_dt;
+ 	u32 word_count = (width * chan->fmtinfo->bit_width) / 8;
++	u32 bypass_pixel_transform = BIT(BYPASS_PXL_TRANSFORM_OFFSET);
 +
-+			pad_cfg->try_crop.width = sdsel.r.width;
-+			pad_cfg->try_crop.height = sdsel.r.height;
-+		}
- 	} else {
- 		pad_cfg->try_crop.width = fse.max_width;
- 		pad_cfg->try_crop.height = fse.max_height;
++	/*
++	 * VI Pixel transformation unit converts source pixels data format
++	 * into selected destination pixel format and aligns properly while
++	 * interfacing with memory packer.
++	 * This pixel transformation should be enabled for YUV and RGB
++	 * formats and should be bypassed for RAW formats as RAW formats
++	 * only support direct to memory.
++	 */
++	if (chan->pg_mode || data_type == TEGRA_IMAGE_DT_YUV422_8 ||
++	    data_type == TEGRA_IMAGE_DT_RGB888)
++		bypass_pixel_transform = 0;
+ 
+ 	vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS, 0xffffffff);
+ 	vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DEF,
+-		     ((chan->pg_mode ? 0 : 1) << BYPASS_PXL_TRANSFORM_OFFSET) |
++		     bypass_pixel_transform |
+ 		     (format << IMAGE_DEF_FORMAT_OFFSET) |
+ 		     IMAGE_DEF_DEST_MEM);
+ 	vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DT, data_type);
 -- 
 2.7.4
 
