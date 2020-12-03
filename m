@@ -2,195 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A11C19425
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CD2C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17C8A20C56
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE812221EC
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502030AbgLCTBe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 14:01:34 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19213 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502016AbgLCTBd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:01:33 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc935c60000>; Thu, 03 Dec 2020 11:00:22 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 19:00:18 +0000
-Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 19:00:17 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>
-CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 13/13] media: tegra-video: Add custom V4L2 control V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY
-Date:   Thu, 3 Dec 2020 11:00:02 -0800
-Message-ID: <1607022002-26575-14-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
-References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1727088AbgLCTU3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 14:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727531AbgLCTU2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:20:28 -0500
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731B7C061A4E
+        for <linux-tegra@vger.kernel.org>; Thu,  3 Dec 2020 11:19:48 -0800 (PST)
+Received: by mail-yb1-xb43.google.com with SMTP id 10so3047480ybx.9
+        for <linux-tegra@vger.kernel.org>; Thu, 03 Dec 2020 11:19:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UUYfB3LhbOXH/qWX5ow3QLdCqkjf8YNWyBuEVSInt6w=;
+        b=tAd4JdpSkRPjjrscn5ThUbDcRYUSaRgmc8LmMW8HU7IePg47OQhCVJdawgzjaN7syv
+         e3N3DviCmLqpIzkG8sO9XhRF7Xf5itcYmV+qZhq7FZqrC0InNtmGC17CoIJH1Wfphncr
+         Rg3+TeoBuBit3SqGgU3LvdQFbIl4Hfvd3BljTLXwQyaI0Nmmgvg8oNhs51a3TPi3/ykN
+         3T79WmLyPDK6zN22VMLIOPq8xzaeDsW3ln56eq9MCq3v+uSGTB7yi3dNZ01zx+siGqKN
+         vaiTRladSGMR+rgnYUqa2sd69sMLzM0Csre6QiBaviz0vCyosEHEY5UGK4etRXSK2MqN
+         PnAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UUYfB3LhbOXH/qWX5ow3QLdCqkjf8YNWyBuEVSInt6w=;
+        b=WBubrDHQA5kXZ0aJFffLRvrONobpOMXC4iahiYIRdxz9ActqIs8Uu7j7AzExwV1OvN
+         JkW1nvSiUEk2VvOs66HI9vKJ+y9myM/BgBeNblSvThWpfbXPkODo9zos1BdpI9lrKhaX
+         ubQozLC13Fi5ETWcgYzcFipMq8dj5ZRW2/v+RCyVw+sP6PHLXvC+4RLDcGJlqgm/zRB9
+         o6xQChfOAtNEhSxuu4PwZfOPI5TBPRu8+YgDnNG2nBU6z9O2e/nKFC9+II0hXvXlI6es
+         Y213gbb4lnA5PMVG9Ae3taV4T7iEZzOsjp8y0n3T9rg+awF09QmoRy3cA5IsPSf1nzSt
+         C/EA==
+X-Gm-Message-State: AOAM533YlwGkHgAaUabkmgxJhBZNANfqaHHfZDuX3yH718otSQRhheOo
+        0icYeMmJx1qQQPQ9dhJi3ZrhHf3QLEfT0rwjYhljY9Qadz2Jjmvn
+X-Google-Smtp-Source: ABdhPJyhXbsmp80bw0icNNI9ciSn4KKgQYFLMDbMBvVHnJ7Dp8BN0RFUQsPErKCI3u7Ti+5A7pCXg92G1jadJjuVlVw=
+X-Received: by 2002:a25:8401:: with SMTP id u1mr1068640ybk.96.1607023187549;
+ Thu, 03 Dec 2020 11:19:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607022022; bh=OZJ/8SCNM9zia5Uy6aq+c9fc5V1L/LcrVZqaCjqF0cQ=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=EkOMKegyV1cnH36jeAfnVHZsOuhtC8seEeDnlD55bTX+pkYBAjSF9i/+aJFMarqx3
-         KVJwLKG9zyu3muZglZ0kUlgF9LiLuojV3n+bJOe8sKEA8tIm1MJ+kdHGwbOcM5q5j5
-         Y+LEzfzSxL6sx9rMXm28HJmwLDV0nnw9sqSH9M37pTqi39Uo9Q+zZSf6Qechc64DwM
-         0CgNWY1OS9RtUfD1yoleBAy0/vqwsueHBjORGPnO/BWiUdx/c/4eZTjhlW1IyGIFNz
-         E9yj7eKofV7enO8EqVdgTJ8T3P68FI5WJyVtt5yC7I7aGU7BBrnSAt4qkRNNCRx5T6
-         XXaI4WP9eP1xg==
+References: <20201203175756.1405564-1-thierry.reding@gmail.com> <CAJZ5v0g_FC6Pikrvk2PK=XMvAwqjaNOcYXHYS6eqv6Zc0JgqNQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g_FC6Pikrvk2PK=XMvAwqjaNOcYXHYS6eqv6Zc0JgqNQ@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 3 Dec 2020 11:19:11 -0800
+Message-ID: <CAGETcx9wrKNfvV36v1YJLa_A8jtb6OvZRMjsNG9AYxLPDvdpgQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Reorder devices on successful probe
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds custom V4L2 control for syncpt timeout retry to continue
-capture on error for specified retries count through this control.
+On Thu, Dec 3, 2020 at 10:17 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Dec 3, 2020 at 6:58 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+> >
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Device drivers usually depend on the fact that the devices that they
+> > control are suspended in the same order that they were probed in. In
+> > most cases this is already guaranteed via deferred probe.
+> >
+> > However, there's one case where this can still break: if a device is
+> > instantiated before a dependency (for example if it appears before the
+> > dependency in device tree) but gets probed only after the dependency is
+> > probed. Instantiation order would cause the dependency to get probed
+> > later, in which case probe of the original device would be deferred and
+> > the suspend/resume queue would get reordered properly. However, if the
+> > dependency is provided by a built-in driver and the device depending on
+> > that driver is controlled by a loadable module, which may only get
+> > loaded after the root filesystem has become available, we can be faced
+> > with a situation where the probe order ends up being different from the
+> > suspend/resume order.
+> >
+> > One example where this happens is on Tegra186, where the ACONNECT is
+> > listed very early in device tree (sorted by unit-address) and depends on
+> > BPMP (listed very late because it has no unit-address) for power domains
+> > and clocks/resets. If the ACONNECT driver is built-in, there is no
+> > problem because it will be probed before BPMP, causing a probe deferral
+> > and that in turn reorders the suspend/resume queue. However, if built as
+> > a module, it will end up being probed after BPMP, and therefore not
+> > result in a probe deferral, and therefore the suspend/resume queue will
+> > stay in the instantiation order. This in turn causes problems because
+> > ACONNECT will be resumed before BPMP, which will result in a hang
+> > because the ACONNECT's power domain cannot be powered on as long as the
+> > BPMP is still suspended.
+> >
+> > Fix this by always reordering devices on successful probe. This ensures
+> > that the suspend/resume queue is always in probe order and hence meets
+> > the natural expectations of drivers vs. their dependencies.
+> >
+> > Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>
+> Saravana had submitted a very similar patch (I don't have a pointer to
+> that one though) and I was against it at that time due to
+> overhead-related concerns.  There still are some, but maybe that
+> doesn't matter in practice.
 
-This is useful for HDMI-to-CSI bridge debug purposes like for hotplug scenarios
-or for ignoring captures till HDMI input is stabilized.
+Yeah, it's a very similar patch but I also suggested deleting the
+reorder done in the deferred probe code (I'm pretty sure we can drop
+it). Here's the thread:
+https://lore.kernel.org/lkml/20200625032430.152447-1-saravanak@google.com/
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/staging/media/tegra-video/tegra210.c | 10 +++++++++-
- drivers/staging/media/tegra-video/vi.c       | 26 +++++++++++++++++++++++++-
- drivers/staging/media/tegra-video/vi.h       |  4 ++++
- 3 files changed, 38 insertions(+), 2 deletions(-)
+Btw, I've been wondering about this recently. Do we even need
+device_pm_move_to_tail() to do the recursive thing once we do "add
+device to end of list when added" + "move probed devices to the end
+after probe" thing here? Doesn't this guarantee that none of the
+consumers can come before the supplier in the dpm list?
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index 063d0a3..f10a041 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -454,6 +454,7 @@ static int chan_capture_kthread_start(void *data)
- {
- 	struct tegra_vi_channel *chan = data;
- 	struct tegra_channel_buffer *buf;
-+	unsigned int retries = 0;
- 	int err = 0;
- 
- 	while (1) {
-@@ -483,8 +484,15 @@ static int chan_capture_kthread_start(void *data)
- 		spin_unlock(&chan->start_lock);
- 
- 		err = tegra_channel_capture_frame(chan, buf);
--		if (err)
-+		if (!err) {
-+			retries = 0;
-+			continue;
-+		}
-+
-+		if (retries++ > chan->syncpt_timeout_retry)
- 			vb2_queue_error(&chan->queue);
-+		else
-+			err = 0;
- 	}
- 
- 	return 0;
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 4773281..70e1e18 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -956,7 +956,6 @@ static const struct v4l2_file_operations tegra_channel_fops = {
- /*
-  * V4L2 control operations
-  */
--#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
- static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
- {
- 	struct tegra_vi_channel *chan = container_of(ctrl->handler,
-@@ -968,6 +967,9 @@ static int vi_s_ctrl(struct v4l2_ctrl *ctrl)
- 		/* pattern change takes effect on next stream */
- 		chan->pg_mode = ctrl->val + 1;
- 		break;
-+	case V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY:
-+		chan->syncpt_timeout_retry = ctrl->val;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -979,10 +981,22 @@ static const struct v4l2_ctrl_ops vi_ctrl_ops = {
- 	.s_ctrl	= vi_s_ctrl,
- };
- 
-+#if IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG)
- static const char *const vi_pattern_strings[] = {
- 	"Black/White Direct Mode",
- 	"Color Patch Mode",
- };
-+#else
-+static const struct v4l2_ctrl_config syncpt_timeout_ctrl = {
-+	.ops = &vi_ctrl_ops,
-+	.id = V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY,
-+	.name = "Syncpt timeout retry",
-+	.type = V4L2_CTRL_TYPE_INTEGER,
-+	.min = 1,
-+	.max = 10000,
-+	.step = 1,
-+	.def = 5,
-+};
- #endif
- 
- static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
-@@ -1004,6 +1018,16 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
- #else
- 	struct v4l2_subdev *subdev;
- 
-+	/* custom control */
-+	v4l2_ctrl_new_custom(&chan->ctrl_handler, &syncpt_timeout_ctrl, NULL);
-+	if (chan->ctrl_handler.error) {
-+		dev_err(chan->vi->dev, "failed to add %s ctrl handler: %d\n",
-+			syncpt_timeout_ctrl.name,
-+			chan->ctrl_handler.error);
-+		v4l2_ctrl_handler_free(&chan->ctrl_handler);
-+		return chan->ctrl_handler.error;
-+	}
-+
- 	subdev = tegra_channel_get_remote_source_subdev(chan);
- 	if (!subdev)
- 		return -ENODEV;
-diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging/media/tegra-video/vi.h
-index 27061a5..a68e2c0 100644
---- a/drivers/staging/media/tegra-video/vi.h
-+++ b/drivers/staging/media/tegra-video/vi.h
-@@ -23,6 +23,8 @@
- 
- #include "csi.h"
- 
-+#define V4L2_CID_TEGRA_SYNCPT_TIMEOUT_RETRY	(V4L2_CTRL_CLASS_CAMERA | 0x1001)
-+
- #define TEGRA_MIN_WIDTH		32U
- #define TEGRA_MAX_WIDTH		32768U
- #define TEGRA_MIN_HEIGHT	32U
-@@ -160,6 +162,7 @@ struct tegra_vi_graph_entity {
-  * @of_node: device node of VI channel
-  *
-  * @ctrl_handler: V4L2 control handler of this video channel
-+ * @syncpt_timeout_retry: syncpt timeout retry count for the capture
-  * @fmts_bitmap: a bitmap for supported formats matching v4l2 subdev formats
-  * @tpg_fmts_bitmap: a bitmap for supported TPG formats
-  * @pg_mode: test pattern generator mode (disabled/direct/patch)
-@@ -201,6 +204,7 @@ struct tegra_vi_channel {
- 	struct device_node *of_node;
- 
- 	struct v4l2_ctrl_handler ctrl_handler;
-+	unsigned int syncpt_timeout_retry;
- 	DECLARE_BITMAP(fmts_bitmap, MAX_FORMAT_NUM);
- 	DECLARE_BITMAP(tpg_fmts_bitmap, MAX_FORMAT_NUM);
- 	enum tegra_vi_pg_mode pg_mode;
--- 
-2.7.4
+-Saravana
 
+>
+> Also, I kind of expect this to blow up somewhere, but since I have no
+> examples ready from the top of my head, I think let's try and see, so:
+>
+> Acked-by: Rafael. J. Wysocki <rafael@kernel.org>
+>
+> > ---
+> >  drivers/base/dd.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index 148e81969e04..cfc079e738bb 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -370,6 +370,13 @@ static void driver_bound(struct device *dev)
+> >
+> >         device_pm_check_callbacks(dev);
+> >
+> > +       /*
+> > +        * Reorder successfully probed devices to the end of the device list.
+> > +        * This ensures that suspend/resume order matches probe order, which
+> > +        * is usually what drivers rely on.
+> > +        */
+> > +       device_pm_move_to_tail(dev);
+> > +
+> >         /*
+> >          * Make sure the device is no longer in one of the deferred lists and
+> >          * kick off retrying all pending devices
+> > --
+> > 2.29.2
+> >
