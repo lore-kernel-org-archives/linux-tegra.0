@@ -8,26 +8,26 @@ X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 337CEC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D645DC19437
 	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB781208A9
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A113820C56
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbgLCTA4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 14:00:56 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5929 "EHLO
+        id S1727457AbgLCTBG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 14:01:06 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5905 "EHLO
         hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731723AbgLCTAy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:00:54 -0500
+        with ESMTP id S1729136AbgLCTAr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:00:47 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc935bd0002>; Thu, 03 Dec 2020 11:00:13 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 19:00:09 +0000
+        id <B5fc935b70000>; Thu, 03 Dec 2020 11:00:07 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
+ 2020 19:00:04 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 19:00:08 +0000
+ Transport; Thu, 3 Dec 2020 19:00:03 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -35,9 +35,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
         <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 07/13] media: tegra-video: Add support for VIDIOC_LOG_STATUS ioctl
-Date:   Thu, 3 Dec 2020 10:59:56 -0800
-Message-ID: <1607022002-26575-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 03/13] media: tegra-video: Fix V4L2 pixel format RGB and YUV
+Date:   Thu, 3 Dec 2020 10:59:52 -0800
+Message-ID: <1607022002-26575-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
 References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
@@ -45,54 +45,62 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607022013; bh=kTyQynYZOfOfJzdQDZRQRAmmuQmvfE4/+44pKh0V+MY=;
+        t=1607022007; bh=imcyi/Wf5bWSKWY3rp4OOsZll/aHA+UXIksKEb6CDQY=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=HK8P3Ioj//TNtz635xPetovlbjJ6sOR0cEOXpQ9+24IPY6Q4o8ADZJLc9gubi4cHz
-         Mbygu7yjU+3u4dQTWdt31XIafzBAgDb7+waETVzIOP1FLWcrQO2tXy9WrxxQTa1Pp8
-         HEhXyNKJ36QmqfH94p8WZBpFFvGlwZWFpVvR8dUSZRcN+MJyh8Tk/G8PBif3DpkL8C
-         KWg1tlYMPmngq9Z3PIiSZCjQPYg9fWZFGwSu8iIovY6BUchqDECW05Kpi3ye9QEMFS
-         2Hv2RLpZRw/ppb9J1k8UYHWQOaRs71myUJYgzdZCOW5uhIJ2yUxTuX9+u5oG0of+oY
-         uPXTtTNYHyl9g==
+        b=puKJiVnOZQxmYQCETPz2Ub4HX4uIfpMxL5kU3XkyO8w6y+azx55yrekM+OXTj9sBs
+         52ImS4Vsch8t1NT0abQYEMS6s+s/ksl8oMQzOf7cEtc/cjn7xzFbC6jHm194iHQDtd
+         6+GTI5FQXUzoqSEi4yvjp0XkQSlfdPjTfShtxRpeAi9n1Kk/eI30GanZUgd++va+xo
+         oqM+2LuaP7D80OQkWNZey1QD+aUlr93eg6R5ydSnXf+//L9wC+dlf/yeWPOe0DIgBm
+         FAYdqBrnPNR8iJtKAFebPBFKeJWo/Uyy5UhA0jmaLNMryySXhfiQQdQALeGkiprHHV
+         tvv4uPjEZIYpw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds support for log_status ioctl.
+V4L2 pixel format is incorrect for RGB and YUV formats.
+
+This patch fixes it.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/staging/media/tegra-video/tegra210.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index bc38136..c280117 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -838,6 +838,15 @@ static int tegra_channel_dv_timings_cap(struct file *file, void *fh,
- 	return v4l2_subdev_call(subdev, pad, dv_timings_cap, cap);
- }
- 
-+static int tegra_channel_log_status(struct file *file, void *fh)
-+{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
-+
-+	v4l2_device_call_all(chan->video.v4l2_dev, 0, core, log_status);
-+
-+	return 0;
-+}
-+
- static int tegra_channel_enum_input(struct file *file, void *fh,
- 				    struct v4l2_input *inp)
- {
-@@ -906,6 +915,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
- 	.vidioc_query_dv_timings	= tegra_channel_query_dv_timings,
- 	.vidioc_enum_dv_timings		= tegra_channel_enum_dv_timings,
- 	.vidioc_dv_timings_cap		= tegra_channel_dv_timings_cap,
-+	.vidioc_log_status		= tegra_channel_log_status,
+diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
+index 6b23aa7..68f09e4 100644
+--- a/drivers/staging/media/tegra-video/tegra210.c
++++ b/drivers/staging/media/tegra-video/tegra210.c
+@@ -619,19 +619,19 @@ static const struct tegra_video_format tegra210_video_formats[] = {
+ 	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
+ 	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
+ 	/* RGB888 */
+-	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, RGB24),
++	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XBGR32),
+ 	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
+-			   XBGR32),
++			   RGBX32),
+ 	/* YUV422 */
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, UYVY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, VYUY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, YUYV),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, YUYV),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, VYUY),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, UYVY),
+ 	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 1, T_Y8__V8U8_N422, NV16),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, UYVY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, VYUY),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, YUYV),
+-	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, YVYU),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, YUYV),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, VYUY),
++	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, UYVY),
  };
  
- /*
+ /* Tegra210 VI operations */
 -- 
 2.7.4
 
