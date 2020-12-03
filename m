@@ -2,74 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6256C2BBD5
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 14:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F659C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 17:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87DC8223D8
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 14:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE15207A2
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 17:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbgLCOho (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 09:37:44 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8678 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389202AbgLCOhn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 09:37:43 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc8f80f0000>; Thu, 03 Dec 2020 06:37:03 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 14:37:03 +0000
-Received: from audio.nvidia.com (10.124.1.5) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 14:37:00 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <broonie@kernel.org>
-CC:     <jonathanh@nvidia.com>, <sharadg@nvidia.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [RESEND PATCH 0/2] Convert Tegra HDA doc to json-schema
-Date:   Thu, 3 Dec 2020 20:06:40 +0530
-Message-ID: <1607006202-4078-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729549AbgLCR6q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 12:58:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgLCR6p (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 12:58:45 -0500
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09845C061A4E;
+        Thu,  3 Dec 2020 09:58:05 -0800 (PST)
+Received: by mail-ed1-x541.google.com with SMTP id dk8so175059edb.1;
+        Thu, 03 Dec 2020 09:58:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DvpVnTdDjJ8kSW6ZFCr0AzlAkfpDl4O8s1SsO6Ne4E0=;
+        b=LiPuX50v+iGvL7Fju08esmQmzJxH6nhPxC39sWDAJ60kOESin2C1AYZX42xcFTItJJ
+         lvNb2ADxPNfT0TswVKoumY6QAzx4k5RUPWz5aU32v6QNBEJBhJmrLn5Z/1MOOdep8V0Y
+         sh85wH+QYeaoAWTDZQ2J2oje+yE81tENSn20n/inUEWxlxairLyVYWbBz60sj2FMbPWD
+         KRQY9QpPmRfC7H2FEpnts4qRtD9ijn16z+2FWgcaHn3V0yQ+imgMetVGFbe/IrwM1AWs
+         k7aH2dLHNKB7aY4XnrOThQYwGOv0oNkZxy6IhlT0tVMOun9jNpY2/LiiicY7knNvAXdF
+         VLTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DvpVnTdDjJ8kSW6ZFCr0AzlAkfpDl4O8s1SsO6Ne4E0=;
+        b=likKucYWmV6IcQBYM2mOIe/vonVEBFTi0mOvNGXs/sCV+io2q+QCdg+UYhzXsGtOmY
+         zMPtJWkPknjnWq+NBvqQOeW0qIiM5GwmOl35oe1Olfna4So1vs/RDDiMb7Baaj6CHtFB
+         mM8EqDzPKr80U97xqDXtEgJJCF781UWwbZ0eN3JhwZc5we5oibzpn/UvhPhVbyzsHWH6
+         H7lFgC35NqDOl4CY/HX8wGV+tmy9eKIxm7WlN/HY5XAtgxxv0kIBRElMBQYaKFX8RLgO
+         zbsGBlTFs4jrLPTONXYV+LiWhSWrWP9LIatYSMbFZBv9nA4z1ex/Uj1sdbm5bHxPVycB
+         mOfg==
+X-Gm-Message-State: AOAM530bi4TIAgU2FXyjne0cfwJRX+k+/2BkeNStMSNAhNltn9ReuWgI
+        yQc8PPcMjeq0FdZ+Ifyv2nhAnaBz8a4=
+X-Google-Smtp-Source: ABdhPJxXcjg9JUpreY4/5trqmtMta8r+XrI2+64/cNG5PnZ4avKMungowzM3jRb7DxfGw7zsl3vulQ==
+X-Received: by 2002:a50:d886:: with SMTP id p6mr4084989edj.366.1607018283609;
+        Thu, 03 Dec 2020 09:58:03 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id r9sm1697954edx.82.2020.12.03.09.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Dec 2020 09:58:02 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] driver core: Reorder devices on successful probe
+Date:   Thu,  3 Dec 2020 18:57:56 +0100
+Message-Id: <20201203175756.1405564-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607006223; bh=oBVH1GkkdSd+6h69hwkZ2XZAHlPV4pT2Qs/l/nDYx3U=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         Content-Type;
-        b=Lbr6OUW0wGesY0teHTXCdQB4XLfzLF45rs1G+FsTO3K4/WHVIoDcITzJJNPAnwMf/
-         K9RtU+Y4j5kKW2eKChMWYnRQG2Awgav8ftJWOIuLnObj/9rUGjNM21k8gfhATvG2O3
-         3Wbd7Vo0E+3qg+2hud5n421+vK18ju1SayNIN20j3wdW7ebqDuKZ7R/SyAtC52ooK2
-         ARiKTR+49EQsu/vQJ0c5IpCo/P0ZlGdlO/JmVJq/zhen5IydbO4459zHxojABLOalq
-         QHQ4XbBMFMRwGGcjN32y3AJohqKDkUm3c9LpFIxawOX7qsklGulUNFWpyBywEKmL9h
-         TXLvAQP7su81w==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Convert Tegra HDA doc to YAML format. Ran binding validation checks to
-ensure there are no warnings/errors for HDA.
+From: Thierry Reding <treding@nvidia.com>
 
-Patch "arm64: tegra: Fix Tegra194 HDA {clock,reset}-names ordering" is
-already merged and hence not included here.
+Device drivers usually depend on the fact that the devices that they
+control are suspended in the same order that they were probed in. In
+most cases this is already guaranteed via deferred probe.
 
-Sameer Pujar (2):
-  dt-bindings: tegra: Convert HDA doc to json-schema
-  dt-bindings: tegra: Add missing HDA properties
+However, there's one case where this can still break: if a device is
+instantiated before a dependency (for example if it appears before the
+dependency in device tree) but gets probed only after the dependency is
+probed. Instantiation order would cause the dependency to get probed
+later, in which case probe of the original device would be deferred and
+the suspend/resume queue would get reordered properly. However, if the
+dependency is provided by a built-in driver and the device depending on
+that driver is controlled by a loadable module, which may only get
+loaded after the root filesystem has become available, we can be faced
+with a situation where the probe order ends up being different from the
+suspend/resume order.
 
- .../bindings/sound/nvidia,tegra30-hda.txt          |  35 -------
- .../bindings/sound/nvidia,tegra30-hda.yaml         | 112 +++++++++++++++++++++
- 2 files changed, 112 insertions(+), 35 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
+One example where this happens is on Tegra186, where the ACONNECT is
+listed very early in device tree (sorted by unit-address) and depends on
+BPMP (listed very late because it has no unit-address) for power domains
+and clocks/resets. If the ACONNECT driver is built-in, there is no
+problem because it will be probed before BPMP, causing a probe deferral
+and that in turn reorders the suspend/resume queue. However, if built as
+a module, it will end up being probed after BPMP, and therefore not
+result in a probe deferral, and therefore the suspend/resume queue will
+stay in the instantiation order. This in turn causes problems because
+ACONNECT will be resumed before BPMP, which will result in a hang
+because the ACONNECT's power domain cannot be powered on as long as the
+BPMP is still suspended.
 
+Fix this by always reordering devices on successful probe. This ensures
+that the suspend/resume queue is always in probe order and hence meets
+the natural expectations of drivers vs. their dependencies.
+
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/base/dd.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 148e81969e04..cfc079e738bb 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -370,6 +370,13 @@ static void driver_bound(struct device *dev)
+ 
+ 	device_pm_check_callbacks(dev);
+ 
++	/*
++	 * Reorder successfully probed devices to the end of the device list.
++	 * This ensures that suspend/resume order matches probe order, which
++	 * is usually what drivers rely on.
++	 */
++	device_pm_move_to_tail(dev);
++
+ 	/*
+ 	 * Make sure the device is no longer in one of the deferred lists and
+ 	 * kick off retrying all pending devices
 -- 
-2.7.4
+2.29.2
 
