@@ -5,29 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D645DC19437
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FED9C197BF
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A113820C56
-	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B2320C56
+	for <linux-tegra@archiver.kernel.org>; Thu,  3 Dec 2020 19:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgLCTBG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 14:01:06 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5905 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729136AbgLCTAr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:00:47 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc935b70000>; Thu, 03 Dec 2020 11:00:07 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
- 2020 19:00:04 +0000
+        id S1731784AbgLCTB2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 3 Dec 2020 14:01:28 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18455 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729136AbgLCTB1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 14:01:27 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fc935bd0002>; Thu, 03 Dec 2020 11:00:13 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Dec
+ 2020 19:00:12 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.13.39) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 3 Dec 2020 19:00:03 +0000
+ Transport; Thu, 3 Dec 2020 19:00:11 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -35,9 +34,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <bparrot@ti.com>, <mchehab@kernel.org>,
         <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 03/13] media: tegra-video: Fix V4L2 pixel format RGB and YUV
-Date:   Thu, 3 Dec 2020 10:59:52 -0800
-Message-ID: <1607022002-26575-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 09/13] media: tegra-video: Implement V4L2 device notify callback
+Date:   Thu, 3 Dec 2020 10:59:58 -0800
+Message-ID: <1607022002-26575-10-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
 References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
@@ -45,62 +44,93 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607022007; bh=imcyi/Wf5bWSKWY3rp4OOsZll/aHA+UXIksKEb6CDQY=;
+        t=1607022013; bh=ncGsj+Oy+F4Lel7edOJaT66wM9yPnydfWvWB30dUNxo=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=puKJiVnOZQxmYQCETPz2Ub4HX4uIfpMxL5kU3XkyO8w6y+azx55yrekM+OXTj9sBs
-         52ImS4Vsch8t1NT0abQYEMS6s+s/ksl8oMQzOf7cEtc/cjn7xzFbC6jHm194iHQDtd
-         6+GTI5FQXUzoqSEi4yvjp0XkQSlfdPjTfShtxRpeAi9n1Kk/eI30GanZUgd++va+xo
-         oqM+2LuaP7D80OQkWNZey1QD+aUlr93eg6R5ydSnXf+//L9wC+dlf/yeWPOe0DIgBm
-         FAYdqBrnPNR8iJtKAFebPBFKeJWo/Uyy5UhA0jmaLNMryySXhfiQQdQALeGkiprHHV
-         tvv4uPjEZIYpw==
+        b=WEyVYfyIIsgLrAqCLF63w9FK9845+8mOPDGODnA7EHYE7gmcVooNheCVZ+Up+5N1r
+         WmGEa1MDx2hm1YjP5AyxBokfwRVMEw3IgXaP1aqFc2Ra9q9jl5iBHI+Kz3tCzzbe8b
+         Ci9Vf1BYTnf6qqpPS7rdJi9ycSHInjLeQ1hAYSQW3ct+4NkOkngSp9XckjzZBhcTMX
+         f40prPcZRxs3hqPqsqfxTJ4Xzqx4ucFrhxF4eteSd64uRNEYif4HXLcmO+vdG/maPJ
+         bEHAiRYshZmzt9Dym0yaGyv8WYUHsuMZjjI9y6hv0HccYoopPNGORx9ZrleDm2EVHj
+         04tqMmhTd9/dg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-V4L2 pixel format is incorrect for RGB and YUV formats.
+Implement V4L2 device notify callback to handle
+V4L2_EVENT_SOURCE_CHANGE event from subdevices.
 
-This patch fixes it.
+HDMI-to-CSI bridge drivers trigger V4L2_EVENT_SOURCE_CHANGE when
+source DV timing changes are detected or when HDMI hotplug happens.
+
+Runtime source parameter changes during active streaming is not
+allowed and Tegra video driver calls vb2_queue_error to signal a
+fatal error if a notification of this event happens during an active
+streaming.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/tegra210.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/media/tegra-video/vi.c    |  3 +++
+ drivers/staging/media/tegra-video/video.c | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index 6b23aa7..68f09e4 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -619,19 +619,19 @@ static const struct tegra_video_format tegra210_video_formats[] = {
- 	TEGRA210_VIDEO_FMT(RAW12, 12, SGBRG12_1X12, 2, T_R16_I, SGBRG12),
- 	TEGRA210_VIDEO_FMT(RAW12, 12, SBGGR12_1X12, 2, T_R16_I, SBGGR12),
- 	/* RGB888 */
--	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, RGB24),
-+	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X24, 4, T_A8R8G8B8, XBGR32),
- 	TEGRA210_VIDEO_FMT(RGB888, 24, RGB888_1X32_PADHI, 4, T_A8B8G8R8,
--			   XBGR32),
-+			   RGBX32),
- 	/* YUV422 */
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, UYVY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, VYUY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, YUYV),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 2, T_U8_Y8__V8_Y8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 2, T_V8_Y8__U8_Y8, YUYV),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 2, T_Y8_U8__Y8_V8, VYUY),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 2, T_Y8_V8__Y8_U8, UYVY),
- 	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 1, T_Y8__V8U8_N422, NV16),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, UYVY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, VYUY),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, YUYV),
--	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, T_U8_Y8__V8_Y8, YVYU),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, T_V8_Y8__U8_Y8, YUYV),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, T_Y8_U8__Y8_V8, VYUY),
-+	TEGRA210_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, T_Y8_V8__Y8_U8, UYVY),
- };
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 0a85e52..d42a218 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1636,6 +1636,9 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
  
- /* Tegra210 VI operations */
+ 	v4l2_set_subdev_hostdata(subdev, chan);
+ 
++	subdev = tegra_channel_get_remote_source_subdev(chan);
++	v4l2_set_subdev_hostdata(subdev, chan);
++
+ 	return 0;
+ 
+ unregister_video:
+diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+index e50bd70..d966b31 100644
+--- a/drivers/staging/media/tegra-video/video.c
++++ b/drivers/staging/media/tegra-video/video.c
+@@ -7,6 +7,8 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ 
++#include <media/v4l2-event.h>
++
+ #include "video.h"
+ 
+ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+@@ -24,6 +26,21 @@ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+ 	kfree(vid);
+ }
+ 
++static void tegra_v4l2_dev_notify(struct v4l2_subdev *sd,
++				  unsigned int notification, void *arg)
++{
++	struct tegra_vi_channel *chan;
++	const struct v4l2_event *ev = arg;
++
++	if (notification != V4L2_DEVICE_NOTIFY_EVENT)
++		return;
++
++	chan = v4l2_get_subdev_hostdata(sd);
++	v4l2_event_queue(&chan->video, arg);
++	if (ev->type == V4L2_EVENT_SOURCE_CHANGE && vb2_is_streaming(&chan->queue))
++		vb2_queue_error(&chan->queue);
++}
++
+ static int host1x_video_probe(struct host1x_device *dev)
+ {
+ 	struct tegra_video_device *vid;
+@@ -49,6 +66,7 @@ static int host1x_video_probe(struct host1x_device *dev)
+ 
+ 	vid->v4l2_dev.mdev = &vid->media_dev;
+ 	vid->v4l2_dev.release = tegra_v4l2_dev_release;
++	vid->v4l2_dev.notify = tegra_v4l2_dev_notify;
+ 	ret = v4l2_device_register(&dev->dev, &vid->v4l2_dev);
+ 	if (ret < 0) {
+ 		dev_err(&dev->dev,
 -- 
 2.7.4
 
