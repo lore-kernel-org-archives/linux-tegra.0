@@ -2,350 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445F9C4361A
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 14:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE007C4361A
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 15:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 112DD22571
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 14:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C5D422BEF
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 15:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbgLDOmm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Dec 2020 09:42:42 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6591 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbgLDOmm (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Dec 2020 09:42:42 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fca4ab90000>; Fri, 04 Dec 2020 06:42:01 -0800
-Received: from [10.26.72.142] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Dec
- 2020 14:41:59 +0000
-Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
- controller
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <broonie@kernel.org>,
-        <robh+dt@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1696afb0-3e44-8a68-caea-22fefd837ad8@nvidia.com>
-Date:   Fri, 4 Dec 2020 14:41:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1730418AbgLDPqv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Dec 2020 10:46:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49338 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbgLDPqu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Dec 2020 10:46:50 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD18C061A4F;
+        Fri,  4 Dec 2020 07:46:10 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id ce23so5541258ejb.8;
+        Fri, 04 Dec 2020 07:46:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DbuAyN4iS3jE4U8EbiNHXJ2azbl7Kvh289+qu9c177I=;
+        b=qo2LjP/5aSlrSTKxBszJVbRALYQEyunOrGSTat7HnEImAsVNH/dsiqnnc/oSJug0o2
+         CUpls6t4Di/qckyok9rz0J7q1HJzRJZp25u9MUEKDc1UwjZfpOaB/oCUOoQkcTSa0yOd
+         kD98xdt+C5yB2eM+hpCaJh2BhCA6Unikuon6GD9Ro2dY/3KBhXSx63YzuM+SFtVDUurV
+         34CcQI1gQQiW9abg14HoZhCnX+jGW1jtzU829y/BZn4zsnvtL3YvC00TEQfD1KJ0p5B5
+         IAUir0Mr3BW6R63WqaTlBkilwaM/1U/ZujJtKlIgBJSH8ooB0qJcroLVBioT+7JcrvP9
+         sjvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DbuAyN4iS3jE4U8EbiNHXJ2azbl7Kvh289+qu9c177I=;
+        b=QOq2jTgalSGbnt8HtlnNUJPFV4UCgNvadG9VWnRR4wlaPLuH7Ij4YvSecP0uVje1vJ
+         0t8RHq04BGbo1wTzan1opecnFUft9jCMs5Gpics8jg+tukaihE+TveQ5PmXgnf8zX4V/
+         Fbu5qzFeBSdUxFWo9H8Cxb8V67tHIWDHiBvdihXsyrdvuvUVlk4w343XAyMGGdJQcylj
+         gIdh3miSmcMusqOksYiODptDtGzuljtpnEhiJ4oD5lAG7FQwR9csXdZuXMZ994F35WuC
+         Gq7M+2RyMJ2cZe9O+mngeQPH0aBaEiAF7oFjD2i2uemxUqJ1mnJEJ04PXGU715e05CR7
+         9wUw==
+X-Gm-Message-State: AOAM531USjGMWUA/2a4TSyKhRAmYwOTh8/Q+7wNNh6E2HfTtAp5M9Rey
+        H5WKCPMEwGlBzRzVJTzU7Y4=
+X-Google-Smtp-Source: ABdhPJzK6eXffhjqFGkcAWdUBfAlJi9OXl7yvUZWgm9NnuvukHyyyS6UAK2lT0tx6lcjkCDWIy/LvA==
+X-Received: by 2002:a17:906:2581:: with SMTP id m1mr7556254ejb.28.1607096769272;
+        Fri, 04 Dec 2020 07:46:09 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id mb22sm3310243ejb.35.2020.12.04.07.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 07:46:07 -0800 (PST)
+Date:   Fri, 4 Dec 2020 16:46:06 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v11 01/10] dt-bindings: memory: tegra20: emc: Document
+ opp-supported-hw property
+Message-ID: <X8pZviQW2BHSMlg6@ulmo>
+References: <20201203192439.16177-1-digetx@gmail.com>
+ <20201203192439.16177-2-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607092921; bh=gDHE8G0yqLA7ipDuJDyitcU07/G1zK4asF/zFU+hXFE=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=GQStKsY+P/YspS/Cy//9F/aQFrphkoPi9gS2z0YkeOSeWveJgGd7VdH4HiStbfC0o
-         yF75VLNOJUXdTZ31MZLXGbQB0BshemMXDpJ0zPkTOda/fyXaWVo1gW5DdnijY0E/hn
-         NrBP6rmAC/BuFG1yn5lbt/Nhh31TbFKZQoC++e6dOCN5CjIg/LY68/Zzu+95hxmdtC
-         DTaRuOuRcZzLCh3CXK5TRxAVH80yhW6U1wuel6xuOW9C5E+yY92/2wMZ48PC7QysHj
-         2BOfI3GEh7/caCbNtKTl5Gj4pZJ3b4/MJkiEQUSsuyey0UXef/DGL+/AoC7sBpMMQb
-         47Q1/5ApBveUQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6ldeiUs9kZMXTziz"
+Content-Disposition: inline
+In-Reply-To: <20201203192439.16177-2-digetx@gmail.com>
+User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 01/12/2020 21:12, Sowjanya Komatineni wrote:
-> Tegra SoC has a Quad SPI controller starting from Tegra210.
-> 
-> This patch adds support for Tegra210 QSPI controller.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+--6ldeiUs9kZMXTziz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 03, 2020 at 10:24:30PM +0300, Dmitry Osipenko wrote:
+> Document opp-supported-hw property, which is not strictly necessary to
+> have on Tegra20, but it's very convenient to have because all other SoC
+> core devices will use hardware versioning, and thus, it's good to maintain
+> the consistency.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/spi/Kconfig      |    9 +
->  drivers/spi/Makefile     |    1 +
->  drivers/spi/qspi-tegra.c | 1418 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 1428 insertions(+)
->  create mode 100644 drivers/spi/qspi-tegra.c
-> 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 3fd16b7..1a021e8 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -844,6 +844,15 @@ config SPI_MXS
->  	help
->  	  SPI driver for Freescale MXS devices.
->  
-> +config QSPI_TEGRA
-> +	tristate "Nvidia Tegra QSPI Controller"
-> +	depends on (ARCH_TEGRA && TEGRA20_APB_DMA) || COMPILE_TEST
+>  .../bindings/memory-controllers/nvidia,tegra20-emc.txt      | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-I assume that the dependency on the APBDMA is for Tegra210. Does it work
-on Tegra210 without the DMA? I am wondering if this is a dependency?
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> +static void tegra_qspi_deinit_dma_param(struct tegra_qspi_data *tqspi,
-> +					bool dma_to_memory)
-> +{
-> +	u32 *dma_buf;
-> +	dma_addr_t dma_phys;
-> +	struct dma_chan *dma_chan;
-> +
-> +	if (dma_to_memory) {
-> +		dma_buf = tqspi->rx_dma_buf;
-> +		dma_chan = tqspi->rx_dma_chan;
-> +		dma_phys = tqspi->rx_dma_phys;
-> +		tqspi->rx_dma_chan = NULL;
-> +		tqspi->rx_dma_buf = NULL;
-> +	} else {
-> +		dma_buf = tqspi->tx_dma_buf;
-> +		dma_chan = tqspi->tx_dma_chan;
-> +		dma_phys = tqspi->tx_dma_phys;
-> +		tqspi->tx_dma_buf = NULL;
-> +		tqspi->tx_dma_chan = NULL;
-> +	}
-> +	if (!dma_chan)
-> +		return;
+--6ldeiUs9kZMXTziz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The above seemed odd to me at first, but I guess if a device does not
-support DMA yet, then this will be NULL. However, would it be clearer to
-just ...
+-----BEGIN PGP SIGNATURE-----
 
-        if (!tqspi->use_dma)
-		return;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/KWb0ACgkQ3SOs138+
+s6FH1w//dN0K/ARFuRyDWigwOrKReFJQh4EOwjQKryEpjjTg8Uvrc7Y/OWrIo/qB
+yja+Mk9p9mxkYJXxn6IY2mW2Seph8nmzG35zy0JBL+N+eZ/XiPvqt85W518oHxaa
+asyYw335HlTappz23Kdx9IIfeHQXX76H96+gUyUughgMA+7y4G2n2G4xTP916EFd
+fZ53xB5EUYyp37nROQASYoPCmCnIgZBAQchJoOvRPqDeSc2ce+/kdU+faoo0ltGz
+gX5OF6zTkC+6NVVS3aBy1gIZg/wqQMo1Yiz1kslAf2n8Pk4JOgDKobzUDL9NZX7F
+HQhmjBwV9yBsjnWEydVEz+hHf+UG1QRbYHCyURDMnNw4qK6/b1tUpz9paE40l2BP
+RQCNEDMb+AhhOx8gyeqtIQJd6XErNR5vJi/kMZV0bWaxjdzaFKSnvNKTZ92VoZvN
+UCsn0kFSmheUTE6xlOW/k2YXnD3Qcoo7pOc0LWqIuSUizqBAbSJen6VFWyKngZ+4
+hkgZW2w0sHoOE9Fut2HxuGc7mg/2da37r+NxI66fzcR4DU0igQeeDJoMVmC9B7gj
+EIqwOMy2hrRUrK64rDJ1fxKeRplINR7LZL9yBKEGsLwACi5wdFYNZwZr9xcP4TCy
+yiEcJJH8F80dhvV8e/AuZyBPfrVhz4qDeWXr/EcuAenYLZnQ9sg=
+=JFZn
+-----END PGP SIGNATURE-----
 
-You could also do this right at the beginning of the function.
-
-> +static struct tegra_qspi_client_data
-> +	*tegra_qspi_parse_cdata_dt(struct spi_device *spi)
-> +{
-> +	struct tegra_qspi_client_data *cdata;
-> +	struct device_node *slave_np;
-> +
-> +	slave_np = spi->dev.of_node;
-> +	if (!slave_np) {
-
-This test should not be necessary as we only support device-tree.
-
-> +		dev_dbg(&spi->dev, "device node not found\n");
-> +		return NULL;
-> +	}
-> +
-> +	cdata = kzalloc(sizeof(*cdata), GFP_KERNEL);
-> +	if (!cdata)
-> +		return NULL;
-> +
-> +	of_property_read_u32(slave_np, "nvidia,tx-clk-tap-delay",
-> +			     &cdata->tx_clk_tap_delay);
-> +	of_property_read_u32(slave_np, "nvidia,rx-clk-tap-delay",
-> +			     &cdata->rx_clk_tap_delay);
-> +	return cdata;
-> +}
-> +
-> +static void tegra_qspi_cleanup(struct spi_device *spi)
-> +{
-> +	struct tegra_qspi_client_data *cdata = spi->controller_data;
-> +
-> +	spi->controller_data = NULL;
-> +	if (spi->dev.of_node)
-> +		kfree(cdata);
-> +}
-> +
-> +static int tegra_qspi_setup(struct spi_device *spi)
-> +{
-> +	struct tegra_qspi_data *tqspi = spi_master_get_devdata(spi->master);
-> +	struct tegra_qspi_client_data *cdata = spi->controller_data;
-> +	u32 tx_tap = 0, rx_tap = 0;
-> +	u32 val;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	dev_dbg(&spi->dev, "setup %d bpw, %scpol, %scpha, %dHz\n",
-> +		spi->bits_per_word,
-> +		spi->mode & SPI_CPOL ? "" : "~",
-> +		spi->mode & SPI_CPHA ? "" : "~",
-> +		spi->max_speed_hz);
-> +
-> +	if (!cdata) {
-> +		cdata = tegra_qspi_parse_cdata_dt(spi);
-> +		spi->controller_data = cdata;
-> +	}
-> +
-> +	ret = pm_runtime_get_sync(tqspi->dev);
-> +	if (ret < 0) {
-> +		dev_err(tqspi->dev, "runtime resume failed: %d\n", ret);
-> +		if (cdata)
-> +			tegra_qspi_cleanup(spi);
-> +		return ret;
-> +	}
-
-Does it simplify the code to do the pm_runtime_get_sync() before the
-parsing of the cdata?
-
-> +static int tegra_qspi_probe(struct platform_device *pdev)
-> +{
-> +	struct spi_master	*master;
-> +	struct tegra_qspi_data	*tqspi;
-> +	struct resource		*r;
-> +	int ret, qspi_irq;
-> +	int bus_num;
-> +
-> +	master = spi_alloc_master(&pdev->dev, sizeof(*tqspi));
-> +	if (!master) {
-> +		dev_err(&pdev->dev, "master allocation failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, master);
-> +	tqspi = spi_master_get_devdata(master);
-> +
-> +	if (of_property_read_u32(pdev->dev.of_node, "spi-max-frequency",
-> +				 &master->max_speed_hz))
-> +		master->max_speed_hz = QSPI_MAX_SPEED;
-> +
-> +	/* the spi->mode bits understood by this driver: */
-> +	master->mode_bits = SPI_MODE_0 | SPI_MODE_3 | SPI_CS_HIGH |
-> +			    SPI_TX_DUAL | SPI_RX_DUAL | SPI_TX_QUAD |
-> +			    SPI_RX_QUAD;
-> +	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
-> +				     SPI_BPW_MASK(8);
-> +	master->setup = tegra_qspi_setup;
-> +	master->cleanup = tegra_qspi_cleanup;
-> +	master->transfer_one_message = tegra_qspi_transfer_one_message;
-> +	master->num_chipselect = 1;
-> +	master->auto_runtime_pm = true;
-> +	bus_num = of_alias_get_id(pdev->dev.of_node, "spi");
-> +	if (bus_num >= 0)
-> +		master->bus_num = bus_num;
-> +
-> +	tqspi->master = master;
-> +	tqspi->dev = &pdev->dev;
-> +	spin_lock_init(&tqspi->lock);
-> +
-> +	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	tqspi->base = devm_ioremap_resource(&pdev->dev, r);
-> +	if (IS_ERR(tqspi->base)) {
-> +		ret = PTR_ERR(tqspi->base);
-> +		goto exit_free_master;
-> +	}
-> +
-> +	tqspi->phys = r->start;
-> +	qspi_irq = platform_get_irq(pdev, 0);
-> +	tqspi->irq = qspi_irq;
-> +
-> +	tqspi->clk = devm_clk_get(&pdev->dev, "qspi");
-> +	if (IS_ERR(tqspi->clk)) {
-> +		ret = PTR_ERR(tqspi->clk);
-> +		dev_err(&pdev->dev, "failed to get clock: %d\n", ret);
-> +		goto exit_free_master;
-> +	}
-> +
-> +	tqspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "qspi");
-> +	if (IS_ERR(tqspi->rst)) {
-> +		ret = PTR_ERR(tqspi->rst);
-> +		dev_err(&pdev->dev, "failed to get reset control: %d\n", ret);
-> +		goto exit_free_master;
-> +	}
-> +
-> +	tqspi->max_buf_size = QSPI_FIFO_DEPTH << 2;
-> +	tqspi->dma_buf_size = DEFAULT_QSPI_DMA_BUF_LEN;
-> +
-> +	ret = tegra_qspi_init_dma_param(tqspi, true);
-> +	if (ret < 0)
-> +		goto exit_free_master;
-> +	ret = tegra_qspi_init_dma_param(tqspi, false);
-> +	if (ret < 0)
-> +		goto exit_rx_dma_free;
-
-I would be tempted to combine the init for the TX and RX into a single
-function. Then we can have a single function to deinit.
-
-> +
-> +	if (tqspi->use_dma)
-> +		tqspi->max_buf_size = tqspi->dma_buf_size;
-> +
-> +	init_completion(&tqspi->tx_dma_complete);
-> +	init_completion(&tqspi->rx_dma_complete);
-> +
-
-Unnecessary blank line.
-
-> +	init_completion(&tqspi->xfer_completion);
-> +
-> +	pm_runtime_enable(&pdev->dev);
-> +	if (!pm_runtime_enabled(&pdev->dev)) {
-
-RPM is always enabled for Tegra and so if this fails we should just fail.
-
-> +		ret = tegra_qspi_runtime_resume(&pdev->dev);
-> +		if (ret)
-> +			goto exit_pm_disable;
-> +	}
-> +
-> +	ret = pm_runtime_get_sync(&pdev->dev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "runtime resume failed: %d\n", ret);
-> +		pm_runtime_put_noidle(&pdev->dev)
-You can use pm_runtime_resume_and_get() now and then you don't need to
-call pm_runtime_put_noidle() on failure.
-
-> +		goto exit_pm_disable;
-> +	}
-> +
-> +	reset_control_assert(tqspi->rst);
-> +	udelay(2);
-> +	reset_control_deassert(tqspi->rst);
-> +	tqspi->def_command1_reg = QSPI_M_S | QSPI_CS_SW_HW |  QSPI_CS_SW_VAL;
-> +	tegra_qspi_writel(tqspi, tqspi->def_command1_reg, QSPI_COMMAND1);
-> +	tqspi->spi_cs_timing1 = tegra_qspi_readl(tqspi, QSPI_CS_TIMING1);
-> +	tqspi->spi_cs_timing2 = tegra_qspi_readl(tqspi, QSPI_CS_TIMING2);
-> +	tqspi->def_command2_reg = tegra_qspi_readl(tqspi, QSPI_COMMAND2);
-> +
-> +	pm_runtime_put(&pdev->dev);
-> +
-> +	ret = request_threaded_irq(tqspi->irq, tegra_qspi_isr,
-> +				   tegra_qspi_isr_thread, IRQF_ONESHOT,
-> +				   dev_name(&pdev->dev), tqspi);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev,
-> +			"failed to request IRQ#%u: %d\n", tqspi->irq, ret);
-> +		goto exit_pm_disable;
-> +	}
-> +
-> +	master->dev.of_node = pdev->dev.of_node;
-> +	ret = devm_spi_register_master(&pdev->dev, master);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to register master: %d\n", ret);
-> +		goto exit_free_irq;
-> +	}
-> +	return ret;
-
-return 0
-
-> +static int tegra_qspi_runtime_resume(struct device *dev)
-> +{
-> +	struct spi_master *master = dev_get_drvdata(dev);
-> +	struct tegra_qspi_data *tqspi = spi_master_get_devdata(master);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(tqspi->clk);
-> +	if (ret < 0) {
-> +		dev_err(tqspi->dev, "clk_prepare failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +	return 0;
-
-Always just 'return ret' here.
-
-Cheers
-Jon
-
--- 
-nvpublic
+--6ldeiUs9kZMXTziz--
