@@ -2,137 +2,62 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D614C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 12:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DC5C4167B
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 12:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA98E229F0
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 12:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B98E22AB0
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 12:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgLDM07 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 4 Dec 2020 07:26:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgLDM07 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Dec 2020 07:26:59 -0500
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E678C0613D1;
-        Fri,  4 Dec 2020 04:26:18 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id ga15so8425680ejb.4;
-        Fri, 04 Dec 2020 04:26:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Do3oqdTH7dveVVzcLf/9LFZKZhHi0k7C7i3j07nGhQ8=;
-        b=OJKLJ5CF7IFSOrgs4oKmQdpr+n4H0yOrjsgmMTQpqzyVk9V6sEOr9krgIR2CqI/eg2
-         Olo2mJ373LWDKVEs4Zvxs6xOat5nXq3f8jPu1NeSZvHt09Q8+YN5xls41wKGDSMpJX/K
-         4HgneLa13KR/eb5Yzw0NBIYdXx4L4NkQqFvMAY0EY8sNpCrlrI8cDLlBGrmQMxEvE+XE
-         xoyMVCPLeAYJru9kb0QbkzbjNA+mwtfIvvY526ZkQB2Vnz7QmArTzmUAh1PY0N0PPZVW
-         1Oj6Y5T1ofLG3dEdL8w9l51AFDIWfZZnZEZU3NtxU28cQFubQiSHelxZKhjzivtXmsxf
-         tGpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Do3oqdTH7dveVVzcLf/9LFZKZhHi0k7C7i3j07nGhQ8=;
-        b=EGL0nft7BOkvEVlvfjYXTRViLnP7t8wLsTX8+zOreO87UASnq6BuTAx5uhgcNiT6X6
-         abezLJUOt1dhx17k2ikXPWpWWvagu0Rp5w4H6yN2yr1gT+ezKKwKNExzTEHhiZxDJOfC
-         b5K/lvIxl+Z2EGfpHD3WZOyelAtZGT8xCQB+/spGGYTjyZY/9kjUv5+vhVuDdh61TEBz
-         uvStP06gZyaTSKlUFx7n8d1W9XnptkA+Ch2BvL2qnNzgj5KBQwgxgezKUnG29z1BHuiW
-         AEp0kuEeESOsn5eEsHqpZhMMVmEuJXGkh8MzDJBofcK1ef0GcqYEoiN1a3KUq5KDz12Y
-         xJNg==
-X-Gm-Message-State: AOAM531Sw80kYTQwS+UKdOxlCHJG7aaYdpg5gQfgT2HpIG4u3ZFpHqXJ
-        5m2efzvacVWffILUk3qpCdM=
-X-Google-Smtp-Source: ABdhPJwyOdmo/tJVMsSbtt3KeXnx37toRK0rO7Y5EgRhnsY2ZjlH90vCVdnqHBzTke2oBWNZyceV/g==
-X-Received: by 2002:a17:906:a51:: with SMTP id x17mr6924333ejf.97.1607084777415;
-        Fri, 04 Dec 2020 04:26:17 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id 65sm3375145edj.83.2020.12.04.04.26.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Dec 2020 04:26:15 -0800 (PST)
-Date:   Fri, 4 Dec 2020 13:26:14 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
+        id S1727711AbgLDM60 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Dec 2020 07:58:26 -0500
+Received: from retiisi.eu ([95.216.213.190]:51378 "EHLO hillosipuli.retiisi.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbgLDM6Z (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 4 Dec 2020 07:58:25 -0500
+X-Greylist: delayed 457 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Dec 2020 07:58:25 EST
+Received: from valkosipuli.localdomain (unknown [IPv6:fd35:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 511E1634C24;
+        Fri,  4 Dec 2020 14:48:48 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1klAW0-0003Ou-Pn; Fri, 04 Dec 2020 14:48:48 +0200
+Date:   Fri, 4 Dec 2020 14:48:48 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>, jonathanh@nvidia.com,
-        robh+dt@kernel.org, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
- controller
-Message-ID: <X8oq5vZRD600IFwd@ulmo>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
- <20201202172721.GL5560@sirena.org.uk>
- <2257bc33-80ef-a6d8-8542-480defa32937@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, bparrot@ti.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/13] media: v4l2-fwnode: Update
+ V4L2_FWNODE_CSI2_MAX_DATA_LANES to 8
+Message-ID: <20201204124848.GK4351@valkosipuli.retiisi.org.uk>
+References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
+ <1607022002-26575-11-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dMt5SDLPoOEwNGde"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2257bc33-80ef-a6d8-8542-480defa32937@nvidia.com>
-User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
+In-Reply-To: <1607022002-26575-11-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Dec 03, 2020 at 10:59:59AM -0800, Sowjanya Komatineni wrote:
+> Some CSI2 receivers support 8 data lanes.
+> 
+> So, this patch updates CSI2 maximum data lanes to be 8.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
---dMt5SDLPoOEwNGde
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-On Wed, Dec 02, 2020 at 11:17:18AM -0800, Sowjanya Komatineni wrote:
-> On 12/2/20 9:27 AM, Mark Brown wrote:
-> > On Tue, Dec 01, 2020 at 01:12:44PM -0800, Sowjanya Komatineni wrote:
-[...]
-> > > +static int tegra_qspi_setup(struct spi_device *spi)
-> > > +{
-> > > +	if (cdata && cdata->tx_clk_tap_delay)
-> > > +		tx_tap = cdata->tx_clk_tap_delay;
-> > > +	if (cdata && cdata->rx_clk_tap_delay)
-> > > +		rx_tap = cdata->rx_clk_tap_delay;
-> > > +	tqspi->def_command2_reg = QSPI_TX_TAP_DELAY(tx_tap) |
-> > > +				  QSPI_RX_TAP_DELAY(rx_tap);
-> > > +	tegra_qspi_writel(tqspi, tqspi->def_command2_reg, QSPI_COMMAND2);
-> > The setup for one device shouldn't be able to affect the operation of
-> > another, already running, device so either these need to be configured
-> > as part of the controller probe or these configurations need to be
-> > deferred until we're actually doing a transfer.
-> We will only have 1 device on QSPI as we only support single chip select.
-
-Even so we could make the driver operate as if there were multiple
-devices. This has the advantage of setting a better example for someone
-who might be reading this code as reference, and it might come in handy
-if for whatever reason we ever end up with a QSPI controller that does
-support multiple chip selects.
-
-If that's overly complicated, maybe a compromise would be to document
-very explicitly that this only works because Tegra QSPI supports a
-single chip select?
-
-Thierry
-
---dMt5SDLPoOEwNGde
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/KKuYACgkQ3SOs138+
-s6FFpBAAjwrCChoV/mRCl1qXNIhjHrIrX80SlHghztIcd2MELmlTh9T7eQfFQpwl
-XXHldwrXRyUNLvHs4GoKdRqigimgf/BbtaWFrQtKT+7y26WRLoQD7LLAC6i2gRoy
-58ugbuGeo4klocB82RLxS/zBgGcB32tb9dwkssOvxnqnKXkKgsKa6d7VBvnwKSnI
-u3NlS8YbEchDG13XmyFjbh18t4wQiu7yFrq6XqGHVatJ3Tf9FUfry9RHUqcagaTp
-qDyI70Zqk0xWoZi6LU16MulJtVThFCQq+LP6cPjZcqQbhba1XNwF/vl9j71wDEpx
-BvWWNmmvU5q0a0v0lDIcSpUVV5ZySOIwM1zniQhRosoknwApG4ckoqasj/Wa8H+Y
-xYBecR8Y8er9XQfRX+4XAY82Y5TKAirIyYkjibfc3+20O8Fjrx/BpWFMDlb+DF7K
-tVsaJzDeE1hqdl0DvALYZELLl47qjk+fybujvnsg1y5Dc48RujyNAtAPAIF0VKg2
-x/bo1A+zRe7gS54fCjoZ3GXl8MG9dsFLOD4A8Ei2L1ai20+Ip0N1CIs2SkTungkL
-YuUld3ETG5Zp3ropWjJMORQppGnZk9fSiYdLsfsZbyMUPmOPn2qVtZfGTZ4CLLdt
-6TaqE3zh0Sf3XygAUcNLNMLyrbB5YSKZ9sW4WSneQu/96lPmMgk=
-=TdSe
------END PGP SIGNATURE-----
-
---dMt5SDLPoOEwNGde--
+-- 
+Sakari Ailus
