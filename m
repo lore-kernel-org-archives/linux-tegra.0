@@ -2,297 +2,205 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64635C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 00:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D011C4361B
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 10:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF357223E4
-	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 00:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D502F229F0
+	for <linux-tegra@archiver.kernel.org>; Fri,  4 Dec 2020 10:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbgLDAXg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 3 Dec 2020 19:23:36 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16962 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbgLDAXg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 3 Dec 2020 19:23:36 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fc9815f0000>; Thu, 03 Dec 2020 16:22:55 -0800
-Received: from [10.2.90.244] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Dec
- 2020 00:22:55 +0000
-Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
- controller
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
- <20201202172721.GL5560@sirena.org.uk>
- <2257bc33-80ef-a6d8-8542-480defa32937@nvidia.com>
-Message-ID: <be8291fc-8e69-b577-d8f4-20aeca0b45cc@nvidia.com>
-Date:   Thu, 3 Dec 2020 16:22:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727977AbgLDKrA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 4 Dec 2020 05:47:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgLDKrA (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 4 Dec 2020 05:47:00 -0500
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD919C0613D1;
+        Fri,  4 Dec 2020 02:46:13 -0800 (PST)
+Received: by mail-ej1-x641.google.com with SMTP id 7so8056181ejm.0;
+        Fri, 04 Dec 2020 02:46:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TZyqh6ptYlihraD2b1FndRpYclk9mikTkr3/jwSxY8I=;
+        b=J+QfY0fDBqvQwH8IMbTR9NFnix3NYx2WQfu39bKEQ6EQcreYVG9DF5Pgvt8S+IiGwt
+         YhD6106K+McI96ZwqH+9qQ1ZVvY7nWqYPLcUsaMAU0PqvXuw6DabzalMiwcz/ll0WyTh
+         d0pMp8+oNzsOxDluo5+0GY2lxYACxgZbbPmpx+fGKjdEFQV0IVLjBRTIYewJoNHjy++8
+         mXGZEIR8tMlCMFKcdxb1w4kGAbZalg+rnQjagHnn/aMNcGOVNdKHm16WoPrdoB9orG+n
+         nm6CO7LF2ZyMt+4NNXWKJxj8dslE43cGZyOZuHl05dMesNnJQs5VceofnGxiomKn2NQ8
+         fSag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TZyqh6ptYlihraD2b1FndRpYclk9mikTkr3/jwSxY8I=;
+        b=sA7TgxvfG7TedlPQ1KFfKWf6rjCRMZKK3BPtaHShwTHf8Eqy/gF5HAf/Pon8Ge1P8z
+         8XqVhm4ze4HJteopDr9fWl0JqV4MpqTnZ090XCpdkyrSgeuJUUPQzV0Jggk0RGoOxWuc
+         x4L11T7byEKrdbprFPBkMomVzbtkq03xAKsKP8tBUr7gWO1dWtXJJFLTF3kVGmo2ZOxb
+         cQzu13OY0wR2WaohxKfMcjluH1sbsOscJPYmT+YanfJPCJgvfrJ4+LpIxPSP4joBbIAt
+         O9NysHjgUyoBQE/KeLfblj0BVIi6S/NvaGPzMTo5E3+IbgF/orAEO87GldWG+MOsTQLn
+         vlWw==
+X-Gm-Message-State: AOAM531TGjqdvK7ZkALdI1S68LYAMQm2UL3UYzciVLCSSBdCK4aW9rjO
+        SL/GiFUuPZ8o6+YVYnbCUjY=
+X-Google-Smtp-Source: ABdhPJzgG4ZQ33plbJ6DmN3bKD2NZhx4EP0JVX5IICKTKOosmqc9iUbg7S5aC5sJa3sMJopaEfIXIg==
+X-Received: by 2002:a17:906:74c1:: with SMTP id z1mr6692642ejl.182.1607078772351;
+        Fri, 04 Dec 2020 02:46:12 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id lc18sm2826034ejb.77.2020.12.04.02.46.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 02:46:10 -0800 (PST)
+Date:   Fri, 4 Dec 2020 11:46:09 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] driver core: Reorder devices on successful probe
+Message-ID: <X8oTcS9vManhNH1n@ulmo>
+References: <20201203175756.1405564-1-thierry.reding@gmail.com>
+ <CAJZ5v0g_FC6Pikrvk2PK=XMvAwqjaNOcYXHYS6eqv6Zc0JgqNQ@mail.gmail.com>
+ <CAGETcx9wrKNfvV36v1YJLa_A8jtb6OvZRMjsNG9AYxLPDvdpgQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2257bc33-80ef-a6d8-8542-480defa32937@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607041375; bh=os3SsoQJuogSnBhNud5ZHwdxrswyR7qg6N2lKrWM8gE=;
-        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=nJMBR1YNf8UvJYya3G1mFxnISCDUikiwbe9TTQYvbHDMPLzOwMCOpt/9ndxxrBs2V
-         c10O11M8E8MwvSNxuKuavkk5GpNdpVlBd7ptpXMbA6ea/C89EOaIAc/uHFBgWW8ZER
-         UKOQZZg37CHy9ccbM0w/gDlVIc5wIGOnw9Mc9JmhpjrXVK5abnAyGbHpuHuSpgwKr5
-         Anzm2ZzyjuDe32CqNMBGb1o5s3O2CVp0x2MGUB8Re0Yf9PjsMOQDtbPCPfNlY+v9QQ
-         RCkHhVca335vBgxAFvGnF+LFCX+nR4q8AbRqiw1mi8UNCsRrQ+1jmJrP+rkzONOeZH
-         10i/eg5fEAeCQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IWeSzFgMjGsB0/Jx"
+Content-Disposition: inline
+In-Reply-To: <CAGETcx9wrKNfvV36v1YJLa_A8jtb6OvZRMjsNG9AYxLPDvdpgQ@mail.gmail.com>
+User-Agent: Mutt/2.0.2 (d9268908) (2020-11-20)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 12/2/20 11:17 AM, Sowjanya Komatineni wrote:
->
-> On 12/2/20 9:27 AM, Mark Brown wrote:
->> On Tue, Dec 01, 2020 at 01:12:44PM -0800, Sowjanya Komatineni wrote:
->>> Tegra SoC has a Quad SPI controller starting from Tegra210.
->>>
->>> This patch adds support for Tegra210 QSPI controller.
->> This looks pretty clean but I've got a few questions below about how
->> this integrates with the frameworks as well as some more minor issues.
->>
->>> +config QSPI_TEGRA
->>> +=A0=A0=A0 tristate "Nvidia Tegra QSPI Controller"
->> Everything else in this file is SPI_, even the qspi controllers.
-> Will rename in v2
->>> +++ b/drivers/spi/qspi-tegra.c
->>> @@ -0,0 +1,1418 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (C) 2020 NVIDIA CORPORATION.=A0 All rights reserved.
->>> + */
->> Please make the entire comment a C++ one.=A0 It also appears that the "A=
+--IWeSzFgMjGsB0/Jx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 03, 2020 at 11:19:11AM -0800, Saravana Kannan wrote:
+> On Thu, Dec 3, 2020 at 10:17 AM Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> >
+> > On Thu, Dec 3, 2020 at 6:58 PM Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+> > >
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > Device drivers usually depend on the fact that the devices that they
+> > > control are suspended in the same order that they were probed in. In
+> > > most cases this is already guaranteed via deferred probe.
+> > >
+> > > However, there's one case where this can still break: if a device is
+> > > instantiated before a dependency (for example if it appears before the
+> > > dependency in device tree) but gets probed only after the dependency =
+is
+> > > probed. Instantiation order would cause the dependency to get probed
+> > > later, in which case probe of the original device would be deferred a=
+nd
+> > > the suspend/resume queue would get reordered properly. However, if the
+> > > dependency is provided by a built-in driver and the device depending =
+on
+> > > that driver is controlled by a loadable module, which may only get
+> > > loaded after the root filesystem has become available, we can be faced
+> > > with a situation where the probe order ends up being different from t=
+he
+> > > suspend/resume order.
+> > >
+> > > One example where this happens is on Tegra186, where the ACONNECT is
+> > > listed very early in device tree (sorted by unit-address) and depends=
+ on
+> > > BPMP (listed very late because it has no unit-address) for power doma=
+ins
+> > > and clocks/resets. If the ACONNECT driver is built-in, there is no
+> > > problem because it will be probed before BPMP, causing a probe deferr=
+al
+> > > and that in turn reorders the suspend/resume queue. However, if built=
+ as
+> > > a module, it will end up being probed after BPMP, and therefore not
+> > > result in a probe deferral, and therefore the suspend/resume queue wi=
 ll
->> rights reserved" here conflicts with the GPL-2.0-only SPDX statement...
-> Will fix in v2
->>
->>> +static void
->>> +tegra_qspi_copy_client_txbuf_to_qspi_txbuf(struct tegra_qspi_data=20
->>> *tqspi,
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 str=
-uct spi_transfer *t)
->>> +{
->>> +=A0=A0=A0 /* Make the dma buffer to read by cpu */
->>> +=A0=A0=A0 dma_sync_single_for_cpu(tqspi->dev, tqspi->tx_dma_phys,
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tqspi->dma_buf_size, DMA=
-_TO_DEVICE);
->>> +
->>> +=A0=A0=A0 if (tqspi->is_packed) {
->>> +=A0=A0=A0=A0=A0=A0=A0 unsigned int len =3D tqspi->curr_dma_words *
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tqspi->bytes_pe=
-r_word;
->>> +
->>> +=A0=A0=A0=A0=A0=A0=A0 memcpy(tqspi->tx_dma_buf, t->tx_buf + tqspi->cur=
-_pos, len);
->>> +=A0=A0=A0=A0=A0=A0=A0 tqspi->cur_tx_pos +=3D tqspi->curr_dma_words *
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tqspi->by=
-tes_per_word;
->> It seems weird that this device needs us to do a memcpy() to do DMA,
->> most devices are able to DMA directly from the buffers provided by the
->> SPI API (and let the SPI core sync things).=A0 What is going on here?
->
-> For transfers of size more than max DMA transfer limit, data transfer=20
-> happens in multiple iterations with each iteration transferring up to=20
-> max DMA transfer limit.
->
-> So using separate dma buffers and on every iteration copying them to=20
-> SPI core provided tx/rx buffers.
-Also unpack mode needs to manually put the bytes together from read data=20
-to SPI core rx buffer.
->
-> Transferring data logic in this driver is similar as Tegra SPI driver=20
-> except register changes and some QSPI specific register programming.
->
->>
->>> +=A0=A0=A0 tegra_qspi_writel(tqspi, status, QSPI_FIFO_STATUS);
->>> +=A0=A0=A0 while ((status & QSPI_FIFO_EMPTY) !=3D QSPI_FIFO_EMPTY) {
->>> +=A0=A0=A0=A0=A0=A0=A0 status =3D tegra_qspi_readl(tqspi, QSPI_FIFO_STA=
-TUS);
->>> +=A0=A0=A0=A0=A0=A0=A0 if (time_after(jiffies, timeout)) {
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 dev_err(tqspi->dev,
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 "timeout waiting for fif=
-o flush\n");
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return -EIO;
->>> +=A0=A0=A0=A0=A0=A0=A0 }
->>> +
->>> +=A0=A0=A0=A0=A0=A0=A0 udelay(1);
->>> +=A0=A0=A0 }
->> It'd be good to put a cpu_relax() in the busy loop.
-> Will update in v2.
->>
->>> +static u32 tegra_qspi_setup_transfer_one(struct spi_device *spi,
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct sp=
-i_transfer *t,
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 bool is_f=
-irst_of_msg)
->>> +{
->>> +=A0=A0=A0=A0=A0=A0=A0 /* toggle cs to active state */
->>> +=A0=A0=A0=A0=A0=A0=A0 if (spi->mode & SPI_CS_HIGH)
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 command1 |=3D QSPI_CS_SW_VAL;
->>> +=A0=A0=A0=A0=A0=A0=A0 else
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 command1 &=3D ~QSPI_CS_SW_VAL;
->>> +=A0=A0=A0=A0=A0=A0=A0 tegra_qspi_writel(tqspi, command1, QSPI_COMMAND1=
-);
->> This is worrying, the client device might be confused if /CS is doing
->> things outside of the standard handling.
->
-> Do you mean to honor spi_transfer cs_change flag?
->
-> Tegra QSPI is master and is used only with QSPI flash devices. Looking=20
-> at SPI NOR driver, I see QSPI Flash commands are executed with one=20
-> flash command per spi_message and I dont see cs_change flag usage=20
-> w.r.t QSPI flash. So, using SW based CS control for QSPI.
->
-> Please correct me if I miss something to understand here.
->
-> Also Tegra186 and later QSPI controller supports combined sequence=20
-> mode where command, address, data phases can be combined in a single GO.
->
-> This saves some cycles in transfer and for this we need to use SW=20
-> based CS control only.
->
->
->>> +=A0=A0=A0 of_property_read_u32(slave_np, "nvidia,tx-clk-tap-delay",
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 &cdata->tx_clk_tap_de=
-lay);
->>> +=A0=A0=A0 of_property_read_u32(slave_np, "nvidia,rx-clk-tap-delay",
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 &cdata->rx_clk_tap_de=
-lay);
->> These properties are not mentioned in the binding document.
-> Thanks Mark. Missed them. Will add in v2.
->>
->>> +static int tegra_qspi_setup(struct spi_device *spi)
->>> +{
->>> +=A0=A0=A0 if (cdata && cdata->tx_clk_tap_delay)
->>> +=A0=A0=A0=A0=A0=A0=A0 tx_tap =3D cdata->tx_clk_tap_delay;
->>> +=A0=A0=A0 if (cdata && cdata->rx_clk_tap_delay)
->>> +=A0=A0=A0=A0=A0=A0=A0 rx_tap =3D cdata->rx_clk_tap_delay;
->>> +=A0=A0=A0 tqspi->def_command2_reg =3D QSPI_TX_TAP_DELAY(tx_tap) |
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 QSPI_RX_TAP_DELAY(=
-rx_tap);
->>> +=A0=A0=A0 tegra_qspi_writel(tqspi, tqspi->def_command2_reg, QSPI_COMMA=
-ND2);
->> The setup for one device shouldn't be able to affect the operation of
->> another, already running, device so either these need to be configured
->> as part of the controller probe or these configurations need to be
->> deferred until we're actually doing a transfer.
-> We will only have 1 device on QSPI as we only support single chip select.
->>
->>> +=A0=A0=A0 /*
->>> +=A0=A0=A0=A0 * Tegra QSPI hardware support dummy bytes transfer based =
-on the
->>> +=A0=A0=A0=A0 * programmed dummy clock cyles in QSPI register.
->>> +=A0=A0=A0=A0 * So, get the total dummy bytes from the dummy bytes tran=
-sfer in
->>> +=A0=A0=A0=A0 * spi_messages and convert to dummy clock cyles.
->>> +=A0=A0=A0=A0 */
->>> +=A0=A0=A0 list_for_each_entry(xfer, &msg->transfers, transfer_list) {
->>> +=A0=A0=A0=A0=A0=A0=A0 if (ntransfers =3D=3D DUMMY_BYTES_XFER &&
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 !(list_is_last(&xfer->transfer_list,=
- &msg->transfers)))
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 dummy_cycles =3D xfer->len * 8 / xfe=
-r->tx_nbits;
->>> +=A0=A0=A0=A0=A0=A0=A0 ntransfers++;
->>> +=A0=A0=A0 }
->> This seems weird, there's some hard coded assumption about particular
->> patterns that the client device is going to send.=A0 What's going on her=
-e?
->> I don't really understand what this is trying to do.
->
-> QSPI flash needs dummy cycles for data read operation which is=20
-> actually the initial read latency and no. of dummy cycles required are=20
-> vendor specific.
->
-> SPI NOR driver gets required dummy cycles based on mode clock cycles=20
-> and wait state clock cycles.
->
-> During read operations, spi_nor_spimem_read_data() converts dummy=20
-> cycles to number of dummy bytes.
->
-> Tegra QSPI controller supports dummy clock cycles register and when=20
-> programmed QSPI controller sends dummy bytes rather than SW handling=20
-> extra cycles for transferring dummy bytes.
->
-> Above equation converts this dummy bytes back to dummy clock cycles to=20
-> program into QSPI register and avoid manual SW transfer of dummy bytes.
->
->>
->>> +static irqreturn_t tegra_qspi_isr(int irq, void *context_data)
->>> +{
->>> +=A0=A0=A0 struct tegra_qspi_data *tqspi =3D context_data;
->>> +
->>> +=A0=A0=A0 tqspi->status_reg =3D tegra_qspi_readl(tqspi, QSPI_FIFO_STAT=
-US);
->>> +=A0=A0=A0 if (tqspi->cur_direction & DATA_DIR_TX)
->>> +=A0=A0=A0=A0=A0=A0=A0 tqspi->tx_status =3D tqspi->status_reg &
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 (QSPI_TX_FIFO_U=
-NF | QSPI_TX_FIFO_OVF);
->>> +
->>> +=A0=A0=A0 if (tqspi->cur_direction & DATA_DIR_RX)
->>> +=A0=A0=A0=A0=A0=A0=A0 tqspi->rx_status =3D tqspi->status_reg &
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 (QSPI_RX_FIFO_O=
-VF | QSPI_RX_FIFO_UNF);
->>> +=A0=A0=A0 tegra_qspi_mask_clear_irq(tqspi);
->>> +
->>> +=A0=A0=A0 return IRQ_WAKE_THREAD;
->>> +}
->> It's a bit unclear to me the value we gain from having this handler - if
->> we don't specify a handler genirq will already mask the interrupt until
->> we get to the thread anyway and we could just read the status in the
->> threaded handler.=A0 OTOH it doesn't do any harm, just struck me as a bi=
-t
->> odd.
->
-> I started QSPI driver by taking SPI driver as data transfer and=20
-> interrupt handling are similar.
->
-> So kept this handler for clearing status registers and masking=20
-> interrupts as I did not see anything wrong with this.
->
->>
->>> +=A0=A0=A0 master =3D spi_alloc_master(&pdev->dev, sizeof(*tqspi));
->>> +=A0=A0=A0 if (!master) {
->>> +=A0=A0=A0=A0=A0=A0=A0 dev_err(&pdev->dev, "master allocation failed\n"=
-);
->>> +=A0=A0=A0=A0=A0=A0=A0 return -ENOMEM;
->>> +=A0=A0=A0 }
->> Please switch to using the devm_ version of the API to allocate
->> controller, it makes things much more robust.
-> Will update in v2
->>
->>> +=A0=A0=A0 if (of_property_read_u32(pdev->dev.of_node, "spi-max-frequen=
-cy",
->>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 &master->max_speed_hz=
-))
->>> +=A0=A0=A0=A0=A0=A0=A0 master->max_speed_hz =3D QSPI_MAX_SPEED;
->> The core will do this for you.
->
-> Will remove this in v2.
->
-> Thanks
->
-> Sowjanya
->
+> > > stay in the instantiation order. This in turn causes problems because
+> > > ACONNECT will be resumed before BPMP, which will result in a hang
+> > > because the ACONNECT's power domain cannot be powered on as long as t=
+he
+> > > BPMP is still suspended.
+> > >
+> > > Fix this by always reordering devices on successful probe. This ensur=
+es
+> > > that the suspend/resume queue is always in probe order and hence meets
+> > > the natural expectations of drivers vs. their dependencies.
+> > >
+> > > Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >
+> > Saravana had submitted a very similar patch (I don't have a pointer to
+> > that one though) and I was against it at that time due to
+> > overhead-related concerns.  There still are some, but maybe that
+> > doesn't matter in practice.
+>=20
+> Yeah, it's a very similar patch but I also suggested deleting the
+> reorder done in the deferred probe code (I'm pretty sure we can drop
+> it). Here's the thread:
+> https://lore.kernel.org/lkml/20200625032430.152447-1-saravanak@google.com/
+
+Yeah, I was thinking about that as well and I agree with your assessment
+that this should no longer be necessary after this patch. Any device
+that would've gotten reordered by a deferred probe should now get
+reordered after successful probe as well. The ordering of the DPM list
+may not end up being exactly the same, but at least it should be from a
+functional point of view.
+
+I didn't want to roll these changes all into one so that we could first
+make sure that this change itself works and then at a later time we
+could remove the deferred probe reordering incrementally to validate
+that we really no longer need it.
+
+But thinking about it, it might be worth making these changes all at
+once, so that when we break things we break them once instead of
+potentially twice.
+
+> Btw, I've been wondering about this recently. Do we even need
+> device_pm_move_to_tail() to do the recursive thing once we do "add
+> device to end of list when added" + "move probed devices to the end
+> after probe" thing here? Doesn't this guarantee that none of the
+> consumers can come before the supplier in the dpm list?
+
+I think we still at least need to reorder the children recursively, but
+I'm pretty sure we could also drop the reordering of consumer device
+links because, yes, every consumer should defer probe if the provider
+hasn't been probed yet, which in turn would cause the consumer to get
+sorted into the right position in the DPM queue after its successful
+probe.
+
+Thierry
+
+--IWeSzFgMjGsB0/Jx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/KE20ACgkQ3SOs138+
+s6FY2w/+KfnnfH/20hfPqZ8Bh6SpeXb+3eoc9ah5S+EOwVGa4hqpp1EeIEk2ZES9
+6U5z/IDKgpX0qK3mwuRhneWP4Lz7R/dHjuRlH828/zJ8ucEOCyTk2zcRsVGDJi1Z
+b7ICRZaDc0+Ym2tCBl+1fwWXXfmMruKXKP/JnH3PNUroc4pFzcp4kiekVLCUtAa0
+ABpeJ0B6iIy6oqNaRAfFM7Dd4ZfYWjBRbiLt/xTqxJhYxoC+brodetlrL4oLQtU9
+B4xxl0ECZlnFP94n07fRDD138x3edtCpZmReVoFf9fc1pUsH+NbDQOG0/+dscdo8
+4aOfNi8VrMzEsJca4vZqbCiAJ/avx4N5pgaJjWmlrxFZChi38LUaE9FuZwxrb8sI
+lfbN4+hvPaIvBjmLT9GI7EopDg8CqjVGQRUWHeIVUjNbonPVIzdp4qVWUtZwMkGs
+QJ4l9OUN/bnRguK5V5ET19GOy8XBXrQZoUcOJVmHV0r0K+lnwklwjnTwUAUAxzLx
+iGoQDzAp+LSECkac1dc9MyOV0prz8OYNtJ2Jg9Cf/bDyQceerzL+e9FFba+rGSEa
+/rKgeAVJAduYVioKPnBAuq/ipXrPCvQzGbk6FJ/wz+Oq/CAsrGOkGuzGjr1MqvXg
+XY4GVzno5mNGkWZQ3Fr3PKH2s/6Wu98pR+f8GuXsk9p1fypQHD0=
+=HyxY
+-----END PGP SIGNATURE-----
+
+--IWeSzFgMjGsB0/Jx--
