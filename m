@@ -2,82 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA106C433FE
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Dec 2020 18:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6234BC433FE
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Dec 2020 19:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3302312F
-	for <linux-tegra@archiver.kernel.org>; Sun,  6 Dec 2020 18:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 206AD22E03
+	for <linux-tegra@archiver.kernel.org>; Sun,  6 Dec 2020 19:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbgLFSQ7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 6 Dec 2020 13:16:59 -0500
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:55513 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbgLFSQ6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 6 Dec 2020 13:16:58 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 3FBB3282269E8;
-        Sun,  6 Dec 2020 19:15:57 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id EB15EF67; Sun,  6 Dec 2020 19:16:12 +0100 (CET)
-Date:   Sun, 6 Dec 2020 19:16:12 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
- controller
-Message-ID: <20201206181612.GA26286@wunner.de>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
+        id S1727148AbgLFTl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 6 Dec 2020 14:41:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbgLFTl6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 6 Dec 2020 14:41:58 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE7EC0613D0;
+        Sun,  6 Dec 2020 11:41:17 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id z21so14938359lfe.12;
+        Sun, 06 Dec 2020 11:41:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rELKJVdGA4Pnbvbd/Y3Htd8wmAbTPijL/zJtE+b0KgY=;
+        b=t3QCvQtUTPkrSoW6q16853R0F9PGy7RF8sVzY1cReUPAJMskr8YIM2D54aGYhXfZID
+         Ak2cSJuKlJkyDGG5hHC6RR2xrLQtJpCJzmK5ljw9a7MTG1DZ6dawx4qqsn3hJp6miiCz
+         cAyGWLOf6CBmDrQpjd8961s+FnAPcAoDY/lVMCU+GAIiO+WGmnGPUyzk0DlOF7rvpVEC
+         64aucD2dQJgWTD3sVeVWtsTbkFZa7IhKKNlMBLxD7lfz7J4LmUeB7Ykm6BkTn0PmVIuS
+         XL1mAl2tbXIni0idftv72g1bmx612glsWQYcX/TMp8PGoUC0olhelHOo19hpCthcg0lv
+         L3QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rELKJVdGA4Pnbvbd/Y3Htd8wmAbTPijL/zJtE+b0KgY=;
+        b=r/g8M41Hs3OUAcqkOFAsCA0w0Xjwd21IzjGqn7dK8kmSykOvJQPl11TcuzaXNrdARH
+         0gjKve7ohFVRYQHVpZ0+giHYj9eJBoyYwuI6ZGcEIXS3NZMHR24ku3dhCZMSbxU04ptb
+         ruiMpwuCFf12c72vxm57xpIZ6WArwj9llzPT4vkD21js4id1DIHTOOUPK4aRSEk2rSvS
+         veCEauo2dAs+o9oFBlQMkcYtjg0qQ1uCRC91DE2zazv00iSgjM0TTv5K37DEln8hO7zX
+         OxaSg5UO1Xr/Wa2nBv0KwbNg9INQjsTXpmGluG6nON3qKElpD+KXvRn0TNPKl/ebcI65
+         YnYw==
+X-Gm-Message-State: AOAM5329d1/AjaMkE11G2ta9ghS85O43NbFnRXuVHTk1279AxLBdzByf
+        avzGW7J4ALUgko5QSSXI+ONwJLXYP54=
+X-Google-Smtp-Source: ABdhPJxDeyLHX05gUmZgeFFEhJLVCLf+xWYqGeTaTdAAdUKcgT3E6Unx28PCa0tIGilYETKcTuM0+g==
+X-Received: by 2002:a05:6512:3f6:: with SMTP id n22mr6456520lfq.393.1607283676148;
+        Sun, 06 Dec 2020 11:41:16 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
+        by smtp.googlemail.com with ESMTPSA id n22sm2669020lfe.130.2020.12.06.11.41.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Dec 2020 11:41:15 -0800 (PST)
+Subject: Re: [PATCH v1 1/3] dt-bindings: input: atmel_mxt_ts: Document
+ atmel,wakeup-method and wake-GPIO
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20201205053328.9535-1-digetx@gmail.com>
+ <20201205053328.9535-2-digetx@gmail.com>
+ <CACRpkdY+fLhUD4cpM7X96Z7XjtXBkoVDRN6pDBUk+PjrQjTxcA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <19b625bc-1e01-468d-f0cf-647b892588b5@gmail.com>
+Date:   Sun, 6 Dec 2020 22:41:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdY+fLhUD4cpM7X96Z7XjtXBkoVDRN6pDBUk+PjrQjTxcA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 01:12:44PM -0800, Sowjanya Komatineni wrote:
-> +	ret = devm_spi_register_master(&pdev->dev, master);
-[...]
-> +static int tegra_qspi_remove(struct platform_device *pdev)
-> +{
-> +	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct tegra_qspi_data	*tqspi = spi_master_get_devdata(master);
-> +
-> +	free_irq(tqspi->irq, tqspi);
-> +
-> +	tegra_qspi_deinit_dma_param(tqspi, false);
-> +	tegra_qspi_deinit_dma_param(tqspi, true);
-> +
-> +	pm_runtime_disable(&pdev->dev);
-> +	if (!pm_runtime_status_suspended(&pdev->dev))
-> +		tegra_qspi_runtime_suspend(&pdev->dev);
-> +
-> +	return 0;
-> +}
+Hello Linus,
 
-With devm_spi_register_master(), the SPI controller is unregistered
-*after* tegra_qspi_remove().  SPI transactions may still be ongoing
-until the SPI controller is unregistered, yet you perform teardown
-steps (such as freeing the IRQ) while it is still registered.
+06.12.2020 18:13, Linus Walleij пишет:
+> On Sat, Dec 5, 2020 at 6:34 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+> 
+>> Some Atmel touchscreen controllers have a WAKE line that needs to be
+>> asserted low in order to wake up controller from a deep sleep. Document
+>> the wakeup methods and the wake-GPIO properties.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Looks really useful!
+> 
+>> +  atmel,wakeup-method:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      The WAKE line is an active-low input that is used to wake up the touch
+>> +      controller from deep-sleep mode before communication with the controller
+>> +      could be started. This feature used to minimize current consumption
+>> +      when the controller is in deep sleep mode.
+>> +
+>> +      The WAKE pin can be connected in one of the following ways:
+>> +       1) left permanently low
+>> +       2) connected to the I2C-compatible SCL pin
+>> +       3) connected to a GPIO pin on the host
+>> +    enum:
+>> +      - 0 # ATMEL_MXT_WAKEUP_NONE
+>> +      - 1 # ATMEL_MXT_WAKEUP_I2C_SCL
+>> +      - 2 # ATMEL_MXT_WAKEUP_GPIO
+> 
+> So you can add:
+> minimum: 0
+> maximum: 2
+> 
+> I suppose?
 
-Bottom line is, you can't use devm_spi_register_master() in this case.
-You need to use spi_register_master() and explicitly call
-spi_unregister_master() in tegra_qspi_remove() *before* performing
-teardown steps.
+The min/max ranges aren't needed for the enums because the min/max are
+already implied.
 
-However, be sure to use the devm variant to *allocate* the SPI controller,
-i.e. use devm_spi_alloc_master() instead of spi_alloc_master().
+I skimmed through a few yamls that use enums, just to be sure, nobody
+sets the min/max for a enum.
 
-Thanks,
+I noticed that some bindings use "default: value" for enums, perhaps it
+will be good to set default=0 for this property, I'll improve it in v3.
 
-Lukas
+> With that:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thank you for taking a look at the patch!
