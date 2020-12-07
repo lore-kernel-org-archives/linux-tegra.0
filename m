@@ -2,115 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DEEC1B0D9
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 20:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A634C433FE
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 173AB238A0
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 20:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F04723975
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgLGUiN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Dec 2020 15:38:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbgLGUiN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Dec 2020 15:38:13 -0500
-Date:   Mon, 7 Dec 2020 14:37:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607373452;
-        bh=mfwi2/EKkZUNhWL82rdthYNiJlGRQHrM44be9bTSWXU=;
-        h=From:To:Cc:Subject:In-Reply-To:From;
-        b=iNqTPnxLZcNUWOaIqo/lY3PV8PrM4IHqYvEj1vXEY0Xup/vDV3dM7KrSc30fzE68u
-         y63KWqvsTxcomng4S5ITEHCRlRcDQONTnZuRC/MsmGpp6xmrsWvx2rkp1SbmljSBku
-         uWLYXkblMU6dsQdge0/xTHkYBqMohd00HeMtCKs6OpRM9iW0rlgICXMef6CZfNh4Fs
-         SSaCAQEmBxhRUsCueVA126SkH3UNKCOLtZOqINf/EIpHY7teoEKseZQ0Sk3QTAJM+6
-         AgVrK9A3jbVzfbU4YvbC5fOf4J+SuEadQtumWuPzH1Mc2WrvozgaTXqDG9qWIYKm+2
-         cp+aW62e883Rw==
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [PATCH V5 5/5] PCI: tegra: Disable LTSSM during L2 entry
-Message-ID: <20201207203730.GA2289423@bjorn-Precision-5520>
+        id S1727936AbgLGWMC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Dec 2020 17:12:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgLGWMC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Dec 2020 17:12:02 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C5EC061749;
+        Mon,  7 Dec 2020 14:11:21 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id h19so476115lfc.12;
+        Mon, 07 Dec 2020 14:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6EwZVkyZDi8giolSpIEZVZKekJNvv34CCb0A7z+ogOo=;
+        b=HHRSWZQViQ36MCqkFBdhwO5WZfuBerDebz8XYis8B/LNgFKFn2zXlsGa3gTscca12P
+         Sk1cLU5iTaC3Ot6LInMNt9xDaBv0NdtLyoCcx5WvXlItb2zXrDUN/drRtvOI78V3IhaU
+         V9HIVSRGLtcur4C3gWyIzH0d6ho6T7qTUnNMHiU96Oths/MkxyGMOM4IKPxE76zrSmQd
+         rXz0O7YLQI5Lwl/Q6/bym18GTrERFgzA+iqUUNeMNi+O9aVtnEmpEe5P40jWpdAuFtaM
+         vAZQvCGUGb3elZtjEfqRiGBDdAygx3UF+nQm58CgWxh0gW4Gqje2TM/DZXjxquKQom4m
+         3FMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6EwZVkyZDi8giolSpIEZVZKekJNvv34CCb0A7z+ogOo=;
+        b=Km+LIqcA7GqUFgr5gSRzcmiKMtHX8BN5GosJ0GHA9LcCtsWWkYGQPMVdYpUQG/D8YJ
+         u1cKd3/exp7v08Q/BBvZi5VOL7out6V1gVMaeTSMMvPKxDQLmWcThRRIZyQm3as7OjOJ
+         WtyDGiyQHdv/lMc82Wdi/W57WT4R4mWhkQTVILsrlfJwbrGxmgjkhrmhxQ77JjZdtcAF
+         0fzNU99c59rE/urIwNkEteMZtGWN76rZIASOneQPzBQksAdx3cYxZeCIRlts+Yn5AnNK
+         4pLM52VcM8vRbX1I+LqCHN2RLdn3xgNCLVC0XFEbus+vDRYuW+r+NpRKF8wboNqhXP1/
+         NKJA==
+X-Gm-Message-State: AOAM530zlZLqnyifCpK+1PN6XjS85CXT+SHCRltWml7Se7vud51gV2eE
+        VAZt6RfkfAwwHk3gh2lU3K2ghOtAu/U=
+X-Google-Smtp-Source: ABdhPJw+9jw+AR2uLqB2wed29KybJWtA5Z8pjqyAD8LWAYc2tJiLGiT58naimP05pyR1vLGlW03TAw==
+X-Received: by 2002:a19:6d05:: with SMTP id i5mr8577181lfc.524.1607379080300;
+        Mon, 07 Dec 2020 14:11:20 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
+        by smtp.googlemail.com with ESMTPSA id y23sm11226ljc.119.2020.12.07.14.11.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Dec 2020 14:11:19 -0800 (PST)
+Subject: Re: [PATCH v11 00/10] Introduce memory interconnect for NVIDIA Tegra
+ SoCs
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20201203192439.16177-1-digetx@gmail.com>
+ <160717730565.9414.18193998919736710677.b4-ty@kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2128b898-ee5f-fd71-77af-4a3d957088a5@gmail.com>
+Date:   Tue, 8 Dec 2020 01:11:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201203133451.17716-6-vidyas@nvidia.com>
+In-Reply-To: <160717730565.9414.18193998919736710677.b4-ty@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-[+cc Jingoo, Gustavo]
+05.12.2020 17:09, Krzysztof Kozlowski пишет:
+> On Thu, 3 Dec 2020 22:24:29 +0300, Dmitry Osipenko wrote:
+>> This series brings initial support for memory interconnect to Tegra20,
+>> Tegra30 and Tegra124 SoCs.
+>>
+>> For the starter only display controllers and devfreq devices are getting
+>> interconnect API support, others could be supported later on. The display
+>> controllers have the biggest demand for interconnect API right now because
+>> dynamic memory frequency scaling can't be done safely without taking into
+>> account bandwidth requirement from the displays. In particular this series
+>> fixes distorted display output on T30 Ouya and T124 TK1 devices.
+>>
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [01/10] dt-bindings: memory: tegra20: emc: Document opp-supported-hw property
+> [02/10] memory: tegra20: Support hardware versioning and clean up OPP table initialization
+> [03/10] memory: tegra30: Support interconnect framework
+>         commit: 01a51facb74fb337ff9fe734caa85dd6e246ef48
+> 
+> Best regards,
+> 
 
-On Thu, Dec 03, 2020 at 07:04:51PM +0530, Vidya Sagar wrote:
-> PCIe cards like Marvell SATA controller and some of the Samsung NVMe
-> drives don't support taking the link to L2 state. When the link doesn't
-> go to L2 state, Tegra194 requires the LTSSM to be disabled to allow PHY
-> to start the next link up process cleanly during suspend/resume sequence.
-> Failing to disable LTSSM results in the PCIe link not coming up in the
-> next resume cycle.
-
-Is this a Tegra194-specific issue, or will other DWC-based controllers
-need a similar change?
-
-> Tested-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
-> V5:
-> * Added Tested-by and Acked-by from Thierry Reding
-> 
-> V4:
-> * New patch in this series
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index f4109d71f20b..5597b2a49598 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1506,6 +1506,14 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
->  		data &= ~APPL_PINMUX_PEX_RST;
->  		appl_writel(pcie, data, APPL_PINMUX);
->  
-> +		/*
-> +		 * Some cards do not go to detect state even after de-asserting
-> +		 * PERST#. So, de-assert LTSSM to bring link to detect state.
-> +		 */
-> +		data = readl(pcie->appl_base + APPL_CTRL);
-> +		data &= ~APPL_CTRL_LTSSM_EN;
-> +		writel(data, pcie->appl_base + APPL_CTRL);
-> +
->  		err = readl_poll_timeout_atomic(pcie->appl_base + APPL_DEBUG,
->  						data,
->  						((data &
-> @@ -1513,14 +1521,8 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
->  						APPL_DEBUG_LTSSM_STATE_SHIFT) ==
->  						LTSSM_STATE_PRE_DETECT,
->  						1, LTSSM_TIMEOUT);
-> -		if (err) {
-> +		if (err)
->  			dev_info(pcie->dev, "Link didn't go to detect state\n");
-> -		} else {
-> -			/* Disable LTSSM after link is in detect state */
-> -			data = appl_readl(pcie, APPL_CTRL);
-> -			data &= ~APPL_CTRL_LTSSM_EN;
-> -			appl_writel(pcie, data, APPL_CTRL);
-> -		}
->  	}
->  	/*
->  	 * DBI registers may not be accessible after this as PLL-E would be
-> -- 
-> 2.17.1
-> 
+Awesome, thanks! Good to have the warning splat silenced.
