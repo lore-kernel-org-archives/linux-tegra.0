@@ -2,120 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C9AC433FE
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 10:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65FDC0018C
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 12:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 127CB23340
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 10:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81790233F7
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 12:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbgLGKsZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Dec 2020 05:48:25 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:46271 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726214AbgLGKsZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Dec 2020 05:48:25 -0500
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id mE3OkFNsIarN7mE3SkzDir; Mon, 07 Dec 2020 11:47:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1607338062; bh=gWVo8YX1VQxSsOSI04pPBsnfOvUw7NtMunA1qyzkVps=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=jKT/DwFs1uxnlPjVbuxcBc5m36tgdSbbBheMmi5rQbE/2Nlq/zWY4tTjVlvcf5Dyz
-         oCr3qxpIELZgr6ldAsAloZ2oU1vnHrpTd5pkVUE7CQhocWJPqJuBC41kWSjhaOnO+H
-         0ZjJ3GJHq0XiHdoiojc8thNUGtjROedHn1s18kAY2k2iKsle5rgDfuG9D3cIyiZ1sl
-         6K+OpjgG8+rnJUk/qzXN5E20ax0F+tVO4OpMKanuUMMqgPj5GtFc8codZ8Z6ynxKDp
-         rzsdp7+WoDml73Y7EzIh3WZpXK+UDL5OBkgGHXxeryJ2vrXFG/4jiGlvcIZQj+16zi
-         e3SVhAVoaW4uw==
-Subject: Re: [PATCH v3 10/13] media: v4l2-fwnode: Update
- V4L2_FWNODE_CSI2_MAX_DATA_LANES to 8
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        sakari.ailus@iki.fi, robh+dt@kernel.org
-Cc:     bparrot@ti.com, mchehab@kernel.org, linux-media@vger.kernel.org,
+        id S1726923AbgLGMcS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Dec 2020 07:32:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726851AbgLGMcS (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Dec 2020 07:32:18 -0500
+Date:   Mon, 7 Dec 2020 12:31:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607344298;
+        bh=ulIWSf4fu0+15UAYDWnox9feOF++im/0KyFh/WPgyL8=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WGKKjDz4bvE/H1goWqMdH74Vdm9C+N+78Q8HLgaCX+L91VkwYRKARNpCtSkM4H74M
+         jh/DtsrNfJXeZUF/RUbvq+/GQdVFD7QaqjP2zUSS2DOJkweCqBbXw8WlBtZVMKmewn
+         F5p4h6Vs0Bi6qhRvxOeOHjwWMvdR7R5mWiWI7r/T4dKqMOzVQS6NIEbdAC4mbwEqHs
+         4afPuls5Efdf/ngfEa2IZKA3v8MKCHHVo42X7+9INGwtzvirwsJ0KM8o5q7LK9A1yC
+         cvMwvje+8xslOTIhZ1C9WuPwggAPp596Szi2RWi6g5QVts/R1pqQTZhKVjU3UgN/q2
+         eIgGqsCrdkEJA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, sharadg@nvidia.com,
+        jonathanh@nvidia.com, kuninori.morimoto.gx@renesas.com,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <1607022002-26575-1-git-send-email-skomatineni@nvidia.com>
- <1607022002-26575-11-git-send-email-skomatineni@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <845dfd4a-fa11-625c-78a3-cc8adc68bfc7@xs4all.nl>
-Date:   Mon, 7 Dec 2020 11:47:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v6 0/6] Tegra210 audio graph card
+Message-ID: <20201207123131.GB5694@sirena.org.uk>
+References: <1606413823-19885-1-git-send-email-spujar@nvidia.com>
+ <160683107678.35139.14772386553150233276.b4-ty@kernel.org>
+ <a3541d83-1f2e-c60f-05f8-4fdd8c8f4175@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1607022002-26575-11-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfKlT91V/9qHoNEbQguLdjtrxEusCqooMka1R1Z25DwFG17wT85odnqoeRsm++0Zzch7a8bH+1di0wpastSoZvVELgKJHd/ZJy5CDBZfTD4bwan22gYMV
- C7KxBboHLhb1Yptt6u1/jkYzVOvNlqcQQRybr6eFb39d5eGgLihAdmflsBBbDI/pCvtlypxfrRcaEUW8TO+2TXec3MfbNPqzxlYDnOJ1ouBYRK53ergZUGEb
- 97/E/JWkam3FjIZhszOQPO8hYKAm7GN3JUc2ofaYgv/d4rjS8bYFAB4ADiFkt8kt++1yW3sVIzwHdyNOogRa8Ynr9KKXEWQt4N9VgH3zjhWbZdMR8TZwEdTX
- aMOtQwlkHub9zJxCo/HQDifMk5m+tep8yWzezayO24YeCUnqtlYlYIKvwtuWZP5PBJR4EXTIcF/GYhAGcjYFP7qZCLb7itRjYKMDmYYrzzLryFSPwYPREY6U
- oyFjX8XMBNMidSuLoqqaj6wM8cJb5gEfzaze1MzYRaLj2LSzdDXPb61Grf0PBun3ntGl/2OGXTS/58LXblSEQmlH8Mem3aBwPagSPERyztfL6JT9pGiViHJE
- C8E=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Content-Disposition: inline
+In-Reply-To: <a3541d83-1f2e-c60f-05f8-4fdd8c8f4175@nvidia.com>
+X-Cookie: Absinthe makes the tart grow fonder.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 03/12/2020 19:59, Sowjanya Komatineni wrote:
-> Some CSI2 receivers support 8 data lanes.
-> 
-> So, this patch updates CSI2 maximum data lanes to be 8.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/media/platform/ti-vpe/cal-camerarx.c | 2 +-
->  include/media/v4l2-fwnode.h                  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/ti-vpe/cal-camerarx.c b/drivers/media/platform/ti-vpe/cal-camerarx.c
-> index 806cbf1..47e2143 100644
-> --- a/drivers/media/platform/ti-vpe/cal-camerarx.c
-> +++ b/drivers/media/platform/ti-vpe/cal-camerarx.c
-> @@ -534,7 +534,7 @@ static int cal_camerarx_parse_dt(struct cal_camerarx *phy)
->  {
->  	struct v4l2_fwnode_endpoint *endpoint = &phy->endpoint;
->  	struct device_node *ep_node;
-> -	char data_lanes[V4L2_FWNODE_CSI2_MAX_DATA_LANES * 2];
-> +	char data_lanes[V4L2_FWNODE_CSI2_MAX_DATA_LANES];
->  	unsigned int i;
->  	int ret;
->  
 
-I'm not so sure about this change: it relies on the implicit knowledge that
-this cal driver can handle only 4 lanes max, so that doubling
-V4L2_FWNODE_CSI2_MAX_DATA_LANES is the same as the old 'V4L2_FWNODE_CSI2_MAX_DATA_LANES * 2'.
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think we should either keep the existing code (which means data_lanes
-is now larger than needed, so stack usage increases by 8 bytes), or perhaps
-create a new define for this driver like CAL_MAX_DATA_LANES and use that.
+On Mon, Dec 07, 2020 at 10:22:38AM +0530, Sameer Pujar wrote:
 
-In my opinion the original code should just be kept, but I've CC-ed Laurent
-on this to hear what he thinks.
+> > [1/3] ASoC: dt-bindings: tegra: Add graph bindings
+> >        (no commit info)
+> > [2/3] ASoC: dt-bindings: tegra: Add json-schema for Tegra audio graph card
+> >        (no commit info)
+> > [3/3] ASoC: tegra: Add audio graph based card driver
+> >        (no commit info)
 
-Regards,
+> I don't see above patches in linux-next yet. Should I wait some more time
+> for this to appear?
 
-	Hans
+No, this was sent by a b4 bug - notice the "no commit info" there, they
+weren't applied.
 
-> diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
-> index 4e1f6e1d..92401c1 100644
-> --- a/include/media/v4l2-fwnode.h
-> +++ b/include/media/v4l2-fwnode.h
-> @@ -25,7 +25,7 @@ struct fwnode_handle;
->  struct v4l2_async_notifier;
->  struct v4l2_async_subdev;
->  
-> -#define V4L2_FWNODE_CSI2_MAX_DATA_LANES	4
-> +#define V4L2_FWNODE_CSI2_MAX_DATA_LANES	8
->  
->  /**
->   * struct v4l2_fwnode_bus_mipi_csi2 - MIPI CSI-2 bus data structure
-> 
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/OIKMACgkQJNaLcl1U
+h9Bergf/R2n7B5AV+c3qA138O8l+XMSdm7bZ8noJM7ZoaPj/A1jX9Br56e38tOjq
+QfofOwv/rAGQG82FVgB9rPGHZRFzz3kvQwb35JO1eQV+TLbSOnGkYFpC28buXymj
+SGYm9ncc7OeN30WV4e3NymMTcOFe8ggwR05zMzc6amXV2163NQl1sN64tlkKbFSA
+yAcctZJeDD5B3TlcILu+yZp5SidHHV7gdk57QDd+A3Ut6sggbj9EBcQamZsKUmkJ
+LwQPdeqesq/WJqs33a3sFL1xDXMLwISR7isCX/6CRO1cd6evcivRf+Wmcgr7k0MJ
+6yR+VP1OIr+ecpxbGAm4CMYD++Cntw==
+=r0dO
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
