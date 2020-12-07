@@ -2,118 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0617BC1B0D9
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BE4C0018C
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5EE323976
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E700E23A34
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbgLGWMF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Dec 2020 17:12:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgLGWME (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Dec 2020 17:12:04 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31AB3C061793;
-        Mon,  7 Dec 2020 14:11:24 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id f11so4915952ljn.2;
-        Mon, 07 Dec 2020 14:11:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MJm4yFBoOOG0Zxihy7qPEaeoKuVX+MClzRO8u7W5XUg=;
-        b=tbSwwhqIuNQzd6L+D2wv6DP3s10F3sQjGFbz9OZUiX32KC7DgE1gCLimps3ZYKpw1O
-         btb4gSIDwLmF8DfMaR7t1MJmpGW3up9U8Yg4lnvwjKc2f1ionNYGvK9aJqwWNCh84DzI
-         Wn2yeourqvFLQWyNQaL4qnZyP2G4GCcOOBP4a7WwMlSWL0o6WD3rO7w9x9d7F06HnH3S
-         3LTCVfnD1bicCQawdSIduxCNwCe31R3Mp6nNjJP+9Cl6TbtPvoTpDB6s8XlH+vWU7/DL
-         H+D8y86H6LXu6eMIf1FL9uRO0Nqqf6mVn9Mgfih/V4T0M3CSd6zTcQAO0PXofQPfWg+C
-         gXCA==
+        id S1728110AbgLGWwC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Dec 2020 17:52:02 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45839 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgLGWwB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Dec 2020 17:52:01 -0500
+Received: by mail-ot1-f65.google.com with SMTP id h18so10172377otq.12;
+        Mon, 07 Dec 2020 14:51:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MJm4yFBoOOG0Zxihy7qPEaeoKuVX+MClzRO8u7W5XUg=;
-        b=r+Lk3SzV3im9Z1Cj4oh5Ex+SIsezMEh8i/tSP7fpthnqkNzVbdusd3fvvaaefGvpKb
-         Ra/xaoHMcN4LyWm7Eo2shdFm1DE52FbyehTcdJe77MogIiQAkxuZVPnsPZlRqDhmPEIm
-         QHlryxQTNsAERp+3bWikZzmlYHwAurFRMIKfRDSzy9BVwKUIua5Uq4p1C+K2lh3G69Zj
-         YQzGrHwQ4KC95L3Doa3qg26KVxjq2KfMRcDnb5wDSA+fdd50C+Tdf3Ix7zfYrywFrh/N
-         013gqYfIq10gpEc7RNN0i2ebOPh0eq2NaDbC5nS9rGe2a40b2p8PFO+1w5Ui/8MxNZVW
-         wJjg==
-X-Gm-Message-State: AOAM531Kk95/TQbwYmtyqXpBJjfBh5RQySogUij5U/ofTHklA6JNThG8
-        S51S8dLXp+vMwjJZbL4cbciCyAp0uLA=
-X-Google-Smtp-Source: ABdhPJwHEfUeaYEY6cBzpP/Ij0Zo7ypjRgpkG3KdpX0TNEunlTBMvM1jIpO0BRfGMx711+SK5PytMA==
-X-Received: by 2002:a2e:2a83:: with SMTP id q125mr5672403ljq.436.1607379082627;
-        Mon, 07 Dec 2020 14:11:22 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
-        by smtp.googlemail.com with ESMTPSA id x25sm3062664lfn.99.2020.12.07.14.11.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Dec 2020 14:11:22 -0800 (PST)
-Subject: Re: [PATCH v11 09/10] PM / devfreq: tegra30: Support interconnect and
- OPPs from device-tree
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-References: <20201203192439.16177-1-digetx@gmail.com>
- <CGME20201203192723epcas1p372e53c3e1443b7cd3010c44faff735ec@epcas1p3.samsung.com>
- <20201203192439.16177-10-digetx@gmail.com>
- <42927892-d4a7-9368-480b-14c0d06e7116@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6ab55ef7-87bb-9f10-c262-b02430fe7d12@gmail.com>
-Date:   Tue, 8 Dec 2020 01:11:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=oGKTxegR211Y4pxTw/c6D3ElM1Y9Rkhy1L6nJUtWY5o=;
+        b=dLwmYPkhqETrGNPB/OkWivsDqSFvxqzzlf55ESlapw83I0jhy4zt9GYEG4sPa1mjFK
+         1wAixU9EnA1b4+pXEDuaWCC9wb4Y1ruJ/cT3g+Znmm2Th+Nwaurvxr6UP3Q8LL7FTutv
+         mQP8dQoMGZXQhrZ/pysj+qnlQhlZjd1R97SQnMpV174Aj/Lipx6BE7Fu5HcrEFHWwuVL
+         k9ZcFdsl6RXPMrlLNZxX8GOnJxd040VN+s/MKf/q1sr6lefg6G0XfILEZbM0UO+hpwdE
+         Dse2pLPczMXHmT92eyS/VsFtjP8SGRoOqiUSoqxg1dLe69eNL9/bz9Ki+20GolMgUy6C
+         t/+A==
+X-Gm-Message-State: AOAM531XRLcIQOg5WvmxePlNWEn15lq9lhE1nXYxixeJixUElFprnfhg
+        xExdEgxvxRacTShxuxANsTM83RnQ3w==
+X-Google-Smtp-Source: ABdhPJzAEyFWBw8aRWodf+kbRFrizaA2A6sKnSxzif1vg6tYA4do5tJjEUn6/sY2OabGg1xZ8r/f8g==
+X-Received: by 2002:a9d:7411:: with SMTP id n17mr14433439otk.262.1607381480806;
+        Mon, 07 Dec 2020 14:51:20 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u10sm2993855otj.31.2020.12.07.14.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Dec 2020 14:51:19 -0800 (PST)
+Received: (nullmailer pid 991883 invoked by uid 1000);
+        Mon, 07 Dec 2020 22:51:18 -0000
+Date:   Mon, 7 Dec 2020 16:51:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     linux-ide@vger.kernel.org, robh+dt@kernel.org,
+        thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+        pchandru@nvidia.com, linux-tegra@vger.kernel.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] dt-bindings: ata: tegra: Convert binding
+ documentation to YAML
+Message-ID: <20201207225118.GA991823@robh.at.kernel.org>
+References: <1606162645-22326-1-git-send-email-skomatineni@nvidia.com>
+ <1606162645-22326-4-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <42927892-d4a7-9368-480b-14c0d06e7116@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1606162645-22326-4-git-send-email-skomatineni@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-07.12.2020 04:32, Chanwoo Choi пишет:
-> On 12/4/20 4:24 AM, Dmitry Osipenko wrote:
->> This patch moves ACTMON driver away from generating OPP table by itself,
->> transitioning it to use the table which comes from device-tree. This
->> change breaks compatibility with older device-trees and brings support
->> for the interconnect framework to the driver. This is a mandatory change
->> which needs to be done in order to implement interconnect-based memory
->> DVFS, i.e. device-trees need to be updated. Now ACTMON issues a memory
->> bandwidth requests using dev_pm_opp_set_bw() instead of driving EMC clock
->> rate directly.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com>
->> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
->> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
-...
+On Mon, 23 Nov 2020 12:17:22 -0800, Sowjanya Komatineni wrote:
+> This patch converts text based dt-binding document to YAML based
+> dt-binding document.
 > 
-> Applied it. Thanks for your work for a long time.
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 138 +++++++++++++++++++++
+>  .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 -------
+>  2 files changed, 138 insertions(+), 44 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
 > 
 
-Thank you!
+Reviewed-by: Rob Herring <robh@kernel.org>
