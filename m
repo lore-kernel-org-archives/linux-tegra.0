@@ -2,73 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18C1C4361B
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 16:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DEEC1B0D9
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 20:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1D523787
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 16:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 173AB238A0
+	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 20:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbgLGQps (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Dec 2020 11:45:48 -0500
-Received: from foss.arm.com ([217.140.110.172]:55404 "EHLO foss.arm.com"
+        id S1726891AbgLGUiN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Dec 2020 15:38:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbgLGQps (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 7 Dec 2020 11:45:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20C56101E;
-        Mon,  7 Dec 2020 08:45:02 -0800 (PST)
-Received: from red-moon.arm.com (unknown [10.57.35.64])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17ECE3F68F;
-        Mon,  7 Dec 2020 08:44:59 -0800 (PST)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     robh+dt@kernel.org, dinghao.liu@zju.edu.cn, bhelgaas@google.com,
-        thierry.reding@gmail.com, amanharitsh123@gmail.com,
-        Vidya Sagar <vidyas@nvidia.com>, jonathanh@nvidia.com,
-        kw@linux.com
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, sagar.tv@gmail.com,
-        kthota@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, mmaddireddy@nvidia.com,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V5 0/5] Enhancements to Tegra194 PCIe driver
-Date:   Mon,  7 Dec 2020 16:44:55 +0000
-Message-Id: <160735947003.21087.14076950970582278435.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20201203133451.17716-1-vidyas@nvidia.com>
-References: <20201203133451.17716-1-vidyas@nvidia.com>
+        id S1726247AbgLGUiN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 7 Dec 2020 15:38:13 -0500
+Date:   Mon, 7 Dec 2020 14:37:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607373452;
+        bh=mfwi2/EKkZUNhWL82rdthYNiJlGRQHrM44be9bTSWXU=;
+        h=From:To:Cc:Subject:In-Reply-To:From;
+        b=iNqTPnxLZcNUWOaIqo/lY3PV8PrM4IHqYvEj1vXEY0Xup/vDV3dM7KrSc30fzE68u
+         y63KWqvsTxcomng4S5ITEHCRlRcDQONTnZuRC/MsmGpp6xmrsWvx2rkp1SbmljSBku
+         uWLYXkblMU6dsQdge0/xTHkYBqMohd00HeMtCKs6OpRM9iW0rlgICXMef6CZfNh4Fs
+         SSaCAQEmBxhRUsCueVA126SkH3UNKCOLtZOqINf/EIpHY7teoEKseZQ0Sk3QTAJM+6
+         AgVrK9A3jbVzfbU4YvbC5fOf4J+SuEadQtumWuPzH1Mc2WrvozgaTXqDG9qWIYKm+2
+         cp+aW62e883Rw==
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org, bhelgaas@google.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        amanharitsh123@gmail.com, dinghao.liu@zju.edu.cn, kw@linux.com,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH V5 5/5] PCI: tegra: Disable LTSSM during L2 entry
+Message-ID: <20201207203730.GA2289423@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201203133451.17716-6-vidyas@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 3 Dec 2020 19:04:46 +0530, Vidya Sagar wrote:
-> This series of patches do some enhancements and some bug fixes to the
-> Tegra194 PCIe platform driver like
-> - Fix Vendor-ID corruption
-> - Update DWC IP version
-> - Continue with uninitialization sequence even if parts fail
-> - Check return value of tegra_pcie_init_controller()
-> - Disable LTSSM during link's L2 entry
+[+cc Jingoo, Gustavo]
+
+On Thu, Dec 03, 2020 at 07:04:51PM +0530, Vidya Sagar wrote:
+> PCIe cards like Marvell SATA controller and some of the Samsung NVMe
+> drives don't support taking the link to L2 state. When the link doesn't
+> go to L2 state, Tegra194 requires the LTSSM to be disabled to allow PHY
+> to start the next link up process cleanly during suspend/resume sequence.
+> Failing to disable LTSSM results in the PCIe link not coming up in the
+> next resume cycle.
+
+Is this a Tegra194-specific issue, or will other DWC-based controllers
+need a similar change?
+
+> Tested-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+> V5:
+> * Added Tested-by and Acked-by from Thierry Reding
 > 
-> [...]
-
-Applied to pci/dwc, thanks!
-
-[1/5] PCI: tegra: Fix ASPM-L1SS advertisement disable code
-      https://git.kernel.org/lpieralisi/pci/c/6b6fafc1ab
-[2/5] PCI: tegra: Set DesignWare IP version
-      https://git.kernel.org/lpieralisi/pci/c/01254b6d6b
-[3/5] PCI: tegra: Continue unconfig sequence even if parts fail
-      https://git.kernel.org/lpieralisi/pci/c/b8f0d67149
-[4/5] PCI: tegra: Check return value of tegra_pcie_init_controller()
-      https://git.kernel.org/lpieralisi/pci/c/3d710af75b
-[5/5] PCI: tegra: Disable LTSSM during L2 entry
-      https://git.kernel.org/lpieralisi/pci/c/cf68e3b7a6
-
-Thanks,
-Lorenzo
+> V4:
+> * New patch in this series
+> 
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index f4109d71f20b..5597b2a49598 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1506,6 +1506,14 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+>  		data &= ~APPL_PINMUX_PEX_RST;
+>  		appl_writel(pcie, data, APPL_PINMUX);
+>  
+> +		/*
+> +		 * Some cards do not go to detect state even after de-asserting
+> +		 * PERST#. So, de-assert LTSSM to bring link to detect state.
+> +		 */
+> +		data = readl(pcie->appl_base + APPL_CTRL);
+> +		data &= ~APPL_CTRL_LTSSM_EN;
+> +		writel(data, pcie->appl_base + APPL_CTRL);
+> +
+>  		err = readl_poll_timeout_atomic(pcie->appl_base + APPL_DEBUG,
+>  						data,
+>  						((data &
+> @@ -1513,14 +1521,8 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
+>  						APPL_DEBUG_LTSSM_STATE_SHIFT) ==
+>  						LTSSM_STATE_PRE_DETECT,
+>  						1, LTSSM_TIMEOUT);
+> -		if (err) {
+> +		if (err)
+>  			dev_info(pcie->dev, "Link didn't go to detect state\n");
+> -		} else {
+> -			/* Disable LTSSM after link is in detect state */
+> -			data = appl_readl(pcie, APPL_CTRL);
+> -			data &= ~APPL_CTRL_LTSSM_EN;
+> -			appl_writel(pcie, data, APPL_CTRL);
+> -		}
+>  	}
+>  	/*
+>  	 * DBI registers may not be accessible after this as PLL-E would be
+> -- 
+> 2.17.1
+> 
