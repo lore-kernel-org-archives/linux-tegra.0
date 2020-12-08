@@ -2,77 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BE4C0018C
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9342EC433FE
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 00:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E700E23A34
-	for <linux-tegra@archiver.kernel.org>; Mon,  7 Dec 2020 22:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AEC923A04
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 00:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgLGWwC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 7 Dec 2020 17:52:02 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45839 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgLGWwB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Dec 2020 17:52:01 -0500
-Received: by mail-ot1-f65.google.com with SMTP id h18so10172377otq.12;
-        Mon, 07 Dec 2020 14:51:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oGKTxegR211Y4pxTw/c6D3ElM1Y9Rkhy1L6nJUtWY5o=;
-        b=dLwmYPkhqETrGNPB/OkWivsDqSFvxqzzlf55ESlapw83I0jhy4zt9GYEG4sPa1mjFK
-         1wAixU9EnA1b4+pXEDuaWCC9wb4Y1ruJ/cT3g+Znmm2Th+Nwaurvxr6UP3Q8LL7FTutv
-         mQP8dQoMGZXQhrZ/pysj+qnlQhlZjd1R97SQnMpV174Aj/Lipx6BE7Fu5HcrEFHWwuVL
-         k9ZcFdsl6RXPMrlLNZxX8GOnJxd040VN+s/MKf/q1sr6lefg6G0XfILEZbM0UO+hpwdE
-         Dse2pLPczMXHmT92eyS/VsFtjP8SGRoOqiUSoqxg1dLe69eNL9/bz9Ki+20GolMgUy6C
-         t/+A==
-X-Gm-Message-State: AOAM531XRLcIQOg5WvmxePlNWEn15lq9lhE1nXYxixeJixUElFprnfhg
-        xExdEgxvxRacTShxuxANsTM83RnQ3w==
-X-Google-Smtp-Source: ABdhPJzAEyFWBw8aRWodf+kbRFrizaA2A6sKnSxzif1vg6tYA4do5tJjEUn6/sY2OabGg1xZ8r/f8g==
-X-Received: by 2002:a9d:7411:: with SMTP id n17mr14433439otk.262.1607381480806;
-        Mon, 07 Dec 2020 14:51:20 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u10sm2993855otj.31.2020.12.07.14.51.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 14:51:19 -0800 (PST)
-Received: (nullmailer pid 991883 invoked by uid 1000);
-        Mon, 07 Dec 2020 22:51:18 -0000
-Date:   Mon, 7 Dec 2020 16:51:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     linux-ide@vger.kernel.org, robh+dt@kernel.org,
-        thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
-        pchandru@nvidia.com, linux-tegra@vger.kernel.org,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] dt-bindings: ata: tegra: Convert binding
- documentation to YAML
-Message-ID: <20201207225118.GA991823@robh.at.kernel.org>
-References: <1606162645-22326-1-git-send-email-skomatineni@nvidia.com>
- <1606162645-22326-4-git-send-email-skomatineni@nvidia.com>
+        id S1726417AbgLHAPC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 7 Dec 2020 19:15:02 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12012 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbgLHAPC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 7 Dec 2020 19:15:02 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fcec55e0000>; Mon, 07 Dec 2020 16:14:22 -0800
+Received: from [10.2.90.244] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 8 Dec
+ 2020 00:14:21 +0000
+Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
+ controller
+To:     Lukas Wunner <lukas@wunner.de>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
+ <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
+ <20201206181612.GA26286@wunner.de>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <8ce3fa3a-88d7-e981-731a-9bce85047892@nvidia.com>
+Date:   Mon, 7 Dec 2020 16:14:53 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1606162645-22326-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20201206181612.GA26286@wunner.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1607386462; bh=xZahUYllljXiYxe4ydcG6ftS2v4ZpfHRVkgWv217yho=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=n61ZnjtsimFPYzBZV6lW3PUKROTJd25X7QXBQmBs0UHJ3I5/tmhrBQGpCNAqGaCAT
+         PZcXiPNvYYIwZmC3235tEi1lhw7ZcaVHAJH2M5c/Sj9ssuJavwK7JgDCUjcyU1o7G+
+         ZEVFgq4Lha2pQ74qVChIafYkfflCz+WPxYLp4G/+5EVAXJdsrrWtT8t2xs4YjeNM01
+         OfNVbjuDsbJDSPj0OvoYCaMNc3MA/jEHZl3vvXdYEK0iu8mTKc4unfjXkYKpuZPo/l
+         4/X/ZIfYzUgkCvJs5Y9YNsLQIHV2K316YkYOxj5IjuptmMRTnIwjqfUVS+rnVrHBVy
+         f7ZZ1wp2DowCg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 Nov 2020 12:17:22 -0800, Sowjanya Komatineni wrote:
-> This patch converts text based dt-binding document to YAML based
-> dt-binding document.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 138 +++++++++++++++++++++
->  .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 -------
->  2 files changed, 138 insertions(+), 44 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
->  delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 12/6/20 10:16 AM, Lukas Wunner wrote:
+> On Tue, Dec 01, 2020 at 01:12:44PM -0800, Sowjanya Komatineni wrote:
+>> +	ret = devm_spi_register_master(&pdev->dev, master);
+> [...]
+>> +static int tegra_qspi_remove(struct platform_device *pdev)
+>> +{
+>> +	struct spi_master *master = platform_get_drvdata(pdev);
+>> +	struct tegra_qspi_data	*tqspi = spi_master_get_devdata(master);
+>> +
+>> +	free_irq(tqspi->irq, tqspi);
+>> +
+>> +	tegra_qspi_deinit_dma_param(tqspi, false);
+>> +	tegra_qspi_deinit_dma_param(tqspi, true);
+>> +
+>> +	pm_runtime_disable(&pdev->dev);
+>> +	if (!pm_runtime_status_suspended(&pdev->dev))
+>> +		tegra_qspi_runtime_suspend(&pdev->dev);
+>> +
+>> +	return 0;
+>> +}
+> With devm_spi_register_master(), the SPI controller is unregistered
+> *after* tegra_qspi_remove().  SPI transactions may still be ongoing
+> until the SPI controller is unregistered, yet you perform teardown
+> steps (such as freeing the IRQ) while it is still registered.
+>
+> Bottom line is, you can't use devm_spi_register_master() in this case.
+> You need to use spi_register_master() and explicitly call
+> spi_unregister_master() in tegra_qspi_remove() *before* performing
+> teardown steps.
+>
+> However, be sure to use the devm variant to *allocate* the SPI controller,
+> i.e. use devm_spi_alloc_master() instead of spi_alloc_master().
+>
+> Thanks,
+>
+> Lukas
+
+Thanks Lukas. I see devm_spi_alloc_master() in 5.4 but not from 5.5
+
+Thanks
+
+Sowjanya
+
