@@ -2,71 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B3FC1B0E3
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 07:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441B6C4361B
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 09:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 585CF23A52
-	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 07:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DF9923A84
+	for <linux-tegra@archiver.kernel.org>; Tue,  8 Dec 2020 09:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbgLHHxN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 8 Dec 2020 02:53:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60900 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbgLHHxM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 8 Dec 2020 02:53:12 -0500
-X-Greylist: delayed 485 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Dec 2020 23:52:32 PST
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [IPv6:2a01:37:1000::53df:5f64:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EA8C0613D6
-        for <linux-tegra@vger.kernel.org>; Mon,  7 Dec 2020 23:52:32 -0800 (PST)
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 8015930006267;
-        Tue,  8 Dec 2020 08:43:48 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 8B064ACE3; Tue,  8 Dec 2020 08:44:24 +0100 (CET)
-Date:   Tue, 8 Dec 2020 08:44:24 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/7] spi: qspi-tegra: Add support for Tegra210 QSPI
- controller
-Message-ID: <20201208074424.GB29998@wunner.de>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-4-git-send-email-skomatineni@nvidia.com>
- <20201206181612.GA26286@wunner.de>
- <8ce3fa3a-88d7-e981-731a-9bce85047892@nvidia.com>
+        id S1729050AbgLHJmk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 8 Dec 2020 04:42:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729048AbgLHJmk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 8 Dec 2020 04:42:40 -0500
+Date:   Tue, 8 Dec 2020 10:43:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1607420514;
+        bh=tvtbfrrR47jb6ZfkBFL79V+US5L4jdG2XyB7WAOqBNg=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Oq0cRkDpfopUklQEuLDxYi1r0kgq8BuOWwjF4/kNNiamkzJbgG8FTS6OfcZZi+B6O
+         /Ry9lS5b+H4Q4jfER5yBzVXV3qRxfCDCCjeuQWC6lSfs1Z/PVPy/FukqZn8HV7hbLw
+         xKiDpMhkO5CU16CnMlwGh6/yHQf5R1cZGqRVsRSQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.9 00/46] 5.9.13-rc1 review
+Message-ID: <X89KptUDfi0g7GhV@kroah.com>
+References: <20201206111556.455533723@linuxfoundation.org>
+ <c2df6c0f5b0249f781ba3f08bb98ec95@HQMAIL101.nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ce3fa3a-88d7-e981-731a-9bce85047892@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c2df6c0f5b0249f781ba3f08bb98ec95@HQMAIL101.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 04:14:53PM -0800, Sowjanya Komatineni wrote:
-> On 12/6/20 10:16 AM, Lukas Wunner wrote:
-> > However, be sure to use the devm variant to *allocate* the SPI controller,
-> > i.e. use devm_spi_alloc_master() instead of spi_alloc_master().
+On Mon, Dec 07, 2020 at 03:04:07PM +0000, Jon Hunter wrote:
+> On Sun, 06 Dec 2020 12:17:08 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.9.13 release.
+> > There are 46 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue, 08 Dec 2020 11:15:42 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.9.13-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.9.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Thanks Lukas. I see devm_spi_alloc_master() in 5.4 but not from 5.5
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.9:
+>     15 builds:	15 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     64 tests:	64 pass, 0 fail
+> 
+> Linux version:	5.9.13-rc1-g1372e1af58d4
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-devm_spi_alloc_master() was introduced in v5.10-rc5 with commit
-5e844cc37a5c and then backported to 5.9-stable and 5.4-stable.
+Thanks for testing all of these and letting me know.
 
-Patches are pending to also backport it to 4.19-stable, 4.14-stable,
-4.9-stable and 4.4-stable.
-
-If your development branch is based on v5.5, just cherry-pick
-5e844cc37a5c and you should be good to go.
-
-Thanks,
-
-Lukas
+greg k-h
