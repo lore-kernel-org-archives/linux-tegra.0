@@ -2,173 +2,167 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782FBC1B0E3
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 06:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65E7C19425
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 17:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5219C23B23
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 06:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD4423B51
+	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 17:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbgLIGi0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Dec 2020 01:38:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgLIGiZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Dec 2020 01:38:25 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C934DC0613CF;
-        Tue,  8 Dec 2020 22:37:45 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id j1so423126pld.3;
-        Tue, 08 Dec 2020 22:37:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=e50gjx2u+dk5VMtYgu+q4thABv8jJUcueqKzMMAspdM=;
-        b=ixLOM9HvY9cq9Z4h6NLLxTGvQ6HSYGtx3j6FDGjAbxvLa2OpQf6evTG0K7aZ8AyjSg
-         Vz4p0EtroLc123xr1LjxiO7na/Pplis+8FzmNk1d2UrvVlqZn09vTY6OtuwPEytSuGG5
-         2KCJbhZpSunbmaFIabDEFehnWei8Vt8i4Oc66zINdaloS1KlTL4RhfHAx8SycAn2ADXy
-         YYLbUI9xC9wRdfqk9Ka7jLgWNvZxP0tNIfJltreYt+Oh5syP5tk1wE9V022lxItkYGs5
-         /OGETCIhjaIt9TdmtA4GohQaG58NA5xxvbe5jJROaeFQOjvoee/Vgex7LnTi6mSyI+/t
-         Kb4g==
+        id S1732767AbgLIR1h (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Dec 2020 12:27:37 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44237 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732758AbgLIR11 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Dec 2020 12:27:27 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f16so2106026otl.11;
+        Wed, 09 Dec 2020 09:27:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=e50gjx2u+dk5VMtYgu+q4thABv8jJUcueqKzMMAspdM=;
-        b=Ons/8vi8C/L+E3fvYfxpGl1el4ZSLrhT+YqYYXGdq81ubG5rU+9yF8adMRuF+hOrKH
-         RLPe1BmRhYaqx5k7/K69Yb0Fqy636p/FNuJQuJuFuZilQNOxsHgdVchppHVSKzb7cBrX
-         0XfZKUhBbJa02Kcmj1yTyp3/H48UWfXfsJVGTQw15Wwrws76gN6C2D0f5qFnXK+CLB8y
-         AFe8X1bGY9ogB6or/q8C0qa6Um7QK34ThJvUBkw5B4Mg5qXtIVTjWMmWR4VfOrIC8Etv
-         6JQ7DkJ/reIP5dKb5ka/9UEecKzQS1QY90PZrC7/eLqPvKgxzTWu4Jd693QLmamF0srJ
-         EZ8Q==
-X-Gm-Message-State: AOAM531QnZ3PWySNvyoiq97K1qx1db4BjdgnbwZVv5H86nAqSe1xRM9s
-        skpQfVIRSKfh3kNe8uhCcoU=
-X-Google-Smtp-Source: ABdhPJwjfEiPLMae+ffo6Cnhp7douBFcf3vSLYOtRxV9vdx0S2C51CdSPEgUeVMZh9kilf8XyPe8TA==
-X-Received: by 2002:a17:90b:4a0d:: with SMTP id kk13mr880119pjb.23.1607495865199;
-        Tue, 08 Dec 2020 22:37:45 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id z11sm990299pfj.191.2020.12.08.22.37.42
+         :mime-version:content-disposition:in-reply-to;
+        bh=dJcplb3slY1dsoFAl6yxoDTBG+DHfog6F6dFhpVHk9A=;
+        b=JKBBhpm/xGYFLyIaJpMhYhdXoKaVBh2nhVS18ayRiDMmzVB6oSfZdOyGdKyvJLgKvm
+         5is3EIYQr8SOSy85+1Y2QabXlmlYjEwtJFgh85o5yZcO0NhKQ5P/6wmvsgZT56n/VRIs
+         JUb/z49cW0Y+5zVbG1HgCtulagzykvZqjDvUU2oiFAdUeW1t5HilLD+9RBSKyFM9sYpf
+         13B6MCsD/XcFJwy02lw7v8jGrbc79tLxThvWoMr39PDhyTxoyMlcKy1JK918MX1+vc4M
+         JneoQAuLhW9TcWfMeQJAgdkieAGcIhl4M95SQFwTTRKmLa0o051BWseRxCFAJxEfXQ7k
+         uvGg==
+X-Gm-Message-State: AOAM531V1XdB+YMbsMJQBUHDo+hlyEY2EuVJrPAzMmaYdo1qkwWz3P6f
+        AZuA8vXkv6aRG7/KfmBjJ3LpHGILvQ==
+X-Google-Smtp-Source: ABdhPJwINWASDIcbnAlPGTqU1d+qKbxekVgnOt54abWpI7enCFjTH9b++DgZI0VBTn7SapNG6EEqVw==
+X-Received: by 2002:a9d:63c6:: with SMTP id e6mr2657288otl.326.1607534805803;
+        Wed, 09 Dec 2020 09:26:45 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k13sm537363otl.72.2020.12.09.09.26.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Dec 2020 22:37:44 -0800 (PST)
-Date:   Tue, 8 Dec 2020 22:37:40 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v4 2/7] Input: use input_device_enabled()
-Message-ID: <X9BwtHs9XriwR8gL@google.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-3-andrzej.p@collabora.com>
- <CGME20201207133237eucas1p26f8484944760a14e51dc7353ed33cd28@eucas1p2.samsung.com>
- <27ce1176-6318-45aa-4e22-3dec9f3df15d@samsung.com>
- <9c784a23-eade-eacd-3e67-d344a5758b83@collabora.com>
- <ad093ba3-7b17-18f3-6bb5-d8133c3da89a@samsung.com>
+        Wed, 09 Dec 2020 09:26:45 -0800 (PST)
+Received: (nullmailer pid 641351 invoked by uid 1000);
+        Wed, 09 Dec 2020 17:26:43 -0000
+Date:   Wed, 9 Dec 2020 11:26:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 2/7] dt-bindings: spi: Add Tegra QSPI device tree
+ binding
+Message-ID: <20201209172643.GA638607@robh.at.kernel.org>
+References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
+ <1606857168-5839-3-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ad093ba3-7b17-18f3-6bb5-d8133c3da89a@samsung.com>
+In-Reply-To: <1606857168-5839-3-git-send-email-skomatineni@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 11:05:42AM +0100, Marek Szyprowski wrote:
-> Hi Andrzej,
+On Tue, Dec 01, 2020 at 01:12:43PM -0800, Sowjanya Komatineni wrote:
+> This patch adds YAML based device tree binding document for Tegra
+> QSPI driver.
 > 
-> On 07.12.2020 16:50, Andrzej Pietrasiewicz wrote:
-> > Hi Marek,
-> >
-> > W dniu 07.12.2020 o 14:32, Marek Szyprowski pisze:
-> >> Hi Andrzej,
-> >>
-> >> On 08.06.2020 13:22, Andrzej Pietrasiewicz wrote:
-> >>> Use the newly added helper in relevant input drivers.
-> >>>
-> >>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> >>
-> >> This patch landed recently in linux-next as commit d69f0a43c677 ("Input:
-> >> use input_device_enabled()"). Sadly it causes following warning during
-> >> system suspend/resume cycle on ARM 32bit Samsung Exynos5250-based Snow
-> >> Chromebook with kernel compiled from exynos_defconfig:
-> >>
-> >> ------------[ cut here ]------------
-> >> WARNING: CPU: 0 PID: 1777 at drivers/input/input.c:2230
-> >> input_device_enabled+0x68/0x6c
-> >> Modules linked in: cmac bnep mwifiex_sdio mwifiex sha256_generic
-> >> libsha256 sha256_arm cfg80211 btmrvl_sdio btmrvl bluetooth s5p_mfc
-> >> exynos_gsc v4l2_mem2mem videob
-> >> CPU: 0 PID: 1777 Comm: rtcwake Not tainted
-> >> 5.10.0-rc6-next-20201207-00001-g49a0dc04c46d-dirty #9902
-> >> Hardware name: Samsung Exynos (Flattened Device Tree)
-> >> [<c0111718>] (unwind_backtrace) from [<c010d050>] (show_stack+0x10/0x14)
-> >> [<c010d050>] (show_stack) from [<c0b32810>] (dump_stack+0xb4/0xd4)
-> >> [<c0b32810>] (dump_stack) from [<c0126e24>] (__warn+0xd8/0x11c)
-> >> [<c0126e24>] (__warn) from [<c0126f18>] (warn_slowpath_fmt+0xb0/0xb8)
-> >> [<c0126f18>] (warn_slowpath_fmt) from [<c07fa2fc>]
-> >> (input_device_enabled+0x68/0x6c)
-> >> [<c07fa2fc>] (input_device_enabled) from [<c080a0f8>]
-> >
-> > Apparently you are hitting this line of code in drivers/input/input.c:
-> >
-> > lockdep_assert_held(&dev->mutex);
-> >
-> > Inspecting input device's "users" member should happen under dev's lock.
-> >
-> This check and warning has been introduced by this patch. I assume that 
-> the suspend/resume paths are correct, but it looks that they were not 
-> tested with this patch thus it has not been noticed that they are not 
-> called under the input's lock. This needs a fix. Dmitry: how would you 
-> like to handle this issue?
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  .../devicetree/bindings/spi/nvidia,tegra-qspi.yaml | 77 ++++++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+> new file mode 100644
+> index 0000000..038a085
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/nvidia,tegra-qspi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Tegra Quad SPI Controller
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra210-qspi
+> +      - nvidia,tegra186-qspi
+> +      - nvidia,tegra194-qspi
+> +
+> +  reg:
+> +    items:
+> +      - description: QSPI registers
 
-The check is proper and the warning is legit, cyapa should not be
-checking this field without holding the lock. I think we can simply
-remove this check from the power ops for gen3 and gen5, and this should
-shut up the warning on suspend, but there other places in cyapa that do
-check 'users', and they also need to be fixed.
+Just 'maxItems: 1'
 
-Thanks.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: qspi
 
--- 
-Dmitry
+Kind of a pointless name. 
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    minItems: 1
+> +    items:
+> +      - const: qspi
+
+Same here.
+
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 2
+> +
+> +  dma-names:
+> +    items:
+> +      - const: rx
+> +      - const: tx
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clock-names
+> +  - clocks
+> +  - reset-names
+> +  - resets
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra210-car.h>
+> +    #include <dt-bindings/reset/tegra210-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    spi@70410000 {
+> +            compatible = "nvidia,tegra210-qspi";
+> +            reg = <0x70410000 0x1000>;
+> +            interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks = <&tegra_car TEGRA210_CLK_QSPI>;
+> +            clock-names = "qspi";
+> +            resets = <&tegra_car 211>;
+> +            reset-names = "qspi";
+> +            dmas = <&apbdma 5>, <&apbdma 5>;
+> +            dma-names = "rx", "tx";
+> +    };
+> -- 
+> 2.7.4
+> 
