@@ -2,107 +2,163 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19608C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 01:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2751FC2BB40
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 03:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0A4123BC6
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 01:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF1223A1D
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 03:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731933AbgLJB1x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Dec 2020 20:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728050AbgLJB1x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 9 Dec 2020 20:27:53 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607563632;
-        bh=4fquuoXgeXKGOmKHsZ5csbna5WzsqVOwtrr9OcdcGt4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QoEV6Wb73MTk6RVv03QGdhzC9QChshkqShWs7zHgdbgmb+S1UwE18CCDXqlr4dpCz
-         emhS1Fl2MmYt2dxaDR9EjWA1U55ohBQt0NqWkW46lDIJ7R2DROpwXL0FFg8O/iuYaj
-         lL/anVqdLkaRGlcyHwbr/QTmTyUrKnXTZmLTmpJ7EOAkCKsyRW6/pjEb+XFL2OG+jC
-         CibqOORASvbtc0PPBWsrOwYsxE8gnbYmhg+dXWDogsTlxkLoqAKKPzZ6nn4R+sbTdd
-         7dHuLYIxEHKnNsk+oFyn+Nop1xkGRVghGIJXdRGicuphQwt4st39a4Z16yNeAREPks
-         NrqiNOUnIIIJA==
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201025224212.7790-1-digetx@gmail.com>
-References: <20201025224212.7790-1-digetx@gmail.com>
-Subject: Re: [PATCH v1] clk: tegra: Fix duplicated SE clock entry
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Dmitry Osipenko <digetx@gmail.com>,
+        id S1731236AbgLJDpH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Dec 2020 22:45:07 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38104 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730376AbgLJDpE (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Dec 2020 22:45:04 -0500
+Received: by mail-oi1-f196.google.com with SMTP id o25so4268856oie.5;
+        Wed, 09 Dec 2020 19:44:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Fu6C4QffPD0sOdnGBmBWkf0xe4d39JgNdhCtih00fXk=;
+        b=PLO+crZpFANXZp/nHa1OWgkUZejGP1bxzLPZTjoBOjoGPkw6ZC9TGVkmB96+cW8ETE
+         MMwrVTQTV65h+JXYLxMuP7cyqxRypQntkMV1GL0a2gmBgeDPufem6UJ2GWPsyGAK+bh8
+         7DoH/XqwvhWfQa64LuM4PF2gyct0DSDwrmI32ocn9LJTsu1F1yu7sjqqUNfTha/8MP7S
+         viwrmgV8Yv1VfTS8Gu+fqwmghlgLZWN+kcBMjE69xoSLrPQZ8dQOmQ64R42Q7Z753/A7
+         J+w/Unf2RMLDjFtauMOCvolO7pppbqVt2vtrDPUfzMZE5X0uN4NVcdBml0Dyi+rxTUiH
+         zuDQ==
+X-Gm-Message-State: AOAM531kWbC2VgNux9ih/JcmByEl74oQXT4fs/BKAS75zgu53vh9jQnL
+        bleyqSdB0IF5RGh6FWb4iQ==
+X-Google-Smtp-Source: ABdhPJz3gT186xFD11r4/H87QdtT5az1qJBQ/iAVgeJQCgY0qz0QsLhzOiYonLwdos+BNGeEIzHy+Q==
+X-Received: by 2002:aca:d706:: with SMTP id o6mr4229937oig.28.1607571862751;
+        Wed, 09 Dec 2020 19:44:22 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f201sm536070oig.21.2020.12.09.19.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Dec 2020 19:44:21 -0800 (PST)
+Received: (nullmailer pid 1617044 invoked by uid 1000);
+        Thu, 10 Dec 2020 03:44:20 -0000
+Date:   Wed, 9 Dec 2020 21:44:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Wed, 09 Dec 2020 17:27:10 -0800
-Message-ID: <160756363099.1580929.2375956922093495697@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: input: atmel_mxt_ts: Document
+ atmel,wakeup-method and wake-GPIO
+Message-ID: <20201210034420.GA1615537@robh.at.kernel.org>
+References: <20201206212217.6857-1-digetx@gmail.com>
+ <20201206212217.6857-2-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201206212217.6857-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Quoting Dmitry Osipenko (2020-10-25 15:42:12)
-> The periph_clks[] array contains duplicated entry for Security Engine
-> clock which was meant to be defined for T210, but it wasn't added
-> properly. This patch corrects the T210 SE entry and fixes the following
-> error message on T114/T124: "Tegra clk 127: register failed with -17".
->=20
-> Fixes: dc37fec48314 ("clk: tegra: periph: Add new periph clks and muxes f=
-or Tegra210")
-> Tested-by Nicolas Chauvet <kwizart@gmail.com>
-> Reported-by Nicolas Chauvet <kwizart@gmail.com>
+On Mon, Dec 07, 2020 at 12:22:15AM +0300, Dmitry Osipenko wrote:
+> Some Atmel touchscreen controllers have a WAKE line that needs to be
+> asserted low in order to wake up controller from a deep sleep. Document
+> the wakeup methods and the wake-GPIO properties.
+
+wake-GPIO?
+
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-
-Looks correct. Should I pick this up Thierry?
-
->  drivers/clk/tegra/clk-id.h           | 1 +
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index ff7da2d3e94d..24413812ec5b 100644
-> --- a/drivers/clk/tegra/clk-id.h
-> +++ b/drivers/clk/tegra/clk-id.h
-> @@ -227,6 +227,7 @@ enum clk_id {
->         tegra_clk_sdmmc4,
->         tegra_clk_sdmmc4_8,
->         tegra_clk_se,
-> +       tegra_clk_se_10,
->         tegra_clk_soc_therm,
->         tegra_clk_soc_therm_8,
->         tegra_clk_sor0,
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
--tegra-periph.c
-> index 2b2a3b81c16b..60cc34f90cb9 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -630,7 +630,7 @@ static struct tegra_periph_init_data periph_clks[] =
-=3D {
->         INT8("host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, =
-28, 0, tegra_clk_host1x_8),
->         INT8("host1x", mux_pllc4_out1_pllc_pllc4_out2_pllp_clkm_plla_pllc=
-4_out0, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_9),
->         INT8("se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, TEG=
-RA_PERIPH_ON_APB, tegra_clk_se),
-> -       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
-RIPH_ON_APB, tegra_clk_se),
-> +       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
-RIPH_ON_APB, tegra_clk_se_10),
->         INT8("2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, 0, t=
-egra_clk_gr2d_8),
->         INT8("3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, 0, t=
-egra_clk_gr3d_8),
->         INT8("vic03", mux_pllm_pllc_pllp_plla_pllc2_c3_clkm, CLK_SOURCE_V=
-IC03, 178, 0, tegra_clk_vic03),
+>  .../bindings/input/atmel,maxtouch.yaml        | 29 +++++++++++++++++++
+>  include/dt-bindings/input/atmel-maxtouch.h    | 10 +++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 include/dt-bindings/input/atmel-maxtouch.h
+> 
+> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> index 8c6418f76e94..e6b03a1e7c30 100644
+> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+> @@ -39,6 +39,13 @@ properties:
+>        (active low). The line must be flagged with
+>        GPIO_ACTIVE_LOW.
+>  
+> +  wake-gpios:
+> +    maxItems: 1
+> +    description:
+> +      Optional GPIO specifier for the touchscreen's wake pin
+> +      (active low). The line must be flagged with
+> +      GPIO_ACTIVE_LOW.
+> +
+>    linux,gpio-keymap:
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+>      description: |
+> @@ -53,6 +60,26 @@ properties:
+>        or experiment to determine which bit corresponds to which input. Use
+>        KEY_RESERVED for unused padding values.
+>  
+> +  atmel,wakeup-method:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      The WAKE line is an active-low input that is used to wake up the touch
+> +      controller from deep-sleep mode before communication with the controller
+> +      could be started. This optional feature used to minimize current
+> +      consumption when the controller is in deep sleep mode. This feature is
+> +      relevant only to some controller families, like mXT1386 controller for
+> +      example.
+> +
+> +      The WAKE pin can be connected in one of the following ways:
+> +       1) left permanently low
+> +       2) connected to the I2C-compatible SCL pin
+> +       3) connected to a GPIO pin on the host
+> +    enum:
+> +      - 0 # ATMEL_MXT_WAKEUP_NONE
+> +      - 1 # ATMEL_MXT_WAKEUP_I2C_SCL
+> +      - 2 # ATMEL_MXT_WAKEUP_GPIO
+> +    default: 0
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -63,6 +90,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/input/atmel-maxtouch.h>
+>      #include <dt-bindings/gpio/gpio.h>
+>      i2c {
+>        #address-cells = <1>;
+> @@ -75,6 +103,7 @@ examples:
+>          reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
+>          vdda-supply = <&ab8500_ldo_aux2_reg>;
+>          vdd-supply = <&ab8500_ldo_aux5_reg>;
+> +        atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
+>        };
+>      };
+>  
+> diff --git a/include/dt-bindings/input/atmel-maxtouch.h b/include/dt-bindings/input/atmel-maxtouch.h
+> new file mode 100644
+> index 000000000000..7345ab32224d
+> --- /dev/null
+> +++ b/include/dt-bindings/input/atmel-maxtouch.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +
+> +#ifndef _DT_BINDINGS_ATMEL_MAXTOUCH_H
+> +#define _DT_BINDINGS_ATMEL_MAXTOUCH_H
+> +
+> +#define ATMEL_MXT_WAKEUP_NONE		0
+> +#define ATMEL_MXT_WAKEUP_I2C_SCL	1
+> +#define ATMEL_MXT_WAKEUP_GPIO		2
+> +
+> +#endif /* _DT_BINDINGS_ATMEL_MAXTOUCH_H */
+> -- 
+> 2.29.2
+> 
