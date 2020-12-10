@@ -2,188 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD10C433FE
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 09:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0804C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 18:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2316F23D25
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 09:59:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5335823C44
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 18:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbgLJJ6d (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Dec 2020 04:58:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbgLJJ63 (ORCPT
+        id S2392725AbgLJSIM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 10 Dec 2020 13:08:12 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:19556 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392547AbgLJSIG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Dec 2020 04:58:29 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B84C0613CF;
-        Thu, 10 Dec 2020 01:57:49 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id a9so7355703lfh.2;
-        Thu, 10 Dec 2020 01:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q6Rle7Zfp/9fsnXTrVMeXSLbIqeu6VGUS6bZlipo6Yg=;
-        b=NEk+KrylcayZ4ow/7WzuzE6tE/6MradNdXkAzkkhcgBfjZQFdrfvd/jLCzSH93DnEj
-         +4Xkj0bZ6+Zrnr8E7L7ZIXLoB9bjSTJEt8jC//nuhHJNhxlYRqBfOSlwY4vGPTe0aOSf
-         rISRBnNwWKoVBd77/QlhMvCgjukH/hk2j9OBIjKS9d1g3iSCDlD+iHlKVTb0w2PgbQsK
-         TNanYeC/6qr42I4x4UPz4EgX/WcuFKdC1RehDFqZolXxCqlyHHxOKh/lhfmXvlfEHWwm
-         /vNgPPOwuXCwILVP6gM3mtvIdvM7Hzknb11MNsNgTbXDKir28Zu5PaejGr7arYW9ymLP
-         Ahew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=q6Rle7Zfp/9fsnXTrVMeXSLbIqeu6VGUS6bZlipo6Yg=;
-        b=gHoOZwky2w70Szo68LcPFmF+r/WfyVqzvDk0tAxJSUqXg1nzoiRB8g4d6Dk9K0jEbv
-         adho8qlbbn2Ql6fbsoMOVcPHOHk4PVxUs7lASWjit/FCuoQyMxUoMGP/T69jBCXfUpak
-         ukkmlZ80VzMDlATnSv40TCF9w7ciyowM9GdBVbzYush1QAl6jNLdH+Jjl+7vVNA4I0IS
-         jWoGIDMhokdIK9I33gaykGxDmH0T0J88+02uwTlfOWXf/KPmf2LffsbdkVEL4Bg1kuLb
-         jqL6ukfTaF4ahOBNqrrPTTtOYpbmHvp1o+Oj/acNWTLMpBVOZNSR5M5Y5NDqJTIsWPvi
-         qSQA==
-X-Gm-Message-State: AOAM531/TDQkmtf+9SMbxuy2B2OXOffVKJ4FtBW6pFmYzdJfym/lHys/
-        Uv3TvZ93HtSS7hzqj/n7tEhszA1zH8k=
-X-Google-Smtp-Source: ABdhPJx7LLXbSh3NSdhxr7eHO60gCHKufiN0jhXXLcVnoC8vpIK+i7AFVsSDACuQJY7h/KC+WJht9w==
-X-Received: by 2002:a19:d86:: with SMTP id 128mr2453180lfn.317.1607594267393;
-        Thu, 10 Dec 2020 01:57:47 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-205.dynamic.spd-mgts.ru. [109.252.193.205])
-        by smtp.googlemail.com with ESMTPSA id m17sm459131lfo.132.2020.12.10.01.57.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Dec 2020 01:57:46 -0800 (PST)
-Subject: Re: [PATCH v3 1/3] dt-bindings: input: atmel_mxt_ts: Document
- atmel,wakeup-method and wake-GPIO
+        Thu, 10 Dec 2020 13:08:06 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd263da0000>; Thu, 10 Dec 2020 10:07:22 -0800
+Received: from [10.2.90.244] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 10 Dec
+ 2020 18:07:21 +0000
+Subject: Re: [PATCH v1 2/7] dt-bindings: spi: Add Tegra QSPI device tree
+ binding
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     Rob Herring <robh@kernel.org>
-Cc:     Nick Dyer <nick@shmanahar.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201206212217.6857-1-digetx@gmail.com>
- <20201206212217.6857-2-digetx@gmail.com>
- <20201210034420.GA1615537@robh.at.kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ea36d902-b158-981a-f144-2878784bf079@gmail.com>
-Date:   Thu, 10 Dec 2020 12:57:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
+ <1606857168-5839-3-git-send-email-skomatineni@nvidia.com>
+ <20201209172643.GA638607@robh.at.kernel.org>
+ <1a9f0391-321d-2463-827b-284bba38e07d@nvidia.com>
+Message-ID: <061c6770-860a-8b5b-7d14-32745a630922@nvidia.com>
+Date:   Thu, 10 Dec 2020 10:08:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201210034420.GA1615537@robh.at.kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1a9f0391-321d-2463-827b-284bba38e07d@nvidia.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1607623642; bh=mQCndjBdMDE2zRyHrOPCBno3Q9FtrmzY5DN+TW0E3OE=;
+        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=iMuzQzBYFg7V9xtZEOU5XFuckw8QYJBPm9VwWp1T8xEAWlTQtpDkz+5jfM5BVKGCz
+         PSzh+6wk8GkMjAMbRE1iIbUcghnVGyKTw0j758WSubQZRNwsy7YiJF4Rq8wQjwHbUQ
+         3qn3pbJX+jSsq0kZjJmKWXLQU07FqhX3jzhGV4B7wvoxb13Mh4DVLv5dp7MPVl/DCn
+         r+YQpvdicoM9QyFRpmcjkQV1rhx/nlcR3k4xKPguYgiTMF/yuLuNL5zzeDIfQ5Iftq
+         fsJGDzqt5jeD2Xq9CrJoaTf98e41s4h3176iJWh4uK1oefBtHMAjRUEzs5KeWBtCw3
+         /rkhYgDbxvO4Q==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-10.12.2020 06:44, Rob Herring пишет:
-> On Mon, Dec 07, 2020 at 12:22:15AM +0300, Dmitry Osipenko wrote:
->> Some Atmel touchscreen controllers have a WAKE line that needs to be
->> asserted low in order to wake up controller from a deep sleep. Document
->> the wakeup methods and the wake-GPIO properties.
-> 
-> wake-GPIO?
 
-The "wake-gpios" is the new property and it has "maxItems: 1", hence the
-wake-GPIO.
+On 12/9/20 12:28 PM, Sowjanya Komatineni wrote:
+>
+> On 12/9/20 9:26 AM, Rob Herring wrote:
+>> On Tue, Dec 01, 2020 at 01:12:43PM -0800, Sowjanya Komatineni wrote:
+>>> This patch adds YAML based device tree binding document for Tegra
+>>> QSPI driver.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>> =C2=A0 .../devicetree/bindings/spi/nvidia,tegra-qspi.yaml | 77=20
+>>> ++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 77 insertions(+)
+>>> =C2=A0 create mode 100644=20
+>>> Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+>>>
+>>> diff --git=20
+>>> a/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml=20
+>>> b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+>>> new file mode 100644
+>>> index 0000000..038a085
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
+>>> @@ -0,0 +1,77 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/spi/nvidia,tegra-qspi.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Tegra Quad SPI Controller
+>>> +
+>>> +maintainers:
+>>> +=C2=A0 - Thierry Reding <thierry.reding@gmail.com>
+>>> +=C2=A0 - Jonathan Hunter <jonathanh@nvidia.com>
+>>> +
+>>> +properties:
+>>> +=C2=A0 compatible:
+>>> +=C2=A0=C2=A0=C2=A0 enum:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - nvidia,tegra210-qspi
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - nvidia,tegra186-qspi
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - nvidia,tegra194-qspi
+>>> +
+>>> +=C2=A0 reg:
+>>> +=C2=A0=C2=A0=C2=A0 items:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: QSPI registers
+>> Just 'maxItems: 1'
+>>
+>>> +
+>>> +=C2=A0 interrupts:
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 1
+>>> +
+>>> +=C2=A0 clock-names:
+>>> +=C2=A0=C2=A0=C2=A0 items:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: qspi
+>> Kind of a pointless name.
+> Thanks Rob for feedback. Do you mean to change name something like=20
+> qspi-clk instead of qspi?
+
+Rob, reason I added clock name is later when we add ddr mode we will=20
+have additional clock.
+
+So driver uses clock name to retrieve.
+
+Will add both clocks to dt-binding doc in v2 although support for ddr=20
+mode in qspi driver can be implemented later.
 
 >>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../bindings/input/atmel,maxtouch.yaml        | 29 +++++++++++++++++++
->>  include/dt-bindings/input/atmel-maxtouch.h    | 10 +++++++
->>  2 files changed, 39 insertions(+)
->>  create mode 100644 include/dt-bindings/input/atmel-maxtouch.h
+>>> +
+>>> +=C2=A0 clocks:
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 1
+>>> +
+>>> +=C2=A0 reset-names:
+>>> +=C2=A0=C2=A0=C2=A0 minItems: 1
+>>> +=C2=A0=C2=A0=C2=A0 items:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: qspi
+>> Same here.
 >>
->> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
->> index 8c6418f76e94..e6b03a1e7c30 100644
->> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
->> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
->> @@ -39,6 +39,13 @@ properties:
->>        (active low). The line must be flagged with
->>        GPIO_ACTIVE_LOW.
->>  
->> +  wake-gpios:
->> +    maxItems: 1
->> +    description:
->> +      Optional GPIO specifier for the touchscreen's wake pin
->> +      (active low). The line must be flagged with
->> +      GPIO_ACTIVE_LOW.
->> +
->>    linux,gpio-keymap:
->>      $ref: /schemas/types.yaml#/definitions/uint32-array
->>      description: |
->> @@ -53,6 +60,26 @@ properties:
->>        or experiment to determine which bit corresponds to which input. Use
->>        KEY_RESERVED for unused padding values.
->>  
->> +  atmel,wakeup-method:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      The WAKE line is an active-low input that is used to wake up the touch
->> +      controller from deep-sleep mode before communication with the controller
->> +      could be started. This optional feature used to minimize current
->> +      consumption when the controller is in deep sleep mode. This feature is
->> +      relevant only to some controller families, like mXT1386 controller for
->> +      example.
->> +
->> +      The WAKE pin can be connected in one of the following ways:
->> +       1) left permanently low
->> +       2) connected to the I2C-compatible SCL pin
->> +       3) connected to a GPIO pin on the host
->> +    enum:
->> +      - 0 # ATMEL_MXT_WAKEUP_NONE
->> +      - 1 # ATMEL_MXT_WAKEUP_I2C_SCL
->> +      - 2 # ATMEL_MXT_WAKEUP_GPIO
->> +    default: 0
->> +
->>  required:
->>    - compatible
->>    - reg
->> @@ -63,6 +90,7 @@ additionalProperties: false
->>  examples:
->>    - |
->>      #include <dt-bindings/interrupt-controller/irq.h>
->> +    #include <dt-bindings/input/atmel-maxtouch.h>
->>      #include <dt-bindings/gpio/gpio.h>
->>      i2c {
->>        #address-cells = <1>;
->> @@ -75,6 +103,7 @@ examples:
->>          reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
->>          vdda-supply = <&ab8500_ldo_aux2_reg>;
->>          vdd-supply = <&ab8500_ldo_aux5_reg>;
->> +        atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
->>        };
->>      };
->>  
->> diff --git a/include/dt-bindings/input/atmel-maxtouch.h b/include/dt-bindings/input/atmel-maxtouch.h
->> new file mode 100644
->> index 000000000000..7345ab32224d
->> --- /dev/null
->> +++ b/include/dt-bindings/input/atmel-maxtouch.h
->> @@ -0,0 +1,10 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +
->> +#ifndef _DT_BINDINGS_ATMEL_MAXTOUCH_H
->> +#define _DT_BINDINGS_ATMEL_MAXTOUCH_H
->> +
->> +#define ATMEL_MXT_WAKEUP_NONE		0
->> +#define ATMEL_MXT_WAKEUP_I2C_SCL	1
->> +#define ATMEL_MXT_WAKEUP_GPIO		2
->> +
->> +#endif /* _DT_BINDINGS_ATMEL_MAXTOUCH_H */
->> -- 
->> 2.29.2
->>
-
+>>> +
+>>> +=C2=A0 resets:
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 1
+>>> +
+>>> +=C2=A0 dmas:
+>>> +=C2=A0=C2=A0=C2=A0 maxItems: 2
+>>> +
+>>> +=C2=A0 dma-names:
+>>> +=C2=A0=C2=A0=C2=A0 items:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: rx
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: tx
+>>> +
+>>> +required:
+>>> +=C2=A0 - compatible
+>>> +=C2=A0 - reg
+>>> +=C2=A0 - interrupts
+>>> +=C2=A0 - clock-names
+>>> +=C2=A0 - clocks
+>>> +=C2=A0 - reset-names
+>>> +=C2=A0 - resets
+>>> +
+>>> +additionalProperties: true
+>>> +
+>>> +examples:
+>>> +=C2=A0 - |
+>>> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/clock/tegra210-car.h>
+>>> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/reset/tegra210-car.h>
+>>> +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/arm-gic.=
+h>
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 spi@70410000 {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 com=
+patible =3D "nvidia,tegra210-qspi";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg=
+ =3D <0x70410000 0x1000>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int=
+errupts =3D <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clo=
+cks =3D <&tegra_car TEGRA210_CLK_QSPI>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clo=
+ck-names =3D "qspi";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 res=
+ets =3D <&tegra_car 211>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 res=
+et-names =3D "qspi";
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma=
+s =3D <&apbdma 5>, <&apbdma 5>;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma=
+-names =3D "rx", "tx";
+>>> +=C2=A0=C2=A0=C2=A0 };
+>>> --=20
+>>> 2.7.4
+>>>
