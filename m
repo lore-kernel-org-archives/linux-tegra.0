@@ -2,170 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C7BC4167B
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 20:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19608C433FE
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 01:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02A5A23B99
-	for <linux-tegra@archiver.kernel.org>; Wed,  9 Dec 2020 20:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0A4123BC6
+	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 01:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387699AbgLIU2k (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 9 Dec 2020 15:28:40 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4239 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbgLIU2k (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 9 Dec 2020 15:28:40 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd133500001>; Wed, 09 Dec 2020 12:28:00 -0800
-Received: from [10.2.90.244] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 9 Dec
- 2020 20:27:59 +0000
-Subject: Re: [PATCH v1 2/7] dt-bindings: spi: Add Tegra QSPI device tree
- binding
-To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1606857168-5839-1-git-send-email-skomatineni@nvidia.com>
- <1606857168-5839-3-git-send-email-skomatineni@nvidia.com>
- <20201209172643.GA638607@robh.at.kernel.org>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <1a9f0391-321d-2463-827b-284bba38e07d@nvidia.com>
-Date:   Wed, 9 Dec 2020 12:28:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1731933AbgLJB1x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 9 Dec 2020 20:27:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728050AbgLJB1x (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 9 Dec 2020 20:27:53 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607563632;
+        bh=4fquuoXgeXKGOmKHsZ5csbna5WzsqVOwtrr9OcdcGt4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=QoEV6Wb73MTk6RVv03QGdhzC9QChshkqShWs7zHgdbgmb+S1UwE18CCDXqlr4dpCz
+         emhS1Fl2MmYt2dxaDR9EjWA1U55ohBQt0NqWkW46lDIJ7R2DROpwXL0FFg8O/iuYaj
+         lL/anVqdLkaRGlcyHwbr/QTmTyUrKnXTZmLTmpJ7EOAkCKsyRW6/pjEb+XFL2OG+jC
+         CibqOORASvbtc0PPBWsrOwYsxE8gnbYmhg+dXWDogsTlxkLoqAKKPzZ6nn4R+sbTdd
+         7dHuLYIxEHKnNsk+oFyn+Nop1xkGRVghGIJXdRGicuphQwt4st39a4Z16yNeAREPks
+         NrqiNOUnIIIJA==
 MIME-Version: 1.0
-In-Reply-To: <20201209172643.GA638607@robh.at.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607545680; bh=a+YYFPeNAX9ceupGi7mBDJuGY63SjjffyHHchHc5KX8=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=hua9Xkyt6+aiMEOH4HBXf5O9Vzj41eAyftRgSv8h23S9VNLzYbbuJGRDFgu5AgdQX
-         VTHR3xS6dby6Obx+AHJItteN5Smb+i2FQbJ+Xr/65Pb7F6zG8Jm1tNtefH2HLn9cQ5
-         EzcNR3j23l0mttyWY7DdKVlbxQukTtgOXUanIuQtsjF4ReJtX9GwaKBsMhuYLo2Lga
-         FoXaBb7c3+Uwqp/xfuTVxuapPJyh4NC5jdkfQAocs8CSK49yQ4nqMBUD4ESmu5FLYa
-         zCL3YJxIUzhu0aAa3AJLLSVwrkLotacjz8R/jQ8jdiGHKKdItkomFdcSuXVjG0Qykx
-         D9a8UI5P2THIA==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201025224212.7790-1-digetx@gmail.com>
+References: <20201025224212.7790-1-digetx@gmail.com>
+Subject: Re: [PATCH v1] clk: tegra: Fix duplicated SE clock entry
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Wed, 09 Dec 2020 17:27:10 -0800
+Message-ID: <160756363099.1580929.2375956922093495697@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Quoting Dmitry Osipenko (2020-10-25 15:42:12)
+> The periph_clks[] array contains duplicated entry for Security Engine
+> clock which was meant to be defined for T210, but it wasn't added
+> properly. This patch corrects the T210 SE entry and fixes the following
+> error message on T114/T124: "Tegra clk 127: register failed with -17".
+>=20
+> Fixes: dc37fec48314 ("clk: tegra: periph: Add new periph clks and muxes f=
+or Tegra210")
+> Tested-by Nicolas Chauvet <kwizart@gmail.com>
+> Reported-by Nicolas Chauvet <kwizart@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-On 12/9/20 9:26 AM, Rob Herring wrote:
-> On Tue, Dec 01, 2020 at 01:12:43PM -0800, Sowjanya Komatineni wrote:
->> This patch adds YAML based device tree binding document for Tegra
->> QSPI driver.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../devicetree/bindings/spi/nvidia,tegra-qspi.yaml | 77 ++++++++++++++++++++++
->>   1 file changed, 77 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
->> new file mode 100644
->> index 0000000..038a085
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra-qspi.yaml
->> @@ -0,0 +1,77 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/spi/nvidia,tegra-qspi.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Tegra Quad SPI Controller
->> +
->> +maintainers:
->> +  - Thierry Reding <thierry.reding@gmail.com>
->> +  - Jonathan Hunter <jonathanh@nvidia.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - nvidia,tegra210-qspi
->> +      - nvidia,tegra186-qspi
->> +      - nvidia,tegra194-qspi
->> +
->> +  reg:
->> +    items:
->> +      - description: QSPI registers
-> Just 'maxItems: 1'
->
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    items:
->> +      - const: qspi
-> Kind of a pointless name.
-Thanks Rob for feedback. Do you mean to change name something like 
-qspi-clk instead of qspi?
->
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  reset-names:
->> +    minItems: 1
->> +    items:
->> +      - const: qspi
-> Same here.
->
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  dmas:
->> +    maxItems: 2
->> +
->> +  dma-names:
->> +    items:
->> +      - const: rx
->> +      - const: tx
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clock-names
->> +  - clocks
->> +  - reset-names
->> +  - resets
->> +
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/tegra210-car.h>
->> +    #include <dt-bindings/reset/tegra210-car.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    spi@70410000 {
->> +            compatible = "nvidia,tegra210-qspi";
->> +            reg = <0x70410000 0x1000>;
->> +            interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
->> +            clocks = <&tegra_car TEGRA210_CLK_QSPI>;
->> +            clock-names = "qspi";
->> +            resets = <&tegra_car 211>;
->> +            reset-names = "qspi";
->> +            dmas = <&apbdma 5>, <&apbdma 5>;
->> +            dma-names = "rx", "tx";
->> +    };
->> -- 
->> 2.7.4
->>
+Looks correct. Should I pick this up Thierry?
+
+>  drivers/clk/tegra/clk-id.h           | 1 +
+>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> index ff7da2d3e94d..24413812ec5b 100644
+> --- a/drivers/clk/tegra/clk-id.h
+> +++ b/drivers/clk/tegra/clk-id.h
+> @@ -227,6 +227,7 @@ enum clk_id {
+>         tegra_clk_sdmmc4,
+>         tegra_clk_sdmmc4_8,
+>         tegra_clk_se,
+> +       tegra_clk_se_10,
+>         tegra_clk_soc_therm,
+>         tegra_clk_soc_therm_8,
+>         tegra_clk_sor0,
+> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
+-tegra-periph.c
+> index 2b2a3b81c16b..60cc34f90cb9 100644
+> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> @@ -630,7 +630,7 @@ static struct tegra_periph_init_data periph_clks[] =
+=3D {
+>         INT8("host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, =
+28, 0, tegra_clk_host1x_8),
+>         INT8("host1x", mux_pllc4_out1_pllc_pllc4_out2_pllp_clkm_plla_pllc=
+4_out0, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_9),
+>         INT8("se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, TEG=
+RA_PERIPH_ON_APB, tegra_clk_se),
+> -       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
+RIPH_ON_APB, tegra_clk_se),
+> +       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
+RIPH_ON_APB, tegra_clk_se_10),
+>         INT8("2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, 0, t=
+egra_clk_gr2d_8),
+>         INT8("3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, 0, t=
+egra_clk_gr3d_8),
+>         INT8("vic03", mux_pllm_pllc_pllp_plla_pllc2_c3_clkm, CLK_SOURCE_V=
+IC03, 178, 0, tegra_clk_vic03),
