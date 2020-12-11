@@ -2,107 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B434C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 21:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1723BC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5D1823B85
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 21:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE61A23770
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394933AbgLKVIG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 16:08:06 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5362 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394954AbgLKVHp (ORCPT
+        id S2393138AbgLKVRH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 16:17:07 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7539 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391340AbgLKVQx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 16:07:45 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3df780000>; Fri, 11 Dec 2020 13:07:04 -0800
-Received: from [10.2.60.59] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 21:07:03 +0000
-Subject: Re: [PATCH v2 2/9] dt-bindings: spi: Add Tegra Quad SPI device tree
- binding
-To:     Rob Herring <robh@kernel.org>
-CC:     <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <lukas@wunner.de>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
- <1607706088-1437-4-git-send-email-skomatineni@nvidia.com>
- <20201211205614.GA905591@robh.at.kernel.org>
+        Fri, 11 Dec 2020 16:16:53 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3e19c0001>; Fri, 11 Dec 2020 13:16:12 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
+ 2020 21:16:11 +0000
+Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 11 Dec 2020 21:16:11 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <2c0501b1-71c9-e0d8-96e7-67e59f01b985@nvidia.com>
-Date:   Fri, 11 Dec 2020 13:07:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
+CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
+        <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
+        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 7/9] arm64: tegra: Enable QSPI on Jetson Nano
+Date:   Fri, 11 Dec 2020 13:16:01 -0800
+Message-ID: <1607721363-8879-8-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
+References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20201211205614.GA905591@robh.at.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607720824; bh=1T0NKV2aHT1IdfpsOWuGOCXfqnCjjpLWvkONzNsmaXA=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=Fl/lpUzuqzqjMIejv6mxyjCHm3FzZuDQ1+2K9QyosSPzxgy9ewWKQfCjZoOzfTN+P
-         Sppm06FbD5WDkjd2bHVe/6UItMVS7iPFhgo5fuAMkPJSj9ZyQGZwZxanfateeU7t+b
-         Dv2BmsXMXnKOI1si6my9B7Q8DjHaVqyD7WMMon6g4fRaXx5iJv1+rVRUIeKPcKxm1T
-         aukIzQQvlgV3WYVeUgCEXVKGpw7GyCEti2SvOWpeMjaupi+PFVuviPIbJRN0CE7KRq
-         E8cNuYaKYtMm52oH3RXcV2o3z0DLuZy53lw7fcIDO/YivPb9dVN/+8biwpMF9xsher
-         w8EZ+Wtp93srA==
+        t=1607721372; bh=dLZyD/aBfvEKW6lFi53KiLDsTnSc0dbBTCqhpZ4bRhM=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:X-NVConfidentiality:MIME-Version:Content-Type;
+        b=g8IwmmXIV46Z/pwJPK4kD/itu55lo2qgtZx16BoTxALicZuoKYm2n4Fccl0b2VBof
+         QGrPoMJzsWu1LFRYUfhwLHJc5uppAgStyGCsBXy/qZIch14zYotPzSuCqYcj3JW8FA
+         Ic6CJ5BlZ2Za+b1lu0RCjiJZf9Ns+B6VqoQI2N/M/MW7VGlluawzO1nBVQkUGT5Ak4
+         NLQyhOBomOGSyjK48nNs2ChmKfQKgujU3v0d4BcLj9WVyRurz1tC41vfEKFh5CD6pm
+         0WLcyzqMSg22Tpc7ja5kfnbf2O0L2Vm8eU7qqN5N+NwOf18OQ6cRBroiQIwVJ4dA2Q
+         UnPk4Axh89jvA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Sorry rob, mixed patches went out accidentally.
+This patch enables QSPI on Jetson Nano.
 
-Will resend v2
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 12 ++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  5 +++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-On 12/11/20 12:56 PM, Rob Herring wrote:
-> On Fri, 11 Dec 2020 09:01:20 -0800, Sowjanya Komatineni wrote:
->> This patch adds YAML based device tree binding document for Tegra
->> Quad SPI driver.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../bindings/spi/nvidia,tegra210-quad.yaml         | 130 +++++++++++++++++++++
->>   1 file changed, 130 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
->>
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> Error: Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.example.dts:29.38-39 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.example.dt.yaml] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:1364: dt_binding_check] Error 2
->
->
-> See https://patchwork.ozlabs.org/patch/1415094
->
-> The base for the patch is generally the last rc1. Any dependencies
-> should be noted.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit.
->
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index 6a877de..a1b4603 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -638,6 +638,18 @@
+ 		};
+ 	};
+ 
++	spi@70410000 {
++		status = "okay";
++
++		flash@0 {
++			compatible = "spi-nor";
++			reg = <0>;
++			spi-max-frequency = <104000000>;
++			spi-tx-bus-width = <2>;
++			spi-rx-bus-width = <2>;
++		};
++	};
++
+ 	clk32k_in: clock@0 {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <32768>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 4fbf8c1..998fa81 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1536,8 +1536,9 @@
+ 		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		clocks = <&tegra_car TEGRA210_CLK_QSPI>;
+-		clock-names = "qspi";
++		clocks = <&tegra_car TEGRA210_CLK_QSPI>,
++			 <&tegra_car TEGRA210_CLK_QSPI_PM>;
++		clock-names = "qspi", "qspi_out";
+ 		resets = <&tegra_car 211>;
+ 		reset-names = "qspi";
+ 		dmas = <&apbdma 5>, <&apbdma 5>;
+-- 
+2.7.4
+
