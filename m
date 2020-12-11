@@ -2,116 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5A7C4361B
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67BCC433FE
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6957923D97
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55CF323DE3
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404060AbgLKRCd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 12:02:33 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3604 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390497AbgLKRC0 (ORCPT
+        id S2404251AbgLKRCe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 12:02:34 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2199 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392681AbgLKRC0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 11 Dec 2020 12:02:26 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3a5eb0000>; Fri, 11 Dec 2020 09:01:31 -0800
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3a5f00000>; Fri, 11 Dec 2020 09:01:36 -0800
 Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 17:01:31 +0000
+ 2020 17:01:36 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 17:01:30 +0000
+ Transport; Fri, 11 Dec 2020 17:01:36 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
 CC:     <skomatineni@nvidia.com>, <linux-spi@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH v2 0/9] Add Tegra Quad SPI driver
-Date:   Fri, 11 Dec 2020 09:01:17 -0800
-Message-ID: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 6/9] spi: tegra210-quad: Add support for hardware dummy cycles
+Date:   Fri, 11 Dec 2020 09:01:25 -0800
+Message-ID: <1607706088-1437-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
+References: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607706091; bh=qxWgn0xGVTwA1ZG1YQ30zYnjg689u8RpYxCpROZ+R+0=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:X-NVConfidentiality:
-         MIME-Version:Content-Type;
-        b=DzJXy5GTZt7zMgehvkY5MPH/QneJQWHHlTT/atv7RA1IX8iXrh6dY3Azq4RksnNZx
-         oQCPvuUfh8uAogXml4OASNyJjwZR6OUsUcZcELtZ+08xYnlyfBbyF7feD4HonrgKCw
-         HNzOxpE+OydLsI6+q+ngYcYwZntcXm2+Cn2FK2vsEnz4dWPxvHIdilfWOsRfBXbozl
-         Ted8o6OHuHnrgOSSdGO0wIlS1700WaTSaDODEsv57ucrhwwOmwbkjycl0n7BSsdxjZ
-         rsaBZps6C32ayvTztkK5I282cTuO1MWAfZ+6DrKGjnusthOJ+ucHwJjVPJ2YPzs66F
-         ZQrgy8jMv+jQQ==
+        t=1607706096; bh=UDrsTDiQs8eElO67iIY2kdbQNgxNBN6S/8FNEm5eF/U=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:X-NVConfidentiality:MIME-Version:Content-Type;
+        b=EVqGco5u6jN2kJlsz1g+D7jTfOt45rROyZytYB3YzeTdl7f8//XEuBk3WsPu9Revz
+         qVpmGDKP4XcCiznOR+yJtj/RvY0H07LyiTfGjAj8nBSYClJp9fWhhuJT8em5QeXyQM
+         jIY1Rsvq4aDjVxTfPQikx5jEjrNlcaSHURpz2EnBlyyDc8fZg4BV4DZ+l/v/UsppQa
+         FDzDIbl9tHd14uyMlrF0Bx5iX9qsdgCdfYbfP7u/VVYj/1JQ732nOCv/Siwq1obdrj
+         3tYUrEldRIlxUsJLSBJl9Oqzq9We6OftSpWYUr05mnm6clg6IsfrCee9tiISqkQC2o
+         XYq8hiG3NYGaQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series adds Tegra210, Tegra186, and Tegra194 Quad SPI driver and
-enables Quad SPI on Jetson Nano and Jetson Xavier NX.
+Tegra Quad SPI controller hardware supports sending dummy cycles
+after address bytes.
 
-QSPI controller is available on Tegra210, Tegra186 and Tegra194.
+This patch adds this support.
 
-Tegra186 and Tegra194 has additional feature of combined sequence mode
-where command, address and data can all be transferred in a single transfer.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/spi/spi-tegra210-quad.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-Combined sequence mode is useful with DMA mode transfer.
-
-This series does not have combined sequence mode feature as Tegra186/Tegra194
-GPCDMA driver is not upstreamed yet.
-
-This series includes
-- dt-binding document
-- QSPI driver for Tegra210/Tegra186/Tegra194
-- Enables QSPI on Jetson Nano and Jetson Xavier NX.
-
-Delta between patch versions:
-[v2]:	below v1 feedback
-	- Added SPI_MASTER_USES_HW_DUMMY_CYCLES flag for controllers supporting
-	  hardware dummy cycles and skips dummy bytes transfer from software for
-	  these controllers.
-	- Updated dt-binding doc with tx/rx tap delay properties.
-	- Added qspi_out clock to dt-binding doc which will be used later with
-	  ddr mode support.
-	- All other v1 feedback on some cleanup.
-
-
-Sowjanya Komatineni (9):
-  dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
-  dt-bindings: spi: Add Tegra Quad SPI device tree binding
-  MAINTAINERS: Add Tegra Quad SPI driver section
-  spi: tegra210-quad: Add support for Tegra210 QSPI controller
-  spi: spi-mem: Allow masters to transfer dummy cycles directly by
-    hardware
-  spi: tegra210-quad: Add support for hardware dummy cycles
-  arm64: tegra: Enable QSPI on Jetson Nano
-  arm64: tegra: Add QSPI nodes on Tegra194
-  arm64: tegra: Enable QSPI on Jetson Xavier NX
-
- .../bindings/spi/nvidia,tegra210-quad.yaml         |  130 ++
- MAINTAINERS                                        |    8 +
- .../dts/nvidia/tegra194-p3509-0000+p3668-0000.dts  |   12 +
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   24 +
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts |   12 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |    5 +-
- drivers/spi/Kconfig                                |    9 +
- drivers/spi/Makefile                               |    1 +
- drivers/spi/spi-mem.c                              |   18 +-
- drivers/spi/spi-tegra210-quad.c                    | 1407 ++++++++++++++++++++
- include/dt-bindings/clock/tegra210-car.h           |    2 +-
- include/linux/spi/spi.h                            |    8 +
- 12 files changed, 1626 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
- create mode 100644 drivers/spi/spi-tegra210-quad.c
-
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 624f395..1d1b125 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -124,6 +124,13 @@
+ #define QSPI_DMA_TIMEOUT			(msecs_to_jiffies(1000))
+ #define DEFAULT_QSPI_DMA_BUF_LEN		(64 * 1024)
+ 
++enum transfer_phase {
++	CMD_BYTE_XFER = 0,
++	ADDR_BYTES_XFER,
++	DATA_BYTES_XFER,
++	MAX_XFERS,
++};
++
+ struct tegra_qspi_client_data {
+ 	int tx_clk_tap_delay;
+ 	int rx_clk_tap_delay;
+@@ -857,6 +864,8 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
+ 
+ 	tqspi->command1_reg = command1;
+ 
++	tegra_qspi_writel(tqspi, QSPI_NUM_DUMMY_CYCLE(tqspi->dummy_cycles), QSPI_MISC_REG);
++
+ 	ret = tegra_qspi_flush_fifos(tqspi, false);
+ 	if (ret < 0)
+ 		return ret;
+@@ -977,7 +986,7 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
+ 	struct spi_device *spi = msg->spi;
+ 	struct spi_transfer *xfer;
+ 	bool is_first_msg = true;
+-	int ret;
++	int ret, xfer_phase = 0;
+ 
+ 	msg->status = 0;
+ 	msg->actual_length = 0;
+@@ -987,6 +996,15 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
+ 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+ 		u32 cmd1;
+ 
++		/*
++		 * Program dummy clock cycles in Tegra QSPI register only
++		 * during address transfer phase.
++		 */
++		if (xfer_phase == ADDR_BYTES_XFER)
++			tqspi->dummy_cycles = msg->dummy_cycles;
++		else
++			tqspi->dummy_cycles = 0;
++
+ 		reinit_completion(&tqspi->xfer_completion);
+ 
+ 		cmd1 = tegra_qspi_setup_transfer_one(spi, xfer, is_first_msg);
+@@ -1018,6 +1036,7 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
+ 		}
+ 
+ 		msg->actual_length += xfer->len;
++		xfer_phase++;
+ 
+ complete_xfer:
+ 		if (ret < 0) {
+@@ -1203,6 +1222,7 @@ static int tegra_qspi_probe(struct platform_device *pdev)
+ 	master->mode_bits = SPI_MODE_0 | SPI_MODE_3 | SPI_CS_HIGH |
+ 			    SPI_TX_DUAL | SPI_RX_DUAL | SPI_TX_QUAD | SPI_RX_QUAD;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) | SPI_BPW_MASK(8);
++	master->flags = SPI_MASTER_USES_HW_DUMMY_CYCLES;
+ 	master->setup = tegra_qspi_setup;
+ 	master->cleanup = tegra_qspi_cleanup;
+ 	master->transfer_one_message = tegra_qspi_transfer_one_message;
 -- 
 2.7.4
 
