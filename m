@@ -8,27 +8,27 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9837DC4361B
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3206AC4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6665F23A33
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F08F423A33
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405540AbgLKVST (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 16:18:19 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8594 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393089AbgLKVQ6 (ORCPT
+        id S2404248AbgLKVSI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 16:18:08 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7578 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395504AbgLKVRi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 16:16:58 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3e19e0002>; Fri, 11 Dec 2020 13:16:14 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 21:16:10 +0000
+        Fri, 11 Dec 2020 16:17:38 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3e19d0000>; Fri, 11 Dec 2020 13:16:13 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
+ 2020 21:16:12 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 21:16:10 +0000
+ Transport; Fri, 11 Dec 2020 21:16:12 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
@@ -36,9 +36,9 @@ CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
         <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
         <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 5/9] spi: spi-mem: Allow masters to transfer dummy cycles directly by hardware
-Date:   Fri, 11 Dec 2020 13:15:59 -0800
-Message-ID: <1607721363-8879-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 8/9] arm64: tegra: Add QSPI nodes on Tegra194
+Date:   Fri, 11 Dec 2020 13:16:02 -0800
+Message-ID: <1607721363-8879-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
 References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
@@ -46,88 +46,63 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607721374; bh=w3ehnwe0omM34FaObddURkJNKGQctD+ZomRiDYg+fkY=;
+        t=1607721373; bh=R3/lpNx2FBCJJOEkaUuhQtltDaXz/t9G5rIg9EkHXfo=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=T2zumNGOUcth4VRkje5LcE5KpNHu5wMsc0AsMX1xA3DbSL3NfwThCopLRMA6fvs3i
-         wcaKluHoisrK14lpflN03/UT06jIFpIIwEP8fnSB5AtQjPm8+SfRGVV/F0ZMxV3kRB
-         5HrA920F5OcjJIDYe9OdT7ERaKn7Lqa9DemaqBOKRDsL+ZqNFnEMv1dqvhzRNea4jR
-         MR99E8BjhMD1EBsRX7mOyjo7QPy6rGeRDH9mdSd/X45cm5e0VBnRm/BOmoCfVPP3mr
-         W+kfNlNlIybiD04g2TfbJTqzoxKh4BMxLgAc0ZRlcGP3KED/HNTFvNmczCxzYWjhyu
-         4vkOAV5dnRqiw==
+        b=I6mo7EvOnec7222zxGHgdupOxCkFMNWl3stexTVjqtpEZLZm0/fo7OCgxumvoJhML
+         H30RyvLP1qJiEhY51SuB9Xx1TVPPvMRSqpq8ysNYhOgfTuEvmj5Of9/qiUMv/K0Do8
+         9tBlUa9FVB8Ax4irDZefEdq68v8kCRLqWs58bcPlr4vtE0yCx1Nm5KTTBp9aJW4Uyn
+         wCq9lnxmcI8sCcs1QI9QhLLyass76GedYI+FIkyZpLVTSVbTgvF0OvMPAGKBUpUfIz
+         AOdaX+0ZwyUuYMuDZqA1LGo05JiHBW8uYVIKIYTpO9JENpKjW6CvdDL7qa/0lB42W7
+         ze4sEbMRrkIkg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds a flag SPI_MASTER_USES_HW_DUMMY_CYCLES for the controllers
-that support transfer of dummy cycles by the hardware directly.
+Tegra194 has 2 QSPI controllers.
 
-For controller with this flag set, spi-mem driver will skip dummy bytes
-transfer in the spi message.
-
-Controller drivers can get the number of dummy cycles from spi_message.
+This patch adds DT node for these 2 QSPI controllers.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/spi/spi-mem.c   | 18 +++++++++++-------
- include/linux/spi/spi.h |  8 ++++++++
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index f3a3f19..38a523b 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -350,13 +350,17 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 	}
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 25f36d6..63ed788 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -609,6 +609,30 @@
+ 			status = "disabled";
+ 		};
  
- 	if (op->dummy.nbytes) {
--		memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
--		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
--		xfers[xferpos].len = op->dummy.nbytes;
--		xfers[xferpos].tx_nbits = op->dummy.buswidth;
--		spi_message_add_tail(&xfers[xferpos], &msg);
--		xferpos++;
--		totalxferlen += op->dummy.nbytes;
-+		if (ctlr->flags & SPI_MASTER_USES_HW_DUMMY_CYCLES) {
-+			msg.dummy_cycles = (op->dummy.nbytes * 8) / op->dummy.buswidth;
-+		} else {
-+			memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
-+			xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
-+			xfers[xferpos].len = op->dummy.nbytes;
-+			xfers[xferpos].tx_nbits = op->dummy.buswidth;
-+			spi_message_add_tail(&xfers[xferpos], &msg);
-+			xferpos++;
-+			totalxferlen += op->dummy.nbytes;
-+		}
- 	}
- 
- 	if (op->data.nbytes) {
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index aa09fdc..2024149 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -512,6 +512,8 @@ struct spi_controller {
- 
- #define SPI_MASTER_GPIO_SS		BIT(5)	/* GPIO CS must select slave */
- 
-+#define SPI_MASTER_USES_HW_DUMMY_CYCLES	BIT(6)	/* HW dummy bytes transfer */
++		spi@3270000 {
++			compatible = "nvidia,tegra194-qspi";
++			reg = <0x3270000 0x1000>;
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA194_CLK_QSPI0>,
++				 <&bpmp TEGRA194_CLK_QSPI0_PM>;
++			clock-names = "qspi", "qspi_out";
++			resets = <&bpmp TEGRA194_RESET_QSPI0>;
++			reset-names = "qspi";
++			status = "disabled";
++		};
 +
- 	/* flag indicating this is an SPI slave controller */
- 	bool			slave;
- 
-@@ -1022,6 +1024,12 @@ struct spi_message {
- 	unsigned		actual_length;
- 	int			status;
- 
-+	/*
-+	 * dummy cycles in the message transfer. This is used by the controller
-+	 * drivers supports transfer of dummy cycles directly by the hardware.
-+	 */
-+	u8			dummy_cycles;
++		spi@3300000 {
++			compatible = "nvidia,tegra194-qspi";
++			reg = <0x3300000 0x1000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&bpmp TEGRA194_CLK_QSPI1>,
++				 <&bpmp TEGRA194_CLK_QSPI1_PM>;
++			clock-names = "qspi", "qspi_out";
++			resets = <&bpmp TEGRA194_RESET_QSPI1>;
++			reset-names = "qspi";
++			status = "disabled";
++		};
 +
- 	/* for optional use by whatever driver currently owns the
- 	 * spi_message ...  between calls to spi_async and then later
- 	 * complete(), that's the spi_controller controller driver.
+ 		pwm1: pwm@3280000 {
+ 			compatible = "nvidia,tegra194-pwm",
+ 				     "nvidia,tegra186-pwm";
 -- 
 2.7.4
 
