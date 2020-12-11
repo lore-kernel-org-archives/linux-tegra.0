@@ -5,128 +5,94 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66801C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6D5C4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB9C23DC2
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF41423DC2
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393419AbgLKRDj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 12:03:39 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5171 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393257AbgLKRDG (ORCPT
+        id S2405443AbgLKREv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 12:04:51 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2526 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393728AbgLKREM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 12:03:06 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3a5f00000>; Fri, 11 Dec 2020 09:01:36 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+        Fri, 11 Dec 2020 12:04:12 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3a63c0000>; Fri, 11 Dec 2020 09:02:52 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
  (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 17:01:35 +0000
+ 2020 17:02:52 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 17:01:35 +0000
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Fri, 11 Dec 2020 17:02:51 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
-CC:     <skomatineni@nvidia.com>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v2 5/9] spi: spi-mem: Allow masters to transfer dummy cycles directly by hardware
-Date:   Fri, 11 Dec 2020 09:01:24 -0800
-Message-ID: <1607706088-1437-8-git-send-email-skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <robh+dt@kernel.org>
+CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 07/13] media: tegra-video: Add support for VIDIOC_LOG_STATUS ioctl
+Date:   Fri, 11 Dec 2020 09:02:36 -0800
+Message-ID: <1607706162-1548-8-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
-References: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1607706162-1548-1-git-send-email-skomatineni@nvidia.com>
+References: <1607706162-1548-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607706096; bh=w3ehnwe0omM34FaObddURkJNKGQctD+ZomRiDYg+fkY=;
+        t=1607706172; bh=kTyQynYZOfOfJzdQDZRQRAmmuQmvfE4/+44pKh0V+MY=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=M3QtDGJ0G+ShIS2KqrK5wZz8VU8My4IP/kP7qgLkbEN9RveXHb+BLDuafNnSEfepb
-         Jl/1QcV4ALz/6ulU1WiQXFUJz49nEI4AcFnx+CMZcYhShgSI80dlbGjxnri0AB1bSs
-         Xib4karOu1aK6Y/NxIZHAvryLIkpyXPHvBWqXN0rdFPPboa6u7MxFrILOhcnzXz+Vt
-         DHRgp4UV18Pms2tOZlUAtF303lwzpdfISmpiUTh8+NhrBGtTH8Mrvg4o2WbZwbeJxG
-         1fjnN9/qTEq7LULCLS4CYb7ge6SVuNbuCJ+O2vKBJr5CHYH2f1OUaL4C6ODj+3n6FK
-         Jhz2B4tLt2nbQ==
+        b=iyR8mvCzd/hKrP7rW+9QkLAyMtstGR2l0KY7IbcLl3vKAeEr0vG8IMHT0nmvMORdp
+         j8x5xbFo4gh1EKckA/+2LUSNhf4J3ABVWTwk+UjHP1l8Dm/WIJZFI118AiT5EMMElV
+         ALMr6Q//7/L3GKQnuLHkKDQrqXyPtcbHpiK2uQU/uoVfg+is0KpN4FPmxTd34PIOLm
+         s1Ddc14R74EJ6M72ddXFA/X7rV6hCiV0CH6D0JQHM4XIpCPewh6KNprANm0oilBVR6
+         HXVx7Z3LaGsGwIaGMLQEYyDFHvi34n+r0cZT2rNSWZ2BTdyrGUTZBobKt+00DpLQ8M
+         VXsfAH8143oiA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds a flag SPI_MASTER_USES_HW_DUMMY_CYCLES for the controllers
-that support transfer of dummy cycles by the hardware directly.
-
-For controller with this flag set, spi-mem driver will skip dummy bytes
-transfer in the spi message.
-
-Controller drivers can get the number of dummy cycles from spi_message.
+This patch adds support for log_status ioctl.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/spi/spi-mem.c   | 18 +++++++++++-------
- include/linux/spi/spi.h |  8 ++++++++
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index f3a3f19..38a523b 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -350,13 +350,17 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 	}
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index bc38136..c280117 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -838,6 +838,15 @@ static int tegra_channel_dv_timings_cap(struct file *file, void *fh,
+ 	return v4l2_subdev_call(subdev, pad, dv_timings_cap, cap);
+ }
  
- 	if (op->dummy.nbytes) {
--		memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
--		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
--		xfers[xferpos].len = op->dummy.nbytes;
--		xfers[xferpos].tx_nbits = op->dummy.buswidth;
--		spi_message_add_tail(&xfers[xferpos], &msg);
--		xferpos++;
--		totalxferlen += op->dummy.nbytes;
-+		if (ctlr->flags & SPI_MASTER_USES_HW_DUMMY_CYCLES) {
-+			msg.dummy_cycles = (op->dummy.nbytes * 8) / op->dummy.buswidth;
-+		} else {
-+			memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
-+			xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
-+			xfers[xferpos].len = op->dummy.nbytes;
-+			xfers[xferpos].tx_nbits = op->dummy.buswidth;
-+			spi_message_add_tail(&xfers[xferpos], &msg);
-+			xferpos++;
-+			totalxferlen += op->dummy.nbytes;
-+		}
- 	}
- 
- 	if (op->data.nbytes) {
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index aa09fdc..2024149 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -512,6 +512,8 @@ struct spi_controller {
- 
- #define SPI_MASTER_GPIO_SS		BIT(5)	/* GPIO CS must select slave */
- 
-+#define SPI_MASTER_USES_HW_DUMMY_CYCLES	BIT(6)	/* HW dummy bytes transfer */
++static int tegra_channel_log_status(struct file *file, void *fh)
++{
++	struct tegra_vi_channel *chan = video_drvdata(file);
 +
- 	/* flag indicating this is an SPI slave controller */
- 	bool			slave;
- 
-@@ -1022,6 +1024,12 @@ struct spi_message {
- 	unsigned		actual_length;
- 	int			status;
- 
-+	/*
-+	 * dummy cycles in the message transfer. This is used by the controller
-+	 * drivers supports transfer of dummy cycles directly by the hardware.
-+	 */
-+	u8			dummy_cycles;
++	v4l2_device_call_all(chan->video.v4l2_dev, 0, core, log_status);
 +
- 	/* for optional use by whatever driver currently owns the
- 	 * spi_message ...  between calls to spi_async and then later
- 	 * complete(), that's the spi_controller controller driver.
++	return 0;
++}
++
+ static int tegra_channel_enum_input(struct file *file, void *fh,
+ 				    struct v4l2_input *inp)
+ {
+@@ -906,6 +915,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_query_dv_timings	= tegra_channel_query_dv_timings,
+ 	.vidioc_enum_dv_timings		= tegra_channel_enum_dv_timings,
+ 	.vidioc_dv_timings_cap		= tegra_channel_dv_timings_cap,
++	.vidioc_log_status		= tegra_channel_log_status,
+ };
+ 
+ /*
 -- 
 2.7.4
 
