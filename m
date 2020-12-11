@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6D5C4361B
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C030C4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF41423DC2
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3617023F2A
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405443AbgLKREv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 12:04:51 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2526 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393728AbgLKREM (ORCPT
+        id S2405507AbgLKREw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 12:04:52 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5412 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405403AbgLKREe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 12:04:12 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3a63c0000>; Fri, 11 Dec 2020 09:02:52 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 17:02:52 +0000
+        Fri, 11 Dec 2020 12:04:34 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3a63d0001>; Fri, 11 Dec 2020 09:02:53 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
+ 2020 17:02:53 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 17:02:51 +0000
+ Transport; Fri, 11 Dec 2020 17:02:52 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <hverkuil@xs4all.nl>,
@@ -35,9 +35,9 @@ To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
 CC:     <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 07/13] media: tegra-video: Add support for VIDIOC_LOG_STATUS ioctl
-Date:   Fri, 11 Dec 2020 09:02:36 -0800
-Message-ID: <1607706162-1548-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v4 09/13] media: tegra-video: Implement V4L2 device notify callback
+Date:   Fri, 11 Dec 2020 09:02:38 -0800
+Message-ID: <1607706162-1548-10-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607706162-1548-1-git-send-email-skomatineni@nvidia.com>
 References: <1607706162-1548-1-git-send-email-skomatineni@nvidia.com>
@@ -45,54 +45,93 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607706172; bh=kTyQynYZOfOfJzdQDZRQRAmmuQmvfE4/+44pKh0V+MY=;
+        t=1607706173; bh=ncGsj+Oy+F4Lel7edOJaT66wM9yPnydfWvWB30dUNxo=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=iyR8mvCzd/hKrP7rW+9QkLAyMtstGR2l0KY7IbcLl3vKAeEr0vG8IMHT0nmvMORdp
-         j8x5xbFo4gh1EKckA/+2LUSNhf4J3ABVWTwk+UjHP1l8Dm/WIJZFI118AiT5EMMElV
-         ALMr6Q//7/L3GKQnuLHkKDQrqXyPtcbHpiK2uQU/uoVfg+is0KpN4FPmxTd34PIOLm
-         s1Ddc14R74EJ6M72ddXFA/X7rV6hCiV0CH6D0JQHM4XIpCPewh6KNprANm0oilBVR6
-         HXVx7Z3LaGsGwIaGMLQEYyDFHvi34n+r0cZT2rNSWZ2BTdyrGUTZBobKt+00DpLQ8M
-         VXsfAH8143oiA==
+        b=pRkNbvPBYVQEx/xrYcvJvEkT7V/3iOamjH60r5h3ipSq0E8VSgLA9Zz9AfHnUy4nH
+         djyaqbNHpJ0Xb7feGOoNHi1gLLE6v49yqS0Mtlkn6XZh31qM8aw7hIXtncGprYq3rG
+         igLRQzpPZm7oMP9yulUxd7y1xwENtiPA61zjMXR6bxQxyPOLTiJJIJAEjUCTmMhLSt
+         kZ+zK/tbYL8Yj/4rFL0U1P3X4xXZMyr7/uodULb4yQB+t1qm0Sx6vpohpdZHAqeq9y
+         24SdrHO0qxixdr8HsmOhxGDFw/6klt4/bCktTGvIOBs3K9/bHhlSBYSHCjqF/LtuT+
+         QME9b+6OPFybQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch adds support for log_status ioctl.
+Implement V4L2 device notify callback to handle
+V4L2_EVENT_SOURCE_CHANGE event from subdevices.
+
+HDMI-to-CSI bridge drivers trigger V4L2_EVENT_SOURCE_CHANGE when
+source DV timing changes are detected or when HDMI hotplug happens.
+
+Runtime source parameter changes during active streaming is not
+allowed and Tegra video driver calls vb2_queue_error to signal a
+fatal error if a notification of this event happens during an active
+streaming.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/staging/media/tegra-video/vi.c    |  3 +++
+ drivers/staging/media/tegra-video/video.c | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index bc38136..c280117 100644
+index 0a85e52..d42a218 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -838,6 +838,15 @@ static int tegra_channel_dv_timings_cap(struct file *file, void *fh,
- 	return v4l2_subdev_call(subdev, pad, dv_timings_cap, cap);
+@@ -1636,6 +1636,9 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
+ 
+ 	v4l2_set_subdev_hostdata(subdev, chan);
+ 
++	subdev = tegra_channel_get_remote_source_subdev(chan);
++	v4l2_set_subdev_hostdata(subdev, chan);
++
+ 	return 0;
+ 
+ unregister_video:
+diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/staging/media/tegra-video/video.c
+index e50bd70..d966b31 100644
+--- a/drivers/staging/media/tegra-video/video.c
++++ b/drivers/staging/media/tegra-video/video.c
+@@ -7,6 +7,8 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ 
++#include <media/v4l2-event.h>
++
+ #include "video.h"
+ 
+ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+@@ -24,6 +26,21 @@ static void tegra_v4l2_dev_release(struct v4l2_device *v4l2_dev)
+ 	kfree(vid);
  }
  
-+static int tegra_channel_log_status(struct file *file, void *fh)
++static void tegra_v4l2_dev_notify(struct v4l2_subdev *sd,
++				  unsigned int notification, void *arg)
 +{
-+	struct tegra_vi_channel *chan = video_drvdata(file);
++	struct tegra_vi_channel *chan;
++	const struct v4l2_event *ev = arg;
 +
-+	v4l2_device_call_all(chan->video.v4l2_dev, 0, core, log_status);
++	if (notification != V4L2_DEVICE_NOTIFY_EVENT)
++		return;
 +
-+	return 0;
++	chan = v4l2_get_subdev_hostdata(sd);
++	v4l2_event_queue(&chan->video, arg);
++	if (ev->type == V4L2_EVENT_SOURCE_CHANGE && vb2_is_streaming(&chan->queue))
++		vb2_queue_error(&chan->queue);
 +}
 +
- static int tegra_channel_enum_input(struct file *file, void *fh,
- 				    struct v4l2_input *inp)
+ static int host1x_video_probe(struct host1x_device *dev)
  {
-@@ -906,6 +915,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
- 	.vidioc_query_dv_timings	= tegra_channel_query_dv_timings,
- 	.vidioc_enum_dv_timings		= tegra_channel_enum_dv_timings,
- 	.vidioc_dv_timings_cap		= tegra_channel_dv_timings_cap,
-+	.vidioc_log_status		= tegra_channel_log_status,
- };
+ 	struct tegra_video_device *vid;
+@@ -49,6 +66,7 @@ static int host1x_video_probe(struct host1x_device *dev)
  
- /*
+ 	vid->v4l2_dev.mdev = &vid->media_dev;
+ 	vid->v4l2_dev.release = tegra_v4l2_dev_release;
++	vid->v4l2_dev.notify = tegra_v4l2_dev_notify;
+ 	ret = v4l2_device_register(&dev->dev, &vid->v4l2_dev);
+ 	if (ret < 0) {
+ 		dev_err(&dev->dev,
 -- 
 2.7.4
 
