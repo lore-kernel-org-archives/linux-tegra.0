@@ -2,95 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F64FC0018C
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 21:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23104C4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 07:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E69423E25
-	for <linux-tegra@archiver.kernel.org>; Thu, 10 Dec 2020 21:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1E0F23F2B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 07:11:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393937AbgLJVHl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:07:41 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16935 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393912AbgLJVFm (ORCPT
+        id S2436675AbgLKHKs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 02:10:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730799AbgLKHKY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:05:42 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd28d730000>; Thu, 10 Dec 2020 13:04:51 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 10 Dec
- 2020 21:04:51 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.13.39) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 10 Dec 2020 21:04:51 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/54] 5.4.83-rc1 review
-In-Reply-To: <20201210142602.037095225@linuxfoundation.org>
-References: <20201210142602.037095225@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 11 Dec 2020 02:10:24 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548B7C0613CF;
+        Thu, 10 Dec 2020 23:09:44 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id w16so6508660pga.9;
+        Thu, 10 Dec 2020 23:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=agSZMQdvaCGV7hdnrq9aTuJTFu3GU2xvnWahrOKp2Jc=;
+        b=iaCwlxTDrUkLZaR2IE70DXZlzMvfp14eegDu7lsHhJVqA94v1rPO5Tw4Re0cXWzUs5
+         tTdmMAeE833iUuG2ImjX+nRar2krQmwfag0rFEsw5K4ZZDSsw9fPPIUx1J2XQU6rwbnH
+         Kz55ev9L7xh0UTnBPP41ch7Fo9bpfKhtijuuRjlbCoQIPm6fHPuAydEfkg/7WaDcnUw2
+         KrX/PojTaAYfFOJojhEJH0JOWh5+06NYveWE7iDEGwTmJRic5BIrac7SqUas4AAAIZYJ
+         M0gohUFiRGvu59MmoW09LRLN4qrmmTOMEwyEoyc9qQHocn+A30QS9pv/UEmoXPeSjRD6
+         JYkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=agSZMQdvaCGV7hdnrq9aTuJTFu3GU2xvnWahrOKp2Jc=;
+        b=dqWcGVMx6IB8U9g6alO7K1sU0PMOKrfe81K+1noR5utrQcHIYWRGLVmEDYq704aFgV
+         OxIAvtHeAuYlI2OS/mEk/U47vrzcJVVmw7lBK978XBwOe6bqplXKbaNuCA2FEEqCBElA
+         ATFNTQHNyPJ7cupDjc48mqAVd/pvU0rZUX8QnyaLzz3AVG45GoJbC0WayihkDEI7oaSX
+         ik3LG6RpifogWt1Nngg03d2xFNU2FtXpWWVlV9Da1Kx3dogpjH1c1nU6207u9l3pL+fQ
+         zm3TsSck8qBkTCHlY9R9Hldy0cJ/NBphlABeGl0NkbMYq0xs9oW9auTgz2For8tFUBO9
+         vAgQ==
+X-Gm-Message-State: AOAM533KvSO0UuBaJXzT/q33ms2fGMpBm16Ovc4Djj6vefd4jgHC/8PQ
+        XgEZvGH1g+Kp4/Kov6OgHss=
+X-Google-Smtp-Source: ABdhPJxv8+WMAsqzX+/A7wLGk5FIrmzTZ6C65bUsZXxoEOBEVQ55NlCjhr48qYKwqGs7+RH4FmPorQ==
+X-Received: by 2002:a63:4d5c:: with SMTP id n28mr10516947pgl.88.1607670583820;
+        Thu, 10 Dec 2020 23:09:43 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id j3sm8846830pjs.50.2020.12.10.23.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Dec 2020 23:09:43 -0800 (PST)
+Date:   Thu, 10 Dec 2020 23:09:38 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] Input: cyapa - do not call input_device_enabled from power
+ mode handler
+Message-ID: <X9MbMja+TEfbKkmJ@google.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <20200608112211.12125-3-andrzej.p@collabora.com>
+ <CGME20201207133237eucas1p26f8484944760a14e51dc7353ed33cd28@eucas1p2.samsung.com>
+ <27ce1176-6318-45aa-4e22-3dec9f3df15d@samsung.com>
+ <9c784a23-eade-eacd-3e67-d344a5758b83@collabora.com>
+ <ad093ba3-7b17-18f3-6bb5-d8133c3da89a@samsung.com>
+ <X9BwtHs9XriwR8gL@google.com>
 MIME-Version: 1.0
-Message-ID: <a6ccffb1a9d2480d96e373a2f9113ef8@HQMAIL109.nvidia.com>
-Date:   Thu, 10 Dec 2020 21:04:51 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607634291; bh=+VmEiO8YNUqN45s6zj3a6WfAhU6C6SMOljUjb9c8KOc=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=jNakXxD8TVCYTxLp+HeCQpABmOeNxBsHYvZ8wjQxvdFZ2bxXHIXMnuK9q2IOq8Olg
-         I5blm6AeH3eotoT6pIGVHWAtv8LAOMZ1e6xRsi6XYvlBbBcQ0RyBKVzEUoDcIAM82F
-         j+oCro9ysc08okjm4XDxFVt9ZHeSb8+1AY/CpexwLHwk6T0EvLMZ7Avzw4UB5zTCNK
-         h/H0VUucGuMkh6KZ+5ResjZrfNB3Men4JODZVME/3hHqc6982IYVVAGZHmHzviaFbS
-         Zxrwre/k5F3m5zuj8dfvE693mqE9+7baToimi5sOjNn1wa5NXuskt03cmZzL+RFHU8
-         VlgUsLLBk94rQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <X9BwtHs9XriwR8gL@google.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 10 Dec 2020 15:26:37 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.83 release.
-> There are 54 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 12 Dec 2020 14:25:47 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.83-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Input device's user counter is supposed to be accessed only while holding
+input->mutex.  Commit d69f0a43c677 ("Input: use input_device_enabled()")
+recently switched cyapa to using the dedicated API and it uncovered the
+fact that cyapa driver violated this constraint.
 
-All tests passing for Tegra ...
+This patch removes checks whether the input device is open when clearing
+device queues when changing device's power mode as there is no harm in
+sending input events through closed input device - the events will simply
+be dropped by the input core.
 
-Test results for stable-v5.4:
-    15 builds:	15 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    56 tests:	56 pass, 0 fail
+Note that there are more places in cyapa driver that call
+input_device_enabled() without holding input->mutex, those are left
+unfixed for now.
 
-Linux version:	5.4.83-rc1-gf71b3a7c3765
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Marek, could you please try this one?
 
-Jon
+ drivers/input/mouse/cyapa_gen3.c |    5 +----
+ drivers/input/mouse/cyapa_gen5.c |    3 +--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/input/mouse/cyapa_gen3.c b/drivers/input/mouse/cyapa_gen3.c
+index a97f4acb6452..4a9022faf945 100644
+--- a/drivers/input/mouse/cyapa_gen3.c
++++ b/drivers/input/mouse/cyapa_gen3.c
+@@ -907,7 +907,6 @@ static u16 cyapa_get_wait_time_for_pwr_cmd(u8 pwr_mode)
+ static int cyapa_gen3_set_power_mode(struct cyapa *cyapa, u8 power_mode,
+ 		u16 always_unused, enum cyapa_pm_stage pm_stage)
+ {
+-	struct input_dev *input = cyapa->input;
+ 	u8 power;
+ 	int tries;
+ 	int sleep_time;
+@@ -953,7 +952,6 @@ static int cyapa_gen3_set_power_mode(struct cyapa *cyapa, u8 power_mode,
+ 	 * depending on the command's content.
+ 	 */
+ 	if (cyapa->operational &&
+-	    input && input_device_enabled(input) &&
+ 	    (pm_stage == CYAPA_PM_RUNTIME_SUSPEND ||
+ 	     pm_stage == CYAPA_PM_RUNTIME_RESUME)) {
+ 		/* Try to polling in 120Hz, read may fail, just ignore it. */
+@@ -1223,8 +1221,7 @@ static int cyapa_gen3_try_poll_handler(struct cyapa *cyapa)
+ 	    (data.finger_btn & OP_DATA_VALID) != OP_DATA_VALID)
+ 		return -EINVAL;
+ 
+-	return cyapa_gen3_event_process(cyapa, &data);
+-
++	return cyapa->input ? cyapa_gen3_event_process(cyapa, &data) : 0;
+ }
+ 
+ static int cyapa_gen3_initialize(struct cyapa *cyapa) { return 0; }
+diff --git a/drivers/input/mouse/cyapa_gen5.c b/drivers/input/mouse/cyapa_gen5.c
+index abf42f77b4c5..afc5aa4dcf47 100644
+--- a/drivers/input/mouse/cyapa_gen5.c
++++ b/drivers/input/mouse/cyapa_gen5.c
+@@ -518,8 +518,7 @@ int cyapa_empty_pip_output_data(struct cyapa *cyapa,
+ 			*len = length;
+ 			/* Response found, success. */
+ 			return 0;
+-		} else if (cyapa->operational &&
+-			   input && input_device_enabled(input) &&
++		} else if (cyapa->operational && input &&
+ 			   (pm_stage == CYAPA_PM_RUNTIME_RESUME ||
+ 			    pm_stage == CYAPA_PM_RUNTIME_SUSPEND)) {
+ 			/* Parse the data and report it if it's valid. */
