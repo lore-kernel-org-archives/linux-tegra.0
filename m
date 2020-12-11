@@ -8,36 +8,36 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326F7C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAC9C4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0687323D3C
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3534123137
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 18:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404480AbgLKRCe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S2404320AbgLKRCe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 11 Dec 2020 12:02:34 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:5117 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392660AbgLKRC0 (ORCPT
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2203 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392701AbgLKRC0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Fri, 11 Dec 2020 12:02:26 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3a5ee0001>; Fri, 11 Dec 2020 09:01:34 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 17:01:34 +0000
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd3a5f20001>; Fri, 11 Dec 2020 09:01:38 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
+ 2020 17:01:38 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 17:01:34 +0000
+ Transport; Fri, 11 Dec 2020 17:01:38 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
 CC:     <skomatineni@nvidia.com>, <linux-spi@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH v2 3/9] MAINTAINERS: Add Tegra Quad SPI driver section
-Date:   Fri, 11 Dec 2020 09:01:22 -0800
-Message-ID: <1607706088-1437-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 9/9] arm64: tegra: Enable QSPI on Jetson Xavier NX
+Date:   Fri, 11 Dec 2020 09:01:28 -0800
+Message-ID: <1607706088-1437-12-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
 References: <1607706088-1437-1-git-send-email-skomatineni@nvidia.com>
@@ -45,46 +45,49 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607706094; bh=eUmYkQtzsVe7hTNcXJ04Thtwwti9plDaDD83X+TMEaA=;
+        t=1607706098; bh=fYE2T8fmJsPLDmks8zJZ++XGgYTpkfOpRR13aXBCmGY=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=OeVNHT+8sctNsyzcz7PASYQNs/vPb/ylI6jrdC0xfZzr3XaS24/+Fxpn4VUAvIXeb
-         XdfVbpyEJOjN9I4eRjP+9Y6qHq7aeYpxm/bVO5W45yF4uQjygF9NCKgJ5XlscEGWEF
-         LSf48cRZpl4PROTwfyWp19+J+CBwI4JAEqWYWldaP+7IWGWH3tYo9FjlTucMgZkwwr
-         Ga37lnF29+HkyG+/hcTb0BY+eh9r+wSAtS+yco9r9kMaCwy5RmQX6wnYTGu6DzalBn
-         2cEFEkpt29JqCiOd9epOyNv3gERp3DQ4FsDtusJgsC77s+hHKTU5HWbnTDo4PIoKkz
-         pD4KNbV27j+CQ==
+        b=TMkrJ1SHGFBOJW1U3hdc6oloIRFm/cFuvKdtFgdAikZaJMGv/vD7Z0u4V4uy7UFZ3
+         7ZzRAe0GHffJs4Co3GnfpSgADq504ZJ4Nhwz0bVEQJrAhvuX3Waqjm5p3AUnCLQFoF
+         Zf7CQepjrAxldkI9dDNh7cnupa6y0SzdoVH/EgCk+WzZpLFftI9/7kbJAZWuIHElIX
+         MVw7HnadjU/lm8/aQq68/OHyCl2dqQpU79WsZNP7dFsjDX5wzqa0cE4MnHoRDpaznX
+         dY8I6xecpZ+s4KlroxcRv/zRGjytIiufGEqpUPi0d/tZuBNABqNAkR/be8SWoCRMDs
+         by+CC8pVvkBhQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add maintainers and mailing list entries to Tegra Quad SPI driver
-section.
+This patch enables QSPI on Jetson Xavier NX.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b20bab..19db61f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17447,6 +17447,14 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
- S:	Supported
- F:	drivers/spi/spi-tegra*
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
+index 7f97b34..f1053e7 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
+@@ -100,6 +100,18 @@
+ 			phy-names = "usb2-1", "usb2-2", "usb3-2";
+ 		};
  
-+TEGRA QUAD SPI DRIVER
-+M:	Thierry Reding <thierry.reding@gmail.com>
-+M:	Jonathan Hunter <jonathanh@nvidia.com>
-+M:	Sowjanya Komatineni <skomatineni@nvidia.com>
-+L:	linux-tegra@vger.kernel.org
-+S:	Maintained
-+F:	drivers/spi/spi-tegra210-quad.c
++		spi@3270000 {
++			status = "okay";
 +
- TEGRA VIDEO DRIVER
- M:	Thierry Reding <thierry.reding@gmail.com>
- M:	Jonathan Hunter <jonathanh@nvidia.com>
++			flash@0 {
++				compatible = "spi-nor";
++				reg = <0>;
++				spi-max-frequency = <102000000>;
++				spi-tx-bus-width = <4>;
++				spi-rx-bus-width = <4>;
++			};
++		};
++
+ 		pwm@32d0000 {
+ 			status = "okay";
+ 		};
 -- 
 2.7.4
 
