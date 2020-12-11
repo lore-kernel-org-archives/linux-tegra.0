@@ -5,30 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EEFC433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDBDC4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8D3523A33
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016A423A33
+	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:24:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390615AbgLKVRE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 16:17:04 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6329 "EHLO
+        id S2405528AbgLKVSN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 16:18:13 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6350 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390488AbgLKVQt (ORCPT
+        with ESMTP id S2392453AbgLKVQy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 16:16:49 -0500
+        Fri, 11 Dec 2020 16:16:54 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3e1980000>; Fri, 11 Dec 2020 13:16:08 -0800
+        id <B5fd3e19d0001>; Fri, 11 Dec 2020 13:16:13 -0800
 Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 21:16:07 +0000
+ 2020 21:16:09 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 21:16:07 +0000
+ Transport; Fri, 11 Dec 2020 21:16:08 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
@@ -36,9 +35,9 @@ CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
         <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
         <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 1/9] dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
-Date:   Fri, 11 Dec 2020 13:15:55 -0800
-Message-ID: <1607721363-8879-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 3/9] MAINTAINERS: Add Tegra Quad SPI driver section
+Date:   Fri, 11 Dec 2020 13:15:57 -0800
+Message-ID: <1607721363-8879-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
 References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
@@ -46,42 +45,46 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607721368; bh=OdeajKJ0j5APS54go9aWji3Lx0upX2LRZePHgYW8yjo=;
+        t=1607721373; bh=eUmYkQtzsVe7hTNcXJ04Thtwwti9plDaDD83X+TMEaA=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Xlp1CCndJzOsTCWlN01H3OnNbbWNBfthxsyOG5K6N52EHqW//6FkihnooyqFoLfb2
-         nT3bsn5uSPDO1Tjh6qDXQ6XoUkRXAy7kFNWFHCm19Xt4perQO5ZZXuz3NB68D0eG5S
-         vRcH2dfa6CzIbMQWuQt9hxKlnHW9T9Ljx2uzrBFvjU7+9ti7lHS0SapZHCc6DaegKw
-         CiaGQmBXqDbfux+YmgzGuO3V5q1k67AXTrtfa9p7a7jZQRYPbpUby6gdT/E7lYmVVk
-         FiJKGvjdOq+vLOn3YyOJ0FPt5v9VLKYt7yTCzjIny31msaXls/O32lNFtejS8kDC2R
-         gFjSI18aBmgQQ==
+        b=Yj+AlcVIZwF81TEjFtBWLapFiN+Yr0Ughlr4/QQtDGycx9HWrez1DzrQgHg7DUct2
+         WcPijMNwSMYOYV4S4Wm6biJtUcINFcD/SbOYbrFGIevUOhcNbBKK5b5I18YyJnSl2l
+         bEMkQPRzDILzkvhWyQKA5yjP7239BCHPbYnxVbdHPhu2Xh8J8EhZQNc9NQ4tOC0Kz8
+         W/Yzyq5iF/nHasKkLerbSw0xjclpxhAfKi/yOIoE8lQ+nWPWQzu7iq+5pUgJsAsH1Z
+         dB+gDt/eZ9FxL03eKKkzKUlJ6vfaK/UhLGsz71Z3dtDAfHQAAl0PGNrCIYz5yJnPts
+         6ocjoQl9bYqGg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra210 QSPI clock output has divider DIV2_SEL which will be enabled
-when using DDR interface mode.
-
-This patch adds clock ID for this to dt-binding.
+Add maintainers and mailing list entries to Tegra Quad SPI driver
+section.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/clock/tegra210-car.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index ab8b8a7..9cfcc3b 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -307,7 +307,7 @@
- #define TEGRA210_CLK_AUDIO4 275
- #define TEGRA210_CLK_SPDIF 276
- /* 277 */
--/* 278 */
-+#define TEGRA210_CLK_QSPI_PM 278
- /* 279 */
- /* 280 */
- #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b20bab..19db61f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17447,6 +17447,14 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
+ S:	Supported
+ F:	drivers/spi/spi-tegra*
+ 
++TEGRA QUAD SPI DRIVER
++M:	Thierry Reding <thierry.reding@gmail.com>
++M:	Jonathan Hunter <jonathanh@nvidia.com>
++M:	Sowjanya Komatineni <skomatineni@nvidia.com>
++L:	linux-tegra@vger.kernel.org
++S:	Maintained
++F:	drivers/spi/spi-tegra210-quad.c
++
+ TEGRA VIDEO DRIVER
+ M:	Thierry Reding <thierry.reding@gmail.com>
+ M:	Jonathan Hunter <jonathanh@nvidia.com>
 -- 
 2.7.4
 
