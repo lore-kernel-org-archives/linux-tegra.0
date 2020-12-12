@@ -2,270 +2,174 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3572C2BB9A
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63175C433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 17:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A246C221EA
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B9622AAC
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 17:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439337AbgLLQJA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 12 Dec 2020 11:09:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56980 "EHLO mail.kernel.org"
+        id S2405508AbgLLR3i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Dec 2020 12:29:38 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:57028 "EHLO nat-hk.nvidia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbgLLQIv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 12 Dec 2020 11:08:51 -0500
-From:   Sasha Levin <sashal@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Zyngier <maz@kernel.org>, Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 02/23] drm/tegra: sor: Ensure regulators are disabled on teardown
-Date:   Sat, 12 Dec 2020 11:07:43 -0500
-Message-Id: <20201212160804.2334982-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201212160804.2334982-1-sashal@kernel.org>
-References: <20201212160804.2334982-1-sashal@kernel.org>
+        id S2390595AbgLLR3i (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 12 Dec 2020 12:29:38 -0500
+Received: from HKMAIL104.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fd4fdd70003>; Sun, 13 Dec 2020 01:28:55 +0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Dec
+ 2020 17:28:55 +0000
+Received: from [10.2.60.59] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Dec
+ 2020 17:28:52 +0000
+Subject: Re: [PATCH v3 5/9] spi: spi-mem: Allow masters to transfer dummy
+ cycles directly by hardware
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>,
+        <bbrezillon@kernel.org>, <p.yadav@ti.com>,
+        <tudor.ambarus@microchip.com>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
+ <1607721363-8879-6-git-send-email-skomatineni@nvidia.com>
+ <20201212115715.31a8d755@collabora.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <7efb281a-98d7-68c5-1515-0e980b6cfe12@nvidia.com>
+Date:   Sat, 12 Dec 2020 09:28:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201212115715.31a8d755@collabora.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1607794135; bh=JRdJwxDrHqj84zOr7vEYjGJE0Jucw9ayr/+irmlLuFk=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=ZllRZodPRm8gF0TopiB6E9PC3EXyRG2M5XjnGN9KtnwCsMZRK9BEJt+L/wY9FQArN
+         3vKCKwhSd7MgrwWwDwDdvVuSM92zMUAIkg7oCmuLSKWTvHkWaEukdUxhvAGf7uPpz6
+         EpLcaZxNDZkrk0XqBf0JreZdyxVEZux9pyORxvo7IhnVbIhQTxdu4CMz/ZGBLYVs5M
+         2nkoGgZ96EgZ9+RXzLBv/OYQT4SOue3yz+8HtgfRq2S/gVIVL0XJL/TKGAA9Er4c/T
+         w2GhNdTsNOmqZulPvh43xaFyZXXHf3N/0+psnBWgreGUjE2zOmdbu7mIV8WmDGUOSt
+         rt169kGFJcw4w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
 
-[ Upstream commit 5c1d644c09dbc13b2dc652435786e42b05ac1bb7 ]
+On 12/12/20 2:57 AM, Boris Brezillon wrote:
+> On Fri, 11 Dec 2020 13:15:59 -0800
+> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+>
+>> This patch adds a flag SPI_MASTER_USES_HW_DUMMY_CYCLES for the controllers
+>> that support transfer of dummy cycles by the hardware directly.
+> Hm, not sure this is a good idea. I mean, if we expect regular SPI
+> devices to use this feature, then why not, but if it's just for
+> spi-mem, I'd recommend implementing a driver-specific exec_op() instead
+> of using the default one.
 
-The Tegra SOR driver uses the devm infrastructure to request regulators,
-but enables them without registering them with the infrastructure.
+dummy cycles programming is SPI device specific.
 
-This results in the following splat if probing fails for any odd resaon
-(such as dependencies not being available):
+Transfer of dummy bytes by SW or HW controller can be depending on 
+features supported by controller.
 
-[    8.974187] tegra-sor 15580000.sor: cannot get HDMI supply: -517
-[    9.414403] tegra-sor 15580000.sor: failed to probe HDMI: -517
-[    9.421240] ------------[ cut here ]------------
-[    9.425879] WARNING: CPU: 1 PID: 164 at drivers/regulator/core.c:2089 _regulator_put.part.0+0x16c/0x174
-[    9.435259] Modules linked in: tegra_drm(E+) cec(E) ahci_tegra(E) drm_kms_helper(E) drm(E) libahci_platform(E) libahci(E) max77620_regulator(E) xhci_tegra(E+) sdhci_tegra(E) xhci_hcd(E) libata(E) sdhci_pltfm(E) cqhci(E) fixed(E) usbcore(E) scsi_mod(E) sdhci(E) host1x(E)
-[    9.459211] CPU: 1 PID: 164 Comm: systemd-udevd Tainted: G S    D W   E     5.9.0-rc7-00298-gf6337624c4fe #1980
-[    9.469285] Hardware name: NVIDIA Jetson TX2 Developer Kit (DT)
-[    9.475202] pstate: 80000005 (Nzcv daif -PAN -UAO BTYPE=--)
-[    9.480784] pc : _regulator_put.part.0+0x16c/0x174
-[    9.485581] lr : regulator_put+0x44/0x60
-[    9.489501] sp : ffffffc011d837b0
-[    9.492814] x29: ffffffc011d837b0 x28: ffffff81dd085900
-[    9.498141] x27: ffffff81de1c8ec0 x26: ffffff81de1c8c10
-[    9.503464] x25: ffffff81dd085800 x24: ffffffc008f2c6b0
-[    9.508790] x23: ffffffc0117373f0 x22: 0000000000000005
-[    9.514101] x21: ffffff81dd085900 x20: ffffffc01172b098
-[    9.515822] ata1: SATA link down (SStatus 0 SControl 300)
-[    9.519426] x19: ffffff81dd085100 x18: 0000000000000030
-[    9.530122] x17: 0000000000000000 x16: 0000000000000000
-[    9.535453] x15: 0000000000000000 x14: 000000000000038f
-[    9.540777] x13: 0000000000000003 x12: 0000000000000040
-[    9.546105] x11: ffffff81eb800000 x10: 0000000000000ae0
-[    9.551417] x9 : ffffffc0106fea24 x8 : ffffff81de83e6c0
-[    9.556728] x7 : 0000000000000018 x6 : 00000000000003c3
-[    9.562064] x5 : 0000000000005660 x4 : 0000000000000000
-[    9.567392] x3 : ffffffc01172b388 x2 : ffffff81de83db80
-[    9.572702] x1 : 0000000000000000 x0 : 0000000000000001
-[    9.578034] Call trace:
-[    9.580494]  _regulator_put.part.0+0x16c/0x174
-[    9.584940]  regulator_put+0x44/0x60
-[    9.588522]  devm_regulator_release+0x20/0x2c
-[    9.592885]  release_nodes+0x1c8/0x2c0
-[    9.596636]  devres_release_all+0x44/0x6c
-[    9.600649]  really_probe+0x1ec/0x504
-[    9.604316]  driver_probe_device+0x100/0x170
-[    9.608589]  device_driver_attach+0xcc/0xd4
-[    9.612774]  __driver_attach+0xb0/0x17c
-[    9.616614]  bus_for_each_dev+0x7c/0xd4
-[    9.620450]  driver_attach+0x30/0x3c
-[    9.624027]  bus_add_driver+0x154/0x250
-[    9.627867]  driver_register+0x84/0x140
-[    9.631719]  __platform_register_drivers+0xa0/0x180
-[    9.636660]  host1x_drm_init+0x60/0x1000 [tegra_drm]
-[    9.641629]  do_one_initcall+0x54/0x2d0
-[    9.645490]  do_init_module+0x68/0x29c
-[    9.649244]  load_module+0x2178/0x26c0
-[    9.652997]  __do_sys_finit_module+0xb0/0x120
-[    9.657356]  __arm64_sys_finit_module+0x2c/0x40
-[    9.661902]  el0_svc_common.constprop.0+0x80/0x240
-[    9.666701]  do_el0_svc+0x30/0xa0
-[    9.670022]  el0_svc+0x18/0x50
-[    9.673081]  el0_sync_handler+0x90/0x318
-[    9.677006]  el0_sync+0x158/0x180
-[    9.680324] ---[ end trace 90f6c89d62d85ff6 ]---
+Adding controller driver specific exec_op() Just for skipping dummy 
+bytes transfer will have so much of redundant code pretty much what all 
+spi_mem_exec_op does.
 
-Instead, let's register a callback that will disable the regulators
-on teardown. This allows for the removal of the .remove callbacks,
-which are not needed anymore.
+So in v1, I handled this in controller driver by skipping SW transfer of 
+dummy bytes during dummy phase and programming dummy cycles in 
+controller register to allow HW to transfer.
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/tegra/sor.c | 59 +++++++++++++++----------------------
- 1 file changed, 24 insertions(+), 35 deletions(-)
+Based on v1 feedback discussion, added this flag 
+SPI_MASTER_USES_HW_DUMMY_CYCLES which can be used by controllers 
+supporting HW dummy bytes transfer and updated spi_mem_exec_op to skip 
+SW dummy bytes.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 5d9a7f008fc6c..f2a114f14a3db 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -397,7 +397,6 @@ struct tegra_sor;
- struct tegra_sor_ops {
- 	const char *name;
- 	int (*probe)(struct tegra_sor *sor);
--	int (*remove)(struct tegra_sor *sor);
- 	void (*audio_enable)(struct tegra_sor *sor);
- 	void (*audio_disable)(struct tegra_sor *sor);
- };
-@@ -2942,6 +2941,24 @@ static const struct drm_encoder_helper_funcs tegra_sor_dp_helpers = {
- 	.atomic_check = tegra_sor_encoder_atomic_check,
- };
- 
-+static void tegra_sor_disable_regulator(void *data)
-+{
-+	struct regulator *reg = data;
-+
-+	regulator_disable(reg);
-+}
-+
-+static int tegra_sor_enable_regulator(struct tegra_sor *sor, struct regulator *reg)
-+{
-+	int err;
-+
-+	err = regulator_enable(reg);
-+	if (err)
-+		return err;
-+
-+	return devm_add_action_or_reset(sor->dev, tegra_sor_disable_regulator, reg);
-+}
-+
- static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- {
- 	int err;
-@@ -2953,7 +2970,7 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- 		return PTR_ERR(sor->avdd_io_supply);
- 	}
- 
--	err = regulator_enable(sor->avdd_io_supply);
-+	err = tegra_sor_enable_regulator(sor, sor->avdd_io_supply);
- 	if (err < 0) {
- 		dev_err(sor->dev, "failed to enable AVDD I/O supply: %d\n",
- 			err);
-@@ -2967,7 +2984,7 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- 		return PTR_ERR(sor->vdd_pll_supply);
- 	}
- 
--	err = regulator_enable(sor->vdd_pll_supply);
-+	err = tegra_sor_enable_regulator(sor, sor->vdd_pll_supply);
- 	if (err < 0) {
- 		dev_err(sor->dev, "failed to enable VDD PLL supply: %d\n",
- 			err);
-@@ -2981,7 +2998,7 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- 		return PTR_ERR(sor->hdmi_supply);
- 	}
- 
--	err = regulator_enable(sor->hdmi_supply);
-+	err = tegra_sor_enable_regulator(sor, sor->hdmi_supply);
- 	if (err < 0) {
- 		dev_err(sor->dev, "failed to enable HDMI supply: %d\n", err);
- 		return err;
-@@ -2992,19 +3009,9 @@ static int tegra_sor_hdmi_probe(struct tegra_sor *sor)
- 	return 0;
- }
- 
--static int tegra_sor_hdmi_remove(struct tegra_sor *sor)
--{
--	regulator_disable(sor->hdmi_supply);
--	regulator_disable(sor->vdd_pll_supply);
--	regulator_disable(sor->avdd_io_supply);
--
--	return 0;
--}
--
- static const struct tegra_sor_ops tegra_sor_hdmi_ops = {
- 	.name = "HDMI",
- 	.probe = tegra_sor_hdmi_probe,
--	.remove = tegra_sor_hdmi_remove,
- 	.audio_enable = tegra_sor_hdmi_audio_enable,
- 	.audio_disable = tegra_sor_hdmi_audio_disable,
- };
-@@ -3017,7 +3024,7 @@ static int tegra_sor_dp_probe(struct tegra_sor *sor)
- 	if (IS_ERR(sor->avdd_io_supply))
- 		return PTR_ERR(sor->avdd_io_supply);
- 
--	err = regulator_enable(sor->avdd_io_supply);
-+	err = tegra_sor_enable_regulator(sor, sor->avdd_io_supply);
- 	if (err < 0)
- 		return err;
- 
-@@ -3025,25 +3032,16 @@ static int tegra_sor_dp_probe(struct tegra_sor *sor)
- 	if (IS_ERR(sor->vdd_pll_supply))
- 		return PTR_ERR(sor->vdd_pll_supply);
- 
--	err = regulator_enable(sor->vdd_pll_supply);
-+	err = tegra_sor_enable_regulator(sor, sor->vdd_pll_supply);
- 	if (err < 0)
- 		return err;
- 
- 	return 0;
- }
- 
--static int tegra_sor_dp_remove(struct tegra_sor *sor)
--{
--	regulator_disable(sor->vdd_pll_supply);
--	regulator_disable(sor->avdd_io_supply);
--
--	return 0;
--}
--
- static const struct tegra_sor_ops tegra_sor_dp_ops = {
- 	.name = "DP",
- 	.probe = tegra_sor_dp_probe,
--	.remove = tegra_sor_dp_remove,
- };
- 
- static int tegra_sor_init(struct host1x_client *client)
-@@ -3768,7 +3766,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 		if (err < 0) {
- 			dev_err(&pdev->dev, "failed to probe %s: %d\n",
- 				sor->ops->name, err);
--			goto output;
-+			goto remove;
- 		}
- 	}
- 
-@@ -3949,9 +3947,6 @@ unregister:
- rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
- remove:
--	if (sor->ops && sor->ops->remove)
--		sor->ops->remove(sor);
--output:
- 	tegra_output_remove(&sor->output);
- 	return err;
- }
-@@ -3970,12 +3965,6 @@ static int tegra_sor_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 
--	if (sor->ops && sor->ops->remove) {
--		err = sor->ops->remove(sor);
--		if (err < 0)
--			dev_err(&pdev->dev, "failed to remove SOR: %d\n", err);
--	}
--
- 	tegra_output_remove(&sor->output);
- 
- 	return 0;
--- 
-2.27.0
+This helps other controllers supporting HW transfer of dummy bytes as 
+well just to set the flag and use dummy cycles directly.
 
+> If we go for those core changes, we should at least add a
+> ctrl->max_dummy_cycles field so the core can fallback to regular writes
+> when the number of dummy cycles in the spi_mem_op exceeds what the
+> controller can do.
+Yes makes sense. Will add this once we decide on keeping this flag to 
+identify controllers supporting HW transfer of dummy bytes Vs SW transfer.
+>> For controller with this flag set, spi-mem driver will skip dummy bytes
+>> transfer in the spi message.
+>>
+>> Controller drivers can get the number of dummy cycles from spi_message.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/spi/spi-mem.c   | 18 +++++++++++-------
+>>   include/linux/spi/spi.h |  8 ++++++++
+>>   2 files changed, 19 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+>> index f3a3f19..38a523b 100644
+>> --- a/drivers/spi/spi-mem.c
+>> +++ b/drivers/spi/spi-mem.c
+>> @@ -350,13 +350,17 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+>>   	}
+>>   
+>>   	if (op->dummy.nbytes) {
+>> -		memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
+>> -		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
+>> -		xfers[xferpos].len = op->dummy.nbytes;
+>> -		xfers[xferpos].tx_nbits = op->dummy.buswidth;
+>> -		spi_message_add_tail(&xfers[xferpos], &msg);
+>> -		xferpos++;
+>> -		totalxferlen += op->dummy.nbytes;
+>> +		if (ctlr->flags & SPI_MASTER_USES_HW_DUMMY_CYCLES) {
+>> +			msg.dummy_cycles = (op->dummy.nbytes * 8) / op->dummy.buswidth;
+>> +		} else {
+>> +			memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
+>> +			xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
+>> +			xfers[xferpos].len = op->dummy.nbytes;
+>> +			xfers[xferpos].tx_nbits = op->dummy.buswidth;
+>> +			spi_message_add_tail(&xfers[xferpos], &msg);
+>> +			xferpos++;
+>> +			totalxferlen += op->dummy.nbytes;
+>> +		}
+>>   	}
+>>   
+>>   	if (op->data.nbytes) {
+>> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+>> index aa09fdc..2024149 100644
+>> --- a/include/linux/spi/spi.h
+>> +++ b/include/linux/spi/spi.h
+>> @@ -512,6 +512,8 @@ struct spi_controller {
+>>   
+>>   #define SPI_MASTER_GPIO_SS		BIT(5)	/* GPIO CS must select slave */
+>>   
+>> +#define SPI_MASTER_USES_HW_DUMMY_CYCLES	BIT(6)	/* HW dummy bytes transfer */
+>> +
+>>   	/* flag indicating this is an SPI slave controller */
+>>   	bool			slave;
+>>   
+>> @@ -1022,6 +1024,12 @@ struct spi_message {
+>>   	unsigned		actual_length;
+>>   	int			status;
+>>   
+>> +	/*
+>> +	 * dummy cycles in the message transfer. This is used by the controller
+>> +	 * drivers supports transfer of dummy cycles directly by the hardware.
+>> +	 */
+>> +	u8			dummy_cycles;
+>> +
+>>   	/* for optional use by whatever driver currently owns the
+>>   	 * spi_message ...  between calls to spi_async and then later
+>>   	 * complete(), that's the spi_controller controller driver.
