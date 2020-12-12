@@ -2,89 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B704C433FE
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 12:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB87DC433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E18422DCC
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 12:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B1AF230FB
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438786AbgLLMGw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 12 Dec 2020 07:06:52 -0500
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:52445 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390904AbgLLMGv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 12 Dec 2020 07:06:51 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id A8B682800A287;
-        Sat, 12 Dec 2020 13:05:48 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 2758D110C0; Sat, 12 Dec 2020 13:06:08 +0100 (CET)
-Date:   Sat, 12 Dec 2020 13:06:08 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        bbrezillon@kernel.org, p.yadav@ti.com, tudor.ambarus@microchip.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/9] spi: tegra210-quad: Add support for Tegra210 QSPI
- controller
-Message-ID: <20201212120608.GA24303@wunner.de>
-References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
- <1607721363-8879-5-git-send-email-skomatineni@nvidia.com>
+        id S2407502AbgLLQRB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Dec 2020 11:17:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405733AbgLLQK7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 12 Dec 2020 11:10:59 -0500
+From:   Sasha Levin <sashal@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Qinglang Miao <miaoqinglang@huawei.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 3/8] drm/tegra: sor: Disable clocks on error in tegra_sor_init()
+Date:   Sat, 12 Dec 2020 11:08:54 -0500
+Message-Id: <20201212160859.2335412-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201212160859.2335412-1-sashal@kernel.org>
+References: <20201212160859.2335412-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1607721363-8879-5-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 01:15:58PM -0800, Sowjanya Komatineni wrote:
-> Tegra SoC has a Quad SPI controller starting from Tegra210.
+From: Qinglang Miao <miaoqinglang@huawei.com>
 
-The probe/remove hooks LGTM now.  Just two tiny nits that caught my eye:
+[ Upstream commit bf3a3cdcad40e5928a22ea0fd200d17fd6d6308d ]
 
+Fix the missing clk_disable_unprepare() before return from
+tegra_sor_init() in the error handling case.
 
-> +	master = devm_spi_alloc_master(&pdev->dev, sizeof(*tqspi));
-> +	if (!master) {
-> +		dev_err(&pdev->dev, "failed to allocate spi_master\n");
-> +		return -ENOMEM;
-> +	}
+Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/tegra/sor.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-The memory allocater already emits an error message if it can't satisfy
-a request.  Emitting an additional message here isn't really necessary.
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 7ab1d1dc7cd73..352ae52be3418 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2378,17 +2378,23 @@ static int tegra_sor_init(struct host1x_client *client)
+ 		if (err < 0) {
+ 			dev_err(sor->dev, "failed to deassert SOR reset: %d\n",
+ 				err);
++			clk_disable_unprepare(sor->clk);
+ 			return err;
+ 		}
+ 	}
+ 
+ 	err = clk_prepare_enable(sor->clk_safe);
+-	if (err < 0)
++	if (err < 0) {
++		clk_disable_unprepare(sor->clk);
+ 		return err;
++	}
+ 
+ 	err = clk_prepare_enable(sor->clk_dp);
+-	if (err < 0)
++	if (err < 0) {
++		clk_disable_unprepare(sor->clk_safe);
++		clk_disable_unprepare(sor->clk);
+ 		return err;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.27.0
 
-
-> +exit_free_irq:
-> +	free_irq(qspi_irq, tqspi);
-> +exit_pm_disable:
-> +	pm_runtime_disable(&pdev->dev);
-> +	tegra_qspi_deinit_dma(tqspi);
-> +	return ret;
-> +}
-> +
-> +static int tegra_qspi_remove(struct platform_device *pdev)
-> +{
-> +	struct spi_master *master = platform_get_drvdata(pdev);
-> +	struct tegra_qspi *tqspi = spi_master_get_devdata(master);
-> +
-> +	spi_unregister_master(master);
-> +	free_irq(tqspi->irq, tqspi);
-> +	tegra_qspi_deinit_dma(tqspi);
-> +	pm_runtime_disable(&pdev->dev);
-
-The order of tegra_qspi_deinit_dma() and pm_runtime_disable() is
-reversed in the remove hook vis-a-vis the probe error path.
-It's nicer to use the same order as in the probe error path.
-
-Thanks,
-
-Lukas
