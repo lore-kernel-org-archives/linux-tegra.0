@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DFBC4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F23BC2BB48
 	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8A32225E
+	by mail.kernel.org (Postfix) with ESMTP id 709F6221EA
 	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 16:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394926AbgLLQh0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 12 Dec 2020 11:37:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57718 "EHLO mail.kernel.org"
+        id S2439347AbgLLQJC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Dec 2020 11:09:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439374AbgLLQJg (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 12 Dec 2020 11:09:36 -0500
+        id S2439311AbgLLQIu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 12 Dec 2020 11:08:50 -0500
 From:   Sasha Levin <sashal@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qinglang Miao <miaoqinglang@huawei.com>,
+Cc:     Deepak R Varma <mh12gx2825@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 08/23] drm/tegra: sor: Disable clocks on error in tegra_sor_init()
-Date:   Sat, 12 Dec 2020 11:07:49 -0500
-Message-Id: <20201212160804.2334982-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 03/23] drm/tegra: replace idr_init() by idr_init_base()
+Date:   Sat, 12 Dec 2020 11:07:44 -0500
+Message-Id: <20201212160804.2334982-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201212160804.2334982-1-sashal@kernel.org>
 References: <20201212160804.2334982-1-sashal@kernel.org>
@@ -39,52 +39,37 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Qinglang Miao <miaoqinglang@huawei.com>
+From: Deepak R Varma <mh12gx2825@gmail.com>
 
-[ Upstream commit bf3a3cdcad40e5928a22ea0fd200d17fd6d6308d ]
+[ Upstream commit 41f71629b4c432f8dd47d70ace813be5f79d4d75 ]
 
-Fix the missing clk_disable_unprepare() before return from
-tegra_sor_init() in the error handling case.
+idr_init() uses base 0 which is an invalid identifier for this driver.
+The new function idr_init_base allows IDR to set the ID lookup from
+base 1. This avoids all lookups that otherwise starts from 0 since
+0 is always unused.
 
-Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+References: commit 6ce711f27500 ("idr: Make 1-based IDRs more efficient")
+
+Signed-off-by: Deepak R Varma <mh12gx2825@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/tegra/sor.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index f2a114f14a3db..b83a46df00584 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3143,6 +3143,7 @@ static int tegra_sor_init(struct host1x_client *client)
- 		if (err < 0) {
- 			dev_err(sor->dev, "failed to deassert SOR reset: %d\n",
- 				err);
-+			clk_disable_unprepare(sor->clk);
- 			return err;
- 		}
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index ba9d1c3e7cacf..e4baf07992a4d 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -90,7 +90,7 @@ static int tegra_drm_open(struct drm_device *drm, struct drm_file *filp)
+ 	if (!fpriv)
+ 		return -ENOMEM;
  
-@@ -3150,12 +3151,17 @@ static int tegra_sor_init(struct host1x_client *client)
- 	}
+-	idr_init(&fpriv->contexts);
++	idr_init_base(&fpriv->contexts, 1);
+ 	mutex_init(&fpriv->lock);
+ 	filp->driver_priv = fpriv;
  
- 	err = clk_prepare_enable(sor->clk_safe);
--	if (err < 0)
-+	if (err < 0) {
-+		clk_disable_unprepare(sor->clk);
- 		return err;
-+	}
- 
- 	err = clk_prepare_enable(sor->clk_dp);
--	if (err < 0)
-+	if (err < 0) {
-+		clk_disable_unprepare(sor->clk_safe);
-+		clk_disable_unprepare(sor->clk);
- 		return err;
-+	}
- 
- 	return 0;
- }
 -- 
 2.27.0
 
