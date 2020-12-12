@@ -2,93 +2,102 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD99C433FE
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA767C4361B
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 02:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2E523A33
-	for <linux-tegra@archiver.kernel.org>; Fri, 11 Dec 2020 22:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 833A62343E
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 02:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405456AbgLKVSM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 16:18:12 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7579 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393412AbgLKVRi (ORCPT
+        id S2407015AbgLLCoP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 11 Dec 2020 21:44:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395249AbgLLCoL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 16:17:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd3e19f0000>; Fri, 11 Dec 2020 13:16:15 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 11 Dec
- 2020 21:16:12 +0000
-Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 11 Dec 2020 21:16:12 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
-CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
-        <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
-        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 9/9] arm64: tegra: Enable QSPI on Jetson Xavier NX
-Date:   Fri, 11 Dec 2020 13:16:03 -0800
-Message-ID: <1607721363-8879-10-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
-References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 11 Dec 2020 21:44:11 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87387C0613CF;
+        Fri, 11 Dec 2020 18:43:31 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id c12so8192600pfo.10;
+        Fri, 11 Dec 2020 18:43:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qqgJjxt3GII5CzX9Vh7yLmiWsNOTpXIC0QugqQtXEy0=;
+        b=Ubn4saS98YB1RqLCS6GYqq5RQyMwCW28RT5ZwixpRe13KSISeMsUf87OWJU8qNNate
+         2LutrxrgoNdLI5OWIkV9CZarM2vZYtR2s/EDjBRMlgmzS1wXX8V2PpvmaYkB1MvJiUl7
+         p4ppqq701jxaq6W5FP3z+gROOOUaYXHgkgW6HcH2Chz+Y3dUXBLmWXgebuElaY1YUjy0
+         lUY/Y+H8S1+dKgX0Z3tPH0Fdnkqve2SD6RUdpD0cMl3Kpk/6+yyttV3jFfSDmqejAFmD
+         BsZ6vtEXz+I6IXmtTj2acGVatkV96UrA4TMG7ze5PQ1c6yXBXIOah3Ya/e7/71zPKTKp
+         qogg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qqgJjxt3GII5CzX9Vh7yLmiWsNOTpXIC0QugqQtXEy0=;
+        b=QmdtuQ0qckWGL8HTOKnQzNrsbeez20ES0LbLueBcgMN87VO/SLSKZg4bF+slMSjCKG
+         un7oQUeZSjUJaZY7bsUn22syN7qu43KOeBkW19FQNKAGtX0P4ihR3o1rxZrFUR+mBPsJ
+         Ei4zQnrQx9vjXKdsI2Lp2NqJmwSys5hPp8hVTLU7TUiJHpxhUCly0FODOQJIPE2Cxf5H
+         Q84kBlbgc8NMqT7y2bKI4Rcf4SQiPhBFbdzzn1OIGf80bxbj7LklF6LK9clc3TlCd47/
+         kBN+OANFa9LtVuer6l7W87Afy4/tOpBy0EZuAjAX+tkDKMSrSsF5xYSIr6+JrWniy13x
+         feTQ==
+X-Gm-Message-State: AOAM531yWKX8avplnzbfJDQ5XWpxf+4KP+Ns5HB/oWqT/BgZH3Ho6RWd
+        MkWJZ1yTmpDtb/CWZBbelzjuCfun5nM=
+X-Google-Smtp-Source: ABdhPJza2gHyYzQgtHaLFjLUl+8vz+Y7PzYlO1c2X641VfQqq2ahJE77hVLlOPs9VwwcC/EwcjiHSw==
+X-Received: by 2002:aa7:9ec5:0:b029:19e:bfaf:1b24 with SMTP id r5-20020aa79ec50000b029019ebfaf1b24mr10660694pfq.51.1607741010753;
+        Fri, 11 Dec 2020 18:43:30 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id 77sm11380186pfx.156.2020.12.11.18.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Dec 2020 18:43:29 -0800 (PST)
+Date:   Fri, 11 Dec 2020 18:43:26 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Support wakeup methods of Atmel maXTouch
+ controllers
+Message-ID: <X9QuTuGEicUnlaJp@google.com>
+References: <20201206212217.6857-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607721375; bh=fYE2T8fmJsPLDmks8zJZ++XGgYTpkfOpRR13aXBCmGY=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=fXZ2scn9L09Xh0N+Kg3hJQlYbfxM8dAr1P0IoIkyKS7TcGqtAq3Rp1w379VjCH1dX
-         LFEoBSKHvOsN4JvMzfk/CUxiFe4MhNObWbwxXbo9BB//HdLDGRlUJifRF6LE/NDI0j
-         9SRLIJbNikou0ALPQ9SzrbC0j4s2+nSE1leepTMHw0+vIEaeyrkHcp+1xMDXqn/9a7
-         Sf55oVDtcwu3f7OL/HHSTTy0oPTAwgpX10vKVOoKcI6E7Ki/QgkjcP+1TXDqego8q3
-         Vw5buZ8MSKRPSmzfFDtaBPMlzYiLvjDnldbE20hhgGphjxRqFEYnqyqsQUedvAqpDf
-         ZSHbKD+gaA8Xw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201206212217.6857-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch enables QSPI on Jetson Xavier NX.
+Hi Dmitry,
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Mon, Dec 07, 2020 at 12:22:14AM +0300, Dmitry Osipenko wrote:
+> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
+> have a WAKE line that needs to be asserted in order to wake controller
+> from a deep sleep, otherwise it will be unusable. This series implements
+> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
+> see page 29 (chapter "5.8 WAKE Line").
+> 
+> The mXT1386 is a widely used controller found on many older Android tablet
+> devices. Touchscreen on Acer A500 tablet now works properly after this
+> series.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-index 7f97b34..f1053e7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-@@ -100,6 +100,18 @@
- 			phy-names = "usb2-1", "usb2-2", "usb3-2";
- 		};
- 
-+		spi@3270000 {
-+			status = "okay";
-+
-+			flash@0 {
-+				compatible = "spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <102000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
-+			};
-+		};
-+
- 		pwm@32d0000 {
- 			status = "okay";
- 		};
+I am trying to understand how your controller is configured on that
+system. Could you please enable all debug messages in the driver and
+post the logs? I am a bit confused why the controller needs to be woken
+up twice in mxt_start() given that according to the spec it is supposed
+to stay up for 2 seconds after successful I2C transfer...
+
+Thanks!
+
 -- 
-2.7.4
-
+Dmitry
