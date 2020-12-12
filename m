@@ -2,63 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA767C4361B
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 02:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760F7C433FE
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 10:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 833A62343E
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 02:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B422225E
+	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 10:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407015AbgLLCoP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 11 Dec 2020 21:44:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        id S2438585AbgLLKGo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Dec 2020 05:06:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395249AbgLLCoL (ORCPT
+        with ESMTP id S2407209AbgLLJyP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 11 Dec 2020 21:44:11 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87387C0613CF;
-        Fri, 11 Dec 2020 18:43:31 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id c12so8192600pfo.10;
-        Fri, 11 Dec 2020 18:43:31 -0800 (PST)
+        Sat, 12 Dec 2020 04:54:15 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CBD5C0617A6;
+        Sat, 12 Dec 2020 00:59:28 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id r24so17533535lfm.8;
+        Sat, 12 Dec 2020 00:59:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qqgJjxt3GII5CzX9Vh7yLmiWsNOTpXIC0QugqQtXEy0=;
-        b=Ubn4saS98YB1RqLCS6GYqq5RQyMwCW28RT5ZwixpRe13KSISeMsUf87OWJU8qNNate
-         2LutrxrgoNdLI5OWIkV9CZarM2vZYtR2s/EDjBRMlgmzS1wXX8V2PpvmaYkB1MvJiUl7
-         p4ppqq701jxaq6W5FP3z+gROOOUaYXHgkgW6HcH2Chz+Y3dUXBLmWXgebuElaY1YUjy0
-         lUY/Y+H8S1+dKgX0Z3tPH0Fdnkqve2SD6RUdpD0cMl3Kpk/6+yyttV3jFfSDmqejAFmD
-         BsZ6vtEXz+I6IXmtTj2acGVatkV96UrA4TMG7ze5PQ1c6yXBXIOah3Ya/e7/71zPKTKp
-         qogg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jcDzKxAqDjG6U4ji8OyJUcUafnUenNsQ9eqG0Q+O0SM=;
+        b=C8l+acEgfvUDTLXrd49Yozm7tsAK87FzWUlIDUkomvTPkQraYtlduInGoBPPW3Zn6x
+         oV2t17iHV3YNuddtKK5xBlmCgYX3WEn2DvSu6S8mZaS+KQ95//Wdl1p97X18gCE5Sd0S
+         88yXcXn7/rRM+NCCJoBuUqPCD/tL9+rymJm7sV+FoJUH589gIjh04fv+m+2cauu8PxqY
+         hTvubPeq/PxHUk1y71kZ86j12x+qLylyL/mtxAJ3UuXjl+WZxWIOWnqIPZ4tUYGNX7Fa
+         X4x3ZTVRvYt5YeKJtaqrAmnJWm3ga5yyrgBZ+jXqY7+CTlqngIzKaoSjh2EYm1jDW1tR
+         HiQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qqgJjxt3GII5CzX9Vh7yLmiWsNOTpXIC0QugqQtXEy0=;
-        b=QmdtuQ0qckWGL8HTOKnQzNrsbeez20ES0LbLueBcgMN87VO/SLSKZg4bF+slMSjCKG
-         un7oQUeZSjUJaZY7bsUn22syN7qu43KOeBkW19FQNKAGtX0P4ihR3o1rxZrFUR+mBPsJ
-         Ei4zQnrQx9vjXKdsI2Lp2NqJmwSys5hPp8hVTLU7TUiJHpxhUCly0FODOQJIPE2Cxf5H
-         Q84kBlbgc8NMqT7y2bKI4Rcf4SQiPhBFbdzzn1OIGf80bxbj7LklF6LK9clc3TlCd47/
-         kBN+OANFa9LtVuer6l7W87Afy4/tOpBy0EZuAjAX+tkDKMSrSsF5xYSIr6+JrWniy13x
-         feTQ==
-X-Gm-Message-State: AOAM531yWKX8avplnzbfJDQ5XWpxf+4KP+Ns5HB/oWqT/BgZH3Ho6RWd
-        MkWJZ1yTmpDtb/CWZBbelzjuCfun5nM=
-X-Google-Smtp-Source: ABdhPJza2gHyYzQgtHaLFjLUl+8vz+Y7PzYlO1c2X641VfQqq2ahJE77hVLlOPs9VwwcC/EwcjiHSw==
-X-Received: by 2002:aa7:9ec5:0:b029:19e:bfaf:1b24 with SMTP id r5-20020aa79ec50000b029019ebfaf1b24mr10660694pfq.51.1607741010753;
-        Fri, 11 Dec 2020 18:43:30 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id 77sm11380186pfx.156.2020.12.11.18.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 18:43:29 -0800 (PST)
-Date:   Fri, 11 Dec 2020 18:43:26 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jcDzKxAqDjG6U4ji8OyJUcUafnUenNsQ9eqG0Q+O0SM=;
+        b=iJuGNxqq5nulCuUCWDQYfip8hLA7gHXq5SRRSKCZgwe+Wlvn6IhO98inu4UQGSkHxd
+         4QLWr1kf9+EJsPmx2idC2YZrOOWA0vSTDQWhiQJxF3GohhGZVRix9mIagmlrQS4whjbH
+         BBl2fBi9pBqQHQf8qKhvpp2WzcLnrGKn8yukKuY3/z+9i1lpOXCFXJChpixkBrdJqlZG
+         H9lFlQHUkLsFcz9uIOdU+nIo//7/mXgPUcSeJ4BeJdGU/avU5Bz1pBnh9C6q7zDBof79
+         drKsBx0mPim/UCE1ln4LiI6uOL9tYUxHGBM7QxE3bRjHIJ2VXTIU7LWWyp5/EeD+SZX2
+         2xpw==
+X-Gm-Message-State: AOAM532OwG2qpeWZs22ckVBGAyPkrVGoOWz0EBDbRIfymyC2Aj5zLiE9
+        bmhP/SAYWIRpUun3QLobOef8aVyV5vA=
+X-Google-Smtp-Source: ABdhPJznhNKlC9HwTBOcO6h+D/8FDiSsw4a4i1DCH36Igqa4KhlgpD3fBkBwdT7v373ejUfbHPnqtA==
+X-Received: by 2002:a19:b97:: with SMTP id 145mr5445939lfl.457.1607759677264;
+        Fri, 11 Dec 2020 23:54:37 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-205.dynamic.spd-mgts.ru. [109.252.193.205])
+        by smtp.googlemail.com with ESMTPSA id n1sm1146509lfg.162.2020.12.11.23.54.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Dec 2020 23:54:36 -0800 (PST)
+Subject: Re: [PATCH v3 0/3] Support wakeup methods of Atmel maXTouch
+ controllers
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,38 +67,95 @@ Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
         Jiada Wang <jiada_wang@mentor.com>,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Support wakeup methods of Atmel maXTouch
- controllers
-Message-ID: <X9QuTuGEicUnlaJp@google.com>
 References: <20201206212217.6857-1-digetx@gmail.com>
+ <X9QuTuGEicUnlaJp@google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3577ed5b-feff-5915-7d70-5fa8fe4a0a82@gmail.com>
+Date:   Sat, 12 Dec 2020 10:54:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201206212217.6857-1-digetx@gmail.com>
+In-Reply-To: <X9QuTuGEicUnlaJp@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+Hello,
 
-On Mon, Dec 07, 2020 at 12:22:14AM +0300, Dmitry Osipenko wrote:
-> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
-> have a WAKE line that needs to be asserted in order to wake controller
-> from a deep sleep, otherwise it will be unusable. This series implements
-> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
-> see page 29 (chapter "5.8 WAKE Line").
+12.12.2020 05:43, Dmitry Torokhov пишет:
+> Hi Dmitry,
 > 
-> The mXT1386 is a widely used controller found on many older Android tablet
-> devices. Touchscreen on Acer A500 tablet now works properly after this
-> series.
+> On Mon, Dec 07, 2020 at 12:22:14AM +0300, Dmitry Osipenko wrote:
+>> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
+>> have a WAKE line that needs to be asserted in order to wake controller
+>> from a deep sleep, otherwise it will be unusable. This series implements
+>> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
+>> see page 29 (chapter "5.8 WAKE Line").
+>>
+>> The mXT1386 is a widely used controller found on many older Android tablet
+>> devices. Touchscreen on Acer A500 tablet now works properly after this
+>> series.
+> 
+> I am trying to understand how your controller is configured on that
+> system. Could you please enable all debug messages in the driver and
+> post the logs? I am a bit confused why the controller needs to be woken
+> up twice in mxt_start() given that according to the spec it is supposed
+> to stay up for 2 seconds after successful I2C transfer...
 
-I am trying to understand how your controller is configured on that
-system. Could you please enable all debug messages in the driver and
-post the logs? I am a bit confused why the controller needs to be woken
-up twice in mxt_start() given that according to the spec it is supposed
-to stay up for 2 seconds after successful I2C transfer...
+From the page 30 in the datasheet:
 
-Thanks!
+"Note that when the mXT1386 is sent into deep sleep mode, it goes to
+sleep immediately. In this case the two-second timeout does not apply
+until the WAKE pin is asserted."
 
--- 
-Dmitry
+The debug log seems confirm that quote:
+
+...
+[ 1.196404] Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
+[ 1.196572] T37 Start:118 Size:130 Instances:1 Report IDs:0-0
+[ 1.196586] T44 Start:248 Size:1 Instances:1 Report IDs:0-0
+[ 1.196597] T5 Start:249 Size:9 Instances:1 Report IDs:0-0
+[ 1.196608] T6 Start:258 Size:6 Instances:1 Report IDs:1-1
+[ 1.196617] T38 Start:264 Size:64 Instances:1 Report IDs:0-0
+[ 1.196628] T7 Start:328 Size:3 Instances:1 Report IDs:0-0
+[ 1.196638] T8 Start:331 Size:10 Instances:1 Report IDs:0-0
+[ 1.196648] T9 Start:341 Size:34 Instances:1 Report IDs:2-17
+[ 1.196658] T15 Start:375 Size:11 Instances:2 Report IDs:18-19
+[ 1.196668] T18 Start:397 Size:2 Instances:1 Report IDs:0-0
+[ 1.196678] T22 Start:399 Size:17 Instances:1 Report IDs:20-20
+[ 1.196688] T24 Start:416 Size:19 Instances:1 Report IDs:21-24
+[ 1.196698] T25 Start:435 Size:14 Instances:1 Report IDs:25-25
+[ 1.196708] T27 Start:449 Size:7 Instances:1 Report IDs:26-26
+[ 1.196718] T28 Start:456 Size:6 Instances:1 Report IDs:27-27
+[ 1.196728] T40 Start:462 Size:5 Instances:1 Report IDs:0-0
+[ 1.196738] T41 Start:467 Size:6 Instances:1 Report IDs:0-0
+[ 1.196748] T43 Start:473 Size:6 Instances:1 Report IDs:0-0
+[ 1.196852] Direct firmware load for maxtouch.cfg failed with error -2
+[ 1.197305] T6 Config Checksum: 0x8D7459
+[ 1.197318] T6 Status 0x90 RESET CAL
+[ 1.197543] Initialized power cfg: ACTV 10, IDLE 50
+[ 1.198387] Touchscreen size X1279Y799
+...
+[ 1.211686] T6 Status 0x00 OK
+...
+[15.576573] Set T7 ACTV:10 IDLE:50
+[15.592142] T6 Status 0x10 CAL
+[15.597920] T6 Status 0x00 OK
+[15.604846] Set T7 ACTV:0 IDLE:0
+[15.831477] waking up controller
+[15.862912] Set T7 ACTV:10 IDLE:50
+[15.872783] Set T7 ACTV:0 IDLE:0
+[15.880333] T6 Status 0x10 CAL
+[15.946853] Set T7 ACTV:10 IDLE:50
+[15.956582] Set T7 ACTV:0 IDLE:0
+...
+[27.897337] waking up controller
+[27.924172] Set T7 ACTV:10 IDLE:50
+[27.947286] T6 Status 0x00 OK
+[27.959754] Set T7 ACTV:0 IDLE:0
+[27.970258] Set T7 ACTV:10 IDLE:50
+[27.987546] T6 Status 0x10 CAL
+[27.993327] T6 Status 0x00 OK
