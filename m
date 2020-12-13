@@ -2,174 +2,166 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63175C433FE
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 17:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310D8C433FE
+	for <linux-tegra@archiver.kernel.org>; Sun, 13 Dec 2020 04:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27B9622AAC
-	for <linux-tegra@archiver.kernel.org>; Sat, 12 Dec 2020 17:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD0123128
+	for <linux-tegra@archiver.kernel.org>; Sun, 13 Dec 2020 04:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405508AbgLLR3i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 12 Dec 2020 12:29:38 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:57028 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390595AbgLLR3i (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 12 Dec 2020 12:29:38 -0500
-Received: from HKMAIL104.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fd4fdd70003>; Sun, 13 Dec 2020 01:28:55 +0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HKMAIL104.nvidia.com
- (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Dec
- 2020 17:28:55 +0000
-Received: from [10.2.60.59] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 12 Dec
- 2020 17:28:52 +0000
-Subject: Re: [PATCH v3 5/9] spi: spi-mem: Allow masters to transfer dummy
- cycles directly by hardware
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>,
-        <bbrezillon@kernel.org>, <p.yadav@ti.com>,
-        <tudor.ambarus@microchip.com>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
- <1607721363-8879-6-git-send-email-skomatineni@nvidia.com>
- <20201212115715.31a8d755@collabora.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <7efb281a-98d7-68c5-1515-0e980b6cfe12@nvidia.com>
-Date:   Sat, 12 Dec 2020 09:28:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2392636AbgLMEml (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 12 Dec 2020 23:42:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392475AbgLMEml (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 12 Dec 2020 23:42:41 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71369C0613CF;
+        Sat, 12 Dec 2020 20:42:01 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id bj5so6853107plb.4;
+        Sat, 12 Dec 2020 20:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=8Tg0dty1ed1kJjQoKSIqXGg4v+WjPJfjUcKMj3cUTn0=;
+        b=jxN8T3bSAIqhXX+3XLEMhkbx0fBbFpWcYJeeqIL3LKEELqTNn4rQ/gypei3IhFvq4q
+         VZMwXDrMH47uOEORDoYFIrVoQ7rvun8ESaT5cMdqsvNc2YXUyyAWQxPRTWlmQ5pGEfFE
+         MqEGTCT8KXKMGgu/la6dYEbMghVJYfpVwXsJzQI6hNH4pk9PTMjmn4lq9IbOrpnmQh18
+         /6oMWTEchJpUoK1J2jfJ2L+wdFTtPcNdZVwaIj/2R8Jo0+CFro01NJ5sD0ZkRVDO73V0
+         GeZGAl3wcKFJs0NiUQMwKhTMdIKKmRXcoQV2VZZ7WzP018z1OOUpcBXADwLP/hFKWTBg
+         OIbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=8Tg0dty1ed1kJjQoKSIqXGg4v+WjPJfjUcKMj3cUTn0=;
+        b=LLQ5jPscs8gOsR1NOxGzRrhin1vl/JmQjEQLS4l2MpjbcXOUd5LZhdeqvSgmMAa9c4
+         3PhVuGj+RJWt5uxut0unvW9CRpmtZRMm5BqVeEshWrR2Y2ODBYxRYMAqExu4y6eyHaZ2
+         xorvtHJkhrZRNd2eQgreJHLf2YNnZGqqNyoPherYkBYGnZWgHwd76kTLTLC0dUpFw4ll
+         tFjTXSp1f2VBEyNSelCXb71PQutV1jCJhobeppxNGsgKvqXy5rF/4vU/9SCzP9Uxxjo8
+         cp1vNAhn+4kczmcFOQ0gpBE6+41plwR5xUZ7nbCP2XFr9mkFuScqD9udT9CrrufjdR+m
+         emWw==
+X-Gm-Message-State: AOAM530mbwRoh20jfr4/oa2FpcFTKDXyrNrN9sfHFVKEbRVnJ+pbEOj8
+        va1g3Hvl9dvqxwz569MXMy8=
+X-Google-Smtp-Source: ABdhPJxz5RUMe2BgeZX3hluLodjuGZG/ZKIVp+v6p7R2KYeaNEMxdZvq/CQZGZ8f7r7nT59L/+W++w==
+X-Received: by 2002:a17:90a:67ce:: with SMTP id g14mr8342548pjm.33.1607834520722;
+        Sat, 12 Dec 2020 20:42:00 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id 22sm15374368pfn.190.2020.12.12.20.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Dec 2020 20:41:59 -0800 (PST)
+Date:   Sat, 12 Dec 2020 20:41:57 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Support wakeup methods of Atmel maXTouch
+ controllers
+Message-ID: <X9WblR19HZPZ5XtY@google.com>
+References: <20201206212217.6857-1-digetx@gmail.com>
+ <X9QuTuGEicUnlaJp@google.com>
+ <3577ed5b-feff-5915-7d70-5fa8fe4a0a82@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201212115715.31a8d755@collabora.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1607794135; bh=JRdJwxDrHqj84zOr7vEYjGJE0Jucw9ayr/+irmlLuFk=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=ZllRZodPRm8gF0TopiB6E9PC3EXyRG2M5XjnGN9KtnwCsMZRK9BEJt+L/wY9FQArN
-         3vKCKwhSd7MgrwWwDwDdvVuSM92zMUAIkg7oCmuLSKWTvHkWaEukdUxhvAGf7uPpz6
-         EpLcaZxNDZkrk0XqBf0JreZdyxVEZux9pyORxvo7IhnVbIhQTxdu4CMz/ZGBLYVs5M
-         2nkoGgZ96EgZ9+RXzLBv/OYQT4SOue3yz+8HtgfRq2S/gVIVL0XJL/TKGAA9Er4c/T
-         w2GhNdTsNOmqZulPvh43xaFyZXXHf3N/0+psnBWgreGUjE2zOmdbu7mIV8WmDGUOSt
-         rt169kGFJcw4w==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3577ed5b-feff-5915-7d70-5fa8fe4a0a82@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Sat, Dec 12, 2020 at 10:54:35AM +0300, Dmitry Osipenko wrote:
+> Hello,
+> 
+> 12.12.2020 05:43, Dmitry Torokhov пишет:
+> > Hi Dmitry,
+> > 
+> > On Mon, Dec 07, 2020 at 12:22:14AM +0300, Dmitry Osipenko wrote:
+> >> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
+> >> have a WAKE line that needs to be asserted in order to wake controller
+> >> from a deep sleep, otherwise it will be unusable. This series implements
+> >> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
+> >> see page 29 (chapter "5.8 WAKE Line").
+> >>
+> >> The mXT1386 is a widely used controller found on many older Android tablet
+> >> devices. Touchscreen on Acer A500 tablet now works properly after this
+> >> series.
+> > 
+> > I am trying to understand how your controller is configured on that
+> > system. Could you please enable all debug messages in the driver and
+> > post the logs? I am a bit confused why the controller needs to be woken
+> > up twice in mxt_start() given that according to the spec it is supposed
+> > to stay up for 2 seconds after successful I2C transfer...
+> 
+> From the page 30 in the datasheet:
+> 
+> "Note that when the mXT1386 is sent into deep sleep mode, it goes to
+> sleep immediately. In this case the two-second timeout does not apply
+> until the WAKE pin is asserted."
+> 
+> The debug log seems confirm that quote:
+> 
+> ...
+> [ 1.196404] Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
+> [ 1.196572] T37 Start:118 Size:130 Instances:1 Report IDs:0-0
+> [ 1.196586] T44 Start:248 Size:1 Instances:1 Report IDs:0-0
+> [ 1.196597] T5 Start:249 Size:9 Instances:1 Report IDs:0-0
+> [ 1.196608] T6 Start:258 Size:6 Instances:1 Report IDs:1-1
+> [ 1.196617] T38 Start:264 Size:64 Instances:1 Report IDs:0-0
+> [ 1.196628] T7 Start:328 Size:3 Instances:1 Report IDs:0-0
+> [ 1.196638] T8 Start:331 Size:10 Instances:1 Report IDs:0-0
+> [ 1.196648] T9 Start:341 Size:34 Instances:1 Report IDs:2-17
+> [ 1.196658] T15 Start:375 Size:11 Instances:2 Report IDs:18-19
+> [ 1.196668] T18 Start:397 Size:2 Instances:1 Report IDs:0-0
+> [ 1.196678] T22 Start:399 Size:17 Instances:1 Report IDs:20-20
+> [ 1.196688] T24 Start:416 Size:19 Instances:1 Report IDs:21-24
+> [ 1.196698] T25 Start:435 Size:14 Instances:1 Report IDs:25-25
+> [ 1.196708] T27 Start:449 Size:7 Instances:1 Report IDs:26-26
+> [ 1.196718] T28 Start:456 Size:6 Instances:1 Report IDs:27-27
+> [ 1.196728] T40 Start:462 Size:5 Instances:1 Report IDs:0-0
+> [ 1.196738] T41 Start:467 Size:6 Instances:1 Report IDs:0-0
+> [ 1.196748] T43 Start:473 Size:6 Instances:1 Report IDs:0-0
+> [ 1.196852] Direct firmware load for maxtouch.cfg failed with error -2
+> [ 1.197305] T6 Config Checksum: 0x8D7459
+> [ 1.197318] T6 Status 0x90 RESET CAL
+> [ 1.197543] Initialized power cfg: ACTV 10, IDLE 50
+> [ 1.198387] Touchscreen size X1279Y799
+> ...
+> [ 1.211686] T6 Status 0x00 OK
+> ...
+> [15.576573] Set T7 ACTV:10 IDLE:50
+> [15.592142] T6 Status 0x10 CAL
+> [15.597920] T6 Status 0x00 OK
+> [15.604846] Set T7 ACTV:0 IDLE:0
+> [15.831477] waking up controller
+> [15.862912] Set T7 ACTV:10 IDLE:50
+> [15.872783] Set T7 ACTV:0 IDLE:0
 
-On 12/12/20 2:57 AM, Boris Brezillon wrote:
-> On Fri, 11 Dec 2020 13:15:59 -0800
-> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
->
->> This patch adds a flag SPI_MASTER_USES_HW_DUMMY_CYCLES for the controllers
->> that support transfer of dummy cycles by the hardware directly.
-> Hm, not sure this is a good idea. I mean, if we expect regular SPI
-> devices to use this feature, then why not, but if it's just for
-> spi-mem, I'd recommend implementing a driver-specific exec_op() instead
-> of using the default one.
+Thank you for the logs. I am confused where these calls to put the
+controller into deep sleep are coming from. Does something constantly
+open and close input device? Do you have any additional patches? We
+definitely do not issue deep sleep request in mxt_start(). Do you mind
+putting dump_stack() into mxt_set_t7_power_cfg() to see where the calls
+are coming from?
 
-dummy cycles programming is SPI device specific.
+I also do not see additional "waking up controller" messages after
+requesting the chip via T7 to be configured to be active, which I'd
+expected to see if we indeed needed to wake it up again for T6 to
+succeed.
 
-Transfer of dummy bytes by SW or HW controller can be depending on 
-features supported by controller.
+Thanks.
 
-Adding controller driver specific exec_op() Just for skipping dummy 
-bytes transfer will have so much of redundant code pretty much what all 
-spi_mem_exec_op does.
-
-So in v1, I handled this in controller driver by skipping SW transfer of 
-dummy bytes during dummy phase and programming dummy cycles in 
-controller register to allow HW to transfer.
-
-Based on v1 feedback discussion, added this flag 
-SPI_MASTER_USES_HW_DUMMY_CYCLES which can be used by controllers 
-supporting HW dummy bytes transfer and updated spi_mem_exec_op to skip 
-SW dummy bytes.
-
-This helps other controllers supporting HW transfer of dummy bytes as 
-well just to set the flag and use dummy cycles directly.
-
-> If we go for those core changes, we should at least add a
-> ctrl->max_dummy_cycles field so the core can fallback to regular writes
-> when the number of dummy cycles in the spi_mem_op exceeds what the
-> controller can do.
-Yes makes sense. Will add this once we decide on keeping this flag to 
-identify controllers supporting HW transfer of dummy bytes Vs SW transfer.
->> For controller with this flag set, spi-mem driver will skip dummy bytes
->> transfer in the spi message.
->>
->> Controller drivers can get the number of dummy cycles from spi_message.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/spi/spi-mem.c   | 18 +++++++++++-------
->>   include/linux/spi/spi.h |  8 ++++++++
->>   2 files changed, 19 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
->> index f3a3f19..38a523b 100644
->> --- a/drivers/spi/spi-mem.c
->> +++ b/drivers/spi/spi-mem.c
->> @@ -350,13 +350,17 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
->>   	}
->>   
->>   	if (op->dummy.nbytes) {
->> -		memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
->> -		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
->> -		xfers[xferpos].len = op->dummy.nbytes;
->> -		xfers[xferpos].tx_nbits = op->dummy.buswidth;
->> -		spi_message_add_tail(&xfers[xferpos], &msg);
->> -		xferpos++;
->> -		totalxferlen += op->dummy.nbytes;
->> +		if (ctlr->flags & SPI_MASTER_USES_HW_DUMMY_CYCLES) {
->> +			msg.dummy_cycles = (op->dummy.nbytes * 8) / op->dummy.buswidth;
->> +		} else {
->> +			memset(tmpbuf + op->addr.nbytes + 1, 0xff, op->dummy.nbytes);
->> +			xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
->> +			xfers[xferpos].len = op->dummy.nbytes;
->> +			xfers[xferpos].tx_nbits = op->dummy.buswidth;
->> +			spi_message_add_tail(&xfers[xferpos], &msg);
->> +			xferpos++;
->> +			totalxferlen += op->dummy.nbytes;
->> +		}
->>   	}
->>   
->>   	if (op->data.nbytes) {
->> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
->> index aa09fdc..2024149 100644
->> --- a/include/linux/spi/spi.h
->> +++ b/include/linux/spi/spi.h
->> @@ -512,6 +512,8 @@ struct spi_controller {
->>   
->>   #define SPI_MASTER_GPIO_SS		BIT(5)	/* GPIO CS must select slave */
->>   
->> +#define SPI_MASTER_USES_HW_DUMMY_CYCLES	BIT(6)	/* HW dummy bytes transfer */
->> +
->>   	/* flag indicating this is an SPI slave controller */
->>   	bool			slave;
->>   
->> @@ -1022,6 +1024,12 @@ struct spi_message {
->>   	unsigned		actual_length;
->>   	int			status;
->>   
->> +	/*
->> +	 * dummy cycles in the message transfer. This is used by the controller
->> +	 * drivers supports transfer of dummy cycles directly by the hardware.
->> +	 */
->> +	u8			dummy_cycles;
->> +
->>   	/* for optional use by whatever driver currently owns the
->>   	 * spi_message ...  between calls to spi_async and then later
->>   	 * complete(), that's the spi_controller controller driver.
+-- 
+Dmitry
