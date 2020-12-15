@@ -2,102 +2,70 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30664C4361B
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Dec 2020 16:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DBAC4361B
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 07:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00525225AB
-	for <linux-tegra@archiver.kernel.org>; Mon, 14 Dec 2020 16:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2712622286
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 07:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440260AbgLNQYM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 14 Dec 2020 11:24:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2440213AbgLNQYG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 14 Dec 2020 11:24:06 -0500
-Date:   Mon, 14 Dec 2020 16:23:15 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607963005;
-        bh=AHdANBBLNTJw739m69nu1X9LxbPWyebOEdf8x8REzLI=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m1I79GixJahrYdFPYjFIKqA6vALsyqCralLCJyWM3v6O2BYsc1VFHeMksKIlOzQLU
-         YhMKPRo+bElsRWMKtQ1OPne74/xQcD1lcX+VmsN4xJgKJlrK7TVJj3Vh+EezydIA9K
-         KYOhdXt20eceahFYp0oXWXCH7VWCFkrTtYjI/4NQBuMccz89J0v/39AlBCcQnx7fVR
-         exIwIVX83Eslw0S0KIdZDhLgOmBKnpW3LZMym1/AboPHHfSQ3CXybnaHAIkhwZwCOH
-         cnJdQt61NdwWjRveDyv6Zb+bFqR0WKdaMXYgL5m9QdRa4/oDeA4ieR+Hv6culExWqn
-         /zUfKSRFNqEsA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
-        lukas@wunner.de, bbrezillon@kernel.org, p.yadav@ti.com,
-        tudor.ambarus@microchip.com, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 5/9] spi: spi-mem: Allow masters to transfer dummy
- cycles directly by hardware
-Message-ID: <20201214162315.GA4880@sirena.org.uk>
-References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
- <1607721363-8879-6-git-send-email-skomatineni@nvidia.com>
- <20201212115715.31a8d755@collabora.com>
+        id S1726072AbgLOHBg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Dec 2020 02:01:36 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:9888 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbgLOHBb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 15 Dec 2020 02:01:31 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Cw8K52BmKz7Ghc;
+        Tue, 15 Dec 2020 15:00:09 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 15 Dec 2020 15:00:43 +0800
+From:   Tian Tao <tiantao6@hisilicon.com>
+To:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <jonathanh@nvidia.com>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
+Date:   Tue, 15 Dec 2020 15:00:53 +0800
+Message-ID: <1608015653-37527-1-git-send-email-tiantao6@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <20201212115715.31a8d755@collabora.com>
-X-Cookie: Everything you know is wrong!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Fixes coccicheck warning:
+drivers/gpu/drm/tegra/drm.c:350:1-3: WARNING: PTR_ERR_OR_ZERO can be used
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+---
+ drivers/gpu/drm/tegra/drm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On Sat, Dec 12, 2020 at 11:57:15AM +0100, Boris Brezillon wrote:
-> Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 19ffb06..245b468 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -347,10 +347,7 @@ static int tegra_gem_create(struct drm_device *drm, void *data,
+ 
+ 	bo = tegra_bo_create_with_handle(file, drm, args->size, args->flags,
+ 					 &args->handle);
+-	if (IS_ERR(bo))
+-		return PTR_ERR(bo);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(bo);
+ }
+ 
+ static int tegra_gem_mmap(struct drm_device *drm, void *data,
+-- 
+2.7.4
 
-> > This patch adds a flag SPI_MASTER_USES_HW_DUMMY_CYCLES for the controllers
-> > that support transfer of dummy cycles by the hardware directly.
-
-> Hm, not sure this is a good idea. I mean, if we expect regular SPI
-> devices to use this feature, then why not, but if it's just for
-> spi-mem, I'd recommend implementing a driver-specific exec_op() instead
-> of using the default one.
-
-I *have* seen other high speed devices which had padding bits in the
-transfer (see regmap's pad_bits feature), I think that corresponds to
-flash dummy bits but haven't checked that the hardware support lines up.
-I'm not sure it's ever been seen as something that we particularly
-needed to speed up with hardware offload though.
-
-> If we go for those core changes, we should at least add a
-> ctrl->max_dummy_cycles field so the core can fallback to regular writes
-> when the number of dummy cycles in the spi_mem_op exceeds what the
-> controller can do.
-
-That seems sensible if there's a risk of controllers being too limited,
-which knowing hardware seems likely.
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/XkXIACgkQJNaLcl1U
-h9CBsAf/XWrzX5DEizCXgE7T1DvfpDtH0jdGsooRqjRftlV5KVN61c4clryl717B
-ix3GAXx57e3OO/JyWtBuKeLChLsyvDcz4CWnr8AMTmHcxYO1KTlqS9GEEs4EEFIO
-lXBiuZ/9yb2/HJSdJTg0w+mudFvH3B2gsVDZ1C5Waupm+HdqPSP1xilOs1owTVpa
-0fNhf99+NIryvBNeGI4vt9okktA+fnhh0u2VjSXQwyyw4woVVrp+Zv5cn1KSx7cX
-DLP9ciLZBUUWoVX5Vh+IIL0k9un1kKBmAjtUgjdTGYyg0yPdJn+sEvHdnifN0wxP
-Pywb4/N/I3lzBeJah5fx5DH0AZ+GyA==
-=GioU
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
