@@ -2,238 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEC5C2BB48
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 16:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1A4C4361B
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 16:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16154221EA
-	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 16:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37CEA20721
+	for <linux-tegra@archiver.kernel.org>; Tue, 15 Dec 2020 16:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730777AbgLOQN4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 15 Dec 2020 11:13:56 -0500
-Received: from mail-oo1-f66.google.com ([209.85.161.66]:34565 "EHLO
-        mail-oo1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730422AbgLOQNs (ORCPT
+        id S1730540AbgLOQSl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 15 Dec 2020 11:18:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730307AbgLOQSe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 15 Dec 2020 11:13:48 -0500
-Received: by mail-oo1-f66.google.com with SMTP id x23so1760125oop.1;
-        Tue, 15 Dec 2020 08:13:31 -0800 (PST)
+        Tue, 15 Dec 2020 11:18:34 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27D5C06179C;
+        Tue, 15 Dec 2020 08:17:53 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id y19so40760986lfa.13;
+        Tue, 15 Dec 2020 08:17:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JKu6z7NvvAuTLT8o5ljUyycVpd5OzgaPv+CEb+i0K+A=;
+        b=bCSFK+tZpE0bdvLBfj/yd2zfR6T5Fc/sBcFZodedew5LNAwBM2pFToiw+M75lsHxAn
+         63eFoOwQgyrCsA8TUTSg54bO6ZdkTKyz526lbi1mDThCai7FDwMU4mF0btegErHhQ2OD
+         rIVsiB24fLW5GaI6rRIzuekhDVa+289aklCmHCrxnYkVzB0dkjlJZanAqeOozNnVcAy+
+         hYGDtlH7IoHy87NOrYHsk2h8Sf4PLAW8vtmFFO0fnDlW7bKJNuTPwMqoQi6sxDuGpYzG
+         n+IuCg9+DdTAjoo7WTnCmXqsQ1pUEW4SnClUmfe+obcRlNQVMH0rwY3l60jRbCt8wb2J
+         Uysg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iJZnRtX3sbuHq49+KxzSlxIlH2YFeZZTDaGKbhkXMPc=;
-        b=T4A9W5ccVotMK6lIUNKrcjflr8XbJSKy8S+YGUt+DvrSggSzWPlZ9vqib0NCrGCnWM
-         YlmUvWw/LtQN/uTU8kBqGm6dbaYRA+HBgSx78Ik8o65pyOGzklhwiEDbQYbw8OpkBzV2
-         cAzDkfIiAp8K+1yef2M7OmPHKXJ8vEWjwHSL0NGlbCpUbyaOkD8oFd+63qsF6xgFrnZA
-         jzlDdt0OH/oSw6F3/Y/NFgpWgvHx5cKEqkcUdPQiWlPUQv82Y/RSP3iSORX8M4LH3eZn
-         hwysXj9+VwHOyuyexL7Jr3FndyXTaF5PRbvG9IE0VhJOUlnC8wl19XA76d2ogjzSI9rZ
-         bXDg==
-X-Gm-Message-State: AOAM531ksb4cTppqHAJywceCRDfL5aT8OV0/vHT5ehjnw9BFl7OXgaBd
-        njBGSrHJHXu2hPJXG3MpbA==
-X-Google-Smtp-Source: ABdhPJx2AG7yR79xBmnEKYChigB3jUkSqzlHLc2xAzoccoZHSNNlTwnG2/qBh7in6d5DkM1o/KLg1g==
-X-Received: by 2002:a4a:2f91:: with SMTP id p139mr23199961oop.0.1608048785972;
-        Tue, 15 Dec 2020 08:13:05 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n3sm509358otj.46.2020.12.15.08.13.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Dec 2020 08:13:05 -0800 (PST)
-Received: (nullmailer pid 3949669 invoked by uid 1000);
-        Tue, 15 Dec 2020 16:13:04 -0000
-Date:   Tue, 15 Dec 2020 10:13:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        lukas@wunner.de, bbrezillon@kernel.org, p.yadav@ti.com,
-        tudor.ambarus@microchip.com, linux-spi@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] dt-bindings: spi: Add Tegra Quad SPI device tree
- binding
-Message-ID: <20201215161304.GA3935217@robh.at.kernel.org>
-References: <1607721363-8879-1-git-send-email-skomatineni@nvidia.com>
- <1607721363-8879-3-git-send-email-skomatineni@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JKu6z7NvvAuTLT8o5ljUyycVpd5OzgaPv+CEb+i0K+A=;
+        b=liJBXdehqRTohg3bS5eVBiTyQXTQgYkBFqHZiqvvNdE4nTznlfUFXW8tGmk8jG//0Y
+         qLNzZY3ZgZbPYWCmbCdO6FN4k805XczRgEuChdKx+hSCdsutqw2Kg7EjD4f+TZplixSq
+         yzZhJmJpvi/xD30/5JmnOyoMHL+9Gqc9Knnzyx/4q3qrNFouS3sRuv+f0Yy1PjSKrhGQ
+         wb8qGslkF13/0B5m4Dmq4KQD+ruMhXCiY3Eg7OLSvDr9gM0o0PeVEqVcSdRvHpmofeXb
+         S84sOLI7BD9lt3o64C6FVLB4h7dndhIZSZMvCU7irP9+ClBdNPNGlEOp8/iqGWJ8bGLE
+         musQ==
+X-Gm-Message-State: AOAM530ubCZLGdxQN8JZ+9HfQ2XDNmtnNagmDgqUuiN6xwCfnC4QGWL1
+        uy1fJ6sJLsYurnrM2At4VDKiu1v1IZ4=
+X-Google-Smtp-Source: ABdhPJxmQMg6xPxUrGAAOy91XZzRwL2vYqnlHRJQ+1sMwHxmFIsRMxfehhnkhsPTkri9L+uOek7dDQ==
+X-Received: by 2002:a19:4c84:: with SMTP id z126mr10856664lfa.69.1608049072238;
+        Tue, 15 Dec 2020 08:17:52 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id b141sm253909lfd.148.2020.12.15.08.17.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Dec 2020 08:17:51 -0800 (PST)
+Subject: Re: [PATCH v1] ARM: tegra: Fix misplaced tegra_uart_config in
+ decompressor
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20201215135222.6899-1-digetx@gmail.com>
+ <980f70c6-8967-c110-1699-cb0da2f46cc0@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5b01ce96-5f8b-dfcb-accd-2ba29f34947f@gmail.com>
+Date:   Tue, 15 Dec 2020 19:17:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1607721363-8879-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <980f70c6-8967-c110-1699-cb0da2f46cc0@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 01:15:56PM -0800, Sowjanya Komatineni wrote:
-> This patch adds YAML based device tree binding document for Tegra
-> Quad SPI driver.
+15.12.2020 19:04, Florian Fainelli пишет:
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../bindings/spi/nvidia,tegra210-quad.yaml         | 130 +++++++++++++++++++++
->  1 file changed, 130 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> new file mode 100644
-> index 0000000..0b5fea6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
-> @@ -0,0 +1,130 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tegra Quad SPI Controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jonathan Hunter <jonathanh@nvidia.com>
-
-allOf:
-  - $ref: spi-controller.yaml#
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra210-qspi
-> +      - nvidia,tegra186-qspi
-> +      - nvidia,tegra194-qspi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: qspi
-> +      - const: qspi_out
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  dmas:
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    items:
-> +      - const: rx
-> +      - const: tx
-> +
-> +patternProperties:
-> +  "^.*@[0-9a-f]+":
-
-You can drop '^.*'.
-
-> +    type: object
-> +
-> +    properties:
-> +      compatible:
-> +        description:
-> +          Compatible of the SPI device.
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      spi-max-frequency:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          Maximum Quad SPI clocking speed of the device in Hz.
-> +
-> +      spi-rx-bus-width:
-> +        description:
-> +          Bus width to the Quad SPI bus used for read transfers.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [1, 2, 4]
-> +
-> +      spi-tx-bus-width:
-> +        description:
-> +          Bus width to the Quad SPI bus used for write transfers.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [1, 2, 4]
-
-All of the above 5 properties are covered by spi-controller.yaml. You 
-only need additional constraints here. As 8-bit mode is not supported, 
-you need:
-
-spi-tx-bus-width:
-  enum: [1, 2, 4]
-
-> +
-> +      nvidia,tx-clk-tap-delay:
-> +        description:
-> +          Delays the clock going out to device with this tap value.
-> +          Tap value varies based on platform design trace lengths from Tegra
-> +          QSPI to corresponding slave device.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 31
-> +
-> +      nvidia,rx-clk-tap-delay:
-> +        description:
-> +          Delays the clock coming in from the device with this tap value.
-> +          Tap value varies based on platform design trace lengths from Tegra
-> +          QSPI to corresponding slave device.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 255
-
-Please include these properties in your example.
-
-> +
-> +    required:
-> +      - reg
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clock-names
-> +  - clocks
-> +  - resets
-> +
-> +additionalProperties: true
-
-That's generally wrong unless it's a schema to be included by other 
-schemas.
-
-unevaluatedProperties: false
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra210-car.h>
-> +    #include <dt-bindings/reset/tegra210-car.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    spi@70410000 {
-> +            compatible = "nvidia,tegra210-qspi";
-> +            reg = <0x70410000 0x1000>;
-> +            interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            clocks = <&tegra_car TEGRA210_CLK_QSPI>,
-> +                     <&tegra_car TEGRA210_CLK_QSPI_PM>;
-> +            clock-names = "qspi", "qspi_out";
-> +            resets = <&tegra_car 211>;
-> +            dmas = <&apbdma 5>, <&apbdma 5>;
-> +            dma-names = "rx", "tx";
-> +
-> +            flash@0 {
-> +                    compatible = "spi-nor";
-> +                    reg = <0>;
-> +                    spi-max-frequency = <104000000>;
-> +                    spi-tx-bus-width = <2>;
-> +                    spi-rx-bus-width = <2>;
-> +            };
-> +    };
-> -- 
-> 2.7.4
+> On 12/15/2020 5:52 AM, Dmitry Osipenko wrote:
+>> The tegra_uart_config of the DEBUG_LL code is now placed right at the
+>> start of the .text section after commit which enabled debug output in the
+>> decompressor. Tegra devices are not booting anymore if DEBUG_LL is enabled
+>> since tegra_uart_config data is executes as a code. Fix the misplaced
+>> tegra_uart_config storage by embedding it into the code.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 2596a72d3384 ("ARM: 9009/1: uncompress: Enable debug in head.S")
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/include/debug/tegra.S | 54 +++++++++++++++++-----------------
+>>  1 file changed, 27 insertions(+), 27 deletions(-)
 > 
+> Looks like arch/arm/include/debug/brcmstb.S would need the same
+> treatment since the implementation was copied from tegra.S.
+> 
+
+Good catch, will you be able to test the brcm and make a patch?
