@@ -2,64 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA9AC2BBCD
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 21:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277D6C4361B
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 21:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57DC23A54
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 21:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F346D23A54
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 21:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgLQVUe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 16:20:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43378 "EHLO
+        id S1731989AbgLQV47 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 16:56:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbgLQVUe (ORCPT
+        with ESMTP id S1730937AbgLQV46 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 16:20:34 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED63C0617B0
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 13:19:53 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id t30so9993031wrb.0
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 13:19:53 -0800 (PST)
+        Thu, 17 Dec 2020 16:56:58 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC4CC061794;
+        Thu, 17 Dec 2020 13:56:17 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id m12so240572lfo.7;
+        Thu, 17 Dec 2020 13:56:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XsBwmgyFbdlnXiRdAhxB0KnsdRP9EX0fo8+7p/onVeM=;
-        b=NyRQdJQ0TIiT6H5yuKllL5V1o0PMFLt7UrTUtmH/FewUN6IbxVKuEto8NkC2CLuJq0
-         EYevYM/zZ/UNBngzu6G93EgAGA43alT1OUSBO2eHb0uZO56DXAsCGLdnR/Vs9w6H3oT2
-         A59Irsjd3PGIB1rGOaQCDkvqK1ZcPEBjVRf5ZR2e9VZIvLYMkpL9oA1nRXpC5CJj8hO/
-         wedNTokq3HhmiyhkviQNxhYAeRfhaswc/0hj0/uPVKZMCjcbJ7W4dBGEOkcSrtExG12h
-         3KIFmdEMMLGNW2R0kHOelk52IHkiN9yqwVHqN4ZyOzJa8k5A+avRgs9jLGBhjHltfj8E
-         IEoA==
+        bh=8nG3HAuO5heZzY5IBy8swXxo8V6gUQeM6w2EgX9BXJQ=;
+        b=FH7Y4beKxDLn6FrH0io7GO1GcAX5VRh7n2CsH8PTCS52NL/g+LWWVpwhVjPSfruoOQ
+         5feO5PmWTZEIKT8KD+uKJxOnCkSmh/oK7rEs6ZU0dpNnmuC+BYgE1edLQspvzqdHce85
+         K46dHCsJiwm5jh912Pg12y96Pj9yNyGP/H9uN5s88X7sMd4pMZiioWuUhbS6PAZWq0CC
+         flNZnZ8VdVz2LdVZCJj+vLBruo51dfg4tatvoTN4szFr2B2N6KhTg+RWoa6eOEazu6B5
+         eLM/se9HsQwagAK1A4dLMLdX6sawyfkSf//yE+th40OP1Wy9rW614MGIGKyPp2zy/ux1
+         gM6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XsBwmgyFbdlnXiRdAhxB0KnsdRP9EX0fo8+7p/onVeM=;
-        b=SdsuMsev6JpVNfy58RbPJsCFszFAS603wzu57YHKJRWbm+S86unI/HL+CObNoXBtXh
-         T90y5WxBxE/hUeXe14COtppDmiK5xLVlWuOA5P6AUKfULiTWmskRBCyzGEii+RGJD+go
-         mgFtj9LJz2Nwa1JD9TE0hs/ArEM2JOLGAPRvWakzOoxjkl2ZSi9Ure+AtevwmnYiSQPb
-         PYVDRZ4aHrLihCZDewcB0emhTbIMvGHXNCDHvsvwKaxiG8eM+9YYuUL1iJzSVBuPhOLT
-         Gr6KXGRFU+GTvh64eMw5o1GAEx8UX1YCniHMgRwVsL9/jAMyvL9EzOWBpVHi00NMwXr7
-         yAcA==
-X-Gm-Message-State: AOAM530RegEe0CZ2nI/Fg2TIJXzpcs78K9GR2+GEfEUC1tuTG/epl5V0
-        D4Ae4hdcMq9pxuN5e6gZakbGrQ==
-X-Google-Smtp-Source: ABdhPJz9z6Hdbu62U7P0AH8ARVxVDI3D8QgrHz9wPCZhkt1X0+MQdkHm0xs8xAdE9USd0/9DVxv2OQ==
-X-Received: by 2002:adf:f101:: with SMTP id r1mr806378wro.112.1608239992221;
-        Thu, 17 Dec 2020 13:19:52 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:ccb6:ce78:2bcd:4ead? ([2a01:e34:ed2f:f020:ccb6:ce78:2bcd:4ead])
-        by smtp.googlemail.com with ESMTPSA id m8sm9617258wmc.27.2020.12.17.13.19.50
+        bh=8nG3HAuO5heZzY5IBy8swXxo8V6gUQeM6w2EgX9BXJQ=;
+        b=AknJh3UWgmCQ0yjvPuIqLT7gVoI+3owo4rMrEDlxmV5LXiu4vSpVR/RS7s1FImo0Vt
+         691k0uItCsEN41m6cqvMHqP3Ab6Zmp6Vf/lLEADaUWEMcyzu3d69TAu6uWPOB7H5Rybg
+         xiFcKkmjSsQusUiR31RVEgjkElpp2ZStQ2zYXvrGuDSLDaAL7bDutDTcpStUXKYrc+fH
+         UnATuu2flpsA1kO2Ytqp4MKD6Nvupq4PMuchhgpHU9777uvkUASlXHNhwlIAiY+pxx94
+         ugL3dTvqagKsb5o1oHpgtwDPGxNwbsmhwqU6mi3/hPYt+++mtWy7ieYpghkEyXmRGAHs
+         hT5g==
+X-Gm-Message-State: AOAM530xawG/E8qbps0wGAQfgokPNigP0wjKCRx3YFak761qDkwdZbdA
+        AB3MU1EEnItKbCnQmJDM9h4IuhfOHUQ=
+X-Google-Smtp-Source: ABdhPJwEQwkebdm0xE5Y65k65p4/uFmrBbkvGqy6QOWj0pr2b6l8lKWwgORn22Sw3y8I8JTXiGH9dQ==
+X-Received: by 2002:a05:6512:358d:: with SMTP id m13mr300445lfr.435.1608242175976;
+        Thu, 17 Dec 2020 13:56:15 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id 20sm708668lfd.237.2020.12.17.13.56.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 13:19:51 -0800 (PST)
+        Thu, 17 Dec 2020 13:56:15 -0800 (PST)
 Subject: Re: [PATCH v2 47/48] ARM: tegra: ventana: Support CPU voltage scaling
  and thermal throttling
-To:     Dmitry Osipenko <digetx@gmail.com>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
@@ -86,13 +86,14 @@ References: <20201217180638.22748-1-digetx@gmail.com>
  <b39ebfc1-42b3-1fa7-efe4-6ecbc8cfcb50@gmail.com>
  <776e0e84-e395-2bfb-f1ee-c34864b1cf16@linaro.org>
  <ce603c74-3a20-7331-36a7-d7bc43ce36b6@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <6afaf91c-d0ce-265d-4b71-0ea8da19918b@linaro.org>
-Date:   Thu, 17 Dec 2020 22:19:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <6afaf91c-d0ce-265d-4b71-0ea8da19918b@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d6f5fb01-7fda-d08c-f909-b0f4ae731b74@gmail.com>
+Date:   Fri, 18 Dec 2020 00:56:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <ce603c74-3a20-7331-36a7-d7bc43ce36b6@gmail.com>
+In-Reply-To: <6afaf91c-d0ce-265d-4b71-0ea8da19918b@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -100,57 +101,51 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17/12/2020 21:28, Dmitry Osipenko wrote:
-> 17.12.2020 22:36, Daniel Lezcano пишет:
->>>>> +					type = "critical";
->>>>> +				};
->>>>> +			};
->>>>> +
->>>>> +			cooling-maps {
->>>>> +				map0 {
->>>>> +					trip = <&trip0>;
->>>>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->>>> You should add all CPUs here.
->>>
->>> All CPU cores are coupled on Tegra in regards to CPUFreq, hence I think
->>> it won't make any difference if secondary CPU cores will be added here,
->>> isn't it?
->> The explanation is in the description of commit ef4734500407ce4d
+18.12.2020 00:19, Daniel Lezcano пишет:
+> On 17/12/2020 21:28, Dmitry Osipenko wrote:
+>> 17.12.2020 22:36, Daniel Lezcano пишет:
+>>>>>> +					type = "critical";
+>>>>>> +				};
+>>>>>> +			};
+>>>>>> +
+>>>>>> +			cooling-maps {
+>>>>>> +				map0 {
+>>>>>> +					trip = <&trip0>;
+>>>>>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>>>>> You should add all CPUs here.
+>>>>
+>>>> All CPU cores are coupled on Tegra in regards to CPUFreq, hence I think
+>>>> it won't make any difference if secondary CPU cores will be added here,
+>>>> isn't it?
+>>> The explanation is in the description of commit ef4734500407ce4d
+>>
+>> I think that really only makes sense if CPU cores have independent clock
+>> rate management. 
 > 
-> I think that really only makes sense if CPU cores have independent clock
-> rate management. 
-
-ATM I did not see any ARM platform having a clock line per CPU but I may
-be wrong.
-
-> IIRC, I actually made some research about this in the
-> past and intentionally removed the secondary cores from the
-> cooling-device since they didn't make any difference for a coupled CPU
-> cores.
+> ATM I did not see any ARM platform having a clock line per CPU but I may
+> be wrong.
 > 
-> That commit also says:
+>> IIRC, I actually made some research about this in the
+>> past and intentionally removed the secondary cores from the
+>> cooling-device since they didn't make any difference for a coupled CPU
+>> cores.
+>>
+>> That commit also says:
+>>
+>> "But as soon as this CPU ordering changes and any other CPU is used to
+>> bring up the cooling device, we will start seeing failures."
+>>
+>> I don't quite understand to what "failures" that commit referrers. I
+>> tried to change the cpu0 to cpu1 in the cooling-device and don't see any
+>> failures. Could you please clarify this?
+>>
+>> In general it should be fine to add all the cores to the cooling-device
+>> and I'll do it in v3, but I want to make it clear why this is needed.
 > 
-> "But as soon as this CPU ordering changes and any other CPU is used to
-> bring up the cooling device, we will start seeing failures."
+> AFAIR, if CPU0 is unplugged the cooling device can not rebind to CPU1.
+> And if CPU0 is plugged in again, the cooling device fails to initialize.
 > 
-> I don't quite understand to what "failures" that commit referrers. I
-> tried to change the cpu0 to cpu1 in the cooling-device and don't see any
-> failures. Could you please clarify this?
-> 
-> In general it should be fine to add all the cores to the cooling-device
-> and I'll do it in v3, but I want to make it clear why this is needed.
+> And, if the CPUs are mapped with the physical CPU0 to Linux numbering
+> CPU1, the cooling device mapping will fail.
 
-AFAIR, if CPU0 is unplugged the cooling device can not rebind to CPU1.
-And if CPU0 is plugged in again, the cooling device fails to initialize.
-
-And, if the CPUs are mapped with the physical CPU0 to Linux numbering
-CPU1, the cooling device mapping will fail.
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Alright, thank you.
