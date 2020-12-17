@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D67C2BB9A
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEFFC47435
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3842388E
+	by mail.kernel.org (Postfix) with ESMTP id EE7DA2388E
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbgLQSKN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:10:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        id S1731481AbgLQSK2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:10:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731142AbgLQSJZ (ORCPT
+        with ESMTP id S1731045AbgLQSJR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:25 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CCD7C0619E1;
-        Thu, 17 Dec 2020 10:07:57 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id o19so34210417lfo.1;
-        Thu, 17 Dec 2020 10:07:57 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:17 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A711C061A4A;
+        Thu, 17 Dec 2020 10:08:13 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id o17so56905161lfg.4;
+        Thu, 17 Dec 2020 10:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fSZsRiGPvHGJIz6xJlgckAslhA5OFM73ksRI6N0tMp8=;
-        b=SSoEYbrUwVJbokD0g4aSzGVYzLoo1djMf+cHRF3oOgvVkRsaWrJwLXOGc1Knrvyr2b
-         DccdRAu+d9A30rBsNq3HLE/rNpNr0GG4xKc2ooNJwfpBmtfYY+dGZ9BLgDO2hcQwbkQG
-         rXzxRMKTFSZKzYsIEed00E27YBtkPCV4TOn5X9DJcHeUL9pXdXFYknghO/xNHPz4rMWo
-         rB/lPKZ/8U/R+0rZ1sD8Ymr0KEa7psFmm90SDWEFYmQBORfcp6PW/3yqIrrv1GwaM5xE
-         QGrA+T06WrScibZOe5YvM37aDkOkS9W/PBNg3YGpvJL7KL+MdBsD6/7F3QUSo2XmXgP8
-         hxcA==
+        bh=DnMa2cBERwNvCshkcZIGtYzUizYdSDwH8+FlINjZS+o=;
+        b=nGBDtC0LssrkA/xgl49FxWqeuomEM/+ArFanzMzMEGA7xk46eJqVrlO5N6wN2JQXgx
+         ASIENxqpmVpFuK7ESxAwjXOiTyJkEmnG6qv7SDFaU0BynG17CnhPdmVlEPOoqGl4mm6N
+         +MxaC6pdEu65jWYzV6zRgWGYFLns79jXe8fGVRmiXJ9lvisZbWIOaptqSP35tbVTuqjZ
+         GWnXCIBG32kJYzpS4w5GOp74lTeeLOFOgS+Ce4ahS6jgn0biV+2+7pT7nYpr3vOR20Mo
+         SEpvYMg9qqttuOc5EiuBgetb2icZ++FBfLBVG1YoVBG/OymCXngPlGOmB/uUD5M+spu4
+         VeTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fSZsRiGPvHGJIz6xJlgckAslhA5OFM73ksRI6N0tMp8=;
-        b=ZxzhG6c9XF97Z/eZQFy5N80Qk9eI3QuJxG46EYqVVgsVNiTZB+aoBQZBS9nObG5jQ7
-         AzU/qa+6MYXMPAM4Z0HULeY1mGO20eAHlPjOgD4DONW/554iEzNSZy6OBoEJ7DpJYG/D
-         PBUPA48nvZZ2IkwB459goH7/NHUVL6FW+kVQfjt+NtxrwNmGJp9poc2I0QLnNUL3yCkq
-         P+fXIGtC74kUd4uf25vD0meC0AeeBZxN9B+ig8RBA4tQkFPgRxp1Xr4Nj1NQYw7iFArN
-         sGa7hAePvnLqM/eSfb+rm14wE7RjpElBv9c8+GcuSFLBXtgNWjiIJiE6QcpjzmXJ6ANG
-         7FVQ==
-X-Gm-Message-State: AOAM533KtsfGdIE+HuWvJK2RyTZNxxycENnhJDKNX0Xi6AhOPbgsim6h
-        +h0mII0X+d+23SejYIOQRdw=
-X-Google-Smtp-Source: ABdhPJwoFDMN+1gF0f+Bpm5Sk1b5ggUXNJvloCrELun0AuDK7TcbEhAsRjembtOJ87S5OMXLbDP3iw==
-X-Received: by 2002:ac2:4307:: with SMTP id l7mr14478362lfh.304.1608228475770;
-        Thu, 17 Dec 2020 10:07:55 -0800 (PST)
+        bh=DnMa2cBERwNvCshkcZIGtYzUizYdSDwH8+FlINjZS+o=;
+        b=pmdVKIE5AoGeuk4VP+G3zQdLfagW3zF0IpO9goYVBmZpdSMOadJ2/z75L3xXO1/c1Z
+         eFv/641xMVMijHwbKHTDTUoxm5p/FOvnlXK6CFFrqIxLKj/juN3HsPXwADhMa9ObgvZY
+         61ByqWoQEcWdgRtCgZCiET6/ErN+E2xfOxI6kpK2JllcH4BOrIT4E+V6iBP74jZdZQf3
+         ZjoiuUJizN65R81lffm5aWx7MtWv3CsJv41J+rO4fidXuk0nRK+2UsYfc7qo/n+nP5h8
+         Z3RkafMVBsPRdx262h4LU1VV15rjts6CrwG66Cpe/I5ky569TphQn+V8iwMH+xHJmAGm
+         7R+A==
+X-Gm-Message-State: AOAM530EkEVWiAkNQXuwyxb64rhZm9XeNAgMJf/CFM99/jg29Oc/9YNm
+        uZJO2WYPZbutGNcB+InoBHM=
+X-Google-Smtp-Source: ABdhPJxK1jf/bwqucZvsz55FDatdpoVwAeTBPQ/w/sO44sRzQ468CuHtA9cdQUMcur4nHvtg9vjUgA==
+X-Received: by 2002:a05:651c:120f:: with SMTP id i15mr214039lja.339.1608228492131;
+        Thu, 17 Dec 2020 10:08:12 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.54
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:55 -0800 (PST)
+        Thu, 17 Dec 2020 10:08:11 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 31/48] soc/tegra: regulators: Support Core domain state syncing
-Date:   Thu, 17 Dec 2020 21:06:21 +0300
-Message-Id: <20201217180638.22748-32-digetx@gmail.com>
+Subject: [PATCH v2 45/48] ARM: tegra: acer-a500: Enable core voltage scaling
+Date:   Thu, 17 Dec 2020 21:06:35 +0300
+Message-Id: <20201217180638.22748-46-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,106 +90,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The core voltage shall not drop until state of Core domain is synced,
-i.e. all device drivers that use Core domain are loaded and ready.
-
-Support Core domain state syncing. The Core domain driver invokes the
-core-regulator voltage syncing once the state of domain is synced, at
-this point the Core voltage is allowed to go lower.
+Allow lower core voltages on Acer A500.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/regulators-tegra20.c | 19 ++++++++++++++++++-
- drivers/soc/tegra/regulators-tegra30.c | 18 +++++++++++++++++-
- 2 files changed, 35 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/regulators-tegra20.c b/drivers/soc/tegra/regulators-tegra20.c
-index 367a71a3cd10..e2c11d442591 100644
---- a/drivers/soc/tegra/regulators-tegra20.c
-+++ b/drivers/soc/tegra/regulators-tegra20.c
-@@ -16,6 +16,8 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index 78b307370a46..6b851cab0efa 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -578,7 +578,7 @@ sys_reg: sys {
  
-+#include <soc/tegra/common.h>
-+
- struct tegra_regulator_coupler {
- 	struct regulator_coupler coupler;
- 	struct regulator_dev *core_rdev;
-@@ -38,6 +40,21 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
- 	int core_cur_uV;
- 	int err;
+ 				vdd_core: sm0 {
+ 					regulator-name = "vdd_sm0,vdd_core";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
+@@ -619,7 +619,7 @@ ldo1 {
  
-+	/*
-+	 * Tegra20 SoC has critical DVFS-capable devices that are
-+	 * permanently-active or active at a boot time, like EMC
-+	 * (DRAM controller) or Display controller for example.
-+	 *
-+	 * The voltage of a CORE SoC power domain shall not be dropped below
-+	 * a minimum level, which is determined by device's clock rate.
-+	 * This means that we can't fully allow CORE voltage scaling until
-+	 * the state of all DVFS-critical CORE devices is synced.
-+	 */
-+	if (tegra_soc_core_domain_state_synced()) {
-+		pr_info_once("voltage state synced\n");
-+		return 0;
-+	}
-+
- 	if (tegra->core_min_uV > 0)
- 		return tegra->core_min_uV;
- 
-@@ -58,7 +75,7 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
- 	 */
- 	tegra->core_min_uV = core_max_uV;
- 
--	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-+	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
- 
- 	return tegra->core_min_uV;
- }
-diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
-index 0e776b20f625..42d675b79fa3 100644
---- a/drivers/soc/tegra/regulators-tegra30.c
-+++ b/drivers/soc/tegra/regulators-tegra30.c
-@@ -16,6 +16,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- 
-+#include <soc/tegra/common.h>
- #include <soc/tegra/fuse.h>
- 
- struct tegra_regulator_coupler {
-@@ -39,6 +40,21 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
- 	int core_cur_uV;
- 	int err;
- 
-+	/*
-+	 * Tegra30 SoC has critical DVFS-capable devices that are
-+	 * permanently-active or active at a boot time, like EMC
-+	 * (DRAM controller) or Display controller for example.
-+	 *
-+	 * The voltage of a CORE SoC power domain shall not be dropped below
-+	 * a minimum level, which is determined by device's clock rate.
-+	 * This means that we can't fully allow CORE voltage scaling until
-+	 * the state of all DVFS-critical CORE devices is synced.
-+	 */
-+	if (tegra_soc_core_domain_state_synced()) {
-+		pr_info_once("voltage state synced\n");
-+		return 0;
-+	}
-+
- 	if (tegra->core_min_uV > 0)
- 		return tegra->core_min_uV;
- 
-@@ -59,7 +75,7 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
- 	 */
- 	tegra->core_min_uV = core_max_uV;
- 
--	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-+	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
- 
- 	return tegra->core_min_uV;
- }
+ 				rtc_vdd: ldo2 {
+ 					regulator-name = "vdd_ldo2,vdd_rtc";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&vdd_core &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
 -- 
 2.29.2
 
