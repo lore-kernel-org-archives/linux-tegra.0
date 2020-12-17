@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93927C4361B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7089DC4361B
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 585CB238EF
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10AD22396F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbgLQNlV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 08:41:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56902 "EHLO
+        id S1726548AbgLQNmT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 08:42:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbgLQNlU (ORCPT
+        with ESMTP id S1726291AbgLQNmT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 08:41:20 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3162CC061794;
-        Thu, 17 Dec 2020 05:40:40 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id x22so5582610wmc.5;
-        Thu, 17 Dec 2020 05:40:40 -0800 (PST)
+        Thu, 17 Dec 2020 08:42:19 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050BAC061794;
+        Thu, 17 Dec 2020 05:41:39 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id d13so8390717wrc.13;
+        Thu, 17 Dec 2020 05:41:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/xEt0wXdZL7ADBlF9vEh+tffl4oQx1au7xXjBQxF3OA=;
-        b=qVVYf0/5qfDxl0QYXURpha42E9l2jVz9UilHHIX//iYcVxpw7+R9seGuvwbdJGOr0q
-         zrH2fyS2QUpiNjh6vhKFpx/GLwrgejSGB1VOtOYV62krufKhDfe9nO4s5i1j3JbHo3Ep
-         b78EVoWywFQUF5BSzImktjUuPHLBObOP8qo035QUQyqMQG5J2obwVJ9QmGUcc5FC+u48
-         /JKc4oo3At6WPqwtHQNiqIw5FbemJCY+j8g0T24b/dQuUl+8g1ik+C13vdFoA+VMhTv4
-         k9zgZaGMOggGdZFcw61cHiMXGuCVppmv/O1t4IpAqZnvJEtxUArcJWVG+OVECqbGUeo2
-         G6+w==
+        bh=SSiUovB1ZKvlSGMVvhS/vfOc7vEzdGXOp/oMPhMJjwE=;
+        b=rkS6TF9br+Bg1nnQ+IGTw7QVjntpInFGPQYtyKJ7ieGM14VA5oVryVfGXxzc6S9HtY
+         B1ZLQtjrk48iq2Yla6mVE41aBMcZrh+Gbq1Nkd8VZNrBH5XQ/bam63RYuFPuDlPiOrGY
+         Errq/t+7s5pQMyptqzKW0qioD4oST49B2ysTgBJITGyWuRaL/oyz7FSxLj1x4ipLUQTj
+         CaTD+TsOrBpfXL99KyVZihztYjfJpwXxCljRYL3HG31mvXAaNplxOt4ddmge1Hn6EoLg
+         oEg7iePzUojr/JpgPbAkk6nZ2LSfHDpJ0cdQuVpBkFHhJCOx1bZ6W7WZWi2SKtirxpXg
+         MoMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/xEt0wXdZL7ADBlF9vEh+tffl4oQx1au7xXjBQxF3OA=;
-        b=ExHzHlxNPok2eNVSZ5T9m99/na0Hyv6zC0zu6QaI8uiiOJxs1YxWUIbDMOlRlCRwzI
-         Lh6ridokEAht79bWymwGm6+ubxs+EG225EvtEVFTDFPNkW/yANUBuGbUyYUVE7TwxoZi
-         f0NIiE5NiihXlrkYpt2pDSrhhdiB66gXcVxbiB1dgzTLeGI1liPeHPOnb6QeVpNJdUNf
-         FBjtIf+VOaWKdPKw31GqjSrbqzCdAn6ZJTXMUdbgB3fM0Qyj+N/eWCTTRlStb27GEbPD
-         AeHiABHo9RlCP91K0U9ZXB+yQkXuo7leBQf/tUaMFJdrWqLYDUg7cD4BDG8DPNusHi9f
-         57EQ==
-X-Gm-Message-State: AOAM530sjcazPXZeOIROOySjrdqE6Uji/RXM0lvdPqKn/4DtXilLnnkE
-        Ks2OrTMXCl81a2ADo7ycT9A=
-X-Google-Smtp-Source: ABdhPJw8WnkEANXergOYbF/Xpo2OL4+IJooyL6tb8eAwRdFjI8Lm0fBCRWx60MEWgmF8s2OdkJQntA==
-X-Received: by 2002:a1c:2182:: with SMTP id h124mr8626434wmh.25.1608212438975;
-        Thu, 17 Dec 2020 05:40:38 -0800 (PST)
+        bh=SSiUovB1ZKvlSGMVvhS/vfOc7vEzdGXOp/oMPhMJjwE=;
+        b=AQF+jqdo/+LjyTuFf+GxQAXTJF7NVfiDGfMo21px50OTtLaZQwI8RxyoviPwmkWJlO
+         ZqlQN/AeMatoUBDmoDE7phg9W/QalPix0lEK0gOAP3ehbA5Yg3AjcO1qLxQAs7vBS/eN
+         0fnZgEf9Kg9QV8HgWhH0o1sb+/E11kaQ/bABJfyOQGnBBgQ7Zc2n447pnFMgEiyUxMSW
+         2PBMRturfCcb+NvQ/wLi/toW5KHgHvo9YcyCihW20ml9RoDhH8bWLQxrdIxb8awiUr8l
+         erCGGBiuozm6+234JcKmSnWIW3QJBZ2j6XyfpnQFWEUP19CX3xWFoX9tGn8CIXLrJptU
+         PLyQ==
+X-Gm-Message-State: AOAM533XUmSlPKnlF93amFqhiLKKNjhMOuOQQTk3YaqCqRVKz3eOvIaj
+        JZ7nrTYap4J7gXTfAcguBOg=
+X-Google-Smtp-Source: ABdhPJzLB9dqsEJ377DeFiwq4G/4bBOdNhmaCyeB6CWo0v7dpy2Agw3PkWbDuZOqEP5j3VzTja6k7w==
+X-Received: by 2002:adf:ef12:: with SMTP id e18mr12415210wro.192.1608212497764;
+        Thu, 17 Dec 2020 05:41:37 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id e17sm8660868wrw.84.2020.12.17.05.40.37
+        by smtp.gmail.com with ESMTPSA id r13sm9030864wrt.10.2020.12.17.05.41.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 05:40:37 -0800 (PST)
-Date:   Thu, 17 Dec 2020 14:40:36 +0100
+        Thu, 17 Dec 2020 05:41:36 -0800 (PST)
+Date:   Thu, 17 Dec 2020 14:41:35 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -70,68 +70,105 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Ion Agorria <ion@agorria.com>, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] usb: chipidea: tegra: Support host mode
-Message-ID: <X9tf1MzyUTCvfvBn@ulmo>
+Subject: Re: [PATCH v2 6/8] usb: chipidea: tegra: Support runtime PM
+Message-ID: <X9tgD+KSU1bIvht5@ulmo>
 References: <20201217094007.19336-1-digetx@gmail.com>
- <20201217094007.19336-6-digetx@gmail.com>
+ <20201217094007.19336-7-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7iCBPi+CNmxV7TSd"
+        protocol="application/pgp-signature"; boundary="n/D9wwuYCvcRgZHH"
 Content-Disposition: inline
-In-Reply-To: <20201217094007.19336-6-digetx@gmail.com>
+In-Reply-To: <20201217094007.19336-7-digetx@gmail.com>
 User-Agent: Mutt/2.0.3 (a51f058f) (2020-12-04)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---7iCBPi+CNmxV7TSd
+--n/D9wwuYCvcRgZHH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 17, 2020 at 12:40:04PM +0300, Dmitry Osipenko wrote:
-> From: Peter Geis <pgwipeout@gmail.com>
->=20
-> Add USB host mode to the Tegra HDRC driver. This allows us to benefit from
-> support provided by the generic ChipIdea driver instead of duplicating the
-> effort in a separate ehci-tegra driver.
+On Thu, Dec 17, 2020 at 12:40:05PM +0300, Dmitry Osipenko wrote:
+> Tegra PHY driver now supports waking up controller from a low power mode.
+> Enable runtime PM in order to put controller into the LPM during idle.
 >=20
 > Tested-by: Matt Merhar <mattmerhar@protonmail.com>
 > Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
 > Tested-by: Ion Agorria <ion@agorria.com>
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/usb/chipidea/Kconfig         |   1 -
->  drivers/usb/chipidea/ci_hdrc_tegra.c | 243 ++++++++++++++++++++++++++-
->  drivers/usb/chipidea/core.c          |  10 +-
->  drivers/usb/chipidea/host.c          | 104 +++++++++++-
->  include/linux/usb/chipidea.h         |   6 +
->  5 files changed, 356 insertions(+), 8 deletions(-)
+>  drivers/usb/chipidea/ci_hdrc_tegra.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/=
+ci_hdrc_tegra.c
+> index 5fccdeeefc64..655671159511 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> @@ -38,21 +38,24 @@ struct tegra_usb_soc_info {
+> =20
+>  static const struct tegra_usb_soc_info tegra20_ehci_soc_info =3D {
+>  	.flags =3D CI_HDRC_REQUIRES_ALIGNED_DMA |
+> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
+> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
+> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
+>  	.dr_mode =3D USB_DR_MODE_HOST,
+>  	.txfifothresh =3D 10,
+>  };
+> =20
+>  static const struct tegra_usb_soc_info tegra30_ehci_soc_info =3D {
+>  	.flags =3D CI_HDRC_REQUIRES_ALIGNED_DMA |
+> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
+> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
+> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
+>  	.dr_mode =3D USB_DR_MODE_HOST,
+>  	.txfifothresh =3D 16,
+>  };
+> =20
+>  static const struct tegra_usb_soc_info tegra_udc_soc_info =3D {
+>  	.flags =3D CI_HDRC_REQUIRES_ALIGNED_DMA |
+> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
+> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
+> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
+>  	.dr_mode =3D USB_DR_MODE_UNKNOWN,
+>  };
+> =20
+> @@ -323,6 +326,10 @@ static int tegra_usb_probe(struct platform_device *p=
+dev)
+>  	usb->data.hub_control =3D tegra_ehci_hub_control;
+>  	usb->data.notify_event =3D tegra_usb_notify_event;
+> =20
+> +	/* Tegra PHY driver currently doesn't support LPM for ULPI */
+> +	if (of_usb_get_phy_mode(pdev->dev.of_node) =3D=3D USBPHY_INTERFACE_MODE=
+_ULPI)
+> +		usb->data.flags &=3D ~CI_HDRC_SUPPORTS_RUNTIME_PM;
+> +
 
-Looks good:
+Does this prevent the wakeup_enabled from being set for ULPI PHYs?
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Thierry
 
---7iCBPi+CNmxV7TSd
+--n/D9wwuYCvcRgZHH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/bX9QACgkQ3SOs138+
-s6EcQw/9F3ruq/wHzXzARXjYo1L/SG55dJe/VK6Qei7WNOWR47PnS5PvUv0dR4rs
-mjvbDJ4tpU91LvnrAytX1aQOtifDNnjY5dqKDLgPde/iiHoh97rjwiBPgYtnQM5k
-1bWVi+A0pHY4H2FtB35HZtP/fLPo3sDJzax8s7/SIFyfXiu+cgbSVZjGypjhBHJY
-RYXLLZzFfxMeJFpDvxb5cYbQy1+06bPPQIZePlE3WMFrh/oanjQraseMc2PdSA3K
-5ufgyHtVInNS3gFERDQyvDQ3/JjNBvZbTQCNmDfPd9HdNgiP6SDUoLQxlZ/vNnWt
-0aJ/uUSTRhid7PvngYOaoPS+LjiELrTuSq3ubdVRJ0wM5uMJQQQ2xBjAlfTMawQP
-7K3xdnZ6GEx7+VyieqD2JC7c2eqdJm2WAqI3aHJTo5oYfWHmxWmp4Xd7FzkxYuVi
-PLWjkEKFxHl54BWV559t3oEayqRXLTr1k0JOVXaqA5anY5FodjGE4xov99qCjoXp
-NBs7q5dHuhMLcdYpS1JYLmdzzURDPiZnG7QgimybQ3m9uzCLHKMXu6+5SmCz5cRF
-0GsFyzY6XPgq8xZnzpARSVhDT/8E9tYE4KozE/j/Ca+pTkRwPKxxhJGD/l6931EM
-YfSTtZOyvZojLbUeptQ48zb26wDSZCEDyPqN3jnmsEABZbSjqzM=
-=G5vX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/bYA8ACgkQ3SOs138+
+s6Hl5w/7BVkXve6VtsuqTT5P4adAwE8LOMKsR0XHw70c5khXTnLY7llcjsgeAQYk
+6YP0XpHupIaF8fGjEDDohLRnyK/xAWQ2BkHyanHlolWSqYKSxssvcF5etkwiir2t
+Gmq7Klsq4m9B1DeSDnhJj9rqSVhdDR+dVItPphjduL0g7OO8PslQB8m5oJUwuUNd
+J9j2hFhjEeTLdJjItQEGNHBXtVzxx/b+YHFISZG3uIwnuzf0kZ6X+XgSDyONrso5
+Etf2pLmQzchDWHomOoJgSgjZtTbjI9heKdVwG+hZd+hEQIS+m0kx1cxGPZrzNjh5
+s61yFlYQOL1h2saheDY3OeG3k/wgATw2STIwauY+5/ERQQZhuR4UACeD2uPg89xI
+0Wike8b/SWMgmv4V14nOFGNPhTTcQ3mXA+GdBzPznHwfhBXfmsfLaXXQJvA/gEjW
+u4+u3MuPBkf/7t8bGwM7QY3Ia0rUHelOYSLyydKO4GNKSZO+Ldu9IRfg/7aGM70n
+W6/c1LZIhUKMnOr4qXXm5ZZPYnVsDK814osk0wtqoU51auNqkeM1mQ9JrkV8fl57
+7aefWjlNMvDOkpftfViwz6vYJsPqyN7e62khVWLXajCMW0K6nQie2K7DOBt0nQZL
+2tCBA89CiJJzf3c/Hs9snd7H5v7aQqA9WncpYw92JXaJ/IRfns8=
+=U/AY
 -----END PGP SIGNATURE-----
 
---7iCBPi+CNmxV7TSd--
+--n/D9wwuYCvcRgZHH--
