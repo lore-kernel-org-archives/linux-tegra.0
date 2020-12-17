@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82211C352A6
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31070C2BBCD
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54EFB2395A
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A4AC239EB
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbgLQSI6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:08:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41992 "EHLO
+        id S1730270AbgLQSMa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:12:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730356AbgLQSI4 (ORCPT
+        with ESMTP id S1730359AbgLQSI5 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:08:56 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9032DC0619D8;
-        Thu, 17 Dec 2020 10:07:44 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id u18so59831574lfd.9;
-        Thu, 17 Dec 2020 10:07:44 -0800 (PST)
+        Thu, 17 Dec 2020 13:08:57 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AA28C061794;
+        Thu, 17 Dec 2020 10:07:49 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id o19so34209261lfo.1;
+        Thu, 17 Dec 2020 10:07:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ic3kTPXawx4sKcxOaKN7fFyaFOYLW2jZWk2kyZRzIN8=;
-        b=pDPXQoxWtm8qgegOQQnLPP2iNl8IcQFs8OGUq2CcE/tO41E62bEBO32YvUgCVcHJ+V
-         YPtVtozDo2n+wZJ4WQmT4rbG7S/div+wwrks6vq0KVL+VFD7En3oQrxCR9XkycdVzhsW
-         S6BmQauT0TOzAZHGgiEusPxXhQOSZMTP5TD6YEKytzyzXfypbZ+5zUfDdkPIIU8s3+Ou
-         mqnXy8OLojNQRx7M8z4L+fND+7tQ+nvxgScaL4ixkM3YRwx7uRc1TLy61azneCrZUo4c
-         Hlcrvlhj6vwXBTq4+eZfHetTjVFqobaSbAbt7owq2Uhx4ROsy0JCVwjBqThP2hwltppM
-         s2mA==
+        bh=2xd7/yRqQ1bpLSBqqvPYmX9y9km1o1DPCdEu2/xdf8k=;
+        b=knjqp1xwmZY1uipSsuIrAKlbV0FPromBnLXJv9W83vZ4UUD9iS/WzmlpXNbZhD+xJn
+         SVAeMUogtUbshBqLuRHfAQSoeEPnAUD2yOgO+lP8Bv5/lzDv8qlofpqMefqRFy+qnU8y
+         cmQWdkpzg8Ar4Ggr1+b1gKRJeePAZtWXiDMoiFncDbrbrSMtUGmP/E6F80FzVADdQkzy
+         obs4CCg1a82jm+Qbii45XqQPDlOvSM0QVnq93k4Ac/PIR/SMRe3nDMizmTePuRTNAgHV
+         BgBWlE/0wpha34e9hCrNtqDLLb1/sEbxoNPJESoXU299byDkUHyj1fP1p1mFO/Rl8rs3
+         DTPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ic3kTPXawx4sKcxOaKN7fFyaFOYLW2jZWk2kyZRzIN8=;
-        b=UUqGURPoq1CW4m9Yw4uM5CUmNPlpWryGMgcp+MaeySfoOYlQLSMdWOVR3TjSElJmqx
-         SDKSkSoxYSI8O2BZX0mArULKMZ8gBFTn8CzxtGv5SFJW4AbTO8T2oqBTTnFzk7lexjIC
-         7ATxlC8VREHmgpv5bLwAHMEYy6wHOnsTTds/QTNIiECVU6Ja3SSIpF+C+2U5H6Kc5p9N
-         6aO+qzg9Pgh03mT/Mk0DSJyVrN873E5Va8Zo9xReyni7mpbPE+lsZETefvFtA+d/ScSr
-         3XkGRmqNWLHlOBxk7mnn1prvFXpwsUhkG++dSbnXqSk+fF9mYmVbWVxyG3CWttHsOp+Z
-         LbYw==
-X-Gm-Message-State: AOAM530kcy8A0C1AzbhC1w5fUZzfcboc0tO9QjVaWyzmkhsPMWTgUVv6
-        AQCa1JJxXGOLR0Eo720c72E=
-X-Google-Smtp-Source: ABdhPJwellNh5faxAJj9vvQwVQ45t8eRtpsRvTnCcKlBjZrYp1XD+vvrxTLHfCwLKBFNaDRVWiD1zw==
-X-Received: by 2002:a2e:a407:: with SMTP id p7mr226531ljn.78.1608228463135;
-        Thu, 17 Dec 2020 10:07:43 -0800 (PST)
+        bh=2xd7/yRqQ1bpLSBqqvPYmX9y9km1o1DPCdEu2/xdf8k=;
+        b=MZ1qSwhU1K9I9oTToP03+AhcFbm5CbWoo18ehBbi1rHt22ffm9MV1HNRlk0F/8jwfd
+         seicjEMzZ3fMYSvZWRqkwurH2Wi//XPC/G9loyxFMz97ZEBWhE1cQSnZ6DpyAq83G4rc
+         5reGST/R8iXnr3nCs+ipQrHVh3fNlellFf2pObHChVfeoilexOWx2KIjoL+hqTTWZmlP
+         zgfmcZ1PErAJJFGtlywawLBRUZeqHz9c6qw/qGzigodQINaXIM3oqVS1ZuH+i1PP0/8C
+         go7QXOF3fIx9E7aU/IzjxnhmIRStZ+M6SzEgT/wPDVgRZk1QRVw/bouzfvkBeFOAJLWN
+         rIpw==
+X-Gm-Message-State: AOAM532LphPMkjHSKJbNO5J/5B6ghdLpm66MmDlzx6iD/Zoze0TmEuyt
+        acOxf2WHYBbyW546+2BfIDU=
+X-Google-Smtp-Source: ABdhPJxl5RroGj+GTUW6FyPBVu/AN/pYFQvr0N2HeyHSfmpalUAs6qNcm/28WYlCJIdj+T+0fIA9GQ==
+X-Received: by 2002:a19:9d8:: with SMTP id 207mr8275737lfj.581.1608228467753;
+        Thu, 17 Dec 2020 10:07:47 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.42
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:42 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:47 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 20/48] PM: domains: Make set_performance_state() callback optional
-Date:   Thu, 17 Dec 2020 21:06:10 +0300
-Message-Id: <20201217180638.22748-21-digetx@gmail.com>
+Subject: [PATCH v2 24/48] soc/tegra: pmc: Ensure that clock rates aren't too high
+Date:   Thu, 17 Dec 2020 21:06:14 +0300
+Message-Id: <20201217180638.22748-25-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,45 +90,200 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Make set_performance_state() callback optional in order to remove the
-need from power domain drivers to implement a dummy callback. If callback
-isn't implemented by a GENPD driver, then the performance state is passed
-to the parent domain.
+Switch all clocks of a power domain to a safe rate which is suitable
+for all possible voltages in order to ensure that hardware constraints
+aren't violated when power domain state toggles.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/base/power/domain.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/soc/tegra/pmc.c | 92 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 90 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 9a14eedacb92..a3e1bfc233d4 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -339,9 +339,11 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
- 			goto err;
- 	}
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 985373ce52b1..8edcd5b319f6 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -237,6 +237,7 @@ struct tegra_powergate {
+ 	unsigned int id;
+ 	struct clk **clks;
+ 	unsigned int num_clks;
++	unsigned long *clk_rates;
+ 	struct reset_control *reset;
+ };
  
--	ret = genpd->set_performance_state(genpd, state);
--	if (ret)
--		goto err;
-+	if (genpd->set_performance_state) {
-+		ret = genpd->set_performance_state(genpd, state);
-+		if (ret)
-+			goto err;
-+	}
- 
- 	genpd->performance_state = state;
+@@ -586,6 +587,57 @@ static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
  	return 0;
-@@ -399,9 +401,6 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
- 	if (!genpd)
- 		return -ENODEV;
+ }
  
--	if (unlikely(!genpd->set_performance_state))
--		return -EINVAL;
--
- 	if (WARN_ON(!dev->power.subsys_data ||
- 		     !dev->power.subsys_data->domain_data))
- 		return -EINVAL;
++static int tegra_powergate_prepare_clocks(struct tegra_powergate *pg)
++{
++	unsigned long safe_rate = 100 * 1000 * 1000;
++	unsigned int i;
++	int err;
++
++	for (i = 0; i < pg->num_clks; i++) {
++		pg->clk_rates[i] = clk_get_rate(pg->clks[i]);
++
++		if (!pg->clk_rates[i]) {
++			err = -EINVAL;
++			goto out;
++		}
++
++		if (pg->clk_rates[i] <= safe_rate)
++			continue;
++
++		/*
++		 * We don't know whether voltage state is okay for the
++		 * current clock rate, hence it's better to temporally
++		 * switch clock to a safe rate which is suitable for
++		 * all voltages, before enabling the clock.
++		 */
++		err = clk_set_rate(pg->clks[i], safe_rate);
++		if (err)
++			goto out;
++	}
++
++	return 0;
++
++out:
++	while (i--)
++		clk_set_rate(pg->clks[i], pg->clk_rates[i]);
++
++	return err;
++}
++
++static int tegra_powergate_unprepare_clocks(struct tegra_powergate *pg)
++{
++	unsigned int i;
++	int err;
++
++	for (i = 0; i < pg->num_clks; i++) {
++		err = clk_set_rate(pg->clks[i], pg->clk_rates[i]);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static void tegra_powergate_disable_clocks(struct tegra_powergate *pg)
+ {
+ 	unsigned int i;
+@@ -636,10 +688,14 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	usleep_range(10, 20);
+ 
+-	err = tegra_powergate_enable_clocks(pg);
++	err = tegra_powergate_prepare_clocks(pg);
+ 	if (err)
+ 		goto powergate_off;
+ 
++	err = tegra_powergate_enable_clocks(pg);
++	if (err)
++		goto unprepare_clks;
++
+ 	usleep_range(10, 20);
+ 
+ 	err = __tegra_powergate_remove_clamping(pg->pmc, pg->id);
+@@ -670,12 +726,19 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 	if (disable_clocks)
+ 		tegra_powergate_disable_clocks(pg);
+ 
++	err = tegra_powergate_unprepare_clocks(pg);
++	if (err)
++		return err;
++
+ 	return 0;
+ 
+ disable_clks:
+ 	tegra_powergate_disable_clocks(pg);
+ 	usleep_range(10, 20);
+ 
++unprepare_clks:
++	tegra_powergate_unprepare_clocks(pg);
++
+ powergate_off:
+ 	tegra_powergate_set(pg->pmc, pg->id, false);
+ 
+@@ -686,10 +749,14 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
+ {
+ 	int err;
+ 
+-	err = tegra_powergate_enable_clocks(pg);
++	err = tegra_powergate_prepare_clocks(pg);
+ 	if (err)
+ 		return err;
+ 
++	err = tegra_powergate_enable_clocks(pg);
++	if (err)
++		goto unprepare_clks;
++
+ 	usleep_range(10, 20);
+ 
+ 	err = reset_control_assert(pg->reset);
+@@ -706,6 +773,10 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
+ 	if (err)
+ 		goto assert_resets;
+ 
++	err = tegra_powergate_unprepare_clocks(pg);
++	if (err)
++		return err;
++
+ 	return 0;
+ 
+ assert_resets:
+@@ -717,6 +788,9 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
+ disable_clks:
+ 	tegra_powergate_disable_clocks(pg);
+ 
++unprepare_clks:
++	tegra_powergate_unprepare_clocks(pg);
++
+ 	return err;
+ }
+ 
+@@ -834,6 +908,12 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+ 	if (!pg)
+ 		return -ENOMEM;
+ 
++	pg->clk_rates = kzalloc(sizeof(*pg->clk_rates), GFP_KERNEL);
++	if (!pg->clk_rates) {
++		kfree(pg->clks);
++		return -ENOMEM;
++	}
++
+ 	pg->id = id;
+ 	pg->clks = &clk;
+ 	pg->num_clks = 1;
+@@ -845,6 +925,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+ 		dev_err(pmc->dev, "failed to turn on partition %d: %d\n", id,
+ 			err);
+ 
++	kfree(pg->clk_rates);
+ 	kfree(pg);
+ 
+ 	return err;
+@@ -995,6 +1076,12 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	if (!pg->clks)
+ 		return -ENOMEM;
+ 
++	pg->clk_rates = kcalloc(count, sizeof(*pg->clk_rates), GFP_KERNEL);
++	if (!pg->clk_rates) {
++		kfree(pg->clks);
++		return -ENOMEM;
++	}
++
+ 	for (i = 0; i < count; i++) {
+ 		pg->clks[i] = of_clk_get(np, i);
+ 		if (IS_ERR(pg->clks[i])) {
+@@ -1011,6 +1098,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	while (i--)
+ 		clk_put(pg->clks[i]);
+ 
++	kfree(pg->clk_rates);
+ 	kfree(pg->clks);
+ 
+ 	return err;
 -- 
 2.29.2
 
