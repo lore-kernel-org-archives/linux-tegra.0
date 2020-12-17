@@ -2,65 +2,64 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C360C4361B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A611AC2BBCA
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15934238E8
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A6902396F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbgLQS3t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:29:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
+        id S1730167AbgLQSqn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:46:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbgLQS3s (ORCPT
+        with ESMTP id S1729157AbgLQSqm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:29:48 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4B8C061257
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 10:29:01 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id m5so27541549wrx.9
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 10:29:01 -0800 (PST)
+        Thu, 17 Dec 2020 13:46:42 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588F1C06138C;
+        Thu, 17 Dec 2020 10:46:02 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id m25so60105102lfc.11;
+        Thu, 17 Dec 2020 10:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q8aRgUoihX8Avz9ruuy2QvIzzYrzaxUTGheCXawpxLo=;
-        b=xl1+B8fgQHVTz0DkWK6xdRV/uEVFC82QHBw49Alo1pZRQNVZfyPx/dg+9bxRxn3y5j
-         wOqiffyVmnYbj1EgpecnWAs09QIW7EF/7NIcncaJdZmmY7+vczFoazIVy/Eg+65pjOtM
-         gbZSGEAdgwAa1cWspO2xP3t3GCTb/mkxr1zZPv3grz2TSux4ttuJEbJVzOWrxUZiqiYa
-         EyespBuebZDUnKpi2lIbacdsmhJeRja5SjUmsnxUg4sTGmUV//8S1eWH9DFS0ELLtHED
-         LuXIIy4cz1c19ZN2cy4JbGpV1+1UqvirDLHJkG8A4GrB16/yngcSjT40kjaVP9H2ytUQ
-         kfsg==
+        bh=eSYB0Y/xRIZysMaCL0aa3isjLo158W5WBPwwbHOrbfE=;
+        b=IQJRL+Lb7PAb96r55KxH7ztRsHpbX849w3oGSThKsjbwhrR5HEGjKItUC60H3ZsJPW
+         PNjoDJv35lDBQiaI37xd7K1t6ho+m0NsdCOzHfJvA6u35zE+4urqIb3xWFcuysXktB4A
+         ebI7unXgw0tsxCPEYs2n2MzQ2XDKRE7E8U0Wo4vNLztrImRrsmKUMUntAw+xWJ9xHtF2
+         zo9ZuUMJIYMdtFrY9oBOvPRlyiqALTvZrla3ds/OD77gU23VkbZn40HFvsYyboUVxS2v
+         gyhg4MCmQlOY5eGpJIFk4J22PqHBSenwJbr6df3n2gsjjRa6zhntGM8mckwXXqW0cVha
+         qleQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=q8aRgUoihX8Avz9ruuy2QvIzzYrzaxUTGheCXawpxLo=;
-        b=nWNbVipaC4/JKtME4ysX5F0M8ue4e3ky/M1ejxgvaaeVIEkH9a+d+nnLN5P+Bk8MfF
-         b+8gG4AC+HS7onaa8LozbRTUFHhvAvZbnAa3y48mVaDPkBnV22A7O0VLfYwLbvASiD2q
-         GN3y4gg1Bn627tepGDKzf9qdFdvvSRl2pciBlYfdhWBUpAxGjdGk5Q3FvXO3ijW1pplu
-         9wyxarPMQBRY6KYt3dy1LkwinMz0+SFm5MSK8Pwv/u0xSp1zbL8sc9maQEYi+gMNPSV+
-         9MzyFFxBUu5J53G9SLCneQVjcVj7ymw092uMvvISYFCYvJddJxGAT/IFcfsPaZ8bw+s5
-         Zefw==
-X-Gm-Message-State: AOAM5312lUYMf8J1dBC5nIYG4+oCcBTWdDkgDpmHuCSMSXWS3dDeoSpI
-        vh1zUOx+y4cBUQwfhlLSt/m8Ow==
-X-Google-Smtp-Source: ABdhPJzsRtqGVStuVvpkZl1+aZoPEJq0l19ZzD3Ifm+FDKdUgsJB+PBHx04WPNMgDSSCFiYkBdKpYg==
-X-Received: by 2002:a5d:61ca:: with SMTP id q10mr144253wrv.124.1608229740327;
-        Thu, 17 Dec 2020 10:29:00 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:ccb6:ce78:2bcd:4ead? ([2a01:e34:ed2f:f020:ccb6:ce78:2bcd:4ead])
-        by smtp.googlemail.com with ESMTPSA id f7sm15260897wmc.1.2020.12.17.10.28.58
+        bh=eSYB0Y/xRIZysMaCL0aa3isjLo158W5WBPwwbHOrbfE=;
+        b=iRKL56Y89QbFofGfCsq3WqaugjFYpUVIgwDhqyehaq9EcO+ErqVrNGaK0A0/eVqr73
+         yZMXly5Vo9UexREV7locP7o492vXQKLj0ecbHCN54fPZ4pBfxC+AvDyZteamBzIm5kYY
+         hUpaDY1Q6wmuIL69R2Q+D2c8TxfQsoPYYfQXEgtOPD6Sx1rvKnWgH631J1KBqwbsq02W
+         IDQe54kwGxAwufy5inVZQDDOetNtwM1IHCeIlIhGCf3h1MVWLfGmgpxX1N+m41hwhTJx
+         e0Ba/fc7tBwMjBETcFcyVDi+2ULKJAHY3Vbl2sj6RgSoADYze3A3CLv+gms+ntVk8Shj
+         Gq/A==
+X-Gm-Message-State: AOAM533cACCOhW5nNBtOUFdQtd6qJy4Ug9D+8/oiBGKasD+5hGrRLVxo
+        F2Z7f5baOpqKrVavc32hxvDGXUgLj7c=
+X-Google-Smtp-Source: ABdhPJwjaocgElWH/9WCSNDWrPgvL9Mseuuyfcz1mrOFvs69hy/dbN9dC6jiFzCRsBauzpQWnpMGcg==
+X-Received: by 2002:a05:6512:3593:: with SMTP id m19mr35943lfr.221.1608230760739;
+        Thu, 17 Dec 2020 10:46:00 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id i19sm756871ljj.26.2020.12.17.10.45.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 10:28:59 -0800 (PST)
-Subject: Re: [PATCH v2 48/48] ARM: tegra: cardhu: Support CPU voltage scaling
- and thermal throttling
-To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thu, 17 Dec 2020 10:46:00 -0800 (PST)
+Subject: Re: [PATCH v2 34/48] gpu: host1x: Support power management
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
@@ -82,14 +81,15 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-49-digetx@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c0cb782a-bd26-917a-8f39-db8b6f460472@linaro.org>
-Date:   Thu, 17 Dec 2020 19:28:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20201217180638.22748-35-digetx@gmail.com>
+ <cb8dca7c-6ef2-5116-6c04-816a63525e2e@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b106c4c0-bd93-bbc9-9357-45fe8fb1cf0f@gmail.com>
+Date:   Thu, 17 Dec 2020 21:45:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20201217180638.22748-49-digetx@gmail.com>
+In-Reply-To: <cb8dca7c-6ef2-5116-6c04-816a63525e2e@kapsi.fi>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -97,123 +97,151 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17/12/2020 19:06, Dmitry Osipenko wrote:
-> Enable CPU voltage scaling and thermal throttling on Tegra30 Cardhu board.
+17.12.2020 21:21, Mikko Perttunen пишет:
+> On 12/17/20 8:06 PM, Dmitry Osipenko wrote:
+>> Add suspend/resume and generic power domain support to the Host1x driver.
+>> This is required for enabling system-wide DVFS and supporting dynamic
+>> power management using a generic power domain.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>   drivers/gpu/host1x/dev.c | 102 ++++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 91 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>> index d0ebb70e2fdd..c1525cffe7b1 100644
+>> --- a/drivers/gpu/host1x/dev.c
+>> +++ b/drivers/gpu/host1x/dev.c
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/of_device.h>
+>>   #include <linux/of.h>
+>> +#include <linux/pm_runtime.h>
+>>   #include <linux/slab.h>
+>>     #define CREATE_TRACE_POINTS
+>> @@ -417,7 +418,7 @@ static int host1x_probe(struct platform_device *pdev)
+>>           return err;
+>>       }
+>>   -    host->rst = devm_reset_control_get(&pdev->dev, "host1x");
+>> +    host->rst = devm_reset_control_get_exclusive_released(&pdev->dev,
+>> "host1x");
+>>       if (IS_ERR(host->rst)) {
+>>           err = PTR_ERR(host->rst);
+>>           dev_err(&pdev->dev, "failed to get reset: %d\n", err);
+>> @@ -437,16 +438,15 @@ static int host1x_probe(struct platform_device
+>> *pdev)
+>>           goto iommu_exit;
+>>       }
+>>   -    err = clk_prepare_enable(host->clk);
+>> -    if (err < 0) {
+>> -        dev_err(&pdev->dev, "failed to enable clock\n");
+>> -        goto free_channels;
+>> -    }
+>> +    pm_runtime_enable(&pdev->dev);
+>> +    err = pm_runtime_get_sync(&pdev->dev);
+>> +    if (err < 0)
+>> +        goto rpm_disable;
+>>         err = reset_control_deassert(host->rst);
+>>       if (err < 0) {
+>>           dev_err(&pdev->dev, "failed to deassert reset: %d\n", err);
+>> -        goto unprepare_disable;
+>> +        goto rpm_disable;
+>>       }
+>>         err = host1x_syncpt_init(host);
+>> @@ -485,9 +485,10 @@ static int host1x_probe(struct platform_device
+>> *pdev)
+>>       host1x_syncpt_deinit(host);
+>>   reset_assert:
+>>       reset_control_assert(host->rst);
+>> -unprepare_disable:
+>> -    clk_disable_unprepare(host->clk);
+>> -free_channels:
+>> +rpm_disable:
+>> +    pm_runtime_put(&pdev->dev);
+>> +    pm_runtime_disable(&pdev->dev);
+>> +
+>>       host1x_channel_list_free(&host->channel_list);
+>>   iommu_exit:
+>>       host1x_iommu_exit(host);
+>> @@ -504,16 +505,95 @@ static int host1x_remove(struct platform_device
+>> *pdev)
+>>       host1x_intr_deinit(host);
+>>       host1x_syncpt_deinit(host);
+>>       reset_control_assert(host->rst);
+>> -    clk_disable_unprepare(host->clk);
+>> +    pm_runtime_put(&pdev->dev);
+>> +    pm_runtime_disable(&pdev->dev);
+>>       host1x_iommu_exit(host);
+>>         return 0;
+>>   }
+>>   +static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+>> +{
+>> +    struct host1x *host = dev_get_drvdata(dev);
+>> +
+>> +    clk_disable_unprepare(host->clk);
+>> +    reset_control_release(host->rst);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int __maybe_unused host1x_runtime_resume(struct device *dev)
+>> +{
+>> +    struct host1x *host = dev_get_drvdata(dev);
+>> +    int err;
+>> +
+>> +    err = reset_control_acquire(host->rst);
+>> +    if (err) {
+>> +        dev_err(dev, "failed to acquire reset: %d\n", err);
+>> +        return err;
+>> +    }
+>> +
+>> +    err = clk_prepare_enable(host->clk);
+>> +    if (err) {
+>> +        dev_err(dev, "failed to enable clock: %d\n", err);
+>> +        goto release_reset;
+>> +    }
+>> +
+>> +    return 0;
+>> +
+>> +release_reset:
+>> +    reset_control_release(host->rst);
+>> +
+>> +    return err;
+>> +}
+>> +
+>> +static __maybe_unused int host1x_suspend(struct device *dev)
+>> +{
+>> +    struct host1x *host = dev_get_drvdata(dev);
+>> +    int err;
+>> +
+>> +    host1x_syncpt_save(host);
+>> +
+>> +    err = pm_runtime_force_suspend(dev);
+>> +    if (err < 0)
+>> +        return err;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static __maybe_unused int host1x_resume(struct device *dev)
+>> +{
+>> +    struct host1x *host = dev_get_drvdata(dev);
+>> +    struct host1x_channel *channel;
+>> +    unsigned int index;
+>> +    int err;
+>> +
+>> +    err = pm_runtime_force_resume(dev);
+>> +    if (err < 0)
+>> +        return err;
+>> +
+>> +    host1x_syncpt_restore(host);
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> We also need to execute 'host1x_setup_sid_table' upon resume.
 
-Same comments as 47/48
+Indeed, thanks. I'll correct it in the next revision.
 
-
-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi | 61 ++++++++++++++++++++++++++-
->  1 file changed, 60 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> index d74c9ca78a7f..08c0ea4e6228 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> @@ -1,6 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/thermal/thermal.h>
->  #include "tegra30.dtsi"
-> +#include "tegra30-cpu-opp.dtsi"
-> +#include "tegra30-cpu-opp-microvolt.dtsi"
->  
->  /**
->   * This file contains common DT entry for all fab version of Cardhu.
-> @@ -339,12 +342,13 @@ ldo8_reg: ldo8 {
->  			};
->  		};
->  
-> -		temperature-sensor@4c {
-> +		nct1008: temperature-sensor@4c {
->  			compatible = "onnn,nct1008";
->  			reg = <0x4c>;
->  			vcc-supply = <&sys_3v3_reg>;
->  			interrupt-parent = <&gpio>;
->  			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_LEVEL_LOW>;
-> +			#thermal-sensor-cells = <1>;
->  		};
->  
->  		vdd_core: tps62361@60 {
-> @@ -438,6 +442,29 @@ clk32k_in: clock@0 {
->  		#clock-cells = <0>;
->  	};
->  
-> +	cpus {
-> +		cpu0: cpu@0 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu@1 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@2 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@3 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
-> +
->  	panel: panel {
->  		compatible = "chunghwa,claa101wb01";
->  		ddc-i2c-bus = <&panelddc>;
-> @@ -617,6 +644,38 @@ sound {
->  					 <&tegra_car TEGRA30_CLK_EXTERN1>;
->  	};
->  
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay-passive = <1000>; /* milliseconds */
-> +			polling-delay = <5000>; /* milliseconds */
-> +
-> +			thermal-sensors = <&nct1008 1>;
-> +
-> +			trips {
-> +				trip0: cpu-alert0 {
-> +					/* throttle at 57C until temperature drops to 56.8C */
-> +					temperature = <57000>;
-> +					hysteresis = <200>;
-> +					type = "passive";
-> +				};
-> +
-> +				trip1: cpu-crit {
-> +					/* shut down at 60C */
-> +					temperature = <60000>;
-> +					hysteresis = <2000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&trip0>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
->  	gpio-keys {
->  		compatible = "gpio-keys";
->  
-> 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Perhaps the actual save/restore needs to be moved to the runtime
+callbacks. At least I can't remember right now why this wasn't done in
+the first place.
