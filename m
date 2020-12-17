@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F19C352B3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77440C47437
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 115702396F
+	by mail.kernel.org (Postfix) with ESMTP id 5D9BE238EF
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730035AbgLQSKw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:10:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
+        id S1730960AbgLQSJO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:09:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730994AbgLQSJQ (ORCPT
+        with ESMTP id S1726548AbgLQSJN (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:16 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02EF5C061A47;
-        Thu, 17 Dec 2020 10:08:10 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id l11so59863593lfg.0;
-        Thu, 17 Dec 2020 10:08:09 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:13 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD95C061143;
+        Thu, 17 Dec 2020 10:08:07 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id 23so59806917lfg.10;
+        Thu, 17 Dec 2020 10:08:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DAtdibIFrFoBdbWxAk3vr83zchLhlmDglPbN6gXDjkM=;
-        b=N3Ck5qX6m1iyF3ASnevrle+liHZfmUJKPpVtCyekINsKU3z6ST0UE5bLfsWvIqI28T
-         q7/Vi3Sc4DvowsD/9Kmvo9md/xI9QWZRDL4tjGFj4npdFEjHST28bU04ou4et5wKrnOO
-         fGttY/cszQ/PtGCr9+VXIP0aN0P10J7+bkhjTUGdyAz347VikCOIE1A/6pxOdMKz2ypq
-         G0p8gf3pn4Qae0IPmyP+JyNMnhpFGkCQ/5nzKj46gc4j5Wo6lbhgkrL0lY/7fhfeBAg0
-         g6JRxyE7jW+z6VXVtkverbxDgAkw6Wh0KasCpETW49fvq3UdS3d9CrPZiAEb+zOriUYO
-         zpSg==
+        bh=LuC35it5WgcMsywJnTS7GhOmGsdjUUBuqpGFnra9j0o=;
+        b=ofn5aE6LcF1l+cvGsQpC/Czx+zpDlTH4WYhoLgcDxiNIlJrd/1vIn6bGZz2hQ/f9nB
+         MyRDocob5zetQFAJhMMJaVoxDjpOQBUdRPMdm+yxT4eeqWLPbXFX4VykL8nMf1nPXBcq
+         NR/UVaUVIzTw8x6vQPaz7o6WfrvBTd7NX7416xc+ff0Qta1oLw0bsxGrIIDREH7IvMJZ
+         afLchL/8XovRs02r/+s8IKz+hp4L1OLRUN1lOzuWuLoBtv+wE4g0xGiSYdPeqRV1MxuK
+         VIij6fhi0IHEJaXoyP4kpXJHwpK4c+YLTRhRwF0dByC3ZB9pLcpmNs8SR2Z6JOhSboeE
+         kFqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DAtdibIFrFoBdbWxAk3vr83zchLhlmDglPbN6gXDjkM=;
-        b=JjsimmKWE0GxH6Ds1THkxofYf9wA8SY3V/pk6tZzFzmPDG4B/Syi0hAp5flLqZF01E
-         Y04oYlM+o/RJgq/Rhfr2yf1F9LkyykbLe38IcjgWhzgOBL8G0pDBLpKjbxIgC2nPX/fd
-         0IWjy9I8UYkhNuacdkWziVt3c7PLZF1HMOq66Qr1usGSupro4belMiB7A2fHP6a/5HPN
-         zmT3u8FRmohIzQ0W0zMXut8gc/o6SEGcp96Rl5X7z+rRBxW9nFjnTNkGmmtyL6IT3o9x
-         YBqdBx6AhsKsf8AGdzTbxoql54z2r9BFivFQI+LWdE+jP5egRe9mbIPYVeiakhn+iYGZ
-         Y4ow==
-X-Gm-Message-State: AOAM532Q5bm8rg7kfSRmqPPuBNBZBq3r3Itp3JgGHhQjcR4wFQbfaX6A
-        bnalZmGkC+KLVWIvzUKDj3Y=
-X-Google-Smtp-Source: ABdhPJzE3wxZCPlLlrNCFylC3Z8X0gJtULmex2P6xsR9syJz5fbiVRh05vs/uMJBZetmgQF7Q/iIjg==
-X-Received: by 2002:a2e:b5b3:: with SMTP id f19mr223623ljn.199.1608228488528;
-        Thu, 17 Dec 2020 10:08:08 -0800 (PST)
+        bh=LuC35it5WgcMsywJnTS7GhOmGsdjUUBuqpGFnra9j0o=;
+        b=IuVDK9xY95f+j+ywaGAixZSaF9bJyAi1CYGVEXNzLr1/W28yHvJZMDke3WO4z/cEKg
+         ravnkB2BO/R2I2QcOLg2lru5ns9SX2Uxlb8+0R9+oQQn0RqHPLpUaf+Gr9jZUHkUSVT9
+         OS1YE9WPFjKxmGjpnq9V6yqiuU3uYgXtcYcd0a6hZ9+ePytwrajITdQetq3d7mCfN7Kb
+         Cp/1ZZSqBdD6iDN2u9UorvuqQ+xDdu1ZGWQIyfQCUJDiU71416QgGv3rYHJgY00phmsE
+         FZxd9ikWMWmXc2pxCNO2470sQbdo340PdyaF1J+38esQbtBDfjAC87w/6i3WiSywwmhN
+         n+uw==
+X-Gm-Message-State: AOAM5335fCyOMGAVaoE4YjMUpgQeJxYhLovd7acVMR7nEcLCXVZpjCl0
+        FgM619JYpgb+oXM5Nndbl/U=
+X-Google-Smtp-Source: ABdhPJwdGFTTvmgxtOAsTgf6lkPU3TwD7qyK9moyquoKTRzbbvADlHWj3x6n0ae4NwCbCdxQWdwYJA==
+X-Received: by 2002:ac2:5c46:: with SMTP id s6mr9280354lfp.207.1608228486221;
+        Thu, 17 Dec 2020 10:08:06 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.07
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:08:08 -0800 (PST)
+        Thu, 17 Dec 2020 10:08:05 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 42/48] memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
-Date:   Thu, 17 Dec 2020 21:06:32 +0300
-Message-Id: <20201217180638.22748-43-digetx@gmail.com>
+Subject: [PATCH v2 40/48] media: staging: tegra-vde: Support OPP and generic power domain
+Date:   Thu, 17 Dec 2020 21:06:30 +0300
+Message-Id: <20201217180638.22748-41-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,96 +90,144 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use common devm_tegra_core_dev_init_opp_table() helper for the OPP table
-initialization.
+Add OPP and generic power domain support to the video decoder driver.
+This allows us to utilize a modern GENPD API for newer device-trees and
+support DVFS of the decoder hardware. Note that older DTBs will continue
+to work like they did it before this patch.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 57 +++---------------------------
- 1 file changed, 4 insertions(+), 53 deletions(-)
+ drivers/staging/media/tegra-vde/vde.c | 63 ++++++++++++++++++++++-----
+ 1 file changed, 53 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 44ac155936aa..c6309afd9939 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1480,58 +1480,6 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- 	return err;
+diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+index 28845b5bafaf..5be26b9bd5d8 100644
+--- a/drivers/staging/media/tegra-vde/vde.c
++++ b/drivers/staging/media/tegra-vde/vde.c
+@@ -15,11 +15,14 @@
+ #include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ 
++#include <soc/tegra/common.h>
+ #include <soc/tegra/pmc.h>
+ 
+ #include "uapi.h"
+@@ -918,13 +921,17 @@ static __maybe_unused int tegra_vde_runtime_suspend(struct device *dev)
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = tegra_powergate_power_off(TEGRA_POWERGATE_VDEC);
+-	if (err) {
+-		dev_err(dev, "Failed to power down HW: %d\n", err);
+-		return err;
++	if (!dev->pm_domain) {
++		err = tegra_powergate_power_off(TEGRA_POWERGATE_VDEC);
++		if (err) {
++			dev_err(dev, "Failed to power down HW: %d\n", err);
++			return err;
++		}
+ 	}
+ 
+ 	clk_disable_unprepare(vde->clk);
++	reset_control_release(vde->rst);
++	dev_pm_opp_set_rate(dev, 0);
+ 
+ 	return 0;
+ }
+@@ -934,18 +941,44 @@ static __maybe_unused int tegra_vde_runtime_resume(struct device *dev)
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VDEC,
+-						vde->clk, vde->rst);
++	err = dev_pm_opp_set_rate(dev, clk_get_rate(vde->clk));
++	if (err) {
++		dev_err(dev, "Failed to prepare OPP: %d\n", err);
++		return err;
++	}
++
++	err = reset_control_acquire(vde->rst);
+ 	if (err) {
+-		dev_err(dev, "Failed to power up HW : %d\n", err);
++		dev_err(dev, "Failed to acquire reset: %d\n", err);
+ 		return err;
+ 	}
+ 
++	if (!dev->pm_domain) {
++		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VDEC,
++							vde->clk, vde->rst);
++		if (err) {
++			dev_err(dev, "Failed to power up HW : %d\n", err);
++			goto release_reset;
++		}
++	}
++
++	err = clk_prepare_enable(vde->clk);
++	if (err) {
++		dev_err(dev, "Failed to enable clock: %d\n", err);
++		goto release_reset;
++	}
++
+ 	return 0;
++
++release_reset:
++	reset_control_release(vde->rst);
++
++	return err;
  }
  
--static int tegra_emc_opp_table_init(struct tegra_emc *emc)
--{
--	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
--	struct opp_table *clk_opp_table, *hw_opp_table;
--	int err;
--
--	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
--	err = PTR_ERR_OR_ZERO(clk_opp_table);
--	if (err) {
--		dev_err(emc->dev, "failed to set OPP clk: %d\n", err);
--		return err;
--	}
--
--	hw_opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
--	err = PTR_ERR_OR_ZERO(hw_opp_table);
--	if (err) {
--		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
--		goto put_clk_table;
--	}
--
--	err = dev_pm_opp_of_add_table(emc->dev);
--	if (err) {
--		if (err == -ENODEV)
--			dev_err(emc->dev, "OPP table not found, please update your device tree\n");
--		else
--			dev_err(emc->dev, "failed to add OPP table: %d\n", err);
--
--		goto put_hw_table;
--	}
--
--	dev_info(emc->dev, "OPP HW ver. 0x%x, current clock rate %lu MHz\n",
--		 hw_version, clk_get_rate(emc->clk) / 1000000);
--
--	/* first dummy rate-set initializes voltage state */
--	err = dev_pm_opp_set_rate(emc->dev, clk_get_rate(emc->clk));
--	if (err) {
--		dev_err(emc->dev, "failed to initialize OPP clock: %d\n", err);
--		goto remove_table;
--	}
--
--	return 0;
--
--remove_table:
--	dev_pm_opp_of_remove_table(emc->dev);
--put_hw_table:
--	dev_pm_opp_put_supported_hw(hw_opp_table);
--put_clk_table:
--	dev_pm_opp_put_clkname(clk_opp_table);
--
--	return err;
--}
--
- static void devm_tegra_emc_unset_callback(void *data)
- {
- 	tegra20_clk_set_emc_round_callback(NULL, NULL);
-@@ -1577,6 +1525,7 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
- 
- static int tegra_emc_probe(struct platform_device *pdev)
+ static int tegra_vde_probe(struct platform_device *pdev)
  {
 +	struct tegra_core_opp_params opp_params = {};
- 	struct device_node *np;
- 	struct tegra_emc *emc;
- 	int err;
-@@ -1626,7 +1575,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	if (err)
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra_vde *vde;
+ 	int irq, err;
+@@ -999,7 +1032,7 @@ static int tegra_vde_probe(struct platform_device *pdev)
  		return err;
+ 	}
  
--	err = tegra_emc_opp_table_init(emc);
+-	vde->rst = devm_reset_control_get(dev, NULL);
++	vde->rst = devm_reset_control_get_exclusive_released(dev, NULL);
+ 	if (IS_ERR(vde->rst)) {
+ 		err = PTR_ERR(vde->rst);
+ 		dev_err(dev, "Could not get VDE reset %d\n", err);
+@@ -1024,6 +1057,12 @@ static int tegra_vde_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
 +	opp_params.init_state = true;
 +
-+	err = devm_tegra_core_dev_init_opp_table(&pdev->dev, &opp_params);
- 	if (err)
- 		return err;
++	err = devm_tegra_core_dev_init_opp_table(dev, &opp_params);
++	if (err && err != -ENODEV)
++		return err;
++
+ 	vde->iram_pool = of_gen_pool_get(dev->of_node, "iram", 0);
+ 	if (!vde->iram_pool) {
+ 		dev_err(dev, "Could not get IRAM pool\n");
+@@ -1117,8 +1156,12 @@ static void tegra_vde_shutdown(struct platform_device *pdev)
+ 	 * On some devices bootloader isn't ready to a power-gated VDE on
+ 	 * a warm-reboot, machine will hang in that case.
+ 	 */
+-	if (pm_runtime_status_suspended(&pdev->dev))
+-		tegra_vde_runtime_resume(&pdev->dev);
++	if (pm_runtime_status_suspended(&pdev->dev)) {
++		if (pdev->dev.pm_domain)
++			dev_pm_genpd_resume(&pdev->dev);
++		else
++			tegra_vde_runtime_resume(&pdev->dev);
++	}
+ }
  
+ static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
 -- 
 2.29.2
 
