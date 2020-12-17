@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B3CC35270
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB9DC352A2
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF58E23977
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51EDA23975
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbgLQSI5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:08:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
+        id S1730794AbgLQSJE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:09:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730357AbgLQSI5 (ORCPT
+        with ESMTP id S1730772AbgLQSJB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:08:57 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E992EC0619DA;
-        Thu, 17 Dec 2020 10:07:46 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id 23so59803909lfg.10;
-        Thu, 17 Dec 2020 10:07:46 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:01 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0617FC0617B0;
+        Thu, 17 Dec 2020 10:08:02 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id h205so16304239lfd.5;
+        Thu, 17 Dec 2020 10:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NX+MS+anU76BlhEILutoJiS/7/Thy1nqdrl3kCzllJ4=;
-        b=m+RcrvCN5SVrC4E9GsHQPZphjjmtSgb6vuW0wmrHP3sg/7u7V+Hka3Yz10nHRBIxUV
-         8UV768vcIQ+01fjn0PkPPxF+oLpCfOhdiGMGBDnrsILzLvxYhOSOifjhnRxs/HVEVyn6
-         3ZsI83oqk77uAHPWY8AhNT3DQe6YpD0gs1NFWahq0b0q9n4yDXnm7aBZCe5eDJG1LvpP
-         zjMk/P17UXO40lcqYkyijOIomLa1G4M0uXMPS0E9EQAbEU49va0WIVYn6oBBujqzciPE
-         QaxGQKnyhWyxfVKhKid9wYcl1G+4A72GGTAmGaMdNzjWKaK3YvR+eOFL4SdIEwRHHc65
-         RtZA==
+        bh=iUM33vHLNZtsJPVk9A+84cGK/qMnFIOLUNLoWSdi5PE=;
+        b=li6sWcps0Q20F/zs74GUHWU1rU3vlb04ApDelSlLDh/E0oz6QSPlp8aG4PB/Ot0zmV
+         Q39ydjkjjzhVz4JxTb5Fhl0OpiGVtztulOFN9e7MH4QdpeQPD4Zu71i+ydlWvG84Yheq
+         fgdEZ6mhHzVyc+CNrv0X8acaJsUF94TsK1KPJa2qJUAk/ijlpCvgJz24Ab9aESiV1Y+t
+         X2Vmb8eL6RWSuRIpEbbgr9nBNRLIaHqWNB3qgb7MVzlAyYPBhnHQ9bvdiz5aJNLoDw9Z
+         rJKEodpQ61oklJiE+Uxlkq4UoYdJ82FYGaMZNfM7nJdppa20Lt2sfDrWQ4ds+Y3CMd4/
+         s+kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NX+MS+anU76BlhEILutoJiS/7/Thy1nqdrl3kCzllJ4=;
-        b=OTdRJT9dgggE+dza9KYYUaAd41+CCj08bQtLi5drzxwxe7ZHUPvSH4ccPNQMjT2FWR
-         FMJ1mu+C+Q5uea0RjCoCpFAEh/8Yd1cyCY+ecBiAnXRN2XeepKvcCmGvuu/Z7ZYUT4ag
-         eA7VhXgHiFeg4FlFGzyW9iPx3EU7ooHTf1tmrkN4GDXpfc+UjSUoyQyLqeyAX3gEQ3A3
-         bQTpf/pMDI9LTjNn1y5bwVILY0TckSEyDi37/mjVcT/0oqf1rwyoTxYtTZ5QGJJIj4X6
-         2H5noTmCWLlfwZNwEUbfuWRDNDynnm1wQUL5RTKnOO/vMCByvwVTQuLYZQSXLVjppSNH
-         7zbg==
-X-Gm-Message-State: AOAM532SZqG6yRIj/Wn42FOLKFpwLmcMrdNzCz8GH146OK2RjvhSjXp+
-        ro+OAGgX45AscyeAV/BDli8=
-X-Google-Smtp-Source: ABdhPJzZPdbXPbkUp1eRbNGTe1GkWb+tswPD3NA3JbqvyYw4q06czICReBowWtbbVUqPBOhPjZBhXQ==
-X-Received: by 2002:a19:9d8:: with SMTP id 207mr8275690lfj.581.1608228465466;
-        Thu, 17 Dec 2020 10:07:45 -0800 (PST)
+        bh=iUM33vHLNZtsJPVk9A+84cGK/qMnFIOLUNLoWSdi5PE=;
+        b=dLMw+QP0TKpOsM3uQc+S/immDH5rLrINRYlC9rNHMGh4tF+IW4Z7FjMIRGry75VDpx
+         1XH5Wmsygs8N5OtstOGcXQHvkLv/CZr4WCQZmHXeq+ZuTGrjl5d2ru1S3NNz0lR46es/
+         6DYUyZdK2czuMsLtPKpnTKTtLubo29b6tDNxgG1x/jvbSiCjjDsboBBihb3eILDu7qtz
+         H7yVUSwn6ilo080j5p/6nmQqdE2urXjZNk7ryhniEpF/o/jP/rFE7g8x+6ASc2H0fxIO
+         9/hY97XHT9AUbTSq+Tt+aAHUTkPDiFs1hA9IpIFuJpJ98Jy99hwWEx7EJf7zHp8GL1D2
+         uZgA==
+X-Gm-Message-State: AOAM533Jz34QreZu3NCaZSjOFEoiOsgLS/aKc5wmE8Z+P3PrfVkAFIRm
+        KeeUEa/LjYeGv2sxmkAyHYg=
+X-Google-Smtp-Source: ABdhPJyUG/ZcFCjkb6RTKaSoldzBmwDKOzmClpf4O3p6ruD35zpWUUUeoWGbOBPqW7cQqlBJDK/7Fw==
+X-Received: by 2002:ac2:5486:: with SMTP id t6mr16345900lfk.265.1608228480486;
+        Thu, 17 Dec 2020 10:08:00 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.44
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:45 -0800 (PST)
+        Thu, 17 Dec 2020 10:08:00 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 22/48] soc/tegra: pmc: Fix imbalanced clock disabling in error code path
-Date:   Thu, 17 Dec 2020 21:06:12 +0300
-Message-Id: <20201217180638.22748-23-digetx@gmail.com>
+Subject: [PATCH v2 35/48] drm/tegra: dc: Support OPP and SoC core voltage scaling
+Date:   Thu, 17 Dec 2020 21:06:25 +0300
+Message-Id: <20201217180638.22748-36-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,28 +90,139 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The tegra_powergate_power_up() has a typo in the error code path where it
-will try to disable clocks twice, fix it. In practice that error never
-happens, so this is a minor correction.
+Add OPP and SoC core voltage scaling support to the display controller
+driver. This is required for enabling system-wide DVFS on pre-Tegra186
+SoCs.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/dc.c | 66 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index df9a5ca8c99c..fd2ba3c59178 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -638,7 +638,7 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index b6676f1fe358..105ad786e432 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -11,9 +11,12 @@
+ #include <linux/interconnect.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- 	err = tegra_powergate_enable_clocks(pg);
- 	if (err)
--		goto disable_clks;
-+		goto powergate_off;
++#include <soc/tegra/common.h>
+ #include <soc/tegra/pmc.h>
  
- 	usleep_range(10, 20);
+ #include <drm/drm_atomic.h>
+@@ -1699,6 +1702,48 @@ int tegra_dc_state_setup_clock(struct tegra_dc *dc,
+ 	return 0;
+ }
  
++static void tegra_dc_update_voltage_state(struct tegra_dc *dc,
++					  struct tegra_dc_state *state)
++{
++	unsigned long rate, pstate;
++	struct dev_pm_opp *opp;
++	int err;
++
++	/* calculate actual pixel clock rate which depends on internal divider */
++	rate = DIV_ROUND_UP(clk_get_rate(dc->clk) * 2, state->div + 2);
++
++	/* find suitable OPP for the rate */
++	opp = dev_pm_opp_find_freq_ceil(dc->dev, &rate);
++
++	if (opp == ERR_PTR(-ERANGE))
++		opp = dev_pm_opp_find_freq_floor(dc->dev, &rate);
++
++	/* -ENOENT means that this device-tree doesn't have OPP table */
++	if (opp == ERR_PTR(-ENOENT))
++		return;
++
++	if (IS_ERR(opp)) {
++		dev_err(dc->dev, "failed to find OPP for %luHz: %pe\n",
++			rate, opp);
++		return;
++	}
++
++	pstate = dev_pm_opp_get_voltage(opp);
++	dev_pm_opp_put(opp);
++
++	/*
++	 * The minimum core voltage depends on the pixel clock rate (which
++	 * depends on internal clock divider of the CRTC) and not on the
++	 * rate of the display controller clock. This is why we're not using
++	 * dev_pm_opp_set_rate() API and instead controlling the power domain
++	 * directly.
++	 */
++	err = dev_pm_genpd_set_performance_state(dc->dev, pstate);
++	if (err)
++		dev_err(dc->dev, "failed to set power domain state to %lu: %d\n",
++			pstate, err);
++}
++
+ static void tegra_dc_commit_state(struct tegra_dc *dc,
+ 				  struct tegra_dc_state *state)
+ {
+@@ -1738,6 +1783,8 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
+ 	if (err < 0)
+ 		dev_err(dc->dev, "failed to set clock %pC to %lu Hz: %d\n",
+ 			dc->clk, state->pclk, err);
++
++	tegra_dc_update_voltage_state(dc, state);
+ }
+ 
+ static void tegra_dc_stop(struct tegra_dc *dc)
+@@ -1931,6 +1978,8 @@ static void tegra_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	err = host1x_client_suspend(&dc->client);
+ 	if (err < 0)
+ 		dev_err(dc->dev, "failed to suspend: %d\n", err);
++
++	dev_pm_genpd_set_performance_state(dc->dev, 0);
+ }
+ 
+ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
+@@ -2523,7 +2572,6 @@ static int tegra_dc_runtime_suspend(struct host1x_client *client)
+ 
+ 	clk_disable_unprepare(dc->clk);
+ 	pm_runtime_put_sync(dev);
+-
+ 	return 0;
+ }
+ 
+@@ -2881,6 +2929,18 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+ 	return 0;
+ }
+ 
++static int tegra_dc_init_opp_table(struct tegra_dc *dc)
++{
++	struct tegra_core_opp_params opp_params = {};
++	int err;
++
++	err = devm_tegra_core_dev_init_opp_table(dc->dev, &opp_params);
++	if (err && err != -ENODEV)
++		return err;
++
++	return 0;
++}
++
+ static int tegra_dc_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_dc *dc;
+@@ -2939,6 +2999,10 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		tegra_powergate_power_off(dc->powergate);
+ 	}
+ 
++	err = tegra_dc_init_opp_table(dc);
++	if (err < 0)
++		return err;
++
+ 	dc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dc->regs))
+ 		return PTR_ERR(dc->regs);
 -- 
 2.29.2
 
