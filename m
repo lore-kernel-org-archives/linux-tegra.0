@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 439C1C47434
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8304DC2BBCA
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28E7C23998
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5447623998
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbgLQSMv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:12:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
+        id S1730127AbgLQSIm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:08:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730214AbgLQSIo (ORCPT
+        with ESMTP id S1729977AbgLQSIa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:08:44 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E165C0611CE;
-        Thu, 17 Dec 2020 10:07:34 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id 23so59802044lfg.10;
-        Thu, 17 Dec 2020 10:07:34 -0800 (PST)
+        Thu, 17 Dec 2020 13:08:30 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C625C0611C5;
+        Thu, 17 Dec 2020 10:07:28 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id s26so25132674lfc.8;
+        Thu, 17 Dec 2020 10:07:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ONUdIoYLvrymxxGuA1rEkpRERKvXdxShg+niqiRuWWw=;
-        b=p2/N6zxOWQ1TNgCgwvZcMNpOSboPM0BuGbUpXZAXVfrMIdLcbf/m3p1KC2nQL3v0I6
-         wH1TSHHk9uUDfjeo0lwnQ0kiY1X7T1gJ0S/JHcoaGZ4DP/tjco2gS2i2yzvshR66pv8H
-         o7Ot28qeR/sxxzMguphR4oIYAhkMO1eRB0/hIWpVDKS1QyUuLObjGKCKgnRASusUidVU
-         zxN0pLs8ZQtIA8ikRgKkDPtzOC4nV6kqtQoNiegpJLjHVQYfklIPYqMmLIHmcd5+/Oej
-         3yksetlAGp6u9VKhXKgNKCbMKS7HuKmgo1KBLhzMJFWqIiExd6/+V5ueg7KJkhXGyUiJ
-         Ddig==
+        bh=Kj7GIF+uJIxlrnFvjrN1VqMHS/QleXXRwa7p10T8PcE=;
+        b=kP7PHY6U8z1UY31KMv3z/cd4fSHYhATI3ExPOUCA2tZru2WKCyeTd2UP8TlwgAp1M6
+         m3gKgbjGMcs+s5oOOkkKRg5uLBYrKlTd+fICyDzeWlVMS8TJLKcBOPihhJWpu+AU9087
+         BB/WHFvb13FuPmlwTMx7QgLcXn2/Ad1/eGMuph5p4IXpPVqJSz4M2F28QQ7j5D3NT9Pe
+         SKPb+8KyQFL1FQLuLtECc7uWAD8qFTVYL6Rf2IuNbEgYvORPTvGDGfDYaX2QnYwn0Rgx
+         FmpTg2+9oH4Y9ij9LQu4ybJ+DxcuDbYI0ihxUQcWcjKPtcTSS6c8GDtx5aNyj2kNgujh
+         8knA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ONUdIoYLvrymxxGuA1rEkpRERKvXdxShg+niqiRuWWw=;
-        b=Ai0OUCwtGd75S3PxhIZ8j3oLnXziBX9+r1w5G2qK8DJuqS4dCh4jN+5eCLXxbAH5rz
-         3CiZpyEZgNeR0z3jYjn70cBWUI0Re7iq5Apo6F6Tp1aAy/1GpP4o68G7w5Rj/TSz6w/A
-         ajid0N3WJvmWn3oDhrK2G7JJydLnLdQwCfN8fvgpm/tsmo/LpsN7LkG4ElqrHKQXrIpz
-         39R/RFekUV+njkff/dEv88Bn9rYla0pHVflzkKfXvCdQoxQg99AGVyG/Ma5w6jvk+6J0
-         GHbN1ELwBfVoF4CI5nFK2E/JP9otshDpwvxNQ62poKWWXRiYmJWtJwFmBP6d9W1pQuQw
-         4Ftw==
-X-Gm-Message-State: AOAM532AxL10n0bi+MjAtVA+lvC2i7SixUKXT8P8BoNb0G3ncpU8vYYj
-        l9qiObTQu4va/kTBSgyhdGw=
-X-Google-Smtp-Source: ABdhPJx4DSg+fZJTBkNxhuc6g3ezsqDW5hpdLf96cj7krLJwspxwSptzE1H7fpBWtPpK43NibJSC9A==
-X-Received: by 2002:a2e:82d0:: with SMTP id n16mr210409ljh.474.1608228452689;
-        Thu, 17 Dec 2020 10:07:32 -0800 (PST)
+        bh=Kj7GIF+uJIxlrnFvjrN1VqMHS/QleXXRwa7p10T8PcE=;
+        b=DS3H+EyW7GR0Xux/52Alt3JjHmfxjSgBo+9yavybjaTCXeVw9cAUIV428yJhMWcGq4
+         5mDg10FkiVh+0GLyGQfcH2DQYODlOSLIeSdzdfoBvqUrLeidgqo26XIMaiXjo2hWqwpS
+         Pei9cHo0GOkUeaWoqn50HM8CRnyE6cNoMDB7/1Xc2vWunZO6nRg5eBNl0+I2n+LFqbMY
+         XUeSqxrjbr+YzeutO61MwUlfaO+yd3o7udUd6B7D5PiBYbq7kSMg/LMx0/VrSPrFbxfC
+         6jsAn04G8Rk/ghw26GNgBqThRlfhf2FHm+Z0efU9rJ1+cBELGVdKF+FY15JnMlpdHV4x
+         sKvQ==
+X-Gm-Message-State: AOAM530zAtEJGPJAZ1dCbGPZviiPse/AdCnLL8AQgapRCRgslN80Z6Rj
+        1RiVyeIk5jTn50FqwjHKkDo=
+X-Google-Smtp-Source: ABdhPJwIfOmllgVrz8dHRr+2J5z3WatJHYxi2dLPJpEQkNdVwjNkmxMLIP17neNyCZHg4jvjqXoFpw==
+X-Received: by 2002:a05:6512:32a2:: with SMTP id q2mr7511267lfe.625.1608228446970;
+        Thu, 17 Dec 2020 10:07:26 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.31
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:32 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:26 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
-Date:   Thu, 17 Dec 2020 21:06:01 +0300
-Message-Id: <20201217180638.22748-12-digetx@gmail.com>
+Subject: [PATCH v2 06/48] dt-bindings: clock: tegra: Document clocks sub-node
+Date:   Thu, 17 Dec 2020 21:05:56 +0300
+Message-Id: <20201217180638.22748-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,102 +90,104 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
-levels don't start from 0 in OPP table and zero usually means a minimal
-level.
+Document "clocks" sub-node which describes Tegra SoC clocks that require
+a higher voltage of the core power domain in order to operate properly on
+a higher rates.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/core.c     | 49 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/pm_opp.h |  8 +++++++
- 2 files changed, 57 insertions(+)
+ .../bindings/clock/nvidia,tegra20-car.txt     | 26 +++++++++++++++++++
+ .../bindings/clock/nvidia,tegra30-car.txt     | 26 +++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index eab37b3a27bb..0783a4ac819a 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -449,6 +449,55 @@ struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_find_level_exact);
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+index 6c5901b503d0..353354477785 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+@@ -19,6 +19,16 @@ Required properties :
+   In clock consumers, this cell represents the bit number in the CAR's
+   array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
  
-+/**
-+ * dev_pm_opp_find_level_ceil() - search for an rounded up level
-+ * @dev:		device for which we do this operation
-+ * @level:		level to search for
-+ *
-+ * Return: Searches for rounded up match in the opp table and returns pointer
-+ * to the  matching opp if found, else returns ERR_PTR in case of error and
-+ * should be handled using IS_ERR. Error return values can be:
-+ * EINVAL:	for bad pointer
-+ * ERANGE:	no match found for search
-+ * ENODEV:	if device not found in list of registered devices
-+ *
-+ * The callers are required to call dev_pm_opp_put() for the returned OPP after
-+ * use.
-+ */
-+struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
-+					      unsigned int *level)
-+{
-+	struct opp_table *opp_table;
-+	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
++Optional child sub-node "clocks" should contain nodes matching the clocks
++on the Tegra SoC. Refer to Tegra TRM for mode details on the clock nodes.
 +
-+	opp_table = _find_opp_table(dev);
-+	if (IS_ERR(opp_table)) {
-+		int r = PTR_ERR(opp_table);
++Required properties :
++- compatible : Should be "nvidia,tegra20-clock".
++- operating-points-v2: See ../bindings/opp/opp.txt for details.
++- clocks : Should contain clock which corresponds to the node.
++- power-domains: Phandle to a power domain node as described by generic
++                 PM domain bindings.
 +
-+		dev_err(dev, "%s: OPP table not found (%d)\n", __func__, r);
-+		return ERR_PTR(r);
-+	}
-+
-+	mutex_lock(&opp_table->lock);
-+
-+	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
-+		if (temp_opp->available && temp_opp->level >= *level) {
-+			opp = temp_opp;
-+			*level = opp->level;
-+
-+			/* Increment the reference count of OPP */
-+			dev_pm_opp_get(opp);
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&opp_table->lock);
-+	dev_pm_opp_put_opp_table(opp_table);
-+
-+	return opp;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_find_level_ceil);
-+
- static noinline struct dev_pm_opp *_find_freq_ceil(struct opp_table *opp_table,
- 						   unsigned long *freq)
- {
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index f311a8b2ca04..a17d92d923cc 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -111,6 +111,8 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- 					      bool available);
- struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
- 					       unsigned int level);
-+struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
-+					      unsigned int *level);
+ Example SoC include file:
  
- struct dev_pm_opp *dev_pm_opp_find_freq_floor(struct device *dev,
- 					      unsigned long *freq);
-@@ -228,6 +230,12 @@ static inline struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
- 	return ERR_PTR(-ENOTSUPP);
- }
- 
-+static inline struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
-+					unsigned int *level)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
+ / {
+@@ -27,6 +37,22 @@ Example SoC include file:
+ 		reg = <0x60006000 0x1000>;
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
 +
- static inline struct dev_pm_opp *dev_pm_opp_find_freq_floor(struct device *dev,
- 					unsigned long *freq)
- {
++		clocks {
++			hdmi {
++				compatible = "nvidia,tegra20-clock";
++				operating-points-v2 = <&hdmi_opp_table>;
++				clocks = <&tegra_car TEGRA20_CLK_HDMI>;
++				power-domains = <&domain>;
++			};
++
++			pll_m {
++				compatible = "nvidia,tegra20-clock";
++				operating-points-v2 = <&pll_m_opp_table>;
++				clocks = <&tegra_car TEGRA20_CLK_PLL_M>;
++				power-domains = <&domain>;
++			};
++		};
+ 	};
+ 
+ 	usb@c5004000 {
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+index 63618cde12df..bc7bbdaa9d3f 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+@@ -19,6 +19,16 @@ Required properties :
+   In clock consumers, this cell represents the bit number in the CAR's
+   array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
+ 
++Optional child sub-node "clocks" should contain nodes matching the clocks
++on the Tegra SoC. Refer to Tegra TRM for mode details on the clock nodes.
++
++Required properties :
++- compatible : Should be "nvidia,tegra30-clock".
++- operating-points-v2: See ../bindings/opp/opp.txt for details.
++- clocks : Should contain clock which corresponds to the node.
++- power-domains: Phandle to a power domain node as described by generic
++                 PM domain bindings.
++
+ Example SoC include file:
+ 
+ / {
+@@ -31,6 +41,22 @@ Example SoC include file:
+ 
+ 	usb@c5004000 {
+ 		clocks = <&tegra_car TEGRA30_CLK_USB2>;
++
++		clocks {
++			hdmi {
++				compatible = "nvidia,tegra30-clock";
++				operating-points-v2 = <&hdmi_opp_table>;
++				clocks = <&tegra_car TEGRA30_CLK_HDMI>;
++				power-domains = <&domain>;
++			};
++
++			pll_m {
++				compatible = "nvidia,tegra30-clock";
++				operating-points-v2 = <&pll_m_opp_table>;
++				clocks = <&tegra_car TEGRA30_CLK_PLL_M>;
++				power-domains = <&domain>;
++			};
++		};
+ 	};
+ };
+ 
 -- 
 2.29.2
 
