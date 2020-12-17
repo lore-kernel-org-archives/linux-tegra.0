@@ -2,159 +2,255 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72DFC352A6
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8597C2BBD5
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A869A23A04
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B713523B28
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:59:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbgLQUaS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 15:30:18 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8611 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731389AbgLQUaR (ORCPT
+        id S1730125AbgLQU7M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 15:59:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729655AbgLQU7M (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 15:30:17 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fdbbf8d0001>; Thu, 17 Dec 2020 12:29:01 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Dec
- 2020 20:28:56 +0000
-Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 17 Dec 2020 20:28:55 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
-CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
-        <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
-        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v4 6/9] spi: tegra210-quad: Add support for hardware dummy cycles transfer
-Date:   Thu, 17 Dec 2020 12:28:44 -0800
-Message-ID: <1608236927-28701-7-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
-References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 17 Dec 2020 15:59:12 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B81C061794;
+        Thu, 17 Dec 2020 12:58:31 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id m25so61160843lfc.11;
+        Thu, 17 Dec 2020 12:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2zaYEPU3Dc5zFOFGXsYjz12iYiWYHN8N3O6lakukl/s=;
+        b=qgHdy+aVZrcGxyULYw4C/dnhEhXcHqnIi3WOZ6PUyWeJ1T2KuwB4MyFcAMVcIxtEkN
+         P0wC9L1L3/OzQP2N4oOFkRUNhuvP6BbgtM9veJ1+/75E6Miy7hj7Bf2nEtboXPbzthOR
+         kxxro9rjbhD5efC41F1HFL2RxEsBF22ZTFXdF10FlYyRqWRrEuRkkxNHvNJAyiBiyHb5
+         xCx3hJCcAYykCnF/aKI0AxMDTkj4x39+lQJUW1SrSIqcsl3UFk3eY07U8IrPb8AhV1uo
+         MAvO3Efc7ekB1pIAMLvXK67v6Yhq5T7IZPOk04vo8zGuFhsht5N49PaRJoPc7WLTbass
+         MfYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2zaYEPU3Dc5zFOFGXsYjz12iYiWYHN8N3O6lakukl/s=;
+        b=mk6ECNMHIfaJnfdVJza6zr3sQqMHNSUgYAr5ydti1HnQ46TwMYNrMnbwcfUw3Asi+C
+         b2yLSIDIROzMJ4LukAW2nI6g0WCFx2Rgp+mq9uJog4e5eFieaS5jShXCayMwSEf11HGI
+         X7T6jbjuu9QqNTxS95tA8I7QTHbfhwKEw7O527CzXhBDqmwJB2aYLR5Vft2Ixka435tP
+         sKi/5FxDUB5UY0wKD7LEMy2xHnmF6UqG0UXampjezxvUVSZ0coNYem4z9WPl2kLL7U+2
+         bq2afagXnH6yG2+yTpWrD+kO3pjf0QaM+NxG/+yqMZulq4kQBMVz/5debAdh5xrh1HEk
+         1smw==
+X-Gm-Message-State: AOAM531DD07vwJRGTuaLZMKW502LLUivI2AlWRZnvbbClbo+msHB3e2f
+        ilcxzGuwW0eCPCm8RSbXdQ77KmaKBMA=
+X-Google-Smtp-Source: ABdhPJybT54BUMIzcynXITACTqPF/IcLrcExqUZ6d4e77IqO+C219fiwEYcS2lWHXSvWZh2/2hrkeQ==
+X-Received: by 2002:a05:6512:3089:: with SMTP id z9mr233591lfd.433.1608238709941;
+        Thu, 17 Dec 2020 12:58:29 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id z26sm789139ljn.98.2020.12.17.12.58.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Dec 2020 12:58:29 -0800 (PST)
+Subject: Re: [PATCH v2 34/48] gpu: host1x: Support power management
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-35-digetx@gmail.com>
+ <cb8dca7c-6ef2-5116-6c04-816a63525e2e@kapsi.fi>
+ <b106c4c0-bd93-bbc9-9357-45fe8fb1cf0f@gmail.com>
+Message-ID: <5523b804-f5de-a529-fd4e-751c39ab663b@gmail.com>
+Date:   Thu, 17 Dec 2020 23:58:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608236941; bh=jmc7L6L+XTlt/mdhhipcIsZ+/q6GiritSmf7bmM215U=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=V7AFKY98NtHczjdjj2QTpZICckChqpZsbFZmqqZPUylPa67e5KY07kXijX9f+k1ZF
-         UbJ+fYZXWjmT8uSwIjEVFgcBCcQmeZ6yN3y2I1sojZagNf/OWit11H7PFedpr0gNqH
-         XtotAIF8aWeCDK2o7T02YaGH2vxBTOJG6FbTFty26M5ZcSX+7TP5b5QiabOOMin/M/
-         2d72OxjH0QpS4gF4qHJVxixiSuKVtlBhMSUtsrEdhWF0dLNq0tDIqeiOdIC6vMagg3
-         LkEvtXparipybt/9ONNh8Z8irFhkMYX+sFAYCym0J/CxSkc73IVSyM8fojI92knkdo
-         foPAly5lSd72Q==
+In-Reply-To: <b106c4c0-bd93-bbc9-9357-45fe8fb1cf0f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Tegra Quad SPI controller hardware supports sending dummy bytes based
-on programmed dummy clock cycles after the actual transfer bytes.
+17.12.2020 21:45, Dmitry Osipenko пишет:
+> 17.12.2020 21:21, Mikko Perttunen пишет:
+>> On 12/17/20 8:06 PM, Dmitry Osipenko wrote:
+>>> Add suspend/resume and generic power domain support to the Host1x driver.
+>>> This is required for enabling system-wide DVFS and supporting dynamic
+>>> power management using a generic power domain.
+>>>
+>>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>>> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>   drivers/gpu/host1x/dev.c | 102 ++++++++++++++++++++++++++++++++++-----
+>>>   1 file changed, 91 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>>> index d0ebb70e2fdd..c1525cffe7b1 100644
+>>> --- a/drivers/gpu/host1x/dev.c
+>>> +++ b/drivers/gpu/host1x/dev.c
+>>> @@ -12,6 +12,7 @@
+>>>   #include <linux/module.h>
+>>>   #include <linux/of_device.h>
+>>>   #include <linux/of.h>
+>>> +#include <linux/pm_runtime.h>
+>>>   #include <linux/slab.h>
+>>>     #define CREATE_TRACE_POINTS
+>>> @@ -417,7 +418,7 @@ static int host1x_probe(struct platform_device *pdev)
+>>>           return err;
+>>>       }
+>>>   -    host->rst = devm_reset_control_get(&pdev->dev, "host1x");
+>>> +    host->rst = devm_reset_control_get_exclusive_released(&pdev->dev,
+>>> "host1x");
+>>>       if (IS_ERR(host->rst)) {
+>>>           err = PTR_ERR(host->rst);
+>>>           dev_err(&pdev->dev, "failed to get reset: %d\n", err);
+>>> @@ -437,16 +438,15 @@ static int host1x_probe(struct platform_device
+>>> *pdev)
+>>>           goto iommu_exit;
+>>>       }
+>>>   -    err = clk_prepare_enable(host->clk);
+>>> -    if (err < 0) {
+>>> -        dev_err(&pdev->dev, "failed to enable clock\n");
+>>> -        goto free_channels;
+>>> -    }
+>>> +    pm_runtime_enable(&pdev->dev);
+>>> +    err = pm_runtime_get_sync(&pdev->dev);
+>>> +    if (err < 0)
+>>> +        goto rpm_disable;
+>>>         err = reset_control_deassert(host->rst);
+>>>       if (err < 0) {
+>>>           dev_err(&pdev->dev, "failed to deassert reset: %d\n", err);
+>>> -        goto unprepare_disable;
+>>> +        goto rpm_disable;
+>>>       }
+>>>         err = host1x_syncpt_init(host);
+>>> @@ -485,9 +485,10 @@ static int host1x_probe(struct platform_device
+>>> *pdev)
+>>>       host1x_syncpt_deinit(host);
+>>>   reset_assert:
+>>>       reset_control_assert(host->rst);
+>>> -unprepare_disable:
+>>> -    clk_disable_unprepare(host->clk);
+>>> -free_channels:
+>>> +rpm_disable:
+>>> +    pm_runtime_put(&pdev->dev);
+>>> +    pm_runtime_disable(&pdev->dev);
+>>> +
+>>>       host1x_channel_list_free(&host->channel_list);
+>>>   iommu_exit:
+>>>       host1x_iommu_exit(host);
+>>> @@ -504,16 +505,95 @@ static int host1x_remove(struct platform_device
+>>> *pdev)
+>>>       host1x_intr_deinit(host);
+>>>       host1x_syncpt_deinit(host);
+>>>       reset_control_assert(host->rst);
+>>> -    clk_disable_unprepare(host->clk);
+>>> +    pm_runtime_put(&pdev->dev);
+>>> +    pm_runtime_disable(&pdev->dev);
+>>>       host1x_iommu_exit(host);
+>>>         return 0;
+>>>   }
+>>>   +static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+>>> +{
+>>> +    struct host1x *host = dev_get_drvdata(dev);
+>>> +
+>>> +    clk_disable_unprepare(host->clk);
+>>> +    reset_control_release(host->rst);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static int __maybe_unused host1x_runtime_resume(struct device *dev)
+>>> +{
+>>> +    struct host1x *host = dev_get_drvdata(dev);
+>>> +    int err;
+>>> +
+>>> +    err = reset_control_acquire(host->rst);
+>>> +    if (err) {
+>>> +        dev_err(dev, "failed to acquire reset: %d\n", err);
+>>> +        return err;
+>>> +    }
+>>> +
+>>> +    err = clk_prepare_enable(host->clk);
+>>> +    if (err) {
+>>> +        dev_err(dev, "failed to enable clock: %d\n", err);
+>>> +        goto release_reset;
+>>> +    }
+>>> +
+>>> +    return 0;
+>>> +
+>>> +release_reset:
+>>> +    reset_control_release(host->rst);
+>>> +
+>>> +    return err;
+>>> +}
+>>> +
+>>> +static __maybe_unused int host1x_suspend(struct device *dev)
+>>> +{
+>>> +    struct host1x *host = dev_get_drvdata(dev);
+>>> +    int err;
+>>> +
+>>> +    host1x_syncpt_save(host);
+>>> +
+>>> +    err = pm_runtime_force_suspend(dev);
+>>> +    if (err < 0)
+>>> +        return err;
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static __maybe_unused int host1x_resume(struct device *dev)
+>>> +{
+>>> +    struct host1x *host = dev_get_drvdata(dev);
+>>> +    struct host1x_channel *channel;
+>>> +    unsigned int index;
+>>> +    int err;
+>>> +
+>>> +    err = pm_runtime_force_resume(dev);
+>>> +    if (err < 0)
+>>> +        return err;
+>>> +
+>>> +    host1x_syncpt_restore(host);
+>>
+>> We also need to execute 'host1x_setup_sid_table' upon resume.
+> 
+> Indeed, thanks. I'll correct it in the next revision.
+> 
+> Perhaps the actual save/restore needs to be moved to the runtime
+> callbacks. At least I can't remember right now why this wasn't done in
+> the first place.
+> 
 
-This patch adds this support of hardware dummy bytes transfer and
-skips transfer of dummy bytes from the software.
-
-For dummy cycles more than Tegra Quad SPI hardware maximum dummy
-cycles limit, driver transfers dummy bytes from the software.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 41 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index e7bee8d..695a296 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -117,6 +117,7 @@
- 
- #define QSPI_MISC_REG                           0x194
- #define QSPI_NUM_DUMMY_CYCLE(x)			(((x) & 0xff) << 0)
-+#define QSPI_DUMMY_CYCLES_MAX			0xff
- 
- #define DATA_DIR_TX				BIT(0)
- #define DATA_DIR_RX				BIT(1)
-@@ -170,6 +171,7 @@ struct tegra_qspi {
- 	u32					def_command2_reg;
- 	u32					spi_cs_timing1;
- 	u32					spi_cs_timing2;
-+	u8					dummy_cycles;
- 
- 	struct completion			xfer_completion;
- 	struct spi_transfer			*curr_xfer;
-@@ -856,6 +858,8 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
- 
- 	tqspi->command1_reg = command1;
- 
-+	tegra_qspi_writel(tqspi, QSPI_NUM_DUMMY_CYCLE(tqspi->dummy_cycles), QSPI_MISC_REG);
-+
- 	ret = tegra_qspi_flush_fifos(tqspi, false);
- 	if (ret < 0)
- 		return ret;
-@@ -974,7 +978,8 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
- {
- 	struct tegra_qspi *tqspi = spi_master_get_devdata(master);
- 	struct spi_device *spi = msg->spi;
--	struct spi_transfer *xfer;
-+	struct spi_transfer *xfer, *next_xfer;
-+	bool use_hw_dummy_cycles = false;
- 	bool is_first_msg = true;
- 	int ret;
- 
-@@ -984,8 +989,42 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
- 	tqspi->rx_status = 0;
- 
- 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-+		u8 dummy_cycles = 0;
- 		u32 cmd1;
- 
-+		/*
-+		 * Skip dummy bytes transfer if they are transferred by the hardware along
-+		 * with previous transfer.
-+		 */
-+		if (xfer->dummy_data && use_hw_dummy_cycles) {
-+			msg->actual_length += xfer->len;
-+			continue;
-+		}
-+
-+		/*
-+		 * Tegra QSPI hardware supports dummy bytes transfer after actual transfer
-+		 * bytes based on programmed dummy clock cycles in the QSPI_MISC register.
-+		 * So, check if the next transfer is dummy data transfer and program dummy
-+		 * clock cycles along with the current transfer.
-+		 */
-+		if (!list_is_last(&xfer->transfer_list, &msg->transfers)) {
-+			next_xfer = list_next_entry(xfer, transfer_list);
-+			if (next_xfer && next_xfer->dummy_data) {
-+				dummy_cycles = next_xfer->len * 8 / next_xfer->tx_nbits;
-+				use_hw_dummy_cycles = true;
-+				/*
-+				 * Use software dummy bytes transfer if dummy cycles exceeds
-+				 * Tegra QSPI hardware maximum dummy cycles limit.
-+				 */
-+				if (dummy_cycles > QSPI_DUMMY_CYCLES_MAX) {
-+					use_hw_dummy_cycles = false;
-+					dummy_cycles = 0;
-+				}
-+			}
-+		}
-+
-+		tqspi->dummy_cycles = dummy_cycles;
-+
- 		reinit_completion(&tqspi->xfer_completion);
- 
- 		cmd1 = tegra_qspi_setup_transfer_one(spi, xfer, is_first_msg);
--- 
-2.7.4
-
+I looked at the save/restore once again and recalled why it's done so.
+The reason is that the host1x touches hardware during the driver probe,
+and thus, RPM needs to be resumed first. It will be a bigger change to
+properly decouple the hardware initialization so that it all could be
+put it into the RPM callback. I'll try to do it in v3.
