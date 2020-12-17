@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4B7C47437
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DC2C2BBCD
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDE9A23A40
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD2A2389E
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbgLQSJM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:09:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42084 "EHLO
+        id S1731231AbgLQSJ1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:09:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730874AbgLQSJL (ORCPT
+        with ESMTP id S1731128AbgLQSJW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:11 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0100C0619D7;
-        Thu, 17 Dec 2020 10:07:43 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id y19so59728949lfa.13;
-        Thu, 17 Dec 2020 10:07:43 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:22 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C26AC0619DD;
+        Thu, 17 Dec 2020 10:07:52 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id o13so36634335lfr.3;
+        Thu, 17 Dec 2020 10:07:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=O54hHe3GwNNHKPGqkz2B7DU6dvwXex7DZOGprtr/GmM=;
-        b=OeNoXEbagvqP4DcdFhxII/42gkuzezO/PqnbWTRx0INOXQdREbZ9WUQtGqRW9XC4zu
-         qwqGe/LBGPelVABYeoE0DFhmP9frBpJpDLpxjZNEzjx2+8qfHOLYxleJzaXHkyivn7MV
-         5Wx+7w3s6l4rWpcim8ghNJ6etTTkdS0O3EKA3rmH4m0vpOdsClXW+OmZRnXCmX54UcIZ
-         YIzRp3emr7EG0FQVREe03LqbyinxlxDppx97t00aAoZs/8z1kq05RI6LRx430jN4MrGe
-         yKib5DtjYjwWT1KHHaTrKl53ri2GUuh6aSw6+bQaGldmbatKakYdHzLHJ4nT9jbN9T1g
-         77OA==
+        bh=AcH1FS/cY17dY1GS/AeJ9Cc6wg6/sJS1m+8NI+VLW6c=;
+        b=A/eiWrTzy624Z6SUVpbBNu2n18qIJdY5Eb7ta7XoYimzF9bE9itZS3TwXefOcE0CwO
+         VuLLv6FI+f5Tisz7MYHdpbsRVGTzVJI0+PSZWYZ0hbjRnsd/5JZBmTMQA40ME9yJZJJV
+         2G7HlZGPklEWcsYRfdD0dH5i12hL+dCLLtkRCBkQw0w3eBS2p8ucEHB85Jtby/AcTmVA
+         uAtgew++vYSM8SMj54+2UwVVMiYlrAQmnslILrkpRq2yKBLbZRNRdG8m6pjq9evQNTTx
+         zjdgSA+2yT0D0q228HIWP7xI++hWpUzNn8NBp/6YsGm3ujIljxovE+HsNK2ug4boY0nm
+         DkUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=O54hHe3GwNNHKPGqkz2B7DU6dvwXex7DZOGprtr/GmM=;
-        b=QyBlJhfWtHDb6VUtK0HLs59bqn28Kxm78/cg6st1yPVGzdw7lRZav3BZiGjcHVjR62
-         QhuCMDIUD9uoGzgretaYaH83Ms9Z3Lkffn7ysAd8gfPfOrKwneOXe1wJAokmL/NeqymG
-         zvxASxwPpyjwChwMRDSnsJPIC/VLZ2FN2Pl90iLHZwp9mQ5fhJWyn6NcJ7VBA0zLc0uP
-         OY0kZ8WcxRgbWx1zdkl0141+gKSn/Ahtlp72G0vEw/6/nQMsDHOOLa8piCKTgLbfYuYC
-         NFj04QFyjEjAKgztcO/k8A5+Hwctmjv5Mdiq6dtUoxQMgGIK/ioOdqYx4Pu+QBCWkZJ2
-         jGng==
-X-Gm-Message-State: AOAM5327XMVfl4WMdKrCk2kzGKShDUFpsDzOEhnGfNWw6D2eAKu5J3+F
-        vQW9sDmi4DIzq+YLZs/uzKQ=
-X-Google-Smtp-Source: ABdhPJwgr1JYd3dkFtKpuRIk58HS8VFkfsWUOGAgiyXDw3hUSYyQyK1uR0tRGdUSz8JFZo5ENDfzNg==
-X-Received: by 2002:a2e:b80d:: with SMTP id u13mr209747ljo.143.1608228460744;
-        Thu, 17 Dec 2020 10:07:40 -0800 (PST)
+        bh=AcH1FS/cY17dY1GS/AeJ9Cc6wg6/sJS1m+8NI+VLW6c=;
+        b=d2cKGKA6UZ21XBgoOUsiv/+cYf6dViX1j8NI0gHxOqhLdLZdCqSTsm1h9cQogz5Tc0
+         dkWW4P/zIBQkttWurTK/ka/tD/Z5oPZaEc83iBrh8XXe4RzQbCOMl6h9xqqEqJo0C8Ij
+         as0qwLevOF1eME5kfKg6olrTpWLyNXiM+57tiB96MhKcQ8cmXdyLDk9L/psD5myVP+1l
+         9XEhcuFx9CeuvDA6gveXEp/hNOXECnGRPpivoWkdN0l0GDGBlnKXDEgph1q9Txo5BFjz
+         e4EPpLCYmNmVepjKDCK0+eJ7vfrOMzkp+gGhPpizmyQPgwANKuwW52tnwNNmWqz3hDP9
+         ShNQ==
+X-Gm-Message-State: AOAM532+IbEoZ8jqClhCrIUmJ2E/QoJ3TvwXd7e86T1L6QODbiGcbJ8x
+        cIqgM0q/3ZA11+/uErUUSJY=
+X-Google-Smtp-Source: ABdhPJxDAKi/w9xlyE0C+sGYBCXZ9YXsrV/Esex76tZjt69/6MpbZ3TUi8oDE2wG4nj3u41A5rs3sw==
+X-Received: by 2002:a05:6512:687:: with SMTP id t7mr14836899lfe.432.1608228471133;
+        Thu, 17 Dec 2020 10:07:51 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.39
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:40 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:50 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 18/48] opp: Print OPP level in debug message of _opp_add_static_v2()
-Date:   Thu, 17 Dec 2020 21:06:08 +0300
-Message-Id: <20201217180638.22748-19-digetx@gmail.com>
+Subject: [PATCH v2 27/48] soc/tegra: Add CONFIG_SOC_TEGRA_COMMON and select PM_OPP by default
+Date:   Thu, 17 Dec 2020 21:06:17 +0300
+Message-Id: <20201217180638.22748-28-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,32 +90,103 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Print OPP level in debug message of _opp_add_static_v2(). This helps to
-chase GENPD bugs.
+Add new Kconfig SOC_TEGRA_COMMON option which selects configuration
+options that are common for all Tegra SoCs. Select PM_OPP by default
+since from now on OPPs will be used by Tegra drivers which present on
+all SoC generations, like display controller driver for example.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/of.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/soc/tegra/Kconfig | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 1f2038a4420b..56b153ea5c56 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -822,10 +822,11 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 	if (new_opp->clock_latency_ns > opp_table->clock_latency_ns_max)
- 		opp_table->clock_latency_ns_max = new_opp->clock_latency_ns;
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 976dee036470..bcd61ae59ba3 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -13,6 +13,7 @@ config ARCH_TEGRA_2x_SOC
+ 	select PINCTRL_TEGRA20
+ 	select PL310_ERRATA_727915 if CACHE_L2X0
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	select SOC_TEGRA20_VOLTAGE_COUPLER
+@@ -27,6 +28,7 @@ config ARCH_TEGRA_3x_SOC
+ 	select ARM_ERRATA_764369 if SMP
+ 	select PINCTRL_TEGRA30
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	select SOC_TEGRA30_VOLTAGE_COUPLER
+@@ -40,6 +42,7 @@ config ARCH_TEGRA_114_SOC
+ 	select ARM_ERRATA_798181 if SMP
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select PINCTRL_TEGRA114
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	select TEGRA_TIMER
+@@ -51,6 +54,7 @@ config ARCH_TEGRA_124_SOC
+ 	bool "Enable support for Tegra124 family"
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select PINCTRL_TEGRA124
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	select TEGRA_TIMER
+@@ -66,6 +70,7 @@ if ARM64
+ config ARCH_TEGRA_132_SOC
+ 	bool "NVIDIA Tegra132 SoC"
+ 	select PINCTRL_TEGRA124
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	help
+@@ -77,6 +82,7 @@ config ARCH_TEGRA_132_SOC
+ config ARCH_TEGRA_210_SOC
+ 	bool "NVIDIA Tegra210 SoC"
+ 	select PINCTRL_TEGRA210
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
+ 	select TEGRA_TIMER
+@@ -99,6 +105,7 @@ config ARCH_TEGRA_186_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 features a
+@@ -115,6 +122,7 @@ config ARCH_TEGRA_194_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra194 SoC.
+@@ -125,6 +133,7 @@ config ARCH_TEGRA_234_SOC
+ 	select TEGRA_BPMP
+ 	select TEGRA_HSP_MBOX
+ 	select TEGRA_IVC
++	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_PMC
+ 	help
+ 	  Enable support for the NVIDIA Tegra234 SoC.
+@@ -132,6 +141,10 @@ config ARCH_TEGRA_234_SOC
+ endif
+ endif
  
--	pr_debug("%s: turbo:%d rate:%lu uv:%lu uvmin:%lu uvmax:%lu latency:%lu\n",
-+	pr_debug("%s: turbo:%d rate:%lu uv:%lu uvmin:%lu uvmax:%lu latency:%lu level:%u\n",
- 		 __func__, new_opp->turbo, new_opp->rate,
- 		 new_opp->supplies[0].u_volt, new_opp->supplies[0].u_volt_min,
--		 new_opp->supplies[0].u_volt_max, new_opp->clock_latency_ns);
-+		 new_opp->supplies[0].u_volt_max, new_opp->clock_latency_ns,
-+		 new_opp->level);
- 
- 	/*
- 	 * Notify the changes in the availability of the operable
++config SOC_TEGRA_COMMON
++	bool
++	select PM_OPP
++
+ config SOC_TEGRA_FUSE
+ 	def_bool y
+ 	depends on ARCH_TEGRA
 -- 
 2.29.2
 
