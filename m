@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17CCC2BBCF
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538FAC3527E
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 989BD2388E
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 298572389E
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731168AbgLQSJy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:09:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42076 "EHLO
+        id S1729617AbgLQSKO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:10:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731144AbgLQSJ0 (ORCPT
+        with ESMTP id S1726548AbgLQSJZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:26 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB336C061A4B;
-        Thu, 17 Dec 2020 10:08:14 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id s26so25139375lfc.8;
-        Thu, 17 Dec 2020 10:08:14 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:25 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D6FC0619DF;
+        Thu, 17 Dec 2020 10:07:54 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id o19so34210094lfo.1;
+        Thu, 17 Dec 2020 10:07:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QFKBoMDmOqL8VObNYiHW98GY/43naCkUJTj2RaTjBwA=;
-        b=EobUySb5wv0B0upIN1NN5TWI3KJftrGAf0Dm89wMk4DobyH++fkeLE/z4h3pNAcmwY
-         KJ0WyZw4eFyiwmPCEsxQUzZGsbOrjN2IQwG4M/O1kofOoZN5ByAbWWJdTOQBwPBsKoBS
-         YWDmsu9jKqeAS2WVyjZ49QrGJ+9mhSEykEG07zlXTiht8LdlM6QIE/SS0XcrFyc1CgBa
-         jao0lrSsTovwf/7miAArkiYN8XUNvonCojQlxztCu49KZPY0cIP0kfEEMVPakCOynJac
-         Egr1ECabTVoznsrygkF3dCm0pKBtmXQtZj19tIv6sdQ+mDaLeG5ndg67V1Zl58HCo4Zw
-         i7Lw==
+        bh=Aa+hChpvs0JDUl0QCouhA8Ook0AiIGpyBFoUGyXOUQI=;
+        b=RhneqMMMFpT/rGzIIf7uEiGIehQLF+olyu6ZCNFX+oOHPVy1WdgNHVxT9bn1QlEeo8
+         4n1SHThx55TK/bXvX0IGfRJ7GoL37rHD2WNc4lkOGHcBMZgFaWTsQ9+uAXZOE3rZqdlW
+         hfAUUX5oiGE3CHjG6mziJsZz3/TzHP2qGv3tDSd1VA2XvrZn95KaGn/ZcVxL0pHAGh2t
+         BFZLKfM9Wp2fxoMv38KrZ/YCEFInQqRvmkF2W5ssdGnXmVqNYh1slRuTRPDfy7h9LqfK
+         9Ij69AfbaRxeblxSU7zdqyMpXBplESP2BswsvcjWDhIg3J1BrpiApycEtaMy4FtWjgRf
+         UY9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QFKBoMDmOqL8VObNYiHW98GY/43naCkUJTj2RaTjBwA=;
-        b=n1CxcXokMtfFOOosv1REAH/GXC5OJK7IXR2Rj8XRIUVfrChyvO+Oghc7OgdER1zh3O
-         GcWZzaqtPOtgX8gzW215/fjhG/waqP1asPfC9gxOhfLOD9jK4jWMIvAxklRmPy2kr1mi
-         ykbaBh9KJeFZqj/7wJdNNfIVvFRvHcg3Y5KQAAetZhMZrCLLBdfi4W4agDKPL9++GxOr
-         JtnjBIhMsNLH1tT+TYtcfQvlzIKSKrjlu1snr6koeJmaXtSSXUkkr7nGUCzFjTUTfdQw
-         lq+P97nYB3UNnfE5cv0Hvt+ERZVfNd1qruW5mbjl9yBGP5Qex9Aolv+p0D1o6rAVAaSa
-         PZag==
-X-Gm-Message-State: AOAM531VrnVQm8pfOmRFCikKQ8esNUQukt/0E7e5/MSvALLIaIEW75eg
-        BhddGB0ioejfDivI9XiOeLA=
-X-Google-Smtp-Source: ABdhPJx3Hj4S995ls6nZE7TDU17yudwFXp26p9mve2ah5isvg97LWmTDZ/u3MbGlnXb8+MoIICA0Yw==
-X-Received: by 2002:a2e:9195:: with SMTP id f21mr210825ljg.191.1608228493416;
-        Thu, 17 Dec 2020 10:08:13 -0800 (PST)
+        bh=Aa+hChpvs0JDUl0QCouhA8Ook0AiIGpyBFoUGyXOUQI=;
+        b=O2GQeMhEejaKkh9GeCd8kVmJHV+QeGKNZOFrXqSy/LQJI3iaBqTQ/aadKB2p7Fqslm
+         yp16vmfQbPU6SMsIk/zzbULfXDSG9bsLIdKFvjV0eyWN4FtYMiejPI+JKWKlC9gZlnVe
+         gaKZ5XEqd1DfVTPoZtSunDQB/3s6vXP9L89S4A58eaeFULppHPGS4kQQRpYEeOlmgWkU
+         ro8vT8WdNaSFOqtlYYUlfwylsHu0K6+dBmFUpLC2gZuqCM9EB2nfIF9GOwnzBVGnzcdR
+         wdlcesr87773XqVocAKJYrcmsvyFQl96k7Uib7chazCWJNa7p7T/lZm5rD74FCJhMFxA
+         NIdw==
+X-Gm-Message-State: AOAM530nEDra3DWvsdcUW8d3kUVqA5yQI/hVNBzRRSRsr3qiOAlzb9UG
+        PeDAfF2YKTlax9bL5/zF/Bg=
+X-Google-Smtp-Source: ABdhPJxL85GcfJiXMkymH7isdZq+CnfDmDZN1MReJJCcpfCArlmNTx0/MjgW8Yls8T8+SwJfWzuMqQ==
+X-Received: by 2002:a19:5e5b:: with SMTP id z27mr16037203lfi.143.1608228473454;
+        Thu, 17 Dec 2020 10:07:53 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.12
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:08:12 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:52 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 46/48] ARM: tegra: ventana: Enable core voltage scaling
-Date:   Thu, 17 Dec 2020 21:06:36 +0300
-Message-Id: <20201217180638.22748-47-digetx@gmail.com>
+Subject: [PATCH v2 29/48] soc/tegra: pmc: Link domains to the parent Core domain
+Date:   Thu, 17 Dec 2020 21:06:19 +0300
+Message-Id: <20201217180638.22748-30-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,69 +90,55 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Allow lower core voltages on Ventana board.
+The Core domain is a parent of PMC power domains, hence PMC domains
+should be set up as a sub-domains of the parent (Core) domain if
+"power-domains" phandle presents in a device-tree node of PMC domain.
+
+This allows to propagate GENPD performance changes to the parent Core
+domain if performance change is applied to PMC domain.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-ventana.dts | 32 ++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ drivers/soc/tegra/pmc.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 0b03b3b0fd0c..14ace2ef749c 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -422,16 +422,26 @@ sys_reg: sys {
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 4f96dc7745c4..1a659d1c06d7 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1236,6 +1236,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+ static int tegra_powergate_init(struct tegra_pmc *pmc,
+ 				struct device_node *parent)
+ {
++	struct of_phandle_args child_args, parent_args;
+ 	struct device_node *np, *child;
+ 	int err = 0;
  
- 				vdd_core: sm0 {
- 					regulator-name = "vdd_sm0,vdd_core";
--					regulator-min-microvolt = <1200000>;
--					regulator-max-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
-+					regulator-coupled-max-spread = <170000 550000>;
- 					regulator-always-on;
-+					regulator-boot-on;
+@@ -1249,6 +1250,24 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
+ 			of_node_put(child);
+ 			break;
+ 		}
 +
-+					nvidia,tegra-core-regulator;
- 				};
- 
--				sm1 {
-+				vdd_cpu: sm1 {
- 					regulator-name = "vdd_sm1,vdd_cpu";
--					regulator-min-microvolt = <1000000>;
--					regulator-max-microvolt = <1000000>;
-+					regulator-min-microvolt = <750000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-coupled-with = <&vdd_core &rtc_vdd>;
-+					regulator-coupled-max-spread = <550000 550000>;
- 					regulator-always-on;
-+					regulator-boot-on;
++		if (of_parse_phandle_with_args(child, "power-domains",
++					       "#power-domain-cells",
++					       0, &parent_args))
++			continue;
 +
-+					nvidia,tegra-cpu-regulator;
- 				};
- 
- 				sm2_reg: sm2 {
-@@ -450,10 +460,16 @@ ldo1 {
- 					regulator-always-on;
- 				};
- 
--				ldo2 {
-+				rtc_vdd: ldo2 {
- 					regulator-name = "vdd_ldo2,vdd_rtc";
--					regulator-min-microvolt = <1200000>;
--					regulator-max-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-coupled-with = <&vdd_core &vdd_cpu>;
-+					regulator-coupled-max-spread = <170000 550000>;
-+					regulator-always-on;
-+					regulator-boot-on;
++		child_args.np = child;
++		child_args.args_count = 0;
 +
-+					nvidia,tegra-rtc-regulator;
- 				};
++		err = of_genpd_add_subdomain(&parent_args, &child_args);
++		of_node_put(parent_args.np);
++		if (err) {
++			if (err == -ENOENT)
++				err = -EPROBE_DEFER;
++
++			of_node_put(child);
++			break;
++		}
+ 	}
  
- 				ldo3 {
+ 	of_node_put(np);
 -- 
 2.29.2
 
