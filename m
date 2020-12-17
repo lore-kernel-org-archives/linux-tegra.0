@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BC6C2BBCF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC9EC2BBD4
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56265238EF
+	by mail.kernel.org (Postfix) with ESMTP id 9E1C7238EF
 	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730779AbgLQSJC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:09:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41956 "EHLO
+        id S1730787AbgLQSJD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:09:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730728AbgLQSJA (ORCPT
+        with ESMTP id S1726548AbgLQSJB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:00 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177EAC0619E0;
-        Thu, 17 Dec 2020 10:07:56 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id a12so59838968lfl.6;
-        Thu, 17 Dec 2020 10:07:56 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:01 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13CDC0619FA;
+        Thu, 17 Dec 2020 10:08:00 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id a12so59839722lfl.6;
+        Thu, 17 Dec 2020 10:08:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=G4bkjkogJjxhucwk91y1cMW03U1PPlta2j9gVHq9Ll8=;
-        b=rCQoU2/mmvaocNvlxnid7FO29LSc024mSugBl0tdXdcytFbXH2gOlnpwvt8N+30PAg
-         yb7ttQI7FzhzKZR924B0d/3R9LNPoRgpBoGk0IOcVJPsgsWCQsxmEeE2TiSNUf6U2zEk
-         UAcyUD0vHfvlRRaoHCc/jZeM8FZ6u+jxT5WvXS4q07C3L49UI1+T4YyeAM47/km2IUMY
-         +h1CezyjEzhVg+SazrlVF4o2uUgbBVRUzc6A6H4zBIs3ZtIXUR4lCvTjP1X8Ma8ljpX9
-         s1nx5sADEfu0hG1dR8Px9QD2KFwkR1jqfRP1a8gQc0nLBI4Jl41CHBYNpt0S5HTVpgKO
-         Zxqw==
+        bh=aGHKx42MfDPDBxR4DOfvxOz7/Acf8JGv695v+njpFiw=;
+        b=APzhHWryK80KbNYYXej8HpuMRxROpNpavnwx1kCJM5bBVa+TdnqcKt2RdY4SHrVcMt
+         W32uT9CDUxgZFM5ZaDWbgo1obHaTQ1kGwhJG++8pUONg2zS9xnH2pzU8uyJ6hB+j4PGX
+         1MqSTqHOmRR4oxYHzrG398GEVxIjKP0fRVqwZMLdKEqIdB1HPy2mp9iXuZShti/PjFyY
+         zg1UQpEpkEy5lqEu4XzkhaFTH8uLVwRO4o9uco4kum/fI3IXc3ln3x8P6KAG8+NBMkxm
+         aBvJj5J91tJlBSHYLO4l1LvQKn29JZGFsLwDihxkT203GN1ZlQqTQLh5/Nq0qb56d/Sx
+         uI/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=G4bkjkogJjxhucwk91y1cMW03U1PPlta2j9gVHq9Ll8=;
-        b=D8mfas+qbdsqplY0WMy08me3O0uooIHO6iiB1FkvJlAfES8mUOi9NvOk0RkAf5xMpz
-         oE3zwYm7A0FX0pe26tweC/WYXQaDJ4jHFYD+n67WQjb9Aj1PuXHM0BLO2zm1gok8RroD
-         bpBhuPUI8Zx4rpxgfDeRrmxJrSoiOypJ136acS4jLLmawr/anCzl7sVxYxhoccLY4frf
-         92Jwglv0zRD5sIvD4RhRhSyZB08hyp77mgpaFSnyeUU8g9u/oDDwtEOB9q0zFMkWTDxo
-         g0FUB8OH9X9l91irRJsolz92RrLFGHY+AfvgJffd3cJ+HaE2hZk6IbagyQb5pAjTGFEN
-         gQrA==
-X-Gm-Message-State: AOAM5303lGJv+QknzbRmuwWLXWxTMe8BGXykk5fznRQqkvKpsg9Q4yKJ
-        rUW1E1CftrZKbnKIbvbWnqfL/dc/Tn8=
-X-Google-Smtp-Source: ABdhPJyqYsSi5e5FbU0bmUx3znLJH35GGikhngE/ppL8K7VwQ0KK0y3SqjiWzxI9i0uAFK/MRB0qlg==
-X-Received: by 2002:a2e:9b4d:: with SMTP id o13mr200509ljj.163.1608228474656;
-        Thu, 17 Dec 2020 10:07:54 -0800 (PST)
+        bh=aGHKx42MfDPDBxR4DOfvxOz7/Acf8JGv695v+njpFiw=;
+        b=Z0MAUhlfYseIx3NpG9dw9WqffIK6vhTngdbbMxvXEe4vxcLA/nl4w7Pa7arGCtwnET
+         1B/JXdKzzz3VeiCrfgYR/rjz3okwcvpiYovR5dMTeoyMn+EVussQR8UYPDSuAmBJwgig
+         8qNsWyQVE1BOfHW9j0wI+/CFQzgl80C/hkqCe+IDTRsIoGBgg1dLjx1+LrDax+lfG3c6
+         aD/IXig4QzHIq1MjR4S5SDyKANDO6FgSP0Zn/6uVIK30B7i1zMscmcV2+XT1Gh+SBakU
+         NcevYMwyEyo1GFsiNCn++eLsELK3yGC4dD0TGXidHDffVbT79E+qJJKUweBmcfW+pPhO
+         JTnA==
+X-Gm-Message-State: AOAM533GiLApO2Xd0lL9mbF9eyz8DyNGbbB3h5ygVjhxAE/yu7gKYKY9
+        GVG8JsVVMhpgy8ej0R7uJHY=
+X-Google-Smtp-Source: ABdhPJxkb6RUPIBzwYQiSBrp+AitBo6hp1cBKHpnuOhqRgnsIEu24oMo56Vx5VfhUm4ap09nC3WDZg==
+X-Received: by 2002:a19:be16:: with SMTP id o22mr15087043lff.109.1608228479360;
+        Thu, 17 Dec 2020 10:07:59 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.53
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:54 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:58 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 30/48] soc/tegra: regulators: Fix locking up when voltage-spread is out of range
-Date:   Thu, 17 Dec 2020 21:06:20 +0300
-Message-Id: <20201217180638.22748-31-digetx@gmail.com>
+Subject: [PATCH v2 34/48] gpu: host1x: Support power management
+Date:   Thu, 17 Dec 2020 21:06:24 +0300
+Message-Id: <20201217180638.22748-35-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,34 +90,171 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix voltage coupler lockup which happens when voltage-spread is out
-of range due to a bug in the code. The max-spread requirement shall be
-accounted when CPU regulator doesn't have consumers. This problem is
-observed on Tegra30 Ouya game console once system-wide DVFS is enabled
-in a device-tree.
+Add suspend/resume and generic power domain support to the Host1x driver.
+This is required for enabling system-wide DVFS and supporting dynamic
+power management using a generic power domain.
 
-Fixes: 783807436f36 ("soc/tegra: regulators: Add regulators coupler for Tegra30")
-Cc: stable@vger.kernel.org
 Tested-by: Peter Geis <pgwipeout@gmail.com>
-Reported-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/regulators-tegra30.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/host1x/dev.c | 102 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 91 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
-index 7f21f31de09d..0e776b20f625 100644
---- a/drivers/soc/tegra/regulators-tegra30.c
-+++ b/drivers/soc/tegra/regulators-tegra30.c
-@@ -178,7 +178,7 @@ static int tegra30_voltage_update(struct tegra_regulator_coupler *tegra,
- 	 * survive the voltage drop if it's running on a higher frequency.
- 	 */
- 	if (!cpu_min_uV_consumers)
--		cpu_min_uV = cpu_uV;
-+		cpu_min_uV = max(cpu_uV, cpu_min_uV);
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index d0ebb70e2fdd..c1525cffe7b1 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/of.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
  
- 	/*
- 	 * Bootloader shall set up voltages correctly, but if it
+ #define CREATE_TRACE_POINTS
+@@ -417,7 +418,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	host->rst = devm_reset_control_get(&pdev->dev, "host1x");
++	host->rst = devm_reset_control_get_exclusive_released(&pdev->dev, "host1x");
+ 	if (IS_ERR(host->rst)) {
+ 		err = PTR_ERR(host->rst);
+ 		dev_err(&pdev->dev, "failed to get reset: %d\n", err);
+@@ -437,16 +438,15 @@ static int host1x_probe(struct platform_device *pdev)
+ 		goto iommu_exit;
+ 	}
+ 
+-	err = clk_prepare_enable(host->clk);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to enable clock\n");
+-		goto free_channels;
+-	}
++	pm_runtime_enable(&pdev->dev);
++	err = pm_runtime_get_sync(&pdev->dev);
++	if (err < 0)
++		goto rpm_disable;
+ 
+ 	err = reset_control_deassert(host->rst);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to deassert reset: %d\n", err);
+-		goto unprepare_disable;
++		goto rpm_disable;
+ 	}
+ 
+ 	err = host1x_syncpt_init(host);
+@@ -485,9 +485,10 @@ static int host1x_probe(struct platform_device *pdev)
+ 	host1x_syncpt_deinit(host);
+ reset_assert:
+ 	reset_control_assert(host->rst);
+-unprepare_disable:
+-	clk_disable_unprepare(host->clk);
+-free_channels:
++rpm_disable:
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
+ 	host1x_channel_list_free(&host->channel_list);
+ iommu_exit:
+ 	host1x_iommu_exit(host);
+@@ -504,16 +505,95 @@ static int host1x_remove(struct platform_device *pdev)
+ 	host1x_intr_deinit(host);
+ 	host1x_syncpt_deinit(host);
+ 	reset_control_assert(host->rst);
+-	clk_disable_unprepare(host->clk);
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ 	host1x_iommu_exit(host);
+ 
+ 	return 0;
+ }
+ 
++static int __maybe_unused host1x_runtime_suspend(struct device *dev)
++{
++	struct host1x *host = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(host->clk);
++	reset_control_release(host->rst);
++
++	return 0;
++}
++
++static int __maybe_unused host1x_runtime_resume(struct device *dev)
++{
++	struct host1x *host = dev_get_drvdata(dev);
++	int err;
++
++	err = reset_control_acquire(host->rst);
++	if (err) {
++		dev_err(dev, "failed to acquire reset: %d\n", err);
++		return err;
++	}
++
++	err = clk_prepare_enable(host->clk);
++	if (err) {
++		dev_err(dev, "failed to enable clock: %d\n", err);
++		goto release_reset;
++	}
++
++	return 0;
++
++release_reset:
++	reset_control_release(host->rst);
++
++	return err;
++}
++
++static __maybe_unused int host1x_suspend(struct device *dev)
++{
++	struct host1x *host = dev_get_drvdata(dev);
++	int err;
++
++	host1x_syncpt_save(host);
++
++	err = pm_runtime_force_suspend(dev);
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++
++static __maybe_unused int host1x_resume(struct device *dev)
++{
++	struct host1x *host = dev_get_drvdata(dev);
++	struct host1x_channel *channel;
++	unsigned int index;
++	int err;
++
++	err = pm_runtime_force_resume(dev);
++	if (err < 0)
++		return err;
++
++	host1x_syncpt_restore(host);
++
++	for_each_set_bit(index, host->channel_list.allocated_channels,
++			 host->info->nb_channels) {
++		channel = &host->channel_list.channels[index];
++		host1x_hw_channel_init(host, channel, channel->id);
++	}
++
++	return 0;
++}
++
++static const struct dev_pm_ops host1x_pm = {
++	SET_RUNTIME_PM_OPS(host1x_runtime_suspend, host1x_runtime_resume,
++			   NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(host1x_suspend, host1x_resume)
++};
++
+ static struct platform_driver tegra_host1x_driver = {
+ 	.driver = {
+ 		.name = "tegra-host1x",
+ 		.of_match_table = host1x_of_match,
++		.pm = &host1x_pm,
+ 	},
+ 	.probe = host1x_probe,
+ 	.remove = host1x_remove,
 -- 
 2.29.2
 
