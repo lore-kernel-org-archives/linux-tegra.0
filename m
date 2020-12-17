@@ -2,155 +2,195 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FEBC4361B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 19:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B99C2BBCD
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0DED23A74
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 19:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11D1823A04
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 20:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgLQTvy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 14:51:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbgLQTvx (ORCPT
+        id S1730184AbgLQU3e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 15:29:34 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19148 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbgLQU3e (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 14:51:53 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615F2C061794;
-        Thu, 17 Dec 2020 11:51:13 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id m25so60661607lfc.11;
-        Thu, 17 Dec 2020 11:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=peFOF8ndPv+QVCUnjm5e8UdB9wjjwk2hem22tcor5IU=;
-        b=D2j7Mtjdwnh2n0c8ZldEpneOFgFr7nwNIbQ4o5W/0tqXRPrSkykYX4BE1YQy0GuuOT
-         4K/krNBMQzkP44Jfqm/UGhLz+bK5jvV1v+liTIbPVfSzeN0zDIIX+yqLRX/TthTiJhok
-         VgdaD5AJg0tEau/mbNoiKU/43c+XitBx9+j8unXljJQiqkHHk4rO7+gpBPUAwQwlw+be
-         xi4SdE6Th+dYpTdkJtGJ8Ty1PFl0yEePk5mL4kl4ihq1uDsCT9HA+E9OPlAu/31FRTgN
-         7/NILKBJ8syZNwXMMG9YSQJmylif2chW9o/hMhWJXacOGJBh7qAw8RQ/fpDxzRkula9U
-         v7kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=peFOF8ndPv+QVCUnjm5e8UdB9wjjwk2hem22tcor5IU=;
-        b=SiagMX09ePupte2smgeizK2oIfnkozMyn2GO85GkQxtOq1X/S5uxWUlt3FEjOYVIlt
-         EH03fG6D2hKUPDrbE7OnafupIuBJhOjRTodLZ2av58aN2/it7iPTXErlxgpuesOXMpfs
-         jUHnGsLzg07y1QegSvSRUAgipx8emYORTa/nrQ5WRqNAZ/WF45mpuSMp7y/hS6Sgsf5v
-         KfqGPI+xTgGbnYvlV8urkN0o4/SYF5ohi8hh3ZyY5rzJEznVnBiODTWQ9Oj914RJUKKd
-         YjSarNAZnoXsfCpwYgzImkjjEMT43eWBsfou8+bOpZzJhouTGpjaFxpl1S1CwoqgXSFx
-         PCtw==
-X-Gm-Message-State: AOAM531PbfAzXmnNrUf5VPnZJ81tmHYtqAb8MlvybrDjufPOYdbYH3x0
-        vCJnFk9Suf5aaO0pBVLzjcoJ6DI9DHA=
-X-Google-Smtp-Source: ABdhPJyB6GNpYP9EvFELD2XvFcMJmHut99ZBV/0NpaJe7FmBBDX3XXq5Ud4wE39HhG+6eKTTRFl5FQ==
-X-Received: by 2002:a19:8a46:: with SMTP id m67mr130126lfd.515.1608234671567;
-        Thu, 17 Dec 2020 11:51:11 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id f15sm695124lfc.10.2020.12.17.11.51.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 11:51:10 -0800 (PST)
-Subject: Re: [PATCH v2 6/8] usb: chipidea: tegra: Support runtime PM
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Felipe Balbi <balbi@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ion Agorria <ion@agorria.com>, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201217094007.19336-1-digetx@gmail.com>
- <20201217094007.19336-7-digetx@gmail.com> <X9tgD+KSU1bIvht5@ulmo>
- <28468e30-a832-9774-bed3-ac986aef8831@gmail.com> <X9tzA4q8mv2j13yo@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <773e4951-eddd-c09b-9513-daf942b15dee@gmail.com>
-Date:   Thu, 17 Dec 2020 22:51:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Thu, 17 Dec 2020 15:29:34 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fdbbf850000>; Thu, 17 Dec 2020 12:28:53 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 17 Dec
+ 2020 20:28:53 +0000
+Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Thu, 17 Dec 2020 20:28:52 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
+CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
+        <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
+        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 2/9] dt-bindings: spi: Add Tegra Quad SPI device tree binding
+Date:   Thu, 17 Dec 2020 12:28:40 -0800
+Message-ID: <1608236927-28701-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
+References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <X9tzA4q8mv2j13yo@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1608236933; bh=q7FKxM+CGuB7xfbL+aSHeN66VFj3TvwS13fwFoek5Q4=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:X-NVConfidentiality:MIME-Version:Content-Type;
+        b=LebfacZa2WbqM2ta9t57X3a7/JQyFAH5U4gmhsFateCd46OWpzJhc4eeLccpS2AEP
+         NzV4KKjkfo3IZ/o2QMKlBzvuiKXAIg9NFjodX74rzbAfbCHLwRxw0X3FKMaThVLtOK
+         ROm0ImgDMk04gRB7FnK3B3AsrKpS0Pt1NRswixZJinsjT98r4ADsN89Q8f+wBlq7sY
+         fVKwYXxxPBgbP6nvyYYQqfdnxs3KaUlg9+uxk//0TfJt+3e2nsnam272hgbJyRW6a0
+         okrQnF6gAzpgJi5DLBcnCaKuTil/EE3Phwj7t151dt3L7vnqEF0fhfPR/6rxWyuhnX
+         DkAfJ2ArhXybw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.12.2020 18:02, Thierry Reding пишет:
-> On Thu, Dec 17, 2020 at 04:45:03PM +0300, Dmitry Osipenko wrote:
->> 17.12.2020 16:41, Thierry Reding пишет:
->>> On Thu, Dec 17, 2020 at 12:40:05PM +0300, Dmitry Osipenko wrote:
->>>> Tegra PHY driver now supports waking up controller from a low power mode.
->>>> Enable runtime PM in order to put controller into the LPM during idle.
->>>>
->>>> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
->>>> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
->>>> Tested-by: Peter Geis <pgwipeout@gmail.com>
->>>> Tested-by: Ion Agorria <ion@agorria.com>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/usb/chipidea/ci_hdrc_tegra.c | 13 ++++++++++---
->>>>  1 file changed, 10 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
->>>> index 5fccdeeefc64..655671159511 100644
->>>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
->>>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
->>>> @@ -38,21 +38,24 @@ struct tegra_usb_soc_info {
->>>>  
->>>>  static const struct tegra_usb_soc_info tegra20_ehci_soc_info = {
->>>>  	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA |
->>>> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
->>>> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
->>>> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
->>>>  	.dr_mode = USB_DR_MODE_HOST,
->>>>  	.txfifothresh = 10,
->>>>  };
->>>>  
->>>>  static const struct tegra_usb_soc_info tegra30_ehci_soc_info = {
->>>>  	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA |
->>>> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
->>>> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
->>>> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
->>>>  	.dr_mode = USB_DR_MODE_HOST,
->>>>  	.txfifothresh = 16,
->>>>  };
->>>>  
->>>>  static const struct tegra_usb_soc_info tegra_udc_soc_info = {
->>>>  	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA |
->>>> -		 CI_HDRC_OVERRIDE_PHY_CONTROL,
->>>> +		 CI_HDRC_OVERRIDE_PHY_CONTROL |
->>>> +		 CI_HDRC_SUPPORTS_RUNTIME_PM,
->>>>  	.dr_mode = USB_DR_MODE_UNKNOWN,
->>>>  };
->>>>  
->>>> @@ -323,6 +326,10 @@ static int tegra_usb_probe(struct platform_device *pdev)
->>>>  	usb->data.hub_control = tegra_ehci_hub_control;
->>>>  	usb->data.notify_event = tegra_usb_notify_event;
->>>>  
->>>> +	/* Tegra PHY driver currently doesn't support LPM for ULPI */
->>>> +	if (of_usb_get_phy_mode(pdev->dev.of_node) == USBPHY_INTERFACE_MODE_ULPI)
->>>> +		usb->data.flags &= ~CI_HDRC_SUPPORTS_RUNTIME_PM;
->>>> +
->>>
->>> Does this prevent the wakeup_enabled from being set for ULPI PHYs?
->>
->> Yes
-> 
-> Okay, it should be fine then to keep that WARN_ONCE in that prior patch
-> since we should really only get there if there's something seriously
-> wrong.
+This patch adds YAML based device tree binding document for Tegra
+Quad SPI driver.
 
-Correct, that is the actual intention of the warning.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ .../bindings/spi/nvidia,tegra210-quad.yaml         | 117 +++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+new file mode 100644
+index 0000000..35a8045
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+@@ -0,0 +1,117 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/nvidia,tegra210-quad.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Tegra Quad SPI Controller
++
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Jonathan Hunter <jonathanh@nvidia.com>
++
++allOf:
++  - $ref: "spi-controller.yaml#"
++
++properties:
++  compatible:
++    enum:
++      - nvidia,tegra210-qspi
++      - nvidia,tegra186-qspi
++      - nvidia,tegra194-qspi
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: qspi
++      - const: qspi_out
++
++  clocks:
++    maxItems: 2
++
++  resets:
++    maxItems: 1
++
++  dmas:
++    maxItems: 2
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++patternProperties:
++  "@[0-9a-f]+":
++    type: object
++
++    properties:
++      spi-rx-bus-width:
++        enum: [1, 2, 4]
++
++      spi-tx-bus-width:
++        enum: [1, 2, 4]
++
++      nvidia,tx-clk-tap-delay:
++        description:
++          Delays the clock going out to device with this tap value.
++          Tap value varies based on platform design trace lengths from Tegra
++          QSPI to corresponding slave device.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 31
++
++      nvidia,rx-clk-tap-delay:
++        description:
++          Delays the clock coming in from the device with this tap value.
++          Tap value varies based on platform design trace lengths from Tegra
++          QSPI to corresponding slave device.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0
++        maximum: 255
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clock-names
++  - clocks
++  - resets
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra210-car.h>
++    #include <dt-bindings/reset/tegra210-car.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    spi@70410000 {
++            compatible = "nvidia,tegra210-qspi";
++            reg = <0x70410000 0x1000>;
++            interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++            clocks = <&tegra_car TEGRA210_CLK_QSPI>,
++                     <&tegra_car TEGRA210_CLK_QSPI_PM>;
++            clock-names = "qspi", "qspi_out";
++            resets = <&tegra_car 211>;
++            dmas = <&apbdma 5>, <&apbdma 5>;
++            dma-names = "rx", "tx";
++
++            flash@0 {
++                    compatible = "spi-nor";
++                    reg = <0>;
++                    spi-max-frequency = <104000000>;
++                    spi-tx-bus-width = <2>;
++                    spi-rx-bus-width = <2>;
++                    nvidia,tx-clk-tap-delay = <0>;
++                    nvidia,rx-clk-tap-delay = <0>;
++            };
++    };
+-- 
+2.7.4
 
