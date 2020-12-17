@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1081C2BB9A
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9F8C2BBCD
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 14:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82DB823434
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 13:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 484882360D
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 14:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgLQNse (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 08:48:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58014 "EHLO
+        id S1727806AbgLQOBR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 09:01:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbgLQNsd (ORCPT
+        with ESMTP id S1725930AbgLQOBR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 08:48:33 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166DDC061794;
-        Thu, 17 Dec 2020 05:47:53 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id 23so57462916lfg.10;
-        Thu, 17 Dec 2020 05:47:53 -0800 (PST)
+        Thu, 17 Dec 2020 09:01:17 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E3BC061794;
+        Thu, 17 Dec 2020 06:00:36 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id h205so14054892lfd.5;
+        Thu, 17 Dec 2020 06:00:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RQQZWATGx9Cd9i1SGEZJb8vdX4uN6McAm/OXt010CwM=;
-        b=usrS9/X19WJNJE8tTPznZiyGQ0vhFySggMlc9YeT0s6XcIDl1dLOkz6RZj6uoiSgkw
-         5Y31qJ85Y6/qOqSqJQ1JQ3XUR99iXNgQUnIFTtO74ap5eRIDlv7hq6eQKHlYIP/4iRqS
-         kD1MmFetx/sNic5eBl0OTBseCT6rjU0skJARBRBHqoFN+jQyhi+JEUwrVFeaGGc0xlyB
-         EA8GCGsRI5rUS0eJSyiW5JtuIqFrLdR3dsCGWFTvOxctK1ZWgj5mvGTzehejVDjYvte3
-         xmrBS2oY0MTtFQ20AEgJ2KHVJUkTalyr+glQSeQnsw5ktGtwGELo9K3ZyFtUN6I5iyer
-         wrGA==
+        bh=FO58AhMktkhPBtclgNdElstsCIkGCfLNl7Tiw7pUkU8=;
+        b=YCKGnPy7Dz/iyIGeAwtc970yNHXxvVMyVQpsEQWECHNFv4kHndRLDOFJ9MHd7uve0X
+         Sej3iSjY7XQCTEE27/dj1pU0DOT+lSx8C+cguOwQStrw8QNQc0efdxA5oa8o3xd9ngxy
+         +LWrvOE/D5cHUSAffYAi9NxqDFXlnSyBjtd/kdZ/r4Ts+XWGtmgUAJAD4MQvjlAaN+xx
+         sJ8QZa6dGCjLC3765QaScKFwBjcyqZtXYuNXpTJ99HHgy9kfOW/jx0AvLWR+lrWWEBZh
+         E1A1hWd0H2I8etTj3L/z7BxrmoB3TWSbP9A1EUoas3UJ8+Y3HTx6Rzd768E5ytZaVrp5
+         Xq/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=RQQZWATGx9Cd9i1SGEZJb8vdX4uN6McAm/OXt010CwM=;
-        b=a4Ew0G52H0CjtnHdV3XTUdt6TKMtSZKMqzN7OLFdmp9ebC/PXzS7axcV2s1Rll5VD7
-         DAy0kavId40hiolwPtW/nyTUaS6C5lNJpZekS1wsyvS5sQM31d+r+7xmkn3K9AZYNB0U
-         0R5eIsdbkSfzW+RxOU62DysWAasuxEY5kKlcclHbDCd9f3WUEQjDmO/Lxpl2gUPmg5Ct
-         H/RLKA8K09AU1l4yxzy+w4OzzbSClclibNH+wbnhRqnp4KcMPSrEb/Q5VdnaVuwY2vQ1
-         hX7R6+GQeAJ+4UyQ0imFWLKOHtNmVNN1pgHWQkZ6t4WXvQyRwguPhXsgpUBEFOTHWoNF
-         jntw==
-X-Gm-Message-State: AOAM5339/+QA6uLJiWOxC6YJt+mihaZCXU/skj3qZmNZ2zRlelLH0GHp
-        ifWmQVR0p3OG11fm0bA0PEH4wl/cf2E=
-X-Google-Smtp-Source: ABdhPJzG17Emu1MTKnWWJvYGQc2YlnLBE7nkVNKRt1ypoqbop6IRJ12yLj6k28JXsShAJRIBlMyEZQ==
-X-Received: by 2002:a05:6512:706:: with SMTP id b6mr16181992lfs.115.1608212871402;
-        Thu, 17 Dec 2020 05:47:51 -0800 (PST)
+        bh=FO58AhMktkhPBtclgNdElstsCIkGCfLNl7Tiw7pUkU8=;
+        b=s8MnlIU/KbEfvt2T+fHlA4HwHbFGVRzwgceC7elIwz2W6QyMlsd4rwFHYQZuQCLWEH
+         QppWBXpjvpnNYZIR4RCirtodRpHKIFK6qIlqlsubPtMrzxD8uH76/FOwuUXl5dLkB0IV
+         M/DvRIO1gi4Ft5PkfjtFy0dgKs+HyuSCkX0xfcpxTLNIFVUZephdoKmzDbqtb8duGRB2
+         ahzRusOGdiSIfiOqRyAMp1eUABpUcm+G6oOuFiWjDcFAMqLwxXbOteLuhNBMuc+vgc8X
+         hwsoBIwk5owBYl1O1D/Bhh8efhCFh1ZJB7q2cMKZ+UgFq0ukTcyJ1xO+s6SJPVtRlC5W
+         h3kA==
+X-Gm-Message-State: AOAM532DjNIYaUd8gYjb7UUBpJtx8iDF+L5jb9fTX/XrQZ2/GJo9PT5o
+        I80QQjB0EVZlkcykv2t7SHnelrDyWBk=
+X-Google-Smtp-Source: ABdhPJwzDXetikcENbkU5gsHDdt5Sa7Ta4XJZ0UGNgnUEb+iRSfyHHTJqKRC2gjSg1/DjNi4jNw4Fg==
+X-Received: by 2002:a2e:86d4:: with SMTP id n20mr11783541ljj.486.1608213635125;
+        Thu, 17 Dec 2020 06:00:35 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id d12sm673175ljl.111.2020.12.17.05.47.50
+        by smtp.googlemail.com with ESMTPSA id v4sm595125lfa.55.2020.12.17.06.00.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 05:47:50 -0800 (PST)
-Subject: Re: [PATCH v2 2/8] usb: phy: tegra: Support waking up from a low
- power mode
+        Thu, 17 Dec 2020 06:00:34 -0800 (PST)
+Subject: Re: [PATCH v2 4/8] usb: chipidea: tegra: Rename UDC to USB
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Peter Chen <Peter.Chen@nxp.com>,
@@ -71,14 +71,14 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Ion Agorria <ion@agorria.com>, linux-tegra@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20201217094007.19336-1-digetx@gmail.com>
- <20201217094007.19336-3-digetx@gmail.com> <X9teRPo/MadN79NI@ulmo>
+ <20201217094007.19336-5-digetx@gmail.com> <X9te7ObUU1Fcy2ut@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3c204a61-86ae-1bbe-1442-527831f15232@gmail.com>
-Date:   Thu, 17 Dec 2020 16:47:50 +0300
+Message-ID: <67e8fb54-a6b3-f9fe-bbee-7def1a81e191@gmail.com>
+Date:   Thu, 17 Dec 2020 17:00:33 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <X9teRPo/MadN79NI@ulmo>
+In-Reply-To: <X9te7ObUU1Fcy2ut@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,55 +86,80 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.12.2020 16:33, Thierry Reding пишет:
->> +	/* PHY won't resume if reset is asserted */
->> +	if (phy->wakeup_enabled)
->> +		goto chrg_cfg0;
+17.12.2020 16:36, Thierry Reding пишет:
+> On Thu, Dec 17, 2020 at 12:40:03PM +0300, Dmitry Osipenko wrote:
+>> Rename all occurrences in the code from "udc" to "usb" and change the
+>> Kconfig entry in order to show that this driver supports USB modes other
+>> than device-only mode. The follow up patch will add host-mode support and
+>> it will be cleaner to perform the renaming separately, i.e. in this patch.
+>>
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>> Tested-by: Ion Agorria <ion@agorria.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/usb/chipidea/Kconfig         |  2 +-
+>>  drivers/usb/chipidea/ci_hdrc_tegra.c | 78 ++++++++++++++--------------
+>>  2 files changed, 40 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+>> index 8bafcfc6080d..8685ead6ccc7 100644
+>> --- a/drivers/usb/chipidea/Kconfig
+>> +++ b/drivers/usb/chipidea/Kconfig
+>> @@ -53,7 +53,7 @@ config USB_CHIPIDEA_GENERIC
+>>  	default USB_CHIPIDEA
 >>  
->>  	val = readl_relaxed(base + USB_SUSP_CTRL);
->>  	val |= UTMIP_RESET;
->>  	writel_relaxed(val, base + USB_SUSP_CTRL);
+>>  config USB_CHIPIDEA_TEGRA
+>> -	tristate "Enable Tegra UDC glue driver" if EMBEDDED
+>> +	tristate "Enable Tegra USB glue driver" if EMBEDDED
+>>  	depends on OF
+>>  	depends on USB_CHIPIDEA_UDC
+>>  	default USB_CHIPIDEA
+>> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>> index 10eaaba2a3f0..d8efa80aa1c2 100644
+>> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+>> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+>> @@ -12,7 +12,7 @@
 >>  
->> +chrg_cfg0:
-> I found this diffcult to read until I realized that it was basically
-> just the equivalent of this:
+>>  #include "ci.h"
+>>  
+>> -struct tegra_udc {
+>> +struct tegra_usb {
+>>  	struct ci_hdrc_platform_data data;
+>>  	struct platform_device *dev;
+>>  
+>> @@ -20,15 +20,15 @@ struct tegra_udc {
+>>  	struct clk *clk;
+>>  };
+>>  
+>> -struct tegra_udc_soc_info {
+>> +struct tegra_usb_soc_info {
+>>  	unsigned long flags;
+>>  };
+>>  
+>> -static const struct tegra_udc_soc_info tegra_udc_soc_info = {
+>> +static const struct tegra_usb_soc_info tegra_udc_soc_info = {
+>>  	.flags = CI_HDRC_REQUIRES_ALIGNED_DMA,
+>>  };
+>>  
+>> -static const struct of_device_id tegra_udc_of_match[] = {
+>> +static const struct of_device_id tegra_usb_of_match[] = {
+>>  	{
+>>  		.compatible = "nvidia,tegra20-udc",
 > 
-> 	if (!phy->wakeup_enabled) {
-> 		val = readl_relaxed(base + USB_SUSP_CTRL);
-> 		val |= UTMIP_RESET;
-> 		writel_relaxed(val, base + USB_SUSP_CTRL);
-> 	}
-> 
->>  	val = readl_relaxed(base + UTMIP_BAT_CHRG_CFG0);
->>  	val |= UTMIP_PD_CHRG;
->>  	writel_relaxed(val, base + UTMIP_BAT_CHRG_CFG0);
->>  
->> +	if (phy->wakeup_enabled)
->> +		goto xcvr_cfg1;
->> +
->>  	val = readl_relaxed(base + UTMIP_XCVR_CFG0);
->>  	val |= UTMIP_FORCE_PD_POWERDOWN | UTMIP_FORCE_PD2_POWERDOWN |
->>  	       UTMIP_FORCE_PDZI_POWERDOWN;
->>  	writel_relaxed(val, base + UTMIP_XCVR_CFG0);
->>  
->> +xcvr_cfg1:
-> Similarly, I think this is more readable as:
-> 
-> 	if (!phy->wakeup_enabled) {
-> 		val = readl_relaxed(base + UTMIP_XCVR_CFG0);
-> 		val |= UTMIP_FORCE_PD_POWERDOWN | UTMIP_FORCE_PD2_POWERDOWN |
-> 		       UTMIP_FORCE_PDZI_POWERDOWN;
-> 		writel_relaxed(val, base + UTMIP_XCVR_CFG0);
-> 	}
-> 
->>  	val = readl_relaxed(base + UTMIP_XCVR_CFG1);
->>  	val |= UTMIP_FORCE_PDDISC_POWERDOWN | UTMIP_FORCE_PDCHRP_POWERDOWN |
->>  	       UTMIP_FORCE_PDDR_POWERDOWN;
->>  	writel_relaxed(val, base + UTMIP_XCVR_CFG1);
->>  
->> +	if (phy->wakeup_enabled) {
-> Which then also matches the style of this conditional here.
+> Do we perhaps also want to add a new tegra20-usb compatible string here
+> and deprecate the old one since this now no longer properly describes
+> the device.
 
-I'll change it in v3, thanks.
+Ideally it should have been "tegra20-otg" to match TRM, but UDC is also
+okay since it's a part of OTG and kinda presumes the OTG support of USB1
+controller for anyone who read the TRM. Hence there is no need to change
+the compatible, IMO.
 
+> In either case, this looks fine:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
 
+thanks
