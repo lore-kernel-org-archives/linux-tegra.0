@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A35C3526B
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37913C3526F
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94C502388E
-	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D510239D0
+	for <linux-tegra@archiver.kernel.org>; Thu, 17 Dec 2020 18:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbgLQSL1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:11:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
+        id S1731572AbgLQSL2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:11:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730872AbgLQSJL (ORCPT
+        with ESMTP id S1730869AbgLQSJJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:09:11 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73EE0C0619D6;
-        Thu, 17 Dec 2020 10:07:43 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id x20so40285637lfe.12;
-        Thu, 17 Dec 2020 10:07:43 -0800 (PST)
+        Thu, 17 Dec 2020 13:09:09 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA09C06138C;
+        Thu, 17 Dec 2020 10:08:03 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id y19so59731827lfa.13;
+        Thu, 17 Dec 2020 10:08:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PBkFTp9tm3NIEsg9yT0qklFrPErhGsiU6/VwoxR8iVo=;
-        b=Wr2PZ5CpiNFJmfsifDPV2pBLJCgPQk0fgJ7q+dzCHxYQ2qxEg6pfh3bKUgDKcdI7K5
-         romrhZ+RhBrJbCJ79wNAdtBxL2APvo/0s6vmkXm7kvCQEJ00kIT5J8YB9d3DSTUARd7w
-         zqs5xyyHJO7q28hpZ44tT+NdcBCKHrURVoFOYXYvuG9dg/sHWuSDrZaM0htPC1zy/o93
-         9c7BLcO6zT3+qWm7cNBTL2gZZePdwFbQSBO+ekT/FYtNGLRJouCO2FL++zN0Z0I6Ba9A
-         DEJMGYoSEVBmf48mppl0TcD1BclLXkF2VNJNUOR8iatoMStAkUS2D1S5er6OcumMC1rS
-         9hgA==
+        bh=8m4pPEAjUTB+XLxB8Q0FiZSpVZH7FkAsOtVYHU/qlmU=;
+        b=M/P4YFEmOmA7dBW3pyL3/h3IvXTD6Uw3VvYBbvCl0IeAwQVfaH0z5SlAicSGEGKVrO
+         PmYy2/1eDCaRKhMT1M1squT81Rew4AWs7Wm+QRca1KosrO7Ve9owlVqkmnQoHdTDB+RK
+         iyhNgZCusZ3HV9jfoK8VnrnyPDwrxP9L+F5q4WvskKX7dLpwhwV3jmtRxbM3UBOg25Fx
+         1vaNyP16U/jwAtLyZ3bfO2XHZqH61jzEJsge/vqE3c8/3bxRllKdwBoder/jXpPkQXLL
+         0ytz1nxtKOoHENRiye+Rg9grNeZqq+H/c8wPoH6d7GrIOudLsuDhMENft08UoQTbkggS
+         MwDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PBkFTp9tm3NIEsg9yT0qklFrPErhGsiU6/VwoxR8iVo=;
-        b=aJqh+Vbfy2tBtyuN2OJYQVB+uQz0AwzFdocKE1v6MVw1wlaw0HAUsnOrdZyrSB4oLF
-         G+jWHQrYXydbi/Wwc3thCY/c+T9gALV0WI7p15cEw9V9I6mCD+4k33mIF0V16flXFY6z
-         hj13ErAmYCW7fj+z/VAmoc86C7IYP3JUyv5nPiFLWA2H72hvzSBIdrTTDy+uNbQtzPgM
-         pyZ+43zqg4B/6Ru2NLhP1rHPhbqmzIprjVXlm+AI1snZNFJ9tYEZRM79j5hFzCYsnrMM
-         PfGwCfHB8EX5s0p2lNewqLZ+Ex/1tXgQ/Ui1cBQQgj/HrGOyu6oDuGyYwYEdTZav7Bjj
-         qQ4g==
-X-Gm-Message-State: AOAM530fXH6ImPe+0hIbiza0GnvcDp+OxPT7Mx8r4QUPf0biUKbEjnzW
-        Aytas3UBw0rvESsTwmuOv1Y=
-X-Google-Smtp-Source: ABdhPJzI9lQCqVR6L1Wp/rAyjMTzeX+0L0LyqYKCSSzn2J93gimBkGPQS81KvJv88WT1zNQwZK203A==
-X-Received: by 2002:a19:670f:: with SMTP id b15mr7791855lfc.340.1608228461978;
-        Thu, 17 Dec 2020 10:07:41 -0800 (PST)
+        bh=8m4pPEAjUTB+XLxB8Q0FiZSpVZH7FkAsOtVYHU/qlmU=;
+        b=OtukfozZEjm0x6jeyAEgsQNi+rjaBIyzd3bIYkXlRXxSYqE3vTdDXbEgnnLl0oZBvf
+         xz8ISvfKo/75HFpUzeWv189305nFE/f+KKWGdkvWVpcBTbzccm2uBZHwaqhJy+5pqV3b
+         iL1U72TVJrJCcj9W7J5vXYsyknjTxlQkSZoKm/KZdcfxgSTC0NWcssCJasVLrGIwk0Xc
+         l+NVmsQ4GcIV16mIxGgs5B7UW/u6GYalfPU0USKhGSjRT5PgBuEPqGDbtZFOxycUvGGE
+         jdsOQByeo/zEUUFHsIc6uN2fJPv0bRM32DaASZ29664bQUe4ophglj31p5D7/sI/RoKQ
+         T+DQ==
+X-Gm-Message-State: AOAM532f0z5ol8qvzkATi3EBmXNZGa8pUXlj23fdNMXASQnv+cd7WSmd
+        u9+HwUtdGoR2NKQpjuqDxAY=
+X-Google-Smtp-Source: ABdhPJwlFjyxr8NFhrflzRw3CbYaZILp8i9Zi8gDSRSCmi/RtwkwrCtk+vx2Ky5r0OD2SP3QX43g2A==
+X-Received: by 2002:a2e:9913:: with SMTP id v19mr194762lji.209.1608228481635;
+        Thu, 17 Dec 2020 10:08:01 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.40
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:41 -0800 (PST)
+        Thu, 17 Dec 2020 10:08:01 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -78,9 +78,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 19/48] opp: Fix adding OPP entries in a wrong order if rate is unavailable
-Date:   Thu, 17 Dec 2020 21:06:09 +0300
-Message-Id: <20201217180638.22748-20-digetx@gmail.com>
+Subject: [PATCH v2 36/48] drm/tegra: gr2d: Correct swapped device-tree compatibles
+Date:   Thu, 17 Dec 2020 21:06:26 +0300
+Message-Id: <20201217180638.22748-37-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -90,90 +90,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix adding OPP entries in a wrong (opposite) order if OPP rate is
-unavailable. The OPP comparison is erroneously skipped if OPP rate is
-missing, thus OPPs are left unsorted.
+The device-tree compatibles are swapped in the code, correct them.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/core.c | 23 ++++++++++++-----------
- drivers/opp/opp.h  |  2 +-
- 2 files changed, 13 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/tegra/gr2d.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 34f7e530d941..5c7f130a8de2 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1531,9 +1531,10 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
- 	return true;
- }
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 1a0d3ba6e525..f30aa86e4c9f 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -162,8 +162,8 @@ static const struct gr2d_soc tegra30_gr2d_soc = {
+ };
  
--int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
-+int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2,
-+		     bool rate_not_available)
- {
--	if (opp1->rate != opp2->rate)
-+	if (!rate_not_available && opp1->rate != opp2->rate)
- 		return opp1->rate < opp2->rate ? -1 : 1;
- 	if (opp1->bandwidth && opp2->bandwidth &&
- 	    opp1->bandwidth[0].peak != opp2->bandwidth[0].peak)
-@@ -1545,7 +1546,8 @@ int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
- 
- static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
- 			     struct opp_table *opp_table,
--			     struct list_head **head)
-+			     struct list_head **head,
-+			     bool rate_not_available)
- {
- 	struct dev_pm_opp *opp;
- 	int opp_cmp;
-@@ -1559,13 +1561,13 @@ static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
- 	 * loop.
- 	 */
- 	list_for_each_entry(opp, &opp_table->opp_list, node) {
--		opp_cmp = _opp_compare_key(new_opp, opp);
-+		opp_cmp = _opp_compare_key(new_opp, opp, rate_not_available);
- 		if (opp_cmp > 0) {
- 			*head = &opp->node;
- 			continue;
- 		}
- 
--		if (opp_cmp < 0)
-+		if (opp_cmp < 0 || rate_not_available)
- 			return 0;
- 
- 		/* Duplicate OPPs */
-@@ -1601,12 +1603,11 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
- 	mutex_lock(&opp_table->lock);
- 	head = &opp_table->opp_list;
- 
--	if (likely(!rate_not_available)) {
--		ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
--		if (ret) {
--			mutex_unlock(&opp_table->lock);
--			return ret;
--		}
-+	ret = _opp_is_duplicate(dev, new_opp, opp_table, &head,
-+				rate_not_available);
-+	if (ret) {
-+		mutex_unlock(&opp_table->lock);
-+		return ret;
- 	}
- 
- 	list_add(&new_opp->node, head);
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 4ced7ffa8158..6f5be6c72f13 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -219,7 +219,7 @@ struct opp_table *_find_opp_table(struct device *dev);
- struct opp_device *_add_opp_dev(const struct device *dev, struct opp_table *opp_table);
- struct dev_pm_opp *_opp_allocate(struct opp_table *opp_table);
- void _opp_free(struct dev_pm_opp *opp);
--int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2);
-+int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2, bool rate_not_available);
- int _opp_add(struct device *dev, struct dev_pm_opp *new_opp, struct opp_table *opp_table, bool rate_not_available);
- int _opp_add_v1(struct opp_table *opp_table, struct device *dev, unsigned long freq, long u_volt, bool dynamic);
- void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, int last_cpu);
+ static const struct of_device_id gr2d_match[] = {
+-	{ .compatible = "nvidia,tegra30-gr2d", .data = &tegra20_gr2d_soc },
+-	{ .compatible = "nvidia,tegra20-gr2d", .data = &tegra30_gr2d_soc },
++	{ .compatible = "nvidia,tegra30-gr2d", .data = &tegra30_gr2d_soc },
++	{ .compatible = "nvidia,tegra20-gr2d", .data = &tegra20_gr2d_soc },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, gr2d_match);
 -- 
 2.29.2
 
