@@ -2,194 +2,150 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F2AC2BBCF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 10:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A6AC4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 12:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20AE623A84
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 10:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E56923A5B
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 12:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbgLRKVX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Dec 2020 05:21:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36940 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgLRKVW (ORCPT
+        id S1726484AbgLRMMK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Dec 2020 07:12:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbgLRMMJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Dec 2020 05:21:22 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4BC251F46188;
-        Fri, 18 Dec 2020 10:20:40 +0000 (GMT)
-Date:   Fri, 18 Dec 2020 11:20:37 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>,
-        <bbrezillon@kernel.org>, <p.yadav@ti.com>,
-        <tudor.ambarus@microchip.com>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 6/9] spi: tegra210-quad: Add support for hardware
- dummy cycles transfer
-Message-ID: <20201218112037.4465598a@collabora.com>
-In-Reply-To: <1608236927-28701-7-git-send-email-skomatineni@nvidia.com>
-References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
-        <1608236927-28701-7-git-send-email-skomatineni@nvidia.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 18 Dec 2020 07:12:09 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A46CC0617A7;
+        Fri, 18 Dec 2020 04:11:29 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id y19so4754978lfa.13;
+        Fri, 18 Dec 2020 04:11:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wmKmmssP571GSjnFYi6HX98tL6vYtUuHsqmX9JpWAKE=;
+        b=YOn3/2Ua2DaHNl9slwXBL4Mu9YvF0aqiet7j6Wj6tmddHMH8oNolTsbuumtocs46OY
+         ZUfM6sUwG9Spfexy7NsVoZ3ZI9mi11iTueOpdn4I5hIDiaHxUPDI6A7LnycXkIkT/3Xo
+         Med+wxfO4lZPHS+jXwsaxzk7yP190TcHZPW03QFtuLOWxOWzSwfjdjmOyZ04xt8VcjDi
+         O1I9EgSQw01QkpVbY4kQcJ7z6wv+Cse0dDhcmoA6kSr2v5Fu3A44xLBHTClXN7ItJHJj
+         oWcEfiLGmvVpHwIHXKlEdEPGRIryDZFEPmxBq8qV8R62GbaZi0tDDyB+p5grMvM1l3bC
+         zXsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wmKmmssP571GSjnFYi6HX98tL6vYtUuHsqmX9JpWAKE=;
+        b=D8zpYLurLt98/4Q2FgPB/k+jSxutjNVitTdWTjEdSrOl19WIUfu6EXZWxXFRM6i28D
+         wYREgTJJawRSGQRGMX1MCqT6u4FANLDNeTM8trCEu5eOqkBvHapWKQ2oPqYqWxVr1ipy
+         0JjNI9bbVqXoHogBPdXU8Ej5riNAx+PUTYBrC/nzYpDdRZpZ5aR66PwXTRoN5sXEWUuj
+         Qxb0cE4gdLyrtqN4srYbW5t1DeNEVQtmIoFb+5Jae2Gx5p92Bb8VnPxCesvNMMusjBMy
+         f4fPObAmtZvH4iakDpkpKOFVNvEJ5cusSaPoMqSQQSw6RZIN7OfhWVfNtcjNV4jcJJzP
+         V7FA==
+X-Gm-Message-State: AOAM533GZWrV2gkSiRvEcM9RXyAhme1qn8szgvQ9OxRmHBtEZPsOI4jF
+        rS3+XJr3aFus1cP02CKYch8=
+X-Google-Smtp-Source: ABdhPJzSn5dO4duO6qBxIhZ1ShydDBRv6a7EPdYniILINI5ediFhUy224FFACqQXVd7qq4dLfCO/nQ==
+X-Received: by 2002:a19:c70b:: with SMTP id x11mr1353353lff.258.1608293487769;
+        Fri, 18 Dec 2020 04:11:27 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.gmail.com with ESMTPSA id i9sm1036472ljn.18.2020.12.18.04.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Dec 2020 04:11:27 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Felipe Balbi <balbi@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, Ion Agorria <ion@agorria.com>
+Cc:     linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9] Support Runtime PM and host mode by Tegra ChipIdea USB driver
+Date:   Fri, 18 Dec 2020 15:02:37 +0300
+Message-Id: <20201218120246.7759-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 17 Dec 2020 12:28:44 -0800
-Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+This series implements Runtime PM support for the Tegra ChipIdea USB driver.
+It also squashes the older ehci-tegra driver into the ChipIdea driver, hence
+the RPM is supported by both UDC and host controllers, secondly this opens
+opportunity for implementing OTG support in the future.
 
-> Tegra Quad SPI controller hardware supports sending dummy bytes based
-> on programmed dummy clock cycles after the actual transfer bytes.
-> 
-> This patch adds this support of hardware dummy bytes transfer and
-> skips transfer of dummy bytes from the software.
-> 
-> For dummy cycles more than Tegra Quad SPI hardware maximum dummy
-> cycles limit, driver transfers dummy bytes from the software.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/spi/spi-tegra210-quad.c | 41 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 40 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-> index e7bee8d..695a296 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -117,6 +117,7 @@
->  
->  #define QSPI_MISC_REG                           0x194
->  #define QSPI_NUM_DUMMY_CYCLE(x)			(((x) & 0xff) << 0)
-> +#define QSPI_DUMMY_CYCLES_MAX			0xff
->  
->  #define DATA_DIR_TX				BIT(0)
->  #define DATA_DIR_RX				BIT(1)
-> @@ -170,6 +171,7 @@ struct tegra_qspi {
->  	u32					def_command2_reg;
->  	u32					spi_cs_timing1;
->  	u32					spi_cs_timing2;
-> +	u8					dummy_cycles;
->  
->  	struct completion			xfer_completion;
->  	struct spi_transfer			*curr_xfer;
-> @@ -856,6 +858,8 @@ static int tegra_qspi_start_transfer_one(struct spi_device *spi,
->  
->  	tqspi->command1_reg = command1;
->  
-> +	tegra_qspi_writel(tqspi, QSPI_NUM_DUMMY_CYCLE(tqspi->dummy_cycles), QSPI_MISC_REG);
-> +
->  	ret = tegra_qspi_flush_fifos(tqspi, false);
->  	if (ret < 0)
->  		return ret;
-> @@ -974,7 +978,8 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
->  {
->  	struct tegra_qspi *tqspi = spi_master_get_devdata(master);
->  	struct spi_device *spi = msg->spi;
-> -	struct spi_transfer *xfer;
-> +	struct spi_transfer *xfer, *next_xfer;
+Patchset was tested on various Tegra20, Tegra30 and Tegra124 devices.
+Thanks to Peter Geis, Matt Merhar, Nicolas Chauvet and Ion Agorria for
+helping with the extensive and productive testing!
 
-next_after should be declared where it's actually used.
+Changelog:
 
-> +	bool use_hw_dummy_cycles = false;
+v3: - Replaced "goto" with if-statements as was suggested by Thierry Reding.
 
-I don't think you need this variable (see below).
+    - Improved wording of the deprecated Kconfig entry as was suggested
+      by Alan Stern.
 
->  	bool is_first_msg = true;
->  	int ret;
->  
-> @@ -984,8 +989,42 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
->  	tqspi->rx_status = 0;
->  
->  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-> +		u8 dummy_cycles = 0;
+    - Added ACKs from Thierry Reding and Alan Stern.
 
-Should be declared where it's actually used, and you don't want it to be a u8
-since you're checking that the result does not exceed 255 which will always
-be true with a u8.
+    - Added a new minor patch "Specify TX FIFO threshold in UDC SoC info"
+      just for completeness, since we can now switch OTG to host mode in
+      the ChipIdea driver. Although, OTG support remains a work-in-progress
+      for now.
 
->  		u32 cmd1;
->  
-> +		/*
-> +		 * Skip dummy bytes transfer if they are transferred by the hardware along
-> +		 * with previous transfer.
-> +		 */
-> +		if (xfer->dummy_data && use_hw_dummy_cycles) {
-> +			msg->actual_length += xfer->len;
-> +			continue;
-> +		}
-> +
-> +		/*
-> +		 * Tegra QSPI hardware supports dummy bytes transfer after actual transfer
-> +		 * bytes based on programmed dummy clock cycles in the QSPI_MISC register.
-> +		 * So, check if the next transfer is dummy data transfer and program dummy
-> +		 * clock cycles along with the current transfer.
-> +		 */
-> +		if (!list_is_last(&xfer->transfer_list, &msg->transfers)) {
-> +			next_xfer = list_next_entry(xfer, transfer_list);
-> +			if (next_xfer && next_xfer->dummy_data) {
-> +				dummy_cycles = next_xfer->len * 8 / next_xfer->tx_nbits;
-> +				use_hw_dummy_cycles = true;
-> +				/*
-> +				 * Use software dummy bytes transfer if dummy cycles exceeds
-> +				 * Tegra QSPI hardware maximum dummy cycles limit.
-> +				 */
-> +				if (dummy_cycles > QSPI_DUMMY_CYCLES_MAX) {
-> +					use_hw_dummy_cycles = false;
-> +					dummy_cycles = 0;
-> +				}
-> +			}
-> +		}
-> +
-> +		tqspi->dummy_cycles = dummy_cycles;
-> +
+v2: - Improved comments in the code as it was suggested by Peter Chen and
+      Sergei Shtylyov for v1.
 
-This can be simplified:
+    - Replaced mdelay() with fsleep() and made ci->hdc to reset to NULL in
+      a error code path, like it was suggested by Peter Chen.
 
-		/*
-		 * Skip dummy bytes transfer if they were issued with the
-		 * previous transfer.
-		 */
-		if (tqspi->dummy_cycles) {
-			WARN_ON(!xfer->dummy_data);
-			tqspi->dummy_cycles = 0;
-		}
+    - Redirected deprecated USB_EHCI_TEGRA Kconfig entry to USB_CHIPIDEA_TEGRA
+      as was suggested by Alan Stern.
 
-		/*
-		 * Tegra QSPI hardware supports dummy bytes transfer after actual
-		 * transfer bytes based on programmed dummy clock cycles in the
-		 * QSPI_MISC register. So, check if the next transfer is dummy
-		 * data transfer and program dummy clock cycles along with the
-		 * current transfer.
-		 */
-		if (!list_is_last(&xfer->transfer_list, &msg->transfers)) {
-			struct spi_transfer *next_xfer;
+    - Improved commit message and added ACK from Thierry Reding to the patch
+      that removes MODULE_ALIAS.
 
-			next_xfer = list_next_entry(xfer, transfer_list);
-			if (next_xfer->dummy_data) {
-				u32 dummy_cycles = next_xfer->len * 8 /
-						   next_xfer->tx_nbits;
-				if (dummy_cycles <= QSPI_DUMMY_CYCLES_MAX)
-					tqspi->dummy_cycles = dummy_cycles;
-			}
-		}
+    - Fixed UDC PHY waking up on ASUS TF201 tablet device by utilizing
+      additional VBUS sensor. This was reported and tested by Ion Agorria.
 
+    - Added t-b from Ion Agorria.
 
->  		reinit_completion(&tqspi->xfer_completion);
->  
->  		cmd1 = tegra_qspi_setup_transfer_one(spi, xfer, is_first_msg);
+Dmitry Osipenko (8):
+  usb: phy: tegra: Add delay after power up
+  usb: phy: tegra: Support waking up from a low power mode
+  usb: chipidea: tegra: Remove MODULE_ALIAS
+  usb: chipidea: tegra: Rename UDC to USB
+  usb: chipidea: tegra: Support runtime PM
+  usb: chipidea: tegra: Specify TX FIFO threshold in UDC SoC info
+  usb: host: ehci-tegra: Remove the driver
+  ARM: tegra_defconfig: Enable USB_CHIPIDEA_HOST and remove
+    USB_EHCI_TEGRA
+
+Peter Geis (1):
+  usb: chipidea: tegra: Support host mode
+
+ arch/arm/configs/tegra_defconfig     |   3 +-
+ drivers/usb/chipidea/Kconfig         |   3 +-
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 344 ++++++++++++---
+ drivers/usb/chipidea/core.c          |  10 +-
+ drivers/usb/chipidea/host.c          | 104 ++++-
+ drivers/usb/host/Kconfig             |  10 +-
+ drivers/usb/host/Makefile            |   1 -
+ drivers/usb/host/ehci-tegra.c        | 604 ---------------------------
+ drivers/usb/phy/phy-tegra-usb.c      | 103 ++++-
+ include/linux/usb/chipidea.h         |   6 +
+ include/linux/usb/tegra_usb_phy.h    |   2 +
+ 11 files changed, 518 insertions(+), 672 deletions(-)
+ delete mode 100644 drivers/usb/host/ehci-tegra.c
+
+-- 
+2.29.2
 
