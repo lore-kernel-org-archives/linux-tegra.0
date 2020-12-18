@@ -2,108 +2,131 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6575AC2BBCF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 07:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7AEC4361B
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 09:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF2D23A80
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 07:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B38A923A7B
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 09:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgLRHPj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Dec 2020 02:15:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727449AbgLRHPi (ORCPT
+        id S1731462AbgLRJWv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Dec 2020 04:22:51 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:34346 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbgLRJWu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Dec 2020 02:15:38 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F30C061285
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 23:14:58 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id z12so824537pjn.1
-        for <linux-tegra@vger.kernel.org>; Thu, 17 Dec 2020 23:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5uBH5KsWopbV7FffwP9cu3qwTCPbWsa/gpWuvPcUSsg=;
-        b=QAa+QgBNWGXQOzLHcEttslyMX7yfVRFnmsie63URsvH5GVYmCfqLASAvZuwYX9MIET
-         eDmE1hBXyewXRMKiWj91RDHrjpb/kMVBkEeGid+6WGS4/m50KcVQrRCW8T8QrPc/NQ/n
-         xkFA8qANdUY/ZMDZ1U10ACf2taGB60mF9xbpsuylhp3HoF/iXl+pGW94NzxojOGrxEL+
-         jbM/5E7N+gPH/W3t8wPwMcbtn6s1VbaU8LAIXwc8wN+nbdu3UYGXyxVvioFI2s3fGdha
-         qUWYb/n/DIAy3pLKM/lOTXvtnloCMYB9AUwFndWYRMY4bs1NSawqpvTYjUnjhU9MTH8e
-         72jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5uBH5KsWopbV7FffwP9cu3qwTCPbWsa/gpWuvPcUSsg=;
-        b=sy3IfxT7pupuO5SSEF66vIIAaGKyvgZ3xB8nraEYfas/qSjg2BidwHA5oXRIDh8FLJ
-         nkECt4ShSg291/lcURYdIEPCr6SfYPxMunTM9p7AGWB+mJrnpWLuMZegerA1PW4C2jW1
-         1BC+04IE2DYLgDzNRbmqlgOaEvLfl9MbXpN4RcnUWHn9D7Ti3h/lNGvK1ltW2CgAOfWU
-         fwY0Cui9idyuB8jYv8gmqo9bkHSe+RQ23XK1eVSuGFDHvOBpt+LG7h5AwHwFTBi9K36m
-         n5m1CFXGAnEJvvT8URCsPRjcZUc7ClcnymrE1GoVq4MQ/c/R14ayRF0Rxv+HYSK3WWyd
-         haYA==
-X-Gm-Message-State: AOAM533j1DJtK36T6Ovjq4ylIqlXEIVVkdVD9rzMyPI6pkc1COCVk5Kt
-        vwNqUfz09L3JajMw8IYhDCU+1w==
-X-Google-Smtp-Source: ABdhPJxh6Vc+BoEp2nvhSj4YmNHb7ku5mMkwmUaQUKeZHUbZ9rzCY6oJyHfeJDwsJp2g/i5HDfSMhg==
-X-Received: by 2002:a17:902:8f94:b029:da:d168:4443 with SMTP id z20-20020a1709028f94b02900dad1684443mr3091172plo.57.1608275697958;
-        Thu, 17 Dec 2020 23:14:57 -0800 (PST)
-Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id j20sm7721737pfd.106.2020.12.17.23.14.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Dec 2020 23:14:57 -0800 (PST)
-Date:   Fri, 18 Dec 2020 12:44:55 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
-References: <20201217180638.22748-1-digetx@gmail.com>
+        Fri, 18 Dec 2020 04:22:50 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0BI9LAP1008846;
+        Fri, 18 Dec 2020 03:21:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1608283270;
+        bh=JEhxrJdzKkqBCohlls58hFvXO71eHtV3nMjA4ot8kec=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=TNkE43jsNjtIWDE7xi/763JHr1wjk9kawqnaGaQIvGzKSyREyM3WQ4UrxomrAvJUj
+         RQKx5Tywu+JOqKRymxnfTSPqhsdGu7GQ+SQzs21KtND4Lnr1I2APZSUUborrJL5lK4
+         OJ8M+yrBEfwEVfUeJNm6xzOwSsENlgoQd9Go7rcE=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0BI9LAb9021593
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Dec 2020 03:21:10 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 18
+ Dec 2020 03:21:09 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 18 Dec 2020 03:21:09 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0BI9L9Iu079866;
+        Fri, 18 Dec 2020 03:21:09 -0600
+Date:   Fri, 18 Dec 2020 14:51:08 +0530
+From:   Pratyush Yadav <p.yadav@ti.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>,
+        <bbrezillon@kernel.org>, <tudor.ambarus@microchip.com>,
+        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 5/9] spi: spi-mem: Mark dummy transfers by setting
+ dummy_data bit
+Message-ID: <20201218092106.skwej2g6bk3oksbb@ti.com>
+References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
+ <1608236927-28701-6-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <1608236927-28701-6-git-send-email-skomatineni@nvidia.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-12-20, 21:05, Dmitry Osipenko wrote:
-> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
-> power consumption and heating of the Tegra chips. Tegra SoC has multiple
-> hardware units which belong to a core power domain of the SoC and share
-> the core voltage. The voltage must be selected in accordance to a minimum
-> requirement of every core hardware unit.
+Hi Sowjanya,
 
-Please submit the OPP changes separately (alone), it will never get
-merged this way. Send fixes at the top, any features you want later in
-the series. It is fine for you to base your series of patches which
-are under review, you just need to mention that in your cover letter
-for your platform's patchset.
+On 17/12/20 12:28PM, Sowjanya Komatineni wrote:
+> This patch marks dummy transfer by setting dummy_data bit to 1.
+> 
+> Controllers supporting dummy transfer by hardware use this bit field
+> to skip software transfer of dummy bytes and use hardware dummy bytes
+> transfer.
+
+What is the benefit you get from this change? You add complexity in 
+spi-mem and the controller driver, so that must come with some benefits. 
+Here I don't see any. The transfer will certainly take the same amount 
+of time because the number or period of the dummy cycles has not 
+changed. So why is this needed?
+ 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/spi/spi-mem.c   | 1 +
+>  include/linux/spi/spi.h | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> index f3a3f19..c64371c 100644
+> --- a/drivers/spi/spi-mem.c
+> +++ b/drivers/spi/spi-mem.c
+> @@ -354,6 +354,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+>  		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
+>  		xfers[xferpos].len = op->dummy.nbytes;
+>  		xfers[xferpos].tx_nbits = op->dummy.buswidth;
+> +		xfers[xferpos].dummy_data = 1;
+>  		spi_message_add_tail(&xfers[xferpos], &msg);
+>  		xferpos++;
+>  		totalxferlen += op->dummy.nbytes;
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index aa09fdc..708f2f5 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -827,6 +827,7 @@ extern void spi_res_release(struct spi_controller *ctlr,
+>   *      transfer. If 0 the default (from @spi_device) is used.
+>   * @bits_per_word: select a bits_per_word other than the device default
+>   *      for this transfer. If 0 the default (from @spi_device) is used.
+> + * @dummy_data: indicates transfer is dummy bytes transfer.
+>   * @cs_change: affects chipselect after this transfer completes
+>   * @cs_change_delay: delay between cs deassert and assert when
+>   *      @cs_change is set and @spi_transfer is not the last in @spi_message
+> @@ -939,6 +940,7 @@ struct spi_transfer {
+>  	struct sg_table tx_sg;
+>  	struct sg_table rx_sg;
+>  
+> +	unsigned	dummy_data:1;
+>  	unsigned	cs_change:1;
+>  	unsigned	tx_nbits:3;
+>  	unsigned	rx_nbits:3;
+> -- 
+> 2.7.4
+> 
 
 -- 
-viresh
+Regards,
+Pratyush Yadav
+Texas Instruments India
