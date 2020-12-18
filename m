@@ -2,39 +2,37 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EB7C2BBCF
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 15:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4335C2BBD5
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 15:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3DC23B7F
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 15:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB3C23B70
+	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 15:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbgLRPe1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Dec 2020 10:34:27 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3157 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbgLRPe1 (ORCPT
+        id S1727608AbgLRP42 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 18 Dec 2020 10:56:28 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13459 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbgLRP41 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Dec 2020 10:34:27 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fdccbdb0000>; Fri, 18 Dec 2020 07:33:47 -0800
+        Fri, 18 Dec 2020 10:56:27 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fdcd1030000>; Fri, 18 Dec 2020 07:55:47 -0800
 Received: from [10.26.73.104] (172.20.145.6) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Dec
- 2020 15:33:38 +0000
+ 2020 15:55:41 +0000
 Subject: Re: [PATCH] gcc-plugins: simplify GCC plugin-dev capability test
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Masahiro Yamada <masahiroy@kernel.org>
-CC:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+To:     Masahiro Yamada <masahiroy@kernel.org>
+CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>,
+        "Emese Revfy" <re.emese@gmail.com>,
         <linux-hardening@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
         Nathan Chancellor <natechancellor@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         clang-built-linux <clang-built-linux@googlegroups.com>,
@@ -48,12 +46,15 @@ References: <CGME20201218075758eucas1p1605768803a5c9edce4fbe54b3e3b859a@eucas1p1
  <e5b06d9a-9b24-2440-e0c2-8bf7095eccd9@nvidia.com>
  <25030057-86b1-5619-25fd-acfa0728b850@samsung.com>
  <4ab4f62f-8b37-01e1-f81c-270155b13a51@nvidia.com>
-Message-ID: <7e691a61-bf4b-0594-8d6d-36d62a5def0b@nvidia.com>
-Date:   Fri, 18 Dec 2020 15:33:36 +0000
+ <7e691a61-bf4b-0594-8d6d-36d62a5def0b@nvidia.com>
+ <CAK7LNAQ6pzMGm=L9389Xtfghjfjr_wDqRntZC2XqP3JDQuhLhQ@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c2a968fa-5a98-d9ea-3255-1e3be3e9c704@nvidia.com>
+Date:   Fri, 18 Dec 2020 15:55:38 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <4ab4f62f-8b37-01e1-f81c-270155b13a51@nvidia.com>
+In-Reply-To: <CAK7LNAQ6pzMGm=L9389Xtfghjfjr_wDqRntZC2XqP3JDQuhLhQ@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,136 +62,54 @@ X-Originating-IP: [172.20.145.6]
 X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608305627; bh=odSmLfTxrpZot9VnSSEPJy+l6LjXBu7/qmxNqGpwNp8=;
-        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+        t=1608306947; bh=Vf95MzpRH15xDbnzDYz9T/qpYpIZeGHo+3utb3dK3p0=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
          MIME-Version:In-Reply-To:Content-Type:Content-Language:
          Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=C2uI9yVKVlz8ad8fIlMzAOeFWPr7FYEHAFVDH7mZDWcH4ntrEqavDASBKgv0qjQIq
-         sz9y2GdmH9b96cpFrclG2jVrxQybNv8GwxNOsuU35GPwyNBKI4pXY4Hc5R0rw1KGii
-         NI/fKPYjuo9n9sLQgPHqqu9tRSi42OJ3tEhhEz5j+JGU0YuJowNvp6yWy9D444RBIm
-         dgZD48aN0rRvUXqPtGugiKlxc/kc3RR4aRv4j+xgEKJsaa6ZR1XfA4U1Vr3u+M3RmP
-         vkMZ46DtlQ0wi/EgiszwvMyZfsGDmdd63nR2L9X2OWXsynwgPNYFzPZSvS2TEGqo1b
-         flMrWPRv9XoZQ==
+        b=gG1/wrOtHRdihF20uuUYpsjhtLGEJ5rvCJOx94H2d7uzNK19cqpHiseyv8P0NMLnv
+         I8Zi4EIzJDUESASrLirKD8QcdqAyICwtSnYzjefHZfkdImiC/meaX6PB4jWksKyPn3
+         NXHBxyDYBsPaGvIZ501PqOkAVxG0tSXgtdtUHyu7vZ8LnAkWl2orGfSQ/aKjOvU0gK
+         sooRrWLWtSoa9pZjxe/t09QaLppo6aGzGKrhF0D8JG21EijrBMc9Eb0V6ol/6FEdsg
+         QZ5CwULlbPQOI299ues3dhGG3lEJU8VMBTHUof23kR279uTCiRUmzbkTxDCXNCLbaG
+         yi8K0JAnpKkIQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 18/12/2020 15:12, Jon Hunter wrote:
-> 
-> On 18/12/2020 15:09, Marek Szyprowski wrote:
+
+On 18/12/2020 15:42, Masahiro Yamada wrote:
+
+...
+
+>> However, if you are saying that this is a problem/bug with our builders,
+>> then of course we will have to get this fixed.
 >>
->> On 18.12.2020 16:03, Jon Hunter wrote:
->>> On 18/12/2020 10:05, Marek Szyprowski wrote:
->>>> On 18.12.2020 10:43, Masahiro Yamada wrote:
->>>>> On Fri, Dec 18, 2020 at 4:58 PM Marek Szyprowski
->>>>> <m.szyprowski@samsung.com> wrote:
->>>>>> On 03.12.2020 13:57, Masahiro Yamada wrote:
->>>>>>> Linus pointed out a third of the time in the Kconfig parse stage comes
->>>>>>> from the single invocation of cc1plus in scripts/gcc-plugin.sh [1],
->>>>>>> and directly testing plugin-version.h for existence cuts down the
->>>>>>> overhead a lot. [2]
->>>>>>>
->>>>>>> This commit takes one step further to kill the build test entirely.
->>>>>>>
->>>>>>> The small piece of code was probably intended to test the C++ designated
->>>>>>> initializer, which was not supported until C++20.
->>>>>>>
->>>>>>> In fact, with -pedantic option given, both GCC and Clang emit a warning.
->>>>>>>
->>>>>>> $ echo 'class test { public: int test; } test = { .test = 1 };' | g++ -x c++ -pedantic - -fsyntax-only
->>>>>>> <stdin>:1:43: warning: C++ designated initializers only available with '-std=c++2a' or '-std=gnu++2a' [-Wpedantic]
->>>>>>> $ echo 'class test { public: int test; } test = { .test = 1 };' | clang++ -x c++ -pedantic - -fsyntax-only
->>>>>>> <stdin>:1:43: warning: designated initializers are a C++20 extension [-Wc++20-designator]
->>>>>>> class test { public: int test; } test = { .test = 1 };
->>>>>>>                                              ^
->>>>>>> 1 warning generated.
->>>>>>>
->>>>>>> Otherwise, modern C++ compilers should be able to build the code, and
->>>>>>> hopefully skipping this test should not make any practical problem.
->>>>>>>
->>>>>>> Checking the existence of plugin-version.h is still needed to ensure
->>>>>>> the plugin-dev package is installed. The test code is now small enough
->>>>>>> to be embedded in scripts/gcc-plugins/Kconfig.
->>>>>>>
->>>>>>> [1] https://protect2.fireeye.com/v1/url?k=03db90e1-5c40a828-03da1bae-0cc47a336fae-4cc36f5830aeb78d&q=1&e=dfdc1cf9-82d6-4ca5-b35d-1782e918bde3&u=https%3A%2F%2Flore.kernel.org%2Flkml%2FCAHk-%3DwjU4DCuwQ4pXshRbwDCUQB31ScaeuDo1tjoZ0_PjhLHzQ%40mail.gmail.com%2F
->>>>>>> [2] https://protect2.fireeye.com/v1/url?k=965b670a-c9c05fc3-965aec45-0cc47a336fae-e34339513ff747c0&q=1&e=dfdc1cf9-82d6-4ca5-b35d-1782e918bde3&u=https%3A%2F%2Flore.kernel.org%2Flkml%2FCAHk-%3DwhK0aQxs6Q5ijJmYF1n2ch8cVFSUzU5yUM_HOjig%3D%2Bvnw%40mail.gmail.com%2F
->>>>>>>
->>>>>>> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->>>>>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->>>>>> This patch landed in linux next-20201217 as commit 1e860048c53e
->>>>>> ("gcc-plugins: simplify GCC plugin-dev capability test").
->>>>>>
->>>>>> It causes a build break with my tests setup, but I'm not sure weather it
->>>>>> is really an issue of this commit or a toolchain I use. However I've
->>>>>> checked various versions of the gcc cross-compilers released by Linaro
->>>>>> at https://protect2.fireeye.com/v1/url?k=053727b6-5aac1f7f-0536acf9-0cc47a336fae-5bd799e7ce6b1b9b&q=1&e=dfdc1cf9-82d6-4ca5-b35d-1782e918bde3&u=https%3A%2F%2Freleases.linaro.org%2Fcomponents%2Ftoolchain%2Fbinaries%2F and all
->>>>>> fails with the same error:
->>>>>>
->>>>>> $ make ARCH=arm
->>>>>> CROSS_COMPILE=../../cross/gcc-arm-10.2-2020.11-x86_64-arm-none-eabi/bin/arm-none-eabi-
->>>>>> zImage
->>>>>>      HOSTCXX scripts/gcc-plugins/arm_ssp_per_task_plugin.so
->>>>>> In file included from
->>>>>> /home/mszyprow/dev/cross/gcc-arm-10.2-2020.11-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/10.2.1/plugin/include/gcc-plugin.h:28:0,
->>>>>>                     from scripts/gcc-plugins/gcc-common.h:7,
->>>>>>                     from scripts/gcc-plugins/arm_ssp_per_task_plugin.c:3:
->>>>>> /home/mszyprow/dev/cross/gcc-arm-10.2-2020.11-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/10.2.1/plugin/include/system.h:687:10:
->>>>>> fatal error: gmp.h: No such file or directory
->>>>>>     #include <gmp.h>
->>>>>>              ^~~~~~~
->>>>>> compilation terminated.
->>>>>> scripts/gcc-plugins/Makefile:47: recipe for target
->>>>>> 'scripts/gcc-plugins/arm_ssp_per_task_plugin.so' failed
->>>>>> make[2]: *** [scripts/gcc-plugins/arm_ssp_per_task_plugin.so] Error 1
->>>>>> scripts/Makefile.build:496: recipe for target 'scripts/gcc-plugins' failed
->>>>>> make[1]: *** [scripts/gcc-plugins] Error 2
->>>>>> Makefile:1190: recipe for target 'scripts' failed
->>>>>> make: *** [scripts] Error 2
->>>>>>
->>>>>> Compilation works if I use the cross-gcc provided by
->>>>>> gcc-7-arm-linux-gnueabi/gcc-arm-linux-gnueabi Ubuntu packages, which is:
->>>>>>
->>>>>> $ arm-linux-gnueabi-gcc --version
->>>>>> arm-linux-gnueabi-gcc (Ubuntu/Linaro 7.5.0-3ubuntu1~18.04) 7.5.0
->>>>>>
->>>>> I can compile gcc-plugins with Linaro toolchians.
->>>>>
->>>>> The version of mine is this:
->>>>>
->>>>> masahiro@oscar:~/ref/linux-next$
->>>>> ~/tools/arm-linaro-7.5/bin/arm-linux-gnueabihf-gcc --version
->>>>> arm-linux-gnueabihf-gcc (Linaro GCC 7.5-2019.12) 7.5.0
->>>>> Copyright (C) 2017 Free Software Foundation, Inc.
->>>>> This is free software; see the source for copying conditions.  There is NO
->>>>> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> Maybe, it depends on the host environment?
->>>>>
->>>>>
->>>>> Please try this:
->>>>>
->>>>> $ sudo apt install libgmp-dev
->>>> Indeed, it was missing on my setup. Sorry for the noise.
->>>
->>> So this change also breaks the build on our farm build machines and
->>> while we can request that packages are installed on these machines, it
->>> takes time. Is there anyway to avoid this?
->>
->> You can temporarily revert 1e860048c53e (this patch).
 > 
 > 
-> Again that works locally, but these automated builders just pull the
-> latest -next branch and build.
+> Yes, please do so.
+> 
+> 
+> Kconfig evaluates $(CC) capabilities, and
+> hides CONFIG options it cannot support.
+> 
+> 
+> In contrast, we do not do that for $(HOSTCC)
+> capabilities because it is just a matter of some
+> missing packages.
+> 
+> 
+> For example, if you enable CONFIG_SYSTEM_TRUSTED_KEYRING
+> and fail to build scripts/extrace-cert.c
+> due to missing <openssl/bio.h>,
+> you need to install the openssl dev package.
+> 
+> It is the same pattern.
 
 
-However, if you are saying that this is a problem/bug with our builders,
-then of course we will have to get this fixed.
+OK, thanks for confirming. We will get this fixed.
 
-Jon
+Cheers Jon
 
 -- 
 nvpublic
