@@ -2,100 +2,155 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFD5C3526B
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 22:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A87CC3526C
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Dec 2020 10:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9D223BA7
-	for <linux-tegra@archiver.kernel.org>; Fri, 18 Dec 2020 22:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E665A207AA
+	for <linux-tegra@archiver.kernel.org>; Sat, 19 Dec 2020 10:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbgLRWCm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 18 Dec 2020 17:02:42 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13862 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbgLRWCl (ORCPT
+        id S1726491AbgLSK6G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 19 Dec 2020 05:58:06 -0500
+Received: from mail-ej1-f53.google.com ([209.85.218.53]:34661 "EHLO
+        mail-ej1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbgLSK6G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 18 Dec 2020 17:02:41 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fdd26d80007>; Fri, 18 Dec 2020 14:02:00 -0800
-Received: from [10.2.61.1] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 18 Dec
- 2020 22:01:57 +0000
-Subject: Re: [PATCH v4 5/9] spi: spi-mem: Mark dummy transfers by setting
- dummy_data bit
-To:     Mark Brown <broonie@kernel.org>, Pratyush Yadav <p.yadav@ti.com>
-CC:     Boris Brezillon <boris.brezillon@collabora.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <robh+dt@kernel.org>, <lukas@wunner.de>, <bbrezillon@kernel.org>,
-        <tudor.ambarus@microchip.com>, <linux-spi@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
- <1608236927-28701-6-git-send-email-skomatineni@nvidia.com>
- <20201218092106.skwej2g6bk3oksbb@ti.com>
- <20201218105759.43789ccf@collabora.com>
- <31c395ee-d7a6-edc5-a790-89fad91a0a27@nvidia.com>
- <20201218191936.hb6sq7zr3zdirar7@ti.com>
- <20201218204102.GF5333@sirena.org.uk> <20201218204414.GG5333@sirena.org.uk>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <c9343475-44b2-c9c4-1790-f6b50ec9c1bd@nvidia.com>
-Date:   Fri, 18 Dec 2020 14:01:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 19 Dec 2020 05:58:06 -0500
+Received: by mail-ej1-f53.google.com with SMTP id g20so6920291ejb.1;
+        Sat, 19 Dec 2020 02:57:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EpBQBebW9DJ389TpaCDahYCkX51lISZZEMe47kdJ6lQ=;
+        b=IAsruEHJrg2v6P8e0bPaSWQU27WQGHNOQafpZafuRhsmkORmMtmgK0WOjeWIBR1nvA
+         XABh1JLTemUs1aKwRp3FqKge3xIKSgZo4efxOUWUswCbdcZSNM95c4+xraIPgYoYpEDe
+         b8DX+xelZ7CTjfn9iK7U7dZGNqI0U8ZofDamSbwiR+Y0aKxEFDPXnlUfnDfxbWCoidmK
+         3IYUfWytgf/O4LoBR6NTbPzYK2Gi9VniI2nZbPkN0ulBZIGUmoG29h4suHjHWNIXJC9L
+         Qqmdw4GLqHCP0R3rG7IMHMUkCY8uX+uZiWEUAGREbjqP7dBM6lTcUU2/hq4qoL9JlCQv
+         egbA==
+X-Gm-Message-State: AOAM530McxTATj0tA4JvZg130C7LGBPxRV+9LHbVHfFDbwNyPO11M7G/
+        T3BiPwMUZNvqA5oQwQKxzGk=
+X-Google-Smtp-Source: ABdhPJyWR/64ayreIal22iSj58nHkNVe6iV5yUrUJ5pe5qe42bhP84ft40zxoVfZe823dJe4zocuIg==
+X-Received: by 2002:a17:906:4ec7:: with SMTP id i7mr8055250ejv.252.1608375443178;
+        Sat, 19 Dec 2020 02:57:23 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id pk19sm6666596ejb.32.2020.12.19.02.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Dec 2020 02:57:22 -0800 (PST)
+Date:   Sat, 19 Dec 2020 11:57:20 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 07/48] dt-bindings: arm: tegra: Add binding for core
+ power domain
+Message-ID: <20201219105720.GA5323@kozik-lap>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-8-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201218204414.GG5333@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608328920; bh=8Acq9GMc6nnEBbII98wXaf5fZtYBkqKtmc92tqPAku0=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=IBjIy3g1xJgPT0QS1nye2wOATxRT9+dPfxL8LVtbKHPbqmixzQGaxpIDYKewcilpT
-         LI6ZoTrTtku07/y8t9ZZPc9yl9ZwsUyideM/rDRhxVIM1sNNbvXqPWKjWa3at9kuxs
-         fwyG32gBi7m9E8gWFVQLy75NMJraywk9hBmbV/e9N2fIdG14syJNk7RElqbr9akQQt
-         QIEG6YjZxgjx59UgkgFRpp6+eFWy9yIJLrxbCaaffk3aqyxsy4vg/+bzZfxmgp1UFH
-         X0yTNbj/mKSBYUTGxMcg8P8CrE8F5XVWyqkHJZgWUBjy92iwnsMi9aTWFow6QRlNuF
-         TgpTtcb05ScGA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201217180638.22748-8-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Dec 17, 2020 at 09:05:57PM +0300, Dmitry Osipenko wrote:
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Add binding for the core power domain.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../arm/tegra/nvidia,tegra20-core-domain.yaml | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+> new file mode 100644
+> index 000000000000..f3d8fd2d8371
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-core-domain.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Core Power Domain
+> +
+> +maintainers:
+> +  - Dmitry Osipenko <digetx@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra20-core-domain
+> +      - nvidia,tegra30-core-domain
 
-On 12/18/20 12:44 PM, Mark Brown wrote:
-> On Fri, Dec 18, 2020 at 08:41:02PM +0000, Mark Brown wrote:
->> On Sat, Dec 19, 2020 at 12:49:38AM +0530, Pratyush Yadav wrote:
->>> Anyway, if the SPI maintainers think this is worth it, I won't object.
->> This gets kind of circular, for me it's a question of if there's some
->> meaningful benefit from using the feature vs the cost to support it and
->> from the sounds of it we don't have numbers on the benefits from using
->> it at present.
-> ...although I do have to say looking at the implementation that the cost
-> seems low, it's just a flag set on an existing transfer.  The only issue
-> is if we'd get more win from coalesing the entire transaction (or entire
-> transmit) into a single transfer that could be DMAed and/or requires
-> fewer trips through the stack which does make it seem like an unclear
-> tradeoff from the point of view of client drivers
+The file should be in bindings/power.
+Include also the power-domain.yaml schema.
 
-Using HW dummy cycles save extra software cycle of transfer which 
-involves transfer setup register writes, writing dummy bytes to TX FIFO, 
-interrupt processing.
+> +
+> +  operating-points-v2:
+> +    description:
+> +      Should contain level, voltages and opp-supported-hw property.
+> +      The supported-hw is a bitfield indicating SoC speedo or process
+> +      ID mask.
+> +
+> +  "#power-domain-cells":
+> +    const: 0
+> +
+> +  power-supply:
+> +    description:
+> +      Phandle to voltage regulator connected to the SoC Core power rail.
+> +
+> +required:
+> +  - compatible
+> +  - operating-points-v2
+> +  - "#power-domain-cells"
+> +  - power-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    core-domain {
 
-Implementation wise it just a single bit field added to spi_transfer and 
-on Tegra controller driver programming dummy cycles with prior transfer 
-and skipping sw dummy transfer which is actually not complex.
+power-domain (to follow schema and devicetree spec)
 
- From quick check, I see HW dummy cycles transfer of 128KB shows 18 Mb/s 
-while SW transfer of bytes shows 17.3 MB/s on average.
+Best regards,
+Krzysztof
 
-When back-to-back read commands are executed using HW dummy cycles will 
-definitely save cycles.
 
+> +        compatible = "nvidia,tegra20-core-domain";
+> +        operating-points-v2 = <&opp_table>;
+> +        power-supply = <&regulator>;
+> +        #power-domain-cells = <0>;
+> +    };
+> -- 
+> 2.29.2
+> 
