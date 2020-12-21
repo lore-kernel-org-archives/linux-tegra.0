@@ -8,27 +8,27 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70946C43332
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC63C4360C
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B53722B4B
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 421E222B4B
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbgLUVS3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Dec 2020 16:18:29 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16136 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgLUVS2 (ORCPT
+        id S1726429AbgLUVSZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Dec 2020 16:18:25 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17049 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbgLUVSZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Dec 2020 16:18:28 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fe110fc0001>; Mon, 21 Dec 2020 13:17:48 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Dec
- 2020 21:17:43 +0000
+        Mon, 21 Dec 2020 16:18:25 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fe110f80000>; Mon, 21 Dec 2020 13:17:44 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Dec
+ 2020 21:17:41 +0000
 Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Mon, 21 Dec 2020 21:17:43 +0000
+ Transport; Mon, 21 Dec 2020 21:17:40 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
@@ -36,9 +36,9 @@ CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
         <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
         <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 5/9] spi: spi-mem: Mark dummy transfers by setting dummy_data bit
-Date:   Mon, 21 Dec 2020 13:17:35 -0800
-Message-ID: <1608585459-17250-6-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v5 3/9] MAINTAINERS: Add Tegra Quad SPI driver section
+Date:   Mon, 21 Dec 2020 13:17:33 -0800
+Message-ID: <1608585459-17250-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
 References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
@@ -46,63 +46,46 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608585468; bh=6bx+wsy3UKNOmMAtBxcV/nZjihJYWCwQ1WcNk7bO2Rk=;
+        t=1608585464; bh=eUmYkQtzsVe7hTNcXJ04Thtwwti9plDaDD83X+TMEaA=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=CtkLdERtK+V6VDnoAVsWnMEWoXndfJeyfntB7L8UhQVYH+i390PtNXM9ZV9wMbBml
-         WhLmhAh6TJl3norWHCBxFqVMkZK15bgJM3Qg7F6iSEpkzpTklFi8Ty4LAXqxAgj4Vl
-         QPjiFTWzNQGQKqKEimfFbRsRHjYuBIROEHyEm8aSf6KTv410uugIRqua49RJOLYAkq
-         n4Ijxuu61KkHBpa+5sCJDulWcm6xBl2BHRsEdoT442M4H3myaWChoUJ0fzCBBcIf18
-         29KjNVUezU1kdRk6zHd8mg1NrhFFYDW4URqWtMKUCr4aaVgz5uK3npWh6+RnqQ0L6h
-         nQ0Ky+DMhVkOw==
+        b=ZoFlzBP3JjcF6OtTT5XLn3VaqFtaGSbrY4c1muVHtdRvsj6DTlFcnQLD917x5FZwm
+         YCpC5P3ytgvFQCRki/RyBcUtC3k4PZaM8jt+ZYgDZiANp3JqQPzinJReSMR17HXcIf
+         vCltlvf4vlOSufZ5wzaz5BSAR4v5BiXH34Qr1mimtW+R8WI9e4shEiEbgxTIVG6hUK
+         1uEOlQHaNtsgi17FekVfM9J2mEa3aSmEJgNRTv7X/hsdmtj1nL7tBpDn7WFL6coy0x
+         LtO1tX7X2Ml1XFCUqN4PZYPjyxFZwHeGsZ4+iTEhjSaQcsulZJ4xwRAGu/qAf+7waa
+         ViMWrslMlK8Iw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch marks dummy transfer by setting dummy_data bit to 1.
-
-Controllers supporting dummy transfer by hardware use this bit field
-to skip software transfer of dummy bytes and use hardware dummy bytes
-transfer.
+Add maintainers and mailing list entries to Tegra Quad SPI driver
+section.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/spi/spi-mem.c   | 1 +
- include/linux/spi/spi.h | 2 ++
- 2 files changed, 3 insertions(+)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index f3a3f19..c64371c 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -354,6 +354,7 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 		xfers[xferpos].tx_buf = tmpbuf + op->addr.nbytes + 1;
- 		xfers[xferpos].len = op->dummy.nbytes;
- 		xfers[xferpos].tx_nbits = op->dummy.buswidth;
-+		xfers[xferpos].dummy_data = 1;
- 		spi_message_add_tail(&xfers[xferpos], &msg);
- 		xferpos++;
- 		totalxferlen += op->dummy.nbytes;
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index aa09fdc..708f2f5 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -827,6 +827,7 @@ extern void spi_res_release(struct spi_controller *ctlr,
-  *      transfer. If 0 the default (from @spi_device) is used.
-  * @bits_per_word: select a bits_per_word other than the device default
-  *      for this transfer. If 0 the default (from @spi_device) is used.
-+ * @dummy_data: indicates transfer is dummy bytes transfer.
-  * @cs_change: affects chipselect after this transfer completes
-  * @cs_change_delay: delay between cs deassert and assert when
-  *      @cs_change is set and @spi_transfer is not the last in @spi_message
-@@ -939,6 +940,7 @@ struct spi_transfer {
- 	struct sg_table tx_sg;
- 	struct sg_table rx_sg;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b20bab..19db61f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17447,6 +17447,14 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
+ S:	Supported
+ F:	drivers/spi/spi-tegra*
  
-+	unsigned	dummy_data:1;
- 	unsigned	cs_change:1;
- 	unsigned	tx_nbits:3;
- 	unsigned	rx_nbits:3;
++TEGRA QUAD SPI DRIVER
++M:	Thierry Reding <thierry.reding@gmail.com>
++M:	Jonathan Hunter <jonathanh@nvidia.com>
++M:	Sowjanya Komatineni <skomatineni@nvidia.com>
++L:	linux-tegra@vger.kernel.org
++S:	Maintained
++F:	drivers/spi/spi-tegra210-quad.c
++
+ TEGRA VIDEO DRIVER
+ M:	Thierry Reding <thierry.reding@gmail.com>
+ M:	Jonathan Hunter <jonathanh@nvidia.com>
 -- 
 2.7.4
 
