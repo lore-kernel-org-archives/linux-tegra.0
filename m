@@ -2,92 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AC3C4332B
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52168C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 22:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 859B722B30
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 21:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D8F229CA
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 22:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgLUVTK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Dec 2020 16:19:10 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4593 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbgLUVTK (ORCPT
+        id S1726274AbgLUWyD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Dec 2020 17:54:03 -0500
+Received: from mail-oo1-f41.google.com ([209.85.161.41]:42504 "EHLO
+        mail-oo1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgLUWyC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Dec 2020 16:19:10 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fe111010000>; Mon, 21 Dec 2020 13:17:53 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 21 Dec
- 2020 21:17:47 +0000
-Received: from skomatineni-linux.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Mon, 21 Dec 2020 21:17:47 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>, <lukas@wunner.de>
-CC:     <skomatineni@nvidia.com>, <bbrezillon@kernel.org>,
-        <p.yadav@ti.com>, <tudor.ambarus@microchip.com>,
-        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 9/9] arm64: tegra: Enable QSPI on Jetson Xavier NX
-Date:   Mon, 21 Dec 2020 13:17:39 -0800
-Message-ID: <1608585459-17250-10-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
-References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 21 Dec 2020 17:54:02 -0500
+Received: by mail-oo1-f41.google.com with SMTP id x203so2564564ooa.9;
+        Mon, 21 Dec 2020 14:53:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PmiFErZsck8Eax6YSpPObi4oYX8shYbW2tl21KlUI5M=;
+        b=gXyRlORkyHi66Llm062zovdcdq/KdIbq5PUDI+TmYhoXIpKso5gfeDUkfHr0jvFjE4
+         2JIzuOHPqgqEC7mE92ToP6LWzLRZJPMYRJmQxoHNKiHFQYBEwp04UutP19/pxZu78xGm
+         EvWYJFY8sBpuao9fX257Wki8nIK84tCOd/iQLXL5b60RqpXqbxJGNq35CDx2vq3tA8LA
+         YaWdwERTZoB2R0JEeALQufP3Dy4vo/zFxMxwtEuZwEMIIbF6Ub25nYHSM9bW4ED/cOSJ
+         7BT8wYTD8g89yhi2bauQCI9ZYBqqxm/37Knd9cNP+hBrdomrI9bDEGmXFYKhLenVm9iv
+         N0NQ==
+X-Gm-Message-State: AOAM532Jk5KndoWb23Mmf3owIOL3WPDPIW1jVAZBOD7DdSfdNPXIPzPe
+        FPEKYCMKBFCflP1zTc/P8J3L1/tfrw==
+X-Google-Smtp-Source: ABdhPJwHk2mKXmiM9Be1g1hPiKx149bS8x31wABVYLXX21+EEEz/R18GHHbZiggzsaUq+ghMjOAzAg==
+X-Received: by 2002:a05:6820:503:: with SMTP id m3mr13176716ooj.83.1608591201539;
+        Mon, 21 Dec 2020 14:53:21 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id e25sm1849939oof.1.2020.12.21.14.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 14:53:20 -0800 (PST)
+Received: (nullmailer pid 723454 invoked by uid 1000);
+        Mon, 21 Dec 2020 22:53:16 -0000
+Date:   Mon, 21 Dec 2020 15:53:16 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devel@driverdev.osuosl.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 01/48] dt-bindings: memory: tegra20: emc: Replace core
+ regulator with power domain
+Message-ID: <20201221225316.GA723398@robh.at.kernel.org>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1608585473; bh=fYE2T8fmJsPLDmks8zJZ++XGgYTpkfOpRR13aXBCmGY=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:X-NVConfidentiality:MIME-Version:Content-Type;
-        b=eNuhBz9S9mFoJT2cwCzLkKczlk3QMj5TOpd4t6d1opXydUVVN3xvWTo4CsZMn7/Mc
-         eiZ+Y6Ntr6sTlkR+otNFK71oFGCNQYPCXBVCJrP1V05ghhGLFb2fQhewQlkBX9PRZ/
-         jEk65zA71Kofwj/oOD49rNT/JBnJFftqkhjKBr2YrrwKOddnS2aQiG8CpofXmI7f/0
-         uYD/6f3b1QamGyUm98K8qxuZVHmmPGediI1/PsaPIC91CG6HseYRkQB4dVjHXaeMsC
-         3dShSJIKICYtOSz9XqLTxJe78S0A1fkDknR3DM35QhcdV8jUseCThd6PE3kLlnb4zC
-         mpv9U52DtFWGw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217180638.22748-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch enables QSPI on Jetson Xavier NX.
+On Thu, 17 Dec 2020 21:05:51 +0300, Dmitry Osipenko wrote:
+> Power domain fits much better than a voltage regulator in regards to
+> a proper hardware description and from a software perspective as well.
+> Hence replace the core regulator with the power domain. Note that this
+> doesn't affect any existing DTBs because we haven't started to use the
+> regulator yet, and thus, it's okay to change it.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/memory-controllers/nvidia,tegra20-emc.txt        | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-index 7f97b34..f1053e7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dts
-@@ -100,6 +100,18 @@
- 			phy-names = "usb2-1", "usb2-2", "usb3-2";
- 		};
- 
-+		spi@3270000 {
-+			status = "okay";
-+
-+			flash@0 {
-+				compatible = "spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <102000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
-+			};
-+		};
-+
- 		pwm@32d0000 {
- 			status = "okay";
- 		};
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
