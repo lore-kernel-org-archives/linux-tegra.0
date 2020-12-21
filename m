@@ -2,100 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AB6C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 13:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67005C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 16:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8D7F22A85
-	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 13:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 291F722CAF
+	for <linux-tegra@archiver.kernel.org>; Mon, 21 Dec 2020 16:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbgLUNAG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 21 Dec 2020 08:00:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
+        id S1725807AbgLUQvu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 21 Dec 2020 11:51:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbgLUNAF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 21 Dec 2020 08:00:05 -0500
-Date:   Mon, 21 Dec 2020 14:00:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1608555565;
-        bh=z9P8YVXTXze/aeKnrHmkfv8VNspdBjfwJOyG2QiGD/Y=;
+        id S1725780AbgLUQvt (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 21 Dec 2020 11:51:49 -0500
+Date:   Mon, 21 Dec 2020 16:50:53 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608569469;
+        bh=yaViPjdmmsCzAeL0va1vlA3tAOMvU2QaaNbTzhk/M2U=;
         h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wk2hqzivRPjRCrY5AsLatS+ExE50rDr8qDKNOAAfMRtTAIyM+3K1xqzhMOctr152i
-         3Zn+YkqSc4iNJGC4xs/6Z2WWpzOMaZVoGgefINrbP1uNb+kVdtrG7fQ+8E2eTB8rk4
-         tQcM/ibTD34vPKFNlxOfEy/A3BPN+afnmbjGYG40=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/16] 5.10.2-rc1 review
-Message-ID: <X+CceNyxGMD8nnzc@kroah.com>
-References: <20201219125339.066340030@linuxfoundation.org>
- <cf66826d-0de4-da22-da2b-809856d3cfb2@nvidia.com>
+        b=iWiBh9ZTafNuO4cox7HBuO1CJjjbyRjmEGOPidRxtKWcZCXUr1hFutQORYEO6hPa4
+         r6N/mb174I1cKh8kJvDVb2Ay3q+pKikPwhfWQam6HQVLukKgL9ug9X0yozFgssd5IC
+         qYtbhN//od4WHh/LEkzdIXdugeu/Zyi9hQAefE3iO6hOYx9kHCgErtLeu1h9pKHbtD
+         Nz3kO0hPcUmaW6XdkSIs2erF129lcL8ht1RRIlFbfB6lbO0JuQJJ7wSSToSqlCsVmO
+         LxYLkNfKdFhQL2WRPKvHLNLI6W7lRHVg5Y+uaUQQWh8vOhFeUrhdSP2BLYHIMj7OHN
+         muxd/uwoL8szw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Pratyush Yadav <p.yadav@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org,
+        lukas@wunner.de, bbrezillon@kernel.org,
+        tudor.ambarus@microchip.com, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 5/9] spi: spi-mem: Mark dummy transfers by setting
+ dummy_data bit
+Message-ID: <20201221165053.GA4521@sirena.org.uk>
+References: <1608236927-28701-1-git-send-email-skomatineni@nvidia.com>
+ <1608236927-28701-6-git-send-email-skomatineni@nvidia.com>
+ <20201218092106.skwej2g6bk3oksbb@ti.com>
+ <20201218105759.43789ccf@collabora.com>
+ <31c395ee-d7a6-edc5-a790-89fad91a0a27@nvidia.com>
+ <20201218191936.hb6sq7zr3zdirar7@ti.com>
+ <20201218204102.GF5333@sirena.org.uk>
+ <20201218204414.GG5333@sirena.org.uk>
+ <c9343475-44b2-c9c4-1790-f6b50ec9c1bd@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
 Content-Disposition: inline
-In-Reply-To: <cf66826d-0de4-da22-da2b-809856d3cfb2@nvidia.com>
+In-Reply-To: <c9343475-44b2-c9c4-1790-f6b50ec9c1bd@nvidia.com>
+X-Cookie: Remember: use logout to logout.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Dec 20, 2020 at 01:41:15PM +0000, Jon Hunter wrote:
-> 
-> On 19/12/2020 12:57, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.10.2 release.
-> > There are 16 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Mon, 21 Dec 2020 12:53:29 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.2-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> 
-> Test results for stable-v5.10:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     64 tests:	63 pass, 1 fail
-> 
-> Linux version:	5.10.2-rc1-gc96cfd687a3f
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Test failures:	tegra194-p2972-0000: boot.py
-> 
-> 
-> Same warning failure as before. The fix for this is now in the mainline
-> if you would like to pick it up ...
-> 
-> commit c9f64d1fc101c64ea2be1b2e562b4395127befc9
-> Author: Thierry Reding <treding@nvidia.com>
-> Date:   Tue Nov 10 08:37:57 2020 +0100
-> 
->     net: ipconfig: Avoid spurious blank lines in boot log
-> 
-> 
-> Otherwise ...
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-I've now queued this up for the next release, thanks for testing these
-and letting me know.
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-greg k-h
+On Fri, Dec 18, 2020 at 02:01:56PM -0800, Sowjanya Komatineni wrote:
+
+> From quick check, I see HW dummy cycles transfer of 128KB shows 18 Mb/s
+> while SW transfer of bytes shows 17.3 MB/s on average.
+
+OK, it's not going to revolutionize the world or anything but that's
+definitely a speedup.
+
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/g0mkACgkQJNaLcl1U
+h9D/FggAgryOP3kQjSN2Lz4KeSPSrsKO6HHCcgeCbfox61nIVRcJVOBKpJX0nuU+
+dbPP8gBvK3GNt/9J/WKP3k+LYD5NUfyq1lARlDe+WpU7P8VkE9TNpjctDFS2PiyO
+6asDGI7iPahkE0iBmGAPqWyiUngS3X7PdN2/uuv4uSf7Fs45+f98se+GLKGa+ryK
+UUTJg3DPwqmMrFqArDETTmVj7/urqREQo/gYUHtQgc7H8KCOOquuXeeOYa5dres2
+GEiFGR08bDJNX2nJ3xAHtLYRJw6DZnD421m5O+FG6pxNh8AfsHQTDnvEIq2TyA0O
+3D+sPY0zkYYNDEnjixQtJ8ycT5Qgdw==
+=a44r
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
