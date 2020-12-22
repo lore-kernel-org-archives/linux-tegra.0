@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16E7C43333
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCF4C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85BFF23133
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:15:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B381D2313C
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbgLVTPU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Dec 2020 14:15:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
+        id S1726569AbgLVTQf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Dec 2020 14:16:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbgLVTPT (ORCPT
+        with ESMTP id S1726316AbgLVTQf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Dec 2020 14:15:19 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE0FC0613D3;
-        Tue, 22 Dec 2020 11:14:38 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id h205so34504600lfd.5;
-        Tue, 22 Dec 2020 11:14:38 -0800 (PST)
+        Tue, 22 Dec 2020 14:16:35 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C436C0613D3;
+        Tue, 22 Dec 2020 11:15:54 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id y19so34370117lfa.13;
+        Tue, 22 Dec 2020 11:15:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XzA+IxTqOiwjX/OrglCXeb/ESpno+XzmysujmIzCZFM=;
-        b=h6Un3O0GRIs20IfATLi+caPIyTbxDAcApXIG4ly+tb+Ff/AsSFUMzbqRg8x3QcB6R+
-         /lifUSEyU9TWfJc8mLHdB9d8Y9qRGestdhGRPway3GOSGQ8cuy0pUSKXN4e5DxzEnKwD
-         fYR1YIf05Ra2zD+xV/OtVJhAAejE7qDSsealn/k6wRndcA+Kr9Qd5G4O+fFM4ffhZQx5
-         iWL+fsem7uxnvLNF9sQvi3DoxjBI8dadxS+frkf0ytoCPFY3u7CLr3wTEKUDK5cvpLd6
-         ZVfYRe9qC4R3pywKEw8dY8c5wQiJMnxeiGLjUsFSzmvoCygv4r2QJhnbSecDGxF5TC88
-         NxkA==
+        bh=bPx7EE6PSbCPkDarnx0nbSqX4DyTXsuDpEiN7AF5ASk=;
+        b=by5CwRSkj7I1IIVMvp0X5QOxMswVE4c93suYm7juykVfkZccthrQYR/1LHg5tNX9Fs
+         G5RwLCFfqZuGdA/NMT84/GKhThuNV13dgCCXDs/xbrTgpQc5HAhUTsSNzuw3OAt9hmPF
+         rCBS/+GhCjpuMIBVDAodHt0e2K5MCFdMyRJCUenuFRI69khvLmnFtCssyFBTVA8mgAI3
+         +P71mriOwhz3yEpqEecEZB4c63IhIbysXU/t4EmQ7A6e7VqHYmWGP4lyIkwrmWQ8nyWi
+         oYy5aN+2WIyhWj0VJdqnrFFB/kKhcNWdk3BD+639Sf/Qe3l2191KixQ85whWtQvBNbO5
+         Japg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XzA+IxTqOiwjX/OrglCXeb/ESpno+XzmysujmIzCZFM=;
-        b=mxRyKaHhw8JLtrsmCztk+L2LgV2k5I1RawRq6ffS17EYZ8AzTVYLhUumcfkmpqoYSI
-         z1rU6J4r8CI8ZXPJ/ZRlQLn7fFpTZWuXA+22KhyZN0890I2MCGjP1KfQ4WkzHJiUXcGs
-         IACHg8wVGbpVGg7S8N6qePHEkKVeLtRwud2HNPa35eKs+ENp7eANZRmiI8XDcUyeHJf0
-         DHKhxOgLRE6ahG5IE0xv6By9LMj4dcd4269NfqN3afMy+Nsz0WCAsepylWv/oyFHf53i
-         JwvEaoBkRbzYPPns5DKGwOvazy6wgJt2juNod9xVJtMMQv06b/Anr1h/VcYL1BwlfdXj
-         6IkQ==
-X-Gm-Message-State: AOAM530UVhNoqLklICcRvPD7DytYECgJKnKZhO999HXc8VVW9EPSWTeX
-        9brciDyNgx7ir3baqG1p5/DqKHXetT0=
-X-Google-Smtp-Source: ABdhPJx7qPXV3sur6eNMVZg5jfo2nbqg0IGWfAP0Kv+mCCycwkuquOyLrOc/kJVZYxAbFZWEAV5uLg==
-X-Received: by 2002:a2e:a366:: with SMTP id i6mr10568406ljn.427.1608664477207;
-        Tue, 22 Dec 2020 11:14:37 -0800 (PST)
+        bh=bPx7EE6PSbCPkDarnx0nbSqX4DyTXsuDpEiN7AF5ASk=;
+        b=Fey+j64ifXLO4xycxCn46C77SC3vQCqakx1dN2M4ltplYRSRYXHk3t9I4GKaYL3yre
+         aX2bWLliU0t+mpjQUzpTuHvy4JLziPq3Rhgfh0NGXvDyaYLIeEUI7sX30BKmz80gpEa6
+         PWQDg2so5FFTRSaRtC0T4mGf0TnzjRv26GdYXWQoAUDgVagjjGthsOm+9TMr/sMyklz1
+         lRhE06/bTo5S9EdARs4ii+e89T3B58J7/YYh4Afu9lp2i2I6x8ruYksXAOXFP/cXV94K
+         LZirK0YLYWQZrpE3nkPBAlKtRGZ67SlVLmhAhGlRWjSDs8dD0i4CZa1+jy8cPHTGkf22
+         2zvg==
+X-Gm-Message-State: AOAM533z1ki7FDtSI3gKT4R+EJ7jWKBEXQMe36fvAc4xRQlcnP/fJpKV
+        Tt7XTd0S/Dxk60gnxier6lpAzo9yoR4=
+X-Google-Smtp-Source: ABdhPJzHaWjDXUMak9w+Uk5NxxvdBfxwblLdXjwl2xjCH+RslfqzQ0040C+FqW1K8XqCgG6Upk0xGA==
+X-Received: by 2002:a2e:9847:: with SMTP id e7mr10954928ljj.388.1608664553007;
+        Tue, 22 Dec 2020 11:15:53 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id h23sm3018460ljh.115.2020.12.22.11.14.35
+        by smtp.googlemail.com with ESMTPSA id f23sm2788410lfh.196.2020.12.22.11.15.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Dec 2020 11:14:36 -0800 (PST)
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
+        Tue, 22 Dec 2020 11:15:52 -0800 (PST)
+Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
 To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -81,16 +81,15 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
- <c0976db7-ae66-740c-d95f-501d81c99fa0@gmail.com>
- <20201222091558.mhqf4oytviwc6b3h@vireshk-i7>
+ <20201217180638.22748-12-digetx@gmail.com>
+ <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6281108a-5d76-bf6e-13ea-e27808c829b9@gmail.com>
-Date:   Tue, 22 Dec 2020 22:14:35 +0300
+Message-ID: <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
+Date:   Tue, 22 Dec 2020 22:15:51 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20201222091558.mhqf4oytviwc6b3h@vireshk-i7>
+In-Reply-To: <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -98,21 +97,16 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-22.12.2020 12:15, Viresh Kumar пишет:
-> On 18-12-20, 16:51, Dmitry Osipenko wrote:
->> Alright, although I haven't pretended that v2 patches should be merged
->> right away since they are fundamentally different from v1, and thus, all
->> patches need to be reviewed first.
+22.12.2020 09:42, Viresh Kumar пишет:
+> On 17-12-20, 21:06, Dmitry Osipenko wrote:
+>> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
+>> levels don't start from 0 in OPP table and zero usually means a minimal
+>> level.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> I agree. I have done some basic review for the stuff.
-
-Thank you for the review.
-
->> If the current OPP changes look good to you, then please give yours r-b
->> to the patches. Thanks in advance!
+> Why doesn't the exact version work for you here ?
 > 
-> r-b-y isn't required as they will go through my tree itself. So if everyone is
-> happy with the idea, please submit the patches separately (fixes, improvements,
-> devm_*, etc).
 
-okay
+The exact version won't find OPP for level=0 if levels don't start with
+0, where 0 means that minimal level is desired.
