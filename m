@@ -2,63 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5B2C4332B
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 09:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B47C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A16DD23343
-	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 09:16:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B5342337F
+	for <linux-tegra@archiver.kernel.org>; Tue, 22 Dec 2020 19:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgLVJQr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Dec 2020 04:16:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48048 "EHLO
+        id S1727314AbgLVTP2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Dec 2020 14:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgLVJQl (ORCPT
+        with ESMTP id S1725953AbgLVTP0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Dec 2020 04:16:41 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A67C061793
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 01:16:00 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id x1so2413318pgh.12
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 01:16:00 -0800 (PST)
+        Tue, 22 Dec 2020 14:15:26 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38973C061793;
+        Tue, 22 Dec 2020 11:14:46 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id b26so24996601lff.9;
+        Tue, 22 Dec 2020 11:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l8QALzA4i8zX7B1di+fsQ9pXz5BTZwpSgw/mRJC9G3I=;
-        b=iNpi5UGBLQA73+p7sshoUk2MKXQ6+B7bN+nLc+PLyRS7Qzc6JQHE5LPyrHGQxOzXY1
-         uOtxbpfxB2whAININqJ4SNPQdP/iqcNVaDMTfpwi6jlirHg+TpXFAk8EUfaM+f2LThpO
-         ITwA/t+QLxo/gtfFoU6Y1t6N7t+IeYiN4NQyBRuiWeJo1VWI5Wqkou8CGRhI3Ddi6WMb
-         hnbtCuE/ASxcgiGOFPqWP03O9KQV73qnkGAu5hCruEh7I3wNKYJN03dx+O01l7K/zD/k
-         7cuSdAfi+Fx9eHduQ+ALtP2fw1WpzfC4YnQ/pZ7skehvj4ca2ag34R983WJCOmU+lJGf
-         g+CQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JeqU2hjek5wLw0+7xrlLc11caNI578OgYNY2jwkqzNY=;
+        b=bHwBuHMIyebkzyuUuOWBtzvheNh3xobf36Fa7wYQWSsb5947FwMxh5EXX1ORm+eEbW
+         9s5TZRAW81SHivJZRvgjBliVL48suJOSz1Q3fByGDaGgZSnCbxhaiAyXQaEZBI91Yzfk
+         Da8F8JtXO/zjgcfIz/rgqYIhHzUMN4koFL/LTO+qm6b0E4aQxq5kQ5cCtBnX91oQRcbd
+         G9iKKoovYg35LssxUr4eWNW7/z6lzqiVA17GKXw1DgN7UnKw56gr4BczhuG99aRzMmZF
+         7jXf+V/o4Q+Dp0H9EG+kujNeGdrVmzHpfpd/8stsHWBUWPBM1U+22zpgewqWife2rV0Z
+         M8vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l8QALzA4i8zX7B1di+fsQ9pXz5BTZwpSgw/mRJC9G3I=;
-        b=ftCMh5EuYeufieBST6n8TNXethW9D2+m4qcd0qbOC6gDpEmkA3+r+/jLnLA/ILaj82
-         oirpSuSBp4zjoBGuReBsnSvJ7At+hM/Ail8k1SmfV41Qb1dgyIAMe7mEgIcZlP9tJe0Y
-         2qJxukVVxum9e4rbvqlJn44MVgHdZJvpsMWQybOMWdXMOE8p8p405U4AttW5UmH1PRnG
-         aVBBEzoiAjsCRXSu6CNgmOZaO2xPMxfBm8jM3wr8gww8j0JA2+NZ5rqmtqWbkAORULNj
-         tRona+ZM7HGTA3XRT+ZO2srkJFjRYVPbVcBtU9XEATRFZ3sactXfXpMJMK90oHXGGr87
-         HZag==
-X-Gm-Message-State: AOAM531LJMmM3WJdKLKq1E4x9HCOHF//6nXJafzLlbZKPDib9BJTaJgF
-        8rSLZKEirVVmpfuV43KfIhyOkg==
-X-Google-Smtp-Source: ABdhPJzoRmGGLI8WVPnxM7oud4VBQbrA5PgTbrGlwdy+hH6OXaJYRZjRb0UVH5lYi+efCVdlFZN7eA==
-X-Received: by 2002:a62:1d0a:0:b029:1a9:8b33:a1bf with SMTP id d10-20020a621d0a0000b02901a98b33a1bfmr19012878pfd.32.1608628560561;
-        Tue, 22 Dec 2020 01:16:00 -0800 (PST)
-Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id t9sm13088468pgh.41.2020.12.22.01.15.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 01:15:59 -0800 (PST)
-Date:   Tue, 22 Dec 2020 14:45:58 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JeqU2hjek5wLw0+7xrlLc11caNI578OgYNY2jwkqzNY=;
+        b=JPSw9parOMMJyI3jfGuE1pUkgUj1rnA6RUFzUXY1u2g5tx94r5bb/4Ofk30muOAw98
+         rjx7fYUO4bJBCjWLxl85L0m6cSsMQEFWJ/5m4NImNg3tpjB6DF8MnQ8jX85RCn9kaBTC
+         l0rjMqP/BQruz3DfNT7S3wEi9OMqrLZt93DoJI9lY/ziWBZxh1ZMpAMOv7phkOm+hVyS
+         xAk04urJhsxTA21J1JCgSQCQlndEnXeJ9xX4Fd9YMeEjtzIkP0rWLa2V4koOIcRWdQU/
+         JMWhmpVksQnOcp5XoB8Afqe2wEauC4ULq0t0I9ndpqaAiB9j6AiMvyRpo+GyMBa9Gk/y
+         Ll0w==
+X-Gm-Message-State: AOAM532MH9MEpk7M9ZfBCi0I5HYaVv0oYXuf75ZbKzdnsGR81lA1reEW
+        Y9cqxlFI1FU9wOObm88G92Pzdohi2L8=
+X-Google-Smtp-Source: ABdhPJxaybHg4decfemE6k9xrHb2rcpd4r/utxUsMuqV39rH7BRNKVoTVuvzmCmXKUkMGne9zGMDhg==
+X-Received: by 2002:a19:6447:: with SMTP id b7mr9495186lfj.206.1608664484582;
+        Tue, 22 Dec 2020 11:14:44 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id x8sm2779029lfn.226.2020.12.22.11.14.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Dec 2020 11:14:44 -0800 (PST)
+Subject: Re: [PATCH v2 13/48] opp: Add resource-managed versions of OPP API
+ functions
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mark Brown <broonie@kernel.org>,
@@ -79,34 +81,37 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20201222091558.mhqf4oytviwc6b3h@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
- <c0976db7-ae66-740c-d95f-501d81c99fa0@gmail.com>
+ <20201217180638.22748-14-digetx@gmail.com>
+ <20201222085556.kce4dcwumk4u6ttm@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0ffd2ada-b279-a319-5d5c-b2bf1a49ca35@gmail.com>
+Date:   Tue, 22 Dec 2020 22:14:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0976db7-ae66-740c-d95f-501d81c99fa0@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201222085556.kce4dcwumk4u6ttm@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 18-12-20, 16:51, Dmitry Osipenko wrote:
-> Alright, although I haven't pretended that v2 patches should be merged
-> right away since they are fundamentally different from v1, and thus, all
-> patches need to be reviewed first.
+22.12.2020 11:55, Viresh Kumar пишет:
+> On 17-12-20, 21:06, Dmitry Osipenko wrote:
+>> Add resource-managed versions of OPP API functions. This removes a need
+>> from drivers to store and manage OPP table pointers.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/opp/core.c     | 173 +++++++++++++++++++++++++++++++++++++++++
+>>  drivers/opp/of.c       |  25 ++++++
+>>  include/linux/pm_opp.h |  51 ++++++++++++
+>>  3 files changed, 249 insertions(+)
+> 
+> Please send a patchset of its own for this patch, along with updates to all the
+> existing code that can make use of these.
+> 
 
-I agree. I have done some basic review for the stuff.
-
-> If the current OPP changes look good to you, then please give yours r-b
-> to the patches. Thanks in advance!
-
-r-b-y isn't required as they will go through my tree itself. So if everyone is
-happy with the idea, please submit the patches separately (fixes, improvements,
-devm_*, etc).
-
--- 
-viresh
+ok
