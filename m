@@ -2,63 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B585C433E9
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 05:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859C7C433E6
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 06:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E492022571
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 05:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A9322518
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 06:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbgLWF6A (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Dec 2020 00:58:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41164 "EHLO
+        id S1727744AbgLWGBp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Dec 2020 01:01:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726685AbgLWF57 (ORCPT
+        with ESMTP id S1727160AbgLWGBp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Dec 2020 00:57:59 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5795FC061794
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 21:57:19 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id be12so8599044plb.4
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 21:57:19 -0800 (PST)
+        Wed, 23 Dec 2020 01:01:45 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072D4C06179C
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 22:01:05 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id x18so8603637pln.6
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 22:01:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lJW5Pmu0e9Bh/oQqoiiF+Gb9g3MgQRYVOM3hqkPUzNs=;
-        b=W5YJc6EiiWk23cUCGsgoEZThjaHKBFlEG4O2cgRcXu+x5+1ODHw6d3bAyttpAh4Npy
-         yhDhQA4+L+oz4wy8QflysfNhX4OfzqA0qNs/SHpKza5WXKgrPbKjAZqXsxt3M6+5uj5+
-         VPzhmEJIKzlbozEEPWm1XL8KIXiyyOKO2HmVu9XxWuzA1/dlfxbwhMlk6o4r2lNa/tYB
-         koUJs3PACOOeP10gRbtLplfNUPU/AAwjZHrgwyo0byxhHtSGWR9eYNFuLyVygLLz+QCX
-         6yGQiSn1spMfKd1SRklgKWo8kYn0YWbHteDUGgx/252nlqC2vuCSM8Grhs1IDDtLRYP5
-         ah0w==
+         :content-disposition:in-reply-to:user-agent;
+        bh=4NTrNWSzSRmqwCvEQTSp0+nnEx8m/nIQOMiO0uIjc1c=;
+        b=WvDRkmfxJVkbMxrPHfQO3jIIP0y/4x9UMXb4LToUg0c0YVvY1v4RZrwNlueMl3TxUA
+         LhGgJdJ92dhnRdqfHs6g8anfNRbf1l3Kmc9/pX6fAPYlRtoT262w08UsgSlWlqjwupim
+         2rTRdJaJfAcBRk7WFZGXpnHhMzcnnfOVRchCFyriNz+u0XQ8rIHPtECtKub6jjl2X1+5
+         u0ItXOKm5ZnduCP8Cm7CrIEnXL9xd920+5LPpI6GbeLhPSxVFzdGqmDFUxmXoFqjPlZL
+         qvMtwOzbFqkFpFexgWWO5Tdjz5PhXaRJUfKZ1KFBLp0LcE39lWeRM19YL0vgg7wtne1B
+         Yrtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lJW5Pmu0e9Bh/oQqoiiF+Gb9g3MgQRYVOM3hqkPUzNs=;
-        b=pC2BMzuomvNTgCdmAllmjZ9Nt0EWdRy2qefj/39x0kD0hciqn+LN77jiLJnOcRUEGC
-         dffLDROf1MMo6VylwvdFJSfOKEC9osEdVcjbTiI5yKb19KiQk8TaW+TGPrTS5H2BGa2T
-         yanjEMJiYqUxDzVMPyPv6HfxK4yEBQRRGcvuZ3NdnqERmCLnUppLZc4B8NPiusWcmeKi
-         G/yS/omEoCpV9BEYlG/DZNVC9ex4rjy+GzxRln+5BBQX/shV8AiEo1ObyEo5mWlhObq4
-         i1Rb+wgr/HCbL4CE9/DTmpYRgvqxfxuZSZZao130Sdc2oKwIYSIk9z1+Tji2JZiuIE9N
-         nk/g==
-X-Gm-Message-State: AOAM5322PYMKRg9QWLutpgs11KfZwwbVq56YK1oMWkXDBbfkpg2PwcqL
-        0zcsGd5ENKgfoXbgB3VHcyVn1w==
-X-Google-Smtp-Source: ABdhPJwsLgoGssujAxswnWOsu8NXhLnCPjFpMxnGOCgLNcgnd+pdiKB2jV1BoCNGdPUko3cGZpeLtQ==
-X-Received: by 2002:a17:90a:cb84:: with SMTP id a4mr25789987pju.50.1608703038680;
-        Tue, 22 Dec 2020 21:57:18 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4NTrNWSzSRmqwCvEQTSp0+nnEx8m/nIQOMiO0uIjc1c=;
+        b=ckoYYdSzQo8T9Hzq0MQEmmJDVbIkipu7CI3RRpOmAAURG9N9/3CkPDez3UgCftY/oR
+         pqQeCBRrQzOK/SPnxKd91agfQXHbdHyW+u30y+dL9cRt4dBPg81pzR8T+3TseRjf4OE2
+         PEjZvCCxSvtbLyfu/l9W5AjV2gVWM1EN4+TRDg5RlA4ZkJINo6nRItSLzuWzk+kZqDFo
+         XHLz2LpdrVrjiKR+tgtLblFtQGL8QsaJTNOt3vpV36gFxvaAMNxDN/L9oqc0Ar7rHJ+Z
+         idijkcAIF4SDIhOuc/hww/IzIUCFkAh7DJGL4E8OvpxN5KfcDfH58Vmo7pG9V5BeMsoi
+         Vk+w==
+X-Gm-Message-State: AOAM530WZZEeeFya6snkxL9wEWTqGMQx36wNrjGxMkrbTB2RIButLQ8L
+        kcAVC2XdRKz0XevpdUGqjkIjtQ==
+X-Google-Smtp-Source: ABdhPJyh2KPTGU4ayTa1XNiz400Y+zyRHMud7qFaV0QD/t+nRNJvznyZNbPeqd5VSc3ukQwC7r4DkA==
+X-Received: by 2002:a17:90b:16cd:: with SMTP id iy13mr24835386pjb.182.1608703264363;
+        Tue, 22 Dec 2020 22:01:04 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id w7sm22839140pgr.48.2020.12.22.21.57.16
+        by smtp.gmail.com with ESMTPSA id y27sm22645455pfr.78.2020.12.22.22.01.03
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 21:57:17 -0800 (PST)
-Date:   Wed, 23 Dec 2020 11:27:15 +0530
+        Tue, 22 Dec 2020 22:01:03 -0800 (PST)
+Date:   Wed, 23 Dec 2020 11:31:01 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -81,74 +79,73 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 28/48] soc/tegra: Introduce core power domain driver
-Message-ID: <20201223055715.2n5eba7fohrwpgr5@vireshk-i7>
+Subject: Re: [PATCH v2 15/48] opp: Support set_opp() customization without
+ requiring to use regulators
+Message-ID: <20201223060101.v2qihvvgsmpahg24@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-29-digetx@gmail.com>
- <20201222064029.duuzcsj53rt7xzvt@vireshk-i7>
- <c130f78d-3d97-9b26-be77-951fee0d8680@gmail.com>
- <3a5c00e5-2cdd-35ce-2714-d4ffbf9d516a@gmail.com>
+ <20201217180638.22748-16-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3a5c00e5-2cdd-35ce-2714-d4ffbf9d516a@gmail.com>
+In-Reply-To: <20201217180638.22748-16-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 22-12-20, 22:39, Dmitry Osipenko wrote:
-> 22.12.2020 22:21, Dmitry Osipenko пишет:
-> >>> +	if (IS_ERR(opp)) {
-> >>> +		dev_err(&genpd->dev, "failed to find OPP for level %u: %pe\n",
-> >>> +			level, opp);
-> >>> +		return PTR_ERR(opp);
-> >>> +	}
-> >>> +
-> >>> +	err = dev_pm_opp_set_voltage(&genpd->dev, opp);
-> >> IIUC, you implemented this callback because you want to use the voltage triplet
-> >> present in the OPP table ?
-> >>
-> >> And so you are setting the regulator ("power") later in this patch ?
-> > yes
-> > 
-> >> I am not in favor of implementing this routine, as it just adds a wrapper above
-> >> the regulator API. What you should be doing rather is get the regulator by
-> >> yourself here (instead of depending on the OPP core). And then you can do
-> >> dev_pm_opp_get_voltage() here and set the voltage yourself. You may want to
-> >> implement a version supporting triplet here though for the same.
-> >>
-> >> And you won't require the sync version of the API as well then.
-> >>
-> > That's what I initially did for this driver. I don't mind to revert back
-> > to the initial variant in v3, it appeared to me that it will be nicer
-> > and cleaner to have OPP API managing everything here.
+On 17-12-20, 21:06, Dmitry Osipenko wrote:
+> Support set_opp() customization without requiring to use regulators. This
+> is needed by drivers which want to use dev_pm_opp_set_rate() for changing
+> rates of a multiple clocks and don't need to touch regulator.
 > 
-> I forgot one important detail (why the initial variant wasn't good)..
-> OPP entries that have unsupportable voltages should be filtered out and
-> OPP core performs the filtering only if regulator is assigned to the OPP
-> table.
+> One example is NVIDIA Tegra30/114 SoCs which have two sibling 3D hardware
+> units which should be use to the same clock rate, meanwhile voltage
+> scaling is done using a power domain. In this case OPP table doesn't have
+> a regulator, causing a NULL dereference in _set_opp_custom().
 > 
-> If regulator is assigned to the OPP table, then we need to use OPP API
-> for driving the regulator, hence that's why I added
-> dev_pm_opp_sync_regulators() and dev_pm_opp_set_voltage().
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/opp/core.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
 > 
-> Perhaps it should be possible to add dev_pm_opp_get_regulator() that
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 3d02fe33630b..625dae7a5ecb 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -828,17 +828,25 @@ static int _set_opp_custom(const struct opp_table *opp_table,
+>  			   struct dev_pm_opp_supply *old_supply,
+>  			   struct dev_pm_opp_supply *new_supply)
+>  {
+> -	struct dev_pm_set_opp_data *data;
+> +	struct dev_pm_set_opp_data *data, tmp_data;
+> +	unsigned int regulator_count;
+>  	int size;
+>  
+> -	data = opp_table->set_opp_data;
+> +	if (opp_table->set_opp_data) {
+> +		data = opp_table->set_opp_data;
+> +		regulator_count = opp_table->regulator_count;
+> +	} else {
+> +		data = &tmp_data;
+> +		regulator_count = 0;
+> +	}
+> +
 
-What's wrong with getting the regulator in the driver as well ? Apart from the
-OPP core ?
+We should use the same structure, you can add some checks but not replace the
+structure altogether.
 
-> will return the OPP table regulator in order to allow driver to use the
-> regulator directly. But I'm not sure whether this is a much better
-> option than the opp_sync_regulators() and opp_set_voltage() APIs.
-
-set_voltage() is still fine as there is some data that the OPP core has, but
-sync_regulator() has nothing to do with OPP core.
-
-And this may lead to more wrapper helpers in the OPP core, which I am afraid of.
-And so even if it is not the best, I would like the OPP core to provide the data
-and not get into this. Ofcourse there is an exception to this, opp_set_rate.
+>  	data->regulators = opp_table->regulators;
+> -	data->regulator_count = opp_table->regulator_count;
+> +	data->regulator_count = regulator_count;
+>  	data->clk = opp_table->clk;
+>  	data->dev = dev;
+>  
+>  	data->old_opp.rate = old_freq;
+> -	size = sizeof(*old_supply) * opp_table->regulator_count;
+> +	size = sizeof(*old_supply) * regulator_count;
+>  	if (!old_supply)
+>  		memset(data->old_opp.supplies, 0, size);
+>  	else
 
 -- 
 viresh
