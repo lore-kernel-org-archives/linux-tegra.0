@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D77C43331
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9713CC4361A
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29F24221F0
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73BE02256F
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgLWCdd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Dec 2020 21:33:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52234 "EHLO mail.kernel.org"
+        id S1730219AbgLWCY0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Dec 2020 21:24:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730403AbgLWCZK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:25:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E8AE22285;
-        Wed, 23 Dec 2020 02:24:54 +0000 (UTC)
+        id S1729252AbgLWCYZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 22 Dec 2020 21:24:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D0512313F;
+        Wed, 23 Dec 2020 02:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690295;
-        bh=LFPNS1AsxzYl6KvbGpsDsMJTi8DK61Ijpwo7Hclcj/0=;
+        s=k20201202; t=1608690225;
+        bh=yU2Q8s/JIOzM5oFF2LA7kz+WsHoXm2IKUFG2CyuZP3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p6S6GvHEJh5RYKe0HmiDE2e/yt9CdMquU2m7b6bnQInW+sUeB/+Y0ykTq1m5S7kTX
-         puFSg2pzm0TaG+wxM8u1D44f36gl5W75q+BeP0/S4H7ih4ixe5vLaBP37guYOEujRI
-         MDmaVfIBxC/2rme3LrqRc7nxxf95+wOGlollF1GzkxrZAY85mL//hQ2jD06PJ2TnxY
-         6/0och6HSTkVg69KRxd/sJCO17QNzchZpibGh51/uwPyRFNJXXe4w/Aby06/K67csv
-         qV40csNd5D0xUtGYPTguKJcev/Zn+PYV/hAzVZmfJWuOxKf0NawgNceVaU+xXcUB/0
-         khsPMiWnQep7g==
+        b=ZDqVbmR4yobf7nd67c2oVlEX3Hx26/7lLkfol6dIcPeCe27RspabvGwV7MKK0RIdw
+         Eygr+ZLe0bga9zZm1ZzxlcA5Zh7qJUL1i/o5mxdU0rrtFRQQEL99t/Hlmd3JEWk0Ap
+         tElxIeuPM+Y2kW6hJr3GiKPgDc9HEJ6x4xxZvaaFJRRJuCJ/yw7XxPPd66FSMcT2+r
+         zrujZ8z3ES016Ri0e1/ZoWKM31CA5X1A5O6YqXkaaDDLINRLZSRXJRd/625heAVSpb
+         a+dY5N0DdrCf1LMtQYLl2UxRMxX/1xZDfIoS1odOpaBJUP5Es7eay+KPJ6zh8ISgcD
+         cME8F+04Lvokw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
@@ -38,12 +38,12 @@ Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
         linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.9 31/48] iommu/tegra-smmu: Expand mutex protection range
-Date:   Tue, 22 Dec 2020 21:23:59 -0500
-Message-Id: <20201223022417.2794032-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 41/66] iommu/tegra-smmu: Expand mutex protection range
+Date:   Tue, 22 Dec 2020 21:22:27 -0500
+Message-Id: <20201223022253.2793452-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201223022417.2794032-1-sashal@kernel.org>
-References: <20201223022417.2794032-1-sashal@kernel.org>
+In-Reply-To: <20201223022253.2793452-1-sashal@kernel.org>
+References: <20201223022253.2793452-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,10 +72,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 21 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 04cec050e42bf..ae796342717a6 100644
+index 848dac3e4580f..30f0c72d685fe 100644
 --- a/drivers/iommu/tegra-smmu.c
 +++ b/drivers/iommu/tegra-smmu.c
-@@ -241,26 +241,19 @@ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+@@ -244,26 +244,19 @@ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
  {
  	unsigned long id;
  
@@ -103,7 +103,7 @@ index 04cec050e42bf..ae796342717a6 100644
  }
  
  static bool tegra_smmu_capable(enum iommu_cap cap)
-@@ -395,17 +388,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+@@ -398,17 +391,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
  				 struct tegra_smmu_as *as)
  {
  	u32 value;
@@ -129,7 +129,7 @@ index 04cec050e42bf..ae796342717a6 100644
  
  	/* We can't handle 64-bit DMA addresses */
  	if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
-@@ -428,24 +425,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+@@ -431,24 +428,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
  	as->smmu = smmu;
  	as->use_count++;
  
