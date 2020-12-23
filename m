@@ -2,98 +2,170 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71918C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 00:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A99FC433E6
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 391B122573
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 00:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B57A22482
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbgLWACh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Dec 2020 19:02:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbgLWACh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Dec 2020 19:02:37 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DCAC0613D3
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 16:01:56 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id b73so14535970edf.13
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 16:01:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fkrYUr3Os7KrZsC5hNgAx2k8T67FxAdgwdbrSELw5jo=;
-        b=IVEhdMFKaxuwlvEY3r+/FUSFwJh8H48oFFl27EEpMJuDeBcZAgoKyrbwZOy5TOjrSl
-         kPG7AORDrPKWO98VRfxul0NQ25Y/TTTEu2TA1G/F3s2s2cWSnmQIJ4JrcljY/5c4rmUp
-         9AUpIbNaeeom+RCjGT52MC2PnQixj1BBJfLtYMgDzf6C2VXT1hTodEATJUbR12wXCXWF
-         KJPkx8VlawWJpKcLgJ55eAyr1e1qkNcJ3jHVneCrFyEEs7xIUVHVTUuBNlTP4mUCVu2k
-         KEWdTkdM0Ub95bXVepHUHbYiDrte7tbFgYC+5+00iRPuLfc1XjcFqPvICyMP1tXUAQIl
-         q8mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fkrYUr3Os7KrZsC5hNgAx2k8T67FxAdgwdbrSELw5jo=;
-        b=mmwdaktdhjsFHIvNc+LdB8NFk/w3aZ+TGFQku2OBiEG7AnHO4Yp3DETpTyo25klsCV
-         8I+kRzUVJaZ/ZaXUuzrvXIdRMTY66ATUhsPuDoJTnWvoo6hvo/epsRq0u50GhQfdVdH/
-         PBbPFzrer83FqGro4TyxmjoL4HoTyJHZFWvpznQB3WN9om11S8qFL0vPail6o1BI+1mc
-         jVEE0RJqWZdVhWzT226x6eQG8infBNmKkGmWS528gtm8lRuQOiBsxqRueIyna+aG36K4
-         KnM+7EGVgGTRP3VKVfYP/KpWy5cLNGKz/QXXQ4J3NtVGgYeTzP/GM8U9D4CqhxxITxRw
-         5Ktg==
-X-Gm-Message-State: AOAM5307t99QiMw1C7sYGaQ+JzuU/mjGkk5u9J8i21KGFyoksr7Av6h/
-        ianPPE5CjVoukswdkmZfThzyMjdYAJqZtw==
-X-Google-Smtp-Source: ABdhPJzZzexNoia1h8HCbYJHElwClHtEcIvuOwsqArwg8iupucKtW7tvZ94E2KGbtuMrE1EPHZGgHw==
-X-Received: by 2002:a05:6402:6c9:: with SMTP id n9mr22500649edy.43.1608681715647;
-        Tue, 22 Dec 2020 16:01:55 -0800 (PST)
-Received: from localhost.localdomain ([31.204.128.19])
-        by smtp.gmail.com with ESMTPSA id p12sm7719360eds.39.2020.12.22.16.01.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 16:01:55 -0800 (PST)
-From:   gabriele.modena@gmail.com
-To:     linux-tegra@vger.kernel.org
-Cc:     marvin24@gmx.de, Gabriele Modena <gabriele.modena@gmail.com>
-Subject: [PATCH] Attempt to address a style issue in nvec_power.c
-Date:   Wed, 23 Dec 2020 01:00:46 +0100
-Message-Id: <20201223000046.35499-1-gabriele.modena@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        id S1730897AbgLWC0b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Dec 2020 21:26:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730893AbgLWC0a (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 22 Dec 2020 21:26:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E9BE2225AC;
+        Wed, 23 Dec 2020 02:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608690349;
+        bh=LFPNS1AsxzYl6KvbGpsDsMJTi8DK61Ijpwo7Hclcj/0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dUD9qr2tVUH39PzmU2+sQtMrlN5RBsMYE8GdG1z+pwIRfTYAVyF570RciT6BVfVl5
+         6bSYLmuoSSmvHMPIqWsW+yOj/oM0XCA9j0uZukIQMLO82RBCd5IiIkB5WFfES6z29y
+         t9kBF2EIqqziMg4hRIvkueqPojXhyTaeJ82w0XGIwpqCgOKV8/6wGAJwUH2AleaHPl
+         Oe/1ugBNElUFk09IyS0N3rxJR274I5Jmj2xUC5uDGbGsK9IfxnpSR5leq+PRsLDKSZ
+         q7LxxGnIEQAI6VmuswegZYHgRaDTRs4zy3Tk9HQVo8S0joq/4A7pZqo4e/ZJUuq52d
+         ObBDdJT9L1Jyg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.4 26/38] iommu/tegra-smmu: Expand mutex protection range
+Date:   Tue, 22 Dec 2020 21:25:04 -0500
+Message-Id: <20201223022516.2794471-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201223022516.2794471-1-sashal@kernel.org>
+References: <20201223022516.2794471-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Gabriele Modena <gabriele.modena@gmail.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-When running checkpatch.pl on nvec_power.c I noticed
-that it contained a style issue. This patch
-attempts to address it by moving const after static.
+[ Upstream commit d5f583bf8654c231b781096bc1a186065cda72b3 ]
 
-Signed-off-by: Gabriele Modena <gabriele.modena@gmail.com>
+This is used to protect potential race condition at use_count.
+since probes of client drivers, calling attach_dev(), may run
+concurrently.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20201125101013.14953-3-nicoleotsuka@gmail.com
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/nvec/nvec_power.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/tegra-smmu.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index 0e861c4bfcbf..b1ef196e1cfe 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -338,7 +338,7 @@ static const struct power_supply_desc nvec_psy_desc = {
- };
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 04cec050e42bf..ae796342717a6 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -241,26 +241,19 @@ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+ {
+ 	unsigned long id;
  
- static int counter;
--static int const bat_iter[] = {
-+static const int bat_iter[] = {
- 	SLOT_STATUS, VOLTAGE, CURRENT, CAPACITY_REMAINING,
- #ifdef EC_FULL_DIAG
- 	AVERAGE_CURRENT, TEMPERATURE, TIME_REMAINING,
+-	mutex_lock(&smmu->lock);
+-
+ 	id = find_first_zero_bit(smmu->asids, smmu->soc->num_asids);
+-	if (id >= smmu->soc->num_asids) {
+-		mutex_unlock(&smmu->lock);
++	if (id >= smmu->soc->num_asids)
+ 		return -ENOSPC;
+-	}
+ 
+ 	set_bit(id, smmu->asids);
+ 	*idp = id;
+ 
+-	mutex_unlock(&smmu->lock);
+ 	return 0;
+ }
+ 
+ static void tegra_smmu_free_asid(struct tegra_smmu *smmu, unsigned int id)
+ {
+-	mutex_lock(&smmu->lock);
+ 	clear_bit(id, smmu->asids);
+-	mutex_unlock(&smmu->lock);
+ }
+ 
+ static bool tegra_smmu_capable(enum iommu_cap cap)
+@@ -395,17 +388,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 				 struct tegra_smmu_as *as)
+ {
+ 	u32 value;
+-	int err;
++	int err = 0;
++
++	mutex_lock(&smmu->lock);
+ 
+ 	if (as->use_count > 0) {
+ 		as->use_count++;
+-		return 0;
++		goto unlock;
+ 	}
+ 
+ 	as->pd_dma = dma_map_page(smmu->dev, as->pd, 0, SMMU_SIZE_PD,
+ 				  DMA_TO_DEVICE);
+-	if (dma_mapping_error(smmu->dev, as->pd_dma))
+-		return -ENOMEM;
++	if (dma_mapping_error(smmu->dev, as->pd_dma)) {
++		err = -ENOMEM;
++		goto unlock;
++	}
+ 
+ 	/* We can't handle 64-bit DMA addresses */
+ 	if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
+@@ -428,24 +425,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 	as->smmu = smmu;
+ 	as->use_count++;
+ 
++	mutex_unlock(&smmu->lock);
++
+ 	return 0;
+ 
+ err_unmap:
+ 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
++unlock:
++	mutex_unlock(&smmu->lock);
++
+ 	return err;
+ }
+ 
+ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
+ 				    struct tegra_smmu_as *as)
+ {
+-	if (--as->use_count > 0)
++	mutex_lock(&smmu->lock);
++
++	if (--as->use_count > 0) {
++		mutex_unlock(&smmu->lock);
+ 		return;
++	}
+ 
+ 	tegra_smmu_free_asid(smmu, as->id);
+ 
+ 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
+ 
+ 	as->smmu = NULL;
++
++	mutex_unlock(&smmu->lock);
+ }
+ 
+ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
 -- 
-2.11.0
+2.27.0
 
