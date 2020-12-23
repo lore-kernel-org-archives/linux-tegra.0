@@ -5,40 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849C4C4332B
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033D3C4161F
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58B4322573
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22CB225AC
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 02:47:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbgLWCqw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1729649AbgLWCqw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 22 Dec 2020 21:46:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51154 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:45508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729650AbgLWCWX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        id S1727724AbgLWCWX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
         Tue, 22 Dec 2020 21:22:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 203AC2333D;
-        Wed, 23 Dec 2020 02:22:06 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EA92221E5;
+        Wed, 23 Dec 2020 02:22:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690126;
-        bh=Hls/f6UZypxug+MLZ3xsMvwiJZ1f5mUMdJCi5UPwEyU=;
+        s=k20201202; t=1608690124;
+        bh=T7PdA5l7Rhy2gkLnrI5FMusQdDWLAYNVwKkmQuxAb1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o0cT9AG2lup9D4uV4o4nBIybKQT0hKcJ8ofVR/t17Tu5evnoBoGBqbOLajntnX6/t
-         Tj+9aUKQtnMjKWhJlP+v3EwlM/tEvVRjNIjEHBUvQp/eShL5J9CUDo9w30NShG/omS
-         TsTx5sdL+RnTjYnkzP6wBU0K/QUgopJyD3Cx1CJehL0TEVJFVGmqpewmtqYe1PhJHZ
-         kRU6wwHKrbWhfZgKd/sYIfRA+r99FG5kyHuqi6vMvN0r7ezkiMnnYD5U2q2bATGF9n
-         D+buRa3RyhaJ7+TKNFLxcRMa1zGeR4pKy7rQx7T8HOUOu35wyldZTBiNCmVQS+FUwH
-         KKGz6mHOUi6CQ==
+        b=pwk72SWK8hZkKTCiv87a9YGgHjSwnkXlXj4rAouywr5qNmGoMJcjOgdJD4z9rOV34
+         ZAhXy+MHh7BoWyvfzoWivbJUmWYmEupF4JailE8GuhqnEcg8gUtGDZsBblf9LvGTtW
+         v/V+kDLPQVKWzh6GgwAsjDnQk0zSWN7SnsmSdwpVU/Luk3GJaYYZOAk7TO7nSquAxv
+         isni/r9cpN02dXNVUmyWUk7AxdHaDWiNlLeNgUBT569tU06EnsAKyZuQXrkOHhwsR4
+         3hl3tV0v6yWjf53AZBcmnJv3kBebl9EyZEd6YW6szr4Bkt3sH7jB8aZEWWJVdwQGQ9
+         nDbNoMXXhOwKQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Zyngier <maz@kernel.org>, Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 51/87] arm64: tegra: Fix GIC400 missing GICH/GICV register regions
-Date:   Tue, 22 Dec 2020 21:20:27 -0500
-Message-Id: <20201223022103.2792705-51-sashal@kernel.org>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.19 49/87] iommu/tegra-smmu: Expand mutex protection range
+Date:   Tue, 22 Dec 2020 21:20:25 -0500
+Message-Id: <20201223022103.2792705-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201223022103.2792705-1-sashal@kernel.org>
 References: <20201223022103.2792705-1-sashal@kernel.org>
@@ -50,40 +52,120 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-[ Upstream commit 776a3c04da9fa144241476f4a0d263899d6cad26 ]
+[ Upstream commit d5f583bf8654c231b781096bc1a186065cda72b3 ]
 
-GIC400 has full support for virtualization, and yet the tegra186
-DT doesn't expose the GICH/GICV regions (despite exposing the
-maintenance interrupt that only makes sense for virtualization).
+This is used to protect potential race condition at use_count.
+since probes of client drivers, calling attach_dev(), may run
+concurrently.
 
-Add the missing regions, based on the hunch that the HW doesn't
-use the CPU build-in interfaces, but instead the external ones
-provided by the GIC. KVM's virtual GIC now works with this change.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20201125101013.14953-3-nicoleotsuka@gmail.com
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/tegra-smmu.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b762227f6aa18..1f8db9c128bd7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -284,7 +284,9 @@ gic: interrupt-controller@3881000 {
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
- 		reg = <0x0 0x03881000 0x0 0x1000>,
--		      <0x0 0x03882000 0x0 0x2000>;
-+		      <0x0 0x03882000 0x0 0x2000>,
-+		      <0x0 0x03884000 0x0 0x2000>,
-+		      <0x0 0x03886000 0x0 0x2000>;
- 		interrupts = <GIC_PPI 9
- 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		interrupt-parent = <&gic>;
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index fa0ecb5e63809..63679cce95054 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -252,26 +252,19 @@ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+ {
+ 	unsigned long id;
+ 
+-	mutex_lock(&smmu->lock);
+-
+ 	id = find_first_zero_bit(smmu->asids, smmu->soc->num_asids);
+-	if (id >= smmu->soc->num_asids) {
+-		mutex_unlock(&smmu->lock);
++	if (id >= smmu->soc->num_asids)
+ 		return -ENOSPC;
+-	}
+ 
+ 	set_bit(id, smmu->asids);
+ 	*idp = id;
+ 
+-	mutex_unlock(&smmu->lock);
+ 	return 0;
+ }
+ 
+ static void tegra_smmu_free_asid(struct tegra_smmu *smmu, unsigned int id)
+ {
+-	mutex_lock(&smmu->lock);
+ 	clear_bit(id, smmu->asids);
+-	mutex_unlock(&smmu->lock);
+ }
+ 
+ static bool tegra_smmu_capable(enum iommu_cap cap)
+@@ -406,17 +399,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 				 struct tegra_smmu_as *as)
+ {
+ 	u32 value;
+-	int err;
++	int err = 0;
++
++	mutex_lock(&smmu->lock);
+ 
+ 	if (as->use_count > 0) {
+ 		as->use_count++;
+-		return 0;
++		goto unlock;
+ 	}
+ 
+ 	as->pd_dma = dma_map_page(smmu->dev, as->pd, 0, SMMU_SIZE_PD,
+ 				  DMA_TO_DEVICE);
+-	if (dma_mapping_error(smmu->dev, as->pd_dma))
+-		return -ENOMEM;
++	if (dma_mapping_error(smmu->dev, as->pd_dma)) {
++		err = -ENOMEM;
++		goto unlock;
++	}
+ 
+ 	/* We can't handle 64-bit DMA addresses */
+ 	if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
+@@ -439,24 +436,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 	as->smmu = smmu;
+ 	as->use_count++;
+ 
++	mutex_unlock(&smmu->lock);
++
+ 	return 0;
+ 
+ err_unmap:
+ 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
++unlock:
++	mutex_unlock(&smmu->lock);
++
+ 	return err;
+ }
+ 
+ static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
+ 				    struct tegra_smmu_as *as)
+ {
+-	if (--as->use_count > 0)
++	mutex_lock(&smmu->lock);
++
++	if (--as->use_count > 0) {
++		mutex_unlock(&smmu->lock);
+ 		return;
++	}
+ 
+ 	tegra_smmu_free_asid(smmu, as->id);
+ 
+ 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
+ 
+ 	as->smmu = NULL;
++
++	mutex_unlock(&smmu->lock);
+ }
+ 
+ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
 -- 
 2.27.0
 
