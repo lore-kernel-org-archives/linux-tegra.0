@@ -2,150 +2,215 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 859C7C433E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 06:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BA6C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 18:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49A9322518
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 06:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752B0223C8
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 18:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgLWGBp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Dec 2020 01:01:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbgLWGBp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Dec 2020 01:01:45 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072D4C06179C
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 22:01:05 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id x18so8603637pln.6
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 22:01:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4NTrNWSzSRmqwCvEQTSp0+nnEx8m/nIQOMiO0uIjc1c=;
-        b=WvDRkmfxJVkbMxrPHfQO3jIIP0y/4x9UMXb4LToUg0c0YVvY1v4RZrwNlueMl3TxUA
-         LhGgJdJ92dhnRdqfHs6g8anfNRbf1l3Kmc9/pX6fAPYlRtoT262w08UsgSlWlqjwupim
-         2rTRdJaJfAcBRk7WFZGXpnHhMzcnnfOVRchCFyriNz+u0XQ8rIHPtECtKub6jjl2X1+5
-         u0ItXOKm5ZnduCP8Cm7CrIEnXL9xd920+5LPpI6GbeLhPSxVFzdGqmDFUxmXoFqjPlZL
-         qvMtwOzbFqkFpFexgWWO5Tdjz5PhXaRJUfKZ1KFBLp0LcE39lWeRM19YL0vgg7wtne1B
-         Yrtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4NTrNWSzSRmqwCvEQTSp0+nnEx8m/nIQOMiO0uIjc1c=;
-        b=ckoYYdSzQo8T9Hzq0MQEmmJDVbIkipu7CI3RRpOmAAURG9N9/3CkPDez3UgCftY/oR
-         pqQeCBRrQzOK/SPnxKd91agfQXHbdHyW+u30y+dL9cRt4dBPg81pzR8T+3TseRjf4OE2
-         PEjZvCCxSvtbLyfu/l9W5AjV2gVWM1EN4+TRDg5RlA4ZkJINo6nRItSLzuWzk+kZqDFo
-         XHLz2LpdrVrjiKR+tgtLblFtQGL8QsaJTNOt3vpV36gFxvaAMNxDN/L9oqc0Ar7rHJ+Z
-         idijkcAIF4SDIhOuc/hww/IzIUCFkAh7DJGL4E8OvpxN5KfcDfH58Vmo7pG9V5BeMsoi
-         Vk+w==
-X-Gm-Message-State: AOAM530WZZEeeFya6snkxL9wEWTqGMQx36wNrjGxMkrbTB2RIButLQ8L
-        kcAVC2XdRKz0XevpdUGqjkIjtQ==
-X-Google-Smtp-Source: ABdhPJyh2KPTGU4ayTa1XNiz400Y+zyRHMud7qFaV0QD/t+nRNJvznyZNbPeqd5VSc3ukQwC7r4DkA==
-X-Received: by 2002:a17:90b:16cd:: with SMTP id iy13mr24835386pjb.182.1608703264363;
-        Tue, 22 Dec 2020 22:01:04 -0800 (PST)
-Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id y27sm22645455pfr.78.2020.12.22.22.01.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 22:01:03 -0800 (PST)
-Date:   Wed, 23 Dec 2020 11:31:01 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1727977AbgLWSjp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 23 Dec 2020 13:39:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727093AbgLWSjp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 23 Dec 2020 13:39:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F23D122287;
+        Wed, 23 Dec 2020 18:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608748744;
+        bh=IZ8pQJgK4JEcx+I6z3wHFfBvNcw3TuumYonqGmKzUh4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=RDINOx4X2BGZ2jOyvn0K27LmPQKDWXXaYVQJNSuZ+1q9yMPBuF/vrwS63CxQlFJNW
+         12CoX3KpvT1dQWWMAxzrB5OQVZFVgMPNNtCl+vwEpmuT1NhffFxM+0TFAnexT0MbJZ
+         iVmZ67TFrZelObyYmJmL5nWjAHdjXiwU6wD4m/7RpXvgTSN89bW+QZ2e4ipHt7ZknO
+         d3puUUbtXBz/4nGfIr4Tg3NbingsFsbbY42jDzcELX0NdOkW9AP+PmOar27NB7gPsa
+         rrVCtSI7P/wT/suRkFOsHCHNgmsD1e8HNE6gnHeKcgsS7iBzc9Xrmm1rIHl33w3cQF
+         qL7QcpxnTW0SA==
+Date:   Wed, 23 Dec 2020 12:39:02 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Mian Yousaf Kaukab <ykaukab@suse.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 15/48] opp: Support set_opp() customization without
- requiring to use regulators
-Message-ID: <20201223060101.v2qihvvgsmpahg24@vireshk-i7>
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-16-digetx@gmail.com>
+        Vidya Sagar <vidyas@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc/tegra: Fix host link initialization
+Message-ID: <20201223183902.GA310430@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-16-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201218143905.1614098-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> Support set_opp() customization without requiring to use regulators. This
-> is needed by drivers which want to use dev_pm_opp_set_rate() for changing
-> rates of a multiple clocks and don't need to touch regulator.
+On Fri, Dec 18, 2020 at 08:39:05AM -0600, Rob Herring wrote:
+> Commit b9ac0f9dc8ea ("PCI: dwc: Move dw_pcie_setup_rc() to DWC common
+> code") broke enumeration of downstream devices on Tegra:
 > 
-> One example is NVIDIA Tegra30/114 SoCs which have two sibling 3D hardware
-> units which should be use to the same clock rate, meanwhile voltage
-> scaling is done using a power domain. In this case OPP table doesn't have
-> a regulator, causing a NULL dereference in _set_opp_custom().
+> In non working case (next-20201211):
+> 0001:00:00.0 PCI bridge: NVIDIA Corporation Device 1ad2 (rev a1)
+> 0001:01:00.0 SATA controller: Marvell Technology Group Ltd. Device 9171 (rev 13)
+> 0005:00:00.0 PCI bridge: NVIDIA Corporation Device 1ad0 (rev a1)
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> In working case (v5.10-rc7):
+> 0001:00:00.0 PCI bridge: Molex Incorporated Device 1ad2 (rev a1)
+> 0001:01:00.0 SATA controller: Marvell Technology Group Ltd. Device 9171 (rev 13)
+> 0005:00:00.0 PCI bridge: Molex Incorporated Device 1ad0 (rev a1)
+> 0005:01:00.0 PCI bridge: PLX Technology, Inc. Device 3380 (rev ab)
+> 0005:02:02.0 PCI bridge: PLX Technology, Inc. Device 3380 (rev ab)
+> 0005:03:00.0 USB controller: PLX Technology, Inc. Device 3380 (rev ab)
+> 
+> The problem seems to be dw_pcie_setup_rc() is now called twice before
+> and after the link up handling. The fix is to move Tegra's link up
+> handling to .start_link() function like other DWC drivers. Tegra is a
+> bit more complicated than others as it re-inits the whole DWC controller
+> to retry the link. With this, the initialization ordering is restored to
+> match the prior sequence.
+> 
+> Fixes: b9ac0f9dc8ea ("PCI: dwc: Move dw_pcie_setup_rc() to DWC common code")
+> Reported-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Vidya Sagar <vidyas@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> Tested-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/opp/core.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
+> Mian, One addition to what you tested. The resume hook also needs to
+> call start_link and that part was moved out of host_init.
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 3d02fe33630b..625dae7a5ecb 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -828,17 +828,25 @@ static int _set_opp_custom(const struct opp_table *opp_table,
->  			   struct dev_pm_opp_supply *old_supply,
->  			   struct dev_pm_opp_supply *new_supply)
->  {
-> -	struct dev_pm_set_opp_data *data;
-> +	struct dev_pm_set_opp_data *data, tmp_data;
-> +	unsigned int regulator_count;
->  	int size;
+> Also, I noticed it looks like suspend/resume is broken for endpoint mode
+> as the hooks are for host mode only.
+> 
+> Bjorn, please apply this for v5.11.
+
+Applied to for-linus for (hopefully) v5.11-rc1, since b9ac0f9dc8ea
+will also appear in v5.11-rc1.  Thanks!
+
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 55 ++++++++++++----------
+>  1 file changed, 29 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 5597b2a49598..6fa216e52d14 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -853,12 +853,14 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
+>  	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+>  }
 >  
-> -	data = opp_table->set_opp_data;
-> +	if (opp_table->set_opp_data) {
-> +		data = opp_table->set_opp_data;
-> +		regulator_count = opp_table->regulator_count;
-> +	} else {
-> +		data = &tmp_data;
-> +		regulator_count = 0;
+> -static void tegra_pcie_prepare_host(struct pcie_port *pp)
+> +static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+>  	u32 val;
+>  
+> +	pp->bridge->ops = &tegra_pci_ops;
+> +
+>  	if (!pcie->pcie_cap_base)
+>  		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+>  							      PCI_CAP_ID_EXP);
+> @@ -907,10 +909,24 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
+>  		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
+>  	}
+>  
+> -	dw_pcie_setup_rc(pp);
+> -
+>  	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+>  
+> +	return 0;
+> +}
+> +
+> +static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+> +{
+> +	u32 val, offset, speed, tmp;
+> +	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+> +	struct pcie_port *pp = &pci->pp;
+> +	bool retry = true;
+> +
+> +	if (pcie->mode == DW_PCIE_EP_TYPE) {
+> +		enable_irq(pcie->pex_rst_irq);
+> +		return 0;
 > +	}
 > +
-
-We should use the same structure, you can add some checks but not replace the
-structure altogether.
-
->  	data->regulators = opp_table->regulators;
-> -	data->regulator_count = opp_table->regulator_count;
-> +	data->regulator_count = regulator_count;
->  	data->clk = opp_table->clk;
->  	data->dev = dev;
+> +retry_link:
+>  	/* Assert RST */
+>  	val = appl_readl(pcie, APPL_PINMUX);
+>  	val &= ~APPL_PINMUX_PEX_RST;
+> @@ -929,19 +945,10 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
+>  	appl_writel(pcie, val, APPL_PINMUX);
 >  
->  	data->old_opp.rate = old_freq;
-> -	size = sizeof(*old_supply) * opp_table->regulator_count;
-> +	size = sizeof(*old_supply) * regulator_count;
->  	if (!old_supply)
->  		memset(data->old_opp.supplies, 0, size);
->  	else
-
--- 
-viresh
+>  	msleep(100);
+> -}
+> -
+> -static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+> -{
+> -	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+> -	u32 val, tmp, offset, speed;
+> -
+> -	pp->bridge->ops = &tegra_pci_ops;
+> -
+> -	tegra_pcie_prepare_host(pp);
+>  
+>  	if (dw_pcie_wait_for_link(pci)) {
+> +		if (!retry)
+> +			return 0;
+>  		/*
+>  		 * There are some endpoints which can't get the link up if
+>  		 * root port has Data Link Feature (DLF) enabled.
+> @@ -975,10 +982,11 @@ static int tegra_pcie_dw_host_init(struct pcie_port *pp)
+>  		val &= ~PCI_DLF_EXCHANGE_ENABLE;
+>  		dw_pcie_writel_dbi(pci, offset, val);
+>  
+> -		tegra_pcie_prepare_host(pp);
+> +		tegra_pcie_dw_host_init(pp);
+> +		dw_pcie_setup_rc(pp);
+>  
+> -		if (dw_pcie_wait_for_link(pci))
+> -			return 0;
+> +		retry = false;
+> +		goto retry_link;
+>  	}
+>  
+>  	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
+> @@ -998,15 +1006,6 @@ static int tegra_pcie_dw_link_up(struct dw_pcie *pci)
+>  	return !!(val & PCI_EXP_LNKSTA_DLLLA);
+>  }
+>  
+> -static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+> -{
+> -	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+> -
+> -	enable_irq(pcie->pex_rst_irq);
+> -
+> -	return 0;
+> -}
+> -
+>  static void tegra_pcie_dw_stop_link(struct dw_pcie *pci)
+>  {
+>  	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+> @@ -2215,6 +2214,10 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
+>  		goto fail_host_init;
+>  	}
+>  
+> +	ret = tegra_pcie_dw_start_link(&pcie->pci);
+> +	if (ret < 0)
+> +		goto fail_host_init;
+> +
+>  	/* Restore MSI interrupt vector */
+>  	dw_pcie_writel_dbi(&pcie->pci, PORT_LOGIC_MSI_CTRL_INT_0_EN,
+>  			   pcie->msi_ctrl_int);
+> -- 
+> 2.25.1
+> 
