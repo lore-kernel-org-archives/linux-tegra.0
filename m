@@ -2,170 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC38C4361A
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 03:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48A7C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 04:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9791A206F6
-	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 03:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613B520789
+	for <linux-tegra@archiver.kernel.org>; Wed, 23 Dec 2020 04:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbgLWCUA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 22 Dec 2020 21:20:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728819AbgLWCT7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:19:59 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4EE61225AB;
-        Wed, 23 Dec 2020 02:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608689984;
-        bh=ESDOidCTiUNEdcaAW0GLG4M5bunsCs4flgEgwwblDRw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RELys2dV+q8QbeesCyVNdtS9T1Oz8WYv1vHG9NUFlTXR8zuknyLGWdJjSLXgBvOcu
-         SRSxbVc30KKaEpW2Tf+MeZ2SI7XnM3UzgiV8Pxv/kPJX0THRnF3fc/dLLEWUYcCn4M
-         8jceQyGKkqjiJI6Cjw7zcA6gyJdVBR+sEDZCXaqCgm5x5gWD5bZAuzI5gvnvmyYhuM
-         wWwDWV9AcN+TO1GI8XbZszhOBv6R7JD0+Cb0fq2u1yZ9bNyFJC8gzs6zR2MzC7PwQ/
-         VPtAvMk3dyQdYIEMeqczsLuIXGko7gjeEStH3BM4rLuIHo7lggl88xAtuF0Z6kHc9h
-         5rVB47Rdf0+Tw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.4 070/130] iommu/tegra-smmu: Expand mutex protection range
-Date:   Tue, 22 Dec 2020 21:17:13 -0500
-Message-Id: <20201223021813.2791612-70-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201223021813.2791612-1-sashal@kernel.org>
-References: <20201223021813.2791612-1-sashal@kernel.org>
+        id S1726825AbgLWEUS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 22 Dec 2020 23:20:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54376 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbgLWEUS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 22 Dec 2020 23:20:18 -0500
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9F1C061793
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 20:19:38 -0800 (PST)
+Received: by mail-pf1-x431.google.com with SMTP id d2so9646684pfq.5
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Dec 2020 20:19:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=26Fr+AtJaqoWMCq9NSUD8XDm547WXau8kIa+Po3ijaQ=;
+        b=sT3RPi0cmSySv3TpxqXakwSZd4+TeVAbgUtHRhhkr9zD2oKndQhh3nAF2ZWRKFEwst
+         fxL85ZuUBFNAQ5onTZ3nMEdhsWGrllkYRYl1tGbri1cjmNeEdBXqoR00oFAdZlinf2sG
+         i3trnl1FImHrkHWsQjqfYqktVg5C0p9hGp3zMs/4X0+liPYJ7Fj35h7EVOzzqMQQ4BmP
+         NoOLT9BhfddUa5brM8O18Y39e3dDinW3tOqST333s6BHhsMhvIuY7sARBYQPtJaNRvta
+         GBJlJv49y/k+55A3aNfm4MsUIuzj/qy5vzUrSvfzWGdcTkTePTwKJsgOch7YgnJiucC7
+         W3zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=26Fr+AtJaqoWMCq9NSUD8XDm547WXau8kIa+Po3ijaQ=;
+        b=NA+bEdJ+QI9l8KUruNi1QNY07mx0huNmEk7RhraYkacbqF107nCvKD77nyeOssXjgi
+         DoXUvRby60/lKrcmHcBIVkq6MgujFxmzcIAncVci9FOQYw7LPxR4MORy8JjhPgSM72YG
+         MOx1t4aVG6r3VZkzfl+t+nGljGWWqNcu8HKAOw3tYbKzseNl7C3qGh0iFhODm5/Txt8B
+         DjMtAr2wITDrbswCU3JzeCbX3EYuU4LTS2g8lIThiPhLEXLGaxIxOqrUojYsA72foxBU
+         ArfbRt4aZVEomiL13lGUcPoO0i3EcX+Ndks1KlNuAayBDT8vZMnaoD+hF20CMUmBPKNn
+         1khA==
+X-Gm-Message-State: AOAM530fcf1ms4S+SGjRbGtjphtG2ttX2Yfwxr7Xue7wHNZP3l1xTmYi
+        gn0KyUWQlqJj9R5zdFq70JiQkw==
+X-Google-Smtp-Source: ABdhPJz3XTw78JGZT3bqt2E1D4SaVZTnIQudWjGvtEJkaUATY8WvaXe+1UR/zVBvhFKdu72MF7n3JA==
+X-Received: by 2002:a63:c205:: with SMTP id b5mr310031pgd.281.1608697177622;
+        Tue, 22 Dec 2020 20:19:37 -0800 (PST)
+Received: from localhost ([122.172.20.109])
+        by smtp.gmail.com with ESMTPSA id j23sm2918258pgj.34.2020.12.22.20.19.36
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Dec 2020 20:19:36 -0800 (PST)
+Date:   Wed, 23 Dec 2020 09:49:31 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
+Message-ID: <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-12-digetx@gmail.com>
+ <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
+ <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+On 22-12-20, 22:15, Dmitry Osipenko wrote:
+> 22.12.2020 09:42, Viresh Kumar пишет:
+> > On 17-12-20, 21:06, Dmitry Osipenko wrote:
+> >> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
+> >> levels don't start from 0 in OPP table and zero usually means a minimal
+> >> level.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > 
+> > Why doesn't the exact version work for you here ?
+> > 
+> 
+> The exact version won't find OPP for level=0 if levels don't start with
+> 0, where 0 means that minimal level is desired.
 
-[ Upstream commit d5f583bf8654c231b781096bc1a186065cda72b3 ]
+Right, but why do you need to send 0 for your platform ?
 
-This is used to protect potential race condition at use_count.
-since probes of client drivers, calling attach_dev(), may run
-concurrently.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20201125101013.14953-3-nicoleotsuka@gmail.com
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iommu/tegra-smmu.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index dd486233e2828..41be3e2202971 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -247,26 +247,19 @@ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
- {
- 	unsigned long id;
- 
--	mutex_lock(&smmu->lock);
--
- 	id = find_first_zero_bit(smmu->asids, smmu->soc->num_asids);
--	if (id >= smmu->soc->num_asids) {
--		mutex_unlock(&smmu->lock);
-+	if (id >= smmu->soc->num_asids)
- 		return -ENOSPC;
--	}
- 
- 	set_bit(id, smmu->asids);
- 	*idp = id;
- 
--	mutex_unlock(&smmu->lock);
- 	return 0;
- }
- 
- static void tegra_smmu_free_asid(struct tegra_smmu *smmu, unsigned int id)
- {
--	mutex_lock(&smmu->lock);
- 	clear_bit(id, smmu->asids);
--	mutex_unlock(&smmu->lock);
- }
- 
- static bool tegra_smmu_capable(enum iommu_cap cap)
-@@ -404,17 +397,21 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
- 				 struct tegra_smmu_as *as)
- {
- 	u32 value;
--	int err;
-+	int err = 0;
-+
-+	mutex_lock(&smmu->lock);
- 
- 	if (as->use_count > 0) {
- 		as->use_count++;
--		return 0;
-+		goto unlock;
- 	}
- 
- 	as->pd_dma = dma_map_page(smmu->dev, as->pd, 0, SMMU_SIZE_PD,
- 				  DMA_TO_DEVICE);
--	if (dma_mapping_error(smmu->dev, as->pd_dma))
--		return -ENOMEM;
-+	if (dma_mapping_error(smmu->dev, as->pd_dma)) {
-+		err = -ENOMEM;
-+		goto unlock;
-+	}
- 
- 	/* We can't handle 64-bit DMA addresses */
- 	if (!smmu_dma_addr_valid(smmu, as->pd_dma)) {
-@@ -437,24 +434,35 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
- 	as->smmu = smmu;
- 	as->use_count++;
- 
-+	mutex_unlock(&smmu->lock);
-+
- 	return 0;
- 
- err_unmap:
- 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
-+unlock:
-+	mutex_unlock(&smmu->lock);
-+
- 	return err;
- }
- 
- static void tegra_smmu_as_unprepare(struct tegra_smmu *smmu,
- 				    struct tegra_smmu_as *as)
- {
--	if (--as->use_count > 0)
-+	mutex_lock(&smmu->lock);
-+
-+	if (--as->use_count > 0) {
-+		mutex_unlock(&smmu->lock);
- 		return;
-+	}
- 
- 	tegra_smmu_free_asid(smmu, as->id);
- 
- 	dma_unmap_page(smmu->dev, as->pd_dma, SMMU_SIZE_PD, DMA_TO_DEVICE);
- 
- 	as->smmu = NULL;
-+
-+	mutex_unlock(&smmu->lock);
- }
- 
- static int tegra_smmu_attach_dev(struct iommu_domain *domain,
 -- 
-2.27.0
-
+viresh
