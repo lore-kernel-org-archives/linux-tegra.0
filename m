@@ -7,56 +7,58 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CE7C43381
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 04:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358F6C4332D
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 06:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6632322AED
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 04:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C6B822AED
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 06:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbgLXELK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 23 Dec 2020 23:11:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47772 "EHLO
+        id S1727029AbgLXG3L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Dec 2020 01:29:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbgLXELJ (ORCPT
+        with ESMTP id S1726934AbgLXG3L (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 23 Dec 2020 23:11:09 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B841C061282
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Dec 2020 20:10:29 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id n7so857679pgg.2
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Dec 2020 20:10:29 -0800 (PST)
+        Thu, 24 Dec 2020 01:29:11 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3511C0617A6
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Dec 2020 22:28:30 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id v1so639865pjr.2
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Dec 2020 22:28:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ikVtzUE4uXfeBqBtO4dtx3e4Xq8je8+SD0cDc4uZBxs=;
-        b=xKGy+n1lH2OICjFJVUJHiGY8JDjFs+zA4vzxAXCrDFU5l1ZTdld+A8Dk+fxxlBFKgV
-         E5eTKopVBqQdPsabWi5F9J/MB+2RweNkKJA1c0sbK6mCgzTnGBOjkv+GqmMLoGYyu06a
-         ttpiVX3Z/L0LrlZD/4+woKfb/vMPCPF3T1xEccKhgioNE8CzX8igBpfeY1gMcA4Qg9rv
-         Ss6rrRCqT7Sk981NvHHGrFAi9IRp2TL7qu6Ba/gO3G7fUcc4yRkVj93tiPezXSd9aNKo
-         dnFyrclYl+eyqxmrRvvK1Bya4PdheEaOLJsOwz+YPu0I+RU1N2lZffE0lmArD5KkOuec
-         MNVA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=EjusjKqe1uD5qVIhtNFzzFr/40x6TzvZ/Sd3W/PBS+U=;
+        b=fkgyFFom2uaI6UYerCixgJyMGXGGZzyzPl2pC34SDHHWr//SHmo19YSii8QHZaSaa0
+         uZC2skGBke5PtP9vslEZombfKjKIAYRw9D3l2M5uGrJ+VkC9bDxNBcQDONWQUC2dmGxG
+         6UJpFpuY87irp1H90rXExkNF0g2y+4HLV3Ep3/gdgJBqsszg3FbKmgil0GqbQ6dTgEnh
+         DrDRzMipJyOMadGCFG5+H9D0UVs6y0l4FAVZ+I0/J5ZdR5hXHDE2454h+0iAD/EAVgA3
+         IDDlN9SUV6QyhslIyk38zgEDS9uC1vEdXUB6uhGhlyh9+PUCifXrT875haF9d9ipr3qB
+         NnsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ikVtzUE4uXfeBqBtO4dtx3e4Xq8je8+SD0cDc4uZBxs=;
-        b=nhdBYa7w5gJNi86E2k0I+LgBYUVR7K4l7lgiZgq5Ki/2enwow1tNtUzaycNhAQFbzH
-         W0c6vdYgDWO/ZSVZl4km57X+1BhqcpqDySWoWGRMXUoYh7kwmK70s7VrxngAxY7oszlR
-         DlyDkd65nyl7OUP4buiIlKmsgWX3Wpc7qrXYYggxFRXxo4hUwMCLYCRV0uD5BZpNPsR/
-         CCznE6w4RpEpEltzkGNtKBKd77w+pkjDyO80JZahIgNaEnKFXW9ochzJKOICf3Zck7lI
-         LBgK1KzBK+oZC8EJVWO8z4iKvn3lodwhVb7/w2IPL4Z/iJAA5+91C+jGaj/FgdbKt3MA
-         hH8g==
-X-Gm-Message-State: AOAM530LwsQXctuXfcpR2Hss8G5N16K2i3gX8ItlRFwgzm++NpXXz20x
-        17qb97bt0moMwQ5UsryIX9nj9A==
-X-Google-Smtp-Source: ABdhPJxF6QsBhYJyHEedTrrFWO0Opl0+2E1UHe5wyQBjNtRXMjwHp5sAJCn6P8PZcaaJH8z8YxT1Gw==
-X-Received: by 2002:a62:644c:0:b029:1a1:f568:d2d9 with SMTP id y73-20020a62644c0000b02901a1f568d2d9mr26738163pfb.64.1608783028602;
-        Wed, 23 Dec 2020 20:10:28 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=EjusjKqe1uD5qVIhtNFzzFr/40x6TzvZ/Sd3W/PBS+U=;
+        b=JttFskQDkKAUNC9uSHby+GQ8gzy+ZeZorS+3K+9IlzMnTpG9zd/FDWoQCw8+FmGzMv
+         iFqKlPhgRxCZqcV72kky66n/Jhi6PpAvVvPVQVDKPJFHGPTuqAT7cqVyGS3LQzFGxH2R
+         D4+inaTehYvgQu+M1ouGW1Qk8xPy/4y+3XWv7S8W1LpLWhC7MeyM9bn9SalAhPeLB6UW
+         0610k5yIQ1/836x74ZxAYmEDGbgsV3D3+Lp96RL+M10tvCOSJTNlOaXiJTJEAyPpDBEr
+         +45OAx1pf0Fe+P7Tl7GYSIvWj1BTE12d7WnEJrP2ldA2rMOtCD+0A4CPe2Ig1fK7NZnh
+         s83w==
+X-Gm-Message-State: AOAM532uFMsW3ApGUeRSIP4Noc1uL0+3jin6BSIR2056/BWinfzmqGXd
+        ga6Ny/jtiuJJAIIA29z9kFRUCQ==
+X-Google-Smtp-Source: ABdhPJwZjLbo7aGBJ7sNLaIhWcs4xnkHkI7BDfYQrcbWA55ODln8fkpMZgsIP8pDydfAZ37ygqOZVA==
+X-Received: by 2002:a17:90a:380c:: with SMTP id w12mr2982286pjb.117.1608791310121;
+        Wed, 23 Dec 2020 22:28:30 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id s5sm1012447pju.9.2020.12.23.20.10.27
+        by smtp.gmail.com with ESMTPSA id t18sm25653088pfl.138.2020.12.23.22.28.28
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Dec 2020 20:10:27 -0800 (PST)
-Date:   Thu, 24 Dec 2020 09:40:25 +0530
+        Wed, 23 Dec 2020 22:28:29 -0800 (PST)
+Date:   Thu, 24 Dec 2020 11:58:27 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -79,28 +81,63 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 15/48] opp: Support set_opp() customization without
- requiring to use regulators
-Message-ID: <20201224041025.mlxsbl2yrxyqt7yh@vireshk-i7>
+Subject: Re: [PATCH v2 19/48] opp: Fix adding OPP entries in a wrong order if
+ rate is unavailable
+Message-ID: <20201224062826.frppxddfinjomfui@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-16-digetx@gmail.com>
- <20201223060101.v2qihvvgsmpahg24@vireshk-i7>
- <ea025b0f-bb2a-d075-4c8e-45831fa9cd93@gmail.com>
+ <20201217180638.22748-20-digetx@gmail.com>
+ <20201222091255.wentz5hyt726qezg@vireshk-i7>
+ <db6273e6-8406-b7ae-b51d-48ceb6d21962@gmail.com>
+ <20201223043443.rklw5er6hck3gl4y@vireshk-i7>
+ <7688d6b9-52a2-d30f-123f-43c01e03b968@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ea025b0f-bb2a-d075-4c8e-45831fa9cd93@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7688d6b9-52a2-d30f-123f-43c01e03b968@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 23-12-20, 23:38, Dmitry Osipenko wrote:
-> Well, there is no "same structure", the opp_table->set_opp_data is NULL
-> there.
+On 23-12-20, 23:36, Dmitry Osipenko wrote:
+> 23.12.2020 07:34, Viresh Kumar пишет:
+> > On 22-12-20, 22:19, Dmitry Osipenko wrote:
+> >> 22.12.2020 12:12, Viresh Kumar пишет:
+> >>> rate will be 0 for both the OPPs here if rate_not_available is true and so this
+> >>> change shouldn't be required.
+> >>
+> >> The rate_not_available is negated in the condition. This change is
+> >> required because both rates are 0 and then we should proceed to the
+> >> levels comparison.
+> > 
+> > Won't that happen without this patch ?
+> 
+> No
 
-Right, I saw that yesterday. What I meant was that we need to start allocating
-the structure for this case now.
+This is how the code looks like currently:
+
+int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
+{
+	if (opp1->rate != opp2->rate)
+		return opp1->rate < opp2->rate ? -1 : 1;
+	if (opp1->bandwidth && opp2->bandwidth &&
+	    opp1->bandwidth[0].peak != opp2->bandwidth[0].peak)
+		return opp1->bandwidth[0].peak < opp2->bandwidth[0].peak ? -1 : 1;
+	if (opp1->level != opp2->level)
+		return opp1->level < opp2->level ? -1 : 1;
+	return 0;
+}
+
+Lets consider the case you are focussing on, where rate is 0 for both the OPPs,
+bandwidth isn't there and we want to run the level comparison here.
+
+Since both the rates are 0, (opp1->rate != opp2->rate) will fail and so we will
+move to bandwidth check which will fail too. And so we will get to the level
+comparison.
+
+What am I missing here ? I am sure there is something for sure as you won't have
+missed this..
 
 -- 
 viresh
