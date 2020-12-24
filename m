@@ -2,63 +2,63 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC065C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 12:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A64AC433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A2D722288
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 12:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B84224B1
+	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgLXMR0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Dec 2020 07:17:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
+        id S1727865AbgLXNBe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Dec 2020 08:01:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbgLXMR0 (ORCPT
+        with ESMTP id S1727372AbgLXNBd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Dec 2020 07:17:26 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AE9C061794;
-        Thu, 24 Dec 2020 04:16:45 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id l11so4447875lfg.0;
-        Thu, 24 Dec 2020 04:16:45 -0800 (PST)
+        Thu, 24 Dec 2020 08:01:33 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F462C061794;
+        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id m25so4539040lfc.11;
+        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aBLJJg+bzbWbulXzWEitNJ5042asREQNv3cmv9hVKiA=;
-        b=JJuUSYdMpRe4neER0nnPgTpAPimiRI1Igwq+UpeDahgwudF1GCXX8kQ9WPifh+7+rE
-         ns6OdiZdklf9VJoAnwAIpFuFP4soAjlbIn1wKb3lMOLTswsKwQS6wkrGtvHUUduAhIR7
-         xTS0ENwDMGzO1p7nvwvV9whAs0T5WkC6vFtKzk+FV6KWULbCWssULHHLIuTPwqtTLOP7
-         50lmQv/rwlVR4UDetNofZ4dJKnmTquUMRtMeLimaCumiMVuw5zIGpcPia8nF/7F4+HeG
-         KSaiTeEKZgA/vi4p4i0umtKkbryQkR9R/MCG0HSKYHf5WH0l1k5XdA113l+wSElI4Qyw
-         73DQ==
+        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
+        b=h35B/CGskQN9x2gajXsHnapJAn/oOdmJUPQzEUHvzlPUdoaVdWOHSvn0gRhd+h4Ola
+         kRThB7EwzP4zCJ6I/cDBaa2jz7i8GwFBJ3G3UgCUXtUfsT2g52TetI+SjB06v4QccX98
+         yOgW4XRztBS1Rb1sUB+HjV5efgFf1R3v/2FDKAIhyUg38TSfby9FdbMS/BOhsmpV8q93
+         2PXIilSxhr+6+5vRNFV8pb+G4eE9EQA1e1YzsE81H7g6mvgl8zL3naGYGYHQKfwNKpkP
+         FkcD6cP+0rX2PGwAlkOUF9fsFJlC40+sqMoNc+qDnwDTa8+wBi9oi10CEnKiniae650p
+         1/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aBLJJg+bzbWbulXzWEitNJ5042asREQNv3cmv9hVKiA=;
-        b=Eg/eziSYHkv2chCS/F+OsfbcCKfOmif92ssNXTBcsWG7qsM6PxvNNQrGwLR4/mNK7Y
-         4YRJI5hn6GaXM24s5mHJlGhR2wv20xJYRxesMQ0YrjCtxUtXSxKzfgTOXcimTdv17QXB
-         hQguL/pPCrYHgfJZZQ7J3STWlHKAH6uT5os1w9DlSnZxuyGE6LOfr92PPjMxh7gEQ+PC
-         PlnHCQ09SgvgGSL54O/GN+RY5EePmQa7ZL2RME9vF4kFGe2pBqBdVXSROYB0BVqPhoMf
-         Df+z8nqw95DJx/DbiuleuJCYD5o2ctlT41YIadnQlkdFfktwaXI0JbfGYOdortOd/nuf
-         YSIQ==
-X-Gm-Message-State: AOAM530YIrD5l0i6U5XAabYcBSnZgfpY6mGHU/Ctl7v7JMGcIElElP1L
-        EJEhdENo95fh3SsPNaddTq1olUQjHe0=
-X-Google-Smtp-Source: ABdhPJwqnQyO8QLk/YiNUUylyZroRpd4i08hKXJxtramIT73WqKFf+cxMjJwIeVnmd7ZHuojM/4uMw==
-X-Received: by 2002:a19:7ec9:: with SMTP id z192mr13717595lfc.50.1608812203827;
-        Thu, 24 Dec 2020 04:16:43 -0800 (PST)
+        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
+        b=Dru+WFqKfQoeVwsu6JWjGquf9Rpvnsi2Klbb9fDUBucX6JCekDXcdk32mzMnhFQu53
+         ft/V8BgvMeO+s3osfZQleS8SpMtKI4SVszorEV6sSJZTu09fvmQR0Ase+G5SA/5iBq0o
+         iq6zsP92ubCVxBIUUx6zTDCZdVd4pBADD6+DOEnNukRojyTHMWjqM/xHRyev1iVhv/XZ
+         VVdgXNjnRB3mTT4ERua/lIs6E3xtOw2FB3bLFKK9/VNdrxE2m5C1//2GF/d2JphJdIOn
+         +jarpqcbHRpTQLeHd5IBxQSMtXPM4ngPwm1xNbIpDyXfhQOpbKvb0q4cAZKEhel5QqGQ
+         1CSw==
+X-Gm-Message-State: AOAM530uw+ZyjIg1kVdGjUIbVzXeNbmQvJVPslp2NWcskK1MnyzyEtFI
+        cBvXx0QKgeMUF2wFBZmSVQw2m0cIh+w=
+X-Google-Smtp-Source: ABdhPJy4dUISU54G6I/fcsUIBl9m9poD0jxB1pYpBLDFT4iw28ge43cAa/UiLwCH2jmZTgAPqvlFag==
+X-Received: by 2002:a05:6512:52c:: with SMTP id o12mr12294057lfc.559.1608814851636;
+        Thu, 24 Dec 2020 05:00:51 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id x70sm3283612lfa.224.2020.12.24.04.16.42
+        by smtp.googlemail.com with ESMTPSA id b4sm3594686lfa.261.2020.12.24.05.00.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Dec 2020 04:16:43 -0800 (PST)
-Subject: Re: [PATCH v2 15/48] opp: Support set_opp() customization without
- requiring to use regulators
+        Thu, 24 Dec 2020 05:00:50 -0800 (PST)
+Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
 To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -81,17 +81,19 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-16-digetx@gmail.com>
- <20201223060101.v2qihvvgsmpahg24@vireshk-i7>
- <ea025b0f-bb2a-d075-4c8e-45831fa9cd93@gmail.com>
- <20201224041025.mlxsbl2yrxyqt7yh@vireshk-i7>
+ <20201217180638.22748-12-digetx@gmail.com>
+ <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
+ <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
+ <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
+ <f00e0c74-8d9a-d3d3-81bb-3ac25a74175d@gmail.com>
+ <20201224064339.zngidobhstnlu2a3@vireshk-i7>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <236f9306-97a5-5f17-9689-a6e04c052b7a@gmail.com>
-Date:   Thu, 24 Dec 2020 15:16:42 +0300
+Message-ID: <780db190-d93d-3bca-4819-790010f82c62@gmail.com>
+Date:   Thu, 24 Dec 2020 16:00:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20201224041025.mlxsbl2yrxyqt7yh@vireshk-i7>
+In-Reply-To: <20201224064339.zngidobhstnlu2a3@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,14 +101,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.12.2020 07:10, Viresh Kumar пишет:
-> On 23-12-20, 23:38, Dmitry Osipenko wrote:
->> Well, there is no "same structure", the opp_table->set_opp_data is NULL
->> there.
+24.12.2020 09:43, Viresh Kumar пишет:
+> On 23-12-20, 23:37, Dmitry Osipenko wrote:
+>> 23.12.2020 07:19, Viresh Kumar пишет:
+>>> On 22-12-20, 22:15, Dmitry Osipenko wrote:
+>>>> 22.12.2020 09:42, Viresh Kumar пишет:
+>>>>> On 17-12-20, 21:06, Dmitry Osipenko wrote:
+>>>>>> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
+>>>>>> levels don't start from 0 in OPP table and zero usually means a minimal
+>>>>>> level.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>
+>>>>> Why doesn't the exact version work for you here ?
+>>>>>
+>>>>
+>>>> The exact version won't find OPP for level=0 if levels don't start with
+>>>> 0, where 0 means that minimal level is desired.
+>>>
+>>> Right, but why do you need to send 0 for your platform ?
+>>>
+>>
+>> To put power domain into the lowest performance state when device is idling.
 > 
-> Right, I saw that yesterday. What I meant was that we need to start allocating
-> the structure for this case now.
+> I see. So you really want to set it to the lowest state or just take the vote
+> out ? Which may end up powering off the domain in the worst case ?
 > 
 
-Okay, that will be a bit bigger change than this v2. I'll try it
-implement yours suggestion in the next revision, thanks.
+In a device driver I want to set PD to the lowest performance state by
+removing the performance vote when dev_pm_opp_set_rate(dev, 0) is
+invoked by the driver.
+
+The OPP core already does this, but if OPP levels don't start from 0 in
+a device-tree for PD, then it currently doesn't work since there is a
+need to get a rounded-up performance state because
+dev_pm_opp_set_voltage() takes OPP entry for the argument (patches 9 and
+28).
+
+The PD powering off and performance-changes are separate from each other
+in the GENPD core. The GENPD core automatically turns off domain when
+all devices within the domain are suspended by system-suspend or RPM.
+
+The performance state of a power domain is controlled solely by a device
+driver. GENPD core only aggregates the performance requests, it doesn't
+change the performance state of a domain by itself when device is
+suspended or resumed, IIUC this is intentional. And I want to put domain
+into lowest performance state when device is suspended.
