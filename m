@@ -2,60 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94963C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 25 Dec 2020 01:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D66C43381
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Dec 2020 01:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57FDD2225E
+	by mail.kernel.org (Postfix) with ESMTP id D462722AED
 	for <linux-tegra@archiver.kernel.org>; Fri, 25 Dec 2020 01:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgLYBVi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Dec 2020 20:21:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
+        id S1729147AbgLYBVn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Dec 2020 20:21:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbgLYBVi (ORCPT
+        with ESMTP id S1729109AbgLYBVk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Dec 2020 20:21:38 -0500
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F381C061573;
-        Thu, 24 Dec 2020 17:20:58 -0800 (PST)
-Received: by mail-qk1-x72d.google.com with SMTP id n142so3284306qkn.2;
-        Thu, 24 Dec 2020 17:20:58 -0800 (PST)
+        Thu, 24 Dec 2020 20:21:40 -0500
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5FAC061757;
+        Thu, 24 Dec 2020 17:21:00 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id s6so1807030qvn.6;
+        Thu, 24 Dec 2020 17:21:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eR/51XLp7HQCd5RWnkeAFXvnTVVeE+YelrG/OsehfgY=;
-        b=hAn5MJD5rRItKlT/7Zl24e2BKZi0Ls8BZo0yfG0VHqNGbxZIImG5bj/Hw62Gu+mG/u
-         QO7Mr9HJasfbcRh505O+zP9Cp22ZCzWUHrxmqVE9qhvWlELEdxNImMJDFxUDvwziQxI6
-         NMUBe1UMHiSbY24xZSLCEC0gjY+JPmEyJJkyAQdan47NLcDaq2OjTXlOcu56PrZEf/Qj
-         K3VfpTdZSMv/g56hpCEy1zR7HYWykU6U6oBzC6tznzZ8ClVF/vQitTc9y6DEuUMNcsQ3
-         ql+bigyXHfDYne4ATahAJRh8V7qWXqutn0+s3hatv64QVfUd+i0A0z5k/VgcvxeTHRD+
-         YW5w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ZaO4eapAX6YcgJ1V86x/6Z20q4JeFpmENkNZ+Vh17YY=;
+        b=VaT/v3w7fIQwr4+nVx3FsfDl6sKjC+xegP3RJ5aJvK2cB6iqn22/Dyc/o6WByT7IMX
+         9J5q1AOse3dJO7cN+i2XYBmjnq+cksvabKySclkdaJbH4TMqOwjxPWvAkK95835uzpBk
+         kbZ/CCKTXsIMvhyEcJTKJQIHIEdsitddgiaZ/qVCX1zBMIsOV1R7jrb3bT5tuIZO2rrD
+         O2q/azdZcystt+XcuDNCoftIjo0y5/G4tqyVbcF6dpugV/TvbnZctQggiQMrzIuhZoV4
+         BLOyT0Tsg2m+aYBYfSzuvrgjmV9M1l8ObtKZ6n4jyVejzpjwQdUuvgp6zZzW7TnSHyPc
+         KhbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eR/51XLp7HQCd5RWnkeAFXvnTVVeE+YelrG/OsehfgY=;
-        b=sFSBicz8fxZ/rKW4Aec1+eMiDc/7B15kRObnjYyYIbRUbPvKsrq3Tc6zEkDlPZ62X4
-         us720YvtPQcggOybTj4mIWhDxa9ExeqW99Xp1htcpTge/2UMfKMu8hlf5FTRt9Za0RsV
-         V5oqE5HpFy1YbMeXsexyaMQTHXB3hfuN1uO8SCPeDzQnieoAYHqqtVVIiEGRfrtGOwHP
-         QLXkVJdz0NkHiik8rK/4tVi//fsM8z6CtUwb/Hdcr9t2fmTkEEI7+XoUTpKLkHY2pDKG
-         G9Z1Md3Yw1RbkGNXNjEYD2+HYeJ7JAIN2COQQKtVCAH4CVEyXs1q/JECAOVOJtMfYHq/
-         tHOw==
-X-Gm-Message-State: AOAM531sV/P6jr9k84mzNUhpRzCM2yO0guwxrN3FCF/d5cAwr7Za6uZD
-        opEPEQRDuRwV5WqtNbTeZTg=
-X-Google-Smtp-Source: ABdhPJyrNjeysbrlaGCYU+QBL1gUJ/O/dP/8CtbqfoqjVSeWYb5ZgSJ1J5pFIsmM63ClMqGEBprPBg==
-X-Received: by 2002:a37:5a47:: with SMTP id o68mr21575955qkb.423.1608859257152;
-        Thu, 24 Dec 2020 17:20:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ZaO4eapAX6YcgJ1V86x/6Z20q4JeFpmENkNZ+Vh17YY=;
+        b=VdfHAu/UR707NjVg3hQHXtsh3XW8h8708nt0kbzQo6zSxP5uDptx4p5OzLY4LvcYuJ
+         8AUQDwKNYmYryj9BB9n7eQTRtdlJ12J2jZtR3Cod2DJ5k+bwP9E9QoW+CN9LWmLwI6i7
+         zxnIkKE+FTL2Gpm2SA4Q4JnBVZfuHlA8VwomD4zgUMm0CxXC8nvIgQcgudzBH6Zkpjqj
+         isMFCCwcHYPxjOhmxNOWVjEn5uwn876pkqJ81h3t8ZwvPyt8IbvQOc8elIDrVc/zfrLe
+         DsU0TU3kV4Fa02zKBocLXUOB5d7gNCWxTBIvuc6L+hG8GdDTXduYjmm4p83rI6vb+aiS
+         F1Vg==
+X-Gm-Message-State: AOAM532Yi0J1Y87rKWYcAgwkgOfF8fzWcgdWZR32RuuV1u2ww9UnL2JV
+        jcPZv3+mknQfLrusv5++8yA=
+X-Google-Smtp-Source: ABdhPJyYpB3bNPAkvnqr+S9zrV/ifONY2HfJ9E0hXD7pAU/LgUB43e0WkZWZz0Pddacjq23iySU+TA==
+X-Received: by 2002:a0c:ca13:: with SMTP id c19mr25994106qvk.21.1608859259481;
+        Thu, 24 Dec 2020 17:20:59 -0800 (PST)
 Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id x47sm17583505qtb.86.2020.12.24.17.20.55
+        by smtp.gmail.com with ESMTPSA id x47sm17583505qtb.86.2020.12.24.17.20.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Dec 2020 17:20:56 -0800 (PST)
+        Thu, 24 Dec 2020 17:20:59 -0800 (PST)
 From:   Peter Geis <pgwipeout@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -69,36 +70,71 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Mohan Kumar <mkumard@nvidia.com>
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH 0/2] fix tegra-hda on tegra30 devices
-Date:   Fri, 25 Dec 2020 01:20:24 +0000
-Message-Id: <20201225012025.507803-1-pgwipeout@gmail.com>
+        Peter Geis <pgwipeout@gmail.com>, Ion Agorria <ion@agorria.com>
+Subject: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+Date:   Fri, 25 Dec 2020 01:20:26 +0000
+Message-Id: <20201225012025.507803-3-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201225012025.507803-1-pgwipeout@gmail.com>
+References: <20201225012025.507803-1-pgwipeout@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The following patches fix tegra-hda on legacy tegra devices.
-Two issues were discovered preventing tegra-hda from functioning:
-The hda clocks on tegra30 were assigned to clk_m and running at too low of a rate to function.
-The tegra-hda encounters an input/output error when opening a stream.
+Currently hda on tegra30 fails to open a stream with an input/output error.
+This is similar to the issue referenced in [1].
 
-Since the only mainline device that used tegra-hda previously was the t124, it is unknown exactly when this was broken.
-Fortunately a recent patch was submitted that fixed the issue only on t194 devices.
-We can apply it universally to the tegra-hda device to resolve the issues across the board.
-Note that downstream devices used the spdif device instead of hda for hdmi audio.
-The spdif device lacks a driver on mainline.
+For example:
+speaker-test -Dhw:0,3 -c 2
 
-Peter Geis (2):
-  clk: tegra30: Add hda clock default rates to clock driver
-  ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+speaker-test 1.2.2
 
- drivers/clk/tegra/clk-tegra30.c | 2 ++
- sound/pci/hda/hda_tegra.c       | 3 +--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Playback device is hw:0,3
+Stream parameters are 48000Hz, S16_LE, 2 channels
+Using 16 octaves of pink noise
+Rate set to 48000Hz (requested 48000Hz)
+Buffer size range from 64 to 16384
+Period size range from 32 to 8192
+Using max buffer size 16384
+Periods = 4
+was set period_size = 4096
+was set buffer_size = 16384
+ 0 - Front Left
+Write error: -5,Input/output error
+xrun_recovery failed: -5,Input/output error
+Transfer failed: Input/output error
 
+[1] states "Due to a legacy HW design problem", implying the issue applies to all previous tegra-hda devices.
+The tegra-hda device was introduced in tegra30 but only utilized in tegra124 until now.
+For this reason it is unknown when this issue first manifested.
+
+Applying the fix in [1] universally resolves this issue on tegra30.
+Tested on the Ouya game console and the tf201 tablet.
+
+[1] 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on Tegra194")
+
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Ion Agorria <ion@agorria.com>
+---
+ sound/pci/hda/hda_tegra.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 70164d1428d4..f8d61e677a09 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	 * in powers of 2, next available ratio is 16 which can be
+ 	 * used as a limiting factor here.
+ 	 */
+-	if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
+-		chip->bus.core.sdo_limit = 16;
++	chip->bus.core.sdo_limit = 16;
+ 
+ 	/* codec detection */
+ 	if (!bus->codec_mask) {
 -- 
 2.25.1
 
