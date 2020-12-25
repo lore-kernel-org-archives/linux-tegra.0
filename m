@@ -2,148 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A64AC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94963C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Dec 2020 01:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3B84224B1
-	for <linux-tegra@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57FDD2225E
+	for <linux-tegra@archiver.kernel.org>; Fri, 25 Dec 2020 01:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbgLXNBe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 24 Dec 2020 08:01:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
+        id S1729021AbgLYBVi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 24 Dec 2020 20:21:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727372AbgLXNBd (ORCPT
+        with ESMTP id S1729020AbgLYBVi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 24 Dec 2020 08:01:33 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F462C061794;
-        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id m25so4539040lfc.11;
-        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
+        Thu, 24 Dec 2020 20:21:38 -0500
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F381C061573;
+        Thu, 24 Dec 2020 17:20:58 -0800 (PST)
+Received: by mail-qk1-x72d.google.com with SMTP id n142so3284306qkn.2;
+        Thu, 24 Dec 2020 17:20:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
-        b=h35B/CGskQN9x2gajXsHnapJAn/oOdmJUPQzEUHvzlPUdoaVdWOHSvn0gRhd+h4Ola
-         kRThB7EwzP4zCJ6I/cDBaa2jz7i8GwFBJ3G3UgCUXtUfsT2g52TetI+SjB06v4QccX98
-         yOgW4XRztBS1Rb1sUB+HjV5efgFf1R3v/2FDKAIhyUg38TSfby9FdbMS/BOhsmpV8q93
-         2PXIilSxhr+6+5vRNFV8pb+G4eE9EQA1e1YzsE81H7g6mvgl8zL3naGYGYHQKfwNKpkP
-         FkcD6cP+0rX2PGwAlkOUF9fsFJlC40+sqMoNc+qDnwDTa8+wBi9oi10CEnKiniae650p
-         1/Aw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eR/51XLp7HQCd5RWnkeAFXvnTVVeE+YelrG/OsehfgY=;
+        b=hAn5MJD5rRItKlT/7Zl24e2BKZi0Ls8BZo0yfG0VHqNGbxZIImG5bj/Hw62Gu+mG/u
+         QO7Mr9HJasfbcRh505O+zP9Cp22ZCzWUHrxmqVE9qhvWlELEdxNImMJDFxUDvwziQxI6
+         NMUBe1UMHiSbY24xZSLCEC0gjY+JPmEyJJkyAQdan47NLcDaq2OjTXlOcu56PrZEf/Qj
+         K3VfpTdZSMv/g56hpCEy1zR7HYWykU6U6oBzC6tznzZ8ClVF/vQitTc9y6DEuUMNcsQ3
+         ql+bigyXHfDYne4ATahAJRh8V7qWXqutn0+s3hatv64QVfUd+i0A0z5k/VgcvxeTHRD+
+         YW5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
-        b=Dru+WFqKfQoeVwsu6JWjGquf9Rpvnsi2Klbb9fDUBucX6JCekDXcdk32mzMnhFQu53
-         ft/V8BgvMeO+s3osfZQleS8SpMtKI4SVszorEV6sSJZTu09fvmQR0Ase+G5SA/5iBq0o
-         iq6zsP92ubCVxBIUUx6zTDCZdVd4pBADD6+DOEnNukRojyTHMWjqM/xHRyev1iVhv/XZ
-         VVdgXNjnRB3mTT4ERua/lIs6E3xtOw2FB3bLFKK9/VNdrxE2m5C1//2GF/d2JphJdIOn
-         +jarpqcbHRpTQLeHd5IBxQSMtXPM4ngPwm1xNbIpDyXfhQOpbKvb0q4cAZKEhel5QqGQ
-         1CSw==
-X-Gm-Message-State: AOAM530uw+ZyjIg1kVdGjUIbVzXeNbmQvJVPslp2NWcskK1MnyzyEtFI
-        cBvXx0QKgeMUF2wFBZmSVQw2m0cIh+w=
-X-Google-Smtp-Source: ABdhPJy4dUISU54G6I/fcsUIBl9m9poD0jxB1pYpBLDFT4iw28ge43cAa/UiLwCH2jmZTgAPqvlFag==
-X-Received: by 2002:a05:6512:52c:: with SMTP id o12mr12294057lfc.559.1608814851636;
-        Thu, 24 Dec 2020 05:00:51 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id b4sm3594686lfa.261.2020.12.24.05.00.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Dec 2020 05:00:50 -0800 (PST)
-Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
+        bh=eR/51XLp7HQCd5RWnkeAFXvnTVVeE+YelrG/OsehfgY=;
+        b=sFSBicz8fxZ/rKW4Aec1+eMiDc/7B15kRObnjYyYIbRUbPvKsrq3Tc6zEkDlPZ62X4
+         us720YvtPQcggOybTj4mIWhDxa9ExeqW99Xp1htcpTge/2UMfKMu8hlf5FTRt9Za0RsV
+         V5oqE5HpFy1YbMeXsexyaMQTHXB3hfuN1uO8SCPeDzQnieoAYHqqtVVIiEGRfrtGOwHP
+         QLXkVJdz0NkHiik8rK/4tVi//fsM8z6CtUwb/Hdcr9t2fmTkEEI7+XoUTpKLkHY2pDKG
+         G9Z1Md3Yw1RbkGNXNjEYD2+HYeJ7JAIN2COQQKtVCAH4CVEyXs1q/JECAOVOJtMfYHq/
+         tHOw==
+X-Gm-Message-State: AOAM531sV/P6jr9k84mzNUhpRzCM2yO0guwxrN3FCF/d5cAwr7Za6uZD
+        opEPEQRDuRwV5WqtNbTeZTg=
+X-Google-Smtp-Source: ABdhPJyrNjeysbrlaGCYU+QBL1gUJ/O/dP/8CtbqfoqjVSeWYb5ZgSJ1J5pFIsmM63ClMqGEBprPBg==
+X-Received: by 2002:a37:5a47:: with SMTP id o68mr21575955qkb.423.1608859257152;
+        Thu, 24 Dec 2020 17:20:57 -0800 (PST)
+Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
+        by smtp.gmail.com with ESMTPSA id x47sm17583505qtb.86.2020.12.24.17.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Dec 2020 17:20:56 -0800 (PST)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-12-digetx@gmail.com>
- <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
- <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
- <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
- <f00e0c74-8d9a-d3d3-81bb-3ac25a74175d@gmail.com>
- <20201224064339.zngidobhstnlu2a3@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <780db190-d93d-3bca-4819-790010f82c62@gmail.com>
-Date:   Thu, 24 Dec 2020 16:00:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Mohan Kumar <mkumard@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH 0/2] fix tegra-hda on tegra30 devices
+Date:   Fri, 25 Dec 2020 01:20:24 +0000
+Message-Id: <20201225012025.507803-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20201224064339.zngidobhstnlu2a3@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.12.2020 09:43, Viresh Kumar пишет:
-> On 23-12-20, 23:37, Dmitry Osipenko wrote:
->> 23.12.2020 07:19, Viresh Kumar пишет:
->>> On 22-12-20, 22:15, Dmitry Osipenko wrote:
->>>> 22.12.2020 09:42, Viresh Kumar пишет:
->>>>> On 17-12-20, 21:06, Dmitry Osipenko wrote:
->>>>>> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
->>>>>> levels don't start from 0 in OPP table and zero usually means a minimal
->>>>>> level.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>
->>>>> Why doesn't the exact version work for you here ?
->>>>>
->>>>
->>>> The exact version won't find OPP for level=0 if levels don't start with
->>>> 0, where 0 means that minimal level is desired.
->>>
->>> Right, but why do you need to send 0 for your platform ?
->>>
->>
->> To put power domain into the lowest performance state when device is idling.
-> 
-> I see. So you really want to set it to the lowest state or just take the vote
-> out ? Which may end up powering off the domain in the worst case ?
-> 
+The following patches fix tegra-hda on legacy tegra devices.
+Two issues were discovered preventing tegra-hda from functioning:
+The hda clocks on tegra30 were assigned to clk_m and running at too low of a rate to function.
+The tegra-hda encounters an input/output error when opening a stream.
 
-In a device driver I want to set PD to the lowest performance state by
-removing the performance vote when dev_pm_opp_set_rate(dev, 0) is
-invoked by the driver.
+Since the only mainline device that used tegra-hda previously was the t124, it is unknown exactly when this was broken.
+Fortunately a recent patch was submitted that fixed the issue only on t194 devices.
+We can apply it universally to the tegra-hda device to resolve the issues across the board.
+Note that downstream devices used the spdif device instead of hda for hdmi audio.
+The spdif device lacks a driver on mainline.
 
-The OPP core already does this, but if OPP levels don't start from 0 in
-a device-tree for PD, then it currently doesn't work since there is a
-need to get a rounded-up performance state because
-dev_pm_opp_set_voltage() takes OPP entry for the argument (patches 9 and
-28).
+Peter Geis (2):
+  clk: tegra30: Add hda clock default rates to clock driver
+  ALSA: hda/tegra: fix tegra-hda on tegra30 soc
 
-The PD powering off and performance-changes are separate from each other
-in the GENPD core. The GENPD core automatically turns off domain when
-all devices within the domain are suspended by system-suspend or RPM.
+ drivers/clk/tegra/clk-tegra30.c | 2 ++
+ sound/pci/hda/hda_tegra.c       | 3 +--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-The performance state of a power domain is controlled solely by a device
-driver. GENPD core only aggregates the performance requests, it doesn't
-change the performance state of a domain by itself when device is
-suspended or resumed, IIUC this is intentional. And I want to put domain
-into lowest performance state when device is suspended.
+-- 
+2.25.1
+
