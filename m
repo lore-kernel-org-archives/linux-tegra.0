@@ -2,101 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E219DC4332B
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 18:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96882C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 21:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBBDC207BC
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 18:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A4A20776
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 21:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbhADSHP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jan 2021 13:07:15 -0500
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:41187 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbhADSHO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 13:07:14 -0500
-Received: by mail-wr1-f44.google.com with SMTP id a12so33074408wrv.8;
-        Mon, 04 Jan 2021 10:06:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Y4OzI0Gift9qAQwCOItPNRXBZiGMCN5H3dDmQ5W7k7k=;
-        b=CgzAg9+XozTRG4MiPHLtQzwqgZrL1SkCQU5SRe5E1IHQRraIV7bV3q16J08PL0cvW0
-         c4lML543wRu1MtxdFenwLAZKgT/gOiCTSOOoyr5KUmxb1vDRiS/uI8wfAALeCyOlRNCB
-         ZKtOiET2YK7EQQ4LDdQB92hEXuH5lzHWXD3LU3ltpjPqQ8lZDDdJAQbSzxQZd+YOePXk
-         uz/+LvKtQvx0GJoPE7Qx22UccXIu6tGW3ZE/jSr7hAIbRSCrSwI1Im3EEFu1kDiC5O+R
-         +c/G41qMAZ5+8UHHOtDBIQIw5m4LbJYe5tfBCMQyIYC4lMEC6KxIxaEStf7bgu8iueFP
-         kNdA==
-X-Gm-Message-State: AOAM531XWbht+J3JGjN1UMFXDvL1mZ3khq1wQ+H4MQjhxV2LFJHEMAAa
-        VRdpWfTCSaVth84p7xcWOgg=
-X-Google-Smtp-Source: ABdhPJwSJr+8sc9s0gJbtsMMAxXbPISgkriOlKIqFLVyMTanzET3gDdnClIP2ae3HciFRhbuw7YS/g==
-X-Received: by 2002:adf:9e47:: with SMTP id v7mr44312549wre.185.1609783591011;
-        Mon, 04 Jan 2021 10:06:31 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id b7sm86189365wrv.47.2021.01.04.10.06.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 10:06:29 -0800 (PST)
-Date:   Mon, 4 Jan 2021 19:06:27 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        digetx@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        yuq825@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
-        robdclark@gmail.com, sean@poorly.run, robh@kernel.org,
-        tomeu.vizoso@collabora.com, steven.price@arm.com,
-        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
-        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
-        lukasz.luba@arm.com, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
-        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
-        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
-        marijn.suijten@somainline.org, gustavoars@kernel.org,
-        emil.velikov@collabora.com, jonathan@marek.ca,
-        akhilpo@codeaurora.org, smasetty@codeaurora.org,
-        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
-        tanmay@codeaurora.org, ddavenport@chromium.org,
-        jsanka@codeaurora.org, rnayak@codeaurora.org,
-        tongtiangen@huawei.com, miaoqinglang@huawei.com,
-        khsieh@codeaurora.org, abhinavk@codeaurora.org,
-        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
-        mka@chromium.org, harigovi@codeaurora.org,
-        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
-        georgi.djakov@linaro.org, akashast@codeaurora.org,
-        parashar@codeaurora.org, dianders@chromium.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 25/31] memory: tegra30: convert to use devm_pm_opp_* API
-Message-ID: <20210104180627.GA27043@kozik-lap>
-References: <20210103035415.23600-1-tiny.windzz@gmail.com>
+        id S1726026AbhADVKQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jan 2021 16:10:16 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19891 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbhADVKQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 16:10:16 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff384100000>; Mon, 04 Jan 2021 13:09:36 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Jan
+ 2021 21:09:35 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 4 Jan 2021 21:09:35 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/47] 5.4.87-rc1 review
+In-Reply-To: <20210104155705.740576914@linuxfoundation.org>
+References: <20210104155705.740576914@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210103035415.23600-1-tiny.windzz@gmail.com>
+Message-ID: <4103e42887994cb3aba1b4b44a5c2327@HQMAIL109.nvidia.com>
+Date:   Mon, 4 Jan 2021 21:09:35 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1609794576; bh=AQz5ab7Irv0TnEMRenVp5IqDPJQ/kU/QCwM7OJZu3tg=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=IrPTBl5G3s4cYpSuLLrjLBRUgpJtB3XTR6gnvcj9dxB3usBhoqkaLxrfSdBeNy7MN
+         brwdHC0Fdn55opm2sMJQInsowAivIViG5Pj/5qjIOyC69l+0lgHYqyHBBzxdq59GRl
+         eIFnf0pFM7Qx1W84KWwUa8vNji3Nci+g/YL9ls4tZ9Wogh5/Z6GDNekNtGl1jzXa6n
+         t3RDitVqiIyzyVuK85UV7OmhE3SVoBGmZFmj5mm6Ik0/yV993mofpuVOQUefrn05AK
+         iLCxvC/bTBhDI3OKcJohZjEnltublxVZx/0egLNuRjOgajIt6XSRVBz44+CsPgFhq1
+         oMDZgX3E/ga8w==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jan 03, 2021 at 03:54:15AM +0000, Yangtao Li wrote:
-> Use devm_pm_opp_* API to simplify code.
+On Mon, 04 Jan 2021 16:56:59 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.87 release.
+> There are 47 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/memory/tegra/tegra30-emc.c | 29 +++++++++--------------------
->  1 file changed, 9 insertions(+), 20 deletions(-)
+> Responses should be made by Wed, 06 Jan 2021 15:56:52 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.87-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+All tests passing for Tegra ...
 
-Best regards,
-Krzysztof
+Test results for stable-v5.4:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
+
+Linux version:	5.4.87-rc1-g01678c93fa9e
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
