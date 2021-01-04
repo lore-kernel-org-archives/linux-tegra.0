@@ -2,91 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12C9C433E6
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 17:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417FDC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 18:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99C3321D94
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 17:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AD8720784
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 18:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbhADReJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jan 2021 12:34:09 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16128 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbhADReJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 12:34:09 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff351690000>; Mon, 04 Jan 2021 09:33:29 -0800
-Received: from [10.2.52.156] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Jan
- 2021 17:33:24 +0000
-Subject: Re: [PATCH v5 2/9] dt-bindings: spi: Add Tegra Quad SPI device tree
- binding
-To:     Rob Herring <robh@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>, <lukas@wunner.de>, <bbrezillon@kernel.org>,
-        <p.yadav@ti.com>, <linux-tegra@vger.kernel.org>,
-        <broonie@kernel.org>, <tudor.ambarus@microchip.com>,
-        <devicetree@vger.kernel.org>, <jonathanh@nvidia.com>,
-        <thierry.reding@gmail.com>
-References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
- <1608585459-17250-3-git-send-email-skomatineni@nvidia.com>
- <20201231183357.GA2112085@robh.at.kernel.org>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <4ac13c7b-dcf1-0a7d-c573-83890cba6a67@nvidia.com>
-Date:   Mon, 4 Jan 2021 09:33:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727800AbhADSEb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jan 2021 13:04:31 -0500
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:33517 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbhADSEa (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 13:04:30 -0500
+Received: by mail-wr1-f51.google.com with SMTP id t30so33120348wrb.0;
+        Mon, 04 Jan 2021 10:04:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h59iCiKuH4MXgrWgjRBSHuWSpOxsm5xD8Y4CubrF3xU=;
+        b=O9Z7vxMRaKMI5t4T35bv5YGBkatCDU5eq6r98qh3QvpeHWzlSAfvYP2gdGrDnTdeX+
+         9lFgK7c3VNoEmv3n0ooUqk/U/D//wbRrsJXgu/8hTYxbBT6jMKF2yD7oRNOYkIrred+Q
+         A36TcezbQKk4ldEN+dINQfU1JnD8ruELUrhvrFMbrHBc7derBdzkFgqYLmy3BtozESqV
+         FrYJR/DbD1nUP5Ci0TkvjufeoMcmg11E5E4KZqE8kJguHszQEotflCChxM97xswkECSV
+         E+gqqo2wMwSHM0FkvYPrWsR+Qc9N6IKAUY5odPzhSPLQuiFFn0ECjTZW7KfMPAGot3Jg
+         IJ6w==
+X-Gm-Message-State: AOAM530djHhjb46cspfzZL3CaJe+iYSF6jgIPNXImY1JNTtHRPCpTaS1
+        44cf+ZLNZ7z9omWXlgNTfzM=
+X-Google-Smtp-Source: ABdhPJxrRN4zoC9ySCl3+E0igqJkr5f1LUevrs1pugc92rcCWGC8YwtDgiDHvDzkbPEnhGyP6UumfQ==
+X-Received: by 2002:a5d:58fb:: with SMTP id f27mr71674294wrd.22.1609783427686;
+        Mon, 04 Jan 2021 10:03:47 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id w8sm92329342wrl.91.2021.01.04.10.03.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jan 2021 10:03:46 -0800 (PST)
+Date:   Mon, 4 Jan 2021 19:03:43 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        digetx@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        yuq825@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run, robh@kernel.org,
+        tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
+        mka@chromium.org, harigovi@codeaurora.org,
+        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
+        georgi.djakov@linaro.org, akashast@codeaurora.org,
+        parashar@codeaurora.org, dianders@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 22/31] memory: samsung: exynos5422-dmc: fix return error
+ in exynos5_init_freq_table
+Message-ID: <20210104180343.GA26189@kozik-lap>
+References: <20210101165507.19486-1-tiny.windzz@gmail.com>
+ <20210101165507.19486-23-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201231183357.GA2112085@robh.at.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1609781609; bh=FflGbQbz9Rt+mAPwIs31x4CA96a3hQ7Bfw2cSc8cimI=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=Sd4nzTZeJqYepDeRiaEpnnwJcHFyDyi70DxTMBdkAB8oEWXEOlimXwUPeC4mPyPeg
-         U9tRy7UoglIY6dxqdCJ+MxSbbtWNRibthmNSJg1+vGih8W7eD80ISNdSv5lJvNiWwT
-         zyYi6hPSxOAoEd+0xOwWYiZhTgBImw9vvPgfMgDJG2oUonOmyY5JbkV9bgJ9NhgRcQ
-         bHUemHsFCSZNfgTURFhQPluPfA83MMUwgUiNlab6HVxCvUOiO6sJAmWZpJpMmp25z3
-         z7RE6mIWxugRwpPPlciMvaKVbW7cLAbeocCqSllov8JRX/ufqAHcGdJGJfPqfUR25r
-         3ZaYVt/L00l4Q==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210101165507.19486-23-tiny.windzz@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jan 01, 2021 at 04:54:58PM +0000, Yangtao Li wrote:
+> We can't always return -EINVAL, let's fix it.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/memory/samsung/exynos5422-dmc.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-On 12/31/20 10:33 AM, Rob Herring wrote:
-> On Mon, 21 Dec 2020 13:17:32 -0800, Sowjanya Komatineni wrote:
->> This patch adds YAML based device tree binding document for Tegra
->> Quad SPI driver.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   .../bindings/spi/nvidia,tegra210-quad.yaml         | 117 +++++++++++++++++++++
->>   1 file changed, 117 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
->>
->
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
->
-> If a tag was not added on purpose, please state why and what changed.
->
-Sorry Rob. Missed to add tag from v4 to v5.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Regards,
+I see that the next patch depends on it so feel free to take it via PM
+tree. Otherwise let me know.
 
-Sowjanya
-
+Best regards,
+Krzysztof
