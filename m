@@ -2,217 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34888C43381
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 12:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F79C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 14:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA8A21E92
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 12:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10000221F9
+	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 14:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbhADMio (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jan 2021 07:38:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
+        id S1727016AbhADN7t (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jan 2021 08:59:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbhADMin (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 4 Jan 2021 07:38:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8A53A20770;
-        Mon,  4 Jan 2021 12:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1609763882;
-        bh=YFyxuG7ZCAHOWy07xspj4tV3y2moP86wc3mkEOK4OO4=;
+        id S1726253AbhADN7s (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 4 Jan 2021 08:59:48 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0F00220770;
+        Mon,  4 Jan 2021 13:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609768747;
+        bh=oAmb65NYH72MQStk3VaVbGlppJznbNt2cArcbsPTQcY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nC9KUT3h7s8E7meCacXGBBdEiM00503KBX2cSXk1XrdARuv3cv3N9n9Gz532B9+iP
-         Q6hOysVHQMkxBHp/FFn54uNJrHaRzDGFudZcr/UN5F1rvlOggbyDUmB5IunQT4GYqh
-         t/j7Jw5G4PR9iVgD3dD/3+srzdYK9id85lQxd1gg=
-Date:   Mon, 4 Jan 2021 13:39:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.2 00/20] 5.2.6-stable review
-Message-ID: <X/MMgPChJ2C+85Tf@kroah.com>
-References: <20190802092055.131876977@linuxfoundation.org>
- <20190802172105.18999-1-thierry.reding@gmail.com>
- <20190803070932.GB24334@kroah.com>
- <20190805114821.GA24378@ulmo>
- <20190809085253.GA25046@kroah.com>
- <20190809130449.GA27957@ulmo>
- <20190809154959.GD22879@kroah.com>
- <20190812090553.GA8903@ulmo>
+        b=UHS8gGbh9dNUQe4WMvhK/m2XPS+6hdEkfpYdNdSAq5F5FoNaAgW4OBMLdogt4PlMZ
+         0owqku0gRhayi6vNM2OwKxXh4BRxz3nZVLwlaZ+spR/7Kaz/eO91UxFD+Gjdm88bKM
+         jhbtaXUe9H+xEf8aYkQk7np+nTDd+QSWF0mLzWEYykQxJrDUsjg8rSmePf4X6QdP4d
+         DbPFJjV5rqsmmZx+7sd/m9xkeoRVwB+XCzQh7n76FixJZI2Y7qJwkzv34hDPfZoD2r
+         c6JjG0u9Y4MIozR8Hz2zQTzUpbqGcFS6iPKmT+CL8SNTyBz3rbYmmqLY5MWtxtru3X
+         cQiqUfTF80NuQ==
+Date:   Mon, 4 Jan 2021 13:58:40 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, krzk@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, digetx@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        rjw@rjwysocki.net, jcrouse@codeaurora.org, hoegsberg@google.com,
+        eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
+        mka@chromium.org, harigovi@codeaurora.org,
+        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
+        georgi.djakov@linaro.org, akashast@codeaurora.org,
+        parashar@codeaurora.org, dianders@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 08/31] spi: spi-qcom-qspi: fix potential mem leak in
+ spi_geni_probe()
+Message-ID: <20210104135840.GC5645@sirena.org.uk>
+References: <20210101165507.19486-1-tiny.windzz@gmail.com>
+ <20210101165507.19486-9-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
 Content-Disposition: inline
-In-Reply-To: <20190812090553.GA8903@ulmo>
+In-Reply-To: <20210101165507.19486-9-tiny.windzz@gmail.com>
+X-Cookie: Stupidity is its own reward.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:05:53AM +0200, Thierry Reding wrote:
-> On Fri, Aug 09, 2019 at 05:49:59PM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Aug 09, 2019 at 03:04:49PM +0200, Thierry Reding wrote:
-> > > On Fri, Aug 09, 2019 at 10:52:53AM +0200, Greg Kroah-Hartman wrote:
-> > > > On Mon, Aug 05, 2019 at 01:48:21PM +0200, Thierry Reding wrote:
-> > > > > Hi Greg,
-> > > > 
-> > > > Sorry for the delay, this got pushed down my queue...
-> > > > 
-> > > > > I stumbled across something as I was attempting to automate more parts
-> > > > > of our process to generate these reports. The original test results were
-> > > > > from a different version of the tree: 5.2.6-rc1-gdbc7f5c7df28. I suspect
-> > > > > that's the same thing that you were discussing with Pavel regarding the
-> > > > > IP tunnel patch that was added subsequent to the announcement.
-> > > > > 
-> > > > > Just for my understanding, does this mean that the patch still makes it
-> > > > > into the 5.2.6 release, or was it supposed to go into 5.2.7?
-> > > > > 
-> > > > > One problem that I ran into was that when I tried to correlate the test
-> > > > > results with your announcement email, there's no indication other than
-> > > > > the branch name and the release candidate name (5.2.6-rc1 in this case),
-> > > > > so there's no way to uniquely identify which test run belongs to the
-> > > > > announcement. Given that there are no tags for the release candidates
-> > > > > means that that's also not an option to uniquely associate with the
-> > > > > builds and tests.
-> > > > > 
-> > > > > While the differences between the two builds are very minor here, I
-> > > > > wonder if there could perhaps in the future be a problem where I report
-> > > > > successful results for a test, but the same tests would be broken by a
-> > > > > patch added to the stable-rc branch subsequent to the announcement. The
-> > > > > test report would be misleading in that case.
-> > > > > 
-> > > > > I noticed that you do add a couple of X-KernelTest-* headers to your
-> > > > > announcement emails, so I'm wondering if perhaps it was possible for you
-> > > > > to add another one that contains the exact SHA1 that corresponds to the
-> > > > > snapshot that's the release candidate. That would allow everyone to
-> > > > > uniquely associate test results with a specific release candidate.
-> > > > > 
-> > > > > That said, perhaps I've just got this all wrong and there's already a
-> > > > > way to connect all the dots that I'm not aware of. Or maybe I'm being
-> > > > > too pedantic here?
-> > > > 
-> > > > You aren't being pedantic, I think you are missing exactly what the
-> > > > linux-stable-rc tree is for and how it is created.
-> > > > 
-> > > > Granted, it's not really documented anywhere so it's not your fault :)
-> > > > 
-> > > > The linux-stable-rc tree is there ONLY for people who want to test the
-> > > > -rc kernels and can not, or do not want to, use the quilt tree of
-> > > > patches in the stable-queue.git tree on kernel.org.  I generate the
-> > > > branches there from a script that throws away the current -rc branch and
-> > > > rebuilds it "from scratch" by applying the patches that are in the
-> > > > stable-quilt tree and then adds the -rc patch as well.  This tree is
-> > > > generated multiple times when I am working on the queues and then when I
-> > > > want to do a "real" -rc release.
-> > > > 
-> > > > The branches are constantly rebased, so you can not rely on 'git pull'
-> > > > doing the right thing (unless you add --rebase to it), and are there for
-> > > > testing only.
-> > > > 
-> > > > Yes, you will see different results of a "-rc1" release in the tree
-> > > > depending on the time of day/week when I created the tree, and sometimes
-> > > > I generate them multiple times a day just to have some of the
-> > > > auto-builders give me results quickly (Linaro does pull from it and
-> > > > sends me results within the hour usually).
-> > > > 
-> > > > So does that help?  Ideally everyone would just use the quilt trees from
-> > > > stable-queue.git, but no everyone likes that, so the -rc git tree is
-> > > > there to make automated testing "easier".  If that works with your
-> > > > workflow, wonderful, feel free to use it.  If not, then go with the
-> > > > stable-quilt.git tree, or the tarballs on kernel.org.
-> > > 
-> > > I'll have to look into that, to see if that'd work. I have to admit that
-> > > having a git tree to point scripts at is rather convenient for
-> > > automation.
-> > > 
-> > > > And as for the SHA1 being in the emails, that doesn't make all that much
-> > > > sense as that SHA1 doesn't live very long.  When I create the trees
-> > > > locally, I instantly delete them after pushing them to kernel.org so I
-> > > > can't regenerate them or do anything with them.
-> > > 
-> > > Fair enough. I suppose the worst thing that could happen is that we may
-> > > fail to test a couple of commits occasionally. In the rare case where
-> > > this actually matters we'll likely end up reporting the failure for the
-> > > stable release, in which case it can be fixed in the next one.
-> > > 
-> > > > DOes that help explain things better?
-> > > 
-> > > Yes, makes a lot more sense now. Thanks for taking the time to explain
-> > > it. Do you want me to snapshot this and submit it as documentation
-> > > somewhere for later reference?
-> > 
-> > It probably should go somewhere, but as the number of people that do
-> > "test stable kernels in an automated way" is very low, so far I've been
-> > doing ok with a one-by-one explaination.  I guess if it's more obvious,
-> > more people would test, so sure, this should be cleaned up...
-> 
-> How about something like the below. It applies to the stable-queue.git
-> repository.
-> 
-> Thierry
-> 
-> --- >8 ---
-> From 4083add6ccb4a1c23edeba650170470bcc5d5205 Mon Sep 17 00:00:00 2001
-> From: Thierry Reding <treding@nvidia.com>
-> Date: Mon, 12 Aug 2019 10:58:35 +0200
-> Subject: [PATCH] Describe the stable-queue release process
-> 
-> Add a README file that describes how release candidates for stable
-> kernels are created and how users are expected to use them. This is
-> reworded from Greg's reply here:
-> 
-> 	https://lore.kernel.org/stable/20190809085253.GA25046@kroah.com/
-> ---
->  README | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 README
-> 
-> diff --git a/README b/README
-> new file mode 100644
-> index 000000000000..868469a73f68
-> --- /dev/null
-> +++ b/README
-> @@ -0,0 +1,31 @@
-> +This repository is the canonical source for patches that make up the stable
-> +kernel releases. It consists of a set of directories for each of the stable
-> +kernels, as well as a directory that contains a snapshot of the patches for
-> +each stable release.
-> +
-> +The patches for each release can be found along with a complete tarball of
-> +a release in the following location:
-> +
-> +	https://kernel.org/pub/linux/kernel/vX.Y/
-> +
-> +For each stable release candidate, a patch representing the diff of all the
-> +patches in the stable queue is uploaded here:
-> +
-> +	https://kernel.org/pub/linux/kernel/vX.Y/stable-review/
-> +
-> +As a convenience for people that want to test release candidates of stable
-> +releases, a branch of the kernel git tree is created containing all of the
-> +patches in the given stable queue. These branches are available in the
-> +following repository:
-> +
-> +	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> +
-> +A branch exists for each of the stable releases. Note, though, that these
-> +branches are recreated from scratch by applying the queued stable patches
-> +on top of the prior release. As a consequence, the branches are not fast-
-> +forward and can change after a release candidate has been announced. The
-> +contents of the branch may therefore not match exactly what was released
-> +as the release candidate, depending on when you fetch it. No tags are
-> +created to track individual release candidates. If you're interested in
-> +exact reproducibility of a stable release candidate, please use the patches
-> +from the location mentioned above.
-> -- 
 
-Sorry for the very long delay, cleaning out old emails...
+--mvpLiMfbWzRoNl4x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This looks really good, thanks for writing it up, I've now applied it to
-the stable-queue tree.
+On Fri, Jan 01, 2021 at 04:54:44PM +0000, Yangtao Li wrote:
+> We should use dev_pm_opp_put_clkname() to free opp table each time
+> dev_pm_opp_of_add_table() got error.
 
-greg k-h
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--mvpLiMfbWzRoNl4x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/zHxAACgkQJNaLcl1U
+h9AFlgf+L/LzmrwnlPEvAiV70bJdryKYNIVHhDTji4GNiw5bc3Fz7A6gxBdDd/Jn
+1qI57uFUYX5WyZ7Avao2gi+jL5EWVJgldsdHEHrlzqSUgK2x9xrgSV9u4JquS45Q
+seFNFtiOh4nAG2I+4V2JWPoQIRWTv4kXzhxOuwTRNZZuW6kHLzTJGUOtXpvSKWvp
+hMqDoVpnnWcyf6WKVAQCPiA8X3YX+UsIiWNVv1RCwnc8s7/g4i3sXQYnvslK/7L6
+vE8FX9MChPQrDewpSlZuH+TLRCMEki6IyGVTdeY+SbwrVQQNavBrAvEH4MGOefoh
+qVdPCyIrmbbWYXhYjynDSBxCC9VgJQ==
+=DvyL
+-----END PGP SIGNATURE-----
+
+--mvpLiMfbWzRoNl4x--
