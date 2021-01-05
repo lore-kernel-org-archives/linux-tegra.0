@@ -2,91 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C8C433E9
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACF9C433E9
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9497A22CBB
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 500CC22CBB
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbhAERET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jan 2021 12:04:19 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:36756 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729278AbhAERES (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jan 2021 12:04:18 -0500
-Received: by mail-wm1-f49.google.com with SMTP id y23so222993wmi.1;
-        Tue, 05 Jan 2021 09:04:01 -0800 (PST)
+        id S1728499AbhAERL5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jan 2021 12:11:57 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:40751 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbhAERL5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jan 2021 12:11:57 -0500
+Received: by mail-wr1-f48.google.com with SMTP id 91so36879706wrj.7;
+        Tue, 05 Jan 2021 09:11:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=n6KIIJ9J9dzDzP5DUFlGPnwQ7nEofIeMZEzRkiVgqQM=;
-        b=H4MV9vL3a8BjUFOmmmEkWiWStkDk21LRLsZBVpaTg1gguqdBcekChtrnYJYqUSgVz6
-         8tj9wpQ46Bo48x5yWdID1+YHCZw8LFu+gzfDi2+98R8KjNZDxTLlEUlxB9ZJKY5efMS/
-         fhuwG4fHoZLqFTAhRHmHejyi5oX4XPbT+MhmcxHsuJCMIWwg9Z5W/Z3MjzqL9g9iR3UL
-         pdulfqIrE0nbA6M5PwRVhsHQ11EXWj9tnA0O7F+YxTMJ9UXac9gKFF1pjo6tc7qW3BO/
-         fUVqtAo3YBGA92tHFmAaWXIZxbQWDNSmLZ7NiNnPAbnSaHRobeHfnd6bu9YV/2QZDVdT
-         WHJw==
-X-Gm-Message-State: AOAM5306suAhf129tcNqvF7hinbKn+n7+6onnM6CvRTQbjgkkRtrLofu
-        ztmlwOJgrwfjCg8dzrg7v4wER8qpYdVnDQ==
-X-Google-Smtp-Source: ABdhPJxIvlNTGgGlYnSrfmBt1kSEImmptJoCJfWMJoE92dAAzlqcVazWUcMl6D9BuAaEKCQtH3p/Sg==
-X-Received: by 2002:a7b:c4d5:: with SMTP id g21mr116341wmk.92.1609866215958;
-        Tue, 05 Jan 2021 09:03:35 -0800 (PST)
+        bh=VnFj1rkcJWvtzQFI6dETJ2tJwVrz2a5nNVgi09YeJXc=;
+        b=BGBqSKaeWeXo3Dc8mD/CH0CHrKflfbFzeWfE9TPNPjpijohQnUpIEuibf+xKRFMpNs
+         pbwFutUp7GomgmRT8G+sKFiSyF15wbZobs3khI0aJU8abZFkqkGDgxgXBhXi6K1J+cwf
+         YSzuHaBplD4EtLHiDxDGt0PsEkU1zjnlyyjN5ulBhSs1B1oLEQsVllwtHOdDgWcrg64o
+         /soa/DcMhWQhwUFRxnmd+s6sdGd5cocrdzmqDiJF4csgEhQ5OKuetLKtET8KPMreh0ZT
+         mt5D77cqmSm7e3XOrwvqblGuPayifgSSG51CcgVe6y8+bj6hOB2wWXmvrljR5u20bZwr
+         H6Pg==
+X-Gm-Message-State: AOAM5311dMQZS7WTcWWR5o/DBgY2/g33m+tLzpkFJ1fSgHfsnVYyqgRh
+        8w1ckSCVFGA9F292VxTCp1g=
+X-Google-Smtp-Source: ABdhPJzS2tnUNQsATQJa8H0cqybMnT7xhuS0Tkf5JkW0sqRFgMdJGyc8820QQRayohYw3nqJBZqzFA==
+X-Received: by 2002:adf:94c7:: with SMTP id 65mr492225wrr.423.1609866674773;
+        Tue, 05 Jan 2021 09:11:14 -0800 (PST)
 Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id v20sm119655wml.34.2021.01.05.09.03.34
+        by smtp.googlemail.com with ESMTPSA id n12sm632321wrg.76.2021.01.05.09.11.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 09:03:34 -0800 (PST)
-Date:   Tue, 5 Jan 2021 18:03:33 +0100
+        Tue, 05 Jan 2021 09:11:13 -0800 (PST)
+Date:   Tue, 5 Jan 2021 18:11:11 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v12 3/5] memory: tegra124: Support interconnect framework
-Message-ID: <20210105170333.GC20651@kozik-lap>
-References: <20201228154920.18846-1-digetx@gmail.com>
- <20201228154920.18846-4-digetx@gmail.com>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+Message-ID: <20210105171111.GC26301@kozik-lap>
+References: <20201217180638.22748-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201228154920.18846-4-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Dec 28, 2020 at 06:49:18PM +0300, Dmitry Osipenko wrote:
-> Now Internal and External memory controllers are memory interconnection
-> providers. This allows us to use interconnect API for tuning of memory
-> configuration. EMC driver now supports OPPs and DVFS.
+On Thu, Dec 17, 2020 at 09:05:50PM +0300, Dmitry Osipenko wrote:
+> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
+> power consumption and heating of the Tegra chips. Tegra SoC has multiple
+> hardware units which belong to a core power domain of the SoC and share
+> the core voltage. The voltage must be selected in accordance to a minimum
+> requirement of every core hardware unit.
 > 
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> Acked-by: Georgi Djakov <georgi.djakov@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/Kconfig        |   1 +
->  drivers/memory/tegra/tegra124-emc.c | 320 +++++++++++++++++++++++++++-
->  drivers/memory/tegra/tegra124.c     |  82 ++++++-
->  3 files changed, 391 insertions(+), 12 deletions(-)
+> The minimum core voltage requirement depends on:
+> 
+>   1. Clock enable state of a hardware unit.
+>   2. Clock frequency.
+>   3. Unit's internal idling/active state.
+> 
+> This series is tested on Acer A500 (T20), AC100 (T20), Nexus 7 (T30),
+> Ouya (T30), TK1 (T124) and some others. I also added voltage scaling to
+> the Ventana (T20) and Cardhu (T30) boards which are tested by NVIDIA's CI
+> farm. Tegra30 is now couple degrees cooler on Nexus 7 and stays cool on
+> Ouya (instead of becoming burning hot) while system is idling. It should
+> be possible to improve this further by implementing a more advanced power
+> management features for the kernel drivers.
+> 
+> The DVFS support is opt-in for all boards, meaning that older DTBs will
+> continue to work like they did it before this series. It should be possible
+> to easily add the core voltage scaling support for Tegra114+ SoCs based on
+> this grounding work later on, if anyone will want to implement it.
 
-Thanks, applied.
+The same comment as for your interconnect work: for sets touching
+multiple systems please mention the dependencies between patches in the
+cover letter. Not as a reply to such remark like I make here, but as a
+separate entry in the cover letter.
 
 Best regards,
 Krzysztof
-
