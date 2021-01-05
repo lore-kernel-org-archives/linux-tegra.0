@@ -2,107 +2,201 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACF9C433E9
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3A3C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 500CC22CBB
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB85722D3E
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 17:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbhAERL5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jan 2021 12:11:57 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:40751 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbhAERL5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jan 2021 12:11:57 -0500
-Received: by mail-wr1-f48.google.com with SMTP id 91so36879706wrj.7;
-        Tue, 05 Jan 2021 09:11:40 -0800 (PST)
+        id S1729419AbhAER00 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jan 2021 12:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56612 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728897AbhAER00 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jan 2021 12:26:26 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595B4C061574;
+        Tue,  5 Jan 2021 09:25:45 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id m12so203184lfo.7;
+        Tue, 05 Jan 2021 09:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JBAoqa/YYzs12J+EpEorHCfSUVTlayy6/Zn5pCrlnlU=;
+        b=Wb/I1FIvHaCKVnSm3BDf3HcY5UB5226ifzpFXz9Bc/IWoi9dhucPYq5+BXuRiOdqc4
+         asGGICYjXvJYO4V3MLhHUoau6UMT7bV0EfiRgndua/77F0JeDNc3VY9rIYshHAJ7unz4
+         C31/lUz7IPge2XmbIuFR27FIQwTb2mfvtIU0S6wr5D+g4lH9V0WDtIY40lLpzsSNfWyO
+         8DaMWjBO9hDOuIVfVQfkp48Wa1L11aYKS63Ac9++6XTVpaTOIUKF3nrlgqbEQfIya3p0
+         xTVpJMz6DpA7XeKG0O9bXutyh7wngd7Vj6MMO9SbM4JkjOKl6hh3Zwqlyvxq0YxYrjOs
+         /tnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VnFj1rkcJWvtzQFI6dETJ2tJwVrz2a5nNVgi09YeJXc=;
-        b=BGBqSKaeWeXo3Dc8mD/CH0CHrKflfbFzeWfE9TPNPjpijohQnUpIEuibf+xKRFMpNs
-         pbwFutUp7GomgmRT8G+sKFiSyF15wbZobs3khI0aJU8abZFkqkGDgxgXBhXi6K1J+cwf
-         YSzuHaBplD4EtLHiDxDGt0PsEkU1zjnlyyjN5ulBhSs1B1oLEQsVllwtHOdDgWcrg64o
-         /soa/DcMhWQhwUFRxnmd+s6sdGd5cocrdzmqDiJF4csgEhQ5OKuetLKtET8KPMreh0ZT
-         mt5D77cqmSm7e3XOrwvqblGuPayifgSSG51CcgVe6y8+bj6hOB2wWXmvrljR5u20bZwr
-         H6Pg==
-X-Gm-Message-State: AOAM5311dMQZS7WTcWWR5o/DBgY2/g33m+tLzpkFJ1fSgHfsnVYyqgRh
-        8w1ckSCVFGA9F292VxTCp1g=
-X-Google-Smtp-Source: ABdhPJzS2tnUNQsATQJa8H0cqybMnT7xhuS0Tkf5JkW0sqRFgMdJGyc8820QQRayohYw3nqJBZqzFA==
-X-Received: by 2002:adf:94c7:: with SMTP id 65mr492225wrr.423.1609866674773;
-        Tue, 05 Jan 2021 09:11:14 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id n12sm632321wrg.76.2021.01.05.09.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 09:11:13 -0800 (PST)
-Date:   Tue, 5 Jan 2021 18:11:11 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20210105171111.GC26301@kozik-lap>
-References: <20201217180638.22748-1-digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JBAoqa/YYzs12J+EpEorHCfSUVTlayy6/Zn5pCrlnlU=;
+        b=IyFvoyrIlUyY5lB5lY84TCf/3g8vfAeWW/jDr3jo1T80+zEUvYnzdLYtl7tOJOsx2l
+         +PjKs+kmPT+CfN2t3kJxrOhpNoiXGXcSXvCIjf1KiiJHExDIoVAJGvx09G71srI0Plys
+         j8WCB9xQUReTFMFxnG50UO/9RgpfTJtDbeVKUa6hNZKvlG3hdHKeBjtsHnjn329vf6/p
+         IvgzqZrMoWEWyy1SJakNXACu1+BJtrSC0msmpHAnK7dfDeAJ9BG3RpSPcibnj6IIQrce
+         NBsqszeHIk45bQ9nc8c02NK6Isir0A8DqJ77HvHKyaXfOuNBt4qOi2/z1TA8A4cAS6Gb
+         L7mw==
+X-Gm-Message-State: AOAM533jmzeAlBDQ+OggBHDAQH8u7271V3iBajLCzFPGEuo7qkF3VpHE
+        YWkS7sk4m68HtdkMKqy9qOdxhrCcnHU=
+X-Google-Smtp-Source: ABdhPJzCgGWL4WFl8jteD+gVSVMTu69LYnDY3u3fLr6D6g+bEwKLZ6cN/6UnPfwcAVUmV5xzuTS9Iw==
+X-Received: by 2002:ac2:4f88:: with SMTP id z8mr130061lfs.141.1609867543680;
+        Tue, 05 Jan 2021 09:25:43 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id 127sm29049lfk.102.2021.01.05.09.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Jan 2021 09:25:43 -0800 (PST)
+Subject: Re: [PATCH 2/4] cpuidle: Fix missing need_resched() check after
+ rcu_idle_enter()
+To:     Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>, stable@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20201222013712.15056-1-frederic@kernel.org>
+ <20201222013712.15056-3-frederic@kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e882be10-548a-8e90-9bc6-acea453a5241@gmail.com>
+Date:   Tue, 5 Jan 2021 20:25:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <20201222013712.15056-3-frederic@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 09:05:50PM +0300, Dmitry Osipenko wrote:
-> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
-> power consumption and heating of the Tegra chips. Tegra SoC has multiple
-> hardware units which belong to a core power domain of the SoC and share
-> the core voltage. The voltage must be selected in accordance to a minimum
-> requirement of every core hardware unit.
+22.12.2020 04:37, Frederic Weisbecker пишет:
+> Entering RCU idle mode may cause a deferred wake up of an RCU NOCB_GP
+> kthread (rcuog) to be serviced.
 > 
-> The minimum core voltage requirement depends on:
+> Usually a wake up happening while running the idle task is spotted in
+> one of the need_resched() checks carefully placed within the idle loop
+> that can break to the scheduler.
 > 
->   1. Clock enable state of a hardware unit.
->   2. Clock frequency.
->   3. Unit's internal idling/active state.
+> Unfortunately within cpuidle the call to rcu_idle_enter() is already
+> beyond the last generic need_resched() check. Some drivers may perform
+> their own checks like with mwait_idle_with_hints() but many others don't
+> and we may halt the CPU with a resched request unhandled, leaving the
+> task hanging.
 > 
-> This series is tested on Acer A500 (T20), AC100 (T20), Nexus 7 (T30),
-> Ouya (T30), TK1 (T124) and some others. I also added voltage scaling to
-> the Ventana (T20) and Cardhu (T30) boards which are tested by NVIDIA's CI
-> farm. Tegra30 is now couple degrees cooler on Nexus 7 and stays cool on
-> Ouya (instead of becoming burning hot) while system is idling. It should
-> be possible to improve this further by implementing a more advanced power
-> management features for the kernel drivers.
+> Fix this with performing a last minute need_resched() check after
+> calling rcu_idle_enter().
 > 
-> The DVFS support is opt-in for all boards, meaning that older DTBs will
-> continue to work like they did it before this series. It should be possible
-> to easily add the core voltage scaling support for Tegra114+ SoCs based on
-> this grounding work later on, if anyone will want to implement it.
+> Reported-by: Paul E. McKenney <paulmck@kernel.org>
+> Fixes: 1098582a0f6c (sched,idle,rcu: Push rcu_idle deeper into the idle path)
+> Cc: stable@vger.kernel.org
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  drivers/cpuidle/cpuidle.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+> index ef2ea1b12cd8..4cc1ba49ce05 100644
+> --- a/drivers/cpuidle/cpuidle.c
+> +++ b/drivers/cpuidle/cpuidle.c
+> @@ -134,8 +134,8 @@ int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+>  }
+>  
+>  #ifdef CONFIG_SUSPEND
+> -static void enter_s2idle_proper(struct cpuidle_driver *drv,
+> -				struct cpuidle_device *dev, int index)
+> +static int enter_s2idle_proper(struct cpuidle_driver *drv,
+> +			       struct cpuidle_device *dev, int index)
+>  {
+>  	ktime_t time_start, time_end;
+>  	struct cpuidle_state *target_state = &drv->states[index];
+> @@ -151,7 +151,14 @@ static void enter_s2idle_proper(struct cpuidle_driver *drv,
+>  	stop_critical_timings();
+>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+>  		rcu_idle_enter();
+> -	target_state->enter_s2idle(dev, drv, index);
+> +	/*
+> +	 * Last need_resched() check must come after rcu_idle_enter()
+> +	 * which may wake up RCU internal tasks.
+> +	 */
+> +	if (!need_resched())
+> +		target_state->enter_s2idle(dev, drv, index);
+> +	else
+> +		index = -EBUSY;
+>  	if (WARN_ON_ONCE(!irqs_disabled()))
+>  		local_irq_disable();
+>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+> @@ -159,10 +166,13 @@ static void enter_s2idle_proper(struct cpuidle_driver *drv,
+>  	tick_unfreeze();
+>  	start_critical_timings();
+>  
+> -	time_end = ns_to_ktime(local_clock());
+> +	if (index > 0) {
 
-The same comment as for your interconnect work: for sets touching
-multiple systems please mention the dependencies between patches in the
-cover letter. Not as a reply to such remark like I make here, but as a
-separate entry in the cover letter.
+index=0 is valid too
 
-Best regards,
-Krzysztof
+> +		time_end = ns_to_ktime(local_clock());
+> +		dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
+> +		dev->states_usage[index].s2idle_usage++;
+> +	}
+>  
+> -	dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
+> -	dev->states_usage[index].s2idle_usage++;
+> +	return index;
+>  }
+>  
+>  /**
+> @@ -184,7 +194,7 @@ int cpuidle_enter_s2idle(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+>  	 */
+>  	index = find_deepest_state(drv, dev, U64_MAX, 0, true);
+>  	if (index > 0) {
+> -		enter_s2idle_proper(drv, dev, index);
+> +		index = enter_s2idle_proper(drv, dev, index);
+>  		local_irq_enable();
+>  	}
+>  	return index;
+> @@ -234,7 +244,14 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+>  	stop_critical_timings();
+>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+>  		rcu_idle_enter();
+> -	entered_state = target_state->enter(dev, drv, index);
+> +	/*
+> +	 * Last need_resched() check must come after rcu_idle_enter()
+> +	 * which may wake up RCU internal tasks.
+> +	 */
+> +	if (!need_resched())
+> +		entered_state = target_state->enter(dev, drv, index);
+> +	else
+> +		entered_state = -EBUSY;
+>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
+>  		rcu_idle_exit();
+>  	start_critical_timings();
+> 
+
+This patch causes a hardlock on NVIDIA Tegra using today's linux-next.
+Disabling coupled idling state helps. Please fix thanks in advance.
