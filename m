@@ -2,219 +2,208 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76400C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 19:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4163EC433E9
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 20:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21CC122C7B
-	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 19:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1848F22D72
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 20:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbhAETSh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 5 Jan 2021 14:18:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727718AbhAETSh (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 5 Jan 2021 14:18:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3781222C7B;
-        Tue,  5 Jan 2021 19:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609874276;
-        bh=jize7m4/DZjYwfA/32qqlJW5+QRlsOgSyPCucBxn0NY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=KWO6wPdq/k+euIe0Ss07T6qoGZSsFIh9J4QMR5fIirJvlUzPY7xlYQCVL3pCPrQF1
-         dfEfrDBbV8ujXrrIeMWu8/AOHghzIFDKwX7goWrGJVd7jLyUx8kY+JD1QKZx9Axigd
-         R6Cj4z1Z0F/EKRkA0zwHyvXyj0rLF7PozwesylTdiXPCp08qSqu0r2xcFY6scocZPP
-         6VbAoqGbmvO6NeAVb9A28xQhb0Oq8kRleh+XznazIauk4V+hweRGOfv7HNgavXz6Pc
-         lzr/CPs8WWkUqa6k5xa8A5FwxpYI9KzlVqxVNgyTf8qEiVhph4+AYmDlktmTj17Arp
-         Wl42R80gxZhdg==
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id DF1583522A62; Tue,  5 Jan 2021 11:17:55 -0800 (PST)
-Date:   Tue, 5 Jan 2021 11:17:55 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Len Brown <lenb@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 2/4] cpuidle: Fix missing need_resched() check after
- rcu_idle_enter()
-Message-ID: <20210105191755.GH17086@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20201222013712.15056-1-frederic@kernel.org>
- <20201222013712.15056-3-frederic@kernel.org>
- <e882be10-548a-8e90-9bc6-acea453a5241@gmail.com>
- <8e9f1c38-ca84-6f5b-afdb-e70c07120332@gmail.com>
+        id S1731066AbhAEUAY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 5 Jan 2021 15:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728383AbhAEUAW (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 5 Jan 2021 15:00:22 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395B7C061793;
+        Tue,  5 Jan 2021 11:59:42 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id l11so1395884lfg.0;
+        Tue, 05 Jan 2021 11:59:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=w3y172ugq1A8+DfHjAatLK3oOwXsMQTLgHeUXaHnUCU=;
+        b=tBCWlgeIGyCHy0ayfKSb2hKeKiEoFzcgiAtzEEfHQ70m4TqSwGsZqX3Xnx4VJJnvbt
+         n0OP+1QygM+MIfVv5A7Ue/siY9qUR3JrwvKGHP2W3QTyiHhYMLJ6zdE5Ged8pj1n+RjK
+         Bb3lYAmgD2urDHD+97GcmaR9/cYTYUc3lvg36iKQWZkukTkf+xsDRudzvwcq2WaBpdlE
+         x0mE68kMXoFvZrIZWNkF8AnSu3p+LzNJVWTcYgez90NbFkWXHh7/NpKY2fPkuOEA7ZKB
+         w1aIj7VtjxtrBSQz6IaOTRs86szJNL8Gutp0tvolPIaAjingl3R6BlglT66Kk2USW+JA
+         gNew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=w3y172ugq1A8+DfHjAatLK3oOwXsMQTLgHeUXaHnUCU=;
+        b=Uf/I3Ff5O/z44dopGdFH8VxMEy+ps1lg2RbF8K2iK1xaV9636T3q/i+iYVyUz8Zyni
+         MsWVVGYV317Br2hWF051LgKpCrQQHDELvspCXtbGdThQCYNy+XtsQDRrPIJHCE5g2CUn
+         EagliKp6DMlD8opHoL7k/2bqsP9vcJr1BCDiroubtkJJaVmWaBeRsHN0Jm3ieCOWOift
+         6nSBgguqmLI1KVE3C4wzsqu/PCVOGNE41U6sbkHn1ZVoa1V25290yMCYinIrSgxKAUHF
+         zqz0xqumSuZ+BLm4+C5wp2VZPA+3fhGmqSIl5xmiwImFBlPW7nSMEWmyg0JG3x92wW04
+         LYaQ==
+X-Gm-Message-State: AOAM531POKnTvTZAfrh/y7+Go/Vz1dUBRj/f9Vi+j6ruoHUjl8lYn95s
+        mLb00hDHWBa72lE/jSkb+1QGupnzOYrpw4F6szU=
+X-Google-Smtp-Source: ABdhPJxefm71gCAP6d5oS17blFAwFnEd9spoEWiCV79bTaAMdk7JG8QCTPTs9zQB67DoNESWvQ4nEkOaTe/eEP/zqxs=
+X-Received: by 2002:a2e:8156:: with SMTP id t22mr509678ljg.263.1609876780665;
+ Tue, 05 Jan 2021 11:59:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e9f1c38-ca84-6f5b-afdb-e70c07120332@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20210103035540.23886-1-tiny.windzz@gmail.com> <CAGTfZH37=e4RgdR4xg-3s9-pRjqunHi2jfPQqQgVWkxW94GwOA@mail.gmail.com>
+In-Reply-To: <CAGTfZH37=e4RgdR4xg-3s9-pRjqunHi2jfPQqQgVWkxW94GwOA@mail.gmail.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Wed, 6 Jan 2021 04:59:04 +0900
+Message-ID: <CAGTfZH0kg=-MLrvEb+oHkaAuS3mV+o+Oia=wUCf=n2v7s1oXMg@mail.gmail.com>
+Subject: Re: [PATCH 28/31] PM / devfreq: imx8m-ddrc: convert to use
+ devm_pm_opp_* API
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, yuq825@gmail.com,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, robdclark@gmail.com,
+        sean@poorly.run, Rob Herring <robh@kernel.org>,
+        tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        mchehab@kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+        adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, Jonathan Marek <jonathan@marek.ca>,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, Guenter Roeck <groeck@chromium.org>,
+        varar@codeaurora.org, Matthias Kaehlcke <mka@chromium.org>,
+        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
+        natechancellor@gmail.com, Georgi Djakov <georgi.djakov@linaro.org>,
+        akashast@codeaurora.org, parashar@codeaurora.org,
+        Doug Anderson <dianders@chromium.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jan 05, 2021 at 09:10:30PM +0300, Dmitry Osipenko wrote:
-> 05.01.2021 20:25, Dmitry Osipenko пишет:
-> > 22.12.2020 04:37, Frederic Weisbecker пишет:
-> >> Entering RCU idle mode may cause a deferred wake up of an RCU NOCB_GP
-> >> kthread (rcuog) to be serviced.
-> >>
-> >> Usually a wake up happening while running the idle task is spotted in
-> >> one of the need_resched() checks carefully placed within the idle loop
-> >> that can break to the scheduler.
-> >>
-> >> Unfortunately within cpuidle the call to rcu_idle_enter() is already
-> >> beyond the last generic need_resched() check. Some drivers may perform
-> >> their own checks like with mwait_idle_with_hints() but many others don't
-> >> and we may halt the CPU with a resched request unhandled, leaving the
-> >> task hanging.
-> >>
-> >> Fix this with performing a last minute need_resched() check after
-> >> calling rcu_idle_enter().
-> >>
-> >> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> >> Fixes: 1098582a0f6c (sched,idle,rcu: Push rcu_idle deeper into the idle path)
-> >> Cc: stable@vger.kernel.org
-> >> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> Cc: Ingo Molnar <mingo@kernel.org>
-> >> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> >> ---
-> >>  drivers/cpuidle/cpuidle.c | 33 +++++++++++++++++++++++++--------
-> >>  1 file changed, 25 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> >> index ef2ea1b12cd8..4cc1ba49ce05 100644
-> >> --- a/drivers/cpuidle/cpuidle.c
-> >> +++ b/drivers/cpuidle/cpuidle.c
-> >> @@ -134,8 +134,8 @@ int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> >>  }
-> >>  
-> >>  #ifdef CONFIG_SUSPEND
-> >> -static void enter_s2idle_proper(struct cpuidle_driver *drv,
-> >> -				struct cpuidle_device *dev, int index)
-> >> +static int enter_s2idle_proper(struct cpuidle_driver *drv,
-> >> +			       struct cpuidle_device *dev, int index)
-> >>  {
-> >>  	ktime_t time_start, time_end;
-> >>  	struct cpuidle_state *target_state = &drv->states[index];
-> >> @@ -151,7 +151,14 @@ static void enter_s2idle_proper(struct cpuidle_driver *drv,
-> >>  	stop_critical_timings();
-> >>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
-> >>  		rcu_idle_enter();
-> >> -	target_state->enter_s2idle(dev, drv, index);
-> >> +	/*
-> >> +	 * Last need_resched() check must come after rcu_idle_enter()
-> >> +	 * which may wake up RCU internal tasks.
-> >> +	 */
-> >> +	if (!need_resched())
-> >> +		target_state->enter_s2idle(dev, drv, index);
-> >> +	else
-> >> +		index = -EBUSY;
-> >>  	if (WARN_ON_ONCE(!irqs_disabled()))
-> >>  		local_irq_disable();
-> >>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
-> >> @@ -159,10 +166,13 @@ static void enter_s2idle_proper(struct cpuidle_driver *drv,
-> >>  	tick_unfreeze();
-> >>  	start_critical_timings();
-> >>  
-> >> -	time_end = ns_to_ktime(local_clock());
-> >> +	if (index > 0) {
-> > 
-> > index=0 is valid too
-> > 
-> >> +		time_end = ns_to_ktime(local_clock());
-> >> +		dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
-> >> +		dev->states_usage[index].s2idle_usage++;
-> >> +	}
-> >>  
-> >> -	dev->states_usage[index].s2idle_time += ktime_us_delta(time_end, time_start);
-> >> -	dev->states_usage[index].s2idle_usage++;
-> >> +	return index;
-> >>  }
-> >>  
-> >>  /**
-> >> @@ -184,7 +194,7 @@ int cpuidle_enter_s2idle(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-> >>  	 */
-> >>  	index = find_deepest_state(drv, dev, U64_MAX, 0, true);
-> >>  	if (index > 0) {
-> >> -		enter_s2idle_proper(drv, dev, index);
-> >> +		index = enter_s2idle_proper(drv, dev, index);
-> >>  		local_irq_enable();
-> >>  	}
-> >>  	return index;
-> >> @@ -234,7 +244,14 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
-> >>  	stop_critical_timings();
-> >>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
-> >>  		rcu_idle_enter();
-> >> -	entered_state = target_state->enter(dev, drv, index);
-> >> +	/*
-> >> +	 * Last need_resched() check must come after rcu_idle_enter()
-> >> +	 * which may wake up RCU internal tasks.
-> >> +	 */
-> >> +	if (!need_resched())
-> >> +		entered_state = target_state->enter(dev, drv, index);
-> >> +	else
-> >> +		entered_state = -EBUSY;
-> >>  	if (!(target_state->flags & CPUIDLE_FLAG_RCU_IDLE))
-> >>  		rcu_idle_exit();
-> >>  	start_critical_timings();
-> >>
-> > 
-> > This patch causes a hardlock on NVIDIA Tegra using today's linux-next.
-> > Disabling coupled idling state helps. Please fix thanks in advance.
-> 
-> This isn't a proper fix, but it works:
+Hi Yangtao,
 
-There is some ongoing discussion about what an overall proper fix might
-look like, so in the meantime I am folding you changes below into
-Frederic's original.  ;-)
+On Tue, Jan 5, 2021 at 1:13 PM Chanwoo Choi <cwchoi00@gmail.com> wrote:
+>
+> On Sun, Jan 3, 2021 at 12:58 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> >
+> > Use devm_pm_opp_* API to simplify code.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  drivers/devfreq/imx8m-ddrc.c | 15 ++-------------
+> >  1 file changed, 2 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
+> > index bc82d3653bff..9383d6e5538b 100644
+> > --- a/drivers/devfreq/imx8m-ddrc.c
+> > +++ b/drivers/devfreq/imx8m-ddrc.c
+> > @@ -370,11 +370,6 @@ static int imx8m_ddrc_check_opps(struct device *dev)
+> >         return 0;
+> >  }
+> >
+> > -static void imx8m_ddrc_exit(struct device *dev)
+> > -{
+> > -       dev_pm_opp_of_remove_table(dev);
+> > -}
+> > -
+> >  static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev = &pdev->dev;
+> > @@ -419,7 +414,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >                 return ret;
+> >         }
+> >
+> > -       ret = dev_pm_opp_of_add_table(dev);
+> > +       ret = devm_pm_opp_of_add_table(dev);
+> >         if (ret < 0) {
+> >                 dev_err(dev, "failed to get OPP table\n");
+> >                 return ret;
+> > @@ -427,12 +422,11 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >
+> >         ret = imx8m_ddrc_check_opps(dev);
+> >         if (ret < 0)
+> > -               goto err;
+> > +               return ret;
+> >
+> >         priv->profile.polling_ms = 1000;
+> >         priv->profile.target = imx8m_ddrc_target;
+> >         priv->profile.get_dev_status = imx8m_ddrc_get_dev_status;
+> > -       priv->profile.exit = imx8m_ddrc_exit;
+> >         priv->profile.get_cur_freq = imx8m_ddrc_get_cur_freq;
+> >         priv->profile.initial_freq = clk_get_rate(priv->dram_core);
+> >
+> > @@ -441,13 +435,8 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >         if (IS_ERR(priv->devfreq)) {
+> >                 ret = PTR_ERR(priv->devfreq);
+> >                 dev_err(dev, "failed to add devfreq device: %d\n", ret);
+> > -               goto err;
+> >         }
+> >
+> > -       return 0;
+> > -
+> > -err:
+> > -       dev_pm_opp_of_remove_table(dev);
+> >         return ret;
+>
+> devm_devfreq_add_device() doesn't return any integer value.
+> Even if devm_devfreq_add_device() returns the right devfreq instance,
+> the 'ret' value  is not the return value of  devm_devfreq_add_device().
+>
+> On this patch, 'ret' value of 'return ret' is from imx8m_ddrc_check_opps().
+> Surely, it is well working with this modification. But, it is not code
+> for exception handling.
+> So, we need to remain the following codes:
+>
+>     return 0;
+> err:
+>     return ret;
+>
 
-							Thanx, Paul
+'err' is not necessary. You better to edit it as following:
 
-> diff --git a/drivers/cpuidle/cpuidle-tegra.c
-> b/drivers/cpuidle/cpuidle-tegra.c
-> index 191966dc8d02..ecc5d9b31553 100644
-> --- a/drivers/cpuidle/cpuidle-tegra.c
-> +++ b/drivers/cpuidle/cpuidle-tegra.c
-> @@ -148,7 +148,7 @@ static int tegra_cpuidle_c7_enter(void)
-> 
->  static int tegra_cpuidle_coupled_barrier(struct cpuidle_device *dev)
->  {
-> -	if (tegra_pending_sgi()) {
-> +	if (tegra_pending_sgi() || need_resched()) {
->  		/*
->  		 * CPU got local interrupt that will be lost after GIC's
->  		 * shutdown because GIC driver doesn't save/restore the
-> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> index 4cc1ba49ce05..2bc52ccc339b 100644
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@ -248,7 +248,7 @@ int cpuidle_enter_state(struct cpuidle_device *dev,
-> struct cpuidle_driver *drv,
->  	 * Last need_resched() check must come after rcu_idle_enter()
->  	 * which may wake up RCU internal tasks.
->  	 */
-> -	if (!need_resched())
-> +	if ((target_state->flags & CPUIDLE_FLAG_COUPLED) || !need_resched())
->  		entered_state = target_state->enter(dev, drv, index);
->  	else
->  		entered_state = -EBUSY;
-> 
+if (IS_ERR(priv->devfreq)) {
+    dev_err(dev, "failed to add devfreq device: %d\n", ret);
+    return PTR_ERR(priv->devfreq);
+}
+
+return 0;
+
+-- 
+Best Regards,
+Chanwoo Choi
