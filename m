@@ -2,93 +2,200 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDCAC43381
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 21:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE863C433E9
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 03:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2D2B20776
-	for <linux-tegra@archiver.kernel.org>; Mon,  4 Jan 2021 21:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD1942256F
+	for <linux-tegra@archiver.kernel.org>; Tue,  5 Jan 2021 03:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbhADVKS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 4 Jan 2021 16:10:18 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4601 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbhADVKR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 16:10:17 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff384110000>; Mon, 04 Jan 2021 13:09:37 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Jan
- 2021 21:09:37 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 4 Jan 2021 21:09:37 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.19 00/35] 4.19.165-rc1 review
-In-Reply-To: <20210104155703.375788488@linuxfoundation.org>
-References: <20210104155703.375788488@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1728395AbhAEDsg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 4 Jan 2021 22:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbhAEDsf (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 4 Jan 2021 22:48:35 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564FBC061794;
+        Mon,  4 Jan 2021 19:47:54 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id m25so69441471lfc.11;
+        Mon, 04 Jan 2021 19:47:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=h3dbOszFbt6OQaWtwfejouXLhmx5RSkLak0dmAl0EsE=;
+        b=X2HIPa+2nYHaUq4baszZeg/1lPwfRlrkiazbu8bWAZ/4KVDEZZ8UJLHkCiHzu5BoPv
+         +d1r6dGtLI/e5iSeLti/uFDhKLFXF3tY06Jdc3OuTB+60jcWy7nbxvR/X/sbuy5Z2y0a
+         zy9Qm2wdvLKFzbzpL5PwnIXh21X/23EVG7mYWxKtxfix082rS5faNNu/pQ57no+v4JD+
+         BaQRjUTLWwn1bDT7po749l/CDI6APyFbpmhm4QydCPb2EdRw7tEUospHsYRRgYR6FHym
+         oOmjm0bgU9pTqMTv2DoYi3myavoG+000acurgbb4dfthX9S8jl7kSgIjjgmMtRlfqb7V
+         Jf3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=h3dbOszFbt6OQaWtwfejouXLhmx5RSkLak0dmAl0EsE=;
+        b=dd7G3Lb1vaKfHk24dyZxF8NzW1w9V2tfzyOCOJtHql4Jdc7Ln21wRiYgpe62h4dMlh
+         HcECjkvf5cmv6Qg/AoIxslXpsDYiNj1rVcy/AGwXEfCk3eGS5UgQPOckRhfr1rxVA7y0
+         NTVI6q1N4eisgYlqmdfDanjvhTaomlSLM0B7sMB4ZdZMbk+74bb3j0L0/hD0yvnMtf/L
+         mKfFtneEN79Y0LYpSA9IyJAE89XsojR30EPH15BbLTLgKAZ44TZIRtwltSFz6H4OO7Vc
+         SqLixdOO/BIR4yE60fjImPZuOw68glbRU6PBStAoVc7Yrvdei+Qq2WCvI/gMuqOALsx2
+         E6Gw==
+X-Gm-Message-State: AOAM530zwnG8HMQmoTyLufFQhzAb9NS8gQL18hxPbRPhdLAXwVjYJGgQ
+        TrGGF5oXeK8DSTdRJQTs6Zm3OKyOizJXfhkQAjg=
+X-Google-Smtp-Source: ABdhPJycvDA2y0kJZnyrX/YoD11eP5GdGX7X4MHU9HChkkRYsRnd6ay+qNKHQmx0en+WU3/yCpN8x9PBPa2srmvjcdU=
+X-Received: by 2002:a19:6b0d:: with SMTP id d13mr32595793lfa.63.1609818472823;
+ Mon, 04 Jan 2021 19:47:52 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <702abb434946478fad437cfb0532303f@HQMAIL107.nvidia.com>
-Date:   Mon, 4 Jan 2021 21:09:37 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1609794577; bh=3NKzdzE9jSIbC32dmLsvsJ6Rbka/mGyDy5GlgJ4dz1s=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=IWOjVPBbfTKQ5A21AGwrF4yIxgbwzUHUSGYqBjZVdjHNbbDYkbYPzQ+U+8Cq9Sz/y
-         BQeKUzn62OwzotzosbK3z01eDO01DRyOfwXWOwThg4C6PA/tHaj1b0kgXlctPR/Tts
-         C3Sz69xtueixgIJomYn3OPx1u+3+gpqk8Z4nxu2bsENi575xSCom03qzSscX6Chhiv
-         l9Ev8q2/vKE9bevHeZ9Ce/mr7aDbkx77yub5FKwliHP7N3xfgg5XbrIT4AR/wnab5H
-         2Y4CBDw3gBn0jRyHoH0JfoFVsF8Ev68ewJ1icG0Is1D/VeMZhNTtJwFEWHMOFDy/cT
-         cE7Jf5t8czb1A==
+References: <20210103035445.23696-1-tiny.windzz@gmail.com>
+In-Reply-To: <20210103035445.23696-1-tiny.windzz@gmail.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Tue, 5 Jan 2021 12:47:16 +0900
+Message-ID: <CAGTfZH0sLh=8XhBVOzUr9qO2w_=jp-OuWoh5vgNpnmXq6EzYHA@mail.gmail.com>
+Subject: Re: [PATCH 26/31] PM / devfreq: tegra30: convert to use devm_pm_opp_* API
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, yuq825@gmail.com,
+        David Airlie <airlied@linux.ie>, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run,
+        Rob Herring <robh@kernel.org>, tomeu.vizoso@collabora.com,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        stanimir.varbanov@linaro.org, agross@kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        mchehab@kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+        adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, Guenter Roeck <groeck@chromium.org>,
+        varar@codeaurora.org, Matthias Kaehlcke <mka@chromium.org>,
+        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
+        natechancellor@gmail.com, Georgi Djakov <georgi.djakov@linaro.org>,
+        akashast@codeaurora.org, parashar@codeaurora.org,
+        Doug Anderson <dianders@chromium.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 04 Jan 2021 16:57:03 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.165 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 06 Jan 2021 15:56:52 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.165-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi,
 
-All tests passing for Tegra ...
+On Sun, Jan 3, 2021 at 12:57 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> Use devm_pm_opp_* API to simplify code, and remove opp_table
+> from tegra_devfreq.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/devfreq/tegra30-devfreq.c | 21 +++++++--------------
+>  1 file changed, 7 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 117cad7968ab..4984cb91e9ea 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -178,7 +178,6 @@ struct tegra_devfreq_soc_data {
+>
+>  struct tegra_devfreq {
+>         struct devfreq          *devfreq;
+> -       struct opp_table        *opp_table;
+>
+>         struct reset_control    *reset;
+>         struct clk              *clock;
+> @@ -794,6 +793,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>         struct tegra_devfreq_device *dev;
+>         struct tegra_devfreq *tegra;
+>         struct devfreq *devfreq;
+> +       struct opp_tabl *opp_table;
 
-Test results for stable-v4.19:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
+opp_tabl -> opp_table. It will make the build error. Please do build
+test at least.
 
-Linux version:	4.19.165-rc1-g32d98dff91da
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+>         unsigned int i;
+>         long rate;
+>         int err;
+> @@ -841,25 +841,25 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>                 return err;
+>         }
+>
+> -       tegra->opp_table = dev_pm_opp_set_supported_hw(&pdev->dev,
+> -                                                      &hw_version, 1);
+> -       err = PTR_ERR_OR_ZERO(tegra->opp_table);
+> +       opp_table = devm_pm_opp_set_supported_hw(&pdev->dev,
+> +                                                &hw_version, 1);
+> +       err = PTR_ERR_OR_ZERO(opp_table);
+>         if (err) {
+>                 dev_err(&pdev->dev, "Failed to set supported HW: %d\n", err);
+>                 return err;
+>         }
+>
+> -       err = dev_pm_opp_of_add_table(&pdev->dev);
+> +       err = devm_pm_opp_of_add_table(&pdev->dev);
+>         if (err) {
+>                 dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+> -               goto put_hw;
+> +               return err;
+>         }
+>
+>         err = clk_prepare_enable(tegra->clock);
+>         if (err) {
+>                 dev_err(&pdev->dev,
+>                         "Failed to prepare and enable ACTMON clock\n");
+> -               goto remove_table;
+> +               return err;
+>         }
+>
+>         err = reset_control_reset(tegra->reset);
+> @@ -917,10 +917,6 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>         reset_control_reset(tegra->reset);
+>  disable_clk:
+>         clk_disable_unprepare(tegra->clock);
+> -remove_table:
+> -       dev_pm_opp_of_remove_table(&pdev->dev);
+> -put_hw:
+> -       dev_pm_opp_put_supported_hw(tegra->opp_table);
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+You might remove the 'devm_pm_opp_remove_all_dynamic(&pdev->dev)
+under ' remove_opp' goto statement.kkkk
 
-Jon
+
+(snip)
+-- 
+Best Regards,
+Chanwoo Choi
