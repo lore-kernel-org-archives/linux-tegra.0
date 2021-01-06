@@ -2,99 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7B0C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 15:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CB0C433E6
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 18:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B18182311D
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 15:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA11923139
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 18:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbhAFPAZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jan 2021 10:00:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbhAFPAY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 6 Jan 2021 10:00:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F05FC22B45;
-        Wed,  6 Jan 2021 14:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609945183;
-        bh=9N8TfJsEA7J2oir+XxY6pt6ih2/gDFppXOSBqjRFQOs=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=LQs3UkTF5XQpfKOdKGHBK3cwfbvmsE0Ls7v4mQkI4g4TSuZFkqTfWOpneqE5DLMDJ
-         BrKEH8mGCJkLuIwswM8W5kkgRZikYv8MOWSPASgB4CkKd1wtRtRLv6X3FpOEwLNz97
-         h8FtG0cbhqHEHKTVvU0cecybvehPnYzC1VwsEiIsh7Q7UFsGDO1xn7PJv8ffJES8Mo
-         D3S4PGchojs+uFaWGgdJ9kigr54BsB6cymwSPv3NyaynRkXQTZ2qqDpYzym6zKke15
-         yD2qaCWdx52rKAQEQnfZKpSim0y1eCmpNilRiAZQV+B9JO2MFn3xi5PCfipmJePwJO
-         Yusqz6Qij+OvA==
-From:   Mark Brown <broonie@kernel.org>
-To:     thierry.reding@gmail.com, lukas@wunner.de, robh+dt@kernel.org,
-        jonathanh@nvidia.com, Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     devicetree@vger.kernel.org, tudor.ambarus@microchip.com,
-        bbrezillon@kernel.org, linux-tegra@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        p.yadav@ti.com
-In-Reply-To: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
-References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
-Subject: Re: (subset) [PATCH v5 0/9] Add Tegra Quad SPI driver
-Message-Id: <160994515510.52247.6457410235851345560.b4-ty@kernel.org>
-Date:   Wed, 06 Jan 2021 14:59:15 +0000
+        id S1726915AbhAFSSa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jan 2021 13:18:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbhAFSS2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 6 Jan 2021 13:18:28 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EDC1C061575;
+        Wed,  6 Jan 2021 10:17:48 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id b26so8604119lff.9;
+        Wed, 06 Jan 2021 10:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HYWLWTmJNILkmHihZoZqMnAVOHO5Z+JPD1TRn5rR9L8=;
+        b=GYiaiaGEtT4BPqTlK0KXvA/lu341yArrXOfwIqhkoVUJgJS2obaAQT2iqcnRMLlEj2
+         86dYKLxag/6o7FFGTh1Vt5TIkPdSdG+zPtevOxa7j54gud87De0pnPPNNbmeyzFcKIe1
+         4YIh5yiiCYo2x6drTLogG5BS1FtgZ7nId5Q/AwMgojxtj5XPEyq3STR1fkLiu+XesnUc
+         QU5ia5w8dG/71l1Z55HnJQmRQInADBb1sNl7x6aeuUT/y6q1BPYSDCvgpmBhWeM+Z+mh
+         AXVxDGWhMUV9j3VOAFcsUFiIntWY+dOOFoXQpYyyfUUEdyjbQguMaGGbtpj5p1vrw984
+         ODXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HYWLWTmJNILkmHihZoZqMnAVOHO5Z+JPD1TRn5rR9L8=;
+        b=gUHBZ8U2efQmGA2O1aY6esLBhZl22SEnXW8Fg6IvFjlC6YPcI6t4svX7qrsllTpKY2
+         qnqBhZHo9dzi7Ik0Na8bh5zb9ngAq7jr9blVbuTAFs/XjqypBbdvPyMehnhMrUvuYjc2
+         7w+AKcDQhk69mFYiwD7Eixso8A68MAROJ4XwUC99aO7jA1eApLZOGYODtcvsU6grjkUX
+         H5gfZmIvNCgFu7rq9TL2ay0hnjzMQ+M/idp4lEwYrYwlpAuUe6Y1zpD312uSDwdQWg2p
+         VZnSUJUCEgj+QJCly0ojIyZeywW5CFSp29LVpDN6Rg6fKmmHf3tSGqcRl0ePd8BhhuQ6
+         eiyg==
+X-Gm-Message-State: AOAM531UAHmQL5aOHOBQbGkx5C0zo0uWUwMB5HTWi2i0fvlFY/fbiVkB
+        NqZO05oBgz0pc6OV8rZGinuEvNvNm+A=
+X-Google-Smtp-Source: ABdhPJyPxFIsokqex0tU1bZCyssoNhQcXmbMg7xmBfVSnpJHRzc1xaOuhg1qqDeBQDzHj7VlWoc+4Q==
+X-Received: by 2002:a19:2358:: with SMTP id j85mr2490159lfj.264.1609957066448;
+        Wed, 06 Jan 2021 10:17:46 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id q7sm556364ljp.77.2021.01.06.10.17.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jan 2021 10:17:45 -0800 (PST)
+Subject: Re: [PATCH 26/31] PM / devfreq: tegra30: convert to use devm_pm_opp_*
+ API
+To:     cwchoi00@gmail.com, Yangtao Li <tiny.windzz@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, yuq825@gmail.com,
+        David Airlie <airlied@linux.ie>, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run,
+        Rob Herring <robh@kernel.org>, tomeu.vizoso@collabora.com,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        stanimir.varbanov@linaro.org, agross@kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        mchehab@kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+        adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, Guenter Roeck <groeck@chromium.org>,
+        varar@codeaurora.org, Matthias Kaehlcke <mka@chromium.org>,
+        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
+        natechancellor@gmail.com, Georgi Djakov <georgi.djakov@linaro.org>,
+        akashast@codeaurora.org, parashar@codeaurora.org,
+        Doug Anderson <dianders@chromium.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org
+References: <20210103035445.23696-1-tiny.windzz@gmail.com>
+ <CAGTfZH0sLh=8XhBVOzUr9qO2w_=jp-OuWoh5vgNpnmXq6EzYHA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e49d60f3-f753-6679-7148-f7ea72973197@gmail.com>
+Date:   Wed, 6 Jan 2021 21:17:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAGTfZH0sLh=8XhBVOzUr9qO2w_=jp-OuWoh5vgNpnmXq6EzYHA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 21 Dec 2020 13:17:30 -0800, Sowjanya Komatineni wrote:
-> This series adds Tegra210, Tegra186, and Tegra194 Quad SPI driver and
-> enables Quad SPI on Jetson Nano and Jetson Xavier NX.
-> 
-> QSPI controller is available on Tegra210, Tegra186 and Tegra194.
-> 
-> Tegra186 and Tegra194 has additional feature of combined sequence mode
-> where command, address and data can all be transferred in a single transfer.
-> Combined sequence mode is useful only when using DMA mode transfer.
-> 
-> [...]
+05.01.2021 06:47, Chanwoo Choi пишет:
+> You might remove the 'devm_pm_opp_remove_all_dynamic(&pdev->dev)
+> under ' remove_opp' goto statement.kkkk
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/9] dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
-      commit: b499779761278d6f5339daa230938211d98861ef
-[2/9] dt-bindings: spi: Add Tegra Quad SPI device tree binding
-      commit: 9684752e5fe3989b45f686a4e0202a683038be4a
-[3/9] MAINTAINERS: Add Tegra Quad SPI driver section
-      commit: e5c92bb924ce4bda9c4312b8596cf62ad7b07e2e
-[4/9] spi: tegra210-quad: Add support for Tegra210 QSPI controller
-      commit: 921fc1838fb036f690b8ba52e6a6d3644b475cbb
-[5/9] spi: spi-mem: Mark dummy transfers by setting dummy_data bit
-      commit: 98621ed011c57ba6e52e01a5982b221c9943b6d9
-[6/9] spi: tegra210-quad: Add support for hardware dummy cycles transfer
-      commit: 6a8a8b51703c69fa2d6adbbcbf731ce9b991c696
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Good catch, thank you.
