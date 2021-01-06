@@ -2,85 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F079C4332E
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 13:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7B0C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 15:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 348742311B
-	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 13:46:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18182311D
+	for <linux-tegra@archiver.kernel.org>; Wed,  6 Jan 2021 15:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbhAFNpj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 6 Jan 2021 08:45:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49550 "EHLO mail.kernel.org"
+        id S1726165AbhAFPAZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 6 Jan 2021 10:00:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727191AbhAFNpj (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 6 Jan 2021 08:45:39 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5FC0A2311B;
-        Wed,  6 Jan 2021 13:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1609940692;
-        bh=jx+Th/540TzI1Dt37+nfh2PkC6QzOMvUCfOQD4tOcEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v7C429kYY1TMIKyPA1xDYuW4eqZw22sN2nbM8QxsKmBu2DBO3kRWP9X1dTNCbvC1w
-         reHktTxA069tgPGMis8/iH/Nv3egcmm7rMha8sB2pM68K+IZ1owjNKGCpPBOpsH6y5
-         pgh1JfaLxYXSbw2jpy7rWJUlIiKaO8AwINujwytY=
-Date:   Wed, 6 Jan 2021 14:46:12 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/29] 4.19.165-rc2 review
-Message-ID: <X/W/JObJgFTb/OXP@kroah.com>
-References: <20210105090818.518271884@linuxfoundation.org>
- <edfc33725b9c477b9999d74f3004fcbc@HQMAIL105.nvidia.com>
+        id S1725800AbhAFPAY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 6 Jan 2021 10:00:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F05FC22B45;
+        Wed,  6 Jan 2021 14:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609945183;
+        bh=9N8TfJsEA7J2oir+XxY6pt6ih2/gDFppXOSBqjRFQOs=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=LQs3UkTF5XQpfKOdKGHBK3cwfbvmsE0Ls7v4mQkI4g4TSuZFkqTfWOpneqE5DLMDJ
+         BrKEH8mGCJkLuIwswM8W5kkgRZikYv8MOWSPASgB4CkKd1wtRtRLv6X3FpOEwLNz97
+         h8FtG0cbhqHEHKTVvU0cecybvehPnYzC1VwsEiIsh7Q7UFsGDO1xn7PJv8ffJES8Mo
+         D3S4PGchojs+uFaWGgdJ9kigr54BsB6cymwSPv3NyaynRkXQTZ2qqDpYzym6zKke15
+         yD2qaCWdx52rKAQEQnfZKpSim0y1eCmpNilRiAZQV+B9JO2MFn3xi5PCfipmJePwJO
+         Yusqz6Qij+OvA==
+From:   Mark Brown <broonie@kernel.org>
+To:     thierry.reding@gmail.com, lukas@wunner.de, robh+dt@kernel.org,
+        jonathanh@nvidia.com, Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     devicetree@vger.kernel.org, tudor.ambarus@microchip.com,
+        bbrezillon@kernel.org, linux-tegra@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        p.yadav@ti.com
+In-Reply-To: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
+References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
+Subject: Re: (subset) [PATCH v5 0/9] Add Tegra Quad SPI driver
+Message-Id: <160994515510.52247.6457410235851345560.b4-ty@kernel.org>
+Date:   Wed, 06 Jan 2021 14:59:15 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edfc33725b9c477b9999d74f3004fcbc@HQMAIL105.nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jan 05, 2021 at 11:08:28AM +0000, Jon Hunter wrote:
-> On Tue, 05 Jan 2021 10:28:46 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.165 release.
-> > There are 29 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 07 Jan 2021 09:08:03 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.165-rc2.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Mon, 21 Dec 2020 13:17:30 -0800, Sowjanya Komatineni wrote:
+> This series adds Tegra210, Tegra186, and Tegra194 Quad SPI driver and
+> enables Quad SPI on Jetson Nano and Jetson Xavier NX.
 > 
-> All tests passing for Tegra ...
+> QSPI controller is available on Tegra210, Tegra186 and Tegra194.
 > 
-> Test results for stable-v4.19:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
+> Tegra186 and Tegra194 has additional feature of combined sequence mode
+> where command, address and data can all be transferred in a single transfer.
+> Combined sequence mode is useful only when using DMA mode transfer.
 > 
-> Linux version:	4.19.165-rc2-g40a2b34effd3
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> [...]
 
-Thanks for testing them all.
+Applied to
 
-greg k-h
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/9] dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
+      commit: b499779761278d6f5339daa230938211d98861ef
+[2/9] dt-bindings: spi: Add Tegra Quad SPI device tree binding
+      commit: 9684752e5fe3989b45f686a4e0202a683038be4a
+[3/9] MAINTAINERS: Add Tegra Quad SPI driver section
+      commit: e5c92bb924ce4bda9c4312b8596cf62ad7b07e2e
+[4/9] spi: tegra210-quad: Add support for Tegra210 QSPI controller
+      commit: 921fc1838fb036f690b8ba52e6a6d3644b475cbb
+[5/9] spi: spi-mem: Mark dummy transfers by setting dummy_data bit
+      commit: 98621ed011c57ba6e52e01a5982b221c9943b6d9
+[6/9] spi: tegra210-quad: Add support for hardware dummy cycles transfer
+      commit: 6a8a8b51703c69fa2d6adbbcbf731ce9b991c696
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
