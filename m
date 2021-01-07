@@ -2,107 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C76AC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20485C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEF892333D
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB91217A0
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbhAGJst (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jan 2021 04:48:49 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:7024 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbhAGJss (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 04:48:48 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff6d8d80001>; Thu, 07 Jan 2021 01:48:08 -0800
-Received: from [10.26.72.150] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 7 Jan
- 2021 09:48:06 +0000
-Subject: Re: [PATCH] arm64: tegra: Add power-domain for Tegra210 HDA
-To:     Sameer Pujar <spujar@nvidia.com>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <1609995970-12256-1-git-send-email-spujar@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1dfc080c-f587-d19f-65c9-b3220b3202a0@nvidia.com>
-Date:   Thu, 7 Jan 2021 09:48:04 +0000
+        id S1727149AbhAGJxV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jan 2021 04:53:21 -0500
+Received: from mga09.intel.com ([134.134.136.24]:47845 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727137AbhAGJxV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 7 Jan 2021 04:53:21 -0500
+IronPort-SDR: QyFwKKnWZlSjLNZ6OK0V4I2BGiiagZQqhR2dp0L/Spk7fJUx1JhKYIrAdOl0HjCkRPgHRYSfs2
+ GFgbfVRhYAzg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="177554814"
+X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
+   d="scan'208";a="177554814"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 01:51:26 -0800
+IronPort-SDR: 6h3NZBaV5ofb/YMPh9Zl9+usdoMQSVv5IFbnGIJLs5PPCRemLpoZ+CEAdjcd2WWtOVk5GYHda9
+ tDOuB1AKyjWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
+   d="scan'208";a="343844806"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Jan 2021 01:51:24 -0800
+Subject: Re: [PATCH] xhci: tegra: Delay for disabling LFPS detector
+To:     JC Kuo <jckuo@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        nkristam@nvidia.com
+References: <20201218164234.128762-1-jckuo@nvidia.com>
+ <X9zelLu26bcQd7bs@kroah.com>
+ <d508a7f9-da00-99a3-cf87-d1234efb10c9@nvidia.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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 fiD/
+Message-ID: <5e1d3cfb-790e-0c26-1300-98f64377f4ad@linux.intel.com>
+Date:   Thu, 7 Jan 2021 11:53:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1609995970-12256-1-git-send-email-spujar@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <d508a7f9-da00-99a3-cf87-d1234efb10c9@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610012888; bh=IjN25z+yWpSbbGI53L+67ScDv4QXQ/8Bbz0TLdhRyYY=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=qznrjEdnM+8mWavbGJf3rO0LQ3iotUPiNeuxvyJx46Ish8/Wf5e57/u6S51anRH9i
-         8yIa+4+SPIIBprmZJUC/rDpPY6iVoqLxqzhdw3NQtL89llzVTR4LbCjAp9CH3Xp/cq
-         OvtvdlzUYz7eq7KWiSwaQ2M++oDC5IECF8OK6C84HMIm9E5n2VGqF1IrkvEeBX9eis
-         Us9XxNEj5e7OHPF6GW+204NzUKzX+nQGuK5Z1RwTHWco0vtipJMI78rOd/UBtijxmH
-         pNLL8NQO0PWTiXsb7MRt94yRntPVg3bplOcEi8k9iAVRvPDu7sjJtwUl7s1Yfgh5VP
-         Xmh/wDGucEdUw==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 07/01/2021 05:06, Sameer Pujar wrote:
-> HDA initialization is failing occasionally on Tegra210 and following
-> print is observed in the boot log. Because of this probe() fails and
-> no sound card is registered.
+On 6.1.2021 8.05, JC Kuo wrote:
+> On 12/19/20 12:53 AM, Greg KH wrote:
+>> On Sat, Dec 19, 2020 at 12:42:34AM +0800, JC Kuo wrote:
+>>> Occasionally, we are seeing some SuperSpeed devices resumes right after
+>>> being directed to U3. This commits add 500us delay to ensure LFPS
+>>> detector is disabled before sending ACK to firmware.
+>>>
+>>> [   16.099363] tegra-xusb 70090000.usb: entering ELPG
+>>> [   16.104343] tegra-xusb 70090000.usb: 2-1 isn't suspended: 0x0c001203
+>>> [   16.114576] tegra-xusb 70090000.usb: not all ports suspended: -16
+>>> [   16.120789] tegra-xusb 70090000.usb: entering ELPG failed
+>>>
+>>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+>>> ---
+>>>  drivers/usb/host/xhci-tegra.c | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+>>> index 934be1686352..20cdc11f7dc6 100644
+>>> --- a/drivers/usb/host/xhci-tegra.c
+>>> +++ b/drivers/usb/host/xhci-tegra.c
+>>> @@ -623,6 +623,12 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
+>>>  								     enable);
+>>>  			if (err < 0)
+>>>  				break;
+>>> +
+>>> +			/*
+>>> +			 * wait 500us for LFPS detector to be disabled before sending ACK
+>>> +			 */
+>>> +			if (!enable)
+>>> +				usleep_range(500, 1000);
+>>
+>> Where does the magic 500us come from?  How can we "know" this is long
+>> enough?
 > 
->   [16.800802] tegra-hda 70030000.hda: no codecs found!
+> Hi Greg,
+> The register write passes through a few flop stages of 32KHz clock domain. Our
+> ASIC designer reviewed RTL and suggests 500us delay. It has also been verified
+> thoroughly.
 > 
-> Codecs request a state change and enumeration by the controller. In
-> failure cases this does not seem to happen as STATETS register reads 0.
-> 
-> The problem seems to be related to the HDA codec dependency on SOR
-> power domain. If it is gated during HDA probe then the failure is
-> observed. Building Tegra HDA driver into kernel image avoids this
-> failure but does not completely address the dependency part. Fix this
-> problem by adding 'power-domains' DT property for Tegra210 HDA. Note
-> that Tegra186 and Tegra194 HDA do this already.
-> 
-> Fixes: 742af7e7a0a1 ("arm64: tegra: Add Tegra210 support")
-> Depends-on: 96d1f078ff0 ("arm64: tegra: Add SOR power-domain for Tegra210")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> index 4fbf8c1..fd33b4d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -997,6 +997,7 @@
->  			 <&tegra_car 128>, /* hda2hdmi */
->  			 <&tegra_car 111>; /* hda2codec_2x */
->  		reset-names = "hda", "hda2hdmi", "hda2codec_2x";
-> +		power-domains = <&pd_sor>;
->  		status = "disabled";
->  	};
 
-Thanks!
+Could you add that comment to the commit message? I can pick it up then.
+Should this go to stable as well?
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+Thanks
+-Mathias
