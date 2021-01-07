@@ -5,182 +5,294 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA9CC43333
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67990C43381
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04BA023435
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A74C23403
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbhAGQLO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jan 2021 11:11:14 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:18797 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728576AbhAGQLN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 11:11:13 -0500
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210107161030epoutp02e6070a518f0eb06e8c29cbac084ef33f~X-w63Yefo0998709987epoutp026
-        for <linux-tegra@vger.kernel.org>; Thu,  7 Jan 2021 16:10:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210107161030epoutp02e6070a518f0eb06e8c29cbac084ef33f~X-w63Yefo0998709987epoutp026
+        id S1728750AbhAGQLb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jan 2021 11:11:31 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:49509 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728702AbhAGQL1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 11:11:27 -0500
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210107161044epoutp0464d64cddcb7a22d17f95fe22a0d27433~X-xHvNDak2392623926epoutp04H
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Jan 2021 16:10:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210107161044epoutp0464d64cddcb7a22d17f95fe22a0d27433~X-xHvNDak2392623926epoutp04H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1610035830;
-        bh=g439C459CH1OddhMJ45SN6Ai5VaoDSSAZ947c4RRj8Q=;
+        s=mail20170921; t=1610035844;
+        bh=/IBdByyl5N7ynEc7XKNOt7QVin5U01igQAur9/h1UNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hvyS0EL9LB/pOwEf1gHTz8X8qurCaknteDdSGYlJoGcq3WV2DnK83mJtU0HQJZcY6
-         VA4TB6EeiRalq3HqCx9ERyyj3jc5ot2YQ7TMYTJUVyGMau2sFYfYBsOHqwL3UM6d5F
-         QPx6jqyNOlOiJUHkcJGHs4AFYFufaMREWG2eKj/Y=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210107161028epcas5p332ce3b0c4627572c2c5efdf49b9d15f3~X-w5bYnus2636626366epcas5p3H;
-        Thu,  7 Jan 2021 16:10:28 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EB.BB.33964.47237FF5; Fri,  8 Jan 2021 01:10:28 +0900 (KST)
+        b=n7SuqvMY3h4tXVi7LAx3SCH8XqEdv/IdnaWG3/TW1O8soDp7AnUZ4ETC5cqoou+Jg
+         tjqXmIR/HGsaKbux+d+lISGZC9fRCbLh3xgu1W4YgrK0++L5kLvWxJL+mT4h03FF1/
+         Rb3v/TnP5MZn6LaIkHu3zJwitFSq5WGmgmA16Dcw=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20210107161043epcas5p1db0c9dbf30e2d604540f1d113af5a6e3~X-xG7i6ev1468214682epcas5p1o;
+        Thu,  7 Jan 2021 16:10:43 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        50.BE.15682.38237FF5; Fri,  8 Jan 2021 01:10:43 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210107153030epcas5p14b0967c4d8d9804a2d084981af445c58~X-OAJV35C2091320913epcas5p1-;
-        Thu,  7 Jan 2021 15:30:30 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210107153116epcas5p3510286e503e690537d5b2eb7486fa7ab~X-Oqa3N5E2366523665epcas5p3J;
+        Thu,  7 Jan 2021 15:31:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210107153030epsmtrp2519ac2f4d5611a8110fca846b86b99f3~X-OAIZSlw0417604176epsmtrp2P;
-        Thu,  7 Jan 2021 15:30:30 +0000 (GMT)
-X-AuditID: b6c32a4b-eb7ff700000184ac-ed-5ff73274ddb0
+        20210107153116epsmtrp2941a89ea87bef08e3eddc4f3b2627efb~X-OqaCrDD0458504585epsmtrp2D;
+        Thu,  7 Jan 2021 15:31:16 +0000 (GMT)
+X-AuditID: b6c32a49-8bfff70000013d42-96-5ff732836832
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E4.2A.08745.61927FF5; Fri,  8 Jan 2021 00:30:30 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AC.04.13470.44927FF5; Fri,  8 Jan 2021 00:31:16 +0900 (KST)
 Received: from ubuntu.sa.corp.samsungelectronics.net (unknown
         [107.108.83.125]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210107153028epsmtip2971fe2872a2a5a799371e17e823cbcd0~X-N98qClA1958119581epsmtip2b;
-        Thu,  7 Jan 2021 15:30:28 +0000 (GMT)
+        20210107153114epsmtip225d77c13628f28c9d28f6a71d0fbe820~X-OojB6b02044620446epsmtip2e;
+        Thu,  7 Jan 2021 15:31:14 +0000 (GMT)
 From:   Shradha Todi <shradha.t@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pci@vger.kernel.org
 Cc:     pankaj.dubey@samsung.com, sriram.dash@samsung.com,
         niyas.ahmed@samsung.com, p.rajanbabu@samsung.com,
         l.mehra@samsung.com, hari.tv@samsung.com,
-        Anvesh Salveru <anvesh.salveru@gmail.com>,
         Shradha Todi <shradha.t@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v7 2/5] PCI: dwc: add support to handle ZRX-DC Compliant
- PHYs
-Date:   Thu,  7 Jan 2021 20:58:40 +0530
-Message-Id: <1610033323-10560-3-git-send-email-shradha.t@samsung.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH v7 5/5] arm64: tegra: Add support for ZRX DC PHY property
+Date:   Thu,  7 Jan 2021 20:58:43 +0530
+Message-Id: <1610033323-10560-6-git-send-email-shradha.t@samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1610033323-10560-1-git-send-email-shradha.t@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7bCmhm6J0fd4gz2HTSx+rJ7AbLGkKcNi
-        190OdouP01YyWaz4MpPd4s7zG4wWl3fNYbM4O+84m0Xnl1lsFm9+v2C3eDLlEavF0Y3BFou2
-        fmG3+L9nB7tF7+Faixvr2R0EPNbMW8PosXPWXXaPBZtKPTat6mTz6NuyitFjy/7PjB6fN8kF
-        sEdx2aSk5mSWpRbp2yVwZSw9285SsFek4sme20wNjIcFuxg5OSQETCSWzFnE2MXIxSEksJtR
-        Yu73pVDOJ0aJxi9fmSCcz4wSZ/5+Z4RpubvpDjNEYhdQ4tEvVginhUlixaJrTCBVbAJaEo1f
-        u5hBbBGBKImZ21vBipgFtjFLTNs+lRUkISzgL7Hl7zUWEJtFQFXiVetLMJtXwFXi1d0b7BDr
-        5CRunusEG8Qp4Cbxbdo6sEESAlM5JBbvPgJ1k4vEm19/mSFsYYlXx7dANUtJfH63lw3CzpeY
-        euEp0AIOILtCYnlPHUTYXuLAlTlgYWYBTYn1u/QhwrISU0+tA/uFWYBPovf3EyaIOK/Ejnkw
-        trLEl797WCBsSYl5xy6zQtgeEp0/Z0KDbiajxL+miywTGOVmIaxYwMi4ilEytaA4Nz212LTA
-        OC+1XK84Mbe4NC9dLzk/dxMjOPFoee9gfPTgg94hRiYOxkOMEhzMSiK8Fse+xAvxpiRWVqUW
-        5ccXleakFh9ilOZgURLn3WHwIF5IID2xJDU7NbUgtQgmy8TBKdXA9OxrR7nNi9+LeZuei2w4
-        /vqgytm/bCkOWU7KXtfXTnpfGR38zmR1d2030/o675m7y/bteZJwZkbyxk7vYyWXKytd3kvb
-        1JzbHpZ8fW/FjrIvM5z4rL/9/JG72mV2XWBv8XzJJXWuS3n17W6cOdf317Hoo7SC6FGef0e2
-        MH0XaTFXebz8lZnF/Rlnw/M2ZpcdueBf/pZz9sJZX7fPZl/6TseJ+dS+bIe5xnMsP79tan2l
-        uiw+t3ND+9qm5GoTQ/1Tuu3TmcvCZkxbwqLuLOXTwFV4rjr3Cff/nFUqDgsfM8XKzzA7c2D+
-        t3mHi6+/vq5326fuq0bzvK6ze33iP+xxS31wyvGl+B+N2NiMxRFtlUosxRmJhlrMRcWJANbm
-        fRWrAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsWy7bCSvK6Y5vd4g5YpxhY/Vk9gtljSlGGx
-        624Hu8XHaSuZLFZ8mclucef5DUaLy7vmsFmcnXeczaLzyyw2ize/X7BbPJnyiNXi6MZgi0Vb
-        v7Bb/N+zg92i93CtxY317A4CHmvmrWH02DnrLrvHgk2lHptWdbJ59G1ZxeixZf9nRo/Pm+QC
-        2KO4bFJSczLLUov07RK4MpaebWcp2CtS8WTPbaYGxsOCXYycHBICJhJ3N91h7mLk4hAS2MEo
-        cWhmLztEQlLi88V1TBC2sMTKf8/ZIYqamCS2/2phA0mwCWhJNH7tYgaxRQRiJNb/u8kKUsQs
-        cIhZ4vatKWBFwgK+En8nfGUEsVkEVCVetb5kAbF5BVwlXt29AbVNTuLmuU6wQZwCbhLfpq0D
-        GsQBtM1V4uGnkAmMfAsYGVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgSHtpbWDsY9
-        qz7oHWJk4mA8xCjBwawkwmtx7Eu8EG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tS
-        s1NTC1KLYLJMHJxSDUy+Z9fJMrttTqmf3bzGM/SjY0pd9ZrrHstW2znGMPUcSZQOcNqhoHb3
-        +zTN5RWBTX5+9UbTerVPXL22/OvLHwtFZp1L3/J3v57z9z1nz6m0z2A2ixTSsnOb0rPbQfrf
-        qsKf23bnVZtfeP0reDqL0V22QrWc3S1pzVu690/fLbBo0bnazMmeK63UCz7p2PHKRB8oeuT/
-        S5WdebFBGcfBk5/WnErbybJ1m8Ka8soEj66j81V/Pdo7be8S1/SHDOFSO7+ta7hRyFpxssW1
-        SCv94JYVn3hsXqTHPT3+Xc7w+X+Hwx71Ex0ys6V23H/Zv754R1Jl5IkbTfJ3w/oyLJdYtkv0
-        1Qkoi/237s/eZSPq4q/EUpyRaKjFXFScCAB1M7GW3AIAAA==
-X-CMS-MailID: 20210107153030epcas5p14b0967c4d8d9804a2d084981af445c58
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleLIzCtJLcpLzFFi42LZdlhTU7fZ6Hu8wf/9ohYfp61ksmiZtYjF
+        4s7zG4wWl3fNYbM4O+84m0Xnl1lsFk+mPGK1OLox2GLR1i/sFq17j7Bb9B6utbixnt3i5655
+        LBbXtvM68HnsnHWX3WPTqk42j97md2wefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAldH8bAZT
+        wWeZivsX/7E0ME4W7WLk5JAQMJHYufIAYxcjF4eQwG5GiRmdE9ghnE+MErvPbWaFcL4xSsxe
+        +hbI4QBrebPbECK+l1Gi891dFginhUniz/cbzCBz2QS0JBq/doHZIgJREjO3t4JNYha4yiSx
+        e9Y2dpCEsICnxOup18CmsgioSiz/6wwS5hVwlXje28sOcZ+cxM1znWBzOAXcJL5NWwc2R0Lg
+        J7vE2lu32SCKXCR6JuxkhrCFJV4d3wLVLCXx+d1eqJp8iakXnrJAfFAhsbynDiJsL3Hgyhyw
+        MLOApsT6XfoQYVmJqafWMYHYzAJ8Er2/nzBBxHkldsyDsZUlvvzdwwJhS0rMO3aZFcL2kLj+
+        fw8zJExmMkrM2raGfQKj3CyEFQsYGVcxSqYWFOempxabFhjmpZbrFSfmFpfmpesl5+duYgSn
+        Ey3PHYx3H3zQO8TIxMF4iFGCg1lJhNfi2Jd4Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rw7DB7E
+        CwmkJ5akZqemFqQWwWSZODilGpg4vdiVHCfKGL2W17IufvKt+Vvr4aYTu++xvK91exwqtiV5
+        cvLV28VNT3W+Cuio2t0sCTH7pr5pY3hIb0mdvluJWP5W3qmsdi/8nRtWNgptNa5/trRc6GyE
+        9e75Oye1T9IN/iy1S231Tg6zXQ0pf/98nPavOrsxL1EiU81Jp7vnpLiuu2Bm6K4TdXMz3wjP
+        v7vlpMv1XRwNm9csl/3MdGxB0K+Fj5K4LrNldtWf0LTt3cwR+TpyRfvWMus383fNtl5u4Cpr
+        dHfq1Wj/mK/C5YW8AW+rhDPnJZdPVbs6IfYsY2f+3/Lwrc/npLk/c3qRZrJtcXNv1jY3z9J6
+        52BJnmDxYom/E3pDGSTua33drcRSnJFoqMVcVJwIAEVehaeWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsWy7bCSvK6L5vd4g019whYfp61ksmiZtYjF
+        4s7zG4wWl3fNYbM4O+84m0Xnl1lsFk+mPGK1OLox2GLR1i/sFq17j7Bb9B6utbixnt3i5655
+        LBbXtvM68HnsnHWX3WPTqk42j97md2wefVtWMXp83iQXwBrFZZOSmpNZllqkb5fAldH8bAZT
+        wWeZivsX/7E0ME4W7WLk4JAQMJF4s9uwi5GLQ0hgN6PEymuL2boYOYHikhKfL65jgrCFJVb+
+        e84OUdTEJLH77mlWkASbgJZE49cuZhBbRCBGYv2/m2BxZoGHTBKLN2qA2MICnhKvp15jBVnG
+        IqAqsfyvM0iYV8BV4nlvLzvEfDmJm+c6wcZwCrhJfJu2DqxcCKjm4aeQCYx8CxgZVjFKphYU
+        56bnFhsWGOallusVJ+YWl+al6yXn525iBIerluYOxu2rPugdYmTiYDzEKMHBrCTCa3HsS7wQ
+        b0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1KzU1MLUotgskwcnFINTGa3YuZ/K66+
+        HrI9/dZLTkObJsGVxpuE+VbmVkX/becUuHI9QsndvzG/RWfZJK9PfTtyIrYpbjo4b0GK77lo
+        1SAmLvZpEqG9DJ+UJC7ZnJK3nlHj+3tK7s2iid37/XnsXzmx/9XYdf/vxU0tla+59be8nOJx
+        i73JatK8VSy2W6f9Ug9J+beBKyV9fcbujk+S6zhuT/PryV90/Z2akJHulNVym/5vEbhivete
+        6sO9szlP3fTz2fdq7Z8n/26df9v26tpNsyiW7H3LatbnOalafSo//fUb6185h2N7N+ZJPtC4
+        uWLiOruObz8adt2S8HoSxpRiPn/O/6zLXeZHr0WyXtuY3P3h+Y1KnXYN042KnsFKLMUZiYZa
+        zEXFiQBjRz7exgIAAA==
+X-CMS-MailID: 20210107153116epcas5p3510286e503e690537d5b2eb7486fa7ab
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20210107153030epcas5p14b0967c4d8d9804a2d084981af445c58
+X-CMS-RootMailID: 20210107153116epcas5p3510286e503e690537d5b2eb7486fa7ab
 References: <1610033323-10560-1-git-send-email-shradha.t@samsung.com>
-        <CGME20210107153030epcas5p14b0967c4d8d9804a2d084981af445c58@epcas5p1.samsung.com>
+        <CGME20210107153116epcas5p3510286e503e690537d5b2eb7486fa7ab@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+DesignWare controller driver provides the support to handle the PHYs which
+are compliant to ZRX-DC specification based on "phy-zrxdc-compliant" DT
+property. So, add "phy-zrxdc-compliant" property in tegra PCIe PHY DT
+nodes.
 
-Many platforms use DesignWare controller but the PHY can be different in
-different platforms. If the PHY is compliant is to ZRX-DC specification it
-helps in low power consumption during power states.
-
-If current data rate is 8.0 GT/s or higher and PHY is not compliant to
-ZRX-DC specification, then after every 100ms link should transition to
-recovery state during the low power states.
-
-DesignWare controller provides GEN3_ZRXDC_NONCOMPL field in
-GEN3_RELATED_OFF to specify about ZRX-DC compliant PHY.
-
-Platforms with ZRX-DC compliant PHY can set phy_zrxdc_compliant variable to
-specify this property to the controller.
-
-Signed-off-by: Anvesh Salveru <anvesh.salveru@gmail.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>
+To: devicetree@vger.kernel.org
+To: linux-tegra@vger.kernel.org
 ---
- drivers/pci/controller/dwc/pcie-designware.c | 6 ++++++
- drivers/pci/controller/dwc/pcie-designware.h | 4 ++++
- 2 files changed, 10 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 645fa18..74590c7 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -722,4 +722,10 @@ void dw_pcie_setup(struct dw_pcie *pci)
- 		       PCIE_PL_CHK_REG_CHK_REG_START;
- 		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
- 	}
-+
-+	if (pci->phy_zrxdc_compliant) {
-+		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-+		val &= ~PORT_LOGIC_GEN3_ZRXDC_NONCOMPL;
-+		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-+	}
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 0207840..8b905a2 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -74,6 +74,9 @@
- #define PCIE_MSI_INTR0_MASK		0x82C
- #define PCIE_MSI_INTR0_STATUS		0x830
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 25f36d6..9d91006 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1006,6 +1006,7 @@
+ 			reg-names = "ctl";
  
-+#define PCIE_PORT_GEN3_RELATED		0x890
-+#define PORT_LOGIC_GEN3_ZRXDC_NONCOMPL	BIT(0)
-+
- #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
- #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
  
-@@ -273,6 +276,7 @@ struct dw_pcie {
- 	u8			n_fts[2];
- 	bool			iatu_unroll_enabled: 1;
- 	bool			io_cfg_atu_shared: 1;
-+	bool			phy_zrxdc_compliant;
- };
+ 		p2u_hsio_1: phy@3e20000 {
+@@ -1014,6 +1015,7 @@
+ 			reg-names = "ctl";
  
- #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_2: phy@3e30000 {
+@@ -1022,6 +1024,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_3: phy@3e40000 {
+@@ -1030,6 +1033,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_4: phy@3e50000 {
+@@ -1038,6 +1042,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_5: phy@3e60000 {
+@@ -1046,6 +1051,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_6: phy@3e70000 {
+@@ -1054,6 +1060,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_7: phy@3e80000 {
+@@ -1062,6 +1069,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_8: phy@3e90000 {
+@@ -1070,6 +1078,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_9: phy@3ea0000 {
+@@ -1078,6 +1087,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_0: phy@3eb0000 {
+@@ -1086,6 +1096,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_1: phy@3ec0000 {
+@@ -1094,6 +1105,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_2: phy@3ed0000 {
+@@ -1102,6 +1114,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_3: phy@3ee0000 {
+@@ -1110,6 +1123,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_4: phy@3ef0000 {
+@@ -1118,6 +1132,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_5: phy@3f00000 {
+@@ -1126,6 +1141,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_6: phy@3f10000 {
+@@ -1134,6 +1150,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_nvhs_7: phy@3f20000 {
+@@ -1142,6 +1159,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_10: phy@3f30000 {
+@@ -1150,6 +1168,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		p2u_hsio_11: phy@3f40000 {
+@@ -1158,6 +1177,7 @@
+ 			reg-names = "ctl";
+ 
+ 			#phy-cells = <0>;
++			phy-zrxdc-compliant;
+ 		};
+ 
+ 		hsp_aon: hsp@c150000 {
 -- 
 2.7.4
 
