@@ -2,144 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20485C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3E8C433E9
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAB91217A0
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 09:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0312343B
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbhAGJxV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jan 2021 04:53:21 -0500
-Received: from mga09.intel.com ([134.134.136.24]:47845 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbhAGJxV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 7 Jan 2021 04:53:21 -0500
-IronPort-SDR: QyFwKKnWZlSjLNZ6OK0V4I2BGiiagZQqhR2dp0L/Spk7fJUx1JhKYIrAdOl0HjCkRPgHRYSfs2
- GFgbfVRhYAzg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9856"; a="177554814"
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="177554814"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jan 2021 01:51:26 -0800
-IronPort-SDR: 6h3NZBaV5ofb/YMPh9Zl9+usdoMQSVv5IFbnGIJLs5PPCRemLpoZ+CEAdjcd2WWtOVk5GYHda9
- tDOuB1AKyjWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,329,1602572400"; 
-   d="scan'208";a="343844806"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Jan 2021 01:51:24 -0800
-Subject: Re: [PATCH] xhci: tegra: Delay for disabling LFPS detector
-To:     JC Kuo <jckuo@nvidia.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        nkristam@nvidia.com
-References: <20201218164234.128762-1-jckuo@nvidia.com>
- <X9zelLu26bcQd7bs@kroah.com>
- <d508a7f9-da00-99a3-cf87-d1234efb10c9@nvidia.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <5e1d3cfb-790e-0c26-1300-98f64377f4ad@linux.intel.com>
-Date:   Thu, 7 Jan 2021 11:53:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <d508a7f9-da00-99a3-cf87-d1234efb10c9@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727983AbhAGQLG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jan 2021 11:11:06 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:31293 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728475AbhAGQLF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 11:11:05 -0500
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210107161022epoutp037d4b6ca92d7a0857b28052cc6d6dacdb~X-wzZSybm1297012970epoutp03B
+        for <linux-tegra@vger.kernel.org>; Thu,  7 Jan 2021 16:10:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210107161022epoutp037d4b6ca92d7a0857b28052cc6d6dacdb~X-wzZSybm1297012970epoutp03B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1610035822;
+        bh=GHrxWzjNq+WBPx404+TbgCs2tA0hCKSMho/LiimfpuA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cCNHcsyAyEss8LASwcTSiS5R5quq8nc9fg8m54XTaV/bsOcKTngef+UOlHQRFKpBJ
+         2TaF4F9RmVjEMakuyGXJb5uL2UnHS6y+1SjSbJkerKaMIduvvvskA5Qs/qfWjZDiEN
+         CaKkYdAjAvGR7ECSXCMDZK14z098fQz+a3CKfoFs=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20210107161021epcas5p4e993bf605cb33b60c3ebac688cb19ac2~X-wyf_tzp1957119571epcas5p4Y;
+        Thu,  7 Jan 2021 16:10:21 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        08.AE.15682.D6237FF5; Fri,  8 Jan 2021 01:10:21 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210107153013epcas5p27700f30e341d7f1fb457035a690490c6~X-NvctQD92347223472epcas5p2r;
+        Thu,  7 Jan 2021 15:30:13 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210107153013epsmtrp14014498c1239563402002bee1f1e6bed~X-NvbD-yG2999429994epsmtrp1E;
+        Thu,  7 Jan 2021 15:30:13 +0000 (GMT)
+X-AuditID: b6c32a49-8bfff70000013d42-64-5ff7326d2e77
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D6.F3.13470.40927FF5; Fri,  8 Jan 2021 00:30:12 +0900 (KST)
+Received: from ubuntu.sa.corp.samsungelectronics.net (unknown
+        [107.108.83.125]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210107153011epsmtip2866ddeedca2aea915f7b2fa686e089c7~X-Ntk70bI2046620466epsmtip2R;
+        Thu,  7 Jan 2021 15:30:10 +0000 (GMT)
+From:   Shradha Todi <shradha.t@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc:     pankaj.dubey@samsung.com, sriram.dash@samsung.com,
+        niyas.ahmed@samsung.com, p.rajanbabu@samsung.com,
+        l.mehra@samsung.com, hari.tv@samsung.com,
+        Anvesh Salveru <anvesh.salveru@gmail.com>,
+        Shradha Todi <shradha.t@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v7 1/5] phy: core: add phy_property_present method
+Date:   Thu,  7 Jan 2021 20:58:39 +0530
+Message-Id: <1610033323-10560-2-git-send-email-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1610033323-10560-1-git-send-email-shradha.t@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTYRjG+845247S6jSN3matWuat0rLbEbpK2iwrYYSggo06WEy3tXkp
+        RbOb5rxCTtDETKV0paJZ07QyLZWsMNdlptYIo+yCpXOTzC7zJP33e573+Z4XXj4SF/wihORR
+        RSyjVsiixVxH4la7p/vqGF9b5BrtWxd64loeTn8vqMLonvdZXHrggwnRxtvFXPpJSSeXzrAU
+        cemh/Hcc+mGdlC67aeHR2e3JtKmWRzcNdOHb+ZKmokGepF6fwZXkNOiRpNNkwCRj9aIQTpjj
+        5sNM9NF4Ru2z9aDjkbqcEUJ1yfn4VJ8RT0VmSoscSKDWgzbrC0+LHEkB1Ywg+7QVsWIUwfkf
+        +QQrrAiqM59xZ570VQ79S91BUDlWjbHiLAaTny3InuJSXnBqXIvb2ZkKg0LDOY49hFN1GHQM
+        9RL2gRPlD+kGG8fOBLUCOobP/GWS5FMBYEpXs9tE0Pc0Y7rHgQoEa0ENh/W/8qChScryTjC0
+        ZuIsO8GnzgYey0IYzk37x0rQ9bwn7PVAHYerWSmsvQ1anxdP2zjlCbW3fVh7Mege1WB2xqk5
+        kD05hLE+HxpLZng5WKZaCJYXQkmHkcO2S2DSupK9SCGC8mYdlodERf83lCKkRwsZlSYmitFs
+        UK1VMAneGlmMJk4R5X1IGVOPpr+IV1AjGjR/825DGInaEJC42JlPd1giBfzDshOJjFoZqY6L
+        ZjRtyIUkxAv4jWvMkQIqShbLyBlGxahnphjpIEzFyht0L5fN3pQuLbt+R+ZWE++3N2U0oTtk
+        t0P5Ba/MpUHbcubFeyRUKG2/sCSiJTFvZJ28h4MH9cu/Dy5qLt4iWtI+Eeo07Po7XOh25l1G
+        ph+ySWuKfPZLZ3nICxTiN2PiuxWd47ETVKItKzf5cSnT3SsLGHfedyo4SY+3eq4qbZlvsEbc
+        4+3aM35fY7oYtkAkffBDHre7qjl3oto1VhVkRStDK68Eq8KrQvTutf5pFXlTL0KPDacMmpls
+        11dJHiURP1/7B3d/PBvRf/lAvW7OKJlsrKanjO1LAoXhlK8uII28gd34EG809859q3yREOgN
+        Gwa6dpRtPHQ+3OWkYH+pmNAcka31wtUa2R+J+8oYkQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvC6L5vd4g5WLLCx+rJ7AbPFx2kom
+        iwtPe9gs7jy/wWhxedccNouz846zWXR+mcVm8WTKI1aLoxuDLRZt/cJu0Xu41uLGenaLnXdO
+        MDvweuycdZfdY9OqTjaPvi2rGD2O39jO5PF5k1wAaxSXTUpqTmZZapG+XQJXxsa+9ywF80Uq
+        /t68zNzA+ECgi5GTQ0LAROLmiieMXYxcHEICuxklzm+YywSRkJT4fHEdlC0ssfLfc3aIoiYm
+        ia3b1jOCJNgEtCQav3Yxg9giAjES6//dZAWxmQV2M0lcb1EFsYUFnCTat38Hi7MIqEoce9kM
+        ZHNw8Aq4StxoL4KYLydx81wn2BhOATeJb9PWgZUIAZU8/BQygZFvASPDKkbJ1ILi3PTcYsMC
+        w7zUcr3ixNzi0rx0veT83E2M4EDV0tzBuH3VB71DjEwcjIcYJTiYlUR4LY59iRfiTUmsrEot
+        yo8vKs1JLT7EKM3BoiTOe6HrZLyQQHpiSWp2ampBahFMlomDU6qBaUvxx3MlvxZr8KdsKu5x
+        Cv30Q2DhbJ9HDg9eGr5pK5sell+cceViAsOyX8nTrlR2V01Z94nF/iFD1B/dgst/f0+3tEvl
+        dfrz72AtE4/8/VOno2R/Bs/KTLNbv29eYkvO50XTXs+wEOFo6LHMPnJLiM+sjscgxV58wf6k
+        UHOXa4EMui8+bcpKfMotEbJ8UUHD4mO2p40zP5Xv9Xc/9Ksu66hT41vFui2nbyxy2m52ZN1H
+        yeUr7s2aWf/y3ps9R7kEruhPneKgsfLL0wd+GxY+5C38XnFrr617s7I0S3hNDe+8859il771
+        CFhlIsR00mdLZbCaRWLhrZy86StXq/s8tog4b+PVapQ72/AG347L25RYijMSDbWYi4oTAb6G
+        PmvDAgAA
+X-CMS-MailID: 20210107153013epcas5p27700f30e341d7f1fb457035a690490c6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20210107153013epcas5p27700f30e341d7f1fb457035a690490c6
+References: <1610033323-10560-1-git-send-email-shradha.t@samsung.com>
+        <CGME20210107153013epcas5p27700f30e341d7f1fb457035a690490c6@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 6.1.2021 8.05, JC Kuo wrote:
-> On 12/19/20 12:53 AM, Greg KH wrote:
->> On Sat, Dec 19, 2020 at 12:42:34AM +0800, JC Kuo wrote:
->>> Occasionally, we are seeing some SuperSpeed devices resumes right after
->>> being directed to U3. This commits add 500us delay to ensure LFPS
->>> detector is disabled before sending ACK to firmware.
->>>
->>> [   16.099363] tegra-xusb 70090000.usb: entering ELPG
->>> [   16.104343] tegra-xusb 70090000.usb: 2-1 isn't suspended: 0x0c001203
->>> [   16.114576] tegra-xusb 70090000.usb: not all ports suspended: -16
->>> [   16.120789] tegra-xusb 70090000.usb: entering ELPG failed
->>>
->>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
->>> ---
->>>  drivers/usb/host/xhci-tegra.c | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
->>> index 934be1686352..20cdc11f7dc6 100644
->>> --- a/drivers/usb/host/xhci-tegra.c
->>> +++ b/drivers/usb/host/xhci-tegra.c
->>> @@ -623,6 +623,12 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
->>>  								     enable);
->>>  			if (err < 0)
->>>  				break;
->>> +
->>> +			/*
->>> +			 * wait 500us for LFPS detector to be disabled before sending ACK
->>> +			 */
->>> +			if (!enable)
->>> +				usleep_range(500, 1000);
->>
->> Where does the magic 500us come from?  How can we "know" this is long
->> enough?
-> 
-> Hi Greg,
-> The register write passes through a few flop stages of 32KHz clock domain. Our
-> ASIC designer reviewed RTL and suggests 500us delay. It has also been verified
-> thoroughly.
-> 
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Could you add that comment to the commit message? I can pick it up then.
-Should this go to stable as well?
+In some platforms, we need information of phy properties in the controller
+drivers. This patch adds a new phy_property_present() method which can be
+used to check if some property exists in PHY or not.
 
-Thanks
--Mathias
+In case of DesignWare PCIe controller, we need to write into controller
+register to specify about ZRX-DC compliance property of the PHY, which
+reduces the power consumption during lower power states.
+
+Signed-off-by: Anvesh Salveru <anvesh.salveru@gmail.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/phy/phy-core.c  | 20 ++++++++++++++++++++
+ include/linux/phy/phy.h |  6 ++++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 71cb108..e4ecd41 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -420,6 +420,26 @@ int phy_calibrate(struct phy *phy)
+ EXPORT_SYMBOL_GPL(phy_calibrate);
+ 
+ /**
++ * phy_property_present() - checks if the property is present in PHY
++ * @phy: the phy returned by phy_get()
++ * @property: name of the property to check
++ *
++ * Used to check if the given property is present in PHY.
++ * Searches for the given property in the phy device tree
++ * node.
++ *
++ * Returns: true if property exists, false otherwise
++ */
++bool phy_property_present(struct phy *phy, const char *property)
++{
++	if (!phy)
++		return false;
++
++	return of_property_read_bool(phy->dev.of_node, property);
++}
++EXPORT_SYMBOL_GPL(phy_property_present);
++
++/**
+  * phy_configure() - Changes the phy parameters
+  * @phy: the phy returned by phy_get()
+  * @opts: New configuration to apply
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index e435bdb..cdecb07 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -225,6 +225,7 @@ static inline enum phy_mode phy_get_mode(struct phy *phy)
+ }
+ int phy_reset(struct phy *phy);
+ int phy_calibrate(struct phy *phy);
++bool phy_property_present(struct phy *phy, const char *property);
+ static inline int phy_get_bus_width(struct phy *phy)
+ {
+ 	return phy->attrs.bus_width;
+@@ -363,6 +364,11 @@ static inline int phy_calibrate(struct phy *phy)
+ 	return -ENOSYS;
+ }
+ 
++static inline bool phy_property_present(struct phy *phy, const char *property)
++{
++	return false;
++}
++
+ static inline int phy_configure(struct phy *phy,
+ 				union phy_configure_opts *opts)
+ {
+-- 
+2.7.4
+
