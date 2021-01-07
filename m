@@ -2,118 +2,169 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317F9C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6736EC433E0
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 18:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08B08233FC
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 16:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 269DF233FD
+	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 18:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbhAGQ6P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jan 2021 11:58:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbhAGQ6P (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 11:58:15 -0500
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B50C0612F4;
-        Thu,  7 Jan 2021 08:57:34 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id f26so6064535qka.0;
-        Thu, 07 Jan 2021 08:57:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wHmyjldWahf1HaQ4AhCEJA5XrMVwiCb1laUOCVRwLmU=;
-        b=o3wkNRnSIU355kxVNIsEZKCV0Zrp3MppLy1glnFtx+V0TdMknifDj042SjoAFG3rfE
-         y38hOUG3JgBirS57/sTdlE1pbj0KYXToRg/8sKE89tmCcfC+846lCv+luRoc1U2hLm68
-         HR9EIv6Ds95adplN3Sx4T6lkSFCfRmnS9axU/z0YQ41zhY3wu79b8RsKNDL65+pEzhu+
-         +A9eJibI8QBGsH13hllywC8Kvy9X8TG/BYe5In5FVXYAfcuBRNoMYk+DsmAc/Qg4/bT/
-         YRd+caMyE77Mgqhcfk8P0Acsg2eBuQXFx4ChtYT5ebOdyRrsZ4qxoZb8abnCCt7T4B0l
-         ACOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wHmyjldWahf1HaQ4AhCEJA5XrMVwiCb1laUOCVRwLmU=;
-        b=VVLktfPASKLNEo1+ncuItBeXoM9WsDU0axm1MfddzykrCIYdYGbIDDAgkPktS4jFyO
-         y/b6256gayqJatqkbgRd05FaB6dBLWT/e6GC0kIZxK84gktH8qfAGv8S+k/cSDCibYJ3
-         T9rMr0mZGhRWY1RdwQnVSXLzt/M0+gUkGZI2eSk32uf70aLEbgtRb1/ZdXqxmNszMTnZ
-         Jp+hZJptXPGS/R32M1oRzaHDn2Lf/EZJfa9yd2i8DIBWlos1Rov78pWu7D3PGYFD8bXT
-         k2y7lCvL/CPhwuPd2cv8bPcIqM8AIkPJwEW4QnGoY/Pc5xSTrA9D5bUtwoRGbPTCCu+M
-         Jmwg==
-X-Gm-Message-State: AOAM531d+4g1tY60s8JWwatAl1SQtE6i9gw/g8/9RNeqoIoo57YNHhDE
-        DgEVUv0knuWBw4T/6HljvLg=
-X-Google-Smtp-Source: ABdhPJw5c4JmiAT+8/vxw+xTkw9iPFNhMT84io4/ZxSTQGkIu0jOS1mqn3yt5t6ZGxjoEC3aqWT81g==
-X-Received: by 2002:a37:8703:: with SMTP id j3mr9984320qkd.455.1610038653882;
-        Thu, 07 Jan 2021 08:57:33 -0800 (PST)
-Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id d72sm3366399qkg.34.2021.01.07.08.57.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 08:57:33 -0800 (PST)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Subject: [PATCH v3] ARM: tegra: ouya: Fix eMMC on specific bootloaders
-Date:   Thu,  7 Jan 2021 16:56:59 +0000
-Message-Id: <20210107165658.1354191-1-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1728240AbhAGSot (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 7 Jan 2021 13:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727177AbhAGSot (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 7 Jan 2021 13:44:49 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D566233CE;
+        Thu,  7 Jan 2021 18:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610045048;
+        bh=TUvWD6mNsKBSzVYyTWlbLFY73PiTiMp2lBOWR6edq/w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=ctLT+flodW3Vqt+tqCSLAvA2CQosG++HuVdsMBMlW92ezEORXE2b7N1OVfYNma3G1
+         fQ8zspUJlG1s9mnnxhJChMr9DIYTS70mPlXPJzDrg+veBa171WUrlquUEYppI2GWN/
+         EJrj8EEGoYpaiqFRalTrhSgaqBTPvEBvtwluivFzN061ha/tJTxNHTt7HcJQDoQ8uF
+         tRyHBbd8uPGgXusZYStpyrf10fVUvmMGhIILjZuLiR3sF/e2cg98BwTa4+GUfo1nmI
+         8isOUkNb3fbdvwELj+7iI+cOaGVaLBOEzmz0sVHW8k3esuDjo5CpReNyqL/d+IgnJO
+         fGkfi86qOfcRw==
+Date:   Thu, 7 Jan 2021 12:44:06 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Shradha Todi <shradha.t@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pci@vger.kernel.org, pankaj.dubey@samsung.com,
+        sriram.dash@samsung.com, niyas.ahmed@samsung.com,
+        p.rajanbabu@samsung.com, l.mehra@samsung.com, hari.tv@samsung.com,
+        Anvesh Salveru <anvesh.salveru@gmail.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v7 2/5] PCI: dwc: add support to handle ZRX-DC Compliant
+ PHYs
+Message-ID: <20210107184406.GA1372915@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1610033323-10560-3-git-send-email-shradha.t@samsung.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Ouya fails to detect the eMMC module when booted via certain bootloaders.
-Fastboot and hard-kexec bootloaders fail while u-boot does not. It was
-discovered that the issue manifests if the sdmmc4 alternate configuration
-clock pin is input disabled.
+Capitalize subject to match the rest of the series.
 
-Ouya uses sdmmc4 in the primary pin configuration. It is unknown why this
-occurs, though it is likely related to other eMMC limitations experienced
-on Ouya.
+"Add support to handle .." is redundant; "Add support for ..." would
+be equivalent and shorter.
 
-For now, fix it by enabling input on cam_mclk_pcc0.
+But this patch actually doesn't add anything at all by itself, since
+it checks pci->phy_zrxdc_compliant but never sets it.
 
-Fixes: d7195ac5c9c5 ("ARM: tegra: Add device-tree for Ouya")
-Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
-Changes v3:
-Removed stable tag, applies to v5.11+ only
+On Thu, Jan 07, 2021 at 08:58:40PM +0530, Shradha Todi wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> Many platforms use DesignWare controller but the PHY can be different in
+> different platforms. If the PHY is compliant is to ZRX-DC specification it
+> helps in low power consumption during power states.
 
-Changes v2:
--Added stable tag.
--Improved commit message.
+s/is to/to/
 
- arch/arm/boot/dts/tegra30-ouya.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Even with that, this sentence doesn't quite parse correctly.  Do you
+mean something like this?
 
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index 74da1360d297..0368b3b816ef 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -4352,8 +4352,8 @@ cam_mclk_pcc0 {
- 		nvidia,pins = "cam_mclk_pcc0";
- 		nvidia,function = "vi_alt3";
- 		nvidia,pull = <TEGRA_PIN_PULL_NONE>;
--		nvidia,tristate = <TEGRA_PIN_ENABLE>;
--		nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+		nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+		nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 	};
- 	pcc1 {
- 		nvidia,pins = "pcc1";
--- 
-2.25.1
+  If the PHY is compliant to the ZRX-DC specification, it reduces
+  power consumption in low power Link states.
 
+(I assume this is related to Link power states (L0, L1, etc), not
+device power states (D0, D3hot, etc)).
+
+> If current data rate is 8.0 GT/s or higher and PHY is not compliant to
+> ZRX-DC specification, then after every 100ms link should transition to
+> recovery state during the low power states.
+
+Not sure this makes sense.  If the Link is in a low power state for 10
+seconds, it must transition to the Recovery state every 100ms during
+that 10 seconds, i.e., 100 times?
+
+> DesignWare controller provides GEN3_ZRXDC_NONCOMPL field in
+> GEN3_RELATED_OFF to specify about ZRX-DC compliant PHY.
+> 
+> Platforms with ZRX-DC compliant PHY can set phy_zrxdc_compliant variable to
+> specify this property to the controller.
+
+If this is a DesignWare-generic register and the "phy-zrxdc-compliant"
+property can be used by any DesignWare-based driver, why isn't the
+code to look for it in the DesignWare-generic part?
+
+Is there a link to the ZRX-DC specification you can mention somewhere
+in this series?
+
+> Signed-off-by: Anvesh Salveru <anvesh.salveru@gmail.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.c | 6 ++++++
+>  drivers/pci/controller/dwc/pcie-designware.h | 4 ++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 645fa18..74590c7 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -722,4 +722,10 @@ void dw_pcie_setup(struct dw_pcie *pci)
+>  		       PCIE_PL_CHK_REG_CHK_REG_START;
+>  		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
+>  	}
+> +
+> +	if (pci->phy_zrxdc_compliant) {
+> +		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
+> +		val &= ~PORT_LOGIC_GEN3_ZRXDC_NONCOMPL;
+> +		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
+> +	}
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 0207840..8b905a2 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -74,6 +74,9 @@
+>  #define PCIE_MSI_INTR0_MASK		0x82C
+>  #define PCIE_MSI_INTR0_STATUS		0x830
+>  
+> +#define PCIE_PORT_GEN3_RELATED		0x890
+> +#define PORT_LOGIC_GEN3_ZRXDC_NONCOMPL	BIT(0)
+> +
+>  #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
+>  #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
+>  
+> @@ -273,6 +276,7 @@ struct dw_pcie {
+>  	u8			n_fts[2];
+>  	bool			iatu_unroll_enabled: 1;
+>  	bool			io_cfg_atu_shared: 1;
+> +	bool			phy_zrxdc_compliant;
+
+I raise my eyebrows a little at "bool xx : 1".  I think it's probably
+*correct*, but "unsigned int xx : 1" is the overwhelming favorite and
+I doubt bool gives any advantage.
+
+  $ git grep -E "int\s+\S+\s*:\s*1" | egrep "^\S*\.[ch]" | wc -l
+  3129
+  $ git grep -E "bool\s+\S+\s*:\s*1" | egrep "^\S*\.[ch]" | wc -l
+  637
+
+pcie-designware.h is the only user in drivers/pci.  But you're
+following the existing style in the file, which is good.
+
+>  };
+>  
+>  #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+> -- 
+> 2.7.4
+> 
