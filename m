@@ -2,161 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DDEC4332B
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851D7C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B660239ED
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:00:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A7E8239FE
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbhAHOAU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jan 2021 09:00:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbhAHOAP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jan 2021 09:00:15 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6308DC0612F6;
-        Fri,  8 Jan 2021 05:59:35 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id d9so9825930iob.6;
-        Fri, 08 Jan 2021 05:59:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v3YUKh3Pg+3HEmWFEzA6lV+W8xXHYJpJ+0Kz0Ylu/I0=;
-        b=GOEfVOeF+iauU8s3f5xN+vySJJL75+qUxx13gPkp6BxYrf3ZpvDuz6iLgsQ+1qV84Y
-         TtTnmu9ZLNEj9fSZsIHZeBF7IRDWzLvLoRurqNKGEJ2Ys1OVUt4zntLQYChpTuk/ZTmy
-         lAXGAicWa/C9SFlDLPTWyNlMEm/xC1aKOhWguiaffn3r/eIe4vRr3aaAWUzMpUCa/qzl
-         eDLd8Z3d1uGg5HnPbFIa7IIJxTrR5KISNk/hOKd206XMfSPFHaLdLKhC88FsNtOTQs7x
-         qn/PK2LHIEMmjFm5mcRS5IBYY3rGX2Uxdom7V2KV4BEdclUtOEvMqx1laFL4vyDKAks8
-         5TsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v3YUKh3Pg+3HEmWFEzA6lV+W8xXHYJpJ+0Kz0Ylu/I0=;
-        b=HmfSXR5kkIBVgF/e0N9Uj3Qdjem4+ng+3p92KRpiyTK6v7eJFDo8RqL7cTu6ifKrDI
-         3ZqHarLnB/CYTEdNk8oaJtgmXV635XFo8Nyw/tzHPO4+k123oyfBGZk+V5nBmB0QB7PP
-         rx5rfCqQX/I50F0iqrUSiNl6/SAghFHdWJMHTX8+w5w665QUpy8TBeTomobjK4JyI7ln
-         3JifZ6QH7UuUEk97EpM2Wttxl/HcK5IteISUwam+7nPnm7cDTEHfgINXpU5WtCkZ8VGx
-         GmmezEA2xMZIjsSKdDFvuY/L/5c0p7xlz/g5gyAkVHriCgeePIuwEn7wEUUwEP7rVfMc
-         AZhw==
-X-Gm-Message-State: AOAM532aLAUctS5WOAOkX21dV0wPlywkk2+x7JX1pCsuKVGYT0y4v8zt
-        rnBa2wS2NYsKiezOxcDcZsQ=
-X-Google-Smtp-Source: ABdhPJyq3vyCn6Be2+obp8pxMdElBtgDGBCoHR8SfzvmL/r/TeRvqDvxO4BZCcIetZoFLBvygFklHg==
-X-Received: by 2002:a5d:8a1a:: with SMTP id w26mr5458680iod.112.1610114374783;
-        Fri, 08 Jan 2021 05:59:34 -0800 (PST)
-Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id l6sm7570063ili.78.2021.01.08.05.59.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 05:59:34 -0800 (PST)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mohan Kumar <mkumard@nvidia.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        Peter Geis <pgwipeout@gmail.com>, Ion Agorria <ion@agorria.com>
-Subject: [PATCH v2 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
-Date:   Fri,  8 Jan 2021 13:59:13 +0000
-Message-Id: <20210108135913.2421585-3-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210108135913.2421585-1-pgwipeout@gmail.com>
-References: <20210108135913.2421585-1-pgwipeout@gmail.com>
+        id S1727630AbhAHO4m (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jan 2021 09:56:42 -0500
+Received: from mga05.intel.com ([192.55.52.43]:17900 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726666AbhAHO4m (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 8 Jan 2021 09:56:42 -0500
+IronPort-SDR: qVJ/Hza9hLYKyLcbywH2FcKgQcxzHvMuBfNTBSTFjCE8Z4iEYYT5U0Yr1FxKKrOATv0QiidBbt
+ 3tB7mCox/sTg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9857"; a="262377173"
+X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
+   d="scan'208";a="262377173"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jan 2021 06:54:56 -0800
+IronPort-SDR: 0IrRF/bXYvokfmPkPdtmF6XqnEknXMzh1ykistOi4cgswB2T0o+Ke2pmT84vgz7msiFLEm8hpx
+ uywqyqi9uEEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,331,1602572400"; 
+   d="scan'208";a="344243358"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Jan 2021 06:54:53 -0800
+Subject: Re: [PATCH v2] xhci: tegra: Delay for disabling LFPS detector
+To:     JC Kuo <jckuo@nvidia.com>, gregkh@linuxfoundation.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org
+Cc:     linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        nkristam@nvidia.com, stable@vger.kernel.org
+References: <20210108064148.26766-1-jckuo@nvidia.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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 fiD/
+Message-ID: <822ad4aa-f8cb-1f8c-737c-98e517441e53@linux.intel.com>
+Date:   Fri, 8 Jan 2021 16:56:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210108064148.26766-1-jckuo@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Currently hda on tegra30 fails to open a stream with an input/output error.
+On 8.1.2021 8.41, JC Kuo wrote:
+> Occasionally, we are seeing some SuperSpeed devices resumes right after
+> being directed to U3. This commits add 500us delay to ensure LFPS
+> detector is disabled before sending ACK to firmware.
+> 
+> [   16.099363] tegra-xusb 70090000.usb: entering ELPG
+> [   16.104343] tegra-xusb 70090000.usb: 2-1 isn't suspended: 0x0c001203
+> [   16.114576] tegra-xusb 70090000.usb: not all ports suspended: -16
+> [   16.120789] tegra-xusb 70090000.usb: entering ELPG failed
+> 
+> The register write passes through a few flop stages of 32KHz clock domain.
+> NVIDIA ASIC designer reviewed RTL and suggests 500us delay.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> changes in v2: 
+>     describes how 500us was determined in commit message
+>     cc stable@vger.kernel.org
+> 
 
-For example:
-speaker-test -Dhw:0,3 -c 2
+Thanks, added.
 
-speaker-test 1.2.2
-
-Playback device is hw:0,3
-Stream parameters are 48000Hz, S16_LE, 2 channels
-Using 16 octaves of pink noise
-Rate set to 48000Hz (requested 48000Hz)
-Buffer size range from 64 to 16384
-Period size range from 32 to 8192
-Using max buffer size 16384
-Periods = 4
-was set period_size = 4096
-was set buffer_size = 16384
- 0 - Front Left
-Write error: -5,Input/output error
-xrun_recovery failed: -5,Input/output error
-Transfer failed: Input/output error
-
-The tegra-hda device was introduced in tegra30 but only utilized in
-tegra124 until recent chips. Tegra210/186 work only due to a hardware
-change. For this reason it is unknown when this issue first manifested.
-Discussions with the hardware team show this applies to all current tegra
-chips. It has been resolved in the tegra234, which does not have hda
-support at this time.
-
-The explanation from the hardware team is this:
-Below is the striping formula referenced from HD audio spec.
-   { ((num_channels * bits_per_sample) / number of SDOs) >= 8 }
-
-The current issue is seen because Tegra HW has a problem with boundary
-condition (= 8) for striping. The reason why it is not seen on
-Tegra210/Tegra186 is because it uses max 2SDO lines. Max SDO lines is
-read from GCAP register.
-
-For the given stream (channels = 2, bps = 16);
-ratio = (channels * bps) / NSDO = 32 / NSDO;
-
-On Tegra30,      ratio = 32/4 = 8  (FAIL)
-On Tegra210/186, ratio = 32/2 = 16 (PASS)
-On Tegra194,     ratio = 32/4 = 8  (FAIL) ==> Earlier workaround was
-applied for it
-
-If Tegra210/186 is forced to use 4SDO, it fails there as well. So the
-behavior is consistent across all these chips.
-
-Applying the fix in [1] universally resolves this issue on tegra30-hda.
-Tested on the Ouya game console and the tf201 tablet.
-
-[1] commit 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on
-Tegra194")
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Ion Agorria <ion@agorria.com>
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
- sound/pci/hda/hda_tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 70164d1428d4..361cf2041911 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -388,7 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
- 	 * in powers of 2, next available ratio is 16 which can be
- 	 * used as a limiting factor here.
- 	 */
--	if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
-+	if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
- 		chip->bus.core.sdo_limit = 16;
- 
- 	/* codec detection */
--- 
-2.25.1
+-Mathias
 
