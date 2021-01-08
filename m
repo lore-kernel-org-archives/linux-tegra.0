@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275E0C433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DDEC4332B
 	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE00123A02
-	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B660239ED
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 14:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbhAHOAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 8 Jan 2021 09:00:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50246 "EHLO
+        id S1726006AbhAHOAU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jan 2021 09:00:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbhAHOAO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jan 2021 09:00:14 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3381C0612F5;
-        Fri,  8 Jan 2021 05:59:33 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id p187so9818884iod.4;
-        Fri, 08 Jan 2021 05:59:33 -0800 (PST)
+        with ESMTP id S1727176AbhAHOAP (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jan 2021 09:00:15 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6308DC0612F6;
+        Fri,  8 Jan 2021 05:59:35 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id d9so9825930iob.6;
+        Fri, 08 Jan 2021 05:59:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=C/zuslkswFYbFYSDVravjmOqNUYzx2XjLo8fR1+C5Bo=;
-        b=CwbkCCR5W8VzKN8SL6brUw3/NlzhnhkQl25s3Ww8oxbHiKCxd2A7QgpL2FG7V/7/V3
-         JXlBQdaZFio7AzJThTdC0RF2yURFC7RJZ55jLHTxuZxhv/Ov9t+kMP2psHPeyd6A1/uA
-         8kp4knYuY8X99ri10VIy4+sIPwFzL5sDHf85XPNX4oWWYzE+YCUDDJ8CwyUcfmWxCS9Z
-         VegCtV8pQvozwsQ4Jg18+5gLp4LCjxFzZhaw+y05YvtUoeMYxWDPZg6bJL+3c9b4vMPi
-         fmfrTGT06s8pgwaL+KRuNQQWl7IEau9shZMCk9xoxbEDFUtRXdoN3DR3W8RifNIKlwKJ
-         Xcyg==
+        bh=v3YUKh3Pg+3HEmWFEzA6lV+W8xXHYJpJ+0Kz0Ylu/I0=;
+        b=GOEfVOeF+iauU8s3f5xN+vySJJL75+qUxx13gPkp6BxYrf3ZpvDuz6iLgsQ+1qV84Y
+         TtTnmu9ZLNEj9fSZsIHZeBF7IRDWzLvLoRurqNKGEJ2Ys1OVUt4zntLQYChpTuk/ZTmy
+         lAXGAicWa/C9SFlDLPTWyNlMEm/xC1aKOhWguiaffn3r/eIe4vRr3aaAWUzMpUCa/qzl
+         eDLd8Z3d1uGg5HnPbFIa7IIJxTrR5KISNk/hOKd206XMfSPFHaLdLKhC88FsNtOTQs7x
+         qn/PK2LHIEMmjFm5mcRS5IBYY3rGX2Uxdom7V2KV4BEdclUtOEvMqx1laFL4vyDKAks8
+         5TsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=C/zuslkswFYbFYSDVravjmOqNUYzx2XjLo8fR1+C5Bo=;
-        b=FOf0lq0bm1eSB65q9oVZXgP2N2N83T6wLaf/9CJyxoorClwu1tfpNyYX119lkMm3/+
-         0PkMLXQ0+eLey3j3zEAj0QD3+JYtBzH3PdotPB2QU2IVo33/heyJ2173bvfbblYEH4Zv
-         EsqFDNMej2ST6wCGogZKADopO9xScYOJhHtGt0Ou4+dJBlYDXMCsBLPGqo/F2SkVvEru
-         R5XsoMg5q7Byyz5CMZpYrtTZXwH3ieoDPT0iztTfLP7KFpwB47BI/jY2TjPDSXV1rQNT
-         QnKIxG+KHI9e3Kip1HVLoMcD01aE71YmcK4+1znF6o+ovcpphYbMzMMJVtwRRp+J1FCN
-         93vw==
-X-Gm-Message-State: AOAM530+/tRGw4wRkK7PEOr7LNiBzP+hok5dhDAca36JfuSbQrKew0P0
-        TeuC8VtT9ZRz1zffqDA3CN4=
-X-Google-Smtp-Source: ABdhPJxAEW7Csj0IPuhsiOm4Rr0CnhSvCZDc1s+wNmgGnnSvXxljW7r+BWgqmQ7VLgSfGIJsu4ygXQ==
-X-Received: by 2002:a05:6602:27af:: with SMTP id i15mr5415055ios.170.1610114373016;
-        Fri, 08 Jan 2021 05:59:33 -0800 (PST)
+        bh=v3YUKh3Pg+3HEmWFEzA6lV+W8xXHYJpJ+0Kz0Ylu/I0=;
+        b=HmfSXR5kkIBVgF/e0N9Uj3Qdjem4+ng+3p92KRpiyTK6v7eJFDo8RqL7cTu6ifKrDI
+         3ZqHarLnB/CYTEdNk8oaJtgmXV635XFo8Nyw/tzHPO4+k123oyfBGZk+V5nBmB0QB7PP
+         rx5rfCqQX/I50F0iqrUSiNl6/SAghFHdWJMHTX8+w5w665QUpy8TBeTomobjK4JyI7ln
+         3JifZ6QH7UuUEk97EpM2Wttxl/HcK5IteISUwam+7nPnm7cDTEHfgINXpU5WtCkZ8VGx
+         GmmezEA2xMZIjsSKdDFvuY/L/5c0p7xlz/g5gyAkVHriCgeePIuwEn7wEUUwEP7rVfMc
+         AZhw==
+X-Gm-Message-State: AOAM532aLAUctS5WOAOkX21dV0wPlywkk2+x7JX1pCsuKVGYT0y4v8zt
+        rnBa2wS2NYsKiezOxcDcZsQ=
+X-Google-Smtp-Source: ABdhPJyq3vyCn6Be2+obp8pxMdElBtgDGBCoHR8SfzvmL/r/TeRvqDvxO4BZCcIetZoFLBvygFklHg==
+X-Received: by 2002:a5d:8a1a:: with SMTP id w26mr5458680iod.112.1610114374783;
+        Fri, 08 Jan 2021 05:59:34 -0800 (PST)
 Received: from rockpro64.hsd1.md.comcast.net ([2601:153:900:7730::20])
-        by smtp.gmail.com with ESMTPSA id l6sm7570063ili.78.2021.01.08.05.59.31
+        by smtp.gmail.com with ESMTPSA id l6sm7570063ili.78.2021.01.08.05.59.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 05:59:32 -0800 (PST)
+        Fri, 08 Jan 2021 05:59:34 -0800 (PST)
 From:   Peter Geis <pgwipeout@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -70,9 +70,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         Peter Geis <pgwipeout@gmail.com>, Ion Agorria <ion@agorria.com>
-Subject: [PATCH v2 1/2] clk: tegra30: Add hda clock default rates to clock driver
-Date:   Fri,  8 Jan 2021 13:59:12 +0000
-Message-Id: <20210108135913.2421585-2-pgwipeout@gmail.com>
+Subject: [PATCH v2 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+Date:   Fri,  8 Jan 2021 13:59:13 +0000
+Message-Id: <20210108135913.2421585-3-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210108135913.2421585-1-pgwipeout@gmail.com>
 References: <20210108135913.2421585-1-pgwipeout@gmail.com>
@@ -82,32 +82,81 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Current implementation defaults the hda clocks to clk_m. This causes hda
-to run too slow to operate correctly. Fix this by defaulting to pll_p and
-setting the frequency to the correct rate.
+Currently hda on tegra30 fails to open a stream with an input/output error.
 
-This matches upstream t124 and downstream t30.
+For example:
+speaker-test -Dhw:0,3 -c 2
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+speaker-test 1.2.2
+
+Playback device is hw:0,3
+Stream parameters are 48000Hz, S16_LE, 2 channels
+Using 16 octaves of pink noise
+Rate set to 48000Hz (requested 48000Hz)
+Buffer size range from 64 to 16384
+Period size range from 32 to 8192
+Using max buffer size 16384
+Periods = 4
+was set period_size = 4096
+was set buffer_size = 16384
+ 0 - Front Left
+Write error: -5,Input/output error
+xrun_recovery failed: -5,Input/output error
+Transfer failed: Input/output error
+
+The tegra-hda device was introduced in tegra30 but only utilized in
+tegra124 until recent chips. Tegra210/186 work only due to a hardware
+change. For this reason it is unknown when this issue first manifested.
+Discussions with the hardware team show this applies to all current tegra
+chips. It has been resolved in the tegra234, which does not have hda
+support at this time.
+
+The explanation from the hardware team is this:
+Below is the striping formula referenced from HD audio spec.
+   { ((num_channels * bits_per_sample) / number of SDOs) >= 8 }
+
+The current issue is seen because Tegra HW has a problem with boundary
+condition (= 8) for striping. The reason why it is not seen on
+Tegra210/Tegra186 is because it uses max 2SDO lines. Max SDO lines is
+read from GCAP register.
+
+For the given stream (channels = 2, bps = 16);
+ratio = (channels * bps) / NSDO = 32 / NSDO;
+
+On Tegra30,      ratio = 32/4 = 8  (FAIL)
+On Tegra210/186, ratio = 32/2 = 16 (PASS)
+On Tegra194,     ratio = 32/4 = 8  (FAIL) ==> Earlier workaround was
+applied for it
+
+If Tegra210/186 is forced to use 4SDO, it fails there as well. So the
+behavior is consistent across all these chips.
+
+Applying the fix in [1] universally resolves this issue on tegra30-hda.
+Tested on the Ouya game console and the tf201 tablet.
+
+[1] commit 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on
+Tegra194")
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Tested-by: Ion Agorria <ion@agorria.com>
 Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra30.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/hda_tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 37244a7e68c2..9cf249c344d9 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1256,6 +1256,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-+	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 70164d1428d4..361cf2041911 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -388,7 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+ 	 * in powers of 2, next available ratio is 16 which can be
+ 	 * used as a limiting factor here.
+ 	 */
+-	if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
++	if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
+ 		chip->bus.core.sdo_limit = 16;
+ 
+ 	/* codec detection */
 -- 
 2.25.1
 
