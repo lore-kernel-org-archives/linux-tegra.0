@@ -2,134 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDCBC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 22:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C6CC433E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 06:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 809D6236FB
-	for <linux-tegra@archiver.kernel.org>; Thu,  7 Jan 2021 22:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84CE323380
+	for <linux-tegra@archiver.kernel.org>; Fri,  8 Jan 2021 06:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbhAGWFs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 7 Jan 2021 17:05:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbhAGWFs (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 7 Jan 2021 17:05:48 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A2BC0612F5;
-        Thu,  7 Jan 2021 14:05:07 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id o17so18272717lfg.4;
-        Thu, 07 Jan 2021 14:05:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JQNiO2Mnj6QxwX1KOBemH+gofG2EOUwTUr4JeDXvjvk=;
-        b=jgw+CU1Q5PZmru7wKEP4suIgDUIZgoXFY6oAGUeETSt3z6gUwm9UKspKZpb1nO8/Ag
-         tPGxXtiV9S/qr0zbBLdE5X23OjABwUyrDRCzhFE5gIW3H8/pnCYGVJJ7TGwIIxx2kmjp
-         J8UOvbmVaHdhStxm/2Looa/gR4Wx0Yfzy+0C5JqTd0v5aAPV4B8bYDrHCtVzXMtqaojd
-         O74nNncQCLwjvxpr2UbkEeyVFlJ69fCRz8KSTPXMqxgqQzJnWEvKKfiG0yj+8Ne/wcgd
-         IYOdgGItsHSB5pOVN9N2rxUDvl0qEFuvstdsVLkKWfL9zJaU78K7leiRzC+4waChx+j8
-         rFuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JQNiO2Mnj6QxwX1KOBemH+gofG2EOUwTUr4JeDXvjvk=;
-        b=HME2otYDn28QTZs1BbXj+SGWYqO0iUamisocPIzDVWHbNS29gTLpxG2RM5SnsI/hs4
-         O1iTqB1h3gxcBg9yZJKl9rBU1pwFZfVBzjcXldU4L+KKKpvsXcJp+VYg9leUtixoGPi0
-         ziqm2I9vTaRU0DcZopZMhCsSxkwhFGBDceXBI2RYWSW073kwEpxI8dnL8+iP6puDmw4S
-         gh7c/RSXpAdVi7Qb635Sl0iaMdGztNy3u4azZVtrFX2OhtW0lg5udKyl/Z8SW4DXn7XS
-         ekfa0Mv1pbMnRNBf0YZ21uBsyEg/YNE+nRy9WiGS7LIPbcxPAYY2zMvaT2bibY7n92K4
-         v8Ig==
-X-Gm-Message-State: AOAM530pHlPOUiGfR66Uw79fGixZ13hzYLbo0Z3rhbfCOKVnnCnLvBxc
-        k2ze4tjNPbz0ojIM9hE9qV9CF5ZdMdQ=
-X-Google-Smtp-Source: ABdhPJyKqM9KoMtCnGj//sZ+f2Zm5WBIE6fUHYwgGxtsGuMPhEBZqVCWR5E9Tbuml69jadxCYBYxLA==
-X-Received: by 2002:a2e:93d6:: with SMTP id p22mr225896ljh.169.1610057105955;
-        Thu, 07 Jan 2021 14:05:05 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id f27sm1433917lfk.293.2021.01.07.14.05.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Jan 2021 14:05:05 -0800 (PST)
-Subject: Re: [PATCH v3 0/3] Support wakeup methods of Atmel maXTouch
- controllers
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201206212217.6857-1-digetx@gmail.com>
- <X9QuTuGEicUnlaJp@google.com>
- <3577ed5b-feff-5915-7d70-5fa8fe4a0a82@gmail.com>
- <X9WblR19HZPZ5XtY@google.com>
- <6b515373-e7b3-4700-7d34-4413a630c461@gmail.com>
-Message-ID: <508585f7-6c2b-3b33-ada8-91cc15ed683e@gmail.com>
-Date:   Fri, 8 Jan 2021 01:05:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S1725791AbhAHGdn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 8 Jan 2021 01:33:43 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6037 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbhAHGdn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 8 Jan 2021 01:33:43 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff7fc9f0000>; Thu, 07 Jan 2021 22:33:03 -0800
+Received: from [10.19.109.31] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 8 Jan
+ 2021 06:33:00 +0000
+Subject: Re: [PATCH] xhci: tegra: Delay for disabling LFPS detector
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <robh@kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <nkristam@nvidia.com>
+References: <20201218164234.128762-1-jckuo@nvidia.com>
+ <X9zelLu26bcQd7bs@kroah.com>
+ <d508a7f9-da00-99a3-cf87-d1234efb10c9@nvidia.com>
+ <5e1d3cfb-790e-0c26-1300-98f64377f4ad@linux.intel.com>
+From:   JC Kuo <jckuo@nvidia.com>
+Organization: NVIDIA
+Message-ID: <f5e2fe23-6365-403e-8bf2-f58e880af1ed@nvidia.com>
+Date:   Fri, 8 Jan 2021 14:32:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <6b515373-e7b3-4700-7d34-4413a630c461@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5e1d3cfb-790e-0c26-1300-98f64377f4ad@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610087583; bh=m56OrYcdLFfwI/B9D0OOKCvtKfrrI76FacTDRhl0mkE=;
+        h=Subject:To:CC:References:From:Organization:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=B3WoTsxc5wDJXPh0/gUaVsnZluTHn+GO2tbFzQtdeGcy9kcdBrbEiC1fy38ij2nPk
+         5tBrxPdMbFdtcpzXNpq24T1remP50aCuPmuW6kClC2uFlQ23tdNh1+p852gWXxP9bj
+         MWswsRWYYilUZG9XaUl4AUXjMBKz8t92X3K80EZccf7RafGBhrvyqjBzDQLujQQJS2
+         eeJJurjP14boU3ePX7Do0iec/N6tMoOcIrvm2PFoiu+PN8zqkXhIrqWnh00nkrui3F
+         97YaOwvxW4IteMFFwA3elQkD5ggUSCa1CyKLdr3bweMD5vLEsx7kpHz1jkhIPopC1G
+         +ao63fn99nrFQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-13.12.2020 12:26, Dmitry Osipenko пишет:
-> 13.12.2020 07:41, Dmitry Torokhov пишет:
->> Thank you for the logs. I am confused where these calls to put the
->> controller into deep sleep are coming from. Does something constantly
->> open and close input device?
+
+
+On 1/7/21 5:53 PM, Mathias Nyman wrote:
+> On 6.1.2021 8.05, JC Kuo wrote:
+>> On 12/19/20 12:53 AM, Greg KH wrote:
+>>> On Sat, Dec 19, 2020 at 12:42:34AM +0800, JC Kuo wrote:
+>>>> Occasionally, we are seeing some SuperSpeed devices resumes right after
+>>>> being directed to U3. This commits add 500us delay to ensure LFPS
+>>>> detector is disabled before sending ACK to firmware.
+>>>>
+>>>> [   16.099363] tegra-xusb 70090000.usb: entering ELPG
+>>>> [   16.104343] tegra-xusb 70090000.usb: 2-1 isn't suspended: 0x0c001203
+>>>> [   16.114576] tegra-xusb 70090000.usb: not all ports suspended: -16
+>>>> [   16.120789] tegra-xusb 70090000.usb: entering ELPG failed
+>>>>
+>>>> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+>>>> ---
+>>>>  drivers/usb/host/xhci-tegra.c | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+>>>> index 934be1686352..20cdc11f7dc6 100644
+>>>> --- a/drivers/usb/host/xhci-tegra.c
+>>>> +++ b/drivers/usb/host/xhci-tegra.c
+>>>> @@ -623,6 +623,12 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
+>>>>  								     enable);
+>>>>  			if (err < 0)
+>>>>  				break;
+>>>> +
+>>>> +			/*
+>>>> +			 * wait 500us for LFPS detector to be disabled before sending ACK
+>>>> +			 */
+>>>> +			if (!enable)
+>>>> +				usleep_range(500, 1000);
+>>>
+>>> Where does the magic 500us come from?  How can we "know" this is long
+>>> enough?
+>>
+>> Hi Greg,
+>> The register write passes through a few flop stages of 32KHz clock domain. Our
+>> ASIC designer reviewed RTL and suggests 500us delay. It has also been verified
+>> thoroughly.
+>>
 > 
-> Input devices are re-opened multiple times during Linux distro boot-up,
-> a regular Ubuntu 20.10 in this case.
+> Could you add that comment to the commit message? I can pick it up then.
+> Should this go to stable as well?
 > 
->> Do you have any additional patches?
+Hi Mathias,
+Yes, I will send v2 with the information in commit message.
+Yes, this should go to stable as well.
+
+Thanks,
+JC
+
+> Thanks
+> -Mathias
 > 
-> No, I'm using next-20201211 + this "wakeup methods" patchset.
-> 
->> We definitely do not issue deep sleep request in mxt_start(). Do you mind
->> putting dump_stack() into mxt_set_t7_power_cfg() to see where the calls
->> are coming from?
-> 
-> Please see the log below, I added it like this:
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c
-> b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index e3342fdfe9f3..bbc5a5ee158a 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -2271,6 +2271,8 @@ static int mxt_set_t7_power_cfg(struct mxt_data
-> *data, u8 sleep)
->  	dev_dbg(dev, "Set T7 ACTV:%d IDLE:%d\n",
->  		new_config->active, new_config->idle);
-> 
-> +	dump_stack();
-> +
->  	return 0;
->  }
-> 
->> I also do not see additional "waking up controller" messages after
->> requesting the chip via T7 to be configured to be active, which I'd
->> expected to see if we indeed needed to wake it up again for T6 to
->> succeed.
-> 
-> I'm not familiar with what controller does internally, hence no clue.
-> 
-> 
-> [ 1.195295] Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
-> [ 1.195468] T37 Start:118 Size:130 Instances:1 Report IDs:0-0
-...
-Dmitry Torokhov, do you have any more comments? Are you okay with v3? If
-yes, could you please pick up patches into -next?
