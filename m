@@ -3,85 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAFCC433DB
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 11:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26994C433DB
+	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 23:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D97D822EBF
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 11:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2F622273
+	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 23:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbhAJLaC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 10 Jan 2021 06:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbhAJLaC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 10 Jan 2021 06:30:02 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C05A22EBF;
-        Sun, 10 Jan 2021 11:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1610278161;
-        bh=ck+7w93CukyhSlhD4+ZVxjqnYj/lgjNuppqHlI8alt8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BvvBHVM4tEXdZbXRW3vtCED0qai3Hdlp+Vnd3ba8OQ9qeXWyxtqh0LIbbnwpy1Or6
-         MvNWGX96GI3FgoPDjmakjWyp5dxzjSphi7p4s+BXsB1GWyBMKjLdB05u9H2aFpDTWc
-         Ol7hno9kCEqLAKZTIw81e3bDNar8hVJ/smUs0xBE=
-Date:   Sun, 10 Jan 2021 12:30:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.10 00/20] 5.10.6-rc1 review
-Message-ID: <X/rlW1dh89bJ5G1V@kroah.com>
-References: <20210107143052.392839477@linuxfoundation.org>
- <a9a73fda0e4647138b0054fe03f20546@HQMAIL107.nvidia.com>
+        id S1726110AbhAJX3T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 10 Jan 2021 18:29:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbhAJX3T (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 10 Jan 2021 18:29:19 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E66C061786;
+        Sun, 10 Jan 2021 15:28:38 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id u25so14506979lfc.2;
+        Sun, 10 Jan 2021 15:28:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1cjTKh3zk70/fWnN1TGeSc/TTueUPP8l3i6siZ1XPIQ=;
+        b=b/yc/gmqhtcjC0idadVE4eFOHYHprCh9Lwg1g4cBYkO/zgieIMQ3wmrUz9FQEVEhBe
+         SzyQ307c00ByIwogHqFMWRP2uAIY2H+DYOROvNKJn6lYnQnKYIrXBpLqnUNavr/Jwh5W
+         v6aB8M9x1UYF9OxuW9rFG5AQpVM2/Uc1S3mGEiRMRM8VYBAz4Z5w2glmA85UdrNhiA7H
+         pBhJlxiGjir7kc9LgJKHbxVEqW++cIHPKpN5jLNbfBcfoqlbUvM+WyOY7SJQ8JLFdBbj
+         LfYhptZfH+vpA9rVF9l3XrwBh5916rab3AdZe06ymkute4tVLEuquCeO3kJChu86iktI
+         rLXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1cjTKh3zk70/fWnN1TGeSc/TTueUPP8l3i6siZ1XPIQ=;
+        b=TLOhe3/1qvIGjjolKMgUy5x8thuDM5yn1Nu0NWZHaw93CWdNF1MGMFFqWAOzb1OWjL
+         YWjAKj4tMdVNuS1NWOj3eGLzpBx2kwRNV2B1nF7AOFj7vGuVYLeUhWirRU8ikiLziJVM
+         tU1P7CqoPcIE2+/lVtA/AENmzQ/A4DCQKjIYqyyn09/vlh+7a5EBnHvC7tODrC0puoUe
+         bNAnBP6Q4fA92Kqm6zJQl8EIJH6Oj0rKDRGVPq0PAX6cT2V7b5W5dV39dIe0wXHO6hIH
+         Uu8q7oiAptoTlCEXWpCr4FYo2E/6ExOPRFyX29LOYVbZJZOF5usYvwSmGVl9BHuXAvle
+         yuJw==
+X-Gm-Message-State: AOAM532NUOqNRJ8r/4Qnsr1L3Q3wJ3hOHhhRcGiHdDqmAi5m4CE9Byji
+        uTat+81XlhqfElP5FAwuRznTpyUpA1Q=
+X-Google-Smtp-Source: ABdhPJyNVKR9Vz9QDSB2ZF6a2CbaOBBfIk1HCiv3Uy/csWtTD5/iWnpTytFs3731rXd+c1BNhFhqJw==
+X-Received: by 2002:ac2:58f7:: with SMTP id v23mr5862782lfo.26.1610321317031;
+        Sun, 10 Jan 2021 15:28:37 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.gmail.com with ESMTPSA id s27sm3220563ljd.25.2021.01.10.15.28.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Jan 2021 15:28:36 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1 1/2] cpuidle: tegra: Fix C7 idling state on Tegra114
+Date:   Mon, 11 Jan 2021 02:27:04 +0300
+Message-Id: <20210110232705.20658-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9a73fda0e4647138b0054fe03f20546@HQMAIL107.nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jan 07, 2021 at 08:20:42PM +0000, Jon Hunter wrote:
-> On Thu, 07 Jan 2021 15:33:55 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.10.6 release.
-> > There are 20 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 09 Jan 2021 14:30:35 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.6-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.10:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     64 tests:	64 pass, 0 fail
-> 
-> Linux version:	5.10.6-rc1-g208f314c03c5
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Trusted Foundation firmware doesn't implement the do_idle call and in
+this case suspending should fall back to the common suspend path. In order
+to fix this issue we will unconditionally set the NOFLUSH_L2 mode via
+firmware call, which is a NO-OP on Tegra30/124, and then proceed to the
+C7 idling, like it was done by the older Tegra114 cpuidle driver.
 
-Thanks for testing all of these and letting me know.
+Fixes: 14e086baca50 ("cpuidle: tegra: Squash Tegra114 driver into the common driver")
+Cc: stable@vger.kernel.org # 5.7+
+Reported-by: Anton Bambura <jenneron@protonmail.com>
+Tested-by: Anton Bambura <jenneron@protonmail.com>
+Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/cpuidle/cpuidle-tegra.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-greg k-h
+diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+index ecc5d9b31553..49531939f24b 100644
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -135,13 +135,13 @@ static int tegra_cpuidle_c7_enter(void)
+ {
+ 	int err;
+ 
+-	if (tegra_cpuidle_using_firmware()) {
+-		err = call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
+-		if (err)
+-			return err;
++	err = call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
++	if (err && err != -ENOSYS)
++		return err;
+ 
+-		return call_firmware_op(do_idle, 0);
+-	}
++	err = call_firmware_op(do_idle, 0);
++	if (err != -ENOSYS)
++		return err;
+ 
+ 	return cpu_suspend(0, tegra30_pm_secondary_cpu_suspend);
+ }
+-- 
+2.29.2
+
