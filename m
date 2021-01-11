@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A60DC4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E373C43332
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 234632255F
+	by mail.kernel.org (Postfix) with ESMTP id 88659225AC
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbhAKNBw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:01:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
+        id S1728850AbhAKNBx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:01:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbhAKNBv (ORCPT
+        with ESMTP id S1728844AbhAKNBv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 11 Jan 2021 08:01:51 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81841C0617AB
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E9BC0617A7
         for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -29,26 +29,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=MaDpPH+B3eezo8YVv9ptDJ+BRb1IzILBcUMQmkzOJVQ=; b=r4exhXthCiTWH45hPqLGfxsYxK
-        Lay+miEqgWcqFcuNLw34/Hf5xJbBLlR0PfrB+Hi6CPJba/klC6Sect8azM4pQ0DDCQS/t6kRPgKgB
-        3ytXn0RKD/MjtpukJQHsb+YhZZ1wAv3hAhhMIiuxLTotoAT/m75OztsKa+n0uy5oIugrNVnMsriUF
-        Mp+idSlKJyoxqLGwQ7k2EVnakfLl3jAXle2LZ4F74Bf9C/WGU8eAIQP3TozLSG9KtDS7r1qQPPdeq
-        jxcflHiaXDbWYYsPQYnRhoQmROLSuOctOplhFINLqdvQwMP2QDCbutbEpD1Eiwf0mOaV1F1k9orl7
-        nCi2KpJA==;
+        bh=7U2ixRKbqOHuyXz+R/GqYFGI2wziELxmuUDNoNmPT0M=; b=LMNSD/9ChaAK9Qjj8YMjy3EEJN
+        IiANlYlF7S+AXNbyRH7pmzTStcyNgFlTpXLNIxtx12pFNVFizx93me7TkYeCi+f4woSe1muPiF/zE
+        3ZcK38aoRsmYzouL42rCB7TimMVVIp14sPKtzdHI8NW4RtxtSL/FdOeOtjVSw0c0EkUjmS0DMWnzs
+        /QsT90w85VvZslXcLZWKvRqbd4ePVzkl7oMXeHy7dU0veUlmXPN+kwS/oY31H82Ce5ENYRGFcvHo9
+        g8SYCX2uS9ldT7fd9VoXom3RH1NB+JzsNCJT4+3lDklZGGNKIiPFCQ6QlZyuQo913SAzpekpUBk5O
+        ETEyaKWA==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo7-0002tl-Hj; Mon, 11 Jan 2021 15:00:27 +0200
+        id 1kywo6-0002tl-Ce; Mon, 11 Jan 2021 15:00:26 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 17/21] drm/tegra: Set resv fields when importing/exporting GEMs
-Date:   Mon, 11 Jan 2021 15:00:15 +0200
-Message-Id: <20210111130019.3515669-18-mperttunen@nvidia.com>
+Subject: [PATCH v5 03/21] gpu: host1x: Show number of pending waiters in debugfs
+Date:   Mon, 11 Jan 2021 15:00:01 +0200
+Message-Id: <20210111130019.3515669-4-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
@@ -61,35 +61,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To allow sharing of implicit fences when exporting/importing dma_buf
-objects, set the 'resv' fields when importing or exporting GEM
-objects.
+Show the number of pending waiters in the debugfs status file.
+This is useful for testing to verify that waiters do not leak
+or accumulate incorrectly.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/gem.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/host1x/debug.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 26af8daa9a16..731e6bdc01b4 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -431,6 +431,7 @@ static struct tegra_bo *tegra_bo_import(struct drm_device *drm,
+diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+index 1b4997bda1c7..8a14880c61bb 100644
+--- a/drivers/gpu/host1x/debug.c
++++ b/drivers/gpu/host1x/debug.c
+@@ -69,6 +69,7 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
+ 
+ static void show_syncpts(struct host1x *m, struct output *o)
+ {
++	struct list_head *pos;
+ 	unsigned int i;
+ 
+ 	host1x_debug_output(o, "---- syncpts ----\n");
+@@ -76,12 +77,19 @@ static void show_syncpts(struct host1x *m, struct output *o)
+ 	for (i = 0; i < host1x_syncpt_nb_pts(m); i++) {
+ 		u32 max = host1x_syncpt_read_max(m->syncpt + i);
+ 		u32 min = host1x_syncpt_load(m->syncpt + i);
++		unsigned int waiters = 0;
+ 
+-		if (!min && !max)
++		spin_lock(&m->syncpt[i].intr.lock);
++		list_for_each(pos, &m->syncpt[i].intr.wait_head)
++			waiters++;
++		spin_unlock(&m->syncpt[i].intr.lock);
++
++		if (!min && !max && !waiters)
+ 			continue;
+ 
+-		host1x_debug_output(o, "id %u (%s) min %d max %d\n",
+-				    i, m->syncpt[i].name, min, max);
++		host1x_debug_output(o,
++				    "id %u (%s) min %d max %d (%d waiters)\n",
++				    i, m->syncpt[i].name, min, max, waiters);
  	}
  
- 	bo->gem.import_attach = attach;
-+	bo->gem.resv = buf->resv;
- 
- 	return bo;
- 
-@@ -683,6 +684,7 @@ struct dma_buf *tegra_gem_prime_export(struct drm_gem_object *gem,
- 	exp_info.size = gem->size;
- 	exp_info.flags = flags;
- 	exp_info.priv = gem;
-+	exp_info.resv = gem->resv;
- 
- 	return drm_gem_dmabuf_export(gem->dev, &exp_info);
- }
+ 	for (i = 0; i < host1x_syncpt_nb_bases(m); i++) {
 -- 
 2.30.0
 
