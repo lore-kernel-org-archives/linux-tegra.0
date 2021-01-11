@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D45C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F854C43381
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E15A022C7E
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1271722472
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:57:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbhAKNCd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:02:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47028 "EHLO
+        id S1730512AbhAKN5N (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:57:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbhAKNCc (ORCPT
+        with ESMTP id S1728569AbhAKN5M (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jan 2021 08:02:32 -0500
+        Mon, 11 Jan 2021 08:57:12 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77D0C0617BC
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C51C061786;
+        Mon, 11 Jan 2021 05:56:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=JpaHpEgMxNEJtMbY9QYGfKpCqLloxFjHFKPFDzy5jHQ=; b=v1ZTFsyXrj66rzgWdUrLvnHOpC
-        aRd1xq8U0vXqadG88kU13KS6IY0hQQwF5hyTznIE46pBOdPxGAiUkN0HkAotoUktq24UpD3oS5tP0
-        +spQuKLTtT3mLSpSvgLf742ih+MNqsFk7TE0yhvFRAYUqWAGFtpR0zU2gcv9vVsDV/kr9lRJ6HOn7
-        PkL8Cc5RfPJ7M5aCRFpPoWRYOtqs/aPtyCfd8fkSwKxn/XC+v1cpmp5v5J1zoGdhebCAbrqsqt0JE
-        1xgtq3+GfYaSqsebvySjU6cjZlYOEXHItdNtWa3hOmKUq6LSiqhex+6oJj42sCbl9x0w4bIyb0uJZ
-        NN5c8LAg==;
+        bh=t97qfNfslY47//eCciieQX08O/i/e1TvZf3R4Xgo04k=; b=A+df3OecQuS3wsVlaCAr/FvXIB
+        SYwYcoPd4E/IC8oWatbtPyMUGStlzWXND6kWATVr/XFuZ1b/idP89dLqSsNM53fac433iuygeryA8
+        RAKgLpAb1psZeaPOykC/9LCpRX4b7fpP9VG9O7BQ5l3M3kC3kTSMlMLZ01nDoSEv5rflTywZ1Rs8F
+        sxV4YKENFQOqZ/4zE3CPpN6umyuhrrQX+WW7FMrmjv7XHn5O8WklTS8PfR5Nb8H2nt+SWFV/V0EvB
+        RVF17EB0o4hslMHOFBXOLnV1bQIh3csdfChNG8A4wsIHuQZa5bmceRXeHXj8oPxC6f0Ie2awvGUPc
+        kG+dE4/Q==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo7-0002tl-TT; Mon, 11 Jan 2021 15:00:27 +0200
+        id 1kyxgJ-0001de-6R; Mon, 11 Jan 2021 15:56:27 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        airlied@linux.ie, daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 21/21] drm/tegra: Add job firewall
-Date:   Mon, 11 Jan 2021 15:00:19 +0200
-Message-Id: <20210111130019.3515669-22-mperttunen@nvidia.com>
+To:     ldewangan@nvidia.com, digetx@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, wsa@kernel.org
+Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>, stable@vger.kernel.org
+Subject: [PATCH] i2c: tegra: Wait for config load atomically while in ISR
+Date:   Mon, 11 Jan 2021 15:55:47 +0200
+Message-Id: <20210111135547.3613092-1-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 84.249.134.236
@@ -61,333 +59,95 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add a firewall that validates jobs before submission to ensure
-they don't do anything they aren't allowed to do, like accessing
-memory they should not access.
+Upon a communication error, the interrupt handler can call
+tegra_i2c_disable_packet_mode. This causes a sleeping poll to happen
+unless the current transaction was marked atomic. Since
+tegra_i2c_disable_packet_mode is only called from the interrupt path,
+make it use atomic waiting always.
 
-The firewall is functionality-wise a copy of the firewall already
-implemented in gpu/host1x. It is copied here as it makes more
-sense for it to live on the DRM side, as it is only needed for
-userspace job submissions, and generally the data it needs to
-do its job is easier to access here.
-
-In the future, the other implementation will be removed.
-
+Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
+Cc: stable@vger.kernel.org
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v5:
-* Support SETCLASS opcode
-v3:
-* New patch
----
- drivers/gpu/drm/tegra/Makefile        |   1 +
- drivers/gpu/drm/tegra/uapi/firewall.c | 221 ++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/uapi/submit.c   |  14 +-
- drivers/gpu/drm/tegra/uapi/submit.h   |   4 +
- 4 files changed, 237 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/uapi/firewall.c
+This fixes constant spew for me while HDMI is connected to a
+powered off television.
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 059322e88943..4e3295f436f1 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -5,6 +5,7 @@ tegra-drm-y := \
- 	drm.o \
- 	uapi/uapi.o \
- 	uapi/submit.o \
-+	uapi/firewall.o \
- 	uapi/gather_bo.o \
- 	gem.o \
- 	fb.o \
-diff --git a/drivers/gpu/drm/tegra/uapi/firewall.c b/drivers/gpu/drm/tegra/uapi/firewall.c
-new file mode 100644
-index 000000000000..57427c2d23fa
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/uapi/firewall.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2010-2020 NVIDIA Corporation */
-+
-+#include "../drm.h"
-+#include "../uapi.h"
-+
-+#include "submit.h"
-+
-+struct tegra_drm_firewall {
-+	struct tegra_drm_submit_data *submit;
-+	struct tegra_drm_client *client;
-+	u32 *data;
-+	u32 pos;
-+	u32 end;
-+	u32 class;
-+};
-+
-+static int fw_next(struct tegra_drm_firewall *fw, u32 *word)
-+{
-+	if (fw->pos == fw->end)
-+		return -EINVAL;
-+
-+	*word = fw->data[fw->pos++];
-+
-+	return 0;
-+}
-+
-+static bool fw_check_addr_valid(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < fw->submit->num_used_mappings; i++) {
-+		struct tegra_drm_mapping *m = fw->submit->used_mappings[i].mapping;
-+
-+		if (offset >= m->iova && offset <= m->iova_end)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int fw_check_reg(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	bool is_addr;
-+	u32 word;
-+	int err;
-+
-+	err = fw_next(fw, &word);
-+	if (err)
-+		return err;
-+
-+	if (!fw->client->ops->is_addr_reg)
-+		return 0;
-+
-+	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
-+					       offset);
-+
-+	if (!is_addr)
-+		return 0;
-+
-+	if (!fw_check_addr_valid(fw, word))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_seq(struct tegra_drm_firewall *fw, u32 offset,
-+			     u32 count, bool incr)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (fw_check_reg(fw, offset))
-+			return -EINVAL;
-+
-+		if (incr)
-+			offset++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_mask(struct tegra_drm_firewall *fw, u32 offset,
-+			      u16 mask)
-+{
-+	unsigned long bmask = mask;
-+	unsigned int bit;
-+
-+	for_each_set_bit(bit, &bmask, 16) {
-+		if (fw_check_reg(fw, offset+bit))
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fw_check_regs_imm(struct tegra_drm_firewall *fw, u32 offset)
-+{
-+	bool is_addr;
-+
-+	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
-+					       offset);
-+	if (is_addr)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int fw_check_class(struct tegra_drm_firewall *fw, u32 class)
-+{
-+	if (!fw->client->ops->is_valid_class)
-+		return -EINVAL;
-+
-+	if (!fw->client->ops->is_valid_class(class))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+enum {
-+        HOST1X_OPCODE_SETCLASS  = 0x00,
-+        HOST1X_OPCODE_INCR      = 0x01,
-+        HOST1X_OPCODE_NONINCR   = 0x02,
-+        HOST1X_OPCODE_MASK      = 0x03,
-+        HOST1X_OPCODE_IMM       = 0x04,
-+        HOST1X_OPCODE_RESTART   = 0x05,
-+        HOST1X_OPCODE_GATHER    = 0x06,
-+        HOST1X_OPCODE_SETSTRMID = 0x07,
-+        HOST1X_OPCODE_SETAPPID  = 0x08,
-+        HOST1X_OPCODE_SETPYLD   = 0x09,
-+        HOST1X_OPCODE_INCR_W    = 0x0a,
-+        HOST1X_OPCODE_NONINCR_W = 0x0b,
-+        HOST1X_OPCODE_GATHER_W  = 0x0c,
-+        HOST1X_OPCODE_RESTART_W = 0x0d,
-+        HOST1X_OPCODE_EXTEND    = 0x0e,
-+};
-+
-+int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
-+			  u32 words, struct tegra_drm_submit_data *submit,
-+			  u32 *job_class)
-+{
-+	struct tegra_drm_firewall fw = {
-+		.submit = submit,
-+		.client = client,
-+		.data = data,
-+		.pos = start,
-+		.end = start+words,
-+		.class = *job_class,
-+	};
-+	bool payload_valid = false;
-+	u32 payload;
-+	int err;
-+
-+	while (fw.pos != fw.end) {
-+		u32 word, opcode, offset, count, mask, class;
-+
-+		err = fw_next(&fw, &word);
-+		if (err)
-+			return err;
-+
-+		opcode = (word & 0xf0000000) >> 28;
-+
-+		switch (opcode) {
-+		case HOST1X_OPCODE_SETCLASS:
-+			offset = word >> 16 & 0xfff;
-+			mask = word & 0x3f;
-+			class = (word >> 6) & 0x3ff;
-+			err = fw_check_class(&fw, class);
-+			fw.class = class;
-+			*job_class = class;
-+			if (!err)
-+				err = fw_check_regs_mask(&fw, offset, mask);
-+			break;
-+		case HOST1X_OPCODE_INCR:
-+			offset = (word >> 16) & 0xfff;
-+			count = word & 0xffff;
-+			err = fw_check_regs_seq(&fw, offset, count, true);
-+			break;
-+		case HOST1X_OPCODE_NONINCR:
-+			offset = (word >> 16) & 0xfff;
-+			count = word & 0xffff;
-+			err = fw_check_regs_seq(&fw, offset, count, false);
-+			break;
-+		case HOST1X_OPCODE_MASK:
-+			offset = (word >> 16) & 0xfff;
-+			mask = word & 0xffff;
-+			err = fw_check_regs_mask(&fw, offset, mask);
-+			break;
-+		case HOST1X_OPCODE_IMM:
-+			/* IMM cannot reasonably be used to write a pointer */
-+			offset = (word >> 16) & 0xfff;
-+			err = fw_check_regs_imm(&fw, offset);
-+			break;
-+		case HOST1X_OPCODE_SETPYLD:
-+			payload = word & 0xffff;
-+			payload_valid = true;
-+			break;
-+		case HOST1X_OPCODE_INCR_W:
-+			if (!payload_valid)
-+				return -EINVAL;
-+
-+			offset = word & 0x3fffff;
-+			err = fw_check_regs_seq(&fw, offset, payload, true);
-+			break;
-+		case HOST1X_OPCODE_NONINCR_W:
-+			if (!payload_valid)
-+				return -EINVAL;
-+
-+			offset = word & 0x3fffff;
-+			err = fw_check_regs_seq(&fw, offset, payload, false);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/drm/tegra/uapi/submit.c b/drivers/gpu/drm/tegra/uapi/submit.c
-index 398be3065e21..8633844ae3d7 100644
---- a/drivers/gpu/drm/tegra/uapi/submit.c
-+++ b/drivers/gpu/drm/tegra/uapi/submit.c
-@@ -224,7 +224,8 @@ static int submit_job_add_gather(struct host1x_job *job,
- 				 struct tegra_drm_channel_ctx *ctx,
- 				 struct drm_tegra_submit_cmd_gather_uptr *cmd,
- 				 struct gather_bo *bo, u32 *offset,
--				 struct tegra_drm_submit_data *job_data)
-+				 struct tegra_drm_submit_data *job_data,
-+				 u32 *class)
+ drivers/i2c/busses/i2c-tegra.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 6f08c0c3238d..4a7ff1840565 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -528,12 +528,12 @@ static void tegra_i2c_vi_init(struct tegra_i2c_dev *i2c_dev)
+ 
+ static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
+ 				   u32 reg, u32 mask, u32 delay_us,
+-				   u32 timeout_us)
++				   u32 timeout_us, bool force_atomic)
  {
- 	u32 next_offset;
+ 	void __iomem *addr = i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg);
+ 	u32 val;
  
-@@ -241,6 +242,10 @@ static int submit_job_add_gather(struct host1x_job *job,
- 	if (next_offset > bo->gather_data_words)
- 		return -EINVAL;
+-	if (!i2c_dev->atomic_mode)
++	if (!i2c_dev->atomic_mode && !force_atomic)
+ 		return readl_relaxed_poll_timeout(addr, val, !(val & mask),
+ 						  delay_us, timeout_us);
  
-+	if (tegra_drm_fw_validate(ctx->client, bo->gather_data, *offset,
-+				  cmd->words, job_data, class))
-+		return -EINVAL;
-+
- 	host1x_job_add_gather(job, &bo->base, cmd->words, *offset * 4);
+@@ -560,7 +560,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+ 	val |= mask;
+ 	i2c_writel(i2c_dev, val, offset);
  
- 	*offset = next_offset;
-@@ -255,10 +260,13 @@ static int submit_create_job(struct drm_device *drm, struct host1x_job **pjob,
- 			     struct tegra_drm_submit_data *job_data)
+-	err = tegra_i2c_poll_register(i2c_dev, offset, mask, 1000, 1000000);
++	err = tegra_i2c_poll_register(i2c_dev, offset, mask, 1000, 1000000, false);
+ 	if (err) {
+ 		dev_err(i2c_dev->dev, "failed to flush FIFO\n");
+ 		return err;
+@@ -569,7 +569,7 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+ 	return 0;
+ }
+ 
+-static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
++static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev, bool force_atomic)
  {
- 	struct drm_tegra_submit_cmd *cmds;
--	u32 i, gather_offset = 0;
-+	u32 i, gather_offset = 0, class;
- 	struct host1x_job *job;
  	int err;
  
-+	/* Set initial class for firewall. */
-+	class = ctx->client->base.class;
-+
- 	cmds = alloc_copy_user_array(u64_to_user_ptr(args->cmds_ptr),
- 				     args->num_cmds, sizeof(*cmds));
- 	if (IS_ERR(cmds))
-@@ -284,7 +292,7 @@ static int submit_create_job(struct drm_device *drm, struct host1x_job **pjob,
- 		if (cmd->type == DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR) {
- 			err = submit_job_add_gather(job, ctx, &cmd->gather_uptr,
- 						    bo, &gather_offset,
--						    job_data);
-+						    job_data, &class);
- 			if (err)
- 				goto free_job;
- 		} else if (cmd->type == DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT) {
-diff --git a/drivers/gpu/drm/tegra/uapi/submit.h b/drivers/gpu/drm/tegra/uapi/submit.h
-index 0a165e9e4bda..cf6a2f0a29fc 100644
---- a/drivers/gpu/drm/tegra/uapi/submit.h
-+++ b/drivers/gpu/drm/tegra/uapi/submit.h
-@@ -14,4 +14,8 @@ struct tegra_drm_submit_data {
- 	u32 num_used_mappings;
- };
+@@ -579,7 +579,7 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+ 	i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
  
-+int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
-+			  u32 words, struct tegra_drm_submit_data *submit,
-+			  u32 *job_class);
-+
- #endif
+ 	err = tegra_i2c_poll_register(i2c_dev, I2C_CONFIG_LOAD, 0xffffffff,
+-				      1000, I2C_CONFIG_LOAD_TIMEOUT);
++				      1000, I2C_CONFIG_LOAD_TIMEOUT, force_atomic);
+ 	if (err) {
+ 		dev_err(i2c_dev->dev, "failed to load config\n");
+ 		return err;
+@@ -684,7 +684,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	if (i2c_dev->multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
+ 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
+ 
+-	err = tegra_i2c_wait_for_config_load(i2c_dev);
++	err = tegra_i2c_wait_for_config_load(i2c_dev, false);
+ 	if (err)
+ 		return err;
+ 
+@@ -707,7 +707,7 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
+ 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+ 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+ 
+-	return tegra_i2c_wait_for_config_load(i2c_dev);
++	return tegra_i2c_wait_for_config_load(i2c_dev, true);
+ }
+ 
+ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+@@ -1090,7 +1090,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
+ 	      I2C_BC_TERMINATE;
+ 	i2c_writel(i2c_dev, val, I2C_BUS_CLEAR_CNFG);
+ 
+-	err = tegra_i2c_wait_for_config_load(i2c_dev);
++	err = tegra_i2c_wait_for_config_load(i2c_dev, false);
+ 	if (err)
+ 		return err;
+ 
 -- 
 2.30.0
 
