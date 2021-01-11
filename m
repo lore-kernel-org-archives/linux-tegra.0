@@ -3,53 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF731C4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E743FC4332E
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84CC92250E
+	by mail.kernel.org (Postfix) with ESMTP id AB7742225E
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbhAKNBL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:01:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46714 "EHLO
+        id S1727614AbhAKNBM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:01:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbhAKNBL (ORCPT
+        with ESMTP id S1727847AbhAKNBL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 11 Jan 2021 08:01:11 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C347C061794
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B2DC061795
         for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=KA5bafOZeUkARKG6BTqpHwrlD6Qf0zeZPOzz1gTVYio=; b=u0N3NBOicVPJnt66FT3yzIzvkw
-        XRLSHUJWAX4Knw6/g7nMGaJu2SB564J12MyeUvbaP7ZQ78hQhofRiAcVYs2baX5Eft7Wo3E08IJ8m
-        uLZTvbx0HvRgJMv8gw7TdWLqe7qSgtILB7jxPg7sz8yZ+W5TYv0F6K3btseH03YgttCwLvHrcn6q4
-        AqeqDAWH1oU/egJaEjio0NgJ1HQln0mXpjnXO6sHnJkZfbNNesYc8ZJXqZ9Ig69EcwnW6JUcoaKGP
-        IOYc32/rEvDwlL+dxflXO1Dk8Fs6J6zGA09G4IFEheNee1k1UbGnYEMFn0C/a2lWZN6VwlkigXigd
-        20K/CKCQ==;
+        bh=OqxRZuGq+nQxSIuVBHS0l6WB/KvjVmglKennV/SG5As=; b=K/cT9NU3J3dt72xY1G/YTZukcU
+        nNxY1uaYR1K3I5lkYLQwgul/QsxMEeJrtjDUR3wrX5L1P8fNwz8jJCftbI6HJd4yp2rcMqfMdxq8N
+        HL2JhvfO+jiQ0/Cudv+Wan6cPd0uGquKFXoxuPWsuKwZq46drnozoJnSJ5fK7DQk7eSL5st9h0ygy
+        +wltiVw6NKQT9/ooiEKP9nEy4PbbL4Y+WOTgUVVglqirQUadMd8lOhTVIA/oV+ruSdtqxFk/Syk0b
+        pcr29F6XvveZiQNxJSnyQnbk28IWQtVQR8j9qus4mvI7MgJjSP6TReeCE6sQBoCDeZSMXkGAGltaE
+        q9rwSUdQ==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo6-0002tl-5u; Mon, 11 Jan 2021 15:00:26 +0200
+        id 1kywo6-0002tl-8F; Mon, 11 Jan 2021 15:00:26 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 00/21] Host1x/TegraDRM UAPI
-Date:   Mon, 11 Jan 2021 14:59:58 +0200
-Message-Id: <20210111130019.3515669-1-mperttunen@nvidia.com>
+Subject: [PATCH v5 01/21] gpu: host1x: Use different lock classes for each client
+Date:   Mon, 11 Jan 2021 14:59:59 +0200
+Message-Id: <20210111130019.3515669-2-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 84.249.134.236
@@ -59,109 +61,65 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi all,
+To avoid false lockdep warnings, give each client lock a different
+lock class, passed from the initialization site by macro.
 
-here's the fifth revision of the Host1x/TegraDRM UAPI proposal,
-containing primarily small bug fixes. It has also been
-rebased on top of recent linux-next.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/bus.c | 7 ++++---
+ include/linux/host1x.h   | 9 ++++++++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-vaapi-tegra-driver has been updated to support the new UAPI
-as well as Tegra186:
-
-  https://github.com/cyndis/vaapi-tegra-driver
-
-The `putsurface` program has been tested to work.
-
-The test suite for the new UAPI is available at
-https://github.com/cyndis/uapi-test
-
-The series can be also found in
-https://github.com/cyndis/linux/commits/work/host1x-uapi-v5.
-
-Older versions:
-v1: https://www.spinics.net/lists/linux-tegra/msg51000.html
-v2: https://www.spinics.net/lists/linux-tegra/msg53061.html
-v3: https://www.spinics.net/lists/linux-tegra/msg54370.html
-v4: https://www.spinics.net/lists/dri-devel/msg279897.html
-
-Thank you,
-Mikko
-
-Mikko Perttunen (21):
-  gpu: host1x: Use different lock classes for each client
-  gpu: host1x: Allow syncpoints without associated client
-  gpu: host1x: Show number of pending waiters in debugfs
-  gpu: host1x: Remove cancelled waiters immediately
-  gpu: host1x: Use HW-equivalent syncpoint expiration check
-  gpu: host1x: Cleanup and refcounting for syncpoints
-  gpu: host1x: Introduce UAPI header
-  gpu: host1x: Implement /dev/host1x device node
-  gpu: host1x: DMA fences and userspace fence creation
-  gpu: host1x: Add no-recovery mode
-  gpu: host1x: Add job release callback
-  gpu: host1x: Add support for syncpoint waits in CDMA pushbuffer
-  gpu: host1x: Reset max value when freeing a syncpoint
-  gpu: host1x: Reserve VBLANK syncpoints at initialization
-  drm/tegra: Add new UAPI to header
-  drm/tegra: Boot VIC during runtime PM resume
-  drm/tegra: Set resv fields when importing/exporting GEMs
-  drm/tegra: Allocate per-engine channel in core code
-  drm/tegra: Implement new UAPI
-  drm/tegra: Implement job submission part of new UAPI
-  drm/tegra: Add job firewall
-
- drivers/gpu/drm/tegra/Makefile         |   4 +
- drivers/gpu/drm/tegra/dc.c             |  10 +-
- drivers/gpu/drm/tegra/drm.c            |  69 ++--
- drivers/gpu/drm/tegra/drm.h            |   9 +
- drivers/gpu/drm/tegra/gem.c            |   2 +
- drivers/gpu/drm/tegra/gr2d.c           |   4 +-
- drivers/gpu/drm/tegra/gr3d.c           |   4 +-
- drivers/gpu/drm/tegra/uapi.h           |  63 ++++
- drivers/gpu/drm/tegra/uapi/firewall.c  | 221 +++++++++++++
- drivers/gpu/drm/tegra/uapi/gather_bo.c |  86 +++++
- drivers/gpu/drm/tegra/uapi/gather_bo.h |  22 ++
- drivers/gpu/drm/tegra/uapi/submit.c    | 436 +++++++++++++++++++++++++
- drivers/gpu/drm/tegra/uapi/submit.h    |  21 ++
- drivers/gpu/drm/tegra/uapi/uapi.c      | 307 +++++++++++++++++
- drivers/gpu/drm/tegra/vic.c            | 118 ++++---
- drivers/gpu/host1x/Makefile            |   2 +
- drivers/gpu/host1x/bus.c               |   7 +-
- drivers/gpu/host1x/cdma.c              |  69 +++-
- drivers/gpu/host1x/debug.c             |  14 +-
- drivers/gpu/host1x/dev.c               |  15 +
- drivers/gpu/host1x/dev.h               |  16 +-
- drivers/gpu/host1x/fence.c             | 208 ++++++++++++
- drivers/gpu/host1x/fence.h             |  13 +
- drivers/gpu/host1x/hw/cdma_hw.c        |   2 +-
- drivers/gpu/host1x/hw/channel_hw.c     |  63 ++--
- drivers/gpu/host1x/hw/debug_hw.c       |  11 +-
- drivers/gpu/host1x/intr.c              |  32 +-
- drivers/gpu/host1x/intr.h              |   6 +-
- drivers/gpu/host1x/job.c               |  79 +++--
- drivers/gpu/host1x/job.h               |  14 +
- drivers/gpu/host1x/syncpt.c            | 187 ++++++-----
- drivers/gpu/host1x/syncpt.h            |  16 +-
- drivers/gpu/host1x/uapi.c              | 385 ++++++++++++++++++++++
- drivers/gpu/host1x/uapi.h              |  22 ++
- drivers/staging/media/tegra-video/vi.c |   4 +-
- include/linux/host1x.h                 |  47 ++-
- include/uapi/drm/tegra_drm.h           | 338 +++++++++++++++++--
- include/uapi/linux/host1x.h            | 134 ++++++++
- 38 files changed, 2771 insertions(+), 289 deletions(-)
- create mode 100644 drivers/gpu/drm/tegra/uapi.h
- create mode 100644 drivers/gpu/drm/tegra/uapi/firewall.c
- create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.c
- create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.h
- create mode 100644 drivers/gpu/drm/tegra/uapi/submit.c
- create mode 100644 drivers/gpu/drm/tegra/uapi/submit.h
- create mode 100644 drivers/gpu/drm/tegra/uapi/uapi.c
- create mode 100644 drivers/gpu/host1x/fence.c
- create mode 100644 drivers/gpu/host1x/fence.h
- create mode 100644 drivers/gpu/host1x/uapi.c
- create mode 100644 drivers/gpu/host1x/uapi.h
- create mode 100644 include/uapi/linux/host1x.h
-
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 347fb962b6c9..8fc79e9cb652 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -715,13 +715,14 @@ EXPORT_SYMBOL(host1x_driver_unregister);
+  * device and call host1x_device_init(), which will in turn call each client's
+  * &host1x_client_ops.init implementation.
+  */
+-int host1x_client_register(struct host1x_client *client)
++int __host1x_client_register(struct host1x_client *client,
++			   struct lock_class_key *key)
+ {
+ 	struct host1x *host1x;
+ 	int err;
+ 
+ 	INIT_LIST_HEAD(&client->list);
+-	mutex_init(&client->lock);
++	__mutex_init(&client->lock, "host1x client lock", key);
+ 	client->usecount = 0;
+ 
+ 	mutex_lock(&devices_lock);
+@@ -742,7 +743,7 @@ int host1x_client_register(struct host1x_client *client)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(host1x_client_register);
++EXPORT_SYMBOL(__host1x_client_register);
+ 
+ /**
+  * host1x_client_unregister() - unregister a host1x client
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index ce59a6a6a008..9eb77c87a83b 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -320,7 +320,14 @@ static inline struct host1x_device *to_host1x_device(struct device *dev)
+ int host1x_device_init(struct host1x_device *device);
+ int host1x_device_exit(struct host1x_device *device);
+ 
+-int host1x_client_register(struct host1x_client *client);
++int __host1x_client_register(struct host1x_client *client,
++			     struct lock_class_key *key);
++#define host1x_client_register(class) \
++	({ \
++		static struct lock_class_key __key; \
++		__host1x_client_register(class, &__key); \
++	})
++
+ int host1x_client_unregister(struct host1x_client *client);
+ 
+ int host1x_client_suspend(struct host1x_client *client);
 -- 
 2.30.0
 
