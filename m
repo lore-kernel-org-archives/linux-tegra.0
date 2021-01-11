@@ -2,153 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24635C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 12:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FDFC43381
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C674F2064B
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 12:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 582B92225E
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbhAKMJs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 07:09:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35690 "EHLO
+        id S1725917AbhAKNBL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:01:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbhAKMJs (ORCPT
+        with ESMTP id S1727525AbhAKNBK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jan 2021 07:09:48 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D45C061794;
-        Mon, 11 Jan 2021 04:09:07 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id p13so3259934ljg.2;
-        Mon, 11 Jan 2021 04:09:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=goLhuBSCjKadHRs/kb9mxrURANG8pwV/Lx3k7y9BRdA=;
-        b=AqnKiTZUVK21X8370FNmUj3Sz2Iey1OZNY4uXHU5eMX4HnREgpIfp/s0lXDBwPnRwi
-         VO0nk8mZj8GMm8U1hGauT3MZz5+P9fbXI/WRZunC3fVpzS79VCcFebfVEdf30/Va5AsE
-         2wbGQl+1Dx4Ns1aD4rVYr7wszSs4Qqfd/zi64R5tTOyzq5M2R6pO2JN1AWQ7zH7KKDCy
-         Wzy9nRBcawAGSw64n0r6i6BE1WJT5Tl3cGVh5/iPZ3k7Vog5ffvuE5p51egXxp3Q1ZJL
-         xbiCCxKznS+bhTAH/PCUtRB3DVUk1jAmjw0d/vXjMK+F8z1uCFb6QuUYmxVuvFKmncPs
-         NAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=goLhuBSCjKadHRs/kb9mxrURANG8pwV/Lx3k7y9BRdA=;
-        b=T0QvNbUhww2cTEq5l0LSLNbAPqvGrmEcFkk2otlhgGRWHPKQymGq0enE7t2i6CTOOw
-         N+KG9e8STdYVyIX6edkVUy+mob0d3HE5w6RcbX9oW+E5XMNWJr9IrHCrlXTDqv82uBw6
-         1lKAtbP4U8KMmY4fiFBwtVvUY7Vyy+R9nCKnyBHY9VFDZVxv3I9tMX6iRiJU2kHcSTzM
-         Q1QD9fwoARKWdoPq86bGk2Wfcxrqtpx5vIXTjSo9w3ap1YBtVIH1dg3KOV9uOZA7zlE9
-         RZworaOUQGGvxZgFreJFhJi0CXrz61//sfXdtcGucJ603hrr+kk6cbqBlKj0pvArzxmv
-         4hZg==
-X-Gm-Message-State: AOAM533kTDFuMUJc/cQDDQYmj/Wr9mq5NE1QKHpnMM/r7oci52/Szdme
-        HGRDiwsT+4M6rhPVsEIO5IB9qoEiuPs=
-X-Google-Smtp-Source: ABdhPJzyrAsqPpGUb6s4idPzfk61xUlntL22/9SRtL6KPIbtrwZfj0kayGdZlP8w0WhHUxcZnJLc8Q==
-X-Received: by 2002:a2e:7102:: with SMTP id m2mr7610037ljc.245.1610366945794;
-        Mon, 11 Jan 2021 04:09:05 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id q9sm3432947ljm.113.2021.01.11.04.09.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Jan 2021 04:09:05 -0800 (PST)
-Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
- of writesl()
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
- <20201020074846.GA1877013@ulmo>
- <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
- <c37f8618-5100-4087-3bc3-fe421d40f3b8@gmail.com>
-Message-ID: <2212a21b-7dff-4ba0-a193-badd5a1770c8@gmail.com>
-Date:   Mon, 11 Jan 2021 15:09:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Mon, 11 Jan 2021 08:01:10 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B93C06179F
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=U4LMapHebtqQLMY7HEgN7zFM2ivBVZziq+5m4D+W0WE=; b=astueCCDkN5AJ4VghQUXJtxvJ9
+        CtOoLIj44JkIBsIM10T7e3PuVwJS15ZN1S8ZDc9u/Su2IFeWs8qrU3RttJGEimd6EcelOGOoATvR8
+        km9FwagT7Pail0kEJ7XfhKviLTkwzt4x8LMcb42L7JWckfEfoP1haOYPadz/IVh7mRmo6Ym1w+ViQ
+        dn6/OTbHuviBx0OVdDnGlRs11nX7O9ocnEIqcUS+qFzKA2lvCIWcINyOVIbVRvJViuRb0/dHKO78/
+        QGEU1GvdHmNRyVnzBTgHbBNS8T7QPKLyTwlB4McwwOZH4nCep6aQwWKj9SQEymRok+7P7GwZVDI0Q
+        TQ9RCVbw==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1kywo6-0002tl-F5; Mon, 11 Jan 2021 15:00:26 +0200
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v5 04/21] gpu: host1x: Remove cancelled waiters immediately
+Date:   Mon, 11 Jan 2021 15:00:02 +0200
+Message-Id: <20210111130019.3515669-5-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <c37f8618-5100-4087-3bc3-fe421d40f3b8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-11.01.2021 14:50, Dmitry Osipenko пишет:
-> 20.10.2020 19:37, Sowjanya Komatineni пишет:
->>
->> On 10/20/20 12:48 AM, Thierry Reding wrote:
->>> On Mon, Oct 19, 2020 at 09:03:54PM -0700, Sowjanya Komatineni wrote:
->>>> VI I2C don't have DMA support and uses PIO mode all the time.
->>>>
->>>> Current driver uses writesl() to fill TX FIFO based on available
->>>> empty slots and with this seeing strange silent hang during any I2C
->>>> register access after filling TX FIFO with 8 words.
->>>>
->>>> Using writel() followed by i2c_readl() in a loop to write all words
->>>> to TX FIFO instead of using writesl() helps for large transfers in
->>>> PIO mode.
->>>>
->>>> So, this patch updates i2c_writesl() API to use writel() in a loop
->>>> instead of writesl().
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>   drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
->>>>   1 file changed, 6 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
->>>> b/drivers/i2c/busses/i2c-tegra.c
->>>> index 6f08c0c..274bf3a 100644
->>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>> @@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev
->>>> *i2c_dev, unsigned int reg)
->>>>       return readl_relaxed(i2c_dev->base +
->>>> tegra_i2c_reg_addr(i2c_dev, reg));
->>>>   }
->>>>   -static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
->>>> +static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
->>>>               unsigned int reg, unsigned int len)
->>>>   {
->>>> -    writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data,
->>>> len);
->>>> +    while (len--) {
->>>> +        writel(*data++, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev,
->>>> reg));
->>>> +        i2c_readl(i2c_dev, I2C_INT_STATUS);
->>>> +    }
->>>>   }
->>>>     static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
->>>> @@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct
->>>> tegra_i2c_dev *i2c_dev)
->>>>           i2c_dev->msg_buf_remaining = buf_remaining;
->>>>           i2c_dev->msg_buf = buf + words_to_transfer *
->>>> BYTES_PER_FIFO_WORD;
->>>>   -        i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
->>>> +        i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO,
->>>> words_to_transfer);
->>> I've thought a bit more about this and I wonder if we're simply reading
->>> out the wrong value for tx_fifo_avail and therefore end up overflowing
->>> the TX FIFO. Have you checked what the value is for tx_fifo_avail when
->>> this silent hang occurs? Given that this is specific to the VI I2C I'm
->>> wondering if this is perhaps a hardware bug where we read the wrong TX
->>> FIFO available count.
->>>
->>> Thierry
->>
->> Yes FIFO status shows all 8 slots available.
-> 
-> Please explain how you checked that 8 slots are available, provide
-> example code.
-> 
+Before this patch, cancelled waiters would only be cleaned up
+once their threshold value was reached. Make host1x_intr_put_ref
+process the cancellation immediately to fix this.
 
-Have you checked the FIFO overflow interrupt?
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+v5:
+* Add parameter to flush, i.e. wait for all pending waiters to
+  complete before returning. The reason this is not always true
+  is that the pending waiter might be the place that is calling
+  the put_ref.
+---
+ drivers/gpu/host1x/intr.c   | 23 +++++++++++++++++------
+ drivers/gpu/host1x/intr.h   |  4 +++-
+ drivers/gpu/host1x/syncpt.c |  2 +-
+ 3 files changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
+index 9245add23b5d..70e1096a4fe9 100644
+--- a/drivers/gpu/host1x/intr.c
++++ b/drivers/gpu/host1x/intr.c
+@@ -242,18 +242,29 @@ int host1x_intr_add_action(struct host1x *host, struct host1x_syncpt *syncpt,
+ 	return 0;
+ }
+ 
+-void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref)
++void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref,
++			 bool flush)
+ {
+ 	struct host1x_waitlist *waiter = ref;
+ 	struct host1x_syncpt *syncpt;
+ 
+-	while (atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED) ==
+-	       WLS_REMOVED)
+-		schedule();
++	atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED);
+ 
+ 	syncpt = host->syncpt + id;
+-	(void)process_wait_list(host, syncpt,
+-				host1x_syncpt_load(host->syncpt + id));
++
++	spin_lock(&syncpt->intr.lock);
++	if (atomic_cmpxchg(&waiter->state, WLS_CANCELLED, WLS_HANDLED) ==
++	    WLS_CANCELLED) {
++		list_del(&waiter->list);
++		kref_put(&waiter->refcount, waiter_release);
++	}
++	spin_unlock(&syncpt->intr.lock);
++
++	if (flush) {
++		/* Wait until any concurrently executing handler has finished. */
++		while (atomic_read(&waiter->state) != WLS_HANDLED)
++			cpu_relax();
++	}
+ 
+ 	kref_put(&waiter->refcount, waiter_release);
+ }
+diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
+index aac38194398f..6ea55e615e3a 100644
+--- a/drivers/gpu/host1x/intr.h
++++ b/drivers/gpu/host1x/intr.h
+@@ -74,8 +74,10 @@ int host1x_intr_add_action(struct host1x *host, struct host1x_syncpt *syncpt,
+  * Unreference an action submitted to host1x_intr_add_action().
+  * You must call this if you passed non-NULL as ref.
+  * @ref the ref returned from host1x_intr_add_action()
++ * @flush wait until any pending handlers have completed before returning.
+  */
+-void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref);
++void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref,
++			 bool flush);
+ 
+ /* Initialize host1x sync point interrupt */
+ int host1x_intr_init(struct host1x *host, unsigned int irq_sync);
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 5982fdf64e1c..e48b4595cf53 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -293,7 +293,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		}
+ 	}
+ 
+-	host1x_intr_put_ref(sp->host, sp->id, ref);
++	host1x_intr_put_ref(sp->host, sp->id, ref, true);
+ 
+ done:
+ 	return err;
+-- 
+2.30.0
+
