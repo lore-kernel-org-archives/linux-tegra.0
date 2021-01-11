@@ -2,95 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF972C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 15:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82E4C43381
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 15:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 782E122AAF
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 15:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62262224D2
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 15:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbhAKPeE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 10:34:04 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17363 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730668AbhAKPeD (ORCPT
+        id S1729369AbhAKPuI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 10:50:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbhAKPuI (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jan 2021 10:34:03 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ffc6fc30004>; Mon, 11 Jan 2021 07:33:23 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 11 Jan
- 2021 15:33:23 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 11 Jan 2021 15:33:23 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/145] 5.10.7-rc1 review
-In-Reply-To: <20210111130048.499958175@linuxfoundation.org>
-References: <20210111130048.499958175@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jan 2021 10:50:08 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8279C0617A2;
+        Mon, 11 Jan 2021 07:49:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FFMEUUCHGLm99xm2CkvttDiOzVZ9LFIoxQMb7aWxnFI=; b=oy5fZ4ZKbOyW3IOxH4IU3ZkhIc
+        nsE4PdgidAM4ki+346LdyuoCASnTypQw0Zco7ZJXDwX6AvGwoJ4THriuE/UF23kqhtyJvcdiuq56s
+        Tejnb7I3L8vBsXSVu7QAgw3Xbzu8xIZsSddgfGddZB2mF6o7WYHklBf5E7BRYuiXh1CldcEqRqBdA
+        DrS9VZVqQjtlGk+ZK45zCV53HvvuqePmNplIu2YNFhl9i+yDVnzUqv8JvANPPZ3PetNmpeByQa4FT
+        OGPHrv179xP57eZR1iDMA0FydgXLQ/BuaG6KSAf+H/P0Iutz1XLE/Scg6LBf2W/eFKbn9qHdmZCe5
+        6oj7Wgcg==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1kyzRc-0003pz-NI; Mon, 11 Jan 2021 17:49:24 +0200
+Subject: Re: [PATCH] i2c: tegra-bpmp: ignore DMA safe buffer flag
+To:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     talho@nvidia.com, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Muhammed Fazal <mfazale@nvidia.com>, stable@vger.kernel.org
+References: <20210111142713.3641208-1-mperttunen@nvidia.com>
+ <16a0be21-2cbe-dd0e-aed7-b84f6abcacac@codethink.co.uk>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <b3a7037c-4568-dcd3-3e03-d8031cc749b2@kapsi.fi>
+Date:   Mon, 11 Jan 2021 17:49:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Message-ID: <5a5c3f8ac53e4e9a9e7710ab6896b4ff@HQMAIL109.nvidia.com>
-Date:   Mon, 11 Jan 2021 15:33:23 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610379203; bh=561GL7xaudSJ4uq0BU4dvRYXG+O5+8gUD64o2BSkhzE=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=NkIaiCZTisVdQzk9nRV2ckkXPxa1VN7k8Z7j36gOTLUsaJdankoAe66DMAkkwzaAA
-         Mao135nAcUf6gRs7lk1VE5SfE6MpJzfmb3bHRXX//7DtnI4SDCaBz/crI+lQww+OCQ
-         6XCda2VSFa/u8GWE8WlYpN/sk9R3ynxGtCewSC4t/w9ZQeONId3TPps1TLe5iVT7vE
-         VHEpl3ruwMksk2z8hOzguix/qJh8Wmv/oLiuSTxCbbH67uYYZXTpym+4WVMri2f4Ep
-         giB8Lwo0+V2PDI+o7IOXDJUgFheK76HDk5576KxG2PRFkwzkqbyS3BTL3nbUa3QPp/
-         nar4c9Y+P045Q==
+In-Reply-To: <16a0be21-2cbe-dd0e-aed7-b84f6abcacac@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 11 Jan 2021 14:00:24 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.7 release.
-> There are 145 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 1/11/21 5:04 PM, Ben Dooks wrote:
+> On 11/01/2021 14:27, Mikko Perttunen wrote:
+>> From: Muhammed Fazal <mfazale@nvidia.com>
+>>
+>> Ignore I2C_M_DMA_SAFE flag as it does not make a difference
+>> for bpmp-i2c, but causes -EINVAL to be returned for valid
+>> transactions.
+>>
+>> Signed-off-by: Muhammed Fazal <mfazale@nvidia.com>
+>> Cc: stable@vger.kernel.org # v4.19+
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>> This fixes failures seen with PMIC probing tools on
+>> Tegra186+ boards.
+>>
+>>   drivers/i2c/busses/i2c-tegra-bpmp.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c 
+>> b/drivers/i2c/busses/i2c-tegra-bpmp.c
+>> index ec7a7e917edd..998d4b21fb59 100644
+>> --- a/drivers/i2c/busses/i2c-tegra-bpmp.c
+>> +++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
+>> @@ -80,6 +80,9 @@ static int tegra_bpmp_xlate_flags(u16 flags, u16 *out)
+>>           flags &= ~I2C_M_RECV_LEN;
+>>       }
+>> +    if (flags & I2C_M_DMA_SAFE)
+>> +        flags &= ~I2C_M_DMA_SAFE;
+>> +
 > 
-> Responses should be made by Wed, 13 Jan 2021 13:00:19 +0000.
-> Anything received after that time might be too late.
+> Just a comment, you can do without the test here.
+> Just doing this would have been fine:
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+>      flags &= ~I2C_M_DMA_SAFE;
 > 
-> thanks,
 > 
-> greg k-h
+> 
 
-All tests passing for Tegra ...
+Yep, I'll send a v2.
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    64 tests:	64 pass, 0 fail
-
-Linux version:	5.10.7-rc1-gc627df405028
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+thanks,
+Mikko
