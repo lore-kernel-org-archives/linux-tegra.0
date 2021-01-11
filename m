@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC97EC432C3
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24887C43603
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D35F2255F
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042F222795
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbhAKNBy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:01:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46882 "EHLO
+        id S1728677AbhAKNBz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 08:01:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728861AbhAKNBv (ORCPT
+        with ESMTP id S1728370AbhAKNBv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 11 Jan 2021 08:01:51 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D07CC0617B9
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679D1C0617A3
         for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -29,26 +29,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=uEdqu0vAnnJ4ggl2+Pwdxf5WEtGDzV0iqKdDQD5ry30=; b=Ca5w0nPaEsM/afbuZCogOj3vZl
-        ikyyXqJbuFdQ+FBwjEAnWNtEWOQ7BJznI0qRhOziQvGHxWjc4rziDtyX3LF3HBoRkDQoKfULYTep0
-        OHfC6js8aYOdDu6VvtUhAtg9kXN5kDueBKgg5BYqBMF9nPEPVdH4lP7XvhN/x5w1SHWgS+nu3Cfcc
-        DhUCFwi5SFQKnNnB4aqVmdrfuTnk1BZDhr45CV2kKWPKumSJjho7s1FUh0u5qG84eQ134xDFJf2NQ
-        f6KQrM5djjgHABMF1cheoVj2Yq44cCHmMWm8T8OGYaQ7ROc6mzcJMLGugXGwPkGJgJ7tt11qmQyvq
-        wXMCA8eA==;
+        bh=nF6oHo8aulIPJbX2Nr8lzvk5VJXA5oLQgAsjG2ASex0=; b=C1kYeDJrfgPH+Og6wg9HZ8dDdu
+        CeRpw27MQBGOMIwUTL/hYdIn5TEtLZwerqCs4125tPQaJfV0jAl0E+3Sk71zPXqaRMz0KxnUsG2UA
+        /Uf2UzfsNY1CqBuryChXtRWs3oiFjZJu1niMtE4AV0yYrGvFonjgx74NIXX+08yYdjIgpQiL2JnvO
+        W9iR4oeZ5mU2dfCEbTlaVy+a4aJ0HJY7uqdaQajFfWPZIyqJXg/1In2p2JEFA2dRsB7SJcPRLBgAP
+        CpYpHH7lAOdcRexNZX8AxUZUAP3WhNMVDpatwqYWEylPrEVYwL9WXQRdyXj4nzts0tg49IrnV9yiW
+        jqNQSH7Q==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo7-0002tl-Jg; Mon, 11 Jan 2021 15:00:27 +0200
+        id 1kywo7-0002tl-2Q; Mon, 11 Jan 2021 15:00:27 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 18/21] drm/tegra: Allocate per-engine channel in core code
-Date:   Mon, 11 Jan 2021 15:00:16 +0200
-Message-Id: <20210111130019.3515669-19-mperttunen@nvidia.com>
+Subject: [PATCH v5 11/21] gpu: host1x: Add job release callback
+Date:   Mon, 11 Jan 2021 15:00:09 +0200
+Message-Id: <20210111130019.3515669-12-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
@@ -61,63 +61,45 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To avoid duplication, allocate the per-engine shared channel in the
-core code instead. Once MLOCKs are implemented on Host1x side, we
-can also update this to avoid allocating a shared channel when
-MLOCKs are enabled.
+Add a callback field to the job structure, to be called just before
+the job is to be freed. This allows the job's submitter to clean
+up any of its own state, like decrement runtime PM refcounts.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/drm.c | 11 +++++++++++
- drivers/gpu/drm/tegra/drm.h |  4 ++++
- 2 files changed, 15 insertions(+)
+ drivers/gpu/host1x/job.c | 3 +++
+ include/linux/host1x.h   | 4 ++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index cd81b52a9e06..afd3f143c5e0 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -880,6 +880,14 @@ static const struct drm_driver tegra_drm_driver = {
- int tegra_drm_register_client(struct tegra_drm *tegra,
- 			      struct tegra_drm_client *client)
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 8f59b34672c2..09097e19c0d0 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
  {
-+	/*
-+	 * When MLOCKs are implemented, change to allocate a shared channel
-+	 * only when MLOCKs are disabled.
-+	 */
-+	client->shared_channel = host1x_channel_request(&client->base);
-+	if (!client->shared_channel)
-+		return -EBUSY;
-+
- 	mutex_lock(&tegra->clients_lock);
- 	list_add_tail(&client->list, &tegra->clients);
- 	client->drm = tegra;
-@@ -896,6 +904,9 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
- 	client->drm = NULL;
- 	mutex_unlock(&tegra->clients_lock);
+ 	struct host1x_job *job = container_of(ref, struct host1x_job, ref);
  
-+	if (client->shared_channel)
-+		host1x_channel_put(client->shared_channel);
++	if (job->release)
++		job->release(job);
 +
- 	return 0;
- }
+ 	if (job->waiter)
+ 		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
+ 				    job->waiter, false);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 81ca70066c76..d48cab563d5c 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -265,6 +265,10 @@ struct host1x_job {
  
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index f38de08e0c95..0f38f159aa8e 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -87,8 +87,12 @@ struct tegra_drm_client {
- 	struct list_head list;
- 	struct tegra_drm *drm;
- 
-+	/* Set by driver */
- 	unsigned int version;
- 	const struct tegra_drm_client_ops *ops;
+ 	/* Fast-forward syncpoint increments on job timeout */
+ 	bool syncpt_recovery;
 +
-+	/* Set by TegraDRM core */
-+	struct host1x_channel *shared_channel;
++	/* Callback called when job is freed */
++	void (*release)(struct host1x_job *job);
++	void *user_data;
  };
  
- static inline struct tegra_drm_client *
+ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
 -- 
 2.30.0
 
