@@ -2,131 +2,186 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4908FC433E0
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 23:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31146C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 08:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1907C229C4
-	for <linux-tegra@archiver.kernel.org>; Sun, 10 Jan 2021 23:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E567E22AAA
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 08:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbhAJX3U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 10 Jan 2021 18:29:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42844 "EHLO
+        id S1727796AbhAKIch (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 03:32:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbhAJX3U (ORCPT
+        with ESMTP id S1726345AbhAKIch (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 10 Jan 2021 18:29:20 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61EF3C061794;
-        Sun, 10 Jan 2021 15:28:39 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id w26so1453355ljo.4;
-        Sun, 10 Jan 2021 15:28:39 -0800 (PST)
+        Mon, 11 Jan 2021 03:32:37 -0500
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB838C061786;
+        Mon, 11 Jan 2021 00:31:56 -0800 (PST)
+Received: by mail-il1-x12f.google.com with SMTP id x15so1749298ilk.3;
+        Mon, 11 Jan 2021 00:31:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gmTSjSeyUWQmPkotNjgjdIHP/fEVm6ggDFHMD/YD1ts=;
-        b=hFfhMSm6L+RIZcO73W69XnCqWlYC5WZap3JcD+9ZD1RKoDnFraA1me0FPYbxCNAPRf
-         GZIJ70uhQvQyJT5/Q7Qou+P3f2k+DUoq923iqDc0waWolvjDi1uwWx7HTzRo8ciIYv5h
-         rOypS1xiFFhqCji6tYAVKgk1cfpXdfE56xUFC+mgK0gAi7NKAKbQfHy5T5veosfz8RJc
-         IdNxG9G08YTrTDV6m1YQAxklln1qkophXvkP8O8XQ/56LgWXfcqlbEvskig46NHKNdoR
-         An9NbQMSyYOLcsw/YZb1JWtLSnKydLsDpH12mUN5CP5flbNFF1srww0BRb6svtlyg59F
-         KNew==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v/NXBvCLKrac3XyokGdCPBcnqn52lWLwH6gBQ31Muv0=;
+        b=JbkQHk9ziGv0q5L+6TJzchHwzF1l03U1EvtxyLPZPe4rKl4XpTcOWd3DWHtZOFVaM0
+         QeYN/A6L1tm9CsPBfHZXkuk6+v1ufg4iD9/VoG89coWrihHuouVZzpGVyh1P8NuD23d0
+         72d+1fWaHEA9s+sHMWA/3fleC74cLkAvOamvOtyDfPbsMlBmdiJVR1IDuLIe3Nj31vPy
+         jqfFtgiS0aHtorZDnyPAjJXThwNw0JReURzrb55vyJnw9ACtlGqlV2D8zs3xePKldBYi
+         RvsKUYreIyGWHcmR+SRlpqVIGCe1DAVZ/BQXa1gyVFXOvVPoJL53HtagH2j2Re3QaAGE
+         1Uwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gmTSjSeyUWQmPkotNjgjdIHP/fEVm6ggDFHMD/YD1ts=;
-        b=ggDCL8cfEa0EZNK5SkFgtfEkTcS27m3KfH/4nuA/qfOb7lsYtL1r4wCpmxDDYGBUd3
-         8FfIQjvdh8EPGyJxsQ00Bbowc8NQV9TJXlwo6VrMrtsbHd/PFlHRM02jeObtUegygAlW
-         kEPiCfxR8HMw+kvMF6r+QOJAa04ZLvg5vSGE5hEzOfB3IEtU/d19plIG0/D7hzFn0kon
-         Hwab8foaWYKgHlJlSRWLCtHCa+nF8eTgWOz/su24WZmC6rNtlPwe5fOYp06LxHLPaNqN
-         k8ZtZu3bXVErBrUyanHnKfRvNwzdLVG3eh2+gLHwq3Ud8Yog4Xr2nk4aId5LOJ1FwDFY
-         q4Rg==
-X-Gm-Message-State: AOAM530ch5BH4+z+VXhSPp2byKgkOIH7m7VyUGCPMOmEcWTOPYCmR/t3
-        fzVyYvWFxweSvyJL6FhdWGQ=
-X-Google-Smtp-Source: ABdhPJz//Mv/RJyC9CZ93smyAEujTwC2Q0Oxx0c4wuPDDbR3gBg8sKl77o8tNFj3po49jgIGpaFA5Q==
-X-Received: by 2002:a2e:9988:: with SMTP id w8mr5852507lji.107.1610321317867;
-        Sun, 10 Jan 2021 15:28:37 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id s27sm3220563ljd.25.2021.01.10.15.28.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v/NXBvCLKrac3XyokGdCPBcnqn52lWLwH6gBQ31Muv0=;
+        b=rLZk+WHrmhfqtRL5GrzxtsttyQh1kIlBkRwx/Kq8JvBc7uNnFTaQB7OYq7jEifhAvv
+         J/zOFoLoDU3ryTvcT4iIY1Im+xe9WO0RIoGW4Adp2EElgRn0jR6Gfa7iMyViZBTeZ/lO
+         BRkCC1stXcHgPcptuX/QaY6Ep30qTCjSyr+Y27TrdqHp/k+JTihu0k6UwifO9W8tTmMU
+         EobKBhIZiwRHvqA8TIw6+F2OSBg1KnOzMu7hZf22GYYYRnoPvY7qvONPhpnGBSl4s8UE
+         adq7BDD2vXUiz8j8Q+cGqHC5RhF8wgCPk6Yu3dQrutlFB8bUtfwRxjqUgr8N2G9B36Ru
+         NQ8w==
+X-Gm-Message-State: AOAM530jVY3f0EVui3HOgEnB40F9ZolvOpkDAzdxiHPCXYgtO7vmPZ2O
+        J5MA+Yet8q/rO5JGlo4OW4LidKolT7Q=
+X-Google-Smtp-Source: ABdhPJwaTB6TYxQj7LLrW6fBsjRXSSsXBmy+Xih7j3qQmJQZiA4wu6uP7t/L6F7y2f2G3eoP1OLs6w==
+X-Received: by 2002:a05:6e02:5d0:: with SMTP id l16mr14185032ils.90.1610353916110;
+        Mon, 11 Jan 2021 00:31:56 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id a10sm10521499ioc.43.2021.01.11.00.31.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jan 2021 15:28:37 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 2/2] cpuidle: tegra: Remove do_idle firmware call
-Date:   Mon, 11 Jan 2021 02:27:05 +0300
-Message-Id: <20210110232705.20658-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210110232705.20658-1-digetx@gmail.com>
-References: <20210110232705.20658-1-digetx@gmail.com>
+        Mon, 11 Jan 2021 00:31:54 -0800 (PST)
+Date:   Mon, 11 Jan 2021 09:31:52 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        digetx@gmail.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
+ of writesl()
+Message-ID: <X/wM+LBkqF5ixuMf@ulmo>
+References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2H5ZGAP27J0BwHMG"
+Content-Disposition: inline
+In-Reply-To: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/2.0.3 (a51f058f) (2020-12-04)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The do_idle firmware call is unused by all Tegra SoCs, hence remove it in
-order to keep driver's code clean.
 
-Tested-by: Anton Bambura <jenneron@protonmail.com>
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/cpuidle/cpuidle-tegra.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+--2H5ZGAP27J0BwHMG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 49531939f24b..e8f92e4d5739 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -48,11 +48,6 @@ enum tegra_state {
- static atomic_t tegra_idle_barrier;
- static atomic_t tegra_abort_flag;
- 
--static inline bool tegra_cpuidle_using_firmware(void)
--{
--	return firmware_ops->prepare_idle && firmware_ops->do_idle;
--}
--
- static void tegra_cpuidle_report_cpus_state(void)
- {
- 	unsigned long cpu, lcpu, csr;
-@@ -139,10 +134,6 @@ static int tegra_cpuidle_c7_enter(void)
- 	if (err && err != -ENOSYS)
- 		return err;
- 
--	err = call_firmware_op(do_idle, 0);
--	if (err != -ENOSYS)
--		return err;
--
- 	return cpu_suspend(0, tegra30_pm_secondary_cpu_suspend);
- }
- 
-@@ -356,9 +347,7 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
- 	 * is disabled.
- 	 */
- 	if (!IS_ENABLED(CONFIG_PM_SLEEP)) {
--		if (!tegra_cpuidle_using_firmware())
--			tegra_cpuidle_disable_state(TEGRA_C7);
--
-+		tegra_cpuidle_disable_state(TEGRA_C7);
- 		tegra_cpuidle_disable_state(TEGRA_CC6);
- 	}
- 
--- 
-2.29.2
+On Mon, Oct 19, 2020 at 09:03:54PM -0700, Sowjanya Komatineni wrote:
+> VI I2C don't have DMA support and uses PIO mode all the time.
+>=20
+> Current driver uses writesl() to fill TX FIFO based on available
+> empty slots and with this seeing strange silent hang during any I2C
+> register access after filling TX FIFO with 8 words.
+>=20
+> Using writel() followed by i2c_readl() in a loop to write all words
+> to TX FIFO instead of using writesl() helps for large transfers in
+> PIO mode.
+>=20
+> So, this patch updates i2c_writesl() API to use writel() in a loop
+> instead of writesl().
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
+Hi Wolfram,
+
+after discussing a bit more with Sowjanya, I don't think we're going to
+have a better solution than this. It should be fairly harmless to have
+this additional flushing read of the interrupt status register because
+the reads don't have any side-effects (the register is write-1-to-clear)
+and these write loops don't happen very often (or when they do we tend
+to use DMA anyway), so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+I did notice that for some reason Sowjanya hadn't listed you as a
+recipient, so perhaps you don't have this anywhere in your inbox. I've
+quoted the patch fully for reference below and the patchwork link for
+this is:
+
+	https://patchwork.ozlabs.org/project/linux-i2c/patch/1603166634-13639-1-gi=
+t-send-email-skomatineni@nvidia.com/
+
+If you'd prefer to have this in your inbox for proper review, please
+let us know so that Sowjanya can resend this.
+
+Thanks,
+Thierry
+
+>=20
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
+a.c
+> index 6f08c0c..274bf3a 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev,=
+ unsigned int reg)
+>  	return readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+>  }
+> =20
+> -static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
+> +static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
+>  			unsigned int reg, unsigned int len)
+>  {
+> -	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+> +	while (len--) {
+> +		writel(*data++, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+> +		i2c_readl(i2c_dev, I2C_INT_STATUS);
+> +	}
+>  }
+> =20
+>  static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+> @@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_de=
+v *i2c_dev)
+>  		i2c_dev->msg_buf_remaining =3D buf_remaining;
+>  		i2c_dev->msg_buf =3D buf + words_to_transfer * BYTES_PER_FIFO_WORD;
+> =20
+> -		i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
+> +		i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO, words_to_transfer);
+> =20
+>  		buf +=3D words_to_transfer * BYTES_PER_FIFO_WORD;
+>  	}
+> --=20
+> 2.7.4
+>=20
+
+--2H5ZGAP27J0BwHMG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl/8DPQACgkQ3SOs138+
+s6H/pQ//TtAcAyV2STrKLqwdsAY4M7EJsz39gSa4Rs53jgTyD1xidMMOq4Y8SbGz
+75lI2ihuk/YoVqsWJJat2PEBA9+cXRorB+DskpDRG+JDbfm5Zoq04VZ51hg0NHlp
++rY+IySRl93clzdxrVuej+6zLi4amNVjBst1BgfWpqEdPDDde3OKLR6ZBCiWK4wz
+7jpBhFr/oKq9rg2+bj2a1c9nnQdW4dM5vf2Hb7qIL9tCCcbWIoiql+4KM328N3Dh
+saLAJzOYTEcS8GrzMhRSqXfp1J4l9SlKpoLleLJ8/TIOIH8ESrcM9Kj4PSKiKXdC
+c6cs2qTe25S7SO/oQ1LGAFGQHgbhKkPQUAMvg22RgrlhScLw+ZoEpcCb+MZ2RDsf
+Psjbd69qNxdj6FUZZo41CFj2hO6l7Y1OIsWwJXbZBCwbYfG3q1y1ugzcaYsPx5ei
+gJKhfI9IC8wqkhhXN50tE7k+lKSUbywGfB6O+AdWuI2vEqrExnd3rdnbwPgJRht7
+kTbGH+34JqYTyRM5fg8PaPuONTRikj2admTJwHB3j9pOhjun0mVQnD12XBRQUAvX
+XNTetMXAi9ZcrfJ8mJxJ96fjCanftMS8mnFPhdRP1WIPMxkzVxtaV2RZa8b8PvRF
+BQPrKoiL4+yonw+g0C+62QBJyVANQ8p8jD1fnJF3+exB67TcCfA=
+=brDH
+-----END PGP SIGNATURE-----
+
+--2H5ZGAP27J0BwHMG--
