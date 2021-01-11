@@ -2,95 +2,191 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB59BC43381
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 19:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34683C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 19:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA7AE22CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 19:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB9AC22A84
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 19:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbhAKTUG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 11 Jan 2021 14:20:06 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12453 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729848AbhAKTUG (ORCPT
+        id S2390900AbhAKTaT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 11 Jan 2021 14:30:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390829AbhAKTaT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 11 Jan 2021 14:20:06 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ffca4bd0003>; Mon, 11 Jan 2021 11:19:25 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 11 Jan
- 2021 19:19:25 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 11 Jan 2021 19:19:25 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/144] 5.10.7-rc2 review
-In-Reply-To: <20210111161510.602817176@linuxfoundation.org>
-References: <20210111161510.602817176@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Jan 2021 14:30:19 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8DFC061786;
+        Mon, 11 Jan 2021 11:29:38 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id m13so127424ljo.11;
+        Mon, 11 Jan 2021 11:29:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=khvcoUktv4FtIeSDa05HRiR7l98Wsp0Qz1MN3btBwP4=;
+        b=cSZWG9pjLxBex4ZagkNXtDoBjUtPOkbF2SWVgbogd9Vn+iwWx79deI6A6OAiMEzJYv
+         GvqfWCqXcPNcFukiq8qcHDXXZfjTq1gxpKaqJ7lb0ESHKbky5AcndeUlajQ86FzQojGk
+         puXS2vICfzzxzxYkqolYjLLSo2+iwRGYRiN3jt3Z9wBPSpZRa9FJ1NKZMTFXNVM9tuNM
+         dMgfVpIGc5iMmBUY8huDh5JPXdCYomcx7mfhOw1YnfljiorcO/17H7V/amgWhptF1mFj
+         wf2KVe6DXFR2Z6aJAvh+LCrGfd/F5BL1nZspsuFEzK8/SQKtk8PvvY6ukTBAV9lmeG0v
+         XuNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=khvcoUktv4FtIeSDa05HRiR7l98Wsp0Qz1MN3btBwP4=;
+        b=CVbJfTbwXM94MYC83Vp4rBfZwTEm9rnkQND4d1hdI0OgKNNbG3kN1wx0EYCOO+qoV9
+         roDFZuo8KSjTXYAhEcw2Hp4s5vmtW1nKEYiU1LCNq3Hq9MssZWtIGODUl0YZBKbfLZdL
+         S6/OXaePfgoE5e55/fjDuvMfb6WD4d2uN9DWrwOiKc862//zXZeUHnbkgbVCGJBWYodW
+         Vd7RdUMKjOzBRTNqPIIWk60MmhHD+sG+EXnvZ+Kxmv3HMJjdWpVRNMmAFFYzxY2rkrjk
+         FDX6gZKALrpWCjusEuNNCl3Mb61uNqQWHoZ+nFAA1W+TKEbaaoKaKWPjPsPN0w8Aa+ry
+         Gz5w==
+X-Gm-Message-State: AOAM533gLZY3f6JPzrQv/QLFjMWG1tYY1zcymMQcT2vWo0Kfd0lR8/Rj
+        PiucioaBQRRF4YjAs8vuKnQ+Mz88LR4=
+X-Google-Smtp-Source: ABdhPJx/9l/HSpXTanZp3O83Gn2IONIcxPaddUR+Qs5aibifaMJqHNJ0Z2mDpUtj+kvccikSIkLJnQ==
+X-Received: by 2002:a05:651c:217:: with SMTP id y23mr398976ljn.247.1610393376845;
+        Mon, 11 Jan 2021 11:29:36 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id t28sm72734ljo.45.2021.01.11.11.29.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jan 2021 11:29:36 -0800 (PST)
+Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
+ of writesl()
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
+ <20201020074846.GA1877013@ulmo>
+ <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
+ <c37f8618-5100-4087-3bc3-fe421d40f3b8@gmail.com>
+ <2212a21b-7dff-4ba0-a193-badd5a1770c8@gmail.com>
+ <6373bc13-a53d-2bb2-98f5-f6f01b0b8b69@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c961f8a4-17dd-f90a-53f5-e33196627fb3@gmail.com>
+Date:   Mon, 11 Jan 2021 22:29:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Message-ID: <003040e4e8514aec86f56badabcea893@HQMAIL111.nvidia.com>
-Date:   Mon, 11 Jan 2021 19:19:25 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610392765; bh=eDY69QaiTGmJL+G1eVFzXI06l/o9oU/JWAHPWV5iBds=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=gFkc15OMz+QagHVZXHxiDw8ZdVtlz2nNlUxSVI2mLiQRAFkwhN3AfinNd5DF4ogju
-         E5ki3ujn6G1oQmvbPaOM7WIhO98cOY099S8yA8apvqMiL77c0a84/GSJVPKT7QU3dp
-         gbChrhPkSN7pSMVfJNwf5NZ5fzPfnx11oUSyL8wGJuuneljQHvRpNaWrZ5RsnKllou
-         JqIbwzPJJGy9yAg/kNOrzZwLsw8jHsrQ/4zcwRQUHXbsuVoTnv7cVin+o2E7EwNPBE
-         6UMb/A99ewetremwslW2BRRAk+4v4HJSHYuOC4tSDGvboERmmrKs9hkO9HE0NvLuQZ
-         sCS82kR9199Dg==
+In-Reply-To: <6373bc13-a53d-2bb2-98f5-f6f01b0b8b69@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 11 Jan 2021 17:15:35 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.7 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+11.01.2021 20:38, Sowjanya Komatineni пишет:
 > 
-> Responses should be made by Wed, 13 Jan 2021 16:14:43 +0000.
-> Anything received after that time might be too late.
+> On 1/11/21 4:09 AM, Dmitry Osipenko wrote:
+>> 11.01.2021 14:50, Dmitry Osipenko пишет:
+>>> 20.10.2020 19:37, Sowjanya Komatineni пишет:
+>>>> On 10/20/20 12:48 AM, Thierry Reding wrote:
+>>>>> On Mon, Oct 19, 2020 at 09:03:54PM -0700, Sowjanya Komatineni wrote:
+>>>>>> VI I2C don't have DMA support and uses PIO mode all the time.
+>>>>>>
+>>>>>> Current driver uses writesl() to fill TX FIFO based on available
+>>>>>> empty slots and with this seeing strange silent hang during any I2C
+>>>>>> register access after filling TX FIFO with 8 words.
+>>>>>>
+>>>>>> Using writel() followed by i2c_readl() in a loop to write all words
+>>>>>> to TX FIFO instead of using writesl() helps for large transfers in
+>>>>>> PIO mode.
+>>>>>>
+>>>>>> So, this patch updates i2c_writesl() API to use writel() in a loop
+>>>>>> instead of writesl().
+>>>>>>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>    drivers/i2c/busses/i2c-tegra.c | 9 ++++++---
+>>>>>>    1 file changed, 6 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
+>>>>>> b/drivers/i2c/busses/i2c-tegra.c
+>>>>>> index 6f08c0c..274bf3a 100644
+>>>>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>>>>> @@ -333,10 +333,13 @@ static u32 i2c_readl(struct tegra_i2c_dev
+>>>>>> *i2c_dev, unsigned int reg)
+>>>>>>        return readl_relaxed(i2c_dev->base +
+>>>>>> tegra_i2c_reg_addr(i2c_dev, reg));
+>>>>>>    }
+>>>>>>    -static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void
+>>>>>> *data,
+>>>>>> +static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, u32 *data,
+>>>>>>                unsigned int reg, unsigned int len)
+>>>>>>    {
+>>>>>> -    writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data,
+>>>>>> len);
+>>>>>> +    while (len--) {
+>>>>>> +        writel(*data++, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev,
+>>>>>> reg));
+>>>>>> +        i2c_readl(i2c_dev, I2C_INT_STATUS);
+>>>>>> +    }
+>>>>>>    }
+>>>>>>      static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void
+>>>>>> *data,
+>>>>>> @@ -811,7 +814,7 @@ static int tegra_i2c_fill_tx_fifo(struct
+>>>>>> tegra_i2c_dev *i2c_dev)
+>>>>>>            i2c_dev->msg_buf_remaining = buf_remaining;
+>>>>>>            i2c_dev->msg_buf = buf + words_to_transfer *
+>>>>>> BYTES_PER_FIFO_WORD;
+>>>>>>    -        i2c_writesl(i2c_dev, buf, I2C_TX_FIFO,
+>>>>>> words_to_transfer);
+>>>>>> +        i2c_writesl(i2c_dev, (u32 *)buf, I2C_TX_FIFO,
+>>>>>> words_to_transfer);
+>>>>> I've thought a bit more about this and I wonder if we're simply
+>>>>> reading
+>>>>> out the wrong value for tx_fifo_avail and therefore end up overflowing
+>>>>> the TX FIFO. Have you checked what the value is for tx_fifo_avail when
+>>>>> this silent hang occurs? Given that this is specific to the VI I2C I'm
+>>>>> wondering if this is perhaps a hardware bug where we read the wrong TX
+>>>>> FIFO available count.
+>>>>>
+>>>>> Thierry
+>>>> Yes FIFO status shows all 8 slots available.
+>>> Please explain how you checked that 8 slots are available, provide
+>>> example code.
+>>>
+>> Have you checked the FIFO overflow interrupt?
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> This is seen with VI I2C (which is under host1x) as we use PIO mode
+> always even for large transfers.
+> HW wise VI I2C is similar to other I2C and FIFO depth is also 8 words.
 > 
-> thanks,
+> tegra_i2c_fill_tx_fifo() reads I2C_FIFO_STATUS register field
+> TX_FIFO_EMPTY_CNT which tells empty slots available in TX_FIFO that can
+> be filled.
+> Added debug message to print empty count and, during beginning of
+> transfer when it executes tegra_i2c_fill_tx_fifo(), empty slots are 8
 > 
-> greg k-h
+> 
+> Using writesl() for filling TX_FIFO causing silent hang immediate on any
+> i2c register access after filling FIFO with 8 words and some times with
+> 6 words as well.
+> 
+> So couldn't INTERRUPT_STATUS registers to check for TX FIFO Overflows
+> when this silent hang happens.
+> 
+> Tried to read thru back-door (JTAG path) but could not connect to JTAG
+> either. Looks like Tegra chip is in some weird state.
+> 
+> But using writel() followed by i2c_readl helps. Not sure if any thing
+> related to register access delay or some other issue.
+> 
+> 
 
-All tests passing for Tegra ...
+Does downstream kernel have this problem?
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    64 tests:	64 pass, 0 fail
-
-Linux version:	5.10.7-rc2-g0ea94a3ff7f8
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+If there is really no good alternative right now, then perhaps should be
+a bit cleaner to add i2c_writesl_vi(), which should contain explanatory
+comment telling why it's needed and then it should be used only for the
+VI I2C controller.
