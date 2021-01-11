@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA46C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D45C433E0
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10E7522CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E15A022C7E
+	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbhAKNCd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1729302AbhAKNCd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 11 Jan 2021 08:02:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47030 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729302AbhAKNCc (ORCPT
+        with ESMTP id S1728020AbhAKNCc (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 11 Jan 2021 08:02:32 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B7DC0617BD
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77D0C0617BC
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=/F9aCeDoSHixU2MonxfAqFKHf+hy2f3LnyksJQ6V79s=; b=lYXlPsK25zImyVW3tw29BuUlYR
-        lt1ViT17yolp7qnraOVF/Ln4jCdBcKUH6dTtfi+/hWBw4k1aAe0SrcFAWcvG8+JP5drKOyRnMSTWn
-        Pe56HJMBXaAOOli7cLdkxb6tDRSWSL2sskT6IuiZL24TJzr0kf7iXSKbo0DI2lwhbbl/5Q4Aji5ql
-        oEM8/cUj+Gx5KeH0MnQn0vyEQiKyvx/OLZAcBCeoPrAi0OIiXmo8ddhK7pyHG5S827npKfP0/pM9h
-        w6hXSZqL8tK0oioXWWJ3Rc9Ycb9JE++ievKMG4vrD1OB9W2v1NHK1rZHy58ttidCKbpWFRacjualE
-        ab70xsyA==;
+        bh=JpaHpEgMxNEJtMbY9QYGfKpCqLloxFjHFKPFDzy5jHQ=; b=v1ZTFsyXrj66rzgWdUrLvnHOpC
+        aRd1xq8U0vXqadG88kU13KS6IY0hQQwF5hyTznIE46pBOdPxGAiUkN0HkAotoUktq24UpD3oS5tP0
+        +spQuKLTtT3mLSpSvgLf742ih+MNqsFk7TE0yhvFRAYUqWAGFtpR0zU2gcv9vVsDV/kr9lRJ6HOn7
+        PkL8Cc5RfPJ7M5aCRFpPoWRYOtqs/aPtyCfd8fkSwKxn/XC+v1cpmp5v5J1zoGdhebCAbrqsqt0JE
+        1xgtq3+GfYaSqsebvySjU6cjZlYOEXHItdNtWa3hOmKUq6LSiqhex+6oJj42sCbl9x0w4bIyb0uJZ
+        NN5c8LAg==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo7-0002tl-9p; Mon, 11 Jan 2021 15:00:27 +0200
+        id 1kywo7-0002tl-TT; Mon, 11 Jan 2021 15:00:27 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 14/21] gpu: host1x: Reserve VBLANK syncpoints at initialization
-Date:   Mon, 11 Jan 2021 15:00:12 +0200
-Message-Id: <20210111130019.3515669-15-mperttunen@nvidia.com>
+Subject: [PATCH v5 21/21] drm/tegra: Add job firewall
+Date:   Mon, 11 Jan 2021 15:00:19 +0200
+Message-Id: <20210111130019.3515669-22-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
@@ -61,184 +61,333 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On T20-T148 chips, the bootloader can set up a boot splash
-screen with DC configured to increment syncpoint 26/27
-at VBLANK. Because of this we shouldn't allow these syncpoints
-to be allocated until DC has been reset and will no longer
-increment them in the background.
+Add a firewall that validates jobs before submission to ensure
+they don't do anything they aren't allowed to do, like accessing
+memory they should not access.
 
-As such, on these chips, reserve those two syncpoints at
-initialization, and only mark them free once the DC
-driver has indicated it's safe to do so.
+The firewall is functionality-wise a copy of the firewall already
+implemented in gpu/host1x. It is copied here as it makes more
+sense for it to live on the DRM side, as it is only needed for
+userspace job submissions, and generally the data it needs to
+do its job is easier to access here.
+
+In the future, the other implementation will be removed.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
+v5:
+* Support SETCLASS opcode
 v3:
 * New patch
 ---
- drivers/gpu/drm/tegra/dc.c  |  6 ++++++
- drivers/gpu/host1x/dev.c    |  6 ++++++
- drivers/gpu/host1x/dev.h    |  6 ++++++
- drivers/gpu/host1x/syncpt.c | 34 +++++++++++++++++++++++++++++++++-
- include/linux/host1x.h      |  3 +++
- 5 files changed, 54 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/Makefile        |   1 +
+ drivers/gpu/drm/tegra/uapi/firewall.c | 221 ++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/uapi/submit.c   |  14 +-
+ drivers/gpu/drm/tegra/uapi/submit.h   |   4 +
+ 4 files changed, 237 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/uapi/firewall.c
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 033032dfc4b9..d0cee40ab3e6 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2033,6 +2033,12 @@ static int tegra_dc_init(struct host1x_client *client)
- 	struct drm_plane *cursor = NULL;
- 	int err;
- 
-+	/*
-+	 * DC has been reset by now, so VBLANK syncpoint can be released
-+	 * for general use.
-+	 */
-+	host1x_syncpt_release_vblank_reservation(client, 26 + dc->pipe);
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index 059322e88943..4e3295f436f1 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -5,6 +5,7 @@ tegra-drm-y := \
+ 	drm.o \
+ 	uapi/uapi.o \
+ 	uapi/submit.o \
++	uapi/firewall.o \
+ 	uapi/gather_bo.o \
+ 	gem.o \
+ 	fb.o \
+diff --git a/drivers/gpu/drm/tegra/uapi/firewall.c b/drivers/gpu/drm/tegra/uapi/firewall.c
+new file mode 100644
+index 000000000000..57427c2d23fa
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/uapi/firewall.c
+@@ -0,0 +1,221 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright (c) 2010-2020 NVIDIA Corporation */
 +
- 	/*
- 	 * XXX do not register DCs with no window groups because we cannot
- 	 * assign a primary plane to them, which in turn will cause KMS to
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 641317d23828..8b50fbb22846 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -77,6 +77,7 @@ static const struct host1x_info host1x01_info = {
- 	.has_hypervisor = false,
- 	.num_sid_entries = 0,
- 	.sid_table = NULL,
-+	.reserve_vblank_syncpts = true,
- };
- 
- static const struct host1x_info host1x02_info = {
-@@ -91,6 +92,7 @@ static const struct host1x_info host1x02_info = {
- 	.has_hypervisor = false,
- 	.num_sid_entries = 0,
- 	.sid_table = NULL,
-+	.reserve_vblank_syncpts = true,
- };
- 
- static const struct host1x_info host1x04_info = {
-@@ -105,6 +107,7 @@ static const struct host1x_info host1x04_info = {
- 	.has_hypervisor = false,
- 	.num_sid_entries = 0,
- 	.sid_table = NULL,
-+	.reserve_vblank_syncpts = false,
- };
- 
- static const struct host1x_info host1x05_info = {
-@@ -119,6 +122,7 @@ static const struct host1x_info host1x05_info = {
- 	.has_hypervisor = false,
- 	.num_sid_entries = 0,
- 	.sid_table = NULL,
-+	.reserve_vblank_syncpts = false,
- };
- 
- static const struct host1x_sid_entry tegra186_sid_table[] = {
-@@ -142,6 +146,7 @@ static const struct host1x_info host1x06_info = {
- 	.has_hypervisor = true,
- 	.num_sid_entries = ARRAY_SIZE(tegra186_sid_table),
- 	.sid_table = tegra186_sid_table,
-+	.reserve_vblank_syncpts = false,
- };
- 
- static const struct host1x_sid_entry tegra194_sid_table[] = {
-@@ -165,6 +170,7 @@ static const struct host1x_info host1x07_info = {
- 	.has_hypervisor = true,
- 	.num_sid_entries = ARRAY_SIZE(tegra194_sid_table),
- 	.sid_table = tegra194_sid_table,
-+	.reserve_vblank_syncpts = false,
- };
- 
- static const struct of_device_id host1x_of_match[] = {
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 7b8b7e20e32b..e360bc4a25f6 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -102,6 +102,12 @@ struct host1x_info {
- 	bool has_hypervisor; /* has hypervisor registers */
- 	unsigned int num_sid_entries;
- 	const struct host1x_sid_entry *sid_table;
-+	/*
-+	 * On T20-T148, the boot chain may setup DC to increment syncpoints
-+	 * 26/27 on VBLANK. As such we cannot use these syncpoints until
-+	 * the display driver disables VBLANK increments.
-+	 */
-+	bool reserve_vblank_syncpts;
- };
- 
- struct host1x {
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 9c39f5bfc70c..100270ac5bcf 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -52,7 +52,7 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- 
- 	mutex_lock(&host->syncpt_mutex);
- 
--	for (i = 0; i < host->info->nb_pts && sp->name; i++, sp++)
-+	for (i = 0; i < host->info->nb_pts && kref_read(&sp->ref); i++, sp++)
- 		;
- 
- 	if (i >= host->info->nb_pts)
-@@ -359,6 +359,11 @@ int host1x_syncpt_init(struct host1x *host)
- 	if (!host->nop_sp)
- 		return -ENOMEM;
- 
-+	if (host->info->reserve_vblank_syncpts) {
-+		kref_init(&host->syncpt[26].ref);
-+		kref_init(&host->syncpt[27].ref);
++#include "../drm.h"
++#include "../uapi.h"
++
++#include "submit.h"
++
++struct tegra_drm_firewall {
++	struct tegra_drm_submit_data *submit;
++	struct tegra_drm_client *client;
++	u32 *data;
++	u32 pos;
++	u32 end;
++	u32 class;
++};
++
++static int fw_next(struct tegra_drm_firewall *fw, u32 *word)
++{
++	if (fw->pos == fw->end)
++		return -EINVAL;
++
++	*word = fw->data[fw->pos++];
++
++	return 0;
++}
++
++static bool fw_check_addr_valid(struct tegra_drm_firewall *fw, u32 offset)
++{
++	u32 i;
++
++	for (i = 0; i < fw->submit->num_used_mappings; i++) {
++		struct tegra_drm_mapping *m = fw->submit->used_mappings[i].mapping;
++
++		if (offset >= m->iova && offset <= m->iova_end)
++			return true;
 +	}
 +
- 	return 0;
- }
- 
-@@ -545,3 +550,30 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base)
- 	return base->id;
- }
- EXPORT_SYMBOL(host1x_syncpt_base_id);
-+
-+static void do_nothing(struct kref *ref)
-+{
++	return false;
 +}
 +
-+/**
-+ * host1x_syncpt_release_vblank_reservation() - Make VBLANK syncpoint
-+ *   available for allocation
-+ *
-+ * @client: host1x bus client
-+ *
-+ * Makes VBLANK<i> syncpoint available for allocatation if it was
-+ * reserved at initialization time. This should be called by the display
-+ * driver after it has ensured that any VBLANK increment programming configured
-+ * by the boot chain has been disabled.
-+ */
-+void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
-+					      u32 syncpt_id)
++static int fw_check_reg(struct tegra_drm_firewall *fw, u32 offset)
 +{
-+	struct host1x *host = dev_get_drvdata(client->host->parent);
++	bool is_addr;
++	u32 word;
++	int err;
 +
-+	if (!host->info->reserve_vblank_syncpts)
-+		return;
++	err = fw_next(fw, &word);
++	if (err)
++		return err;
 +
-+	kref_put(&host->syncpt[syncpt_id].ref, do_nothing);
++	if (!fw->client->ops->is_addr_reg)
++		return 0;
++
++	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
++					       offset);
++
++	if (!is_addr)
++		return 0;
++
++	if (!fw_check_addr_valid(fw, word))
++		return -EINVAL;
++
++	return 0;
 +}
-+EXPORT_SYMBOL(host1x_syncpt_release_vblank_reservation);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 0a46d12b69f0..5890f91dd286 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -163,6 +163,9 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- struct host1x_syncpt_base *host1x_syncpt_get_base(struct host1x_syncpt *sp);
- u32 host1x_syncpt_base_id(struct host1x_syncpt_base *base);
- 
-+void host1x_syncpt_release_vblank_reservation(struct host1x_client *client,
-+					      u32 syncpt_id);
 +
- struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
++static int fw_check_regs_seq(struct tegra_drm_firewall *fw, u32 offset,
++			     u32 count, bool incr)
++{
++	u32 i;
++
++	for (i = 0; i < count; i++) {
++		if (fw_check_reg(fw, offset))
++			return -EINVAL;
++
++		if (incr)
++			offset++;
++	}
++
++	return 0;
++}
++
++static int fw_check_regs_mask(struct tegra_drm_firewall *fw, u32 offset,
++			      u16 mask)
++{
++	unsigned long bmask = mask;
++	unsigned int bit;
++
++	for_each_set_bit(bit, &bmask, 16) {
++		if (fw_check_reg(fw, offset+bit))
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int fw_check_regs_imm(struct tegra_drm_firewall *fw, u32 offset)
++{
++	bool is_addr;
++
++	is_addr = fw->client->ops->is_addr_reg(fw->client->base.dev, fw->class,
++					       offset);
++	if (is_addr)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int fw_check_class(struct tegra_drm_firewall *fw, u32 class)
++{
++	if (!fw->client->ops->is_valid_class)
++		return -EINVAL;
++
++	if (!fw->client->ops->is_valid_class(class))
++		return -EINVAL;
++
++	return 0;
++}
++
++enum {
++        HOST1X_OPCODE_SETCLASS  = 0x00,
++        HOST1X_OPCODE_INCR      = 0x01,
++        HOST1X_OPCODE_NONINCR   = 0x02,
++        HOST1X_OPCODE_MASK      = 0x03,
++        HOST1X_OPCODE_IMM       = 0x04,
++        HOST1X_OPCODE_RESTART   = 0x05,
++        HOST1X_OPCODE_GATHER    = 0x06,
++        HOST1X_OPCODE_SETSTRMID = 0x07,
++        HOST1X_OPCODE_SETAPPID  = 0x08,
++        HOST1X_OPCODE_SETPYLD   = 0x09,
++        HOST1X_OPCODE_INCR_W    = 0x0a,
++        HOST1X_OPCODE_NONINCR_W = 0x0b,
++        HOST1X_OPCODE_GATHER_W  = 0x0c,
++        HOST1X_OPCODE_RESTART_W = 0x0d,
++        HOST1X_OPCODE_EXTEND    = 0x0e,
++};
++
++int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
++			  u32 words, struct tegra_drm_submit_data *submit,
++			  u32 *job_class)
++{
++	struct tegra_drm_firewall fw = {
++		.submit = submit,
++		.client = client,
++		.data = data,
++		.pos = start,
++		.end = start+words,
++		.class = *job_class,
++	};
++	bool payload_valid = false;
++	u32 payload;
++	int err;
++
++	while (fw.pos != fw.end) {
++		u32 word, opcode, offset, count, mask, class;
++
++		err = fw_next(&fw, &word);
++		if (err)
++			return err;
++
++		opcode = (word & 0xf0000000) >> 28;
++
++		switch (opcode) {
++		case HOST1X_OPCODE_SETCLASS:
++			offset = word >> 16 & 0xfff;
++			mask = word & 0x3f;
++			class = (word >> 6) & 0x3ff;
++			err = fw_check_class(&fw, class);
++			fw.class = class;
++			*job_class = class;
++			if (!err)
++				err = fw_check_regs_mask(&fw, offset, mask);
++			break;
++		case HOST1X_OPCODE_INCR:
++			offset = (word >> 16) & 0xfff;
++			count = word & 0xffff;
++			err = fw_check_regs_seq(&fw, offset, count, true);
++			break;
++		case HOST1X_OPCODE_NONINCR:
++			offset = (word >> 16) & 0xfff;
++			count = word & 0xffff;
++			err = fw_check_regs_seq(&fw, offset, count, false);
++			break;
++		case HOST1X_OPCODE_MASK:
++			offset = (word >> 16) & 0xfff;
++			mask = word & 0xffff;
++			err = fw_check_regs_mask(&fw, offset, mask);
++			break;
++		case HOST1X_OPCODE_IMM:
++			/* IMM cannot reasonably be used to write a pointer */
++			offset = (word >> 16) & 0xfff;
++			err = fw_check_regs_imm(&fw, offset);
++			break;
++		case HOST1X_OPCODE_SETPYLD:
++			payload = word & 0xffff;
++			payload_valid = true;
++			break;
++		case HOST1X_OPCODE_INCR_W:
++			if (!payload_valid)
++				return -EINVAL;
++
++			offset = word & 0x3fffff;
++			err = fw_check_regs_seq(&fw, offset, payload, true);
++			break;
++		case HOST1X_OPCODE_NONINCR_W:
++			if (!payload_valid)
++				return -EINVAL;
++
++			offset = word & 0x3fffff;
++			err = fw_check_regs_seq(&fw, offset, payload, false);
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/tegra/uapi/submit.c b/drivers/gpu/drm/tegra/uapi/submit.c
+index 398be3065e21..8633844ae3d7 100644
+--- a/drivers/gpu/drm/tegra/uapi/submit.c
++++ b/drivers/gpu/drm/tegra/uapi/submit.c
+@@ -224,7 +224,8 @@ static int submit_job_add_gather(struct host1x_job *job,
+ 				 struct tegra_drm_channel_ctx *ctx,
+ 				 struct drm_tegra_submit_cmd_gather_uptr *cmd,
+ 				 struct gather_bo *bo, u32 *offset,
+-				 struct tegra_drm_submit_data *job_data)
++				 struct tegra_drm_submit_data *job_data,
++				 u32 *class)
+ {
+ 	u32 next_offset;
  
- struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 threshold);
+@@ -241,6 +242,10 @@ static int submit_job_add_gather(struct host1x_job *job,
+ 	if (next_offset > bo->gather_data_words)
+ 		return -EINVAL;
+ 
++	if (tegra_drm_fw_validate(ctx->client, bo->gather_data, *offset,
++				  cmd->words, job_data, class))
++		return -EINVAL;
++
+ 	host1x_job_add_gather(job, &bo->base, cmd->words, *offset * 4);
+ 
+ 	*offset = next_offset;
+@@ -255,10 +260,13 @@ static int submit_create_job(struct drm_device *drm, struct host1x_job **pjob,
+ 			     struct tegra_drm_submit_data *job_data)
+ {
+ 	struct drm_tegra_submit_cmd *cmds;
+-	u32 i, gather_offset = 0;
++	u32 i, gather_offset = 0, class;
+ 	struct host1x_job *job;
+ 	int err;
+ 
++	/* Set initial class for firewall. */
++	class = ctx->client->base.class;
++
+ 	cmds = alloc_copy_user_array(u64_to_user_ptr(args->cmds_ptr),
+ 				     args->num_cmds, sizeof(*cmds));
+ 	if (IS_ERR(cmds))
+@@ -284,7 +292,7 @@ static int submit_create_job(struct drm_device *drm, struct host1x_job **pjob,
+ 		if (cmd->type == DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR) {
+ 			err = submit_job_add_gather(job, ctx, &cmd->gather_uptr,
+ 						    bo, &gather_offset,
+-						    job_data);
++						    job_data, &class);
+ 			if (err)
+ 				goto free_job;
+ 		} else if (cmd->type == DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT) {
+diff --git a/drivers/gpu/drm/tegra/uapi/submit.h b/drivers/gpu/drm/tegra/uapi/submit.h
+index 0a165e9e4bda..cf6a2f0a29fc 100644
+--- a/drivers/gpu/drm/tegra/uapi/submit.h
++++ b/drivers/gpu/drm/tegra/uapi/submit.h
+@@ -14,4 +14,8 @@ struct tegra_drm_submit_data {
+ 	u32 num_used_mappings;
+ };
+ 
++int tegra_drm_fw_validate(struct tegra_drm_client *client, u32 *data, u32 start,
++			  u32 words, struct tegra_drm_submit_data *submit,
++			  u32 *job_class);
++
+ #endif
 -- 
 2.30.0
 
