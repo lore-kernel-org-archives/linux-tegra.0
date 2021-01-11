@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FDFC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744C0C433E9
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 582B92225E
+	by mail.kernel.org (Postfix) with ESMTP id 3BDC12250F
 	for <linux-tegra@archiver.kernel.org>; Mon, 11 Jan 2021 13:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbhAKNBL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S1727849AbhAKNBL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 11 Jan 2021 08:01:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbhAKNBK (ORCPT
+        with ESMTP id S1725917AbhAKNBK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 11 Jan 2021 08:01:10 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B93C06179F
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43CBBC061786
         for <linux-tegra@vger.kernel.org>; Mon, 11 Jan 2021 05:00:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -29,26 +29,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=U4LMapHebtqQLMY7HEgN7zFM2ivBVZziq+5m4D+W0WE=; b=astueCCDkN5AJ4VghQUXJtxvJ9
-        CtOoLIj44JkIBsIM10T7e3PuVwJS15ZN1S8ZDc9u/Su2IFeWs8qrU3RttJGEimd6EcelOGOoATvR8
-        km9FwagT7Pail0kEJ7XfhKviLTkwzt4x8LMcb42L7JWckfEfoP1haOYPadz/IVh7mRmo6Ym1w+ViQ
-        dn6/OTbHuviBx0OVdDnGlRs11nX7O9ocnEIqcUS+qFzKA2lvCIWcINyOVIbVRvJViuRb0/dHKO78/
-        QGEU1GvdHmNRyVnzBTgHbBNS8T7QPKLyTwlB4McwwOZH4nCep6aQwWKj9SQEymRok+7P7GwZVDI0Q
-        TQ9RCVbw==;
+        bh=A7ckSzYp1TpLOEZ7QhaHvBzogqxJS3kYCSW35tNPRGw=; b=DRuL6AF/XNCjs0K9xrr9bOAVul
+        rS6ZUbY9iMWoWWE7uw3JPuf5IF0iEbfxkWGEJ/3cOexr2S0YWktbZnlvALaojCTYcKLNZYo4MpGkg
+        beGrWqIlDSKV+IKgq6tBo6oUBv460OFsmm58i4Z0TVOnmSmjqfGFefdd/SrimsjtNY6Ra8f538TS9
+        0WF8KJEFlqrI+u5dCwtSDY1sFD+4iOqj4LWu8OVlRKMCyku3SCC77rLCrJRjmvYwFvAB1B11dG9K8
+        opZjiwEkhvNXM1h3jeIPCV6kUQ4sdtfIFaMb+XKMr1h809AGsn+2EW80AkvBtwx5vMLaXrsi2iqbd
+        E7INSFUw==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1kywo6-0002tl-F5; Mon, 11 Jan 2021 15:00:26 +0200
+        id 1kywo6-0002tl-N8; Mon, 11 Jan 2021 15:00:26 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
         airlied@linux.ie, daniel@ffwll.ch
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         talho@nvidia.com, bhuntsman@nvidia.com,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v5 04/21] gpu: host1x: Remove cancelled waiters immediately
-Date:   Mon, 11 Jan 2021 15:00:02 +0200
-Message-Id: <20210111130019.3515669-5-mperttunen@nvidia.com>
+Subject: [PATCH v5 07/21] gpu: host1x: Introduce UAPI header
+Date:   Mon, 11 Jan 2021 15:00:05 +0200
+Message-Id: <20210111130019.3515669-8-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210111130019.3515669-1-mperttunen@nvidia.com>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
@@ -61,92 +61,157 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Before this patch, cancelled waiters would only be cleaned up
-once their threshold value was reached. Make host1x_intr_put_ref
-process the cancellation immediately to fix this.
+Add the userspace interface header, specifying interfaces
+for allocating and accessing syncpoints from userspace,
+and for creating sync_file based fences based on syncpoint
+thresholds.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-v5:
-* Add parameter to flush, i.e. wait for all pending waiters to
-  complete before returning. The reason this is not always true
-  is that the pending waiter might be the place that is calling
-  the put_ref.
----
- drivers/gpu/host1x/intr.c   | 23 +++++++++++++++++------
- drivers/gpu/host1x/intr.h   |  4 +++-
- drivers/gpu/host1x/syncpt.c |  2 +-
- 3 files changed, 21 insertions(+), 8 deletions(-)
+ include/uapi/linux/host1x.h | 134 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
+ create mode 100644 include/uapi/linux/host1x.h
 
-diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-index 9245add23b5d..70e1096a4fe9 100644
---- a/drivers/gpu/host1x/intr.c
-+++ b/drivers/gpu/host1x/intr.c
-@@ -242,18 +242,29 @@ int host1x_intr_add_action(struct host1x *host, struct host1x_syncpt *syncpt,
- 	return 0;
- }
- 
--void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref)
-+void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref,
-+			 bool flush)
- {
- 	struct host1x_waitlist *waiter = ref;
- 	struct host1x_syncpt *syncpt;
- 
--	while (atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED) ==
--	       WLS_REMOVED)
--		schedule();
-+	atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED);
- 
- 	syncpt = host->syncpt + id;
--	(void)process_wait_list(host, syncpt,
--				host1x_syncpt_load(host->syncpt + id));
+diff --git a/include/uapi/linux/host1x.h b/include/uapi/linux/host1x.h
+new file mode 100644
+index 000000000000..9c8fb9425cb2
+--- /dev/null
++++ b/include/uapi/linux/host1x.h
+@@ -0,0 +1,134 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* Copyright (c) 2020 NVIDIA Corporation */
 +
-+	spin_lock(&syncpt->intr.lock);
-+	if (atomic_cmpxchg(&waiter->state, WLS_CANCELLED, WLS_HANDLED) ==
-+	    WLS_CANCELLED) {
-+		list_del(&waiter->list);
-+		kref_put(&waiter->refcount, waiter_release);
-+	}
-+	spin_unlock(&syncpt->intr.lock);
++#ifndef _UAPI__LINUX_HOST1X_H
++#define _UAPI__LINUX_HOST1X_H
 +
-+	if (flush) {
-+		/* Wait until any concurrently executing handler has finished. */
-+		while (atomic_read(&waiter->state) != WLS_HANDLED)
-+			cpu_relax();
-+	}
- 
- 	kref_put(&waiter->refcount, waiter_release);
- }
-diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
-index aac38194398f..6ea55e615e3a 100644
---- a/drivers/gpu/host1x/intr.h
-+++ b/drivers/gpu/host1x/intr.h
-@@ -74,8 +74,10 @@ int host1x_intr_add_action(struct host1x *host, struct host1x_syncpt *syncpt,
-  * Unreference an action submitted to host1x_intr_add_action().
-  * You must call this if you passed non-NULL as ref.
-  * @ref the ref returned from host1x_intr_add_action()
-+ * @flush wait until any pending handlers have completed before returning.
-  */
--void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref);
-+void host1x_intr_put_ref(struct host1x *host, unsigned int id, void *ref,
-+			 bool flush);
- 
- /* Initialize host1x sync point interrupt */
- int host1x_intr_init(struct host1x *host, unsigned int irq_sync);
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 5982fdf64e1c..e48b4595cf53 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -293,7 +293,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 		}
- 	}
- 
--	host1x_intr_put_ref(sp->host, sp->id, ref);
-+	host1x_intr_put_ref(sp->host, sp->id, ref, true);
- 
- done:
- 	return err;
++#include <linux/ioctl.h>
++#include <linux/types.h>
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++
++struct host1x_allocate_syncpoint {
++	/**
++	 * @fd: [out]
++	 *
++	 * New file descriptor representing the allocated syncpoint.
++	 */
++	__s32 fd;
++
++	__u32 reserved[3];
++};
++
++struct host1x_syncpoint_info {
++	/**
++	 * @id: [out]
++	 *
++	 * System-global ID of the syncpoint.
++	 */
++	__u32 id;
++
++	__u32 reserved[3];
++};
++
++struct host1x_syncpoint_increment {
++	/**
++	 * @count: [in]
++	 *
++	 * Number of times to increment the syncpoint. The syncpoint can
++	 * be observed at in-between values, but each increment is atomic.
++	 */
++	__u32 count;
++};
++
++struct host1x_read_syncpoint {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of the syncpoint to read.
++	 */
++	__u32 id;
++
++	/**
++	 * @value: [out]
++	 *
++	 * Current value of the syncpoint.
++	 */
++	__u32 value;
++};
++
++struct host1x_create_fence {
++	/**
++	 * @id: [in]
++	 *
++	 * ID of the syncpoint to create a fence for.
++	 */
++	__u32 id;
++
++	/**
++	 * @threshold: [in]
++	 *
++	 * When the syncpoint reaches this value, the fence will be signaled.
++	 * The syncpoint is considered to have reached the threshold when the
++	 * following condition is true:
++	 *
++	 * 	((value - threshold) & 0x80000000U) == 0U
++	 *
++	 */
++	__u32 threshold;
++
++	/**
++	 * @fence_fd: [out]
++	 *
++	 * New sync_file file descriptor containing the created fence.
++	 */
++	__s32 fence_fd;
++
++	__u32 reserved[1];
++};
++
++struct host1x_fence_extract_fence {
++	__u32 id;
++	__u32 threshold;
++};
++
++struct host1x_fence_extract {
++	/**
++	 * @fence_fd: [in]
++	 *
++	 * sync_file file descriptor
++	 */
++	__s32 fence_fd;
++
++	/**
++	 * @num_fences: [in,out]
++	 *
++	 * In: size of the `fences_ptr` array counted in elements.
++	 * Out: required size of the `fences_ptr` array counted in elements.
++	 */
++	__u32 num_fences;
++
++	/**
++	 * @fences_ptr: [in]
++	 *
++	 * Pointer to array of `struct host1x_fence_extract_fence`.
++	 */
++	__u64 fences_ptr;
++
++	__u32 reserved[2];
++};
++
++#define HOST1X_IOCTL_ALLOCATE_SYNCPOINT  _IOWR('X', 0x00, struct host1x_allocate_syncpoint)
++#define HOST1X_IOCTL_READ_SYNCPOINT      _IOR ('X', 0x01, struct host1x_read_syncpoint)
++#define HOST1X_IOCTL_CREATE_FENCE        _IOWR('X', 0x02, struct host1x_create_fence)
++#define HOST1X_IOCTL_SYNCPOINT_INFO      _IOWR('X', 0x03, struct host1x_syncpoint_info)
++#define HOST1X_IOCTL_SYNCPOINT_INCREMENT _IOWR('X', 0x04, struct host1x_syncpoint_increment)
++#define HOST1X_IOCTL_FENCE_EXTRACT       _IOWR('X', 0x05, struct host1x_fence_extract)
++
++#if defined(__cplusplus)
++}
++#endif
++
++#endif
 -- 
 2.30.0
 
