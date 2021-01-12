@@ -3,112 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7A5C43333
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1495C43331
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0511823104
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA12206A4
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731614AbhALNKL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jan 2021 08:10:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730094AbhALNKK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:10:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C455C2311D;
-        Tue, 12 Jan 2021 13:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1610456969;
-        bh=LtMEfIjW927NolOA4/+0HIR0sfp/7v2eXzqxStddmBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RYjZZsh1Kw/llLotuOa/hGgXEGGhcc7pdVBVfnPZYfaRXEQJ2P34GuMTwSL17RsDL
-         bSLgdytVe+Xmm6a1LQ8n9Wa4mcVJgf42X+zW18FKITQMnFLZ2QUfbJt6QETQPssXST
-         C7XawTKZCe2vE4yA+BGGt7DkKe68ejQE6njG1d88=
-Date:   Tue, 12 Jan 2021 14:10:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Furquan Shaikh <furquan@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] drivers: core: Detach device from power domain on
- shutdown
-Message-ID: <X/2fzghPXnuDNBPU@kroah.com>
-References: <20201201213019.1558738-1-furquan@google.com>
- <e77e0569-568a-f7fb-9f0d-e64943b467f0@gmail.com>
- <CAJZ5v0jhniqG43F6hCqXdxQiQZRc67GdkdP0BXcRut=P7k7BVQ@mail.gmail.com>
+        id S1726758AbhALNTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jan 2021 08:19:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbhALNTI (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 12 Jan 2021 08:19:08 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B003CC061575;
+        Tue, 12 Jan 2021 05:18:27 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id o13so3338131lfr.3;
+        Tue, 12 Jan 2021 05:18:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnN2tqffNW/ZGJScvjdPkfvZef1jhn/Tnr5Ec8h0oh0=;
+        b=lfbpCHc32dI/mtyN8tTDPI3iPN5eDGiGfC3Dj78llxLL1P5b8EMsEZ8lF+hJdBk16w
+         3zSNKO0fuGc14xwdxWY46TgG0AP8odFcgsSrGZTY4QlLZGQcGlyKOLI7cWwQyXfq877L
+         cKU4KhCQWixhEQB/KZ+eFXyxXICpV3SHJ7YlaiT4ALazX8z6pZRu27/RSFU1sdh+15jy
+         vukfl5vatsjc0+KvZ9wDoxV1yxUa65lWFsspw+SqKAdHPf2NBqnDd7A3Y9fkH3IKzYn+
+         gIUZY/euy9LvFcSZRz2AX6DOHpVSSkqW1y1Nl8FHtjEB3aXiQJSxTIy0eK4H9HVlrtmu
+         MVOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnN2tqffNW/ZGJScvjdPkfvZef1jhn/Tnr5Ec8h0oh0=;
+        b=uGjTn6RwzD0OqxpsLpZmqrVkUcQPG7BZN08OnVYRU5ZpPYQJRFHxn9F9Z3Z1MCOVjh
+         mBDkwNt/iVI6iJvpVwYk0ZbKxNsM6QzIWLV8oIvLf0MhAFaBSsSEX/HfX9XIPWLEp2iI
+         Jx8pmZwyCnNF46N5QDbKgiBXYirq8sL9Wv0aT5UeS/IHWXWgl7EzcknRnk9ppc4F/cWc
+         k/y+ypBQ8x0yokndV8X/hmvAnHtu2ZOXTHm2asqydKXZ/iDIbdx8ZhKvcCf5DIfqJQyg
+         3DILiiOV5iiBLiAqISPWA0kQLYVo6+79Q7xvFL9PYoeHb9cIK9GPftnWLOQ+tAnHEXOw
+         0x2Q==
+X-Gm-Message-State: AOAM53124CaETgO+uOGxdXa1oWp+PKqi3vzLCNR4oHRUx9U0oQnlmxZc
+        IKrupyH7MJ3m5biIMlZvyZQ=
+X-Google-Smtp-Source: ABdhPJzCNXMgByNGSo/TbKGw4SKYy1tY2E1liRirSA3809X/h2kuk074wDqkgiNEdhHO8eV3SepH0w==
+X-Received: by 2002:a19:6459:: with SMTP id b25mr2063344lfj.635.1610457506271;
+        Tue, 12 Jan 2021 05:18:26 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.gmail.com with ESMTPSA id a4sm341188ljp.14.2021.01.12.05.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jan 2021 05:18:25 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] i2c: tegra: Use threaded interrupt
+Date:   Tue, 12 Jan 2021 16:17:09 +0300
+Message-Id: <20210112131709.1711-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jhniqG43F6hCqXdxQiQZRc67GdkdP0BXcRut=P7k7BVQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 01:45:25PM +0100, Rafael J. Wysocki wrote:
-> On Tue, Jan 12, 2021 at 10:55 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-> >
-> > 02.12.2020 00:30, Furquan Shaikh пишет:
-> > > When the system is powered off or rebooted, devices are not detached
-> > > from their PM domain. This results in ACPI PM not being invoked and
-> > > hence PowerResouce _OFF method not being invoked for any of the
-> > > devices. Because the ACPI power resources are not turned off in case
-> > > of poweroff and reboot, it violates the power sequencing requirements
-> > > which impacts the reliability of the devices over the lifetime of the
-> > > platform. This is currently observed on all Chromebooks using ACPI.
-> > >
-> > > In order to solve the above problem, this change detaches a device
-> > > from its PM domain whenever it is shutdown. This action is basically
-> > > analogous to ->remove() from driver model perspective. Detaching the
-> > > device from its PM domain ensures that the ACPI PM gets a chance to
-> > > turn off the power resources for the device thus complying with its
-> > > power sequencing requirements.
-> > >
-> > > Signed-off-by: Furquan Shaikh <furquan@google.com>
-> > > ---
-> > >  drivers/base/core.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index d661ada1518f..5823f1d719e1 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -23,6 +23,7 @@
-> > >  #include <linux/of_device.h>
-> > >  #include <linux/genhd.h>
-> > >  #include <linux/mutex.h>
-> > > +#include <linux/pm_domain.h>
-> > >  #include <linux/pm_runtime.h>
-> > >  #include <linux/netdevice.h>
-> > >  #include <linux/sched/signal.h>
-> > > @@ -4057,6 +4058,8 @@ void device_shutdown(void)
-> > >                       dev->driver->shutdown(dev);
-> > >               }
-> > >
-> > > +             dev_pm_domain_detach(dev, true);
-> > > +
-> > >               device_unlock(dev);
-> > >               if (parent)
-> > >                       device_unlock(parent);
-> > >
-> >
-> > This patch broke system shutdown on NVIDIA Tegra using today's
-> > linux-next because power domain can't be turned off until device drivers
-> > handed control over device resets to the power domain of Power
-> > Management controller on Tegra. This patch introduced the wrong
-> > behaviour, apparently it should be made specific to ACPI only.
-> >
-> > Please fix, thanks in advance.
-> 
-> OK, so Greg please drop it.
+Switch to use threaded interrupt context in order to avoid checking of
+"are we in interrupt?" for the code that may sleep in the IRQ handler.
+I2C doesn't require a very low interrupt-handling latency, hence this
+change doesn't introduce any noticeable effects.
 
-Now reverted, thanks.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 0727383f4940..c4262408bae7 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -533,7 +533,7 @@ static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
+ 	void __iomem *addr = i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg);
+ 	u32 val;
+ 
+-	if (!i2c_dev->atomic_mode && !in_irq())
++	if (!i2c_dev->atomic_mode)
+ 		return readl_relaxed_poll_timeout(addr, val, !(val & mask),
+ 						  delay_us, timeout_us);
+ 
+@@ -1719,9 +1719,10 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	/* interrupt will be enabled during of transfer time */
+ 	irq_set_status_flags(i2c_dev->irq, IRQ_NOAUTOEN);
+ 
+-	err = devm_request_irq(i2c_dev->dev, i2c_dev->irq, tegra_i2c_isr,
+-			       IRQF_NO_SUSPEND, dev_name(i2c_dev->dev),
+-			       i2c_dev);
++	err = devm_request_threaded_irq(i2c_dev->dev, i2c_dev->irq,
++					NULL, tegra_i2c_isr,
++					IRQF_NO_SUSPEND | IRQF_ONESHOT,
++					dev_name(i2c_dev->dev), i2c_dev);
+ 	if (err)
+ 		return err;
+ 
+-- 
+2.29.2
+
