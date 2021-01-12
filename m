@@ -3,102 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF72C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33117C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 496BD22285
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1D4920771
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 13:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbhALNbD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jan 2021 08:31:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52498 "EHLO
+        id S1729160AbhALNb4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jan 2021 08:31:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730216AbhALNbC (ORCPT
+        with ESMTP id S1728482AbhALNb4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:31:02 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B6BC061786;
-        Tue, 12 Jan 2021 05:30:22 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id f11so2821296ljm.8;
-        Tue, 12 Jan 2021 05:30:22 -0800 (PST)
+        Tue, 12 Jan 2021 08:31:56 -0500
+Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50F8C061786
+        for <linux-tegra@vger.kernel.org>; Tue, 12 Jan 2021 05:31:15 -0800 (PST)
+Received: by mail-vs1-xe2f.google.com with SMTP id o19so168214vsn.3
+        for <linux-tegra@vger.kernel.org>; Tue, 12 Jan 2021 05:31:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WkBi8cOfZJevANkTdRqj8Ub33blmw4LwonV+ywbCBD4=;
-        b=VPUjr2+c+aN/sO0xt17qQm/yoYDf4HILMa/C6SU7PP04xVsUTwlnBuyUzA/dRY0knq
-         X7z4igyL3kW+TdjFWUbRqziOR1T+TpoAKPp4SAhKXJFfGFUqGv9+L/ZN6/zm9szGW+XH
-         KoQayPNLvEfU0hMykKnvgE0su6/VChiC9zFNlD2v5KOW7vKA+ORjkNNeYAJ/vEtM3O+P
-         w8L91gGTBYnQvpL4GYVC8PgqzL1lOklOyJyPi7/gmc8dg1BlYu3mCFgxcKkR6Pzv7VeP
-         ET9xWTexpp3k22gghMeQZXQ05b6/4ssBBoYQxPJP8Ckhxx3MWkrDFOV211W0jVombvYv
-         yWDg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r0RONQCsveuH12mcp5SO7WKQEzlPvyEoFcpr2U4wTVM=;
+        b=OkQPJCk8ioE3pFgIZYlWQDPW8ITJpfyjad5m44r7MYgwruK3cnZq6XTMJhKn6/AdLr
+         117lNPeDu1Bt7ZtXn2Z1q/N/h0mXOJo7Daod7/FWjueAr7y1qIxv/vqtoGCVEl7tbM1R
+         vtK2AymwwMYNwc3cDPcAKnv7haOm9KYfeafvC5bO8zaXF9gScIh7S4msSn8qtjwpl4LM
+         6zOVVnaUMf5FXn+Y/PY7w0I9yve6AMG1od7pV9ALOWWdgqcwAEWClJJJQJbPBXRvq4ie
+         TSj79arUA3SnSxZunuJFeZUZXbkcHtz5kjENaxA0MnL9FU0VVvWN2ShVRbDFYbocrDcE
+         HnEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WkBi8cOfZJevANkTdRqj8Ub33blmw4LwonV+ywbCBD4=;
-        b=mfWTT0cxh/90TGfpE8RMjr6eQT5wEl1m0V4ODOIBu9jDPN0EtTNb1xpczmCoR62aD5
-         Pa5Jd/rSGH4Wlnjp8xNQacfBoJJWkH5fFart++FoxzSrCLQZI2xH1mTP6xKeYhsz2ryR
-         U63QWlsqbDyXaGrhxISFTXmE7JePWsb2+dnHoXpPh9mwnl+02NUW3ewk1ksvwE5IRYsm
-         NT5p+K/j4xJxE2atm8uGQf3U8FAaREWgvRHzDqTBrHlIgyYLUievUcFt7CXXFetYzIE6
-         Z5IXeTicdaIKe+uBnloYoxXVnQ+bqrpq1Y85le0n/jq9QAzovxwpe/FXhyvlItmKUv0T
-         UBEw==
-X-Gm-Message-State: AOAM532ke7IYQ2iTnjUk90+2+T7s5QAGcFRAt2gu0CS7j7pcAzqAToGR
-        KpeSMG3isPxLRcSLrjXaHpU=
-X-Google-Smtp-Source: ABdhPJwOTt8krhzfLzRMUPS6kcJGfq1RYandMhb74Bc5pqMIZzs5jbU504/XB06qBd8TD54m+TMn1A==
-X-Received: by 2002:a2e:a364:: with SMTP id i4mr2055546ljn.426.1610458220149;
-        Tue, 12 Jan 2021 05:30:20 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u30sm394042lfc.238.2021.01.12.05.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 05:30:19 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] gpio: tegra: Add dependency on GPIOLIB_IRQCHIP
-Date:   Tue, 12 Jan 2021 16:30:10 +0300
-Message-Id: <20210112133010.21397-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210112133010.21397-1-digetx@gmail.com>
-References: <20210112133010.21397-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r0RONQCsveuH12mcp5SO7WKQEzlPvyEoFcpr2U4wTVM=;
+        b=tvCdVHOoo8rwpygYmtIVWvabcl0zdNUYAvrdvx7W9qx4sqkzMM/UwB3c/mBgsg+Tuv
+         +pyErokRHaFFDzoe1Q+jITy85YETwTHt2FTUfKRHr0yGwKHMNwQDq758Phs1IfrXSX1+
+         iw555+ZtwvnowofbczDkTEWNnKr/SrFMmacj6His6VALXziXEhtzkTiKRbYEXcDtUIKT
+         ToPF37tl635t/UqQEa2Gtj0A749ssiQfIiIuxp9L9lcgpLiFgw4obGoRg6lxKaoOSXvd
+         9NZGVNj+376bmSDop2mM4F/vPNJgCBv7/gLPOrmExjCtTUK1eT9E2IQhe9qDiCfMBybK
+         pSuw==
+X-Gm-Message-State: AOAM532GfEXTKCTX1qQTaFcE/hlTfcuavNnT3VIgn7oeJQvKRRDe3DkC
+        5dDS+y4hXaOWHGXL7cQmSjrywBd5iaWiuU1OV6DLQg==
+X-Google-Smtp-Source: ABdhPJwt8/TB1tdd47rzsdts4U5b5Ht0iy4ZvkXfVqAJEhveYbFkAPjQ6ucqokw7W9HAc5TBdHS/iamJPJQStNP+vxg=
+X-Received: by 2002:a67:e286:: with SMTP id g6mr3928269vsf.42.1610458275130;
+ Tue, 12 Jan 2021 05:31:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201217180638.22748-1-digetx@gmail.com> <20201217180638.22748-30-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-30-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Jan 2021 14:30:39 +0100
+Message-ID: <CAPDyKFrj-8WwK1U7KJaCiWkt2bsohgoEnqhQ4sgwjZzZfX2iMA@mail.gmail.com>
+Subject: Re: [PATCH v2 29/48] soc/tegra: pmc: Link domains to the parent Core domain
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add dependency on GPIOLIB_IRQCHIP in order to fix driver compilation.
+- trimmed cc-list
 
-Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 17 Dec 2020 at 19:07, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> The Core domain is a parent of PMC power domains, hence PMC domains
+> should be set up as a sub-domains of the parent (Core) domain if
+> "power-domains" phandle presents in a device-tree node of PMC domain.
+>
+> This allows to propagate GENPD performance changes to the parent Core
+> domain if performance change is applied to PMC domain.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 4f96dc7745c4..1a659d1c06d7 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1236,6 +1236,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>  static int tegra_powergate_init(struct tegra_pmc *pmc,
+>                                 struct device_node *parent)
+>  {
+> +       struct of_phandle_args child_args, parent_args;
+>         struct device_node *np, *child;
+>         int err = 0;
+>
+> @@ -1249,6 +1250,24 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
+>                         of_node_put(child);
+>                         break;
+>                 }
+> +
+> +               if (of_parse_phandle_with_args(child, "power-domains",
+> +                                              "#power-domain-cells",
+> +                                              0, &parent_args))
+> +                       continue;
+> +
+> +               child_args.np = child;
+> +               child_args.args_count = 0;
+> +
+> +               err = of_genpd_add_subdomain(&parent_args, &child_args);
+> +               of_node_put(parent_args.np);
+> +               if (err) {
+> +                       if (err == -ENOENT)
+> +                               err = -EPROBE_DEFER;
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 75f6c37620ea..0cd1f91e4a19 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -597,6 +597,7 @@ config GPIO_TEGRA
- 	default ARCH_TEGRA
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
- 
--- 
-2.29.2
+Okay. So this special error treatment is needed because
+of_genpd_add_subdomain may return -ENOENT, in case the providers for
+the parent-domain and child-domain haven't been registered yet.
 
+I suggest we move this into of_genpd_add_subdomain() instead, thus
+letting it return -EPROBE_DEFER when there are parent/child nodes
+specified in DT, but the providers are lacking.
+
+> +
+> +                       of_node_put(child);
+> +                       break;
+> +               }
+>         }
+>
+>         of_node_put(np);
+> --
+> 2.29.2
+>
+
+Kind regards
+Uffe
