@@ -2,147 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E41C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 16:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3885C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 16:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 283FD22CAD
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 16:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F1012311A
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 16:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406377AbhALQXC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jan 2021 11:23:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406371AbhALQXB (ORCPT
+        id S2390959AbhALQ5W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jan 2021 11:57:22 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10839 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbhALQ5W (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jan 2021 11:23:01 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578C2C061575;
-        Tue, 12 Jan 2021 08:22:21 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id f17so3428341ljg.12;
-        Tue, 12 Jan 2021 08:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rM6mWr7O8Oy7IkGQjWrrd4PjuMu2KQXpKSzChL6UR30=;
-        b=rpICpfc8idHvAZrSqf38wOEk86Ckf2Bkn7ZC3hWhbbTL+b0erAeVQAfloEg+OaSqIL
-         3egNeTKy22Ouq57RH1cvILPk+yDDCEh1aEWT9x4SH7g8cJRDdqcZx8LWfxrfMu5AfchJ
-         EZ50iSPzDkQ1oGYez3VAzui3iNNUNo6/XVSh+XWGoL4NDpAiFpVnbLR41eL6JJi6j0ey
-         SO61lItgbbgi3GCLA6ztO2C5MWubSDGmMGKTln5l9rU8txd9DrLx09RkkTxcd7gv4qx3
-         iN7lRMe+l6ThgzN72cOngDKrLwep8ns7SACTSXndmWr68FYb05gUgxqmuUEV5vRDsdYr
-         DvyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rM6mWr7O8Oy7IkGQjWrrd4PjuMu2KQXpKSzChL6UR30=;
-        b=O1nNGwXBLgnZMxL4c17Zrbimi88dUwnGuZE6Wq6K78ymJC9cEdaIhaBK7VDduxEvTW
-         d9V1M0ZBXAaDzkb4FHn9TjUhWJJdxyA/YDfgI5QO5ffEd97GomJiNo9iOwSOarxcoJwq
-         XNe1GN+AEECWe8TuLc0QThKMWZ/8Zinkdi00BTZVmbR7f9+zEbqg2yos1fXCxBtoR0Az
-         iJUCrXqS90FLUIU6Vu48Z8dTmUDrMvAS5s4sYxWIoGbv6yFqR6nNCbD5gxfUQQbwpXa0
-         qNKIbaszo7zNAg0R1x/FGpjpjR4WUEriGuJxXacLJRdw6aHAsqZuiV27bQCKiyyBQJ0K
-         b2Ig==
-X-Gm-Message-State: AOAM5320SSlDCIw7bHERqsWX+NAsO5AdLyONUZdPXkXI0itxZFNYYjLQ
-        Eqfen7RhVqBy/6jgdsvE+3R/KZ8vo7Q=
-X-Google-Smtp-Source: ABdhPJwneL5K+pX0tKSeFXjPAd0OZQx8RPVxV4z6EID5cTmW6WaHsuRYg0wdaoRPQ00wgyo2w/b/oA==
-X-Received: by 2002:a2e:7806:: with SMTP id t6mr31408ljc.298.1610468539622;
-        Tue, 12 Jan 2021 08:22:19 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id n10sm403211lji.99.2021.01.12.08.22.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jan 2021 08:22:18 -0800 (PST)
-Subject: Re: [PATCH v2 29/48] soc/tegra: pmc: Link domains to the parent Core
- domain
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-30-digetx@gmail.com>
- <CAPDyKFrj-8WwK1U7KJaCiWkt2bsohgoEnqhQ4sgwjZzZfX2iMA@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9feb43dc-1303-4207-6bc9-a3202696acd2@gmail.com>
-Date:   Tue, 12 Jan 2021 19:22:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Tue, 12 Jan 2021 11:57:22 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ffdd4ca0001>; Tue, 12 Jan 2021 08:56:42 -0800
+Received: from [10.2.51.38] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Jan
+ 2021 16:56:41 +0000
+Subject: Re: [PATCH v1] i2c: tegra: Fix i2c_writesl() to use writel() instead
+ of writesl()
+To:     David Laight <David.Laight@ACULAB.COM>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1603166634-13639-1-git-send-email-skomatineni@nvidia.com>
+ <20201020074846.GA1877013@ulmo>
+ <538d8436-260d-40a8-b0a3-a822a0f9c909@nvidia.com>
+ <c37f8618-5100-4087-3bc3-fe421d40f3b8@gmail.com>
+ <2212a21b-7dff-4ba0-a193-badd5a1770c8@gmail.com>
+ <6373bc13-a53d-2bb2-98f5-f6f01b0b8b69@nvidia.com>
+ <790fa75aaec146f0bb27703157c0e77a@AcuMS.aculab.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <ee6d9283-cbff-1d26-c1ea-2fff435d9c2c@nvidia.com>
+Date:   Tue, 12 Jan 2021 08:56:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrj-8WwK1U7KJaCiWkt2bsohgoEnqhQ4sgwjZzZfX2iMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <790fa75aaec146f0bb27703157c0e77a@AcuMS.aculab.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610470602; bh=OQMmqb5lh1n/TkSrehTwWEmRMv7Pbzy7zBdWLqpHldM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=dSAwlMNc8X0w5LOLuaOJxJ9Xg+pM9ZaV0zhKBzc9fd3V8bxraC9D6m+qseKl5yXje
+         kBQAglalaAYJnn4yTAkWSk5WY4045cDZIJQOGZBpCDS/ElRK968pkB9xHQtUMAP4mW
+         04Rtxzf4FocHlSldEguJ8LOH0KXZXuHopjV/7lUfjEzBsrmNL5Xj+dCeN7hXTdArnb
+         1IQu2K0yxqKLlcn+HiEyBipRGFk59TJ4TBgbpwmxKm02cqmrLeonxLq83jC9zbcXFY
+         Rk4Utn56jauqLoto/BS3wrksqnc3J2NeR+N2fVPldDDNlW+xwbvp3oIsGRXC5OXz9I
+         76ZRsZK0SA4zQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-12.01.2021 16:30, Ulf Hansson пишет:
-> - trimmed cc-list
-> 
-> On Thu, 17 Dec 2020 at 19:07, Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> The Core domain is a parent of PMC power domains, hence PMC domains
->> should be set up as a sub-domains of the parent (Core) domain if
->> "power-domains" phandle presents in a device-tree node of PMC domain.
->>
->> This allows to propagate GENPD performance changes to the parent Core
->> domain if performance change is applied to PMC domain.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/soc/tegra/pmc.c | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index 4f96dc7745c4..1a659d1c06d7 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -1236,6 +1236,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->>  static int tegra_powergate_init(struct tegra_pmc *pmc,
->>                                 struct device_node *parent)
->>  {
->> +       struct of_phandle_args child_args, parent_args;
->>         struct device_node *np, *child;
->>         int err = 0;
->>
->> @@ -1249,6 +1250,24 @@ static int tegra_powergate_init(struct tegra_pmc *pmc,
->>                         of_node_put(child);
->>                         break;
->>                 }
->> +
->> +               if (of_parse_phandle_with_args(child, "power-domains",
->> +                                              "#power-domain-cells",
->> +                                              0, &parent_args))
->> +                       continue;
->> +
->> +               child_args.np = child;
->> +               child_args.args_count = 0;
->> +
->> +               err = of_genpd_add_subdomain(&parent_args, &child_args);
->> +               of_node_put(parent_args.np);
->> +               if (err) {
->> +                       if (err == -ENOENT)
->> +                               err = -EPROBE_DEFER;
-> 
-> Okay. So this special error treatment is needed because
-> of_genpd_add_subdomain may return -ENOENT, in case the providers for
-> the parent-domain and child-domain haven't been registered yet.
-> 
-> I suggest we move this into of_genpd_add_subdomain() instead, thus
-> letting it return -EPROBE_DEFER when there are parent/child nodes
-> specified in DT, but the providers are lacking.
 
-Alright
+On 1/12/21 1:32 AM, David Laight wrote:
+> From: Sowjanya Komatineni
+>> Sent: 11 January 2021 17:38
+> ...
+>> Using writesl() for filling TX_FIFO causing silent hang immediate on any
+>> i2c register access after filling FIFO with 8 words and some times with
+>> 6 words as well.
+>>
+>> So couldn't INTERRUPT_STATUS registers to check for TX FIFO Overflows
+>> when this silent hang happens.
+>>
+>> Tried to read thru back-door (JTAG path) but could not connect to JTAG
+>> either. Looks like Tegra chip is in some weird state.
+>>
+>> But using writel() followed by i2c_readl helps. Not sure if any thing
+>> related to register access delay or some other issue.
+> How much does the i2c_read() slow down the transfer?
+> If the device is PCIe it is probably significant.
+>
+> If the underlying problem is that the Tegra chip can't handle
+> back to back writes to the tx fifo maybe there are other solutions!
+> 1) Send it back and ask for a working chip :-)
+> 2) Maybe an interleaved write will slow things down enough?
+>
+> It may be worth testing back to back writes to other registers
+> to see if it is a problem that is specific to the tx fifo.
+>
+> 	David
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+
+This is a known hardware bug with VI I2C controller which is under 
+host1x where immediate multiple writes to TX FIFO register gets stuck 
+and reading from a register allows them to be flushed out.
+
+VI I2C is dedicated for camera sensors or HDMI2CSI bridge.
+
