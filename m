@@ -2,105 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81B2C43332
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 12:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847D5C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 12:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 876912310C
-	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 12:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AA2E22B37
+	for <linux-tegra@archiver.kernel.org>; Tue, 12 Jan 2021 12:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387608AbhALM3W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 12 Jan 2021 07:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731468AbhALM2p (ORCPT
+        id S2388105AbhALMqU convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 12 Jan 2021 07:46:20 -0500
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:43784 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387974AbhALMqU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 12 Jan 2021 07:28:45 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A0CC061794;
-        Tue, 12 Jan 2021 04:28:04 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id x20so3037135lfe.12;
-        Tue, 12 Jan 2021 04:28:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tATaPWAeIZO8mvZ/lzhKPVoXvQQFhtgfsi9R5HiJZkY=;
-        b=G30TE4STSvQ1E+ojDFF6Rmzv7mG/iIQ9nSIgc2fxE9ewcMUi2vaxOHV3EHck86bNBC
-         02hTlUsHldPApSp79cd8HlL5MkzOkFSSrpJqdu/m6T4Xw7OlVKMGiKKdWVtHz00133Q3
-         EveQ0kzetGzC7zL/BDak3XMHy80PZ+jeXjXm/+g+z0VGG6D/vRHBtLhdbh/FDIOB70XO
-         MVXZQQspmMl43/UxUFVOVAWmxDFuZxDWFNhEkpKNlkQJ03ZM8VL/9VanRxvpBTnIJEyb
-         JNvm4psLglQ/oksN1YE6jskayTwq84ulrgP+DoGp8/fBRf3rThVyoo05sJL9eJtKqzT5
-         So/A==
+        Tue, 12 Jan 2021 07:46:20 -0500
+Received: by mail-ot1-f45.google.com with SMTP id q25so2082511otn.10;
+        Tue, 12 Jan 2021 04:46:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tATaPWAeIZO8mvZ/lzhKPVoXvQQFhtgfsi9R5HiJZkY=;
-        b=Joixp71k9qCs24cngJ/KvmWnQhsfPTTYnYlQ3Wyi5MiNK7FygXgRUKgUdX6rZjF4sB
-         0Uudpgb8o+Do5C/EUpsoSrMDbqeeJ7IGPMqrUwD27/BxZcm70QzeldzC064FbRy+7Ltg
-         PEWaw4rPkd7g/LKw8AZzjVlSHkFNZI1C1zq8kK+SQsygsVmBwRJhb/cqZhg3M671DaFR
-         av3pdU2xY6bLyvo0WezxJEW1TsOO+U60FYEeV3ajKrklbf8B+66H+peEAdD8rlEyyFqO
-         31aae6R/3s+V7/AUzwTUtYv//Gol3ZTJiRijq84XIRYtTfRlkuYQ4AmQDQCrkJEgsP8v
-         2OLQ==
-X-Gm-Message-State: AOAM533O+fM+7JD04A1tezfQleQspKJ2S2iWZdlGl0hZyfvTtGHnyK8T
-        EBkJcmH6uk0q27izKY12znY=
-X-Google-Smtp-Source: ABdhPJwWsbuLwwKO39dmii1PesteRSRjqi3Bmg3igXvmYOKQghfaPS9CpxxA1jzGOkIH7vtHPb0obg==
-X-Received: by 2002:a05:6512:3586:: with SMTP id m6mr2105377lfr.318.1610454483215;
-        Tue, 12 Jan 2021 04:28:03 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id c3sm330136ljk.88.2021.01.12.04.28.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 04:28:02 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] clk: tegra30: Use 300MHz for video decoder by default
-Date:   Tue, 12 Jan 2021 15:27:20 +0300
-Message-Id: <20210112122724.1712-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210112122724.1712-1-digetx@gmail.com>
-References: <20210112122724.1712-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EFOSSjP2fTd1K6RGm8lMh2K690UVe2NBQkQwH5LWtVE=;
+        b=p51g4VnsBc0vJcrt93uyuSmVjBE/sxcuboKWaGe77/BJgtIimlu6aiZkk8G972lnMH
+         D8zZFwzWuCbS71U3rdIk64TrPfHG8XFu3SfO6V/XQSHCXpE8C22rww2HuWGBIx86Pbj7
+         G2R7yMCXbo23vF93s+Y6a1QXDyv5Sbev5lClTNM/HhtDsKqXRmYpnPUfC5hv9IA5RlGF
+         jJ0fC8JKmwJH21plPHe3pRQOMQ6ClXwTCOVSOLY17awOGxFBu11+FCP00K35fr2puhdo
+         tF0VQaQ+EPb0KlAcSlcVc2RbWBt2G2oOKoW3Nq1nkFYleieVkn7yUvxHfOS2jdu55Nzg
+         urJA==
+X-Gm-Message-State: AOAM53263x6SEFHgyZSZ78dgEnIlxjx/bQfwLMVWQnd2PYk7V3nPc/yX
+        AnwGfYmE94jeZG6AKLpFP8W9SsbgBUCpf5yGk1mpJKJn
+X-Google-Smtp-Source: ABdhPJyawNLYHpp3fs0HwK16+5LDEjwKVxHsqC5aggXbKqlM6e3ARb7zgK9iSZn6Zl/iLEr4qIO18zAKTIzYogi+Fb0=
+X-Received: by 2002:a9d:208a:: with SMTP id x10mr2572558ota.260.1610455537788;
+ Tue, 12 Jan 2021 04:45:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201201213019.1558738-1-furquan@google.com> <e77e0569-568a-f7fb-9f0d-e64943b467f0@gmail.com>
+In-Reply-To: <e77e0569-568a-f7fb-9f0d-e64943b467f0@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 12 Jan 2021 13:45:25 +0100
+Message-ID: <CAJZ5v0jhniqG43F6hCqXdxQiQZRc67GdkdP0BXcRut=P7k7BVQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers: core: Detach device from power domain on shutdown
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Furquan Shaikh <furquan@google.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The 600MHz is a too high clock rate for some SoC versions for the video
-decoder hardware and this may cause stability issues. Use 300MHz for the
-video decoder by default, which is supported by all hardware versions.
+On Tue, Jan 12, 2021 at 10:55 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 02.12.2020 00:30, Furquan Shaikh пишет:
+> > When the system is powered off or rebooted, devices are not detached
+> > from their PM domain. This results in ACPI PM not being invoked and
+> > hence PowerResouce _OFF method not being invoked for any of the
+> > devices. Because the ACPI power resources are not turned off in case
+> > of poweroff and reboot, it violates the power sequencing requirements
+> > which impacts the reliability of the devices over the lifetime of the
+> > platform. This is currently observed on all Chromebooks using ACPI.
+> >
+> > In order to solve the above problem, this change detaches a device
+> > from its PM domain whenever it is shutdown. This action is basically
+> > analogous to ->remove() from driver model perspective. Detaching the
+> > device from its PM domain ensures that the ACPI PM gets a chance to
+> > turn off the power resources for the device thus complying with its
+> > power sequencing requirements.
+> >
+> > Signed-off-by: Furquan Shaikh <furquan@google.com>
+> > ---
+> >  drivers/base/core.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index d661ada1518f..5823f1d719e1 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/of_device.h>
+> >  #include <linux/genhd.h>
+> >  #include <linux/mutex.h>
+> > +#include <linux/pm_domain.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/netdevice.h>
+> >  #include <linux/sched/signal.h>
+> > @@ -4057,6 +4058,8 @@ void device_shutdown(void)
+> >                       dev->driver->shutdown(dev);
+> >               }
+> >
+> > +             dev_pm_domain_detach(dev, true);
+> > +
+> >               device_unlock(dev);
+> >               if (parent)
+> >                       device_unlock(parent);
+> >
+>
+> This patch broke system shutdown on NVIDIA Tegra using today's
+> linux-next because power domain can't be turned off until device drivers
+> handed control over device resets to the power domain of Power
+> Management controller on Tegra. This patch introduced the wrong
+> behaviour, apparently it should be made specific to ACPI only.
+>
+> Please fix, thanks in advance.
 
-Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra30.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 37244a7e68c2..98923c4674bf 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1248,7 +1248,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
--	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
-+	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
--- 
-2.29.2
-
+OK, so Greg please drop it.
