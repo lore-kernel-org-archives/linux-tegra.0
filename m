@@ -2,111 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12494C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 18:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D29CC43217
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA49122248
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 18:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADE3235F8
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbhAMS4w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Jan 2021 13:56:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
+        id S1729146AbhAMVbk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Jan 2021 16:31:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728692AbhAMS4w (ORCPT
+        with ESMTP id S1728420AbhAMVaf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Jan 2021 13:56:52 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6A4C061575
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 10:56:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EkbPFiDWmzFHAIu8oihwICgsB4QuGqf1Zx3RAWAzrXQ=; b=TF2b9SO/CNHdAHE8FNtIW7s7Yg
-        gaW+HHtFfXbuU1jTpOVUi+sjSZCXXioJj1DPfER0Y/SbMEzTeRC6uKRLKbAr8PGrDySVBfFr5f1bv
-        1LPjkAIsRVHknYpefeTUFf10UFPE3p5NS0Gmpa7OQ77PUIYIuYHbdc+p9dcHQdDTfjGeRkBuA3YLR
-        Ll4O0OjA1xAcIazaqHdnkK5M6oe41HbYwn+7mUGI7z67M+9nxpWV5FqT0V/rRMvfLN/cYH6vilfe+
-        SnTZ1hACX1PC8CV2c63A0aEmDjWg5fLBYq7n1yD/ZHvXs7WNKmJnzTsA1V8Jx+gdr6ZNNgIk2RfMj
-        27luJC9A==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1kzlJO-0006cz-Vu; Wed, 13 Jan 2021 20:56:07 +0200
-Subject: Re: [PATCH v5 15/21] drm/tegra: Add new UAPI to header
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-16-mperttunen@nvidia.com>
- <a0fdac0d-88cf-6eda-6611-fca951253060@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <cc746d91-e6b2-53d8-17ff-59cbc8bb522f@kapsi.fi>
-Date:   Wed, 13 Jan 2021 20:56:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Wed, 13 Jan 2021 16:30:35 -0500
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48E9C061786
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:29:53 -0800 (PST)
+Received: by mail-qk1-x732.google.com with SMTP id 143so4165491qke.10
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:29:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VExiYHmqwPXooPsM00PEuTMdc848Er2iS47/e4Rre3U=;
+        b=rLrEeqZEMYBFkB57NfvTrRBtpce1M96aDR8g8DXBcOnFyUdpuKgZXYOOC/IYPOMC29
+         bxT+rU7I4Zop56nmAXg0Mjgv0f99gu7ExCKbazp0zDj0nuSkiTTFx8+NPw4a3Ok/Hzbn
+         yJhVBZIriApPRBkODPNnwAKqACAKbLpunk0smw3qy9pLAfE1i76Ambu7EGM+lkJZg1zI
+         esM5GCf7aTeYeAvSUKyzb/xI11X5UXZjAdYfN9sKefFpkDNIxnNla8+8eKw9OZc0kJFe
+         2GWWv6ECoDhkiIoeTCNcEMj3jKfwMq/Fw+gHYlIJoZdBijxtjbKC025/M19yzyWZUoN8
+         jIZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VExiYHmqwPXooPsM00PEuTMdc848Er2iS47/e4Rre3U=;
+        b=aXYXfC0J4pcsrUfCa3LOSMnpabrQ+HRIOXcxh7NkQEO+DwcfLoZ/2QMCjqRfMnvYbl
+         rwNvPZJf7xXUN+Nhnf+8WAPL6SlzTzsKsja8IL/xblEN3gT3ou1NsCAEeKi07JRILFJC
+         4a/e5AdButMaggk/9EdojbwMGI4Rn5Z5I6fnK4IzPsHNzb8iVyg/f2C/wUD6jSmcTN6b
+         rMVVMnwhuxzPXnwBviVFHynxM0VmjExHQqd+M+ASC7KlWRkKIjDF1uKBWs/J1RBQjEwG
+         lkgZpAyL6v5cLHmQGqFnHZTA2CQOQO+7yXp2YuJzsHdQNZNgjE7JGCIdtS8sZ1se+xqf
+         rljQ==
+X-Gm-Message-State: AOAM531BOUms0324yQ2YNtIcLOiNod7AVYQHV+pAqFGLGU69sh0Q7iCj
+        PcnIkdmQ/1l0aJcVeaaTUrhtjMhs6KQ9W9WMgMAXKg==
+X-Google-Smtp-Source: ABdhPJxuYYjsMGPxY/P1Gyj3lPeICRhxkp0YFDfzhEzob3rW6ao/fMgu2IlLIeHccNoFEzd9z7gPTfcTSUSL2lIADVE=
+X-Received: by 2002:a25:d7d7:: with SMTP id o206mr6177287ybg.228.1610573392718;
+ Wed, 13 Jan 2021 13:29:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <a0fdac0d-88cf-6eda-6611-fca951253060@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+References: <20201218031703.3053753-1-saravanak@google.com>
+ <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org> <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
+In-Reply-To: <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Wed, 13 Jan 2021 13:29:16 -0800
+Message-ID: <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 1/13/21 8:14 PM, Dmitry Osipenko wrote:
-> 11.01.2021 16:00, Mikko Perttunen пишет:
->> +struct drm_tegra_submit_buf {
->> +	/**
->> +	 * @mapping_id: [in]
->> +	 *
->> +	 * Identifier of the mapping to use in the submission.
->> +	 */
->> +	__u32 mapping_id;
-> 
-> I'm now in process of trying out the UAPI using grate drivers and this
-> becomes the first obstacle.
-> 
-> Looks like this is not going to work well for older Tegra SoCs, in
-> particular for T20, which has a small GART.
-> 
-> Given that the usefulness of the partial mapping feature is very
-> questionable until it will be proven with a real userspace, we should
-> start with a dynamic mappings that are done at a time of job submission.
-> 
-> DRM already should have everything necessary for creating and managing
-> caches of mappings, grate kernel driver has been using drm_mm_scan for a
-> long time now for that.
-> 
-> It should be fine to support the static mapping feature, but it should
-> be done separately with the drm_mm integration, IMO.
-> 
-> What do think?
-> 
+On Wed, Jan 13, 2021 at 7:27 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 13/01/2021 11:11, Marc Zyngier wrote:
+> > On 2021-01-07 20:05, Greg Kroah-Hartman wrote:
+> >> On Thu, Dec 17, 2020 at 07:16:58PM -0800, Saravana Kannan wrote:
+> >>> As discussed in LPC 2020, cyclic dependencies in firmware that couldn't
+> >>> be broken using logic was one of the last remaining reasons
+> >>> fw_devlink=on couldn't be set by default.
+> >>>
+> >>> This series changes fw_devlink so that when a cyclic dependency is found
+> >>> in firmware, the links between those devices fallback to permissive mode
+> >>> behavior. This way, the rest of the system still benefits from
+> >>> fw_devlink, but the ambiguous cases fallback to permissive mode.
+> >>>
+> >>> Setting fw_devlink=on by default brings a bunch of benefits (currently,
+> >>> only for systems with device tree firmware):
+> >>> * Significantly cuts down deferred probes.
+> >>> * Device probe is effectively attempted in graph order.
+> >>> * Makes it much easier to load drivers as modules without having to
+> >>>   worry about functional dependencies between modules (depmod is still
+> >>>   needed for symbol dependencies).
+> >>>
+> >>> Greg/Rafael,
+> >>>
+> >>> Can we get this pulled into 5.11-rc1 or -rc2 soon please? I expect to
+> >>> see some issues due to device drivers that aren't following best
+> >>> practices (they don't expose the device to driver core). Want to
+> >>> identify those early on and try to have them fixed before 5.11 release.
+> >>> See [1] for an example of such a case.
+> >>
+> >> Now queued up in my tree, will show up in linux-next in a few days,
+> >> let's see what breaks!  :)
+> >>
+> >> And it is scheduled for 5.12-rc1, not 5.11, sorry.
+> >
+> > For the record, this breaks my rk3399 board, (NanoPC-T4) as no mass
+> > storage can be discovered (it lives on PCIe):
+> >
+> > (initramfs) find /sys -name 'waiting_for_supplier'| xargs grep .| egrep
+> > -v ':0$'
+> > /sys/devices/platform/ff3d0000.i2c/i2c-4/4-0022/waiting_for_supplier:1
+> > /sys/devices/platform/f8000000.pcie/waiting_for_supplier:1
+> > /sys/devices/platform/fe320000.mmc/waiting_for_supplier:1
+> > /sys/devices/platform/sdio-pwrseq/waiting_for_supplier:1
+> > /sys/devices/platform/ff3c0000.i2c/i2c-0/0-001b/waiting_for_supplier:1
+> >
+> > Enabling the debug prints in device_links_check_suppliers(), I end up with
+> > the dump below (apologies for the size).
+>
+>
+> I am seeing the same problem on Tegra30 Cardhu A04 where several regulators
+> are continuously deferred and prevents the board from booting ...
+>
+> [    2.518334] platform panel: probe deferral - supplier regulator@11 not ready
+>
+> [    2.525503] platform regulator@1: probe deferral - supplier 4-002d not ready
+>
+> [    2.533141] platform regulator@3: probe deferral - supplier regulator@101 not ready
+>
+> [    2.540856] platform regulator@5: probe deferral - supplier regulator@101 not ready
+>
+> [    2.548589] platform regulator@6: probe deferral - supplier regulator@101 not ready
+>
+> [    2.556316] platform regulator@7: probe deferral - supplier regulator@101 not ready
+>
+> [    2.564041] platform regulator@8: probe deferral - supplier regulator@101 not ready
+>
+> [    2.571743] platform regulator@9: probe deferral - supplier regulator@101 not ready
+>
+> [    2.579463] platform regulator@10: probe deferral - supplier regulator@101 not ready
+>
+> [    2.587273] platform regulator@11: probe deferral - supplier regulator@101 not ready
+>
+> [    2.595088] platform regulator@12: probe deferral - supplier regulator@104 not ready
+>
+> [    2.603837] platform regulator@102: probe deferral - supplier regulator@104 not ready
+>
+> [    2.611726] platform regulator@103: probe deferral - supplier regulator@104 not ready
+>
+> [    2.620137] platform 3000.pcie: probe deferral - supplier regulator@5 not ready
 
-Can you elaborate on the requirements to be able to use GART? Are there 
-any other reasons this would not work on older chips?
+Looks like this is not the whole log? Do you see any "wait for
+supplier" logs? That's what all these boot issues should boil down to.
+And as usual, pointer to DT for this board please.
 
-I think we should keep CHANNEL_MAP and mapping_ids, but if e.g. for GART 
-we cannot do mapping immediately at CHANNEL_MAP time, we can just treat 
-it as a "registration" call for the GEM object - potentially no-op like 
-direct physical addressing is. We can then do whatever is needed at 
-submit time. This way we can have the best of both worlds.
-
-Note that partial mappings are already not present in this version of 
-the UAPI.
-
-Mikko
+-Saravana
