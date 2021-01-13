@@ -2,172 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD91C43381
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 15:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE852C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 16:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10CB723436
-	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 15:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6564D23435
+	for <linux-tegra@archiver.kernel.org>; Wed, 13 Jan 2021 16:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbhAMP1w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Jan 2021 10:27:52 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16313 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbhAMP1v (ORCPT
+        id S1726828AbhAMQai (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Jan 2021 11:30:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbhAMQah (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Jan 2021 10:27:51 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fff114f0002>; Wed, 13 Jan 2021 07:27:11 -0800
-Received: from [10.26.73.78] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Jan
- 2021 15:27:06 +0000
-Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
-To:     Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>, <kernel-team@android.com>,
-        <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20201218031703.3053753-1-saravanak@google.com>
- <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
-Date:   Wed, 13 Jan 2021 15:27:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 13 Jan 2021 11:30:37 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272F7C061575
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 08:29:57 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id p13so3258751ljg.2
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 08:29:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2siudaJetlL4FSQZMNVVHzMkL7ELpV6uopIfOVvMWs8=;
+        b=l8xop7pH+Setq82fKbZ4EFQTUoHmoBO+t6Pph1Vzjk1CYRrAOcfLtsKkFoL5ddaiW8
+         SxVevzBvjl7o4Rha9onDBL5KVYidZ2YAWAk7Z6lQ4fF6s9ZE+x57O1ZW1S2nNhqLXA8v
+         6HQAyjn/UVHjp2GqZAJZLnd+7TtaqiG4wQUpHcfc1dXL4cXmsyLUGxW3tw89IlSTAodI
+         aFdfjT3Pz26d2/k9mCgIFIhZ/xAyuAKYDgT/wSf4WTkh9DHVGDITFgx2hewOMH2HIT3F
+         3sLC41ibMjc4jlPswFQ3YAjSDGSZ0BIUVyBNBCIN/yz6uM7NKZlw1sWB+bi+WbDB4PAG
+         fDFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2siudaJetlL4FSQZMNVVHzMkL7ELpV6uopIfOVvMWs8=;
+        b=RLAa4TW9RuFzU6bu7ZZ1CUyGvUz7HoTpkF1BiNNP8wUSkSkEUA0UaYwUvHr5spYfAq
+         GHQYNkAqrJUToFSzINhGw/X5e2EaY4RRlGvf2Ab0GW2/vCf6cyqXPDGJ7El6sKnD9/Xh
+         UlbwSJGh+O23M1QjEhyxxTYuMWZhnf13Qmc/D/I6mPLlq1EMcZWDLejZTkQIFGZ5ug4I
+         iMKqdL+uhZQdETm0oZEr1P7vTi0qxo3PXddD1r2eAOnijUJiPfh/Ftkk45gcba9+mjni
+         2zd78raE08FlMpeHc0EhBq+d+PRjYPGld8evcUbfsLmV79oEFhEycVdF9ZuUj52TRYUb
+         aJVw==
+X-Gm-Message-State: AOAM530FSXUIKjI1xPkLHdmSsUbu5OazbpJxfy0bHYodFHtv4vICdl2W
+        zl6YDatB9+HWA44qLgYA7RI=
+X-Google-Smtp-Source: ABdhPJxo5bxVwGtUe+l+R6oDxiDXlb5UzmCR9sb2VRDgxNSPyvKLX/oyuSi47L0DYwnaxTXsky5Ibw==
+X-Received: by 2002:a2e:96c5:: with SMTP id d5mr1275164ljj.321.1610555395703;
+        Wed, 13 Jan 2021 08:29:55 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id b141sm254508lfd.148.2021.01.13.08.29.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jan 2021 08:29:54 -0800 (PST)
+Subject: Re: [PATCH v5 04/21] gpu: host1x: Remove cancelled waiters
+ immediately
+To:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        talho@nvidia.com, bhuntsman@nvidia.com
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
+ <20210111130019.3515669-5-mperttunen@nvidia.com>
+ <1c2c4a31-68a2-c938-fe65-6059d9889126@gmail.com>
+ <1f98ce42-dc6b-299c-f55e-f6dd87b99cab@kapsi.fi>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b0a983a1-6379-1a27-5c8d-05fee58e696a@gmail.com>
+Date:   Wed, 13 Jan 2021 19:29:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1f98ce42-dc6b-299c-f55e-f6dd87b99cab@kapsi.fi>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610551631; bh=vWvbfeQs/eOznYq1ghflo7/4ihY6xIq1d7AfKE+C1Ko=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=i6358Wm2qF7iHgC5O3/ZZVseUz7ouGggNJgySQQ70iNyfWKIWkx8/GVhsN5YJ885g
-         ZzE4vMoMUOWFd9UjhOoENpNbUx7c7Rk/VBLLBi5ESjHHGMMGn7Ok8hw6J08fpauYA4
-         LcQ2u8yC7f+mU1h2QkSPuu8BcAhw2/Pnmqc7tfjtDS9Uk4YzvjnbEOJhyYH3Hzlin1
-         +tHHtn62RbW1QYpQ747bdk3HvM8R3GsBAHmjey39yvcaOgoTH3msS3RNSL1Y8nIH63
-         GrC9bk1Np3pJaBzTtSYDNEtqvJ6AqI/5TdltQbUGvXi4geEqVT+KHHKXmMPChPzvC7
-         UxNBIgCttvILg==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 13/01/2021 11:11, Marc Zyngier wrote:
-> On 2021-01-07 20:05, Greg Kroah-Hartman wrote:
->> On Thu, Dec 17, 2020 at 07:16:58PM -0800, Saravana Kannan wrote:
->>> As discussed in LPC 2020, cyclic dependencies in firmware that couldn't
->>> be broken using logic was one of the last remaining reasons
->>> fw_devlink=3Don couldn't be set by default.
->>>
->>> This series changes fw_devlink so that when a cyclic dependency is foun=
-d
->>> in firmware, the links between those devices fallback to permissive mod=
-e
->>> behavior. This way, the rest of the system still benefits from
->>> fw_devlink, but the ambiguous cases fallback to permissive mode.
->>>
->>> Setting fw_devlink=3Don by default brings a bunch of benefits (currentl=
-y,
->>> only for systems with device tree firmware):
->>> * Significantly cuts down deferred probes.
->>> * Device probe is effectively attempted in graph order.
->>> * Makes it much easier to load drivers as modules without having to
->>> =C2=A0 worry about functional dependencies between modules (depmod is s=
-till
->>> =C2=A0 needed for symbol dependencies).
->>>
->>> Greg/Rafael,
->>>
->>> Can we get this pulled into 5.11-rc1 or -rc2 soon please? I expect to
->>> see some issues due to device drivers that aren't following best
->>> practices (they don't expose the device to driver core). Want to
->>> identify those early on and try to have them fixed before 5.11 release.
->>> See [1] for an example of such a case.
+13.01.2021 01:20, Mikko Perttunen пишет:
+> On 1/13/21 12:07 AM, Dmitry Osipenko wrote:
+>> 11.01.2021 16:00, Mikko Perttunen пишет:
+>>> -void host1x_intr_put_ref(struct host1x *host, unsigned int id, void
+>>> *ref)
+>>> +void host1x_intr_put_ref(struct host1x *host, unsigned int id, void
+>>> *ref,
+>>> +             bool flush)
+>>>   {
+>>>       struct host1x_waitlist *waiter = ref;
+>>>       struct host1x_syncpt *syncpt;
+>>>   -    while (atomic_cmpxchg(&waiter->state, WLS_PENDING,
+>>> WLS_CANCELLED) ==
+>>> -           WLS_REMOVED)
+>>> -        schedule();
+>>> +    atomic_cmpxchg(&waiter->state, WLS_PENDING, WLS_CANCELLED);
+>>>         syncpt = host->syncpt + id;
+>>> -    (void)process_wait_list(host, syncpt,
+>>> -                host1x_syncpt_load(host->syncpt + id));
+>>> +
+>>> +    spin_lock(&syncpt->intr.lock);
+>>> +    if (atomic_cmpxchg(&waiter->state, WLS_CANCELLED, WLS_HANDLED) ==
+>>> +        WLS_CANCELLED) {
+>>> +        list_del(&waiter->list);
+>>> +        kref_put(&waiter->refcount, waiter_release);
+>>> +    }
+>>> +    spin_unlock(&syncpt->intr.lock);
+>>> +
+>>> +    if (flush) {
+>>> +        /* Wait until any concurrently executing handler has
+>>> finished. */
+>>> +        while (atomic_read(&waiter->state) != WLS_HANDLED)
+>>> +            cpu_relax();
+>>> +    }
 >>
->> Now queued up in my tree, will show up in linux-next in a few days,
->> let's see what breaks!=C2=A0 :)
+>> A busy-loop shouldn't be used in kernel unless there is a very good
+>> reason. The wait_event() should be used instead.
 >>
->> And it is scheduled for 5.12-rc1, not 5.11, sorry.
->=20
-> For the record, this breaks my rk3399 board, (NanoPC-T4) as no mass
-> storage can be discovered (it lives on PCIe):
->=20
-> (initramfs) find /sys -name 'waiting_for_supplier'| xargs grep .| egrep
-> -v ':0$'
-> /sys/devices/platform/ff3d0000.i2c/i2c-4/4-0022/waiting_for_supplier:1
-> /sys/devices/platform/f8000000.pcie/waiting_for_supplier:1
-> /sys/devices/platform/fe320000.mmc/waiting_for_supplier:1
-> /sys/devices/platform/sdio-pwrseq/waiting_for_supplier:1
-> /sys/devices/platform/ff3c0000.i2c/i2c-0/0-001b/waiting_for_supplier:1
->=20
-> Enabling the debug prints in device_links_check_suppliers(), I end up wit=
-h
-> the dump below (apologies for the size).
+>> But please don't hurry to update this patch, we may need or want to
+>> retire the host1x-waiter and then these all waiter-related patches won't
+>> be needed.
+>>
+> 
+> Yes, we should improve the intr code to remove all this complexity. But
+> let's merge this first to get a functional baseline and do larger design
+> changes in follow-up patches.
+> 
+> It is cumbersome for me to develop further series (of which I have
+> several under work and planning) with this baseline series not being
+> merged. The uncertainty on the approval of the UAPI design also makes it
+> hard to know whether it makes sense for me to work on top of this code
+> or not, so I'd like to focus on what's needed to get this merged instead
+> of further redesign of the driver at this time.
 
-
-I am seeing the same problem on Tegra30 Cardhu A04 where several regulators
-are continuously deferred and prevents the board from booting ...
-
-[    2.518334] platform panel: probe deferral - supplier regulator@11 not r=
-eady
-
-[    2.525503] platform regulator@1: probe deferral - supplier 4-002d not r=
-eady
-
-[    2.533141] platform regulator@3: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.540856] platform regulator@5: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.548589] platform regulator@6: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.556316] platform regulator@7: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.564041] platform regulator@8: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.571743] platform regulator@9: probe deferral - supplier regulator@10=
-1 not ready
-
-[    2.579463] platform regulator@10: probe deferral - supplier regulator@1=
-01 not ready
-
-[    2.587273] platform regulator@11: probe deferral - supplier regulator@1=
-01 not ready
-
-[    2.595088] platform regulator@12: probe deferral - supplier regulator@1=
-04 not ready
-
-[    2.603837] platform regulator@102: probe deferral - supplier regulator@=
-104 not ready
-
-[    2.611726] platform regulator@103: probe deferral - supplier regulator@=
-104 not ready
-
-[    2.620137] platform 3000.pcie: probe deferral - supplier regulator@5 no=
-t ready
-
-
-Cheers
-Jon
-
---=20
-nvpublic
+Is this patch (and some others) necessary for the new UAPI? If not,
+could we please narrow down the patches to the minimum that is needed
+for trying out the new UAPI?
