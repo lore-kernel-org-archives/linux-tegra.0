@@ -7,62 +7,60 @@ X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D29CC43217
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B1BC43381
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADE3235F8
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DBBC23343
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 02:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbhAMVbk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 13 Jan 2021 16:31:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
+        id S1727866AbhANCO3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 13 Jan 2021 21:14:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbhAMVaf (ORCPT
+        with ESMTP id S1729129AbhAMV2I (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 13 Jan 2021 16:30:35 -0500
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48E9C061786
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:29:53 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id 143so4165491qke.10
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:29:53 -0800 (PST)
+        Wed, 13 Jan 2021 16:28:08 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C855C061795
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:27:28 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id p14so4185467qke.6
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Jan 2021 13:27:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VExiYHmqwPXooPsM00PEuTMdc848Er2iS47/e4Rre3U=;
-        b=rLrEeqZEMYBFkB57NfvTrRBtpce1M96aDR8g8DXBcOnFyUdpuKgZXYOOC/IYPOMC29
-         bxT+rU7I4Zop56nmAXg0Mjgv0f99gu7ExCKbazp0zDj0nuSkiTTFx8+NPw4a3Ok/Hzbn
-         yJhVBZIriApPRBkODPNnwAKqACAKbLpunk0smw3qy9pLAfE1i76Ambu7EGM+lkJZg1zI
-         esM5GCf7aTeYeAvSUKyzb/xI11X5UXZjAdYfN9sKefFpkDNIxnNla8+8eKw9OZc0kJFe
-         2GWWv6ECoDhkiIoeTCNcEMj3jKfwMq/Fw+gHYlIJoZdBijxtjbKC025/M19yzyWZUoN8
-         jIZw==
+        bh=KYfuGnLwArlinw5s1DodWez2H2suYhTdu1Oid0kJwRY=;
+        b=r3hmvLs9ZA7yzltYa5GNNLkPnSiaItyhkoVfhKIlZJz/2W6WbPgNrVP0BKwaMhjzkV
+         Zct5gPPx+smoEIxds+onaBFcJS9w/0Y+IC7kXubLEO23XygggLoD8QeEsUSvcERMpNvN
+         Ndr2HxPuUfsbt/x60f+uRCqxF6K+iSl2PLCFCtbNxPTxIr/H600n1R9pDWwj5dD/zFqk
+         +phsNj/SRxSDFH2qOx5s+jKvYLwaP2zYPUEDW93wZYzM14fCHyORIQSCUqc1kqZeLPKI
+         kQQ/r+utOYaq7vCHtIMxblDxNnkDo+rZlvdc8ekJsiSynF7YavUf3CT6PTW705KbcyKt
+         Ri2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VExiYHmqwPXooPsM00PEuTMdc848Er2iS47/e4Rre3U=;
-        b=aXYXfC0J4pcsrUfCa3LOSMnpabrQ+HRIOXcxh7NkQEO+DwcfLoZ/2QMCjqRfMnvYbl
-         rwNvPZJf7xXUN+Nhnf+8WAPL6SlzTzsKsja8IL/xblEN3gT3ou1NsCAEeKi07JRILFJC
-         4a/e5AdButMaggk/9EdojbwMGI4Rn5Z5I6fnK4IzPsHNzb8iVyg/f2C/wUD6jSmcTN6b
-         rMVVMnwhuxzPXnwBviVFHynxM0VmjExHQqd+M+ASC7KlWRkKIjDF1uKBWs/J1RBQjEwG
-         lkgZpAyL6v5cLHmQGqFnHZTA2CQOQO+7yXp2YuJzsHdQNZNgjE7JGCIdtS8sZ1se+xqf
-         rljQ==
-X-Gm-Message-State: AOAM531BOUms0324yQ2YNtIcLOiNod7AVYQHV+pAqFGLGU69sh0Q7iCj
-        PcnIkdmQ/1l0aJcVeaaTUrhtjMhs6KQ9W9WMgMAXKg==
-X-Google-Smtp-Source: ABdhPJxuYYjsMGPxY/P1Gyj3lPeICRhxkp0YFDfzhEzob3rW6ao/fMgu2IlLIeHccNoFEzd9z7gPTfcTSUSL2lIADVE=
-X-Received: by 2002:a25:d7d7:: with SMTP id o206mr6177287ybg.228.1610573392718;
- Wed, 13 Jan 2021 13:29:52 -0800 (PST)
+        bh=KYfuGnLwArlinw5s1DodWez2H2suYhTdu1Oid0kJwRY=;
+        b=VXs9DExvYE0vISmD6kHESyxxVxcjfRv/Gw8pK1VybiejBn38Q23x0C+rauQgac52U0
+         kTudgdca1vWiXQp3od7jwLxPmlTDoR9QCcsPje2+42tWE40sYYV66aB7bjIHYJl+uucf
+         ufNjlXfWbtKHVAKDjMrtEessGkQBUEHKtR7hNL8DUFm98y0wR5bsBF2o6L/w6BOmkyWC
+         QkXs+Ppdl1m82BzyBtnfpFtqeLFSiNFXMGtSY5eX/h9BakQu33LVmB+rLgKB09p9bUU/
+         fZ7BCfcWzfqf81kEAdPVTyO+IGqSx+L/WWcQ0QJg3daEMnuT6btvrq84h+nBsCwVxzqZ
+         KVrA==
+X-Gm-Message-State: AOAM531OWYIHQt7SFrdZkKgWyFzvhXs+Icfo3JdWEgRvTLEcGiJa9MMI
+        rtvR1BSh8OSTkeewOViMoWiPSwn798jBarZGTIXQ2A==
+X-Google-Smtp-Source: ABdhPJwORp3tKryADDf32VsnwiJuvC7YfWezYSI/YhfnKwkfnJ1GnNGeoco2Zd2VtFjdyt4NVkfZ9noLdQmqmI5qGGM=
+X-Received: by 2002:a25:6604:: with SMTP id a4mr6435438ybc.412.1610573247136;
+ Wed, 13 Jan 2021 13:27:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20201218031703.3053753-1-saravanak@google.com>
- <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org> <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
-In-Reply-To: <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
+References: <20201218031703.3053753-1-saravanak@google.com> <56f7d032-ba5a-a8c7-23de-2969d98c527e@nvidia.com>
+In-Reply-To: <56f7d032-ba5a-a8c7-23de-2969d98c527e@nvidia.com>
 From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 13 Jan 2021 13:29:16 -0800
-Message-ID: <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
+Date:   Wed, 13 Jan 2021 13:26:51 -0800
+Message-ID: <CAGETcx9FAAa+gUOTJX76DGGOAE4g3cTbZhwNQ-pLioYzg=fTOw@mail.gmail.com>
 Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
 To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Android Kernel Team <kernel-team@android.com>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -70,96 +68,101 @@ Cc:     Marc Zyngier <maz@kernel.org>,
         Kevin Hilman <khilman@baylibre.com>,
         John Stultz <john.stultz@linaro.org>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Marc Zyngier <maz@kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 13, 2021 at 7:27 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+On Wed, Jan 13, 2021 at 3:30 AM Jon Hunter <jonathanh@nvidia.com> wrote:
 >
 >
-> On 13/01/2021 11:11, Marc Zyngier wrote:
-> > On 2021-01-07 20:05, Greg Kroah-Hartman wrote:
-> >> On Thu, Dec 17, 2020 at 07:16:58PM -0800, Saravana Kannan wrote:
-> >>> As discussed in LPC 2020, cyclic dependencies in firmware that couldn't
-> >>> be broken using logic was one of the last remaining reasons
-> >>> fw_devlink=on couldn't be set by default.
-> >>>
-> >>> This series changes fw_devlink so that when a cyclic dependency is found
-> >>> in firmware, the links between those devices fallback to permissive mode
-> >>> behavior. This way, the rest of the system still benefits from
-> >>> fw_devlink, but the ambiguous cases fallback to permissive mode.
-> >>>
-> >>> Setting fw_devlink=on by default brings a bunch of benefits (currently,
-> >>> only for systems with device tree firmware):
-> >>> * Significantly cuts down deferred probes.
-> >>> * Device probe is effectively attempted in graph order.
-> >>> * Makes it much easier to load drivers as modules without having to
-> >>>   worry about functional dependencies between modules (depmod is still
-> >>>   needed for symbol dependencies).
-> >>>
-> >>> Greg/Rafael,
-> >>>
-> >>> Can we get this pulled into 5.11-rc1 or -rc2 soon please? I expect to
-> >>> see some issues due to device drivers that aren't following best
-> >>> practices (they don't expose the device to driver core). Want to
-> >>> identify those early on and try to have them fixed before 5.11 release.
-> >>> See [1] for an example of such a case.
-> >>
-> >> Now queued up in my tree, will show up in linux-next in a few days,
-> >> let's see what breaks!  :)
-> >>
-> >> And it is scheduled for 5.12-rc1, not 5.11, sorry.
+> On 18/12/2020 03:16, Saravana Kannan wrote:
+> > As discussed in LPC 2020, cyclic dependencies in firmware that couldn't
+> > be broken using logic was one of the last remaining reasons
+> > fw_devlink=on couldn't be set by default.
 > >
-> > For the record, this breaks my rk3399 board, (NanoPC-T4) as no mass
-> > storage can be discovered (it lives on PCIe):
+> > This series changes fw_devlink so that when a cyclic dependency is found
+> > in firmware, the links between those devices fallback to permissive mode
+> > behavior. This way, the rest of the system still benefits from
+> > fw_devlink, but the ambiguous cases fallback to permissive mode.
 > >
-> > (initramfs) find /sys -name 'waiting_for_supplier'| xargs grep .| egrep
-> > -v ':0$'
-> > /sys/devices/platform/ff3d0000.i2c/i2c-4/4-0022/waiting_for_supplier:1
-> > /sys/devices/platform/f8000000.pcie/waiting_for_supplier:1
-> > /sys/devices/platform/fe320000.mmc/waiting_for_supplier:1
-> > /sys/devices/platform/sdio-pwrseq/waiting_for_supplier:1
-> > /sys/devices/platform/ff3c0000.i2c/i2c-0/0-001b/waiting_for_supplier:1
-> >
-> > Enabling the debug prints in device_links_check_suppliers(), I end up with
-> > the dump below (apologies for the size).
+> > Setting fw_devlink=on by default brings a bunch of benefits (currently,
+> > only for systems with device tree firmware):
+> > * Significantly cuts down deferred probes.
+> > * Device probe is effectively attempted in graph order.
+> > * Makes it much easier to load drivers as modules without having to
+> >   worry about functional dependencies between modules (depmod is still
+> >   needed for symbol dependencies).
 >
 >
-> I am seeing the same problem on Tegra30 Cardhu A04 where several regulators
-> are continuously deferred and prevents the board from booting ...
+> One issue we have come across with this is the of_mdio.c driver. On
+> Tegra194 Jetson Xavier I am seeing the following ...
 >
-> [    2.518334] platform panel: probe deferral - supplier regulator@11 not ready
+> boot: logs: [       4.194791] WARNING KERN WARNING: CPU: 0 PID: 1 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/base/core.c:1189 device_links_driver_bound+0x240/0x260
+> boot: logs: [       4.207683] WARNING KERN Modules linked in:
+> boot: logs: [       4.210691] WARNING KERN CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.11.0-rc3-next-20210112-gdf869cab4b35 #1
+> boot: logs: [       4.219221] WARNING KERN Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
+> boot: logs: [       4.225628] WARNING KERN pstate: 80400009 (Nzcv daif +PAN -UAO -TCO BTYPE=--)
+> boot: logs: [       4.231542] WARNING KERN pc : device_links_driver_bound+0x240/0x260
+> boot: logs: [       4.236587] WARNING KERN lr : device_links_driver_bound+0xf8/0x260
+> boot: logs: [       4.241560] WARNING KERN sp : ffff800011f4b980
+> boot: logs: [       4.244819] WARNING KERN x29: ffff800011f4b980 x28: ffff00008208a0a0
+> boot: logs: [       4.250051] WARNING KERN x27: ffff00008208a080 x26: 00000000ffffffff
+> boot: logs: [       4.255271] WARNING KERN x25: 0000000000000003 x24: ffff800011b99000
+> boot: logs: [       4.260489] WARNING KERN x23: 0000000000000001 x22: ffff800011df14f0
+> boot: logs: [       4.265706] WARNING KERN x21: ffff800011f4b9f8 x20: ffff800011df1000
+> boot: logs: [       4.270934] WARNING KERN x19: ffff00008208a000 x18: 0000000000000005
+> boot: logs: [       4.276166] WARNING KERN x17: 0000000000000007 x16: 0000000000000001
+> boot: logs: [       4.281382] WARNING KERN x15: ffff000080030c90 x14: ffff0000805c9df8
+> boot: logs: [       4.286618] WARNING KERN x13: 0000000000000000 x12: ffff000080030c90
+> boot: logs: [       4.291847] WARNING KERN x11: ffff0000805c9da8 x10: 0000000000000040
+> boot: logs: [       4.297061] WARNING KERN x9 : ffff000080030c98 x8 : 0000000000000000
+> boot: logs: [       4.302291] WARNING KERN x7 : 0000000000000009 x6 : 0000000000000000
+> boot: logs: [       4.307509] WARNING KERN x5 : ffff000080100000 x4 : 0000000000000000
+> boot: logs: [       4.312739] WARNING KERN x3 : ffff800011df1e38 x2 : ffff000080908c10
+> boot: logs: [       4.317956] WARNING KERN x1 : 0000000000000001 x0 : ffff0000809ca400
+> boot: logs: [       4.323183] WARNING KERN Call trace:
+> boot: logs: [       4.325593] WARNING KERN  device_links_driver_bound+0x240/0x260
+> boot: logs: [       4.330301] WARNING KERN  driver_bound+0x70/0xd0
+> boot: logs: [       4.333740] WARNING KERN  device_bind_driver+0x50/0x60
+> boot: logs: [       4.337671] WARNING KERN  phy_attach_direct+0x258/0x2e0
+> boot: logs: [       4.341718] WARNING KERN  phylink_of_phy_connect+0x7c/0x140
+> boot: logs: [       4.346081] WARNING KERN  stmmac_open+0xb04/0xc70
+> boot: logs: [       4.349612] WARNING KERN  __dev_open+0xe0/0x190
+> boot: logs: [       4.352972] WARNING KERN  __dev_change_flags+0x16c/0x1b8
+> boot: logs: [       4.357081] WARNING KERN  dev_change_flags+0x20/0x60
+> boot: logs: [       4.360856] WARNING KERN  ip_auto_config+0x2a0/0xfe8
+> boot: logs: [       4.364633] WARNING KERN  do_one_initcall+0x58/0x1b8
+> boot: logs: [       4.368405] WARNING KERN  kernel_init_freeable+0x1ec/0x240
+> boot: logs: [       4.372698] WARNING KERN  kernel_init+0x10/0x110
+> boot: logs: [       4.376130] WARNING KERN  ret_from_fork+0x10/0x18
 >
-> [    2.525503] platform regulator@1: probe deferral - supplier 4-002d not ready
 >
-> [    2.533141] platform regulator@3: probe deferral - supplier regulator@101 not ready
->
-> [    2.540856] platform regulator@5: probe deferral - supplier regulator@101 not ready
->
-> [    2.548589] platform regulator@6: probe deferral - supplier regulator@101 not ready
->
-> [    2.556316] platform regulator@7: probe deferral - supplier regulator@101 not ready
->
-> [    2.564041] platform regulator@8: probe deferral - supplier regulator@101 not ready
->
-> [    2.571743] platform regulator@9: probe deferral - supplier regulator@101 not ready
->
-> [    2.579463] platform regulator@10: probe deferral - supplier regulator@101 not ready
->
-> [    2.587273] platform regulator@11: probe deferral - supplier regulator@101 not ready
->
-> [    2.595088] platform regulator@12: probe deferral - supplier regulator@104 not ready
->
-> [    2.603837] platform regulator@102: probe deferral - supplier regulator@104 not ready
->
-> [    2.611726] platform regulator@103: probe deferral - supplier regulator@104 not ready
->
-> [    2.620137] platform 3000.pcie: probe deferral - supplier regulator@5 not ready
+> So looking at this change does this mean that the of_mdio needs to be
+> converted to a proper driver?
 
-Looks like this is not the whole log? Do you see any "wait for
-supplier" logs? That's what all these boot issues should boil down to.
-And as usual, pointer to DT for this board please.
+Sorry, there's not enough context in this log for me to tell how this
+is even related to of_mdio.c. My guess is this is related to network
+stack directly calling device_bind_driver() and not updating device
+link state correctly. See what device_links_check_suppliers() does in
+the normal path. I think I know which warning this is, but can you
+check your tree and tell me the code you see in
+drivers/base/core.c:1189 ?
+
+Also, can you give me a few more lines above and below this log and
+also explain why you think this is related to of_mdio.c? Where is the
+DT file for this board in case I need to look at it? And where is this
+phy node defined in DT?
+
+If there's an easy way to convert it to a proper driver, that's always
+better than calling into driver core in a piecemeal fashion.
+
+> I would have thought that this will be
+> seen on several platforms.
+
+I'm surprised you are seeing this issue only now. I'd have expected it
+to have happened even without this series.
 
 -Saravana
