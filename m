@@ -2,70 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B339EC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 16:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7C6C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 16:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8667A23B40
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 16:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84F2223B40
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 16:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbhANQxX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Jan 2021 11:53:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbhANQxU (ORCPT
+        id S1726224AbhANQ52 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Jan 2021 11:57:28 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:1342 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbhANQ52 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Jan 2021 11:53:20 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7037CC061575
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 08:52:40 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id u18so137365ybu.12
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 08:52:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=27zQ/ygWyI21K284m8AlMgtMN5IZhUfhEaSCqrYdflI=;
-        b=oH+Ce7c5Z3Znqj06jKHUPZ9wRz8ggvZv9xbX/3pFgJ+2ehWcXAStBc4zknfFxnXQ2x
-         53FjliXq4ddpT7ijHY7MPmHt9/aUUyNp+vJahAUBi6kxB7tcPUKSf9fxQcoFDY5ynpty
-         Quvb92PRZTLucq7jTQujKT8Hl+oU0D9PkeMSfrdhBIJJcSCWaqtWk1IfAkzzaOWjEBf8
-         oHxkSZDO3EbygW+H9xpAIwsWnzsfGmd7kRAfTW1BVg9NtFIgHDU6D9M8ATMKTENzv6TO
-         1qdYlR0f3J+knnRc/0zYajGTHGomDLSfO6ZrOhuUWwTM0dlqL9Ujb+9BXxaW/kO+MJB6
-         XtqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=27zQ/ygWyI21K284m8AlMgtMN5IZhUfhEaSCqrYdflI=;
-        b=pCjlxD0czTis6HBcBi7CzT3XhKd0pT+/pHucHy6xfO4cEh1D7Fx6mCAY6McUF+dgcE
-         nBYzqDuUEDVtRDUrry0zS6NPCyTRDwqEkPL0Xl3c5LOFb23d0QOv6+G46bSlRYlFXNSr
-         8HOfVkFi4w//cQUXjI/dZ0YXUd1+IzGolYdl0YoPCfi1KIZ/KbgqM+PGBwdo4gT+Aw7e
-         0GqqnFV9qAkOYZXP27G0SfGr1eD8auSHgApAgTjp7nBDJy79F9LLRY37KTalG7E9Euxr
-         xZnbKM5pBXuBWod4KsVrrtltgf6ryBM2X1lkVI8AmreEgPjfZ5GtQDy+PG7WpG88z6Cy
-         p2Og==
-X-Gm-Message-State: AOAM531VpuBkEO9ctr/8pWaYkOG4Qn5N6bli8+ctNPNG3BsW9MTZeErJ
-        hvGSZIupR8gNHcTWbPwDtclvWuuAd1E7+yXajoWs/bnVv3uhnQ==
-X-Google-Smtp-Source: ABdhPJykSjRF4+IjWbKmRHChAN1ZDS4CaoJZna4MlKg2SaTwQ5sQNN+g8QyPWBMQ079xfpzD1jByBsYGpfkNvAJeGHA=
-X-Received: by 2002:a25:77d4:: with SMTP id s203mr5790072ybc.32.1610643159431;
- Thu, 14 Jan 2021 08:52:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20201218031703.3053753-1-saravanak@google.com>
- <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
- <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com> <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
- <17703ac8-2238-0b64-3c98-ddadc7ae8a36@nvidia.com> <CAGETcx-=y4Ps41Lb0b_MTCbNTC_ah0cJTmPP+GajywFBc7kEfw@mail.gmail.com>
- <f0240065-a4a0-d985-a696-eba4d42ea580@nvidia.com>
-In-Reply-To: <f0240065-a4a0-d985-a696-eba4d42ea580@nvidia.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 14 Jan 2021 08:52:03 -0800
-Message-ID: <CAGETcx_QmbOcof5T8Wo_zFXKB+qswPN3Cbwz5a6A+m+VrnWg0A@mail.gmail.com>
+        Thu, 14 Jan 2021 11:57:28 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B600077cf0000>; Thu, 14 Jan 2021 08:56:47 -0800
+Received: from [10.26.73.78] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 14 Jan
+ 2021 16:56:42 +0000
 Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Saravana Kannan <saravanak@google.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Android Kernel Team <kernel-team@android.com>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -73,88 +35,75 @@ Cc:     Marc Zyngier <maz@kernel.org>,
         Kevin Hilman <khilman@baylibre.com>,
         John Stultz <john.stultz@linaro.org>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Marc Zyngier <maz@kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20201218031703.3053753-1-saravanak@google.com>
+ <56f7d032-ba5a-a8c7-23de-2969d98c527e@nvidia.com>
+ <CAGETcx9FAAa+gUOTJX76DGGOAE4g3cTbZhwNQ-pLioYzg=fTOw@mail.gmail.com>
+ <17939709-f6f4-fa9c-836f-9779081c4087@nvidia.com>
+ <CAGETcx_1x7LFprsEM+-X8Y42-sbajBav5Bik4U=s4Z5XCSZtUg@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <e11bc6a2-ec9d-ea3b-71f7-13c9f764bbfc@nvidia.com>
+Date:   Thu, 14 Jan 2021 16:56:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAGETcx_1x7LFprsEM+-X8Y42-sbajBav5Bik4U=s4Z5XCSZtUg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610643407; bh=VVr9Jb7p408lN4F9Eal/RHjNNIRAMwvnH+e2NcECWK0=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=d9pC8YMLtbTPfFF6dqPv+SvrD/A4t8hzLmSYIQUpuO83iQn32eWRPj+RNpSPiJjg/
+         QSJg/Z2cRZq7BkQTnBerwS5Hs67qoGUU5IKpK1MzPtb0gACrLakmQod1KrKl3WPFHT
+         QpJ+34pOIXE04LSWEom+OMajS7jRr5grOO6ShF6jZBjI700qkROlcR2krSSE6XLa00
+         b4gnUD8AopqIuSnzOPeRcQwo0Lmtfh/0EPjzPpcnln1J5DnhnhX74IhA+5y5oEfCel
+         1TcOLJuY8PALA0U6PgxRRAxawkyDOCgx2ZUMpc6nnFQ8BhkQIqFEarGy1007PvpGAZ
+         MBTzqqV/RYjPQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 8:48 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 14/01/2021 16:40, Saravana Kannan wrote:
-> > On Thu, Jan 14, 2021 at 3:35 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 13/01/2021 21:29, Saravana Kannan wrote:
-> >>
-> >> ...
-> >>
-> >>>> I am seeing the same problem on Tegra30 Cardhu A04 where several regulators
-> >>>> are continuously deferred and prevents the board from booting ...
-> >>>>
-> >>>> [    2.518334] platform panel: probe deferral - supplier regulator@11 not ready
-> >>>>
-> >>>> [    2.525503] platform regulator@1: probe deferral - supplier 4-002d not ready
-> >>>>
-> >>>> [    2.533141] platform regulator@3: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.540856] platform regulator@5: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.548589] platform regulator@6: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.556316] platform regulator@7: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.564041] platform regulator@8: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.571743] platform regulator@9: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.579463] platform regulator@10: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.587273] platform regulator@11: probe deferral - supplier regulator@101 not ready
-> >>>>
-> >>>> [    2.595088] platform regulator@12: probe deferral - supplier regulator@104 not ready
-> >>>>
-> >>>> [    2.603837] platform regulator@102: probe deferral - supplier regulator@104 not ready
-> >>>>
-> >>>> [    2.611726] platform regulator@103: probe deferral - supplier regulator@104 not ready
-> >>>>
-> >>>> [    2.620137] platform 3000.pcie: probe deferral - supplier regulator@5 not ready
-> >>>
-> >>> Looks like this is not the whole log? Do you see any "wait for
-> >>> supplier" logs? That's what all these boot issues should boil down to.
-> >>> And as usual, pointer to DT for this board please.
-> >>
-> >> Ah yes I see ...
-> >>
-> >>  platform regulator@1: probe deferral - wait for supplier tps65911@2d
-> >
-> > Do you mind sharing the full log please? It's hard to tell you
-> > anything useful with bits and pieces of logs.
-> >
-> >> Yes the device-tree for this board can be found here [0]. Looks like
-> >> there is a circular dependency between the vddctrl_reg and vddcore_reg.
-> >> This is part of coupled regulators which have a two-way linkage [1]. So
-> >> this change appears to conflict with this.
-> >
-> > fw_devlink doesn't track "regulator-coupled-with". So that's probably
-> > not it. Also, this patch series was made to handle simple cycles
-> > properly. It'll functionally disable the device links it created when
-> > it comes to probe ordering. Only two overlapping cycles might cause
-> > issues -- and even that, not all the time. So yeah, full log please.
->
->
-> No problem. Please find attached.
 
-Thanks! I think you forgot to enable those logs though. Also, while
-you are at it, maybe enable the logs in device_link_add() too please?
+On 14/01/2021 16:47, Saravana Kannan wrote:
 
--Saravana
+...
 
->
-> Cheers
-> Jon
->
->
-> --
-> nvpublic
+>> Yes this is the warning shown here [0] and this is coming from
+>> the 'Generic PHY stmmac-0:00' device.
+> 
+> Can you print the supplier and consumer device when this warning is
+> happening and let me know? That'd help too. I'm guessing the phy is
+> the consumer.
+
+
+Sorry I should have included that. I added a print to dump this on
+another build but failed to include here.
+
+WARNING KERN Generic PHY stmmac-0:00: supplier 2200000.gpio (status 1)
+
+The status is the link->status and looks like the supplier is the
+gpio controller. I have verified that the gpio controller is probed
+before this successfully.
+
+> So the warning itself isn't a problem -- it's not breaking anything or
+> leaking memory or anything like that. But the device link is jumping
+> states in an incorrect manner. With enough context of this code (why
+> the device_bind_driver() is being called directly instead of going
+> through the normal probe path), it should be easy to fix (I'll just
+> need to fix up the device link state).
+
+
+Correct, the board seems to boot fine, we just get this warning.
+
+Cheers
+Jon
+
+-- 
+nvpublic
