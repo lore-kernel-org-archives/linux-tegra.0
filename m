@@ -2,429 +2,126 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E1DC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 18:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E745C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 21:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B29623B1F
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 18:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBA4023A9F
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 21:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbhANSug (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Jan 2021 13:50:36 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52108 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbhANSug (ORCPT
+        id S1728984AbhANVwL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Jan 2021 16:52:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbhANVwK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Jan 2021 13:50:36 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 0F7451F45A80
-Received: by earth.universe (Postfix, from userid 1000)
-        id 0F4FB3C0C94; Thu, 14 Jan 2021 19:49:51 +0100 (CET)
-Date:   Thu, 14 Jan 2021 19:49:51 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Murphy <dmurphy@ti.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] power: supply: Add battery gauge driver for Acer
- Iconia Tab A500
-Message-ID: <20210114184951.4itiy5kfqjcxkoms@earth.universe>
-References: <20201228160547.30562-1-digetx@gmail.com>
- <20201228160547.30562-4-digetx@gmail.com>
+        Thu, 14 Jan 2021 16:52:10 -0500
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54556C061757
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 13:51:30 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id o144so3233282ybc.0
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 13:51:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8MaJhCChLvMA5q7Hc7EGz9x2JBN/Mr/+/kQsJO4ydp0=;
+        b=giJjqVe3Kr//U30LVgKzadlQb8wdA/+YGhxY7JPrxL8nWL6SpFSejBXGGRnbs3Swbt
+         NhA/luSJJs/kbOWr1t0yuKsKMUTOGL1dmLqEULuCHyI6uWj3RSfCCBxJGKE57yqRQtG/
+         f9UVuM+T08zZpLGrUgtsQ6SHVS8urxRmV63GmO81u1VohhaCljESsqeKLP4Ilc30rQFJ
+         SOb106qBEmPmCswU8nttfm2L+GcfmScDYDmKRM/g4a4jbQ97euKG1/pY57Hi0cF/e9Vc
+         wjja0Ee1USX8DCfchkLKG23qhaKtPlP1Is9VoKyH59XzKgNB4UpTx5pXXrwahoI53+96
+         Undg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8MaJhCChLvMA5q7Hc7EGz9x2JBN/Mr/+/kQsJO4ydp0=;
+        b=qim6v5yXW7Wka+UpSgVNiz40dv4xUBaOlio4SijGSwgv6tNid2ea+mzQe9jNKvePb9
+         EOQXEI0ZCpDyf0mIBMwRE/Vgo6qeuL8qx2ymoies3JrDS0wZVaq7/P1WUYWXna+FYQw0
+         m92aVnEF1nRSpL7MhDlndtzq1yRNM6NB55AhzYeaJwcDh1sVIhfX+QMttDY9YXtK+9e1
+         ewkIoie3xKygQqJGaTE5l0yTJMf0Lj/OjvYQdMRyxMqW39b8Msb2XV+Mn//jPhmPKr0C
+         mOz29KT7y4q8WxwvG9zmzwJq/DDB9hJXcB9yyJhFgdStww/JrMxnDSMIba8bKYfhv4Qu
+         KyBA==
+X-Gm-Message-State: AOAM5335EscxW7H8kuU7bl/BtFYmHlQyg/YzANJ3l9fZVMWACCReQDAB
+        Oxzlf5/TwhJKkumeJxSJDox7Iv0Q9jN7TWJ/7DHB3A==
+X-Google-Smtp-Source: ABdhPJxsaHc1Q9X8x1mbLGU3fLEE/2MXeR/09DpXj+8UneKPE7+VKoOfuy3x1/kBXIcpRJdIx02Qu9lRbZDNhE/LXwM=
+X-Received: by 2002:a25:d295:: with SMTP id j143mr14364937ybg.20.1610661089343;
+ Thu, 14 Jan 2021 13:51:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fanhwzk2b46wa3oi"
-Content-Disposition: inline
-In-Reply-To: <20201228160547.30562-4-digetx@gmail.com>
+References: <20201218031703.3053753-1-saravanak@google.com>
+ <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
+ <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com> <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
+ <17703ac8-2238-0b64-3c98-ddadc7ae8a36@nvidia.com> <CAGETcx-=y4Ps41Lb0b_MTCbNTC_ah0cJTmPP+GajywFBc7kEfw@mail.gmail.com>
+ <f0240065-a4a0-d985-a696-eba4d42ea580@nvidia.com> <CAGETcx_QmbOcof5T8Wo_zFXKB+qswPN3Cbwz5a6A+m+VrnWg0A@mail.gmail.com>
+ <a38c0566-a58e-aaf7-ef57-dc294c4e71b4@nvidia.com>
+In-Reply-To: <a38c0566-a58e-aaf7-ef57-dc294c4e71b4@nvidia.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 14 Jan 2021 13:50:53 -0800
+Message-ID: <CAGETcx9szf-=JjFNp0p-0LmOfOU1MWE3QqDNe-bAn2wXPH9pEQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Jan 14, 2021 at 10:55 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 14/01/2021 16:52, Saravana Kannan wrote:
+>
+> ...
+>
+> > Thanks! I think you forgot to enable those logs though. Also, while
+> > you are at it, maybe enable the logs in device_link_add() too please?
+>
+>
+> Sorry try this one.
+>
+> Cheers
+> Jon
 
---fanhwzk2b46wa3oi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Phew! That took almost 4 hours to debug on the side! I think I figured
+it out. Can you try this patch? If it works or improves things, I'll
+explain why it helps.
 
-Hi,
+-Saravana
 
-On Mon, Dec 28, 2020 at 07:05:47PM +0300, Dmitry Osipenko wrote:
-> This patch adds battery gauge driver for Acer Iconia Tab A500 device.
-> The battery gauge function is provided via the Embedded Controller,
-> which is found on the Acer A500.
->=20
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/Kconfig             |   6 +
->  drivers/power/supply/Makefile            |   1 +
->  drivers/power/supply/acer_a500_battery.c | 297 +++++++++++++++++++++++
->  3 files changed, 304 insertions(+)
->  create mode 100644 drivers/power/supply/acer_a500_battery.c
->=20
-> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-> index eec646c568b7..bc493173ddbc 100644
-> --- a/drivers/power/supply/Kconfig
-> +++ b/drivers/power/supply/Kconfig
-> @@ -774,4 +774,10 @@ config RN5T618_POWER
->  	  This driver can also be built as a module. If so, the module will be
->  	  called rn5t618_power.
-> =20
-> +config BATTERY_ACER_A500
-> +	tristate "Acer Iconia Tab A500 battery driver"
-> +	depends on MFD_ACER_A500_EC
-> +	help
-> +	  Say Y to include support for Acer Iconia Tab A500 battery fuel gauge.
-> +
->  endif # POWER_SUPPLY
-> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-> index dd4b86318cd9..0607a3d64c0f 100644
-> --- a/drivers/power/supply/Makefile
-> +++ b/drivers/power/supply/Makefile
-> @@ -98,3 +98,4 @@ obj-$(CONFIG_CHARGER_BD70528)	+=3D bd70528-charger.o
->  obj-$(CONFIG_CHARGER_BD99954)	+=3D bd99954-charger.o
->  obj-$(CONFIG_CHARGER_WILCO)	+=3D wilco-charger.o
->  obj-$(CONFIG_RN5T618_POWER)	+=3D rn5t618_power.o
-> +obj-$(CONFIG_BATTERY_ACER_A500)	+=3D acer_a500_battery.o
-> diff --git a/drivers/power/supply/acer_a500_battery.c b/drivers/power/sup=
-ply/acer_a500_battery.c
-> new file mode 100644
-> index 000000000000..32a0bfcac08f
-> --- /dev/null
-> +++ b/drivers/power/supply/acer_a500_battery.c
-> @@ -0,0 +1,297 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Battery driver for Acer Iconia Tab A500.
-> + *
-> + * Copyright 2020 GRATE-driver project.
-> + *
-> + * Based on downstream driver from Acer Inc.
-> + * Based on NVIDIA Gas Gauge driver for SBS Compliant Batteries.
-> + *
-> + * Copyright (c) 2010, NVIDIA Corporation.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/power_supply.h>
-> +#include <linux/regmap.h>
-> +#include <linux/sched.h>
-> +#include <linux/slab.h>
-> +#include <linux/workqueue.h>
-> +
-> +enum {
-> +	REG_CAPACITY,
-> +	REG_VOLTAGE,
-> +	REG_CURRENT,
-> +	REG_DESIGN_CAPACITY,
-> +	REG_TEMPERATURE,
-> +};
-> +
-> +#define EC_DATA(_reg, _psp) {			\
-> +	.psp =3D POWER_SUPPLY_PROP_ ## _psp,	\
-> +	.reg =3D _reg,				\
-> +}
-> +
-> +static const struct battery_register {
-> +	enum power_supply_property psp;
-> +	unsigned int reg;
-> +} ec_data[] =3D {
-> +	[REG_CAPACITY]		=3D EC_DATA(0x00, CAPACITY),
-> +	[REG_VOLTAGE]		=3D EC_DATA(0x01, VOLTAGE_NOW),
-> +	[REG_CURRENT]		=3D EC_DATA(0x03, CURRENT_NOW),
-> +	[REG_DESIGN_CAPACITY]	=3D EC_DATA(0x08, CHARGE_FULL_DESIGN),
-> +	[REG_TEMPERATURE]	=3D EC_DATA(0x0a, TEMP),
-> +};
-> +
-> +static const enum power_supply_property a500_battery_properties[] =3D {
-> +	POWER_SUPPLY_PROP_CAPACITY,
-> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-> +	POWER_SUPPLY_PROP_CURRENT_NOW,
-> +	POWER_SUPPLY_PROP_PRESENT,
-> +	POWER_SUPPLY_PROP_STATUS,
-> +	POWER_SUPPLY_PROP_TECHNOLOGY,
-> +	POWER_SUPPLY_PROP_TEMP,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +};
-> +
-> +struct a500_battery {
-> +	struct delayed_work poll_work;
-> +	struct power_supply *psy;
-> +	struct regmap *regmap;
-> +	unsigned int capacity;
-> +};
-> +
-> +static bool a500_battery_update_capacity(struct a500_battery *bat)
-> +{
-> +	unsigned int capacity;
-> +	int err;
-> +
-> +	err =3D regmap_read(bat->regmap, ec_data[REG_CAPACITY].reg, &capacity);
-> +	if (err)
-> +		return false;
-> +
-> +	/* capacity can be >100% even if max value is 100% */
-> +	capacity =3D min(capacity, 100u);
-> +
-> +	if (bat->capacity !=3D capacity) {
-> +		bat->capacity =3D capacity;
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int a500_battery_get_status(struct a500_battery *bat)
-> +{
-> +	if (bat->capacity < 100) {
-> +		if (power_supply_am_i_supplied(bat->psy))
-> +			return POWER_SUPPLY_STATUS_CHARGING;
-> +		else
-> +			return POWER_SUPPLY_STATUS_DISCHARGING;
-> +	}
-> +
-> +	return POWER_SUPPLY_STATUS_FULL;
-> +}
-> +
-> +static void a500_battery_unit_adjustment(struct device *dev,
-> +					 enum power_supply_property psp,
-> +					 union power_supply_propval *val)
-> +{
-> +	const unsigned int base_unit_conversion =3D 1000;
-> +	const unsigned int temp_kelvin_to_celsius =3D 2731;
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-> +	case POWER_SUPPLY_PROP_CURRENT_NOW:
-> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> +		val->intval *=3D base_unit_conversion;
-> +		break;
-> +
-> +	case POWER_SUPPLY_PROP_TEMP:
-> +		val->intval -=3D temp_kelvin_to_celsius;
-> +		break;
-> +
-> +	case POWER_SUPPLY_PROP_PRESENT:
-> +		val->intval =3D !!val->intval;
-> +		break;
-> +
-> +	default:
-> +		dev_dbg(dev,
-> +			"%s: no need for unit conversion %d\n", __func__, psp);
-> +	}
-> +}
-> +
-> +static int a500_battery_get_ec_data_index(struct device *dev,
-> +					  enum power_supply_property psp)
-> +{
-> +	unsigned int i;
-> +
-> +	/*
-> +	 * DESIGN_CAPACITY register always returns a non-zero value if
-> +	 * battery is connected and zero if disconnected, hence we'll use
-> +	 * it for judging the battery presence.
-> +	 */
-> +	if (psp =3D=3D POWER_SUPPLY_PROP_PRESENT)
-> +		psp =3D POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(ec_data); i++)
-> +		if (psp =3D=3D ec_data[i].psp)
-> +			return i;
-> +
-> +	dev_dbg(dev, "%s: invalid property %u\n", __func__, psp);
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int a500_battery_get_property(struct power_supply *psy,
-> +				     enum power_supply_property psp,
-> +				     union power_supply_propval *val)
-> +{
-> +	struct a500_battery *bat =3D power_supply_get_drvdata(psy);
-> +	struct device *dev =3D psy->dev.parent;
-> +	int ret =3D 0;
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_STATUS:
-> +		val->intval =3D a500_battery_get_status(bat);
-> +		break;
-> +
-> +	case POWER_SUPPLY_PROP_TECHNOLOGY:
-> +		val->intval =3D POWER_SUPPLY_TECHNOLOGY_LION;
-> +		break;
-> +
-> +	case POWER_SUPPLY_PROP_CAPACITY:
-> +		a500_battery_update_capacity(bat);
-> +		val->intval =3D bat->capacity;
-> +		break;
-> +
-> +	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-> +	case POWER_SUPPLY_PROP_CURRENT_NOW:
-> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> +	case POWER_SUPPLY_PROP_PRESENT:
-> +	case POWER_SUPPLY_PROP_TEMP:
-> +		ret =3D a500_battery_get_ec_data_index(dev, psp);
-> +		if (ret < 0)
-> +			break;
-> +
-> +		ret =3D regmap_read(bat->regmap, ec_data[ret].reg, &val->intval);
-> +		break;
-> +
-> +	default:
-> +		dev_err(dev, "%s: invalid property %u\n", __func__, psp);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!ret) {
-> +		/* convert units to match requirements of power supply class */
-> +		a500_battery_unit_adjustment(dev, psp, val);
-> +	}
-> +
-> +	dev_dbg(dev, "%s: property =3D %d, value =3D %x\n",
-> +		__func__, psp, val->intval);
-> +
-> +	/* return NODATA for properties if battery not presents */
-> +	if (ret)
-> +		return -ENODATA;
-> +
-> +	return 0;
-> +}
-> +
-> +static void a500_battery_poll_work(struct work_struct *work)
-> +{
-> +	struct a500_battery *bat;
-> +	bool capacity_changed;
-> +
-> +	bat =3D container_of(work, struct a500_battery, poll_work.work);
-> +	capacity_changed =3D a500_battery_update_capacity(bat);
-> +
-> +	if (capacity_changed)
-> +		power_supply_changed(bat->psy);
-> +
-> +	/* continuously send uevent notification */
-> +	schedule_delayed_work(&bat->poll_work, 30 * HZ);
-> +}
-> +
-> +static const struct power_supply_desc a500_battery_desc =3D {
-> +	.name =3D "ec-battery",
-> +	.type =3D POWER_SUPPLY_TYPE_BATTERY,
-> +	.properties =3D a500_battery_properties,
-> +	.get_property =3D a500_battery_get_property,
-> +	.num_properties =3D ARRAY_SIZE(a500_battery_properties),
-> +	.external_power_changed =3D power_supply_changed,
-> +};
-> +
-> +static int a500_battery_probe(struct platform_device *pdev)
-> +{
-> +	struct power_supply_config psy_cfg =3D {};
-> +	struct a500_battery *bat;
-> +
-> +	bat =3D devm_kzalloc(&pdev->dev, sizeof(*bat), GFP_KERNEL);
-> +	if (!bat)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, bat);
-> +
-> +	psy_cfg.of_node =3D pdev->dev.parent->of_node;
-> +	psy_cfg.drv_data =3D bat;
-> +
-> +	bat->regmap =3D dev_get_regmap(pdev->dev.parent, "KB930");
-> +	if (!bat->regmap)
-> +		return -EINVAL;
-> +
-> +	bat->psy =3D devm_power_supply_register_no_ws(&pdev->dev,
-> +						    &a500_battery_desc,
-> +						    &psy_cfg);
-> +	if (IS_ERR(bat->psy))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(bat->psy),
-> +				     "failed to register battery\n");
-> +
-> +	INIT_DELAYED_WORK(&bat->poll_work, a500_battery_poll_work);
-> +	schedule_delayed_work(&bat->poll_work, HZ);
-> +
-> +	return 0;
-> +}
-> +
-> +static int a500_battery_remove(struct platform_device *pdev)
-> +{
-> +	struct a500_battery *bat =3D dev_get_drvdata(&pdev->dev);
-> +
-> +	cancel_delayed_work_sync(&bat->poll_work);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused a500_battery_suspend(struct device *dev)
-> +{
-> +	struct a500_battery *bat =3D dev_get_drvdata(dev);
-> +
-> +	cancel_delayed_work_sync(&bat->poll_work);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused a500_battery_resume(struct device *dev)
-> +{
-> +	struct a500_battery *bat =3D dev_get_drvdata(dev);
-> +
-> +	schedule_delayed_work(&bat->poll_work, HZ);
-> +
-> +	return 0;
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(a500_battery_pm_ops,
-> +			 a500_battery_suspend, a500_battery_resume);
-> +
-> +static struct platform_driver a500_battery_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "acer-a500-iconia-battery",
-> +		.pm =3D &a500_battery_pm_ops,
-> +	},
-> +	.probe =3D a500_battery_probe,
-> +	.remove =3D a500_battery_remove,
-> +};
-> +module_platform_driver(a500_battery_driver);
-> +
-> +MODULE_DESCRIPTION("Battery gauge driver for Acer Iconia Tab A500");
-> +MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
-> +MODULE_ALIAS("platform:acer-a500-iconia-battery");
-> +MODULE_LICENSE("GPL");
-> --=20
-> 2.29.2
->=20
-
---fanhwzk2b46wa3oi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmAAkk4ACgkQ2O7X88g7
-+ppdjw/6AkYv9leP/9NMuxsp3uUHlSnkhvhL0R1obHZVCcrzUvOKVSTOUNRKjfYB
-N/IHrt0W8Ehkqeeeh+c/hIiNuId6mGtdqnmYJUdSy/GKahHNvBWdwhizGY8NjwYq
-yrZDAmPiqZ/KpS4oYdeQE72/4JD28gX3Ws9e8U7MknIPuCRRGDrqi+ZxEM2qBkG2
-cWOSs/THhTYEbYNmdPAqo1kq3Ii/6INCQkLXh+xxUSk3euTDWWG+ash4+OIutGvZ
-czbQ8Im2MYMRepOpN6zmjnb3jXZBveqiMi1VpKIycWMQ41sw61fEBA6O7C+77R2D
-CEVN16u6sS3aSBkwTenRsUXr58B+yL1Oth1e09iwLSJ3m78+E+UK6oE5mS6ztu5Y
-XNrEh1Ika/wL+eK9xBjNSVospj1vGxu5qYP7y57778t/VzkrawRxGIY3LNoonCK/
-MuAywfXs5kfJYOYDBf5NrUWmqw4gE/xQSeqWpYM+ku3Ou61JeW/X3t2HBdMpf0ax
-pEZ397FPs49LyuW/D6HmZ+tPUq6BEtz6a7CpgdnUWA9LgVpTGGbqjefRZ+Yh66DY
-yufrJUZiM/KuyljRFJuf4SSF1i033yFWC9HBKuqk1aTE7U96rDh7JVdIVF95Taw3
-8iZssJX31FVNcS3pKBn3ni6a4pk/yo2T1rYBBjpj9hafrzGgU2k=
-=JNT8
------END PGP SIGNATURE-----
-
---fanhwzk2b46wa3oi--
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 5f9eed79a8aa..1c8c65c4a887 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -1258,6 +1258,8 @@ DEFINE_SIMPLE_PROP(pinctrl5, "pinctrl-5", NULL)
+ DEFINE_SIMPLE_PROP(pinctrl6, "pinctrl-6", NULL)
+ DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
+ DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
++DEFINE_SIMPLE_PROP(gpio_compat, "gpio", "#gpio-cells")
++DEFINE_SIMPLE_PROP(gpios_compat, "gpios", "#gpio-cells")
+ DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+ DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+ DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
+@@ -1296,6 +1298,8 @@ static const struct supplier_bindings
+of_supplier_bindings[] = {
+        { .parse_prop = parse_pinctrl6, },
+        { .parse_prop = parse_pinctrl7, },
+        { .parse_prop = parse_pinctrl8, },
++       { .parse_prop = parse_gpio_compat, },
++       { .parse_prop = parse_gpios_compat, },
+        { .parse_prop = parse_regulators, },
+        { .parse_prop = parse_gpio, },
+        { .parse_prop = parse_gpios, },
