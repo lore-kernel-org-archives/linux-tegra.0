@@ -2,112 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9506CC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 13:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1EFC433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 14:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5688623A6A
-	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 13:48:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D480323A59
+	for <linux-tegra@archiver.kernel.org>; Thu, 14 Jan 2021 14:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbhANNsn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 14 Jan 2021 08:48:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56052 "EHLO
+        id S1726236AbhANONl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 14 Jan 2021 09:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbhANNsn (ORCPT
+        with ESMTP id S1725961AbhANONk (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 14 Jan 2021 08:48:43 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87B1C061757
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 05:47:56 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id g10so4745616wmh.2
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Jan 2021 05:47:56 -0800 (PST)
+        Thu, 14 Jan 2021 09:13:40 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57FA0C061574;
+        Thu, 14 Jan 2021 06:13:00 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id b26so8198567lff.9;
+        Thu, 14 Jan 2021 06:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=TbqE2IlRGagFgBkQ2kCkUrfXzLCjHj/NgUbyVG+QOLU=;
-        b=OwOxLsbosDLvoLhRLZ8mzzei4v0t2XhAEbH8Iq2Sxm640+qWBEKYZm4cocQg4aGYiV
-         Xffe/6oKYTXJTmiquE5GGTUFqyH4SWt1o3Mk/HO8mr1iB4/oJKfzT+653Fp1pZ6tPwzi
-         S1stu6wWFThE8hKMRzYPWMNQPSVjWsmHzrcFSQebC+wFsDX7FJfNPmzHzMhUEvcJ4Cv+
-         by4PSWVqcLWwoS6qTTEpItMusrhWhM+A6A9T+EBRMyqDtNd1C3s6YY82pNWW5Yu/oudv
-         zQUzIvGo47Uv1SukMAsYZkAvpT4tZhYQ7JGE+BCNysEIgarpETIZ2w3ApWtZcqTPbAU2
-         CxtA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Dx0pSimPO+7al3kZsg71712ZkypN/dzE6boWLCtFmRY=;
+        b=YPO1KgE2uePmIPhVS5tdBZsbV3DhscA8oOwrY77tPNWdL5Y+FJPuPX1OkmJSDQuFEG
+         fpGoIlwIgFNmtlS1x6mfyUx+YZgWpqq46EVJvOpGzFN3hWmIHdJwMMa/wdTTJmWgRWBa
+         GqOqLmbFxeIztIf098yTaENYXO3SqamEfXl2K69R7+0AlBhTvZowvc4JX44mZ+FQz5lo
+         JIVvzYTKCsKve7oIhrQ6R/mJ+EhDdFHcEDzpx5sxAHdoRRFt8nLfNPvBvCR6JKTvHMsd
+         50B74GkQE2yjaJaLe+VWlLlWgyqdhcCdXFaX5Qond6lL/jiMuPqcs+1JgSxLLR3QzbFN
+         3fOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=TbqE2IlRGagFgBkQ2kCkUrfXzLCjHj/NgUbyVG+QOLU=;
-        b=g5R141vPEUKdMU/d9atP8F8M8FOPMPsqL82TFIU/mcvYbPvJ6DxKcfu0BiJvI8Qn2m
-         OmRckA5d+y1+kwmEVV8v0dEpg/UTDLI1XlkCeO9+5yHJT9q5xjJ8Bpf8eeRu+xxs/AMZ
-         P1PPkZDplbHc3yvivp0LjBxYxLXU5dpNlNauhaInLXwJIWKtLDtZ3Sx2bZ+Qq/W7i/Wa
-         5D/YSRdprVpHGbCLyhgbwBF98Bkadcr2v3iZUVYI1dtHCNpwzPL2Nwrn29jTRMOEd2yr
-         IyVlTZcAb8BWQnuvMmUyRvR68mCsTVT2mN8Z3W8axl62ErguuS/Ido0PxKZlp0ykuGyK
-         4RhA==
-X-Gm-Message-State: AOAM530TMUSgzR49qAR7nJRHFxW8QEAvZXXyAybxCvzd1asxUlxzrTk2
-        e4WNpUAYUOSVWWWZSXvkW65tEw==
-X-Google-Smtp-Source: ABdhPJx7eMOHq1ibtaSAKOLLhWbpBK52AbF8LO4+T4csN/v/5B1yHZ36jNUkiZ/Dhf1ZMfYjqWO/Sw==
-X-Received: by 2002:a1c:2905:: with SMTP id p5mr4021448wmp.156.1610632075437;
-        Thu, 14 Jan 2021 05:47:55 -0800 (PST)
-Received: from dell ([91.110.221.178])
-        by smtp.gmail.com with ESMTPSA id n9sm9766176wrq.41.2021.01.14.05.47.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jan 2021 05:47:54 -0800 (PST)
-Date:   Thu, 14 Jan 2021 13:47:53 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Dx0pSimPO+7al3kZsg71712ZkypN/dzE6boWLCtFmRY=;
+        b=fUYFv+2694tmQs24DMT9ArhGu2UkTrv6yTwVkPkSDVUqhrcZ73SYmtZEXHY7+lepvq
+         pXSoALPa+FbyNTVMAIYTsPXOXz/MrTNvwGP19gRKbxrSJDhjizk2mjOk+Rv9qjP+h4xg
+         gzANf13fN71EKYsefZu/PlXOkQvz6TDWI1DESxYeYB/N876yZZaJBbBrb1zQ+0wcwsas
+         2yrj4eleeiftoGRT1pnRLXIAyNihNMn7Vl4l4+YwL/CvdjhRn53SSrSkQSFvCHZ8JCtp
+         /myIE2UClyns8BqLrG5+7LgMrO0Zdtx3nc6eF5a716OhA8MlqXgPKWsAxAXJsS5B8HSA
+         aqVA==
+X-Gm-Message-State: AOAM530sxhMOwzYvBitxUAnyYhF+EFlNBzit8qX43nIqvelMNagNv3Th
+        sKU+Yj/i/3v4QYQrUesqnXDGL+hjVG8=
+X-Google-Smtp-Source: ABdhPJx95LKJ5umiJwjUs/3t/gR7xRGz5wZ/2HLwvhnns7vMFzWsXIO89o/vcuqMW7zO8A++x07wRQ==
+X-Received: by 2002:a05:6512:248:: with SMTP id b8mr3439835lfo.371.1610633578588;
+        Thu, 14 Jan 2021 06:12:58 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id i27sm438837lfo.213.2021.01.14.06.12.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jan 2021 06:12:57 -0800 (PST)
+Subject: Re: [PATCH v8 2/3] mfd: Add driver for Embedded Controller found on
+ Acer Iconia Tab A500
+To:     Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        Dan Murphy <dmurphy@ti.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/3] mfd: Add driver for Embedded Controller found on
- Acer Iconia Tab A500
-Message-ID: <20210114134753.GY3975472@dell>
 References: <20201228160547.30562-1-digetx@gmail.com>
- <20201228160547.30562-3-digetx@gmail.com>
+ <20201228160547.30562-3-digetx@gmail.com> <20210114134753.GY3975472@dell>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <796fb7fd-38e3-7204-555b-82ffbf40272c@gmail.com>
+Date:   Thu, 14 Jan 2021 17:12:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <20210114134753.GY3975472@dell>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201228160547.30562-3-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 28 Dec 2020, Dmitry Osipenko wrote:
-
-> Acer Iconia Tab A500 is an Android tablet device, it has ENE KB930
-> Embedded Controller which provides battery-gauge, LED, GPIO and some
-> other functions. The EC uses firmware that is specifically customized
-> for Acer A500. This patch adds MFD driver for the Embedded Controller
-> which allows to power-off / reboot the A500 device, it also provides
-> a common register read/write API that will be used by the sub-devices.
+14.01.2021 16:47, Lee Jones пишет:
+> On Mon, 28 Dec 2020, Dmitry Osipenko wrote:
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/mfd/Kconfig        |  11 ++
->  drivers/mfd/Makefile       |   1 +
->  drivers/mfd/acer-ec-a500.c | 202 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 214 insertions(+)
->  create mode 100644 drivers/mfd/acer-ec-a500.c
+>> Acer Iconia Tab A500 is an Android tablet device, it has ENE KB930
+>> Embedded Controller which provides battery-gauge, LED, GPIO and some
+>> other functions. The EC uses firmware that is specifically customized
+>> for Acer A500. This patch adds MFD driver for the Embedded Controller
+>> which allows to power-off / reboot the A500 device, it also provides
+>> a common register read/write API that will be used by the sub-devices.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/mfd/Kconfig        |  11 ++
+>>  drivers/mfd/Makefile       |   1 +
+>>  drivers/mfd/acer-ec-a500.c | 202 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 214 insertions(+)
+>>  create mode 100644 drivers/mfd/acer-ec-a500.c
+> 
+> Looks good to me:
+> 
+> For my own reference (apply this as-is to your sign-off block):
+> 
+>   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> 
+> Do you have a merge plan?
+> 
 
-Looks good to me:
+Thanks, you could take the DT binding and the MFD patches into the MFD
+tree right now.
 
-For my own reference (apply this as-is to your sign-off block):
+Perhaps will be better to merge the battery patch via the Power tree
+since it doesn't have build dependency on the MFD patch. The battery
+patch was reviewed by Sebastian, but not acked, as I see now.
 
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
-Do you have a merge plan?
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sebastian, could you please take the battery patch?
