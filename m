@@ -2,188 +2,212 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7804C43381
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 14:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE43C43381
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 14:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9862238D7
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 14:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 291F9224F9
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 14:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbhAOOD0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 09:03:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58576 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732623AbhAOODZ (ORCPT
+        id S1733066AbhAOOOn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 09:14:43 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:55073 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731651AbhAOOOm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 09:03:25 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C232BC061795;
-        Fri, 15 Jan 2021 06:02:09 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id v67so13288805lfa.0;
-        Fri, 15 Jan 2021 06:02:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LEFHoCKlwoBTeIV9uQCrZGB8LTusol6OgYk0Nc6MLlc=;
-        b=FRijWLnDda9wN+RN+0vI7soeToWea6pd3AKovqBgoqyRyMNR9xc/avXaNJ2mGJL6kR
-         dCy61BTRu/KWf6MJanz4XfKYhnO++8hL0ElEha3O+CAcvMhmUinwPcAA9TDhbhVvd3Um
-         pIrfTQKbjvIL9NFoATtbEEhDsmlWyDIaKBliihIqVvR9g+cKdJn3jz5gPLJAhH4774v7
-         +YukRL+g76cauOARXCY6VzGyXeNoxbPE+Icrq/L8fLBDa/NaYzTLPJSuAvrLX6TPAwYR
-         BLtZP4UQSQlRG9YozKsgR/uXW6ko5bHhlI8uMZ5mx3Zvhu/6QXVg5p0ywtHK55E03JMI
-         lOAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LEFHoCKlwoBTeIV9uQCrZGB8LTusol6OgYk0Nc6MLlc=;
-        b=WWcKRHBsoedPx2R/uWPr6ehO/VV9o/u+Fw+tEAZOLQVL8ea+/M9nZtRYyL0jl71Q4M
-         WPLYHYyla7ccsGaKdauo8g/u300FXa86IXmxnfx/6kqun88dORKaRJ2wFYvxFZuD4+K+
-         IWCrqU2l1VJY96poYMsUGOmesR2EY7GpKAOL1wVhGvtHaGHbH86EJrWgFVXSUyHg9Pxk
-         D4alzaZE3l94H3e2R8mmPOri1YTnzcHP4ycpjVpDhTzkKRAxKw8s/dh3KopZ5oMPSN2L
-         X+LdcloVedaGVIrGG9KitNUn67vybGpQgc/Fm1IdAMymseGDz6E39hCyRE9pT3KbMvae
-         tquw==
-X-Gm-Message-State: AOAM532TTfpWOPyetg9wrg9+sHFatqGDmyjC3OBQoKje08+qn0II4xFi
-        8fxb0wQm0azRt5wH7qooaoQ=
-X-Google-Smtp-Source: ABdhPJyhtRastDCvuC3SUd6kji3K08UNSWGIadr4cyeT8jummwWN4RqelpY2jy0Z/c1fU6lmBuTjYg==
-X-Received: by 2002:ac2:4571:: with SMTP id k17mr5339672lfm.208.1610719328358;
-        Fri, 15 Jan 2021 06:02:08 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id f132sm906852lfd.252.2021.01.15.06.02.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 06:02:07 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        Fri, 15 Jan 2021 09:14:42 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id CDECC580732;
+        Fri, 15 Jan 2021 09:13:55 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 15 Jan 2021 09:13:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=tj2SxXoSa96FfDtLrh9IpSrjSWA
+        c9uYGz+Dn9iyVoAo=; b=B7b719RQYKeJsatdvoMfftPaZ7yza1XeB2tdCt+EfXJ
+        lyEobF8ynRrdN7pxtUoPCNN3dfilyUknC7aTjyaF4oJihyfecKY12lq6IgiU5Cz1
+        Vra/Uwe7W13TjbG6KqN24oHHPrC1/88iYYfOg2wCPjrXLB0GDaNS3PDyATP1pXej
+        5HHLRWc0r29gZRdE1uLJv6pc5aMOPi8ZjLC6JAnQxX87d99PTR+kZ/k9Z6nQNm9V
+        x0WGFJchuLQni4XDfFsGtGRZ9mYyCjTdEq5nOBG8T+RIbswMnhUDy8bhLPUdPJvI
+        Ni7wAgdzO3zMr5uZO/F7sboexu5D3QU0T8Ed3vI5MfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=tj2SxX
+        oSa96FfDtLrh9IpSrjSWAc9uYGz+Dn9iyVoAo=; b=kkT3T4zeweqWXIX/CZ1B6z
+        DqGsjahZcO/cZPAU9BLCMla6ymzdiSZ7ZJ35RgoZIA7tkknGLbm7K6HkmmyEtuM9
+        m7U9NkEy3eA3CEOyqx8bRrsvRBhizLBqsv+hShK8YQ8uMeerxHTPnHWmrZT6W0es
+        FCpGNCGdJWhmmOt1yxhfqpCXhhbQS7V+qp+UB1aKlqBuwhXYiNCI8VJ5DguNziG3
+        sV4dimLDsXpkSnoUlQhIt7Z0//+muuUO0gvpOjviJZQXUhsCiK2Npriy+Aj61tE8
+        4BgkQVmB0W+Y7dCtAftP+KRmtIM2szcqlPcQnNOYCpPvzfL+Flf5dJQZ2A0g6cMw
+        ==
+X-ME-Sender: <xms:H6MBYD0GSlkzCPJVYGpbR_ZNI06sWvUNPMDdZ6_eJm43rVMA2MrEXQ>
+    <xme:H6MBYCGSUXTu3NWdcNYsemiQeKDPcqwh30OHx6Fp4t9vJ_J6k4zoRtURvSopDsY2K
+    kZ4YOo4yGkimvhGq54>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtddvgdefjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:IKMBYD420Ru-_AznpbGVzQ0jU5qBuPPsrrNPdOFYs-JrU-4D9wCSAQ>
+    <xmx:IKMBYI0429guPeHHyjc0jgU-OS7U10edc0et5onZ_6Las_n_TZYJYQ>
+    <xmx:IKMBYGGGZe6Wkc688GCwHAOskyhRtgv4uvUdI5qJ4DXevueC4Uhobw>
+    <xmx:I6MBYFbypYhb5YdRA0eaNNYJaUXLGsvZhXSUB8usLISCNOSUVzP1ug>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 869AA1080059;
+        Fri, 15 Jan 2021 09:13:51 -0500 (EST)
+Date:   Fri, 15 Jan 2021 15:13:49 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Dave Airlie <airlied@redhat.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Alison Wang <alison.wang@nxp.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Edmund Dea <edmund.j.dea@intel.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] ASoC: tegra: ahub: Reset hardware properly
-Date:   Fri, 15 Jan 2021 17:01:45 +0300
-Message-Id: <20210115140145.10668-6-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210115140145.10668-1-digetx@gmail.com>
-References: <20210115140145.10668-1-digetx@gmail.com>
+        Jyri Sarha <jyri.sarha@iki.fi>, Eric Anholt <eric@anholt.net>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 02/10] drm: Rename plane atomic_check state names
+Message-ID: <20210115141349.7oq5hwsj37qcpk5j@gilmour>
+References: <20210115125703.1315064-1-maxime@cerno.tech>
+ <20210115125703.1315064-2-maxime@cerno.tech>
+ <221e5626-d97c-9d4e-07cc-e696c92ceb65@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pc7g53zcvckyysz5"
+Content-Disposition: inline
+In-Reply-To: <221e5626-d97c-9d4e-07cc-e696c92ceb65@suse.de>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Assert hardware reset before clocks are enabled and then de-assert it
-after clocks are enabled. This brings hardware into a predictable state
-and removes relying on implicit de-assertion of resets which is done by
-the clk driver.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- sound/soc/tegra/tegra30_ahub.c | 43 ++++++++++++++++++++--------------
- sound/soc/tegra/tegra30_ahub.h |  1 +
- 2 files changed, 27 insertions(+), 17 deletions(-)
+--pc7g53zcvckyysz5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 37a847569a40..df4ca2b35566 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -65,12 +65,32 @@ static int tegra30_ahub_runtime_resume(struct device *dev)
- {
- 	int ret;
- 
-+	ret = reset_control_assert(ahub->reset);
-+	if (ret)
-+		return ret;
-+
- 	ret = clk_bulk_prepare_enable(ahub->nclocks, ahub->clocks);
- 	if (ret)
- 		return ret;
- 
-+	ret = reset_control_reset(ahub->reset);
-+	if (ret) {
-+		clk_bulk_disable_unprepare(ahub->nclocks, ahub->clocks);
-+		return ret;
-+	}
-+
- 	regcache_cache_only(ahub->regmap_apbif, false);
- 	regcache_cache_only(ahub->regmap_ahub, false);
-+	regcache_mark_dirty(ahub->regmap_apbif);
-+	regcache_mark_dirty(ahub->regmap_ahub);
-+
-+	ret = regcache_sync(ahub->regmap_apbif);
-+	if (ret)
-+		return ret;
-+
-+	ret = regcache_sync(ahub->regmap_ahub);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
-@@ -462,7 +482,6 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	const struct tegra30_ahub_soc_data *soc_data;
--	struct reset_control *rst;
- 	struct resource *res0;
- 	void __iomem *regs_apbif, *regs_ahub;
- 	int ret = 0;
-@@ -475,22 +494,6 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	soc_data = match->data;
- 
--	/*
--	 * The AHUB hosts a register bus: the "configlink". For this to
--	 * operate correctly, all devices on this bus must be out of reset.
--	 * Ensure that here.
--	 */
--	rst = of_reset_control_array_get_exclusive(pdev->dev.of_node);
--	if (IS_ERR(rst)) {
--		dev_err(&pdev->dev, "Can't get reset: %pe\n", rst);
--		return PTR_ERR(rst);
--	}
--
--	ret = reset_control_deassert(rst);
--	reset_control_put(rst);
--	if (ret)
--		return ret;
--
- 	ahub = devm_kzalloc(&pdev->dev, sizeof(struct tegra30_ahub),
- 			    GFP_KERNEL);
- 	if (!ahub)
-@@ -507,6 +510,12 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ahub->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
-+	if (IS_ERR(ahub->reset)) {
-+		dev_err(&pdev->dev, "Can't get reset: %pe\n", ahub->reset);
-+		return PTR_ERR(ahub->reset);
-+	}
-+
- 	res0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs_apbif = devm_ioremap_resource(&pdev->dev, res0);
- 	if (IS_ERR(regs_apbif))
-diff --git a/sound/soc/tegra/tegra30_ahub.h b/sound/soc/tegra/tegra30_ahub.h
-index 063aed5037d7..ceb056575e98 100644
---- a/sound/soc/tegra/tegra30_ahub.h
-+++ b/sound/soc/tegra/tegra30_ahub.h
-@@ -510,6 +510,7 @@ struct tegra30_ahub_soc_data {
- struct tegra30_ahub {
- 	const struct tegra30_ahub_soc_data *soc_data;
- 	struct device *dev;
-+	struct reset_control *reset;
- 	struct clk_bulk_data clocks[2];
- 	unsigned int nclocks;
- 	resource_size_t apbif_addr;
--- 
-2.29.2
+Hi,
 
+On Fri, Jan 15, 2021 at 02:46:36PM +0100, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 15.01.21 um 13:56 schrieb Maxime Ripard:
+> > diff --git a/drivers/gpu/drm/imx/ipuv3-plane.c b/drivers/gpu/drm/imx/ip=
+uv3-plane.c
+> > index 8a4235d9d9f1..2cb09e9d9306 100644
+> > --- a/drivers/gpu/drm/imx/ipuv3-plane.c
+> > +++ b/drivers/gpu/drm/imx/ipuv3-plane.c
+> > @@ -344,12 +344,12 @@ static const struct drm_plane_funcs ipu_plane_fun=
+cs =3D {
+> >   };
+> >   static int ipu_plane_atomic_check(struct drm_plane *plane,
+> > -				  struct drm_plane_state *state)
+> > +				  struct drm_plane_state *new_state)
+>=20
+> It's not 'new_plane_state' ?
+
+That function is using old_state for plane->state:
+
+> >   {
+> >   	struct drm_plane_state *old_state =3D plane->state;
+
+Here ^
+
+So it felt more natural to keep the convention in use in that driver
+
+Maxime
+
+--pc7g53zcvckyysz5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAGjHQAKCRDj7w1vZxhR
+xRyQAP9z6jgYoVLN5O08Gfa2bipU5kwBoAnOqoWm5tZt0atb8QEA9iY4poTgz6cv
+u2lw2ErmnQLG6Rt10lvZcTmjIdOF5QI=
+=AOj1
+-----END PGP SIGNATURE-----
+
+--pc7g53zcvckyysz5--
