@@ -2,66 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65458C43332
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 12:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F19C433E6
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 13:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F498221FA
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 12:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE92A221FA
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 13:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387452AbhAOM7v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 07:59:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
+        id S1731945AbhAONDi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 08:03:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387680AbhAOM7t (ORCPT
+        with ESMTP id S1733115AbhAONDe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 07:59:49 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0B1C061757;
-        Fri, 15 Jan 2021 04:59:08 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id o19so13012848lfo.1;
-        Fri, 15 Jan 2021 04:59:08 -0800 (PST)
+        Fri, 15 Jan 2021 08:03:34 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E458C061757;
+        Fri, 15 Jan 2021 05:02:53 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id p13so10320188ljg.2;
+        Fri, 15 Jan 2021 05:02:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z88+UL1Kj6t4xLAfVZNrkkERr8HUHthYkN4y2Wjje3c=;
-        b=MhqrXC/dYh36OxJjw9QxGR7fCLRbvk85JQynbg3YfDCRakvYIS2Kj7eLzV+qQseEZV
-         I2fFwjm/LEiIi7w5QxR5ao4tXK9SNBWkBzwZpyvOreKbXTXhqBKbD0uWpuABKNazhKiH
-         fxNhIsXG4Pgq7BgK9x8CvW123eDyZEzJo9v1yJM2YeyByXtqQBm2TewW3+kD4BvRHurr
-         6Yk2+vbRYWhRL/5ftCxTyERNtjR1txQt4T6RDbefYMnjYipT5Hc2MKh4yqPZ4majDo3n
-         f7UzJC2/z7cuJCur8u1TMvomCullcaLWJ+kQXuFurardizuUImGxfDRBr7ew1i6KFJvx
-         FvSA==
+        bh=Ced3NxvYK3fUREKoo4RuGKO8nItMO6rbOL9yPMeNSOA=;
+        b=hucXtmX2CLjSjXIeLSPOZ5kLbLG4UtSP8wR/Weha9hA+jClqCuD1CGIg1DAS4NAIVS
+         8b+lrciqxAGBr2MJnz5JrRaUc9cGb7AY9E+XRihDqQd/5EYG8xoJ5BJY9Dk4/u4OiEp5
+         Udo5JPNQiHQbdP63KJGNhSvQ2pKNCvLiWshOj2XZjFk/73ulW9g5YglPv9n3KQhSd6fR
+         GOtp9b/ALqb5L5zm+1ZTYylQeGnuAkanfAjdke63gsHywW70CWSr3eH76r8akVfzhLbw
+         N5GHY8YaabL2Apmh50ZOKiMWw6zlZ/oG1djh1V3GSqJl3Of8/hBsww2uW7PuN/il7FUb
+         80jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=z88+UL1Kj6t4xLAfVZNrkkERr8HUHthYkN4y2Wjje3c=;
-        b=NVCCKd6TP8dOxZsJROwKdfcfvXg0jf2TmfxJq7tKiVXpMgxSHstQ0z5Bvvx1Dzg/tD
-         XZI2Ep5HsLvQ4zBvJqCa1y5/EF9K4Nz1KRAZ7I/WuUAQIvmZ2sCIY2xKRK4OJ+bIp/qn
-         5w11YMGf9cJsNehTGctRM0NwKVcNjYfa/VzGkVH/qOSrGROJuFnzg+JjJX9sLIY7MBRU
-         FlU0/wx1NUnFRrfxGNKHmwfg1rjOYEHON4NTrMqm9Lw92mGBtzDsrB8AlZfUTkYHvJJb
-         W6hmOWYOW1O0LuWamtu8Y8ZcmJZBsX0J8/RIQ7a6iZrT8s0BaeaAdN5F4F8rJI4F5DHX
-         Pl5w==
-X-Gm-Message-State: AOAM530ZAQSB/9dWuAOdxlzUNghraM+PoCEgrfaVH2osMU6kj43Cd+ru
-        n2nEyWMpxUFkZjMGkpSUMeD9DMLWhuY=
-X-Google-Smtp-Source: ABdhPJyEfV1U5TCVbyHg3GM67rUvvGiwT27nwjAQZNQRykEEs3obQTaas/aimmSJGg9/+8LvfXgtcg==
-X-Received: by 2002:a19:4352:: with SMTP id m18mr3722258lfj.107.1610715546746;
-        Fri, 15 Jan 2021 04:59:06 -0800 (PST)
+        bh=Ced3NxvYK3fUREKoo4RuGKO8nItMO6rbOL9yPMeNSOA=;
+        b=HnGdCL1q6PTVJl7YTlLknq3Q4tbH+OF1+ns88xtkv+EZpiDpfdAtAY4fZ8q+3OAeDm
+         AC105dA04O6rERCd/+nKbkJ5bn3dwxLXG2N6MZry+gW5PaKNBKuiUBjch36+E1Ae8ziW
+         axqACP9NnDURDTQ1YC6gN3sWnFHkz0XBS8fUwax2QBqy54KPmnp/3OVJg7TXpajo4+AI
+         hLPz6FxMCidd0dg399GgIN6cbYq70XZSXwj7NgFvdSPRh8d7j1mTsUXntzpLFyIyeV4Y
+         5zRMZ4YiVZUTf/YCgnialx0ZnQbG8AleT9wv5QhmS7lSb36u2LHfqiN1BD0wUfPNztnH
+         EejA==
+X-Gm-Message-State: AOAM5311dnygnv6SoSJ6e8FEDqMm27aLQC1Z0bGBaEk61yqr3QLJx3pW
+        M+By8ndST/UqLC5Clp6VBKILiC2eGng=
+X-Google-Smtp-Source: ABdhPJy1VyYGCB2G9pvcPq97w0TzAlqZ2ViCpO83g6XVhyil0OoITD43h7+sCiO7pF/mO4Td/ZQ4wQ==
+X-Received: by 2002:a05:651c:1282:: with SMTP id 2mr5260045ljc.383.1610715771914;
+        Fri, 15 Jan 2021 05:02:51 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id s5sm909129lfc.150.2021.01.15.04.59.05
+        by smtp.googlemail.com with ESMTPSA id z9sm892667lfs.183.2021.01.15.05.02.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 04:59:06 -0800 (PST)
-Subject: Re: [PATCH v1 0/5] Clock and reset improvements for Tegra ALSA
- drivers
-To:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Fri, 15 Jan 2021 05:02:51 -0800 (PST)
+Subject: Re: [PATCH v1 5/5] ASoC: tegra: ahub: Reset hardware properly
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Sameer Pujar <spujar@nvidia.com>,
         Peter Geis <pgwipeout@gmail.com>,
@@ -70,14 +69,13 @@ To:     Ben Dooks <ben.dooks@codethink.co.uk>,
 Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20210112125834.21545-1-digetx@gmail.com>
- <d09b6953-fc74-9fbc-e66d-556df4674746@codethink.co.uk>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fc95043e-1bc4-61e1-7d83-61aa7797ae0e@gmail.com>
-Date:   Fri, 15 Jan 2021 15:59:05 +0300
+ <20210112125834.21545-6-digetx@gmail.com>
+Message-ID: <5d99eba8-a169-1dc1-c7ab-0734c67c50b7@gmail.com>
+Date:   Fri, 15 Jan 2021 16:02:50 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <d09b6953-fc74-9fbc-e66d-556df4674746@codethink.co.uk>
+In-Reply-To: <20210112125834.21545-6-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,35 +83,44 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.01.2021 13:52, Ben Dooks пишет:
-> On 12/01/2021 12:58, Dmitry Osipenko wrote:
->> This series improves the handling of clock and reset controls of
->> NVIDA Tegra ALSA drivers. Tegra HDA and AHUB drivers aren't handling
->> resets properly, which needs to be fixed in order to unblock other
->> patches
->> related to fixes on the reset controller driver since HDA/AHUB are bound
->> to fail once reset controller driver will be corrected. In particular
->> ALSA
->> drivers are relying on implicit de-assertion of resets which is done
->> by the
->> tegra-clk driver. It's not the business of the clk driver to touch resets
->> and we need to fix this because it breaks reset/clk programming sequences
->> of other Tegra drivers.
->>
->> Dmitry Osipenko (5):
->>    ALSA: hda/tegra: Use clk_bulk helpers
->>    ALSA: hda/tegra: Reset hardware
->>    ASoC: tegra: ahub: Use of_reset_control_array_get_exclusive()
->>    ASoC: tegra: ahub: Use clk_bulk helpers
->>    ASoC: tegra: ahub: Reset hardware properly
->>
->>   sound/pci/hda/hda_tegra.c      |  86 +++++++++------------------
->>   sound/soc/tegra/tegra30_ahub.c | 103 ++++++---------------------------
->>   sound/soc/tegra/tegra30_ahub.h |   6 +-
->>   3 files changed, 49 insertions(+), 146 deletions(-)
+12.01.2021 15:58, Dmitry Osipenko пишет:
+> Assert hardware reset before clocks are enabled and then de-assert it
+> after clocks are enabled. This brings hardware into a predictable state
+> and removes relying on implicit de-assertion of resets which is done by
+> the clk driver.
 > 
-> I wonder if this will help with the issues we saw when the tegra is
-> the i2s clock slave.
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  sound/soc/tegra/tegra30_ahub.c | 33 ++++++++++++++++-----------------
+>  sound/soc/tegra/tegra30_ahub.h |  1 +
+>  2 files changed, 17 insertions(+), 17 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+> index 4dbb58f7ea36..246cf6a373a1 100644
+> --- a/sound/soc/tegra/tegra30_ahub.c
+> +++ b/sound/soc/tegra/tegra30_ahub.c
+> @@ -65,10 +65,20 @@ static int tegra30_ahub_runtime_resume(struct device *dev)
+>  {
+>  	int ret;
+>  
+> +	ret = reset_control_assert(ahub->reset);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = clk_bulk_prepare_enable(ahub->nclocks, ahub->clocks);
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = reset_control_reset(ahub->reset);
+> +	if (ret) {
+> +		clk_bulk_disable_unprepare(ahub->nclocks, ahub->clocks);
+> +		return ret;
+> +	}
+> +
+>  	regcache_cache_only(ahub->regmap_apbif, false);
+>  	regcache_cache_only(ahub->regmap_ahub, false);
 
-Probably no, this series shouldn't fix any of the current problems. I
-will be surprised if it does.
+I just realized that this is incorrect version of the patch which misses
+the regcache syncing after the h/w reset. I'll make a v2.
