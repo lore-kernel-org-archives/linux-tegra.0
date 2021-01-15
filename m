@@ -8,110 +8,127 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8CAC433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7A4C433E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 492182399A
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71531238EE
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbhAOQXu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 11:23:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60730 "EHLO
+        id S1726019AbhAOQ0y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 11:26:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbhAOQXu (ORCPT
+        with ESMTP id S1725910AbhAOQ0y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 11:23:50 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED9EAC061757
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 08:23:09 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id g10so8093059wmh.2
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 08:23:09 -0800 (PST)
+        Fri, 15 Jan 2021 11:26:54 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D128AC0613C1;
+        Fri, 15 Jan 2021 08:26:13 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id d26so9853420wrb.12;
+        Fri, 15 Jan 2021 08:26:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=b1o12dNG44Js/P1pUm9lZNb9c/tZm0IvKlzwFKSJOe4=;
-        b=u6Rz3/y6TejtY7ekD7TKOvD32frkhlVQ3X+PCLdMmVT6F9BRLCVc+bA+Vk1Vh3zgLP
-         xkvPFk+w60b+dFoGP+B4I/bU0xq4ZYtP2Ply4FsO4k29OD5JyQlXSF2YMrfnjwE2WZ1b
-         3THTd2EiQU4B3Rb2IQV7glQMGZOIXVDbGwY9bPF2TxBqm917Q+EnmqNP+V0MrVsFcGpZ
-         gu9e96TKFx0rMXez9ReUmI08ABBoXJiaymFC1fg8PmwV3kKhbzdCm/ibolcurWQTJd/V
-         1nrH0u70hiyqHnxINP+duj8ThcabSh3drJrIA0VaifNftd3ZwUI1nxD2OpqOc9+B3xaV
-         gUgw==
+        bh=nWLmc3yR2tv/EqCP45DZyypeULeeDqAZ/zy0X3SdJ5s=;
+        b=QJB/43JqyTc1Gi68NiR+A3I1qp5KyVQrvM5MJJ/0u86ADDxhG/NCpLGJmGDzakounI
+         Xc3fNEifdzB4tW1iLbNNB+lDEqTGiB3zKVmDOdR/k/L0SxymPeckR2twJicjdJ1Bir+2
+         WItkF9dN3RRo9cgne1PedOxpOJNrOahbVg4kKKut9GJwpQU+UsIQBCnmcMd/sRzdEJ1Y
+         xhcW+Vn5zsgasBELDibw9FLPFHM7qSddwBPsL6bMnJC+HS0/mhWCLkeA2Ua5wiemxKdQ
+         +Fv5D7GKK2pCHHgtTyl4D/MLWqWbnjMpoKHviF86d6H3YVaoVnYMGFN0JwPP9SOOxF/V
+         7c0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b1o12dNG44Js/P1pUm9lZNb9c/tZm0IvKlzwFKSJOe4=;
-        b=M29i+4cmIYFwfCwS/y4n77ld+ebRtFR5qt72MF05a5vYbcWkMzZ7oEAwHZUKT4GodY
-         +crJBh5fnSiejRgOzU9FAkaK3ZyjuJR8+6EDKph2sl0kXjI/gSir7df+Nig1CeLLIc6c
-         D/6S4KLxclkfWJwjObfraZ7z4od83S5nPzb405O1PYIryS4KAzduteavV0pS1t8Si2SQ
-         YfX6mIrhAYBLaZ/6f1SCD2GuD9BzVOMqU6kWmN37o0Z+dMab/1QH5M3Rnwb8CNXBAFTL
-         UZ4UIrHa7iye2favfTifowrFtAnFBnLFBXQQjWVVzrgyS8joyagh04LLPNkURuDNyiTM
-         z1bQ==
-X-Gm-Message-State: AOAM531zWmNUhCqMauE6jifuNGukAw800H2BcDQ7DIQPKMrSkCtYmRl5
-        M5IAowC2ICMLxjDJfzXwYyM=
-X-Google-Smtp-Source: ABdhPJzuFsNid31NEDYUxiNY45bsQsrtZWzgTx7aYMNWv8incgqJqU9ca7xAWrPlDAPAJ5n8tyfiOg==
-X-Received: by 2002:a05:600c:4e87:: with SMTP id f7mr9459591wmq.163.1610727788758;
-        Fri, 15 Jan 2021 08:23:08 -0800 (PST)
+        bh=nWLmc3yR2tv/EqCP45DZyypeULeeDqAZ/zy0X3SdJ5s=;
+        b=OUm70Yueaaqw+GQkOVq6MqeN6ejBeXW05andau4yLxWVP3IfErsCTQhpcHmRWfR4r8
+         Ihw2N3tNrlmaRW8irj9JIncYbrjb+1gil7SUlhIK4dvJRWTVTZvOGvcDKsWwR90oIjyj
+         Rdk3Hptm+LFazGKw6RRaPJmXnqJWyH3fe4e/t3Ldbe7t9cFZcfQXDFM0LQEOVXfH9BWA
+         jGV1+ZSECxLZWtjfh+rs9nTJQAj6jsLCOV189hpw1NOWOuyHuK50rcaeLUDzgfvFm5ob
+         UxnlrmKewyiLOj5me7RdBygpaOXq2UQYA1VxPfhg3viuDk/ZxXKTU/n67omiLoEDz2jP
+         DZaQ==
+X-Gm-Message-State: AOAM5307cTG8agZv1TzGcblrU60/im3k8VVXeCa39XUgVgKGYcBlaJMJ
+        /lk/EFdv/HloV2UVBDTZrz4Tq7+lO+8=
+X-Google-Smtp-Source: ABdhPJxh8Z+P44Wu1c7fkR9xWwjvx8qEckdtWrwy9Mu4uUNFcydekCsOgd9NCGDZ2vrbTt++pa2J+w==
+X-Received: by 2002:adf:f6c9:: with SMTP id y9mr14160847wrp.121.1610727972657;
+        Fri, 15 Jan 2021 08:26:12 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id u13sm15516794wrw.11.2021.01.15.08.23.07
+        by smtp.gmail.com with ESMTPSA id v20sm12822294wml.34.2021.01.15.08.26.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 08:23:07 -0800 (PST)
-Date:   Fri, 15 Jan 2021 17:23:06 +0100
+        Fri, 15 Jan 2021 08:26:11 -0800 (PST)
+Date:   Fri, 15 Jan 2021 17:26:10 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Tian Tao <tiantao6@hisilicon.com>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: Use PTR_ERR_OR_ZERO() to simplify code
-Message-ID: <YAHBatsdlhhqir67@ulmo>
-References: <1608015653-37527-1-git-send-email-tiantao6@hisilicon.com>
+To:     Qinglang Miao <miaoqinglang@huawei.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: fix reference leak when pm_runtime_get_sync
+ fails
+Message-ID: <YAHCIsQtRUANr+m+@ulmo>
+References: <20201201125631.142590-1-miaoqinglang@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YaX/wmy9Np5Jy0xx"
+        protocol="application/pgp-signature"; boundary="mXEwpiDczBzJuSir"
 Content-Disposition: inline
-In-Reply-To: <1608015653-37527-1-git-send-email-tiantao6@hisilicon.com>
+In-Reply-To: <20201201125631.142590-1-miaoqinglang@huawei.com>
 User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---YaX/wmy9Np5Jy0xx
+--mXEwpiDczBzJuSir
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 15, 2020 at 03:00:53PM +0800, Tian Tao wrote:
-> Fixes coccicheck warning:
-> drivers/gpu/drm/tegra/drm.c:350:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+On Tue, Dec 01, 2020 at 08:56:31PM +0800, Qinglang Miao wrote:
+> The PM reference count is not expected to be incremented on
+> return in these tegra functions.
 >=20
-> Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+> However, pm_runtime_get_sync will increment the PM reference
+> count even failed. Forgetting to putting operation will result
+> in a reference leak here.
+>=20
+> Replace it with pm_runtime_resume_and_get to keep usage
+> counter balanced.
+>=20
+> Fixes: fd67e9c6ed5a ("drm/tegra: Do not implement runtime PM")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+>  drivers/gpu/drm/tegra/dc.c   | 2 +-
+>  drivers/gpu/drm/tegra/dsi.c  | 2 +-
+>  drivers/gpu/drm/tegra/hdmi.c | 2 +-
+>  drivers/gpu/drm/tegra/hub.c  | 2 +-
+>  drivers/gpu/drm/tegra/sor.c  | 2 +-
+>  drivers/gpu/drm/tegra/vic.c  | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
 
-This coccinelle patch was recently removed, so I won't pick this up.
+Applied, thanks.
 
 Thierry
 
---YaX/wmy9Np5Jy0xx
+--mXEwpiDczBzJuSir
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmABwWoACgkQ3SOs138+
-s6Hb2RAAh8kG7ZuKmcYpO1qU01x7b/rh7eLpfTuzlcGyjC69Ixt+mBl20L1bahkH
-bdywhLzSmyfGS8dFuvaLJotWjMsjbK7G6Va6lIq6g3cvcyqS390Sh6KFoxFQb46w
-rcySTs50KCLtF+8769UwnShMRweM9De6NA7oGJGUwJMROZLM0duECrQlVReNutI1
-FtPsi4MuI5gCG8ERyuSwTSeVheDTRhmsBjWXRG0TKDv2RBwLYg77x/+G6yL0imVm
-Nkaojq0bJ+D6ozeLCyN9G7GqYt+3USx/73wh0/1h4XRuNQjXR2AcIvDVLT0QtWwP
-83zMY7Ge7HakgKr3U3bnReoexzg+DFk73C8BD0aCTPA6bWWcZJW8f/p0Cl1oBwBq
-2J2CtItExkB7973OP+qdIiNRPV3V3XhVifFpBOWyeAdroQuutnfUstwlljmLJ9xy
-xcW9GfKc0IoJdmFIXN+xRO3MYizi8yKu1+eLQ0Jsz5UERHO74grLmPwUCQG6wMjN
-Dd+vpvbH9fRTZjBxeZnd/pLoMZ8Eqelil7i70Bqcy2KwCfe/jtRqUHWudadVfN5V
-pC74zcf6p8onyzXS84Fd6lZ2A5t5gteEpkfERTqSDPgEfuEgFh0RrAXptnNuer/5
-ExdIWhBeQy3nbdBwrXP0nGskdBz6UKYaRpVrErRP2Ow6cnXk0Jg=
-=EKtM
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmABwiEACgkQ3SOs138+
+s6Gq+g//aYAXqOKKZgi5czRT2/84OFx4O+y4q5hyEU08WTnNtySKAdW/EZ7hAFeo
+hmeLvPOoa5zjIUx9/4M53lbxnRi8HC4acWL8s+r/WIlGgR6A1zyIIQygYjgQsYAj
+UJcN5tWbmTduH2RM/JgrZ5RusiYLrMtxDlZHeGVeC5Zl0UoQulQQFjEdm+lMrlHo
+1Lw3CHUnIvhscWzR0AjnQzRIgwCLmGbKRKA7/+kqpgBv6oi+BsR9tWieQhu6fktH
+opfas2mz3KILuDTOa4UiBZCbMxEyeXOGIaJsU7+jRiBFEAG8G5I4Of/xXPpqXYV7
+o5sVE1xe3W1u9rNha09Ir9cHny7vPWCsg1JHePiFuKzlSjj6Y/vf1YVFg/myrltn
+76sCbPDb7aJQ3WbrOeUqJlIMONJGVj69cdhRKe4xbwTQPmAaoS1ywCO3Sm+VyyBf
+IfY/SSDJHlqTowdDdGpxOx0mVEdT3OAz+xbEzxjfjX26n76iFKs5UfkG9IWp7lgk
+uwsQkE9Y5POipaQNTJ0fuiUmgBCjruQWjnVdBFYAkPBSb/crGgP+8Kq+vAXdU4w1
++T1WLsPBProSSsEqKajIxfsKFqOuwKT5Zb9vi5f0jJZ/ERPybQVEVgxPyIr72dRE
+PlYy48vD1184Bbn541hcgtp7eaqMIEizIq+/sHGjKBP5c+SQOGQ=
+=TYn/
 -----END PGP SIGNATURE-----
 
---YaX/wmy9Np5Jy0xx--
+--mXEwpiDczBzJuSir--
