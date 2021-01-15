@@ -2,154 +2,292 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942ABC433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 17:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DD2C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 20:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6305523A5E
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 17:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 950D823AA9
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 20:30:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbhAORpe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:45:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbhAORpd (ORCPT
+        id S2388464AbhAOUaQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 15:30:16 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50256 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732164AbhAOUaB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:45:33 -0500
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A86B7C0613C1
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 09:44:52 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id 18so5795558ybx.2
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 09:44:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tM4MaXgvTZAlvr1leXTujrQPLxqm/ubLgNUK1RNGKmU=;
-        b=C6TxA79SS2UHJZWdjOMsdX5j68QB687xUftG/IEQRsXZBbcqHTKLZqBvIQQ/f3tPLt
-         KisHSDb8dANHLMht8Ztl6L5lBkGSbu8V2hwlXHfu4I2csQYrvaxrsYFh8P/9WPPe4vTP
-         pb78VMwiNnqt169FBuqm8h0oJl7wrovy6XUFuW0bRVH5dAQpIv9akaF8wtjhlFpr9zbc
-         uRJ4sG88aJZ8bEc8lu/6CqoGgu5soHlqnUsj3HhZABuF3U7kecNGmBxAaF7AgOzRFpMg
-         kMCWsnrfADjqTuz/lccK25DnmtFHhlmO+hqDV1HyxIlXcPoqYaq+5XqKUBloIn+IQKD3
-         10JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tM4MaXgvTZAlvr1leXTujrQPLxqm/ubLgNUK1RNGKmU=;
-        b=l34w/M8CBB4WliLJz6M3+3AojEuuYP8SuBSZMczF2Y1zKSrlLrljiV0urX1crXfpxu
-         yewHbO16OQl1+iL3giyzrHiQSMsHlPw05flFXvD9eRYxm/c3u+RzJHv375ys3WywRJMI
-         SBntWlgRisyjh1emOXl1It1IVJ/99IvmzpaHeFCwdfP4pQ/xHj+3huJn5IuHyZs2OF4m
-         DnHufR9aEicKHiolqB2mH/AD0/coZF778WU56LcLUSq+IJ1S7lU21wWvc1g+tMhJRd5E
-         r/LB4B/fqxcvY37TbhoebXfWxqEhse+c0CeACcbHy2a2/Zj2l3/8jMt2OOSAWR1bvoN5
-         r3+g==
-X-Gm-Message-State: AOAM531M/UcjXSxLqKUOiG0JOz5yB/ff+YMiTyqe8e/+pCfo0NBMsSsg
-        BmTwQfVgXeOKaUAyYQTbj0krokHMN/HLmAXHqKR4bA==
-X-Google-Smtp-Source: ABdhPJzOpXG72PdWzknvcYxjm8t378ZP8M5mL+Ez5KLDIpZx81kJp0pmKfaanhvbEoSDWZ2FNufqczsa/hxe4/FUXiI=
-X-Received: by 2002:a25:c343:: with SMTP id t64mr4791124ybf.228.1610732691634;
- Fri, 15 Jan 2021 09:44:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20201218031703.3053753-1-saravanak@google.com>
- <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
- <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com> <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
- <17703ac8-2238-0b64-3c98-ddadc7ae8a36@nvidia.com> <CAGETcx-=y4Ps41Lb0b_MTCbNTC_ah0cJTmPP+GajywFBc7kEfw@mail.gmail.com>
- <f0240065-a4a0-d985-a696-eba4d42ea580@nvidia.com> <CAGETcx_QmbOcof5T8Wo_zFXKB+qswPN3Cbwz5a6A+m+VrnWg0A@mail.gmail.com>
- <a38c0566-a58e-aaf7-ef57-dc294c4e71b4@nvidia.com> <CAGETcx9szf-=JjFNp0p-0LmOfOU1MWE3QqDNe-bAn2wXPH9pEQ@mail.gmail.com>
- <f3683601-66db-ffe3-9066-ac94a9372727@nvidia.com>
-In-Reply-To: <f3683601-66db-ffe3-9066-ac94a9372727@nvidia.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 15 Jan 2021 09:44:15 -0800
-Message-ID: <CAGETcx-3wjcmTgrqEyDiHx7dj0m3ME8PmVyGm2kLjFoUT=bfAQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        Fri, 15 Jan 2021 15:30:01 -0500
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0E61358B;
+        Fri, 15 Jan 2021 21:29:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1610742556;
+        bh=8R5qOZgwIXX9QIBlCIV/R54viYQ+tS8st/8kK+PspT4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rXfe/Bd4sxDcopxrQyulKr6sWDtZgNWVEUmMmsnebMU4/0jVNn/8hLQVXHqwR4Iqy
+         dmLamgDdsuehH2QKJU5DVGWdiVNzsC5Rqtv2JHOZ59k4V2CtY3G/tqo9iglvRf5/6q
+         dndbBomFsfYf9WqlpJf3+ozL6ojiJBE1hiTgHRnI=
+Date:   Fri, 15 Jan 2021 22:28:59 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Dave Airlie <airlied@redhat.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Alison Wang <alison.wang@nxp.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
         John Stultz <john.stultz@linaro.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Edmund Dea <edmund.j.dea@intel.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>, Eric Anholt <eric@anholt.net>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 02/10] drm: Rename plane atomic_check state names
+Message-ID: <YAH7C0EOsisHhqvR@pendragon.ideasonboard.com>
+References: <20210115125703.1315064-1-maxime@cerno.tech>
+ <20210115125703.1315064-2-maxime@cerno.tech>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210115125703.1315064-2-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 8:13 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 14/01/2021 21:50, Saravana Kannan wrote:
-> > On Thu, Jan 14, 2021 at 10:55 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 14/01/2021 16:52, Saravana Kannan wrote:
-> >>
-> >> ...
-> >>
-> >>> Thanks! I think you forgot to enable those logs though. Also, while
-> >>> you are at it, maybe enable the logs in device_link_add() too please?
-> >>
-> >>
-> >> Sorry try this one.
-> >>
-> >> Cheers
-> >> Jon
-> >
-> > Phew! That took almost 4 hours to debug on the side! I think I figured
-> > it out. Can you try this patch? If it works or improves things, I'll
-> > explain why it helps.
-> >
-> > -Saravana
-> >
-> > diff --git a/drivers/of/property.c b/drivers/of/property.c
-> > index 5f9eed79a8aa..1c8c65c4a887 100644
-> > --- a/drivers/of/property.c
-> > +++ b/drivers/of/property.c
-> > @@ -1258,6 +1258,8 @@ DEFINE_SIMPLE_PROP(pinctrl5, "pinctrl-5", NULL)
-> >  DEFINE_SIMPLE_PROP(pinctrl6, "pinctrl-6", NULL)
-> >  DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
-> >  DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
-> > +DEFINE_SIMPLE_PROP(gpio_compat, "gpio", "#gpio-cells")
-> > +DEFINE_SIMPLE_PROP(gpios_compat, "gpios", "#gpio-cells")
-> >  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
-> >  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
-> >  DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
-> > @@ -1296,6 +1298,8 @@ static const struct supplier_bindings
-> > of_supplier_bindings[] = {
-> >         { .parse_prop = parse_pinctrl6, },
-> >         { .parse_prop = parse_pinctrl7, },
-> >         { .parse_prop = parse_pinctrl8, },
-> > +       { .parse_prop = parse_gpio_compat, },
-> > +       { .parse_prop = parse_gpios_compat, },
-> >         { .parse_prop = parse_regulators, },
-> >         { .parse_prop = parse_gpio, },
-> >         { .parse_prop = parse_gpios, },
-> >
->
-> Thanks, that worked!
->
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->
-> Thanks for digging into that one. Would have taken me more than 4 hours!
+Hi Maxime,
 
-Thanks for testing. What was happening was that there was a cycle of
-2-3 devices. A -(depends on)-> B -> C -> A.
+Thank you for the patch.
 
-And fw_devlink only understood A -> B since the rest were the gpio
-bindings I added above. Without fw_devlink seeing the cycle, it can't
-do cycle workarounds. So C's driver was deferring probe waiting on A
-and none of them probed.
+On Fri, Jan 15, 2021 at 01:56:54PM +0100, Maxime Ripard wrote:
+> Most drivers call the argument to the plane atomic_check hook simply
+> state, which is going to conflict with the global atomic state in a
+> later rework. Let's rename it to new_plane_state (or new_state depending
+> on the convention used in the driver).
+> 
+> This was done using the coccinelle script below, and built tested:
+> 
+> @ plane_atomic_func @
+> identifier helpers;
+> identifier func;
+> @@
+> 
+>  static const struct drm_plane_helper_funcs helpers = {
+>  	.atomic_check = func,
+>  };
+> 
+> @ has_old_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> expression e;
+> symbol old_state;
+> symbol state;
+> @@
+> 
+>  func(struct drm_plane *plane, struct drm_plane_state *state)
+>  {
+>  	...
+>  	struct drm_plane_state *old_state = e;
+>  	...
+>  }
+> 
+> @ depends on has_old_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol old_state;
+> @@
+> 
+>  func(struct drm_plane *plane,
+> -	struct drm_plane_state *state
+> +	struct drm_plane_state *new_state
+>      )
+>  {
+>  	<+...
+> -	state
+> +	new_state
+> 	...+>
+>  }
+> 
+> @ has_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol state;
+> @@
+> 
+>  func(struct drm_plane *plane, struct drm_plane_state *state)
+>  {
+>  	...
+>  }
+> 
+> @ depends on has_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol old_state;
+> @@
+> 
+>  func(struct drm_plane *plane,
+> -	struct drm_plane_state *state
+> +	struct drm_plane_state *new_plane_state
+>      )
+>  {
+>  	<+...
+> -	state
+> +	new_plane_state
+> 	...+>
+>  }
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-Once I added these and made the cycle visible to fw_devlink, it
-handled it fine (basically between A, B and C, the device links don't
-affect probe order anymore).
+[...]
 
+>  drivers/gpu/drm/omapdrm/omap_plane.c          | 19 +++++----
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c       |  7 ++--
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c         |  7 ++--
+>  drivers/gpu/drm/xlnx/zynqmp_disp.c            | 10 +++--
 
--Saravana
+For these, with the comment below addressed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  41 files changed, 402 insertions(+), 357 deletions(-)
+
+[snip]
+
+> diff --git a/drivers/gpu/drm/omapdrm/omap_plane.c b/drivers/gpu/drm/omapdrm/omap_plane.c
+> index 51dc24acea73..78d0eb1fd69d 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_plane.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_plane.c
+> @@ -99,18 +99,19 @@ static void omap_plane_atomic_disable(struct drm_plane *plane,
+>  }
+>  
+>  static int omap_plane_atomic_check(struct drm_plane *plane,
+> -				   struct drm_plane_state *state)
+> +				   struct drm_plane_state *new_plane_state)
+>  {
+>  	struct drm_crtc_state *crtc_state;
+>  
+> -	if (!state->fb)
+> +	if (!new_plane_state->fb)
+>  		return 0;
+>  
+>  	/* crtc should only be NULL when disabling (i.e., !state->fb) */
+
+s/state/new_plane_state/ here too ?
+
+> -	if (WARN_ON(!state->crtc))
+> +	if (WARN_ON(!new_plane_state->crtc))
+>  		return 0;
+>  
+> -	crtc_state = drm_atomic_get_existing_crtc_state(state->state, state->crtc);
+> +	crtc_state = drm_atomic_get_existing_crtc_state(new_plane_state->state,
+> +							new_plane_state->crtc);
+>  	/* we should have a crtc state if the plane is attached to a crtc */
+>  	if (WARN_ON(!crtc_state))
+>  		return 0;
+> @@ -118,17 +119,17 @@ static int omap_plane_atomic_check(struct drm_plane *plane,
+>  	if (!crtc_state->enable)
+>  		return 0;
+>  
+> -	if (state->crtc_x < 0 || state->crtc_y < 0)
+> +	if (new_plane_state->crtc_x < 0 || new_plane_state->crtc_y < 0)
+>  		return -EINVAL;
+>  
+> -	if (state->crtc_x + state->crtc_w > crtc_state->adjusted_mode.hdisplay)
+> +	if (new_plane_state->crtc_x + new_plane_state->crtc_w > crtc_state->adjusted_mode.hdisplay)
+
+I can't help thinking we're using too long variable names... :-(
+
+>  		return -EINVAL;
+>  
+> -	if (state->crtc_y + state->crtc_h > crtc_state->adjusted_mode.vdisplay)
+> +	if (new_plane_state->crtc_y + new_plane_state->crtc_h > crtc_state->adjusted_mode.vdisplay)
+>  		return -EINVAL;
+>  
+> -	if (state->rotation != DRM_MODE_ROTATE_0 &&
+> -	    !omap_framebuffer_supports_rotation(state->fb))
+> +	if (new_plane_state->rotation != DRM_MODE_ROTATE_0 &&
+> +	    !omap_framebuffer_supports_rotation(new_plane_state->fb))
+>  		return -EINVAL;
+>  
+>  	return 0;
+
+[...]
+
+-- 
+Regards,
+
+Laurent Pinchart
