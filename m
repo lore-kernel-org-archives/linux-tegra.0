@@ -2,136 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0732C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAA1C433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACD63238EF
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA82A23772
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 16:16:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbhAOQNi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 11:13:38 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17173 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbhAOQNi (ORCPT
+        id S1725923AbhAOQQk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 11:16:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbhAOQQj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 11:13:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B6001bf090000>; Fri, 15 Jan 2021 08:12:57 -0800
-Received: from [10.26.73.78] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 15 Jan
- 2021 16:12:54 +0000
-Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
-To:     Saravana Kannan <saravanak@google.com>
-CC:     Marc Zyngier <maz@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20201218031703.3053753-1-saravanak@google.com>
- <X/dpkgTnUk+inKHK@kroah.com> <e28e1f38d87c12a3c714a6573beba6e1@kernel.org>
- <ba2fcbfb-d714-2f73-3bd0-962f49363b62@nvidia.com>
- <CAGETcx8pdPnH1ndOCoi7Qyz8DDshCfMTzDLQM=oEaCjyds9reA@mail.gmail.com>
- <17703ac8-2238-0b64-3c98-ddadc7ae8a36@nvidia.com>
- <CAGETcx-=y4Ps41Lb0b_MTCbNTC_ah0cJTmPP+GajywFBc7kEfw@mail.gmail.com>
- <f0240065-a4a0-d985-a696-eba4d42ea580@nvidia.com>
- <CAGETcx_QmbOcof5T8Wo_zFXKB+qswPN3Cbwz5a6A+m+VrnWg0A@mail.gmail.com>
- <a38c0566-a58e-aaf7-ef57-dc294c4e71b4@nvidia.com>
- <CAGETcx9szf-=JjFNp0p-0LmOfOU1MWE3QqDNe-bAn2wXPH9pEQ@mail.gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f3683601-66db-ffe3-9066-ac94a9372727@nvidia.com>
-Date:   Fri, 15 Jan 2021 16:12:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 15 Jan 2021 11:16:39 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300D9C061757
+        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 08:16:24 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id y17so9822760wrr.10
+        for <linux-tegra@vger.kernel.org>; Fri, 15 Jan 2021 08:16:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g7JbEVsR6hed7rNs5IQiLomB3I1tp8PyB2urljaCSwE=;
+        b=EsFnt9FjssJUKYVHi70fmTgHzWLbKC8a9WAzFKSxrf2NwiJGIkPhpi9cqWsMMHIB1N
+         56YBnNK5YkLq02FYZvJ3naIV4nj7WkXefd7zBjzyJ6jSS/ewW7CumW7LMHddyYkwWFwm
+         XHgUg2rdsLX7wWzh5HPJHQZ13FtzHuCeb1JRiE8G6bqEU2uZHonQvu8CfC6/5G5DKvU9
+         rwRoTK8qFugcegCdeYpfZ/8cBNnrQeVkRNNt6AbFSTIzMYVScfb8u2yDh+0ntMe8uTxJ
+         M0ebTDWVyMbjGwz/ovff8GQh+RHQGGsldgrbdgsOXMNTeEiV4aUSE/LSTns3/1DndBJj
+         tmpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g7JbEVsR6hed7rNs5IQiLomB3I1tp8PyB2urljaCSwE=;
+        b=ifwynxi5oHIz1eS+6/CwMZYqBhkehRCiyNWoGq/WIy4O44Rw9NJQq2lbcvzYesNBGp
+         3XdDE6yza/DcV5QqYBCOpMzlBgkH3Y6anA/G62PkmTFczMn/TPWJFZmmJkJV285CRfJq
+         r5faz6lGm5Nd9Ovhy+U/EwQredzJR20pUIn42BU7F/l+UVCN6BwkAugJ3qL556n0aYff
+         sv76IIWTf7DVD2cVQBRQbo+j4xQ05TU00F6/6Y5ozLr9p/gbouMZWW6WFQYLmHQ//ahl
+         8c9UTVkPWeqcm9KzB1nUMl/S9+ZlUFMp6XmkFAvxsW/7Dge474n/0Flo2YJyKlYG9r5o
+         c2RA==
+X-Gm-Message-State: AOAM531a23KE6GFWgfUsWm6W+r0jYkopTle2JFh5h4aSs1kSWm5hic2K
+        eO0kP1btQXmB5O3TfirP8uY=
+X-Google-Smtp-Source: ABdhPJz9jeKybwSSqsE8URg/01ZwtZjzdv2knp6hjtYRPUNR7Rp/VuENkn+AnJYqxLoh1SkihlMmSA==
+X-Received: by 2002:adf:80d0:: with SMTP id 74mr14192059wrl.110.1610727382984;
+        Fri, 15 Jan 2021 08:16:22 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id p8sm16034262wru.50.2021.01.15.08.16.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jan 2021 08:16:21 -0800 (PST)
+Date:   Fri, 15 Jan 2021 17:16:20 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] drm/tegra: falcon: Support newer VIC firmware
+Message-ID: <YAG/1MTY8BdO+Msr@ulmo>
+References: <20210112113707.3837876-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGETcx9szf-=JjFNp0p-0LmOfOU1MWE3QqDNe-bAn2wXPH9pEQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610727177; bh=c2f56oAIuPvnccFuxorIRvCzWCtWaZTs/1xK7y8H1i4=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=NuuOySC3OSfMOloaTwT4aAgns9+FMrdwL9TfphWEKU9N7wnEpNkT47/MO2DmQA8r0
-         mnI/86Pvua6nDgisyLZmty9PEsj41w7Q0/qT6NywBNgSXZQMCFMXPr/idFNvlwgyOK
-         ASjwp8jAgnA3RjD9HbiV5AzgTuCoKvfA9Rj00H3ucYMVJltUWBHIe2n/12t8tBfCCU
-         JEepgXxBPCJmLptfcsE6qW20R9suKTuSmplSndy0ioNyncrebbj2S6cF9JP5Kx233t
-         qEuGC9iN9X5JXcXj9iSc6J5b21D8MFBSbTBN3TgBbT5yECLnBudUnj8saluRTGHljm
-         A/c6hPditQqIg==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J0xAiNj7E4FsUDNa"
+Content-Disposition: inline
+In-Reply-To: <20210112113707.3837876-1-mperttunen@nvidia.com>
+User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 14/01/2021 21:50, Saravana Kannan wrote:
-> On Thu, Jan 14, 2021 at 10:55 AM Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->>
->> On 14/01/2021 16:52, Saravana Kannan wrote:
->>
->> ...
->>
->>> Thanks! I think you forgot to enable those logs though. Also, while
->>> you are at it, maybe enable the logs in device_link_add() too please?
->>
->>
->> Sorry try this one.
->>
->> Cheers
->> Jon
-> 
-> Phew! That took almost 4 hours to debug on the side! I think I figured
-> it out. Can you try this patch? If it works or improves things, I'll
-> explain why it helps.
-> 
-> -Saravana
-> 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 5f9eed79a8aa..1c8c65c4a887 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1258,6 +1258,8 @@ DEFINE_SIMPLE_PROP(pinctrl5, "pinctrl-5", NULL)
->  DEFINE_SIMPLE_PROP(pinctrl6, "pinctrl-6", NULL)
->  DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
->  DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
-> +DEFINE_SIMPLE_PROP(gpio_compat, "gpio", "#gpio-cells")
-> +DEFINE_SIMPLE_PROP(gpios_compat, "gpios", "#gpio-cells")
->  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
->  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
->  DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
-> @@ -1296,6 +1298,8 @@ static const struct supplier_bindings
-> of_supplier_bindings[] = {
->         { .parse_prop = parse_pinctrl6, },
->         { .parse_prop = parse_pinctrl7, },
->         { .parse_prop = parse_pinctrl8, },
-> +       { .parse_prop = parse_gpio_compat, },
-> +       { .parse_prop = parse_gpios_compat, },
->         { .parse_prop = parse_regulators, },
->         { .parse_prop = parse_gpio, },
->         { .parse_prop = parse_gpios, },
-> 
+--J0xAiNj7E4FsUDNa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, that worked!
+On Tue, Jan 12, 2021 at 01:37:06PM +0200, Mikko Perttunen wrote:
+> Support newer VIC firmware by accepting the new magic number 0x10fe,
+> loading the full code segment instead of just the first page at boot
+> time, and skipping FCE setup if the firmware header indicates that
+> FCE is handled internally by the firmware.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/falcon.c |  9 +++++----
+>  drivers/gpu/drm/tegra/vic.c    | 21 +++++++++++++--------
+>  2 files changed, 18 insertions(+), 12 deletions(-)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Both patches applied, thanks.
 
-Thanks for digging into that one. Would have taken me more than 4 hours!
+Thierry
 
-Jon
+--J0xAiNj7E4FsUDNa
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmABv9IACgkQ3SOs138+
+s6HRaA//flUNiwu+BTIMkgejTbqnIfXuvdwappq+ITMYLcl/WxAgr1j50JRyB+o1
+oQIGSQIR4inK11HkoFI0F0hpYLVvVFkBdhUMedC4di44lSGYchMPlukwiYn5/eKG
+VgI1IXKjaPbSzj0ckVETO+KROhU9O/P5lxbLWaipfjzoJ6uK7cu3dVqXGWYvJeA8
+WoDBstZDAKGmp/OlNV5s/xnuwCsUjjNDW8njBiSt44saCQNzeUalZyfrdRnjLAy2
+Oet87FmOCDr/+F9Q0AruFiIBHPU4Glhgy6ZaFo9SndO3G9Sr6q4tKjmEefGvMBjO
+3VfNiNLe99Og4PeMG0hI33rdVlvVl7b5Npcvm3z966W7U4/ESVVmTvpromg/rFG0
+QTDktpzlWJey+v3SdtbdnFSGdY2OliK84w1xGmHfPDip0u09ZV6kenKXAkjht1s+
+46RHmTh3b3tme8wzcMfHXkgj0lUXxg+dzYIYgCv6iDHMQ9RUyzKTFxktAnw5lW6q
+wnkADbcNZ14M81e9MCAbKH8veAQ23ilCUpEavzHu06C0fALpNOuiTrOxogOFTqCZ
+nrXGMlL2GdH2Rb8icgDOywDmam+u9yoYBcRmhQv6PuPj3xwalXnYV8DIYH4kJwRv
+hI2/CdZu+FW+8UzjRLP656ajTv1Mi11y3Jp+wPrCQsiVtahBMdA=
+=6QL4
+-----END PGP SIGNATURE-----
+
+--J0xAiNj7E4FsUDNa--
