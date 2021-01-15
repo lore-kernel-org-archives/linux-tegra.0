@@ -5,200 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10982C433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 15:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7C4C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 15:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D20F423888
-	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 15:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19928238E7
+	for <linux-tegra@archiver.kernel.org>; Fri, 15 Jan 2021 15:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731623AbhAOPpY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 15 Jan 2021 10:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52298 "EHLO
+        id S1728330AbhAOP6V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 15 Jan 2021 10:58:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbhAOPpY (ORCPT
+        with ESMTP id S1728020AbhAOP6V (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 15 Jan 2021 10:45:24 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A996C0613C1;
-        Fri, 15 Jan 2021 07:44:44 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id h17so7584805wmq.1;
-        Fri, 15 Jan 2021 07:44:43 -0800 (PST)
+        Fri, 15 Jan 2021 10:58:21 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B12C061757;
+        Fri, 15 Jan 2021 07:57:40 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id n142so12106467qkn.2;
+        Fri, 15 Jan 2021 07:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=v8S8qEdVz3GDJ+77anbenPYreFZ0YsaL7qAKkmhD9uk=;
-        b=EUGbHoTQfbzJ+kkwO5O+XPiigwOXJulEPDH5oQ1EWpoodmnWZy9jaslxD87JVaa7B9
-         KAGo6qviSfw30M1GfDLV29RHbV0jveROpYLmM7nY5YuUPKEOAG//d4XnL2y8YYyWUYlE
-         rC8GdhyIDuU4nRiCzxzs+ky4ozCILj3vZZNXSNMGXdQ+ZKNjc6ZJRPny4aTKXEr+N8/h
-         ltIiU+ZQX15IpWiegVgQC2gssKPtK8ccfTH/myEge4IaGHYR3Nt1rgIkMA0nsOg7ECmR
-         Mczez7WJYQKjgP22ItBo3AnpFviXS9eJCzVAereLaVAOAbQORhw5HD0fykOql+mMnqd4
-         Li3A==
+        bh=wUihvIYTO+c9XI3nDxsZDkyRWMVzMrDyYmjZV2/Hb7w=;
+        b=Y7lA0ZiX7v5y57tlhFjW/SGGhaFXGCVUR3zuOYmxIrpk7M2p+1q4jio2oPEV09AQs0
+         gEfX6z2yV/NHWHXHK94KbBlSrCPOTUuPiMr9+nQqfAOgvwdHq6vo9iZ5AbwAYFKMtQVu
+         q4Js7SrKZavTor2/7rRqeIxLrTf4CgwSvDEleERjezWNqOjaAT/1K4qxlkOz8xw4FD5s
+         1Th1Z0pdll8vKzOS8nIArQBidu9uBplQnPgEUMzti0FO/7D/Jc3DhPuJiGtgDyOtB8sg
+         opk4T4Az3A9+xwborNXjr2I1kH3dRgy3hp/nQpUjVS5Zps+voey7MDmDu3137YnjhrK/
+         61pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v8S8qEdVz3GDJ+77anbenPYreFZ0YsaL7qAKkmhD9uk=;
-        b=C79N5QC9wlIP305spag2rblZlaH+TGOY7WrodWvCx098OUxE8gikdWV7BdgtxDF22k
-         tpWmeijGb8kFzg3nM6BDRw/3+0EN9T0JVGtkgHw6yRMQ1R5l2e1BE2TshDrGhExiWKLa
-         CUI9Y+rPLNs14osNxjH0jtWSCJfxE3XY0xhWUJxuwFgbnlBzvbPEzFfpB+d1xaIYAfow
-         CiEXh9O4VAWnB9fa7nR39bHGhq1WfbAJ6eWZnIjE50l5P6GtdLNaDGHbHHFrf4HymeBr
-         1w4dskCcchZKAqmyDZ3tw69+UNglHjLR3EYBgZbhwd7DHLPjNxHM/eYFSxwad+j6B2I6
-         mGhA==
-X-Gm-Message-State: AOAM533h6u/IsQWhDI4sTsCurlqAUo7r3+5OB23Jz8nMly5pvIcsAfT/
-        VaXSdR9seLHs7pemhXq1UCL00Dv2sP0=
-X-Google-Smtp-Source: ABdhPJyBM7/z8OiWXdolpSI28qwFk3Z03j+PwAK1KiJ8lNUsCDtKkqn41q74ZppsrBrX3SS23Fcs/w==
-X-Received: by 2002:a1c:5459:: with SMTP id p25mr8890538wmi.19.1610725482714;
-        Fri, 15 Jan 2021 07:44:42 -0800 (PST)
+        bh=wUihvIYTO+c9XI3nDxsZDkyRWMVzMrDyYmjZV2/Hb7w=;
+        b=TYqbSd7vXAqrW6EJUUm8aYTsDq8DlJ+feDrJJy6jfaNAwfP84ikZdJvEN1mZzCWY7e
+         QMC/i+46Q+9OEJjfDxElMyUBCh1E63sgBVabLeNE+lSG14yqaSr1F84vTX1b4ba2Vlk+
+         nFDbE/bJpCqSXUNob31tB8B5bM5TqyU7vxpjQcJGyYbZ/1Xc+RWaj1UpCeabJtixO/NA
+         dZ/XZ2YFbqsy6GBC8mifU+1xKK34WeLdB51ftLUygT+KWi3I/0yA5LiA1R7CozX304ns
+         CHCDZotVq8aaqJP3IFDLwSbzEdV4gfRe2PEzTHrAFQ+3v9CjSdbUCeIJwFqxZajVW2Ri
+         VCsA==
+X-Gm-Message-State: AOAM531dzW8IIGUSHsUjdWz+v5JFMsCyoeyFgZX2mZmocK2/SDbMbWDY
+        SKBdulS4AJilvxEFKT6Krjw=
+X-Google-Smtp-Source: ABdhPJz003YQOkYa4cIkwmcrgTOTizyV483ds/v1vxy/GMCLv2tXnW0h7AgWE//d4qMoLd2/Q/TDtQ==
+X-Received: by 2002:a37:27ce:: with SMTP id n197mr12952414qkn.220.1610726260200;
+        Fri, 15 Jan 2021 07:57:40 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id i59sm11757982wri.3.2021.01.15.07.44.41
+        by smtp.gmail.com with ESMTPSA id t5sm5053412qte.20.2021.01.15.07.57.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 07:44:41 -0800 (PST)
-Date:   Fri, 15 Jan 2021 16:44:40 +0100
+        Fri, 15 Jan 2021 07:57:39 -0800 (PST)
+Date:   Fri, 15 Jan 2021 16:57:36 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] ASoC: tegra: ahub: Reset hardware properly
-Message-ID: <YAG4aFADwo7dh/oR@ulmo>
-References: <20210112125834.21545-1-digetx@gmail.com>
- <20210112125834.21545-6-digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, digetx@gmail.com, wsa@the-dreams.de,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v3] i2c: tegra: Create i2c_writesl_vi() to use with VI
+ I2C for filling TX FIFO
+Message-ID: <YAG7cJb2y3Yym1xy@ulmo>
+References: <1610478161-4877-1-git-send-email-skomatineni@nvidia.com>
+ <1610478161-4877-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nBwVPcTqRFm05mUj"
+        protocol="application/pgp-signature"; boundary="oAZvG9Hbx9gUz+i6"
 Content-Disposition: inline
-In-Reply-To: <20210112125834.21545-6-digetx@gmail.com>
+In-Reply-To: <1610478161-4877-2-git-send-email-skomatineni@nvidia.com>
 User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---nBwVPcTqRFm05mUj
+--oAZvG9Hbx9gUz+i6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 12, 2021 at 03:58:34PM +0300, Dmitry Osipenko wrote:
-> Assert hardware reset before clocks are enabled and then de-assert it
-> after clocks are enabled. This brings hardware into a predictable state
-> and removes relying on implicit de-assertion of resets which is done by
-> the clk driver.
+On Tue, Jan 12, 2021 at 11:02:41AM -0800, Sowjanya Komatineni wrote:
+> VI I2C controller has known hardware bug where immediate multiple
+> writes to TX_FIFO register gets stuck.
 >=20
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Recommended software work around is to read I2C register after
+> each write to TX_FIFO register to flush out the data.
+>=20
+> This patch implements this work around for VI I2C controller.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  sound/soc/tegra/tegra30_ahub.c | 33 ++++++++++++++++-----------------
->  sound/soc/tegra/tegra30_ahub.h |  1 +
->  2 files changed, 17 insertions(+), 17 deletions(-)
->=20
-> diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahu=
-b.c
-> index 4dbb58f7ea36..246cf6a373a1 100644
-> --- a/sound/soc/tegra/tegra30_ahub.c
-> +++ b/sound/soc/tegra/tegra30_ahub.c
-> @@ -65,10 +65,20 @@ static int tegra30_ahub_runtime_resume(struct device =
-*dev)
->  {
->  	int ret;
-> =20
-> +	ret =3D reset_control_assert(ahub->reset);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret =3D clk_bulk_prepare_enable(ahub->nclocks, ahub->clocks);
->  	if (ret)
->  		return ret;
-> =20
-> +	ret =3D reset_control_reset(ahub->reset);
-> +	if (ret) {
-> +		clk_bulk_disable_unprepare(ahub->nclocks, ahub->clocks);
-> +		return ret;
-> +	}
-> +
->  	regcache_cache_only(ahub->regmap_apbif, false);
->  	regcache_cache_only(ahub->regmap_ahub, false);
-> =20
-> @@ -462,7 +472,6 @@ static int tegra30_ahub_probe(struct platform_device =
-*pdev)
->  {
->  	const struct of_device_id *match;
->  	const struct tegra30_ahub_soc_data *soc_data;
-> -	struct reset_control *rst;
->  	struct resource *res0;
->  	void __iomem *regs_apbif, *regs_ahub;
->  	int ret =3D 0;
-> @@ -475,22 +484,6 @@ static int tegra30_ahub_probe(struct platform_device=
- *pdev)
->  		return -EINVAL;
->  	soc_data =3D match->data;
-> =20
-> -	/*
-> -	 * The AHUB hosts a register bus: the "configlink". For this to
-> -	 * operate correctly, all devices on this bus must be out of reset.
-> -	 * Ensure that here.
-> -	 */
-> -	rst =3D of_reset_control_array_get_exclusive(pdev->dev.of_node);
-> -	if (IS_ERR(rst)) {
-> -		dev_err(&pdev->dev, "Can't get reset: %p\n", rst);
-> -		return PTR_ERR(rst);
-> -	}
-> -
-> -	ret =3D reset_control_deassert(rst);
-> -	reset_control_put(rst);
-> -	if (ret)
-> -		return ret;
-> -
->  	ahub =3D devm_kzalloc(&pdev->dev, sizeof(struct tegra30_ahub),
->  			    GFP_KERNEL);
->  	if (!ahub)
-> @@ -507,6 +500,12 @@ static int tegra30_ahub_probe(struct platform_device=
- *pdev)
->  	if (ret)
->  		return ret;
-> =20
-> +	ahub->reset =3D devm_reset_control_array_get_exclusive(&pdev->dev);
-> +	if (IS_ERR(ahub->reset)) {
-> +		dev_err(&pdev->dev, "Can't get reset: %p\n", ahub->reset);
+>  drivers/i2c/busses/i2c-tegra.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
 
-I didn't notice that the prior patch already introduced this, but I'd
-prefer for this to either be %pe so that the symbolic error name is
-printed, or %ld with PTR_ERR(ahub->reset) to format this in a more
-standard way that can be more easily grepped for and parsed.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-It also seems like the prior patch that converts this to use
-of_reset_control_array_get_exclusive() is a bit pointless now. Why not
-just move to this directly instead?
-
-Thierry
-
---nBwVPcTqRFm05mUj
+--oAZvG9Hbx9gUz+i6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmABuGgACgkQ3SOs138+
-s6HpEg/9ELKKB/l2VIM6U1hL0jP6a3U3a6FcQ4eM1uoBvicpEZH0FEJeJxYDyxBF
-zAtT473WDtsUNRsUqE1Vhuril6cQJ8Y69885n3UCqQ85lzo0Tn7Gcse9gNqehkDY
-6Zwh4R6juN7+83ek1oQ/3K7jdzaUDS032WAWUT/KhIoTSs7WpvM4ZQuROGdG4a2V
-uIFiFPqa4TNDiMPuSEpNmNsrcJo4xww+QGuq+ySqsOJnF74b+rGboimcNMoSQbVs
-1ZPB1GBvt+k9ixhJRdS/jVm+31vK4bFKtrbVTd3BxEtP6OLEBWXIv2anQwETWIvO
-gOBjAhRuzNL9fSGZToyfdRqo7a2Or+t10Of1R0aMiKdaguYQr8FXLfY9rjq/19pw
-/9HuEIfneYEZqicos2urNnk0r5gTNcWdo1gNsmqfkZGy9d/DEjZGN/xuhGCUpicq
-cBEkfIkg/YvhYcVszhdSVGCs0PuaZ60PHCjTYp1l5ExF/n5J4spMyhWp9AR9cLvz
-dX6HeXrmaU98XYYdut2HIQZJ6AJa3UtLTOfqfSrgdwUGgqelPaBXRYmQ5dZda12X
-rJ0SWAjplPQmQ3Sj7llJCL2V2Z3X9liphP8q70puqwGhY8QUcb1yiU37fVczvR8S
-EuCd40QajKHa3Xj9QS4djfrZ4h7Oh3535k7AJybZ7yeRlgHIhSc=
-=g2ZT
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmABu24ACgkQ3SOs138+
+s6FI+g//bK107HZ6P4WEwIsk6ntl3FeTnn4J/0XajD+VkUp4bMoZHOtqBHBEdl4R
+dzSIz0B37wVyr2uS4/MvRcdU5WndLpwOG9ZsiUvhR9BI86AlWiqqrTNjzq4ddQ1a
+Aj/mue6Q/Zdgzx5T7Hfs6KnpZcHlz+nGGIK878fUqmKKMtFScyoPuN1wk+FI6ljU
+Fj40ZPjZxMIP/YGosv2W9+m3rYYvksh/87iDF2GnH9BWzPppA4Y2OqeYNiXKblbp
+Cq9xZAo/ilsADBPSJ9sS5fNVsLTh7qg/gGOumoenyox9J1xKk1WkVj0TLUbQOxmx
++xodXVEJ0yhymRbKxJgioziMPspGXrPz33LHMeIYaI0uVw1NIEOfN6ems2lxyWtY
+DhZ0Vy1FOWOacvyq+tBs/Hg1AVaeB60fC98V9gTcXLr/DcF1V9Nxg+hxMugrKjqp
+aN10FpurrmMLQxZsdO3OoIBNae3Ti0c6QYdjsIohPB4hh+0teRXXPGOhjHxmYbE8
+cqWI1BovSlfL7bMMzH7LBKn6MaHsud2hb3G5WH/HheEk5wnrSVXFn64m6+UCVSKk
+3O1ymLtEv9ukBpllHDEibseHNi3/UeVB0Oai4v5durVoJWRQQnNUlCi89Dpj2r4b
+alLWfd1JyBSDBJXg2KyxbePzyvTZX6dFMDc9V7QJ9C5J7ZIQ9eM=
+=X1yL
 -----END PGP SIGNATURE-----
 
---nBwVPcTqRFm05mUj--
+--oAZvG9Hbx9gUz+i6--
