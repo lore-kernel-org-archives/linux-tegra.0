@@ -2,83 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F24CC433E0
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 11:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F16C433E0
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 13:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 057A02074F
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 11:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E392222B
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 13:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbhAQLZd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Jan 2021 06:25:33 -0500
-Received: from sauhun.de ([88.99.104.3]:35480 "EHLO pokefinder.org"
+        id S1728579AbhAQNVa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Jan 2021 08:21:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbhAQLZa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Jan 2021 06:25:30 -0500
-Received: from localhost (p54b3344f.dip0.t-ipconnect.de [84.179.52.79])
-        by pokefinder.org (Postfix) with ESMTPSA id F0DF72C04D8;
-        Sun, 17 Jan 2021 12:24:46 +0100 (CET)
-Date:   Sun, 17 Jan 2021 12:24:46 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: tegra: Create i2c_writesl_vi() to use with VI
- I2C for filling TX FIFO
-Message-ID: <20210117112446.GC1983@ninjato>
-References: <1610478161-4877-1-git-send-email-skomatineni@nvidia.com>
- <1610478161-4877-2-git-send-email-skomatineni@nvidia.com>
+        id S1728538AbhAQNV3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 17 Jan 2021 08:21:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E6262222A;
+        Sun, 17 Jan 2021 13:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1610889648;
+        bh=9P16Qc1fDjEpHvys6GdWgaFdY2+VGQav+DW/Ke2p3oU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AUzpFoxXCU+ZWal3396Lr99WF0MXcZFtQAKnLQU6MPCBave6RF8KXzkqvqkmSAouz
+         AAXB9g/6lS64rR/sJKRuiZMlSGmRGilqkuSLBJe79mUrEMMEg3nPkXNOeueoM766/O
+         cGQdjZYflxN1KwfbTEZH5swaPyR3GUaK15BBxI18=
+Date:   Sun, 17 Jan 2021 14:20:47 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.10 000/103] 5.10.8-rc1 review
+Message-ID: <YAQ5r4QRVv4zjnQR@kroah.com>
+References: <20210115122006.047132306@linuxfoundation.org>
+ <a9195879679a4280b4c666be8d573617@HQMAIL105.nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ncSAzJYg3Aa9+CRW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1610478161-4877-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <a9195879679a4280b4c666be8d573617@HQMAIL105.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Jan 15, 2021 at 04:19:46PM +0000, Jon Hunter wrote:
+> On Fri, 15 Jan 2021 13:26:53 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.8 release.
+> > There are 103 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun, 17 Jan 2021 12:19:42 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.8-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.10:
+>     12 builds:	12 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     64 tests:	64 pass, 0 fail
+> 
+> Linux version:	5.10.8-rc1-gc6e710bf849b
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
---ncSAzJYg3Aa9+CRW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for testing them all and letting me know.
 
-On Tue, Jan 12, 2021 at 11:02:41AM -0800, Sowjanya Komatineni wrote:
-> VI I2C controller has known hardware bug where immediate multiple
-> writes to TX_FIFO register gets stuck.
->=20
-> Recommended software work around is to read I2C register after
-> each write to TX_FIFO register to flush out the data.
->=20
-> This patch implements this work around for VI I2C controller.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-
-Applied to for-current, thanks!
-
-
---ncSAzJYg3Aa9+CRW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAEHn4ACgkQFA3kzBSg
-KbauDQ//WWf4l+IGkmljJgqCl0gS+WfQEGYVDnreh1bK7jKXzmGsB6WJ1eshsiFf
-UKTDVx0lbOSEo724D6Fix/AjIx1LCKXUwUV3jvDk9OxQol8e5S4w/McWN3qQKhrH
-dGfLoFfvDWg1kRnFctk9wrjxQyi+jzkY7mT0i1+9ZcDntPew7pxHBqxQhlrk9Wnt
-ehzkXahoTlPDYzrQ+lnNVZj0s28TB3SiU+PAlc/KKwuLi+v2GwkpQSfccD7DarMK
-tpWHT3N3OHJBg8PsNQwP1B5gX33HZ+OX/LgJUKntfWfLzK5UyM82t3T328tGzN3u
-2w4/jHXXXbWFaz23Da0hjDc5ETTte96beocPKWxDBtRwnf3IIty+6KoHBjL+oCrF
-GWcgvEvo7cKXFhKNzs5plmHvYrP3EaHd7W++GG4W3GvMa8vanwNO5d2HWyaO1p/N
-PvHl61Mko/+OadFYHNb+IW7qQtpKgvh6q6x+kDJ9OV14itfZxK+d6xVYIe/dilAo
-rv1HIa3TWjKiwiA5wVsP4wpFf1UGI+mbNtRO54Pd3UZXlWni6qaUk/ubD+a5pN60
-llTEbHOt4eie5yJM99DtLVki6KYCLRrh4m11AoKxDHyNFlWJumpDEH6nqQNOmVF0
-MqYB/mxDUoPSLCn3MmoPYKh5nO0r8MKZ5DFv7xuN1HR9PT/wP0I=
-=1/hR
------END PGP SIGNATURE-----
-
---ncSAzJYg3Aa9+CRW--
+greg k-h
