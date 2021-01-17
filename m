@@ -2,165 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE11C433DB
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 23:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B005FC433DB
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 23:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9375922522
-	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 23:19:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67FAD2251F
+	for <linux-tegra@archiver.kernel.org>; Sun, 17 Jan 2021 23:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbhAQXTR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Jan 2021 18:19:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
+        id S1730400AbhAQXcU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Jan 2021 18:32:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729936AbhAQXTP (ORCPT
+        with ESMTP id S1729349AbhAQXcT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Jan 2021 18:19:15 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04B7C061573;
-        Sun, 17 Jan 2021 15:18:34 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id a12so21454498lfl.6;
-        Sun, 17 Jan 2021 15:18:34 -0800 (PST)
+        Sun, 17 Jan 2021 18:32:19 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8934FC061573;
+        Sun, 17 Jan 2021 15:31:38 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id v67so21468545lfa.0;
+        Sun, 17 Jan 2021 15:31:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sq4yZQdAteM9zcWr1ItP1nFqtCn3ipB5YcMTpKk0NwE=;
-        b=hwPu9DDF1x6++8kqaee1IpHkqnC4ie4htJy/fuew9Jkk1M94f3hwZTcvM6OWhqFRJW
-         n8+QWcnKs8xi3JMMBy+MSDIMRHg/d3xLLRshkzKEdxSmRuhNccSCVx15y7VRoQ9/2CEh
-         yj9OmpzVhDSk4EKuTQpd+JWKaaOsSYqFh4N/YCvc6AYg5YSUcZuN3i5B+iF/3bdBheo+
-         Ojpeb/+cQ9e6XCsCEGWtio+3F7/kyxAScjubXGwQKVLmaLlvonwLwMOSxAX0jR767JH6
-         V42O5KOrHxEUNIv8fjJSKVWT5Zj/Uv8mhTpBOcUprQVuuhPz/3ynilX0SiFpJEKUN0z1
-         TkYw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H8Z9/ZSAEmrFlwkMVk+Nep1g2PRuUGd/OosI/Tv5lXU=;
+        b=JQu0gkJL/B6HWq2ogRHgtMZLnQLXsJOVvt+rI116ay6gI/1lMjFX5HG8utTEIS9PX0
+         kJ3pNAyXpW3CZ8YUIFC+fB51sG2e4Jsq7Hp/GhYW8l8TPc8bWNDAHm99fvrkDP/yyHOy
+         fqkdHhnqTFsm48UEhxJ6ceTMnwWQRBxUiQBPlsMytcWhwoOMvHWTfyxHi+nFWoWcBmAP
+         1PsilHTJFi8+Zd2JHYkZvEzfEExitcnf/3J7J/7AtJF/7q9X4x6+OCZOfeCglFl0RcXm
+         XQ1S/+IcGXCaYVjv4kK3tTYwi6bcuL07fPHHGcndj+1WFjW2woYXyeSoUE6eAQgJuVeK
+         a8Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sq4yZQdAteM9zcWr1ItP1nFqtCn3ipB5YcMTpKk0NwE=;
-        b=iP1mfEHzJWS62BAnSZpK9ov+XwjjezK4wWAXYixHfDvWAoZ91TfvEvoQ3U3QVcDB3V
-         EZ0wRjH3jBvycKEjKoEbHEgSQBUkz4Hs59kjXWeIsTNSFtHQBA1mN0QlcXsUOf++Aqpf
-         BOewbjJUqvdUxqGUQ1W2GAq6SmaWCNRGanjfvDMx7oI69TNpneF5xU+WzLiDFNLluaJU
-         keN2twmat1WMwaxD/zyuShFfBjD5UAIIHGThWWIIBsL7p3LCcAutqYxnb6r4n9N+5P2n
-         ooqCyUZLXdxIgdBKxuwnF+LtRmoROMPQfajwCVeE9V3009AvdoRGTYUdHew0Wx6liaTf
-         FDbQ==
-X-Gm-Message-State: AOAM532gy/VwZaXAdgm4eKtqc7FsDkSSpuPdDbLsAMt2HTkXaMsC70Wu
-        PJC10SoxE6u/2kGsrmn/BiQ=
-X-Google-Smtp-Source: ABdhPJz3dpZSgPb/NFdl0tvBy1tbfKxDf6ewKkexLSmU8ZGnKcHdkfWGKJ5FVaQkDgnl6NT9kbOb0Q==
-X-Received: by 2002:a19:ac0c:: with SMTP id g12mr10494423lfc.51.1610925512080;
-        Sun, 17 Jan 2021 15:18:32 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id d6sm1697226lfl.175.2021.01.17.15.18.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Jan 2021 15:18:31 -0800 (PST)
+        bh=H8Z9/ZSAEmrFlwkMVk+Nep1g2PRuUGd/OosI/Tv5lXU=;
+        b=MX47LJzkBLKnxwkgPL3hAjh3dV+I5JptIeIkXfpTa4fNed4XWKabCQ3hd0CIffe2eP
+         unZiuooz7vu3oua0iqe8l9JRnm70mnHe+409hQy9BRTpyG6fz1w31o5jdJeiOH4B2kIm
+         YWe31k6jRFfmSxPDd880xpOk8Hs2GWhMuIdcAll3J7HIZgTWIXUeTLgwqSeMjlYC8sTl
+         hkrAs1vvWWxzaGWyNsma4JjUqeoRZOR5oenDAyLfP1mmv6FRcxE3pgQ74/Q1e1BfJz1a
+         5TlU1+PXbzyTGYn6CMS40WxWbLfoc5zPL86UmPSlxcXG1+R5AKzNr2FgBmeDvcWXuZOd
+         eXuA==
+X-Gm-Message-State: AOAM531pRJeWOJtih2V00aX9RtnRC2Je8dyjFFS3m1gL85Ck9/P7u2fR
+        bR4YF/YpL6SL7i2K8jRWHeEJtsblYq0=
+X-Google-Smtp-Source: ABdhPJy/vM8U2unQrywODC5Emgj5gvRF91iUTa4Q5N7Bh8b9f0OsJb2+9RRhl4ybkEkyC7BdEJCYUg==
+X-Received: by 2002:a19:48e:: with SMTP id 136mr10074687lfe.357.1610926296882;
+        Sun, 17 Jan 2021 15:31:36 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id e9sm1700913lft.104.2021.01.17.15.31.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Jan 2021 15:31:36 -0800 (PST)
+Subject: Re: [PATCH v1 1/5] ALSA: hda/tegra: Use clk_bulk helpers
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210112125834.21545-1-digetx@gmail.com>
+ <20210112125834.21545-2-digetx@gmail.com> <YAGzJM7BJqLV0xxY@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J . Wysocki " <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] cpufreq: tegra20: Use resource-managed API
-Date:   Mon, 18 Jan 2021 02:18:25 +0300
-Message-Id: <20210117231825.28256-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
+Message-ID: <b84c6d9f-e113-e249-cd76-248e2cd646ff@gmail.com>
+Date:   Mon, 18 Jan 2021 02:31:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <YAGzJM7BJqLV0xxY@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Switch cpufreq-tegra20 driver to use resource-managed API.
-This removes the need to get opp_table pointer using
-dev_pm_opp_get_opp_table() in order to release OPP table that
-was requested by dev_pm_opp_set_supported_hw(), making the code
-a bit more straightforward.
+15.01.2021 18:22, Thierry Reding пишет:
+...
+>>  static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+>>  {
+>>  	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
+>> @@ -495,7 +441,11 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>>  		return err;
+>>  	}
+>>  
+>> -	err = hda_tegra_init_clk(hda);
+>> +	hda->clocks[hda->nclocks++].id = "hda";
+>> +	hda->clocks[hda->nclocks++].id = "hda2hdmi";
+>> +	hda->clocks[hda->nclocks++].id = "hda2codec_2x";
+> 
+> Originally the code did this in this order: "hda", "hda2codec_2x" and
+> "hda2hdmi". I don't expect the exact order to be very relevant, but was
+> there any particular reason to change it?
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/cpufreq/tegra20-cpufreq.c | 45 +++++++++++++++----------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-index 8c893043953e..e8db3d75be25 100644
---- a/drivers/cpufreq/tegra20-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -32,6 +32,16 @@ static bool cpu0_node_has_opp_v2_prop(void)
- 	return ret;
- }
- 
-+static void tegra20_cpufreq_put_supported_hw(void *opp_table)
-+{
-+	dev_pm_opp_put_supported_hw(opp_table);
-+}
-+
-+static void tegra20_cpufreq_dt_unregister(void *cpufreq_dt)
-+{
-+	platform_device_unregister(cpufreq_dt);
-+}
-+
- static int tegra20_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct platform_device *cpufreq_dt;
-@@ -68,42 +78,31 @@ static int tegra20_cpufreq_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	err = devm_add_action_or_reset(&pdev->dev,
-+				       tegra20_cpufreq_put_supported_hw,
-+				       opp_table);
-+	if (err)
-+		return err;
-+
- 	cpufreq_dt = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
- 	err = PTR_ERR_OR_ZERO(cpufreq_dt);
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"failed to create cpufreq-dt device: %d\n", err);
--		goto err_put_supported_hw;
-+		return err;
- 	}
- 
--	platform_set_drvdata(pdev, cpufreq_dt);
--
--	return 0;
--
--err_put_supported_hw:
--	dev_pm_opp_put_supported_hw(opp_table);
--
--	return err;
--}
--
--static int tegra20_cpufreq_remove(struct platform_device *pdev)
--{
--	struct platform_device *cpufreq_dt;
--	struct opp_table *opp_table;
--
--	cpufreq_dt = platform_get_drvdata(pdev);
--	platform_device_unregister(cpufreq_dt);
--
--	opp_table = dev_pm_opp_get_opp_table(get_cpu_device(0));
--	dev_pm_opp_put_supported_hw(opp_table);
--	dev_pm_opp_put_opp_table(opp_table);
-+	err = devm_add_action_or_reset(&pdev->dev,
-+				       tegra20_cpufreq_dt_unregister,
-+				       cpufreq_dt);
-+	if (err)
-+		return err;
- 
- 	return 0;
- }
- 
- static struct platform_driver tegra20_cpufreq_driver = {
- 	.probe		= tegra20_cpufreq_probe,
--	.remove		= tegra20_cpufreq_remove,
- 	.driver		= {
- 		.name	= "tegra20-cpufreq",
- 	},
--- 
-2.29.2
-
+The reason was "to make code look nicer". This was a conscious decision
+since indeed the clocks order shouldn't matter for this driver.
