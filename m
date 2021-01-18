@@ -2,96 +2,125 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75ACC433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 15:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B7CC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 18:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F37F22C9E
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 15:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 082B522C9E
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 18:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404949AbhARPqs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 10:46:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39494 "EHLO
+        id S2407615AbhARSgT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 13:36:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405984AbhARPd2 (ORCPT
+        with ESMTP id S2407690AbhARSfs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 10:33:28 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01EA2C061757
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 07:32:46 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id n11so18653875lji.5
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 07:32:46 -0800 (PST)
+        Mon, 18 Jan 2021 13:35:48 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F774C061574;
+        Mon, 18 Jan 2021 10:35:08 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id s26so25409335lfc.8;
+        Mon, 18 Jan 2021 10:35:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bBQOG7vxoM6QNk6U3xhAhy3xS9YtkVdNjMmBgzCoLbA=;
-        b=Cuhm6Se308oUzIL+drXDZ+cwNnuIbBlps5d6xsRssecTHpjtgiuTXzQNDMhO0JY8bt
-         YszIfLR3A3eKvExUZO7VBnhwcWQLm4D59sAQxyW/hIP/kQgjZCk8tQ5PDNc13t6+Pjq2
-         Vh2K46SLjz1jIHAb14v74cfZz5YTawi+sTQT0gvsUXqFXvPCWOb8sojcejX4G7GTL5js
-         Bd/uigPucj6wczJhxvWhiZVIXVP0bGt43r5NBfHeB5VzWWXtgTsFR5ONsoTUhbOBSSTR
-         Yqyr/24gdZ0l4L5em2Zv2771xtQG3Twi+luFDeUk6OY04kZGRj5BKfmldGwrSqYUNl98
-         X2lQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IJQ7iXT5ZJJPGjCWc7ZOg3Jpy57FUNGSPots343V6k8=;
+        b=IKNVZurPpwbxQi3xk/Clq+rIAj62XBhEdmVhP58GRiJjUuXEAZslFUxhoa/8kxXvEU
+         gTtDcdLgFaZ0UAPzQYsdeZZzAOMi2CFP5sxEHPxqlrb3zopA1E6hEXeZ4ZY1zqyhioHB
+         2uG/p2g1rOwbpVotyMsBqBcED5/MKoWGqt8Y4zul52D1FO8tyN0NbdDM/HmJkGQ8Vszn
+         O8RS2tJNi+DAiFEPPyAc+R4t3r03xwTv54Qre2xRNCXq/SV6aF2/dgSFIKOEQMvZHNnG
+         6zoXZaWQxf+C8IN+x6NPwMn6p4Zo8wj+5/RlNR76i6rmb87HRh2fq1ydUryxJgNr6fwQ
+         3sfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bBQOG7vxoM6QNk6U3xhAhy3xS9YtkVdNjMmBgzCoLbA=;
-        b=D251V43uS8IHQVTp8YEzlmxfPnKivQDUdee98+npJNvx4OqhkkE4cljrBnIU5taDO1
-         KM6A2htjEbFO9kuWWZsdyMZQZJ2reMmmijip1oDbGcl1g85ANltvGJni8SOflYkZN4JU
-         xk6hPCEeyrlCWC4/esUo9T+nbwdSHD5JkSxR0H3Xp3oPw/j/QxdZEvfPrevpoVC7uiQp
-         3IKWy01X8o9DCSIKvvhEBfZkI6Vf2SLIyUBbkzw13AkFgNZfz8mUa2U5DAqA+qVGvlMP
-         JZ5flT+Rv1Q12r2Iya6xjnZqoXK5VXlfzIY8n36dTok5IbQ7eyD8QSVXw4U3JsssfEWz
-         UTkA==
-X-Gm-Message-State: AOAM5319QIyMT/S/eBfu3+U4h1WgEcpG8KkmHpNkbbg4IUsnzaBvmFxu
-        CAy3A4ajzxyocd3RGu5t2xHwtvq9qM+JCtYEZz7+Xw==
-X-Google-Smtp-Source: ABdhPJx4ZdzRD10FhfCcqPFhhRv+irScAwpmWxe4JltyATFb4F/WmkBfnmVNpRmz04RW1/5GvimIWM/NJ/EbS4tq3uM=
-X-Received: by 2002:a2e:586:: with SMTP id 128mr85874ljf.273.1610983965379;
- Mon, 18 Jan 2021 07:32:45 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IJQ7iXT5ZJJPGjCWc7ZOg3Jpy57FUNGSPots343V6k8=;
+        b=D66WZexjx100P/T29vwEF322empwVZ2/Tadcqri2LI2ZJnkjap5fz8S5SfsuHHubzg
+         SMw/VKj509wVpR2waau+eKf+IZaqQJlfr5/7SSSvNXzDSoZ94F9QzZDrZchkcv7Wgt+B
+         rYta9UPB8lhqzcVVOLk93UQmLZ+cu5uT8CnSXsV2VsSjJElBEIvXCnVyACRV634zyDlm
+         Hv3jFHybWAupzm7ewHl3aZ1LC/5TAoCTQf+GTH/8ge4jXvhB51I9NXTJAK5z8GbLZNkW
+         QLi1Kbsrfl/4ecxFVmjSDLdoTpz2tIvjPuldoRmStnOj7lH7iH0yiEBmEXiPkHCXsZPl
+         VEHQ==
+X-Gm-Message-State: AOAM530ClZrJZewrkNUHBvf6BWVIAcAWpevQee4+m8I/A+nQGM0Xct9R
+        ybqvHZgsTmddBgK5r09GchamuiATV04=
+X-Google-Smtp-Source: ABdhPJyZo4KZcV7s56vOT07NUXhRMBh8KcsWPfNtNu+wnqlNtl80pkRMbSaZuOv2tb32jORs1eijvw==
+X-Received: by 2002:ac2:4a75:: with SMTP id q21mr190165lfp.119.1610994906533;
+        Mon, 18 Jan 2021 10:35:06 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id w24sm1980365lfl.199.2021.01.18.10.35.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Jan 2021 10:35:05 -0800 (PST)
+Subject: Re: [PATCH v3 04/12] opp: Add dev_pm_opp_sync_regulators()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20210118005524.27787-1-digetx@gmail.com>
+ <20210118005524.27787-5-digetx@gmail.com>
+ <20210118082013.32y5tndlbw4xrdgc@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4acde958-91c1-bbcb-6e20-2d90cf0e57d3@gmail.com>
+Date:   Mon, 18 Jan 2021 21:35:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-References: <20210115210159.3090203-1-saravanak@google.com>
-In-Reply-To: <20210115210159.3090203-1-saravanak@google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 18 Jan 2021 16:32:34 +0100
-Message-ID: <CACRpkdYrzaFuWkbTe7Fmos4Bk4Ojt6wbqayDjyrS7sf98P-Rbg@mail.gmail.com>
-Subject: Re: [PATCH v1] of: property: Add fw_devlink support for "gpio" and
- "gpios" binding
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>, kernel-team@android.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210118082013.32y5tndlbw4xrdgc@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jan 15, 2021 at 10:02 PM Saravana Kannan <saravanak@google.com> wrote:
+18.01.2021 11:20, Viresh Kumar пишет:
+>> +int dev_pm_opp_sync_regulators(struct device *dev)
+>> +{
+>> +	struct opp_table *opp_table;
+>> +	struct regulator *reg;
+>> +	int i, ret = 0;
+>> +
+>> +	/* Device may not have OPP table */
+>> +	opp_table = _find_opp_table(dev);
+>> +	if (IS_ERR(opp_table))
+>> +		return 0;
+>> +
+>> +	/* Regulator may not be required for the device */
+>> +	if (!opp_table->regulators)
+>> +		goto put_table;
+>> +
+>> +	mutex_lock(&opp_table->lock);
+> What exactly do you need this lock for ?
 
-> To provide backward compatibility for boards that use deprecated DT
-> bindings, we need to add fw_devlink support for "gpio" and "gpios".
->
-> Cc: linux-tegra <linux-tegra@vger.kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Fixes: e590474768f1 ("driver core: Set fw_devlink=on by default")
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+It is needed for protecting simultaneous invocations of
+dev_pm_opp_sync_regulators() and dev_pm_opp_set_voltage().
 
-"gpios" is a valid non legacy property I think.
+The sync_regulators() should be invoked only after completion of the
+set_voltage() in a case of Tegra power domain driver since potentially
+both could be running in parallel. For example device driver may be
+changing performance state in a work thread, while PM domain state is
+syncing.
 
-Anyways:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+But maybe it will be better to move the protection to the PM driver
+since we're focused on sync_regulators() and set_voltage() here, but
+there are other OPP API functions which use regulators. I'll need to
+take a closer look at it.
