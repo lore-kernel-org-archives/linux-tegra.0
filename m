@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126E7C433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 07:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090B8C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 08:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8FEC229F0
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 07:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE1E62253A
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 08:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733061AbhARHpF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 02:45:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
+        id S1733285AbhARIMk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 03:12:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733044AbhARHo7 (ORCPT
+        with ESMTP id S2387518AbhARIMe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 02:44:59 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31358C061575
-        for <linux-tegra@vger.kernel.org>; Sun, 17 Jan 2021 23:44:19 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id 15so10419956pgx.7
-        for <linux-tegra@vger.kernel.org>; Sun, 17 Jan 2021 23:44:19 -0800 (PST)
+        Mon, 18 Jan 2021 03:12:34 -0500
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6CBC061575
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 00:11:51 -0800 (PST)
+Received: by mail-pl1-x62f.google.com with SMTP id s15so8213790plr.9
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 00:11:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=tG2ZkIlPRQanLBVIchs0TjT+jl8Xjtc0CE3s1wTefiU=;
-        b=mW1Htp48X2dHMHQjBwIQf+l6sEVMTr0sO+5+Z8pZbwVyf7CW9kcXod08hxGrB0RVeS
-         yMRzZUA9X3LMqs1bz9Pe8JFP8uEB4XcJz+4UZhlNaXUjG1nMg6Aa40B4rVBaoojNGzIX
-         mlQDOvbI2hmyupom4boWX1dmJVd17NHz3q0a+pb0CRl/TwoIVU2X9KVR/c9wS3UfIqR7
-         1x6LpBbnHUEO5iJMgqfnCOyYSxCcFS1U0GvDcazX4uecmVlb1SufgqepG3Kb5vIeDrL7
-         jidHXmx6MEihy/FhIYcxeE0Tf1xcBvpu/a9SyJwgwPK78m28Tr4tS3Sltv149fyELlGw
-         xB/A==
+        bh=QKcmKyiOriNv9CawnvLDegUn0IWwVGyV2JGDmEMB510=;
+        b=fsf7zvodAzztsfzAYxfizNdjfBiH0V2dU3ZnZS924fbocq91Oy4ifO/hdCp9iHc9ik
+         bEWEq4wBRN9oLh37aeJMb0GQvUJWCIJdHT9Y2GNdPua6Bo+r7Hhbfgg8tpNXGbd1tQv4
+         69o+LxI+OSafI5PUqcomCVy72Zv4exlc/PdvLp2Vw1miy+4yusr3ovDoUMCgQKDRMtLz
+         evFom4MSw3877mXseuu2p0cgDuuIRzs0GwJKmX0zEobet2p66F2o6Pjwg3o6Ri0mtNJ0
+         wc1ntYnzih3qatinQAvMqHdIJqs+j0hHXybePeB3cevaCltSSkXD/QYeM/Ghd0iv8EfJ
+         UMYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tG2ZkIlPRQanLBVIchs0TjT+jl8Xjtc0CE3s1wTefiU=;
-        b=c3mpTFj23lDl3MAm7nz/qWx+vhD8KFjvs/mV8xP0JrV8bJ3qkvyQ3eUHpTK8v39tII
-         KtXuuIoepVTjlYzzgL+IDuw85INPsoUK7YwckThH4OwughE5OCuus/3OsoSfT64rEDuZ
-         Q+yM8RIZuFSAMV8pTDNHQEtYiuZrcsAHDJnGtHr+dZReFEPRh44bXkvd/0+CFNlQyvns
-         YpTxWSSHZDrSL+PYfHsWDkHs/Mg7cQ5xvxhnBgaQ+F1GDEG6NB9uWKRHL4voXA1kMlDd
-         hHgewZz/B77YC2h+cALEl74cM1lJlVwjrbVflRsDCJMm3Lobc3LmCeC8yS6hSFotqHZg
-         wYJA==
-X-Gm-Message-State: AOAM5334k203nBll/u9OYNAb8yHaHA2jAYbnJhATtpVW8KIbuTu0i/kC
-        CYjlVUGAjBjWCPNuXlJ4zdalfg==
-X-Google-Smtp-Source: ABdhPJyL2i8D1O12pZSTHQR8MFhA8ZuWSJUTdowMZk6y7fHlnukMj1xt9pmoIjLK8L7QYUfwXSbycA==
-X-Received: by 2002:aa7:8701:0:b029:19e:561:d476 with SMTP id b1-20020aa787010000b029019e0561d476mr25136763pfo.2.1610955858651;
-        Sun, 17 Jan 2021 23:44:18 -0800 (PST)
+        bh=QKcmKyiOriNv9CawnvLDegUn0IWwVGyV2JGDmEMB510=;
+        b=YvFBCWqLQToAehuXfvrC0LaXs6ls6V1+eEJ9PJuDp9t2DU8ZND86oNd5bzyYJER+YB
+         cGX9Nuzzjrh2WMXx0QxkhqA3cspl+neytnPRehnJ5wRJ8o507/vukhdor4g7KOPLwPYb
+         0JrNmGlwfE7N0LIrg2G09MpHfasy1Umau9eOzlNW1uM14nY1848EJ9pzHb1L8toiuDCp
+         BGRTFPCt3PXfH0E6nxYwXNPO+rXgY/W2sT432MljlO228RyjKvUQ54wnesNLY0trc6GY
+         XBooKXoreXNGpD5IZVGwyUX4L9RHwRibj4qhP0BV4ddh1yeaIRBBE5aGPHLQFFOoMrmB
+         cAWQ==
+X-Gm-Message-State: AOAM533huLhZyH8udVaCW1fKqFXX9NnUydhMg3gYAcFYq2aN4XoqmBIm
+        kNnJWbyUpq2v2uLda/Qm0aMgXQ==
+X-Google-Smtp-Source: ABdhPJxFSgtpSYoL414526LkeAHMNoXzxaUVmksVJSVla/O6fWvtj19lRqgO+oAwdSstw1rOdo3QhQ==
+X-Received: by 2002:a17:90a:d24a:: with SMTP id o10mr23597810pjw.160.1610957510970;
+        Mon, 18 Jan 2021 00:11:50 -0800 (PST)
 Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id q23sm14930878pfg.192.2021.01.17.23.44.17
+        by smtp.gmail.com with ESMTPSA id 101sm15155588pjo.38.2021.01.18.00.11.49
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jan 2021 23:44:17 -0800 (PST)
-Date:   Mon, 18 Jan 2021 13:14:16 +0530
+        Mon, 18 Jan 2021 00:11:50 -0800 (PST)
+Date:   Mon, 18 Jan 2021 13:41:47 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -75,59 +75,66 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 01/12] opp: Fix adding OPP entries in a wrong order if
- rate is unavailable
-Message-ID: <20210118074416.5mjogew62fjohzlm@vireshk-i7>
+Subject: Re: [PATCH v3 02/12] opp: Filter out OPPs based on availability of a
+ required-OPP
+Message-ID: <20210118081147.bfk2wgu5rabqnvku@vireshk-i7>
 References: <20210118005524.27787-1-digetx@gmail.com>
- <20210118005524.27787-2-digetx@gmail.com>
+ <20210118005524.27787-3-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118005524.27787-2-digetx@gmail.com>
+In-Reply-To: <20210118005524.27787-3-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 On 18-01-21, 03:55, Dmitry Osipenko wrote:
-> Fix adding OPP entries in a wrong (opposite) order if OPP rate is
-> unavailable. The OPP comparison was erroneously skipped, thus OPPs
-> were left unsorted.
+> A required OPP may not be available, and thus, all OPPs which are using
+> this required OPP should be unavailable too.
 > 
 > Tested-by: Peter Geis <pgwipeout@gmail.com>
 > Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 > Tested-by: Matt Merhar <mattmerhar@protonmail.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/opp/core.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+>  drivers/opp/core.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
 > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index dfc4208d3f87..48618ff3e99e 100644
+> index 48618ff3e99e..7b4d07279638 100644
 > --- a/drivers/opp/core.c
 > +++ b/drivers/opp/core.c
-> @@ -1527,12 +1527,10 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
->  	mutex_lock(&opp_table->lock);
->  	head = &opp_table->opp_list;
+> @@ -1522,6 +1522,7 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+>  	     struct opp_table *opp_table, bool rate_not_available)
+>  {
+>  	struct list_head *head;
+> +	unsigned int i;
+>  	int ret;
 >  
-> -	if (likely(!rate_not_available)) {
-> -		ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
-> -		if (ret) {
-> -			mutex_unlock(&opp_table->lock);
-> -			return ret;
-> -		}
-> +	ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
-> +	if (ret) {
-> +		mutex_unlock(&opp_table->lock);
-> +		return ret;
+>  	mutex_lock(&opp_table->lock);
+> @@ -1547,6 +1548,16 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+>  			 __func__, new_opp->rate);
 >  	}
 >  
->  	list_add(&new_opp->node, head);
+> +	for (i = 0; i < opp_table->required_opp_count; i++) {
+> +		if (new_opp->required_opps[i]->available)
+> +			continue;
+> +
+> +		new_opp->available = false;
+> +		dev_warn(dev, "%s: OPP not supported by required OPP %pOF (%lu)\n",
+> +			 __func__, new_opp->required_opps[i]->np, new_opp->rate);
+> +		break;
+> +	}
+> +
+>  	return 0;
+>  }
 
 Applied. Thanks.
 
-I am not sending it for 5.11-rc as there shouldn't be any users which
-are impacted because of this right now, right ?
+Though I am concerned about who will enable this back again if the
+required-opp comes back. And I am not sure if we should even care
+about that.
 
 -- 
 viresh
