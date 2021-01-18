@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DF1C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 01:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FD6C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 01:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B307C20759
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 01:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2523020759
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 01:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbhARBDq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 17 Jan 2021 20:03:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49112 "EHLO
+        id S1730436AbhARBF0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 17 Jan 2021 20:05:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730472AbhARA5L (ORCPT
+        with ESMTP id S1730433AbhARA5E (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 17 Jan 2021 19:57:11 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18D1C061795;
-        Sun, 17 Jan 2021 16:55:47 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id w26so16519202ljo.4;
-        Sun, 17 Jan 2021 16:55:47 -0800 (PST)
+        Sun, 17 Jan 2021 19:57:04 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE51CC0613ED;
+        Sun, 17 Jan 2021 16:55:43 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id o13so21663816lfr.3;
+        Sun, 17 Jan 2021 16:55:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DilXPRI3TRJmzULgddpAwxGtKs9uc5bXa700Snpt8eg=;
-        b=jkazrJTlp36hPiUFrC7+kV3l/6K9OcH+n0l0ToQZJatwEfH45vuOuQHKdbSx5Agt/m
-         Zkx4gfKuxm8joxqX1fCVKjv7tfssLoyYjVBzVbctl4sHyY31hy2etFKh5TVmGHunzGVI
-         wPoW89LcSShSPDDGOzHRofjldjka5fVLPMgggkwnu1crxdMRmSPz8+dz2F4YrHWV2RrJ
-         jCeJtjFJV+hsdcu0GYJJYVIBKfiiKP4ggQ0wjotl4yJ1RhXZEuWz7fmiQlkPh4hkgIwV
-         /gD6sxhVwLpG9Sq+P0k6ktUIuGfpb1HLxo129X+uf5ZDsRhPvKjZQKfkTICNf9HtvS0R
-         hK8w==
+        bh=vgDoSUPRoPUFpDdr936+57Rv3VyE6xZwg/R405Zj7FM=;
+        b=Q9Xr1KYDDf/wQO0QAAoJdCsR2X3CU7X12Zn+9x7ok8bjlryXvSfBcnYhXSGFpEjT/B
+         nDqZ6GJkMxI8xISHL/hgL9NIDd+mI7Lv+cPCvTPFQwPfOcZsmDKiPAk0njQJyGJTqSA8
+         MlsZtl7ST3Wj/kG9MNcptgsppWrwLTRsEEZsmApI0JimIQoGoOrI/KL3spNwUAdVyMTn
+         1OqS/98Hg8uVZIKW0nuwpSQh7rly8krNrgY4RjNORxzmsQFgEfMZGMlESAUqBRB0XpW7
+         UshUuvEtwfV7valYKFBhg18jtXBcOkMIu99RrZWqHhCxlpXHGv+d/h3LYmYgt6RUndGj
+         U5VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DilXPRI3TRJmzULgddpAwxGtKs9uc5bXa700Snpt8eg=;
-        b=YejkF1/uF7f5rPtNmCHgCRruilv7dIfoQP0fODcbnbKZJKfccrV9dvxoCuK2pgx7hD
-         /o4AqqTefUQIg27O19FYvBU9jVGO2ku5D6aOmQ4OGgSJatFdkUggOI7Ep+wtq7Z1tXRk
-         lVMwTQPQPuFaKOfSsTS6HtCfpo3kotzadMW4KrxN6553/SC83WWqEF+VMTLcAJ+oAfNB
-         MeyLg8aE5W4Nfs8T2IecvGIzRD1sP4k1FwUq7nzdKZhRUg86XyUFPdJLByHwH9neewpG
-         Jh9mXSoN9T/1FP4pGAyUHD8bsDbjv4TMm4jXbLjFd5qHf0RzyfQ8lhtBuo5y3DKoja2r
-         uSDw==
-X-Gm-Message-State: AOAM531yrYcu1sFMV1B44rv5e3BMCdEPq9TQywIgIHh+gokh92aci7QK
-        qyvHQ4w6YAZ9HVCbsFFzL5Fv2+Wcjps=
-X-Google-Smtp-Source: ABdhPJwJPyNTEMevAfSEECE2toaXbJUsIn96iIntXcmUHGkNfR12JhXMpsdGv6/2GG1f0eSXZU1wzA==
-X-Received: by 2002:a2e:9497:: with SMTP id c23mr9805613ljh.362.1610931346276;
-        Sun, 17 Jan 2021 16:55:46 -0800 (PST)
+        bh=vgDoSUPRoPUFpDdr936+57Rv3VyE6xZwg/R405Zj7FM=;
+        b=HUBqg7V+b8IqLvuwJC633ZsV/ID6nRUwxevu/CDaymfM2O94+sKNdwMclIljClnoHY
+         hR6g+qQCdBQ56AuftQAhn+yRtvy9EU4Nuu7aMpqKYYa5oeZ3EvLuY3eA6K0UDbzp6cvI
+         G/Qunpfm8tpDNaXXb1OYzJt9iWEewgLw2aiAkAdxpbIj3vz8XeD0nK54b+zUwhmnnWMq
+         ueKXvXH0ZoCe5xojpXgbbDPVzq6Hh2zbJDCtYB9FyK7hjUXRKl8bKnZz3qMpDVOuIMJC
+         I8jB3RUzIGZZfjK83NG7pDwnHaQLeN7qUn286W4jvEWy5NSo9UrAsp6Yq9ANcKRiBUHH
+         cywg==
+X-Gm-Message-State: AOAM531iBOTfLZdWYzFBuNKbR3+6+8F7bcBRzbJwyC00k3ByUxPLEIF9
+        KeV/KM9alwNh9A9zs3Rub3s=
+X-Google-Smtp-Source: ABdhPJyVyFQhDEzOgofsjcTMdMzB3JK/5khRhA4EtPdSZyVBvc2EQbXNf/IfFQoYpIg2bvHagCpgag==
+X-Received: by 2002:a19:6459:: with SMTP id b25mr9607365lfj.635.1610931342481;
+        Sun, 17 Jan 2021 16:55:42 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id m24sm1484553ljj.62.2021.01.17.16.55.45
+        by smtp.gmail.com with ESMTPSA id m24sm1484553ljj.62.2021.01.17.16.55.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Jan 2021 16:55:45 -0800 (PST)
+        Sun, 17 Jan 2021 16:55:42 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -74,9 +74,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v3 12/12] opp: Print OPP level in debug message of _opp_add_static_v2()
-Date:   Mon, 18 Jan 2021 03:55:24 +0300
-Message-Id: <20210118005524.27787-13-digetx@gmail.com>
+Subject: [PATCH v3 08/12] opp: Add devm_pm_opp_register_set_opp_helper
+Date:   Mon, 18 Jan 2021 03:55:20 +0300
+Message-Id: <20210118005524.27787-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210118005524.27787-1-digetx@gmail.com>
 References: <20210118005524.27787-1-digetx@gmail.com>
@@ -86,35 +86,85 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Print OPP level in debug message of _opp_add_static_v2(). This helps to
-chase GENPD bugs.
+Add resource-managed version of dev_pm_opp_register_set_opp_helper().
 
 Tested-by: Peter Geis <pgwipeout@gmail.com>
 Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Tested-by: Matt Merhar <mattmerhar@protonmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/of.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/opp/core.c     | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/pm_opp.h |  8 ++++++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 63b16cdba5ea..758730d070da 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -822,10 +822,11 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 	if (new_opp->clock_latency_ns > opp_table->clock_latency_ns_max)
- 		opp_table->clock_latency_ns_max = new_opp->clock_latency_ns;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index fde2ec00ab0e..8e0d2193fd5f 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -2857,3 +2857,37 @@ int dev_pm_opp_set_voltage(struct device *dev, struct dev_pm_opp *opp)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_set_voltage);
++
++static void devm_pm_opp_unregister_set_opp_helper(void *data)
++{
++	dev_pm_opp_unregister_set_opp_helper(data);
++}
++
++/**
++ * devm_pm_opp_register_set_opp_helper() - Register custom set OPP helper
++ * @dev: Device for which the helper is getting registered.
++ * @set_opp: Custom set OPP helper.
++ *
++ * This is a resource-managed version of dev_pm_opp_register_set_opp_helper().
++ *
++ * Return: pointer to 'struct opp_table' on success and errorno otherwise.
++ */
++struct opp_table *
++devm_pm_opp_register_set_opp_helper(struct device *dev,
++				    int (*set_opp)(struct dev_pm_set_opp_data *data))
++{
++	struct opp_table *opp_table;
++	int err;
++
++	opp_table = dev_pm_opp_register_set_opp_helper(dev, set_opp);
++	if (IS_ERR(opp_table))
++		return opp_table;
++
++	err = devm_add_action_or_reset(dev, devm_pm_opp_unregister_set_opp_helper,
++				       opp_table);
++	if (err)
++		return ERR_PTR(err);
++
++	return opp_table;
++}
++EXPORT_SYMBOL_GPL(devm_pm_opp_register_set_opp_helper);
+diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+index e072148ae0e1..6de5853aaada 100644
+--- a/include/linux/pm_opp.h
++++ b/include/linux/pm_opp.h
+@@ -169,6 +169,7 @@ void dev_pm_opp_remove_table(struct device *dev);
+ void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask);
+ int dev_pm_opp_sync_regulators(struct device *dev);
+ int dev_pm_opp_set_voltage(struct device *dev, struct dev_pm_opp *opp);
++struct opp_table *devm_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
+ #else
+ static inline struct opp_table *dev_pm_opp_get_opp_table(struct device *dev)
+ {
+@@ -428,6 +429,13 @@ static inline int dev_pm_opp_set_voltage(struct device *dev, struct dev_pm_opp *
+ 	return -ENOTSUPP;
+ }
  
--	pr_debug("%s: turbo:%d rate:%lu uv:%lu uvmin:%lu uvmax:%lu latency:%lu\n",
-+	pr_debug("%s: turbo:%d rate:%lu uv:%lu uvmin:%lu uvmax:%lu latency:%lu level:%u\n",
- 		 __func__, new_opp->turbo, new_opp->rate,
- 		 new_opp->supplies[0].u_volt, new_opp->supplies[0].u_volt_min,
--		 new_opp->supplies[0].u_volt_max, new_opp->clock_latency_ns);
-+		 new_opp->supplies[0].u_volt_max, new_opp->clock_latency_ns,
-+		 new_opp->level);
++static inline struct opp_table *
++devm_pm_opp_register_set_opp_helper(struct device *dev,
++				    int (*set_opp)(struct dev_pm_set_opp_data *data))
++{
++	return ERR_PTR(-ENOTSUPP);
++}
++
+ #endif		/* CONFIG_PM_OPP */
  
- 	/*
- 	 * Notify the changes in the availability of the operable
+ #if defined(CONFIG_PM_OPP) && defined(CONFIG_OF)
 -- 
 2.29.2
 
