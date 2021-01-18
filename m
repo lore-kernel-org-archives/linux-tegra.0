@@ -2,156 +2,187 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BB5C433E9
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F07DC43381
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F012223E8
+	by mail.kernel.org (Postfix) with ESMTP id CF8C3222B3
 	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389700AbhARLBt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 06:01:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37244 "EHLO
+        id S2387746AbhARLCy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 06:02:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389852AbhARLAn (ORCPT
+        with ESMTP id S2389809AbhARLBf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 06:00:43 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC00C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 02:59:51 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id 186so6493870vsz.13
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 02:59:51 -0800 (PST)
+        Mon, 18 Jan 2021 06:01:35 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055C4C0613CF
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 03:00:37 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id j12so2832559pfj.12
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 03:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7JseCC4p4s98iO8n50GRDW5OTWNrzI0fkECROJrjMGE=;
-        b=NgUvwwdEVgWzjDusuC7Exbnd00TYCQwbBhK+jgkTlaPu4vKeTBEpdszuT1NmcjU7RU
-         K/wU7GuCei7Ksbn3EUSUh10WnSiVpxcCJoI8GQWhFwL9e6vQ9uhiRRVrXiSPDwWOh8P4
-         KEpx9xX+1Q/DleR8mkF95QqhiMWlCJ/itl1pTkDikHKGELohS1TjqYlVcDfTdH1nYQ+L
-         uzM4qDIMYim6Pobu8lViF65Zd5oG1qaRz3CBsRH6QhPbt4K3eXgojvvRj7RaXdY9UY/s
-         rYbqXPnl7c2Rnca52tZBxRtvIIb2stQYWGDigxxUkv1d2SiJj4SmKJsrUWUNclYNHHgt
-         hHqw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ChNH22Z5HZChYsCjae7b831d+/CbiVMv84UtIu3UXM8=;
+        b=Zt/yZIHI7ZV/rVfdcD40vMcON9v/sBdnxFSW+O8wypIz9jSxbwnfCqlzpLNZBaVhiw
+         VdCDk/LrYk3/RLmBCr9RmjWqtBelBQK9sjDUuNuHaKu3tla2rgq1FJ0tDLvgfWQ36VuG
+         9TpQGtAGmxGCrmLVnoU/7B68n9qFORiRdv8IYhXGfmuNyOLrZDcR2dMQlnFVc3MQfGuk
+         RFp6bcibjelann6sjtC50PgYdHtpnbSJRl5o1f07gq8vO0+taLHNtQ+2Dg1x79npwfAd
+         ykOtUtFoytClt6SYOL/7CC5lEB52CgDEP+X6kXv0QgYcs1H2+zI5AJQ6DUsa0VJxfMZP
+         DHdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7JseCC4p4s98iO8n50GRDW5OTWNrzI0fkECROJrjMGE=;
-        b=IZvHr+YS+MPs5ajJx7kurghhwy0noO/gMOoMfYk+iG9eZOlkXlnFCec5+gfuEV22kH
-         YtvAw6piQXs3DllKPe+tOQ0hZikZQhnWS9uiTHZT+DjxwNaV8jQOLdiWegQWUMv4aajn
-         u+qlwzrtZNO1usmj/dPBwU3iBKLZHBXGNz99Vd1GF9+YloCa/Z24/99KQ2aJWPq4UnR2
-         5yy1MbJlrKEc9waRsDJRbwu1KMIdbB3dUugO92Qwh1f2P8UbbBlYrMYJIVv4PlF4+skL
-         0O6o4Gs4Js8YWB/iUthhx/whREpPp8vuPSkD7Zuprl/WyTzMEOJXDIyfsvBWemjuRJ91
-         7Dnw==
-X-Gm-Message-State: AOAM531eUWbA8VhrA/IBGuKljmCMsTYGu6SbqGosjf706O/eAGFHYKVM
-        PfrEWmGqjprSVOud/Dmn1NRVsg5J5osDONroc78Mig==
-X-Google-Smtp-Source: ABdhPJyBUJWi5Ju6Q9MQQZnOi0LMGBdZYB4kjop78cF/auEd2OIrYF41hFiNnx9zHxsaCbDoK/AC+FZvrl2eso8c+m0=
-X-Received: by 2002:a67:7f41:: with SMTP id a62mr16749532vsd.55.1610967590293;
- Mon, 18 Jan 2021 02:59:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20210118011330.4145-1-digetx@gmail.com> <20210118011330.4145-2-digetx@gmail.com>
- <20210118072855.anncyl6z3e5uznvd@vireshk-i7>
-In-Reply-To: <20210118072855.anncyl6z3e5uznvd@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 18 Jan 2021 11:59:13 +0100
-Message-ID: <CAPDyKFquCGUSTvcCpmN0vm1eGEz9B_hYSNm7wojhgwuXT=jkEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: domains: Make set_performance_state() callback optional
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ChNH22Z5HZChYsCjae7b831d+/CbiVMv84UtIu3UXM8=;
+        b=ayJnG88e1p3fx3bjbaw1LzhhJ7dofZvfvKx8LP4C+PzpeNSkD2dOHjM8HXRBvMA1iA
+         TgfsV0n3eYjCvkt+Yjb406RhZfAIfGX+D48jGNZWH9bL6Ob2mTcTlu8Zs1VKIEGWKKuB
+         /RQdgoGZ04mi8Z3N+5aQbm+4lO/tEceysztxMR7yHS4JQfdQ5Vkp+r6ivnqjsmunKu0Y
+         +cMRV3gYPH/rwHKNvwWBGwFU/8SubRMP48HUizrO8dQTiZvN12pGXT+3m4Sc55T8xdox
+         tS8i5dAdYTfj0ATBS3P+ar9XYOdm6K8s9hRaOVfdUCtLjVHp1OFTEEoFOzjx8QEoKQh6
+         afRg==
+X-Gm-Message-State: AOAM5319H157xhj6KUrAETGKm8MF0qdq5n6lyWb72anY2lGr7oGSxmZU
+        d6o91glU8jr1RfmgPW9XiQjkIw==
+X-Google-Smtp-Source: ABdhPJzZKvrbczLbEmwrbgRXmppTIpOEG8lBCnJf9nFANrDqVY88oS4W9KHCOCu3rJJRyPvhmank0A==
+X-Received: by 2002:a63:1220:: with SMTP id h32mr25626825pgl.309.1610967633652;
+        Mon, 18 Jan 2021 03:00:33 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id i22sm12073565pjv.35.2021.01.18.03.00.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jan 2021 03:00:32 -0800 (PST)
+Date:   Mon, 18 Jan 2021 16:30:29 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 04/12] opp: Add dev_pm_opp_sync_regulators()
+Message-ID: <20210118110029.sjczugppsvrxd2tl@vireshk-i7>
+References: <20210118005524.27787-1-digetx@gmail.com>
+ <20210118005524.27787-5-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118005524.27787-5-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 18 Jan 2021 at 08:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 18-01-21, 04:13, Dmitry Osipenko wrote:
-> > Make set_performance_state() callback optional in order to remove the
-> > need from power domain drivers to implement a dummy callback. If callback
-> > isn't implemented by a GENPD driver, then the performance state is passed
-> > to the parent domain.
-> >
-> > Tested-by: Peter Geis <pgwipeout@gmail.com>
-> > Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> > Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/base/power/domain.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > index 9a14eedacb92..a3e1bfc233d4 100644
-> > --- a/drivers/base/power/domain.c
-> > +++ b/drivers/base/power/domain.c
-> > @@ -339,9 +339,11 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
-> >                       goto err;
-> >       }
-> >
-> > -     ret = genpd->set_performance_state(genpd, state);
-> > -     if (ret)
-> > -             goto err;
-> > +     if (genpd->set_performance_state) {
-> > +             ret = genpd->set_performance_state(genpd, state);
-> > +             if (ret)
-> > +                     goto err;
-> > +     }
->
-> Earlier in this routine we also have this:
->
-> if (!parent->set_performance_state)
->         continue;
->
-> Should we change that too ?
+On 18-01-21, 03:55, Dmitry Osipenko wrote:
+> Extend OPP API with dev_pm_opp_sync_regulators() function, which syncs
+> voltage state of regulators.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/opp/core.c     | 45 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  6 ++++++
+>  2 files changed, 51 insertions(+)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 7b4d07279638..99d18befc209 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -2686,3 +2686,48 @@ void dev_pm_opp_remove_table(struct device *dev)
+>  	dev_pm_opp_put_opp_table(opp_table);
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_remove_table);
+> +
+> +/**
+> + * dev_pm_opp_sync_regulators() - Sync state of voltage regulators
+> + * @dev:	device for which we do this operation
+> + *
+> + * Sync voltage state of the OPP table regulators.
+> + *
+> + * Return: 0 on success or a negative error value.
+> + */
+> +int dev_pm_opp_sync_regulators(struct device *dev)
+> +{
+> +	struct opp_table *opp_table;
+> +	struct regulator *reg;
+> +	int i, ret = 0;
+> +
+> +	/* Device may not have OPP table */
+> +	opp_table = _find_opp_table(dev);
+> +	if (IS_ERR(opp_table))
+> +		return 0;
+> +
+> +	/* Regulator may not be required for the device */
+> +	if (!opp_table->regulators)
+> +		goto put_table;
+> +
+> +	mutex_lock(&opp_table->lock);
+> +
+> +	/* Nothing to sync if voltage wasn't changed */
+> +	if (!opp_table->enabled)
+> +		goto unlock;
+> +
+> +	for (i = 0; i < opp_table->regulator_count; i++) {
+> +		reg = opp_table->regulators[i];
+> +		ret = regulator_sync_voltage(reg);
+> +		if (ret)
+> +			break;
+> +	}
+> +unlock:
+> +	mutex_unlock(&opp_table->lock);
+> +put_table:
+> +	/* Drop reference taken by _find_opp_table() */
+> +	dev_pm_opp_put_opp_table(opp_table);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_sync_regulators);
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index c24bd34339d7..1c3a09cc8dcd 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -162,6 +162,7 @@ int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cp
+>  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
+>  void dev_pm_opp_remove_table(struct device *dev);
+>  void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask);
+> +int dev_pm_opp_sync_regulators(struct device *dev);
+>  #else
+>  static inline struct opp_table *dev_pm_opp_get_opp_table(struct device *dev)
+>  {
+> @@ -398,6 +399,11 @@ static inline void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask
+>  {
+>  }
+>  
+> +static inline int dev_pm_opp_sync_regulators(struct device *dev)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +
+>  #endif		/* CONFIG_PM_OPP */
+>  
+>  #if defined(CONFIG_PM_OPP) && defined(CONFIG_OF)
 
-Good point! I certainly overlooked that when reviewing. We need to
-reevaluate the new state when propagating to the parent(s).
+Applied. Thanks.
 
-To me, it looks like when doing the propagation we must check if the
-parent has the ->set_performance_state() callback assigned. If so, we
-should call dev_pm_opp_xlate_performance_state(), but otherwise just
-use the value of "state", when doing the reevaluation.
+I had to apply it manually, please make sure it looks okay.
 
-Does it make sense?
-
->
-> >
-> >       genpd->performance_state = state;
-> >       return 0;
-> > @@ -399,9 +401,6 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
-> >       if (!genpd)
-> >               return -ENODEV;
-> >
-> > -     if (unlikely(!genpd->set_performance_state))
-> > -             return -EINVAL;
-> > -
-> >       if (WARN_ON(!dev->power.subsys_data ||
-> >                    !dev->power.subsys_data->domain_data))
-> >               return -EINVAL;
->
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
->
-> --
-> viresh
-
-Kind regards
-Uffe
+-- 
+viresh
