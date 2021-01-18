@@ -2,140 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C005C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D61C43381
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C32F21D42
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:15:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD76122CA1
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436994AbhARTPS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 14:15:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59194 "EHLO
+        id S2437672AbhARTuW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 14:50:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393835AbhARTPM (ORCPT
+        with ESMTP id S2437666AbhARTuM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 14:15:12 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC34AC061574;
-        Mon, 18 Jan 2021 11:14:31 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id v67so25612361lfa.0;
-        Mon, 18 Jan 2021 11:14:31 -0800 (PST)
+        Mon, 18 Jan 2021 14:50:12 -0500
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7F9C061757;
+        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id j26so12105505qtq.8;
+        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t2WDGIWPAw5uMllXaciM/LhVaMlZ/X9LzIRIbsz/nXQ=;
-        b=kn4nXwPS0PnB+asmQWimKB7MuVM3uxJcFRVZYnKv89CT4EM2eak2wrKI2flJwSFgcc
-         akJyLDJpm193okg3CFEKLedJM5LlerrAjT36yjhnnLkQoxXMERpCqY41UW3PpBuqUgTk
-         8OOQ5aQ9ehxUQMfkbbmTk13MuKhvTUxLQ2yngxzpspWOb7+6tNAq37nDfOPRwySTXRer
-         p9AbCJ/Jn31Z7CsWtpq1GS64447vMCrplbhAc3+UKArucCRKAc0bIXWhjeYzzsbVaddR
-         gGK6kgcuqSvt0rM3Ua9F7ZWe+QwaF0hsMh5woGOvRnVNM9Mfq/OjhCt/5wEpuDPLMni7
-         e4Ig==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o5HksdyTUdQQjk2zOw6fwIggM+3xcWHdyUNjxB+lolM=;
+        b=f+Bf+sEP2mTEJI5cn94UIcqIquN01905oEdZfQ+gSimLgDzNIFqoowjvNQBbo6gi2X
+         Lhc4l+vdPhhlJXBCk5SFppD2FBDq01vO5IkKTkEV2G+IuI0v7IuS8oKp5Rs5trUix3zg
+         rrU6xYgDfC5jrCF+c/RUwI1VGVHZo3Ous7G3b/lkkYk1uRJl+/yTzy8JJ2c4priZt7Hd
+         XeJjAiA/TtwmUZ+y3nbCMiWRHYrWa9Vas/fINYeQidZx/rgsr4SBeSfH4khDMmT98RFQ
+         qOKjvYOJPMzZGEfKS3y/FH+FZ0s6D/soMVzBWsSC1fizsxDaqk1IYsXxpEOXp43LcAzc
+         HDiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=t2WDGIWPAw5uMllXaciM/LhVaMlZ/X9LzIRIbsz/nXQ=;
-        b=f14wm74brGwPzzKTbzIEU3tsxgQ6tvpj8MMEV8Kjzqu6duWj6pX0O3Zkr3tx92LuQT
-         mrYTMxgu7hq5ARqwrrWg1fgA6kXnDjCX25zfuhUhqnFsK3QwNv5SfMJC0k3Sh1CCcrNZ
-         S4CXaMQh96tejyyEsQx9bpdxSwqajKnlVLX36eT3boIW+7BN4W4OUMZk4+3KyNdM3UbO
-         q9rKmmXmfPjpKE/NYrvuTqP4L47fhep/Ps4TDC9sI0UjGqsi36+DpvJyvOrHRi+ELXVt
-         JYGaUwXVzyJ4LBiRwzQfkrLT+4S2ygdJtUWBwEKyLVH/Z7t8Liu+AQ1A9v+Wj91yTwz6
-         T7Pw==
-X-Gm-Message-State: AOAM533b+z4k3TkPDyt6n74/AvkfVrZXdk0+z/LhlE1K328NoUMOZj5U
-        lmuEBTBlXke3Xnr6BODYnWfu+tDLE+w=
-X-Google-Smtp-Source: ABdhPJy7R8718qM5BynuwN5lXAtoZUYz8oERmYgMSgqKM16DSQ2HUVjbZKEuAou/dzPkWAKkj3vLQA==
-X-Received: by 2002:a19:4148:: with SMTP id o69mr227498lfa.610.1610997270175;
-        Mon, 18 Jan 2021 11:14:30 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id x1sm1767110ljc.20.2021.01.18.11.14.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jan 2021 11:14:29 -0800 (PST)
-Subject: Re: [PATCH v3 05/12] opp: Add dev_pm_opp_set_voltage()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210118005524.27787-1-digetx@gmail.com>
- <20210118005524.27787-6-digetx@gmail.com>
- <20210118095256.tr2qgnrmokkc6ngf@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a48dca91-4264-e153-cefa-ccbcca1b1d9d@gmail.com>
-Date:   Mon, 18 Jan 2021 22:14:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        bh=o5HksdyTUdQQjk2zOw6fwIggM+3xcWHdyUNjxB+lolM=;
+        b=jOuYFbEwF5UziWQFH8z2hdSxZuogFNBPMx+ZuME5edwpk1v9POsVwLtN8Zm5+alOlB
+         +6JBXfhOyyXqaQnTybSoF9HSVirAOvLFSlKn8qQ+cxmd1I3Et8X1Qm4gfmE6d0tsd4On
+         WtSlLYzbKd8pTbtpmaeb5SjLXLSgOzvwW/HGI0VsU9WTE8AtEtVI0400QZSuGIeC2vlk
+         qltJq4ILSX/ONcDWCU9LBBEybaPHdyL2sRF7mnMmR3VTjsaQhKvqKvAhpm201R8kFdsk
+         btuEaCWEsQnmSCkSwZ5Sa6aTf4xgMf6UNeKbWLVJk6d7p+d3Dl8d4iu2lmzVVKhmDMP/
+         /oiQ==
+X-Gm-Message-State: AOAM5307ckOD04f2SLk2JFS75x1EAZu4jSIConwibjVQppD662LKbKn8
+        Lf2g5KS/kp2gmNu13hgtfdU=
+X-Google-Smtp-Source: ABdhPJzzx5A9KgkbSufAunbooPXWFCoXUKi3te0JOtzs/8S4XM8V00ZL6LQlyMEAO24xQKU3isVjgw==
+X-Received: by 2002:aed:31a6:: with SMTP id 35mr1200470qth.370.1610999371146;
+        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id 184sm11438085qkg.92.2021.01.18.11.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jan 2021 11:49:30 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: [PATCH] gpio: tegra: Add missing dependencies
+Date:   Mon, 18 Jan 2021 20:49:25 +0100
+Message-Id: <20210118194925.819610-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <20210118095256.tr2qgnrmokkc6ngf@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.01.2021 12:52, Viresh Kumar пишет:
-> On 18-01-21, 03:55, Dmitry Osipenko wrote:
->> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
->> index 99d18befc209..341484d58e6c 100644
->> --- a/drivers/opp/core.c
->> +++ b/drivers/opp/core.c
->> @@ -2731,3 +2731,58 @@ int dev_pm_opp_sync_regulators(struct device *dev)
->>  	return ret;
->>  }
->>  EXPORT_SYMBOL_GPL(dev_pm_opp_sync_regulators);
->> +
->> +/**
->> + * dev_pm_opp_set_voltage() - Change voltage of regulators
->> + * @dev:	device for which we do this operation
->> + * @opp:	opp based on which the voltages are to be configured
->> + *
->> + * Change voltage of the OPP table regulators.
->> + *
->> + * Return: 0 on success or a negative error value.
->> + */
->> +int dev_pm_opp_set_voltage(struct device *dev, struct dev_pm_opp *opp)
-> 
-> I think we should do better than this, will require some work from
-> your part though (or I can do it if you want).
-> 
-> Basically what you wanted to do here is set the OPP for a device and
-> this means do whatever is required for setting the OPP. It is normally
-> frequency, which is not your case, but it is other things as well.
-> Like setting multiple regulators, bandwidth, required-opps, etc.
-> 
-> I feel the right way of doing this would be to do this:
-> 
-> Factor out dev_pm_opp_set_opp() from dev_pm_opp_set_rate() and make
-> the later call the former. And then we can just call
-> dev_pm_opp_set_opp() from your usecase. This will make sure we have a
-> single code path for all the set-opp stuff. What do you think ?
-> 
+From: Thierry Reding <treding@nvidia.com>
 
-Sounds like it could be a lot of code moving and some extra complexity
-will be added to the code. If nobody will ever need the universal
-dev_pm_opp_set_opp(), then it could become a wasted effort. I'd choose
-the easiest path, i.e. to defer the dev_pm_opp_set_opp() implementation
-until somebody will really need it.
+Commit efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip") moved the
+Tegra GPIO driver to the generic GPIO IRQ chip infrastructure and made
+the IRQ domain hierarchical, so the driver needs to pull in the support
+infrastructure via the GPIOLIB_IRQCHIP and IRQ_DOMAIN_HIERARCHY Kconfig
+options.
 
-But if it looks to you that it won't be a too much effort, then I'll
-appreciate if you could type the patch.
+Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 75f6c37620ea..013a1055939d 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -597,6 +597,8 @@ config GPIO_TEGRA
+ 	default ARCH_TEGRA
+ 	depends on ARCH_TEGRA || COMPILE_TEST
+ 	depends on OF_GPIO
++	select GPIOLIB_IRQCHIP
++	select IRQ_DOMAIN_HIERARCHY
+ 	help
+ 	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
+ 
+-- 
+2.30.0
+
