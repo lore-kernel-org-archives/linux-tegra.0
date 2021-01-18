@@ -2,104 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D61C43381
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB47C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 21:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD76122CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 19:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FE422DA9
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 21:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437672AbhARTuW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 14:50:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
+        id S2388664AbhARVmx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 16:42:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437666AbhARTuM (ORCPT
+        with ESMTP id S2388666AbhARJ6y (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 14:50:12 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7F9C061757;
-        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id j26so12105505qtq.8;
-        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
+        Mon, 18 Jan 2021 04:58:54 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0847DC061757
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 01:58:14 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id lw17so54516pjb.0
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 01:58:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=o5HksdyTUdQQjk2zOw6fwIggM+3xcWHdyUNjxB+lolM=;
-        b=f+Bf+sEP2mTEJI5cn94UIcqIquN01905oEdZfQ+gSimLgDzNIFqoowjvNQBbo6gi2X
-         Lhc4l+vdPhhlJXBCk5SFppD2FBDq01vO5IkKTkEV2G+IuI0v7IuS8oKp5Rs5trUix3zg
-         rrU6xYgDfC5jrCF+c/RUwI1VGVHZo3Ous7G3b/lkkYk1uRJl+/yTzy8JJ2c4priZt7Hd
-         XeJjAiA/TtwmUZ+y3nbCMiWRHYrWa9Vas/fINYeQidZx/rgsr4SBeSfH4khDMmT98RFQ
-         qOKjvYOJPMzZGEfKS3y/FH+FZ0s6D/soMVzBWsSC1fizsxDaqk1IYsXxpEOXp43LcAzc
-         HDiw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=J5Dlakpa6uscV9wI+hxTT1e6AnkifWVChxQ3u0oHgAk=;
+        b=b5hJhCKrotp/TDa/9Uf1MBhZqtL56ZL4fDD75pbp7afcoNHFk5rAdvanGFJON/fanQ
+         e5pv+XHqAQBdZcAuM/UyKyPEzwaIbVqoGa96d8Mm17HDCdvg5NeOJzazAzp4qnY3vhP9
+         7gHzWCsuQQpM/dz5MXkSqfynpOoaf3qHJQUty/nrVTWDlpTWM/gpq7JLR+COChxk7/LN
+         EsEVH7mDRFodrON3MCceSSRAxQxI54/Jbya/tPpNCxIjgFvCzXX4a71Et0bso4OGqt7k
+         6Wan2n0Gl6u3CMMw9nnjDyVZXpY0efE2vTGbs994tqbA6wnF5AIY/s0Srk0Pmd8y9LJb
+         q32w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=o5HksdyTUdQQjk2zOw6fwIggM+3xcWHdyUNjxB+lolM=;
-        b=jOuYFbEwF5UziWQFH8z2hdSxZuogFNBPMx+ZuME5edwpk1v9POsVwLtN8Zm5+alOlB
-         +6JBXfhOyyXqaQnTybSoF9HSVirAOvLFSlKn8qQ+cxmd1I3Et8X1Qm4gfmE6d0tsd4On
-         WtSlLYzbKd8pTbtpmaeb5SjLXLSgOzvwW/HGI0VsU9WTE8AtEtVI0400QZSuGIeC2vlk
-         qltJq4ILSX/ONcDWCU9LBBEybaPHdyL2sRF7mnMmR3VTjsaQhKvqKvAhpm201R8kFdsk
-         btuEaCWEsQnmSCkSwZ5Sa6aTf4xgMf6UNeKbWLVJk6d7p+d3Dl8d4iu2lmzVVKhmDMP/
-         /oiQ==
-X-Gm-Message-State: AOAM5307ckOD04f2SLk2JFS75x1EAZu4jSIConwibjVQppD662LKbKn8
-        Lf2g5KS/kp2gmNu13hgtfdU=
-X-Google-Smtp-Source: ABdhPJzzx5A9KgkbSufAunbooPXWFCoXUKi3te0JOtzs/8S4XM8V00ZL6LQlyMEAO24xQKU3isVjgw==
-X-Received: by 2002:aed:31a6:: with SMTP id 35mr1200470qth.370.1610999371146;
-        Mon, 18 Jan 2021 11:49:31 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id 184sm11438085qkg.92.2021.01.18.11.49.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jan 2021 11:49:30 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: [PATCH] gpio: tegra: Add missing dependencies
-Date:   Mon, 18 Jan 2021 20:49:25 +0100
-Message-Id: <20210118194925.819610-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.30.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J5Dlakpa6uscV9wI+hxTT1e6AnkifWVChxQ3u0oHgAk=;
+        b=HKKH0+AQcJfMlp5wDW8jz38VsmKze7GVAD+yvE1s7KV1CF8bYKzB237sVdU3zsLSv1
+         cancKb/XZ/UGKuSdHLPDjrhWXrzWiE9wKzbFHteZ/ZvXqw7uDbq682uyfofDROotVFtR
+         /a80nBs72fJ/P82RNqE7n0BFdHC+QQY8GsMIlZgwMThJJnuO0x1KGHFMpfrw+fo5MAJZ
+         1xm19Xe10yAtNqptqOicvSkE4PA4O5mNFg/rVGOnYJ5HEJBpYKh718FZ1ou8+cfxXgqy
+         YsD6aP9ESgc98KoGPD+KqMKYtERSkhBETdY7lZRzsPxQi+KBjpeQYPt580Hod4iI2b23
+         mMtg==
+X-Gm-Message-State: AOAM530xOZe6FdyvA+3hJYYJZqSMaUhUKEBv+Bqg42dKqCQ9YJuQMRMT
+        FsUYhBsFPQtvaSZSju9f6MLdCQ==
+X-Google-Smtp-Source: ABdhPJzSn0ETidLntnQdkh8DW6sl+g3rqAMIpMzhQZ9ghdObttxe4TiUGn/0B/YlcXT/eWavHFQEow==
+X-Received: by 2002:a17:902:6b02:b029:da:c6c0:d650 with SMTP id o2-20020a1709026b02b02900dac6c0d650mr25918569plk.74.1610963893396;
+        Mon, 18 Jan 2021 01:58:13 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id p8sm15780055pjo.21.2021.01.18.01.58.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jan 2021 01:58:12 -0800 (PST)
+Date:   Mon, 18 Jan 2021 15:28:10 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 06/12] opp: Add dev_pm_opp_find_level_ceil()
+Message-ID: <20210118095810.ta7cy7kjntalfnx7@vireshk-i7>
+References: <20210118005524.27787-1-digetx@gmail.com>
+ <20210118005524.27787-7-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118005524.27787-7-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 18-01-21, 03:55, Dmitry Osipenko wrote:
+> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
+> levels don't start from 0 in OPP table and zero usually means a minimal
+> level.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/opp/core.c     | 49 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  8 +++++++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 341484d58e6c..df0969002555 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -449,6 +449,55 @@ struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_find_level_exact);
+>  
+> +/**
+> + * dev_pm_opp_find_level_ceil() - search for an rounded up level
+> + * @dev:		device for which we do this operation
+> + * @level:		level to search for
+> + *
+> + * Return: Searches for rounded up match in the opp table and returns pointer
+> + * to the  matching opp if found, else returns ERR_PTR in case of error and
+> + * should be handled using IS_ERR. Error return values can be:
+> + * EINVAL:	for bad pointer
+> + * ERANGE:	no match found for search
+> + * ENODEV:	if device not found in list of registered devices
+> + *
+> + * The callers are required to call dev_pm_opp_put() for the returned OPP after
+> + * use.
+> + */
+> +struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
+> +					      unsigned int *level)
+> +{
+> +	struct opp_table *opp_table;
+> +	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
+> +
+> +	opp_table = _find_opp_table(dev);
+> +	if (IS_ERR(opp_table)) {
+> +		int r = PTR_ERR(opp_table);
+> +
+> +		dev_err(dev, "%s: OPP table not found (%d)\n", __func__, r);
+> +		return ERR_PTR(r);
+> +	}
+> +
+> +	mutex_lock(&opp_table->lock);
+> +
+> +	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+> +		if (temp_opp->available && temp_opp->level >= *level) {
+> +			opp = temp_opp;
+> +			*level = opp->level;
+> +
+> +			/* Increment the reference count of OPP */
+> +			dev_pm_opp_get(opp);
+> +			break;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&opp_table->lock);
+> +	dev_pm_opp_put_opp_table(opp_table);
+> +
+> +	return opp;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_find_level_ceil);
+> +
+>  static noinline struct dev_pm_opp *_find_freq_ceil(struct opp_table *opp_table,
+>  						   unsigned long *freq)
+>  {
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index f344be844bde..b7dc993487c7 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -111,6 +111,8 @@ struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
+>  					      bool available);
+>  struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
+>  					       unsigned int level);
+> +struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
+> +					      unsigned int *level);
+>  
+>  struct dev_pm_opp *dev_pm_opp_find_freq_floor(struct device *dev,
+>  					      unsigned long *freq);
+> @@ -234,6 +236,12 @@ static inline struct dev_pm_opp *dev_pm_opp_find_level_exact(struct device *dev,
+>  	return ERR_PTR(-ENOTSUPP);
+>  }
+>  
+> +static inline struct dev_pm_opp *dev_pm_opp_find_level_ceil(struct device *dev,
+> +					unsigned int *level)
+> +{
+> +	return ERR_PTR(-ENOTSUPP);
+> +}
+> +
+>  static inline struct dev_pm_opp *dev_pm_opp_find_freq_floor(struct device *dev,
+>  					unsigned long *freq)
+>  {
 
-Commit efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip") moved the
-Tegra GPIO driver to the generic GPIO IRQ chip infrastructure and made
-the IRQ domain hierarchical, so the driver needs to pull in the support
-infrastructure via the GPIOLIB_IRQCHIP and IRQ_DOMAIN_HIERARCHY Kconfig
-options.
+Applied. Thanks.
 
-Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpio/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 75f6c37620ea..013a1055939d 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -597,6 +597,8 @@ config GPIO_TEGRA
- 	default ARCH_TEGRA
- 	depends on ARCH_TEGRA || COMPILE_TEST
- 	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
-+	select IRQ_DOMAIN_HIERARCHY
- 	help
- 	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
- 
 -- 
-2.30.0
-
+viresh
