@@ -2,118 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997E9C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 12:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D096C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 13:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0082231F
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 12:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E6C82065E
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 13:41:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391572AbhARMsd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 07:48:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60218 "EHLO
+        id S2404676AbhARNkP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 08:40:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388975AbhARMsB (ORCPT
+        with ESMTP id S2404669AbhARNkK (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:48:01 -0500
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A1BC061573
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 04:47:21 -0800 (PST)
-Received: by mail-vk1-xa2b.google.com with SMTP id j67so2469250vkh.11
-        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 04:47:21 -0800 (PST)
+        Mon, 18 Jan 2021 08:40:10 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39B61C061573
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 05:39:24 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id w26so18249542ljo.4
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 05:39:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=b83F1B/qVW2V5ML+weocFQV9HBWi+FGn2tiA4+WY95g=;
-        b=JIzaye8OLy57uPzFlpwaIvTQ0n5EhlhqPWsLXmmZuXzLj3MFi5nTnPIbqGxjfiJUwE
-         EYOXXVZbs4UUl7EvUTgLNaY7I0KIiifJmW/Cl2ZEG9GWG17fBV+/cIH2buyjjrDCvOGT
-         v6pDzHuLeJX86SdopnLzngsn6+8EmRr7xC7ok/up+2tebxYrkH7fgIqPInk+RM06/yN7
-         sbryszEQiwuLQC27si31af2ky/xbchx9rVE2/epkZZUofXapn3bkxkDUVn8QPdX3dkgG
-         AIzZOEfXvd1qdZBf4jWS+W7vguWpKJv8cF4tM4JPkuVFTJpZJJDu3fzR3MlhjwZAW3LH
-         FA4A==
+        bh=7rCmnKzXpVa20gXpSfmHUH8NWDq8PYAlPBp+23NCeYc=;
+        b=T9EUMNeImUwwkD4WyDhF7Kk0NSaYLw80mFsxFto0JPp2Vj3wumv1RBBWA2bDRx0ctb
+         gQ9m59tSyu6g0fUCewx6qmixqPDCNmy5Xvn1rmigxBUIJQSoMBim/f7GZY2YN8Sqq/8n
+         ijo6r8uXig2cqictwngUdeqLU0rmWPK81JZi3UQ7F8mVvmPBAqQB93ETUbF4UAZunmMz
+         r/l+LGZnCjtUpjTKvPiLBxMnllEjn7dxehkBDi0bWv8s2EB0qsgjMFUWAmjq70VKhb/5
+         bhcSA2oSOp0aiuu/cdOuMoxHhnKMCqMse84Ju78hLrx+1Y5cNf/gkos8xole5CpCRWI0
+         71Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=b83F1B/qVW2V5ML+weocFQV9HBWi+FGn2tiA4+WY95g=;
-        b=MYlf17AMJ3JlG14BEnA9svub3UMhHIbq8mzVjx1MF2DNXVFhTRGwlZlJWDXItLehgI
-         XkSTQlexS0UoJR/kDBy1sarsargyD6AKj7PLYaKYKYIJDUnfoDktpRdC4ncoQl3AAeyH
-         x0KQq0L31GFVGacl+Z4IBUIvzBkwL6B5Fvd/W5nrz0XJp5Lo4ZuQoWmaM+sPdqCgUYlZ
-         su1MF2QWjnweKTYi9h+LoFtnCAnCMtH8YIP4IfENAy9lD76sJtPo3qyk/vMCIJIisict
-         tTHhE5RO7BZ+G9gPuEN2UMQ2VHIj7Wz0NevNmCI6CLXe+PC0SjH6J3ZluJwnTGK2VJPj
-         UP0Q==
-X-Gm-Message-State: AOAM530FqfxxmFdB0XPOxF9ENZHGBQLghhdGxXaOl4c6V5dd3tTA3Apq
-        QiuD4GWGvCTre90Hxj8i3lLaLiRWS0PHd6CkayYxJA==
-X-Google-Smtp-Source: ABdhPJwv6E3z66cqB95O4c0V2uVDpQXhiPOpTXlNp8u1EQNaJMUuByE7k6gKfvyf/E25VneGlD54u9W7Zh6OW4OJh7Q=
-X-Received: by 2002:a1f:dec2:: with SMTP id v185mr17551711vkg.8.1610974040303;
- Mon, 18 Jan 2021 04:47:20 -0800 (PST)
+        bh=7rCmnKzXpVa20gXpSfmHUH8NWDq8PYAlPBp+23NCeYc=;
+        b=PEBRZk5UelYVDSC5/2XU4WqTZC52FHOTPRUGSroYjw0jw9b2fCNIWGUPfWbVVoh7in
+         L/BkV5NItON4EN6XbgDZnKnvbw7WoMwmcD+HN9yVgJumRq8y6A/AkAIM+9PGbrC6R8s8
+         LwvhSWlkXVCZivNJs+D49/9PIrQy9/c3LfIQJlzBS3OCwIbhCm9gOYPestkOzYD1raZ5
+         Z0ENUhZ6JP1zvAo5DmH94zTrV0QJOZTvQd+DYf21xexoPp5MYYxu+PIC/NTJ5iej+jFE
+         qYp6dVxrjqdChQQAcTy0S+3KJmM8WxFW/nF+jtkLC4DleGigiMMqTyAbXJBGp6oI6FUs
+         BH/Q==
+X-Gm-Message-State: AOAM533dH72s29W+7b4h6t56hCY/4FEUUBvQRNV025V+3jhJIaMsgutb
+        qscDNy3L2l+iDEm8AQ06Ri774qVdBWL8hPp3r2nvCQ==
+X-Google-Smtp-Source: ABdhPJw3FCTQyPsrFGXu0G+vqPN+sHa2TBDw+/GAEnvxRNO83nf1Xwv8q0+VTXNLnEkl0npJzDid86l9ZTjLU5Fifhw=
+X-Received: by 2002:a2e:b047:: with SMTP id d7mr10100589ljl.467.1610977162805;
+ Mon, 18 Jan 2021 05:39:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20210118011330.4145-1-digetx@gmail.com> <20210118011330.4145-2-digetx@gmail.com>
- <20210118072855.anncyl6z3e5uznvd@vireshk-i7> <CAPDyKFquCGUSTvcCpmN0vm1eGEz9B_hYSNm7wojhgwuXT=jkEQ@mail.gmail.com>
- <20210118110506.linvsoca7jbl42iq@vireshk-i7>
-In-Reply-To: <20210118110506.linvsoca7jbl42iq@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 18 Jan 2021 13:46:43 +0100
-Message-ID: <CAPDyKFr7SD_A9sKD2+90XfjP09T+PCLE=8qvn=M-yPEPXvBhsg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: domains: Make set_performance_state() callback optional
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+References: <20210112133010.21397-1-digetx@gmail.com>
+In-Reply-To: <20210112133010.21397-1-digetx@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 18 Jan 2021 14:39:11 +0100
+Message-ID: <CACRpkdZtOiWz=FuBTX=uO4LU22d-OE8D1-B6nN-OHYNenMVYGQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] gpio: tegra: Fix wake interrupt
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 18 Jan 2021 at 12:05, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Tue, Jan 12, 2021 at 2:30 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+
+> The GPIO bank wake interrupt setting was erroneously removed after
+> conversion to gpio_irq_chip, thus the wake interrupt programming is
+> broken now. Secondly, the wake_enb of the GPIO driver should be changed
+> only after the successful toggling of the IRQ wake-state. Restore the wake
+> interrupt setting and the programming order.
 >
-> On 18-01-21, 11:59, Ulf Hansson wrote:
-> > Good point! I certainly overlooked that when reviewing. We need to
-> > reevaluate the new state when propagating to the parent(s).
-> >
-> > To me, it looks like when doing the propagation we must check if the
-> > parent has the ->set_performance_state() callback assigned. If so, we
-> > should call dev_pm_opp_xlate_performance_state(), but otherwise just
-> > use the value of "state", when doing the reevaluation.
-> >
-> > Does it make sense?
->
-> That will work but I am wondering if there is a way to avoid the
-> unnecessary propagation if we can somehow find out if someone above in
-> hierarchy supports pstates or not ?
+> Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-You seem to be worried about latency/overhead while doing the
-propagation upwards in the hierarchy. That seems like a reasonable
-concern to me, especially as the genpd lock is taken at each level.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-However, to mitigate this can be rather messy. In principle, we would
-need to walk the hierarchy upwards, each time a new subdomain is added
-in genpd_add_subdomain(). While doing this, we would also need to keep
-track on what level we set to continue the propagation of the
-performance states for. Even if this can be done in non-latency
-sensitive paths, I don't think it's worth it because of complexity (I
-haven't even thought of what happens when removing a subdomain).
-
-So, maybe we should simply just stick to the existing code, forcing
-the parent to have a ->set_performance() callback assigned if
-propagation should continue?
-
-Kind regards
-Uffe
+Yours,
+Linus Walleij
