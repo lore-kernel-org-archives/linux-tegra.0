@@ -2,100 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E994CC433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2CFC433E9
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADB1A22573
-	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:36:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D747A22D03
+	for <linux-tegra@archiver.kernel.org>; Mon, 18 Jan 2021 11:49:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389103AbhARLgL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 06:36:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390379AbhARLfn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 06:35:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 976A9221EC;
-        Mon, 18 Jan 2021 11:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610969703;
-        bh=oXcjoXT+gCij5gox1DhkN8rids03zLaBhtgQQQ5MTJY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RmJgLCL2ZISwMPkYjh/iygth35csm9is7KQYqg8XxoOr+CtER9Oqbfio/iHQBvhT/
-         UXkmXe7XYJK9LRCS3U6qVGGcEMEYuKaVG8/8c+owLWKFGgSJQIxgWtkoRFA4HU8J73
-         BqGaR9aAY20JeyXGtLUXw9rpOX4JRz531bNOkSxvZ8yy3OFc1+Y9wqP2TeLHyeXXQd
-         Nj7on3j/Gj20v1yCaVVmTS+krhw0SX0p2WWj9l6/aT2gWrrdfFn9LpSphZzfNs8lrd
-         XwDPsipwxZd1D4ucGkkPNPeNmBJyaDJ4CItvONoBOtMQeGl9LmEi78tKy8TCsEJ7R3
-         OGckGngigMmig==
-Date:   Mon, 18 Jan 2021 12:34:59 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, talho@nvidia.com, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: bpmp-tegra: Ignore unknown I2C_M flags
-Message-ID: <20210118113459.GF1018@ninjato>
-References: <20210112102225.3737326-1-mperttunen@nvidia.com>
- <20210117112003.GB1983@ninjato>
- <99326ffc-7590-84ce-dfa7-7c09bc17ca31@kapsi.fi>
+        id S2390973AbhARLsu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 06:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390937AbhARLq5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 18 Jan 2021 06:46:57 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173FEC061574
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 03:46:17 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id w14so1017077pfi.2
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 03:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gzlwaPkTlP/ZmJOY5fxJliyLPQaZ8STG1NZSoSJX0e8=;
+        b=AMrcT41venp9oOMLrdEMRufFZ13OH9ME5n2x86QPk+pJHIuS38ApYkNDA66+piA1ZE
+         gyJglzZ56sTOHHhoCMqkQhuFBbRj6o5Z6R330X1ZBwvlVrg12Vj1VCXbRG5WUz+en+Sm
+         ZcNZFE4TcnZi6PkMNFaL/poXIVQd2O7oNVTXDBFeOXYXlbFqUjZyP0HIvwjc/197jQE4
+         At3I4s1SBtF19Z8xVdvYn9Znk1CvC0GRfWQaNyCdFp4hTL4MJG+NZrkFBXSP5m8G8IS2
+         EsCFtpsuTheyhw5l4K88KP27axqL1IWUaBB2UPxwWc9YAHUpk9ececnBa1yKbszkcVHv
+         MiZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gzlwaPkTlP/ZmJOY5fxJliyLPQaZ8STG1NZSoSJX0e8=;
+        b=i/UZvaxZfOCx6h43eHHwjLHEU9DKgDhoRm94Po5kTkkzSjqQAJGngDgLWCoF7QUtp+
+         QUnKGhDK2h3JdjyrESp4jXqodHHjpzRF9oSgWvpKAbedqn74D+JHZk2CfFshd/hrcCjd
+         p9AW8qJ+BwAQm3qLhBhjmIEdND9LzlKP24+RLf7R19nvtNmWM9IntKIWAvLVrKXoUfGM
+         9MPSAGJ81tAEwgb7nF7Xw75dAy3kQkl5gGfopoDN9JMTN51gCT4ub9VD/F0+vCu0wZuU
+         Oby+SCcvINzh29MZz3Y8hNCmMlKkFOGcbi74z5tvmFCWips20q/6Sd+d252m5gYwPefY
+         kZVg==
+X-Gm-Message-State: AOAM530WGmK9lb6w0KHyAwz/wIMNN1iEijbToQC7GF1Q3rgu1RCAj+2O
+        DaBlYg+j8wxcbBmqno61ip24EQ==
+X-Google-Smtp-Source: ABdhPJziOaaMILfmkjkhAuMyBMxzmMtTG6xMcp/+fEGOYCNqSgENDW5xJ+AakPLst9AI0D1btKh8ZA==
+X-Received: by 2002:a62:4e12:0:b029:1b6:7eac:c740 with SMTP id c18-20020a624e120000b02901b67eacc740mr8044883pfb.65.1610970376621;
+        Mon, 18 Jan 2021 03:46:16 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id d8sm11839722pjm.30.2021.01.18.03.46.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jan 2021 03:46:15 -0800 (PST)
+Date:   Mon, 18 Jan 2021 17:16:13 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] OPP API fixes and improvements
+Message-ID: <20210118114613.fzq7nkrdfm53upkr@vireshk-i7>
+References: <20210118005524.27787-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <99326ffc-7590-84ce-dfa7-7c09bc17ca31@kapsi.fi>
+In-Reply-To: <20210118005524.27787-1-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 18-01-21, 03:55, Dmitry Osipenko wrote:
+> Hi,
+> 
+> This series fixes problems and adds features to OPP API that are required
+> for implementation of a power domain driver for NVIDIA Tegra SoCs.
+> 
+> It is a continuation of [1], where Viresh Kumar asked to factor OPP
+> patches into a separate series. I factored out the patches into this
+> series, addressed the previous review comments and re-based patches
+> on top of [2], which replaced some of my patches that added resource-managed
+> helpers.
+> 
+> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
+> [2] https://lore.kernel.org/linux-pm/20210101165507.19486-1-tiny.windzz@gmail.com/
 
---GLp9dJVi+aaipsRk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dmitry,
 
+I have applied 9 out of 12 patches already. Thanks.
 
-> > Also, this driver has no dedicated maintainer. Is there someone up for
-> > this task? There is probably little to do and it will speed up patch
-> > acceptance because I pick patches once the driver maintainer is happy.
-> >=20
->=20
-> I think it falls under the 'TEGRA ARCHITECTURE SUPPORT' wildcard (Thierry
-> and Jon). Do we need a more specific maintainer entry?
->=20
-> If it's helpful to Thierry and Jon, I guess I could pick it up.
-
-I am fine with both. I'd just like a line
-
-	"F:	drivers/i2c/busses/i2c-tegra-bpmp.c"
-
-somewhere in MAINTAINERS. If that's in Tegra architecture, also good.
-However, i2c-tegra.c already has a dedicated entry and spreading the
-work avoids bottlenecks, so I think it might be the better option. But
-I'll leave it to you guys. In any case, thanks for volunteering!
-
-
---GLp9dJVi+aaipsRk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAFcl8ACgkQFA3kzBSg
-KbZc/A//beRLpHVewEVuZZJb2FkgIZhzbfyfpZ1Dgxsi7Igpk+8UFvvJjOemPWiR
-wOml0upHDuiGvAiHRw2W3Qg7d1oRp+TCXH/kEqPSXMh8SoFeXzI/lBxZrMBJFisa
-pdvO+OXbTPqCWcXEvhzCB5hS4PGuniB1mMawCs97WZrBWVfSTDjqSZpx5miPAvRR
-a8Uj8HZnO4BlwOKJlBc2jwVNBArziEVKvVoxtsrhnUpxJTWV89pOVctHLMAV694R
-vAYPH4bdyyGHgPulvRHGE6q4C/tumFKr56oRGEjJHyIN5hgeqMaoQN7hIuVU+bAx
-yFGy3xt112LtxJ/H/v8hchliW/8sd5cC9PkYjuIum+P7fCu3eVzmzhIWI85BO6SP
-4Cn9Tga/Bho0IUVEwMi84xydG82cKtViRr1/yC4NSynPXnd4E0q+obnZZslU0fPC
-N3Q7EDg02vA5wpoDvflGe64V9naLWhpWjsIaz+Ef0X5wbfdD75Fruvb9iEUTnTLW
-tkrRx+c5EutkAVBHlfXaHN8TFzZltf8nvdzaLUM5g9Wd2C8ytc/6/EkpTEO+nFa8
-w+8Hv5qebGoqYjjN5h5qQNVIf2LwgMN8D0bTCsdJyC6IddOpPlE2DHmTqpE7BpvY
-q9uFIrLkLX+/lhGregbh/JqRaYZMMsBY0Se7ZEleu04OygLj+yU=
-=MeL+
------END PGP SIGNATURE-----
-
---GLp9dJVi+aaipsRk--
+-- 
+viresh
