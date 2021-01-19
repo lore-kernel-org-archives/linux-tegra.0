@@ -2,122 +2,142 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F30C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB366C433E6
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 19:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C758222E00
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A6E8216FD
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 19:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbhASSor (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 13:44:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387890AbhASR5H (ORCPT
+        id S2392053AbhASTII (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 14:08:08 -0500
+Received: from condef-10.nifty.com ([202.248.20.75]:57592 "EHLO
+        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404630AbhASTGx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 12:57:07 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B62FEC06138B
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 09:54:30 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id e67so8211446ybc.12
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 09:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b+/J27uvGJNWRkcEdHdikRhtGLPGXBf2Z7B8raJzfG8=;
-        b=VNmhhkIievbkfSc+cjRvVw2L92usrVFQArZAzXCy99qCox/NjfpvR07w/+4P8slWk5
-         NHZAWIhrgGzzekDe1fQMBL0cUF2CjUMATWBMUl31unA/FvaxTrFd+77Oup7faIC9sJVM
-         9QG87sR/eWzrliUtIupEbtEiNWQyG5oPB7F+/+CpmGxlk2KYqDH3PnavfGc3sy9n7tP/
-         cCSPhtGwfXS2d2gSzNiZrKaqlfal36TyN15sGM/Dns6WwQFG0fZRlvY/116YfkG8Ku5T
-         qUqMC+HWaUq+SDkKx1HB9w2+TB9q8VzQq1SEh+nw8myO82T6druRVu5BAszrPdMLCQAC
-         YqKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b+/J27uvGJNWRkcEdHdikRhtGLPGXBf2Z7B8raJzfG8=;
-        b=P/VGrBYWi+Y6E+yhwD0NnNa8QgiuEo7vqzLDVD3zWWroMl4kdE8m+UvnxZkOcsgCDq
-         Kwg+f4dlJ1PuQQYWSwuxs5PhWhQA0BuU7LuMGnKl0wXouBmZjDFiVgELELmNEotDkh7K
-         3TiuNZIX16dqcJQaZPDFm3rgHTI9GPD6i9i0QqtCYl+V2UNaNUyi082CYa/24TOtfuaD
-         iX5SgH1CE3/bLQWgQ+Hc6gA/YzdHNfVgkGDWkFu83a+kORjviKmR7gWw8bgQ+HQw1rjk
-         5r8qEHQuBdEccPmfBAK1Ybq7LMCK0J/NKeArcbvVmH+brmsNNMVoqDcteLfySd7wYMVO
-         xfMA==
-X-Gm-Message-State: AOAM532Y7HhjXCqHyclxYq8JXM/MoGnag7Z8oBrWt4AN1AnXhcoqyl0d
-        tty1zhnhHTNfe57SHs6Se3FcGkL7SGrmkZ1UOObEtg==
-X-Google-Smtp-Source: ABdhPJxrYl/1TM45kNIJhyUluY43XDSvSI/9t/hcpCygXflUpxCfBA/MJNLA/Q+aYIn08kWgLlNWb6Xo+b5k0jCg4sg=
-X-Received: by 2002:a25:7491:: with SMTP id p139mr7075085ybc.346.1611078869664;
- Tue, 19 Jan 2021 09:54:29 -0800 (PST)
+        Tue, 19 Jan 2021 14:06:53 -0500
+Received: from conssluserg-05.nifty.com ([10.126.8.84])by condef-10.nifty.com with ESMTP id 10JJ3Lom023990
+        for <linux-tegra@vger.kernel.org>; Wed, 20 Jan 2021 04:03:21 +0900
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 10JJ1vNK023366;
+        Wed, 20 Jan 2021 04:01:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 10JJ1vNK023366
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1611082917;
+        bh=zI6GU7mXkcWDxGjtKMV8O8z/yEmOhQ9tFNXqxOpXbBs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PDRabLSkS9jpbERu9lBeGwslLvIbsqKFP4NvjjApjDiDkovfYJvXuPbWPsAq8zyy9
+         gLDpMSPItGow2lLB7kV/qGRsQ1Oiu/+LjaDHa5YiwaPw2IYt1NHcnB0FQjC6KBij7P
+         Xx7DonaNydC8iQ4vEpTXovCcXcPTMMBOmV2ALO5f+UOKR358KxV+xEqCraHHB6Ok50
+         XEZVnEK7OyfeRL/4fDO2GsAsCAXY87jhLKjvoFwLtREwVgX3r6Z5Lk5bJG3l4uB0dS
+         xDaq3pYYNFDBjmk6MtRQ7tRM1Gn9Z/Aij6R++WdMJ5zT/iWsSSBt0sMG9TemsEzv/g
+         Lt/pHbOgUvsuQ==
+X-Nifty-SrcIP: [209.85.216.48]
+Received: by mail-pj1-f48.google.com with SMTP id m5so491804pjv.5;
+        Tue, 19 Jan 2021 11:01:57 -0800 (PST)
+X-Gm-Message-State: AOAM531xdmSkOajvjTmZHuTSHy5PxeX/j07Jn3cbkpITNmV/t0Qnp0dY
+        Csu536ijkwfyHNtMh61q7RsJiRfxmbdgD5W6FkM=
+X-Google-Smtp-Source: ABdhPJwcVVWFx/19HJIMuNEGuXLwQm9F5Mh2DdvpPlQ8jXfzldkpTmg2AmaScl9Z3BgO9qJVOtbiOwj5drL5ew0zrDo=
+X-Received: by 2002:a17:902:ed93:b029:de:84d2:9ce1 with SMTP id
+ e19-20020a170902ed93b02900de84d29ce1mr6162056plj.47.1611082916634; Tue, 19
+ Jan 2021 11:01:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20210115210159.3090203-1-saravanak@google.com>
- <CACRpkdYrzaFuWkbTe7Fmos4Bk4Ojt6wbqayDjyrS7sf98P-Rbg@mail.gmail.com>
- <CAGETcx9t3R-k0ttiaBUqcveqnXMX75xuTcKPSo9J6WJOfgSP8w@mail.gmail.com>
- <CAMuHMdUN7+O28Xz5rkPwR2RuSA+o_E2VcWsz_9+kzy4=0Jnb1g@mail.gmail.com> <CACRpkdZqSm-xfo8a8aFUe-Mbaw9tM+OmCAF3KWjOVDfC=oWj+Q@mail.gmail.com>
-In-Reply-To: <CACRpkdZqSm-xfo8a8aFUe-Mbaw9tM+OmCAF3KWjOVDfC=oWj+Q@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 19 Jan 2021 09:53:53 -0800
-Message-ID: <CAGETcx-Vp0BpYbpPjwsmOv0q5ba1mJvfsPEZ9Oi2Rmx67udu7A@mail.gmail.com>
-Subject: Re: [PATCH v1] of: property: Add fw_devlink support for "gpio" and
- "gpios" binding
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20201203125700.161354-1-masahiroy@kernel.org> <b9b17126-9af5-2f73-526e-91bb9fd27f71@samsung.com>
+ <CAK7LNART2qQBY7Vc8rhMiXS_Fwty7qpWjwwfPrUegTb-gjy6sA@mail.gmail.com>
+ <9f959875-1a30-b1a1-b626-3805e24a6df3@samsung.com> <e5b06d9a-9b24-2440-e0c2-8bf7095eccd9@nvidia.com>
+ <25030057-86b1-5619-25fd-acfa0728b850@samsung.com> <4ab4f62f-8b37-01e1-f81c-270155b13a51@nvidia.com>
+ <7e691a61-bf4b-0594-8d6d-36d62a5def0b@nvidia.com> <CAHk-=wjjiYjCp61gdAMpDOsUBU-A2hFFKJoVx5VAC7yV4K6WYg@mail.gmail.com>
+ <95ce88c6-59bd-55b9-9299-51fa20aeb95c@nvidia.com> <YAcbZRViwlAwl62q@ulmo>
+In-Reply-To: <YAcbZRViwlAwl62q@ulmo>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 20 Jan 2021 04:01:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATf6DEyk=SPouHDO6f4Na0bm3HY7_7Cn4Quq6weg_6uFA@mail.gmail.com>
+Message-ID: <CAK7LNATf6DEyk=SPouHDO6f4Na0bm3HY7_7Cn4Quq6weg_6uFA@mail.gmail.com>
+Subject: Re: [PATCH] gcc-plugins: simplify GCC plugin-dev capability test
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>,
+        linux-hardening@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 2:20 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Wed, Jan 20, 2021 at 2:48 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
-> On Tue, Jan 19, 2021 at 9:50 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> > > Can we pull this into driver-core-next please? It fixes issues on some
-> > > boards with fw_devlink=on.
+> On Fri, Dec 18, 2020 at 08:33:37PM +0000, Jon Hunter wrote:
 > >
-> > On r8a77951-salvator-xs.dts, it introduces one more failure:
+> > On 18/12/2020 17:54, Linus Torvalds wrote:
+> > > On Fri, Dec 18, 2020 at 7:33 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > >>
+> > >> However, if you are saying that this is a problem/bug with our builders,
+> > >> then of course we will have to get this fixed.
+> > >
+> > > This seems to be a package dependency problem with the gcc plugins -
+> > > they clearly want libgmp, but apparently the package hasn't specified
+> > > that dependency.
+> > >
+> > > If this turns out to be a big problem, I guess we can't simplify the
+> > > plugin check after all.
+> > >
+> > > We historically just disabled gcc-plugins if that header didn't build,
+> > > which obviously meant that it "worked" for people, but it also means
+> > > that clearly the coverage can't have been as good as it could/should
+> > > be.
+> > >
+> > > So if it's as simple as just installing the GNU multiprecision
+> > > libraries ("gmp-devel" on most rpm-based systems, "libgmp-dev" on most
+> > > debian systems), then I think that's the right thing to do. You'll get
+> > > a working build again, and equally importantly, your build servers
+> > > will actually do a better job of covering the different build options.
 > >
-> >     OF: /soc/i2c@e66d8000/gpio@20/pcie-sata-switch-hog: could not get
-> > #gpio-cells for /cpus/cpu@102
-
-Geert,
-
-One good thing is that it's noticing this being weird and ignoring it
-in your particular board. I *think* it interprets the "7" as a phandle
-and that's cpu@102 and realizes it's not a gpio-controller. For at
-least in your case, it's a safe failure.
-
 > >
-> > Seems like it doesn't parse gpios properties in GPIO hogs correctly.
+> > Thanks. I have reported this issue to the team that administers the
+> > builders. So hopefully, they will install the necessary packages for us
+> > now.
 >
-> Could it be that the code assumes no self-referencing phandles?
-> (Just guessing...)
+> Just to close the loop on this, the builders now have libgmp-dev and
+> libmpc-dev packages installed and the builds are passing without the
+> workaround we had used.
 >
+> Thierry
 
-Linus,
 
-Ok I tried to understand what gpio-hogs means. It's not fully clear to
-me. But it looks like if a gpio-controller has a gpio-hog, then it
-doesn't have/need gpio-cells? Is that right?
+I was slightly concerned about your question:
 
-So if a gpio-controller has a gpio-hog, can it ever be referred to by
-another consumer in DT using blah-gpios = ...? If so, I don't see any
-obvious code that's handling the missing gpio-cells in this case.
+"In case where CC != HOSTCC, it's possible that CC was not built against
+the same version of GMP/MPC as HOSTCC. And even HOSTCC might not
+necessarily have been built against the versions provided by libgmp-dev
+or libmpc-dev. I'm not overly familiar with GMP/MPC, so perhaps if these
+headers are reasonably stable, this is not all that important. But if it
+is, then which version of GMP/MPC do we need? The version that CC was
+built against, or the version that HOSTCC was built against?"
 
-Long story short, please help me understand gpio-hog in the context of
-finding dependencies in DT.
 
-Thanks,
-Saravana
+
+I do not have a good insight about this.
+
+I am not sure if it is perfectly OK to
+use gmp.h from HOSTCC when it was not bundled with CC.
+
+The version difference might not be a significant issue, though...
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
