@@ -2,136 +2,280 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF2AC43219
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:18 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0AD222D2A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C20AC4332D
 	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:17 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id D280222D2A
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392205AbhASMCx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 07:02:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389171AbhASJx2 (ORCPT
+        id S2391799AbhASMBX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 07:01:23 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4336 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387438AbhASJ3V (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:53:28 -0500
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633B8C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 01:52:46 -0800 (PST)
-Received: by mail-vs1-xe35.google.com with SMTP id e15so10744263vsa.0
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 01:52:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AvjIP08JcWTDKv/EkjmGjjz2/Ez706ArkiY7SpIuCxU=;
-        b=S76XbketDfZ5GOQP3pIs7MNG45HGRAYb/s53ny9BZCQVB19xEkUeQS01TTyf168ona
-         Dph7cxIw6Z8V1n9ieX5l131KhH5A+VOkODESEHvkz/WMefABtTe+zMkoTtHZDH/c3Ur0
-         VwzTLh0YRvzQ5DxgAwqwwNkMlywDSr+l+iAbDEpUAz/VwYhsZEdXl6r9F7CA/eyt0I9I
-         p66qw5dAFsWdoTR59kT9AEoZjYWnHF7dIx6iMOvhYIrh4nXYunYMOCqUhhBAPpA/Mwnd
-         NYVEi4txXDV6FnnXd8MtbkEdPJwcXgc//iI7JkmsSOL/vndGB73Ls5MUNmGRU6q84Vvj
-         8JaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AvjIP08JcWTDKv/EkjmGjjz2/Ez706ArkiY7SpIuCxU=;
-        b=Bmo04a/YGmpCIqjB/u5hzSy551oog8Ux3ir+/jArytKLClDv6d55EzbKI1nWZx7Crm
-         jc9yUf5whwEss9g/CkxSxJblbjxrW6KhsN81YZj2ro2Xu9vIY0c3+MFXaA1VWcT7EobB
-         mEQH3wqbcjUSTGWEjWSvESYq3rlTW7J/PPs9zxVRjZaI5J2MAA8znziYFsmHu9GuTGMz
-         Jq3dKCsnqZR0QJN8DtaMTGw/Jc5GLdB6HXkVVADHdWBJyOTwp2vXMrb8aKd1qsAb6xyo
-         arxFsbGna8M18rdx5eu+ZupNfU9G+Kvt0yCACJMyUFXYFCoADRcfD89RUVSLXr8KHpQb
-         WknQ==
-X-Gm-Message-State: AOAM5312EI3MPRXhMFkvXDXHDTtpRKmWNkBHIfYDo3Fx9GCzGQwcCS3m
-        oB5SOHrAGA6UeY6ABKRcIaBvLeuQRnG2GZAytHyt4w==
-X-Google-Smtp-Source: ABdhPJxAkvFe7flhE98SBpSnM5IMOBz4v5rCx2G5W8QFgBx180sUyyr3j2h5bpp9P7Jgbxy5KNOUIPyvIujWKp8D73U=
-X-Received: by 2002:a67:facb:: with SMTP id g11mr2168122vsq.19.1611049965177;
- Tue, 19 Jan 2021 01:52:45 -0800 (PST)
+        Tue, 19 Jan 2021 04:29:21 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B6006a6480007>; Tue, 19 Jan 2021 01:28:40 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Jan
+ 2021 09:28:40 +0000
+Received: from audio.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Tue, 19 Jan 2021 09:28:37 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <kuninori.morimoto.gx@renesas.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, Sameer Pujar <spujar@nvidia.com>
+Subject: [RESEND PATCH v6 1/6] ASoC: dt-bindings: tegra: Add graph bindings
+Date:   Tue, 19 Jan 2021 14:58:11 +0530
+Message-ID: <1611048496-24650-2-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
+References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-References: <20210118011330.4145-1-digetx@gmail.com> <20210118011330.4145-2-digetx@gmail.com>
- <20210118072855.anncyl6z3e5uznvd@vireshk-i7> <CAPDyKFquCGUSTvcCpmN0vm1eGEz9B_hYSNm7wojhgwuXT=jkEQ@mail.gmail.com>
- <20210118110506.linvsoca7jbl42iq@vireshk-i7> <CAPDyKFr7SD_A9sKD2+90XfjP09T+PCLE=8qvn=M-yPEPXvBhsg@mail.gmail.com>
- <20210119034428.qgjjlvti6sirsnzy@vireshk-i7>
-In-Reply-To: <20210119034428.qgjjlvti6sirsnzy@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 19 Jan 2021 10:52:08 +0100
-Message-ID: <CAPDyKFp3OpV5qgfB_EGf=fyCR5b0b0zntbsXAJJsWbJX09gF6A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] PM: domains: Make set_performance_state() callback optional
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611048520; bh=wSbiZL/NM0UtDU3bPzfMihVkMzdLJDTXJ2ICU4gUlTc=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Type;
+        b=gd6Q+iHytfAu0HGTrnQEj+V7rlLL9DN4LDh7raUz8lVIXEJxYaZIf8JiiwtxJDY/4
+         q1vAFagpitZ5s0ljsHaNy3LXOlXmibnf4B2rv3ymcWCnXZB6u95O3ElGlOVV5jAhAJ
+         XeWL2p8m/M6UYvwULFOM0ElzzkJF8VMmqup5SIHUnlFT2seDA0p5xoAdjg05g0fOdC
+         kpRqE5f0S5TkRvvkzZ6gD91SjiRkFn2KCeb6N05IS3tg0NYkusLNQaIKKYG0CUagmP
+         OS7Sn7xBWwT7Ukq6NYy5YsaGII1O8ET5SnXIjyxvN3jAxht15m6JKzNp4RA9ZA8ioY
+         /rAahmO2QnHbw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 19 Jan 2021 at 04:44, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 18-01-21, 13:46, Ulf Hansson wrote:
-> > You seem to be worried about latency/overhead while doing the
-> > propagation upwards in the hierarchy. That seems like a reasonable
-> > concern to me, especially as the genpd lock is taken at each level.
->
-> I am not sure how many levels of domains we have normally, but unless the number
-> is big it won't be a very big problem.
+Add device tree binding properties of generic graph to ASoC component
+devices. This allows to define audio ports out of these components or
+DAIs and audio graph based sound card can be realised with this.
 
-It depends on the SoC topology, so obviously it differs. But more than
-a couple is unusual, I would say.
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ .../bindings/sound/nvidia,tegra186-dspk.yaml           | 18 +++++++++++++++++-
+ .../bindings/sound/nvidia,tegra210-admaif.yaml         | 13 ++++++++++++-
+ .../bindings/sound/nvidia,tegra210-ahub.yaml           | 13 +++++++++++--
+ .../bindings/sound/nvidia,tegra210-dmic.yaml           | 18 +++++++++++++++++-
+ .../devicetree/bindings/sound/nvidia,tegra210-i2s.yaml | 18 +++++++++++++++++-
+ 5 files changed, 74 insertions(+), 6 deletions(-)
 
-However, I think it may also depend on how many devices that are
-hooked up to the domains and how actively these are being used.
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+index ed2fb32..b8645d9 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra186-dspk.yaml
+@@ -17,6 +17,9 @@ maintainers:
+   - Jon Hunter <jonathanh@nvidia.com>
+   - Sameer Pujar <spujar@nvidia.com>
+ 
++allOf:
++  - $ref: audio-graph-port.yaml#
++
+ properties:
+   $nodename:
+     pattern: "^dspk@[0-9a-f]*$"
+@@ -55,6 +58,19 @@ properties:
+       The name can be "DSPK1" or "DSPKx", where x depends on the maximum
+       available instances on a Tegra SoC.
+ 
++  ports:
++    type: object
++    properties:
++      port@0:
++        description: |
++          DSPK ACIF (Audio Client Interface) port connected to the
++          corresponding AHUB (Audio Hub) ACIF port.
++
++      port@1:
++        description: |
++          DSPK DAP (Digital Audio Port) interface which can be connected
++          to external audio codec for playback.
++
+ required:
+   - compatible
+   - reg
+@@ -64,7 +80,7 @@ required:
+   - assigned-clock-parents
+   - sound-name-prefix
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+index c028b25..7cee772 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+@@ -17,6 +17,9 @@ maintainers:
+   - Jon Hunter <jonathanh@nvidia.com>
+   - Sameer Pujar <spujar@nvidia.com>
+ 
++allOf:
++  - $ref: audio-graph-port.yaml#
++
+ properties:
+   $nodename:
+     pattern: "^admaif@[0-9a-f]*$"
+@@ -37,6 +40,14 @@ properties:
+ 
+   dma-names: true
+ 
++  ports:
++    description: |
++      Contains list of ACIF (Audio CIF) port nodes for ADMAIF channels.
++      The number of port nodes depends on the number of ADMAIF channels
++      that SoC may have. These are interfaced with respective ACIF ports
++      in AHUB (Audio Hub). Each port is capable of data transfers in
++      both directions.
++
+ if:
+   properties:
+     compatible:
+@@ -81,7 +92,7 @@ required:
+   - dmas
+   - dma-names
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+index d772197..31f3e51 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+@@ -17,6 +17,9 @@ maintainers:
+   - Jon Hunter <jonathanh@nvidia.com>
+   - Sameer Pujar <spujar@nvidia.com>
+ 
++allOf:
++  - $ref: audio-graph-port.yaml#
++
+ properties:
+   $nodename:
+     pattern: "^ahub@[0-9a-f]*$"
+@@ -56,6 +59,13 @@ properties:
+ 
+   ranges: true
+ 
++  ports:
++    description: |
++      Contains list of ACIF (Audio CIF) port nodes for AHUB (Audio Hub).
++      These are connected to ACIF interfaces of AHUB clients. Thus the
++      number of port nodes depend on the number of clients that AHUB may
++      have depending on the SoC revision.
++
+ required:
+   - compatible
+   - reg
+@@ -67,8 +77,7 @@ required:
+   - "#size-cells"
+   - ranges
+ 
+-additionalProperties:
+-  type: object
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+index 2a3207b..89f4f47 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-dmic.yaml
+@@ -16,6 +16,9 @@ maintainers:
+   - Jon Hunter <jonathanh@nvidia.com>
+   - Sameer Pujar <spujar@nvidia.com>
+ 
++allOf:
++  - $ref: audio-graph-port.yaml#
++
+ properties:
+   $nodename:
+     pattern: "^dmic@[0-9a-f]*$"
+@@ -56,6 +59,19 @@ properties:
+       The name can be "DMIC1" or "DMIC2" ... "DMICx", where x depends
+       on the maximum available instances on a Tegra SoC.
+ 
++  ports:
++    type: object
++    properties:
++      port@0:
++        description: |
++          DMIC ACIF (Audio Client Interface) port connected to the
++          corresponding AHUB (Audio Hub) ACIF port.
++
++      port@1:
++        description: |
++          DMIC DAP (Digital Audio Port) interface which can be connected
++          to external audio codec for capture.
++
+ required:
+   - compatible
+   - reg
+@@ -64,7 +80,7 @@ required:
+   - assigned-clocks
+   - assigned-clock-parents
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+index dfc1bf7..5564603 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-i2s.yaml
+@@ -16,6 +16,9 @@ maintainers:
+   - Jon Hunter <jonathanh@nvidia.com>
+   - Sameer Pujar <spujar@nvidia.com>
+ 
++allOf:
++  - $ref: audio-graph-port.yaml#
++
+ properties:
+   $nodename:
+     pattern: "^i2s@[0-9a-f]*$"
+@@ -74,6 +77,19 @@ properties:
+       The name can be "I2S1" or "I2S2" ... "I2Sx", where x depends
+       on the maximum available instances on a Tegra SoC.
+ 
++  ports:
++    type: object
++    properties:
++      port@0:
++        description: |
++          I2S ACIF (Audio Client Interface) port connected to the
++          corresponding AHUB (Audio Hub) ACIF port.
++
++      port@1:
++        description: |
++          I2S DAP (Digital Audio Port) interface which can be connected
++          to external audio codec for playback or capture.
++
+ required:
+   - compatible
+   - reg
+@@ -82,7 +98,7 @@ required:
+   - assigned-clocks
+   - assigned-clock-parents
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.7.4
 
->
-> > However, to mitigate this can be rather messy. In principle, we would
-> > need to walk the hierarchy upwards, each time a new subdomain is added
-> > in genpd_add_subdomain(). While doing this, we would also need to keep
-> > track on what level we set to continue the propagation of the
-> > performance states for. Even if this can be done in non-latency
-> > sensitive paths, I don't think it's worth it because of complexity (I
-> > haven't even thought of what happens when removing a subdomain).
->
-> What about a new field in the domain structure like 'can-handle-pstates', and
-> then whenever sub-domain gets added it just needs to check its parent's field
-> and set his own.
-
-That would work if the topology is built from top to bottom, but I
-don't think we can rely on that.
-
-For example, when a domain A is added as a child to domain B, domain B
-doesn't have a parent yet (and the "can-handle-pstates" don't get set
-for neither domain A or domain B). Next, domain B is added as child
-domain to domain C. Domain C has the "can-handle-pstates" set, which
-means domain B gets the "can-handle-pstates" set as well. This means
-domain A, will not have "can-handle-pstates" set, while it probably
-should have.
-
->
-> > So, maybe we should simply just stick to the existing code, forcing
-> > the parent to have a ->set_performance() callback assigned if
-> > propagation should continue?
->
-> I think it would be better to fix the issue even if we aren't fully optimized
-> and making the change to make sure we keep propagating is rather important.
-
-Alright, let's continue with Dmitry's patches and discuss this further
-when v4 is out, as he seems to have it almost ready.
-
-Kind regards
-Uffe
