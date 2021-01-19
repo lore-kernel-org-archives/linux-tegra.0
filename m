@@ -7,92 +7,78 @@ X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4D6C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD65C43331
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7525B22D2A
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 379D023104
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 12:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390041AbhASMBN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 07:01:13 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18772 "EHLO
+        id S2392161AbhASMBf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 07:01:35 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4397 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731579AbhASI5f (ORCPT
+        with ESMTP id S2387470AbhASJ3o (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 03:57:35 -0500
+        Tue, 19 Jan 2021 04:29:44 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B60069ebd0000>; Tue, 19 Jan 2021 00:56:29 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Jan
- 2021 08:56:23 +0000
-Received: from jckuo-lt.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 19 Jan 2021 08:56:21 +0000
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v6 10/15] dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
-Date:   Tue, 19 Jan 2021 16:55:41 +0800
-Message-ID: <20210119085546.725005-11-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210119085546.725005-1-jckuo@nvidia.com>
-References: <20210119085546.725005-1-jckuo@nvidia.com>
+        id <B6006a6540000>; Tue, 19 Jan 2021 01:28:52 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Jan
+ 2021 09:28:52 +0000
+Received: from audio.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Tue, 19 Jan 2021 09:28:48 +0000
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <kuninori.morimoto.gx@renesas.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, Sameer Pujar <spujar@nvidia.com>
+Subject: [RESEND PATCH v6 4/6] arm64: defconfig: Enable Tegra audio graph card driver
+Date:   Tue, 19 Jan 2021 14:58:14 +0530
+Message-ID: <1611048496-24650-5-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
+References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611046589; bh=mvN5hTqw5+kX1iYGS+XGaO12JO7Us+IzS/6Gn+rdcC4=;
+        t=1611048532; bh=K6ffk+sf+Kr8aOJa1Q3UxSgncS5xJ1/jwgXDUj0CrKg=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=Rt6m+P1xTmIYrvOA9BJ2QN/RcGVpWqWSmuT/k/H6BMqJbClEJqSsh3DXRo2HOPXky
-         v72okR1s1179iDxUnY6rX905FL79bl0wbzZXLL2o3Sq26zxMD/PW46MQ5dPDmDB4om
-         QHmokK0UxyXb54WOyyaili/ksVUQj+XfhUeQy1dyoT+tylQ5YwZ9ioi4mC7o5ObsGX
-         EwqIWqIOOq/1tRb/AqKv7RM1IXF/hDx0C02bBPcD6Tn0EWA5siQO668Q+CvOUz1ff4
-         eb2pMdvy+DXD0/BQKNAnHXzUEgyYVA90qsyZtjs+KrJscs6AjSOqeN1dVxAmDl1vhu
-         ScAEFLiZcxwPQ==
+         References:MIME-Version:Content-Type;
+        b=O4kL+JxQDDK1PDJag7/IxjJDsCagLy7qXdmvcw2emgQEQ4W4Re9MtgUuLkav+HiY9
+         HfC/vMJ1Eyp1vrvRw+n6F/HCkedIJ08ZzMV0/V7NtqzZXt98h9M4WzR1EER84WzhVC
+         wuGQgyJvsrmGLYvNTWptPrHkKlEDyvZje7sTAsibm6JeYWbzeACdbG3j29Qls+ZF1S
+         pjZ6LSfN4/NzMehkZDCRA1SuL3gn73FiqrenSNylZl8QoiPzj6W/cFfznb59G2TkV0
+         StXMISx7iBsvn0ZFm6GMXtjca93uevaXpEu41ltYMDJRWShiyGfEE/FP9p2Wvd9Fju
+         NJcq58OX3lh1A==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit describes the "nvidia,pmc" property for Tegra210 tegra-xusb
-PHY driver. It is a phandle and specifier referring to the Tegra210
-pmc@7000e400 node.
+This commit enables Tegra audio graph card driver which is based on
+the generic audio-graph card driver. This is intended to be used
+on platforms based on Tegra210 and later chips.
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 ---
-v6:
-   no change
-v5:
-   replace "pmc@7000e400 node" -> with "PMC node"
-v4:
-   new change to document "nvidia,pmc" prop
-
- .../devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt      | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-pad=
-ctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl=
-.txt
-index 38c5fa21f435..b62397d2bb0c 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-@@ -54,6 +54,7 @@ For Tegra210:
- - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.0=
-5 V.
- - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
- - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V=
-.
-+- nvidia,pmc: phandle and specifier referring to the Tegra210 PMC node.
-=20
- For Tegra186:
- - avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI =
-PHY
---=20
-2.25.1
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 1cd0106..62763fc 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -747,6 +747,7 @@ CONFIG_SND_SOC_TEGRA210_DMIC=m
+ CONFIG_SND_SOC_TEGRA210_I2S=m
+ CONFIG_SND_SOC_TEGRA186_DSPK=m
+ CONFIG_SND_SOC_TEGRA210_ADMAIF=m
++CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD=m
+ CONFIG_SND_SOC_AK4613=m
+ CONFIG_SND_SOC_ES7134=m
+ CONFIG_SND_SOC_ES7241=m
+-- 
+2.7.4
 
