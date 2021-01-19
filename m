@@ -2,163 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B8C433E9
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 02:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D0EC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 03:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D76322252
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 02:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA7CE224B1
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 03:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405517AbhASCYi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 18 Jan 2021 21:24:38 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18788 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393946AbhASCYi (ORCPT
+        id S1728706AbhASDpn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 18 Jan 2021 22:45:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbhASDpL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 18 Jan 2021 21:24:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B600642bd0001>; Mon, 18 Jan 2021 18:23:57 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Jan
- 2021 02:23:57 +0000
-Received: from jckuo-lt.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Tue, 19 Jan 2021 02:23:54 +0000
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>,
-        JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH] arm64: tegra: Enable Jetson-Xavier J512 USB host
-Date:   Tue, 19 Jan 2021 10:23:49 +0800
-Message-ID: <20210119022349.136453-1-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 18 Jan 2021 22:45:11 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98015C0613C1
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 19:44:31 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id y12so10873888pji.1
+        for <linux-tegra@vger.kernel.org>; Mon, 18 Jan 2021 19:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uEYeDZRMc+h9WRG4pAvK1/KcPM+2OYyPYOz9DIXty1Q=;
+        b=pWBSJZSmcZMj2pZhxcvM90w618YnoqlP/e2ZsPvqSU31lhhwC6KzS14A0v4I3iwXWA
+         ekzUq8zkMfFfYzwOFQzMBiDl8bhV+F0bO5QuWbQHXNP3VMPzbxMqzhjZUCoEa5xMcNg2
+         8eBptoGSqwkGEP3T2nJcJJW6tcVsqegpmLCMQ2hua7B6+ZXTzpVI3bbxKqAa0VRoxddH
+         w5pA1R/yjbZNOV36eYKnnafT9iKxQRZKwYHu/vPUB588FIWjo/HEcgMnWxdb8gRqt0LZ
+         9XY7cqo1F/BA46hPSb9Cj6ODBYSClTy832K8agVMz9krtlmkF/4G/+72Jks6XYPhufFI
+         q3+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uEYeDZRMc+h9WRG4pAvK1/KcPM+2OYyPYOz9DIXty1Q=;
+        b=kn56CI69kUeXJ6JO8y9c3cbgCcd8DqwOy3SuZehbnS5lvgz9sKfWC7EPaXJ0ZitxSZ
+         XyiNJgmu99V85vqJY4UTaWqoddr79VAFhZjrkrcSdxnZR8GCvN2BpcJ9dYH2WxP9Ni5a
+         F+fbz355YZtfo1RWZBb/Y3pBnvqrrdC5i2bzfFkqNQ5/tely3pCPd/ntP28SAyzEH6W/
+         fs+53woZZZoeCbAMd1SwfCVAfnpWqkZbUW0ZDh1p6sjZbbwFB2KUoSPWnCuxqm1i0mZt
+         fvxbj9hRr1XlDKY1uo2O7Q7ZU/lAXptICAyOVwPDoHc5GyzxCiWcu6NyoNnQVB7773be
+         Oeyw==
+X-Gm-Message-State: AOAM531qgM31B+xr9dfkTl9730GhMIGInUG//zjouQtx3Jw0c9+a0ura
+        fSwB5TwepBV0r6l+1tXroDNjVQ==
+X-Google-Smtp-Source: ABdhPJx0/lt81SpGGHqSKLnBKJV7JMtFB7qIvoG67P7dnCkZfjz67sgzJDc44bJDxE5UqZMJqbPhPw==
+X-Received: by 2002:a17:902:9009:b029:dc:52a6:575 with SMTP id a9-20020a1709029009b02900dc52a60575mr2539734plp.57.1611027871154;
+        Mon, 18 Jan 2021 19:44:31 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id b62sm6424022pfg.58.2021.01.18.19.44.29
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jan 2021 19:44:30 -0800 (PST)
+Date:   Tue, 19 Jan 2021 09:14:28 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] PM: domains: Make set_performance_state()
+ callback optional
+Message-ID: <20210119034428.qgjjlvti6sirsnzy@vireshk-i7>
+References: <20210118011330.4145-1-digetx@gmail.com>
+ <20210118011330.4145-2-digetx@gmail.com>
+ <20210118072855.anncyl6z3e5uznvd@vireshk-i7>
+ <CAPDyKFquCGUSTvcCpmN0vm1eGEz9B_hYSNm7wojhgwuXT=jkEQ@mail.gmail.com>
+ <20210118110506.linvsoca7jbl42iq@vireshk-i7>
+ <CAPDyKFr7SD_A9sKD2+90XfjP09T+PCLE=8qvn=M-yPEPXvBhsg@mail.gmail.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611023037; bh=I8KRuadsSP9ujBg3UCBPF0M40+TaUrMhBkFLROVrMRg=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
-        b=FhRzl9GjjnVHtGUWO+0ZqgYMw4uhh836WGq3OigXe4h1hyBraea41i2HPWp2jZsoV
-         Ma1gUgv3+tEvM8nOT0zwxosRuN32z28uggyckYwOagmubzXBINvkZmlPMtIRi48Ico
-         s+FQwfiHvB+7O5hH8TD2n/Ytd0sMd5K6uxbNIgJA67AKroADKAbplU+XafaeUN5xtO
-         vt907F9tDPypdAgkfOiKnXnrewmKnGvEJyUAjqTw33VnlNmvj9QMZf28ORWjoE/tHn
-         aRTr2Y6lGF/TxFf6XC9/qltt03wwmvnPMQpWgq7dvInc+Lyt8OQ1lFySXgWqHD/KEP
-         SnMGk9PfNITXA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFr7SD_A9sKD2+90XfjP09T+PCLE=8qvn=M-yPEPXvBhsg@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit enables USB host mode at J512 type-C port of Jetson-Xavier.
+On 18-01-21, 13:46, Ulf Hansson wrote:
+> You seem to be worried about latency/overhead while doing the
+> propagation upwards in the hierarchy. That seems like a reasonable
+> concern to me, especially as the genpd lock is taken at each level.
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  8 +++++++
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 24 +++++++++++++++++--
- 2 files changed, 30 insertions(+), 2 deletions(-)
+I am not sure how many levels of domains we have normally, but unless the number
+is big it won't be a very big problem.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/bo=
-ot/dts/nvidia/tegra194-p2888.dtsi
-index d71b7a1140fe..7e7b0eb90c80 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -93,6 +93,10 @@ padctl@3520000 {
- 			vclamp-usb-supply =3D <&vdd_1v8ao>;
-=20
- 			ports {
-+				usb2-0 {
-+					vbus-supply =3D <&vdd_5v0_sys>;
-+				};
-+
- 				usb2-1 {
- 					vbus-supply =3D <&vdd_5v0_sys>;
- 				};
-@@ -105,6 +109,10 @@ usb3-0 {
- 					vbus-supply =3D <&vdd_5v0_sys>;
- 				};
-=20
-+				usb3-2 {
-+					vbus-supply =3D <&vdd_5v0_sys>;
-+				};
-+
- 				usb3-3 {
- 					vbus-supply =3D <&vdd_5v0_sys>;
- 				};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm6=
-4/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 54d057beec59..8697927b1fe7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -57,6 +57,10 @@ padctl@3520000 {
- 			pads {
- 				usb2 {
- 					lanes {
-+						usb2-0 {
-+							status =3D "okay";
-+						};
-+
- 						usb2-1 {
- 							status =3D "okay";
- 						};
-@@ -73,6 +77,10 @@ usb3-0 {
- 							status =3D "okay";
- 						};
-=20
-+						usb3-2 {
-+							status =3D "okay";
-+						};
-+
- 						usb3-3 {
- 							status =3D "okay";
- 						};
-@@ -81,6 +89,11 @@ usb3-3 {
- 			};
-=20
- 			ports {
-+				usb2-0 {
-+					mode =3D "host";
-+					status =3D "okay";
-+				};
-+
- 				usb2-1 {
- 					mode =3D "host";
- 					status =3D "okay";
-@@ -96,6 +109,11 @@ usb3-0 {
- 					status =3D "okay";
- 				};
-=20
-+				usb3-2 {
-+					nvidia,usb2-companion =3D <0>;
-+					status =3D "okay";
-+				};
-+
- 				usb3-3 {
- 					nvidia,usb2-companion =3D <3>;
- 					maximum-speed =3D "super-speed";
-@@ -107,11 +125,13 @@ usb3-3 {
- 		usb@3610000 {
- 			status =3D "okay";
-=20
--			phys =3D	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-+			phys =3D	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
- 				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
- 				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
-+				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>,
- 				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-3}>;
--			phy-names =3D "usb2-1", "usb2-3", "usb3-0", "usb3-3";
-+			phy-names =3D "usb2-0", "usb2-1", "usb2-3", "usb3-0", "usb3-2", "usb3-3=
-";
- 		};
-=20
- 		pwm@c340000 {
---=20
-2.25.1
+> However, to mitigate this can be rather messy. In principle, we would
+> need to walk the hierarchy upwards, each time a new subdomain is added
+> in genpd_add_subdomain(). While doing this, we would also need to keep
+> track on what level we set to continue the propagation of the
+> performance states for. Even if this can be done in non-latency
+> sensitive paths, I don't think it's worth it because of complexity (I
+> haven't even thought of what happens when removing a subdomain).
 
+What about a new field in the domain structure like 'can-handle-pstates', and
+then whenever sub-domain gets added it just needs to check its parent's field
+and set his own.
+
+> So, maybe we should simply just stick to the existing code, forcing
+> the parent to have a ->set_performance() callback assigned if
+> propagation should continue?
+
+I think it would be better to fix the issue even if we aren't fully optimized
+and making the change to make sure we keep propagating is rather important.
+
+-- 
+viresh
