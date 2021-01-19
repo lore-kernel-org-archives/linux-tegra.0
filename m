@@ -2,115 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA32FC10F14
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C06EC18E7D
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99EBF23158
-	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BAE52333D
+	for <linux-tegra@archiver.kernel.org>; Tue, 19 Jan 2021 18:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbhASRgg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 12:36:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390678AbhASRgO (ORCPT
+        id S1727097AbhASRoB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 12:44:01 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4778 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391584AbhASRkW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 12:36:14 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B992C061573;
-        Tue, 19 Jan 2021 09:35:34 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id b26so30250867lff.9;
-        Tue, 19 Jan 2021 09:35:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gMgwlQyoUBPXZTnesEHGejV06vBVQO6z3YHE6lnNlA8=;
-        b=m+odlVeeIwd/iWZY8EUBSSPZ50JljTtjRALJNl0uHJMiKBXYWqjk4lJ6bFvC7AGKpE
-         v0VEwo2A6coM1VA8JK2EHOGtkV3IHKEcS1wn80qXqyPMNdrZ4bE/BVSyLbcxH9StLAfp
-         pvdTLnBHUiIJeXCknyBw7jsOGAI785JXb80ogKdmck8sKGe1//yzh/KxkmYmgxx2fCWN
-         UtaQfCRWmq4fW9RAHebWgJ8cSQjMHJsKNUozQGppsS9vMP6vLtcZwIZ32ou0MBOjfDqk
-         Tnaej0vhE6USsm+HD2b7DKIaECKqr6xMolVX/VKcD94bEq6kKtIyhLMcHPb+fk9XjtUK
-         MJHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gMgwlQyoUBPXZTnesEHGejV06vBVQO6z3YHE6lnNlA8=;
-        b=BrmrovHAMrS8cjXZ8Fh2tUf4vAm8skvZCCGaKAcCCwpp3g8IR44qbpzsgbV8V5tdHa
-         vxTh2Pcn6I0aUMOfBwTjpFcKgodiaQoji/BfFMFzoHP2M73hPLbvNH3zUvGionNX3z4P
-         8HTOlCqkHYVflXMN6CE594basEPofZZMy+JH4rM1M/agKkMT8Vs1nXiuD9xNDXGxyy6g
-         sg2lrHIZHp2CUqaaQCBhc2fuaUbWbSvDeWKceMcAt7SYz7eJaYgDQVhGdTwiqCWhoeBO
-         4siRlVhlRqbPfnVzl+nIwunjKqDTNf1JZ85yGvSKS1HvewAGFbhsK103cl56sC5yVtAn
-         PJfg==
-X-Gm-Message-State: AOAM532nOw19k4VC462to9NpIF8hBPjE+n8TO3+xGMG1MIg4bVO97o4G
-        VQm1n+9g764Z4LrqfU5kPxEN2bsx7Wo=
-X-Google-Smtp-Source: ABdhPJypJleEMjoXlixlan9dKgAjCS8aG2pk0Q8rneBgP9GZa6qxN8L9BOUsK7BSpV2xNESqpMFvUA==
-X-Received: by 2002:a05:6512:368d:: with SMTP id d13mr2162278lfs.414.1611077732803;
-        Tue, 19 Jan 2021 09:35:32 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id f5sm2031874lft.218.2021.01.19.09.35.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Jan 2021 09:35:32 -0800 (PST)
-Subject: Re: [PATCH v3 00/12] OPP API fixes and improvements
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210118005524.27787-1-digetx@gmail.com>
- <20210118114613.fzq7nkrdfm53upkr@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1d17901f-6341-d278-f517-33d9c7aadf42@gmail.com>
-Date:   Tue, 19 Jan 2021 20:35:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Tue, 19 Jan 2021 12:40:22 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B6007195c0000>; Tue, 19 Jan 2021 09:39:40 -0800
+Received: from [10.25.99.10] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Jan
+ 2021 17:39:36 +0000
+Subject: Re: Re: [RESEND PATCH v6 5/6] arm64: tegra: Audio graph header for
+ Tegra210
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <broonie@kernel.org>, <robh+dt@kernel.org>, <jonathanh@nvidia.com>,
+        <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>
+References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
+ <1611048496-24650-6-git-send-email-spujar@nvidia.com> <YAcTxxyogVgfN1uw@ulmo>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <b83eb795-328e-acc5-4555-7befd919a136@nvidia.com>
+Date:   Tue, 19 Jan 2021 23:09:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210118114613.fzq7nkrdfm53upkr@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YAcTxxyogVgfN1uw@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611077980; bh=NYSuQvptGwglsg6hwhbeZo+P6a5iRvHlv/Ac5X3wq0E=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=BkfBjCUirmEPSHaImywpIfpgV7kphUGUianmqeHjkbZ0ygzEmqlRasO7Hwd/L4VPy
+         KOO2kYKtrdPTiV4eFWv2p4PUvcSY07KI0LiQ2CZaQQtGpJXn8EjBnfOmzwobA1RVdZ
+         MSxH3StnoqYMehpSI9CqmNvITcT7VpsxCqSErtSmKkGgyaqQL90TXladEbNVJGOybg
+         PLS6JMYhVbDNvmgjUEg2rAaCoqv08+3EKa/mlMh+SnOTuWQP1v06KTpRg6mHxSlIgK
+         uvz8RO5GxtqnZGHBIbwoekZLCd/ajzehQG7HgxkAZy5fj5SXzTAaaFR0QZ9pBUlM7S
+         8VOFBzSnarVhQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.01.2021 14:46, Viresh Kumar пишет:
-> On 18-01-21, 03:55, Dmitry Osipenko wrote:
->> Hi,
->>
->> This series fixes problems and adds features to OPP API that are required
->> for implementation of a power domain driver for NVIDIA Tegra SoCs.
->>
->> It is a continuation of [1], where Viresh Kumar asked to factor OPP
->> patches into a separate series. I factored out the patches into this
->> series, addressed the previous review comments and re-based patches
->> on top of [2], which replaced some of my patches that added resource-managed
->> helpers.
->>
->> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
->> [2] https://lore.kernel.org/linux-pm/20210101165507.19486-1-tiny.windzz@gmail.com/
-> 
-> Hi Dmitry,
-> 
-> I have applied 9 out of 12 patches already. Thanks.
-> 
 
-Thanks, I checked that everything is applied properly using today's
-linux-next.
+
+On 1/19/2021 10:45 PM, Thierry Reding wrote:
+> On Tue, Jan 19, 2021 at 02:58:15PM +0530, Sameer Pujar wrote:
+>> Expose a header which describes DT bindings required to use audio-graph
+>> based sound card. All Tegra210 based platforms can include this header
+>> and add platform specific information. Currently, from SoC point of view,
+>> all links are exposed for ADMAIF, AHUB, I2S and DMIC components.
+>>
+>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>   .../boot/dts/nvidia/tegra210-audio-graph.dtsi      | 153 +++++++++++++++++++++
+>>   1 file changed, 153 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
+> I prefer keeping everything in tegra210.dtsi, but I can do that merge
+> when I apply, after the DT bindings have been acked, so no need to
+> resend just because of that.
+
+I think this may be fine for Tegra210 based boards. But for Tegra186 and 
+Tegra194, whenever we add support for it, can rely on a common 
+audio-graph dtsi because there is no change w.r.t APE. This can help us 
+to avoid duplication of the bindings. This most likely applies to future 
+chips as well (where Tegra186 audio-graph bindings can be considered as 
+base) when there is no significant change in APE.
