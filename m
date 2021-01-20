@@ -2,64 +2,69 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDFDC4332B
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8798C4321A
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 542CF23603
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F10C2360D
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 23:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732721AbhATVZi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 16:25:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57786 "EHLO
+        id S1726725AbhATWbI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 17:31:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbhATVYv (ORCPT
+        with ESMTP id S1727099AbhATV5t (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 16:24:51 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCB75C0613C1;
-        Wed, 20 Jan 2021 13:13:54 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id 3so114463ljc.4;
-        Wed, 20 Jan 2021 13:13:54 -0800 (PST)
+        Wed, 20 Jan 2021 16:57:49 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD7BC061575;
+        Wed, 20 Jan 2021 13:57:08 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id j3so199524ljb.9;
+        Wed, 20 Jan 2021 13:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i9SzY+rPoitpU/eUZajfioFau9iWba75LSgb/vVzMO4=;
-        b=jQQjUnLM/CnrijQRgSGWa5rrt5vBw3HYnIjcRsYyYCns8TvRDr6MRVxN3/7pcHXWQS
-         SeQ0xJWvdEeTaBJYLgeRYPxpbSRXqA9B0dV2okMU4fEY9FflFgmDDGWqZ1QrGlM7azK3
-         hIwuYOzb4uBaTWBIi6+LtM5GBJRpwJyCdcAZQyNJkp84/x/UEosyU8/ysnLCCDhUPul+
-         R3REx9CoyWwbxgP62WK8qxhdKAFbZTrWyshiJOC+2VApSBNp34Rzh7GGJ10K3iJxsRYU
-         PNTf9UcbIk/nLsNmrK11iML8OUlk9FIh9GXlqK8WYxupSvkRFMsEYjdRtztsBsHZe+Za
-         5+rQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ceHRCJDK3HYsIEFwVaZdcOC3/1LUUaiOgnlHMxXcJKg=;
+        b=W4ZRzJICVHiuDztf0opX/vCbrya/2gxGbYiulmDAeN26an7pfDLwC4uXVeSsZjs2qP
+         cAIeGhUo4T20zGUkQwArJb/rD7L2agpHRuA4x84VPsCwWZP/JW9zAMLfMwjVXhVJRMx0
+         n8IKlOMybH2T1r8fxngsjrDBnq7dID9jfN/zRu0TjA9rPmO9p9HuQl53eeYWaPitLDsJ
+         ZqIELerQYMLrCrtSmIBa3YXesH/Rr3lL8eBp/foZBi5/yw6hJ+wUqi3Gz+orqqqa0D2t
+         bLUD7GdJGCCXvkEsXyNOuOI/9/ldHYAJfNE0L8LglMfczwKtfYEOgWJ+dhHt4kH2bmXw
+         reNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i9SzY+rPoitpU/eUZajfioFau9iWba75LSgb/vVzMO4=;
-        b=nlsRa9rWPqSB/j6z+meuJKck6meneDPFUJsrl67QHqDnz0DkotI+WjKtQ/FqMzFBsa
-         bjuOFAH/Q0ooD4I4Nmkk3fshk28aK7raGuMUqDT0tPzDnDIo5cQIqaprs7v+Vk0xvMDY
-         UxBmlnCu3ZJotskB6F5kyW0uJCQXPFOwz5hMGW+GKN7dIH1L0XvWPcSWp0OojbblEQXW
-         wlN9+L111TFNZT7GDnB4N6TCUbJrwMHIjtA7XBKJd8VxKMAEgfADtaR4GaCJYj1fmG/z
-         Cc9vgw0TaZPSlDOnvPblooWimJsPRduyntuLcFEzCpBqEvuXJmOjKH5KVcuqg1RKOS2E
-         LWdA==
-X-Gm-Message-State: AOAM532f1rx2LZTfA8y4Jgl4pfG3zxH/WUqERqKcn0rKgQazlW1OVMuE
-        Nubs07kuXAamWUiro/b5Bs+uMFha/bI=
-X-Google-Smtp-Source: ABdhPJwiEdk2TXuFXgvoQPSkujL9k026Rz/nUihP+1xfMlkG3UEBsW/2DSrrZGOho4YJsMpuoi7KMg==
-X-Received: by 2002:a05:651c:112c:: with SMTP id e12mr5366946ljo.66.1611177232499;
-        Wed, 20 Jan 2021 13:13:52 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id 196sm298131lfj.219.2021.01.20.13.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 13:13:52 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ceHRCJDK3HYsIEFwVaZdcOC3/1LUUaiOgnlHMxXcJKg=;
+        b=icVs2wgz1sxsRk2joxvFo7LHGeexY8B19C9qMxgbyqO695UMSC7TYUCZR0dEl4a35X
+         zbtyaJd3pOm8EM26Mhduuh93XH9qNEvnxGHb2Twp/qbr0MLnDLHYqryPI11yIPr7KGRn
+         K7sn/UUe0j/P8u/Oezggbxg7O7ViW9G83elxl4rO8MKXYEQveNwNggJ69OJ8klUrUWoI
+         lnq4Bm2oW2tOrZhxHZepn6LihmK8KbEsLVYU5moTVOSKElzExDQw4mAktaNaMqciAS83
+         jnlWYM76M2W63QoSuhUFi5n+xImdDDZoNsB5LW2ICuxVFMm1WZREsT/lzauJTq/ZzA9q
+         tqEQ==
+X-Gm-Message-State: AOAM533ki+jmJIx1nMeTQHqyIFWGeVggn8wCD8SUsQygW6grhvPZQX6Z
+        E7COPg1a5mdRgOVWEmCq2GrUg2psf8I=
+X-Google-Smtp-Source: ABdhPJwycW2kFZEra1VeimUqPfqf9oMM2IltvnYEEPSGXuxF3K4moS4SD52zegkvlFyE/vW2eYuhlA==
+X-Received: by 2002:a2e:2f17:: with SMTP id v23mr5515563ljv.222.1611179826782;
+        Wed, 20 Jan 2021 13:57:06 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id f3sm349528ljp.114.2021.01.20.13.57.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Jan 2021 13:57:05 -0800 (PST)
+Subject: Re: [PATCH v3 05/12] opp: Add dev_pm_opp_set_voltage()
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
@@ -67,53 +72,79 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Kevin Hilman <khilman@kernel.org>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v5 2/3] PM: domains: Make of_genpd_add_subdomain() to return -EPROBE_DEFER
-Date:   Thu, 21 Jan 2021 00:12:31 +0300
-Message-Id: <20210120211232.17299-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210120211232.17299-1-digetx@gmail.com>
-References: <20210120211232.17299-1-digetx@gmail.com>
+References: <20210118005524.27787-1-digetx@gmail.com>
+ <20210118005524.27787-6-digetx@gmail.com>
+ <20210118095256.tr2qgnrmokkc6ngf@vireshk-i7>
+ <a48dca91-4264-e153-cefa-ccbcca1b1d9d@gmail.com>
+Message-ID: <16c7e096-5efd-2d0c-a2ac-c11133c29c30@gmail.com>
+Date:   Thu, 21 Jan 2021 00:57:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <a48dca91-4264-e153-cefa-ccbcca1b1d9d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Driver of a power domain provider may not be ready at the time of
-of_genpd_add_subdomain() invocation. Make this function to return
--EPROBE_DEFER instead of -ENOENT in order to remove a need from
-power domain drivers to handle the error code specially.
+18.01.2021 22:14, Dmitry Osipenko пишет:
+> 18.01.2021 12:52, Viresh Kumar пишет:
+>> On 18-01-21, 03:55, Dmitry Osipenko wrote:
+>>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>>> index 99d18befc209..341484d58e6c 100644
+>>> --- a/drivers/opp/core.c
+>>> +++ b/drivers/opp/core.c
+>>> @@ -2731,3 +2731,58 @@ int dev_pm_opp_sync_regulators(struct device *dev)
+>>>  	return ret;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(dev_pm_opp_sync_regulators);
+>>> +
+>>> +/**
+>>> + * dev_pm_opp_set_voltage() - Change voltage of regulators
+>>> + * @dev:	device for which we do this operation
+>>> + * @opp:	opp based on which the voltages are to be configured
+>>> + *
+>>> + * Change voltage of the OPP table regulators.
+>>> + *
+>>> + * Return: 0 on success or a negative error value.
+>>> + */
+>>> +int dev_pm_opp_set_voltage(struct device *dev, struct dev_pm_opp *opp)
+>>
+>> I think we should do better than this, will require some work from
+>> your part though (or I can do it if you want).
+>>
+>> Basically what you wanted to do here is set the OPP for a device and
+>> this means do whatever is required for setting the OPP. It is normally
+>> frequency, which is not your case, but it is other things as well.
+>> Like setting multiple regulators, bandwidth, required-opps, etc.
+>>
+>> I feel the right way of doing this would be to do this:
+>>
+>> Factor out dev_pm_opp_set_opp() from dev_pm_opp_set_rate() and make
+>> the later call the former. And then we can just call
+>> dev_pm_opp_set_opp() from your usecase. This will make sure we have a
+>> single code path for all the set-opp stuff. What do you think ?
+>>
+> 
+> Sounds like it could be a lot of code moving and some extra complexity
+> will be added to the code. If nobody will ever need the universal
+> dev_pm_opp_set_opp(), then it could become a wasted effort. I'd choose
+> the easiest path, i.e. to defer the dev_pm_opp_set_opp() implementation
+> until somebody will really need it.
+> 
+> But if it looks to you that it won't be a too much effort, then I'll
+> appreciate if you could type the patch.
+> 
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-[tested on NVIDIA Tegra20/30/124 SoCs]
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/base/power/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Let's start with dev_pm_opp_set_voltage() for now. It shouldn't be a
+problem at all to upgrade it to dev_pm_opp_set_opp() later on.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 5c843772f7f4..25b346bb2d97 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2466,7 +2466,7 @@ int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
- out:
- 	mutex_unlock(&gpd_list_lock);
- 
--	return ret;
-+	return ret == -ENOENT ? -EPROBE_DEFER : ret;
- }
- EXPORT_SYMBOL_GPL(of_genpd_add_subdomain);
- 
--- 
-2.29.2
-
+I'll make a v4 with the dev_pm_opp_set_voltage(), please let me know if
+you have objections or more suggestions!
