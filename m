@@ -2,120 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30C9C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 04:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37278C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 05:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F4B223137
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 04:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC9623132
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 05:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbhATElN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 23:41:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbhATEkT (ORCPT
+        id S1725827AbhATFN7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 00:13:59 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14679 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730601AbhATFHe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 23:40:19 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E391C061757
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 20:39:39 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id md11so1372120pjb.0
-        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 20:39:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3Mw9kpTWYLs3GYeFCfv2XLbWScki4E8QbYrJLATCMOM=;
-        b=NSOrtz9JoqUpYLUCCHjbFEdlVTD56bqaffClcuXWTCrFL897Lom+Qbl/QZRG8jUavo
-         3BVHucGwNpSvG0TN0uzfs/15kOixsoGwr8cAkkZLHw1iKT1Fd/re6YcN3qoWaR4RSryj
-         X5cI35dcMrlx6A+1XOsn10yQZuQ+JvIwix4AF9qhS4cpacFOSXlaol/YjhXX32T+kMLd
-         WcknRbRNUX85FbG4GwK36nACqMC3Jc0LCvtv7cFCZCKK1+jL4ieziZFp8Vfi20lCTTbN
-         Dt8QtG7YTyV/mN0q68LmIAzplQu6gYW0MGfJmEzp+44ebL/CksaqbgtbMJ1+DX9F8TlH
-         8lLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3Mw9kpTWYLs3GYeFCfv2XLbWScki4E8QbYrJLATCMOM=;
-        b=CZXcHiTDeWiZCVDT/VTkWHBeqZ2AohbTfly1Gq/ZKGAxxzlxar/Knh1ERGvxn8CdRP
-         YgAJJbG+JdChXbd5U2csP6ziFpUNcn1vp9IK+jJj/HA0qbiWyy3w9RVD2AuVRpXKfN1g
-         9hFY8DXmPMsW66VLpQ+20PGGONTdDxZEALMHYo9af++euLjKJONO3QfUg4nhpPOR0Ioa
-         gJyozRPvjplD1DnqeKx286FqL67HMEyLcAwmUPjGIufCI0lPiUCbY0tcwAwmOquw3EFb
-         DB/Sq1yIAQsjiSNlFVnvGLSU8ejK/P6Trp/AMrA1KfsV6JndaNm8/nLeGe8gv9O65Ta5
-         83cg==
-X-Gm-Message-State: AOAM531/Yu2qNd42f3w2pBKbnMei3EXWD14xqBGtvGturLhIzsVBlR13
-        J6uR9QQh9LDVMf/JQAz90FOG9Q==
-X-Google-Smtp-Source: ABdhPJxWrwGkrMAt216utAgHlcqTJR4nbRCrGF/RIvEBvOStwKqO/SPw4ZkPZWTjLIEYXgSFndBaEA==
-X-Received: by 2002:a17:902:b692:b029:de:43aa:6537 with SMTP id c18-20020a170902b692b02900de43aa6537mr8177507pls.65.1611117578969;
-        Tue, 19 Jan 2021 20:39:38 -0800 (PST)
-Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id u68sm620672pfb.70.2021.01.19.20.39.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jan 2021 20:39:38 -0800 (PST)
-Date:   Wed, 20 Jan 2021 10:09:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] PM: domains: Make set_performance_state()
- callback optional
-Message-ID: <20210120043933.6ilryvgkhvnsrei7@vireshk-i7>
-References: <20210120015010.14191-1-digetx@gmail.com>
- <20210120015010.14191-2-digetx@gmail.com>
+        Wed, 20 Jan 2021 00:07:34 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B6007ba6e0000>; Tue, 19 Jan 2021 21:06:54 -0800
+Received: from [10.25.99.10] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 Jan
+ 2021 05:06:48 +0000
+Subject: Re: Re: Re: [RESEND PATCH v6 5/6] arm64: tegra: Audio graph header
+ for Tegra210
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <broonie@kernel.org>, <robh+dt@kernel.org>, <jonathanh@nvidia.com>,
+        <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sharadg@nvidia.com>
+References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
+ <1611048496-24650-6-git-send-email-spujar@nvidia.com> <YAcTxxyogVgfN1uw@ulmo>
+ <b83eb795-328e-acc5-4555-7befd919a136@nvidia.com> <YAcdi7ARk0imXafQ@ulmo>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <fb0d0f14-e038-cb0c-542e-011ccb4beb93@nvidia.com>
+Date:   Wed, 20 Jan 2021 10:36:44 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210120015010.14191-2-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <YAcdi7ARk0imXafQ@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611119214; bh=TrUW/bRVd0y6RBunmo1Nvw8U/CisQ85mSiTQB96uz4Q=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=iqJqehfrlGaLEYWRtxL8pSQcX78r9QttWiB+MThCuJIKgzBAG05ePIeO7kEtH3u/w
+         lKt3gIrqHKl2y2rosb6wvtl0mGOf4xTMhixn97FdZEXDfyp1TXk1MBmpz4dGKFTh0p
+         6yuyUPjOwC1fWbInmd2GX5IlkNh0bscT1c4rJ7bz5rkxVsv8a+y8jLOEHjV27Dw+Np
+         CXv7nlVgSuim4YEU3v93drYtjTu4UdfUo66xQPY/+Vh21xrI9i/319L0kc1ub4RLYK
+         XuVuyONSrYrmMpaopjtSGaxQSv2E0F8WFn/+psAoaISZ87LPRUOIIH62rj+IqyrO3i
+         lYpd9Yh5WOaEg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20-01-21, 04:50, Dmitry Osipenko wrote:
-> Make set_performance_state() callback optional in order to remove the
-> need from power domain drivers to implement a dummy callback. If callback
-> isn't implemented by a GENPD driver, then the performance state is passed
-> to the parent domain.
-> 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-> [tested on NVIDIA Tegra20/30/124 SoCs]
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/base/power/domain.c | 33 ++++++++++++++++++---------------
->  1 file changed, 18 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 9a14eedacb92..0bd0cdc30393 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -297,6 +297,18 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
->  	return state;
->  }
->  
-> +static int _genpd_xlate_performance_state(struct generic_pm_domain *src_genpd,
-> +					  struct generic_pm_domain *dst_genpd,
-> +					  unsigned int pstate)
 
-I would name them as genpd and parent, that makes it more readable for it.
 
--- 
-viresh
+On 1/19/2021 11:27 PM, Thierry Reding wrote:
+> On Tue, Jan 19, 2021 at 11:09:32PM +0530, Sameer Pujar wrote:
+>>
+>> On 1/19/2021 10:45 PM, Thierry Reding wrote:
+>>> On Tue, Jan 19, 2021 at 02:58:15PM +0530, Sameer Pujar wrote:
+>>>> Expose a header which describes DT bindings required to use audio-graph
+>>>> based sound card. All Tegra210 based platforms can include this header
+>>>> and add platform specific information. Currently, from SoC point of view,
+>>>> all links are exposed for ADMAIF, AHUB, I2S and DMIC components.
+>>>>
+>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>    .../boot/dts/nvidia/tegra210-audio-graph.dtsi      | 153 +++++++++++++++++++++
+>>>>    1 file changed, 153 insertions(+)
+>>>>    create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-audio-graph.dtsi
+>>> I prefer keeping everything in tegra210.dtsi, but I can do that merge
+>>> when I apply, after the DT bindings have been acked, so no need to
+>>> resend just because of that.
+>> I think this may be fine for Tegra210 based boards. But for Tegra186 and
+>> Tegra194, whenever we add support for it, can rely on a common audio-graph
+>> dtsi because there is no change w.r.t APE. This can help us to avoid
+>> duplication of the bindings. This most likely applies to future chips as
+>> well (where Tegra186 audio-graph bindings can be considered as base) when
+>> there is no significant change in APE.
+> Maybe. Although that argument is somewhat extreme because we already
+> have some of that same duplication throughout the other .dtsi files. By
+> the same argument we could save a bit of duplication by having something
+> like tegra-gpio.dtsi and including that in all the SoC .dtsi files and
+> only update the compatible string, because that's the only significant
+> change.
+
+> Duplication isn't a big problem for DTS files because the data is meant
+> to be stable anyway. So once it is in place and doesn't have to change,
+> it really doesn't matter if it comes from an include or it's duplicated.
+
+OK, if there is no issue with duplication then fine with me. Thanks.
+
