@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B97C433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27585C433DB
 	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 203212245C
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A6821D79
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbhATB7X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 20:59:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59246 "EHLO
+        id S1729906AbhATB54 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 20:57:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731384AbhATBvf (ORCPT
+        with ESMTP id S1731386AbhATBvh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 20:51:35 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 668A6C061573;
-        Tue, 19 Jan 2021 17:50:55 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id o17so31971874lfg.4;
-        Tue, 19 Jan 2021 17:50:55 -0800 (PST)
+        Tue, 19 Jan 2021 20:51:37 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49220C061575;
+        Tue, 19 Jan 2021 17:50:57 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id u11so24156794ljo.13;
+        Tue, 19 Jan 2021 17:50:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g0Z7h9bg+7HGu4fSvr9LvhKp90jXWDcL2gI3AJjDonI=;
-        b=PGIrOj1nZpTfvp1DDH1UrdhWcj3jN6bLf6XpM4jn5v3JiETzTYfZDPItRCvaY/rg88
-         lhUy7AhJP0BxI2N+tH8VMhTx+wPZBpkcRwQwxZrMocxr0BOFE6rGt00BFUDkRzMQranR
-         17lAqB+KTkOzDB2HrXel9dH5V+TxaRuDefQEeJylk6l+YirRWKDHV5q/Pa/3X3JqeutF
-         f+rq+QFxtNIO7WowD4aA+S+YnZd0GDLjOMbU4hEVSD0V44SNwBUTXCfhhj9QWEiUIQkf
-         wxgarM/uet9zKlGWXvi3A45DtPuniC9rrvzF9CdAzrZnvjI0dYm/jGpg13OoCeJ0ovXJ
-         6sAA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ybcPr1W3M4zWRH/hwFZaxAvSfw+Gc9d6ovp3laSwDH4=;
+        b=h3NWcY2gyn6aWdF7c0CY5VtTcvP58xqEnCnQU05TXtCUOsSIq3frqt9BDynCuYAYsG
+         fjzB1TIYAX9tE5e69lNzQMsA4RL9FYuXTIMMcSSf9ynqg5DTZz6kDxMzQOc4K4kSHSLV
+         3jQ0/4FnglqMzK70jzOgG080bjMHfT7ffjyfU44dYWpzpGTEkPcEc9ptUSIswGF6VLZ1
+         kSh5A596bHTvrif3QlgwjjTDr8gDbeuhgsEBIFnyk8JPDeHaSMeYs+BhyRYcF7OPJxB+
+         urra11Og+l5o86L7f8iMcXU7+K1hJaO+8N2dnJ/8u5FNjCyPKOVAh/Os7iW+l6H14PTI
+         xGPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g0Z7h9bg+7HGu4fSvr9LvhKp90jXWDcL2gI3AJjDonI=;
-        b=epRMZLaWIeMQcOQCU3h0o7Qzj1HN8Kxe9140nOUKrxTFF/XTC1W6ITJ/ZeiREgg7in
-         4HFzo5u9n3S0NAQ+VbbyNjokbgLQfh5SiXBMAkeJ876ETLlmvEE9MrFpwrQzzySJOx22
-         2SUtGUNaHdtHnnhXhzwBxAQynh2a0WihPbIzM5iYf4pCIAK0bJWwZvzuuLD5ZeY8JEcp
-         uGxReU49UxMp/1+E5xMWREKOSbRaFt9twuuGdJLRH7TXPKEZi7v9jmwpcXGdssY3vG3+
-         DBO8IXOu+gxYJTDgESVFDfKZ9TAAs39BI9S5cepMnrtAf2zGCFKRTxvoCedpbwROKCzf
-         Naxg==
-X-Gm-Message-State: AOAM532hqMSlzyRIfPp9oAC0q5sX/CQXRN6epiERzI+raFmXDwiT6Enc
-        lBDON5g0dweR+2eVEz6+F3U=
-X-Google-Smtp-Source: ABdhPJy0omEijItkCZZccB/DnERd8KPObDC8xwSGkB6x6hDvMCy3ohbpgdf7F9lGgntW5kFJjO07VA==
-X-Received: by 2002:ac2:504e:: with SMTP id a14mr2832014lfm.285.1611107453983;
-        Tue, 19 Jan 2021 17:50:53 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ybcPr1W3M4zWRH/hwFZaxAvSfw+Gc9d6ovp3laSwDH4=;
+        b=guS7giq3xANOifGYXSFus1HncoFJH76PSQf0mmT+SyPhNO6tZcdFofmQv7GD8YjKvb
+         EHKhMh0C1QkIslC6TeAaf/7iEnk43PU9CQv1P/FkfDxCN9N/6IgsYn0aPwpF2asYDSAz
+         12IE6Y5OkkP18LduZgG0pLdtys+Flm4aOz2b4SXPwxXNJsb0lBaJzoMHh/SgFyIxGJ/u
+         Kj1E5YToQZxJFwoSvOT7/UK+Lts7kqoBQgus3gFrhqd3p5NAc8OmXrQApv+97QwKuAcN
+         0vgidhpyxyWP8zG5R9fv9GfvttpkQ6E3eCAeHhsU09oET5QOJq76WmODlx57gCVjsEoM
+         NSHw==
+X-Gm-Message-State: AOAM531ctjUrGMG+kRmbjoYaB6DSb6vk1jDQwG8zPZeophBwdUK6+0op
+        IJeNjfgtfNv/NiZCEPraalE=
+X-Google-Smtp-Source: ABdhPJxpaR3X7eLcrmcRa7Kuigbz4QgkpPiGYAJSMBuIQVhwyJJOodVwzQaNGnIzl140AIFoNAnbuA==
+X-Received: by 2002:a2e:b4af:: with SMTP id q15mr3180904ljm.507.1611107455786;
+        Tue, 19 Jan 2021 17:50:55 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id o14sm56163lfi.92.2021.01.19.17.50.53
+        by smtp.gmail.com with ESMTPSA id o14sm56163lfi.92.2021.01.19.17.50.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 17:50:53 -0800 (PST)
+        Tue, 19 Jan 2021 17:50:55 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -72,50 +72,48 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v4 0/3] GENPD API improvements
-Date:   Wed, 20 Jan 2021 04:50:07 +0300
-Message-Id: <20210120015010.14191-1-digetx@gmail.com>
+Subject: [PATCH v4 2/3] PM: domains: Make of_genpd_add_subdomain() to return -EPROBE_DEFER
+Date:   Wed, 20 Jan 2021 04:50:09 +0300
+Message-Id: <20210120015010.14191-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210120015010.14191-1-digetx@gmail.com>
+References: <20210120015010.14191-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Driver of a power domain provider may not be ready at the time of
+of_genpd_add_subdomain() invocation. Make this function to return
+-EPROBE_DEFER instead of -ENOENT in order to remove a need from
+power domain drivers to handle the error code specially.
 
-This is a continuation of [1], where Ulf Hansson suggested to factor out
-GENPD patches into a separate series. This series is a prerequisite for
-the power domain driver of NVIDIA Tegra SoCs.
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+[tested on NVIDIA Tegra20/30/124 SoCs]
+Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/base/power/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
-
-Changelog:
-
-v4: - Updated the "Make set_performance_state() callback optional" patch.
-      Now the case where one of intermediate domains doesn't implement
-      the set_performance_state() callback is handled properly, thanks
-      to Viresh and Ulf for catching this drawback and suggesting the fix.
-
-    - Added more r-bs from Ulf Hansson and Viresh Kumar.
-
-v3: - Added r-b from Ulf Hansson.
-
-    - Added new patch "Make of_genpd_add_subdomain() to return -EPROBE_DEFER",
-      which was suggested by Ulf Hansson.
-
-    - Improved "Add "performance" column to debug summary" patch by
-      correcting the formatting of debug output, which had a superfluous
-      whitespace.
-
-Dmitry Osipenko (3):
-  PM: domains: Make set_performance_state() callback optional
-  PM: domains: Make of_genpd_add_subdomain() to return -EPROBE_DEFER
-  PM: domains: Add "performance" column to debug summary
-
- drivers/base/power/domain.c | 54 +++++++++++++++++++++++--------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 0bd0cdc30393..def1299ad085 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2466,7 +2466,7 @@ int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
+ out:
+ 	mutex_unlock(&gpd_list_lock);
+ 
+-	return ret;
++	return ret == -ENOENT ? -EPROBE_DEFER : ret;
+ }
+ EXPORT_SYMBOL_GPL(of_genpd_add_subdomain);
+ 
 -- 
 2.29.2
 
