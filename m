@@ -2,74 +2,71 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAED2C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1D8C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6849423108
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5477023110
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbhATArP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 19:47:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45148 "EHLO
+        id S1726770AbhATBYw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 20:24:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729070AbhATArM (ORCPT
+        with ESMTP id S1726491AbhATBYv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 19:47:12 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCC7C061757;
-        Tue, 19 Jan 2021 16:46:14 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id q8so178647lfm.10;
-        Tue, 19 Jan 2021 16:46:14 -0800 (PST)
+        Tue, 19 Jan 2021 20:24:51 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37DBC061575;
+        Tue, 19 Jan 2021 17:24:10 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id v67so31899063lfa.0;
+        Tue, 19 Jan 2021 17:24:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+yTAnXtjPrGxO02YmxJ6XSfUB2dhdEl68apWpq9Pbuk=;
-        b=aWR9uj6s3zndMEFoZ0kLGAmhuCaTsnAHptSyzcafSG7fqIryWI9a5yiM/dJtg7cQ31
-         xBuT1njrtSKCDJUwwVbAM2PunBKhKs/LSzcG2bV3C5PKxh5sZ2pMdNKFXtT11CXBXTQc
-         95xFXZCtrb0KGKUpfj2P3YJXOyHL9aSDk7y715K94Mkv/aCxnUwZR+pkgLrvbP63yZ4a
-         tvYyVQr4BuxHVXuPEO+soQnt9V+9ZXse1vcmQ9YKTou5lId/bjyqGWdoAvog9pRNWIWf
-         P7nGzwbSjXFPbF9maU7JyKVY5oMqYdEo7YspHvXT/4qdjqEeUmnkxEVgIdaVWZjfr9Bs
-         bNYg==
+        bh=SqXy5aAwO2rzTfIM1Q2kL1twoVRiUAFWQBCsKbtJUR4=;
+        b=i7NUxwefIFwJpjK8ajZXDW0HjSZ5QDjUmLG0F99hEYrbXSofPmAX6ZsciiFmjRlXZy
+         4dMN5zCNU+rsCXMod1GY3EErGNE6BvAr3tN6AAMBAL82qtmAVt3P9L3DkrYjqfurrQW7
+         JRB0Z8jCJ1sx1vWAfJbOiQu1s1pSO4qlrt98MpBH8ca2u9N9Tq75MM0Z7JRBuSxk38Ky
+         zr9bThVaoqPgX9glOnywr1nWDWmOBzHXbNUGhlLI+R9jZizoPPqwgAoaCBCmgLm8ZeEe
+         1rXEkGxj8duuZ8a8omNrsTrdR4wagmaneYJWHY4rUhCSjAnba/z19TDg8iKPxlAnZ+ZB
+         TiaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+yTAnXtjPrGxO02YmxJ6XSfUB2dhdEl68apWpq9Pbuk=;
-        b=mKglqnXoEdfVnkP8iWm5KxLzPmWRmmRQBzFZy1lF75hlCKQgy+oKRdkqEl3zOpDvfo
-         mFIPGYZ8MLoODaxoDw8SUmXKlEzQiLs5mg17wEVuvTskYmqfLjuYM/jU+7Zx8Q+EcAAX
-         vU8yLAGB+71kwT0DLGXxpV7cE+wLQKm35fOVxuH/15eMr379gEJLhSTROMoW6j34AKMf
-         HnqZCbUT0kUV3S2GJLVasnoow9W9yvIC9Q97hSSMIslFYyP3lpXdJTskSTvzLw5wHy7c
-         C9kkqnX+Mrs7J3n/lAHbxBFT1ovKQwPZXj5Pja5FY6AzmhdWKvT0i0ZMQo8FHphvKKNY
-         LUVw==
-X-Gm-Message-State: AOAM532ajCvapBTfGnrskUkXUztnXUbudQyiWzae5CwIliETVELsbaVT
-        Ibr4LNVTZqXFLf2fZ7IrklE=
-X-Google-Smtp-Source: ABdhPJy8eIsMtMERKkZrAhe3XZuLfuFDeOMsJR2MapSRDZs82HYp5fV158YEgPkRzK0K5NOueIL+tA==
-X-Received: by 2002:a19:ee09:: with SMTP id g9mr995874lfb.272.1611103572917;
-        Tue, 19 Jan 2021 16:46:12 -0800 (PST)
+        bh=SqXy5aAwO2rzTfIM1Q2kL1twoVRiUAFWQBCsKbtJUR4=;
+        b=UaOkobRtPKurO3dmrYdvifDRoCw1TTydln9MC5Wh65T7lqal7VddUAv2x6I0BcFZ3a
+         Jip8IGqWZMmhucHESXATeu2VgA8bDP+TT4WdaB9haVoXbKSjhNvDuULj+NKl5pQuLWyz
+         QcCtuB9MnycQseLsC95dY42m/d67t/aLTEKLuvvIQGPOxhPP0xd79uQMMgpQFBI0Cm0/
+         CqVr9s9L6xZOJDqJYjFZnGIu5BrXhQJCoIhe8z4AfO434Hfhx1s3aFZa+IZ9fIkQVHpi
+         p1rSsi3ThUdN1gAJ2DDFDy1oGKuGQ6TL5USJ72jgWSdXXDb9nY4hYgrVVSstjeMpqGnx
+         btiA==
+X-Gm-Message-State: AOAM532X1B0K20lvM7rBvidLGVkhwW7pPpLYA7xWz9whBwa/m8u+xQe4
+        qKybJI6HQF1gHBxfCMmNuD4=
+X-Google-Smtp-Source: ABdhPJzmzFx5B7IioVgSc3gLGXi1iWGjYzrIudDlGknzXByhsQ0q9+dVSPqSMCSnrpgc6MBCrclBdw==
+X-Received: by 2002:a19:804a:: with SMTP id b71mr2914610lfd.504.1611105849515;
+        Tue, 19 Jan 2021 17:24:09 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id v23sm21046ljg.97.2021.01.19.16.46.11
+        by smtp.gmail.com with ESMTPSA id c8sm28416lja.80.2021.01.19.17.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 16:46:12 -0800 (PST)
+        Tue, 19 Jan 2021 17:24:08 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] gpio: tegra: Fix irq_set_affinity
-Date:   Wed, 20 Jan 2021 03:45:48 +0300
-Message-Id: <20210120004548.31692-1-digetx@gmail.com>
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] Tegra PMC driver fixes and improvements
+Date:   Wed, 20 Jan 2021 04:23:52 +0300
+Message-Id: <20210120012357.11038-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,61 +74,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The irq_set_affinity callback should not be set if parent IRQ domain
-doesn't present because gpio-tegra driver callback fails in this case,
-causing a noisy error messages on system suspend:
+Hi,
 
- Disabling non-boot CPUs ...
- IRQ 26: no longer affine to CPU1
- IRQ128: set affinity failed(-22).
- IRQ130: set affinity failed(-22).
- IRQ131: set affinity failed(-22).
- IRQ 27: no longer affine to CPU2
- IRQ128: set affinity failed(-22).
- IRQ130: set affinity failed(-22).
- IRQ131: set affinity failed(-22).
- IRQ 28: no longer affine to CPU3
- IRQ128: set affinity failed(-22).
- IRQ130: set affinity failed(-22).
- IRQ131: set affinity failed(-22).
- Entering suspend state LP1
+This is a continuation of [1]. I decided to factor out PMC patches into a
+separate series to ease reviewing and applying of the patches. This series
+is a prerequisite for enabling dynamic power management by Tegra drivers
+that are using PMC domain.
 
-Hence just don't specify the irq_set_affinity callback if parent PMC
-IRQ domain is missing. Tegra isn't capable of setting affinity per GPIO,
-affinity could be set only per GPIO bank, thus there is nothing to do
-for gpio-tegra in regards to CPU affinity without the parent IRQ domain.
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
 
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
-Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-tegra.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 6c79e9d2f932..9a43129313fa 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -701,7 +701,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- 	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
- #endif
--	tgi->ic.irq_set_affinity	= tegra_gpio_irq_set_affinity;
- 	tgi->ic.irq_request_resources	= tegra_gpio_irq_request_resources;
- 	tgi->ic.irq_release_resources	= tegra_gpio_irq_release_resources;
- 
-@@ -754,6 +753,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 		if (!irq->parent_domain)
- 			return -EPROBE_DEFER;
-+
-+		tgi->ic.irq_set_affinity = tegra_gpio_irq_set_affinity;
- 	}
- 
- 	tgi->regs = devm_platform_ioremap_resource(pdev, 0);
+v3: - Added new patch "pmc: Fix completion of power-gate toggling",
+      which fixes toggling power state of PMC domains.
+
+Dmitry Osipenko (5):
+  soc/tegra: pmc: Fix imbalanced clock disabling in error code path
+  soc/tegra: pmc: Fix completion of power-gate toggling
+  soc/tegra: pmc: Ensure that clock rates aren't too high
+  soc/tegra: pmc: Print out domain name when reset fails to acquire
+  soc/tegra: pmc: Link power domains to the parent Core domain
+
+ drivers/soc/tegra/pmc.c | 181 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 173 insertions(+), 8 deletions(-)
+
 -- 
 2.29.2
 
