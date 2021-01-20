@@ -2,133 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F406DC433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 18:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0268DC433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 21:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C633523428
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 18:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6015235DD
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 21:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733290AbhATRhV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 12:37:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36742 "EHLO
+        id S1730503AbhATVZM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 16:25:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732001AbhATRgC (ORCPT
+        with ESMTP id S1730345AbhATVRY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 12:36:02 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17C2C0613C1;
-        Wed, 20 Jan 2021 09:35:21 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id g10so5510936wrx.1;
-        Wed, 20 Jan 2021 09:35:21 -0800 (PST)
+        Wed, 20 Jan 2021 16:17:24 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E5AC0613D3;
+        Wed, 20 Jan 2021 13:16:44 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id u21so149652lja.0;
+        Wed, 20 Jan 2021 13:16:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bgWbillt2EgWWG5wuhiDZDSvtc6oP4uvK/bDe7atus4=;
-        b=m/DQCZTCFDAKAA47Fqyr754WPbDeIlXyeMyJc5X1hFhVDLxtVxK9YanCcfypvzCVTm
-         f4oeRquI2HYah+oWSPGB44coBCY0pbzUGmiVjq3BoIZ5eRH7vPNGqWFa/++/wlUF9sog
-         vVUpbF0+aUvcbCf7q80COT84GSMUolRI9fk5M0uMlbX6aVemVh27ksTZuJy813zMym6i
-         8HndGkfMoxwVk0a/wGLhj5fbZJRz3EajFrz7YXvXOZJTPR8a9Cfo1iYoqIE95k3TYdoS
-         a+rbQYxnPf3dIIvpdkjdkO4X4zRPfgqLtnNZQK2K5ZCD16ZIYj/RMO831ok5u+jVJjz9
-         g4Wg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=puoT3PhMHA4aUtA+KKIL7CM1ZheEhQL1zDFA6Af983A=;
+        b=rBCjBhNRn1eq0A1fZkIO9qIeGW/poiL1ah83D2As5xWlSgqnC+E70le9eZBJlOSP0s
+         Ns1sGSaUBghjBzzGAp6qSSn+D3AuMXjjIXh/sKd0JuFP5y/0JWysQqyYwqNuTPCMEBIW
+         v4Q50R6OyB7qyW4TogNezTFyZWQkCWT46pjlDRwWazfINTI7H/4dCMaUZcwKy35tOIZj
+         yQ9hQ1VMLIpqX4Pal87SMYfs9KUS2tCcuK3OpBo1CQY5VGaXtMyBNMZzngudPEZSY/cd
+         Nwy9t1crwgf+GfisLxuQTsc/sVzDPFinr2M/hymQ45eb42IZmygNCcoSl+57qEGXNTP/
+         zbUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bgWbillt2EgWWG5wuhiDZDSvtc6oP4uvK/bDe7atus4=;
-        b=pMkZHZIZbCZlrmsrS143XMv1/nfw8qtTk3DFN4pjLizPuYuTsewdyhYD2tKn5Q1rLc
-         04iP0BVNqrN/GzyX+QK/UdNZ10RrtMD6WuNdlNGrAO8gc6U8GHV5foyCxkBC3AyQBnqc
-         lL/FKP0Y2+UhB1ECBlXhbjkV8E0wxG3psK9fY5da0qyy9dbzmzMoLrlcY5/8NiZRQ8oQ
-         03LkTeIq2G4hpdj8x3eblZzrJJlGn40d+tWnqj2NU8IhPHM/RgwhJ4DM+T5ij5bvkFEo
-         XYMwawF5GUS8yUhC0aH6S8WM7O2LCcyG8H9//aLi8AldZ51Wnvt4TYLjGfgR1UGJ34f4
-         /ziw==
-X-Gm-Message-State: AOAM533QalzsIlaknlFzyfvRmGhFGJBwqPCtKnh9YqKdV8r8YOFmnBAX
-        3Eyj23PidBA7wDbvIiDEO7I=
-X-Google-Smtp-Source: ABdhPJzByxqsWOE3ecma2d/q4MjvAdPab8HfLtylXkpN1r5aMzK5sHc1+rLNxK0T60IIARVKjx0OjA==
-X-Received: by 2002:adf:e547:: with SMTP id z7mr10021098wrm.283.1611164120662;
-        Wed, 20 Jan 2021 09:35:20 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id r16sm5306760wrx.36.2021.01.20.09.35.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=puoT3PhMHA4aUtA+KKIL7CM1ZheEhQL1zDFA6Af983A=;
+        b=N3QyMyupS+lvylLIPYIflpBpOlgtkVOKADk3YNgoTaPgjtSPyZaPXrfkfgAJpWUAYn
+         v94Ngvfl48oGW7astA/23o+YAeBbpcoGGT8L8Xyq259V+GNgnilIOMBUuxNg0fadna/J
+         JMalT6Z/rW90EtzoS9gn/DxZdUrbJ0h9/Yy9OQFKYgdtpVVyjXtC2fiX6dOUD2XzWQLq
+         CxHkKn9Wwm/5x7qaOGL5mDV5gjXhE2eMnX0q/o+pR8f1O44bJZoz1b/g/qf3XnR3km7q
+         6wGbk2YF4PIA+O/m3apL1BnMikrEfF/DzMCMVrLqM7/RA6yk6NlqWV0Wtu9IjJeTUFsu
+         briA==
+X-Gm-Message-State: AOAM533yHRLXPkiI8H+E90c8gG7sdKkNX8N7luQLnCcP2rPW52hfLuAS
+        cRExOHtzZKmWLiFCpf/vA3ALtmi86x0=
+X-Google-Smtp-Source: ABdhPJwTeQxlgRM61Qq/WtkbJG3vqp4LqCU/ZugFczD50cOzjWqjt5YtEZbw0vwdqB4Um9uTcYOJjQ==
+X-Received: by 2002:a2e:9b13:: with SMTP id u19mr5067681lji.48.1611177402589;
+        Wed, 20 Jan 2021 13:16:42 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.gmail.com with ESMTPSA id e20sm341986lja.123.2021.01.20.13.16.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 09:35:19 -0800 (PST)
-Date:   Wed, 20 Jan 2021 18:35:18 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     gregkh@linuxfoundation.org, robh@kernel.org, jonathanh@nvidia.com,
-        kishon@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        nkristam@nvidia.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 08/14] arm64: tegra210: XUSB PADCTL add "nvidia,pmc"
- prop
-Message-ID: <YAhp1tzeVszKFAXt@ulmo>
-References: <20210120073414.69208-1-jckuo@nvidia.com>
- <20210120073414.69208-9-jckuo@nvidia.com>
+        Wed, 20 Jan 2021 13:16:42 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>
+Cc:     linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] rtc: tps65910: Support wakeup-source property
+Date:   Thu, 21 Jan 2021 00:16:02 +0300
+Message-Id: <20210120211603.18555-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="18V6D7czgfXzXs7x"
-Content-Disposition: inline
-In-Reply-To: <20210120073414.69208-9-jckuo@nvidia.com>
-User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+TPS65910 is a PMIC MFD device and RTC is one of its functions. The
+wakeup-source DT property is specified for the parent MFD device and we
+need to use this property for the RTC in order to allow to use RTC alarm
+for waking up system from suspend by default, instead of requiring user
+to enable wakeup manually via sysfs.
 
---18V6D7czgfXzXs7x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-On Wed, Jan 20, 2021 at 03:34:08PM +0800, JC Kuo wrote:
-> PMC driver provides USB sleepwalk registers access to XUSB PADCTL
-> driver. This commit adds a "nvidia,pmc" property which points to
-> PMC node to XUSB PADCTL device node.
->=20
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> ---
-> v7:
->    no change
-> v6:
->    no change
-> v5:
->    no change
-> v4:
->    no change
-> v3:
->    no change
->=20
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+Changelog:
 
-Applied, thanks.
+v2: - Rebased on a recent linux-next, fixed merge conflict.
 
-Thierry
+ drivers/rtc/rtc-tps65910.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---18V6D7czgfXzXs7x
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
+index e1415a49f4ee..288abb1abdb8 100644
+--- a/drivers/rtc/rtc-tps65910.c
++++ b/drivers/rtc/rtc-tps65910.c
+@@ -418,10 +418,14 @@ static int tps65910_rtc_probe(struct platform_device *pdev)
+ 		irq = -1;
+ 
+ 	tps_rtc->irq = irq;
+-	if (irq != -1)
+-		device_set_wakeup_capable(&pdev->dev, 1);
+-	else
++	if (irq != -1) {
++		if (device_property_present(tps65910->dev, "wakeup-source"))
++			device_init_wakeup(&pdev->dev, 1);
++		else
++			device_set_wakeup_capable(&pdev->dev, 1);
++	} else {
+ 		clear_bit(RTC_FEATURE_ALARM, tps_rtc->rtc->features);
++	}
+ 
+ 	tps_rtc->rtc->ops = &tps65910_rtc_ops;
+ 	tps_rtc->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+-- 
+2.29.2
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmAIadUACgkQ3SOs138+
-s6EDMRAAvfRgeCYikIL6BAwhM+SJloxBij+bHJARe9b4wi6pnROzxtFyJqUvo/cB
-g19sC695KcooGStaivQiO9I7P/oFiss+DW2X7p0gz/3QvOO9JCsjpw6rT87qi6d/
-ssfTnZ+vjiJg2YA+xvIomS9x6VTknLB4yNf0gN++hr/qkLUBviIg1WLwEKQ2TA4q
-42rT2OoJC1IXx+BJ7w6O1N+bu4RFRva2jv2E6dOrTFdgeP4WR6D3gvgoHfeqGYJ+
-HXtn/3j4X2DrTnUwAXkZ3EPBSTW/KxjUKKmUkZLkxILSZDFzQ2wIVH1DUEGIqQYn
-GN52PjCca4A7FYY0coZIEiW48lthCybbVu21NPs+C/qqBTwuyEBOZULvPfDeVJQa
-5b9K3RsL1M4z00iSTueUa/Q0aiiGcAoOoeOZIbdH+4E9AteeboFfO0NB+qmudQxi
-fpR0JJtEbov1KiE2xJG0McHesgUfWbqdcfyN9U2FNcEzNhppyDhdj1OfTiJ/frRy
-L8ryBXnTZ2aufYjDyJe7ShDJElIbssSBI4ETs48Zc9zYlejUuth8H4aNgNS7pCe1
-ihtyG2TegmRT2IgZDEvYn3CrPGElfcDaRBMBYaM0869tTa1Has8+SVIPxWO51UWK
-YZkkTPNo9qYFrMwP2E/EwyiImIxLsDeBQh8RTEUG0ED9CQgd/9M=
-=zY9/
------END PGP SIGNATURE-----
-
---18V6D7czgfXzXs7x--
