@@ -2,93 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471E7C43331
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 03:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66AAC433E6
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 04:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FBD32313A
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 03:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 765872313B
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 04:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbhATC23 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 21:28:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbhATB1r (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 20:27:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A9912332B;
-        Wed, 20 Jan 2021 01:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611105987;
-        bh=nNAHqXNlik6Lp82foU7Am+8xOHXb3VK7DiEQfGKesrc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUvMxfwZAUvNUP5vM9uOP5vsjUqo4JDbhpSyYV92yp6c60eV/k9E4pHYbu+0VeXFc
-         O1Uvxl7ve+30nkE0EcMzkjzHfYf3wWvT1NtLk2Y1V5JyybE1PHZqOsWP5Mu9COtjRy
-         fg5GCdIF0/+p2yhiWEE7I5GnDkkOOCB1XOT/NdqqaTbDAMm1tBgExcIVE8Y4e9pXid
-         gYpr6RuWfn/JOyT3LJCobWimEiGU3mI+DZxEWQ+8oOtgZlDFkwr1K8oewLJplDFqvM
-         rLeDiUsb1RjsJuRT+eGoedxI4A27goYDIQvyQLMxT+uWLoj3X571tELf3X4gZRQ63M
-         t+xOy7dwyCK7w==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Geis <pgwipeout@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Ion Agorria <ion@agorria.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 19/45] clk: tegra30: Add hda clock default rates to clock driver
-Date:   Tue, 19 Jan 2021 20:25:36 -0500
-Message-Id: <20210120012602.769683-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210120012602.769683-1-sashal@kernel.org>
-References: <20210120012602.769683-1-sashal@kernel.org>
+        id S1728152AbhATEdF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 23:33:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbhATEc6 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 19 Jan 2021 23:32:58 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 863D1C0613CF
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 20:32:18 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id q20so13732669pfu.8
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Jan 2021 20:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jtrfxvYoDEq3RZCyVGjLYtU5e+mF9oTQsRcyWM47vks=;
+        b=Qi7IYVi+JQEiMs6lekW5M0ChYs+HdEmLIcV8nmfIq0ufPG4j5BYZMxff78LGzyTVvI
+         Dtkwsndwy4DSomsmW8+E4WUmr+KN5vq8yxEUWqomHpNkE0RI5oBE15EoK2JCvXLOZdVj
+         3Ey3cC3y1mYZSqLJ6ucdtqUUSZAeeZTCcl9zgLulc7SKBXrfDQd9GhnGtS9O033VVIb5
+         huc1gp07WTTdQFLwvPOaxIi9m9cx3K+4WQn/DIpWBz4SNMiqUw8IPw/rXuyaLGfkIE75
+         BjeUoZW03NC748AFJN/rkuZY8qX2KOUs1ORWaEzhwkoAZxsSuVEkN4TMSU03S3bHDpZU
+         kKIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jtrfxvYoDEq3RZCyVGjLYtU5e+mF9oTQsRcyWM47vks=;
+        b=hV+njSNAResxyY+5RnQyk+H5HGlKhnF5m0uLsY2XotXKOFmQ5+m1bLk399RnTMa++E
+         TFiYtK6oluWme6sq9lyl5vwRjsirZm25dGsoJpm+0WYpSKfvnXAttg4hTgrtvZYeraSa
+         mo+eMi4ukUTsU40ih4VhsOiEYdGLrUT2VbpG3QgF8p/WpDaLnBRdThj4pw4ue6Fw8NeD
+         xzaLP+WIVs1LUBquDqpMzVP34Bz302M9k/nXe5d/8qze0McaqxuAwFPXzm3neTTQOJuG
+         IRdkvBtnNZYI2GNrtvbyvLweJm8J4SSeIS1wiQ2P1a8tCn2Ii11ConKuQ3Qh9PuUbx02
+         NPzw==
+X-Gm-Message-State: AOAM531VdqBOfr34FlVAf1pbOUCanhUp+ZVVPSmJztKQTSDqkhvc5VJu
+        +xOKBnhWctlAxbw5NpE4Tp9UNA==
+X-Google-Smtp-Source: ABdhPJwBADlP3zfaNDQ2lytPl+ztqBiN4oMl0NB+9YvvugtaEhsGTWHp/yJftqCzbgIcaG9HT+uSKQ==
+X-Received: by 2002:a63:1261:: with SMTP id 33mr7577909pgs.213.1611117137877;
+        Tue, 19 Jan 2021 20:32:17 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id 21sm617075pfx.84.2021.01.19.20.32.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jan 2021 20:32:16 -0800 (PST)
+Date:   Wed, 20 Jan 2021 10:02:11 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] cpufreq: tegra20: Use resource-managed API
+Message-ID: <20210120043211.qakitv5yyr4lun37@vireshk-i7>
+References: <20210117231825.28256-1-digetx@gmail.com>
+ <20210118063910.on4vgbllfmsduezo@vireshk-i7>
+ <09f93579-9de0-d541-1331-e2b45518c270@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09f93579-9de0-d541-1331-e2b45518c270@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Peter Geis <pgwipeout@gmail.com>
+On 19-01-21, 18:01, Dmitry Osipenko wrote:
+> The regular devm_opp_* helpers won't be usable for CPUFreq drivers because OPP is applied to the CPU device and not the device of the CPUFreq driver.
 
-[ Upstream commit f4eccc7fea203cfb35205891eced1ab51836f362 ]
+Ahh, I missed that.
 
-Current implementation defaults the hda clocks to clk_m. This causes hda
-to run too slow to operate correctly. Fix this by defaulting to pll_p and
-setting the frequency to the correct rate.
+> But maybe we could support such cases by the helpers?
+> 
+> I CC'd Yangtao Li.
+> 
+> For example we could do this:
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index ca8c6acc29f4..e2eb0f9cf46c 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1771,7 +1771,8 @@ static void devm_pm_opp_supported_hw_release(void *data)
+>  
+>  /**
+>   * devm_pm_opp_set_supported_hw() - Set supported platforms
+> - * @dev: Device for which supported-hw has to be set.
+> + * @dev: Device which manages allocated resources.
+> + * @opp_dev: Device for which supported-hw has to be set.
+>   * @versions: Array of hierarchy of versions to match.
+>   * @count: Number of elements in the array.
+>   *
+> @@ -1783,13 +1784,14 @@ static void devm_pm_opp_supported_hw_release(void *data)
+>   * The opp_table structure will be freed after the device is destroyed.
+>   */
+>  struct opp_table *devm_pm_opp_set_supported_hw(struct device *dev,
+> +					       struct device *opp_dev,
+>  					       const u32 *versions,
+>  					       unsigned int count)
+>  {
+>  	struct opp_table *opp_table;
+>  	int err;
+>  
+> -	opp_table = dev_pm_opp_set_supported_hw(dev, versions, count);
+> +	opp_table = dev_pm_opp_set_supported_hw(opp_dev, versions, count);
+>  	if (IS_ERR(opp_table))
+>  		return opp_table;
 
-This matches upstream t124 and downstream t30.
+No please :)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Ion Agorria <ion@agorria.com>
-Acked-by: Sameer Pujar <spujar@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-Link: https://lore.kernel.org/r/20210108135913.2421585-2-pgwipeout@gmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-tegra30.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 37244a7e68c22..9cf249c344d9e 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1256,6 +1256,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-+	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
 -- 
-2.27.0
-
+viresh
