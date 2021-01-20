@@ -5,29 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA810C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 07:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B5FC433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 07:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ABBC23142
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 07:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B4842313A
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 07:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbhATHib (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 02:38:31 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6690 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729169AbhATHf5 (ORCPT
+        id S1729138AbhATHii (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 02:38:38 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11320 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729027AbhATHfv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 02:35:57 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B6007dd320000>; Tue, 19 Jan 2021 23:35:14 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 Jan
- 2021 07:35:11 +0000
+        Wed, 20 Jan 2021 02:35:51 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B6007dd1b0001>; Tue, 19 Jan 2021 23:34:51 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 Jan
+ 2021 07:34:48 +0000
 Received: from jckuo-lt.nvidia.com (172.20.145.6) by mail.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Wed, 20 Jan 2021 07:35:08 +0000
+ Transport; Wed, 20 Jan 2021 07:34:45 +0000
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <robh@kernel.org>, <jonathanh@nvidia.com>, <kishon@ti.com>,
@@ -36,9 +37,9 @@ CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <nkristam@nvidia.com>, <linux-clk@vger.kernel.org>,
         JC Kuo <jckuo@nvidia.com>, Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v7 13/14] usb: host: xhci-tegra: Unlink power domain devices
-Date:   Wed, 20 Jan 2021 15:34:13 +0800
-Message-ID: <20210120073414.69208-14-jckuo@nvidia.com>
+Subject: [PATCH v7 07/14] soc/tegra: pmc: Provide USB sleepwalk register map
+Date:   Wed, 20 Jan 2021 15:34:07 +0800
+Message-ID: <20210120073414.69208-8-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120073414.69208-1-jckuo@nvidia.com>
 References: <20210120073414.69208-1-jckuo@nvidia.com>
@@ -47,388 +48,263 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611128114; bh=8OAKWRqtP92VODxlWi13Ad3QiiXJoOcEdg7CU811U5E=;
+        t=1611128091; bh=xNgblGDdr0N02kLTWfw/mp6ja5PnveaoO8Mz1omnGYk=;
         h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
          References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=K/R6chqyRIvKynxQonPilIeRS2ZqWTdcL7EZhjta/4wFKMyjxw7xry6I/AGdJMbfL
-         a6G3TdSFPv8H4vm10hGWLRWHVtOmObWzXyGCByE9J4afmxK+BqLan8NZFknJ76X4Ox
-         seRJJzk2G7Z+ELyYJUF2sf0tYsbPIYQUK5adUPZoo+eVrVDdozbgdjqdP6RUDLU9rs
-         aIzBlLWIUvDOe87UwBb104Wir/MMH2AgC98Jb/MrZrcf+NNIOYZy09i3MEjqlOvsqf
-         oGumruMhN3N97hIiFZRNcFMyiFkMvBAs8jl3IVczNbEbxM49hijhLKquvrjVJX4g6v
-         mPifBD+iIhAWQ==
+        b=Zoy40+fVmrsLdLeFxJZ8qWANyXXtjS5CWm/Dg0JClAIaiYpEKGJ6+KGniQq9dc/RG
+         1UuNfbIYujYNfuB9RGkxFXtBYNzwA6dvQQ+lnWAxxKagczmeT0cS98UJ0AwIHd314P
+         SO1qZoQPToWVE5Jz/OJAyD1GcVlIirDOAXlv8tDl/TGFrGjf3Flqh/YVC6DTmSCgh6
+         clCZSdi2rHAghRLh3JftxkyDdsvFMTHNB2d2lOZYYBrF0hcCgX3r/h8kdDkuZwmBbP
+         Goe0jJMRXAqyJzdixd7Ff6OZVbXYzm7YM+DMrdzCJqKI//6aYUTX15YXJr6tbJql/g
+         +InUE7GZQ+usA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This commit unlinks xhci-tegra platform device with SS/host power
-domain devices. Reasons for this change is - at ELPG entry, PHY
-sleepwalk and wake configuration need to be done before powering
-down SS/host partitions, and PHY need be powered off after powering
-down SS/host partitions. Sequence looks like roughly below:
-
-  tegra_xusb_enter_elpg() -> xhci_suspend()
-                          -> enable PHY sleepwalk and wake if needed
-                          -> power down SS/host partitions
-                          -> power down PHY
-
-If SS/host power domains are linked to xhci-tegra platform device, we
-are not able to perform the sequence like above.
-
-This commit introduces:
-  1. tegra_xusb_unpowergate_partitions() to power up SS and host
-     partitions together. If SS/host power domain devices are
-     available, it invokes pm_runtime_get_sync() to request power
-     driver to power up partitions; If power domain devices are not
-     available, tegra_powergate_sequence_power_up() will be used to
-     power up partitions.
-
-  2. tegra_xusb_powergate_partitions() to power down SS and host
-     partitions together. If SS/host power domain devices are
-     available, it invokes pm_runtime_put_sync() to request power
-     driver to power down partitions; If power domain devices are not
-     available, tegra_powergate_power_off() will be used to power down
-     partitions.
+This commit implements a register map which grants USB (UTMI and HSIC)
+sleepwalk registers access to USB PHY drivers. The USB sleepwalk logic
+is in PMC hardware block but USB PHY drivers have the best knowledge
+of proper programming sequence.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 ---
 v7:
-   add 'Acked-by: Thierry Reding <treding@nvidia.com>'
+   no change
 v6:
    no change
 v5:
    no change
 v4:
    commit message improvement
-   update copyright string
+   remove an unnecessary type cast when invokes devm_regmap_init()
 v3:
-   use 'unsigned int' for PHY index
-   remove unnecessary 'else'
-   drop IRQF_TRIGGER_HIGH when invokes devm_request_threaded_irq()
+   commit message improvement
+   drop regmap_reg() usage
+   rename 'reg' with 'offset'
+   rename 'val' with 'value'
+   drop '__force' when invokes devm_regmap_init()
+   print error code of devm_regmap_init()
+   move devm_regmap_init() a litter bit earlier
+   explicitly set '.has_usb_sleepwalk=3Dfalse'
 
- drivers/usb/host/xhci-tegra.c | 206 ++++++++++++++++++----------------
- 1 file changed, 112 insertions(+), 94 deletions(-)
+ drivers/soc/tegra/pmc.c | 94 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 50bb91b6a4b8..5b39a739f8f0 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -2,7 +2,7 @@
- /*
-  * NVIDIA Tegra xHCI host controller driver
-  *
-- * Copyright (C) 2014 NVIDIA Corporation
-+ * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
-  * Copyright (C) 2014 Google, Inc.
-  */
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index df9a5ca8c99c..a619a23f9592 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -43,6 +43,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/regmap.h>
 =20
-@@ -249,8 +249,7 @@ struct tegra_xusb {
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/fuse.h>
+@@ -102,6 +103,9 @@
 =20
- 	struct device *genpd_dev_host;
- 	struct device *genpd_dev_ss;
--	struct device_link *genpd_dl_host;
--	struct device_link *genpd_dl_ss;
-+	bool use_genpd;
+ #define PMC_PWR_DET_VALUE		0xe4
 =20
- 	struct phy **phys;
- 	unsigned int num_phys;
-@@ -821,36 +820,12 @@ static void tegra_xusb_phy_disable(struct tegra_xusb =
-*tegra)
-=20
- static int tegra_xusb_runtime_suspend(struct device *dev)
- {
--	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
--
--	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
--	tegra_xusb_clk_disable(tegra);
--
- 	return 0;
- }
-=20
- static int tegra_xusb_runtime_resume(struct device *dev)
- {
--	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
--	int err;
--
--	err =3D tegra_xusb_clk_enable(tegra);
--	if (err) {
--		dev_err(dev, "failed to enable clocks: %d\n", err);
--		return err;
--	}
--
--	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
--	if (err) {
--		dev_err(dev, "failed to enable regulators: %d\n", err);
--		goto disable_clk;
--	}
--
- 	return 0;
--
--disable_clk:
--	tegra_xusb_clk_disable(tegra);
--	return err;
- }
-=20
- #ifdef CONFIG_PM_SLEEP
-@@ -1026,10 +1001,9 @@ static int tegra_xusb_load_firmware(struct tegra_xus=
-b *tegra)
- static void tegra_xusb_powerdomain_remove(struct device *dev,
- 					  struct tegra_xusb *tegra)
- {
--	if (tegra->genpd_dl_ss)
--		device_link_del(tegra->genpd_dl_ss);
--	if (tegra->genpd_dl_host)
--		device_link_del(tegra->genpd_dl_host);
-+	if (!tegra->use_genpd)
-+		return;
++#define PMC_USB_DEBOUNCE_DEL		0xec
++#define PMC_USB_AO			0xf0
 +
- 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_ss))
- 		dev_pm_domain_detach(tegra->genpd_dev_ss, true);
- 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_host))
-@@ -1055,20 +1029,84 @@ static int tegra_xusb_powerdomain_init(struct devic=
-e *dev,
- 		return err;
- 	}
+ #define PMC_SCRATCH41			0x140
 =20
--	tegra->genpd_dl_host =3D device_link_add(dev, tegra->genpd_dev_host,
--					       DL_FLAG_PM_RUNTIME |
--					       DL_FLAG_STATELESS);
--	if (!tegra->genpd_dl_host) {
--		dev_err(dev, "adding host device link failed!\n");
--		return -ENODEV;
-+	tegra->use_genpd =3D true;
+ #define PMC_WAKE2_MASK			0x160
+@@ -133,6 +137,13 @@
+ #define IO_DPD2_STATUS			0x1c4
+ #define SEL_DPD_TIM			0x1c8
+=20
++#define PMC_UTMIP_UHSIC_TRIGGERS	0x1ec
++#define PMC_UTMIP_UHSIC_SAVED_STATE	0x1f0
++
++#define PMC_UTMIP_TERM_PAD_CFG		0x1f8
++#define PMC_UTMIP_UHSIC_SLEEP_CFG	0x1fc
++#define PMC_UTMIP_UHSIC_FAKE		0x218
++
+ #define PMC_SCRATCH54			0x258
+ #define  PMC_SCRATCH54_DATA_SHIFT	8
+ #define  PMC_SCRATCH54_ADDR_SHIFT	0
+@@ -145,8 +156,18 @@
+ #define  PMC_SCRATCH55_CHECKSUM_SHIFT	16
+ #define  PMC_SCRATCH55_I2CSLV1_SHIFT	0
+=20
++#define  PMC_UTMIP_UHSIC_LINE_WAKEUP	0x26c
++
++#define PMC_UTMIP_BIAS_MASTER_CNTRL	0x270
++#define PMC_UTMIP_MASTER_CONFIG		0x274
++#define PMC_UTMIP_UHSIC2_TRIGGERS	0x27c
++#define PMC_UTMIP_MASTER2_CONFIG	0x29c
++
+ #define GPU_RG_CNTRL			0x2d4
+=20
++#define PMC_UTMIP_PAD_CFG0		0x4c0
++#define PMC_UTMIP_UHSIC_SLEEP_CFG1	0x4d0
++#define PMC_UTMIP_SLEEPWALK_P3		0x4e0
+ /* Tegra186 and later */
+ #define WAKE_AOWAKE_CNTRL(x) (0x000 + ((x) << 2))
+ #define WAKE_AOWAKE_CNTRL_LEVEL (1 << 3)
+@@ -334,6 +355,7 @@ struct tegra_pmc_soc {
+ 	const struct pmc_clk_init_data *pmc_clks_data;
+ 	unsigned int num_pmc_clks;
+ 	bool has_blink_output;
++	bool has_usb_sleepwalk;
+ };
+=20
+ /**
+@@ -2443,6 +2465,67 @@ static void tegra_pmc_clock_register(struct tegra_pm=
+c *pmc,
+ 			 err);
+ }
+=20
++static const struct regmap_range pmc_usb_sleepwalk_ranges[] =3D {
++	regmap_reg_range(PMC_USB_DEBOUNCE_DEL, PMC_USB_AO),
++	regmap_reg_range(PMC_UTMIP_UHSIC_TRIGGERS, PMC_UTMIP_UHSIC_SAVED_STATE),
++	regmap_reg_range(PMC_UTMIP_TERM_PAD_CFG, PMC_UTMIP_UHSIC_FAKE),
++	regmap_reg_range(PMC_UTMIP_UHSIC_LINE_WAKEUP, PMC_UTMIP_UHSIC_LINE_WAKEUP=
+),
++	regmap_reg_range(PMC_UTMIP_BIAS_MASTER_CNTRL, PMC_UTMIP_MASTER_CONFIG),
++	regmap_reg_range(PMC_UTMIP_UHSIC2_TRIGGERS, PMC_UTMIP_MASTER2_CONFIG),
++	regmap_reg_range(PMC_UTMIP_PAD_CFG0, PMC_UTMIP_UHSIC_SLEEP_CFG1),
++	regmap_reg_range(PMC_UTMIP_SLEEPWALK_P3, PMC_UTMIP_SLEEPWALK_P3),
++};
++
++static const struct regmap_access_table pmc_usb_sleepwalk_table =3D {
++	.yes_ranges =3D pmc_usb_sleepwalk_ranges,
++	.n_yes_ranges =3D ARRAY_SIZE(pmc_usb_sleepwalk_ranges),
++};
++
++static int tegra_pmc_regmap_readl(void *context, unsigned int offset, unsi=
+gned int *value)
++{
++	struct tegra_pmc *pmc =3D context;
++
++	*value =3D tegra_pmc_readl(pmc, offset);
++	return 0;
++}
++
++static int tegra_pmc_regmap_writel(void *context, unsigned int offset, uns=
+igned int value)
++{
++	struct tegra_pmc *pmc =3D context;
++
++	tegra_pmc_writel(pmc, value, offset);
++	return 0;
++}
++
++static const struct regmap_config usb_sleepwalk_regmap_config =3D {
++	.name =3D "usb_sleepwalk",
++	.reg_bits =3D 32,
++	.val_bits =3D 32,
++	.reg_stride =3D 4,
++	.fast_io =3D true,
++	.rd_table =3D &pmc_usb_sleepwalk_table,
++	.wr_table =3D &pmc_usb_sleepwalk_table,
++	.reg_read =3D tegra_pmc_regmap_readl,
++	.reg_write =3D tegra_pmc_regmap_writel,
++};
++
++static int tegra_pmc_regmap_init(struct tegra_pmc *pmc)
++{
++	struct regmap *regmap;
++	int err;
++
++	if (pmc->soc->has_usb_sleepwalk) {
++		regmap =3D devm_regmap_init(pmc->dev, NULL, pmc, &usb_sleepwalk_regmap_c=
+onfig);
++		if (IS_ERR(regmap)) {
++			err =3D PTR_ERR(regmap);
++			dev_err(pmc->dev, "failed to allocate register map (%d)\n", err);
++			return err;
++		}
++	}
 +
 +	return 0;
 +}
 +
-+static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
-+{
-+	struct device *dev =3D tegra->dev;
-+	int rc;
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+@@ -2548,6 +2631,10 @@ static int tegra_pmc_probe(struct platform_device *p=
+dev)
+ 	if (err)
+ 		goto cleanup_restart_handler;
+=20
++	err =3D tegra_pmc_regmap_init(pmc);
++	if (err < 0)
++		goto cleanup_restart_handler;
 +
-+	if (tegra->use_genpd) {
-+		rc =3D pm_runtime_get_sync(tegra->genpd_dev_ss);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB SS partition\n");
-+			return rc;
-+		}
-+
-+		rc =3D pm_runtime_get_sync(tegra->genpd_dev_host);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB Host partition\n");
-+			pm_runtime_put_sync(tegra->genpd_dev_ss);
-+			return rc;
-+		}
-+	} else {
-+		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
-+							tegra->ss_clk,
-+							tegra->ss_rst);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB SS partition\n");
-+			return rc;
-+		}
-+
-+		rc =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							tegra->host_clk,
-+							tegra->host_rst);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB Host partition\n");
-+			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
-+			return rc;
-+		}
- 	}
+ 	err =3D tegra_powergate_init(pmc, pdev->dev.of_node);
+ 	if (err < 0)
+ 		goto cleanup_powergates;
+@@ -2706,6 +2793,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc =3D=
+ {
+ 	.pmc_clks_data =3D NULL,
+ 	.num_pmc_clks =3D 0,
+ 	.has_blink_output =3D true,
++	.has_usb_sleepwalk =3D false,
+ };
 =20
--	tegra->genpd_dl_ss =3D device_link_add(dev, tegra->genpd_dev_ss,
--					     DL_FLAG_PM_RUNTIME |
--					     DL_FLAG_STATELESS);
--	if (!tegra->genpd_dl_ss) {
--		dev_err(dev, "adding superspeed device link failed!\n");
--		return -ENODEV;
-+	return 0;
-+}
-+
-+static int tegra_xusb_powergate_partitions(struct tegra_xusb *tegra)
-+{
-+	struct device *dev =3D tegra->dev;
-+	int rc;
-+
-+	if (tegra->use_genpd) {
-+		rc =3D pm_runtime_put_sync(tegra->genpd_dev_host);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB Host partition\n");
-+			return rc;
-+		}
-+
-+		rc =3D pm_runtime_put_sync(tegra->genpd_dev_ss);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB SS partition\n");
-+			pm_runtime_get_sync(tegra->genpd_dev_host);
-+			return rc;
-+		}
-+	} else {
-+		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB Host partition\n");
-+			return rc;
-+		}
-+
-+		rc =3D tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB SS partition\n");
-+			tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							  tegra->host_clk,
-+							  tegra->host_rst);
-+			return rc;
-+		}
- 	}
+ static const char * const tegra30_powergates[] =3D {
+@@ -2764,6 +2852,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc =3D=
+ {
+ 	.pmc_clks_data =3D tegra_pmc_clks_data,
+ 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output =3D true,
++	.has_usb_sleepwalk =3D false,
+ };
 =20
- 	return 0;
-@@ -1432,25 +1470,6 @@ static int tegra_xusb_probe(struct platform_device *=
-pdev)
- 				err);
- 			goto put_padctl;
- 		}
--
--		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
--							tegra->ss_clk,
--							tegra->ss_rst);
--		if (err) {
--			dev_err(&pdev->dev,
--				"failed to enable XUSBA domain: %d\n", err);
--			goto put_padctl;
--		}
--
--		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
--							tegra->host_clk,
--							tegra->host_rst);
--		if (err) {
--			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--			dev_err(&pdev->dev,
--				"failed to enable XUSBC domain: %d\n", err);
--			goto put_padctl;
--		}
- 	} else {
- 		err =3D tegra_xusb_powerdomain_init(&pdev->dev, tegra);
- 		if (err)
-@@ -1525,10 +1544,22 @@ static int tegra_xusb_probe(struct platform_device =
-*pdev)
- 	 */
- 	platform_set_drvdata(pdev, tegra);
+ static const char * const tegra114_powergates[] =3D {
+@@ -2818,6 +2907,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc =
+=3D {
+ 	.pmc_clks_data =3D tegra_pmc_clks_data,
+ 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output =3D true,
++	.has_usb_sleepwalk =3D false,
+ };
 =20
-+	err =3D tegra_xusb_clk_enable(tegra);
-+	if (err) {
-+		dev_err(tegra->dev, "failed to enable clocks: %d\n", err);
-+		goto put_hcd;
-+	}
-+
-+	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
-+	if (err) {
-+		dev_err(tegra->dev, "failed to enable regulators: %d\n", err);
-+		goto disable_clk;
-+	}
-+
- 	err =3D tegra_xusb_phy_enable(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
--		goto put_hcd;
-+		goto disable_regulator;
- 	}
+ static const char * const tegra124_powergates[] =3D {
+@@ -2932,6 +3022,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc =
+=3D {
+ 	.pmc_clks_data =3D tegra_pmc_clks_data,
+ 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output =3D true,
++	.has_usb_sleepwalk =3D true,
+ };
 =20
- 	/*
-@@ -1547,30 +1578,22 @@ static int tegra_xusb_probe(struct platform_device =
-*pdev)
- 		goto disable_phy;
- 	}
+ static const char * const tegra210_powergates[] =3D {
+@@ -3059,6 +3150,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc =
+=3D {
+ 	.pmc_clks_data =3D tegra_pmc_clks_data,
+ 	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output =3D true,
++	.has_usb_sleepwalk =3D true,
+ };
 =20
--	pm_runtime_enable(&pdev->dev);
--
--	if (!pm_runtime_enabled(&pdev->dev))
--		err =3D tegra_xusb_runtime_resume(&pdev->dev);
--	else
--		err =3D pm_runtime_get_sync(&pdev->dev);
--
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
-+	err =3D tegra_xusb_unpowergate_partitions(tegra);
-+	if (err)
- 		goto free_firmware;
--	}
+ #define TEGRA186_IO_PAD_TABLE(_pad)                                       =
+   \
+@@ -3214,6 +3306,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc =
+=3D {
+ 	.pmc_clks_data =3D NULL,
+ 	.num_pmc_clks =3D 0,
+ 	.has_blink_output =3D false,
++	.has_usb_sleepwalk =3D false,
+ };
 =20
- 	tegra_xusb_config(tegra);
+ #define TEGRA194_IO_PAD_TABLE(_pad)                                       =
+       \
+@@ -3347,6 +3440,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc =
+=3D {
+ 	.pmc_clks_data =3D NULL,
+ 	.num_pmc_clks =3D 0,
+ 	.has_blink_output =3D false,
++	.has_usb_sleepwalk =3D false,
+ };
 =20
- 	err =3D tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
--		goto put_rpm;
-+		goto powergate;
- 	}
-=20
- 	err =3D usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
--		goto put_rpm;
-+		goto powergate;
- 	}
-=20
- 	device_wakeup_enable(tegra->hcd->self.controller);
-@@ -1622,24 +1645,21 @@ static int tegra_xusb_probe(struct platform_device =
-*pdev)
- 	usb_put_hcd(xhci->shared_hcd);
- remove_usb2:
- 	usb_remove_hcd(tegra->hcd);
--put_rpm:
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		tegra_xusb_runtime_suspend(&pdev->dev);
--put_hcd:
--	usb_put_hcd(tegra->hcd);
-+powergate:
-+	tegra_xusb_powergate_partitions(tegra);
- free_firmware:
- 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
- 			  tegra->fw.phys);
- disable_phy:
- 	tegra_xusb_phy_disable(tegra);
--	pm_runtime_disable(&pdev->dev);
-+disable_regulator:
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-+disable_clk:
-+	tegra_xusb_clk_disable(tegra);
-+put_hcd:
-+	usb_put_hcd(tegra->hcd);
- put_powerdomains:
--	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--	} else {
--		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
--	}
-+	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
- put_padctl:
- 	tegra_xusb_padctl_put(tegra->padctl);
- 	return err;
-@@ -1664,15 +1684,13 @@ static int tegra_xusb_remove(struct platform_device=
- *pdev)
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-=20
--	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--	} else {
--		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
--	}
-+	tegra_xusb_powergate_partitions(tegra);
-=20
--	tegra_xusb_phy_disable(tegra);
-+	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
-=20
-+	tegra_xusb_phy_disable(tegra);
-+	tegra_xusb_clk_disable(tegra);
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
- 	tegra_xusb_padctl_put(tegra->padctl);
-=20
- 	return 0;
+ static const struct tegra_pmc_regs tegra234_pmc_regs =3D {
 --=20
 2.25.1
 
