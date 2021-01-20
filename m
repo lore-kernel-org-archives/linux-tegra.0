@@ -6,207 +6,132 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A30C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAED2C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66B1522C9E
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:37:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6849423108
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 00:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbhATAht (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 19:37:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
+        id S1729420AbhATArP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 19:47:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727866AbhATAcq (ORCPT
+        with ESMTP id S1729070AbhATArM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 19 Jan 2021 19:32:46 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73656C061575;
-        Tue, 19 Jan 2021 16:32:05 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id o17so31766227lfg.4;
-        Tue, 19 Jan 2021 16:32:05 -0800 (PST)
+        Tue, 19 Jan 2021 19:47:12 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCC7C061757;
+        Tue, 19 Jan 2021 16:46:14 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id q8so178647lfm.10;
+        Tue, 19 Jan 2021 16:46:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fQq5aMM1gfhP3pdE9BLkOlrfG0TdZlw8DX8e6i8Mgq8=;
-        b=chUHWZ5mhJU4JGaLn/t7ZUUMT7ekqVsQRieJ2DMkmTdlCWigAXZElF17fl+NVBCtcF
-         88tPjKnzNjJbQ3OAxqFVxyNoJXouTyC4G/3cJ6yQZ8Ho561XXPivpWwN3IAizMiitIhU
-         IE7N1HJOGkfTMUzf2xO873dCxq9Yp8kIgeGYKMhoBIUyr6M+G4yAoP6jG/cTqcGqPxF5
-         aqXQt8U4+tvSsad6fPUIc0kkec4UmESY9EVbo/xMDKKe4fsT1xIXrhgHtdFqhmLhFwP8
-         0I4KyaffJdAj/4+1cnWws+nzqlk1fdua38eb2aRW3j+23su2NLhehvTQlOtDyhBShwTo
-         uS5Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+yTAnXtjPrGxO02YmxJ6XSfUB2dhdEl68apWpq9Pbuk=;
+        b=aWR9uj6s3zndMEFoZ0kLGAmhuCaTsnAHptSyzcafSG7fqIryWI9a5yiM/dJtg7cQ31
+         xBuT1njrtSKCDJUwwVbAM2PunBKhKs/LSzcG2bV3C5PKxh5sZ2pMdNKFXtT11CXBXTQc
+         95xFXZCtrb0KGKUpfj2P3YJXOyHL9aSDk7y715K94Mkv/aCxnUwZR+pkgLrvbP63yZ4a
+         tvYyVQr4BuxHVXuPEO+soQnt9V+9ZXse1vcmQ9YKTou5lId/bjyqGWdoAvog9pRNWIWf
+         P7nGzwbSjXFPbF9maU7JyKVY5oMqYdEo7YspHvXT/4qdjqEeUmnkxEVgIdaVWZjfr9Bs
+         bNYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fQq5aMM1gfhP3pdE9BLkOlrfG0TdZlw8DX8e6i8Mgq8=;
-        b=OasJKIE9X7iFyPTilvemVgDd/WPiv8CSxwDBYPwvpfAcQRMFSBG9/ZDTh33WkfN7gU
-         IVuwFTuJ11XBnAO+J0q7lfbi36OIgourN8ZMCRtdSUmoBOtyYIbz/94L8Km8IuEAc2gR
-         pL2eOm88Sa3NmEV6jFgMAztyc2uOpWDh8HWi3cfhnn1B12vbsxDs0JA8jcnSyeWV8DOf
-         D5+4VSOjpu4VHrzizSVRcBmG6K0xosI0hiNS6+5128YZhRlfLtylkJPMrmYOdVk6BcPp
-         kZrUammi2QY/Vo9m+w2K20KtUYZwitM339E2XFMAVfdL38IjnvsuIu9mUA+/gP6Gl9NE
-         xFdQ==
-X-Gm-Message-State: AOAM533rbh9qNLLysqxIEd0B66rKvVDTWxSwl/GJuQJforNYKot7jdHi
-        wLgpUSuWVqzNAN/mw8JBVPM=
-X-Google-Smtp-Source: ABdhPJyINFwmCuSEz3SwkwQbZgcIhCFMpG6UVCoawsoZ+euU/4XalJp6swlgpoHoBmofInNxrnw1BQ==
-X-Received: by 2002:ac2:518d:: with SMTP id u13mr2896249lfi.169.1611102723988;
-        Tue, 19 Jan 2021 16:32:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+yTAnXtjPrGxO02YmxJ6XSfUB2dhdEl68apWpq9Pbuk=;
+        b=mKglqnXoEdfVnkP8iWm5KxLzPmWRmmRQBzFZy1lF75hlCKQgy+oKRdkqEl3zOpDvfo
+         mFIPGYZ8MLoODaxoDw8SUmXKlEzQiLs5mg17wEVuvTskYmqfLjuYM/jU+7Zx8Q+EcAAX
+         vU8yLAGB+71kwT0DLGXxpV7cE+wLQKm35fOVxuH/15eMr379gEJLhSTROMoW6j34AKMf
+         HnqZCbUT0kUV3S2GJLVasnoow9W9yvIC9Q97hSSMIslFYyP3lpXdJTskSTvzLw5wHy7c
+         C9kkqnX+Mrs7J3n/lAHbxBFT1ovKQwPZXj5Pja5FY6AzmhdWKvT0i0ZMQo8FHphvKKNY
+         LUVw==
+X-Gm-Message-State: AOAM532ajCvapBTfGnrskUkXUztnXUbudQyiWzae5CwIliETVELsbaVT
+        Ibr4LNVTZqXFLf2fZ7IrklE=
+X-Google-Smtp-Source: ABdhPJy8eIsMtMERKkZrAhe3XZuLfuFDeOMsJR2MapSRDZs82HYp5fV158YEgPkRzK0K5NOueIL+tA==
+X-Received: by 2002:a19:ee09:: with SMTP id g9mr995874lfb.272.1611103572917;
+        Tue, 19 Jan 2021 16:46:12 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id s27sm17710ljd.25.2021.01.19.16.32.03
+        by smtp.gmail.com with ESMTPSA id v23sm21046ljg.97.2021.01.19.16.46.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 16:32:03 -0800 (PST)
+        Tue, 19 Jan 2021 16:46:12 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Matt Merhar <mattmerhar@protonmail.com>,
-        Jaroslav Kysela <perex@perex.cz>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] ALSA: hda/tegra: Use clk_bulk helpers
-Date:   Wed, 20 Jan 2021 03:31:49 +0300
-Message-Id: <20210120003154.26749-2-digetx@gmail.com>
+Subject: [PATCH v1] gpio: tegra: Fix irq_set_affinity
+Date:   Wed, 20 Jan 2021 03:45:48 +0300
+Message-Id: <20210120004548.31692-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210120003154.26749-1-digetx@gmail.com>
-References: <20210120003154.26749-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use clk_bulk helpers to make code cleaner. Note that this patch changed
-the order in which clocks are enabled to make code look nicer, but this
-doesn't matter in terms of hardware.
+The irq_set_affinity callback should not be set if parent IRQ domain
+doesn't present because gpio-tegra driver callback fails in this case,
+causing a noisy error messages on system suspend:
 
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30 audio works
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30 boot-tested
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # TK1 boot-tested
-Acked-by: Thierry Reding <treding@nvidia.com>
+ Disabling non-boot CPUs ...
+ IRQ 26: no longer affine to CPU1
+ IRQ128: set affinity failed(-22).
+ IRQ130: set affinity failed(-22).
+ IRQ131: set affinity failed(-22).
+ IRQ 27: no longer affine to CPU2
+ IRQ128: set affinity failed(-22).
+ IRQ130: set affinity failed(-22).
+ IRQ131: set affinity failed(-22).
+ IRQ 28: no longer affine to CPU3
+ IRQ128: set affinity failed(-22).
+ IRQ130: set affinity failed(-22).
+ IRQ131: set affinity failed(-22).
+ Entering suspend state LP1
+
+Hence just don't specify the irq_set_affinity callback if parent PMC
+IRQ domain is missing. Tegra isn't capable of setting affinity per GPIO,
+affinity could be set only per GPIO bank, thus there is nothing to do
+for gpio-tegra in regards to CPU affinity without the parent IRQ domain.
+
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
+Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
+Reported-by: Matt Merhar <mattmerhar@protonmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- sound/pci/hda/hda_tegra.c | 68 ++++++---------------------------------
- 1 file changed, 9 insertions(+), 59 deletions(-)
+ drivers/gpio/gpio-tegra.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 361cf2041911..a25bf7083c28 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -70,9 +70,8 @@
- struct hda_tegra {
- 	struct azx chip;
- 	struct device *dev;
--	struct clk *hda_clk;
--	struct clk *hda2codec_2x_clk;
--	struct clk *hda2hdmi_clk;
-+	struct clk_bulk_data clocks[3];
-+	unsigned int nclocks;
- 	void __iomem *regs;
- 	struct work_struct probe_work;
- };
-@@ -113,36 +112,6 @@ static void hda_tegra_init(struct hda_tegra *hda)
- 	writel(v, hda->regs + HDA_IPFS_INTR_MASK);
- }
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 6c79e9d2f932..9a43129313fa 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -701,7 +701,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ 	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
+ #endif
+-	tgi->ic.irq_set_affinity	= tegra_gpio_irq_set_affinity;
+ 	tgi->ic.irq_request_resources	= tegra_gpio_irq_request_resources;
+ 	tgi->ic.irq_release_resources	= tegra_gpio_irq_release_resources;
  
--static int hda_tegra_enable_clocks(struct hda_tegra *data)
--{
--	int rc;
--
--	rc = clk_prepare_enable(data->hda_clk);
--	if (rc)
--		return rc;
--	rc = clk_prepare_enable(data->hda2codec_2x_clk);
--	if (rc)
--		goto disable_hda;
--	rc = clk_prepare_enable(data->hda2hdmi_clk);
--	if (rc)
--		goto disable_codec_2x;
--
--	return 0;
--
--disable_codec_2x:
--	clk_disable_unprepare(data->hda2codec_2x_clk);
--disable_hda:
--	clk_disable_unprepare(data->hda_clk);
--	return rc;
--}
--
--static void hda_tegra_disable_clocks(struct hda_tegra *data)
--{
--	clk_disable_unprepare(data->hda2hdmi_clk);
--	clk_disable_unprepare(data->hda2codec_2x_clk);
--	clk_disable_unprepare(data->hda_clk);
--}
--
- /*
-  * power management
-  */
-@@ -186,7 +155,7 @@ static int __maybe_unused hda_tegra_runtime_suspend(struct device *dev)
- 		azx_stop_chip(chip);
- 		azx_enter_link_reset(chip);
- 	}
--	hda_tegra_disable_clocks(hda);
-+	clk_bulk_disable_unprepare(hda->nclocks, hda->clocks);
+@@ -754,6 +753,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
  
- 	return 0;
- }
-@@ -198,7 +167,7 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
- 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
- 	int rc;
- 
--	rc = hda_tegra_enable_clocks(hda);
-+	rc = clk_bulk_prepare_enable(hda->nclocks, hda->clocks);
- 	if (rc != 0)
- 		return rc;
- 	if (chip && chip->running) {
-@@ -268,29 +237,6 @@ static int hda_tegra_init_chip(struct azx *chip, struct platform_device *pdev)
- 	return 0;
- }
- 
--static int hda_tegra_init_clk(struct hda_tegra *hda)
--{
--	struct device *dev = hda->dev;
--
--	hda->hda_clk = devm_clk_get(dev, "hda");
--	if (IS_ERR(hda->hda_clk)) {
--		dev_err(dev, "failed to get hda clock\n");
--		return PTR_ERR(hda->hda_clk);
--	}
--	hda->hda2codec_2x_clk = devm_clk_get(dev, "hda2codec_2x");
--	if (IS_ERR(hda->hda2codec_2x_clk)) {
--		dev_err(dev, "failed to get hda2codec_2x clock\n");
--		return PTR_ERR(hda->hda2codec_2x_clk);
--	}
--	hda->hda2hdmi_clk = devm_clk_get(dev, "hda2hdmi");
--	if (IS_ERR(hda->hda2hdmi_clk)) {
--		dev_err(dev, "failed to get hda2hdmi clock\n");
--		return PTR_ERR(hda->hda2hdmi_clk);
--	}
--
--	return 0;
--}
--
- static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
- {
- 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
-@@ -495,7 +441,11 @@ static int hda_tegra_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = hda_tegra_init_clk(hda);
-+	hda->clocks[hda->nclocks++].id = "hda";
-+	hda->clocks[hda->nclocks++].id = "hda2hdmi";
-+	hda->clocks[hda->nclocks++].id = "hda2codec_2x";
+ 		if (!irq->parent_domain)
+ 			return -EPROBE_DEFER;
 +
-+	err = devm_clk_bulk_get(&pdev->dev, hda->nclocks, hda->clocks);
- 	if (err < 0)
- 		goto out_free;
++		tgi->ic.irq_set_affinity = tegra_gpio_irq_set_affinity;
+ 	}
  
+ 	tgi->regs = devm_platform_ioremap_resource(pdev, 0);
 -- 
 2.29.2
 
