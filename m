@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88092C433E9
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9CAC433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5908123110
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3570F23110
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 01:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbhATBYz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 19 Jan 2021 20:24:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53368 "EHLO
+        id S1727354AbhATBYy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 19 Jan 2021 20:24:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbhATBYx (ORCPT
+        with ESMTP id S1726843AbhATBYx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Tue, 19 Jan 2021 20:24:53 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED56C0613CF;
-        Tue, 19 Jan 2021 17:24:13 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id q8so279618lfm.10;
-        Tue, 19 Jan 2021 17:24:13 -0800 (PST)
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780ABC0613C1;
+        Tue, 19 Jan 2021 17:24:12 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id m13so24116039ljo.11;
+        Tue, 19 Jan 2021 17:24:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vOBlnVG2mbipegIz2h2sKNzx6kmvDT8PSag/nFDKqZQ=;
-        b=pJ28pxWDj6u3K/XIN/GhvqSg+e2ZsUwCWfShWLbVYW57AKjhRNy9PxZ1bOEgBV/HHC
-         Xx+W//CGWyL+9tzr7NpqngwXp8mdi5ZnkzzAH4uZBLQEF8dOc4ATwM2tjN1V4cQpj3eQ
-         5o3TRCl7BwrkuHQux9O8tcQOcy1OPvlDuK2g+VRD4/+M1AQcUrx9ePeAqo6yqsD+mLtr
-         LKEBNcIKboWhOIoTuDG6fIn+Il+fnwMOU7BfxhKS1CWfnA3EAp+qajZr8WHX3vbLmYHT
-         FNZlklAsu89O+9sGBVw3YrDW3WWsE+Kh2niZFvZ+Db1IeBaHBaTi5wzbvmDPpMTRB8Pu
-         zq+g==
+        bh=uBnKxkMoWgBmADz8vMOGbpC2I6RNnJynTQ74usheb0k=;
+        b=E3r1teUsHqwMDlgns9e18aIexe465SdW1E8s+/2B0eF9nfSYHVYwdvd8G5kQL5L92z
+         hfjqKQoC55a7WdobuCHy7kcRHY7D4HuE6atYoQDrhowE8VqFQGk3KqESnb9BwAik1QzB
+         0aF8zvGv3OjNhLv48icELUXxbGX/S+kuDSJaQS4hgS9tTYwcYfq0nR81SkQZxW7cM7ST
+         oS8KF3tVejK19guV7I4lGMd5iSnkY+pni7/iidMz8lZAzQH4Q58A7T3kFuefhPl45MGh
+         0Ppx42ef6c9A7JwMATZU0Alp8Tb5XC6c8zEbRjM5G0XVOeb4M80IAsDyIPgz1rc6wOTF
+         SaOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vOBlnVG2mbipegIz2h2sKNzx6kmvDT8PSag/nFDKqZQ=;
-        b=eg+WERzSi7kmMQmEVjkM4hfPa7cVcDF5E6rTHtUTIF83C/QzlOP/bREXWF0UZpK327
-         qsGANkZj5HbKwUeV8LjDI5SW1ley19uxGUKJXO0JjgsCfRz8eFtgIy24Ag6kEqjxz+xO
-         5zRxdtDRyjcwSGh8b6Y2YkE00K1nmN2+FUtsX75q4O8DNjLR0dc5kRu2TOO/9dc/v3V9
-         kcxtznCNsfrtJ90WX3w7ZgZi549tD9PLFBEuUa1DRn0mIEV++G0TgkqhYyMV7OC/YG+e
-         2vcdJk6VoUf0cfT2RNgPpf1Sg3PJtKf+zgeZvOrhEFdJ0E6hsXilkAIM0RsjBIUN5VTB
-         bMOA==
-X-Gm-Message-State: AOAM533vSSqsvFDBMABpl2fCRmImeVsJ6YrTXApXvp3o6eXsJccHHRh4
-        CfZr9QXolgVkmlXilCj9JEk=
-X-Google-Smtp-Source: ABdhPJwMIWXpSzN7ZM5SnODQK2C9knx5sGoyDBoAwTTSYr+c/MdJaNT+jNhK/Hu1sZVllxRoI8f4bw==
-X-Received: by 2002:ac2:4a6f:: with SMTP id q15mr3257974lfp.301.1611105851851;
+        bh=uBnKxkMoWgBmADz8vMOGbpC2I6RNnJynTQ74usheb0k=;
+        b=TRqWmDOHqEggaK0RUmj/ZER8wCLO/K4JvXeW2/OWRZ3HI83Uf9Kr6lTX0kAREWUcqD
+         JlAQAuSVSy2BYoCSz9MLuYyRRVnMRjMCi5AEAEi+FwQWbY1Vxr7cf2/TVhXbmU1C0PMF
+         vbkmLv1EzeqfxplPM55oTJP0G3MAIPEKbD5Zsr4f+fZavfpEQ/0qvdHn78OQdodx27q0
+         M7HJFk+U9xY13df+ySpF32kY0QBwMhymrE/oU48eHGfdv/kqgiBRKY00741+G3hamu6S
+         ghgIJiJLhctHb3K6D5Msd4wRMVI7fT5K6KFrfKi+FICi5noeH/HrENquOBIUf4owP4O7
+         bCRA==
+X-Gm-Message-State: AOAM533yPkbRZC/xpPN6Apd20AUeH+Sluz/DpJ4llhmMA7z5Uv8mpZjH
+        kClf43yvtHjfrJ5pblYGg60=
+X-Google-Smtp-Source: ABdhPJw+t9t4TC9wAX/mFIXOhdtNSFjt0AB+iKgwQbTTOlR7I83rHV2BXua5Sfun3DbEykce/wWtGg==
+X-Received: by 2002:a2e:7508:: with SMTP id q8mr3150470ljc.35.1611105851031;
         Tue, 19 Jan 2021 17:24:11 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id c8sm28416lja.80.2021.01.19.17.24.11
+        by smtp.gmail.com with ESMTPSA id c8sm28416lja.80.2021.01.19.17.24.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 17:24:11 -0800 (PST)
+        Tue, 19 Jan 2021 17:24:10 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] soc/tegra: pmc: Ensure that clock rates aren't too high
-Date:   Wed, 20 Jan 2021 04:23:55 +0300
-Message-Id: <20210120012357.11038-4-digetx@gmail.com>
+Subject: [PATCH v3 2/5] soc/tegra: pmc: Fix completion of power-gate toggling
+Date:   Wed, 20 Jan 2021 04:23:54 +0300
+Message-Id: <20210120012357.11038-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210120012357.11038-1-digetx@gmail.com>
 References: <20210120012357.11038-1-digetx@gmail.com>
@@ -76,10 +76,24 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Switch all clocks of a power domain to a safe rate which is suitable
-for all possible voltages in order to ensure that hardware constraints
-aren't violated when power domain state toggles.
+The SW-initiated power gate toggling is dropped by PMC if there is
+contention with a HW-initiated toggling, i.e. when one of CPU cores is
+gated by cpuidle driver. Software should retry the toggling after 10
+microseconds on Tegra20/30 SoCs, hence add the retrying. On Tegra114+ the
+toggling method was changed in hardware, the TOGGLE_START bit indicates
+whether PMC is busy or could accept the command to toggle, hence handle
+that bit properly.
 
+The problem pops up after enabling dynamic power gating of 3d hardware,
+where 3d power domain fails to turn on/off "randomly".
+
+The programming sequence and quirks are documented in TRMs, but PMC
+driver obliviously re-used the Tegra20 logic for Tegra30+, which strikes
+back now. The 10 microseconds and other timeouts aren't documented in TRM,
+they are taken from downstream kernel.
+
+Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commit;h=311dd1c318b70e93bcefec15456a10ff2b9eb0ff
+Link: https://nv-tegra.nvidia.com/gitweb/?p=linux-3.10.git;a=commit;h=7f36693c47cb23730a6b2822e0975be65fb0c51d
 Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
 Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
 Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
@@ -87,194 +101,146 @@ Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
 [this patch was also boot-tested on some other T20/30/114 devices]
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 92 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 90 insertions(+), 2 deletions(-)
+ drivers/soc/tegra/pmc.c | 70 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 65 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index f970b615ee27..a87645fac735 100644
+index fd2ba3c59178..f970b615ee27 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -237,6 +237,7 @@ struct tegra_powergate {
- 	unsigned int id;
- 	struct clk **clks;
- 	unsigned int num_clks;
-+	unsigned long *clk_rates;
- 	struct reset_control *reset;
- };
+@@ -317,6 +317,8 @@ struct tegra_pmc_soc {
+ 				   bool invert);
+ 	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
+ 	int (*irq_set_type)(struct irq_data *data, unsigned int type);
++	int (*powergate_set)(struct tegra_pmc *pmc, unsigned int id,
++			     bool new_state);
  
-@@ -641,6 +642,57 @@ static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
- 	return 0;
+ 	const char * const *reset_sources;
+ 	unsigned int num_reset_sources;
+@@ -517,6 +519,63 @@ static int tegra_powergate_lookup(struct tegra_pmc *pmc, const char *name)
+ 	return -ENODEV;
  }
  
-+static int tegra_powergate_prepare_clocks(struct tegra_powergate *pg)
++static int tegra20_powergate_set(struct tegra_pmc *pmc, unsigned int id,
++				 bool new_state)
 +{
-+	unsigned long safe_rate = 100 * 1000 * 1000;
-+	unsigned int i;
-+	int err;
++	unsigned int retries = 100;
++	bool status;
++	int ret;
 +
-+	for (i = 0; i < pg->num_clks; i++) {
-+		pg->clk_rates[i] = clk_get_rate(pg->clks[i]);
++	/*
++	 * As per TRM documentation, the toggle command will be dropped by PMC
++	 * if there is contention with a HW-initiated toggling (i.e. CPU core
++	 * power-gated), the command should be retried in that case.
++	 */
++	do {
++		tegra_pmc_writel(pmc, PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
 +
-+		if (!pg->clk_rates[i]) {
-+			err = -EINVAL;
-+			goto out;
-+		}
++		/* wait for PMC to execute the command */
++		ret = readx_poll_timeout(tegra_powergate_state, id, status,
++					 status == new_state, 1, 10);
++	} while (ret == -ETIMEDOUT && retries--);
 +
-+		if (pg->clk_rates[i] <= safe_rate)
-+			continue;
-+
-+		/*
-+		 * We don't know whether voltage state is okay for the
-+		 * current clock rate, hence it's better to temporally
-+		 * switch clock to a safe rate which is suitable for
-+		 * all voltages, before enabling the clock.
-+		 */
-+		err = clk_set_rate(pg->clks[i], safe_rate);
-+		if (err)
-+			goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	while (i--)
-+		clk_set_rate(pg->clks[i], pg->clk_rates[i]);
-+
-+	return err;
++	return ret;
 +}
 +
-+static int tegra_powergate_unprepare_clocks(struct tegra_powergate *pg)
++static inline bool tegra_powergate_toggle_ready(struct tegra_pmc *pmc)
 +{
-+	unsigned int i;
-+	int err;
-+
-+	for (i = 0; i < pg->num_clks; i++) {
-+		err = clk_set_rate(pg->clks[i], pg->clk_rates[i]);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
++	return !(tegra_pmc_readl(pmc, PWRGATE_TOGGLE) & PWRGATE_TOGGLE_START);
 +}
 +
- static void tegra_powergate_disable_clocks(struct tegra_powergate *pg)
- {
- 	unsigned int i;
-@@ -691,10 +743,14 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
- 
- 	usleep_range(10, 20);
- 
--	err = tegra_powergate_enable_clocks(pg);
-+	err = tegra_powergate_prepare_clocks(pg);
- 	if (err)
- 		goto powergate_off;
- 
-+	err = tegra_powergate_enable_clocks(pg);
-+	if (err)
-+		goto unprepare_clks;
++static int tegra114_powergate_set(struct tegra_pmc *pmc, unsigned int id,
++				  bool new_state)
++{
++	bool status;
++	int err;
 +
- 	usleep_range(10, 20);
- 
- 	err = __tegra_powergate_remove_clamping(pg->pmc, pg->id);
-@@ -717,12 +773,19 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
- 	if (disable_clocks)
- 		tegra_powergate_disable_clocks(pg);
- 
-+	err = tegra_powergate_unprepare_clocks(pg);
++	/* wait while PMC power gating is contented */
++	err = readx_poll_timeout(tegra_powergate_toggle_ready, pmc, status,
++				 status == true, 1, 100);
 +	if (err)
 +		return err;
 +
- 	return 0;
- 
- disable_clks:
- 	tegra_powergate_disable_clocks(pg);
- 	usleep_range(10, 20);
- 
-+unprepare_clks:
-+	tegra_powergate_unprepare_clocks(pg);
++	tegra_pmc_writel(pmc, PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
 +
- powergate_off:
- 	tegra_powergate_set(pg->pmc, pg->id, false);
- 
-@@ -733,10 +796,14 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
++	/* wait for PMC to accept the command */
++	err = readx_poll_timeout(tegra_powergate_toggle_ready, pmc, status,
++				 status == true, 1, 100);
++	if (err)
++		return err;
++
++	/* wait for PMC to execute the command */
++	err = readx_poll_timeout(tegra_powergate_state, id, status,
++				 status == new_state, 10, 100000);
++	if (err)
++		return err;
++
++	return 0;
++}
++
+ /**
+  * tegra_powergate_set() - set the state of a partition
+  * @pmc: power management controller
+@@ -526,7 +585,6 @@ static int tegra_powergate_lookup(struct tegra_pmc *pmc, const char *name)
+ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
+ 			       bool new_state)
  {
+-	bool status;
  	int err;
  
--	err = tegra_powergate_enable_clocks(pg);
-+	err = tegra_powergate_prepare_clocks(pg);
- 	if (err)
- 		return err;
+ 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+@@ -539,10 +597,7 @@ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
+ 		return 0;
+ 	}
  
-+	err = tegra_powergate_enable_clocks(pg);
-+	if (err)
-+		goto unprepare_clks;
-+
- 	usleep_range(10, 20);
+-	tegra_pmc_writel(pmc, PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
+-
+-	err = readx_poll_timeout(tegra_powergate_state, id, status,
+-				 status == new_state, 10, 100000);
++	err = pmc->soc->powergate_set(pmc, id, new_state);
  
- 	err = reset_control_assert(pg->reset);
-@@ -753,6 +820,10 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
- 	if (err)
- 		goto assert_resets;
+ 	mutex_unlock(&pmc->powergates_lock);
  
-+	err = tegra_powergate_unprepare_clocks(pg);
-+	if (err)
-+		return err;
-+
- 	return 0;
- 
- assert_resets:
-@@ -764,6 +835,9 @@ static int tegra_powergate_power_down(struct tegra_powergate *pg)
- disable_clks:
- 	tegra_powergate_disable_clocks(pg);
- 
-+unprepare_clks:
-+	tegra_powergate_unprepare_clocks(pg);
-+
- 	return err;
- }
- 
-@@ -881,6 +955,12 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 	if (!pg)
- 		return -ENOMEM;
- 
-+	pg->clk_rates = kzalloc(sizeof(*pg->clk_rates), GFP_KERNEL);
-+	if (!pg->clk_rates) {
-+		kfree(pg->clks);
-+		return -ENOMEM;
-+	}
-+
- 	pg->id = id;
- 	pg->clks = &clk;
- 	pg->num_clks = 1;
-@@ -892,6 +972,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 		dev_err(pmc->dev, "failed to turn on partition %d: %d\n", id,
- 			err);
- 
-+	kfree(pg->clk_rates);
- 	kfree(pg);
- 
- 	return err;
-@@ -1042,6 +1123,12 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
- 	if (!pg->clks)
- 		return -ENOMEM;
- 
-+	pg->clk_rates = kcalloc(count, sizeof(*pg->clk_rates), GFP_KERNEL);
-+	if (!pg->clk_rates) {
-+		kfree(pg->clks);
-+		return -ENOMEM;
-+	}
-+
- 	for (i = 0; i < count; i++) {
- 		pg->clks[i] = of_clk_get(np, i);
- 		if (IS_ERR(pg->clks[i])) {
-@@ -1058,6 +1145,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
- 	while (i--)
- 		clk_put(pg->clks[i]);
- 
-+	kfree(pg->clk_rates);
- 	kfree(pg->clks);
- 
- 	return err;
+@@ -2699,6 +2754,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra20_powergate_set,
+ 	.reset_sources = NULL,
+ 	.num_reset_sources = 0,
+ 	.reset_levels = NULL,
+@@ -2757,6 +2813,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra20_powergate_set,
+ 	.reset_sources = tegra30_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra30_reset_sources),
+ 	.reset_levels = NULL,
+@@ -2811,6 +2868,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra114_powergate_set,
+ 	.reset_sources = tegra30_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra30_reset_sources),
+ 	.reset_levels = NULL,
+@@ -2925,6 +2983,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra114_powergate_set,
+ 	.reset_sources = tegra30_reset_sources,
+ 	.num_reset_sources = ARRAY_SIZE(tegra30_reset_sources),
+ 	.reset_levels = NULL,
+@@ -3048,6 +3107,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra114_powergate_set,
+ 	.irq_set_wake = tegra210_pmc_irq_set_wake,
+ 	.irq_set_type = tegra210_pmc_irq_set_type,
+ 	.reset_sources = tegra210_reset_sources,
 -- 
 2.29.2
 
