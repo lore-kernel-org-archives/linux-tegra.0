@@ -8,114 +8,155 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0268DC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661A1C433E0
 	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 21:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6015235DD
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 21:25:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A47923444
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 21:25:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbhATVZM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 16:25:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
+        id S1732522AbhATVZ0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 16:25:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730345AbhATVRY (ORCPT
+        with ESMTP id S1727081AbhATVYv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 16:17:24 -0500
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E5AC0613D3;
-        Wed, 20 Jan 2021 13:16:44 -0800 (PST)
-Received: by mail-lj1-x22c.google.com with SMTP id u21so149652lja.0;
-        Wed, 20 Jan 2021 13:16:44 -0800 (PST)
+        Wed, 20 Jan 2021 16:24:51 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07248C0613CF;
+        Wed, 20 Jan 2021 13:13:55 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id v67so36099853lfa.0;
+        Wed, 20 Jan 2021 13:13:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=puoT3PhMHA4aUtA+KKIL7CM1ZheEhQL1zDFA6Af983A=;
-        b=rBCjBhNRn1eq0A1fZkIO9qIeGW/poiL1ah83D2As5xWlSgqnC+E70le9eZBJlOSP0s
-         Ns1sGSaUBghjBzzGAp6qSSn+D3AuMXjjIXh/sKd0JuFP5y/0JWysQqyYwqNuTPCMEBIW
-         v4Q50R6OyB7qyW4TogNezTFyZWQkCWT46pjlDRwWazfINTI7H/4dCMaUZcwKy35tOIZj
-         yQ9hQ1VMLIpqX4Pal87SMYfs9KUS2tCcuK3OpBo1CQY5VGaXtMyBNMZzngudPEZSY/cd
-         Nwy9t1crwgf+GfisLxuQTsc/sVzDPFinr2M/hymQ45eb42IZmygNCcoSl+57qEGXNTP/
-         zbUw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KjwS82fYqqkv4xPlnla6S9j26In+4jWKlglRsnCKUho=;
+        b=EmysAZqHCtHWslXxtghv190tfnK9KVVE01KhsXjEV21KwwZ8fvmvnbV9bozew3fksr
+         BRNtH8BL0tIuVGNWzvn18YPp6GhXZQPjKPDIBlR9z4lFbOGIVRPBpHLsPmi4iH2Lmcx8
+         Vrsu8jLBHyBFjRb/RVLnHv4BuCkAUoWzh/e7OvgK0PLxIzDkk/M5i+1dhViQhgiIIO0X
+         StMTRS0PRA8BhHq7tpBdUeol5Mh7vwy1B9ZIwqeEus/O8Utjck6P5zXwCortKdkgfw63
+         f8GiDBK6z8HREsMGmVCgjjSZSnVZZtNcWjRa+89kNE73kqa1+659eJ4hqYBQh2oMOmJy
+         saHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=puoT3PhMHA4aUtA+KKIL7CM1ZheEhQL1zDFA6Af983A=;
-        b=N3QyMyupS+lvylLIPYIflpBpOlgtkVOKADk3YNgoTaPgjtSPyZaPXrfkfgAJpWUAYn
-         v94Ngvfl48oGW7astA/23o+YAeBbpcoGGT8L8Xyq259V+GNgnilIOMBUuxNg0fadna/J
-         JMalT6Z/rW90EtzoS9gn/DxZdUrbJ0h9/Yy9OQFKYgdtpVVyjXtC2fiX6dOUD2XzWQLq
-         CxHkKn9Wwm/5x7qaOGL5mDV5gjXhE2eMnX0q/o+pR8f1O44bJZoz1b/g/qf3XnR3km7q
-         6wGbk2YF4PIA+O/m3apL1BnMikrEfF/DzMCMVrLqM7/RA6yk6NlqWV0Wtu9IjJeTUFsu
-         briA==
-X-Gm-Message-State: AOAM533yHRLXPkiI8H+E90c8gG7sdKkNX8N7luQLnCcP2rPW52hfLuAS
-        cRExOHtzZKmWLiFCpf/vA3ALtmi86x0=
-X-Google-Smtp-Source: ABdhPJwTeQxlgRM61Qq/WtkbJG3vqp4LqCU/ZugFczD50cOzjWqjt5YtEZbw0vwdqB4Um9uTcYOJjQ==
-X-Received: by 2002:a2e:9b13:: with SMTP id u19mr5067681lji.48.1611177402589;
-        Wed, 20 Jan 2021 13:16:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KjwS82fYqqkv4xPlnla6S9j26In+4jWKlglRsnCKUho=;
+        b=Y+MoB9Rm7SizMki9XnJqMz6rA4riQJOyYOePine0CI4SbWTp7CmMHHzdGoBAWarubt
+         r0f7G2LN783jrTXgnQp8dZkI7Vx5e3VwgwzrTAaaIUqoxFQO5waKw3jKKThCYD15oWKD
+         3gjBAfWmNC3S0IycUOe9SoEZuuwD3zWz6kVlfOKUrO2pmu6vLb/e9hX/GVdedczYAHgE
+         swTj6CpIUly9LJDn2NDG19zKkDaK0ExrAxuakB/Udq/cttrpjKGkxwkRdp90rtVzIXeV
+         mt7yOU/KMnsFNxlRUCGvmEL9t+jQGgAG036u8QlJCNufxRec6s3OJ8xmU9DbktR3sLSQ
+         PoJA==
+X-Gm-Message-State: AOAM532+pOePXRh/XaQBd8HquVMu8RHxYbZDZ5ktqS13XSciFk0QWNHL
+        A8cSSDRIK+Yx6HFoE7b/xMo=
+X-Google-Smtp-Source: ABdhPJzFbfdCzVoQJkISeG4Rz4RWsAmu98GhPnEYYfDeTQBLSEyPyyrlRWvyypuYoFYyWVC4Ekyfjw==
+X-Received: by 2002:a05:6512:131b:: with SMTP id x27mr4615717lfu.593.1611177233593;
+        Wed, 20 Jan 2021 13:13:53 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id e20sm341986lja.123.2021.01.20.13.16.41
+        by smtp.gmail.com with ESMTPSA id 196sm298131lfj.219.2021.01.20.13.13.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 13:16:42 -0800 (PST)
+        Wed, 20 Jan 2021 13:13:53 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] rtc: tps65910: Support wakeup-source property
-Date:   Thu, 21 Jan 2021 00:16:02 +0300
-Message-Id: <20210120211603.18555-1-digetx@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v5 3/3] PM: domains: Add "performance" column to debug summary
+Date:   Thu, 21 Jan 2021 00:12:32 +0300
+Message-Id: <20210120211232.17299-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210120211232.17299-1-digetx@gmail.com>
+References: <20210120211232.17299-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-TPS65910 is a PMIC MFD device and RTC is one of its functions. The
-wakeup-source DT property is specified for the parent MFD device and we
-need to use this property for the RTC in order to allow to use RTC alarm
-for waking up system from suspend by default, instead of requiring user
-to enable wakeup manually via sysfs.
+Add "performance" column to debug summary which shows performance state
+of all power domains and theirs devices.
 
 Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+[tested on NVIDIA Tegra20/30/124 SoCs]
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
+ drivers/base/power/domain.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-Changelog:
-
-v2: - Rebased on a recent linux-next, fixed merge conflict.
-
- drivers/rtc/rtc-tps65910.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
-index e1415a49f4ee..288abb1abdb8 100644
---- a/drivers/rtc/rtc-tps65910.c
-+++ b/drivers/rtc/rtc-tps65910.c
-@@ -418,10 +418,14 @@ static int tps65910_rtc_probe(struct platform_device *pdev)
- 		irq = -1;
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 25b346bb2d97..40b72b1d8e8f 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2955,7 +2955,15 @@ static void rtpm_status_str(struct seq_file *s, struct device *dev)
+ 	else
+ 		WARN_ON(1);
  
- 	tps_rtc->irq = irq;
--	if (irq != -1)
--		device_set_wakeup_capable(&pdev->dev, 1);
--	else
-+	if (irq != -1) {
-+		if (device_property_present(tps65910->dev, "wakeup-source"))
-+			device_init_wakeup(&pdev->dev, 1);
-+		else
-+			device_set_wakeup_capable(&pdev->dev, 1);
-+	} else {
- 		clear_bit(RTC_FEATURE_ALARM, tps_rtc->rtc->features);
-+	}
+-	seq_puts(s, p);
++	seq_printf(s, "%-25s  ", p);
++}
++
++static void perf_status_str(struct seq_file *s, struct device *dev)
++{
++	struct generic_pm_domain_data *gpd_data;
++
++	gpd_data = to_gpd_data(dev->power.subsys_data->domain_data);
++	seq_put_decimal_ull(s, "", gpd_data->performance_state);
+ }
  
- 	tps_rtc->rtc->ops = &tps65910_rtc_ops;
- 	tps_rtc->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+ static int genpd_summary_one(struct seq_file *s,
+@@ -2983,7 +2991,7 @@ static int genpd_summary_one(struct seq_file *s,
+ 	else
+ 		snprintf(state, sizeof(state), "%s",
+ 			 status_lookup[genpd->status]);
+-	seq_printf(s, "%-30s  %-15s ", genpd->name, state);
++	seq_printf(s, "%-30s  %-50s %u", genpd->name, state, genpd->performance_state);
+ 
+ 	/*
+ 	 * Modifications on the list require holding locks on both
+@@ -2991,6 +2999,8 @@ static int genpd_summary_one(struct seq_file *s,
+ 	 * Also genpd->name is immutable.
+ 	 */
+ 	list_for_each_entry(link, &genpd->parent_links, parent_node) {
++		if (list_is_first(&link->parent_node, &genpd->parent_links))
++			seq_printf(s, "\n%48s", " ");
+ 		seq_printf(s, "%s", link->child->name);
+ 		if (!list_is_last(&link->parent_node, &genpd->parent_links))
+ 			seq_puts(s, ", ");
+@@ -3005,6 +3015,7 @@ static int genpd_summary_one(struct seq_file *s,
+ 
+ 		seq_printf(s, "\n    %-50s  ", kobj_path);
+ 		rtpm_status_str(s, pm_data->dev);
++		perf_status_str(s, pm_data->dev);
+ 		kfree(kobj_path);
+ 	}
+ 
+@@ -3020,9 +3031,9 @@ static int summary_show(struct seq_file *s, void *data)
+ 	struct generic_pm_domain *genpd;
+ 	int ret = 0;
+ 
+-	seq_puts(s, "domain                          status          children\n");
++	seq_puts(s, "domain                          status          children                           performance\n");
+ 	seq_puts(s, "    /device                                             runtime status\n");
+-	seq_puts(s, "----------------------------------------------------------------------\n");
++	seq_puts(s, "----------------------------------------------------------------------------------------------\n");
+ 
+ 	ret = mutex_lock_interruptible(&gpd_list_lock);
+ 	if (ret)
 -- 
 2.29.2
 
