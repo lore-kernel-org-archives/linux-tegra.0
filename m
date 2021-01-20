@@ -2,90 +2,107 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E12C433E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 15:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78805C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 15:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5F923381
-	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 15:46:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D17F2339E
+	for <linux-tegra@archiver.kernel.org>; Wed, 20 Jan 2021 15:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbhATPqm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 10:46:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40500 "EHLO
+        id S2389486AbhATPyr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 10:54:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732535AbhATPm0 (ORCPT
+        with ESMTP id S2390562AbhATPx3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 10:42:26 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEC8C0613C1;
-        Wed, 20 Jan 2021 07:41:46 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id f17so26568807ljg.12;
-        Wed, 20 Jan 2021 07:41:46 -0800 (PST)
+        Wed, 20 Jan 2021 10:53:29 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38FE4C061575;
+        Wed, 20 Jan 2021 07:52:49 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id o17so34757590lfg.4;
+        Wed, 20 Jan 2021 07:52:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9sJ1ScRq8N/XaLEQifnGC6kRifQqptOQ2pXix1nlQlY=;
-        b=Uajiq292D24xViZSilHw5Nw54/tYtaDcIPIzm0DmQ1axRpfxwauVk6W3xes7SPa8ME
-         /Qdm+mMXRCwcadGLIWF8ocpHiR24QX5YLae+1HzZwWnKQztag6cmwfKZbONjTi7Ga3fH
-         q5RP5Oy90ofLvcDP3vqOxS3TLOGic5cXgVIogUXp/KQrop3QNZIJet0XLVPeu7nD0TbD
-         D+ebXCuRzp1A3rlGZmbgc0KU7yLtuJ1A2G4F+M+6jSzOBqkP+P2AsM9JXL7BD78B91O5
-         3ehukk8m/3jWoqMe0tB+VjLGd8sIfjaBrGBx8TIMWxIBRBQ+H7AxMJCw1RextufG0Hc2
-         rRNw==
+        bh=/KIgJpukkTUseLKOL+nfTNs+iHfOcLiaf/sA4jMSc7o=;
+        b=b2NLVokQPZCUuJAyv3kiWNUb/D7/YvKoWfUJcCHR1heKGaiZjLpcSwBstX7Q3YX8MD
+         0VSL3nGarP20z1Z7t1EQA7XA2H4vpXyhlGms2qwFGmlN5vFPCkNOEwhXvgcl2dX2OHl0
+         Fk8lwe7s8eUZ2wwS5RMH6/mUWuXSRNmTjNvQCAwK5Dd3NdzmkpZHt4llHrw8Ni5khkmn
+         myMjJRhAiEUeq/sHdT1yh60NnMmGAROPatvIjJ8mP6HQeV19cvk6YGXY87IpFAtncwaV
+         v00shKKr9e/yxCXAB3jbsK18rnr4dn0SL3OuJ8SyDsoqZnywmH2zxXJFRB0YEqFQqi04
+         OP8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9sJ1ScRq8N/XaLEQifnGC6kRifQqptOQ2pXix1nlQlY=;
-        b=J5Tl1owmaH5flvbn/Xed5ltELFrv2dEaRrFAuIY/+FXglX8Dxa/jBMwwW19WbJZcO6
-         T0yfFeFL76FmMXNx9m5LoiapzJSS3FPi06Hfs+0+tvlGx+E4RJdQRIll79LuY+2vJkwe
-         AtsCDWPrs4Ahff9f972DU8Igq8F7iv5UpI/C5QGvgZU4zUlyFY935GNY7iNkkoyiUP8D
-         1SwrjCFZyrvZ7KQt7gE2GP/E3ynVZdZg61i+RNeho5K2S0MAacMQFa29BQlRC1X6mtT9
-         GnZrMi/3/6m0G21k0vhjSyxNumxwNNvmNOYH4LmCmvVfX9ZE0LEJyv302s/aW0EeQc3Q
-         IpZA==
-X-Gm-Message-State: AOAM531RQiq94fBGiowe8DfQybf/jdqF3WYDb0hMd/ufMjdGZhD4g9z3
-        kHeCAz4KloA66Q7Qep2Dx1YVpRGPBZE=
-X-Google-Smtp-Source: ABdhPJwS4Qe/V4DTqXpHPpVFyBynrwBLREgqIfYmzBAewWBaQBUksbpctc33wZx6P9VYWEGo5ma19g==
-X-Received: by 2002:a2e:b4cd:: with SMTP id r13mr1564048ljm.273.1611157304363;
-        Wed, 20 Jan 2021 07:41:44 -0800 (PST)
+        bh=/KIgJpukkTUseLKOL+nfTNs+iHfOcLiaf/sA4jMSc7o=;
+        b=nbGUUFMp2tvkeX6XBsXTytoIiQPoz2eDIbHMmu4obTt01NoNLbaj2f9zx3wVyrCp4j
+         XIEjmjHhN6R1F1fnjSKUn9LIH2fe1HWXJOARadqqsVIByKni7NkJOPdLj+5chmh06SoZ
+         6TH9b14hriqgE1+ThonVV1NND8L1OGT9qf8dXWsrbFRjvgVWZ0Hv2ANhdQP7Pp0rUInH
+         DdyJhS2vnOcnkWMdS4WMk+TAwt6OmI0ezULfIAVj4iUL3FbjIeIkwceqBm8ZxGEFnVmy
+         1k1exhCfw1zlHcU/HC6vF73fyQJL7udqR/YCzWTZyBsWL6xCKgckEZ+apslDjtXdNUTt
+         jDZQ==
+X-Gm-Message-State: AOAM5338hi7aA1pHPOm9dFhgTGZXp4CKCcQIfKiU3dvNwEKhL+T6Bgjo
+        K/NSxyBc5oPD2aA5LNiSlbJh8+WQmjY=
+X-Google-Smtp-Source: ABdhPJz54jp4p6N7ro9OB4UGTlGLwMbj9w9A1NhmVFwuW25RiB7kgYemoqd4C3nN1Esa+ddCNU5GUA==
+X-Received: by 2002:a19:ac45:: with SMTP id r5mr4942869lfc.305.1611157967504;
+        Wed, 20 Jan 2021 07:52:47 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id 29sm229492lfr.304.2021.01.20.07.41.42
+        by smtp.googlemail.com with ESMTPSA id b4sm74228ljp.53.2021.01.20.07.52.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Jan 2021 07:41:43 -0800 (PST)
-Subject: Re: [PATCH v3 00/12] OPP API fixes and improvements
+        Wed, 20 Jan 2021 07:52:46 -0800 (PST)
+Subject: Re: [PATCH 02/31] opp: Add devres wrapper for
+ dev_pm_opp_set_regulators and dev_pm_opp_put_regulators
+To:     Yangtao Li <tiny.windzz@gmail.com>, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, cw00.choi@samsung.com, krzk@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
+        mka@chromium.org, harigovi@codeaurora.org,
+        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
+        georgi.djakov@linaro.org, akashast@codeaurora.org,
+        parashar@codeaurora.org, dianders@chromium.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20210101165507.19486-1-tiny.windzz@gmail.com>
+ <20210101165507.19486-3-tiny.windzz@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20210118005524.27787-1-digetx@gmail.com>
- <20210118114613.fzq7nkrdfm53upkr@vireshk-i7>
- <1d17901f-6341-d278-f517-33d9c7aadf42@gmail.com>
-Message-ID: <af1044be-263e-0aa2-7061-0b217f94197b@gmail.com>
-Date:   Wed, 20 Jan 2021 18:41:41 +0300
+Message-ID: <43c251a2-430a-040c-4152-94cf10c884e0@gmail.com>
+Date:   Wed, 20 Jan 2021 18:52:43 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <1d17901f-6341-d278-f517-33d9c7aadf42@gmail.com>
+In-Reply-To: <20210101165507.19486-3-tiny.windzz@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,31 +110,15 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.01.2021 20:35, Dmitry Osipenko пишет:
-> 18.01.2021 14:46, Viresh Kumar пишет:
->> On 18-01-21, 03:55, Dmitry Osipenko wrote:
->>> Hi,
->>>
->>> This series fixes problems and adds features to OPP API that are required
->>> for implementation of a power domain driver for NVIDIA Tegra SoCs.
->>>
->>> It is a continuation of [1], where Viresh Kumar asked to factor OPP
->>> patches into a separate series. I factored out the patches into this
->>> series, addressed the previous review comments and re-based patches
->>> on top of [2], which replaced some of my patches that added resource-managed
->>> helpers.
->>>
->>> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
->>> [2] https://lore.kernel.org/linux-pm/20210101165507.19486-1-tiny.windzz@gmail.com/
->>
->> Hi Dmitry,
->>
->> I have applied 9 out of 12 patches already. Thanks.
->>
+01.01.2021 19:54, Yangtao Li пишет:
+> Add devres wrapper for dev_pm_opp_set_regulators()
+> dev_pm_opp_put_regulators () to simplify driver code.
 > 
-> Thanks, I checked that everything is applied properly using today's
-> linux-next.
-> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/opp/core.c     | 50 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  9 ++++++++
+>  2 files changed, 59 insertions(+)
 
-Turned out that one minor issue was actually introduced, the
-devm_pm_opp_attach_genpd() lost the export. I'll make a patch to fix this.
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
