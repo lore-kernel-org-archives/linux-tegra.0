@@ -2,95 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B15CC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 01:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991D5C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 04:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F13523602
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 01:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647BB238E4
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 04:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387532AbhAUA74 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:59:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53928 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387742AbhAUAIB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 20 Jan 2021 19:08:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 96F5523731;
-        Thu, 21 Jan 2021 00:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611187638;
-        bh=q2ZTBy/GMJKRUdA87t2kPuxFQS8sPWRWpmZxf4B5WZw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=g2+cM8NWD1hKgEPNQrvsuKvIAvkCC+K0aLHdyDPTSjm7q1b69lV904geZC9cnNIBK
-         H8Hpm+KBO2GbwUbfwKvWBePgmlBYcSV3H9hyLFAfVC0OQ7AAaBCm/BYRJPsBT4SjmO
-         VZUvFT4vHZ+06rT7DkgySHrWf6p257TkbnCw/g5xVOgfUqd1ygUWaaPxRBSfyAyUin
-         IogOaPW8jcLTlo6sUhsi7rqykapkWUWqN/5ShkgzJeeowCdjSPFiEVU9sOjtFVXj61
-         T6dnemTJJDqnJy2pt76eqigPi5Qdqiy9PRYz2lOWBEALC4I0ne8ts1NqyIuX7SI36w
-         udU2Tr9OIaeOA==
-From:   Mark Brown <broonie@kernel.org>
-To:     robh+dt@kernel.org, Sameer Pujar <spujar@nvidia.com>,
-        thierry.reding@gmail.com
-Cc:     sharadg@nvidia.com, linux-tegra@vger.kernel.org,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        kuninori.morimoto.gx@renesas.com
-In-Reply-To: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
-References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
-Subject: Re: (subset) [RESEND PATCH v6 0/6] Tegra210 audio graph card
-Message-Id: <161118753483.45718.690579581482519791.b4-ty@kernel.org>
-Date:   Thu, 21 Jan 2021 00:05:34 +0000
+        id S1729636AbhAUEJV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 20 Jan 2021 23:09:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbhAUEJK (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 20 Jan 2021 23:09:10 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A52EC0613D3
+        for <linux-tegra@vger.kernel.org>; Wed, 20 Jan 2021 20:08:30 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id q131so717451pfq.10
+        for <linux-tegra@vger.kernel.org>; Wed, 20 Jan 2021 20:08:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X4Jw/E+MtQCCTnL+PGuuK0p7Rc+43AmkTUUI5e9cfl8=;
+        b=zNayIhusqeaJcQKJoNACth9N6WIAptS33FTJhomoi5rFhdlCG4d3T63nrUWB2tTHVC
+         lWi7KXdFnO0nXBbBVghWQjlANtXi1z79PkIeDAi1VkBwIbgG1/SSc2QTDgTUxZggeTbT
+         ZhyW84SuqbzH8Zr9pUCUW8rqgb9YtgOcGfddOuCAI7cRbsLkEDq7gjuE6+0QTb8cDOOs
+         qm9cOa6Vf4NzBN/x7g5Wz/KoKYozCfulX++avvbOu5a07qXNTUsnojSE3j89VFxzE6eH
+         Vj8beYYR8bgec4BVA6sM434V20kxQM/tEi6+cn0U7+l7yzbuf6tEbaJLUaV10f2pKQfQ
+         7Zpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X4Jw/E+MtQCCTnL+PGuuK0p7Rc+43AmkTUUI5e9cfl8=;
+        b=U1JaRX1Rg+RhIqoAw7Sm6rrjQo/OrRfTAf8nWcGwEfLL1N+0kjzSo/XCADZ0do6Jtc
+         MyAH8VEHn62AN/STYVg2uejcE5gYVexjmBtbNlT0+Gkeg4gTIly1QY/S72lOczI7KhfV
+         lO+uR3DFUPo8Leyq7YNbnxtsbtgIYpzs5OeZ6nUXv/w83H8NAqBROvPDxLuugwRAd2oK
+         b3dli4v5CJP/2/iMUkR8mlPJM22J4P7JgeljwGGH8lJ2/sXwsQw0Iev7hwaV3dfr54sz
+         ft1AUVZGlQo/caP0a7qDih3Q50NI8df8S1BTjWpsx3xvqFU/Jokdo3R/XZi75cGBNqNm
+         G2nQ==
+X-Gm-Message-State: AOAM533mfIMFajP6DibsrEoI/a0x9OX13sEC9FQnFD+00BNo0vF9aj2S
+        2i+auazZFH0qAznWcbMkN9QW7A==
+X-Google-Smtp-Source: ABdhPJytsWhRYcWkltf5/Tc9Fp63GWINBFAh/gZQi00WIv4gQiwq3VmsZi6nh+YyCfv8eBHuYPnT+Q==
+X-Received: by 2002:a62:64c9:0:b029:1b9:6b48:7901 with SMTP id y192-20020a6264c90000b02901b96b487901mr11809332pfb.0.1611202109309;
+        Wed, 20 Jan 2021 20:08:29 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id 126sm3687628pfu.31.2021.01.20.20.08.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jan 2021 20:08:28 -0800 (PST)
+Date:   Thu, 21 Jan 2021 09:38:26 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] PM: domains: Make set_performance_state()
+ callback optional
+Message-ID: <20210121040826.jsxdv24vxnobq45s@vireshk-i7>
+References: <20210120211232.17299-1-digetx@gmail.com>
+ <20210120211232.17299-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210120211232.17299-2-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 19 Jan 2021 14:58:10 +0530, Sameer Pujar wrote:
-> This series adds audio graph based sound card support for Tegra210
-> platforms like Jetson-TX1 an Jetson-Nano. The following preparatory
-> audio graph enhancement series is already merged.
->  * https://patchwork.kernel.org/project/alsa-devel/list/?series=375629&state=*
+On 21-01-21, 00:12, Dmitry Osipenko wrote:
+> Make set_performance_state() callback optional in order to remove the
+> need from power domain drivers to implement a dummy callback. If callback
+> isn't implemented by a GENPD driver, then the performance state is passed
+> to the parent domain.
 > 
-> Following are the summary of changes:
->  * Add graph/audio-graph based schemas or schema updates for Tegra210
->    component and machine drivers.
->  * Add Tegra audio graph machine driver.
->  * Add required DT support for Jetson-TX1/Nano.
-> 
-> [...]
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+> [tested on NVIDIA Tegra20/30/124 SoCs]
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/base/power/domain.c | 33 ++++++++++++++++++---------------
+>  1 file changed, 18 insertions(+), 15 deletions(-)
 
-Applied to
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/6] ASoC: dt-bindings: tegra: Add graph bindings
-      commit: 9e0f86fdcdab6a0e183ad4ec2410453985b4cf3c
-[2/6] ASoC: dt-bindings: tegra: Add json-schema for Tegra audio graph card
-      commit: a9f22c03a8ac5d21ce7a9b9307d9654c963a1f9c
-[3/6] ASoC: tegra: Add audio graph based card driver
-      commit: 202e2f7745437aa5b694de92cbd30bb43b23fbed
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+viresh
