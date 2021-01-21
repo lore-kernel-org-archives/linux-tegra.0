@@ -4,99 +4,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27114C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 10:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF195C43381
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 10:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D26BD229C9
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 10:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6750323602
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 10:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbhAUKHt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:07:49 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11942 "EHLO
+        id S1729221AbhAUK1X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 05:27:23 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14001 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbhAUKH2 (ORCPT
+        with ESMTP id S1728582AbhAUK1J (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 05:07:28 -0500
+        Thu, 21 Jan 2021 05:27:09 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B6009521b0000>; Thu, 21 Jan 2021 02:06:19 -0800
+        id <B600956d40000>; Thu, 21 Jan 2021 02:26:28 -0800
 Received: from [10.26.72.207] (172.20.145.6) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Jan
- 2021 10:06:14 +0000
-Subject: Re: [PATCH] ACPICA: fix -Wfallthrough
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>
-CC:     <clang-built-linux@googlegroups.com>, Len Brown <lenb@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <devel@acpica.org>,
-        <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20201111021131.822867-1-ndesaulniers@google.com>
+ 2021 10:26:25 +0000
+Subject: Re: [PATCH] arm64: tegra: Enable Jetson-Xavier J512 USB host
+To:     JC Kuo <jckuo@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20210119022349.136453-1-jckuo@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <031790d7-ee26-f919-9338-b135e9b94635@nvidia.com>
-Date:   Thu, 21 Jan 2021 10:06:12 +0000
+Message-ID: <4790de5a-f299-219b-1d50-6fe98942c2e1@nvidia.com>
+Date:   Thu, 21 Jan 2021 10:26:23 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201111021131.822867-1-ndesaulniers@google.com>
+In-Reply-To: <20210119022349.136453-1-jckuo@nvidia.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [172.20.145.6]
 X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611223579; bh=ecknqWhuJL3W8p6oQ0zL/CmHsHXhDRwgK1lykE3RJyQ=;
+        t=1611224788; bh=sct4guh8tyVx7wvx6PCrh8j4kV3LgnQtah4P1FR8Wxo=;
         h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
          MIME-Version:In-Reply-To:Content-Type:Content-Language:
          Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=hQ9ZqKLYBvSdVpq/QxZyE+ROLV9WzIzI1NNn1H29M+eRY+CERXSsX24rDtifxNsGx
-         gJ2UWTvPfHxQPkxRszZlLARzfL9qwIiYhq5F+2t79hEujT/T5wE8Yp1RaXH2zb0fr6
-         KHps9XcTapcsTT97zKDniQRCU4yvcwZ70NNbSARxqEtCZ24LK8kFgvHFFYcec4iQiu
-         K6lnTBYBrtu4Nzw/d/leu7Jb6yGNZVVUz/AaQE498WuZTFrBTbJAIJhmhvshqTfCI4
-         C39BAL/NroKKXoA1IGLpxQLmfT0xYmlLYnLvjg2yPkM/dWCj7zdbg5clw5OrAMpJ7S
-         lM34IV6mGryeA==
+        b=nltaLyNWSpKaTMH9c/msvna7xDzoq2b3KsD2bo5FEO3SzddIuvp3u/L0mAJc9Sbi4
+         axH5JGLSi3Dp55nekMmDW2JIiEvvIkGRs5y++pa/5ySgv+qq7E1Nlu6jhJTyBzULMv
+         c5pBGPGb7q4vVrpfKlELi8kiXBYGFjgRvfrlkKBcInAIRdv0h36EUg3NZfICk+RwBm
+         9WQ/CPLV1lZAqE7iTvzGD7a1VGffM693MJDFjXB3tAaQEBtXmJLZBR5YFlMjbKXe0N
+         SKXOiMlYuWTQvk3aWSIyrfpucqiQEWG9GtUH79b40jFWCI+2KBqVfCzR9MdkBTfY1u
+         4xlA3+Oe3CbKQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 11/11/2020 02:11, Nick Desaulniers wrote:
-> The "fallthrough" pseudo-keyword was added as a portable way to denote
-> intentional fallthrough. This code seemed to be using a mix of
-> fallthrough comments that GCC recognizes, and some kind of lint marker.
-> I'm guessing that linter hasn't been run in a while from the mixed use
-> of the marker vs comments.
->=20
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+On 19/01/2021 02:23, JC Kuo wrote:
+> This commit enables USB host mode at J512 type-C port of Jetson-Xavier.
+> 
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  8 +++++++
+>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 24 +++++++++++++++++--
+>  2 files changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+> index d71b7a1140fe..7e7b0eb90c80 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+> @@ -93,6 +93,10 @@ padctl@3520000 {
+>  			vclamp-usb-supply = <&vdd_1v8ao>;
+>  
+>  			ports {
+> +				usb2-0 {
+> +					vbus-supply = <&vdd_5v0_sys>;
+> +				};
+> +
+>  				usb2-1 {
+>  					vbus-supply = <&vdd_5v0_sys>;
+>  				};
+> @@ -105,6 +109,10 @@ usb3-0 {
+>  					vbus-supply = <&vdd_5v0_sys>;
+>  				};
+>  
+> +				usb3-2 {
+> +					vbus-supply = <&vdd_5v0_sys>;
+> +				};
+> +
+>  				usb3-3 {
+>  					vbus-supply = <&vdd_5v0_sys>;
+>  				};
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> index 54d057beec59..8697927b1fe7 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> @@ -57,6 +57,10 @@ padctl@3520000 {
+>  			pads {
+>  				usb2 {
+>  					lanes {
+> +						usb2-0 {
+> +							status = "okay";
+> +						};
+> +
+>  						usb2-1 {
+>  							status = "okay";
+>  						};
+> @@ -73,6 +77,10 @@ usb3-0 {
+>  							status = "okay";
+>  						};
+>  
+> +						usb3-2 {
+> +							status = "okay";
+> +						};
+> +
+>  						usb3-3 {
+>  							status = "okay";
+>  						};
+> @@ -81,6 +89,11 @@ usb3-3 {
+>  			};
+>  
+>  			ports {
+> +				usb2-0 {
+> +					mode = "host";
+> +					status = "okay";
+> +				};
+> +
+>  				usb2-1 {
+>  					mode = "host";
+>  					status = "okay";
+> @@ -96,6 +109,11 @@ usb3-0 {
+>  					status = "okay";
+>  				};
+>  
+> +				usb3-2 {
+> +					nvidia,usb2-companion = <0>;
+> +					status = "okay";
+> +				};
+> +
+>  				usb3-3 {
+>  					nvidia,usb2-companion = <3>;
+>  					maximum-speed = "super-speed";
+> @@ -107,11 +125,13 @@ usb3-3 {
+>  		usb@3610000 {
+>  			status = "okay";
+>  
+> -			phys =	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
+> +			phys =	<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-0}>,
+> +				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-1}>,
+>  				<&{/bus@0/padctl@3520000/pads/usb2/lanes/usb2-3}>,
+>  				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-0}>,
+> +				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-2}>,
+>  				<&{/bus@0/padctl@3520000/pads/usb3/lanes/usb3-3}>;
+> -			phy-names = "usb2-1", "usb2-3", "usb3-0", "usb3-3";
+> +			phy-names = "usb2-0", "usb2-1", "usb2-3", "usb3-0", "usb3-2", "usb3-3";
+>  		};
+>  
+>  		pwm@c340000 {
+> 
 
+Thanks. Works for me.
 
-I know this is not the exact version that was merged, I can't find it on
-the list, but looks like the version that was merged [0], is causing
-build errors with older toolchains (GCC v6) ...
-
-/dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol=
-.c: In function =E2=80=98acpi_ds_exec_begin_control_op=E2=80=99:
-/dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol=
-.c:65:3: error: =E2=80=98ACPI_FALLTHROUGH=E2=80=99 undeclared (first use in=
- this function)
-   ACPI_FALLTHROUGH;
-   ^~~~~~~~~~~~~~~~
-/dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol=
-.c:65:3: note: each undeclared identifier is reported only once for each fu=
-nction it appears in
-/dvs/git/dirty/git-master_l4t-upstream/kernel/scripts/Makefile.build:287: r=
-ecipe for target 'drivers/acpi/acpica/dscontrol.o' failed
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
 
-[0] https://github.com/acpica/acpica/commit/4b9135f5
-	=20
---=20
+-- 
 nvpublic
