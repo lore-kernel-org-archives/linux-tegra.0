@@ -2,147 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DA1C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9391DC433E9
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D84B623975
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B9823975
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbhAULUB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:20:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
+        id S1728211AbhAULro (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 06:47:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728332AbhAULTM (ORCPT
+        with ESMTP id S1729997AbhAULVU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 06:19:12 -0500
+        Thu, 21 Jan 2021 06:21:20 -0500
 Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BA3C0613D3
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:18:27 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id z21so1161668pgj.4
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:18:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F35FC061575
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:20:03 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id n7so1173761pgg.2
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:20:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=x3SmdleK8UZBluZ+gLv61IXIdA7ChI0uJ8q02WGnkWs=;
-        b=kKul5ID8v5TbX97ww+cpfmgrUv3kSKDwJ5+iClldpCxSEMEvh16BW9c99r9D6TxUF/
-         UJy9U+fbp6GgTXqQAKH2vpfq+OBFaUhJAFtmu2GlHVA0WGpq/UGkkQR9iGMbQoj1Iitv
-         n10xlrNXdq0kiQQIE5ELsxJO+0LGCp2wS9uujRkXF7ZC8F+po6ARY/vc2Wfe1Q2Hl5ea
-         ea/DVLs27iqJz6zMgl0grfTLeQyN5TuTmnmrzme3iilGPe9v/xC35tR/mdM3Bl/HM1qU
-         XZS/WWhF29VdoamNtm9NTJNGg++hLG8LJsFS9ZiaU3Au8PjSKQyPReA9zoIHqr/wIRDf
-         hK1A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=UlV9SkLktbmadacAKGgdNG9Y2QsM6fa71yNEW4spCec=;
+        b=dV21di/SIMnV6UG3syoEA4dXCTmipisQDkMW2ufldO2KP0jSQItvJ3YkLtmXk/+JhE
+         7hmZ57fpHjt97X8PR5gXKmU1bgQz8d9clCagTI0XMnZpqP7mbO2Zh9iAagmu72olXVXj
+         CpvgynAYjmFNlOtru+P+SYxpt+iir3lFG9dv6lysvnZP2hLf/APuNd8AjgmKHKz2BNET
+         Q/B3hhhnbz+8xj6PhO4etIkonSNJevSre91l8KyekoUNJ+w0l4BvS0UDAMyBit0BFHnd
+         2TjKMVh5o1fOz3r3E2jv7XYpty6AqtiuILOhk63BTwf28a0P+EHbNvdsGS3BPWyxJAU3
+         Rplg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=x3SmdleK8UZBluZ+gLv61IXIdA7ChI0uJ8q02WGnkWs=;
-        b=fm8T1Vy8V4e1ZEoUF33ssyH9K1OD53Lus7ho0o6Mre02O2hEi3G5Sd6UIY5cAgEzfz
-         vjKRRD8Z+RaU2wxbYtGb5Zh+LSgZAUpDfLRjAVDA9UBk0AZG7W4xw4JZlJDoP5ysBIY5
-         W3AFtet6bNDoQY6ZvASoKHf8AUHhDgfICjyhxtTzILksbFEfJ+7e+bVfYIh+OOnN+GkM
-         juezH4/dtLN1tBAWXk8IlXP0NDOHGUu/UnOpK7EmUnvjeqzCr98ib62IHLcN61KhDeNn
-         Xvs+WJnpt92FzQugJBFfkpU8epsr2L1OmIdjBRRo+kzPICjKTQkxmCRH1qD4CbkyiCXr
-         RyMA==
-X-Gm-Message-State: AOAM530QL+O3txVYlFsihqAkDeI8gPC4KjJ8Uc5dNjyBP9FMwDPv4Tz1
-        1d1+VByTWwAYFuL5OUV0pcCSMA==
-X-Google-Smtp-Source: ABdhPJzYjBGnMJtovsRHZ48WHArs33wC1W8Lrm5qvHpSIs5QnnIQMqLBBg9eMiM+WEzPlls9eOjVdQ==
-X-Received: by 2002:aa7:84d5:0:b029:19d:da20:73fe with SMTP id x21-20020aa784d50000b029019dda2073femr13718975pfn.16.1611227895317;
-        Thu, 21 Jan 2021 03:18:15 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=UlV9SkLktbmadacAKGgdNG9Y2QsM6fa71yNEW4spCec=;
+        b=BTpL6fEU2nUcKMw67a/Dsh+FFMH9lfdlBPVAVovqk5pfZSLuobkXfJ9jgZDhJXcI5E
+         FCnVFCWxkBfl1mqlU4CEIhYI6qylwyD6L3NVfr1GITvQWTXcIA2QjEeckvct9EVlLY4L
+         1+UCu3zWAu9Zm8vPAPVqkM0GCQVVeyk1Gv6jokGiLsU/uUS1bv8uCWW32gD9bm0qOoRA
+         0ayRM5MO6mNGDuPTkAPha1E0QxMGdVWxLVwtxeBLFRYOOpS/pIYEi1f1HnfbyG52Xm5I
+         va4l3xWzS1wX+m3Sk4O1nCymKX+RgAVELXgRMP+zNJjg/vhqwWVZh7Oisqi2dr3prxfV
+         JONw==
+X-Gm-Message-State: AOAM5302xK+aDwExy6kn8YXfux3fNKPANFsqCT8OjOAsETtedQ7CXr5Q
+        uLwMZCQkj6aX5UeYZ67pi9XkPg==
+X-Google-Smtp-Source: ABdhPJyWSSNOh5sgHtD8hlBg7objnemuBrANhZgMxnAG9UmzBJYI+f5LE6kZ+jLn7AkBm1SA7BUzng==
+X-Received: by 2002:a63:455c:: with SMTP id u28mr506335pgk.142.1611228002718;
+        Thu, 21 Jan 2021 03:20:02 -0800 (PST)
 Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id 68sm5691390pfg.90.2021.01.21.03.18.13
+        by smtp.gmail.com with ESMTPSA id gk2sm5831650pjb.6.2021.01.21.03.20.01
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jan 2021 03:18:14 -0800 (PST)
+        Thu, 21 Jan 2021 03:20:01 -0800 (PST)
+Date:   Thu, 21 Jan 2021 16:50:00 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
         Viresh Kumar <vireshk@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 00/13] opp: Implement dev_pm_opp_set_opp()
-Date:   Thu, 21 Jan 2021 16:47:40 +0530
-Message-Id: <cover.1611227342.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 05/12] opp: Add dev_pm_opp_set_voltage()
+Message-ID: <20210121112000.rn6uvfsmgy2wyxwh@vireshk-i7>
+References: <20210118005524.27787-1-digetx@gmail.com>
+ <20210118005524.27787-6-digetx@gmail.com>
+ <20210118095256.tr2qgnrmokkc6ngf@vireshk-i7>
+ <a48dca91-4264-e153-cefa-ccbcca1b1d9d@gmail.com>
+ <16c7e096-5efd-2d0c-a2ac-c11133c29c30@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <16c7e096-5efd-2d0c-a2ac-c11133c29c30@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
+On 21-01-21, 00:57, Dmitry Osipenko wrote:
+> 18.01.2021 22:14, Dmitry Osipenko пишет:
+> > Sounds like it could be a lot of code moving and some extra complexity
+> > will be added to the code. If nobody will ever need the universal
+> > dev_pm_opp_set_opp(), then it could become a wasted effort. I'd choose
+> > the easiest path, i.e. to defer the dev_pm_opp_set_opp() implementation
+> > until somebody will really need it.
+> > 
+> > But if it looks to you that it won't be a too much effort, then I'll
+> > appreciate if you could type the patch.
 
-This patchset implements a new API dev_pm_opp_set_opp(), which
-configures the devices represented by an opp table to a particular opp.
-The opp core supports a wide variety of devices now, some of them can
-change frequency and other properties (like CPUs), while others can just
-change their pstates or regulators (like power domains) and then there
-are others which can change their bandwidth as well (interconnects).
-Instead of having separate implementations for all of them, where all
-will eventually lack something or the other, lets try to implement a
-common solution for everyone. This takes care of setting regulators, bw,
-required opps, etc for all device types.
+Yes.
+ 
+> Let's start with dev_pm_opp_set_voltage() for now. It shouldn't be a
+> problem at all to upgrade it to dev_pm_opp_set_opp() later on.
+> 
+> I'll make a v4 with the dev_pm_opp_set_voltage(), please let me know if
+> you have objections or more suggestions!
 
-Dmitry, please go ahead and try this series. This is based of opp tree's
-linux-next branch.
+Sorry about this, I have been working on this stuff for last 2 days. I
+didn't reply earlier as I thought I would be able to finish this
+earlier. Once you see the patches you will see it was a significant
+change :)
 
-Sibi, since you added dev_pm_opp_set_bw() earlier, it would be good if
-you can give this a try. In case this breaks anything for you.
-
-I have already tested this on hikey board for CPU devices.
-
-To get this tested better and as early as possible, I have pushed it
-here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git opp/linux-next
-
-This will be part of linux-next tomorrow.
-
-Note, all the patches need to go through OPP tree here. Please provide
-your Acks for platform specific bits.
-
---
-Viresh
-
-Viresh Kumar (13):
-  opp: Rename _opp_set_rate_zero()
-  opp: No need to check clk for errors
-  opp: Keep track of currently programmed OPP
-  opp: Split _set_opp() out of dev_pm_opp_set_rate()
-  opp: Allow _set_opp() to work for non-freq devices
-  opp: Allow _generic_set_opp_regulator() to work for non-freq devices
-  opp: Allow _generic_set_opp_clk_only() to work for non-freq devices
-  opp: Update parameters of  _set_opp_custom()
-  opp: Implement dev_pm_opp_set_opp()
-  cpufreq: qcom: Migrate to dev_pm_opp_set_opp()
-  devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
-  drm: msm: Migrate to dev_pm_opp_set_opp()
-  opp: Remove dev_pm_opp_set_bw()
-
- drivers/cpufreq/qcom-cpufreq-hw.c     |   2 +-
- drivers/devfreq/tegra30-devfreq.c     |   2 +-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c |   8 +-
- drivers/opp/core.c                    | 314 ++++++++++++++------------
- drivers/opp/opp.h                     |   2 +
- include/linux/pm_opp.h                |   6 +-
- 6 files changed, 184 insertions(+), 150 deletions(-)
+I have cc'd you to the relevant patches now. Please see if they work
+fine for you or not.
 
 -- 
-2.25.0.rc1.19.g042ed3e048af
-
+viresh
