@@ -2,146 +2,118 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1442AC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF288C43381
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE82123A1C
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF18C23A80
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbhAUTTX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 14:19:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58470 "EHLO
+        id S1727318AbhAUTbq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 14:31:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbhAUTRz (ORCPT
+        with ESMTP id S1726344AbhAUTFG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:17:55 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF09FC061788
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 11:16:43 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id p80so3139909ybg.10
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 11:16:43 -0800 (PST)
+        Thu, 21 Jan 2021 14:05:06 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0E0C0613D6;
+        Thu, 21 Jan 2021 10:53:53 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id b5so2767896wrr.10;
+        Thu, 21 Jan 2021 10:53:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=uXaJ+OStKaU1TSDiW6h4CbV+WkJ9mG9O+r64LsV2Mn0=;
-        b=eYA5oY8hKyFgrd6TaGKQAuh6YxqMlqPxpbJ8pyoyuBQ5PnSRAWEUsOSfVIlKlrnTNe
-         1g9UPvefodcMNDtEPBEVZO417AdPQEKhx4hr9piNifguWGsv4TKREN42AXZzhMzK9/Pv
-         ixaynA7Sd0OdpCfDWG+36lcv/ab/sSQE2olYxokM9JRdaDHeEbW8pE9Sg5rrPc4H3YjU
-         cwK/ti8L3uMXvyX6jMTKTQx3IEddmzePDlcylcPGlkZkp60JX3KEGnYxxtO63Q8m9ckF
-         dNphdkfdARYdmL25bczQDMud97R+KKV6D91nxyiHcUxDJbUzJWW+BjgdiPzlxbM4he64
-         C+1g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GSNo4GQaMF01CN3jcOZYky+NX759MUu9sdXp7CoIzS0=;
+        b=nAQr/sRJATdK0DqAwkGDw0KKvUrP1/VyLrtLabyHoZZQAjVySysTjzEjvXARgPpYQS
+         ivx/E8XQ+kStGQummVVzsk8djxm1W5e5QVWTn0mTvSRLxnU20fmx8EGKMRtn7VBQiatZ
+         p0nHYtI+edbkBt+ad0HJIw4xjgaSo5IO6tMSopKQkoIi/5nAj5SbnVG8x1HQqLIO7r9M
+         XyM98dnWNXdkccXdZ1VPDdi3ks+6GawTeU+YDT1YW6MPfXgMXA5ZubrOBB4mnKQAmTOz
+         B/4NGdLPWqiW2W9WN2d4z2vItET0EZ8rQmJlnaZzpRN7Ykkg6Yai5BDrTFrFf730Lj9M
+         tucQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=uXaJ+OStKaU1TSDiW6h4CbV+WkJ9mG9O+r64LsV2Mn0=;
-        b=gyTU6EoSehfxScRCavjFaduEzRwIJudmI5DQH+NVWAKBLmmWxqihiBCkbKOxLwaxuC
-         WAXz+cDNY2tNAqWgCR7Rz5wWqNB7wlf7IupaliU2/zxcFIip4DQelJXWI+T0yO7mNAbY
-         fk99l/Supg6vpK7zpANTwbjIdSfiUUBAbBI+6dR0Tib275gQmIfCrahPYbo9L8RWSvXT
-         NfUfx/H1003ISh8X1tB2FEP8NbjAz0zgVh7tMpiLReTjbxfNZlV2oeMDsm76gnUP8GDK
-         6AZ2dJ9DC5b9Q4hCRaoTAVUJeV+0cDsr9Zx7zRmoNnOfR2603nAh3KaU1zEZ1skUj7jJ
-         cSCw==
-X-Gm-Message-State: AOAM531ftf3Zz6ojD4qSGV3hbX20K6Me8IddiBXiH9hkO5KFZdxU7xd3
-        Str/n4TxWPwifAEUucp97wRBN+SjivmSuP8=
-X-Google-Smtp-Source: ABdhPJy4L6QwhSe0V+bSgCGU7lb6sP9PuorwKblCURljHt9RwnFbXh8XjG13AZV/uRwJfoVT4D3nP1Zn8jH2KNU=
-Sender: "saravanak via sendgmr" <saravanak@saravanak.san.corp.google.com>
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:7220:84ff:fe09:fedc])
- (user=saravanak job=sendgmr) by 2002:a25:243:: with SMTP id
- 64mr1209671ybc.257.1611256603164; Thu, 21 Jan 2021 11:16:43 -0800 (PST)
-Date:   Thu, 21 Jan 2021 11:16:36 -0800
-In-Reply-To: <20210121191637.1067630-1-saravanak@google.com>
-Message-Id: <20210121191637.1067630-2-saravanak@google.com>
-Mime-Version: 1.0
-References: <20210121191637.1067630-1-saravanak@google.com>
-X-Mailer: git-send-email 2.30.0.296.g2bfb1c46d8-goog
-Subject: [PATCH v2 1/2] of: property: Add fw_devlink support for "gpio" and
- "gpios" binding
-From:   Saravana Kannan <saravanak@google.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-team@android.com, linux-tegra <linux-tegra@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh@kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GSNo4GQaMF01CN3jcOZYky+NX759MUu9sdXp7CoIzS0=;
+        b=efT1Ka00wc0UgxK14fVrOCygS83lM8vp9wp4uj2pRz38fZN86SHAwTmNc6hoTRNUE3
+         wpq9GlpXUg4p7TumsjqbPjx5EobXtjfJ/7k7BqvSY1NoqPciz6Q8WtwaUhLOlnBp3lyu
+         Rn2PhGephgYZytx1sbY2X9MHbUHqb1eszEw+cx5B51HLjVJdnJFl0GkSRmNBZiVX33lV
+         YXeGPh7xM87lD4ncImzK/GbItFmf8KB+/lOiQRLbSC7z/6Ga+Ut7X6PPmxErglOWKyQf
+         6BsJozdXBWpbJlXmuHqylR2ltJQ7LGz8guGzNo5J/h5/5t2WLTpjpWwzVQjBvrpfhF9n
+         eqsw==
+X-Gm-Message-State: AOAM532V3CtOqtqygvqNS26Ikxa908WrbaP8qhUCfufYzftctN/Ebk64
+        YvXShec688mMN7ST3QnPktRulfucW+I=
+X-Google-Smtp-Source: ABdhPJz5DlIzazgq+BpxAwHtAA/1THEgWazEtaOcDMZtKX1BTXdxh2SoRvXrjAQxa2kh0FKvRjOjbQ==
+X-Received: by 2002:adf:f5c5:: with SMTP id k5mr893553wrp.286.1611255232632;
+        Thu, 21 Jan 2021 10:53:52 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id h16sm8830498wmb.41.2021.01.21.10.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jan 2021 10:53:51 -0800 (PST)
+Date:   Thu, 21 Jan 2021 19:53:49 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     JC Kuo <jckuo@nvidia.com>
+Cc:     gregkh@linuxfoundation.org, jonathanh@nvidia.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Enable Jetson-Xavier J512 USB host
+Message-ID: <YAnNvTtlx8jHyRG3@ulmo>
+References: <20210119022349.136453-1-jckuo@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RWasVtTkUFJY1dK5"
+Content-Disposition: inline
+In-Reply-To: <20210119022349.136453-1-jckuo@nvidia.com>
+User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To provide backward compatibility for boards that use deprecated DT
-bindings, we need to add fw_devlink support for "gpio" and "gpios".
 
-We also need to ignore these properties on nodes with "gpio-hog"
-property because their gpio[s] are all supplied by the parent node.
+--RWasVtTkUFJY1dK5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: linux-tegra <linux-tegra@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Fixes: e590474768f1 ("driver core: Set fw_devlink=on by default")
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/of/property.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+On Tue, Jan 19, 2021 at 10:23:49AM +0800, JC Kuo wrote:
+> This commit enables USB host mode at J512 type-C port of Jetson-Xavier.
+>=20
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |  8 +++++++
+>  .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 24 +++++++++++++++++--
+>  2 files changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 5f9eed79a8aa..b2ea1951d937 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1271,6 +1271,28 @@ static struct device_node *parse_iommu_maps(struct device_node *np,
- 	return of_parse_phandle(np, prop_name, (index * 4) + 1);
- }
- 
-+static struct device_node *parse_gpio_compat(struct device_node *np,
-+					     const char *prop_name, int index)
-+{
-+	struct of_phandle_args sup_args;
-+
-+	if (strcmp(prop_name, "gpio") && strcmp(prop_name, "gpios"))
-+		return NULL;
-+
-+	/*
-+	 * Ignore node with gpio-hog property since its gpios are all provided
-+	 * by its parent.
-+	 */
-+	if (of_find_property(np, "gpio-hog", NULL))
-+		return NULL;
-+
-+	if (of_parse_phandle_with_args(np, prop_name, "#gpio-cells", index,
-+				       &sup_args))
-+		return NULL;
-+
-+	return sup_args.np;
-+}
-+
- static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_clocks, },
- 	{ .parse_prop = parse_interconnects, },
-@@ -1296,6 +1318,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_pinctrl6, },
- 	{ .parse_prop = parse_pinctrl7, },
- 	{ .parse_prop = parse_pinctrl8, },
-+	{ .parse_prop = parse_gpio_compat, },
- 	{ .parse_prop = parse_regulators, },
- 	{ .parse_prop = parse_gpio, },
- 	{ .parse_prop = parse_gpios, },
--- 
-2.30.0.296.g2bfb1c46d8-goog
+Applied, thanks.
 
+Thierry
+
+--RWasVtTkUFJY1dK5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmAJzbUACgkQ3SOs138+
+s6FGwA//XuVbtQA6LY/Mptb4ENgPKL5kotvFnpTGdmQRuBhTV/Ga+zORCUVCSiRt
+P9x5LUnMSHpgyZn+TKaNiZIrcxdV8m//TnjrwL+bDIlEZDBxHVOmapanhTjkNEhY
+MNZ0NGXZsmzFRXeb2q6FC51lQEQeBT9yC33fe/5/KTCnMr+15NcmCy9nd+aWmImH
+PHx7OJwoen7dXfcTKR/Q6Kxc0yKjcujyXKH64gXlSRjWJUnInF114Gc6GnGIMSOu
+CBnW2i63lw21RAiR3s7Ys91pnjhXudoP/GogEeK05Zf/LufuW3vZ7hhLrk/sqG/g
+LFbhE1UKGc44wuoMq2OFT/HwHsg9PcvNOaJ3sil1/9Pzjak4xeLHsF5W3NFWyiCj
+LeqICBXqCqABTKckIjWy0U+LCcieHxVACb3gltOzASiJ5EA7ivzu4nebtPGuy4O3
+PF2vC8xHO6beTQwYYAjK9J6cydttiOqrJeY0d5mhla6U0hR+YeSONeLJ+hNNfI8u
+Y9gwJ53QRLW6t79av1NcBe5I+O9fguko3fqlnVwhvW0saqpIneYBy8J7a61KvqvH
+PcLk4M2rfIMsWUTraaRw2q5gpM/ApPz46Nbdv+U17wJZQL5QbbIQeI7pYXeXulAG
+4vz3q57PdpLkEMt0dfmflHZx0k2LxPRBkb3hcx4vrfPUPwYZf5E=
+=Pioz
+-----END PGP SIGNATURE-----
+
+--RWasVtTkUFJY1dK5--
