@@ -2,119 +2,212 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC51C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 21:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7F3C433E6
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 22:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 767EB23A5D
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 21:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AA9123A60
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 22:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbhAUVhu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 16:37:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbhAUVgu (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 16:36:50 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5706C06174A;
-        Thu, 21 Jan 2021 13:36:09 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id p13so4237643ljg.2;
-        Thu, 21 Jan 2021 13:36:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YVqgssMQdQhf9y4JoWK0z3t3swC1/ivpAtAAVdvhll4=;
-        b=s/o8iP3f3g2RyAf0tsVr2o+psJr/byantEoQeD3hFGfAIysCZTR59lyN5PZ3XKN1qW
-         /xvkhqeg2suJDIb+8ByOo5mgTbwsHJH5qM1SAQCd2h+0QO8zG/L6pjwWlbcC6COTaOyl
-         +KGRl3IcRVFS5tXYbGgL0MShb+stQyDjOK2zhlF5rxntfW5yFJVU1SVWo6IWbIxuhhrR
-         5k5QLe5ddFfQYycgWlOjNSP+BMjPQjmyhC5pMqVKxujTrP+F4NMckZfULHmo8HA8Szga
-         Fl7DbYX+KTT+VSgn2b3v+T9CRDx9K7lk4APaIfekExKBDRBcP8vlYQyWUbFCm9yIkcCG
-         EUdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YVqgssMQdQhf9y4JoWK0z3t3swC1/ivpAtAAVdvhll4=;
-        b=HK68l1QWyfb4eUQ03GfUvyeXyLq2+wj2ttouSAv90VaZtZTHezM8zk3of0S38OABtW
-         eR2rXZiRfTPHXIgesLH17jYIFo38J9qDCINmcNfw+11zD2PGqbksgy4Gzu+EZPwJJoIR
-         3YTwS2tFm8lhs6M9LupYsGUpV9Y5NixrfQ0eKGeKuE5GISLgxJUPalpi8KbXD5+5c9gD
-         15ifsVD0+zlODTJk5vG/CUmCUm6IldQJwUZnayW/enaKZ+gMpjiKW8Ba2dvfPwaPgvbG
-         yv9qDFkpp2oKdrdvf/xAIHs9v1EZmx5kTVQVIicdcT5ypdNCbxKCxCfgaZnojO3vZVGB
-         vAmg==
-X-Gm-Message-State: AOAM531E4R1c+kql3ocWVKU4qvawpVVVuw5gM+5+Rc8JbCLflSkOgvc8
-        QvDnRLe8AVc/uiMWXiSaGVN02Vnsil8=
-X-Google-Smtp-Source: ABdhPJwIPaV85WcNNtbxmI3PgM7773oygI3tszwUBIQeJepq5sb+YObOjRnU/5o3/Z0ZlU4qsIoo8Q==
-X-Received: by 2002:a05:651c:2049:: with SMTP id t9mr693818ljo.58.1611264968032;
-        Thu, 21 Jan 2021 13:36:08 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id p3sm652233lfu.271.2021.01.21.13.36.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jan 2021 13:36:07 -0800 (PST)
-Subject: Re: [PATCH 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-References: <cover.1611227342.git.viresh.kumar@linaro.org>
- <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <71451eb2-46b2-1ea0-efcc-0811568159a4@gmail.com>
-Date:   Fri, 22 Jan 2021 00:36:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
-MIME-Version: 1.0
-In-Reply-To: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=utf-8
+        id S1726624AbhAUWGa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 17:06:30 -0500
+Received: from mga03.intel.com ([134.134.136.65]:19652 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbhAUWG2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 21 Jan 2021 17:06:28 -0500
+IronPort-SDR: GBwq3bbhPc88KbB95N65ihFw4XOvPtkD6WU73LXRYBUynDpKK+08crjmy3ZP6pUZRDib92Hu76
+ VGpjkVNEtuJw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9871"; a="179438972"
+X-IronPort-AV: E=Sophos;i="5.79,365,1602572400"; 
+   d="scan'208";a="179438972"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2021 14:05:47 -0800
+IronPort-SDR: 3VNd/qVawhtsMUN9MYLFoG7rzE9BR8Fgq30MBSswsGM/62HBkTuno8aStUddiGA0mQH41UI8vW
+ ZFaxLCp271RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,365,1602572400"; 
+   d="scan'208";a="367073075"
+Received: from orsmsx605.amr.corp.intel.com ([10.22.229.18])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jan 2021 14:05:47 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX605.amr.corp.intel.com (10.22.229.18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 21 Jan 2021 14:05:46 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 21 Jan 2021 14:05:46 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.36.59) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1713.5; Thu, 21 Jan 2021 14:05:45 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g7+cpt174OyeLOWULbz4q7/t2S5UU8PEHkQtN5alQ3/xlwAd1Rwy93ZUTqmX7C0BNutnWbP1fZ5HH0QPZci0mQqoPSu+LNt42fX9g+2Q6ijN2YzYL6kpyyQ1JyOKvg8zf2PGYUFWUUZHJFAHGjxwvkzWG58hRyMbvmpwS9VtNfGecPewWo+hMBlOyCmWSELXq2nhV3nIoK0gc3mIFyBI72t6vsvVOFqZRplBab+xjaZvjwkbPXfOgGYM8xjxMq1FnQP8JMhTX3dQ6NkfRe0IoxxCt7ntvYw9CAi6ZhbYULYHpEzrJjICcN2aGU77j+/lARZ1dHbFbfYU7BYnpapl7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AYVgoSwV3qnm3TOkF3xxd4fntWyrW0LKO+4+ap+qRdc=;
+ b=Mxv7WD+LnNfq6QJe4MYLmqIOCRz1KZ/6qaA6l1nHMMAXarGFB8x/Xq8dGenTVV06z5nqaixnITYthEmacoosC/mEKWNmrdpzPktvFK4/a7+q5x8meMkHNVxH4D0tRcuI9OS8mxke8LkQXpm2y9CU32gvRlniDkEMov9SoHSBv7jxKU0RvFr56VzBblD13SojuK7ThoNI5iNlFieMRun6FFpvAEHikl5DPBck/9rP99L+i9pD2Tacv1XJM1zCknQSflZZypmuQJiq+BZfZGbUUqwDfSugDPRjRdU39W4R3RqtnESAArStmzASMyx/BlZAlBbsAdqDZCp8ZlFBKU4XBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AYVgoSwV3qnm3TOkF3xxd4fntWyrW0LKO+4+ap+qRdc=;
+ b=CxKmgDEvKXKQGv75jaOUlHfClF1REO1/CIsFB2SSdNleLnJIFjWg4BDUUSABE8AMfhOFJ8YbwZ7pteooI4/lW4/Qloh11S4YSmbdPTYSeRqKMphkW78+05kdrgtflf/dVsoPH7C5jRZhYv0wLy3EU6QukLNRuPB6HW8ZF2jP48w=
+Received: from MWHPR11MB1599.namprd11.prod.outlook.com (2603:10b6:301:e::16)
+ by MWHPR11MB1391.namprd11.prod.outlook.com (2603:10b6:300:23::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.9; Thu, 21 Jan
+ 2021 22:05:43 +0000
+Received: from MWHPR11MB1599.namprd11.prod.outlook.com
+ ([fe80::4878:159c:ca1e:f430]) by MWHPR11MB1599.namprd11.prod.outlook.com
+ ([fe80::4878:159c:ca1e:f430%10]) with mapi id 15.20.3763.014; Thu, 21 Jan
+ 2021 22:05:43 +0000
+From:   "Kaneda, Erik" <erik.kaneda@intel.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+CC:     Jon Hunter <jonathanh@nvidia.com>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Len Brown <lenb@kernel.org>,
+        "ACPI Devel Maling List" <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: RE: [PATCH] ACPICA: fix -Wfallthrough
+Thread-Topic: [PATCH] ACPICA: fix -Wfallthrough
+Thread-Index: AQHWt9BQlYjhl8Bfrk+mO8TKTgEi+KoySncAgACWFoCAAAE0gIAAMY2g
+Date:   Thu, 21 Jan 2021 22:05:43 +0000
+Message-ID: <MWHPR11MB1599FF516D46CAEEDC1C21B8F0A10@MWHPR11MB1599.namprd11.prod.outlook.com>
+References: <20201111021131.822867-1-ndesaulniers@google.com>
+ <031790d7-ee26-f919-9338-b135e9b94635@nvidia.com>
+ <CAJZ5v0it3KfdNo7kwq-7__C+Kvr4Eo7x8-3rBi09B5rHfNv-hQ@mail.gmail.com>
+ <CAKwvOdnG6Ew+7HMjJuH3Or8kEE_ZyP-xNGbwaX8HdT=6FApYxA@mail.gmail.com>
+In-Reply-To: <CAKwvOdnG6Ew+7HMjJuH3Or8kEE_ZyP-xNGbwaX8HdT=6FApYxA@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+authentication-results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=intel.com;
+x-originating-ip: [174.25.99.223]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 824e41e6-3071-404a-541f-08d8be58b2b0
+x-ms-traffictypediagnostic: MWHPR11MB1391:
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MWHPR11MB1391553F3F77060303A8CB29F0A10@MWHPR11MB1391.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:849;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: rPBWAFp0N3d0v50G4FZXBqVfqR5dYtDd2bF6eKdea8/ZnTnMCC6pOLTsdtkdFIbEwe+oNq/LtOPf6bdOmAjqMVKPt3lRc0SC1Y8G2LbJUdjBFrfijwNQq/VDHAk/iyLG7EJr8/GcFpBhQ2cu5pq8TMz1slV3MShBI6aNNBRKlX83Nse2529QvMCBC3aVAQgCxOa68qsuk9s7UDaUWNmJsLmUCx6Jzp81SI++CtCKE1grw5ejm3evOOGSdxrX0Yomi4H1Negxvvy7SGvHwMd9ktX0YPclueW5vS/Jgl5bKKNicIKPTxFR4jm7iYqNYejaggBHl6V1NSzQ36ogV62KtxIskqgIiUgtmu14tiflUk40Ry/+I8bM5Y+ZLm6QOS7TwDELM+eT1kg50V72oq2rekJCPH9kGn+nwj3CZMZM9pWuKF1FV1ZekYafJ8PIK81mG/NjkuYcMa06J4wDsRQVMQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR11MB1599.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(136003)(346002)(396003)(366004)(478600001)(33656002)(26005)(9686003)(86362001)(4326008)(186003)(110136005)(71200400001)(5660300002)(2906002)(54906003)(7416002)(8936002)(52536014)(55016002)(66946007)(66476007)(316002)(76116006)(8676002)(83380400001)(6506007)(64756008)(53546011)(966005)(66556008)(66446008)(7696005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?RGRDdGdoTXFtWWFrYWorVXRwbk5vVkI4Yk5JQmtvYWVHMGMvcWpaZjJFZFlx?=
+ =?utf-8?B?Z084Y0dmNU8ySlJVYlFWSHA1bzhicFJkOThweDI4cVVqY2NGYmdxdWhHRmFU?=
+ =?utf-8?B?VkJpS2tWRXROWi9jZjBEbkxENXdVTXlER0l6MjdrUElnbW51cHRzRHVvRzhO?=
+ =?utf-8?B?RzM5ZDF1Q2ZoV044YlpzTWRkaEJRVk9PUkV0ZVZ3RWtKVk0wWmZ6Ly9qcnZZ?=
+ =?utf-8?B?ajFFVDNOcGlUT3lrYUZZYzFZVjJKZmwzU2t4dFg5ZEJkb1UzZGFTbDlBMXQx?=
+ =?utf-8?B?SkpqZWZnUnN2SzNjTlJTQTdyUDVzbUJCTERhcmNLZGptN09QZVROUGxxK1hB?=
+ =?utf-8?B?SUNlOU9tU0NuQzZvbnEzT3d4VWhqSXk5b0RqTkNnZ1NwdU50eDRMRytGTnFZ?=
+ =?utf-8?B?QWhDaUU0QkRWRzRGVm9hZ295TnRDcFdVMVprQzVzUDBRWGJFQU5IaXBMQ3k5?=
+ =?utf-8?B?V3RhTnBMVUplOWR0eUVTN3dXbVY0Q1VHY1ZTOVIxRC9saGFPTFh0ZE9lRUFk?=
+ =?utf-8?B?MHZQTjYvemJtbjQwMTFsV1EySyswUGxpNmlRQkZMMmN1RmJvMnRZcnhnRXZC?=
+ =?utf-8?B?SGF1VHhkTms0S08vQVQzR1RlVHVmYjdpUmMzbmlyTG1jUElRQTZrZzZSd2R6?=
+ =?utf-8?B?cUlIZkZCS25NU3NEMWZKS055SlFCWlRhYWFXUmZxSXVNdG1WVU53UGVQdVpo?=
+ =?utf-8?B?WmRZeTEwNjR4dW91UWcyN2lmL2tmWjlvY0xZQzlOM1B2VUEwRGxKMVVCamZ2?=
+ =?utf-8?B?U3pPQVczNTQxRVJYVXBmOU1yTW4wekJQUHJxRlltNGcwcnNyUzBvUjVteUZK?=
+ =?utf-8?B?QlNKQS9DZW5lTkdtRERQWVFpN2NNV1JrRm93RzhweUtlVzUzUE54TDI5bUNJ?=
+ =?utf-8?B?RWp0WnNpL1NNZHlBMDVoVTZ0M1A1K2x5YU96VWpwa0dhQks3a3ZnbjVIVWN3?=
+ =?utf-8?B?RWVFRSt4STFpUWNkSWRBSHRpNzFBVm42LzFsandFckduQ3pObVNTenRKUnJt?=
+ =?utf-8?B?NHJyb0NKTGJtdnA4VTNoMDRzak5RK2hJSVd3dVFTOXhQY1RYUWF3ZVhicTJY?=
+ =?utf-8?B?MVZXZnNOd0NLZGV4NlBKVWV1T2taYmxYZ1YzNEdkbnQrSVZtTDZLOTBpVzVy?=
+ =?utf-8?B?c0NRS0MyZHowZE5pb1o1Q0tySFlUbVJBVGRPc1Fja0J4QXBhcHZwNW92czV2?=
+ =?utf-8?B?MGNxSUhZbE1YQXZkek5CL2hxczBrejFpRVY2TzZidE1tbG80T2ZJSS9jVS9R?=
+ =?utf-8?B?UEVSdDJtS0M3TmZEWHdEMkhoenFBNkJMWU5UV3ZUNkR1OVB0TXRWNEV0MEYz?=
+ =?utf-8?B?NE4rc3VyYWludDdpeWxLTjl2bnMvQTBmTkx4bzA3U3RwTmdmQzM5RkhuQ1k2?=
+ =?utf-8?B?Nm5GNnRHenIzUjRibDI0WXpQbGJiV1pwWVl0dS9vVkFyOHp0dWpRc05LZDFl?=
+ =?utf-8?Q?nA9Cm5j5?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR11MB1599.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 824e41e6-3071-404a-541f-08d8be58b2b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2021 22:05:43.5495
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ar08mOoNu7F2YzJPXxlHk2Gjoh7pJq3+UqXvzDoWLGajweIz/vdAtrHz5w0SLZPAle5rGVYjAkpFrOjElxtK2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1391
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-21.01.2021 14:17, Viresh Kumar пишет:
-> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
-> be used instead. Migrate to the new API.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 117cad7968ab..d2477d7d1f66 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->  		return PTR_ERR(opp);
->  	}
->  
-> -	ret = dev_pm_opp_set_bw(dev, opp);
-> +	ret = dev_pm_opp_set_opp(dev, opp);
->  	dev_pm_opp_put(opp);
->  
->  	return ret;
-> 
-
-This patch introduces a very serious change that needs to be fixed.
-
-Now dev_pm_opp_set_opp() changes both clock rate and bandwidth, this is
-unacceptable for this driver because it shall not touch the clock rate.
-
-I think dev_pm_opp_set_bw() can't be removed.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTmljayBEZXNhdWxuaWVy
+cyA8bmRlc2F1bG5pZXJzQGdvb2dsZS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDIx
+LCAyMDIxIDExOjA4IEFNDQo+IFRvOiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5v
+cmc+OyBLYW5lZGEsIEVyaWsNCj4gPGVyaWsua2FuZWRhQGludGVsLmNvbT4NCj4gQ2M6IEpvbiBI
+dW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPjsgTW9vcmUsIFJvYmVydA0KPiA8cm9iZXJ0Lm1v
+b3JlQGludGVsLmNvbT47IFd5c29ja2ksIFJhZmFlbCBKIDxyYWZhZWwuai53eXNvY2tpQGludGVs
+LmNvbT47DQo+IEd1c3Rhdm8gQSAuIFIgLiBTaWx2YSA8Z3VzdGF2b2Fyc0BrZXJuZWwub3JnPjsg
+Y2xhbmctYnVpbHQtbGludXggPGNsYW5nLWJ1aWx0LQ0KPiBsaW51eEBnb29nbGVncm91cHMuY29t
+PjsgTGVuIEJyb3duIDxsZW5iQGtlcm5lbC5vcmc+OyBBQ1BJIERldmVsDQo+IE1hbGluZyBMaXN0
+IDxsaW51eC1hY3BpQHZnZXIua2VybmVsLm9yZz47IG9wZW4gbGlzdDpBQ1BJIENPTVBPTkVOVA0K
+PiBBUkNISVRFQ1RVUkUgKEFDUElDQSkgPGRldmVsQGFjcGljYS5vcmc+OyBMaW51eCBLZXJuZWwg
+TWFpbGluZyBMaXN0DQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbGludXgtdGVn
+cmEgPGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0g
+QUNQSUNBOiBmaXggLVdmYWxsdGhyb3VnaA0KPiANCj4gT24gVGh1LCBKYW4gMjEsIDIwMjEgYXQg
+MTE6MDMgQU0gUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbEBrZXJuZWwub3JnPg0KPiB3cm90ZToN
+Cj4gPg0KPiA+IE9uIFRodSwgSmFuIDIxLCAyMDIxIGF0IDExOjA4IEFNIEpvbiBIdW50ZXIgPGpv
+bmF0aGFuaEBudmlkaWEuY29tPg0KPiB3cm90ZToNCj4gPiA+DQo+ID4gPg0KPiA+ID4gT24gMTEv
+MTEvMjAyMCAwMjoxMSwgTmljayBEZXNhdWxuaWVycyB3cm90ZToNCj4gPiA+ID4gVGhlICJmYWxs
+dGhyb3VnaCIgcHNldWRvLWtleXdvcmQgd2FzIGFkZGVkIGFzIGEgcG9ydGFibGUgd2F5IHRvDQo+
+IGRlbm90ZQ0KPiA+ID4gPiBpbnRlbnRpb25hbCBmYWxsdGhyb3VnaC4gVGhpcyBjb2RlIHNlZW1l
+ZCB0byBiZSB1c2luZyBhIG1peCBvZg0KPiA+ID4gPiBmYWxsdGhyb3VnaCBjb21tZW50cyB0aGF0
+IEdDQyByZWNvZ25pemVzLCBhbmQgc29tZSBraW5kIG9mIGxpbnQNCj4gbWFya2VyLg0KPiA+ID4g
+PiBJJ20gZ3Vlc3NpbmcgdGhhdCBsaW50ZXIgaGFzbid0IGJlZW4gcnVuIGluIGEgd2hpbGUgZnJv
+bSB0aGUgbWl4ZWQgdXNlDQo+ID4gPiA+IG9mIHRoZSBtYXJrZXIgdnMgY29tbWVudHMuDQo+ID4g
+PiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IE5pY2sgRGVzYXVsbmllcnMgPG5kZXNhdWxuaWVy
+c0Bnb29nbGUuY29tPg0KPiA+ID4NCj4gPiA+DQo+ID4gPiBJIGtub3cgdGhpcyBpcyBub3QgdGhl
+IGV4YWN0IHZlcnNpb24gdGhhdCB3YXMgbWVyZ2VkLCBJIGNhbid0IGZpbmQgaXQgb24NCj4gPiA+
+IHRoZSBsaXN0LCBidXQgbG9va3MgbGlrZSB0aGUgdmVyc2lvbiB0aGF0IHdhcyBtZXJnZWQgWzBd
+LA0KPiA+DQo+ID4gSXQgd291bGQgYmUgdGhpcyBwYXRjaDoNCj4gPg0KPiA+IGh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC0NCj4gYWNwaS9wYXRjaC8yMDIxMDExNTE4
+NDgyNi4yMjUwLTQtZXJpay5rYW5lZGFAaW50ZWwuY29tLw0KPiA+DQo+ID4gTmljaywgRXJpaz8N
+Cj4gDQo+IG9oLCBzaGl0LCBsb29rcyBsaWtlIGEgbGluZSB3YXMgZHJvcHBlZC4gIEhlcmUncyB3
+aGF0IEkgc2VudCB1cHN0cmVhbToNCj4gaHR0cHM6Ly9naXRodWIuY29tL2FjcGljYS9hY3BpY2Ev
+cHVsbC82NTAvZmlsZXMjZGlmZi0NCj4gY2NjZDk2ZTkwMGUwMWY3MjI0YzgxNTA4Y2JkZGZiMWFm
+NmZjZmJmZjk1OWQ2YmZiNTUxMjNlMWI5Y2FkNGUzOFIxNTQNCj4gMw0KPiBOb3RlIGluIHRoZSBw
+YXRjaCBSYWZhZWwgbGlua3MgdG8gdGhhdCBsaW5lIGlzIG1pc3NpbmcgYW5kIHRoZXJlJ3MNCj4g
+aW5zdGVhZCBhbiAjaWZkZWYgdGhhdCdzIGVtcHR5LiAgV2FzIHRoaXMgbGluZSBhY2NpZGVudGFs
+bHkgZHJvcHBlZD8NCg0KTGV0IG1lIHRha2UgYSBsb29rLi4uDQo+IA0KPiA+DQo+ID4gPiBpcyBj
+YXVzaW5nIGJ1aWxkIGVycm9ycyB3aXRoIG9sZGVyIHRvb2xjaGFpbnMgKEdDQyB2NikgLi4uDQo+
+ID4gPg0KPiA+ID4gL2R2cy9naXQvZGlydHkvZ2l0LW1hc3Rlcl9sNHQtDQo+IHVwc3RyZWFtL2tl
+cm5lbC9kcml2ZXJzL2FjcGkvYWNwaWNhL2RzY29udHJvbC5jOiBJbiBmdW5jdGlvbg0KPiDigJhh
+Y3BpX2RzX2V4ZWNfYmVnaW5fY29udHJvbF9vcOKAmToNCj4gPiA+IC9kdnMvZ2l0L2RpcnR5L2dp
+dC1tYXN0ZXJfbDR0LQ0KPiB1cHN0cmVhbS9rZXJuZWwvZHJpdmVycy9hY3BpL2FjcGljYS9kc2Nv
+bnRyb2wuYzo2NTozOiBlcnJvcjoNCj4g4oCYQUNQSV9GQUxMVEhST1VHSOKAmSB1bmRlY2xhcmVk
+IChmaXJzdCB1c2UgaW4gdGhpcyBmdW5jdGlvbikNCj4gPiA+ICAgIEFDUElfRkFMTFRIUk9VR0g7
+DQo+ID4gPiAgICBefn5+fn5+fn5+fn5+fn5+DQo+ID4gPiAvZHZzL2dpdC9kaXJ0eS9naXQtbWFz
+dGVyX2w0dC0NCj4gdXBzdHJlYW0va2VybmVsL2RyaXZlcnMvYWNwaS9hY3BpY2EvZHNjb250cm9s
+LmM6NjU6Mzogbm90ZTogZWFjaA0KPiB1bmRlY2xhcmVkIGlkZW50aWZpZXIgaXMgcmVwb3J0ZWQg
+b25seSBvbmNlIGZvciBlYWNoIGZ1bmN0aW9uIGl0IGFwcGVhcnMgaW4NCj4gPiA+IC9kdnMvZ2l0
+L2RpcnR5L2dpdC1tYXN0ZXJfbDR0LQ0KPiB1cHN0cmVhbS9rZXJuZWwvc2NyaXB0cy9NYWtlZmls
+ZS5idWlsZDoyODc6IHJlY2lwZSBmb3IgdGFyZ2V0DQo+ICdkcml2ZXJzL2FjcGkvYWNwaWNhL2Rz
+Y29udHJvbC5vJyBmYWlsZWQNCj4gPiA+DQo+ID4gPiBDaGVlcnMNCj4gPiA+IEpvbg0KPiA+ID4N
+Cj4gPiA+IFswXSBodHRwczovL2dpdGh1Yi5jb20vYWNwaWNhL2FjcGljYS9jb21taXQvNGI5MTM1
+ZjUNCj4gPiA+DQo+ID4gPiAtLQ0KPiA+ID4gbnZwdWJsaWMNCj4gDQo+IA0KPiANCj4gLS0NCj4g
+VGhhbmtzLA0KPiB+TmljayBEZXNhdWxuaWVycw0K
