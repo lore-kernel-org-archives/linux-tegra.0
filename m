@@ -2,121 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E0DC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 20:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A681C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 20:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78193224B2
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 20:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C26223A56
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 20:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbhAUSrY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 13:47:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46990 "EHLO
+        id S1727147AbhAUU1w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 15:27:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbhAUS0A (ORCPT
+        with ESMTP id S1726672AbhAUU11 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 13:26:00 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C13C061793;
-        Thu, 21 Jan 2021 10:23:30 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id j3so3601172ljb.9;
-        Thu, 21 Jan 2021 10:23:30 -0800 (PST)
+        Thu, 21 Jan 2021 15:27:27 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC3EC061756;
+        Thu, 21 Jan 2021 12:26:47 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id p13so4033712ljg.2;
+        Thu, 21 Jan 2021 12:26:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1cBynbltPC/InmbROCWOZHkosuVmX3nGRVytxcl7VwE=;
-        b=KhSQVOM48d/jPNKoyHKARJ1ISaZNPnk/iUlPEhm4XQRiG5NWdWD1EgbopS4MaIQP/a
-         PYfw2oMQxUC/pHXHCTS12gLcZ4A9443pYaY49/uku0QQJktOXDfdSDS0yvpt95QTdpYH
-         Nkx5bU1pIUDnrg5By0M+N2GalmVjYbvWPHGqCOovZP+QID3XcvO55ThEv4mbjcbcNTNP
-         g7bKsK6sQtRWzd3eEtjhMWdS40MXlo8rm6S7bGAsF1GsWVXQ6RdIPR5h9uV+WsmFOY3q
-         U+JexWf5UYdGancEod5CbzIo1MvSUcuzR9aP0bSocQJQAcRQBmQ3olfYrMx2rc1iLoeR
-         hyGA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/HRTfbG4emabSLFelmlx+vEEglKRLfy1gL/MezAi/ZM=;
+        b=Wmpj3uR+B0oz7EbHGBH0A/9/umuq3HtC70vKmknXE/bVji4YOs7D1DVYHD5yuI0mcI
+         rhxEp0Yr0sg5kAIEbnC2sQ6MFHGa77WLAIQUTBLVaAXTgfG3RMHgoAH9brIk0RlVFIZi
+         kBQwEl/lTlkkRiJqbRwZC1NSLZO8lLKnAMfio+iQrD+6GBEHDX0ToT6qUCCuCIrT6sy9
+         IIsBCKprxdFHSTsB4zVRt+YXOQ7N6hO1HT3vHdrjZ40Kh2UdL/5oKL2SUe6Cfj8irMNL
+         cjDWbZGfdpZX/BkGISTFxt1MrKPB8u+lZlFV4V7Oty91HcIUt6yDLfBuY07u70csd96Y
+         w6DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1cBynbltPC/InmbROCWOZHkosuVmX3nGRVytxcl7VwE=;
-        b=fPiDRkG8elFPtdPwS7ZA7sfRA8yUATMSeC8xJqxbcNt4OdJgFn1W4EqSQd8vuXOUYV
-         c6eisgcIizFQq75lB0R50yua9We1dAHwdCi7aMhZAQSp0ONOuLQCMo08BYTV3ZULKQSP
-         FVF8BmLshfQd/AXZP4BtDz73SwudH84G6+zUCg+wxOvxS7ApJ+jv8mn0HK57sctv/koC
-         sOAiaVviXSLZhZwxauP2PG06ELIJHxfPSZXl5x857GaWH48EJ8J8kIWMcOgxTzAX4MCk
-         2wF2QO08qZSj80KfVGWryTrMhb/KLolSHhevPDeMnXVb7T3vAJPgyayvjsMsAWmU7qxq
-         F7CA==
-X-Gm-Message-State: AOAM530kTGyJEacF/KH5J8RQhcFRWzGAifuSrDF5q6/yKXF7pGyFNyC9
-        GEpYdEw1PloNAX2UjgrBg1Q=
-X-Google-Smtp-Source: ABdhPJzBeW1Fvv8HSp0zHArlOE/R2B66rQ5PoGH/xWGXFp6HX4ier7iIvA29eW0XCgAKXiD69HsPuA==
-X-Received: by 2002:a2e:b4b3:: with SMTP id q19mr283771ljm.121.1611253408719;
-        Thu, 21 Jan 2021 10:23:28 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id f186sm600537lfd.289.2021.01.21.10.23.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 10:23:28 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/HRTfbG4emabSLFelmlx+vEEglKRLfy1gL/MezAi/ZM=;
+        b=P5IDwIbrXRgMqOCWtU4tWIiujMAEjEhZbuaYvdHKM87oAetkMOOvPOSAfqbh8lYis7
+         q4mFU/I+VRtbSY3zY2sKZW2psTEmUi59qaV7DLzuKuW3r0oc80XM+OsPOuQHV3wR/LQ/
+         L2TGIMtUuBkch1UaEcEOf7c/g2FOkaFJHK24iQ9b2tBDZxU+gjjyi2X9fJU05DRfYVNA
+         NQD5ePctxv/jzcMAXaCGDMj8ORWcNcNS5jaH8CMIr2Bbn5zJ4/YP0JtjGB8KulSu+Fg6
+         aMQ0RLM/eyZHe+FjNJrNXBaahI9UultYqhFNVndYwymLQkEzUxoSYR03HIEYaacdUZxj
+         kHbA==
+X-Gm-Message-State: AOAM531dvnof7Dbuo8YJ9G79hQVODMIaFQUqULLBBMP2XCAfbfN8eVAs
+        g46+TuNSgJcahSZZ/8+DXg/cRMCOrLc=
+X-Google-Smtp-Source: ABdhPJztFRGAPddrobgjhvcdhiqrWAqsLj6Hf8+fRw2jY6qn6Z2O41UhIeIZis2JIksLu/TG8DVIKA==
+X-Received: by 2002:a2e:8350:: with SMTP id l16mr538281ljh.403.1611260805366;
+        Thu, 21 Jan 2021 12:26:45 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id m25sm633354lfb.144.2021.01.21.12.26.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Jan 2021 12:26:44 -0800 (PST)
+Subject: Re: [PATCH 07/13] opp: Allow _generic_set_opp_clk_only() to work for
+ non-freq devices
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1611227342.git.viresh.kumar@linaro.org>
+ <1585f6c21ea8aee64fe4da0bf72b36ea4d74a779.1611227342.git.viresh.kumar@linaro.org>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/13] ARM: tegra: acer-a500: Specify all CPU cores as cooling devices
-Date:   Thu, 21 Jan 2021 21:23:03 +0300
-Message-Id: <20210121182308.16080-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210121182308.16080-1-digetx@gmail.com>
-References: <20210121182308.16080-1-digetx@gmail.com>
+Message-ID: <9b2638e6-b842-8737-e5a0-aeeb84927fce@gmail.com>
+Date:   Thu, 21 Jan 2021 23:26:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <1585f6c21ea8aee64fe4da0bf72b36ea4d74a779.1611227342.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-If CPU0 is unplugged the cooling device can not rebind to CPU1. And if
-CPU0 is plugged in again, the cooling device may fail to initialize.
+21.01.2021 14:17, Viresh Kumar пишет:
+> In order to avoid conditional statements at the caller site, this patch
+> updates _generic_set_opp_clk_only() to work for devices that don't
+> change frequency (like power domains, etc.). Return 0 if the clk pointer
+> passed to this routine is not valid.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+...
 
-If the CPUs are mapped with the physical CPU0 to Linux numbering
-CPU1, the cooling device mapping will fail.
+Hello Viresh,
 
-Hence specify all CPU cores as a cooling devices in the device-tree.
+Thank you very much for yours effort! I gave a quick test to this series
+and instantly found one small issue in this patch.
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> +	/* We may reach here for devices which don't change frequency */
+> +	if (unlikely(!clk))
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 64a303cc5395..8a98e4a9d994 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -841,9 +841,10 @@ cpu0: cpu@0 {
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			cpu-supply = <&vdd_cpu>;
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-@@ -1073,7 +1074,8 @@ trip1: cpu-crit {
- 			cooling-maps {
- 				map0 {
- 					trip = <&trip0>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
- 		};
--- 
-2.29.2
+I replaced dev_pm_opp_set_voltage() with dev_pm_opp_set_opp() in the
+Tegra PD driver and got a crash, which happens because the above line
+should be:
 
+	if (IS_ERR(clk))
+
+The opp_table->clk is initialized to ERR_PTR(-ENOENT) if device doesn't
+have a clock, like a power domain device in my case.
+
+Everything works good after fixing this patch. I'll keep testing and
+will be taking a closer look at the rest of the patches over this weekend.
+
+For the record, here is a backtrace of the crash:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000016
+...
+(clk_set_rate) from (_set_opp)
+(_set_opp) from (dev_pm_opp_set_opp)
+(dev_pm_opp_set_opp) from (tegra_genpd_set_performance_state)
+(tegra_genpd_set_performance_state) from (_genpd_set_performance_state)
+(_genpd_set_performance_state) from (dev_pm_genpd_set_performance_state)
+(dev_pm_genpd_set_performance_state) from (_set_required_opp)
+(_set_required_opp) from (_set_opp)
+(_set_opp) from (dev_pm_opp_set_rate)
+(dev_pm_opp_set_rate) from (host1x_runtime_resume)
+(host1x_runtime_resume) from (genpd_runtime_resume)
+(genpd_runtime_resume) from (__rpm_callback)
+(__rpm_callback) from (rpm_callback)
+(rpm_callback) from (rpm_resume)
+(rpm_resume) from (__pm_runtime_resume)
+(__pm_runtime_resume) from (host1x_probe)
+(host1x_probe) from (platform_probe)
+(platform_probe) from (really_probe)
+(really_probe) from (driver_probe_device)
+(driver_probe_device) from (device_driver_attach)
+(device_driver_attach) from (__driver_attach)
+(__driver_attach) from (bus_for_each_dev)
+(bus_for_each_dev) from (bus_add_driver)
+(bus_add_driver) from (driver_register)
+(driver_register) from (__platform_register_drivers)
+(__platform_register_drivers) from (host1x_module_init)
+(host1x_module_init) from (do_one_initcall)
+(do_one_initcall) from (kernel_init_freeable)
+(kernel_init_freeable) from (kernel_init)
