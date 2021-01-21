@@ -2,103 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4747C433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 18:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19094C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98E3123136
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 18:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D222223A60
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbhAUSsH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 13:48:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbhAUS0A (ORCPT
+        id S1726412AbhAUTFz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 14:05:55 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:33065 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbhAUTFG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 13:26:00 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355CDC06178C;
-        Thu, 21 Jan 2021 10:23:29 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id m22so3877692lfg.5;
-        Thu, 21 Jan 2021 10:23:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=o+6Qr9g4GUhZQovcGPL0QQ9GPJLut7iCnnUkdOOvXTs=;
-        b=LKSG5HyJfv+CRE2WARL/dTEnMBsuHMPSYjspr/jwJdGYcK+PHbE2gmUUdGKufEYZrc
-         5QctPpyjUXlbxgks/XoJLk6gi7vtonVv/x6eim6WFZagZuQDKnI/8SC43tXDwZQYWptl
-         Glj0QaPpFrTx4+B2wNGz0BK0ZKzPKCdk2bU1dPV6eiW37Ue8Bd1Kz3ZWfKWoXsRZrPig
-         FAuu0p0dVu6+iA1RHtBJCPqDDMzbd6k4xT9Nt0NuYqyKLbgRE2IYEQ0ogITMlIGCVSGK
-         goiz+KLH7igTlXBStRa43dqKBkemDe8FaUHsG+mKlo8DyC6WkaIeemPVjaibmDy6nX7d
-         50gQ==
+        Thu, 21 Jan 2021 14:05:06 -0500
+Received: by mail-oi1-f177.google.com with SMTP id d203so3331160oia.0;
+        Thu, 21 Jan 2021 11:04:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o+6Qr9g4GUhZQovcGPL0QQ9GPJLut7iCnnUkdOOvXTs=;
-        b=J/sVO6EO86dIbteR0DKwc6MzFRYgE7e21HvoueDe3vc7BlSyM6qYYgVPNIBxLkgSIP
-         Ngaqli8GcLuxz2AcRxYuiwP3YQBizTH2v1HtqliUCXIkG1Bi/7khkuKLQF8h09sn8H2v
-         gcnxXjbQF1uY+xVQjT5x/61lOuu5czlGAAsANBvvK4OCdvGSlR+WL74aD/00dlsPayGn
-         U97lynBY3I+TCl403NNHbsE97X39ZnzFWVkR+pL/STifYdvNjtd63ty/8gXMr3Me1QP2
-         yjO3Smuh1u7siPIiDXBlvv7N7oQSy1E7a5AixvRJXqTzFVIOh6pL7nOOe4amYwoSzzM2
-         be3g==
-X-Gm-Message-State: AOAM5320eZ7HqTvvaJ0u2/nBmtRRW8EP4TNmn6iphJwiG9vAAlcKf2Ss
-        bwYqM34Bxuq/bSe3ek8sezc=
-X-Google-Smtp-Source: ABdhPJzHJv0Wq+Y78TWtoUAd7eukg1lEtqLwT82rLSQ1dF/iRsvB8HaBJwyCxoJdMvWBxB6maw/EGw==
-X-Received: by 2002:a05:6512:2242:: with SMTP id i2mr211459lfu.573.1611253407792;
-        Thu, 21 Jan 2021 10:23:27 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id f186sm600537lfd.289.2021.01.21.10.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 10:23:27 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 07/13] ARM: tegra: acer-a500: Reduce thermal throttling hysteresis to 0.2C
-Date:   Thu, 21 Jan 2021 21:23:02 +0300
-Message-Id: <20210121182308.16080-8-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210121182308.16080-1-digetx@gmail.com>
-References: <20210121182308.16080-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sxUFDSeoZEWN4aDqisZF6mUVpomTtmiF7YK6hytZxWc=;
+        b=qWa+uEpZ5yso8/rb0urhOsLhosKvFHOxVghxZirLSf+NyVU4lUnkz+0Yyi2/8WqwMJ
+         dDo+yvXqyPP80ZaCbcWyLdrh5wr2FQ2rITEfsh2lpxAjUY2DtDfYORfcO5iPIthS5FOK
+         6CMlt/IbsL7hSM674dbayLLexoq+gSxD6NaM/8SDYEoPv/YxiIBf9AtQF5w3+AQyez/p
+         CjuEWz102L451pDCZ7Cm+fR2jpkbxq72MdadmemvrWPAMyIwm7iuwZX3NSlZR3BXg3OB
+         Nw00zR7EHZnVSGcVPA6ai1iHN3xwKm/vDAqkcycFWCPUVUcX9Joqk67V9mSOcaUsUuSl
+         UjOA==
+X-Gm-Message-State: AOAM530b/i4To4Gq0pyUDiYB713k8FTP3OmJLgw4eFvLo5I6Xh4ijxWT
+        jahMtwKDx6Bxj5id4GbBwrZRa/5kWiKgKs70aH4=
+X-Google-Smtp-Source: ABdhPJwFYOx7GKzTGGbTxgqjm5rCY/53kLF3X/JTRr/LaAc8hfo2mXKv0cD2IHyeZkf+1CBzz3/fcbRitQ3sr4ri09g=
+X-Received: by 2002:aca:308a:: with SMTP id w132mr703472oiw.69.1611255814671;
+ Thu, 21 Jan 2021 11:03:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201111021131.822867-1-ndesaulniers@google.com> <031790d7-ee26-f919-9338-b135e9b94635@nvidia.com>
+In-Reply-To: <031790d7-ee26-f919-9338-b135e9b94635@nvidia.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 21 Jan 2021 20:03:23 +0100
+Message-ID: <CAJZ5v0it3KfdNo7kwq-7__C+Kvr4Eo7x8-3rBi09B5rHfNv-hQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPICA: fix -Wfallthrough
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Erik Kaneda <erik.kaneda@intel.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Robert Moore <robert.moore@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        clang-built-linux@googlegroups.com, Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The 2C hysteresis is a bit too high, although CPU never gets hot on A500.
-Nevertheless, let's reduce thermal throttling hysteresis to 0.2C, which is
-a much more reasonable value.
+On Thu, Jan 21, 2021 at 11:08 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 11/11/2020 02:11, Nick Desaulniers wrote:
+> > The "fallthrough" pseudo-keyword was added as a portable way to denote
+> > intentional fallthrough. This code seemed to be using a mix of
+> > fallthrough comments that GCC recognizes, and some kind of lint marker.
+> > I'm guessing that linter hasn't been run in a while from the mixed use
+> > of the marker vs comments.
+> >
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+>
+>
+> I know this is not the exact version that was merged, I can't find it on
+> the list, but looks like the version that was merged [0],
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It would be this patch:
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 8531abf329c6..64a303cc5395 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -1058,7 +1058,7 @@ trips {
- 				trip0: cpu-alert0 {
- 					/* start throttling at 50C */
- 					temperature = <50000>;
--					hysteresis = <3000>;
-+					hysteresis = <200>;
- 					type = "passive";
- 				};
- 
--- 
-2.29.2
+https://patchwork.kernel.org/project/linux-acpi/patch/20210115184826.2250-4-erik.kaneda@intel.com/
 
+Nick, Erik?
+
+> is causing build errors with older toolchains (GCC v6) ...
+>
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol.c: In function ‘acpi_ds_exec_begin_control_op’:
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol.c:65:3: error: ‘ACPI_FALLTHROUGH’ undeclared (first use in this function)
+>    ACPI_FALLTHROUGH;
+>    ^~~~~~~~~~~~~~~~
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/acpi/acpica/dscontrol.c:65:3: note: each undeclared identifier is reported only once for each function it appears in
+> /dvs/git/dirty/git-master_l4t-upstream/kernel/scripts/Makefile.build:287: recipe for target 'drivers/acpi/acpica/dscontrol.o' failed
+>
+> Cheers
+> Jon
+>
+> [0] https://github.com/acpica/acpica/commit/4b9135f5
+>
+> --
+> nvpublic
