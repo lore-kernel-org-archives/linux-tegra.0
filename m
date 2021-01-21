@@ -2,311 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A9AC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDDC4332E
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADBF23A53
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C2F23A03
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 19:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbhAUTQR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 14:16:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57866 "EHLO
+        id S1727019AbhAUTQ4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 14:16:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbhAUTPI (ORCPT
+        with ESMTP id S1727145AbhAUTOy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 14:15:08 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0DAC06174A;
-        Thu, 21 Jan 2021 11:14:27 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id j3so3772336ljb.9;
-        Thu, 21 Jan 2021 11:14:27 -0800 (PST)
+        Thu, 21 Jan 2021 14:14:54 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD59C061793;
+        Thu, 21 Jan 2021 11:00:37 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id v184so2432105wma.1;
+        Thu, 21 Jan 2021 11:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6KWQI8XD7L6EDXDFReXNozccameFVZf4WSpONfuhC2U=;
-        b=d1h027qiGtzmqxfp3brM4N5sDpzRXXr8lK3gA9nhMLzUfxUSMhLbLCciyh8Ec+H7x0
-         cctjyjuCP5WGhCECoKU6D4KFz62BbASk6uFJQfCt0mzI3qBaeKUNVcpvk3TkJsGWS75u
-         NFRKmvF+YQjQR5450zyByMK6WNKbeYX+8F60bAggWWyiQ616lskiYL3PcPz0ofxahSXE
-         VeDUHhY8EY6fIZo3+C7WTRioU2mVbMt+3HWzeIGSrt62S/aXXWsMzR5UJWElCLT4GlQz
-         /h/Bb9cNRXnCvHklAcFwBeDzDg11wsWPSVKu0mH1rXHPectmYpjLvXXeV1+sOlYRTLXO
-         /y0Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K17Qb/xqJhqemGjS6kTuTL7FFWSJ4l9BP89RSwHWF5E=;
+        b=ZScCF4q9ohNh1JUkk8uuqWZ8Rq8ZDBqMV4uqim51MRtN3L7wr3V5GXWe1UNAYrx2NG
+         iWmT1UHRYeligQF9mMqPe9M53d9xPFG+//3VSwFpP4c2jf02Tv0o2JT7Z77Ob6k/ykDl
+         /heJDcYuDSC6yzwfzCc1eVsvo5h1hSd/2Un1NJqGuFWtatvhU+lFIBXs7Ulcn0JXeX//
+         9I2T7wSnyah9yUWZ2VAynfXdFz7BuCXj4C3O6T68Imgxg+RsTItetkWotjLgDXLVdm2z
+         vFrD41N369dEkQA3Yr+piTujNErzQyvocyaqaaEF8aNpbkhXT4+uKZUGT9ZnHBVTXFOQ
+         MRYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6KWQI8XD7L6EDXDFReXNozccameFVZf4WSpONfuhC2U=;
-        b=PSgC4iZtrH4eqPLH60+pmqMh86LQ37ZAsob+gDtLfghK3JsufjN8p/DRVfQGsFGbLt
-         z7v+guqLNW1eq8aAQYhgTJS7oYvgmyhyj5EPEgE52SHcJFV9r2eV9RubGMEC6tkOOJZv
-         QGW/y4hS9HSSEW1i4K93phC3WwBcKKiTAoC2fMnHSacSmumoedGirSKvTnuz+Lh1PWz9
-         AnM500pFOq2xZOdbsC8Tqh8cqBwsaeJQlXIea9e7YJ54spraE5hlK28jsidM0Rm0FQmM
-         qiFlMq05HHbAzvMAh2D7Hn+eppJw1FJAt6FqG35+gQEfj6bmPZcajtdy7qdfjIwmTsg5
-         kRIw==
-X-Gm-Message-State: AOAM533mXbDWUsLgZxzqhQSwvuxX9uyL5MnuhvdxU+xnV3dTiwSnR7a9
-        tshSx/anSUA0GJDHv+Gq+HI=
-X-Google-Smtp-Source: ABdhPJx1Q0Qo9k/uDxQk4+fgSogXKXxXSjpY3pCvtz9JDz2xYLZ0baZM5V1k+iUkva4Z79qWt7wZzQ==
-X-Received: by 2002:a2e:b8c5:: with SMTP id s5mr374840ljp.335.1611256465700;
-        Thu, 21 Jan 2021 11:14:25 -0800 (PST)
-Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id o11sm613304lfi.267.2021.01.21.11.14.24
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K17Qb/xqJhqemGjS6kTuTL7FFWSJ4l9BP89RSwHWF5E=;
+        b=jYv93uVUG/y3eXH7ekRhiA0vtJudxGRRqFkNaoJanzATpgIYPpigVOmujRhI0DYuEk
+         FSuXpD+S9HwEK3SqBiCuYipHiaOruQoB2zuZmKCkfVNaQQod1CLm/SXHDX/Bx1hxzJg1
+         x7/3VenQPu9sdVdBucixdU0kk6fsG3w4n48tGdW7HJwiAWMd7RnBqM8HZm739bYXbF1N
+         2RAacJxNX8oEnnR9gX15wGh92H/JND+8f3XATg3ps3NTEYjQRIJnrD32GKn3RWVo5NPZ
+         gICLcfg84i0UUucBulOaWOPwKiBo1wvmbspeBiwbVPMnS3Mk57ClUNWni+PyXRrCxj8H
+         +zcg==
+X-Gm-Message-State: AOAM530C9HLOf6luCp0Ob9B5vu5AbKVa1I7vW/lc2Z0JPdEgjrfR9b75
+        OefuWbarNE5BrWTjRv7nht4=
+X-Google-Smtp-Source: ABdhPJyJGoMAuEiKqmzk71DvSTnpg4Ui3V10hF5b8vzzCod0tNFv3UIb4yOZgcvqdflnJZPOlpC9wg==
+X-Received: by 2002:a05:600c:21d8:: with SMTP id x24mr699705wmj.27.1611255636500;
+        Thu, 21 Jan 2021 11:00:36 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id p9sm8673767wrj.11.2021.01.21.11.00.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 11:14:25 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4] soc/tegra: Add devm_tegra_core_dev_init_opp_table()
-Date:   Thu, 21 Jan 2021 22:14:10 +0300
-Message-Id: <20210121191410.13781-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        Thu, 21 Jan 2021 11:00:35 -0800 (PST)
+Date:   Thu, 21 Jan 2021 20:00:34 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     broonie@kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
+        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sharadg@nvidia.com
+Subject: Re: [RESEND PATCH v6 6/6] arm64: tegra: Audio graph sound card for
+ Jetson Nano and TX1
+Message-ID: <YAnPUsg7cNJQKqfO@ulmo>
+References: <1611048496-24650-1-git-send-email-spujar@nvidia.com>
+ <1611048496-24650-7-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="51vTQSaQmQ9+ueZw"
+Content-Disposition: inline
+In-Reply-To: <1611048496-24650-7-git-send-email-spujar@nvidia.com>
+User-Agent: Mutt/2.0.4 (26f41dd1) (2020-12-30)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add common helper which initializes OPP table for Tegra SoC core devices.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+--51vTQSaQmQ9+ueZw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changelog:
+On Tue, Jan 19, 2021 at 02:58:16PM +0530, Sameer Pujar wrote:
+> Enable support for audio-graph based sound card on Jetson-Nano and
+> Jetson-TX1. Depending on the platform, required I/O interfaces are
+> enabled.
+>=20
+>  * Jetson-Nano: Enable I2S3, I2S4, DMIC1 and DMIC2.
+>  * Jetson-TX1: Enable all I2S and DMIC interfaces.
+>=20
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 262 +++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 146 ++++++++++++
+>  2 files changed, 408 insertions(+)
 
-v4: - Fixed inconsistency of "params" argument naming. I renamed "cfg"
-      to "params" in v3, but missed to rename the doc-comment and
-      prototype in tegra/common.h.
+Applied, thanks.
 
-    - Fixed missing doc-comment for @dev.
+Thierry
 
-v3: - This patch is factored out from [1] to ease merging of the patches
-      that will use the new helper. The goal is to get this new helper
-      into 5.12, this should remove dependency on this patch for a several
-      patchsets of a different subsystems (DRM, media, memory, etc) that
-      will target 5.13.
+--51vTQSaQmQ9+ueZw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-      @Thierry/Jon, please review and apply this patch for 5.12!
+-----BEGIN PGP SIGNATURE-----
 
-      [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmAJz1IACgkQ3SOs138+
+s6GsMRAAsajRy5WFgKN+ktn2lL5UogXSyqcI2/4odHZspdTjh48LGWAWZZ2BkJO3
+0FBPJmcg9irGgzc1L0mKH2SKLbs0owGIh24jpuf51T3SAzygOXh/K6wIy/mMBz1F
+ViRWHtM866kzXyAizKanXmXnVP75VyquwO6TNgMhsldEm0CqjA2kcsWZZ+KCFsc3
+mlMFUfGgzxjScgjhVXTrSBa8jx5FmaFEIRMwFRfuU1eZxV4oVWocWPS4fM7nkFNg
+1FEvwGr3MZGmR4VZ8VUUyoiCHIIXD0A+o1X2+2iLpau9bgh9LASrj7mWHA62eRWa
+ji18iCYrdsv3+ac82Yhbnot+0mCMajIlP8qL75HPpjSavjIiAOaJ2ifYdWmzNbcd
+Ep/Ot1GkXnyMhSZwL8vp6TOvDq8uoLDwdMjNilA8BXwDq8V7QZvz5fVT9EV7oPY1
+Q7eoiypjrsfmDbw1niP9uNKcCIDh1Boj9FqxKi9Unq/blcbKqXbo8zb/ANGAwIau
+Ds8bpCy4zQOFCXnmDw1BReWQbryUZp4TsSQ18gskEIo4U8/Tg2JDJzqJbmN6LuQ1
+Y4VzhHq0JBzr5oBlTJU1f7d+v3Bcfxtwm8LMYrUqQYkEZidO+794fC6077Dai/r8
+KcDiIFitTxSTqogQLN45ISY/a3MtNGRhDLBZcf6Sdd6yoJa+IfQ=
+=ceXN
+-----END PGP SIGNATURE-----
 
-    - The v3 got couple very minor cleanup improvements in comparison to [1],
-      like a removed unused variable and improved comments in the code.
-
- drivers/soc/tegra/common.c | 138 +++++++++++++++++++++++++++++++++++++
- include/soc/tegra/common.h |  30 ++++++++
- 2 files changed, 168 insertions(+)
-
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index 3dc54f59cafe..6d9110fd3645 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -3,9 +3,16 @@
-  * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#define dev_fmt(fmt)	"tegra-soc: " fmt
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/pm_opp.h>
- 
- #include <soc/tegra/common.h>
-+#include <soc/tegra/fuse.h>
- 
- static const struct of_device_id tegra_machine_match[] = {
- 	{ .compatible = "nvidia,tegra20", },
-@@ -31,3 +38,134 @@ bool soc_is_tegra(void)
- 
- 	return match != NULL;
- }
-+
-+static int tegra_core_dev_init_opp_state(struct device *dev)
-+{
-+	struct dev_pm_opp *opp;
-+	unsigned long rate;
-+	struct clk *clk;
-+	int err;
-+
-+	clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "failed to get clk: %pe\n", clk);
-+		return PTR_ERR(clk);
-+	}
-+
-+	/*
-+	 * If voltage regulator presents, then we could select the fastest
-+	 * clock rate, but driver doesn't support power management and
-+	 * frequency scaling yet, hence the top freq OPP will vote for a
-+	 * very high voltage that will produce lot's of heat.  Let's select
-+	 * OPP for the current/default rate for now.
-+	 *
-+	 * Clock rate should be pre-initialized (i.e. it's non-zero) either
-+	 * by clock driver or by assigned clocks in a device-tree.
-+	 */
-+	rate = clk_get_rate(clk);
-+	if (!rate) {
-+		dev_err(dev, "failed to get clk rate\n");
-+		return -EINVAL;
-+	}
-+
-+	/* find suitable OPP for the clock rate and supportable by hardware */
-+	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
-+
-+	/*
-+	 * dev_pm_opp_set_rate() doesn't search for a floor clock rate and it
-+	 * will error out if default clock rate is too high, i.e. unsupported
-+	 * by a SoC hardware version.  Hence will find floor rate by ourselves.
-+	 */
-+	if (opp == ERR_PTR(-ERANGE))
-+		opp = dev_pm_opp_find_freq_floor(dev, &rate);
-+
-+	err = PTR_ERR_OR_ZERO(opp);
-+	if (err) {
-+		dev_err(dev, "failed to get OPP for %ld Hz: %d\n",
-+			rate, err);
-+		return err;
-+	}
-+
-+	dev_pm_opp_put(opp);
-+
-+	/*
-+	 * First dummy rate-set initializes voltage vote by setting voltage
-+	 * in accordance to the clock rate.  We need to do this because some
-+	 * drivers currently don't support power management and clock is
-+	 * permanently enabled.
-+	 */
-+	err = dev_pm_opp_set_rate(dev, rate);
-+	if (err) {
-+		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * devm_tegra_core_dev_init_opp_table() - initialize OPP table
-+ * @dev: device for which OPP table is initialized
-+ * @params: pointer to the OPP table configuration
-+ *
-+ * This function will initialize OPP table and sync OPP state of a Tegra SoC
-+ * core device.
-+ *
-+ * Return: 0 on success or errorno.
-+ */
-+int devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				       struct tegra_core_opp_params *params)
-+{
-+	struct opp_table *opp_table;
-+	u32 hw_version;
-+	int err;
-+
-+	opp_table = devm_pm_opp_set_clkname(dev, NULL);
-+	if (IS_ERR(opp_table)) {
-+		dev_err(dev, "failed to set OPP clk %pe\n", opp_table);
-+		return PTR_ERR(opp_table);
-+	}
-+
-+	/* Tegra114+ doesn't support OPP yet */
-+	if (!of_machine_is_compatible("nvidia,tegra20") &&
-+	    !of_machine_is_compatible("nvidia,tegra30"))
-+		return -ENODEV;
-+
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		hw_version = BIT(tegra_sku_info.soc_process_id);
-+	else
-+		hw_version = BIT(tegra_sku_info.soc_speedo_id);
-+
-+	opp_table = devm_pm_opp_set_supported_hw(dev, &hw_version, 1);
-+	if (IS_ERR(opp_table)) {
-+		dev_err(dev, "failed to set OPP supported HW: %pe\n", opp_table);
-+		return PTR_ERR(opp_table);
-+	}
-+
-+	/*
-+	 * Older device-trees have an empty OPP table, hence we will get
-+	 * -ENODEV from devm_pm_opp_of_add_table() for the older DTBs.
-+	 *
-+	 * The OPP table presence also varies per-device and depending
-+	 * on a SoC generation, hence -ENODEV is expected to happen for
-+	 * the newer DTs as well.
-+	 */
-+	err = devm_pm_opp_of_add_table(dev);
-+	if (err) {
-+		if (err == -ENODEV)
-+			dev_err_once(dev, "OPP table not found, please update device-tree\n");
-+		else
-+			dev_err(dev, "failed to add OPP table: %d\n", err);
-+
-+		return err;
-+	}
-+
-+	if (params->init_state) {
-+		err = tegra_core_dev_init_opp_state(dev);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_tegra_core_dev_init_opp_table);
-diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
-index 98027a76ce3d..e8eab13aa199 100644
---- a/include/soc/tegra/common.h
-+++ b/include/soc/tegra/common.h
-@@ -6,6 +6,36 @@
- #ifndef __SOC_TEGRA_COMMON_H__
- #define __SOC_TEGRA_COMMON_H__
- 
-+#include <linux/errno.h>
-+#include <linux/types.h>
-+
-+struct device;
-+
-+/**
-+ * Tegra SoC core device OPP table configuration
-+ *
-+ * @init_state: pre-initialize OPP state of a device
-+ */
-+struct tegra_core_opp_params {
-+	bool init_state;
-+};
-+
-+#ifdef CONFIG_ARCH_TEGRA
- bool soc_is_tegra(void);
-+int devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				       struct tegra_core_opp_params *params);
-+#else
-+static inline bool soc_is_tegra(void)
-+{
-+	return false;
-+}
-+
-+static inline int
-+devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				   struct tegra_core_opp_params *params)
-+{
-+	return -ENODEV;
-+}
-+#endif
- 
- #endif /* __SOC_TEGRA_COMMON_H__ */
--- 
-2.29.2
-
+--51vTQSaQmQ9+ueZw--
