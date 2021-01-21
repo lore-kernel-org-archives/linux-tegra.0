@@ -2,107 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5461BC4332D
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C27EC433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 13:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1058A239A4
-	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 11:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBFAC23A00
+	for <linux-tegra@archiver.kernel.org>; Thu, 21 Jan 2021 13:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbhAULsr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:48:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39726 "EHLO
+        id S1731690AbhAUNNF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 21 Jan 2021 08:13:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729774AbhAULVH (ORCPT
+        with ESMTP id S1731652AbhAUNMR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 21 Jan 2021 06:21:07 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0600BC0617A9
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:19:16 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id 31so1087994plb.10
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 03:19:16 -0800 (PST)
+        Thu, 21 Jan 2021 08:12:17 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECC3C0613CF
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 05:11:36 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id b26so2406158lff.9
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 05:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sc4RKhDP//JPOMDhY7YCUQxeEMkiC/uPecJg02H/C7o=;
-        b=l+IAUYm7EFFo4t2J9K9y1homcgzoofuLPhJewoVATAFKtJg6FXyHwS2xW0rpFUTRHV
-         0VKWEJvRNqSxZWuzsLNt/c0JLq2Cpa0y6HOD3slSw3e3u01OJT4ei9LtHA+9mAS4E+e0
-         ZrW068O3VrMsNGnFvp6u2l0/u9WAI8YevpehexN1DMnm1c3YG//LXbjknAvqtN/oOpFH
-         EZ1gSzViZvXX1doq/J5KOHLewT76zw0MOY/tM6Mvx2FezcifiP/0cHUjZ5pGAhTd2XYC
-         UIlHo2ZP06GzddxHR81p+DeIXuMc4gRZzrAoMDgmg0JP7gIK5KRDPPgZxZUKYZhtePem
-         HQ0Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5SfYgMEZhXd25eYi6qDsESTLBn/H15YeTrdDgpcnnLg=;
+        b=XqZam54V6WNMaJGpQ/zvStXdECi0C+QtAqbDl16uTP8QioYtk1POCI5rq4ekLBZUIz
+         kqDKzYSX8IHExWGey4zMVWfm90PVJegAsI9pSoEhlbTENGMDh6pSp4b5tlefIzBvwoB7
+         swLIZazE6kk/8MNF4dLmLSJIrM8sHNzVLmNYgrRKEF5y/duOdwPTw5jSGwqDUcPL2yOW
+         /3gI2Ht6mM2RpqVZMAsGhxcMSW0j4+Drz600DkSUVF++LOFmjgQVLj7ePlqSQPMe6O5m
+         RCXQMtC2csH8UIsDZyKtdZkpiiK+RX3uZ5/KpaVAust1eNvovi0wfgU+mm2jEKTPOJXO
+         r0IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sc4RKhDP//JPOMDhY7YCUQxeEMkiC/uPecJg02H/C7o=;
-        b=HEmaH5SrHsONTdFcvmtEzla1QHCfxQt9aaWfDIHx0kIa5egLAGrgzrvqOw4xfJGdaH
-         4Ta+asoAnrIfdqesrho+pae6uvU/Hj71BpBAEIhv7OAjDLWR3GKMqPxQ2XCwBvj/8ZBH
-         DOiRor49ZzX5YPFf4R+zfgg69gKKrl58Vik5mjWBtyG0TMF+Lmzrj5dBjwmFibW5Acdm
-         iXoHABa8GHt1yb8ePI+xeb5Bquzlv/AkliFt0KOJ2XitW0txIdV+g3zj2/zmlU0qprBr
-         CIjWCBcGjcfMqXHF4qZL7hZ54EBJYc1HU3HRsj3vK6qHqjVF7WBwgDrlETttMXnkFev3
-         7Nmg==
-X-Gm-Message-State: AOAM5339gdOwa+u6YVELBAedYO477QgQ+pgD+8kjtZIFz9iqIrI5g5/f
-        Nbr5PWcVUogd/ABXPeqQLkvdMg==
-X-Google-Smtp-Source: ABdhPJyINtEI3nSzz0ay/vase6wWA+XDS1j1/V24hIEgbqObHoCTROQExJ2ifEGydCT5glp9WAX8vw==
-X-Received: by 2002:a17:90a:ad48:: with SMTP id w8mr11326968pjv.48.1611227955542;
-        Thu, 21 Jan 2021 03:19:15 -0800 (PST)
-Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id ge16sm5827745pjb.41.2021.01.21.03.19.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jan 2021 03:19:14 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
-Date:   Thu, 21 Jan 2021 16:47:51 +0530
-Message-Id: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
-In-Reply-To: <cover.1611227342.git.viresh.kumar@linaro.org>
-References: <cover.1611227342.git.viresh.kumar@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5SfYgMEZhXd25eYi6qDsESTLBn/H15YeTrdDgpcnnLg=;
+        b=JeBdEdcOJxZ3WK5KdQQZyKgDzWxltPqedpQyERn4K/7GhqOGT8p7B9Vz9papSiYhP0
+         kJHionRB9SDZ26TDo7wnUa45QbXq19LdzeDdpA+Lp2/Ewr12aTVpJcHrCsle5c8D3jzf
+         48YkNHzFKKm1geDKjLSX3BXm9UE7BR4cVzMM69RkAGO9k90Vrc/+qbvbTKu+ynGD2y69
+         aFMDhZQ4UhclMjN+4OmXd5fQjasFVsDmzT4g3JgSa4SYgjkU/wiA2nF2kOLOEpBxE3Bx
+         /GTH7EeZZ2U+45xKhu9mWjmiCjZgvzyBT/PUKBqNkvPkjPkzmulsx4pqJYTSyZfw5CpP
+         DCgQ==
+X-Gm-Message-State: AOAM531mdXWra5G13/MXxCCefyGlqrH3hnl2HhK/XzgAVqRY2nGPXI6K
+        /FTLyfGoZneHlgxWyJOlaFSLXULpjy/au6xGK9Z4ig==
+X-Google-Smtp-Source: ABdhPJwFTZwp0woXY9zVcoMioOYsSx1rGdrNSXqJ/is4tl/LS3ywlrqFOWHMdDa3yy6WG1BJ0UNlQtoKVhMMhIRbxeI=
+X-Received: by 2002:ac2:5597:: with SMTP id v23mr6289121lfg.649.1611234695050;
+ Thu, 21 Jan 2021 05:11:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210120080522.471120-1-saravanak@google.com> <20210120080522.471120-2-saravanak@google.com>
+In-Reply-To: <20210120080522.471120-2-saravanak@google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Jan 2021 14:11:24 +0100
+Message-ID: <CACRpkdbEC6duR=fJQD_Nw9o=HW0DEe2_Ks3SYCgJmkOjzKz3Jg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] of: property: Add fw_devlink support for "gpio"
+ and "gpios" binding
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
-be used instead. Migrate to the new API.
+On Wed, Jan 20, 2021 at 9:05 AM Saravana Kannan <saravanak@google.com> wrote:
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/devfreq/tegra30-devfreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> To provide backward compatibility for boards that use deprecated DT
+> bindings, we need to add fw_devlink support for "gpio" and "gpios".
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 117cad7968ab..d2477d7d1f66 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 		return PTR_ERR(opp);
- 	}
- 
--	ret = dev_pm_opp_set_bw(dev, opp);
-+	ret = dev_pm_opp_set_opp(dev, opp);
- 	dev_pm_opp_put(opp);
- 
- 	return ret;
--- 
-2.25.0.rc1.19.g042ed3e048af
+You do some more stuff in the patch so describe that too.
+Especially the check for hogs and #gpio-cells.
+Describe why you do that. Maybe even with a comment in
+the code because I don't think everyone will understand.
 
+> +       if (strcmp(prop_name, "gpio") && strcmp(prop_name, "gpios"))
+> +               return NULL;
+
+This part is easy to understand.
+
+> +       if (of_find_property(np, "gpio-hog", NULL))
+> +               return NULL;
+> +
+> +       if (of_parse_phandle_with_args(np, prop_name, "#gpio-cells", index,
+> +                                      &sup_args))
+> +               return NULL;
+
+This part is hard to understand. Insert comments and tell the reader
+of the code what is going on and why.
+
+Yours,
+Linus Walleij
