@@ -2,164 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782F4C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 06:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55493C433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 06:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 455F5238EE
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 06:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07BCA235FF
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 06:29:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbhAVGBV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jan 2021 01:01:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55540 "EHLO
+        id S1726925AbhAVG26 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jan 2021 01:28:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbhAVGBN (ORCPT
+        with ESMTP id S1726953AbhAVG1n (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jan 2021 01:01:13 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B3AC061756
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 22:00:33 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id q20so3005145pfu.8
-        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 22:00:33 -0800 (PST)
+        Fri, 22 Jan 2021 01:27:43 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CCAEC061756
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 22:27:03 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id n10so3037357pgl.10
+        for <linux-tegra@vger.kernel.org>; Thu, 21 Jan 2021 22:27:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p5gxMZPm4PZ2rpKTFEgwKlwXFVCJLHtF6PjdnahhMhg=;
-        b=lPr5/zLCr8ZGdAWYA/jTfcxtbP0IAyjNCgmQM22nnj94Gebthxj9bcGRqCcwHHnneV
-         G0lTKPZ0bcgRjZvYbPoymTZvQlJuW5Fa0EIDFNviiPlta429aMm5AZ0fqOfLesc4/jqN
-         hNTVYlpvciMys8b3WOvqIIbYEG2sR/2YfPqra8ulbe4PorbhJi3pZ+rc6gCqyX6hmPfj
-         6tq6Tfpayr1opGOsOtKO1/TyHxGbPs1vVTMlVlza9PJLqwRh/GNwrakk9uDrRQ97m0cU
-         DUJNmf7vn+gNgu6VNyAxliB9x0zrBzXOxAcpCzCvRRSFw2KoRx/yMAET7gcO/DcO334d
-         xibQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=svgrB85wDJvp1wFsJQnCVp+ank0Arsi8GO3FERYAPGc=;
+        b=ux0UjAuQYmGVBrb8Ye8qm1tpjApuGIEbLNzDKfWG+sREKtOBhs9wc69kCk2XcGEVUh
+         u4H3V16lDaQ13d/AsqE4nHLxmPe4u06EH1Ukvg1m+2aWKGTgxgUMmm0h9Dyvq3nJb8ZP
+         wCFeHZ709a0RsxBpawIx7FvwlQZ8KLhnixCtMwH2xgNME8aSrvH+oC4TzP1Dr5/Q2t3Y
+         N7tUbU7RSFbJcNRFLbM6VehvtjO8Sb5j3WRpjKSVSc63nhcKQUoNQNIRXe6oINWi8Mz6
+         tP5tfq11q/Tl8+KmTKFLM8pkvPvi50GMr6qKyC077jMTvm/URFFLSlHH/sqZHxmEpnqa
+         qNmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p5gxMZPm4PZ2rpKTFEgwKlwXFVCJLHtF6PjdnahhMhg=;
-        b=qKf5f6gHGJ/4usHA1YJXy7hPLVVC3Fh8Bgc72l/9sP7GyIrz8BqqRDOieWBGxjeOab
-         /J8d8jHhrB9fxoFgp/D3thGP9b8gM1B/iLgyIxVFGgx6ep0iL5SCcP3g/bg3VYQBKdKM
-         amaq9MxOSbOowRWpLon81p4U0HCkx4M8cPymLL2Lfd/5gEl0nA++9v5h/ej3EXwnVoDR
-         R1gLAw1yL9ry8shmPzms6usDag39voERbRcSntHLaVsmwSCoCkfysA/7ThOVsi8hcEhF
-         pQCWw2ExxqadTWFMGIiFpA6fSuymRa0ikYHE4Wpatn/FE37HfBm48o6huzhLY3TH1Mqk
-         ELKw==
-X-Gm-Message-State: AOAM533eR0nAKbdiYjlLn12QA7vnK8QHMNnQefVNnFX1hfpdmBWfXoJ2
-        9xTsNdAtEkeFqQ8mx8/a3lmOpg==
-X-Google-Smtp-Source: ABdhPJyJs80rRHKzzfa9cbpX+5oYFoa/8DdYpiEfkLFvLFM9r2jL3FobSQxV97NwOINP6a3A0Lo+Yg==
-X-Received: by 2002:a17:90b:e8b:: with SMTP id fv11mr3374510pjb.5.1611295232804;
-        Thu, 21 Jan 2021 22:00:32 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=svgrB85wDJvp1wFsJQnCVp+ank0Arsi8GO3FERYAPGc=;
+        b=g4Ayc11qK5zTWc9Q0epgWIuDlZ59Mjzz+pu6aauyzAXU7n6v9xBeYcgqL+y6+OSVIE
+         WAbVO7onA2UCpDL2JY/eu2UOoj9D5r1y6DFT8c7L0QtpnhdgwO5biwKxdfv71fuVDzEq
+         ty2R08HONCBTB/0dLE+lXaft+Epwc7Bm6/CcL2iTF7nXh1x1sRNwhFCQtmOg8yq7+h+y
+         svgLZlq+FNKAVldH6qgZoKf/bxTIiFf1MFanh4L8pwCEb13ULGREr8Kx5s4wPVJ333Ew
+         BP4LONWpdRt6z4PNjTKBSKLgBe/pZg98U0Uuox/Rsc1X+zJoupO6nZyeQVyCB2dJARam
+         1F6A==
+X-Gm-Message-State: AOAM5326Z9VDHxeiSdK70nV7/5rgVkjN2I3jIH/yXauLWzNVXn8k5/su
+        SPEfbQw3Oj+D8/un9lsju4bxWA==
+X-Google-Smtp-Source: ABdhPJyYey8B/wZZECCKK/6z6M0ZdDm5dsyDljIPXQKsuXilPAqgZAz+8Uqbev9+vKmCz1YIcKVNQg==
+X-Received: by 2002:a17:90a:f2d2:: with SMTP id gt18mr3578692pjb.102.1611296822502;
+        Thu, 21 Jan 2021 22:27:02 -0800 (PST)
 Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id r1sm7062032pfh.2.2021.01.21.22.00.31
+        by smtp.gmail.com with ESMTPSA id q2sm6678851pfj.32.2021.01.21.22.27.01
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jan 2021 22:00:32 -0800 (PST)
+        Thu, 21 Jan 2021 22:27:01 -0800 (PST)
+Date:   Fri, 22 Jan 2021 11:56:59 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] memory: tegra: Remove calls to dev_pm_opp_set_clkname()
-Date:   Fri, 22 Jan 2021 11:30:21 +0530
-Message-Id: <1430e70777fdcf1c946ca2fef296f439762a4f21.1611295029.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
+Message-ID: <20210122062659.qss3hef4kltfgciu@vireshk-i7>
+References: <cover.1611227342.git.viresh.kumar@linaro.org>
+ <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
+ <71451eb2-46b2-1ea0-efcc-0811568159a4@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <71451eb2-46b2-1ea0-efcc-0811568159a4@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-There is no point calling dev_pm_opp_set_clkname() with the "name"
-parameter set to NULL, this is already done by the OPP core at setup
-time and should work as it is.
+On 22-01-21, 00:36, Dmitry Osipenko wrote:
+> 21.01.2021 14:17, Viresh Kumar пишет:
+> > dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
+> > be used instead. Migrate to the new API.
+> > 
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > ---
+> >  drivers/devfreq/tegra30-devfreq.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> > index 117cad7968ab..d2477d7d1f66 100644
+> > --- a/drivers/devfreq/tegra30-devfreq.c
+> > +++ b/drivers/devfreq/tegra30-devfreq.c
+> > @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+> >  		return PTR_ERR(opp);
+> >  	}
+> >  
+> > -	ret = dev_pm_opp_set_bw(dev, opp);
+> > +	ret = dev_pm_opp_set_opp(dev, opp);
+> >  	dev_pm_opp_put(opp);
+> >  
+> >  	return ret;
+> > 
+> 
+> This patch introduces a very serious change that needs to be fixed.
+> 
+> Now dev_pm_opp_set_opp() changes both clock rate and bandwidth, this is
+> unacceptable for this driver because it shall not touch the clock rate.
+> 
+> I think dev_pm_opp_set_bw() can't be removed.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Dmitry, am I missing something obvious here ?
+I am wondering here on what would be a better solution, do what you
+said or introduce another helper like dev_pm_opp_clear_clk(), which
+will make sure the OPP core doesn't play with device's clk.
 
- drivers/memory/tegra/tegra20-emc.c | 13 ++-----------
- drivers/memory/tegra/tegra30-emc.c | 13 ++-----------
- 2 files changed, 4 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 686aaf477d8a..d653a6be8d7f 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -911,21 +911,14 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- {
- 	u32 hw_version = BIT(tegra_sku_info.soc_process_id);
--	struct opp_table *clk_opp_table, *hw_opp_table;
-+	struct opp_table *hw_opp_table;
- 	int err;
- 
--	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
--	err = PTR_ERR_OR_ZERO(clk_opp_table);
--	if (err) {
--		dev_err(emc->dev, "failed to set OPP clk: %d\n", err);
--		return err;
--	}
--
- 	hw_opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
- 	err = PTR_ERR_OR_ZERO(hw_opp_table);
- 	if (err) {
- 		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
--		goto put_clk_table;
-+		return err;
- 	}
- 
- 	err = dev_pm_opp_of_add_table(emc->dev);
-@@ -954,8 +947,6 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- 	dev_pm_opp_of_remove_table(emc->dev);
- put_hw_table:
- 	dev_pm_opp_put_supported_hw(hw_opp_table);
--put_clk_table:
--	dev_pm_opp_put_clkname(clk_opp_table);
- 
- 	return err;
- }
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 44ac155936aa..6985da0ffb35 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1483,21 +1483,14 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- {
- 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
--	struct opp_table *clk_opp_table, *hw_opp_table;
-+	struct opp_table *hw_opp_table;
- 	int err;
- 
--	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
--	err = PTR_ERR_OR_ZERO(clk_opp_table);
--	if (err) {
--		dev_err(emc->dev, "failed to set OPP clk: %d\n", err);
--		return err;
--	}
--
- 	hw_opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
- 	err = PTR_ERR_OR_ZERO(hw_opp_table);
- 	if (err) {
- 		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
--		goto put_clk_table;
-+		return err;
- 	}
- 
- 	err = dev_pm_opp_of_add_table(emc->dev);
-@@ -1526,8 +1519,6 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
- 	dev_pm_opp_of_remove_table(emc->dev);
- put_hw_table:
- 	dev_pm_opp_put_supported_hw(hw_opp_table);
--put_clk_table:
--	dev_pm_opp_put_clkname(clk_opp_table);
- 
- 	return err;
- }
 -- 
-2.25.0.rc1.19.g042ed3e048af
-
+viresh
