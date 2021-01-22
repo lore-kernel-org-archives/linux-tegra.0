@@ -2,106 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CA2C43381
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 21:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F46C433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 22:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B106123B08
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 21:59:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 462CC23B09
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 22:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbhAVV7a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jan 2021 16:59:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36150 "EHLO
+        id S1728359AbhAVWP7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jan 2021 17:15:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbhAVV6z (ORCPT
+        with ESMTP id S1728582AbhAVUAu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jan 2021 16:58:55 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20FE8C06174A;
-        Fri, 22 Jan 2021 13:58:15 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id u11so8182962ljo.13;
-        Fri, 22 Jan 2021 13:58:15 -0800 (PST)
+        Fri, 22 Jan 2021 15:00:50 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EC38C06174A;
+        Fri, 22 Jan 2021 12:00:09 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id x23so7895580lji.7;
+        Fri, 22 Jan 2021 12:00:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XmVwcl5zov3KR+vEhZu6TM/lbJHaayiWVAvDfTYcGJg=;
-        b=Jfp3zu+DNoQBWUPlvlhJpjwwkHiJMuyg/x3E1zTiq7E5c8b9N2+Ekj/UynidTve9k9
-         qBWVzvzk46qU3mXkydK9Dza/CR0p/CXE0y9LGZsfkM+yT+jFqoNZGvn4sE4d0O+i62uZ
-         M0+A//Nm1Zx/ow9vdUMnD+DdDfM1RljSFLKQ4fo+faBPmid02wsTVMLQqOJ+uM9X3y7E
-         rkSPBQEftvA+TwjjpayNpITUpotZaqIKuCp+KBMPBlJpc7Hv9J+Sgyx5VEd13xUd5Owa
-         PNfYTEqtQpM5VhmqBPiE2cU7KkBlvvVwxssAcVSTdXUxOLO1WsKyxo2yCSR8jMEHpqex
-         jYWQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ySROqCpqpgTDT8oyxKlu8mYrdsVHNrj8mgdO1gvw1O8=;
+        b=dAqM9hKEJBD7SJ9nSMxLIdg1nOdSHr6KVLlOstj71hN6gES78SjTMf2T1od6HxRHg9
+         nyMQRhSMt0HyyRS1bgShRoxTYql6RuUlkXrpD+PXPpHZ4r1b10gYOs1NZ4NlK9wvMh2t
+         9ZeFX+TTe7Z4zgD3ZtqMbLHQMXruSo3mpOfuxiMJKvyoAoJrjRIHan0Y43lp0GiEreLI
+         EMcAadnCgPQh91vO57TNx/mlegeGLynGbYYp407D6duvbqFVnDIqWVMp4a2hdOQGhx20
+         RwK05HxK1qdhXU8cpL2AbiRQzKTC9H9xuibF9DwlXy6NFKizUVxnu+/XzchPEa11yeeG
+         VHAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=XmVwcl5zov3KR+vEhZu6TM/lbJHaayiWVAvDfTYcGJg=;
-        b=HOyTJt6rzt869CHAqMdZtOjtFHpUK8NWyBBRUvyGlLk1miFfe1hNuCdrAFVnXqeduL
-         B6dp+s+kVBFl3F0hxhhLjwAcbyFkzgb8EHrYy1xYciV28ExMvmeztUc2y+miRHS36o+4
-         irBZ2xMjCWQb4kEVag3X8V+S3uVMVEBs3Qd6S4rDrW00SRP12uOEfgDPOt5eqm2BNPju
-         lJVoYMGK/gZQcJyRO2wvm0I3lHF7d+snDqHYF5V0Ozmvh4Xo+VvwohJvQwW5J33IVP1S
-         48PsW+87EjlwFRGrrFNj5l+2Ea0MKdX8tL8Z4Y9AAK3zAJyUiO3JAca3+RO9MrmociD6
-         fClQ==
-X-Gm-Message-State: AOAM532wnCb6/dk9V0r7n/3SGh3wSwS0G/BMYsDaOSi6NAlesjhBJkxo
-        jAqlNx/9B16zwaDaShb2ZdU3iqfEua4=
-X-Google-Smtp-Source: ABdhPJzL0Qff0MnWj81jjM+rLajUyTVkI7773FXMWioYjSYTCDNefT6rCEUD5xq63TjsiKXX8t52Zg==
-X-Received: by 2002:a2e:9d8b:: with SMTP id c11mr209129ljj.470.1611352693430;
-        Fri, 22 Jan 2021 13:58:13 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id t2sm484560lfk.28.2021.01.22.13.58.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Jan 2021 13:58:12 -0800 (PST)
-Subject: Re: [PATCH v1] memory: tegra: Check whether reset is already asserted
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210119235210.13006-1-digetx@gmail.com>
- <20210122214005.bfsznpaga2rhl3ow@kozik-lap>
+        bh=ySROqCpqpgTDT8oyxKlu8mYrdsVHNrj8mgdO1gvw1O8=;
+        b=caUViMSRNJYGiLOQUnPQZm7FfoQ5URhij5D7dcoTZCAyCosZg+2z8evQ0fEvbt7DVy
+         Vs2dXEWcIRDBGZIw3TvQDTMQAp3Kd14A9CjoNZ1X+xjsIqUOzbGuQ/5EWTCRIHqXPV3a
+         nOAJDz5ACUHsOOTsqEs8EYfPxj3ndy5SJ9jOjPebV5iScfhZ27Nn8I/MF9ZFnCdOfc0Q
+         JET0gGziTF/CglQ+Dvjzs6Za54HyCUpDXpVBHKLSUDpao5lYnDJAdb3GXcEk/3NmC+oW
+         EJWY5rxVJ5I26S5WposmKqVq7RowYuMOiVl0ZKSbBx0b2ZFN+J14br/3aMvmhZCYLugH
+         l7Hw==
+X-Gm-Message-State: AOAM531NZJrRhUyLbraC2/vnmx6xldU58jZKyUzCpVLq2CIVM3XjdwX3
+        WvYHFKvHLKVBk/wS3EF2uIc=
+X-Google-Smtp-Source: ABdhPJx/aNkD6pLYl1sH1ah8wn5QAG2qqt8Lue3LPtLn3f0E3j3HJ1TIltAOq9r+LpnJPGEcd5mILg==
+X-Received: by 2002:a05:651c:30d:: with SMTP id a13mr952818ljp.238.1611345608033;
+        Fri, 22 Jan 2021 12:00:08 -0800 (PST)
+Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.gmail.com with ESMTPSA id y20sm306401ljh.124.2021.01.22.12.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jan 2021 12:00:07 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <20cc8401-1934-6e4f-8e66-3216b86681fa@gmail.com>
-Date:   Sat, 23 Jan 2021 00:58:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] gpio: tegra: Improve formatting of the code
+Date:   Fri, 22 Jan 2021 22:59:59 +0300
+Message-Id: <20210122195959.4197-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <20210122214005.bfsznpaga2rhl3ow@kozik-lap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.01.2021 00:40, Krzysztof Kozlowski пишет:
-> On Wed, Jan 20, 2021 at 02:52:10AM +0300, Dmitry Osipenko wrote:
->> Check whether memory client reset is already asserted in order to prevent
->> DMA-flush error on trying to re-assert an already asserted reset.
->>
->> This becomes a problem once PMC GENPD is enabled to use memory resets
->> since GENPD will get a error and fail to toggle power domain. PMC GENPDs
->> can't be toggled safely without holding memory reset on Tegra and we're
->> about to fix this.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
->> Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
-> 
-> Don't add your own Tested-by. Author has to test it.  However this is a
-> v1 and already three other people added tests. Where are the emails?
+Don't cross 80 chars of line length in order to keep formatting of the
+code consistent.
 
-The test results were given on #tegra irc.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpio/gpio-tegra.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Author doesn't have to test, from time to time I'm helping people who
-can't make a patch with fixing obvious bugs for the h/w that I don't
-have access to.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 0be24248280a..0025f613d9b3 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -432,8 +432,10 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+ 		chained_irq_exit(chip, desc);
+ }
+ 
+-static int tegra_gpio_child_to_parent_hwirq(struct gpio_chip *chip, unsigned int hwirq,
+-					    unsigned int type, unsigned int *parent_hwirq,
++static int tegra_gpio_child_to_parent_hwirq(struct gpio_chip *chip,
++					    unsigned int hwirq,
++					    unsigned int type,
++					    unsigned int *parent_hwirq,
+ 					    unsigned int *parent_type)
+ {
+ 	*parent_hwirq = chip->irq.child_offset_to_irq(chip, hwirq);
+@@ -442,7 +444,8 @@ static int tegra_gpio_child_to_parent_hwirq(struct gpio_chip *chip, unsigned int
+ 	return 0;
+ }
+ 
+-static void *tegra_gpio_populate_parent_fwspec(struct gpio_chip *chip, unsigned int parent_hwirq,
++static void *tegra_gpio_populate_parent_fwspec(struct gpio_chip *chip,
++					       unsigned int parent_hwirq,
+ 					       unsigned int parent_type)
+ {
+ 	struct irq_fwspec *fwspec;
+@@ -570,7 +573,8 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
+ }
+ #endif
+ 
+-static int tegra_gpio_irq_set_affinity(struct irq_data *data, const struct cpumask *dest,
++static int tegra_gpio_irq_set_affinity(struct irq_data *data,
++				       const struct cpumask *dest,
+ 				       bool force)
+ {
+ 	if (data->parent_data)
+@@ -712,7 +716,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	if (!tgi->bank_info)
+ 		return -ENOMEM;
+ 
+-	tgi->irqs = devm_kcalloc(&pdev->dev, tgi->bank_count, sizeof(*tgi->irqs), GFP_KERNEL);
++	tgi->irqs = devm_kcalloc(&pdev->dev, tgi->bank_count,
++				 sizeof(*tgi->irqs), GFP_KERNEL);
+ 	if (!tgi->irqs)
+ 		return -ENOMEM;
+ 
+-- 
+2.29.2
 
-Anyways, I'll make v2 with myself removed if you prefer that, thanks.
