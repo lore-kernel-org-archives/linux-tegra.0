@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647A5C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 20:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43ED9C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 20:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD6323B01
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 20:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13ED523B01
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 20:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731049AbhAVUaG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jan 2021 15:30:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44350 "EHLO
+        id S1730300AbhAVUaE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jan 2021 15:30:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730998AbhAVU2e (ORCPT
+        with ESMTP id S1730951AbhAVU2d (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jan 2021 15:28:34 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401CAC061A2E;
-        Fri, 22 Jan 2021 12:25:16 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id b26so9277053lff.9;
-        Fri, 22 Jan 2021 12:25:16 -0800 (PST)
+        Fri, 22 Jan 2021 15:28:33 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2375C061A2A;
+        Fri, 22 Jan 2021 12:25:13 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id p13so8006024ljg.2;
+        Fri, 22 Jan 2021 12:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YaUct1vLa7CUCMQj1vBwX5+PDe09kdgx2eO2LPTaVhg=;
-        b=Yrj8eepBTkvQ+ORQ5EHBMlqX78YLVGByjffzMy7c5E6ONKwUZ1V57GkQrIc44KlOux
-         nPA3VnkZiFiEa/IXfnF2GLKN4QryBr/7o8HIMX96bP/EjQ0Hk7MZOxtZKXbYyIQH4vDM
-         pQ2htyuXz4U/LizU/tyVu6gim6uMsyXNpz4pT+bMdh+3ht9f66Eq9DzYzZyiBEjpA910
-         6Lo+OuhG6SCVjWUPkyI0T5GdCEBXgkUZ5zFkKOU0/lumozSE9OE7uXUkCeFs79zIBdw/
-         StuHp0gZp7LtAo5VbXOKchtUHML/Bx52iHzTecLz3za+EUdvcFpOr5UkWO+Qs+02M9zy
-         vGmA==
+        bh=1TFMrxk5Y5fLNqfPH2xbYxuuOS1BGXZk2VnJngWDMz8=;
+        b=hzSyci+eKM6pyZG49FekHP4eXQf4qwAIgTuLB7SgmakRtiYP13pZ5WG1RrGqracF62
+         3fSXqlNByfhnBQ07JJSEFsoVTbhc8nKxPXlSZCIwAN4nvXsW8fa/Ju13rNqk2qhQ0RBN
+         vO7BVXdkFVw/oUZ+JGS/2hrBJW1B3GJs87eZjFZWhsBV3ZouS7JssPjqO434Vc5R0VWx
+         YFdmePuZ7rGieuzth8MbS4Ocvwq1SgRI4rcjijRGlpGUTUY4x7eKYKSEpadkaE1pxlL+
+         v/njw8scrDwd8YXJ0UQ8tD9IB2ScvLonaQb97S6IpzLLQfNZkJJrLn2msJaT9NmNVgCl
+         w4AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YaUct1vLa7CUCMQj1vBwX5+PDe09kdgx2eO2LPTaVhg=;
-        b=KQwvHWyLShLHz+8mKO/24w5YzhhOA6OU+YChUJMbpYPxUvqPoMXF7rZ7K70vRYWNsT
-         H2jC4gAIeGJ6hVTJET1AgCUuYFlDi0noM4/7PUgY82N+RQuOK5VUpYquRly0IXai+nOQ
-         1GuDCq+yiKaccJMDuxzppo7QypqyZhQAJPO0ETxkgQsQok0LAqhP0kHHK90DCcp6cMjF
-         vum2RAz6XQkfRzQDmeh1E4zcLvEE73oD42BFYA3p6ExIyvO3k+aBTOELTKEWTw5xq1TP
-         42pqc5ubWnXDiLPBw1YpCSM97TWvskWi7btQsfF0dMcIsqAg9cDYQKmYMtn2wdlQei42
-         ANsw==
-X-Gm-Message-State: AOAM532jToxV9E81kraY4GEMPGRCeIu+oz83aimUM5EeiYAJMnA8OG+c
-        DiEw+H0Zy/rwtwpeC67dXR8=
-X-Google-Smtp-Source: ABdhPJx9aa/QHYafeLsqG+hjKanmiN14MxCG9Zs4qBitxZjsOUkfeqUM2Pi/0OCKcRUENef7HiDBKQ==
-X-Received: by 2002:ac2:4852:: with SMTP id 18mr28889lfy.230.1611347114858;
-        Fri, 22 Jan 2021 12:25:14 -0800 (PST)
+        bh=1TFMrxk5Y5fLNqfPH2xbYxuuOS1BGXZk2VnJngWDMz8=;
+        b=SOLUUiswr8UyLMjHC2iSoG1UOx023C0J5yGg4IR35+nFVuN449wd+hrPTa7RVU2Q8E
+         zbyjWdxNHetld0hvpPco0Jk9A9LGrczGUcrRc8L3ZQS1NKdh15VvuJfAMmp0023gvwFC
+         01v4La6ZxDj/2F1OgLv1sjPZUfZOnORTeEahC4m98qZNNbKz+wGsnhF2WlJbcrOFT00y
+         OCQ5mRGCrXYjS8AwT/1rr6KIO6jOXXxjIS1/r2aKVi2PeReWF7Y7KRO1BWyFiV0KEsRc
+         RoYkY0cpxnMPchc0ZGhJ/4bRUJ6lsGt81gS7jvm9xpENwiLdDoTDOqkB64TzNgWvgBxI
+         r9Pw==
+X-Gm-Message-State: AOAM5306HjNyrrP2k0OvuLPrOjkzRlFTkYOcDcM/aEhIooqoQluFCc3l
+        IscKtpBDf0ge2CorufgraVI=
+X-Google-Smtp-Source: ABdhPJwWA7/q42+Vf+Y6LuE0qMvTBmqfwXN/Qs5MFnCIyTcOlrBi9SB2uFT7INgMFfmUPwg9rRV9AA==
+X-Received: by 2002:a2e:b00a:: with SMTP id y10mr935181ljk.92.1611347112372;
+        Fri, 22 Jan 2021 12:25:12 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id q5sm996921lfr.172.2021.01.22.12.25.14
+        by smtp.gmail.com with ESMTPSA id q5sm996921lfr.172.2021.01.22.12.25.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 12:25:14 -0800 (PST)
+        Fri, 22 Jan 2021 12:25:11 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -65,9 +65,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/13] ARM: tegra: acer-a500: Rename avdd to vdda of touchscreen node
-Date:   Fri, 22 Jan 2021 23:24:53 +0300
-Message-Id: <20210122202457.13326-10-digetx@gmail.com>
+Subject: [PATCH v2 06/13] ARM: tegra: acer-a500: Enable core voltage scaling
+Date:   Fri, 22 Jan 2021 23:24:50 +0300
+Message-Id: <20210122202457.13326-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210122202457.13326-1-digetx@gmail.com>
 References: <20210122202457.13326-1-digetx@gmail.com>
@@ -77,27 +77,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Rename avdd supply to vdda of the touchscreen node. The old supply name
-was incorrect.
+Allow lower core voltages on Acer A500.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 4dcec18b677b..2c6cb7de57f7 100644
+index d3b99535d755..719da992fdaf 100644
 --- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
 +++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -448,7 +448,7 @@ touchscreen@4c {
+@@ -575,7 +575,7 @@ sys_reg: sys {
  
- 			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_LOW>;
+ 				vdd_core: sm0 {
+ 					regulator-name = "vdd_sm0,vdd_core";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
+@@ -616,7 +616,7 @@ ldo1 {
  
--			avdd-supply = <&vdd_3v3_sys>;
-+			vdda-supply = <&vdd_3v3_sys>;
- 			vdd-supply  = <&vdd_3v3_sys>;
- 		};
- 
+ 				rtc_vdd: ldo2 {
+ 					regulator-name = "vdd_ldo2,vdd_rtc";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&vdd_core &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
 -- 
 2.29.2
 
