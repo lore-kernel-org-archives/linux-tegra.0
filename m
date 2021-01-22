@@ -2,87 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77D9C433E9
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 15:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8537AC433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 16:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 765CB23AC9
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 15:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ACED22EBE
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 16:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbhAVP3M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jan 2021 10:29:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36696 "EHLO
+        id S1728136AbhAVQBn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jan 2021 11:01:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728697AbhAVP3B (ORCPT
+        with ESMTP id S1729326AbhAVQBh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jan 2021 10:29:01 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B576AC061786;
-        Fri, 22 Jan 2021 07:28:20 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id o10so8011695lfl.13;
-        Fri, 22 Jan 2021 07:28:20 -0800 (PST)
+        Fri, 22 Jan 2021 11:01:37 -0500
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7683FC061794;
+        Fri, 22 Jan 2021 08:00:35 -0800 (PST)
+Received: by mail-lj1-x22e.google.com with SMTP id p13so7097895ljg.2;
+        Fri, 22 Jan 2021 08:00:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ISQKWjgPbcA/Ev2c4Dpj7JuqMDl83n77M+ggmuFw+pg=;
-        b=dmzoTzYkZa7zRgygbr3mVegm7/sSaiMmR4RVw3M0mqAtfAoDB6XXewgJnlYDtkBuam
-         F9bWa423mWu4Wijewx2OnQDBOIZuy9V/4v673kVolbgAankkGZhMZdeR+BMlOdtGICe1
-         Eksl/DHbz7pG8KNfGc9Fh0o9IjVB3UwI6IECSx7Y1C3p1TH0bnwyGfw1ysNkTgmfnc8C
-         kNpIIrtnmEB/Ww/FDgjE10+JmGaNJawt2KpUfBdXgyrnZK1HnWpg9PJWBO360XYAdR+0
-         Cknwdaltai7YIbG2ojLtq1UrywWnOnd8c89KoKJBwt4OJlBoUsSmcHeARDvK5K5wDlBU
-         Nl1g==
+        bh=WKOacFjtIl0I2fdJD2/SwxXGKdu15MP5vVZ1ZKeXK24=;
+        b=DvfDRJCOS2tEYUyCRUsTb195aILJ2j5S/XTqCR+Iwm8sb/Ip4S6VkmzNXZ5FRok4cz
+         M2umZ+ACI2u4dS48ummRMtGZxCh1eScekynREChTu7U/3xyJ9Rf7LUYOnsF2tELGahyy
+         iezkqhUPaV/1CZjs4l0DneU9CIp+ylcXGF1fqQoLlDg8/OpfBddOC7cJzt65B8gDcq75
+         R5VuU4+r9EK9/k1RAFPWR5sj5m0+fliITd+xrPmSY1wJR6gs5xhvxQ1vjafKKQKw+uNb
+         QuPoY/q5bq/TmzQxqTQ1Zr/kldiALzEqOXFYipoWoCt888U67qeOeTd2ZM6HG5yRhrqJ
+         6CLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ISQKWjgPbcA/Ev2c4Dpj7JuqMDl83n77M+ggmuFw+pg=;
-        b=bwaquGBytYcbDAy1izD3d4P8Rh+6cdyVg1SZ98A8X1hjmMJh5uEK0+C5cElYI3pBkX
-         L/yGPdX4xGShk5QnncnBcz919O/IkhRQX2DFLpdqes3PtB2xb5L03FOYGUilgPcHLwqt
-         CLEoyqLB/gc1wPa64MB1VFDIYKS1dWEWWPtn4DKKtjrq2TCs+yfdaXB9mRPJuL5hZSnr
-         2FXklmC7D7HmKQ/ay+tUe18uHV6DyrQ0dK6VpnwDk4wwIpYkd9F+ZsugCBJ2gncX4gCk
-         b3DycWOwuyKQ8oiNoum8MRnUlCbykLk8GKAF6nQ7Qw+8ggyI/97ktJgKOnRkcpjIRDxz
-         NDhw==
-X-Gm-Message-State: AOAM530cRZ2otYHCXOGXxH2w40ze7wVOu9PUjP/JelSpa8au/+DP1s71
-        QgWhXVYjpUDzT/rTXOanXzk1TZh5LtA=
-X-Google-Smtp-Source: ABdhPJzwGQlG1MHqbBIRIHds0kbrQeg1FOtQon6lZaFzU702grDxctXDFHfPTYD/1lhQxfZk3d3pqg==
-X-Received: by 2002:ac2:5e2a:: with SMTP id o10mr93571lfg.481.1611329299125;
-        Fri, 22 Jan 2021 07:28:19 -0800 (PST)
+        bh=WKOacFjtIl0I2fdJD2/SwxXGKdu15MP5vVZ1ZKeXK24=;
+        b=PkUQkRRZtgRtsX0u5R2HqqGtza2NBNoViamz1BZmCMwJT07B3pEePWkJCQSuRMt4TL
+         Our1dIKpUL8Ik2KUFAcwL0WqqKxKFGtOXls//iM0AntdkmnaBRyPn6GWtuIQUWXXi8wD
+         RMISV6Dga7sGscTQbYpW2cDNQaiaN3LhX+rgCGCLsbF1zY5CRHZmvZILrplis6xxsOZD
+         +EAvqX/BeHvnY/uMWCLDKd/kuoaW84DiCVBU4yV+XueclNZjNbY2E3Ge4VOpS68040uL
+         WuVi8PeNSZr+mBGf3TlmEnLp3aq9hWlfyTlwNYRTZc81iXhx+SirRettu14AluJoR0FG
+         GLlg==
+X-Gm-Message-State: AOAM532wBtslIIHQYLlxSNNMzuhJyKHYET3FMu1ji5XDoLrOBUAsE4HL
+        ykPPz1wqw3dHdQYFn5dyln918zdY+wM=
+X-Google-Smtp-Source: ABdhPJxQirgmrd8HStvvWr25mtQzxEvo/zfpPWaKr7n873zpfLttMd9rwGScqmyLUMDPwk6iM+8PcA==
+X-Received: by 2002:a05:651c:c1:: with SMTP id 1mr83794ljr.255.1611331233519;
+        Fri, 22 Jan 2021 08:00:33 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id a23sm920989lfm.125.2021.01.22.07.28.17
+        by smtp.googlemail.com with ESMTPSA id r201sm928493lff.268.2021.01.22.08.00.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Jan 2021 07:28:18 -0800 (PST)
-Subject: Re: [PATCH 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Fri, 22 Jan 2021 08:00:32 -0800 (PST)
+Subject: Re: [PATCH v3] regulator: Make regulator_sync_voltage() usable by
+ coupled regulators
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-References: <cover.1611227342.git.viresh.kumar@linaro.org>
- <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
- <71451eb2-46b2-1ea0-efcc-0811568159a4@gmail.com>
- <20210122062659.qss3hef4kltfgciu@vireshk-i7>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210121221649.23155-1-digetx@gmail.com>
+ <20210122134045.GD6391@sirena.org.uk>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f33334e7-bd28-af82-b557-681a2b4132da@gmail.com>
-Date:   Fri, 22 Jan 2021 18:28:16 +0300
+Message-ID: <36d0dad5-d5dd-a089-b65b-0d476e639a98@gmail.com>
+Date:   Fri, 22 Jan 2021 19:00:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20210122062659.qss3hef4kltfgciu@vireshk-i7>
+In-Reply-To: <20210122134045.GD6391@sirena.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -90,44 +83,20 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-22.01.2021 09:26, Viresh Kumar пишет:
-> On 22-01-21, 00:36, Dmitry Osipenko wrote:
->> 21.01.2021 14:17, Viresh Kumar пишет:
->>> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
->>> be used instead. Migrate to the new API.
->>>
->>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> ---
->>>  drivers/devfreq/tegra30-devfreq.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->>> index 117cad7968ab..d2477d7d1f66 100644
->>> --- a/drivers/devfreq/tegra30-devfreq.c
->>> +++ b/drivers/devfreq/tegra30-devfreq.c
->>> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->>>  		return PTR_ERR(opp);
->>>  	}
->>>  
->>> -	ret = dev_pm_opp_set_bw(dev, opp);
->>> +	ret = dev_pm_opp_set_opp(dev, opp);
->>>  	dev_pm_opp_put(opp);
->>>  
->>>  	return ret;
->>>
->>
->> This patch introduces a very serious change that needs to be fixed.
->>
->> Now dev_pm_opp_set_opp() changes both clock rate and bandwidth, this is
->> unacceptable for this driver because it shall not touch the clock rate.
->>
->> I think dev_pm_opp_set_bw() can't be removed.
+22.01.2021 16:40, Mark Brown пишет:
+> On Fri, Jan 22, 2021 at 01:16:49AM +0300, Dmitry Osipenko wrote:
 > 
-> I am wondering here on what would be a better solution, do what you
-> said or introduce another helper like dev_pm_opp_clear_clk(), which
-> will make sure the OPP core doesn't play with device's clk.
+>> +	/* balance only if there are regulators coupled */
+>> +	if (rdev->coupling_desc.n_coupled > 1) {
+>> +		ret = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+>> +		goto out;
+>> +	}
+>> +
+>>  	ret = _regulator_do_set_voltage(rdev, min_uV, max_uV);
+>>  
+>>  out:
+> 
+> This would be clearer written as an if/else rather than using the goto.
 > 
 
-Either way will work, but maybe keeping the dev_pm_opp_set_bw() is a bit
-more straightforward variant for now since it will avoid the code's
-changes and it's probably a bit more obvious variant for the OPP users.
+I'll make v4, thanks.
