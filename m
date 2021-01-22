@@ -7,107 +7,99 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981DAC433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 12:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DA2C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 12:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6F5230FC
-	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 12:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BC42343E
+	for <linux-tegra@archiver.kernel.org>; Fri, 22 Jan 2021 12:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbhAVM4w (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 22 Jan 2021 07:56:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
+        id S1727010AbhAVM7Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 22 Jan 2021 07:59:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbhAVM4s (ORCPT
+        with ESMTP id S1727066AbhAVM7T (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 22 Jan 2021 07:56:48 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168F7C06174A
-        for <linux-tegra@vger.kernel.org>; Fri, 22 Jan 2021 04:56:06 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id a8so7379179lfi.8
-        for <linux-tegra@vger.kernel.org>; Fri, 22 Jan 2021 04:56:06 -0800 (PST)
+        Fri, 22 Jan 2021 07:59:19 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC6FC0613D6
+        for <linux-tegra@vger.kernel.org>; Fri, 22 Jan 2021 04:58:36 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id b10so6403826ljp.6
+        for <linux-tegra@vger.kernel.org>; Fri, 22 Jan 2021 04:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hbysKLgwDzAo+nX90SpxzAyrCCK68/bvQhdhyAtkNpo=;
-        b=QDULxrStPPn057tG9barLLBFRTBLJ8ylUfC0+F54+qfA4SNlZv40pBLuzSI0N/59g+
-         SapNPHtGBn0koEhPx0looQTZhW4s0UFM5EVkuMCzoapTRXpEDyc69fqvsU908jFwJhl1
-         j/yvSpIt2HaWfzv+03V9uyp8XZPdrS6Fth+Ku9EuwOJYLiz4LOmW9KBVV+H7uB9ILTHo
-         76d+qxuVb/0yZGYHVhgwPn0OxgWrekrE33QMuejE4dqntZ4GJoOtPN0Jyx7bDRdcr5qZ
-         m6CggsFCwzDH7b5b9jySKPwtmQ3X/dswem/zBMF8fVnBErlwmXTgKtFmBiztB4LRoPvI
-         ipow==
+        bh=4seuth170OHrpzcvrGxWNmFx5FHFxq8P84afz/6Z5Xo=;
+        b=HDnNK/PLHiVdfRkWV5yeyxOxcoyCn24hwPU4U5xCPwq9vE8u2n7RaykoB9INj9iET2
+         qUuiJw/ezJMAYKqwQ7h8IxlVNfZwDGlZZF6GpSe26TrDgk/w6HvHpeAWDxUbbe+E/xty
+         IP3BH3yzs6HK2qPiedEnoeSTrLmR1CdeJX7crvwKs2nTNUQGoeTHl0catxZTLfTkXsVO
+         Pda4DDu/6DrlmZtvXnU1vRjCKW/8QMLlU7aoEzt2FFKEwyeRxBe3+Eec4bzCujuiac+y
+         R0N+yTNXq7d2rzCjwGs9Ed3mh/bpNkyn7x+uz4CdUJEgwTkIsaF0BiCl9WNM0uZmSfN/
+         Popw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hbysKLgwDzAo+nX90SpxzAyrCCK68/bvQhdhyAtkNpo=;
-        b=LsVGY75BKVxCGG/0oQM1l4LaC8ZPITGSJ25FgjHbeqTbDljnHqJEIKXs5nwBkcxata
-         HbVSGkMp5ZnTbiirvqRuvYCsVfhNgX/5E8RnPk8nohBGPnPWNG84yIhFY+aZWDwZAuvQ
-         M95AsQ1/95dmeSXC3NGtN8DS47EVwstXPPn5BuwoM9JYNVgAsFDytXrE/lC93vfrpEH1
-         Y35oSfVpoR+GZaIdPxU2XRfVnxzIZbg6x0qXL07LAizwJxiKAOTnxkkfnjjzQojUKA5C
-         zHrkCP+jX/36DI42C2N2hVu8cKEoYh3LH/tgyOOtW3m4B1YX9VQ1FLoab9KAMy7gmChS
-         WAaA==
-X-Gm-Message-State: AOAM530crCK8pEcejIsgec/sGSj0aLqFYqjl1CC1OXbkKX7f36Rt3sVW
-        H2nrgyAn6LcSXyLwJSVazhE8bLAv7DGjbX5gWIKCxQ==
-X-Google-Smtp-Source: ABdhPJyzQ8QWrLb9ryGYf8zFaFDgdefT9zZMp875FZQAg32906v115z1A2LAgTQWXJX5DB0zn6ghDHXKGH30CeVhH7A=
-X-Received: by 2002:a19:8bc6:: with SMTP id n189mr129571lfd.291.1611320164547;
- Fri, 22 Jan 2021 04:56:04 -0800 (PST)
+        bh=4seuth170OHrpzcvrGxWNmFx5FHFxq8P84afz/6Z5Xo=;
+        b=IHLu4s6daOjrzVf1bA3f3xdt+s2WQAZkwlHy7d2LRlRbQY5TMAI9OJlbizpJGWjhHU
+         rMIirqhoGMAj3V0CHOtwb0dkOf0ckAlwF10/VHMlnc12iFvkDtFpc2rITZPurNraKXHG
+         SW89ViPOlsPiBQ6WOhR1ndQukydpARnUIfZOLP3SPRbuw/IMrPJc+upkeeQCmJGE/MY3
+         6AKLdguIWOvOqNtKeEoojKGzFMP7IJ/x1M9Gkp3x4kE/cplHmO7GtiL0VoNpiinbTe3F
+         RuVGtBVPNTyZIf42UYqIb18/GWGFZ+pRuHYbtiYKkOb0a+6ITYkG0dENoBuMQkbkPJZr
+         3Xeg==
+X-Gm-Message-State: AOAM530jvWzxEIwcUIQi5rLLdvQr8N8Jw4uiNNQbT+6Q1NLmbsFwalWA
+        bwZzkhX/ngXFLw2pBAsRamvwnVp65WY9+XQIpnycDg==
+X-Google-Smtp-Source: ABdhPJzj59F+7XmvRLWmVdxewFMrw4mj2TMxm/ZMG2OB+xID5A+BKHAHHzn8FfIafN2lCelvrEVeOCnbUajF+SnUnUI=
+X-Received: by 2002:a05:651c:205b:: with SMTP id t27mr218754ljo.368.1611320314554;
+ Fri, 22 Jan 2021 04:58:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20210120004548.31692-1-digetx@gmail.com>
-In-Reply-To: <20210120004548.31692-1-digetx@gmail.com>
+References: <20210121225712.1118239-1-saravanak@google.com> <20210121225712.1118239-2-saravanak@google.com>
+In-Reply-To: <20210121225712.1118239-2-saravanak@google.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Jan 2021 13:55:53 +0100
-Message-ID: <CACRpkdZynT6T8wnN3xY6hUmZy5emWUe5ep9N3BEV8iQEZLnEew@mail.gmail.com>
-Subject: Re: [PATCH v1] gpio: tegra: Fix irq_set_affinity
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
+Date:   Fri, 22 Jan 2021 13:58:23 +0100
+Message-ID: <CACRpkdbR+W_prw-ONbU90q2hYrm9vTvFUDXHCvtDcbdZ8UwXsg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] of: property: Add fw_devlink support for "gpio"
+ and "gpios" binding
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 1:46 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Thu, Jan 21, 2021 at 11:57 PM Saravana Kannan <saravanak@google.com> wrote:
 
-> The irq_set_affinity callback should not be set if parent IRQ domain
-> doesn't present because gpio-tegra driver callback fails in this case,
-> causing a noisy error messages on system suspend:
+> To provide backward compatibility for boards that use deprecated DT
+> bindings, we need to add fw_devlink support for "gpio" and "gpios".
 >
->  Disabling non-boot CPUs ...
->  IRQ 26: no longer affine to CPU1
->  IRQ128: set affinity failed(-22).
->  IRQ130: set affinity failed(-22).
->  IRQ131: set affinity failed(-22).
->  IRQ 27: no longer affine to CPU2
->  IRQ128: set affinity failed(-22).
->  IRQ130: set affinity failed(-22).
->  IRQ131: set affinity failed(-22).
->  IRQ 28: no longer affine to CPU3
->  IRQ128: set affinity failed(-22).
->  IRQ130: set affinity failed(-22).
->  IRQ131: set affinity failed(-22).
->  Entering suspend state LP1
+> We also need to ignore these properties on nodes with "gpio-hog"
+> property because their gpio[s] are all supplied by the parent node.
 >
-> Hence just don't specify the irq_set_affinity callback if parent PMC
-> IRQ domain is missing. Tegra isn't capable of setting affinity per GPIO,
-> affinity could be set only per GPIO bank, thus there is nothing to do
-> for gpio-tegra in regards to CPU affinity without the parent IRQ domain.
->
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-> Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
-> Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-> Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Cc: linux-tegra <linux-tegra@vger.kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: e590474768f1 ("driver core: Set fw_devlink=on by default")
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-Ick, sorry for the noise!
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
