@@ -2,106 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC2CC433DB
-	for <linux-tegra@archiver.kernel.org>; Sun, 24 Jan 2021 22:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06B5C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 03:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E52222C9F
-	for <linux-tegra@archiver.kernel.org>; Sun, 24 Jan 2021 22:47:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B4A21D79
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 03:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbhAXWro (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 24 Jan 2021 17:47:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
+        id S1726652AbhAYDIf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 24 Jan 2021 22:08:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbhAXWrm (ORCPT
+        with ESMTP id S1726571AbhAYDIe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 24 Jan 2021 17:47:42 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A510EC061756
-        for <linux-tegra@vger.kernel.org>; Sun, 24 Jan 2021 14:47:01 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id h7so15105734lfc.6
-        for <linux-tegra@vger.kernel.org>; Sun, 24 Jan 2021 14:47:01 -0800 (PST)
+        Sun, 24 Jan 2021 22:08:34 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0843EC061573
+        for <linux-tegra@vger.kernel.org>; Sun, 24 Jan 2021 19:07:54 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id 31so6697412plb.10
+        for <linux-tegra@vger.kernel.org>; Sun, 24 Jan 2021 19:07:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=y/Ur1icl1bDhiJCpdkX42xbQJISQc10E4JkJfciYOIg=;
-        b=Fia13/11rrtVr3VD7jIbc1K2BXfyYbZKOQTkLB5fAphprZoIvpPCfPD9iEjTxrgu6L
-         4FV34p6SGvJ+iLunKep0oqWeCiFrP/WtmaaTq9zJLy6Xhh/TgI0S7C/Xo/Idfmv+cAgA
-         +0Ucp8n8H19ggvIdUc0BtrkWn7+4itcS3JLyj81g0jXRaJV0I5VOgSI0wfxhbpVGHjEZ
-         xuNH/O9sJgiIDcV/+B7ykpvJgvaltM55BcY+DSRsFA/WMFhp0GcU1q3g/NHexoA898y8
-         r2XAq8Yo7i46ovoLHCweo+CMO6+tE7lVpj/hiFnpL6l5HGhrhjGbFgoSqwcgGI817arb
-         ofCA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=u8+YbkbccOnTqbWHKnDyaMuyym5pEv5IG+EImU42D6M=;
+        b=MJy6OqiaaLqTicZSQyhluQpXvA0EVEL681DUoeBYtHv7G3AVEEeDpKIhkdZLMMKvuU
+         1QH4rMwBnUZnRgpvGKKVleRTyzdI4+BsusreYgtgBupeL6Bo0otwlK51fYQWYBAxpDdH
+         NI5fXAjrYMAVyFltVblQkcpfbiBTJomT05odfRQxEuyTu+kY99Twaam1l4m/vSxAO/WL
+         CMS9fH3sZ2XVYbZmgkmLrOzEVZ+FZX4m8c34hLjaMb2XV1Tz+HxNb6qJtwP5fCgVxwtb
+         isVgmExJEyCZTHyTE+Uvq8OXKxn42vzX0v+rsIFL5X9rUGKbrjXEH4tlnh9V29kbWFT3
+         Zvhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=y/Ur1icl1bDhiJCpdkX42xbQJISQc10E4JkJfciYOIg=;
-        b=oSN5wy8tVFXYqyJ5TXbMqxJuthPQ7jACapNoQoWqLT9U6VnIESesF7ENY0pWHeblTK
-         RUH9xi4wQwxW8c9rMHf+1nW5GWkGpazx94sTUT72XAa3DhLrhczVxHuBSmygEq8DLVyG
-         qDZBAiwluaKxss12WF13kqAVS3JxR0dIpG28rlhRmo8/lIu3FS+jZ+Z79viAUgcOx4Cd
-         To8PRGqlR/RKoX7EeqYlSkU9V76npWgMzTJbI4D1FZiZLFndBLyfzvBFtgy64sIg9eVk
-         w3XEiGaV8qyacZ/o4ci2Gp29rjc06atqFTMpCAMIp0s/uYUyGEfE5gjfuXlEJZIR/MJm
-         fxVQ==
-X-Gm-Message-State: AOAM533IkYv7VZhhVs7EKKwOCmuUG5w4/WR3XcwYj3xTDd54fBFXNWAP
-        wznEWiQa6L8uaRjnX3cT1INmllx0t09/+vrkS9WgcQ==
-X-Google-Smtp-Source: ABdhPJxRmV/i00A0XXkkWgplWNjeR+UwYPMT/qKg224LqsPZ4Tm9OrCC49nvwsY/P09TlEZqpiPKi95861RYTNut0G8=
-X-Received: by 2002:ac2:5c45:: with SMTP id s5mr278583lfp.586.1611528420080;
- Sun, 24 Jan 2021 14:47:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20210122185543.16554-1-digetx@gmail.com> <CACRpkdZTyBuz240iYuvi91k3dLKKXX=4DNxFEBP7mSNB58XtDw@mail.gmail.com>
- <24d46928-8c57-acba-f9cf-49afbe4c983c@gmail.com>
-In-Reply-To: <24d46928-8c57-acba-f9cf-49afbe4c983c@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 24 Jan 2021 23:46:49 +0100
-Message-ID: <CACRpkdaR9+mxXXjRADG4+qaGiqgwVRPcCAo-5nZwXXASYfs9+g@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Support building gpio-tegra driver as loadable module
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=u8+YbkbccOnTqbWHKnDyaMuyym5pEv5IG+EImU42D6M=;
+        b=BpTZq4rugPT/gIx7t+KOJDnDcHe4quf4V1x2mc4y94lfCTe9nMJRcKvhU/PnONEaCK
+         s+I40XmETOlq2ZmrOR/70RMw5+pmsU3rqDTSemK201zkY6DkEvg+iFl1MnW0liOFwz9a
+         hdbeKEAWw3WjqYmCADbAh/odEJSMci2PdrLoyC9qcX5GAf97gdCsL1t5NJczLHjzQbRV
+         3OHyPonv4mf33Qyk0foiC+jNyMOAJq0jc9Hb6Du3h/WRCltR1tE8L1GDmgr/kx75ynkm
+         m0Hp3cZjC8QU/e0AvyDhm5AcpAhS5SBZNSDiLAQ16pM/3tM6A3HFRViV8UULEFRrS1TT
+         /w6Q==
+X-Gm-Message-State: AOAM531kotYGOPhuSUWi3mHM04itjYASIqIDiNygrkJ8hUj1K1kUk8+6
+        I79lFqgLYgZnv3pgZsJeDrRJLg==
+X-Google-Smtp-Source: ABdhPJznGhbmqZqh5TnNgZUZ5C8Qkle96KENqXu8ahyIxfYvxvKFOOt/YTH0Tf8L7qqK0ZJZEnm2KQ==
+X-Received: by 2002:a17:902:e541:b029:df:df4f:2921 with SMTP id n1-20020a170902e541b02900dfdf4f2921mr6555444plf.52.1611544073448;
+        Sun, 24 Jan 2021 19:07:53 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id b14sm17415811pju.14.2021.01.24.19.07.52
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Jan 2021 19:07:52 -0800 (PST)
+Date:   Mon, 25 Jan 2021 08:37:50 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: Re: [PATCH v3] soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+Message-ID: <20210125030750.735minp7toxortm4@vireshk-i7>
+References: <20210121190117.25235-1-digetx@gmail.com>
+ <20210122063537.7yd7ww47gl2rdsdu@vireshk-i7>
+ <60cfafdf-4615-5a41-103d-96c35ba1fa8c@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <60cfafdf-4615-5a41-103d-96c35ba1fa8c@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jan 24, 2021 at 12:56 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-> 24.01.2021 01:50, Linus Walleij =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Fri, Jan 22, 2021 at 7:59 PM Dmitry Osipenko <digetx@gmail.com> wrot=
-e:
-> >
-> >> This small series adds modularization support to the gpio-tegra driver=
-,
-> >> i.e. driver now could be built as a loadable kernel module.
+On 22-01-21, 17:41, Dmitry Osipenko wrote:
+> 22.01.2021 09:35, Viresh Kumar пишет:
+> > On 21-01-21, 22:01, Dmitry Osipenko wrote:
+> >> Add common helper which initializes OPP table for Tegra SoC core devices.
 > >>
-> >> Dmitry Osipenko (3):
-> >>   gpio: tegra: Use debugfs_create_devm_seqfile()
-> >>   gpio: tegra: Clean up whitespaces in tegra_gpio_driver
-> >>   gpio: tegra: Support building driver as a loadable module
-> >
-> > As these three patches clearly make the kernel look better after
-> > than before:
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > However when we are doing this I would strongly encourage you
-> > to also make a patch implementing remove() so you can insmod
-> > rmmod the module at runtime.
->
-> The remove() is optional for drivers, it doesn't prevent the rmmod.
+> >> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+> >> Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
+> >> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+> >> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> >> [tested on some other non-upstreamed-yet T20/30/114 devices as well]
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>
+> >> Changelog:
+> >>
+> >> v3: - This patch is factored out from [1] to ease merging of the patches
+> >>       that will use the new helper. The goal is to get this new helper
+> >>       into 5.12, this should remove dependency on this patch for a several
+> >>       patchsets of a different subsystems (DRM, media, memory, etc) that
+> >>       will target 5.13.
+> >>
+> >>       @Thierry/Jon, please review and apply this patch for 5.12!
+> > 
+> > This is not how stuff works in kernel Dmitry, every commit in the
+> > kernel tree should build(at least)/boot fine. Your patch can only be
+> > applied once your base tree has all the patches on which your work is
+> > based of, otherwise this will lead to build failure (stuff like git
+> > bisect breaks with that). It would be better if you take this patch in
+> > 5.13, or after 5.12-rc2 once all other stuff lands.
+> > 
+> 
+> OMG, I completely missed that the devm series from Yangtao Li isn't
+> merged yet.
+> 
+> Viresh / Yangtao, will be it be okay if I'll collect all the
+> prerequisite devm patches from Yangtao + add this patch into a single
+> series that could be merged via the OPP tree for 5.12?
+> 
+> Of course Thierry or Jon will need to give the ack for the Tegra changes
+> in that case.
 
-Aha you mean all resources are managed (devm_*) so that
-rmmod/insmod works fine with this driver?
+I haven't heard back from Yangtao since his last post, not sure what's going on.
+It is normally better if he keeps posting his series, unless he is busy and will
+not be able to do it.
 
-OK then! :) the work is finished.
-
-Yours,
-Linus Walleij
+-- 
+viresh
