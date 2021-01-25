@@ -2,99 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB44C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 18:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B728AC433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 21:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0049822583
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 18:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8638820708
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 21:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbhAYSMa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Jan 2021 13:12:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731260AbhAYSDn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 13:03:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A997522583;
-        Mon, 25 Jan 2021 18:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611597782;
-        bh=XauW+yiq9PtiLTCRxGls7vBx60Zpm0LmrZUr+oXBxRo=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=iyq9f8V840omIGOnw2ZyP+t+wGGLaWsJi36buJoF3okaMAmncHZjs9AC21hcRAElb
-         yqTDVa30Jw162sTNEl3jiFgoyB5JJ9mEXIWfw9eMEENGZpBHz9npyz4RvpoayfKf21
-         Teo47zlSRs0sgrFb9dH7lyy1RIbcV0iBG3nHJ0InaCIwAEkuco4dxzgd5VUu9aEJWt
-         0gF2YTKOOPQqdQLzvuXd/PDfkbEeaiQTstPPYUsavZQ0pMoQuaDTgCsMI+Blq/a0mq
-         Ky9bPMrzekERI75Gc8ep0meyQaGuSw0GlLZlLgAPYmWY+sIvpGn0MUQ7pV8h/PJZ6b
-         gzMpXxZM7rWEw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-In-Reply-To: <20210120003154.26749-1-digetx@gmail.com>
-References: <20210120003154.26749-1-digetx@gmail.com>
-Subject: Re: (subset) [PATCH v3 0/6] Clock and reset improvements for Tegra ALSA drivers
-Message-Id: <161159774049.2212.2964424673309683521.b4-ty@kernel.org>
-Date:   Mon, 25 Jan 2021 18:02:20 +0000
+        id S1732046AbhAYVKV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Jan 2021 16:10:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732238AbhAYVJu (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Jan 2021 16:09:50 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D772C061574;
+        Mon, 25 Jan 2021 13:09:09 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id a8so19858028lfi.8;
+        Mon, 25 Jan 2021 13:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ljX94ob0gxc7TBbMW/hwvorCyQ7d78+9C5d6nUuJY4A=;
+        b=l8FsEZ8ZKnJFAhD5sfNBKDjgb3XtTjtjRwwpmqVRkHvuw0hQec5jUHcmTJPIU3fJ3+
+         euItLtjg7gKpCV1pjAgOqUWu+FIW9C5mjVBC6XHOAHGgSeGwC2FWgOGiVViyylakaQ5h
+         bA9u4oeJSbto5gU3zaYoAouYI2RN+bJiF/zw1D0m61jNLdGVDvmRJhrWGMKXw1WWfMYH
+         +FWeWiEWI2IJ/qgkE6d+sivsZXixsW853jfsLJWvzCgLnPJSZsx97ng3dPpMMM9gpoCo
+         KolGhANnSL4SOZ6WL7chOYSgt1DTI7SrWcOFVbyjvVgaGZSKkYBCvKAkgRNxzX0ImNPS
+         HQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ljX94ob0gxc7TBbMW/hwvorCyQ7d78+9C5d6nUuJY4A=;
+        b=J2eEZpAVznhRdXqWdF0gdZhJRv1ykIZdyCfci2H4k0I/RqkYqBvRtc29Koltevz5yn
+         afHE3iiSpSDIqVYkw0qVZFMQ/Xt2ThXnYaDh/DlJ0WP+MQ5d2I0aMSd0sNRvnCaKqniI
+         XMIzT+xuwB8mRHQzK/Xn5soUakFZYPGBXzZXCH6IrPZAhN6UeriYSeawUZQKQfEcPxj0
+         aEUyIkDhmMpFlOx+GB7zEY7eb7Dws0Tpl2vMbcQxf+MA4D1OHWJrzo8T7f3TK7sd7D91
+         UumedGxpB1/NS4dKLCf9+8M1/zzuXBmalK/0b5wMTazshEnDJWAnthTI8+l1i2hA2jqE
+         1GAQ==
+X-Gm-Message-State: AOAM531TwdRlP8LMhL5IZOJl8xNcHqOBfnD2VUmlT+MavCX/0yqY0ugR
+        uYfNji+C3alkuu2XkUqGCzOScTHsru8=
+X-Google-Smtp-Source: ABdhPJxNbMSVPgHPo/hTwLSVl2t3E08eBL30MfC6cO0G1scw3qtVdUFtPz51LYvi84N+/v7VL0sTcg==
+X-Received: by 2002:a19:58a:: with SMTP id 132mr1091790lff.355.1611608947678;
+        Mon, 25 Jan 2021 13:09:07 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id q13sm1069781lfk.307.2021.01.25.13.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Jan 2021 13:09:06 -0800 (PST)
+Subject: Re: [PATCH 07/13] opp: Allow _generic_set_opp_clk_only() to work for
+ non-freq devices
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1611227342.git.viresh.kumar@linaro.org>
+ <1585f6c21ea8aee64fe4da0bf72b36ea4d74a779.1611227342.git.viresh.kumar@linaro.org>
+ <9b2638e6-b842-8737-e5a0-aeeb84927fce@gmail.com>
+ <20210122043506.lm6yiefzlyubq5my@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7d6573e3-7885-fb0b-2290-c181e2c557f9@gmail.com>
+Date:   Tue, 26 Jan 2021 00:09:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20210122043506.lm6yiefzlyubq5my@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 20 Jan 2021 03:31:48 +0300, Dmitry Osipenko wrote:
-> This series improves the handling of clock and reset controls of
-> NVIDA Tegra ALSA drivers. Tegra HDA and AHUB drivers aren't handling
-> resets properly, which needs to be fixed in order to unblock other patches
-> related to fixes of the reset controller driver since HDA/AHUB are bound
-> to fail once reset controller driver will be corrected. In particular ALSA
-> drivers are relying on implicit de-assertion of resets which is done by the
-> tegra-clk driver. It's not the business of the clk driver to touch resets
-> and we need to fix this because it breaks reset/clk programming sequences
-> of other Tegra drivers.
+22.01.2021 07:35, Viresh Kumar пишет:
+> On 21-01-21, 23:26, Dmitry Osipenko wrote:
+>> 21.01.2021 14:17, Viresh Kumar пишет:
+>>> In order to avoid conditional statements at the caller site, this patch
+>>> updates _generic_set_opp_clk_only() to work for devices that don't
+>>> change frequency (like power domains, etc.). Return 0 if the clk pointer
+>>> passed to this routine is not valid.
+>>>
+>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> ---
+>> ...
+>>
+>> Hello Viresh,
+>>
+>> Thank you very much for yours effort! I gave a quick test to this series
+>> and instantly found one small issue in this patch.
+>>
+>>> +	/* We may reach here for devices which don't change frequency */
+>>> +	if (unlikely(!clk))
+>>
+>> I replaced dev_pm_opp_set_voltage() with dev_pm_opp_set_opp() in the
+>> Tegra PD driver and got a crash, which happens because the above line
+>> should be:
+>>
+>> 	if (IS_ERR(clk))
 > 
-> [...]
+> Fixed, thanks.
+> 
 
-Applied to
+Please remove unlikely() around IS_ERR(), it already has the unlikely().
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+https://elixir.bootlin.com/linux/v5.11-rc4/source/include/linux/err.h#L22
 
-Thanks!
-
-[4/6] ASoC: tegra: ahub: Add missing resets
-      commit: 24a41a38dd2df065ee942221c2fae5e314770865
-[5/6] ASoC: tegra: ahub: Use clk_bulk helpers
-      commit: 6d8ac9b1dd2f138f4aa39008994600f561eeede8
-[6/6] ASoC: tegra: ahub: Reset hardware properly
-      commit: ed9ce1ed2239909c23d48c723c6549417c476246
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+I'd also recommend to remove all the unlikely() from OPP code since it
+doesn't bring any value if not used in a very performance-critical code
+path. OPP core doesn't have such code paths. The [un]likely() only make
+code less readable and may result in a worse assembly.
