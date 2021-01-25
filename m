@@ -2,112 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8296C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 17:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB44C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 18:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7CE22B3F
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 17:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0049822583
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 18:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbhAYRg4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Jan 2021 12:36:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57126 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731000AbhAYRgg (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 12:36:36 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F031C061786;
-        Mon, 25 Jan 2021 09:35:42 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id p13so16347700ljg.2;
-        Mon, 25 Jan 2021 09:35:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X83exQMOztH+V+6RKs+mLlDQ2mY3VBp/sSkBeCvqfIU=;
-        b=dLDEE8ucdkDxl02KcwK9VxrydqBs7/Gis+S8JTrtOAWFi/WQ2uKwoU9Q0n56+15h3r
-         aSmNSI9G8hFoxk3YQzFpVCI91y3DmPL9XgJIAq2g8j8j/jAbsIBrc+F7ulOCS37nbQYg
-         9eYqthPf3ryUCi+MAYFY95WB5+VwYW1jbRrEAws9sQqTSH0R7F02CWQUp49KY0XgmQ3r
-         PnohwYm4UdmIk6r+10eX+zdGXovwmpCQnmOlptiCJ3Q5Fz5PKe4GvpHik/geDbusdCzI
-         jgfu6fd5aN08FVFs61+LacwrLE9YKq2SdzhzNugkfes6z/UJsgyZ3fanyZlI/uWQ/A3c
-         fPjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X83exQMOztH+V+6RKs+mLlDQ2mY3VBp/sSkBeCvqfIU=;
-        b=KHLv4eXklo8yofY14uNMX8UhC4vzdDz1q9d+mVyM8cE51BVGPveGYDnrAEclvLxaEH
-         L+D1eKHGhpN3AxA7y1QQX3uUQekN2xQFkyo/mjmuBT+NVDGJ7oocoXmxZufKw6hb2TQX
-         B3O0+qU8sg0nuLh7Fcjg8coWZqJRsuPKycWvCfKg+ye7UYM5Hnh21R9W6dKEcRrgePiB
-         m4hWngYDsEljcrzCJQa94tflx3Vx2YJKn/Baz0WXBDvNYIrOqUf8ZNgjamb4DVk1AJZT
-         z/iI/c+7PjbZcyoDzlp4tqhNW9JuuMZnxOPsrbgUDpmfUOTPNMyFHMl/bkPavLbaobn+
-         u7hQ==
-X-Gm-Message-State: AOAM531HWbwwl2AYpBAvVolJNuUoyC+2PNy8mRHfN+rroU3D4PSgyGJp
-        NcGvL1VXBPEmbnbWUp7H4S0=
-X-Google-Smtp-Source: ABdhPJwrVRjKISUhGPG51fA4v6H3gH94RDNCwsh4GjGzdQwUIMcUpp8sUecuEHv6y7+L/VWT8pXIyA==
-X-Received: by 2002:a2e:8059:: with SMTP id p25mr682526ljg.155.1611596139799;
-        Mon, 25 Jan 2021 09:35:39 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id j2sm2023879lfe.134.2021.01.25.09.35.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 09:35:39 -0800 (PST)
-Subject: Re: [PATCH v12 4/5] drm/tegra: dc: Support memory bandwidth
- management
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Viresh Kumar <vireshk@kernel.org>,
+        id S1731258AbhAYSMa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Jan 2021 13:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731260AbhAYSDn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Jan 2021 13:03:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A997522583;
+        Mon, 25 Jan 2021 18:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611597782;
+        bh=XauW+yiq9PtiLTCRxGls7vBx60Zpm0LmrZUr+oXBxRo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=iyq9f8V840omIGOnw2ZyP+t+wGGLaWsJi36buJoF3okaMAmncHZjs9AC21hcRAElb
+         yqTDVa30Jw162sTNEl3jiFgoyB5JJ9mEXIWfw9eMEENGZpBHz9npyz4RvpoayfKf21
+         Teo47zlSRs0sgrFb9dH7lyy1RIbcV0iBG3nHJ0InaCIwAEkuco4dxzgd5VUu9aEJWt
+         0gF2YTKOOPQqdQLzvuXd/PDfkbEeaiQTstPPYUsavZQ0pMoQuaDTgCsMI+Blq/a0mq
+         Ky9bPMrzekERI75Gc8ep0meyQaGuSw0GlLZlLgAPYmWY+sIvpGn0MUQ7pV8h/PJZ6b
+         gzMpXxZM7rWEw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Takashi Iwai <tiwai@suse.com>,
         Peter Geis <pgwipeout@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20201228154920.18846-1-digetx@gmail.com>
- <20201228154920.18846-5-digetx@gmail.com>
-Message-ID: <f19789d5-fdf2-8cae-9b54-db885873032a@gmail.com>
-Date:   Mon, 25 Jan 2021 20:35:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Jaroslav Kysela <perex@perex.cz>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+In-Reply-To: <20210120003154.26749-1-digetx@gmail.com>
+References: <20210120003154.26749-1-digetx@gmail.com>
+Subject: Re: (subset) [PATCH v3 0/6] Clock and reset improvements for Tegra ALSA drivers
+Message-Id: <161159774049.2212.2964424673309683521.b4-ty@kernel.org>
+Date:   Mon, 25 Jan 2021 18:02:20 +0000
 MIME-Version: 1.0
-In-Reply-To: <20201228154920.18846-5-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.12.2020 18:49, Dmitry Osipenko пишет:
-> Display controller (DC) performs isochronous memory transfers, and thus,
-> has a requirement for a minimum memory bandwidth that shall be fulfilled,
-> otherwise framebuffer data can't be fetched fast enough and this results
-> in a DC's data-FIFO underflow that follows by a visual corruption.
+On Wed, 20 Jan 2021 03:31:48 +0300, Dmitry Osipenko wrote:
+> This series improves the handling of clock and reset controls of
+> NVIDA Tegra ALSA drivers. Tegra HDA and AHUB drivers aren't handling
+> resets properly, which needs to be fixed in order to unblock other patches
+> related to fixes of the reset controller driver since HDA/AHUB are bound
+> to fail once reset controller driver will be corrected. In particular ALSA
+> drivers are relying on implicit de-assertion of resets which is done by the
+> tegra-clk driver. It's not the business of the clk driver to touch resets
+> and we need to fix this because it breaks reset/clk programming sequences
+> of other Tegra drivers.
 > 
-> The Memory Controller drivers provide facility for memory bandwidth
-> management via interconnect API. Let's wire up the interconnect API
-> support to the DC driver in order to fix the distorted display output
-> on T30 Ouya, T124 TK1 and other Tegra devices.
-> 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> [...]
 
-Thierry, I'm looking forward to yours review. Only DRM patches are left
-unmerged yet in this series.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[4/6] ASoC: tegra: ahub: Add missing resets
+      commit: 24a41a38dd2df065ee942221c2fae5e314770865
+[5/6] ASoC: tegra: ahub: Use clk_bulk helpers
+      commit: 6d8ac9b1dd2f138f4aa39008994600f561eeede8
+[6/6] ASoC: tegra: ahub: Reset hardware properly
+      commit: ed9ce1ed2239909c23d48c723c6549417c476246
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
