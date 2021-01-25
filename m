@@ -2,118 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A5C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 02:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0CAC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 05:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8977922E03
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 02:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F99D229C4
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 05:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbhAYOKn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Jan 2021 09:10:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729258AbhAYOIr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 09:08:47 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77AD4C061786;
-        Mon, 25 Jan 2021 06:08:06 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id a12so9774706lfb.1;
-        Mon, 25 Jan 2021 06:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b70UYa8YIK0x9xv+9vYo/yu767VIPloSWRaqTr4Le5U=;
-        b=p2aWeLNxieT8woVT0Tl/UIXog/WUBwAaE+KXDvN3pVh7Tl9ZVAD+1/JiZX0bHE311l
-         WIS0Fc0dUG8GqfDKDPHM62E60VTzNwJvhZ46CsjqN/rZm3IzD0xVx2BxdNdl70xehQFp
-         n+8ebZ0qkSe5mVX0/BRW+bf4RGo5bVjD8r2D8v/1iYWgFcc5Zb+cfEz5VjMIzRNnwn+t
-         0klFZfxePE4Yjx+zVVUFn1w+f5UJmTS05THBybzYt7h7+SNQ8mK7pDQgsyS0O2QdG4vM
-         Spg8PBxWdArWbSyOxtTrtP1cUfqxJXuzbdVcJ81elQ7hGOsQ2WoVpl3Z2vZIob0F1fff
-         bWEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b70UYa8YIK0x9xv+9vYo/yu767VIPloSWRaqTr4Le5U=;
-        b=ajqKU+lOY5i/Ac0LOz0bkepiDPCkU8gTRJLNAeUAq9y4MAYeiS7OKwzqkqr03hlJDU
-         Uul0VwaoCXtZsKn8EySqBVNxTm8rcqNI8Y8bOvdfo7UjV0rSIM3Yxg9ylbORtbeg6v8O
-         slmFxILim/TtO8Jt4HMxwbJ8ZSn2omJpPhUXn/fU+akKFGBqjqVFNhxRnHyaGu93QYdR
-         kfRLkpT6SeMb6nxO8DB7Ba0p/tLyZPTZAwRMGlHT4AI1VcmoKAFZtIA9/N/qxaPPcLhd
-         eJLcKcSBntMaawGj1RX9inCWLFu8g+7gpVhaChnyXhnmGv4nKEQuc8F6qgUPRtdlYU7j
-         dqWg==
-X-Gm-Message-State: AOAM531pVhliHwqr8Gz26EC0TIDVJx+3Vb2qscyNySlP6sfX7NPFmedJ
-        oRJyplZU9ixMfCCtdn/a9DLAGI2U9Bc=
-X-Google-Smtp-Source: ABdhPJxCtwtWXYO91eo6tYXFDoyFBpADb2MoH9I5qV4pNcyLmcqhJSYYTq9inWLbmT/uD6Wo9qmcmw==
-X-Received: by 2002:a19:c1c9:: with SMTP id r192mr351166lff.578.1611583684824;
-        Mon, 25 Jan 2021 06:08:04 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id u18sm298271ljl.57.2021.01.25.06.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 06:08:04 -0800 (PST)
-Subject: Re: [PATCH v1 0/3] Support building gpio-tegra driver as loadable
- module
-To:     Linus Walleij <linus.walleij@linaro.org>
+        id S1727904AbhAZFrD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:47:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48792 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730799AbhAYQeV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Jan 2021 11:34:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E975FAD7A;
+        Mon, 25 Jan 2021 15:18:52 +0000 (UTC)
+Date:   Mon, 25 Jan 2021 16:18:52 +0100
+Message-ID: <s5h35yp3uzn.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210122185543.16554-1-digetx@gmail.com>
- <CACRpkdZTyBuz240iYuvi91k3dLKKXX=4DNxFEBP7mSNB58XtDw@mail.gmail.com>
- <24d46928-8c57-acba-f9cf-49afbe4c983c@gmail.com>
- <CACRpkdaR9+mxXXjRADG4+qaGiqgwVRPcCAo-5nZwXXASYfs9+g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b6075dec-c019-3701-4d3d-d3327aef17d7@gmail.com>
-Date:   Mon, 25 Jan 2021 17:08:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdaR9+mxXXjRADG4+qaGiqgwVRPcCAo-5nZwXXASYfs9+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sameer Pujar <spujar@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] ALSA: hda/tegra: Reset hardware
+In-Reply-To: <20210120003154.26749-3-digetx@gmail.com>
+References: <20210120003154.26749-1-digetx@gmail.com>
+        <20210120003154.26749-3-digetx@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-25.01.2021 01:46, Linus Walleij пишет:
-> On Sun, Jan 24, 2021 at 12:56 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->> 24.01.2021 01:50, Linus Walleij пишет:
->>> On Fri, Jan 22, 2021 at 7:59 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->>>
->>>> This small series adds modularization support to the gpio-tegra driver,
->>>> i.e. driver now could be built as a loadable kernel module.
->>>>
->>>> Dmitry Osipenko (3):
->>>>   gpio: tegra: Use debugfs_create_devm_seqfile()
->>>>   gpio: tegra: Clean up whitespaces in tegra_gpio_driver
->>>>   gpio: tegra: Support building driver as a loadable module
->>>
->>> As these three patches clearly make the kernel look better after
->>> than before:
->>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>>
->>> However when we are doing this I would strongly encourage you
->>> to also make a patch implementing remove() so you can insmod
->>> rmmod the module at runtime.
->>
->> The remove() is optional for drivers, it doesn't prevent the rmmod.
+On Wed, 20 Jan 2021 01:31:50 +0100,
+Dmitry Osipenko wrote:
 > 
-> Aha you mean all resources are managed (devm_*) so that
-> rmmod/insmod works fine with this driver?
+> Reset hardware on RPM-resume in order to bring it into a predictable
+> state.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30 audio works
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30 boot-tested
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # TK1 boot-tested
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-yes
+Currently we have neither dependency nor reverse-selection of
+CONFIG_RESET_CONTROLLER.  It wouldn't be a problem for builds, but
+you'll get a runtime error from
+devm_reset_control_array_get_exclusive() always when
+CONFIG_RESET_CONTROLLER=n.
 
-> OK then! :) the work is finished.
+I guess it must be a corner case, but just to be sure.
 
-The work on the modularization indeed should be finished, thanks.
+
+thanks,
+
+Takashi
+
+
+> ---
+>  sound/pci/hda/hda_tegra.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> index a25bf7083c28..04dcd4cdfd9e 100644
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/moduleparam.h>
+>  #include <linux/mutex.h>
+>  #include <linux/of_device.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/time.h>
+>  #include <linux/string.h>
+> @@ -70,6 +71,7 @@
+>  struct hda_tegra {
+>  	struct azx chip;
+>  	struct device *dev;
+> +	struct reset_control *reset;
+>  	struct clk_bulk_data clocks[3];
+>  	unsigned int nclocks;
+>  	void __iomem *regs;
+> @@ -167,6 +169,12 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
+>  	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
+>  	int rc;
+>  
+> +	if (!chip->running) {
+> +		rc = reset_control_assert(hda->reset);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+>  	rc = clk_bulk_prepare_enable(hda->nclocks, hda->clocks);
+>  	if (rc != 0)
+>  		return rc;
+> @@ -176,6 +184,12 @@ static int __maybe_unused hda_tegra_runtime_resume(struct device *dev)
+>  		/* disable controller wake up event*/
+>  		azx_writew(chip, WAKEEN, azx_readw(chip, WAKEEN) &
+>  			   ~STATESTS_INT_MASK);
+> +	} else {
+> +		usleep_range(10, 100);
+> +
+> +		rc = reset_control_deassert(hda->reset);
+> +		if (rc)
+> +			return rc;
+>  	}
+>  
+>  	return 0;
+> @@ -441,6 +455,12 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> +	hda->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
+> +	if (IS_ERR(hda->reset)) {
+> +		err = PTR_ERR(hda->reset);
+> +		goto out_free;
+> +	}
+> +
+>  	hda->clocks[hda->nclocks++].id = "hda";
+>  	hda->clocks[hda->nclocks++].id = "hda2hdmi";
+>  	hda->clocks[hda->nclocks++].id = "hda2codec_2x";
+> -- 
+> 2.29.2
+> 
