@@ -2,96 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3CCC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 05:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4B2C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 16:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B09E922581
-	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 05:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3AC722EBD
+	for <linux-tegra@archiver.kernel.org>; Mon, 25 Jan 2021 16:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbhAYFVk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 25 Jan 2021 00:21:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39960 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbhAYFVi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 00:21:38 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383E7C061573;
-        Sun, 24 Jan 2021 21:20:58 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id l18so1750374pji.3;
-        Sun, 24 Jan 2021 21:20:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Dds/WUdH9PnyQJIl6DvWk3y0e5c+VljMiMqdDLW00eo=;
-        b=aUbpK8mE9FdDCtnG3Wp9dOLFJQatc42v4dnZuSe5ywgLs15fD3JjZJBG7YCRiH9BzJ
-         tavgdxfEWMP3nJDfIwkAnml3MRco42FXX3GStJkbURsCA7Wc1xAzfL2nZbxc3Dl/0OnR
-         PPRWJ21N/wtenBqYyHPlu2jYWm++0xttx4mK3RR9qtXLWHVK/wN8VpM3qW0znmce8ilY
-         J/QqAdmXSMzDkwacS1yjggWPWguohByHbCOz9gVIPVPVqH9xtCQorDKWv1kwd8LsNOn5
-         zILCy8RE24C22/PnXnOAhIxPE0XiasA6oOnK0WnfHOtUKxuxwKsHtiStfTCL6JJ1VnSc
-         YxJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Dds/WUdH9PnyQJIl6DvWk3y0e5c+VljMiMqdDLW00eo=;
-        b=BU0nCea92oGJq09Itl4uj5aTZlrRJoTBS1w5R6fgB73eJbyzCpFp4Cs2X3Lff9SYCo
-         yIsfl811BL9LRJqY5WDfT8NNMD6so9sA6fsk5X6Qp+1+bJSyqByZRh+pMvsObXU6QUbw
-         HlhwGtjomCKFv2ArQti2DHVIrQClvfBF2iz6Dkbb3zEWP7V6cYq9HT7+/9/LlMdqFsHD
-         1enDJqnOa22Oy1JX8yqCtjL7WWGh1sgZSD8zz8BR/p4nqlQw+bHy7T8oZo/Gzd0uTsMF
-         Rdk1x61uXIjsLCvhZn9u7G2+3dWd/FV+hf6WLfyEVqMjUNXCFc79eIWe9vbq5uWUOSIe
-         kXSQ==
-X-Gm-Message-State: AOAM531cqFhA0YHEjF1xQYXSvAS3nFwWRCeNBcjSZWbBIVftN5i32XYa
-        xbB7l40YAbkVnR15M5DS8Ww4ogecs9k=
-X-Google-Smtp-Source: ABdhPJzdUoh5B6dMgRhGEhLrOl14C38iw8g4rBvfTcmwcgxwtNxlDqwC+tNX1D3wLLKV1Y/PP2FSjw==
-X-Received: by 2002:a17:90a:4088:: with SMTP id l8mr1571526pjg.106.1611552057777;
-        Sun, 24 Jan 2021 21:20:57 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id kr9sm17111965pjb.0.2021.01.24.21.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Jan 2021 21:20:56 -0800 (PST)
-Date:   Sun, 24 Jan 2021 21:20:54 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Johnny Chuang <johnny.chuang.emc@gmail.com>,
-        linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9] Input: elants_i2c - support eKTF3624
-Message-ID: <YA5VNtc7vetdNDHq@google.com>
-References: <20210124195414.27333-1-digetx@gmail.com>
+        id S1730742AbhAYQgW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 25 Jan 2021 11:36:22 -0500
+Received: from foss.arm.com ([217.140.110.172]:51054 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730778AbhAYQf7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 25 Jan 2021 11:35:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 265A41042;
+        Mon, 25 Jan 2021 08:34:35 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07DD13F68F;
+        Mon, 25 Jan 2021 08:34:33 -0800 (PST)
+Date:   Mon, 25 Jan 2021 16:34:31 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     zhangqilong <zhangqilong3@huawei.com>, vidyas@nvidia.com
+Cc:     "robh@kernel.org" <robh@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIFBDSQ==?= =?utf-8?Q?=3A?= dwc:
+ fix reference leak in pex_ep_event_pex_rst_deassert
+Message-ID: <20210125163431.GB5795@e121166-lin.cambridge.arm.com>
+References: <20201102143045.142121-1-zhangqilong3@huawei.com>
+ <f09c0801-d584-3c27-d3e7-ca59a64a30d1@nvidia.com>
+ <b1f6b6805a7746b48020d7cfaaa73fab@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210124195414.27333-1-digetx@gmail.com>
+In-Reply-To: <b1f6b6805a7746b48020d7cfaaa73fab@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Jan 24, 2021 at 10:54:14PM +0300, Dmitry Osipenko wrote:
-> From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+On Tue, Nov 03, 2020 at 03:14:21AM +0000, zhangqilong wrote:
+> Hi
 > 
-> Add ELAN KTF3624 touchscreen support to the elants_i2c driver.
-> The eKTF3624 TS is found on a series of ASUS Transformer tablet devices,
-> Nexus 7 tablet and etc. The firmware interface of eKTF3624 is nearly
-> identical to eKTH3500, which is already supported by the driver.
-> The minor differences of the firmware interface are now handled by
-> the driver. The eKTF3624 support was tested on ASUS Transformer TF700T,
-> TF300T and Nexus 7 tablets.
+> > 
+> > 
+> > On 11/2/2020 8:00 PM, Zhang Qilong wrote:
+> > > External email: Use caution opening links or attachments
+> > >
+> > >
+> > > pm_runtime_get_sync will increment pm usage counter even it failed.
+> > > Forgetting to pm_runtime_put_noidle will result in reference leak in
+> > > pex_ep_event_pex_rst_deassert, so we should fix it.
+> > >
+> > > Fixes: c57247f940e8e ("PCI: tegra: Add support for PCIe endpoint mode
+> > > in Tegra194")
+> > > Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+> > > ---
+> > >   drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > index f920e7efe118..936510b5c649 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > > @@ -1662,6 +1662,7 @@ static void pex_ep_event_pex_rst_deassert(struct
+> > > tegra_pcie_dw *pcie)
+> > >
+> > >          ret = pm_runtime_get_sync(dev);
+> > >          if (ret < 0) {
+> > > +               pm_runtime_put_noidle(dev);
+> > Why can't we call pm_runtime_put_sync(dev) as that is what is being called in
+> > failure cases anyway further down in this API?
+> > 
+> Both of the two functions are OK, the difference is that, when pm_runtime_put_sync failed(runtime of the device has error, the device is in Inaccessible state or other error state...), it only increase the usage count of the power, and do nothing else. We merely need call pm_runtime_put_noidle to decrease the usage count. If we call pm_runtime_put_sync to reset it, it will notify device bus type if the device can be suspended, and that is meanless when pm_runtime_put_sync failed.
+
+I don't understand. Vidya any feedback ?
+
+Lorenzo
+
+> Thanks, best wish!
 > 
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-Applied, thank you.
-
--- 
-Dmitry
+> Zhang Qilong
+> > >                  dev_err(dev, "Failed to get runtime sync for PCIe
+> > dev: %d\n",
+> > >                          ret);
+> > >                  return;
+> > > --
+> > > 2.17.1
+> > >
