@@ -2,88 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D272C4361A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD411C07EBE
 	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 19:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 541F322228
+	by mail.kernel.org (Postfix) with ESMTP id 7987322A84
 	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 19:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbhAZFqx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:46:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
+        id S1726592AbhAZFqg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:46:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbhAYQB1 (ORCPT
+        with ESMTP id S1730208AbhAYPmM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 11:01:27 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49CAC06174A;
-        Mon, 25 Jan 2021 08:00:46 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id l12so13361965ljc.3;
-        Mon, 25 Jan 2021 08:00:46 -0800 (PST)
+        Mon, 25 Jan 2021 10:42:12 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C795C0611BC;
+        Mon, 25 Jan 2021 07:27:33 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id v67so18347799lfa.0;
+        Mon, 25 Jan 2021 07:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JOoMcr6gXPOH11DZhT/CQoFTEMtxIzC/wwQvt5fOQcU=;
-        b=s9ZsLNOMX3/ADc0QvUSgm9Yg1DqXKjdKMs4QAHCWpedsj9oiNKbnVgFXUsLEZ7bCN6
-         PuK1JwHj/WUsJsEg8X6qiQw/0rB34XxNv74C+j7C9sVEYA0f1B3WiPGgvhoeZA+VtHdE
-         y4bS90Sd/n/Wry31xnp0HN+INJtB7ARvtoP/ECQru3/eADWj2Y7N6ib55ByZ/ugmMvah
-         MrUZhywSbV15i+xANr0NFQptn7RtEugQtZVCbY8HcHjCHAuD4SoFNJklB24Y1jBI8BkT
-         ViLeIB5gGBJFTnE+o6fsMFlc651CMnaaJ6p9jEdQwUyxy0vudynIIYYJIiv7KNBrKlVP
-         9avQ==
+        bh=UoWqLYFxEb3nF4ce0Tbsv2hSrI7OApPalzEh2y4l+cg=;
+        b=apX8fpQRgXrDIIQdjhUlTMXanMxM8vUDXIXSQxsrotsPIpCU3fVl8nY1YSQaDejIuV
+         dMgju/qSlputc6pRNtgKBzQxzNpw4j9gADNtjJHru12juCIpeM8mif1GHz2d0r/2k16o
+         aSR7B67E5usnCWLnTai1SHUwssmY+SFCBsktn2XmcUibTdzawm4AHdcZ/mq1ZYxmQwvb
+         qfUNzewXuyTQMasbbW02FnhTG71BJB5ta2ayJHvm+eYvOxS8NSUQKUikYW+vBWlcNs1a
+         fUKPSWRLzYwNO2Q7MVbX90QA18Fe7TsS8XixZVhjR7DOjzoEljVqH9PhXu06e64suN7K
+         HTnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JOoMcr6gXPOH11DZhT/CQoFTEMtxIzC/wwQvt5fOQcU=;
-        b=NqhywZt3sjk79lUEiFTpgza4vQX5Y5PL0v6bRP6NN4SaieKcJ8fPmg46gu3u4zcBAO
-         eKJlH+lwa6tHGFeuDB/CaiyngHh9DaZlcgKh/29L6YotWZ/d4fOKU1TCr0or1IIuSjQm
-         v2UA/KPtJSvC2fpI3PLRrHM3WGNiZhoC09DgDgM6xYt00CHxqfL2Qj8mb32Gg2qb+Scd
-         5tFhDi35LK740nWr0qCcKXSc2IvE5HRZ+VPI7vzTsiHHlSym6Au5bNu6HEbfbt9dFeyq
-         ZBaQW/42n+jJ8oHfCPn2J9yo/SU0obuIgK0gbVwj95vkgqvZRZGgqZUfWPHOT43yjqqj
-         2muw==
-X-Gm-Message-State: AOAM532G6JsF2PqtuLLBEhVd5ZSNqh3Hl5xUMkQcaHsK1x7IcgwrMFZm
-        6zvSWRXdAbI5jw7wT/uRwEj/VGAKfvw=
-X-Google-Smtp-Source: ABdhPJwuUl9XnI7wh5L2vZA9lC5YKKyuJ3rqG7nMeiXnigRzAbpYaNeFI51XmmRdCEu4EEaYw8iHug==
-X-Received: by 2002:a2e:9bce:: with SMTP id w14mr510036ljj.120.1611590444956;
-        Mon, 25 Jan 2021 08:00:44 -0800 (PST)
+        bh=UoWqLYFxEb3nF4ce0Tbsv2hSrI7OApPalzEh2y4l+cg=;
+        b=ggfRmOi77Yyc9zwHYRL9QaMiHTFruu+L0f/ZYz5TTk6te4RGs4r1HTKO9/6U8hYx2k
+         R2sNaKrkjw2wfg+GGk/bNdpxR2+dNUDMWEUMAndAdjseDbGFJncDtUxVzHwgdWOJQQPe
+         NjO2Jph5ik4IJOKJYF9gyufRCOv+enegKtaSAaaw5ojnA+Y8maxF71gYymcL3u0P3Vzz
+         nni+eu40feiDXsZb7W12Z68p1SYn82yrPsFnYEtQpfMqJcVYp1qBuA0wl9Xm3kg24JnR
+         XBjPCxi9VISJUy/HLlrccw/kh3olR0XkVP9FCTU2HnF4HhN6mWkYLXjyBGRGC0kegF3G
+         /tDw==
+X-Gm-Message-State: AOAM531xYLKVWwhu2QXVJ+fjzm+fnLavjU9YfykFlmcaep1JWzcMPMuA
+        dm46jDu+AVRkXkPAjl01HXsSZQ+C9BE=
+X-Google-Smtp-Source: ABdhPJzDcoM6wlnR4aq1O5cH1RDetElITIqHpJu7IarP73ywYIe7RT+4sbqdWBMZvwGLKk3tZuJ6Fg==
+X-Received: by 2002:a19:d83:: with SMTP id 125mr460486lfn.651.1611588451591;
+        Mon, 25 Jan 2021 07:27:31 -0800 (PST)
 Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id r21sm831903ljk.1.2021.01.25.08.00.43
+        by smtp.googlemail.com with ESMTPSA id x2sm1928237ljd.63.2021.01.25.07.27.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 08:00:44 -0800 (PST)
-Subject: Re: [PATCH 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 25 Jan 2021 07:27:31 -0800 (PST)
+Subject: Re: [PATCH v3 2/6] ALSA: hda/tegra: Reset hardware
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-References: <cover.1611227342.git.viresh.kumar@linaro.org>
- <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
- <71451eb2-46b2-1ea0-efcc-0811568159a4@gmail.com>
- <20210122062659.qss3hef4kltfgciu@vireshk-i7>
- <f33334e7-bd28-af82-b557-681a2b4132da@gmail.com>
- <20210125031402.aqiwhlsozvakehxd@vireshk-i7>
+        Sameer Pujar <spujar@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210120003154.26749-1-digetx@gmail.com>
+ <20210120003154.26749-3-digetx@gmail.com> <s5h35yp3uzn.wl-tiwai@suse.de>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <05eee5d4-9c89-e3fd-a716-efd44191231a@gmail.com>
-Date:   Mon, 25 Jan 2021 19:00:43 +0300
+Message-ID: <7535a927-5246-4ccf-63fe-f8ded9eb6c52@gmail.com>
+Date:   Mon, 25 Jan 2021 18:27:30 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20210125031402.aqiwhlsozvakehxd@vireshk-i7>
+In-Reply-To: <s5h35yp3uzn.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -91,18 +85,28 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-25.01.2021 06:14, Viresh Kumar пишет:
-> On 22-01-21, 18:28, Dmitry Osipenko wrote:
->> Either way will work, but maybe keeping the dev_pm_opp_set_bw() is a bit
->> more straightforward variant for now since it will avoid the code's
->> changes and it's probably a bit more obvious variant for the OPP users.
+25.01.2021 18:18, Takashi Iwai пишет:
+> On Wed, 20 Jan 2021 01:31:50 +0100,
+> Dmitry Osipenko wrote:
+>>
+>> Reset hardware on RPM-resume in order to bring it into a predictable
+>> state.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30 audio works
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30 boot-tested
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # TK1 boot-tested
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> The problem is it creates unnecessary paths which we need to support. For
-> example, in case of bandwidth itself we may want to update regulator/pm
-> domain/required OPPs and this should all be done for everyone. I really do not
-> want to keep separate paths for such stuff, it makes it hard to maintain..
+> Currently we have neither dependency nor reverse-selection of
+> CONFIG_RESET_CONTROLLER.  It wouldn't be a problem for builds, but
+> you'll get a runtime error from
+> devm_reset_control_array_get_exclusive() always when
+> CONFIG_RESET_CONTROLLER=n.
 > 
+> I guess it must be a corner case, but just to be sure.
 
-Maybe we could add dev_pm_opp_of_add_table_without_clock(), at least
-that should be a bit nicer from a drivers perspective than having to
-care about dev_pm_opp_clear_clk(), IMO.
+The CONFIG_RESET_CONTROLLER=y at least for ARM32 Tegra builds.
+
+https://elixir.bootlin.com/linux/v5.11-rc5/source/arch/arm/mach-tegra/Kconfig#L15
+
+Not sure about ARM64.
