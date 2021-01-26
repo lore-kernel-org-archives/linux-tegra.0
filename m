@@ -2,119 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384AEC433E6
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 13:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7D1C433E6
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 13:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0230B23109
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 13:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B09222B51
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 13:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbhAZNMB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:12:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391913AbhAZMrw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Jan 2021 07:47:52 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71BD9C0698D2
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 04:45:54 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id e15so2664874wme.0
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 04:45:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=N8T1u34dorC88muTgROvb30sAlojxHjcjn3S8eWKchI=;
-        b=oMD6xl4SFT0eTU53M3uPErJ4+nTXkWKXmdZubrAueDfO34/ooNIHmfH7T8dREJUgm1
-         OlkGDp/8inaEAuBHE+132rS8QA22d841x8psc4+RlNgkNEDarvxXe47YPeV3ZfW+HANT
-         YCCbXQAyAanjmvkhnvi5ks2A8p0MW5er65CsVWB8lysY23+FhQjF3lSI8N21KSNspYuF
-         IHM/o+AKe4GzK5us1spd0tVVMCypmikMFco+py/5KcYlhwi670zXSjinTjHjU34mUK3a
-         ovNcky78HGkVG8r6Tat6mr0Kiy4zkp3Em916tKSp+5On/sB3u38Gns489lMoZxC1GJ9k
-         lw/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=N8T1u34dorC88muTgROvb30sAlojxHjcjn3S8eWKchI=;
-        b=pEsSeHIRjwY+WFTAA7CONeuSL4LZ9KgQQPtYdj4WDDVgBgKOeLachWRsYz+yPBuTyh
-         SHAJKW7GM+d94o8VxIt7rkXSVPxz8aOAG6I7/OFERMr0dAauvJWmeITIYHfbTPcAa88S
-         OzEHrqxK/CKB4eMJy44JquC59WJK/vLTg3K4dvNUgiTKpLGDlQzwi1vkmwDVJxsR0mU+
-         pYdfmmsGsIgieuLhjrZHFBM7Dr7SxpUxG+gDnW9C06h7aEsBTdbz8io+a6vP9sO013GH
-         YJBUnQfZ8eFJmWtNXxvh99RVyUGXku9gWdYb/BLIygw/UOV0yODT8LnZhhE6AWAtUiN+
-         Hfkg==
-X-Gm-Message-State: AOAM531eKRuFttKH7XUjUU6F4HylzAnEh7EtcTmi4klWvn/L41HcDXcs
-        m45vdCD//1QePLQBmdDFptv4aQ==
-X-Google-Smtp-Source: ABdhPJwQJjhHhz6+8aVdRCxnSCzGI7zL38pJJEIEPZSfK1LrkdeGVtS3fjzmGZYKF25DJn0g2cu2Dg==
-X-Received: by 2002:a1c:b78b:: with SMTP id h133mr4566691wmf.151.1611665153187;
-        Tue, 26 Jan 2021 04:45:53 -0800 (PST)
-Received: from dell.default ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 04:45:52 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S2404634AbhAZNf5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:35:57 -0500
+Received: from mga06.intel.com ([134.134.136.31]:48273 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392005AbhAZN0n (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 26 Jan 2021 08:26:43 -0500
+IronPort-SDR: Ksr2gGZ7dn03b/85c1HgNMlPduJ5NJC4EiCDNMkUNQVcrdHtToYzTjEMhgvdUx+T9+FNarGHaf
+ N+TpHz0X3cag==
+X-IronPort-AV: E=McAfee;i="6000,8403,9875"; a="241429103"
+X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
+   d="scan'208";a="241429103"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 05:24:53 -0800
+IronPort-SDR: g4Zswe3qz4zMid/EyEG5xz4WWhFPriWd/t2t5KrG0ShP0j9WNEEJayXNCJQTEkRkM2/IHRNzgx
+ zk+bb8SSGplQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.79,375,1602572400"; 
+   d="scan'208";a="369103591"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga002.jf.intel.com with SMTP; 26 Jan 2021 05:24:36 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 26 Jan 2021 15:24:35 +0200
+Date:   Tue, 26 Jan 2021 15:24:35 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-tegra@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
         Thierry Reding <thierry.reding@gmail.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Marek Vasut <marex@denx.de>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        linux-rockchip@lists.infradead.org,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 07/21] clk: tegra: clk-tegra30: Remove unused variable 'reg'
-Date:   Tue, 26 Jan 2021 12:45:26 +0000
-Message-Id: <20210126124540.3320214-8-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
+        freedreno@lists.freedesktop.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-msm@vger.kernel.org,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        virtualization@lists.linux-foundation.org,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Alison Wang <alison.wang@nxp.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        linux-renesas-soc@vger.kernel.org, linux-mips@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-mediatek@lists.infradead
+Subject: Re: [PATCH v2 10/11] drm: Use state helper instead of the plane
+ state pointer
+Message-ID: <YBAYE4YH4bgURmuf@intel.com>
+References: <20210121163537.1466118-1-maxime@cerno.tech>
+ <20210121163537.1466118-10-maxime@cerno.tech>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210121163537.1466118-10-maxime@cerno.tech>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+On Thu, Jan 21, 2021 at 05:35:35PM +0100, Maxime Ripard wrote:
+> Many drivers reference the plane->state pointer in order to get the
+> current plane state in their atomic_update or atomic_disable hooks,
+> which would be the new plane state in the global atomic state since
+> _swap_state happened when those hooks are run.
+> 
+> Use the drm_atomic_get_new_plane_state helper to get that state to make it
+> more obvious.
+> 
+> This was made using the coccinelle script below:
+> 
+> @ plane_atomic_func @
+> identifier helpers;
+> identifier func;
+> @@
+> 
+> (
+>  static const struct drm_plane_helper_funcs helpers = {
+>  	...,
+>  	.atomic_disable = func,
+> 	...,
+>  };
+> |
+>  static const struct drm_plane_helper_funcs helpers = {
+>  	...,
+>  	.atomic_update = func,
+> 	...,
+>  };
+> )
+> 
+> @ adds_new_state @
+> identifier plane_atomic_func.func;
+> identifier plane, state;
+> identifier new_state;
+> @@
+> 
+>  func(struct drm_plane *plane, struct drm_atomic_state *state)
+>  {
+>  	...
+> -	struct drm_plane_state *new_state = plane->state;
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state, plane);
+> 	...
+>  }
+> 
+> @ include depends on adds_new_state @
+> @@
+> 
+>  #include <drm/drm_atomic.h>
+> 
+> @ no_include depends on !include && adds_new_state @
+> @@
+> 
+> + #include <drm/drm_atomic.h>
+>   #include <drm/...>
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
- drivers/clk/tegra/clk-tegra30.c: In function â€˜tegra30_enable_cpu_clockâ€™:
- drivers/clk/tegra/clk-tegra30.c:1107:15: warning: variable â€˜regâ€™ set but not used [-Wunused-but-set-variable]
+Looks great.
 
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/clk/tegra/clk-tegra30.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 9cf249c344d9e..16dbf83d2f62a 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1104,12 +1104,9 @@ static void tegra30_cpu_out_of_reset(u32 cpu)
- 
- static void tegra30_enable_cpu_clock(u32 cpu)
- {
--	unsigned int reg;
--
- 	writel(CPU_CLOCK(cpu),
- 	       clk_base + TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
--	reg = readl(clk_base +
--		    TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
-+	readl(clk_base + TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
- }
- 
- static void tegra30_disable_cpu_clock(u32 cpu)
 -- 
-2.25.1
-
+Ville Syrjälä
+Intel
