@@ -2,87 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8BDC433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 17:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C629C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 17:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A537206D8
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 17:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BFE1206E3
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 17:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbhAZRW4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:22:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56582 "EHLO mx2.suse.de"
+        id S1730050AbhAZRXH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:23:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732951AbhAZGej (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Jan 2021 01:34:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 14AE3AF52;
-        Tue, 26 Jan 2021 06:33:58 +0000 (UTC)
-Date:   Tue, 26 Jan 2021 07:33:58 +0100
-Message-ID: <s5him7k2omh.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1730672AbhAZHf4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 26 Jan 2021 02:35:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 121D9230FE;
+        Tue, 26 Jan 2021 07:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611646515;
+        bh=+VAs2ymsR3wvwxQFkon4/lt3ON1FUNprV+UepWushio=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DH2Lp/8Ef0k9WGN0ll9FmubItN0Z4unrWnNQS2pyl2CUBL7o4QsLZbVTFfKsobAFJ
+         rqis4X+XbAgqsLOIi2xs0N9LOezi8R1B3MJRlaAf+t5K7louVm5tILOwBOPekx54Dp
+         gxGYVH9sPqyKT9rTqpWuBYCY/4Ml/MC0cOYw5dSCTJwQMG0iNcMSQJWPiMJQGz01Ki
+         A22EreErsNsWRT1n182mAs2KUT0HFIOn49DPq47GwhpEw133zKoi2C3eSrEIDvRSro
+         yals0i+X72Z5A+lrvA7iUlU3O1m7Ebf/8Fx9SxxtUcGSuay+HFsCn+KXGiyEhuM4Q0
+         ot6GUJlxXOVnw==
+Received: by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1l4Isa-00BqrJ-FX; Tue, 26 Jan 2021 08:35:12 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] ALSA: hda/tegra: Reset hardware
-In-Reply-To: <7535a927-5246-4ccf-63fe-f8ded9eb6c52@gmail.com>
-References: <20210120003154.26749-1-digetx@gmail.com>
-        <20210120003154.26749-3-digetx@gmail.com>
-        <s5h35yp3uzn.wl-tiwai@suse.de>
-        <7535a927-5246-4ccf-63fe-f8ded9eb6c52@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
- FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
- (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
-Content-Type: text/plain; charset=UTF-8
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH RFC 0/2] Convert designware-pcie and kirin-pcie to yaml
+Date:   Tue, 26 Jan 2021 08:35:05 +0100
+Message-Id: <cover.1611645945.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 25 Jan 2021 16:27:30 +0100,
-Dmitry Osipenko wrote:
-> 
-> 25.01.2021 18:18, Takashi Iwai пишет:
-> > On Wed, 20 Jan 2021 01:31:50 +0100,
-> > Dmitry Osipenko wrote:
-> >>
-> >> Reset hardware on RPM-resume in order to bring it into a predictable
-> >> state.
-> >>
-> >> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30 audio works
-> >> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30 boot-tested
-> >> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # TK1 boot-tested
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > 
-> > Currently we have neither dependency nor reverse-selection of
-> > CONFIG_RESET_CONTROLLER.  It wouldn't be a problem for builds, but
-> > you'll get a runtime error from
-> > devm_reset_control_array_get_exclusive() always when
-> > CONFIG_RESET_CONTROLLER=n.
-> > 
-> > I guess it must be a corner case, but just to be sure.
-> 
-> The CONFIG_RESET_CONTROLLER=y at least for ARM32 Tegra builds.
-> 
-> https://elixir.bootlin.com/linux/v5.11-rc5/source/arch/arm/mach-tegra/Kconfig#L15
-> 
-> Not sure about ARM64.
+Rob,
 
-OK, then it must be fine.
-I applied now.  Thanks.
+As I'm preparing some upstream patches for kirin-pcie driver to support
+Hikey 970, I opted to try first to convert the existing schema to yaml.
+
+It should be noticed that those two patches currently won't pass
+cleanly with dtbs_check/dt_binding_check.
+
+I'm out of ideas about how to fix. It sounds to me that the checking
+tools are trying to enforce different types of reference types than
+the ones used by designware drivers.:
+
+$ make CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/designware,pcie.yaml dt_binding_check
+  LINT    Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/pci/designware,pcie.example.dts
+  CHKDT   Documentation/devicetree/bindings/processed-schema-examples.json
+  SCHEMA  Documentation/devicetree/bindings/processed-schema-examples.json
+  DTC     Documentation/devicetree/bindings/pci/designware,pcie.example.dt.yaml
+  CHECK   Documentation/devicetree/bindings/pci/designware,pcie.example.dt.yaml
 
 
-Takashi
+		[[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808]] is not of type 'boolean'
+		True was expected
+		[[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808]] is not of type 'null'
+	[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808] is too long
+	From schema: /home/mchehab/.local/lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
+
+$ make CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml dt_binding_check
+  DTEX    Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dts
+  DTC     Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml
+  CHECK   Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml
+/devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml: pcie@f4000000: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
+	From schema: /devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+/devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml: pcie@f4000000: '#interrupt-cells', 'bus-range', 'clock-names', 'clocks', 'device_type', 'interrupt-map', 'interrupt-map-mask', 'num-lanes', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
+	From schema: /devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+
+I ran out of ideas about how to solve that. So, I'm posting it as a RFC.
+
+Mauro Carvalho Chehab (2):
+  dt: pci: designware-pcie.txt: convert it to yaml
+  dt: pci: kirin-pcie.txt: convert it to yaml
+
+ .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
+ .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
+ .../bindings/pci/designware,pcie.yaml         | 194 ++++++++++++++++++
+ .../bindings/pci/designware-pcie.txt          |  77 -------
+ .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
+ .../bindings/pci/hisilicon,kirin-pcie.yaml    |  98 +++++++++
+ .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
+ .../bindings/pci/hisilicon-pcie.txt           |   2 +-
+ .../devicetree/bindings/pci/kirin-pcie.txt    |  50 -----
+ .../bindings/pci/layerscape-pci.txt           |   2 +-
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
+ .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
+ .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
+ .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
+ .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
+ .../bindings/pci/samsung,exynos5440-pcie.txt  |   4 +-
+ .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
+ .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
+ .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
+ MAINTAINERS                                   |   4 +-
+ 20 files changed, 323 insertions(+), 158 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/designware,pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/kirin-pcie.txt
+
+-- 
+2.29.2
+
+
