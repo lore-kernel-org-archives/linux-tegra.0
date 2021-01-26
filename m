@@ -2,87 +2,95 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF7AC433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 12:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC86FC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 12:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9DDF23123
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 12:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4E0E2311F
+	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 12:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404521AbhAZMZa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Jan 2021 07:25:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404434AbhAZMYx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Jan 2021 07:24:53 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1FE1C230FD;
-        Tue, 26 Jan 2021 12:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611663852;
-        bh=AlItFwZ97s0AnDx+0w4Em4lUmWNA/amNqEP3kSbNmu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bBiBf+SMb4i+zIvS3TIMwC+1E1dR0vsd/PQWAk/UhFTKyOP13x1e3amrL5s09sWpU
-         g3TCAgdsR1yIkMK1s+jgoRENps4qdS2hYgNSXQxqIKb706GzZospexptPgi9hd/PO2
-         B0keLfcZqWAMROrF5AtOMuZtq/9i2ikmR23WpKt1bsQCmolIlIvEoUWev1XdnKl698
-         u4/O9GPDjcCuma2t+3f/yZ4IK/mobP+Ev3d8cGL5ac4hkht13Fm+EVNG/6mdDGJseX
-         K4HkwMFO4Q2IyN+n6Krvhkqp88+/mKb0QmH8kbwIfQGxrX5kHV52GMDEXEFoa8esU0
-         kPZzdHNwl+UXg==
-Date:   Tue, 26 Jan 2021 12:23:30 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        robh+dt@kernel.org, lukas@wunner.de, bbrezillon@kernel.org,
-        p.yadav@ti.com, tudor.ambarus@microchip.com,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/9] dt-bindings: clock: tegra: Add clock ID
- TEGRA210_CLK_QSPI_PM
-Message-ID: <20210126122330.GA4839@sirena.org.uk>
-References: <1608585459-17250-1-git-send-email-skomatineni@nvidia.com>
- <1608585459-17250-2-git-send-email-skomatineni@nvidia.com>
- <YA/o/stKkt7I0tg1@ulmo>
+        id S2404356AbhAZM3j (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 26 Jan 2021 07:29:39 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14436 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404375AbhAZKtJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 26 Jan 2021 05:49:09 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B600ff36e0002>; Tue, 26 Jan 2021 02:48:14 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 26 Jan
+ 2021 10:48:14 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 26 Jan 2021 10:48:14 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/86] 5.4.93-rc1 review
+In-Reply-To: <20210125183201.024962206@linuxfoundation.org>
+References: <20210125183201.024962206@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
-Content-Disposition: inline
-In-Reply-To: <YA/o/stKkt7I0tg1@ulmo>
-X-Cookie: I don't understand you anymore.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <05cc6f906dc349fe91fc6a48f3c934bd@HQMAIL107.nvidia.com>
+Date:   Tue, 26 Jan 2021 10:48:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611658094; bh=9yGdReLerh2zqQ1FvOcamaF4eb/F7yVwPGzy5Rlo/dE=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=eqLUuAgIg+XvRc9LpS78tgDjadi6vOm13luB5SA+Pn3he8VfI1cKfFTuoChZ0eedG
+         PBc1ivXzull4KM3/xay1BKBbxCB/deTU94HkG5tmia6FdvBwOI7CkKjy9Go/JvA1Wm
+         8miZWUdlpJv291IWU55Z2w5SKPy5lCqaoQDF4Srksz3UKKVuocCgfloMInNlWiTIH2
+         uUxE3mcjgZFk3HNtX++edT9GcZfB9Xg5uADSyaQvhvWx0Hz5JV9L9BFN3w5pYiagds
+         Gktw+YWX/avRfMAefINPGnuav2ICgZExE1Ias2pgWx+H1p7wjU53QhQVCuMncYvqD8
+         iBR1QfAXsd/FA==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, 25 Jan 2021 19:38:42 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.93 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 27 Jan 2021 18:31:44 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.93-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+All tests passing for Tegra ...
 
-On Tue, Jan 26, 2021 at 11:03:42AM +0100, Thierry Reding wrote:
+Test results for stable-v5.4:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    56 tests:	56 pass, 0 fail
 
-> Since the TEGRA210_CLK_QSPI_PM symbol isn't used by the driver patches
-> directly, would you mind dropping this so that I can pick it up into the
-> Tegra tree along with the DT updates?
+Linux version:	5.4.93-rc1-g3deaa28e41d9
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-Sure, can you send me a revert commit dropping it?  Or it might be fine
-just to double commit it, I suspect git will work things out when
-merging.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAQCcEACgkQJNaLcl1U
-h9CSLggAhJ8SfztEACe/4iC0FxJR/9vnf21Q6E54ZR+tHUW/Bcijw0G/5SYroT0K
-xxB8QgBnQ3odJFdh7cUsjFIRAOvEiXDXIDYFzvvI2Rlhgu73kaFg5kP0YD49TkAN
-H48PpL9gFMElvxYqkI7porZJNzbVHDb6JUqA13NPnaCPMVLtfpHMI/jKlalFEH6A
-3HOHOhNXqYc2n7nLYJVmMjv67UfMChdlE6nNq3pGJzgAX7MgWu2d6xNeCXwlx37E
-HCOuVndzlJAeQJuM5ZfCb0aXlTDKtc/4qPigcrVHEALUwRJ1LRWXrl8iXCWhDFFe
-rjjzw0RVUrMYMzowYvVO5KCzqeILTg==
-=OCkc
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
+Jon
