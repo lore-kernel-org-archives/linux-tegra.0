@@ -2,133 +2,100 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4784C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99420C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83F5D20679
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5329320727
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbhA0GaB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 01:30:01 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8611 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231953AbhA0GU0 (ORCPT
+        id S231529AbhA0G5r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 01:57:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59550 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232183AbhA0G4A (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 01:20:26 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B601106000000>; Tue, 26 Jan 2021 22:19:44 -0800
-Received: from [10.25.73.63] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Jan
- 2021 06:19:33 +0000
-Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIXSBQQ0k6IGR3YzogZml4IHJlZmVyZW5j?=
- =?UTF-8?Q?e_leak_in_pex=5fep=5fevent=5fpex=5frst=5fdeassert?=
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        zhangqilong <zhangqilong3@huawei.com>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20201102143045.142121-1-zhangqilong3@huawei.com>
- <f09c0801-d584-3c27-d3e7-ca59a64a30d1@nvidia.com>
- <b1f6b6805a7746b48020d7cfaaa73fab@huawei.com>
- <20210125163431.GB5795@e121166-lin.cambridge.arm.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <ecc71860-1391-aca8-ce60-24497ddbcf7d@nvidia.com>
-Date:   Wed, 27 Jan 2021 11:49:29 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Wed, 27 Jan 2021 01:56:00 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F47C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 22:54:44 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id t29so565081pfg.11
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 22:54:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pTwgFUD18J10kzxHrbvYTlK2Fz95pDqrTymbde1eXTk=;
+        b=CtmoehdYMCxgJ5YmaTYJuEs5nO9uBsWNBvxyXHYBnpftWXZ3YRAlxq7SquRby76z1A
+         l8I12es42UxKGwSqmCtf1ISe3ycHpxOEyiKjiGblAAdubB11uNFvDpbR+S4NGfOQMgHn
+         FX6B9qkDUrmEf8yMsGEVN43kqyGIlNsOc/LVilJlOsbgOsa7D5Wkm6BmOtQrFCQ1l+DX
+         AnUqA83ju1h2yi3vMV10royAHLMIbRDHWDFKmgdrdpKyxr+njMKV17iz0mYrYpG9Oi6e
+         gNs50EOPlg1b6DY7cWkIAXvU9YqpfYUc+eQjY+D9VUOAP4k7aYiUqzOxH7JD0an1JCl3
+         97sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pTwgFUD18J10kzxHrbvYTlK2Fz95pDqrTymbde1eXTk=;
+        b=dRkeKj6fhz25txn9lQijWl9/GYwgiywv5w0nnw090PC/tBYzwlJ0IlCvT9CmH4tYvQ
+         2xGoPeqHjlv4oPI4kglyQzGB/TvfdxMuWGy2VVWYDMuY1R5dNIAZTDB+Pnm2fuBfhPN6
+         Tv7M1IZntSGekhL1tzlRPpY3R0ljnvCVkdYQUZgT929KK0SqZ3Rj0bs8jua0LD5LBGOz
+         /XD6SfYg4vr8zVL4hN/LVgLvEUd63Or03CGZ6l/4w2bm4fC49ss/9NbqsL/vE5CF4u7e
+         wx6ZP8labz17mKOUHQEjA4JM+CYUrQ8DdQMknX2O8IO+K7COZfoWAAtsRg18OyNANr7n
+         HGYQ==
+X-Gm-Message-State: AOAM530F8Q1kmRKL9A/y8jP2z076usDzf+3ebvuhnb2s653NJuTBG3lW
+        qVaEALCUKVnc5hWl6XXSki2eRg==
+X-Google-Smtp-Source: ABdhPJyshWiqC8C9nN9XUvgxFRAppVMCfz7DwX+Y0wlAVXrVNbN/tlOICftJZu61My0PrLIv2Wj99w==
+X-Received: by 2002:a63:33c4:: with SMTP id z187mr9716930pgz.312.1611730484495;
+        Tue, 26 Jan 2021 22:54:44 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id q22sm1200065pgi.66.2021.01.26.22.54.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jan 2021 22:54:43 -0800 (PST)
+Date:   Wed, 27 Jan 2021 12:24:41 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] OPP API fixes and improvements
+Message-ID: <20210127065441.p5v7einprkpiinab@vireshk-i7>
+References: <20210120222649.28149-1-digetx@gmail.com>
+ <20210122073439.yadzqwodsyscl2ac@vireshk-i7>
 MIME-Version: 1.0
-In-Reply-To: <20210125163431.GB5795@e121166-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611728384; bh=H149k2HJXyD3ZZSbCbFoC+CkaNViV6Lg8T18vc3KGYg=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=bDJgtJEo893xTvKpAztvDejRyRFnqBGJS7jR6v8sZBy/OEERSLXQQt6XAlkDvQZVp
-         1x6z/iNhq9ip7L7jjevZD89C3WZNb1PZnvLPY1kSdtetVuDmXV2DtORLvhtdIZLXQY
-         l5h6m0EIbVMcFqRlTRVsp2BeG7RgnRZ7gnEfv/NJcz0dhNEBImRNwAwfZUfk9YX7dQ
-         ARdQyszD9TdNCg0Q9HVnJEWXY7s2L0svNbJvyUg8PjixhFcR9T7psfp48ShLWaBHIA
-         +kSXrP2g4kzvDXA+GlNjsnQhfGYIM7I2Y+cHwdEDKvf+fWhVSehFC8Vvs4Kn1FWj+R
-         pgxy/eWEhlvgg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210122073439.yadzqwodsyscl2ac@vireshk-i7>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 22-01-21, 13:04, Viresh Kumar wrote:
+> Patch 2 can be applied only after the dependency patch for the stub
+> definition gets merge in Linus's tree. I see that Mark has already
+> queued that up in his for-5.11 branch, so it might be part of next
+> -rc. I will apply 2nd patch then.
 
+The consumer.h patch landed into Linus's tree this morning and hence I have
+applied the last patch 2/4 from this series as well. Thanks.
 
-On 1/25/2021 10:04 PM, Lorenzo Pieralisi wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On Tue, Nov 03, 2020 at 03:14:21AM +0000, zhangqilong wrote:
->> Hi
->>
->>>
->>>
->>> On 11/2/2020 8:00 PM, Zhang Qilong wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> pm_runtime_get_sync will increment pm usage counter even it failed.
->>>> Forgetting to pm_runtime_put_noidle will result in reference leak in
->>>> pex_ep_event_pex_rst_deassert, so we should fix it.
->>>>
->>>> Fixes: c57247f940e8e ("PCI: tegra: Add support for PCIe endpoint mode
->>>> in Tegra194")
->>>> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
->>>> ---
->>>>    drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
->>>> b/drivers/pci/controller/dwc/pcie-tegra194.c
->>>> index f920e7efe118..936510b5c649 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
->>>> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
->>>> @@ -1662,6 +1662,7 @@ static void pex_ep_event_pex_rst_deassert(struct
->>>> tegra_pcie_dw *pcie)
->>>>
->>>>           ret = pm_runtime_get_sync(dev);
->>>>           if (ret < 0) {
->>>> +               pm_runtime_put_noidle(dev);
->>> Why can't we call pm_runtime_put_sync(dev) as that is what is being called in
->>> failure cases anyway further down in this API?
->>>
->> Both of the two functions are OK, the difference is that, when pm_runtime_put_sync failed(runtime of the device has error, the device is in Inaccessible state or other error state...), it only increase the usage count of the power, and do nothing else. We merely need call pm_runtime_put_noidle to decrease the usage count. If we call pm_runtime_put_sync to reset it, it will notify device bus type if the device can be suspended, and that is meanless when pm_runtime_put_sync failed.
-> 
-> I don't understand. Vidya any feedback ?
-If I understand this correctly, we are assuming that nothing would have 
-happened apart from just counter increment and hence don't want to run 
-the idle check by calling pm_runtime_put_noidle(). On a different note, 
-what is it that we are going to lose if we let the idle check also to 
-run i.e. by calling pm_runtime_put_sync()?
-
-Thanks,
-Vidya Sagar
-> 
-> Lorenzo
-> 
->> Thanks, best wish!
->>
->> Zhang Qilong
->>>>                   dev_err(dev, "Failed to get runtime sync for PCIe
->>> dev: %d\n",
->>>>                           ret);
->>>>                   return;
->>>> --
->>>> 2.17.1
->>>>
+-- 
+viresh
