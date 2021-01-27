@@ -2,119 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 314F9C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 14:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85232C433E6
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 16:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 073A0207C5
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 14:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37FD9207D2
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 16:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234201AbhA0Oq6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 09:46:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48116 "EHLO
+        id S1343857AbhA0QAw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 11:00:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234382AbhA0Oqy (ORCPT
+        with ESMTP id S235584AbhA0P71 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 09:46:54 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA63C061756
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 06:46:13 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id hs11so3042806ejc.1
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 06:46:13 -0800 (PST)
+        Wed, 27 Jan 2021 10:59:27 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95EFC061788;
+        Wed, 27 Jan 2021 07:58:34 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id i187so3344274lfd.4;
+        Wed, 27 Jan 2021 07:58:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LB+KnXDk08QSztygvS1XRrmtygQ3Z6NLwB4B/K64vk4=;
-        b=MCq9nT9sjOH/xAmhsgEVlDS04AvCloSKoqpwLu4kkOM9mXA5U807sI6Bq+S0kWd1q+
-         hVdknbWzaif7Mpl0GXvRD6W48szElaiBkZpwzK4g3z3ezTApPwstKC9stF9yQTey2aTT
-         23RmLCQzkzXAuXHb8Zo8RbYDcGG53pTUXkhA4yLSlUYeWXHVKkEYOm4ZA2kwxN0mnNMF
-         qTU3Z07/1z2VIrHlJYvIMj59fGwPnRGVlPPPk7FJQ0uMCeJFfb3CUfQOPZNLAbkaCeNZ
-         1GH8J0+NeysPMLvfMKWBrktDcpsTiNIDZ3BNjdyXUJ3jxNotrmD9eEgRBxGkRo8G5h/m
-         pb+A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rkl23YYCAN7td3M2Yke0axkC0ziieHeFZsCxQDb5Nko=;
+        b=Dn89ET8ROAPBM0aXpz6DrKWB044nV6zsg9xvTxnFSiXhXbThstKRIgu1kzB/eJg6r1
+         5DoC9PG8HZGwCW+1CKM3urc7UcQ0UBKiij+DQ7CcabslbIoWdT3dUvcLMASLpZnVtPPw
+         qcdZqidFCDYhO1eb3UawlpVC2OAsIIRgDILTAP/oLucPcdjATOSz7lPpUgKsfkbblUjA
+         RPeKoM84g8HKD7DIvCn6zbpa1Hr/sXKhn3KMa5otRlY+qBU+O4nz9zIpCHFyRHMhPbix
+         O4To35jnsDnJzAhVdjgF120mB29D+jLegTUVsJq2E8WNFvPjZWeZBguCS8a2o4eJ/IjM
+         G5Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LB+KnXDk08QSztygvS1XRrmtygQ3Z6NLwB4B/K64vk4=;
-        b=mhRfL1NqIwj5AFAhwhvZvb9a3idu/8A9W0aA5NfreqrIgAADLDrEJ1ZmFUEN8iJ+dH
-         oJu6xZ4X78lvCPVmuCWtW4inlE84IHcg9x5BLEwRwWnA12mWp/Q8/Lfs1jhV4dALlPeG
-         EDPUFb8tgfh5bvpn+PEdrs2rWAJunShWfngp36JyV3qn/ZG6Y45HhDhr3bzEMM50xRjD
-         7K4rDNqwid9xT6er9hxC5ZTYpZ+OPurYn7TVx0OLCrqxPf2rVk6TP4sPFjmm8p4V9wfq
-         g4ZQ5mTlpvn5W9PDuG+wbUNgpzMgA+bhJyAGDoc1635Z2wjqOgzvC1ZkYks0IPYhn5Qw
-         bRVg==
-X-Gm-Message-State: AOAM5304Hone2I8pjP15AgsiS6OI3PvAPZZN7TK6CKe+BWwkY5HiPwwd
-        /xbXyQ0m6JkMRUeIwW5WDNAu0ru8fVp/WPkfSchT8g==
-X-Google-Smtp-Source: ABdhPJyY9Gpe6UV949iqRFcQXeo6eAH+lz7i0n80n61UAFSWAuJJqxJzMnOoy8jNyXqG8JdO34YZgV6MmRfPXZapNVI=
-X-Received: by 2002:a17:907:2632:: with SMTP id aq18mr117344ejc.445.1611758772511;
- Wed, 27 Jan 2021 06:46:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20210120004548.31692-1-digetx@gmail.com> <CACRpkdZynT6T8wnN3xY6hUmZy5emWUe5ep9N3BEV8iQEZLnEew@mail.gmail.com>
-In-Reply-To: <CACRpkdZynT6T8wnN3xY6hUmZy5emWUe5ep9N3BEV8iQEZLnEew@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 27 Jan 2021 15:46:01 +0100
-Message-ID: <CAMpxmJX2BwN1Lj1GpGqoq9Yd_jGsJoRDO4ur-6nZY18DE++vVw@mail.gmail.com>
-Subject: Re: [PATCH v1] gpio: tegra: Fix irq_set_affinity
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rkl23YYCAN7td3M2Yke0axkC0ziieHeFZsCxQDb5Nko=;
+        b=SCpkNuhXWrQtsAYNn4Zv3LRQcnylc+jMdOqI/9u2bIGE9kgQjYXgCjyf6Rty8vDLFx
+         EaO9oCRjatG2CEqmntFvtmszmZ87j1pkEhRqCaInfvfiW+pSplIvdvf1ZtFqVKVdn0oZ
+         mZmhqL3LrjVzj/rZdKG/IaZtZr9XmHvV9fA4y1O5nZM4y8oGXI9g5C+Yc30p8ZkLMftm
+         kZrXWG1z5hvgz0n9a75uBh1pcrsTOzA5SYxp6QccXXBUZ86/P+nzUkZeAXffyn6N66wH
+         /TqQXZhxpwbBdx6beFwXV8+cQ95UwE6L2LdmIrQOsJaKJvXXrXehdyihgfY+GCFINnmU
+         mMgQ==
+X-Gm-Message-State: AOAM530Y77hXnSudIJmvOkMq6sWQ6cFn0gJ5n9zEKlL38eS7VEMvIwGT
+        jVtT5wftnoX18RL9Ugl25XYmyWYjBUo=
+X-Google-Smtp-Source: ABdhPJz6ngq6hOfVFIs8rFg9oOmlF6bbI+gFeQqU00YqMM+2j/aEHNezEvyP8wmU2JpN4awGfS9+vA==
+X-Received: by 2002:a05:6512:2206:: with SMTP id h6mr5239788lfu.239.1611763113017;
+        Wed, 27 Jan 2021 07:58:33 -0800 (PST)
+Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id q190sm679199ljb.8.2021.01.27.07.58.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jan 2021 07:58:32 -0800 (PST)
+Subject: Re: [PATCH V2 11/13] devfreq: tegra30: Migrate to
+ dev_pm_opp_set_opp()
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
+ <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
+ <20210127100234.vl2wwe7rjrrz4btz@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b5f1065b-14ad-adae-af1c-e9962e6626ad@gmail.com>
+Date:   Wed, 27 Jan 2021 18:58:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
+MIME-Version: 1.0
+In-Reply-To: <20210127100234.vl2wwe7rjrrz4btz@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 1:56 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, Jan 20, 2021 at 1:46 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> > The irq_set_affinity callback should not be set if parent IRQ domain
-> > doesn't present because gpio-tegra driver callback fails in this case,
-> > causing a noisy error messages on system suspend:
-> >
-> >  Disabling non-boot CPUs ...
-> >  IRQ 26: no longer affine to CPU1
-> >  IRQ128: set affinity failed(-22).
-> >  IRQ130: set affinity failed(-22).
-> >  IRQ131: set affinity failed(-22).
-> >  IRQ 27: no longer affine to CPU2
-> >  IRQ128: set affinity failed(-22).
-> >  IRQ130: set affinity failed(-22).
-> >  IRQ131: set affinity failed(-22).
-> >  IRQ 28: no longer affine to CPU3
-> >  IRQ128: set affinity failed(-22).
-> >  IRQ130: set affinity failed(-22).
-> >  IRQ131: set affinity failed(-22).
-> >  Entering suspend state LP1
-> >
-> > Hence just don't specify the irq_set_affinity callback if parent PMC
-> > IRQ domain is missing. Tegra isn't capable of setting affinity per GPIO,
-> > affinity could be set only per GPIO bank, thus there is nothing to do
-> > for gpio-tegra in regards to CPU affinity without the parent IRQ domain.
-> >
-> > Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> > Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-> > Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
-> > Fixes: efcdca286eef ("gpio: tegra: Convert to gpio_irq_chip")
-> > Reported-by: Matt Merhar <mattmerhar@protonmail.com>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->
-> Ick, sorry for the noise!
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Yours,
-> Linus Walleij
+27.01.2021 13:02, Viresh Kumar пишет:
+> On 27-01-21, 14:40, Viresh Kumar wrote:
+>> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
+>> be used instead. Migrate to the new API.
+>>
+>> We don't want the OPP core to manage the clk for this driver, migrate to
+>> dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
+>> doesn't have any side effects.
+>>
+>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> ---
+>> Dmitry,
+>>
+>> This is based over the patches sent here:
+>>
+>> https://lore.kernel.org/lkml/6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar@linaro.org/
+>>
+>> This should fix the problem you mentioned earlier. Will push this for
+>> linux-next unless you have any issues with it.
+>>
+>>  drivers/devfreq/tegra30-devfreq.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index 117cad7968ab..31f7dec5990b 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>>  		return PTR_ERR(opp);
+>>  	}
+>>  
+>> -	ret = dev_pm_opp_set_bw(dev, opp);
+>> +	ret = dev_pm_opp_set_opp(dev, opp);
+>>  	dev_pm_opp_put(opp);
+>>  
+>>  	return ret;
+>> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>>  		return err;
+>>  	}
+>>  
+>> -	err = dev_pm_opp_of_add_table(&pdev->dev);
+>> +	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
+> 
+> Plus this, somehow was left uncommited in my tree :(
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 31f7dec5990b..ce83f883ca65 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>                 return err;
+>         }
+>  
+> -       err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
+> +       err = dev_pm_opp_of_add_table_noclk(&pdev->dev, 0);
+>         if (err) {
+>                 dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+>                 goto put_hw;
+> 
 
-Patch applied, thanks!
+Sadly this doesn't work because we missed that clk is assigned to
+opp_table when OPP table is allocated and not when it's added to device.
 
-Bartosz
+Hence we're now set back to the dev_pm_opp_clear_clk() variant.
+
+What about to add a new OPP API which will allow OPP users to configure
+behaviour that user wants from OPP core in a generic way, something like
+this:
+
+struct opp_config {
+	bool no_clk;
+	...
+};
+
+devm_pm_opp_set_config(dev, struct opp_config);
+dev_pm_opp_set_config(dev, struct opp_config);
+dev_pm_opp_unset_config(dev);
+
+Or maybe even rename it dev_pm_opp_allocate_table(dev, struct
+opp_config), which will allow users to directly allocate OPP table
+instead of relying on the implicit allocations. Then there won't be a
+need for drivers to use a dummy devm_pm_opp_set_clkname(dev, NULL) just
+to allocate the table usable for dev_pm_opp_set_rate().
