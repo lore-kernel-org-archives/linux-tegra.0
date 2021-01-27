@@ -7,57 +7,58 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FE4C4332D
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B6AC433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB856146D
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC00B6146D
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231219AbhA0VjV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 16:39:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51642 "EHLO
+        id S235913AbhA0Vxt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 16:53:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236121AbhA0VgS (ORCPT
+        with ESMTP id S236211AbhA0Vxl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 16:36:18 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0710FC061786
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:35:19 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id q8so4742208lfm.10
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:35:18 -0800 (PST)
+        Wed, 27 Jan 2021 16:53:41 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564AEC061573
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:53:01 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id f2so3896286ljp.11
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:53:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tQDe7yRUmKhAto8WrhSV9CEVL5HS+KA9x6e+wAuz/h4=;
-        b=vFVSscQ0PNZE0lJfiHB24oYt7wFoclmi9hPaaKkEocP7ZrRGNIYhkpc3nz37cUp7wp
-         isdx58x+AH8lAkM8rplbun08sIwaSDXKQBqJulfzGQ9Em2SO/cX7CYHYRk35yc53WnOO
-         Q7GSBi4MR7gKySJ5D3LVrOKDCPDkH+d/b0+PfUS0h0MV0JTq39iuPTkG5J6snc4JPSBb
-         0/ISNZL3iK2mqM/p2icU5tnszkn+WetvdxuyZjrJpYPIRWVJRdxLsekXw+iA3HHU3+ih
-         Km5GQMX4qsheWVn3jwbHX0SgskpLGE7agfPbFMRxXEIcMs4PCC3OJJOxDvn/Q7TRQzY8
-         pW2A==
+        bh=I2V5qL7ef4qnigee9vLt+3og4OBtjgl/PNhaajxHfkY=;
+        b=fp1l0zczuSsluJ5rNV82ImxxiKA1iV7UFIkHHxxlokIwffYPKVYGqGBFu1FBEi8XDA
+         dUPXjRdAbfZvt5tMQTSl1zFktsLeu+gJuwmeq241CLUSi6iAvNpFunl8YNzIG5UyS7RI
+         Fara4J5IgUT27agOZzW8MN0puhQYLOL8X/TISxefKHmLoSgtFw9gQJZRaiPGRyRpYhL3
+         XvOPfKGOGWNx7gPuGHDGiE6jpRZYul9IoMUnFWq0zd9J/c5SDA9mO5AW3crm0AMmqzvI
+         WO1coAScJMIPUAUWKpdEVUex+CzOb1XL8h5e3E9OFlFHjluKyJR4PUmjQUCjhQBti3MB
+         AV3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=tQDe7yRUmKhAto8WrhSV9CEVL5HS+KA9x6e+wAuz/h4=;
-        b=B1wl90bHpf3oCgHHqdjexk7sjphq1AVCy2LHoeT2NnTEmuDCaeL3GH/uYiJ2JzZzd8
-         VQZ8Z/dZ7eQzs2KrtgWWLrPRH4hkma4k7582fXy3SgMgbjUyIIgw97s4BCFjHU0akCkf
-         XabqepeY6okTPGGeTuwSvrwzK0uaimWPxnS4ZsHlP2DZ7CYCFAYyrM64RNSn3M4OeCLw
-         OWOZ19zgf2QCpcqgeO0vgM0wcWOeh18Z5Mgp8+hpZ6NZec5U3WVw2k7VZIFcw3F+rlY5
-         Q4jHr0Bie7gw6TIyzR0q5qcowxzxoWb8Fna3xVHGlJYTSmj5RshTpb2wRMXNOFnf5n5O
-         uMcw==
-X-Gm-Message-State: AOAM5333TZbj+1nmKJ2lGgsrU38G/75hR2kJcTY42fl4c65ffFUwZDBl
-        O0/fKYTqONeBrmAeeDlLvSA=
-X-Google-Smtp-Source: ABdhPJwvKuM9VGT8UPkeH/y+fiNWKXj3vYQKAoCkzkgX+1mV8tdal7fbDywNMvQPb/4rgVjAp/ZUgw==
-X-Received: by 2002:a19:746:: with SMTP id 67mr5706808lfh.395.1611783317211;
-        Wed, 27 Jan 2021 13:35:17 -0800 (PST)
+        bh=I2V5qL7ef4qnigee9vLt+3og4OBtjgl/PNhaajxHfkY=;
+        b=nfoPR58SlxhJQ9j9aDj6WTkPAtjYqzYe0dzIV/w3IhF+kYEiHZl7AAEK9eKcic95Gd
+         qhUJF/BJDZuL04jXOYph6A0+SqvaalecxfEfF96AtNNr0BjcQYPzDtRni38pH0ndAvqZ
+         BRKepKytzdxaFLE+qqtvfW7hKBe0bXXLVt8uNONEUKBdpVk5srugpZ/IYcxDYZ3O+VKr
+         zy9YbIwmsjOqk1TaOYyUD3XWoMdkqFtQ0s5AfFuVnhI4TspEILMl2Z4AVVSnTybj88sw
+         1m9xZZw9vg5afDRCFZV4qzyQjqB2xdW8YyyC5Q8qHBh5pl6qrKbbY8oXEWQcENsIOYje
+         2HaQ==
+X-Gm-Message-State: AOAM530a9KHEH52AEDCJdp5CNFGDAcHJ69xRyeMyCvNZGNIBwsuf0xBz
+        2SXKFh6yq2dXguoXhpZriYk=
+X-Google-Smtp-Source: ABdhPJykpTqIXPlX22xvTJ7uWlP/yBGwsd3B47unBuHTo1XyPLU+9TV1fmfI8EPxij8D0d2qtyX+kA==
+X-Received: by 2002:a2e:b743:: with SMTP id k3mr6465157ljo.337.1611784379887;
+        Wed, 27 Jan 2021 13:52:59 -0800 (PST)
 Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id f19sm1007383ljn.111.2021.01.27.13.35.16
+        by smtp.googlemail.com with ESMTPSA id g21sm839837lfr.212.2021.01.27.13.52.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 13:35:16 -0800 (PST)
-Subject: Re: [PATCH v5 00/21] sync_file API is not very suitable for DRM
+        Wed, 27 Jan 2021 13:52:59 -0800 (PST)
+Subject: Re: [PATCH v5 00/21] support option where all commands are collected
+ into a single,dedicated cmdstream
 To:     Mikko Perttunen <cyndis@kapsi.fi>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
@@ -68,8 +69,8 @@ References: <20210111130019.3515669-1-mperttunen@nvidia.com>
  <da085c38-4ac1-19dd-7706-caf323c969d2@gmail.com>
  <2f999b6d-d781-503a-78f4-d444bce72c58@kapsi.fi>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c690b17d-7278-5d25-8316-671afd111e01@gmail.com>
-Date:   Thu, 28 Jan 2021 00:35:15 +0300
+Message-ID: <c0d4c6ed-c942-97cb-379b-09482aa73020@gmail.com>
+Date:   Thu, 28 Jan 2021 00:52:58 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
@@ -82,23 +83,57 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 26.01.2021 05:45, Mikko Perttunen пишет:
->> 4. Sync file shouldn't be needed for the part of DRM API which doesn't
->> interact with external non-DRM devices.  We should use DRM syncobj for
->> everything related to DRM, it's a superior API over sync file, it's
->> suitable for DRM scheduler.
+>> 6. We will need to allocate a host1x BO for a job's cmdstream and add a
+>> restart command to the end of the job's stream.  CDMA will jump into the
+>> job's stream from push buffer.
+>>
+>> We could add a flag for that to drm_tegra_submit_cmd_gather, saying that
+>> gather should be inlined into job's main cmdstream.
+>>
+>> This will remove a need to have a large push buffer that will easily
+>> overflow, it's a real problem and upstream driver even has a bug where
+>> it locks up on overflow.
+>>
+>> How it will look from CDMA perspective:
+>>
+>> PUSHBUF |
+>> ---------
+>> ...     |      | JOB   |
+>>          |      ---------       | JOB GATHER |
+>> RESTART    ------> CMD    |       --------------
+>>          |      |GATHER -------> DATA        |
+>> ... <---------- RESTART|       |            |
+>>          |      |       |
+>>
 > 
-> Considering the issues with fileno limits, I suppose there is no other
-> choice. Considering the recent NTSYNC proposal by Wine developers, maybe
-> we should also have NTHANDLEs to get rid of restrictions of file
-> descriptors.
+> Let me check if I understood you correctly:
+> - You would like to have the job's cmdbuf have further GATHER opcodes
+> that jump into smaller gathers?
 
-It's odd to me that you trying to avoid the existing DRM API. This all
-was solved in DRM long time ago and grate drivers have no problems with
-using the DRM APIs. Even if something is really missing, then you should
-add the missing features instead of re-inventing everything from scratch.
+I want jobs to be a self-contained. Instead of pushing commands to the
+PB of a kernel driver, we'll push them to job's cmdstream. This means
+that for each new job we'll need to allocate a host1x buffer.
 
-> DRM syncobjs may have some advantages over sync files, but
-> also disadvantages. They cannot be poll()ed, so they cannot be combined
-> with waits for other resources.
+> I assume this is needed because currently WAITs are placed into the
+> pushbuffer, so the job will take a lot of space in the pushbuffer if
+> there are a lot of waits (and GATHERs in between these waits)?
 
-I'm not sure do you mean by "poll". Sync object supports polling very well.
+Yes, and with drm-sched we will just need to limit the max number of
+jobs in the h/w queue (i.e. push buffer) and then push buffer won't ever
+overflow. Problem solved.
+
+> If so, perhaps as a simpler alternative we could change the firewall to
+> allow SETCLASS into HOST1X for waiting specifically, then userspace
+> could just submit one big cmdbuf taking only little space in the
+> pushbuffer? Although that would only allow direct ID/threshold waits.
+
+My solution doesn't require changes to firewall, not sure whether it's
+easier.
+
+> In any case, it seems that this can be added in a later patch, so we
+> should omit it from this series for simplicity. If it is impossible for
+> the userspace to deal with it, we could disable the firewall
+> temporarily, or implement the above change in the firewall.
+
+I won't be able to test UAPI fully until all features are at least on
+par with the experimental driver of grate kernel.
