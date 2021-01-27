@@ -2,172 +2,176 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85232C433E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 16:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAD6C43381
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 17:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37FD9207D2
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 16:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0158E64DA4
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 17:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343857AbhA0QAw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 11:00:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235584AbhA0P71 (ORCPT
+        id S234346AbhA0ROK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 12:14:10 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17623 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234152AbhA0RMJ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 10:59:27 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95EFC061788;
-        Wed, 27 Jan 2021 07:58:34 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id i187so3344274lfd.4;
-        Wed, 27 Jan 2021 07:58:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rkl23YYCAN7td3M2Yke0axkC0ziieHeFZsCxQDb5Nko=;
-        b=Dn89ET8ROAPBM0aXpz6DrKWB044nV6zsg9xvTxnFSiXhXbThstKRIgu1kzB/eJg6r1
-         5DoC9PG8HZGwCW+1CKM3urc7UcQ0UBKiij+DQ7CcabslbIoWdT3dUvcLMASLpZnVtPPw
-         qcdZqidFCDYhO1eb3UawlpVC2OAsIIRgDILTAP/oLucPcdjATOSz7lPpUgKsfkbblUjA
-         RPeKoM84g8HKD7DIvCn6zbpa1Hr/sXKhn3KMa5otRlY+qBU+O4nz9zIpCHFyRHMhPbix
-         O4To35jnsDnJzAhVdjgF120mB29D+jLegTUVsJq2E8WNFvPjZWeZBguCS8a2o4eJ/IjM
-         G5Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rkl23YYCAN7td3M2Yke0axkC0ziieHeFZsCxQDb5Nko=;
-        b=SCpkNuhXWrQtsAYNn4Zv3LRQcnylc+jMdOqI/9u2bIGE9kgQjYXgCjyf6Rty8vDLFx
-         EaO9oCRjatG2CEqmntFvtmszmZ87j1pkEhRqCaInfvfiW+pSplIvdvf1ZtFqVKVdn0oZ
-         mZmhqL3LrjVzj/rZdKG/IaZtZr9XmHvV9fA4y1O5nZM4y8oGXI9g5C+Yc30p8ZkLMftm
-         kZrXWG1z5hvgz0n9a75uBh1pcrsTOzA5SYxp6QccXXBUZ86/P+nzUkZeAXffyn6N66wH
-         /TqQXZhxpwbBdx6beFwXV8+cQ95UwE6L2LdmIrQOsJaKJvXXrXehdyihgfY+GCFINnmU
-         mMgQ==
-X-Gm-Message-State: AOAM530Y77hXnSudIJmvOkMq6sWQ6cFn0gJ5n9zEKlL38eS7VEMvIwGT
-        jVtT5wftnoX18RL9Ugl25XYmyWYjBUo=
-X-Google-Smtp-Source: ABdhPJz6ngq6hOfVFIs8rFg9oOmlF6bbI+gFeQqU00YqMM+2j/aEHNezEvyP8wmU2JpN4awGfS9+vA==
-X-Received: by 2002:a05:6512:2206:: with SMTP id h6mr5239788lfu.239.1611763113017;
-        Wed, 27 Jan 2021 07:58:33 -0800 (PST)
-Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id q190sm679199ljb.8.2021.01.27.07.58.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 07:58:32 -0800 (PST)
-Subject: Re: [PATCH V2 11/13] devfreq: tegra30: Migrate to
- dev_pm_opp_set_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
- <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
- <20210127100234.vl2wwe7rjrrz4btz@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b5f1065b-14ad-adae-af1c-e9962e6626ad@gmail.com>
-Date:   Wed, 27 Jan 2021 18:58:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Wed, 27 Jan 2021 12:12:09 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B60119ebd0003>; Wed, 27 Jan 2021 09:11:25 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Jan
+ 2021 17:11:25 +0000
+Received: from moonraker.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 27 Jan 2021 17:11:23 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: clk-dfll: Verify regulator vsel values are valid
+Date:   Wed, 27 Jan 2021 17:11:21 +0000
+Message-ID: <20210127171121.322765-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210127100234.vl2wwe7rjrrz4btz@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611767485; bh=URvrDgporW+3OSixaQLjcd3wnqEV05uMiHjiwxC8n7k=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=KY6QDP5aT4GsdCRoRbs+l6wWM3bN7wS0V/Q+hJ/fu2VLuQfqkdf4RRNyEX3JO+6uI
+         gRVsKAqaF0is0XZjxyGB3ysoDMdUQ+HdocV68CS9nRDntpO1DvyY+eTUmAIe3DWqxr
+         Juzwcs5clENVxwvGh5Za5LHwbER5u2lJ09Unkp46ap+jEY5vI+PKqlthgbuHXYBvi0
+         wkMj7YwKWkth5fa3fRo1rE9nEst0O0HFblRaNFh/BOjVLF/MOCVOC1aZVy0iIc9Ww7
+         4SH2OYIC2EJ/sWdEowe6pKSzo6j1LgNvmo5EulGNQq0Cyu3++ij25y1KugaGIlTTw7
+         vIaYCDl+C0PUg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.01.2021 13:02, Viresh Kumar пишет:
-> On 27-01-21, 14:40, Viresh Kumar wrote:
->> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
->> be used instead. Migrate to the new API.
->>
->> We don't want the OPP core to manage the clk for this driver, migrate to
->> dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
->> doesn't have any side effects.
->>
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->> Dmitry,
->>
->> This is based over the patches sent here:
->>
->> https://lore.kernel.org/lkml/6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar@linaro.org/
->>
->> This should fix the problem you mentioned earlier. Will push this for
->> linux-next unless you have any issues with it.
->>
->>  drivers/devfreq/tegra30-devfreq.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 117cad7968ab..31f7dec5990b 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->>  		return PTR_ERR(opp);
->>  	}
->>  
->> -	ret = dev_pm_opp_set_bw(dev, opp);
->> +	ret = dev_pm_opp_set_opp(dev, opp);
->>  	dev_pm_opp_put(opp);
->>  
->>  	return ret;
->> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->>  		return err;
->>  	}
->>  
->> -	err = dev_pm_opp_of_add_table(&pdev->dev);
->> +	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
-> 
-> Plus this, somehow was left uncommited in my tree :(
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 31f7dec5990b..ce83f883ca65 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->                 return err;
->         }
->  
-> -       err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
-> +       err = dev_pm_opp_of_add_table_noclk(&pdev->dev, 0);
->         if (err) {
->                 dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
->                 goto put_hw;
-> 
+The regulator function, regulator_list_hardware_vsel(), may return an
+negative error code on failure. The Tegra DFLL driver does not check to
+see if the value returned by this function is an error. Fix this by
+updating the DFLL driver to check if the value returned by
+regulator_list_hardware_vsel() is an error and if an error does occur
+propagate the error.
 
-Sadly this doesn't work because we missed that clk is assigned to
-opp_table when OPP table is allocated and not when it's added to device.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-dfll.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-Hence we're now set back to the dev_pm_opp_clear_clk() variant.
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index a5f526bb0483..709fb1fe7073 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -672,10 +672,9 @@ static int dfll_force_output(struct tegra_dfll *td, un=
+signed int out_sel)
+  * Load the voltage-to-PMIC register value lookup table into the DFLL
+  * IP block memory. Look-up tables can be loaded at any time.
+  */
+-static void dfll_load_i2c_lut(struct tegra_dfll *td)
++static int dfll_load_i2c_lut(struct tegra_dfll *td)
+ {
+-	int i, lut_index;
+-	u32 val;
++	int i, lut_index, val;
+=20
+ 	for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++) {
+ 		if (i < td->lut_min)
+@@ -687,10 +686,15 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
+=20
+ 		val =3D regulator_list_hardware_vsel(td->vdd_reg,
+ 						     td->lut[lut_index]);
++		if (val < 0)
++			return val;
++
+ 		__raw_writel(val, td->lut_base + i * 4);
+ 	}
+=20
+ 	dfll_i2c_wmb(td);
++
++	return 0;
+ }
+=20
+ /**
+@@ -737,9 +741,10 @@ static void dfll_init_i2c_if(struct tegra_dfll *td)
+  * disable the I2C command output to the PMIC, set safe voltage and
+  * output limits, and disable and clear limit interrupts.
+  */
+-static void dfll_init_out_if(struct tegra_dfll *td)
++static int dfll_init_out_if(struct tegra_dfll *td)
+ {
+ 	u32 val;
++	int ret;
+=20
+ 	td->lut_min =3D td->lut_bottom;
+ 	td->lut_max =3D td->lut_size - 1;
+@@ -773,9 +778,14 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+ 			dfll_force_output(td, vsel);
+ 		}
+ 	} else {
+-		dfll_load_i2c_lut(td);
++		ret =3D dfll_load_i2c_lut(td);
++		if (ret < 0)
++			return ret;
++
+ 		dfll_init_i2c_if(td);
+ 	}
++
++	return 0;
+ }
+=20
+ /*
+@@ -1497,12 +1507,17 @@ static int dfll_init(struct tegra_dfll *td)
+=20
+ 	dfll_set_open_loop_config(td);
+=20
+-	dfll_init_out_if(td);
++	ret =3D dfll_init_out_if(td);
+=20
+ 	pm_runtime_put_sync(td->dev);
+=20
++	if (ret < 0)
++		goto disable_rpm;
++
+ 	return 0;
+=20
++disable_rpm:
++	pm_runtime_disable(td->dev);
+ di_err2:
+ 	clk_unprepare(td->soc_clk);
+ di_err1:
+@@ -1547,6 +1562,7 @@ EXPORT_SYMBOL(tegra_dfll_suspend);
+ int tegra_dfll_resume(struct device *dev)
+ {
+ 	struct tegra_dfll *td =3D dev_get_drvdata(dev);
++	int ret;
+=20
+ 	reset_control_deassert(td->dvco_rst);
+=20
+@@ -1560,11 +1576,11 @@ int tegra_dfll_resume(struct device *dev)
+=20
+ 	dfll_set_open_loop_config(td);
+=20
+-	dfll_init_out_if(td);
++	ret =3D dfll_init_out_if(td);
+=20
+ 	pm_runtime_put_sync(td->dev);
+=20
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL(tegra_dfll_resume);
+=20
+--=20
+2.25.1
 
-What about to add a new OPP API which will allow OPP users to configure
-behaviour that user wants from OPP core in a generic way, something like
-this:
-
-struct opp_config {
-	bool no_clk;
-	...
-};
-
-devm_pm_opp_set_config(dev, struct opp_config);
-dev_pm_opp_set_config(dev, struct opp_config);
-dev_pm_opp_unset_config(dev);
-
-Or maybe even rename it dev_pm_opp_allocate_table(dev, struct
-opp_config), which will allow users to directly allocate OPP table
-instead of relying on the implicit allocations. Then there won't be a
-need for drivers to use a dummy devm_pm_opp_set_clkname(dev, NULL) just
-to allocate the table usable for dev_pm_opp_set_rate().
