@@ -2,117 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39586C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 05:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4784C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 121E32070A
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 05:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83F5D20679
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 06:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbhA0FqF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 00:46:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239110AbhA0Eax (ORCPT
+        id S229779AbhA0GaB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 01:30:01 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8611 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231953AbhA0GU0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 26 Jan 2021 23:30:53 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A580C0613D6
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 20:30:13 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id r38so704617pgk.13
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 20:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=//ioNvWDQkvk42Fc89Zh4vygy6z/RRR07z1hB6ofzIU=;
-        b=d3GR+gHmnaa96Nm0QcKgBXmK3NGGMKMwA33oyu6d7nrqpoeQY+1ytoD4gwsnG1vqfY
-         TY/HPQ7TS8N7jTwjK+vxUfiRVR1YpM43Br5CXg9JWVgPt1d7sV6EYtL6cQV6ISSbTHfg
-         m54M+yzrLlRq7bNu167pbivdFiYFw2H6fi5lqieiqc29Wp+txQhPG2FMsvmC2a9AaNKE
-         xfi593mYnvYKMeb7gRwZgmLR4u+ScXbnIabpUw1jz5coZnfIjOViHg8BB7nrHDGDkxEF
-         UsZXFq/187R3pD6qVIYH8eKwX0DI9tibhvmOlEodYAOj7gL35FyEh6hQ7809px5Jmqbh
-         SYXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=//ioNvWDQkvk42Fc89Zh4vygy6z/RRR07z1hB6ofzIU=;
-        b=QjV57dipJXy8/6GRmgfOGGIEtbGUQBP8pTcNx72Ot9lpAI2k0ZtmrUzZ5OrJThwMw0
-         bIgKUoDkDmki4lmc+Xo95SuDbo2X2JxB09O56VduxXEfu9bqcc1T8XzRSrq7dSRPsFyg
-         w/dz/jHsPRcri4eLLTxxnKX5trxK2bQwNiyu1YyKiF4xWiC+qHHZHdHq3SwZ6qiIC2Hk
-         /StRMCCZFP/VPv4tQ7alQGoniWvaNOyhgDO4je820zeQ/FswjgFXSu22tNdmyFgjd+5M
-         XvRQaiVv/pqBnYvdUA98gG2ukzyK3gC/lbUk3lYYTwmc6hMra22rFWEO/4grfyCILZ/W
-         Tkjw==
-X-Gm-Message-State: AOAM5301E4CZ86s5xE3c1CktgS8wIMJyzl7iwxUEG2g7LyvW9HZGmUc5
-        VyebENXqhn6SnztwJCChucGXyg==
-X-Google-Smtp-Source: ABdhPJyqKTCjg4RoXfa5PGfc0trCuDCoxGmhg6h3Uthbq8A5dQcjfqyDV5/szcFEstejMp18qWeXGw==
-X-Received: by 2002:aa7:8d86:0:b029:19e:cb57:2849 with SMTP id i6-20020aa78d860000b029019ecb572849mr8603482pfr.54.1611721812500;
-        Tue, 26 Jan 2021 20:30:12 -0800 (PST)
-Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id 17sm533107pgy.53.2021.01.26.20.30.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jan 2021 20:30:11 -0800 (PST)
-Date:   Wed, 27 Jan 2021 10:00:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] opp: Add dev_pm_opp_sync_regulators()
-Message-ID: <20210127043009.rwy4l3u7fohlibec@vireshk-i7>
-References: <20210120222649.28149-1-digetx@gmail.com>
- <20210120222649.28149-3-digetx@gmail.com>
- <42abee3f-ce18-7930-b584-17ae69bdc498@gmail.com>
+        Wed, 27 Jan 2021 01:20:26 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B601106000000>; Tue, 26 Jan 2021 22:19:44 -0800
+Received: from [10.25.73.63] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Jan
+ 2021 06:19:33 +0000
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIXSBQQ0k6IGR3YzogZml4IHJlZmVyZW5j?=
+ =?UTF-8?Q?e_leak_in_pex=5fep=5fevent=5fpex=5frst=5fdeassert?=
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        zhangqilong <zhangqilong3@huawei.com>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20201102143045.142121-1-zhangqilong3@huawei.com>
+ <f09c0801-d584-3c27-d3e7-ca59a64a30d1@nvidia.com>
+ <b1f6b6805a7746b48020d7cfaaa73fab@huawei.com>
+ <20210125163431.GB5795@e121166-lin.cambridge.arm.com>
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <ecc71860-1391-aca8-ce60-24497ddbcf7d@nvidia.com>
+Date:   Wed, 27 Jan 2021 11:49:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <42abee3f-ce18-7930-b584-17ae69bdc498@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20210125163431.GB5795@e121166-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611728384; bh=H149k2HJXyD3ZZSbCbFoC+CkaNViV6Lg8T18vc3KGYg=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=bDJgtJEo893xTvKpAztvDejRyRFnqBGJS7jR6v8sZBy/OEERSLXQQt6XAlkDvQZVp
+         1x6z/iNhq9ip7L7jjevZD89C3WZNb1PZnvLPY1kSdtetVuDmXV2DtORLvhtdIZLXQY
+         l5h6m0EIbVMcFqRlTRVsp2BeG7RgnRZ7gnEfv/NJcz0dhNEBImRNwAwfZUfk9YX7dQ
+         ARdQyszD9TdNCg0Q9HVnJEWXY7s2L0svNbJvyUg8PjixhFcR9T7psfp48ShLWaBHIA
+         +kSXrP2g4kzvDXA+GlNjsnQhfGYIM7I2Y+cHwdEDKvf+fWhVSehFC8Vvs4Kn1FWj+R
+         pgxy/eWEhlvgg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26-01-21, 01:30, Dmitry Osipenko wrote:
-> 21.01.2021 01:26, Dmitry Osipenko пишет:
-> > Extend OPP API with dev_pm_opp_sync_regulators() function, which syncs
-> > voltage state of regulators.
-> > 
-> > Tested-by: Peter Geis <pgwipeout@gmail.com>
-> > Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-> > Tested-by: Matt Merhar <mattmerhar@protonmail.com>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/opp/core.c     | 41 +++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/pm_opp.h |  6 ++++++
-> >  2 files changed, 47 insertions(+)
-> 
-> Hello Viresh,
-> 
-> This is the last patch that is left unmerged from this series. We will
-> need it for implementation of the PD driver for NVIDIA Tegra20/30 SoCs.
-> Please consider applying it, thanks in advance!
 
-I have replied to 0/4 earlier giving the reason why I haven't applied this.
 
--- 
-viresh
+On 1/25/2021 10:04 PM, Lorenzo Pieralisi wrote:
+> External email: Use caution opening links or attachments
+> 
+> 
+> On Tue, Nov 03, 2020 at 03:14:21AM +0000, zhangqilong wrote:
+>> Hi
+>>
+>>>
+>>>
+>>> On 11/2/2020 8:00 PM, Zhang Qilong wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> pm_runtime_get_sync will increment pm usage counter even it failed.
+>>>> Forgetting to pm_runtime_put_noidle will result in reference leak in
+>>>> pex_ep_event_pex_rst_deassert, so we should fix it.
+>>>>
+>>>> Fixes: c57247f940e8e ("PCI: tegra: Add support for PCIe endpoint mode
+>>>> in Tegra194")
+>>>> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+>>>> ---
+>>>>    drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c
+>>>> b/drivers/pci/controller/dwc/pcie-tegra194.c
+>>>> index f920e7efe118..936510b5c649 100644
+>>>> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+>>>> @@ -1662,6 +1662,7 @@ static void pex_ep_event_pex_rst_deassert(struct
+>>>> tegra_pcie_dw *pcie)
+>>>>
+>>>>           ret = pm_runtime_get_sync(dev);
+>>>>           if (ret < 0) {
+>>>> +               pm_runtime_put_noidle(dev);
+>>> Why can't we call pm_runtime_put_sync(dev) as that is what is being called in
+>>> failure cases anyway further down in this API?
+>>>
+>> Both of the two functions are OK, the difference is that, when pm_runtime_put_sync failed(runtime of the device has error, the device is in Inaccessible state or other error state...), it only increase the usage count of the power, and do nothing else. We merely need call pm_runtime_put_noidle to decrease the usage count. If we call pm_runtime_put_sync to reset it, it will notify device bus type if the device can be suspended, and that is meanless when pm_runtime_put_sync failed.
+> 
+> I don't understand. Vidya any feedback ?
+If I understand this correctly, we are assuming that nothing would have 
+happened apart from just counter increment and hence don't want to run 
+the idle check by calling pm_runtime_put_noidle(). On a different note, 
+what is it that we are going to lose if we let the idle check also to 
+run i.e. by calling pm_runtime_put_sync()?
+
+Thanks,
+Vidya Sagar
+> 
+> Lorenzo
+> 
+>> Thanks, best wish!
+>>
+>> Zhang Qilong
+>>>>                   dev_err(dev, "Failed to get runtime sync for PCIe
+>>> dev: %d\n",
+>>>>                           ret);
+>>>>                   return;
+>>>> --
+>>>> 2.17.1
+>>>>
