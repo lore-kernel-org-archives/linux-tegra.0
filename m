@@ -2,191 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EB1C4332D
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 19:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39586C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 05:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E213A22B3B
-	for <linux-tegra@archiver.kernel.org>; Tue, 26 Jan 2021 19:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121E32070A
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 05:46:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbhAZFqU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:46:20 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47122 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727837AbhAYMLv (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 25 Jan 2021 07:11:51 -0500
-IronPort-SDR: fqz5a1tn3qhlMUlkY76XwQXck4G6XKSaQOGwObuDQINO2RFZplUNFUZ0mza3zGyUSkwAAvW5Ko
- mN5FdGqLc2gg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9874"; a="166812576"
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="166812576"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 03:52:51 -0800
-IronPort-SDR: 48DaYsnvHv+gYU3iB0lIM7aytVWrCoDavD2mjf0kyTM07tuyUD4vfRcB0epq/cCvtOYMGfxoLJ
- ZQzg2k7suibA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="472167193"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 25 Jan 2021 03:52:39 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 25 Jan 2021 13:52:38 +0200
-Date:   Mon, 25 Jan 2021 13:52:38 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Marek Vasut <marex@denx.de>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        id S232160AbhA0FqF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 00:46:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239110AbhA0Eax (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 26 Jan 2021 23:30:53 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A580C0613D6
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 20:30:13 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id r38so704617pgk.13
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 20:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=//ioNvWDQkvk42Fc89Zh4vygy6z/RRR07z1hB6ofzIU=;
+        b=d3GR+gHmnaa96Nm0QcKgBXmK3NGGMKMwA33oyu6d7nrqpoeQY+1ytoD4gwsnG1vqfY
+         TY/HPQ7TS8N7jTwjK+vxUfiRVR1YpM43Br5CXg9JWVgPt1d7sV6EYtL6cQV6ISSbTHfg
+         m54M+yzrLlRq7bNu167pbivdFiYFw2H6fi5lqieiqc29Wp+txQhPG2FMsvmC2a9AaNKE
+         xfi593mYnvYKMeb7gRwZgmLR4u+ScXbnIabpUw1jz5coZnfIjOViHg8BB7nrHDGDkxEF
+         UsZXFq/187R3pD6qVIYH8eKwX0DI9tibhvmOlEodYAOj7gL35FyEh6hQ7809px5Jmqbh
+         SYXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=//ioNvWDQkvk42Fc89Zh4vygy6z/RRR07z1hB6ofzIU=;
+        b=QjV57dipJXy8/6GRmgfOGGIEtbGUQBP8pTcNx72Ot9lpAI2k0ZtmrUzZ5OrJThwMw0
+         bIgKUoDkDmki4lmc+Xo95SuDbo2X2JxB09O56VduxXEfu9bqcc1T8XzRSrq7dSRPsFyg
+         w/dz/jHsPRcri4eLLTxxnKX5trxK2bQwNiyu1YyKiF4xWiC+qHHZHdHq3SwZ6qiIC2Hk
+         /StRMCCZFP/VPv4tQ7alQGoniWvaNOyhgDO4je820zeQ/FswjgFXSu22tNdmyFgjd+5M
+         XvRQaiVv/pqBnYvdUA98gG2ukzyK3gC/lbUk3lYYTwmc6hMra22rFWEO/4grfyCILZ/W
+         Tkjw==
+X-Gm-Message-State: AOAM5301E4CZ86s5xE3c1CktgS8wIMJyzl7iwxUEG2g7LyvW9HZGmUc5
+        VyebENXqhn6SnztwJCChucGXyg==
+X-Google-Smtp-Source: ABdhPJyqKTCjg4RoXfa5PGfc0trCuDCoxGmhg6h3Uthbq8A5dQcjfqyDV5/szcFEstejMp18qWeXGw==
+X-Received: by 2002:aa7:8d86:0:b029:19e:cb57:2849 with SMTP id i6-20020aa78d860000b029019ecb572849mr8603482pfr.54.1611721812500;
+        Tue, 26 Jan 2021 20:30:12 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id 17sm533107pgy.53.2021.01.26.20.30.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Jan 2021 20:30:11 -0800 (PST)
+Date:   Wed, 27 Jan 2021 10:00:09 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-msm@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        linux-mips@vger.kernel.org,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Alison Wang <alison.wang@nxp.com>,
-        dri-devel@lists.freedesktop.org,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-amlogic@lists.infradead.org, freedreno@lists.freedesktop.org,
-        Sean Paul <sean@poorly.run>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>
-Subject: Re: [PATCH v2 08/11] drm: Rename plane->state variables in atomic
- update and disable
-Message-ID: <YA6xBuECFjzjY7gG@intel.com>
-References: <20210121163537.1466118-1-maxime@cerno.tech>
- <20210121163537.1466118-8-maxime@cerno.tech>
- <YArBy2DKdCct5cYW@intel.com>
- <20210125105218.kv63vjbxz5b35hdo@gilmour>
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] opp: Add dev_pm_opp_sync_regulators()
+Message-ID: <20210127043009.rwy4l3u7fohlibec@vireshk-i7>
+References: <20210120222649.28149-1-digetx@gmail.com>
+ <20210120222649.28149-3-digetx@gmail.com>
+ <42abee3f-ce18-7930-b584-17ae69bdc498@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210125105218.kv63vjbxz5b35hdo@gilmour>
-X-Patchwork-Hint: comment
+In-Reply-To: <42abee3f-ce18-7930-b584-17ae69bdc498@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:52:18AM +0100, Maxime Ripard wrote:
-> Hi Ville,
-> 
-> On Fri, Jan 22, 2021 at 02:15:07PM +0200, Ville Syrjälä wrote:
-> > On Thu, Jan 21, 2021 at 05:35:33PM +0100, Maxime Ripard wrote:
-> > > Some drivers are storing the plane->state pointer in atomic_update and
-> > > atomic_disable in a variable simply called state, while the state passed
-> > > as an argument is called old_state.
-> > > 
-> > > In order to ease subsequent reworks and to avoid confusing or
-> > > inconsistent names, let's rename those variables to new_state.
-> > > 
-> > > This was done using the following coccinelle script, plus some manual
-> > > changes for mtk and tegra.
-> > > 
-> > > @ plane_atomic_func @
-> > > identifier helpers;
-> > > identifier func;
-> > > @@
-> > > 
-> > > (
-> > >  static const struct drm_plane_helper_funcs helpers = {
-> > >  	...,
-> > >  	.atomic_disable = func,
-> > > 	...,
-> > >  };
-> > > |
-> > >  static const struct drm_plane_helper_funcs helpers = {
-> > >  	...,
-> > >  	.atomic_update = func,
-> > > 	...,
-> > >  };
-> > > )
-> > > 
-> > > @ moves_new_state_old_state @
-> > > identifier plane_atomic_func.func;
-> > > identifier plane;
-> > > symbol old_state;
-> > > symbol state;
-> > > @@
-> > > 
-> > >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
-> > >  {
-> > >  	...
-> > > -	struct drm_plane_state *state = plane->state;
-> > > +	struct drm_plane_state *new_state = plane->state;
-> > > 	...
-> > >  }
-> > > 
-> > > @ depends on moves_new_state_old_state @
-> > > identifier plane_atomic_func.func;
-> > > identifier plane;
-> > > identifier old_state;
-> > > symbol state;
-> > > @@
-> > > 
-> > >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
-> > >  {
-> > >  	<...
-> > > -	state
-> > > +	new_state
-> > > 	...>
+On 26-01-21, 01:30, Dmitry Osipenko wrote:
+> 21.01.2021 01:26, Dmitry Osipenko Ð¿Ð¸ÑˆÐµÑ‚:
+> > Extend OPP API with dev_pm_opp_sync_regulators() function, which syncs
+> > voltage state of regulators.
 > > 
-> > Was going to say that this migh eat something else, but I guess
-> > the dependency prevents that?
+> > Tested-by: Peter Geis <pgwipeout@gmail.com>
+> > Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> > Tested-by: Matt Merhar <mattmerhar@protonmail.com>
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/opp/core.c     | 41 +++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/pm_opp.h |  6 ++++++
+> >  2 files changed, 47 insertions(+)
 > 
-> Yeah, the dependency takes care of this
+> Hello Viresh,
 > 
-> > Another way to avoid that I suppose would be to declare 'state'
-> > as
-> > symbol moves_new_state_old_state.state;
-> > 
-> > That would probably make the intent a bit more obvious, even with
-> > the dependency. Or does a dependency somehow automagically imply
-> > that?
-> 
-> I'm not sure if it does, but it's a symbol here not an identifier or an
-> expression, so here moves_new_state_old_state.state would always resolve
-> to state (and only state) anyway
+> This is the last patch that is left unmerged from this series. We will
+> need it for implementation of the PD driver for NVIDIA Tegra20/30 SoCs.
+> Please consider applying it, thanks in advance!
 
-Hm. Right. OK, cocci bits look good to me. Variable naming
-bikeshed I'll leave to others :)
-
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+I have replied to 0/4 earlier giving the reason why I haven't applied this.
 
 -- 
-Ville Syrjälä
-Intel
+viresh
