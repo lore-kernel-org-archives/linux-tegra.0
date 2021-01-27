@@ -2,107 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F145C433E9
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 07:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EF9C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 07:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFE320723
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 07:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 608A020724
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 07:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231338AbhA0HAP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 02:00:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232357AbhA0G7l (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 01:59:41 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8C6C061573
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 22:58:49 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id l18so752974pji.3
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Jan 2021 22:58:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hdH070fYQGRrVFXSs6VUzPA20L1MAMda+ejAucezRlo=;
-        b=bcxwQY9v7gG8/ZLRsynArRtdDbnVjaCQYtuVwVy4gAD09HJ0afvA9irJzEB9sle0aI
-         rOJweiDeWGPx5J1nbkpKcf22eLrwJ2GJu8oNzqJ8NFQdlrkcsFG9hMMaPgx7ZnNralqJ
-         bXiqaEZyrKKD9h9vOUiGT0e9cY0riXPAjo3ar9rJXXTr6rWQQGUnG+he/PyqPS0y9Mfd
-         Yvg4RvXCCeorEy3smliUnT/OrysHSP6tcCR6b+dRweRZFZMMEaSNJbNh+CgICb4xryRf
-         5PsnDzVJUqLlOHOjfIicTMFhn7pSqTUkxbScpKohKp3OB2avLlmBf0UsKnsITVnppNIw
-         4Qfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hdH070fYQGRrVFXSs6VUzPA20L1MAMda+ejAucezRlo=;
-        b=ja1dvCsWyCXjqTormyCgQpxIce2wfozaRKcPJxw7Ijc0LzIvbLWpsZRAPbUECfSWUJ
-         llysF8ZYHaBJb9t8KVFVNYdt1G3Y44+BXPHSq/HWBBjl2ln2hYUSxOPpNZMI5+CbmpyV
-         Oio31D14iuec7M4Gu7BExmYLAQwJou2mPqLiU7lSxvSTt+rQyh2Gs8johgT1cafGkLOw
-         fyRNFbzqYzuCKgaNZMESdiXPKde/5MVNm5FO4j/oxxesxbtZ9EaTbB7Ln8/tr1P3+tkN
-         /6Oug0/uw/NLTG78mIkKzEnD493u5/2xYc+Uax5Yzvkb8dF0RRrnCQdXbqdwLAcnmdZc
-         s4ug==
-X-Gm-Message-State: AOAM531g1pLBb+VeTnVBS9Pn+IXas6J29Oh1U4qFT7/SDwFb8UPAnC8I
-        fGdcaEmJIboMcjObXHLYjh2bp8Hgye/pJw==
-X-Google-Smtp-Source: ABdhPJyaTToGexohyPD3a1AnlyINM47VgWjzZWARW91p7Tk9RAH8ZSmplUpcdPIxJZ4yB7OyWIpFyA==
-X-Received: by 2002:a17:90a:de2:: with SMTP id 89mr4105815pjv.26.1611730729086;
-        Tue, 26 Jan 2021 22:58:49 -0800 (PST)
-Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id j16sm947790pjj.18.2021.01.26.22.58.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Jan 2021 22:58:48 -0800 (PST)
-Date:   Wed, 27 Jan 2021 12:28:46 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 07/13] opp: Allow _generic_set_opp_clk_only() to work for
- non-freq devices
-Message-ID: <20210127065846.c2usquegqrqib45r@vireshk-i7>
-References: <cover.1611227342.git.viresh.kumar@linaro.org>
- <1585f6c21ea8aee64fe4da0bf72b36ea4d74a779.1611227342.git.viresh.kumar@linaro.org>
- <9b2638e6-b842-8737-e5a0-aeeb84927fce@gmail.com>
- <20210122043506.lm6yiefzlyubq5my@vireshk-i7>
- <7d6573e3-7885-fb0b-2290-c181e2c557f9@gmail.com>
+        id S234523AbhA0HwF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 02:52:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234070AbhA0Hte (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 27 Jan 2021 02:49:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BF76B2074A;
+        Wed, 27 Jan 2021 07:48:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611733728;
+        bh=Nro3vfQTCFtmv98iajZ/Tld6vSBtHkyWqkV/zj14XFw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SHMBfSfTtkKbBZei+R26dC4Lsa2N+suQiJ9H3LZMp1MaKa5JjGt+4QjAdFsyIyLUT
+         tQmzXXgXxEdLQ2XzmFzAyIzEDH80xOrFrwsQDYWFBcKKnne9TgiIilSEhMFajPzLcb
+         WKlppAIzlGh3Fdk7NfvaI8omlrDmEFva/CSsY1cFN2joSSKZRYRcFT7U90A+CfEknv
+         NgBhXEjQyytURjwbuv1CbEWSI5z02gPfxp9eYDmJnFUBTAyEZEGvdNF+R6c9qOt6Gv
+         k1vZRXX2j4SYiZQErTdX1uQdkl0rrqMB5kZzlCHOYRGKTz5ie1ZeE0UWWrrB+E8xPk
+         07s+G/JFyQ1kw==
+Date:   Wed, 27 Jan 2021 08:48:37 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] dt: pci: designware-pcie.txt: convert it to
+ yaml
+Message-ID: <20210127084837.39d68850@coco.lan>
+In-Reply-To: <b6ab7110-fc87-85d7-d591-dffad32985ec@samsung.com>
+References: <cover.1611645945.git.mchehab+huawei@kernel.org>
+        <CGME20210126074127eucas1p1dd8f2d1704d708d64458922566b934f1@eucas1p1.samsung.com>
+        <55f479324098b66d7dba89c8f9c3e455731df4f7.1611645945.git.mchehab+huawei@kernel.org>
+        <b6ab7110-fc87-85d7-d591-dffad32985ec@samsung.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d6573e3-7885-fb0b-2290-c181e2c557f9@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 26-01-21, 00:09, Dmitry Osipenko wrote:
-> Please remove unlikely() around IS_ERR(), it already has the unlikely().
+Hi Marek,
 
-Right.
+Em Tue, 26 Jan 2021 11:13:20 +0100
+Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
 
-> https://elixir.bootlin.com/linux/v5.11-rc4/source/include/linux/err.h#L22
+> Hi Mauro,
 > 
-> I'd also recommend to remove all the unlikely() from OPP code since it
-> doesn't bring any value if not used in a very performance-critical code
-> path. OPP core doesn't have such code paths. The [un]likely() only make
-> code less readable and may result in a worse assembly.
+> On 26.01.2021 08:35, Mauro Carvalho Chehab wrote:
+> > Convert the file into a JSON description at the yaml format.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >   .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
+> >   .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
+> >   .../bindings/pci/designware,pcie.yaml         | 194 ++++++++++++++++++
+> >   .../bindings/pci/designware-pcie.txt          |  77 -------
+> >   .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
+> >   .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
+> >   .../bindings/pci/hisilicon-pcie.txt           |   2 +-
+> >   .../devicetree/bindings/pci/kirin-pcie.txt    |   2 +-
+> >   .../bindings/pci/layerscape-pci.txt           |   2 +-
+> >   .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
+> >   .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
+> >   .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
+> >   .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
+> >   .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
+> >   .../bindings/pci/samsung,exynos5440-pcie.txt  |   4 +-  
 
-The likely/unlikely() stuff is to optimize code, not necessarily the stuff in
-the hot path alone, therwise stuff like IS_ERR() would never have it. It surely
-does bring value by optimizing the code, surely the result isn't significant
-enough but that is fine, every effort counts.
+> You must have used an old tree for preparing this patchset. The above 
+> file is gone in v5.11-rc1 and there is 
+> Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml instead.
 
-AFAIK, if we are sure of path the code will almost always take, then we should
-rather use these and so I am inclined towards keeping them. Though I understand
-that using them may result in bad behavior (performance) if they fail.
+Yeah, this series was generated against v5.10, as part of my efforts
+to have Hikey 970 properly supported upstream:
 
--- 
-viresh
+	https://github.com/mchehab/linux/commits/devel/hikey970
+
+For the next version, I'll rebase on the top of linux-next. 
+
+Thanks,
+Mauro
