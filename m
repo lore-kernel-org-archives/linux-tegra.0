@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C922C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17942C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F29864DA1
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC02964DD0
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 21:29:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233995AbhA0VVG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 16:21:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48360 "EHLO
+        id S231448AbhA0V3Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 16:29:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbhA0VU5 (ORCPT
+        with ESMTP id S1344491AbhA0V1g (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 16:20:57 -0500
+        Wed, 27 Jan 2021 16:27:36 -0500
 Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C436CC061573
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:20:16 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id a12so4738176lfb.1
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:20:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E146C061573
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:26:56 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id v24so4723516lfr.7
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 13:26:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NpNL5RakE2KXSN5P6KgIPsL9eD0ecDZ1R9kFzhbHFTc=;
-        b=BH16q8u5n+5wAzmvY5Tt7y+9w4fAecFWth8ZGXc+xm1sy5BoVTbe3P6EsRIJYETFsd
-         alsXF927SsBb16m4gwlONDWQ5LCXkPvzPKG0YUjc2EjenNnV6aJ4sC5PmVTCy6ZEVGSy
-         ytsQ8CS8r4mj2ga3r87V63y7McKV+LeBuBSIvkletRxuhpsqrsWOI+3slbnCqRqeHVZp
-         tSF/kQbCZiNhUwMdxol6IwNu5u85t4XmuK4rHTX6spFnbAhyP6eiFXqSyrBbO1W9UYwX
-         BsZanDvIYv0b9enAOK0UnXh/weHsjXe8eWpkaN0/as/vitX3c9NYH1KICLlrrNx9XxJm
-         Tfqg==
+        bh=PkkTYvfWyANciuqV75npJ/gFbUncXc5JjD+XYOH0VH8=;
+        b=BoTOvXdu3swqZb2+lsk9WlhzPZXwfhI0WIxDCA1OMC3oHJSMsL1Zh31Dw1l3Zdxb4q
+         MMN90OsKTnEdbi0aHFmA9tRnjbanvZU+JmL1+/GLsWujC2m5oxLBaS9EUv44CgxaXTsX
+         zFOVDhw+I7SE5LIVzDMgnhED4Kx/zqvWwwpCTqSfJvbBLg9ZsVPPJPuuKIxMWFHkUnAu
+         5Iv9e80z+3WGVPpj5FAFTn7k3RaSbMc6fmyxTe29aAln4dwrjABSJ/0h/8Hba5eEX2zz
+         vwFrXxIm2d9WTNUuXgfFAdgbO8ayBDEjiR2q0zHB48CBdtSyhL+4tLM6zdErCvdcEm+p
+         vj3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NpNL5RakE2KXSN5P6KgIPsL9eD0ecDZ1R9kFzhbHFTc=;
-        b=TpJiJaPPZrErtuHYrl79xlklTYdp0NMKkVlq3FpGXd2kJVLko/z15jQcxdHt/f0eT4
-         LKWUA19msaREIUP80Vk/ILy2h5i5OCyfXugMJQ5K+hVHV+dwHNp/E47B6HV7fqvLpIlA
-         kpH6ZiZpobYaUdD7suaasZ50uZChcOmaKS1P5Y5PnwE0CAB/0S62LCC/cDGMDreUTROo
-         uSynBGh7b17yXj1oKHpiyST90EWmitZUmYQaQADNCzUwCei6vfhz5xm+CuhKXOhKlPwe
-         HzbxeOPRbR3J2jbOAL1533xeTIkNz3l0NGtz0OKZX/qOhVrQK14Ld4UO19VaAEs4S96l
-         qOJQ==
-X-Gm-Message-State: AOAM5332EfPX2jJRgvC9HLKCc4W6ecLo4NCMZp1LuvxHgcnZfwgTZnDm
-        t5jH4y7GwlBSf50wWUzltIA=
-X-Google-Smtp-Source: ABdhPJwuNE1bisH3/2nrqBreh6P4L49LGnAK80zVgYFYHQ01ync3x0KeZR7SHcqKGDYRN5Dz9dh+uw==
-X-Received: by 2002:a19:8147:: with SMTP id c68mr3711356lfd.292.1611782415325;
-        Wed, 27 Jan 2021 13:20:15 -0800 (PST)
+        bh=PkkTYvfWyANciuqV75npJ/gFbUncXc5JjD+XYOH0VH8=;
+        b=ErYD0UNtLKp3rCv96Nq2iJH0/yu7Ne0jZ0XUyujzcFSSkDykxIb6kaLQC1oExg3YAW
+         wrjm+JPqKuGy3aWz9F19icRJh8KlTD9Dw3/de2qr0f5rSpBd1UYy0jDe4wPkZUSZGycA
+         T1iZT5S7zRRLS2hjrgZNWdmif3YUi3pwAmaw0od19gjCxY7quo9z1V8LWwwR1NfUS7ZQ
+         easftReviMufy5ia1Qr3I55e+Rv+LGR/r92ak3MLguD8RXuAgNCy6x1lbApu+gQWvxdO
+         sEZpMyBGu01Zb1Ca+YE8y667yJePc5hrOw+4EWJ127KTSKiJpx5IUlExzOsmzcpiSGQ0
+         6O9w==
+X-Gm-Message-State: AOAM532UAOCEFQ5o2oFXPd4LCqxoOwuEKXQAuSz02LjwKvIHvLR5Qeg3
+        F1xMQuC90+mm0hl/Wgh4rdY=
+X-Google-Smtp-Source: ABdhPJwMOh5Zbzn5jlQDDiionvaHND6cl6YEMpkKIEYnDhyiUHbvJwqooKTYa8uuAqSnKJskJJ6wiQ==
+X-Received: by 2002:ac2:4907:: with SMTP id n7mr3247719lfi.213.1611782814893;
+        Wed, 27 Jan 2021 13:26:54 -0800 (PST)
 Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id 19sm1002904ljw.19.2021.01.27.13.20.13
+        by smtp.googlemail.com with ESMTPSA id b18sm823875lfj.140.2021.01.27.13.26.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 13:20:14 -0800 (PST)
-Subject: Re: [PATCH v5 00/21] Host1x sync point UAPI should not be used for
- tracking DRM jobs
+        Wed, 27 Jan 2021 13:26:54 -0800 (PST)
+Subject: Re: [PATCH v5 00/21] Host1x/TegraDRM UAPI
 To:     Mikko Perttunen <cyndis@kapsi.fi>,
         Mikko Perttunen <mperttunen@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
@@ -69,8 +68,8 @@ References: <20210111130019.3515669-1-mperttunen@nvidia.com>
  <da085c38-4ac1-19dd-7706-caf323c969d2@gmail.com>
  <2f999b6d-d781-503a-78f4-d444bce72c58@kapsi.fi>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2ee12338-bd5a-4b99-f86d-13da0d2a899b@gmail.com>
-Date:   Thu, 28 Jan 2021 00:20:13 +0300
+Message-ID: <638c1aeb-921b-0ea2-5258-16c6d3183306@gmail.com>
+Date:   Thu, 28 Jan 2021 00:26:53 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
@@ -83,26 +82,23 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 26.01.2021 05:45, Mikko Perttunen пишет:
->> 2. We will probably need a dedicated drm_tegra_submit_cmd for sync point
->> increments.  The job's sync point will be allocated dynamically when job
->> is submitted.  We will need a fag for the sync_incr and wait_syncpt
->> commands, saying "it's a job's sync point increment/wait"
+>> 5. The hardware state of sync points should be reset when sync point is
+>> requested, not when host1x driver is initialized.
 > 
-> Negative. Like I have explained in previous discussions, with the
-> current way the usage of hardware resources is much more deterministic
-> and obvious. I disagree on the point that this is much more complicated
-> for the userspace. Separating syncpoint and channel allocation is one of
-> the primary motivations of this series for me.
+> This may be doable, but I don't think it is critical for this UAPI, so
+> let's consider it after this series.
+> 
+> The userspace should anyway not be able to assume the initial value of
+> the syncpoint upon allocation. The kernel should set it to some high
+> value to catch any issues related to wraparound.
 
-Sync points are a limited resource. The most sensible way to work around
-it is to keep sync points within kernel as much as possible. This is not
-only much simpler for user space, but also allows to utilize DRM API
-properly without re-inventing what already exists and it's easier to
-maintain hardware in a good state.
+This is critical because min != max when sync point is requested.
 
-If you need to use a dedicated sync point for VMs, then just allocate
-that special sync point and use it. But this sync point won't be used
-for jobs tracking by kernel driver. Is there any problem with this?
+> Also, this makes code more complicated since it now needs to ensure all
+> waits on the syncpoint have completed before freeing the syncpoint,
+> which can be nontrivial e.g. if the waiter is in a different virtual
+> machine or some other device connected via PCIe (a real usecase).
 
-The primary motivation for me is to get a practically usable kernel
-driver for userspace.
+It sounds to me that these VM sync points should be treated very
+separately from a generic sync points, don't you think so? Let's not mix
+them and get the generic sync points usable first.
