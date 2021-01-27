@@ -2,135 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39322C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 08:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34574C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 09:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE8F420756
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 08:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0BC20756
+	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 09:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbhA0I5Z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 03:57:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233375AbhA0IzF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 03:55:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 94BE920754;
-        Wed, 27 Jan 2021 08:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1611737659;
-        bh=aL5ww7x0yIMNn8eMOTqyx6f5SllCtTcRixceXOr0Tek=;
-        h=Subject:To:From:Date:From;
-        b=ubyxgHVHbx/TGFSFp/MRo0mE9rD5k/okkP/tkhfvSP/H/uJOyF6ZdrTAFkFVe18xV
-         +gOZkDjfg6XEJZY/It8W2zzP7/g991TwJl/2j6kfSO65jID/4Nxp05EsrNhgYEkqEi
-         sleTmxroFOLT2lic+mub63qXFkp3Ik5aKy0FY98w=
-Subject: patch "of: property: Add fw_devlink support for "gpio" and "gpios" binding" added to driver-core-next
-To:     saravanak@google.com, bgolaszewski@baylibre.com,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org,
-        jonathanh@nvidia.com, linus.walleij@linaro.org,
-        linux-tegra@vger.kernel.org, robh@kernel.org, treding@nvidia.com
-From:   <gregkh@linuxfoundation.org>
-Date:   Wed, 27 Jan 2021 09:54:16 +0100
-Message-ID: <161173765639250@kroah.com>
+        id S233361AbhA0JNH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 04:13:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235034AbhA0JKs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 27 Jan 2021 04:10:48 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28B6C0613ED
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 01:10:05 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id r38so1120645pgk.13
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 01:10:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rRKTArZOg1KrGjFi8d6fGv/HZF1EOkxq/275M+KtPoM=;
+        b=Uwi3vAvNi1s+fF28WE+kMRQKlLALPib/vLCh98PitSRYo0RLK7BJNXcZJY8kJfdfCh
+         QjPJy/jOQUcOTSfmLC6YooQySA/r8sREjF1KpI3tE578WpmdEf8+mpMrlWzPcWZEMQlw
+         ptgUiPaZ1OQ3Pv9jjp/E5Gl3S1o7exI3S8p/HVlwxOPrCgS9qCuCrAWZ3TLLjKL3oScy
+         h1Sb8WbTzWSzfIv0X6HOXnjoB6I6Btf1Pw24B7aUgx60k/1+jxsPK9luftsez9AZyVhm
+         JM3bhBiTpL1BWmN1LpNlu8Ribeqp5zezKYgK26eKERrW5NIWZ1OwT6vtgwmOWZxlmERM
+         HtcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rRKTArZOg1KrGjFi8d6fGv/HZF1EOkxq/275M+KtPoM=;
+        b=poS82KlZHPpOoYfqbKtmStTM4X3oJ94KUj7JgJmGtOf26k6eh6Y8B3iu9Tjquev53l
+         FH4DRZEJHWhCn112Si4/+G/xdt7LGHAOqsonbB2h2Clr7CP/I/sE9+jW2WYrsswYO8q4
+         zUpRaiQ0FfEonYbdHhITt2kHHPgeAj2k0v32EYMVBM5X5mJGOb+lP06C17F7J/4VBHmf
+         mi5pB0iYUz4KzP6bXME7xkaokLQbM30eO5KgoEH//z7ETKtC0eeUbbUAqqS7/FdHOkNt
+         rMCO32M6QXZY4VX1FeOVVoqmt7A0lSAYrjfFFMwY5cO2rwPa8081lkwD7gcTrHx05zh4
+         eXew==
+X-Gm-Message-State: AOAM530FGXu4REVOAj6/CI2FF8Fk0cczDmdz0y29nsJFfngeMMleYKMg
+        KZPFkvffxOwhLnL9ZvsbQgLZ6A==
+X-Google-Smtp-Source: ABdhPJx4mOZlZshf0Ls4berDrkhQojnQ+aWFvIpMsiPBN5+BkSj7Yadrh1anDfjDbpXvp3ejj1Caog==
+X-Received: by 2002:a62:144c:0:b029:1c0:d62d:e16e with SMTP id 73-20020a62144c0000b02901c0d62de16emr9544172pfu.25.1611738605363;
+        Wed, 27 Jan 2021 01:10:05 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id p64sm1574652pfb.201.2021.01.27.01.10.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jan 2021 01:10:04 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 11/13] devfreq: tegra30: Migrate to dev_pm_opp_set_opp()
+Date:   Wed, 27 Jan 2021 14:40:00 +0530
+Message-Id: <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
+In-Reply-To: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
+References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
+be used instead. Migrate to the new API.
 
-This is a note to let you know that I've just added the patch titled
+We don't want the OPP core to manage the clk for this driver, migrate to
+dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
+doesn't have any side effects.
 
-    of: property: Add fw_devlink support for "gpio" and "gpios" binding
-
-to my driver-core git tree which can be found at
-    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-in the driver-core-next branch.
-
-The patch will show up in the next release of the linux-next tree
-(usually sometime within the next 24 hours during the week.)
-
-The patch will also be merged in the next major kernel release
-during the merge window.
-
-If you have any questions about this process, please let me know.
-
-
-From e13f5b7a130f7b6d4d34be27a87393890b5ee2ba Mon Sep 17 00:00:00 2001
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 21 Jan 2021 14:57:11 -0800
-Subject: of: property: Add fw_devlink support for "gpio" and "gpios" binding
-
-To provide backward compatibility for boards that use deprecated DT
-bindings, we need to add fw_devlink support for "gpio" and "gpios".
-
-We also need to ignore these properties on nodes with "gpio-hog"
-property because their gpio[s] are all supplied by the parent node.
-
-Fixes: e590474768f1 ("driver core: Set fw_devlink=on by default")
-Cc: linux-tegra <linux-tegra@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Link: https://lore.kernel.org/r/20210121225712.1118239-2-saravanak@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/of/property.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Dmitry,
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 5f9eed79a8aa..b2ea1951d937 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1271,6 +1271,28 @@ static struct device_node *parse_iommu_maps(struct device_node *np,
- 	return of_parse_phandle(np, prop_name, (index * 4) + 1);
- }
+This is based over the patches sent here:
+
+https://lore.kernel.org/lkml/6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar@linaro.org/
+
+This should fix the problem you mentioned earlier. Will push this for
+linux-next unless you have any issues with it.
+
+ drivers/devfreq/tegra30-devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 117cad7968ab..31f7dec5990b 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+ 		return PTR_ERR(opp);
+ 	}
  
-+static struct device_node *parse_gpio_compat(struct device_node *np,
-+					     const char *prop_name, int index)
-+{
-+	struct of_phandle_args sup_args;
-+
-+	if (strcmp(prop_name, "gpio") && strcmp(prop_name, "gpios"))
-+		return NULL;
-+
-+	/*
-+	 * Ignore node with gpio-hog property since its gpios are all provided
-+	 * by its parent.
-+	 */
-+	if (of_find_property(np, "gpio-hog", NULL))
-+		return NULL;
-+
-+	if (of_parse_phandle_with_args(np, prop_name, "#gpio-cells", index,
-+				       &sup_args))
-+		return NULL;
-+
-+	return sup_args.np;
-+}
-+
- static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_clocks, },
- 	{ .parse_prop = parse_interconnects, },
-@@ -1296,6 +1318,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_pinctrl6, },
- 	{ .parse_prop = parse_pinctrl7, },
- 	{ .parse_prop = parse_pinctrl8, },
-+	{ .parse_prop = parse_gpio_compat, },
- 	{ .parse_prop = parse_regulators, },
- 	{ .parse_prop = parse_gpio, },
- 	{ .parse_prop = parse_gpios, },
+-	ret = dev_pm_opp_set_bw(dev, opp);
++	ret = dev_pm_opp_set_opp(dev, opp);
+ 	dev_pm_opp_put(opp);
+ 
+ 	return ret;
+@@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = dev_pm_opp_of_add_table(&pdev->dev);
++	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+ 		goto put_hw;
 -- 
-2.30.0
-
+2.25.0.rc1.19.g042ed3e048af
 
