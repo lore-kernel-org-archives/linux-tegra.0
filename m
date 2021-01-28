@@ -2,127 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF71C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 22:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4710C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jan 2021 04:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33ECD64DDF
-	for <linux-tegra@archiver.kernel.org>; Wed, 27 Jan 2021 22:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8523364DD1
+	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jan 2021 04:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231883AbhA0Wzc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 27 Jan 2021 17:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
+        id S231173AbhA1ETn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 27 Jan 2021 23:19:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231764AbhA0WzK (ORCPT
+        with ESMTP id S229739AbhA1ETm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 27 Jan 2021 17:55:10 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF9FC0613D6
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 14:26:19 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id s18so3997554ljg.7
-        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 14:26:19 -0800 (PST)
+        Wed, 27 Jan 2021 23:19:42 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44E3C061573
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 20:19:01 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id s15so2612407plr.9
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Jan 2021 20:19:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=32GBvzqULqr1PLS7WMQvWkvIMQOSOY8uDAPn1dKTtws=;
-        b=Ka1wao9S4YmQcYU0JmZdG14bdsrzn9+86yE2kFtQzDxNj6I64RHsGItNuA0V7WsxPc
-         mzLdsv/WSW/KIvGgLROXfKtTRVvtzsF87Rd/oXlNvozEnxs8SjJsIOex8chw8b/Epg+e
-         QEw9Ux0CxJ/kdk9qXInTsPoKjC5DJ7+T3/pyFy4iVsNXmcY7x4NDqad1VWxwpeu0hOnM
-         XoovlnnPqF3vpw7ufVQ6IuAlaT7RAS8unHMr6pqLtd+AqWLhiig3CIqia+E1w7fqX93Q
-         l0zjt09saX6JHt3Q93mDtCjAHA9aRue9lTt5u264IWrHCykwYGJOIJ8h0Qkr9pij51AH
-         YDeg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RTAG4vsAoUjlR0wHdPRSWvh6PJ/veu4LyJng/CB31aA=;
+        b=uJ8qG+hjgRgxsD7XyEzcyvs3SRBRuiMqgAeBDn8V+t1h/i3YSRJLmGWOY8QqKCRoXl
+         C9YhVD/VZMCq9894EzWzKHlgdUFchNp/0lPXYoDgSsx315oH1bMgKMxrdMtWMLGU2LBy
+         M4U3QTtGEjeZRjmBFndldNNQdiw4YCrG0KYQcCeGb/OcK2hF90R1RROysJmYb2Id7z4y
+         DKZwFjf67nu7P2QiZ1bm/agd/QUhSapqP48G2XQTk89+sInyaMbqYqkx3yMG0CiRcPaB
+         1d4TBW/aUpUTSCnV2pPk9nmY+4vndwl/MFJlow4v4a2E6qskV3sKMKYn0C044u3Z4owD
+         MDXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=32GBvzqULqr1PLS7WMQvWkvIMQOSOY8uDAPn1dKTtws=;
-        b=Uq0EfW615P/iOKpBwO39f/Q1c6dmcF5FiIWZlvIUzLhpswpYPbcJX4dJ50Kiibo8om
-         Z8E4rS/CICtxdhtqmEyrqCcEg+6nHcxGUx3qQu9yiQVMh/hu8IPryvLjN8DU91ZAkIr5
-         eL4X7/U/2jbl6ekFfv2stBoUNoZE7SQgtZcaqO8f8vhlfezny9Jsz6hCVuAyKEXo+TPL
-         zIcXetPhj65UaIprL0ugAMbp7CsU856jOSm/JAkT08zRQ7nHKrr/y1LhnK3oPa3p+KM0
-         Q/1i/YcYTOwaB5f/ziVWCFZ0b6csV/HJXsrClO7/eLXEborGOIpjYuMvt90T/eJfI1Oo
-         MP2A==
-X-Gm-Message-State: AOAM531Esd7Fq5nY8NwicuD2dPKCC/kb635Qo3F+EybpBaOkh7v8TJF+
-        FmH/xFA7yT0gIWvR2EhaW8jQC10SRfc=
-X-Google-Smtp-Source: ABdhPJxXB7p+r/x4WzIRpDAHBgtF8yd6jgQYBzcVb6rcerdzP7sbiU6Ml51Ct6frVnYlvJUanEd/aQ==
-X-Received: by 2002:a2e:81c5:: with SMTP id s5mr6962770ljg.197.1611786378069;
-        Wed, 27 Jan 2021 14:26:18 -0800 (PST)
-Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id c16sm878016lfh.82.2021.01.27.14.26.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jan 2021 14:26:17 -0800 (PST)
-Subject: Re: [PATCH v5 00/21] sync_file API is not very suitable for DRM
-To:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <da085c38-4ac1-19dd-7706-caf323c969d2@gmail.com>
- <2f999b6d-d781-503a-78f4-d444bce72c58@kapsi.fi>
- <c690b17d-7278-5d25-8316-671afd111e01@gmail.com>
- <53b7c991-7aa7-2407-eb54-d9db997f00e7@kapsi.fi>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6fe05443-de81-ecf6-faf8-a62d73c0de9c@gmail.com>
-Date:   Thu, 28 Jan 2021 01:26:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RTAG4vsAoUjlR0wHdPRSWvh6PJ/veu4LyJng/CB31aA=;
+        b=nzPK83LUTiICROGrEOm382P/OyxQNmCoxc52WLP9/6kn++maoOByrgUV4RMl0KliZO
+         +A2FaeQ9Wrgt1GbH9sw9F5NeDkCZY00x6K2n8+SFjobzLVHtK5Uw38sqzRFyJDt/Y07T
+         CnJMznEiNZvfQDGqqZ0B8VpcC/voU4oBHikpBqccYrwu/xfOk0+VosUwubbr3NtDw/zQ
+         XoKaqawarbNAJC3d403/8UrIAcNaSFpF5c/7jIeuBPdRxoPCQAdqlKlhIdrKSnrxDxLZ
+         t3jI5kOXAPcv6ZGkYDhlBv5eZVlA1Wbi6hhQ+w/SYc0HxpXIuMMk9jNn6ndG0WLYuLVc
+         RTdA==
+X-Gm-Message-State: AOAM531t2JCn8gCxA8Jq+yuQWRLGLwTO7XctcK2Ou62E8748iQSOcrRJ
+        kRCM2OUo1RXanZtVZG6/SWeYWij6IgbBLg==
+X-Google-Smtp-Source: ABdhPJyXlbusIa5aDnUr1YQskJ1UjHwzmZFuuVfIphKPBt8J1C/dFiblCimvtZONWyiR4r621UvA/g==
+X-Received: by 2002:a17:90a:b392:: with SMTP id e18mr9115862pjr.156.1611807541303;
+        Wed, 27 Jan 2021 20:19:01 -0800 (PST)
+Received: from localhost ([122.172.59.240])
+        by smtp.gmail.com with ESMTPSA id a2sm3764717pgq.94.2021.01.27.20.19.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jan 2021 20:19:00 -0800 (PST)
+Date:   Thu, 28 Jan 2021 09:48:55 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: Remove calls to dev_pm_opp_set_clkname()
+Message-ID: <20210128041855.4sovmu3bnbq7efaa@vireshk-i7>
+References: <0f22cc1791d8b88c50a9790c2dc19455b34ec7b0.1611742564.git.viresh.kumar@linaro.org>
+ <7daaf77c-4ba0-0c69-1028-49518eb44d18@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <53b7c991-7aa7-2407-eb54-d9db997f00e7@kapsi.fi>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7daaf77c-4ba0-0c69-1028-49518eb44d18@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.01.2021 00:53, Mikko Perttunen пишет:
-> On 1/27/21 11:35 PM, Dmitry Osipenko wrote:
->> 26.01.2021 05:45, Mikko Perttunen пишет:
->>>> 4. Sync file shouldn't be needed for the part of DRM API which doesn't
->>>> interact with external non-DRM devices.  We should use DRM syncobj for
->>>> everything related to DRM, it's a superior API over sync file, it's
->>>> suitable for DRM scheduler.
->>>
->>> Considering the issues with fileno limits, I suppose there is no other
->>> choice. Considering the recent NTSYNC proposal by Wine developers, maybe
->>> we should also have NTHANDLEs to get rid of restrictions of file
->>> descriptors.
->>
->> It's odd to me that you trying to avoid the existing DRM API. This all
->> was solved in DRM long time ago and grate drivers have no problems with
->> using the DRM APIs. Even if something is really missing, then you should
->> add the missing features instead of re-inventing everything from scratch.
->>
+On 27-01-21, 22:27, Dmitry Osipenko wrote:
+> 27.01.2021 13:16, Viresh Kumar пишет:
+> > There is no point calling dev_pm_opp_set_clkname() with the "name"
+> > parameter set to NULL, this is already done by the OPP core at setup
+> > time and should work as it is.
+> > 
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > 
+> > ---
+> > V2: Update tegra124 as well.
+> > 
+> > Krzysztof, please take this through your tree, it doesn't have any
+> > dependency in the OPP tree.
+> > ---
+> >  drivers/memory/tegra/tegra124-emc.c | 13 ++-----------
+> >  drivers/memory/tegra/tegra20-emc.c  | 13 ++-----------
+> >  drivers/memory/tegra/tegra30-emc.c  | 13 ++-----------
+> >  3 files changed, 6 insertions(+), 33 deletions(-)
 > 
-> DRM is only one of many subsystems that will have to deal with
-> syncpoints, so I have wanted to have a central solution instead of
-> reimplementing the same stuff everywhere. sync_files seem like the
-> "missing feature", but they are difficult to use it with the fileno
-> limits. But as has been said many times, they are intended only to
-> transfer fences between the implementations in individual drivers, so I
-> guess I will have to abandon this dream.
+> Ideally drivers should be able to ensure that OPP table received the
+> clk, IMO.
 
-Let's focus on finishing the basics first, using what we already have.
-Sync file + syncobj should be good enough for what we need right now.
+I don't really agree with that, this stuff is internal to the OPP
+core. And it should all work unless there is a bug, whose effects we
+will see anyway.
 
->>> DRM syncobjs may have some advantages over sync files, but
->>> also disadvantages. They cannot be poll()ed, so they cannot be combined
->>> with waits for other resources.
->>
->> I'm not sure do you mean by "poll". Sync object supports polling very
->> well.
->>
+> But this is also almost fine with me since realistically
+> clk_get() shouldn't fail if it already succeeded a moment ago.
 > 
-> I mean the poll/select etc. series of functions, which wait for file
-> descriptors to become ready. If there's some trick that allows syncobjs
-> to be used for that, then please tell.
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
 
-Please explain in details what problem you need to solve, give an example.
+Thanks.
+
+Krzysztof, please apply the patch to your tree. Thanks.
+
+> Could we please fix the _allocate_opp_table() to not ignore clk_get()
+> errors like -ENOMEM and etc?
+
+Maybe we should fail if the error is anything other than -ENODEV ?
+
+-- 
+viresh
