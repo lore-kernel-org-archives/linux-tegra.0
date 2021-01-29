@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7048C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83225C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77BF564E06
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5616F64E06
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbhA2Tdv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jan 2021 14:33:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        id S233008AbhA2Tdy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jan 2021 14:33:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbhA2Tdt (ORCPT
+        with ESMTP id S232849AbhA2Tdx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jan 2021 14:33:49 -0500
-Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 753FFC061756
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:09 -0800 (PST)
-Received: by mail-qk1-x72f.google.com with SMTP id l27so9859057qki.9
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:09 -0800 (PST)
+        Fri, 29 Jan 2021 14:33:53 -0500
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DCCC0613D6
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:12 -0800 (PST)
+Received: by mail-qk1-x72d.google.com with SMTP id u20so9864111qku.7
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bqVdY6Y1Pq6EnP728WEfCslQJrqbbJH/OzjLm3CcFak=;
-        b=frlSKUglNEaK6Zpvp86GtgN++a9yOZ+2aO/YgJHiBy5G2bESsrJHWyNI2fyjx3vG8k
-         36MAdBp+4c7E3fDNpL0vQtOPHajP3DYI7sJw4kH4iPjWTWkKPGr1HW2IeE/3NUUQPLnr
-         mhr8CQvXb/jEl5SVirY4jZrvGzz7ussoXU9QYtuGzAjXsUjRs2258+JRMYJ+7sqdOnp2
-         iQR8/b9kimu0cg4uqhZa9/KTqXm/16i96G7ea7be05PasQqDomlBcbcju9uk6ChGgXZu
-         ZOE/XO4pzNNdazf3bFB5grzxkAYj3mD6CDwGkirWuwdcwkBcTuqkhvdObrFVw1sUt4oN
-         UpEA==
+        bh=UjJUcK0eKglR2tl7QF1+vtD7OR9nEVOsWRf/PyeTMJk=;
+        b=CHwKYzHK9FxB/mZ0nAGkH39ZGKHXe2WcgZrmYQcnWRKU/0hkZ0bLMJ75HR1sI5PH4F
+         kBzvszdHTtt3TeJRVVD9AVS5B6cvasZjfggskuWG+FZm4bcBI8IEUXk2jNWvoMNBpjzL
+         3C5Rnhs9+tnPq6E4PuCfCLxwr/AbeVuIlqoNjyMeYiuKwvASuTr9gSZ+vMaGSxSJcaCr
+         96gaBmyRYpYPGQuLhFRMJYjChieWlyowiKXzdJxqRDysukPn1r1JCZ3D7vWm5TZ1K/g6
+         vKGKpMpsjB5SWK3xc/nEk6nI+OS/TPlQeYB/kXIjP6M7ZhzMCeIQ/RAl4ZLW6+vmHwYC
+         r4ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bqVdY6Y1Pq6EnP728WEfCslQJrqbbJH/OzjLm3CcFak=;
-        b=m/B/ERYfkRbzXxSQru5ap76bBPICluJVg4w7f2I4JcwfAi1Fv1gDcRGGfM92tr8i7C
-         Sq9XYCtZ6MUhuDjRyyJZAsA186pmS6w+XcB9rX7wSt3MR/AH8/0zTRvYYsTtjL0UEphN
-         TAzu1t8+gFqCPYoCqCDQ6iijQo7/kW47GL7r/4FNfi71ouuJQxZo7QlmQJMAPj+zipmz
-         0Jrj1RKKiSWA/1Iu6RL1vTQql1iQSzpdPbMgEzc1Vjh5zYxIkD0xkx9Z8ZYDProqwl1r
-         d/0yOJqYE/uHkMBBFo4BaBmkOeXCnQ6LIE8/D5sfQlstXrsz7zslC4d3ln8huEAHJvqM
-         f8fA==
-X-Gm-Message-State: AOAM530FHYmHfWqu7qRHm3atGFNUsfi/R8Ac7pDeySxFz7r7Pg38grsK
-        QPpseSOTpWXf7DEabmBonbsipFBAg3Y=
-X-Google-Smtp-Source: ABdhPJyNcVv2s6OfH0LXqQSxzBg0bM2teWMMrnalWOh+8lH382eWJR2cTxp36jtmwKB0alXh5vStVg==
-X-Received: by 2002:a37:a70c:: with SMTP id q12mr5811740qke.25.1611948788759;
-        Fri, 29 Jan 2021 11:33:08 -0800 (PST)
+        bh=UjJUcK0eKglR2tl7QF1+vtD7OR9nEVOsWRf/PyeTMJk=;
+        b=Qr2iufk+7XiwuWJR3O11sRDvezTt2sskDklPUeLklJLsQB7qGbaaw+UVfnQr++2wyo
+         Bh/2t4usYgJauAmWzsaRwKfNrYxMzBZhgb13jRvffmf//1BP4xPQsnPGsBLr16nWMN6k
+         jV7s5mZAJhDnVrHrtRSTMLCc+yqLzcjQAufC+KORke3MBhVI4iUc+msj1qLWWRjO/LsG
+         w6wztMoZ47MLYe5KyVVQQI3zmJZy/5o6ZM52k8QI57U5GXk9IVk0PPj1q+mHsfFmbTB3
+         uQPmhbCVry6jef0FF5/WhQUbqFe24rIyv83Ci9mlAd4DcG2s8iirdZDu/S5KES7g3AcY
+         qN3A==
+X-Gm-Message-State: AOAM530mugW03sVPf1BYuOJP1XEzKLzYjbqx5iU8+530YNo0sqe29xXj
+        6i+E/zCLojfRCf816Zz8FjCb6lQd2gY=
+X-Google-Smtp-Source: ABdhPJyI9vC8rMQ9ccCV59xv3EzDEvfasWpwShDIerPQPWPLCzd+mzLUgTYodzTpmygN4gX4sExDxA==
+X-Received: by 2002:a37:a992:: with SMTP id s140mr5742907qke.286.1611948792010;
+        Fri, 29 Jan 2021 11:33:12 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id h25sm6766744qkh.133.2021.01.29.11.33.07
+        by smtp.gmail.com with ESMTPSA id u65sm6774578qkb.58.2021.01.29.11.33.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Jan 2021 11:33:07 -0800 (PST)
+        Fri, 29 Jan 2021 11:33:10 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/6] ARM: tegra: Default configuration changes for v5.12-rc1
-Date:   Fri, 29 Jan 2021 20:32:52 +0100
-Message-Id: <20210129193254.3610492-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/6] arm64: tegra: Device tree changes for v5.12-rc1
+Date:   Fri, 29 Jan 2021 20:32:53 +0100
+Message-Id: <20210129193254.3610492-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210129193254.3610492-1-thierry.reding@gmail.com>
 References: <20210129193254.3610492-1-thierry.reding@gmail.com>
@@ -84,25 +84,70 @@ The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.12-arm-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.12-arm64-dt
 
-for you to fetch changes up to 760f9c2b84106fd02de701c964e7989c9802791b:
+for you to fetch changes up to 5b4f6323096a05870e557d841b209bf39e719440:
 
-  ARM: config: Enable Tegra SoC Thermal driver (2021-01-19 16:54:49 +0100)
+  arm64: tegra: Audio graph sound card for Jetson AGX Xavier (2021-01-29 17:35:37 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Default configuration changes for v5.12-rc1
+arm64: tegra: Device tree changes for v5.12-rc1
 
-Enables the Tegra SoC thermal driver on 32-bit platforms such as
-Tegra124.
+Fixes an issue with HDA codec detection by properly wiring up the
+power-domain for the HDA controller. This also fixes one of the USB-C
+ports on Jetson AGX Xavier and enables support for audio on various
+Tegra210, Tegra186 and Tegra194 boards. The Jetson Nano and Jetson TX1
+also gain QSPI support.
 
 ----------------------------------------------------------------
-Jon Hunter (1):
-      ARM: config: Enable Tegra SoC Thermal driver
+JC Kuo (2):
+      arm64: tegra: Add XUSB pad controller's "nvidia,pmc" property on Tegra210
+      arm64: tegra: Enable Jetson-Xavier J512 USB host
 
- arch/arm/configs/multi_v7_defconfig | 1 +
- arch/arm/configs/tegra_defconfig    | 1 +
- 2 files changed, 2 insertions(+)
+Jon Hunter (2):
+      arm64: tegra: Prepare for supporting the Jetson Xavier NX with eMMC
+      arm64: tegra: Add support for Jetson Xavier NX with eMMC
+
+Sameer Pujar (7):
+      arm64: tegra: Add power-domain for Tegra210 HDA
+      arm64: tegra: Audio graph header for Tegra210
+      arm64: tegra: Audio graph sound card for Jetson Nano and TX1
+      arm64: tegra: Add RT5658 device entry
+      Revert "arm64: tegra: Disable the ACONNECT for Jetson TX2"
+      arm64: tegra: Audio graph sound card for Jetson TX2
+      arm64: tegra: Audio graph sound card for Jetson AGX Xavier
+
+Sowjanya Komatineni (4):
+      dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
+      arm64: tegra: Enable QSPI on Jetson Nano
+      arm64: tegra: Add QSPI nodes on Tegra194
+      arm64: tegra: Enable QSPI on Jetson Xavier NX
+
+Thierry Reding (2):
+      Merge branch 'for-5.12/dt-bindings' into for-5.12/arm64/dt
+      arm64: tegra: Order nodes alphabetically on Tegra210
+
+ arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 742 +++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  22 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   8 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 595 ++++++++++++++++-
+ .../dts/nvidia/tegra194-p3509-0000+p3668-0000.dts  | 339 +---------
+ .../dts/nvidia/tegra194-p3509-0000+p3668-0001.dts  |  10 +
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi | 351 ++++++++++
+ .../arm64/boot/dts/nvidia/tegra194-p3668-0000.dtsi | 282 +-------
+ .../arm64/boot/dts/nvidia/tegra194-p3668-0001.dtsi |  19 +
+ arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi     | 284 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  48 ++
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 299 +++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 175 +++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 261 ++++++--
+ include/dt-bindings/clock/tegra210-car.h           |   2 +-
+ 16 files changed, 2780 insertions(+), 658 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0001.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3668-0001.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi
