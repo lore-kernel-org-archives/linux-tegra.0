@@ -2,110 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0C0C433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jan 2021 18:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8F1C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 07:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1253A64E20
-	for <linux-tegra@archiver.kernel.org>; Thu, 28 Jan 2021 18:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EFA464DFD
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 07:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbhA1Sc2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 28 Jan 2021 13:32:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232168AbhA1Sa1 (ORCPT
+        id S231887AbhA2HAH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jan 2021 02:00:07 -0500
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:37882 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229656AbhA2HAC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 28 Jan 2021 13:30:27 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA37C061574;
-        Thu, 28 Jan 2021 10:29:46 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id u14so5352867wmq.4;
-        Thu, 28 Jan 2021 10:29:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=New2v2T3Uy5ybbNiA0IfE0qGrUAXUx9CUscR4MiRx4g=;
-        b=negjh9Y0yWRG+F8PtiY7LtzqzO8MgXwRiT2wJeq/+PY8wei8/Eu1rcOubDi34QeCxK
-         G2hBmRESsB8OTwvVF1gwjfPHHJr78ZBcBk9vmnnqCO5DUFxOHdhmq2yXqjhV0FOE1/hx
-         l+/BT56aDY6rNpMxVPrE7sMbxArAKcuUrBp9puGYe3CYQFtX5zNfOLo7EGXKQ8Vrj949
-         nu+pldclWd0QswZdh4YUcBixu5fE/6GheG2E8yKlDd+8owwy0DspmPl2JfBbMPElzr81
-         TVwGVc/xrPU78wxrYQrdzxD75fPXyZdIn+EGrWruzS7DUmPu75PFMkjXAi4i6J5PhmUp
-         e8MA==
+        Fri, 29 Jan 2021 02:00:02 -0500
+Received: by mail-wm1-f44.google.com with SMTP id m1so3036380wml.2;
+        Thu, 28 Jan 2021 22:59:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=New2v2T3Uy5ybbNiA0IfE0qGrUAXUx9CUscR4MiRx4g=;
-        b=gPOiTA11bcY0+/Ksc9OeADhDr+yA5Gl2daoejmvTYejEAyPV1v0CBkmLbGoX6e4SAk
-         Cmni0bwuWu1+rwuBD32omAGHPjXIIhr11axwDgITt+56mq5V1BJntINYIG09rN2jXzii
-         MGu/z1RqDTesBSySZ1txBTT+cFTnk6gJ23dxW8zouT8ReXeYpM81ZR8ogyb3CsXJVkx/
-         NchqZ2bMIYQQftO7pAYWUpHxmkLpDzXvAB4KjI91r4kw1gD2BGq7xH6YVxY8mi3HKDCC
-         th661jwf+su0IUJQ8ARh/5SbGA/VQSrpkb9y91cZpw6TL1OMTDC0gt4hqYMiRMbmmVUu
-         LXoQ==
-X-Gm-Message-State: AOAM533tkVXIwja/QFT7dynRSrTm7x4+gA0wzl0hgErKsdDbSZvYeAJt
-        tHil02CEW+sy3n5kTL+JGGo=
-X-Google-Smtp-Source: ABdhPJwZibqCZKaj7K/3nQ4liF9/wo4NQ9rg4TBgRonsnAJEDzFD9xtzlBImh6C7jPIbjHU4pKdMtA==
-X-Received: by 2002:a1c:e2d7:: with SMTP id z206mr540274wmg.168.1611858585368;
-        Thu, 28 Jan 2021 10:29:45 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id a16sm7549538wrr.89.2021.01.28.10.29.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=I0gYgB0si4DzJnhX+tVmzjnF6SImyHl28jVz6fS8z7c=;
+        b=muz5QSNgdmZo7nehhy2IGBe99gDhj3hdq8hSq+qkGxa84Se3xSk2yTmbdS/XLJoXEu
+         +bcihP9r82zn8n9emzH81RUtyqbjwMA4w9qvADSQczq7BM/ol6uPxN/VguVeR8y5NC2K
+         /1k1AHuMfLX+PvXako5sZw+XQgP3307yz/zc3pbeLelPzk5Ut9z14Wt2A8x0N79yuFjQ
+         A9VsbHLckSaSaDWc4Ko/7VbguiemVAxC9GoUYeyPBW9j0xoHcwKq7WNB2UI7DtevRVIW
+         7x7TUf9vyrcod6WM/CdMaBmW6zk1Ae2pDz3B3tCpETYbAMWOZPUnGxCpjy7qirmnGiMO
+         4mnQ==
+X-Gm-Message-State: AOAM532U0iFlxP0+2ct5kYb3FerExeC7H/YLBHZm+zWyucV1krJt/cfq
+        369e3cYgq7cPDiXpRF3Dktw=
+X-Google-Smtp-Source: ABdhPJw64TQRP5+5Gnp1J0WTxzWh5qUF3vzgVg/gzqdsVo4nTtt7H1pRcyiCbbcGO16Ddwdoa6k2lQ==
+X-Received: by 2002:a1c:4986:: with SMTP id w128mr2340685wma.89.1611903560343;
+        Thu, 28 Jan 2021 22:59:20 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id q16sm15137243wme.1.2021.01.28.22.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jan 2021 10:29:44 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: tegra: Document Jetson Xavier NX eMMC SKU
-Date:   Thu, 28 Jan 2021 19:29:40 +0100
-Message-Id: <20210128182940.11845-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.30.0
+        Thu, 28 Jan 2021 22:59:18 -0800 (PST)
+Date:   Fri, 29 Jan 2021 07:59:17 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: Remove calls to dev_pm_opp_set_clkname()
+Message-ID: <20210129065917.ctod3hjbdsdu5v3g@kozik-lap>
+References: <0f22cc1791d8b88c50a9790c2dc19455b34ec7b0.1611742564.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0f22cc1791d8b88c50a9790c2dc19455b34ec7b0.1611742564.git.viresh.kumar@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, Jan 27, 2021 at 03:46:22PM +0530, Viresh Kumar wrote:
+> There is no point calling dev_pm_opp_set_clkname() with the "name"
+> parameter set to NULL, this is already done by the OPP core at setup
+> time and should work as it is.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> ---
+> V2: Update tegra124 as well.
+> 
+> Krzysztof, please take this through your tree, it doesn't have any
+> dependency in the OPP tree.
+> ---
+>  drivers/memory/tegra/tegra124-emc.c | 13 ++-----------
+>  drivers/memory/tegra/tegra20-emc.c  | 13 ++-----------
+>  drivers/memory/tegra/tegra30-emc.c  | 13 ++-----------
+>  3 files changed, 6 insertions(+), 33 deletions(-)
 
-Two different SKUs exist for the Jetson Xavier NX module, so document
-the compatible strings for both, as well as the developer kits that come
-with each of the SKUs.
+Thanks, applied.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- Documentation/devicetree/bindings/arm/tegra.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index c5fbf869aa93..b9f75e20fef5 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -120,10 +120,18 @@ properties:
-         items:
-           - const: nvidia,p3668-0000
-           - const: nvidia,tegra194
-+      - description: Jetson Xavier NX (eMMC)
-+        items:
-+          - const: nvidia,p3668-0001
-+          - const: nvidia,tegra194
-       - description: Jetson Xavier NX Developer Kit
-         items:
-           - const: nvidia,p3509-0000+p3668-0000
-           - const: nvidia,tegra194
-+      - description: Jetson Xavier NX Developer Kit (eMMC)
-+        items:
-+          - const: nvidia,p3509-0000+p3668-0001
-+          - const: nvidia,tegra194
-       - items:
-           - enum:
-               - nvidia,tegra234-vdk
--- 
-2.30.0
+Best regards,
+Krzysztof
 
