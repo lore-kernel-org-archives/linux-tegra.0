@@ -7,111 +7,142 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73737C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 17:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFB8C433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 17:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46E6764E13
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 17:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F21364E07
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 17:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232580AbhA2Rbg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jan 2021 12:31:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51230 "EHLO
+        id S231246AbhA2Rd5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jan 2021 12:33:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232429AbhA2R3Y (ORCPT
+        with ESMTP id S231533AbhA2RbD (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:29:24 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 249B0C061573;
-        Fri, 29 Jan 2021 09:28:44 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id b8so5575431plh.12;
-        Fri, 29 Jan 2021 09:28:44 -0800 (PST)
+        Fri, 29 Jan 2021 12:31:03 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADEBEC061574
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 09:30:10 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id b20so3520912ljo.1
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 09:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=i4YXa9+oUVNsluWZqNeovQVGehxzdePq9D0BS8DMKkI=;
-        b=E5Eq5LjEJ+KIvRT+gUvCHdCqXHtL+2IBSs2+2T3BN1qup9kTDA7YByXqA0IL8aQCA/
-         x+qK5yuFPe/j7VNGh/QciE3y4YK9+JTq2zA/52IfvaA57pBXYpLG9pIlJOL+F582OtUt
-         20ueM+D5WkPieuuGVSmqiY4PacI3HgmgXys73AnadyATMeI+VHwG3X2GuMCLu0SS7jzZ
-         CZTTKAPH2VNFMRlxapHzPj8c6nE4qPns+rxkJjZGRng1F2/FeP93J2MU7snAR1TgkMv9
-         7c1y15pcyyISmV2BiGhVPS9pOzjyT3SH9uvK9Rr9hMfI0X2gM8eIeIlIkzyBcMc+Ul3w
-         pB/A==
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZDj5Zd17VeIJsrPXYNhev0hV+6mgMniB3E2FshOdbyc=;
+        b=Wemd7WC7dfiHsTC195al2zRYGaaYcj0e6irZj7qVUVoCa9pn/kidMabOQ5pSwu8s1/
+         1wfvVbVyqmkCXd0butDfPvZ5DTsm0Vt2XPRn5wap6AFHThgjQOYspDdORej5h0SDCq0Y
+         Z4m2rH6TIXLnIkDSjU99Qzc7P/54FKLDqzIZ+T6SsnrZmKHmWoziQAQWcqtq8qTVsY+A
+         YJvgzO+Zit9qWd3ybLTJ5WL6WrSgUp+91FHrep2lOyJno+0qVHPs8QpR7q9BFl+CCfm9
+         Io+zuPmhnhkkEa1loNdRsiGqEwmJ5ms8rUwAc06DHFV9iuovxFyEX060UAi0+a7RnBXp
+         gTIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=i4YXa9+oUVNsluWZqNeovQVGehxzdePq9D0BS8DMKkI=;
-        b=TGqtz9qUv6d2hdqw3EboI4ZeAshaYrJMGmPPs/HE3patAQ6asJSm6ogU+d8cuHkUhK
-         k/ZieNUEbdkQ/YlsR4Zx9pEZgXpIyOpZKB+/QdClHYJOH8oqawE0muwmSd526oZkcuKP
-         n+EwM+zRGcqejXAUUfb3xFN+3+I/PwX47TwNi6yaBQcRs4ZMUhP7mbTbjjwCzayHTg+c
-         LQx8Bv/mUe5h/lsjyb1tn47QLL252OxEfX9eSxccRrKgrpYkoDTavhaTFpaSJ2aQFS9e
-         0xFo+kVRDq2VW96zrmdVNdIJjsZvZ5QPSZeQe4AaUofPuZ42VTZ5bF0wJKOt5O0R2W3z
-         +FKg==
-X-Gm-Message-State: AOAM531ntyD4pZ+Tz87jXGhEa86UfQTqXvQQlFk9D7lzMdLUMQLzOa6R
-        Ak8bgUVPbtAlg5ot8bMlkecY6eMJQ1vgBg==
-X-Google-Smtp-Source: ABdhPJwpob9XLa+enm1Bvj+AMTD2zpUuszy1UGCflSG1OYghuF+vKjPh09cWTnrk+73gxOglOxlNWg==
-X-Received: by 2002:a17:90a:4bc7:: with SMTP id u7mr5447970pjl.51.1611941323248;
-        Fri, 29 Jan 2021 09:28:43 -0800 (PST)
-Received: from [10.25.100.162] ([202.164.25.5])
-        by smtp.gmail.com with ESMTPSA id w186sm9110790pfc.182.2021.01.29.09.28.39
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZDj5Zd17VeIJsrPXYNhev0hV+6mgMniB3E2FshOdbyc=;
+        b=XGxtfbU8JmAhM5Wdu2Ez1gnzSb+auvdNDJYefqEg5i/pT/0/C0GmFV/ijJcj0fPpDc
+         IGbbexBHXkTPOSUtaPEnwvnh2jIBzTrQWzdvXQX9voAIcXALXKhqkaLHfXd/ZKfY6JMj
+         0OGp9CNNj7p6eKcCJZP8r9W0vH1Zop6rwVMRwwhH2Javk0cA2i6fVUS2HUIEtBXfwmqw
+         TJbB+bizTPl+MQzXXG3NCynVFJQzltZQ5Px99hFgUGnIpyZt4jIaRybUTEriiiyNpt+Z
+         xj8FICZ72kRHXxsXlGQ8pVGyeA8u54rsgFyRuJSPx38Bqc5+mFsvG6vR7t5M92Ghm8nx
+         wKTg==
+X-Gm-Message-State: AOAM533OaI2do0G2Xihb9Qi1sGmW86A9W+272Qle++x1phKAt1cJoDeN
+        fuHzlgeETdBuDPsmV4q4ZDc=
+X-Google-Smtp-Source: ABdhPJxx8aN8jAZEEFTgcJWKXPnTAMlks4CbTke3y3rQny5gMMUsrvv3Nur2CZYZ0Di8v/KNpCABcQ==
+X-Received: by 2002:a2e:9b42:: with SMTP id o2mr2849606ljj.99.1611941409221;
+        Fri, 29 Jan 2021 09:30:09 -0800 (PST)
+Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id 71sm2077043lfd.202.2021.01.29.09.30.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Jan 2021 09:28:42 -0800 (PST)
-Subject: Re: [PATCH 4/8] ASoC: tegra: Select SND_SOC_RT5659
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Sameer Pujar <spujar@nvidia.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, kuninori.morimoto.gx@renesas.com,
-        lgirdwood@gmail.com, robh+dt@kernel.org, jonathanh@nvidia.com,
-        sharadg@nvidia.com, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org
-References: <1611920470-24225-1-git-send-email-spujar@nvidia.com>
- <1611920470-24225-5-git-send-email-spujar@nvidia.com>
- <20210129124454.GB4560@sirena.org.uk>
- <d6cb9252-246e-d6c7-7500-5f1d1823325c@nvidia.com>
- <20210129154858.GE4560@sirena.org.uk>
- <a5a8df4b-21d1-0a12-df7d-9e94c353e2b5@gmail.com>
- <20210129171954.GF4560@sirena.org.uk>
-From:   Sameer Pujar <dev.spujar@gmail.com>
-Message-ID: <2f7e3949-e6b9-6940-94a4-6c1cea3b8db0@gmail.com>
-Date:   Fri, 29 Jan 2021 22:58:37 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Fri, 29 Jan 2021 09:30:08 -0800 (PST)
+Subject: Re: [PATCH v5 00/21] Host1x sync point UAPI should not be used for
+ tracking DRM jobs
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, talho@nvidia.com,
+        bhuntsman@nvidia.com
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
+ <da085c38-4ac1-19dd-7706-caf323c969d2@gmail.com>
+ <2f999b6d-d781-503a-78f4-d444bce72c58@kapsi.fi>
+ <2ee12338-bd5a-4b99-f86d-13da0d2a899b@gmail.com>
+ <8504c239-d5df-3033-934c-7b3fab52e387@kapsi.fi> <YBLtPv/1mGXwtibX@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1ff922b2-161d-c8b9-7b08-4454ff7329f8@gmail.com>
+Date:   Fri, 29 Jan 2021 20:30:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <20210129171954.GF4560@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+In-Reply-To: <YBLtPv/1mGXwtibX@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+28.01.2021 19:58, Thierry Reding пишет:
+> On Thu, Jan 28, 2021 at 01:08:54PM +0200, Mikko Perttunen wrote:
+>> On 1/27/21 11:20 PM, Dmitry Osipenko wrote:
+>>> 26.01.2021 05:45, Mikko Perttunen пишет:
+>>>>> 2. We will probably need a dedicated drm_tegra_submit_cmd for sync point
+>>>>> increments.  The job's sync point will be allocated dynamically when job
+>>>>> is submitted.  We will need a fag for the sync_incr and wait_syncpt
+>>>>> commands, saying "it's a job's sync point increment/wait"
+>>>>
+>>>> Negative. Like I have explained in previous discussions, with the
+>>>> current way the usage of hardware resources is much more deterministic
+>>>> and obvious. I disagree on the point that this is much more complicated
+>>>> for the userspace. Separating syncpoint and channel allocation is one of
+>>>> the primary motivations of this series for me.
+>>>
+>>> Sync points are a limited resource. The most sensible way to work around
+>>> it is to keep sync points within kernel as much as possible. This is not
+>>> only much simpler for user space, but also allows to utilize DRM API
+>>> properly without re-inventing what already exists and it's easier to
+>>> maintain hardware in a good state.
+>>
+>> I've spent the last few years designing for automotive and industrial
+>> products, where we don't want to at runtime notice that the system is out of
+>> free syncpoints and because of that we can only process the next camera
+>> frame in a second or two instead of 16 milliseconds. We need to know that
+>> once we have allocated the resource, it is there. The newer chips are also
+>> designed to support this.
+>>
+>> Considering Linux is increasingly being used for such applications, and they
+>> are important target markets for NVIDIA, these need to be supported.
+>>
+>> Because of the above design constraint the userspace software that runs in
+>> these environments also expects resources to be allocated up front. This
+>> isn't a matter of having to design that software according to what kind of
+>> allocation API we decide do at Linux level -- it's no use designing for
+>> dynamic allocation if it leads to you not meeting the safety requirement of
+>> needing to ensure you have all resources allocated up front.
+>>
+>> This isn't a good design feature just in a car, but in anything that needs
+>> to be reliable. However, it does pose some tradeoffs, and if you think that
+>> running out of syncpoints on T20-T114 because of upfront allocation is an
+>> actual problem, I'm not opposed to having both options available.
 
+The word "reliable" contradicts to the error-prone approach. On the
+other hand, it should be very difficult to change the stubborn
+downstream firmware and we want driver to be usable as much as possible,
+so in reality not much can be done about it.
 
-On 1/29/2021 10:49 PM, Mark Brown wrote:
-> On Fri, Jan 29, 2021 at 10:15:51PM +0530, Sameer Pujar wrote:
->> On 1/29/2021 9:18 PM, Mark Brown wrote:
->>> If the user wants a given CODEC driver then they should enable that
->>> driver.
->> Above card driver is intended to be used on multiple platforms. DT has
->> already a way for user to describe the CODEC connection required for
->> specific platform. So idea is enable these CODECs from driver point of view
->> for this card driver and platform DT can use what is required. Also the
->> CODEC driver will be a loadable module here.
-> No, you're missing the point of a generic driver here.  This will mean
-> that if someone wants to build the driver into the kernel for their
-> embedded board they will be forced to build in every CODEC driver
-> someone has decided might be used with this generic driver, and even if
-> they're building things modular someone trying to cut down the size of
-> their kernel images is going to at least have to spend time building
-> CODEC drivers they don't want to use.  Distributions should just select
-> all the CODEC drivers that are available in Kconfig, people configuring
-> for a particular target audience should be able to build only the
-> drivers they know they need.
+> I think that's a fair point. I don't see why we can't support both
+> implicit and explicit syncpoint requests. If most of the use-cases can
+> work with implicit syncpoints and let the kernel handle all aspects of
+> it, that's great. But there's no reason we can't provide more explicit
+> controls for cases where it's really important that all the resources
+> are allocated upfront.
+> 
+> Ultimately this is very specific to each use-case, so I think having
+> both options will provide us with the most flexibility.
+It should be fine to support both. This will add complexity to the
+driver, thus it needs to be done wisely.
 
-OK, will drop this in v2. Thank you for details.
-
->
->> If above does not seem fine, alternatively can I just enable CODEC config
->> independently from defconfig?
-> Yes.
+I'll need more time to think about it.
 
