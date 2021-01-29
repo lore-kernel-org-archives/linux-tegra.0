@@ -2,93 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555C8C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 18:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D64C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09A0B64E08
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 18:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F75064DFB
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232790AbhA2Sas (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jan 2021 13:30:48 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8344 "EHLO
+        id S232896AbhA2TKa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jan 2021 14:10:30 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12438 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232735AbhA2SaA (ORCPT
+        with ESMTP id S232955AbhA2TJd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jan 2021 13:30:00 -0500
+        Fri, 29 Jan 2021 14:09:33 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B601453c50000>; Fri, 29 Jan 2021 10:28:21 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 29 Jan
- 2021 18:28:21 +0000
-Received: from audio.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Fri, 29 Jan 2021 18:28:17 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <thierry.reding@gmail.com>, <broonie@kernel.org>,
-        <robh+dt@kernel.org>, <lgirdwood@gmail.com>
-CC:     <kuninori.morimoto.gx@renesas.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>, <sharadg@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v2 7/9] Revert "arm64: tegra: Disable the ACONNECT for Jetson TX2"
-Date:   Fri, 29 Jan 2021 23:57:44 +0530
-Message-ID: <1611944866-29373-8-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1611944866-29373-1-git-send-email-spujar@nvidia.com>
-References: <1611944866-29373-1-git-send-email-spujar@nvidia.com>
+        id <B60145d420003>; Fri, 29 Jan 2021 11:08:50 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 29 Jan
+ 2021 19:08:50 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 29 Jan 2021 19:08:50 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/30] 4.9.254-rc1 review
+In-Reply-To: <20210129105910.583037839@linuxfoundation.org>
+References: <20210129105910.583037839@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <7002f2eaccbe4822ace69408bdf67448@HQMAIL105.nvidia.com>
+Date:   Fri, 29 Jan 2021 19:08:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611944901; bh=I95udSMV/XUfuFEVmUIVdulMrVLxZ9bvj1yUdPIvxCs=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Type;
-        b=OmoUYQrg/YSr24+iyc4mBwtIC21nefrGcNzKRO0gpVqfnOAJ6XhBMf3ktqB6jNYzj
-         f/BWhzZtg34HHNo1lfpTYa1L1IhmVwveXsNmlm1zukZYy7AlZe9ORbjDX2On4WomHG
-         /XUFfxOrlPanTylpJpYvhjA81e1dyJH48Sss4XlLwKV7AMKr45zhH8j35tI02mZpcr
-         pNwgQdc+RGNED/mwKgG3DA7a+0wb8VxoCnOFNtAIbKUdt+6ManrAlSKSLPGLnHz+mG
-         luQyuyf8mQMc2i70WiBDrHLQ+tXuOmoyNERz7CfEY5ErTVtHdskz74A2lD8SAcWck0
-         tEHf7wthl3/mg==
+        t=1611947330; bh=g5eCi/8QPOpm1X2xJPxF1UWsFsdH9tgQBsoapFzwrqs=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=WMupgGVpeBgXJcSvA/8XVWjqXGvPmbWJVVg2nRkZsjErF4D4nAWmQw6UKpPf/C9oj
+         P/eWPQBsLR3jYGq4ErTUGvFj1yAsuxTK4yvkAiPwzh/vtEGuALxOaX7uNzvz5OYpw7
+         WecdjV9zRD7UeLMGhixPKTH/8ralOJxETmmbNYUlTpaSV/kV0QNwtRauwfp6cau61+
+         oNDLoDrc3VYVFtBA+9SKhUOLYYFgzq0mLoYwbIecsmymwdhyTq34pzvlwjr1Jh/FlP
+         6aTJpUzVEDNS7kkHlDP/8HZk+k7vTcwJmka6NzSbzcA+dVsyZrpAOKCJRi7lHMCLob
+         pnZdmbxs7NZXg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This reverts commit fb319496935b ("arm64: tegra: Disable the
-ACONNECT for Jetson TX2").
+On Fri, 29 Jan 2021 12:06:36 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.254 release.
+> There are 30 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 31 Jan 2021 10:59:01 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.254-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+All tests passing for Tegra ...
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 6fd2e05..7e1723e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -10,6 +10,18 @@
- 	model = "NVIDIA Jetson TX2 Developer Kit";
- 	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
- 
-+	aconnect {
-+		status = "okay";
-+
-+		dma-controller@2930000 {
-+			status = "okay";
-+		};
-+
-+		interrupt-controller@2a40000 {
-+			status = "okay";
-+		};
-+	};
-+
- 	i2c@3160000 {
- 		power-monitor@42 {
- 			compatible = "ti,ina3221";
--- 
-2.7.4
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
+Linux version:	4.9.254-rc1-g1aa322729224
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
