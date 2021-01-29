@@ -8,65 +8,67 @@ X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D96C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF7BC433E6
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAB1364DE3
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AE2D61477
+	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232862AbhA2Tdl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jan 2021 14:33:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49706 "EHLO
+        id S232939AbhA2Tdp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 29 Jan 2021 14:33:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbhA2Tdj (ORCPT
+        with ESMTP id S232849AbhA2Tdn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jan 2021 14:33:39 -0500
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2D9C061573
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:32:59 -0800 (PST)
-Received: by mail-qv1-xf34.google.com with SMTP id l14so5016114qvp.2
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:32:59 -0800 (PST)
+        Fri, 29 Jan 2021 14:33:43 -0500
+Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BFDC061574
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:02 -0800 (PST)
+Received: by mail-qv1-xf36.google.com with SMTP id es14so5013693qvb.3
+        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:33:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r67InYHj7w0UwUs8Y72vPHBfu31eAHA0VGcwVWjNNEc=;
-        b=EdUVY0bLdPbBA2FZrTNiX66oEskosYO2f/QYo+UziRqOcrODVKbpBf3Gl+VaTtfGiA
-         niihmJAk00TDIqH52b4XL4ZDnJzQCIN1lUlsuY5QkdNTA5/c/aCPnfWDvzH7dBtoRN+o
-         /vWQVRWq6gK52JeBDNAopenV5jEoHjTMMBkTiTS7JhJZWt2o6EJi+YsqBlRO2v7R49a2
-         f0ySZXgQsXdaVs5Z4KKyJ4tnR3m6Of2uSN2fk613Q9d8HoOrjBTuKewjwRA2YodNOo9b
-         U5QC0ab2pM3BKg8g7LMFHsggSFm1CFbh/l98i/aHUFzf5n7qgSiNkdYaSm/ORndxjuRS
-         pxgA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mwt6PYt422RZr5pAeACM9vyiMCyLXs8GJeF9XZ1Ku/4=;
+        b=XvEoFspRjc44ZPN01jRZgrDB0RcoMQx30OGPldUb0GekBNzzbbWHmmokWKb1QpDcY0
+         zT8sD6jjRTNCsPDMtwG13pdDrr+UsKufx70NWQhm4z0PZxMWhsUxu64Pil/833RPbD4w
+         moUi/1sJbECYY9mXtGpFubfV4066tSJKNGKRWmTCj3uOr1+p16awkyTBKK7HD/Woz1HT
+         vVAK0mNtCgAzuQqSh8EXnkGt/bS0QMEesvVIN56zlBp3xGVLvvoINi8JRieE+x/R5+6Q
+         3ctFEHB8o2/qAzYwfHbAKspZnEicA0Zr5ed5yWApu6wZMBPCi3W2sFnfpIx53UbJQIsz
+         BqlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r67InYHj7w0UwUs8Y72vPHBfu31eAHA0VGcwVWjNNEc=;
-        b=XtlkFbM287OkvCyi19Tn1BjxEyWxa9Ib1qAfz2O/pi/NDgV+3Wv1g3xUTNqlLXnh8x
-         igePfR3rlXy9BBvdHTP00TQALkiHpVZNafBXvdDXNrf4CB2OuzVyR5j0yPLwH9gCIxCu
-         0PHQDrPI8gLzunmgxx2ZpVLcauylWr/20RGGGBei7bQd8IZcdVViJpRPHL5J2cEbDhIj
-         h10DWJsuyf70GKui3dTwTedt8DYk2JAHVZBfQf+SGcv0IK6n14xkLNPkSToonPO9TAEk
-         C9Wt7VaJwFcdPC6SRTH6HQBOcwSob1VJ7WKSZixxr8TpIm2GKers45fb/ylnzyIZ1L9N
-         Am1A==
-X-Gm-Message-State: AOAM532nqbfyAPW8V4rXcrG8StnjySj2ulGq9ChIoB/6mOuXlaF1XOvY
-        wBb6CWA4/lsTMoUtZ/D5v9U=
-X-Google-Smtp-Source: ABdhPJy+w1P0mfYDxPTKAsKLMxfdPnzKm1nQ1m/wfdbrlcGXGt5Vna74AeVZkCwDJts+0hKT8dUcLg==
-X-Received: by 2002:a0c:e28c:: with SMTP id r12mr5539465qvl.34.1611948778317;
-        Fri, 29 Jan 2021 11:32:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mwt6PYt422RZr5pAeACM9vyiMCyLXs8GJeF9XZ1Ku/4=;
+        b=YT/mVZUx4gaJFTqskPke/l3L3gINEftLrIcmxtiyAG5PaX2S1e5wfewRcdOzMW2M8Q
+         8wBy608I7FfSmTsLBUsirkEEQ9bIUo3m/dIlpOIUUT61wSKkPIPPopjuRAQzXfo7R+Ek
+         5wQLU5fNdC4J8coRN7pmRKtlfRHdG8qXQRCqdneRC46kwDP2fXw9diah+A9Ya+FuDpA/
+         ZKLRuXDq0g+GrfqNgC5aHxoH6I1OxsAtdn62MwUpbiCPxllx4gtolldn8dXjhcCWi6gq
+         IMLqBbF1glMO0Bf5TK4omTF8GhaY/LDx9RnsqBhILnhnID9vep5/bWm5/0TungVJJa0/
+         raQA==
+X-Gm-Message-State: AOAM5316HloSZ7GUIFb2nnlbqDkQVDj66AaidiTh/qkM8bqUcaeff3cg
+        +GexIwoKryBrDXJHvzeIFQs=
+X-Google-Smtp-Source: ABdhPJz6//JxPflubp5RhH+Qrff2wJYD+9lPMkoqu3M/SZu9QEK9EVrKezOiEwB1HQiXJU1P+wJCkQ==
+X-Received: by 2002:a05:6214:7aa:: with SMTP id v10mr5405656qvz.2.1611948781910;
+        Fri, 29 Jan 2021 11:33:01 -0800 (PST)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id v15sm5751291qkv.36.2021.01.29.11.32.56
+        by smtp.gmail.com with ESMTPSA id m10sm2615314qtp.72.2021.01.29.11.33.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Jan 2021 11:32:57 -0800 (PST)
+        Fri, 29 Jan 2021 11:33:01 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 List-Id: <soc.lore.kernel.org>
 To:     arm@kernel.org, soc@kernel.org
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/6] ARM: tegra: Core changes for v5.12-rc1
-Date:   Fri, 29 Jan 2021 20:32:49 +0100
-Message-Id: <20210129193254.3610492-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] dt-bindings: tegra: Changes for v5.12-rc1
+Date:   Fri, 29 Jan 2021 20:32:50 +0100
+Message-Id: <20210129193254.3610492-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210129193254.3610492-1-thierry.reding@gmail.com>
+References: <20210129193254.3610492-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -82,25 +84,28 @@ The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.12-arm-core
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-5.12-dt-bindings
 
-for you to fetch changes up to 680ae44526ea9b656238ac768c8b6130961a0bdb:
+for you to fetch changes up to 6c50321fd65135a28450f16b5745b72368d61006:
 
-  ARM: tegra: Don't enable unused PLLs on resume from suspend (2021-01-19 18:20:42 +0100)
+  dt-bindings: arm: tegra: Document Jetson Xavier NX eMMC SKU (2021-01-29 16:56:47 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Core changes for v5.12-rc1
+dt-bindings: tegra: Changes for v5.12-rc1
 
-This contains a single fix that helps properly track the enable state
-for various PLLs during suspend/resume.
+Exposed a new QSPI clock to DT on Tegra210 and documents the eMMC SKU of
+the Jetson Xavier NX board.
 
 ----------------------------------------------------------------
-Dmitry Osipenko (1):
-      ARM: tegra: Don't enable unused PLLs on resume from suspend
+Sowjanya Komatineni (1):
+      dt-bindings: clock: tegra: Add clock ID TEGRA210_CLK_QSPI_PM
 
- arch/arm/mach-tegra/sleep-tegra20.S | 38 +++++++++++++--
- arch/arm/mach-tegra/sleep-tegra30.S | 94 +++++++++++++++++++++++++++++--------
- 2 files changed, 108 insertions(+), 24 deletions(-)
+Thierry Reding (1):
+      dt-bindings: arm: tegra: Document Jetson Xavier NX eMMC SKU
+
+ Documentation/devicetree/bindings/arm/tegra.yaml | 8 ++++++++
+ include/dt-bindings/clock/tegra210-car.h         | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
