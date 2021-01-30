@@ -2,119 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B42CFC433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90CBC433E0
+	for <linux-tegra@archiver.kernel.org>; Sat, 30 Jan 2021 11:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62D6264DEB
-	for <linux-tegra@archiver.kernel.org>; Fri, 29 Jan 2021 19:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 999A064DDF
+	for <linux-tegra@archiver.kernel.org>; Sat, 30 Jan 2021 11:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233043AbhA2Tiz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 29 Jan 2021 14:38:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233042AbhA2Tiw (ORCPT
+        id S229659AbhA3LNe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 30 Jan 2021 06:13:34 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13268 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229620AbhA3LNd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 29 Jan 2021 14:38:52 -0500
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAFFC061573
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:38:11 -0800 (PST)
-Received: by mail-qv1-xf29.google.com with SMTP id n14so5019140qvg.5
-        for <linux-tegra@vger.kernel.org>; Fri, 29 Jan 2021 11:38:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4fGzrN6PFTAJYkRPyb9kzsjSHgmSvwhuhlysknOYXYA=;
-        b=i6oSb7UAaMqU4PIDGWm0yU7Y/uPJJh1eDrYwsw3CF/XyUsSZAr9es25MVA2DGtlBFz
-         u7rhUfXmjPZeIKdsIN/pY4LwCDQzqLl8oYX0AUHSjMyfQs+BHCa7KAOE/Naw9LO7Vxrw
-         ZRjzLLaejtrFnBuNSrHN5Hc6hyow6BWajlW8OC9xDNUtK4a8CJE6R8q4P0lCCOHWOd+B
-         JM50toQNcZke7C0UdF60Zcnt0cqe1wUU1qzLZ8gZuK7e9qQnS3BjBA9E0f6RvLWm18lR
-         5InP1O48dP07vCLuj4Eq+I3ISlmtCgGEbWfxwiwOJPqGd46oObORvcm3qVMzSBMcE/c9
-         7lGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4fGzrN6PFTAJYkRPyb9kzsjSHgmSvwhuhlysknOYXYA=;
-        b=Qui3rhMCbDcs9U7+FpcPKz+TIAHlhenOaj8wY3WRCvl/qgCwSRbcz4sbLsuQYG9vb8
-         67AsC4bkzMlFVi/T02T/hC99gk6w9Zu2L5DvO2rhYGJrsQB6ztlez+1eGKWEEvAbI5m7
-         QcCakqp0m7+10R5Eedt5DYs21nrUwCvkZz8csMHozmIY8tNfRuQm6iGpU8vroprmOUaf
-         /K8BR1fKn9sm4GvV2Wsfxm2qxHYXtscjf1ctV7I5lcCc+XzM0YKmFi7TlAeW6nRNE3RK
-         c/9/oqCYZxju+rXDf8XovyNe2QXZbZ5w/M1B4iFNwsCLXaCTsR/d7WpikjNTdxyViYHl
-         daNA==
-X-Gm-Message-State: AOAM530QEBB3p1AvZx30pzUkj5nW/m7+CWLBUm4pRS6G6gT5Gzc+H51Q
-        A/QGyWZwCTV5uPREjcS0G6A=
-X-Google-Smtp-Source: ABdhPJytot/Qn5Gn2Zuh5rqErTSAuk9UolhUla6tra+YOX2FqMS77YGZywgL7wPppFvu2Vop4MVMlg==
-X-Received: by 2002:a0c:b4d1:: with SMTP id h17mr5299486qvf.53.1611949091101;
-        Fri, 29 Jan 2021 11:38:11 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id r17sm6389910qta.78.2021.01.29.11.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Jan 2021 11:38:10 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] drm/tegra: Changes for v5.12-rc1
-Date:   Fri, 29 Jan 2021 20:38:07 +0100
-Message-Id: <20210129193807.3653456-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.30.0
+        Sat, 30 Jan 2021 06:13:33 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B60153f350000>; Sat, 30 Jan 2021 03:12:53 -0800
+Received: from [10.26.74.139] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 30 Jan
+ 2021 11:12:50 +0000
+Subject: Re: [PATCH 4.9 00/30] 4.9.254-rc1 review
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20210129105910.583037839@linuxfoundation.org>
+ <7002f2eaccbe4822ace69408bdf67448@HQMAIL105.nvidia.com>
+Message-ID: <f39129e5-6d38-6c33-f31e-cf15e4c0399d@nvidia.com>
+Date:   Sat, 30 Jan 2021 11:12:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7002f2eaccbe4822ace69408bdf67448@HQMAIL105.nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1612005173; bh=wbKKSPFv7rGHUAFgEhp4QjkXiqJiuFWXorSO27ViRdY=;
+        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=kBpBumaTtce3C8abkoyXARWV69eQXZvdNTyEWdpLaKCqtqG70HL6xT3GkwPHve4qZ
+         l93quEGwnxCPUPWVdO4nZSd8g3k9TxeEawouAEXPICdbokciDSdAXmOGB/kJzmyF9K
+         qfJSdJe/XcnzDLvvc1kLhS8gILRAAAM8gTt7ira9hDaejlLhPMDTnhpNfMCQYiPbkP
+         fEMKG/QK/phi6sSamL1BvKRcmj9QGD6H+4uJcC9fSdG0Ydvo6eII0Qu+PF+GEL+iEu
+         JfxFVmHTAPx1s/yN/Wti/qcS1nVrOLL74GJAm/HCPab+n0iQDcPXVPKps2wDGDkvzc
+         eQjS2VFPw3Kzw==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dave,
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+On 29/01/2021 19:08, Jon Hunter wrote:
+> On Fri, 29 Jan 2021 12:06:36 +0100, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 4.9.254 release.
+>> There are 30 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
+>>
+>> Responses should be made by Sun, 31 Jan 2021 10:59:01 +0000.
+>> Anything received after that time might be too late.
+>>
+>> The whole patch series can be found in one patch at:
+>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.254-rc1.gz
+>> or in the git tree and branch at:
+>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+>> and the diffstat can be found below.
+>>
+>> thanks,
+>>
+>> greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v4.9:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     30 tests:	30 pass, 0 fail
+> 
+> Linux version:	4.9.254-rc1-g1aa322729224
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Jon
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
 
-are available in the Git repository at:
+For some reason I don't appear to be receiving the 'review' request
+emails. We have a script that checks for them on lore.kernel.org/lkml
+but I don't seem to find them there either ...
 
-  ssh://git.freedesktop.org/git/tegra/linux.git tags/drm/tegra/for-5.12-rc1
+https://lore.kernel.org/lkml/?q=%5BPATCH+4.14+00%2F50%5D+4.14.218-rc1+review
 
-for you to fetch changes up to dcdfe2712b68f1e9dbf4f1a96ad59b80e5cc0ef7:
+https://lore.kernel.org/lkml/?q=%5BPATCH+4.19+00%2F26%5D+4.19.172-rc1+review
 
-  drm/tegra: Fix reference leak when pm_runtime_get_sync() fails (2021-01-15 17:24:51 +0100)
+I thought it was our mail server but then I would have thought I would
+see them on lore. I often see a delay but they usually arrive within a day.
 
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Changes for v5.12-rc1
-
-Adds support for newer firmware image versions of the Video Image
-Composer (VIC) and adds a comment clarifying the use of the STREAMID
-registers. Fixes a couple of issues with display and gr2d on older
-Tegra SoCs such as Tegra114, as well as a runtime PM reference leak.
-
-----------------------------------------------------------------
-Dmitry Osipenko (3):
-      drm/tegra: dc: Enable display controller driver for Tegra114
-      drm/tegra: gr2d: Correct swapped device-tree compatibles
-      drm/tegra: gr2d: Add compatible for Tegra114
-
-Mikko Perttunen (2):
-      drm/tegra: falcon: Support newer VIC firmware
-      drm/tegra: vic: Add comments on STREAMID registers
-
-Qinglang Miao (1):
-      drm/tegra: Fix reference leak when pm_runtime_get_sync() fails
-
- drivers/gpu/drm/tegra/dc.c     |  2 +-
- drivers/gpu/drm/tegra/drm.c    |  2 ++
- drivers/gpu/drm/tegra/dsi.c    |  2 +-
- drivers/gpu/drm/tegra/falcon.c |  9 +++++----
- drivers/gpu/drm/tegra/gr2d.c   |  9 +++++++--
- drivers/gpu/drm/tegra/hdmi.c   |  2 +-
- drivers/gpu/drm/tegra/hub.c    |  2 +-
- drivers/gpu/drm/tegra/sor.c    |  2 +-
- drivers/gpu/drm/tegra/vic.c    | 35 ++++++++++++++++++++++++++---------
- 9 files changed, 45 insertions(+), 20 deletions(-)
+Cheers
+Jon
+ --
+nvpublic
