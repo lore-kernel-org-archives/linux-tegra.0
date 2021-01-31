@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2582CC433E0
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409C8C433DB
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF33064E24
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CD464E25
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231183AbhAaTpu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 31 Jan 2021 14:45:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40196 "EHLO
+        id S232178AbhAaUNc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 31 Jan 2021 15:13:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbhAaTgN (ORCPT
+        with ESMTP id S230438AbhAaTfs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 31 Jan 2021 14:36:13 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C192C061353;
-        Sun, 31 Jan 2021 09:32:59 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id e19so9999246pfh.6;
-        Sun, 31 Jan 2021 09:32:59 -0800 (PST)
+        Sun, 31 Jan 2021 14:35:48 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0AFC061797;
+        Sun, 31 Jan 2021 09:31:46 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id gx20so343150pjb.1;
+        Sun, 31 Jan 2021 09:31:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gKI25e/jJLfDV6Kg+PuHK7AdOezrhXeGKxAKRdL5O5c=;
-        b=NZcWTveJhv5rbkJbLgSmHjwf6GQe9APQLUr0ywzyJM8YOZdKLDVjpOlWiqUVM3EYNh
-         kVuCCm5wXBU2CzBpOGGvpr1BpC2rqWrQeI06JQ+SETI199L8+FYBQKp89qv5dG75eYTW
-         KWNOwfxDvOcvULC3hmRatn9Q4lf1Cq3pLf8Qx4umAZfUd4mAYHqrmX4Go7rUJOSRRkJY
-         AsFOhMO81LuYJHC3r4erHnmawkginx2aVB88AKq463Zgz7HOHICH1Nj2Ej16T3V73iQ7
-         2EiZ8RG+u8M76R39DPXF34+0sdMtwNcnubNW+xTw/tY6N2wafaytjUKh5roXYOGeEtUq
-         rINA==
+        bh=YAFVqpo2auTJUYrtqcdZaCPT+PUXtqA1yzZi4A7sg2M=;
+        b=gfsZBKg7cAaipKTK44sZULsayr/Mkqb6cPw3QqfDlqaATzBwAKNvQGRnZ8G9iQJvq6
+         y5303HIUVPKino6SaIXwqAu5Tci/Tzt2HbWQqq2MCxJn5iOrkIMyNUeri8O6BmLuVXPi
+         87qTgY1RCyNju4kNcPvB8Tw31Emb1d/uI934cKG5o1G7XkB4X8TxFGf0FcJWiMmpvKLE
+         5nAwLdxrnWcY6/lu/1MnPS8+GZ3kpEouQrjxhlnbTImavBmUiZ5epzlC3bY5Fnkxj1jl
+         e+H0b+dSu9OslMzvEStB9LLe2hkht0pV+jZbsFQZzrpFDBBuwp/SGsCzpZuqu9kk95+9
+         G3QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gKI25e/jJLfDV6Kg+PuHK7AdOezrhXeGKxAKRdL5O5c=;
-        b=tt1iT9orJLG3nCuFds1StDkvkG7joNJC81YQB51fg0hfMTjyy7LiKVs1s5jju/rWaP
-         +XFCDu9y1LRwn2aWSRiyGdmHCBYDYwbUrj9JNnPIUcJYmuPB55Pb5rY281Ge5qWH8gyn
-         cKyz9w9g7Rh7KmsnuNwZyF5upk79KlaxIKO5wZOKaE5XPDLEsAAi4oxe66pTmJRt7A6d
-         wUQkgsHT/0FFUoXrJM9oEGzhbGW3ZYFRAHTvdzuheYd8T66jkSDJ78H3e3+JJJj+1OpW
-         S7nCfIZ6wFoU8frb1xfhHvac86nmPLupBRuu5IIfeT6RSyCSRFFVIm4gTevJP+Pw/DfG
-         dyxQ==
-X-Gm-Message-State: AOAM532zyWTNhl2jKTt38Q3wqXnVPaaDfKFBp4W98gOd+cQ3aAo/jLmQ
-        AOm+boO60LE2yN0oZ07AB/M=
-X-Google-Smtp-Source: ABdhPJxJdjPPIgHhUA+gd6c590Us77Rv3SAo0M63OGyZ3eELnR08dADDz7f1OMchhqa7A2U6TYf6aw==
-X-Received: by 2002:a62:7b8a:0:b029:1bb:4a06:bb57 with SMTP id w132-20020a627b8a0000b02901bb4a06bb57mr12418121pfc.47.1612114378549;
-        Sun, 31 Jan 2021 09:32:58 -0800 (PST)
+        bh=YAFVqpo2auTJUYrtqcdZaCPT+PUXtqA1yzZi4A7sg2M=;
+        b=cFtRF0Wp0zXNd0UQ79DTn7fG/SeSWM/tNxMtPPotfTVYrCl/dn+RaKvW+2vLEBXqN1
+         mqVEopeXapFRFuWBXuEz7pnFrw2J6RFybBW60PzU3F6CxbcA58pYjhohUZ/lota2W+pG
+         j06waKMlLhXxYflJugcTPF4and3/WsXZXRuf9pBSseXnxvZq1dkutxhhOxKhdiJD9Hib
+         AMzVQnfHcyEahQPIFxR9GESco5EfqM2w5YdeF3M41x1ypwJICeMZ0k4AEj4OyysuXzg5
+         e46VBFH9KVIlYytmApFS3Wqy57gpQ4NR52l3PjHQfEbaKK/zKmb262ufjnxKkV9pW/n5
+         HSYQ==
+X-Gm-Message-State: AOAM530tiYLQLNGy+UOoK+Er3sC303QORNSeRJJCNnVkxjsZK7bVI3vJ
+        JYsHbAT6uxT5rq4jBX5E+jM=
+X-Google-Smtp-Source: ABdhPJydIpBl27zWlFzSU3IhagnDXZPJq2whmVIc4lQaYyGAyMUbLfRKz+PJcImBlqe99k/sZnqEYw==
+X-Received: by 2002:a17:90a:7608:: with SMTP id s8mr6952392pjk.105.1612114306505;
+        Sun, 31 Jan 2021 09:31:46 -0800 (PST)
 Received: from localhost ([2402:3a80:11ea:e144:a2a4:c5ff:fe20:7222])
-        by smtp.gmail.com with ESMTPSA id a141sm15124191pfa.189.2021.01.31.09.32.57
+        by smtp.gmail.com with ESMTPSA id ge16sm12997426pjb.41.2021.01.31.09.31.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Jan 2021 09:32:58 -0800 (PST)
+        Sun, 31 Jan 2021 09:31:45 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org
@@ -80,17 +80,16 @@ Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Teddy Wang <teddy.wang@siliconmotion.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Robert Richter <rric@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        William Cohen <wcohen@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
         Mike Rapoport <rppt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Robert Richter <rric@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         greybus-dev@lists.linaro.org, ac100@lists.launchpad.net,
         linux-tegra@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 11/13] staging: rtl8712: Switch from strlcpy to strscpy
-Date:   Sun, 31 Jan 2021 22:58:32 +0530
-Message-Id: <20210131172838.146706-12-memxor@gmail.com>
+Subject: [PATCH 04/13] staging: most: Switch from strlcpy to strscpy
+Date:   Sun, 31 Jan 2021 22:58:25 +0530
+Message-Id: <20210131172838.146706-5-memxor@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210131172838.146706-1-memxor@gmail.com>
 References: <20210131172838.146706-1-memxor@gmail.com>
@@ -110,22 +109,47 @@ This silences the related checkpatch warnings from:
 
 Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 ---
- drivers/staging/rtl8712/rtl871x_ioctl_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/most/sound/sound.c | 2 +-
+ drivers/staging/most/video/video.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-index cbaa7a489..81de5a9e6 100644
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -1784,7 +1784,7 @@ static int r871x_wx_set_enc_ext(struct net_device *dev,
- 		return -ENOMEM;
- 	param->cmd = IEEE_CMD_SET_ENCRYPTION;
- 	eth_broadcast_addr(param->sta_addr);
--	strlcpy((char *)param->u.crypt.alg, alg_name, IEEE_CRYPT_ALG_NAME_LEN);
-+	strscpy((char *)param->u.crypt.alg, alg_name, IEEE_CRYPT_ALG_NAME_LEN);
- 	if (pext->ext_flags & IW_ENCODE_EXT_GROUP_KEY)
- 		param->u.crypt.set_tx = 0;
- 	if (pext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
+diff --git a/drivers/staging/most/sound/sound.c b/drivers/staging/most/sound/sound.c
+index 3a1a59058..c4287994b 100644
+--- a/drivers/staging/most/sound/sound.c
++++ b/drivers/staging/most/sound/sound.c
+@@ -525,7 +525,7 @@ static int audio_probe_channel(struct most_interface *iface, int channel_id,
+ 		pr_err("Incompatible channel type\n");
+ 		return -EINVAL;
+ 	}
+-	strlcpy(arg_list_cpy, arg_list, STRING_SIZE);
++	strscpy(arg_list_cpy, arg_list, STRING_SIZE);
+ 	ret = split_arg_list(arg_list_cpy, &ch_num, &sample_res);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index 829df899b..90933d78c 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -245,8 +245,8 @@ static int vidioc_querycap(struct file *file, void *priv,
+ 	struct comp_fh *fh = priv;
+ 	struct most_video_dev *mdev = fh->mdev;
+ 
+-	strlcpy(cap->driver, "v4l2_component", sizeof(cap->driver));
+-	strlcpy(cap->card, "MOST", sizeof(cap->card));
++	strscpy(cap->driver, "v4l2_component", sizeof(cap->driver));
++	strscpy(cap->card, "MOST", sizeof(cap->card));
+ 	snprintf(cap->bus_info, sizeof(cap->bus_info),
+ 		 "%s", mdev->iface->description);
+ 	return 0;
+@@ -483,7 +483,7 @@ static int comp_probe_channel(struct most_interface *iface, int channel_idx,
+ 	mdev->v4l2_dev.release = comp_v4l2_dev_release;
+ 
+ 	/* Create the v4l2_device */
+-	strlcpy(mdev->v4l2_dev.name, name, sizeof(mdev->v4l2_dev.name));
++	strscpy(mdev->v4l2_dev.name, name, sizeof(mdev->v4l2_dev.name));
+ 	ret = v4l2_device_register(NULL, &mdev->v4l2_dev);
+ 	if (ret) {
+ 		pr_err("v4l2_device_register() failed\n");
 -- 
 2.29.2
 
