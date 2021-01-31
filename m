@@ -2,134 +2,156 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DB1C433E6
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824C4C433E0
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 21:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE5464E2E
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 20:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40A4A64E2C
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 21:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbhAaUNf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 31 Jan 2021 15:13:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39668 "EHLO
+        id S229645AbhAaVUf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 31 Jan 2021 16:20:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbhAaTft (ORCPT
+        with ESMTP id S229705AbhAaVQ7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 31 Jan 2021 14:35:49 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0475FC0617A9;
-        Sun, 31 Jan 2021 09:32:08 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id y10so4411481plk.7;
-        Sun, 31 Jan 2021 09:32:08 -0800 (PST)
+        Sun, 31 Jan 2021 16:16:59 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1FEC0613ED
+        for <linux-tegra@vger.kernel.org>; Sun, 31 Jan 2021 13:06:07 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id q201so11329607ybg.8
+        for <linux-tegra@vger.kernel.org>; Sun, 31 Jan 2021 13:06:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8z7T30JwVaWaq0MDWkzbLRl1Zk2i9+kaaFA/9JES7Xs=;
-        b=Uoqbq4QkgIl9VP9kliAkYuDQm21xB+XmNDU1AxMz1RJf8ufeaxxdJyfbPtuk5Ue9Sy
-         MsdwlBDkuXGbADiWX3vmEvafdwHpDVKRSJ9NoYmEi915UYcqRWEQPKMo+cP6rmBvv8bF
-         qkIqPu6ztvPeb9ysJJLiyUFmRIrZVzyr9cs/x02p9cSb4Pt62moPq/QSkjFuqmHJ/4V6
-         E2opHNxR9Ga44NNvcciGBBq2C025jSGE+TkcgPUq2BZ1KJf5K5IlNq0oVQnrPipGjDLr
-         XRzLuQtPzaP5fBIV1iwtCKI5ZRISbgq/zvxGOm4x9XsH6BxWulI21PlLJsi/m4HS2xyG
-         1Q6Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F6xePmZZnH6hMvD4xD8ZTxXMbXTwQCIaaXwZCqOR73o=;
+        b=pomyqoIFXX8blUy7SRM25Ywc+1yks3dkornd4bjxNZ7tJyPbuAIYMU6om7s9K38vJu
+         VzCVf4EXMfvoHPrmVlkUDpTvmmsfMex17X44y5ilguI1PX/cW5hb+FhSGH5NoZntkpy7
+         k/yS+ANLmiMBiwh7xRB1VsICl/7gFFT7+VGTJp+TMlW9FkAxzhR1ldV6byEN+YrJzyw+
+         EkMkKyE6kbmp0WsE5wmuqL00jQ59V9C2c6XSLdiwhzz2ubHYQrLe0jE+KLU4ZfV3ec7y
+         mV77qYWFGvW3v4jkAVc91iU0NyniIvM0UCzR40x/EIzC91ahpbFjqayO6t/RhkBNeRqT
+         FcnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8z7T30JwVaWaq0MDWkzbLRl1Zk2i9+kaaFA/9JES7Xs=;
-        b=sIPB65a505mtAz2pweoDMnJJ0aDeRQcVfOnkeXojixCpqDP4BbPHS/fl2XBK/pfjDp
-         CzfdV01RreRZk7iohA4gWNrp+FaK3HgyEkd7I1I85drvT0YGZTfUaoHg2mboC5+2qKVD
-         ujRM9W5wP4K7gUfXBCnUAcJxlJmOuWc+o6SX3ZYqFI5OkwbfJUsEZq7Y5AJrp6qbwyqq
-         vJMIWGHbuGQzwRwgIfSHgQvqbL0M2J3QpylcRbdmQK6PWSwnMuMsRG97b92omaimYMcX
-         VKvWO1xuGQyTjBLeWQ+ffMbcyMDDlLnsCVA8i1c8ib9TXJ0ZzEEIk7ji1ldc6Qodaul0
-         b+Ew==
-X-Gm-Message-State: AOAM5339L+ZwrsX+I2DGRCpO91y3GnyeSkEvfakEJb1HpJRjGz23DHAX
-        Mz0bBJtKYLu9q8hQrqltuKM=
-X-Google-Smtp-Source: ABdhPJxlrmQpiP0t2W7sFWGvxmRHJQ1EXLzsFuG1+Bm3Y/OPuczoXDBzhNcDmo58qBTT9cFSwqvRTw==
-X-Received: by 2002:a17:902:eacb:b029:e1:2de4:72b6 with SMTP id p11-20020a170902eacbb02900e12de472b6mr8975072pld.17.1612114327515;
-        Sun, 31 Jan 2021 09:32:07 -0800 (PST)
-Received: from localhost ([2402:3a80:11ea:e144:a2a4:c5ff:fe20:7222])
-        by smtp.gmail.com with ESMTPSA id 76sm14898291pfz.174.2021.01.31.09.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Jan 2021 09:32:06 -0800 (PST)
-From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
-To:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        William Cohen <wcohen@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mike Rapoport <rppt@kernel.org>,
-        Robert Richter <rric@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        greybus-dev@lists.linaro.org, ac100@lists.launchpad.net,
-        linux-tegra@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 06/13] staging: octeon: Switch from strlcpy to strscpy
-Date:   Sun, 31 Jan 2021 22:58:27 +0530
-Message-Id: <20210131172838.146706-7-memxor@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210131172838.146706-1-memxor@gmail.com>
-References: <20210131172838.146706-1-memxor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F6xePmZZnH6hMvD4xD8ZTxXMbXTwQCIaaXwZCqOR73o=;
+        b=e7m/dgUMRNiO6FSeRGiWViWa06f9Rt2etgGQeDn4jJVBatRTg9OiElEqP4j/tml8nU
+         ksVBDPbaJoWcbZgBUnleexPNWRKdO3en2DwknzVY8cap3BwZFxNbJecxMZV9s2ShOasT
+         JHXuqoWrlGMJ4nIyNzpnDjWvybxzGQ28zEt0sUwanQs9nqdwLlYnzffcn84xfqcg5PCt
+         gqbhZk6+XMXukMazw8FnXnEHBlVX/knYtn6KlRHHsW832XjkB5ZdFVCpHyHguj+ji0aj
+         N9au592uTgQNFYejWzcxgsKnYFZdvwKDwGIFzw5BlaFoEdmGa/dECKQjQHZmUeddULCM
+         xkYw==
+X-Gm-Message-State: AOAM530Xamh80OkQETRIckWUavMkzcQ2oE3QD07FRF8WwzJpaxnlHuAN
+        feS1BxKe/GTlpAKbxEFczPkuQ+PuKpSsgxYAG1nCxg==
+X-Google-Smtp-Source: ABdhPJzjU3zj0wbXZG0f03S/hFagW8JbVXaVdT9fwLER5q6Jo0XbHcUOUssMJB/AbhXUdfaJz5NEzNBpvaWWh15ZEzc=
+X-Received: by 2002:a25:b74c:: with SMTP id e12mr11231618ybm.20.1612127166455;
+ Sun, 31 Jan 2021 13:06:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210121225712.1118239-1-saravanak@google.com> <20210131163823.c4zb47pl4tukcl7c@viti.kaiser.cx>
+In-Reply-To: <20210131163823.c4zb47pl4tukcl7c@viti.kaiser.cx>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Sun, 31 Jan 2021 13:05:30 -0800
+Message-ID: <CAGETcx8A_+Y0sCLPdyeeT+rHOsAPsmg4LVn_ahF0NaD6hfRiZw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] of: property: Add fw_devlink support for more props
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-strlcpy is marked as deprecated in Documentation/process/deprecated.rst,
-and there is no functional difference when the caller expects truncation
-(when not checking the return value). strscpy is relatively better as it
-also avoids scanning the whole source string.
+On Sun, Jan 31, 2021 at 8:38 AM Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Dear all,
+>
+> Thus wrote Saravana Kannan (saravanak@google.com):
+>
+> > Sending again because I messed up the To/Cc for the coverletter.
+>
+> > This series combines two patches [1] [2] that'd conflict.
+>
+> > Greg,
+>
+> > Can you please pull this into driver-core-next?
+>
+> > -Saravana
+>
+> > [1] - https://lore.kernel.org/lkml/20210115210159.3090203-1-saravanak@google.com/
+> > [2] - https://lore.kernel.org/lkml/20201218210750.3455872-1-saravanak@google.com/
+>
+> I'm running linux-next on my hardware which is based on the imx258
+> chipset by Freescale/NXP.
+>
+> When those two patches appeared in linux-next, my system would not boot
+> any more. It was stuck right after
+>
+> Uncompressing Linux... done, booting the kernel.
+>
+> Reverting the irq-patch made the system boot again. Still, a number of
+> devices like usb or nand flash controller are not found any more.
+> If I revert the gpio patch as well, all devices are available again.
+>
+> My system's device tree is based on arch/arm/boot/dts/imx25.dtsi with
+> very few adaptations for my board.
+>
+> I tried to play around with the new parse_interrupts() function to
+> figure out which device causes the boot failure. If I skip the following
+> device, I can boot again:
+>
+> -       return of_irq_find_parent(np);
+> +       np_ret = of_irq_find_parent(np);
+> +       if (!strcmp(np->full_name, "serial@50008000")) {
+> +           printk(KERN_ERR "skip serial@50008000\n");
+> +           return NULL;
+> +       }
+> +      return np_ret;
+>
+> This is uart4 of the imx258 chip, which I use as my serial console. The
+> imx25.dtsi device tree seems ok, we find an interrupt parent. The
+> problem must be in the code that processes the result of
+> parse_interrupts().
+>
+> I tried to boot the unmodified code with qemu, simulating the imx25-pdk
+> device. This wouldn't boot either.
+>
+> Does this ring any bells with anyone?
 
-This silences the related checkpatch warnings from:
-5dbdb2d87c29 ("checkpatch: prefer strscpy to strlcpy")
+This series [1] has a high chance of fixing it for you if
+CONFIG_MODULES is disabled in your set up. Can you give it a shot?
 
-Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
----
- drivers/staging/octeon/ethernet-mdio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The real problem is that arch/arm/mach-imx/avic.c doesn't set the
+OF_POPULATED flag for the "fsl,avic" node. fw_devlink uses this
+information to know that this device node will never have a struct
+device created for it. The proper way to do this for root IRQCHIP
+nodes is to use IRQCHIP_DECLARE(). I Cc'ed you on a clean up patch for
+IMX [2], can you please give [2] a shot *without* [1] and with
+CONFIG_MODULES enabled? Things should boot properly with this
+combination too.
 
-diff --git a/drivers/staging/octeon/ethernet-mdio.c b/drivers/staging/octeon/ethernet-mdio.c
-index 0bf545849..1bb91a904 100644
---- a/drivers/staging/octeon/ethernet-mdio.c
-+++ b/drivers/staging/octeon/ethernet-mdio.c
-@@ -21,9 +21,9 @@
- static void cvm_oct_get_drvinfo(struct net_device *dev,
- 				struct ethtool_drvinfo *info)
- {
--	strlcpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
--	strlcpy(info->version, UTS_RELEASE, sizeof(info->version));
--	strlcpy(info->bus_info, "Builtin", sizeof(info->bus_info));
-+	strscpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
-+	strscpy(info->version, UTS_RELEASE, sizeof(info->version));
-+	strscpy(info->bus_info, "Builtin", sizeof(info->bus_info));
- }
- 
- static int cvm_oct_nway_reset(struct net_device *dev)
--- 
-2.29.2
+Btw, for future reference, you can try enabling the logs in
+device_links_check_suppliers() to see what devices are being blocked
+on what supplier nodes.
 
+[1] - https://lore.kernel.org/lkml/20210130040344.2807439-1-saravanak@google.com/
+[2] - https://lore.kernel.org/lkml/20210131205654.3379661-1-saravanak@google.com/T/#u
+
+Thanks,
+Saravana
