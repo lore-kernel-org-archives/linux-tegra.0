@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D2BC433DB
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 19:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C041CC433E6
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 19:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2F564E27
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 19:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A00064E31
+	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 19:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbhAaTqq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 31 Jan 2021 14:46:46 -0500
+        id S231419AbhAaTqu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 31 Jan 2021 14:46:50 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbhAaTgi (ORCPT
+        with ESMTP id S231262AbhAaTl0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 31 Jan 2021 14:36:38 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD631C061351;
-        Sun, 31 Jan 2021 09:32:38 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id e9so9558225pjj.0;
-        Sun, 31 Jan 2021 09:32:38 -0800 (PST)
+        Sun, 31 Jan 2021 14:41:26 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7895CC061354;
+        Sun, 31 Jan 2021 09:33:10 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id s23so2652553pjz.4;
+        Sun, 31 Jan 2021 09:33:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UATS+ZdWIHunyokeUQ2KzApxYEhPMU9QywnIQp+k1xo=;
-        b=b9PXwhx5E5wwbmXTP1RC5Fki7Zw2VLqiM/m2UxK1wU8m1BcPsvMcbEoZKi8Jo/UQfo
-         row6SlwsGQ4BvNwDVIFQKQ/exYO3s1SXu5odFHUWe5KJyKgB3MdlNG4erlIsz0qCCsKl
-         mWVsToJ0LPw8Jz4M7lkZxQtrfefC0w4E9v94Z8g+fQoBFJWMp5LIJg7kn1zkr+a/kmIX
-         OS6IXKIRgJ0Z6rRVCw55ShwQemSUKLOnG27rkeZv06XzlINdBPCLpuk0AsGiO8EDQq7t
-         DNrGOEj9pmVX5fRmfrorZSbIo7rwnLgXNjJrVAgsXk6dQZJErelCE7Teavl1RfklKb3o
-         Zo8Q==
+        bh=OCqlwfO8Y29nGZpydwpkYYTLuT/Y0WSarB/5hJMpIrI=;
+        b=clsAZXvxgZ/QYBDXDbtJ4ra1untXoh43m/JKXpoj36mFm0NTF9xDZ4Fi6UUWdXVLU2
+         Y2NyRER0oiHmVIINV0iIbfMP9jEN2oswqdjlsA1PdtxmpvHogl3KEFRiiDRXet3IjpbY
+         VX3bdj8TnT2DO6FEoc42Z8aIfClVIJYWI7V2GHHaSuLUfbuysrEWnA0dSiQGnbyrMlyD
+         vNHavG8UTyA6Td5n4FOSphSDHxBAKT5qDWSqn5jhKXAgY8hmM12i0jDOe3eZGqJB/NBF
+         RVsZrpV19eW5wedv6j6jw+usPKIlLbfw2s9RmT+uUdu1qcbzBci4hKPzE6jSCgCGR32f
+         +JLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UATS+ZdWIHunyokeUQ2KzApxYEhPMU9QywnIQp+k1xo=;
-        b=A0pOAKhqQsqOjgR643+zlIVwS+H0qSS8zV26Bs5+T2pkUeJu85gxbp/u1O1fY+dSmq
-         FDPhFyRqulkKmgItPIm5ZqWguqw9qaFn0v6U2x7Cb4DhvOeHmAFAxAj1vyudaO1RjfWw
-         FX0NDJUnjYn5DPO1Uw1ZzsABGelYFx1OrKtr0Ln/0GokKdbxHE912LAtfWfC6vJp4dNh
-         JGdK1QlLhUZO/WiB9us7CVOGegB7ZGbmQ+hg6Tntar3nlyxF/oHMeMD7pUC2cY6UXd2o
-         zyK/u904DLO/REU70isnkmX8/WGZIz07QQyUlBoZUfRNVun5yZM86uUY3POA6gMVdFFl
-         1ktw==
-X-Gm-Message-State: AOAM531YJ1W0kDTcmDHtxI5yig1XvLEIcKehi2uJsUe9AHT5cwyjNzSb
-        XxAwAVS4cqNULvF3sv2bj1A=
-X-Google-Smtp-Source: ABdhPJxtoGANsdEpKKge2o/29AN1E8VfPfLdlwcKVddQbVKTDT3+km65hFEkM3txwdasUFD8QbEDvQ==
-X-Received: by 2002:a17:90a:778b:: with SMTP id v11mr13218923pjk.61.1612114358345;
-        Sun, 31 Jan 2021 09:32:38 -0800 (PST)
+        bh=OCqlwfO8Y29nGZpydwpkYYTLuT/Y0WSarB/5hJMpIrI=;
+        b=RWHFWUTSTU1tL78jJhoCUtI87LEshoIQzKoc84NbN6JrB5cNnUcF4zlkVAuH1+PZ3b
+         EeWZbtdeRU7joIfFDK9X6innwxeaX/iAOcOvnfRbzYlSzMLf0qrdYdEZBF0dk7yCfN1Y
+         Hl3x3xMSlt+u/Dkgc/xHgWjrE1cmgIm8OulHpoi0+elEG54ONuPA68AdEmWvJAgEZRxC
+         Ut2WEi3kFdYqnM48JmGsKDJLYcs+FlfbIeEQ1Fm+rPiZyNGwfA6POd+aLzyItsf3mAz3
+         ptRII1NhcKqhLersIVgrlCtdISWTIiVJh1FJtosIsoTDHRWlHUx2zGNwmC5J2yf8VrPi
+         a4Eg==
+X-Gm-Message-State: AOAM5301/zAedlFEgaD13lCaz9sEfo+ODp0rWpb+ZEZD2TW5LWiMYPXM
+        k0P3kHgMGCeiwU2ZBX0ZpP4=
+X-Google-Smtp-Source: ABdhPJxrcDtakyOOGA891Q1rZXY+m90HEiouugXutZuV7hNkCAUtDlwX09zIR5GawshucqOHMUegOw==
+X-Received: by 2002:a17:90b:1955:: with SMTP id nk21mr8221442pjb.206.1612114390012;
+        Sun, 31 Jan 2021 09:33:10 -0800 (PST)
 Received: from localhost ([2402:3a80:11ea:e144:a2a4:c5ff:fe20:7222])
-        by smtp.gmail.com with ESMTPSA id y16sm15492888pfb.83.2021.01.31.09.32.37
+        by smtp.gmail.com with ESMTPSA id r5sm14566058pfl.165.2021.01.31.09.33.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Jan 2021 09:32:37 -0800 (PST)
+        Sun, 31 Jan 2021 09:33:09 -0800 (PST)
 From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
 To:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org
@@ -80,17 +80,17 @@ Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Teddy Wang <teddy.wang@siliconmotion.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Robert Richter <rric@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Mike Rapoport <rppt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rric@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         greybus-dev@lists.linaro.org, ac100@lists.launchpad.net,
         linux-tegra@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 09/13] staging: rtl8192e: Switch from strlcpy to strscpy
-Date:   Sun, 31 Jan 2021 22:58:30 +0530
-Message-Id: <20210131172838.146706-10-memxor@gmail.com>
+Subject: [PATCH 12/13] staging: sm750fb: Switch from strlcpy to strscpy
+Date:   Sun, 31 Jan 2021 22:58:33 +0530
+Message-Id: <20210131172838.146706-13-memxor@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210131172838.146706-1-memxor@gmail.com>
 References: <20210131172838.146706-1-memxor@gmail.com>
@@ -110,26 +110,22 @@ This silences the related checkpatch warnings from:
 
 Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_ethtool.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_ethtool.c b/drivers/staging/rtl8192e/rtl8192e/rtl_ethtool.c
-index 6ae7a67e7..f4f7b74c8 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_ethtool.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_ethtool.c
-@@ -18,9 +18,9 @@ static void _rtl92e_ethtool_get_drvinfo(struct net_device *dev,
- {
- 	struct r8192_priv *priv = rtllib_priv(dev);
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 029f0d09e..c237a8f8e 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -814,7 +814,7 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
+ 	fix->ywrapstep = crtc->ywrapstep;
+ 	fix->accel = FB_ACCEL_SMI;
  
--	strlcpy(info->driver, DRV_NAME, sizeof(info->driver));
--	strlcpy(info->version, DRV_VERSION, sizeof(info->version));
--	strlcpy(info->bus_info, pci_name(priv->pdev), sizeof(info->bus_info));
-+	strscpy(info->driver, DRV_NAME, sizeof(info->driver));
-+	strscpy(info->version, DRV_VERSION, sizeof(info->version));
-+	strscpy(info->bus_info, pci_name(priv->pdev), sizeof(info->bus_info));
- }
+-	strlcpy(fix->id, fixId[index], sizeof(fix->id));
++	strscpy(fix->id, fixId[index], sizeof(fix->id));
  
- static u32 _rtl92e_ethtool_get_link(struct net_device *dev)
+ 	fix->smem_start = crtc->oScreen + sm750_dev->vidmem_start;
+ 	pr_info("fix->smem_start = %lx\n", fix->smem_start);
 -- 
 2.29.2
 
