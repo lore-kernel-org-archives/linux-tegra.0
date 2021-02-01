@@ -2,326 +2,183 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDE0C433DB
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 21:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5DEC433DB
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 00:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5CEC64E2B
-	for <linux-tegra@archiver.kernel.org>; Sun, 31 Jan 2021 21:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1084D64E27
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 00:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbhAaV3c (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 31 Jan 2021 16:29:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbhAaV32 (ORCPT
+        id S229769AbhBAAGb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 31 Jan 2021 19:06:31 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:57953 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229474AbhBAAGZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 31 Jan 2021 16:29:28 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140A5C061756
-        for <linux-tegra@vger.kernel.org>; Sun, 31 Jan 2021 13:28:48 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id k4so14944008ybp.6
-        for <linux-tegra@vger.kernel.org>; Sun, 31 Jan 2021 13:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iRXDaKcuPFZ1g77tcHjhAIL2RDFfqyx64KolFOkHk6U=;
-        b=XvpETEDk2H5tcjSbBQN4HnqVuhUQI3+QSEJlKDFtdKi88L46MBvepFZHFPVtq9D5bM
-         ekSi4ZXYMxU5vfZCbCJms+amTxqKsCwPhpB6dlJ2f5cKJJ1HmUtnTKFr4Fj66FQEa1F7
-         r9W/iOAIiakiXAxN/np1MuWy8I3FrEjiKMsQswHiJAUYRpJB7MlT6364BueInCAPi8RQ
-         MhnpHgfw+VhAAQocFv4XhYCr2O0vqW5bZmUXWW1gDXcoknm91LK3vNL781oGw1a4bld2
-         +LMmrTNaZzussuR35otsiZLqApAh9ezYR66jXARcEyjNeFAyoEmwwJJInZx8fTYyu431
-         n18g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iRXDaKcuPFZ1g77tcHjhAIL2RDFfqyx64KolFOkHk6U=;
-        b=cX6G3od9xtlXUkUh0M57Fy7rcn1uPGBr3TdMccueyqJ4Dc/VhabkW7jnTqmmiXCGQ4
-         euSEFStidQrKjjzVMswmTVrks3BxnZInyGiTd3jFYzpp+XTAvr88y0iL7PBlAEka17Z6
-         sqhf6Ks6ibvPl8hIBMGZor1Pg9W18pMgnwnjCLs8Z3moLZWFk+8DgUNpkSqOQAvkwdA3
-         W7yRbBq7yu0BExgq7oFEGNS9f3OH5lJuDx5lMp4NuhEZSQSm+hM+r82ydjLfPBQXa0sm
-         HHuXmwVrudoN2EohXdsEvZCEDBsrPvK6RIMQ8MAIzxFXSIrlMGGZTcxbyGvy0KLUQqrb
-         vN6g==
-X-Gm-Message-State: AOAM531Azojmxx3Mv6tcZukXrNSGxiVZl/WQKyTBZHwWyvshHEbO/RPp
-        1d4IGCy4pAOtTmZXCFdNSotcBssqOp+sG+/KvGLELw==
-X-Google-Smtp-Source: ABdhPJzNRqmVODPGlcwJSngHDnaah4BYKFGgvm59Zu/LuEPWFcbvMKS/7k9Rb6xc6189AWvCE/XXZ1s9JAk6Cb3bluQ=
-X-Received: by 2002:a25:b74c:: with SMTP id e12mr11313396ybm.20.1612128527221;
- Sun, 31 Jan 2021 13:28:47 -0800 (PST)
+        Sun, 31 Jan 2021 19:06:25 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210201000541epoutp0325635b1ee03be027701e68949d058ee0~fdup2UX9I0984009840epoutp03D
+        for <linux-tegra@vger.kernel.org>; Mon,  1 Feb 2021 00:05:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210201000541epoutp0325635b1ee03be027701e68949d058ee0~fdup2UX9I0984009840epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1612137941;
+        bh=bEwtsacQFPBPaJXsD/yffm3iWGCOhx2GmyJ+elyD9oY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=gX3uicwCn39Y6fX/tcvZubT+z+H9s1IGYf7gPv1n+KP2+D8w7FxhWo8TGl6OwWUuN
+         BD3+i8BIQi5pK6Krqb4spIprsJvw345fMgqxLMY2M2iQyjH1FYHlF/Ebim1VGXTC6o
+         i9n2HzpM6SWLazDIpJiEMLKlkYU2+EdY/0l0jrFw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210201000540epcas1p35cf72e21ca8d175c0c81ec512fd065cb~fdupIKCDd0326003260epcas1p3T;
+        Mon,  1 Feb 2021 00:05:40 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4DTSrd69Ljz4x9Q7; Mon,  1 Feb
+        2021 00:05:37 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F1.3E.09577.1D547106; Mon,  1 Feb 2021 09:05:37 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20210201000536epcas1p4ffb3d916c2966ed55da5f880566a131f~fdul24ClZ3010030100epcas1p4x;
+        Mon,  1 Feb 2021 00:05:36 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210201000536epsmtrp1223f3e761185e317fb119f88d791d6d2~fdul2ACcu1721017210epsmtrp12;
+        Mon,  1 Feb 2021 00:05:36 +0000 (GMT)
+X-AuditID: b6c32a39-c13ff70000002569-f9-601745d1154d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        16.7C.08745.0D547106; Mon,  1 Feb 2021 09:05:36 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210201000536epsmtip1628d7fc8c8692867e21a29fed034c07f~fdulXhb4p1187311873epsmtip1h;
+        Mon,  1 Feb 2021 00:05:36 +0000 (GMT)
+Subject: Re: [PATCH V2 11/13] devfreq: tegra30: Migrate to
+ dev_pm_opp_set_opp()
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <756b5af0-2c80-9c39-242c-d9552f03bcd6@samsung.com>
+Date:   Mon, 1 Feb 2021 09:21:31 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-References: <20210122193600.1415639-1-saravanak@google.com> <544ad0e4-0954-274c-8e77-866aaa5661a8@gmail.com>
-In-Reply-To: <544ad0e4-0954-274c-8e77-866aaa5661a8@gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Sun, 31 Jan 2021 13:28:11 -0800
-Message-ID: <CAGETcx_CYKczo+geD7yDo+T2+_-tgGYwtjR-2sMPQYHuz-wAgw@mail.gmail.com>
-Subject: Re: [PATCH v5] gpiolib: Bind gpio_device to a driver to enable
- fw_devlink=on by default
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmnu5FV/EEgxd9hharPz5mtGiZtYjF
+        4mzTG3aLy7vmsFl87j3CaNH5ZRabxe3GFWwWb36cZbI4c/oSq8W/axtZLH7umsdi0XHkG7PF
+        xq8eDrweO2fdZffYtKqTzePOtT1sHr3N79g8tlxtZ/Ho27KK0eP4je1MHp83yQVwRGXbZKQm
+        pqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gCdrKRQlphTChQK
+        SCwuVtK3synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzIzrjwbCpb
+        wU2+igUTrjA3MC7g6WLk5JAQMJFY//Q+axcjF4eQwA5GiY5VZ1lAEkICnxglrl9LgbA/M0pM
+        uxMH09C87RYbRMMuRolPq04xQTjvGSWmX98M1i0sECixqXkNM0hCROA3o8TBw5fBWpgF3jBK
+        tPV+ZASpYhPQktj/4gYbiM0voChx9cdjsDivgJ3E+WlLwWwWARWJRccugE0VFQiTOLmtBapG
+        UOLkzCdgcU6BOIkzkw+DxZkFxCVuPZnPBGHLS2x/OwfsCgmBOxwSL9sbWCGecJHo3nqUHcIW
+        lnh1fAuULSXxsr8Nyq6WWHnyCBtEcwejxJb9F6CajSX2L50MtIEDaIOmxPpd+hBhRYmdv+dC
+        HcEn8e5rDytIiYQAr0RHmxBEibLE5Qd3mSBsSYnF7Z1sExiVZiF5ZxaSF2YheWEWwrIFjCyr
+        GMVSC4pz01OLDQtMkaN7EyM4PWtZ7mCc/vaD3iFGJg7GQ4wSHMxKIrynJoklCPGmJFZWpRbl
+        xxeV5qQWH2I0BQbwRGYp0eR8YIbIK4k3NDUyNja2MDE0MzU0VBLnTTJ4EC8kkJ5YkpqdmlqQ
+        WgTTx8TBKdXAxLJDPSo+5GlLxGqlZXUr2Np+cRx7W/Jhx+1vL/7aTXnw1LHA47Dysi1T+2Uk
+        bbeanbsu93l/iamt6RRVm+7LWWeln3cE/ni2f8ayjSXbdDPU806fXy3+UvDUAzObf3/9VNZ+
+        vVv5YK5Qle5vTev1PlWuq3PUrduYZx+cW7fKX/vQfrkdtR8NbaP9nV8059x3vMvwmlnhy3oB
+        /pdB17cm/X67IfJho/ryLctPFUTq8Zn9/61W+fDlR5voZx6Oc5r/i8mG9b2YauIjcmLypWut
+        WYyWd9+vM3SJtxPonHBJf0Oq4aXZSfOfM16+yLlct/0Wk9WVEnWDtVceNT+p4OGVOv+1cVXW
+        86ViwV6vZXxSziqxFGckGmoxFxUnAgAQG+m8WAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7bCSnO4FV/EEg+9NiharPz5mtGiZtYjF
+        4mzTG3aLy7vmsFl87j3CaNH5ZRabxe3GFWwWb36cZbI4c/oSq8W/axtZLH7umsdi0XHkG7PF
+        xq8eDrweO2fdZffYtKqTzePOtT1sHr3N79g8tlxtZ/Ho27KK0eP4je1MHp83yQVwRHHZpKTm
+        ZJalFunbJXBlXHg2la3gJl/FgglXmBsYF/B0MXJySAiYSDRvu8UGYgsJ7GCU2Ls8GiIuKTHt
+        4lHmLkYOIFtY4vDhYoiSt4wSH1tqQGxhgUCJTc1rgEq4OEQE/jJKHLi4jRkkwSzwhlHi/a0I
+        kISQQCuTxK+HfewgCTYBLYn9L26ALeMXUJS4+uMxI4jNK2AncX7aUjCbRUBFYtGxCywgtqhA
+        mMTOJY+ZIGoEJU7OfAIW5xSIkzgz+TAjxDJ1iT/zLkEtFpe49WQ+E4QtL7H97RzmCYzCs5C0
+        z0LSMgtJyywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgRHqZbWDsY9qz7o
+        HWJk4mA8xCjBwawkwntqkliCEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NT
+        C1KLYLJMHJxSDUxn3Pxurphe3c0fHfyxInjTtW1vTu6a7RfLHrXn84PkJw9jmB+wLxA6Zy24
+        61lsydbb5WKqaTwzHs3Y55bmvGqh90y5RJ7Gv7MNf/w4uP980h4rnmQOr/slom+079dsm78m
+        /3rd2ZZpsm9Vky1X/+MNLZCwneci6q/tfunSd0aLj3lBOy/3C9Y12G25uP7TqxbdXcvS96y4
+        xLkgty9289db2lr3JA6fMD4t5XbXjvNX3S5jbYsVu5i7LCc9Zy4umnz58eLJTo7+y3pUtm6P
+        6cryC2B9f/2MTt3Z/SuOPsoyPP3pp+PkWa2+nJsvcb+QdNzqqc4bV/Rr+zQh84pDCu+cr14I
+        4dp2I/QE6z+Xa56VSizFGYmGWsxFxYkABe3NbEEDAAA=
+X-CMS-MailID: 20210201000536epcas1p4ffb3d916c2966ed55da5f880566a131f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210127091008epcas1p204716c6e5b0157c5bae7237300609210
+References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
+        <CGME20210127091008epcas1p204716c6e5b0157c5bae7237300609210@epcas1p2.samsung.com>
+        <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jan 30, 2021 at 9:39 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 22.01.2021 22:35, Saravana Kannan =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > There are multiple instances of GPIO device tree nodes of the form:
-> >
-> > foo {
-> >       compatible =3D "acme,foo";
-> >       ...
-> >
-> >       gpio0: gpio0@xxxxxxxx {
-> >               compatible =3D "acme,bar";
-> >               ...
-> >               gpio-controller;
-> >       };
-> >
-> >       gpio1: gpio1@xxxxxxxx {
-> >               compatible =3D "acme,bar";
-> >               ...
-> >               gpio-controller;
-> >       };
-> >
-> >       ...
-> > }
-> >
-> > bazz {
-> >       my-gpios =3D <&gpio0 ...>;
-> > }
-> >
-> > Case 1: The driver for "foo" populates struct device for these gpio*
-> > nodes and then probes them using a driver that binds with "acme,bar".
-> > This driver for "acme,bar" then registers the gpio* nodes with gpiolib.
-> > This lines up with how DT nodes with the "compatible" property are
-> > typically converted to struct devices and then registered with driver
-> > core to probe them. This also allows the gpio* devices to hook into all
-> > the driver core capabilities like runtime PM, probe deferral,
-> > suspend/resume ordering, device links, etc.
-> >
-> > Case 2: The driver for "foo" doesn't populate struct devices for these
-> > gpio* nodes before registering them with gpiolib. Instead it just loops
-> > through its child nodes and directly registers the gpio* nodes with
-> > gpiolib.
-> >
-> > Drivers that follow case 2 cause problems with fw_devlink=3Don. This is
-> > because fw_devlink will prevent bazz from probing until there's a struc=
-t
-> > device that has gpio0 as its fwnode (because bazz lists gpio0 as a GPIO
-> > supplier). Once the struct device is available, fw_devlink will create =
-a
-> > device link with gpio0 device as the supplier and bazz device as the
-> > consumer. After this point, since the gpio0 device will never bind to a
-> > driver, the device link will prevent bazz device from ever probing.
-> >
-> > Finding and refactoring all the instances of drivers that follow case 2
-> > will cause a lot of code churn and it is not something that can be done
-> > in one shot. In some instances it might not even be possible to refacto=
-r
-> > them cleanly. Examples of such instances are [1] [2].
-> >
-> > This patch works around this problem and avoids all the code churn by
-> > simply setting the fwnode of the gpio_device and creating a stub driver
-> > to bind to the gpio_device. This allows all the consumers to continue
-> > probing when the driver follows case 2.
-> >
-> > [1] - https://lore.kernel.org/lkml/20201014191235.7f71fcb4@xhacker.debi=
-an/
-> > [2] - https://lore.kernel.org/lkml/e28e1f38d87c12a3c714a6573beba6e1@ker=
-nel.org/
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> > Cc: Kever Yang <kever.yang@rock-chips.com>
-> > Fixes: e590474768f1 ("driver core: Set fw_devlink=3Don by default")
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> > v1 -> v2:
-> > - Fixed up compilation errors that were introduced accidentally
-> > - Fixed a missing put_device()
-> >
-> > v2 -> v3:
-> > - Changed chip_warn() to pr_warn()
-> > - Changed some variable names
-> >
-> > v3 -> v4:
-> > - Dropped the warning since it's not always valid
-> > - This simplifies the code a lot
-> > - Added comments and fixed up commit text
-> >
-> > v4 -> v5:
-> > - Fixed the code to not mess up non-DT cases.
-> > - Moved code into gpiolib-of.c
-> >
-> >  drivers/gpio/gpiolib-of.c | 11 +++++++++++
-> >  drivers/gpio/gpiolib-of.h |  5 +++++
-> >  drivers/gpio/gpiolib.c    | 38 +++++++++++++++++++++++++++++++-------
-> >  3 files changed, 47 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> > index b4a71119a4b0..baf0153b7bca 100644
-> > --- a/drivers/gpio/gpiolib-of.c
-> > +++ b/drivers/gpio/gpiolib-of.c
-> > @@ -1039,3 +1039,14 @@ void of_gpiochip_remove(struct gpio_chip *chip)
-> >  {
-> >       of_node_put(chip->of_node);
-> >  }
-> > +
-> > +void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
-> > +{
-> > +     /* If the gpiochip has an assigned OF node this takes precedence =
-*/
-> > +     if (gc->of_node)
-> > +             gdev->dev.of_node =3D gc->of_node;
-> > +     else
-> > +             gc->of_node =3D gdev->dev.of_node;
-> > +     if (gdev->dev.of_node)
-> > +             gdev->dev.fwnode =3D of_fwnode_handle(gdev->dev.of_node);
-> > +}
-> > diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
-> > index ed26664f1537..8af2bc899aab 100644
-> > --- a/drivers/gpio/gpiolib-of.h
-> > +++ b/drivers/gpio/gpiolib-of.h
-> > @@ -15,6 +15,7 @@ int of_gpiochip_add(struct gpio_chip *gc);
-> >  void of_gpiochip_remove(struct gpio_chip *gc);
-> >  int of_gpio_get_count(struct device *dev, const char *con_id);
-> >  bool of_gpio_need_valid_mask(const struct gpio_chip *gc);
-> > +void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
-> >  #else
-> >  static inline struct gpio_desc *of_find_gpio(struct device *dev,
-> >                                            const char *con_id,
-> > @@ -33,6 +34,10 @@ static inline bool of_gpio_need_valid_mask(const str=
-uct gpio_chip *gc)
-> >  {
-> >       return false;
-> >  }
-> > +static inline void of_gpio_dev_init(struct gpio_chip *gc,
-> > +                                 struct gpio_device *gdev)
-> > +{
-> > +}
-> >  #endif /* CONFIG_OF_GPIO */
-> >
-> >  extern struct notifier_block gpio_of_notifier;
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index b02cc2abd3b6..70fb15ae5d36 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -590,13 +590,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *g=
-c, void *data,
-> >               gdev->dev.of_node =3D gc->parent->of_node;
-> >       }
-> >
-> > -#ifdef CONFIG_OF_GPIO
-> > -     /* If the gpiochip has an assigned OF node this takes precedence =
-*/
-> > -     if (gc->of_node)
-> > -             gdev->dev.of_node =3D gc->of_node;
-> > -     else
-> > -             gc->of_node =3D gdev->dev.of_node;
-> > -#endif
-> > +     of_gpio_dev_init(gc, gdev);
-> >
-> >       gdev->id =3D ida_alloc(&gpio_ida, GFP_KERNEL);
-> >       if (gdev->id < 0) {
-> > @@ -4202,6 +4196,29 @@ void gpiod_put_array(struct gpio_descs *descs)
-> >  }
-> >  EXPORT_SYMBOL_GPL(gpiod_put_array);
-> >
-> > +static int gpio_stub_drv_probe(struct device *dev)
-> > +{
-> > +     /*
-> > +      * The DT node of some GPIO chips have a "compatible" property, b=
-ut
-> > +      * never have a struct device added and probed by a driver to reg=
-ister
-> > +      * the GPIO chip with gpiolib. In such cases, fw_devlink=3Don wil=
-l cause
-> > +      * the consumers of the GPIO chip to get probe deferred forever b=
-ecause
-> > +      * they will be waiting for a device associated with the GPIO chi=
-p
-> > +      * firmware node to get added and bound to a driver.
-> > +      *
-> > +      * To allow these consumers to probe, we associate the struct
-> > +      * gpio_device of the GPIO chip with the firmware node and then s=
-imply
-> > +      * bind it to this stub driver.
-> > +      */
-> > +     return 0;
-> > +}
-> > +
-> > +static struct device_driver gpio_stub_drv =3D {
-> > +     .name =3D "gpio_stub_drv",
-> > +     .bus =3D &gpio_bus_type,
-> > +     .probe =3D gpio_stub_drv_probe,
-> > +};
-> > +
-> >  static int __init gpiolib_dev_init(void)
-> >  {
-> >       int ret;
-> > @@ -4213,9 +4230,16 @@ static int __init gpiolib_dev_init(void)
-> >               return ret;
-> >       }
-> >
-> > +     if (driver_register(&gpio_stub_drv) < 0) {
-> > +             pr_err("gpiolib: could not register GPIO stub driver\n");
-> > +             bus_unregister(&gpio_bus_type);
-> > +             return ret;
-> > +     }
-> > +
-> >       ret =3D alloc_chrdev_region(&gpio_devt, 0, GPIO_DEV_MAX, GPIOCHIP=
-_NAME);
-> >       if (ret < 0) {
-> >               pr_err("gpiolib: failed to allocate char dev region\n");
-> > +             driver_unregister(&gpio_stub_drv);
-> >               bus_unregister(&gpio_bus_type);
-> >               return ret;
-> >       }
-> >
->
-> Hi,
->
-> This patch causes these new errors on NVIDIA Tegra30 Nexus 7 using recent=
- linux-next:
->
->  gpio-1022 (cpu-pwr-req-hog): hogged as input
->  max77620-pinctrl max77620-pinctrl: pin gpio4 already requested by max776=
-20-pinctrl; cannot claim for gpiochip1
->  max77620-pinctrl max77620-pinctrl: pin-4 (gpiochip1) status -22
->  max77620-pinctrl max77620-pinctrl: could not request pin 4 (gpio4) from =
-group gpio4  on device max77620-pinctrl
->  gpio_stub_drv gpiochip1: Error applying setting, reverse things back
->  gpio_stub_drv: probe of gpiochip1 failed with error -22
->
-> Please fix, thanks in advance.
+On 1/27/21 6:10 PM, Viresh Kumar wrote:
+> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
+> be used instead. Migrate to the new API.
+> 
+> We don't want the OPP core to manage the clk for this driver, migrate to
+> dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
+> doesn't have any side effects.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> Dmitry,
+> 
+> This is based over the patches sent here:
+> 
+> https://protect2.fireeye.com/v1/url?k=72d88562-2d43bc78-72d90e2d-000babff24ad-e4764030101eaedc&q=1&e=a25b5db7-346b-47b2-9c0a-3945e579f389&u=https%3A%2F%2Flore.kernel.org%2Flkml%2F6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar%40linaro.org%2F
+> 
+> This should fix the problem you mentioned earlier. Will push this for
+> linux-next unless you have any issues with it.
+> 
+>  drivers/devfreq/tegra30-devfreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 117cad7968ab..31f7dec5990b 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>  		return PTR_ERR(opp);
+>  	}
+>  
+> -	ret = dev_pm_opp_set_bw(dev, opp);
+> +	ret = dev_pm_opp_set_opp(dev, opp);
+>  	dev_pm_opp_put(opp);
+>  
+>  	return ret;
+> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	err = dev_pm_opp_of_add_table(&pdev->dev);
+> +	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+>  		goto put_hw;
+> 
 
-I have a partial guess on why this is happening. So can you try this patch?
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks,
-Saravana
-
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4213,6 +4213,8 @@ static int gpio_stub_drv_probe(struct device *dev)
-         * gpio_device of the GPIO chip with the firmware node and then sim=
-ply
-         * bind it to this stub driver.
-         */
-+       if (dev->fwnode && dev->fwnode->dev !=3D dev)
-+               return -EBUSY;
-        return 0;
- }
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
