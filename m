@@ -2,109 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B264AC433E9
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 14:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C9FC43381
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 16:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86BBC64EA1
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 14:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DFBE64EA8
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 16:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbhBAODA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Feb 2021 09:03:00 -0500
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:35338 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231916AbhBAOC7 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Feb 2021 09:02:59 -0500
-Received: by mail-oi1-f174.google.com with SMTP id w8so18862534oie.2;
-        Mon, 01 Feb 2021 06:02:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PjQ2aAipDSaq5oC4lmBya+0Rk1klXjpSSVN7GA5y3Ng=;
-        b=tx1hsv+UOTZdkmkVsqprjcwNkmce1Z7Kmpr6pVGux/5cntzJ2+koInp0Of+ZT8GbbJ
-         f3no2hLMfDxlojDrrdwgtfwFA6sAas2+nDMYMC546L4Z8+f92+XKR22Qlb3hW1/+2BAv
-         76dK4TmaINCX7ABBvHZg24xqVRXC8AD2P/utJ7FAE8L6wkIbLHagITuqyVexyf86y4F/
-         Va/7SNL6sHQ8wCtMJ9e1gKNSkdXTCPiB6beau2M09LDn6m9XuoLgwrbtD4FpLGHzZGNN
-         s3knvojLv0oj72LR3mYLtGCf5T3JEUq9yYXkAIIDbByxu581gckufiBS4DsT+Z8bYH61
-         JAaA==
-X-Gm-Message-State: AOAM530BfBbSKtSkkefXKOXXPVRSEzvV8tY62vmTkcJsCkEFM4iAsNdQ
-        kaJtlvfZA5wjvJZfRLdbuv3h08tQCLymoFSMxXWOs7q1
-X-Google-Smtp-Source: ABdhPJw1DQOtXQiOfLob/rMGpYwphh6HqBDyeQVpm2HarfCzjirlfFQpNkL8KnEPZ6WvYaJWPQuOJUtbJQHKhwp2iUI=
-X-Received: by 2002:aca:fc84:: with SMTP id a126mr11038406oii.71.1612188138028;
- Mon, 01 Feb 2021 06:02:18 -0800 (PST)
+        id S231226AbhBAQrP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Feb 2021 11:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231168AbhBAQrN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 1 Feb 2021 11:47:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6873464DA5;
+        Mon,  1 Feb 2021 16:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612197991;
+        bh=rnfT7QC1QylsfBHlTLq503WKQd1AGk542dN4U3+Qa+w=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=nP7mncKo6tpJ+dPF1HascPqMRADMqPbHpiJvvLU4U8esPVyaqJe1OaRKi3qLn4KuL
+         //BSDcCV1J1S+LkJk5Otc++esTcn7MdY3ddpJ5G+c85ERtessJTvHZcZ0IvA6uMAol
+         +vv/9QHJE3GNbMHmiEvY51Rbo5/4lCVSUSwkQS6GCFswOQZvHkeEIXCeX3HbIoftVR
+         JXEiHH2mCnU/hH/FwHvDY7VdGMo7+5ulZeZEaMi+03BnXqKx1qbAZpZPPJNT6/4lVA
+         p7fqkEVrV4YCn6oFjlmAUevfZT7F31PcRgil9Z3hQvjtYljKWsTF3m06LEAR//Jmt8
+         4aBCNdDS6BaSw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        lgirdwood@gmail.com, robh+dt@kernel.org
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        sharadg@nvidia.com, kuninori.morimoto.gx@renesas.com,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org
+In-Reply-To: <1611944866-29373-1-git-send-email-spujar@nvidia.com>
+References: <1611944866-29373-1-git-send-email-spujar@nvidia.com>
+Subject: Re: (subset) [PATCH v2 0/9] Tegra186 and Tegra194 audio graph card
+Message-Id: <161219793995.46194.8766382899018359652.b4-ty@kernel.org>
+Date:   Mon, 01 Feb 2021 16:45:39 +0000
 MIME-Version: 1.0
-References: <377d2e2d328276070ae2f26c65daa1497bb3c3cf.1612166647.git.viresh.kumar@linaro.org>
- <YBfNb91psVcf3TAS@light.dominikbrodowski.net> <20210201100502.xluaj5rpqosqsq7b@vireshk-i7>
-In-Reply-To: <20210201100502.xluaj5rpqosqsq7b@vireshk-i7>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 1 Feb 2021 15:02:06 +0100
-Message-ID: <CAJZ5v0iowSHeie2HLPjHUftBDVBQXi30O1Kfk3Kxchc0K=gYag@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Remove CPUFREQ_STICKY flag
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Feb 1, 2021 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 01-02-21, 10:44, Dominik Brodowski wrote:
-> > IIRC, it was required on various ARM systems,[*] as CPUs were registered as
-> > subsys_initcall(), while cpufreq used to be initialized only later, as an
->
-> s/later/earlier ? arch happens before subsys not at least and that is
-> the only way we can break cpufreq here, i.e. when the driver comes up
-> before the CPUs are registered.
->
-> > arch_initcall(). If the ordering is opposite now on all architectures (it
-> > wasn't on ARM back then), we should be fine.
-> >
-> > [*] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/arch/arm/mach-sa1100/cpu-sa1100.c?id=f59d3bbe35f6268d729f51be82af8325d62f20f5
->
-> Thanks for your reply, it made me look at that aspect in some more
-> detail to confirm I don't end up breaking anything. Unless I am making
-> a mistake in reading the code, this is the code flow that we have
-> right now:
->
-> start_kernel()
-> -> kernel_init()
->    -> kernel_init_freeable()
->       -> do_basic_setup()
->          -> driver_init()
->             -> cpu_dev_init()
->                -> subsys_system_register(for-CPUs)
->
->          -> do_initcalls()
->             -> register-cpufreq-driver from any level
->
-> And so CPUs should always be there for a cpufreq driver.
->
-> Makes sense ?
+On Fri, 29 Jan 2021 23:57:37 +0530, Sameer Pujar wrote:
+> This series adds support for audio graph based solution on Tegra186 and
+> Tegra194. This enables audio paths for I2S, DMIC and DSPK modules.
+> 
+> Depending on the platform Jetson TX2 or Jetson AGX Xavier, required I/O
+> module instances are enabled. Since the latter board has on board audio
+> codec, DT support for the same is enabled and external audio playback and
+> capture can be used.
+> 
+> [...]
 
-It does to me, but can you update the changelog, please?
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/9] ASoC: dt-bindings: rt5659: Update binding doc
+      commit: 6bbb859012e905736c852b518be16c653e451967
+[2/9] ASoC: dt-bindings: tegra: Add iommus property to Tegra graph card
+      commit: 70f0bc65f6cf757fa4cca2d6fcb84f613bc0d8cc
+[3/9] ASoC: audio-graph-card: Add clocks property to endpoint node
+      commit: 531e5b7abbde3c190aeff5b13c17f7ef3e0f3543
+[4/9] ASoC: rt5659: Add Kconfig prompt
+      commit: 563c2681d4313f55b9b1d9a8f635946cd4972170
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
