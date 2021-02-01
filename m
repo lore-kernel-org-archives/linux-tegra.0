@@ -2,84 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340BFC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 16:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F95BC433E6
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 19:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC61064DA5
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 16:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 018CB64D92
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 19:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbhBAQuQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Feb 2021 11:50:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        id S231226AbhBAT6l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Feb 2021 14:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231211AbhBAQuK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Feb 2021 11:50:10 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC38CC061573;
-        Mon,  1 Feb 2021 08:49:28 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id e18so20423006lja.12;
-        Mon, 01 Feb 2021 08:49:28 -0800 (PST)
+        with ESMTP id S232408AbhBAT6C (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Feb 2021 14:58:02 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512D5C061573;
+        Mon,  1 Feb 2021 11:57:22 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id h7so24539557lfc.6;
+        Mon, 01 Feb 2021 11:57:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9VdbASHiVmFzlRrCBkcgPO/Bb9c7Lp5JC3aGueKrB7w=;
-        b=kPfZhEmLVIOVBOCVIlPCZJmSk0JBqzOoBhSvYEL4yjjzBe6NYjHz/rd6rFD1HpCSCw
-         AjgtMdl0oQBfgXMFHmKSOVnj5WK8qSABWsPJBNiZP/hW49izNJY6hGwE6YSFRXTXUEMX
-         ebdPBO3Du0NikGKlyrkYrEbdhY/w1rmg7npYWlFwdFZCkrc9zlU42UM5/L56gYXarJOo
-         wRq6tu4rLrh+2QxKe5FbbEeHoJ+C/F+Qpp7vbmCyB8Yqt64mAupTmfza/hySkY7bUwLs
-         vnDMf+zH3o8GNIY/filvZqjh66MOpEBBhDd/dAif+NuTxB9yJN/BZgCMR9h/wZ6saayX
-         9qyQ==
+        bh=jags3qvJfYgEQ14KjYOoGcQ9AwJcrMbj7KmApNgTAWE=;
+        b=gMqkBksxWaYSfdPJPNB7K4My5e+qh885nWMrYBwUlRqg7b2Z7NE3+hlxBMjOv9h/eP
+         wb22i0TsklkZ0oFwXAWBtmwo8oZ+2jSrpX6rnsKPcuHBNiD8i5Y/3FUa2JeA5sdrhrzn
+         fpVDXnY1NU+MYy3UfABPRrq5gPkpkKMlQlnKeIFHvBe7YFf53WWprMrWfwDoifV1TWGc
+         cpDsRCOkArZK1JkHmri8t0ToTeU7sR2uTWnuOIY9koHSOxIAMDoQuKnzuuua7AGl5puX
+         Ds64H5Vp/AfGa7tv7YJW5tZ3uNZkGZ9DKI2CXRgEg4b3me+RmoYZOnoG2hzSuKMPcPpG
+         eh9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9VdbASHiVmFzlRrCBkcgPO/Bb9c7Lp5JC3aGueKrB7w=;
-        b=KlLlsb3bJWTE40Ae9fF2QUF+GsqSs5c0+KoPi/ugBIvVl/7rTfj9aN4GKhmFj8qrmQ
-         Dphlo3LdV+UB5+PM4WaF7VizQPS0yDUL5g4f4LizzQ3eqjrGftBhgXSg2UWx3/aXAsKF
-         3tKi3G0G0P8ocDdHcEBWMWuMHDq47FKZwWVLcAeKciZ3TRDeMpNxQxWYrtvW5WZlya7p
-         jEDj7aw0Q3TpzwkVhP8+U+Tvn/3OT4I9ps+rlZsIgynGh6eYbfNgY4INhrYL2A7wEb23
-         pIX0wa83eNcMskJxlpOXgEiv2c1Y4ovEq9VonCPpV8F/HLuYFuDV9GUu9E4X0RzStp2y
-         ND8g==
-X-Gm-Message-State: AOAM530g5dM0Yva+NuJ+Rn0FIbku/8EuOIgIrknSi/EoIgIa10hOoby8
-        EoE46RCNC9tV9IjaBLdjJFGw9UyZQK0=
-X-Google-Smtp-Source: ABdhPJyqUln8hLIlpdaaPXa0X70kBzyZJ6VG5Y5wvGlI+AQBzrIzvi28yRY26QMKXKPCzztPNjrrwQ==
-X-Received: by 2002:a2e:b8d3:: with SMTP id s19mr10951810ljp.97.1612198167162;
-        Mon, 01 Feb 2021 08:49:27 -0800 (PST)
+        bh=jags3qvJfYgEQ14KjYOoGcQ9AwJcrMbj7KmApNgTAWE=;
+        b=LhNiHSw7I6ysuOOD0DKPfR0QrjdafRj0rlcs+rYbkL+e6H51j2uy1Ja1ByoII+ReUF
+         x9bku+Z3KVJtLHIoJ61sJgsDFuizR7uM3A4NkvjeKuRVydw7GfzyOomWQWu4KjmE7i4W
+         eWltYoJ9ijl8Mo8kLBBX/hGpPA0YQRtxUELkwVwAYKWZADGUmA0eHR5lh5ltU0EfYCFf
+         Sqk/JM2ZcqCNWV5Zf7b5cbqqLsaAgIXH8iaQYYKKBjJ3kwYSUsfzVRhmEo7Fy9xZszf5
+         XZ6pmrGBOIJT9bcGaTlcgjLNVIFMrto9XPontdyohgDUd2+axqAqOYjDm//5i6UgWqZy
+         menw==
+X-Gm-Message-State: AOAM53218+x2cJq7zfnxVzSSw+kQd2EGw3RNYMDlNMAZ93Bl5wfFEMcQ
+        +uCk8xSKNsZr9pDRnRREjp7VjyB+TaY=
+X-Google-Smtp-Source: ABdhPJyCYrJoeLXl/a1I/jsmotO3KKyCFToHNmJcCEZeI4IT1RCinCGkhykUj2udkEikBrX9HeCG9A==
+X-Received: by 2002:a05:6512:2254:: with SMTP id i20mr9278793lfu.534.1612209440613;
+        Mon, 01 Feb 2021 11:57:20 -0800 (PST)
 Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id x20sm3011428lfe.256.2021.02.01.08.49.25
+        by smtp.googlemail.com with ESMTPSA id d9sm3061573lfm.293.2021.02.01.11.57.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 08:49:26 -0800 (PST)
-Subject: Re: [PATCH v5] gpiolib: Bind gpio_device to a driver to enable
- fw_devlink=on by default
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20210122193600.1415639-1-saravanak@google.com>
- <544ad0e4-0954-274c-8e77-866aaa5661a8@gmail.com>
- <CAGETcx_CYKczo+geD7yDo+T2+_-tgGYwtjR-2sMPQYHuz-wAgw@mail.gmail.com>
+        Mon, 01 Feb 2021 11:57:20 -0800 (PST)
+Subject: Re: [PATCH V2 11/13] devfreq: tegra30: Migrate to
+ dev_pm_opp_set_opp()
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
+ <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <09502076-02e9-39ee-e432-24260696a927@gmail.com>
-Date:   Mon, 1 Feb 2021 19:49:25 +0300
+Message-ID: <a07c21b5-c791-4599-8e6d-85083d3958a9@gmail.com>
+Date:   Mon, 1 Feb 2021 22:57:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <CAGETcx_CYKczo+geD7yDo+T2+_-tgGYwtjR-2sMPQYHuz-wAgw@mail.gmail.com>
+In-Reply-To: <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,31 +86,50 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-01.02.2021 00:28, Saravana Kannan пишет:
->> This patch causes these new errors on NVIDIA Tegra30 Nexus 7 using recent linux-next:
->>
->>  gpio-1022 (cpu-pwr-req-hog): hogged as input
->>  max77620-pinctrl max77620-pinctrl: pin gpio4 already requested by max77620-pinctrl; cannot claim for gpiochip1
->>  max77620-pinctrl max77620-pinctrl: pin-4 (gpiochip1) status -22
->>  max77620-pinctrl max77620-pinctrl: could not request pin 4 (gpio4) from group gpio4  on device max77620-pinctrl
->>  gpio_stub_drv gpiochip1: Error applying setting, reverse things back
->>  gpio_stub_drv: probe of gpiochip1 failed with error -22
->>
->> Please fix, thanks in advance.
-> I have a partial guess on why this is happening. So can you try this patch?
+27.01.2021 12:10, Viresh Kumar пишет:
+> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
+> be used instead. Migrate to the new API.
 > 
-> Thanks,
-> Saravana
+> We don't want the OPP core to manage the clk for this driver, migrate to
+> dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
+> doesn't have any side effects.
 > 
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4213,6 +4213,8 @@ static int gpio_stub_drv_probe(struct device *dev)
->          * gpio_device of the GPIO chip with the firmware node and then simply
->          * bind it to this stub driver.
->          */
-> +       if (dev->fwnode && dev->fwnode->dev != dev)
-> +               return -EBUSY;
->         return 0;
->  }
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> Dmitry,
+> 
+> This is based over the patches sent here:
+> 
+> https://lore.kernel.org/lkml/6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar@linaro.org/
+> 
+> This should fix the problem you mentioned earlier. Will push this for
+> linux-next unless you have any issues with it.
+> 
+>  drivers/devfreq/tegra30-devfreq.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 117cad7968ab..31f7dec5990b 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
+>  		return PTR_ERR(opp);
+>  	}
+>  
+> -	ret = dev_pm_opp_set_bw(dev, opp);
+> +	ret = dev_pm_opp_set_opp(dev, opp);
+>  	dev_pm_opp_put(opp);
+>  
+>  	return ret;
+> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	err = dev_pm_opp_of_add_table(&pdev->dev);
+> +	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
+>  		goto put_hw;
+> 
 
-This change doesn't help, exactly the same errors are still there.
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
