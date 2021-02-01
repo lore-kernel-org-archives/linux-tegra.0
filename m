@@ -2,134 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F95BC433E6
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 19:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A730C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 20:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 018CB64D92
-	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 19:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD9F64EBD
+	for <linux-tegra@archiver.kernel.org>; Mon,  1 Feb 2021 20:06:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbhBAT6l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 1 Feb 2021 14:58:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
+        id S232927AbhBAUF6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 1 Feb 2021 15:05:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232408AbhBAT6C (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Feb 2021 14:58:02 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512D5C061573;
-        Mon,  1 Feb 2021 11:57:22 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id h7so24539557lfc.6;
-        Mon, 01 Feb 2021 11:57:22 -0800 (PST)
+        with ESMTP id S233034AbhBAUF3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 1 Feb 2021 15:05:29 -0500
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B2FAC061756
+        for <linux-tegra@vger.kernel.org>; Mon,  1 Feb 2021 12:04:49 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id m76so11381435ybf.0
+        for <linux-tegra@vger.kernel.org>; Mon, 01 Feb 2021 12:04:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jags3qvJfYgEQ14KjYOoGcQ9AwJcrMbj7KmApNgTAWE=;
-        b=gMqkBksxWaYSfdPJPNB7K4My5e+qh885nWMrYBwUlRqg7b2Z7NE3+hlxBMjOv9h/eP
-         wb22i0TsklkZ0oFwXAWBtmwo8oZ+2jSrpX6rnsKPcuHBNiD8i5Y/3FUa2JeA5sdrhrzn
-         fpVDXnY1NU+MYy3UfABPRrq5gPkpkKMlQlnKeIFHvBe7YFf53WWprMrWfwDoifV1TWGc
-         cpDsRCOkArZK1JkHmri8t0ToTeU7sR2uTWnuOIY9koHSOxIAMDoQuKnzuuua7AGl5puX
-         Ds64H5Vp/AfGa7tv7YJW5tZ3uNZkGZ9DKI2CXRgEg4b3me+RmoYZOnoG2hzSuKMPcPpG
-         eh9w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L9sw9hSS8Z/uEqXF5ukYAI1b9wH2rffWPop3oA1u9N8=;
+        b=OaqXg573LwGDOY7qNJNrh0QcBeqsUIIqangIggwrbBQxOBAtBk3cpdcdqa2WsrVSS2
+         laGL44tiLg1XML8BpM1iubpZljC7ujabB9YqWWAdNvvTZgQzuTE9+OO8/JkhCszWCvNv
+         LrxCQeksu44w3KXdZXVK1HUeoBD/nP1TJub5dyxoB6NOkN4sBiBXm26tmGqhhOKPK7C8
+         kUo91KC2IK7GUrmmCz1/CGH7H1GK/IzjMDzoTMhzf0Ac4nl7COJGy6l0plw/GiPX/H5B
+         mfD9sO3BVpSlv61DGdi+uXE1iG5Ct92fELaimdzlNifeFGUB2wl92f1tL4+b4IvWDjk0
+         zyAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jags3qvJfYgEQ14KjYOoGcQ9AwJcrMbj7KmApNgTAWE=;
-        b=LhNiHSw7I6ysuOOD0DKPfR0QrjdafRj0rlcs+rYbkL+e6H51j2uy1Ja1ByoII+ReUF
-         x9bku+Z3KVJtLHIoJ61sJgsDFuizR7uM3A4NkvjeKuRVydw7GfzyOomWQWu4KjmE7i4W
-         eWltYoJ9ijl8Mo8kLBBX/hGpPA0YQRtxUELkwVwAYKWZADGUmA0eHR5lh5ltU0EfYCFf
-         Sqk/JM2ZcqCNWV5Zf7b5cbqqLsaAgIXH8iaQYYKKBjJ3kwYSUsfzVRhmEo7Fy9xZszf5
-         XZ6pmrGBOIJT9bcGaTlcgjLNVIFMrto9XPontdyohgDUd2+axqAqOYjDm//5i6UgWqZy
-         menw==
-X-Gm-Message-State: AOAM53218+x2cJq7zfnxVzSSw+kQd2EGw3RNYMDlNMAZ93Bl5wfFEMcQ
-        +uCk8xSKNsZr9pDRnRREjp7VjyB+TaY=
-X-Google-Smtp-Source: ABdhPJyCYrJoeLXl/a1I/jsmotO3KKyCFToHNmJcCEZeI4IT1RCinCGkhykUj2udkEikBrX9HeCG9A==
-X-Received: by 2002:a05:6512:2254:: with SMTP id i20mr9278793lfu.534.1612209440613;
-        Mon, 01 Feb 2021 11:57:20 -0800 (PST)
-Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id d9sm3061573lfm.293.2021.02.01.11.57.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 11:57:20 -0800 (PST)
-Subject: Re: [PATCH V2 11/13] devfreq: tegra30: Migrate to
- dev_pm_opp_set_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <3345fd49f7987d022f4f61edb6c44f230f7354c4.1611227342.git.viresh.kumar@linaro.org>
- <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a07c21b5-c791-4599-8e6d-85083d3958a9@gmail.com>
-Date:   Mon, 1 Feb 2021 22:57:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L9sw9hSS8Z/uEqXF5ukYAI1b9wH2rffWPop3oA1u9N8=;
+        b=By01gvsaIrQ8ztUKYJoUO3MOahJQTzBhkiVV/I/0YqjlMO2GkPuDuEk/1yl3tgJRI/
+         NkD7sgQTYAr0WPTrAecpA3GPwc5ZuerR/d6AGTOSsKyNYmscH0vvKSxjCR2H1r2yAcTx
+         glu0LMRl0/3Qp5RPhvMFLIMqpCjRDA7go5BOijVTly+d0cnIaPVH8pP5DMyvP61aaWQy
+         jgvL3nUSUdwADL7EdTxAT8xWAda2YUuQ9eX9PIvLcFohRxWLLeGdhOUVgw3OD8LFVT7a
+         MJQdJg32Gw+bvUoXYXljHTdtScZuqyGz9fkk/EEAOb60z43KsRkbZHd0Y47IcGXCsXhS
+         yaoQ==
+X-Gm-Message-State: AOAM533vsaQ3GmosofVGOhx7WyBuQ1YA9CYbgjrruenj3vVvKXezb5WE
+        P14J936py2uxvbHqR2oiTJz7O7lGnDursq4pPqRs4Q==
+X-Google-Smtp-Source: ABdhPJw4RFUaM2c3Knj9a5xMEVR7SKifxohoJtjamohf1LlW3VtIH11Ase4ZEm/ickH5qdpZf1yRO+hhRtckErqk53A=
+X-Received: by 2002:a25:c683:: with SMTP id k125mr29048716ybf.32.1612209888649;
+ Mon, 01 Feb 2021 12:04:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f0341655361aa0107266ed9c838aa8bcfe50a3ed.1611738418.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210121225712.1118239-1-saravanak@google.com>
+ <20210131163823.c4zb47pl4tukcl7c@viti.kaiser.cx> <CAGETcx8A_+Y0sCLPdyeeT+rHOsAPsmg4LVn_ahF0NaD6hfRiZw@mail.gmail.com>
+ <20210201105204.GA1467@martin-debian-1.paytec.ch>
+In-Reply-To: <20210201105204.GA1467@martin-debian-1.paytec.ch>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 1 Feb 2021 12:04:11 -0800
+Message-ID: <CAGETcx91CdvqYpSr6Eg45jrToEFLPBSgzMxTjHh=1rBqi8V3pg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] of: property: Add fw_devlink support for more props
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-27.01.2021 12:10, Viresh Kumar пишет:
-> dev_pm_opp_set_bw() is getting removed and dev_pm_opp_set_opp() should
-> be used instead. Migrate to the new API.
-> 
-> We don't want the OPP core to manage the clk for this driver, migrate to
-> dev_pm_opp_of_add_table_noclk() to make sure dev_pm_opp_set_opp()
-> doesn't have any side effects.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> Dmitry,
-> 
-> This is based over the patches sent here:
-> 
-> https://lore.kernel.org/lkml/6c2160ff30a8f421563793020264cf9f533f293c.1611738228.git.viresh.kumar@linaro.org/
-> 
-> This should fix the problem you mentioned earlier. Will push this for
-> linux-next unless you have any issues with it.
-> 
->  drivers/devfreq/tegra30-devfreq.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 117cad7968ab..31f7dec5990b 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -647,7 +647,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
->  		return PTR_ERR(opp);
->  	}
->  
-> -	ret = dev_pm_opp_set_bw(dev, opp);
-> +	ret = dev_pm_opp_set_opp(dev, opp);
->  	dev_pm_opp_put(opp);
->  
->  	return ret;
-> @@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	err = dev_pm_opp_of_add_table(&pdev->dev);
-> +	err = dev_pm_opp_of_add_table_noclk(&pdev->dev);
->  	if (err) {
->  		dev_err(&pdev->dev, "Failed to add OPP table: %d\n", err);
->  		goto put_hw;
-> 
+On Mon, Feb 1, 2021 at 2:52 AM Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Hi Saravana,
+>
+> Thus wrote Saravana Kannan (saravanak@google.com):
+>
+> > This series [1] has a high chance of fixing it for you if
+> > CONFIG_MODULES is disabled in your set up. Can you give it a shot?
+>
+> sure. This fixes things for me if CONFIG_MODULES is disabled. Booting is
+> still stuck if modules are enabled.
+>
+> > The real problem is that arch/arm/mach-imx/avic.c doesn't set the
+> > OF_POPULATED flag for the "fsl,avic" node. fw_devlink uses this
+> > information to know that this device node will never have a struct
+> > device created for it. The proper way to do this for root IRQCHIP
+> > nodes is to use IRQCHIP_DECLARE(). I Cc'ed you on a clean up patch for
+> > IMX [2], can you please give [2] a shot *without* [1] and with
+> > CONFIG_MODULES enabled? Things should boot properly with this
+> > combination too.
+>
+> This works as well.
 
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Thanks for testing both. Mind giving Tested-by for [1] too?
+
+-Saravana
