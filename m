@@ -2,205 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A37C433E6
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Feb 2021 14:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF188C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Feb 2021 15:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE3B964F6B
-	for <linux-tegra@archiver.kernel.org>; Tue,  2 Feb 2021 14:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E86B64F5E
+	for <linux-tegra@archiver.kernel.org>; Tue,  2 Feb 2021 15:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234844AbhBBOuU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Feb 2021 09:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234808AbhBBOtb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 2 Feb 2021 09:49:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A5D9064F49;
-        Tue,  2 Feb 2021 14:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612277329;
-        bh=G3KQesqI3VgP63AXwofPugp+1nSxUQ1OQ3Asy+jaNxs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=eojN5/2N4cQk8EnY0ICyh6i1TcTTpwXBuPH3WiiD+Is0PsjvGpY6et9QhxsGT5VuL
-         j2sZioAI4vghYTiCSjBPzgNsLMs1/gfmvuCGiKiwY4jRuKAUk34iNtn/+vkSZEbnhr
-         k9d4cJ0KKieTU51s6fPYwc2gIvP21tuqwVnRXaECdcxkgRA4n5XFeDOSnW4hKtmA8v
-         aAGKa2F7Y0LeNpYwk9gqDbsPb7gTaSCc/kJQbcS0BWF8UEpHqg9XIafhyzb8kZ6WAg
-         0cnqrnXAnajN7ayCTf4OOpA1XV8iLkFGReeBa9UEfwdBe1rEW+W/NUOVo2j0JJkxgi
-         ZysjLyIga5lLQ==
-Date:   Tue, 2 Feb 2021 08:48:47 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org,
+        id S235578AbhBBP2T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Feb 2021 10:28:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235485AbhBBP0T (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Feb 2021 10:26:19 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7E5C06174A;
+        Tue,  2 Feb 2021 07:25:38 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id f2so24396194ljp.11;
+        Tue, 02 Feb 2021 07:25:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1BFhguJtknsgKZxynMp8586vauMG7FnrvbgtjYyZdro=;
+        b=Vv94kslTjxOHCof/KEF/LoLKR4nL5ltWMvPcoQIXsSRavJWqtYBiP4QkJfugy6ZSHw
+         QF/4EXVfa3lenAfwmQje7P49RcR1YghY0PCAU//9kv0OcVTFjTz+s6MTZsuDvoxeNQBg
+         VhJHmLc35E4FARCFj1km/HlUqEq5qSdKlViFF05bIHJYnduqZRrIF/W9XUC7LvaYe2wg
+         H1qPnPgPgF1ij8aDO/c1c+3R7ZGttCyFlLtxcYJiYN+c2/hWbqX0cqLcTFyW4c+9bQO4
+         8eoNEKdfAyzCfqpFKMhgFKZr15lZL86pIdGoUv/Neqjn/opYp+dRlJF99YQ2/8WOcbaG
+         28Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1BFhguJtknsgKZxynMp8586vauMG7FnrvbgtjYyZdro=;
+        b=MX491ZNuDqCJiwhs4ej73LOSS70us4LxE7dV3l0lP+v/rNS9Kq9rCeMxv9/lbL+Di9
+         JBo/myvnZX71wz98MDaeFO0wILBty29wsEI+SnJ0FUOFbkikQkMCpVq9Yn/+Fe34NBZJ
+         vFWbvzj0NutK84HA1lwE4wqzN3N0iO/IuRn6uDPxjFbd12VETLSM3XbFIShhcRiSzkTr
+         s36Cnrn50rtZxS3Va31vplsJphqCiwXp9KmJvsl+FFLytYwdVOiIalcLKEAnGjyEeauX
+         UD2hYva12yiZ1FImZ/XlGeMnF1VCLSuFSLFB/zweY0Ngdp7aLASKFYAvgc452Jidldq/
+         xxdA==
+X-Gm-Message-State: AOAM531qBClaNqm/5jKQ/5jpsSk7LFToPk8GnSV86zOjLhxSxuzaT9LH
+        X2R3YVTMCsZva6DtPi/8QEpqq+ekjUg=
+X-Google-Smtp-Source: ABdhPJy9CrYxZnEFUlb+AY6IJgJ2nx7yfz9iiAllAC8BTXE/k9hwCGANIk8LURd2z3PsTK23pF1mFg==
+X-Received: by 2002:a2e:7c16:: with SMTP id x22mr13561352ljc.46.1612279536183;
+        Tue, 02 Feb 2021 07:25:36 -0800 (PST)
+Received: from ?IPv6:2a00:1370:814d:ea25:a10:76ff:fe69:21b6? ([2a00:1370:814d:ea25:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id s19sm2604205ljg.43.2021.02.02.07.25.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Feb 2021 07:25:35 -0800 (PST)
+Subject: Re: [PATCH v1 2/2] ASoC: tegra: Add RT5631 machine driver
+To:     Jon Hunter <jonathanh@nvidia.com>, Ion Agorria <AG0RRIA@yahoo.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        devicetree@vger.kernel.org, Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@axis.com, Mark Brown <broonie@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stephen Warren <swarren@nvidia.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
         Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 00/13] Add support for Hikey 970 PCIe
-Message-ID: <20210202144847.GA97183@bjorn-Precision-5520>
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Ion Agorria <ion@agorria.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210131184101.651486-1-AG0RRIA@yahoo.com>
+ <20210131184101.651486-3-AG0RRIA@yahoo.com>
+ <7f4eb8f7-215e-ab3d-fcef-9243037cf246@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8d0bc6f3-45ce-565d-d80f-b50fb75e7c55@gmail.com>
+Date:   Tue, 2 Feb 2021 18:25:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1612271903.git.mchehab+huawei@kernel.org>
+In-Reply-To: <7f4eb8f7-215e-ab3d-fcef-9243037cf246@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 02:29:45PM +0100, Mauro Carvalho Chehab wrote:
-> This series add support for Kirin 970 and for the Hikey 970
-> board at the already-existing  driver.
-> 
-> patches 1-3 were previously submitted as RFC:
-> 
-> - Patch 1 converts the Synopsys Designware PCIe binding
->   documentation to the DT schema;
-> - Patch 2 converts the pcie-kirin DT binding to the DT schema;
-> - Patch 3 adds some extra configuration needed by
->   Kirin 970.
-> 
-> Patches 4-5 were imported from Manivannan's Hikey 970
-> tree:
-> 
->    https://git.linaro.org/people/manivannan.sadhasivam/96b-common.git/commit/?h=hikey970_pcie&id=4917380ad023c62960aa0f876bd4f23cefc8729e
-> 
-> It contains the original port made by Linaro.
-> 
-> patches 6 to 12 contains several cleanups applied on the
-> top of Manivann's work, in order to simplify the extra data
-> that would be required at DT, and to ensure that the power
-> regulator needed to enable the PCI support on Hikey970
-> will be enabled before trying to power it on, as otherwise,
-> PCI resource allocation will fail.
-> 
-> -
-> 
-> patch 13 is here mostly as an example about what is needed
-> in order for PCIe (and Ethernet) to start working on Hikey 970.
-> 
-> It won't apply cleanly, as it depends on another patch series,
-> adding the needed regulator drivers.
-> 
-> I'll re-submit patch 13 after the pending stuff gets merged
-> upstream.
-> 
-> Manivannan Sadhasivam (2):
->   pci: dwc: pcie-kirin: add HI3670 PCI-E controller support
->   arm64: dts: hisilicon: Add HI3670 PCI-E controller support
-> 
-> Mauro Carvalho Chehab (11):
->   doc: bindings: pci: designware-pcie.txt: convert it to yaml
->   doc: bindings: kirin-pcie.txt: convert it to yaml
->   doc: bindings: add new parameters used by Hikey 970
->   pci: dwc: pcie-kirin: simplify error handling logic
->   pci: dwc: pcie-kirin: simplify kirin 970 get resource logic
->   pci: dwc: pcie-kirin: place common init code altogether
->   pci: dwc: pcie-kirin: allow to optionally require a regulator
->   pci: dwc: pcie-kirin: allow using multiple reset GPIOs
->   pci: dwc: pcie-kirin: add support for clkreq GPIOs
->   pci: dwc: pcie-kirin: cleanup kirin970_pcie_get_eyeparam()
->   arm64: dts: hisilicon: cleanup Hikey 970 PCI schema
+02.02.2021 16:22, Jon Hunter пишет:
+> So this is very similar to tegra_rt5677, is it not possible to support
+> both codecs with the same machine driver?
 
-Please match:
+These codecs require individual configurations and those
+"../codecs/rt5631.h" and  "../codecs/rt5677.h" aren't compatible at a
+quick glance.
 
-  $ git log --oneline drivers/pci/controller/dwc/pcie-kirin.c
-  60f5b73fa0f2 ("PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()")
-  b9ac0f9dc8ea ("PCI: dwc: Move dw_pcie_setup_rc() to DWC common code")
-  59fbab1ae40e ("PCI: dwc: Move dw_pcie_msi_init() into core")
-  886a9c134755 ("PCI: dwc: Move link handling into common code")
-  5bcb1757e637 ("PCI: dwc: Move MSI interrupt setup into DWC common code")
-  a0fd361db8e5 ("PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into common code")
-  ecc3e424d190 ("PCI: kirin: Return -EPROBE_DEFER in case the gpio isn't ready")
+The tegra_rt5677 also uses outdated GPIO API and etc. Hence the new
+driver should be a better base anyways.
 
-We've already picked "PCIe" (not "PCI-E") as the preferred spelling.
-Please adopt in subject lines, commit logs, comments, etc.
-
-Similarly, "YAML" in comments & text, since acronyms are normally
-capitalized.
-
-"DesignWare" (not "Designware").
-
-HiSilicon seems to use "HiKey" (not "Hikey"), so let's follow them.
-
-Pick either "Kirin 970" or "HiKey 970" From
-http://www.o.hisilicon.com/en/Products/ProductList/HiKey, it looks
-like "HiKey 970" refers to a board, and "Kirin 970" refers to a piece
-of it.
-
-Please wrap commit logs to fill 75 columns.
-
->  .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
->  .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
->  .../bindings/pci/designware-pcie.txt          |  77 --
->  .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
->  .../bindings/pci/hisilicon,kirin-pcie.yaml    | 144 ++++
->  .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
->  .../bindings/pci/hisilicon-pcie.txt           |   2 +-
->  .../devicetree/bindings/pci/kirin-pcie.txt    |  50 --
->  .../bindings/pci/layerscape-pci.txt           |   2 +-
->  .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
->  .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
->  .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
->  .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
->  .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
->  .../bindings/pci/samsung,exynos-pcie.yaml     |   2 +-
->  .../devicetree/bindings/pci/snps,pcie.yaml    | 139 ++++
->  .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
->  .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
->  .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
->  MAINTAINERS                                   |   4 +-
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |  64 ++
->  .../boot/dts/hisilicon/hikey970-pmic.dtsi     |   1 -
->  drivers/pci/controller/dwc/pcie-kirin.c       | 736 +++++++++++++++++-
->  23 files changed, 1084 insertions(+), 187 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/kirin-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/pci/snps,pcie.yaml
-> 
-> -- 
-> 2.29.2
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Overall it shouldn't worth time and effort trying to squeeze these
+drivers into a single one, IMO.
