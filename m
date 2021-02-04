@@ -2,166 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115C9C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Feb 2021 13:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F173C43381
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Feb 2021 15:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC67D64F10
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Feb 2021 13:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F301364F65
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Feb 2021 15:33:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236124AbhBDNvo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Feb 2021 08:51:44 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10667 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236364AbhBDNvP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Feb 2021 08:51:15 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B601bfba90000>; Thu, 04 Feb 2021 05:50:33 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 4 Feb
- 2021 13:50:33 +0000
-Received: from audio.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Thu, 4 Feb 2021 13:50:30 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v2 1/3] ASoC: audio-graph: Rename functions needed for export
-Date:   Thu, 4 Feb 2021 19:20:10 +0530
-Message-ID: <1612446612-32613-2-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1612446612-32613-1-git-send-email-spujar@nvidia.com>
-References: <1612446612-32613-1-git-send-email-spujar@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1612446633; bh=jcj/sWYDH6F6INwt5+Upmxiy3TusPMPo5cYStrLeSR0=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Type;
-        b=pY3N+yBR18UC2whKUbZxUK1JDJdz43+tmcqPLntNqjO+WSomloNfQCbBAEegNIPM/
-         3IIWMh1JxOC/59hpXaLyt+cTR2Y6hVhj7sitXGmPeIyPV50LK9VYRiDeuf1qHxDmV3
-         F+itQrU6wgn8Ii69WEC4Oc/u1SjtLFlz9kKIDmMllIGH9Q+N8R73sin8kPzt9So0ye
-         LJ6/HJVbjeFFi95N02GEXHcgjAdwW6fFB3tEVDz0xBuJ7d1/JEkltHyB6qSU4vH2jh
-         gMhp1cRCAZYYAyffm2e8FWs13Z9V3+aTY+nLEHzfOs7UHG0pw+WLV8ULu8XS7MvNrd
-         UMVsbyR0FckuQ==
+        id S237309AbhBDPdI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Feb 2021 10:33:08 -0500
+Received: from mail-oo1-f44.google.com ([209.85.161.44]:44999 "EHLO
+        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237250AbhBDPVs (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Feb 2021 10:21:48 -0500
+Received: by mail-oo1-f44.google.com with SMTP id n19so827328ooj.11;
+        Thu, 04 Feb 2021 07:21:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=P7JarkNG0Jr4x/lj1itZ7BSEgkDgo9dz5ORdHCgfdk8=;
+        b=Zo0NmWhlaKEdDnz60vg4clm2uM+qfG+TmAsZm9uWAvERLScDh4aCBssmqQmhsnkvXV
+         /KQr2iMRTO/5k7QcFS6a7Wmgc4frscHFgJ/Z49Spim8GruSrTb3q5oGm2o/AthpH6U6a
+         Hu06U+3yLqV/fGfYkgWDEzNGkzrRZ2k7YNkUb1CaIGUEPIbiLPMfQiaG+1mVl7CznLH+
+         QrWpqhtMpGgkBss750HPJDA9UsMCWfSHsT7A+ekoJqIA2Y595xd9RyZeA/ApKwpiy8dD
+         0JqJCXvBMJ75aDILVkggF62iWKAVWqWt34UGrPUQU4e9F4fypVNbtyAqqtT5sFmgLdAs
+         6EXQ==
+X-Gm-Message-State: AOAM533IhD3MzlLMZgW2JJ2jxZvgpOGejP280jVFylV82VZMS/tWJ7Ax
+        3At+zr8vNQY/6C3jFuEKlw==
+X-Google-Smtp-Source: ABdhPJzM3kHORViPede34wMD/uUSw98pduiPbhxgxRYTa/nSc0pWIAtPIW3tqD1eZiyu3WZiHYs1VA==
+X-Received: by 2002:a4a:d50d:: with SMTP id m13mr52826oos.2.1612452060739;
+        Thu, 04 Feb 2021 07:21:00 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 33sm1139125ota.69.2021.02.04.07.20.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 07:20:59 -0800 (PST)
+Received: (nullmailer pid 452035 invoked by uid 1000);
+        Thu, 04 Feb 2021 15:20:57 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@axis.com, Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-omap@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
+        linux-amlogic@lists.infradead.org,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+In-Reply-To: <bf3d0a5683c50062a55182922daeec5cfdbe00cc.1612335031.git.mchehab+huawei@kernel.org>
+References: <cover.1612335031.git.mchehab+huawei@kernel.org> <bf3d0a5683c50062a55182922daeec5cfdbe00cc.1612335031.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v2 01/11] doc: bindings: PCI: designware-pcie.txt: convert it to YAML
+Date:   Thu, 04 Feb 2021 09:20:57 -0600
+Message-Id: <1612452057.699681.452034.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Following functions are renamed for a better global visibility.
-  graph_card_probe() --> audio_graph_card_probe()
-  graph_parse_of()   --> audio_graph_parse_of()
-  graph_remove()     --> audio_graph_remove() [exported as well]
+On Wed, 03 Feb 2021 08:01:45 +0100, Mauro Carvalho Chehab wrote:
+> Convert the file into a DT schema.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
+>  .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
+>  .../bindings/pci/designware-pcie.txt          |  77 ----------
+>  .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
+>  .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
+>  .../bindings/pci/hisilicon-pcie.txt           |   2 +-
+>  .../devicetree/bindings/pci/kirin-pcie.txt    |   2 +-
+>  .../bindings/pci/layerscape-pci.txt           |   2 +-
+>  .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
+>  .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
+>  .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
+>  .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
+>  .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
+>  .../bindings/pci/samsung,exynos-pcie.yaml     |   2 +-
+>  .../devicetree/bindings/pci/snps,pcie.yaml    | 139 ++++++++++++++++++
+>  .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
+>  .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
+>  .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
+>  MAINTAINERS                                   |   2 +-
+>  19 files changed, 169 insertions(+), 107 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/snps,pcie.yaml
+> 
 
-The references in header and source files of audio graph are
-updated to make use of above.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
- include/sound/graph_card.h           |  6 ++++--
- sound/soc/generic/audio-graph-card.c | 17 +++++++++--------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+yamllint warnings/errors:
 
-diff --git a/include/sound/graph_card.h b/include/sound/graph_card.h
-index bbb5a13..0137844 100644
---- a/include/sound/graph_card.h
-+++ b/include/sound/graph_card.h
-@@ -9,8 +9,10 @@
- 
- #include <sound/simple_card_utils.h>
- 
--int graph_card_probe(struct snd_soc_card *card);
-+int audio_graph_card_probe(struct snd_soc_card *card);
- 
--int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev);
-+int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev);
-+
-+int audio_graph_remove(struct platform_device *pdev);
- 
- #endif /* __GRAPH_CARD_H */
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 16a04a6..8c5cdcd 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -532,7 +532,7 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- static void graph_get_dais_count(struct asoc_simple_priv *priv,
- 				 struct link_info *li);
- 
--int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
-+int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
- {
- 	struct snd_soc_card *card = simple_priv_to_card(priv);
- 	struct link_info li;
-@@ -608,7 +608,7 @@ int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(graph_parse_of);
-+EXPORT_SYMBOL_GPL(audio_graph_parse_of);
- 
- static int graph_count_noml(struct asoc_simple_priv *priv,
- 			    struct device_node *cpu_ep,
-@@ -705,7 +705,7 @@ static void graph_get_dais_count(struct asoc_simple_priv *priv,
- 		li->link, li->dais, li->conf);
- }
- 
--int graph_card_probe(struct snd_soc_card *card)
-+int audio_graph_card_probe(struct snd_soc_card *card)
- {
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(card);
- 	int ret;
-@@ -720,7 +720,7 @@ int graph_card_probe(struct snd_soc_card *card)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(graph_card_probe);
-+EXPORT_SYMBOL_GPL(audio_graph_card_probe);
- 
- static int graph_probe(struct platform_device *pdev)
- {
-@@ -736,20 +736,21 @@ static int graph_probe(struct platform_device *pdev)
- 	card = simple_priv_to_card(priv);
- 	card->dapm_widgets	= graph_dapm_widgets;
- 	card->num_dapm_widgets	= ARRAY_SIZE(graph_dapm_widgets);
--	card->probe		= graph_card_probe;
-+	card->probe		= audio_graph_card_probe;
- 
- 	if (of_device_get_match_data(dev))
- 		priv->dpcm_selectable = 1;
- 
--	return graph_parse_of(priv, dev);
-+	return audio_graph_parse_of(priv, dev);
- }
- 
--static int graph_remove(struct platform_device *pdev)
-+int audio_graph_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 
- 	return asoc_simple_clean_reference(card);
- }
-+EXPORT_SYMBOL_GPL(audio_graph_remove);
- 
- static const struct of_device_id graph_of_match[] = {
- 	{ .compatible = "audio-graph-card", },
-@@ -766,7 +767,7 @@ static struct platform_driver graph_card = {
- 		.of_match_table = graph_of_match,
- 	},
- 	.probe = graph_probe,
--	.remove = graph_remove,
-+	.remove = audio_graph_remove,
- };
- module_platform_driver(graph_card);
- 
--- 
-2.7.4
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/snps,pcie.yaml: properties:snps,enable-cdm-check: 'oneOf' conditional failed, one must be fixed:
+	'type' is a required property
+	Additional properties are not allowed ('$ref' was unexpected)
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/snps,pcie.yaml: properties:snps,enable-cdm-check: 'oneOf' conditional failed, one must be fixed:
+		'enum' is a required property
+		'const' is a required property
+	'/schemas/types.yaml#definitions/flag' does not match 'types.yaml#/definitions/'
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pci/snps,pcie.yaml: ignoring, error in schema: properties: snps,enable-cdm-check
+warning: no schema found in file: ./Documentation/devicetree/bindings/pci/snps,pcie.yaml
+
+See https://patchwork.ozlabs.org/patch/1435145
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
