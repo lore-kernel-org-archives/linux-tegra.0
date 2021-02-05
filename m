@@ -2,140 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9057DC433E0
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Feb 2021 19:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04011C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Feb 2021 19:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F52364E36
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Feb 2021 19:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1FBF64E3E
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Feb 2021 19:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233545AbhBERlE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Feb 2021 12:41:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbhBERiK (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Feb 2021 12:38:10 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E28C061788
-        for <linux-tegra@vger.kernel.org>; Fri,  5 Feb 2021 11:19:53 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id a1so8908775wrq.6
-        for <linux-tegra@vger.kernel.org>; Fri, 05 Feb 2021 11:19:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jKpWYq7VIIL6VYUoIW5OckVXatPGRV104LzvjFGIr1c=;
-        b=HwIpaNjwBxYkUwux2fQ5Do8bhE9RIxKGf3pBtqircLjR/ltu3YBNFOqrISVA9cKWcR
-         9LZ/kEg7RcmLgK7zzuGM6Ws9pPX2PHkVBWjx7IaAGU/LGoLG4WajR2fEp/7WTQlSp7Ad
-         Qm2lM6PHf5+u73jqSb5tFR4dD3MD2z/riun81VWe0cKVIlc0Ddfjp7OiBOmLWFjVOrZF
-         EabzDIVnsRVobIqrdK9/T4ed2N0Y+9XPWyFj+AimPzyyzBk+I1nxbBwpskI6zwL8GDSt
-         aDbX+8HiSKRQ4DZoeaTXWnA7xfkWaLrWQdZj0Tysv6O9oTbtpPZD6bTpfDxJJNyB+kiD
-         Gswg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jKpWYq7VIIL6VYUoIW5OckVXatPGRV104LzvjFGIr1c=;
-        b=SSAf1ol/H9lIJRApJ6OivhvIvKAmn/Q/ec5AzEpHnnzunSJ9dJcvct9MMY5Hj2Sz/X
-         NyJs2Tv/zfIR9YPvXiUYHBw/f/0y7XtCpAIuoSp7YvIDhxlijNbJZgryaciHqLOlaCAo
-         RmmcAX+q/n117aZRCIT5sn2SRuWupkcndfJjGkWLj7tZXYQsxEQCmk0FtVVNc6WomlP/
-         MjaqGeqa16hoaGNaLXwfXEWrtS2piLsMk2+//DcvZHzcDKp0ndVwmjbl9YlBxXJr15nx
-         GqJhh3UWKhAhKiiUELmdA7wGiXk76zPNnoM1MKSXumFRol4ymoHgScod13uwa7Aa6P5K
-         O9Sg==
-X-Gm-Message-State: AOAM530BIrrc+W1BSzMMzgr3+BolmQEUQmWBUqlZRCfimBmp5w0tqMqL
-        CgfpF4oZxtKd19Knn6eOZPoT9w==
-X-Google-Smtp-Source: ABdhPJzCBGvv1VGUurr+4N/vSECBVMAquwr4j/9tJjZbqQkfy05JU+uYe9sEdOTVfMMZi1qhBeuO9w==
-X-Received: by 2002:a5d:4dd0:: with SMTP id f16mr6639112wru.304.1612552791820;
-        Fri, 05 Feb 2021 11:19:51 -0800 (PST)
-Received: from dell ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id k4sm14244388wrm.53.2021.02.05.11.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Feb 2021 11:19:51 -0800 (PST)
-Date:   Fri, 5 Feb 2021 19:19:48 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        P rashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210205191948.GS2789116@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210203083155.GA2329016@dell>
- <161255130506.76967.8682382463883809207@swboyd.mtv.corp.google.com>
+        id S233327AbhBERpj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Feb 2021 12:45:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232889AbhBERnb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 5 Feb 2021 12:43:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B46764E2E;
+        Fri,  5 Feb 2021 19:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612553113;
+        bh=slBMzILp9QgXeNYRnY8ojvq0IafhxVVhPZ1aE5vU+Kc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OxHxDOIgvp3x8FVmE9kU1x7oe2zAFmrx8UskZnRa7Sz+btX8Qjxvug4SpUWoXH4rW
+         rkRb8c3XNTvSfb+xXyPW3LgdPzda7JAVTqxepJ2ohReRhIqML8R0711TioSOXpHxH2
+         9A+i5cx6jSysjyLvACKhZThkDYxzM6VpXd868q25/XiqVgZNM6Ilf+AJgpe+dZQFhI
+         yaya6ALMw22278pArjmoCLRwUSBcAguAyhzuOMnpD9THg3s49Xr+OpgBcTx7HNFqCJ
+         ptlAwQtkOHabiS58p88EBnUlOuRwlEgPaKFLWkKK0qlknRpTFtoTh8kZ/APHLdQnt2
+         KoOsyeLgKNaLQ==
+Date:   Fri, 5 Feb 2021 19:24:24 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com
+Subject: Re: [PATCH v2 0/3] Rename audio graph export functions
+Message-ID: <20210205192424.GK4720@sirena.org.uk>
+References: <1612446612-32613-1-git-send-email-spujar@nvidia.com>
+ <875z37scr8.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NqNl6FRZtoRUn5bW"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <161255130506.76967.8682382463883809207@swboyd.mtv.corp.google.com>
+In-Reply-To: <875z37scr8.wl-kuninori.morimoto.gx@renesas.com>
+X-Cookie: Huh?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 05 Feb 2021, Stephen Boyd wrote:
 
-> Quoting Lee Jones (2021-02-03 00:31:55)
-> > On Tue, 26 Jan 2021, Lee Jones wrote:
-> > 
-> > > This set is part of a larger effort attempting to clean-up W=1
-> > > kernel builds, which are currently overwhelmingly riddled with
-> > > niggly little warnings.
-> > > 
-> > > This is the last set.  Clock is clean after this.
-> > 
-> > Out of interest, what normally happens to the patches which aren't
-> > picked up by individual driver Maintainers?
-> > 
-> 
-> I have to go in and figure it out! :)
+--NqNl6FRZtoRUn5bW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks mate, much obliged.
+On Fri, Feb 05, 2021 at 07:20:42AM +0900, Kuninori Morimoto wrote:
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > This series renames exported functions from audio graph for a better
+> > global visibility. In doing so update the references in audio graph
+> > and Tegra audio graph card drivers.
+
+> I guess [1/3] and [2/3] should be merged/squashed ?
+> Otherwise, there is git-bisect error.
+
+Yes, and I'll complain because I have automation to test every patch
+individually!  Otherwise this does look fine to me too.
+
+--NqNl6FRZtoRUn5bW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAdm2cACgkQJNaLcl1U
+h9Cjjgf/YHn+MjPCdow32NDrJsA500L+9pHXNUNT68r7wTkbBQbkR5vVW2x+xnCW
+IpI5PWFNS1ziAIAuxc6hWVK4VDVA5PVQkoEw/RQXoC7JbproJ6+6QHuFi1ZpZ2Hq
+Q1UoSu82H0g4gx86WqsyqN0sJHIMptniLFQvk830RnDA28iX+N/IXsIh1QBArkZm
+0A1lu77XKKGNFLcOt8xSyXA94aEvAzZYltWROVgdSAOK8e1eAX75ocgeI/uj+eiY
+/yoD6PECteaO6iJLirDAEy5DS/vIW6HBHcIqutdNYc6Z8qrIHWGXqKOJgDQtmvvl
+Rdqyg7VPac3KKd/kcCRjNq/Hi3dbZQ==
+=y6/g
+-----END PGP SIGNATURE-----
+
+--NqNl6FRZtoRUn5bW--
