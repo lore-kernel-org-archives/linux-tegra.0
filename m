@@ -2,195 +2,111 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA664C433E6
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Feb 2021 17:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AB7C433E0
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Feb 2021 22:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C81F64DEB
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Feb 2021 17:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73A064E35
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Feb 2021 22:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbhBGRhw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Feb 2021 12:37:52 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3595 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbhBGRhv (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Feb 2021 12:37:51 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B602025470002>; Sun, 07 Feb 2021 09:37:11 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 7 Feb
- 2021 17:37:10 +0000
-Received: from audio.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
- Transport; Sun, 7 Feb 2021 17:37:08 +0000
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <broonie@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <kuninori.morimoto.gx@renesas.com>, <alsa-devel@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH v3 1/2] ASoC: audio-graph: Rename functions needed for export
-Date:   Sun, 7 Feb 2021 23:06:57 +0530
-Message-ID: <1612719418-5858-2-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1612719418-5858-1-git-send-email-spujar@nvidia.com>
-References: <1612719418-5858-1-git-send-email-spujar@nvidia.com>
+        id S229623AbhBGWQx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Feb 2021 17:16:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229506AbhBGWQw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Feb 2021 17:16:52 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F2DAC06174A;
+        Sun,  7 Feb 2021 14:16:12 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id d3so19420063lfg.10;
+        Sun, 07 Feb 2021 14:16:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=amw+arajV2h5jip6V0/FYm9nsxnyFJgWfDun4yL2hWo=;
+        b=Qxz3qIx4N/K/ylzxBOh9LpEAJVJER0i3fj5x5/b4eYTiPdgZowWin7i0TJhL3YBGYX
+         nqUU4rin5JIo4EF9yw/Ct4YDapLRWVueBm8FZguVaNpmhpn+GUSOGOmHQfmxdEFFuC8Q
+         813WjLZU5WM+3YdNjdP3GZc3hhKDoeAQ+3MLzwtsQuRjmFv8VXnCZ9LMS87ggn6rN8XO
+         a10sgapTHYd7EqRAsKEysMqnlXuw5Tq4yMN53oCC8rKkoZ5naGSafn231Ih80kr3ro0R
+         QjVuXaiMF5Rp3GSxU1lln7BDoxWUMov4gzapyFc+Rl2Tgj+MrexZG5WmBVVlMKGqGCQX
+         UtXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=amw+arajV2h5jip6V0/FYm9nsxnyFJgWfDun4yL2hWo=;
+        b=Je20lzumsezgDfAP2CJ6rJRtNzPAReP+L5hWVT0CXJEakDpJAyNPq2LaBCmPSadMZL
+         IzibS6DFGC2QM6Hh0nADWVwVhRCT08n9QxILyhFEq0GE/L0gfzVe4bWOIKXX1M0NzV5O
+         EYm01xcnW8WvrhWstClcgNppP7eZpN1ZmPMh6rQrBwLMG2RP7ZSmQrXJwrtEfP5TbiQk
+         OBoKN6smJA/tDk75dkf8xCSUFOQ0vaJ91l0WOKHWJuZVax5gU8+wSKomlaZ5Hmy60BB7
+         GTokmZDgVOFitI4E4xeY0mM7iVWujaE78uQGgUKqy64DDDsbHhmeeh/cpUDrq7Vti3dq
+         ZJ1g==
+X-Gm-Message-State: AOAM531XX5ecHHQ/yRN0s2DE3fntsPHD6RGBHgczPrTOk7mxzIRk2cix
+        AlwSKP9ALLnyym8thhEgOS++lgJq58BchQ==
+X-Google-Smtp-Source: ABdhPJyjaJRB143WhUN8+rLijJv2/iICLgKR/rcd245VCxOBQw4+5emTlBYz3D77P7u2f2YLo877sg==
+X-Received: by 2002:ac2:5639:: with SMTP id b25mr8348018lff.370.1612736170304;
+        Sun, 07 Feb 2021 14:16:10 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-164.NA.cust.bahnhof.se. [158.174.22.164])
+        by smtp.gmail.com with ESMTPSA id y25sm1873866lfe.20.2021.02.07.14.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Feb 2021 14:16:09 -0800 (PST)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>,
+        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH] PCI: tegra: Constify static structs
+Date:   Sun,  7 Feb 2021 23:16:04 +0100
+Message-Id: <20210207221604.48910-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1612719431; bh=QNOEKARjC18l+zl2o4mNJlCfnihZnl9yHW4AuVCikCc=;
-        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Type;
-        b=TUMbdtqcIQ1x4CyaenmKFhySINP4EE5esWR76/Ys/Jz5x3wZHLntAur8gMdVGvEnB
-         HStAPgD29wPnSWR+1blusi5zPucGUBGvPLtr51GKuldKm34zvSAVM5u7Bj0jQRi5dO
-         LCx87tCEXHEjiDFRRxOKozF+DV6VUR1EIYOikEO/1PqttJMmIZ1TuLJ8RtRgUNqVkl
-         0m4T62s9X5Fmi7c8DvI9Wc/Epu5vG/7wKWeGqvjb99Zjtvws4W75/C6leUJTWBiTa1
-         jQCkXFT8SzbeUlfd0gzKaN/9kWZINQxMyFPz/oOrPV4CIC6Y/G2HG8/lE8IJtmpm2x
-         9mxtVkAeV/u9w==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Following functions are renamed for a better global visibility.
-  graph_card_probe() --> audio_graph_card_probe()
-  graph_parse_of()   --> audio_graph_parse_of()
-  graph_remove()     --> audio_graph_remove() [exported as well]
+The only usage of them is to assign their address to the 'ops' field in
+the pcie_port and the dw_pcie_ep structs, both which are pointers to
+const. Make them const to allow the compiler to put them in read-only
+memory.
 
-The references of these are updated in audio graph and Tegra audio
-graph card drivers.
-
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 ---
- include/sound/graph_card.h               |  6 ++++--
- sound/soc/generic/audio-graph-card.c     | 17 +++++++++--------
- sound/soc/tegra/tegra_audio_graph_card.c |  6 +++---
- 3 files changed, 16 insertions(+), 13 deletions(-)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/graph_card.h b/include/sound/graph_card.h
-index bbb5a13..0137844 100644
---- a/include/sound/graph_card.h
-+++ b/include/sound/graph_card.h
-@@ -9,8 +9,10 @@
- 
- #include <sound/simple_card_utils.h>
- 
--int graph_card_probe(struct snd_soc_card *card);
-+int audio_graph_card_probe(struct snd_soc_card *card);
- 
--int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev);
-+int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev);
-+
-+int audio_graph_remove(struct platform_device *pdev);
- 
- #endif /* __GRAPH_CARD_H */
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 16a04a6..8c5cdcd 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -532,7 +532,7 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
- static void graph_get_dais_count(struct asoc_simple_priv *priv,
- 				 struct link_info *li);
- 
--int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
-+int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
- {
- 	struct snd_soc_card *card = simple_priv_to_card(priv);
- 	struct link_info li;
-@@ -608,7 +608,7 @@ int graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(graph_parse_of);
-+EXPORT_SYMBOL_GPL(audio_graph_parse_of);
- 
- static int graph_count_noml(struct asoc_simple_priv *priv,
- 			    struct device_node *cpu_ep,
-@@ -705,7 +705,7 @@ static void graph_get_dais_count(struct asoc_simple_priv *priv,
- 		li->link, li->dais, li->conf);
- }
- 
--int graph_card_probe(struct snd_soc_card *card)
-+int audio_graph_card_probe(struct snd_soc_card *card)
- {
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(card);
- 	int ret;
-@@ -720,7 +720,7 @@ int graph_card_probe(struct snd_soc_card *card)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(graph_card_probe);
-+EXPORT_SYMBOL_GPL(audio_graph_card_probe);
- 
- static int graph_probe(struct platform_device *pdev)
- {
-@@ -736,20 +736,21 @@ static int graph_probe(struct platform_device *pdev)
- 	card = simple_priv_to_card(priv);
- 	card->dapm_widgets	= graph_dapm_widgets;
- 	card->num_dapm_widgets	= ARRAY_SIZE(graph_dapm_widgets);
--	card->probe		= graph_card_probe;
-+	card->probe		= audio_graph_card_probe;
- 
- 	if (of_device_get_match_data(dev))
- 		priv->dpcm_selectable = 1;
- 
--	return graph_parse_of(priv, dev);
-+	return audio_graph_parse_of(priv, dev);
- }
- 
--static int graph_remove(struct platform_device *pdev)
-+int audio_graph_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 
- 	return asoc_simple_clean_reference(card);
- }
-+EXPORT_SYMBOL_GPL(audio_graph_remove);
- 
- static const struct of_device_id graph_of_match[] = {
- 	{ .compatible = "audio-graph-card", },
-@@ -766,7 +767,7 @@ static struct platform_driver graph_card = {
- 		.of_match_table = graph_of_match,
- 	},
- 	.probe = graph_probe,
--	.remove = graph_remove,
-+	.remove = audio_graph_remove,
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 6fa216e52d14..18acd48e8e9b 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1019,7 +1019,7 @@ static const struct dw_pcie_ops tegra_dw_pcie_ops = {
+ 	.stop_link = tegra_pcie_dw_stop_link,
  };
- module_platform_driver(graph_card);
  
-diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
-index 9e43f16..121e572 100644
---- a/sound/soc/tegra/tegra_audio_graph_card.c
-+++ b/sound/soc/tegra/tegra_audio_graph_card.c
-@@ -184,7 +184,7 @@ static int tegra_audio_graph_card_probe(struct snd_soc_card *card)
- 		return PTR_ERR(priv->clk_plla_out0);
- 	}
+-static struct dw_pcie_host_ops tegra_pcie_dw_host_ops = {
++static const struct dw_pcie_host_ops tegra_pcie_dw_host_ops = {
+ 	.host_init = tegra_pcie_dw_host_init,
+ };
  
--	return graph_card_probe(card);
-+	return audio_graph_card_probe(card);
+@@ -1881,7 +1881,7 @@ tegra_pcie_ep_get_features(struct dw_pcie_ep *ep)
+ 	return &tegra_pcie_epc_features;
  }
  
- static int tegra_audio_graph_probe(struct platform_device *pdev)
-@@ -201,12 +201,12 @@ static int tegra_audio_graph_probe(struct platform_device *pdev)
- 
- 	card->probe = tegra_audio_graph_card_probe;
- 
--	/* graph_parse_of() depends on below */
-+	/* audio_graph_parse_of() depends on below */
- 	card->component_chaining = 1;
- 	priv->simple.ops = &tegra_audio_graph_ops;
- 	priv->simple.force_dpcm = 1;
- 
--	return graph_parse_of(&priv->simple, dev);
-+	return audio_graph_parse_of(&priv->simple, dev);
- }
- 
- static const struct tegra_audio_cdata tegra210_data = {
+-static struct dw_pcie_ep_ops pcie_ep_ops = {
++static const struct dw_pcie_ep_ops pcie_ep_ops = {
+ 	.raise_irq = tegra_pcie_ep_raise_irq,
+ 	.get_features = tegra_pcie_ep_get_features,
+ };
 -- 
-2.7.4
+2.30.0
 
