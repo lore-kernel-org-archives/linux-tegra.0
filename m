@@ -2,86 +2,181 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E629CC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 12:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD6AC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A59A64E29
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 12:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AAE264E26
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbhBHMlK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Feb 2021 07:41:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231996AbhBHMkK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 8 Feb 2021 07:40:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CF1464E7E;
-        Mon,  8 Feb 2021 12:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1612787970;
-        bh=8pLDrf/AeZOIez/HX1MNFZLMmTZuKOF7ggdyqS1IatM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ezONN6xeMQy71/KvSw1R9GRiDOrA1kQ8hvxT97x1Kt1u699jgfx1HApD/G6/AwV1V
-         U27UHtTZHuKutJjWU/JJ2WpbU7zzNM12CjnVtWtd/zhA4y0jt3LewBldzC7lIRYc7+
-         tEG4ZlVUFr0GGZo3Tr69uFK3BcXPlEC0AomJ2hTQ=
-Date:   Mon, 8 Feb 2021 13:39:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.10 00/57] 5.10.14-rc1 review
-Message-ID: <YCEw/8pqE5WhG97g@kroah.com>
-References: <20210205140655.982616732@linuxfoundation.org>
- <361dc1da83e64a4d89e5c81487890f4e@HQMAIL101.nvidia.com>
+        id S233763AbhBHQmU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Feb 2021 11:42:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234520AbhBHQlt (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Feb 2021 11:41:49 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF40C061788;
+        Mon,  8 Feb 2021 08:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=+Iq5LNuGONIJSlt2BCZxMPi1D1idJLDj40Ss+nIJ16Y=; b=vYDvRV1ydBQnebpPZS+UoEsR0y
+        mHQqvb0tbudnfraBwOtXq0AhHzRK5y+nt3OQh3TgsZUjYl3Ks1YrBi6Dqo8g+MuaB+BzUToFVsels
+        XUsC6QdXfhcnKH1KmJ+kQnZVybxzTJyYkA1zKqdPo4PXQdYvzeUTZ5IJWNpsRTFs4eBRBE1q7zzUp
+        vdIOP6s4topbq2Rnrleb9fVeiZWRG6Fj5PgVfneBuGQW7EEjIsldgl9CsAOAKpAUQW5Lm6bEyW5bU
+        6JE3ptXRzr7yZbrUhigxv/0cHQ9V6s9w+Wsm+3l1oB13ZA+apfY9ZVo7/3bfUAp6CV0HimKTBVE/b
+        MQtHR/8w==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1l99as-0000Cr-MW; Mon, 08 Feb 2021 18:40:58 +0200
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
+        will@kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        robin.murphy@arm.com
+Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [RFC PATCH 2/8] gpu: host1x: Add context bus
+Date:   Mon,  8 Feb 2021 18:38:42 +0200
+Message-Id: <20210208163848.2504291-3-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210208163848.2504291-1-mperttunen@nvidia.com>
+References: <20210208163848.2504291-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <361dc1da83e64a4d89e5c81487890f4e@HQMAIL101.nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Feb 07, 2021 at 01:26:20PM +0000, Jon Hunter wrote:
-> On Fri, 05 Feb 2021 15:06:26 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.10.14 release.
-> > There are 57 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 07 Feb 2021 14:06:42 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.14-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.10:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     65 tests:	65 pass, 0 fail
-> 
-> Linux version:	5.10.14-rc1-g58d18d6d116a
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+The context bus is a "dummy" bus that contains struct devices that
+correspond to IOMMU contexts assigned through Host1x to processes.
 
-Thanks for testing them all and letting me know.
+Even when host1x itself is built as a module, the bus is registered
+in built-in code so that the built-in ARM SMMU driver is able to
+reference it.
 
-greg k-h
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/Makefile               |  3 +--
+ drivers/gpu/host1x/Kconfig         |  5 +++++
+ drivers/gpu/host1x/Makefile        |  1 +
+ drivers/gpu/host1x/context_bus.c   | 31 ++++++++++++++++++++++++++++++
+ include/linux/host1x_context_bus.h | 15 +++++++++++++++
+ 5 files changed, 53 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/host1x/context_bus.c
+ create mode 100644 include/linux/host1x_context_bus.h
+
+diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+index 835c88318cec..8997f0096545 100644
+--- a/drivers/gpu/Makefile
++++ b/drivers/gpu/Makefile
+@@ -2,7 +2,6 @@
+ # drm/tegra depends on host1x, so if both drivers are built-in care must be
+ # taken to initialize them in the correct order. Link order is the only way
+ # to ensure this currently.
+-obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+-obj-y			+= drm/ vga/
++obj-y			+= host1x/ drm/ vga/
+ obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
+ obj-$(CONFIG_TRACE_GPU_MEM)		+= trace/
+diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
+index 6dab94adf25e..8546dde3acc8 100644
+--- a/drivers/gpu/host1x/Kconfig
++++ b/drivers/gpu/host1x/Kconfig
+@@ -1,7 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config TEGRA_HOST1X_CONTEXT_BUS
++	bool
++
+ config TEGRA_HOST1X
+ 	tristate "NVIDIA Tegra host1x driver"
+ 	depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
++	select TEGRA_HOST1X_CONTEXT_BUS
+ 	select IOMMU_IOVA
+ 	help
+ 	  Driver for the NVIDIA Tegra host1x hardware.
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index a48af2cefae1..d9fea2885658 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -19,3 +19,4 @@ host1x-y = \
+ 	hw/host1x07.o
+ 
+ obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
++obj-$(CONFIG_TEGRA_HOST1X_CONTEXT_BUS) += context_bus.o
+diff --git a/drivers/gpu/host1x/context_bus.c b/drivers/gpu/host1x/context_bus.c
+new file mode 100644
+index 000000000000..2625914f3c7d
+--- /dev/null
++++ b/drivers/gpu/host1x/context_bus.c
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, NVIDIA Corporation.
++ */
++
++#include <linux/device.h>
++#include <linux/of.h>
++
++struct bus_type host1x_context_device_bus_type = {
++	.name = "host1x-context",
++};
++EXPORT_SYMBOL(host1x_context_device_bus_type);
++
++static int __init host1x_context_device_bus_init(void)
++{
++	int err;
++
++	if (!of_machine_is_compatible("nvidia,tegra186") &&
++	    !of_machine_is_compatible("nvidia,tegra194") &&
++	    !of_machine_is_compatible("nvidia,tegra234"))
++		return 0;
++
++	err = bus_register(&host1x_context_device_bus_type);
++	if (err < 0) {
++		pr_err("bus type registration failed: %d\n", err);
++		return err;
++	}
++
++	return 0;
++}
++postcore_initcall(host1x_context_device_bus_init);
+diff --git a/include/linux/host1x_context_bus.h b/include/linux/host1x_context_bus.h
+new file mode 100644
+index 000000000000..72462737a6db
+--- /dev/null
++++ b/include/linux/host1x_context_bus.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2021, NVIDIA Corporation. All rights reserved.
++ */
++
++#ifndef __LINUX_HOST1X_CONTEXT_BUS_H
++#define __LINUX_HOST1X_CONTEXT_BUS_H
++
++#include <linux/device.h>
++
++#ifdef CONFIG_TEGRA_HOST1X_CONTEXT_BUS
++extern struct bus_type host1x_context_device_bus_type;
++#endif
++
++#endif
+-- 
+2.30.0
+
