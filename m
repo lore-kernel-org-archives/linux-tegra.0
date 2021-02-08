@@ -2,217 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02652C43381
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B987C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCD5B64E9A
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A8A64E5A
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234604AbhBHQnK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Feb 2021 11:43:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43250 "EHLO
+        id S234424AbhBHQzN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Feb 2021 11:55:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234590AbhBHQm6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Feb 2021 11:42:58 -0500
+        with ESMTP id S234539AbhBHQyL (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Feb 2021 11:54:11 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BCFC061793;
-        Mon,  8 Feb 2021 08:41:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7181FC061786;
+        Mon,  8 Feb 2021 08:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=dMAh1MNck3e2VRmcao1RhRO5KxC9ewWuSldpLdYqPJE=; b=2Bavg5JYwLJkBoT+joSv1vCEss
-        dDQMGRJApeOztQqsbb+LsVsiyDuKS/bbcfe0Ybm/ncO/bwNI2A9v/SSfzGfpX2JznB1z6nwwEbid2
-        hP8hzI1bbDag/COrEujQiEeXrt156euzfcRyOfr8d5AK61OXq85Z3nAPtT9e9eIKQwUKefPWrf1cs
-        sz5AOPTZPJkE4n4IsCHOiwE/HDBDOG41NzYSks8ziE71WcXTwe2RdY3XFXQYUyBUlceFiruyGs82Y
-        Q3OpUBVzupKr6MgWM8N5xAND0u3sYq6bWBrz715PekJ2f08NSQha4pc2/9ozLU0tdrILcngH8b+hD
-        ov0NeY8A==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FME9VbzmFyLWNxiCozESgnR6SphEi+7tXAYke0+yW0o=; b=CYZbkVwR8/zLr1IC961HpJsuU3
+        rdBv/yBzOhjyYfjEJZqsOgvFObqpluR4IqoxODvBfFAeUkoguFJR8WWqQXhTmFs5I8aDF1bOh63gq
+        /Zl5wC9oFD53XItWUwbO60FErDMgImrYx+yIsqNKFmtex7Y3mDwuAMQS49H/zPADWNb1MJRkHfVHP
+        GAxfrRDo+rVXZMV3hK8EBwqOpDe6J3OMc54qfMxr4vs1sVFzp6K7pBuHJ4swfyT3VnYmxb2keLuk1
+        xS6sYAECK3g2Ow7kev4N3ZJCIkAETKILOjTNItN30DYkCWza2UAnbZCDs9EpmvhWR5iHkTe0Ekose
+        o2w9zSFQ==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1l99as-0000Cr-Td; Mon, 08 Feb 2021 18:40:58 +0200
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        will@kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
-        robin.murphy@arm.com
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1l99mq-0003Mk-Fh; Mon, 08 Feb 2021 18:53:20 +0200
+Subject: Re: [RFC PATCH 1/8] of/device: Allow specifying a custom iommu_spec
+ to of_dma_configure
+To:     Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, joro@8bytes.org, will@kernel.org,
+        robh+dt@kernel.org, frowand.list@gmail.com, robin.murphy@arm.com
 Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH 4/8] gpu: host1x: Program context stream ID on submission
-Date:   Mon,  8 Feb 2021 18:38:44 +0200
-Message-Id: <20210208163848.2504291-5-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210208163848.2504291-1-mperttunen@nvidia.com>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20210208163848.2504291-1-mperttunen@nvidia.com>
+ <20210208163848.2504291-2-mperttunen@nvidia.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <14e29aae-53bc-923f-568e-eb222bd24ba1@kapsi.fi>
+Date:   Mon, 8 Feb 2021 18:53:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210208163848.2504291-2-mperttunen@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
 X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add code to do stream ID switching at the beginning of a job. The
-stream ID is switched to the stream ID specified by the context
-passed in the job structure.
+On 2/8/21 6:38 PM, Mikko Perttunen wrote:
+> ...
+> -static int of_iommu_xlate(struct device *dev,
+> -			  struct of_phandle_args *iommu_spec)
+> +int of_iommu_xlate(struct device *dev, struct of_phandle_args *iommu_spec)
+> ...
+> +EXPORT_SYMBOL_GPL(of_iommu_xlate);
+>   
 
-Before switching the stream ID, an OP_DONE wait is done on the
-channel's engine to ensure that there is no residual ongoing
-work that might do DMA using the new stream ID.
+These two chunks should not be needed.. looks like I left them in from 
+some earlier experiments.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/hw/channel_hw.c        | 52 +++++++++++++++++++++--
- drivers/gpu/host1x/hw/host1x06_hardware.h | 10 +++++
- drivers/gpu/host1x/hw/host1x07_hardware.h | 10 +++++
- include/linux/host1x.h                    |  4 ++
- 4 files changed, 72 insertions(+), 4 deletions(-)
+Sending patches out is really the best way to notice mistakes, even 
+after reading through them 5 times before.. :)
 
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index d88a32f73f5e..f97296864da8 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -129,6 +129,45 @@ static void host1x_channel_set_streamid(struct host1x_channel *channel)
- #endif
- }
- 
-+static void host1x_channel_program_engine_streamid(struct host1x_job *job)
-+{
-+#if HOST1X_HW >= 6
-+	u32 fence;
-+
-+	if (!job->context)
-+		return;
-+
-+	fence = host1x_syncpt_incr_max(job->syncpt, 1);
-+
-+	/* First, increment a syncpoint on OP_DONE condition.. */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
-+		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
-+			HOST1X_UCLASS_INCR_SYNCPT_COND_F(1));
-+
-+	/* Wait for syncpoint to increment */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
-+			host1x_uclass_wait_syncpt_r(), 1),
-+		host1x_class_host_wait_syncpt(job->syncpt->id, fence));
-+
-+	/*
-+	 * Now that we know the engine is idle, return to class and
-+	 * change stream ID.
-+	 */
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setclass(job->class, 0, 0),
-+		HOST1X_OPCODE_NOP);
-+
-+	host1x_cdma_push(&job->channel->cdma,
-+		host1x_opcode_setpayload(job->context->stream_id),
-+		host1x_opcode_setstreamid(job->engine_streamid_offset / 4));
-+#endif
-+}
-+
- static int channel_submit(struct host1x_job *job)
- {
- 	struct host1x_channel *ch = job->channel;
-@@ -184,18 +223,23 @@ static int channel_submit(struct host1x_job *job)
- 	if (sp->base)
- 		synchronize_syncpt_base(job);
- 
--	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
--
- 	host1x_hw_syncpt_assign_to_channel(host, sp, ch);
- 
--	job->syncpt_end = syncval;
--
- 	/* add a setclass for modules that require it */
- 	if (job->class)
- 		host1x_cdma_push(&ch->cdma,
- 				 host1x_opcode_setclass(job->class, 0, 0),
- 				 HOST1X_OPCODE_NOP);
- 
-+	/*
-+	 * Ensure engine DMA is idle and set new stream ID. May increment
-+	 * syncpt max.
-+	 */
-+	host1x_channel_program_engine_streamid(job);
-+
-+	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
-+	job->syncpt_end = syncval;
-+
- 	submit_gathers(job);
- 
- 	/* end CDMA submit & stash pinned hMems into sync queue */
-diff --git a/drivers/gpu/host1x/hw/host1x06_hardware.h b/drivers/gpu/host1x/hw/host1x06_hardware.h
-index 01a142a09800..5d515745eee7 100644
---- a/drivers/gpu/host1x/hw/host1x06_hardware.h
-+++ b/drivers/gpu/host1x/hw/host1x06_hardware.h
-@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
- 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
- }
- 
-+static inline u32 host1x_opcode_setstreamid(unsigned streamid)
-+{
-+	return (7 << 28) | streamid;
-+}
-+
-+static inline u32 host1x_opcode_setpayload(unsigned payload)
-+{
-+	return (9 << 28) | payload;
-+}
-+
- static inline u32 host1x_opcode_gather_wide(unsigned count)
- {
- 	return (12 << 28) | count;
-diff --git a/drivers/gpu/host1x/hw/host1x07_hardware.h b/drivers/gpu/host1x/hw/host1x07_hardware.h
-index e6582172ebfd..82c0cc9bb0b5 100644
---- a/drivers/gpu/host1x/hw/host1x07_hardware.h
-+++ b/drivers/gpu/host1x/hw/host1x07_hardware.h
-@@ -127,6 +127,16 @@ static inline u32 host1x_opcode_gather_incr(unsigned offset, unsigned count)
- 	return (6 << 28) | (offset << 16) | BIT(15) | BIT(14) | count;
- }
- 
-+static inline u32 host1x_opcode_setstreamid(unsigned streamid)
-+{
-+	return (7 << 28) | streamid;
-+}
-+
-+static inline u32 host1x_opcode_setpayload(unsigned payload)
-+{
-+	return (9 << 28) | payload;
-+}
-+
- static inline u32 host1x_opcode_gather_wide(unsigned count)
- {
- 	return (12 << 28) | count;
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 3cf3c6a0b225..3bf19080f1c1 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -272,6 +272,10 @@ struct host1x_job {
- 	/* Callback called when job is freed */
- 	void (*release)(struct host1x_job *job);
- 	void *user_data;
-+
-+	/* Options for configuring engine data stream ID */
-+	struct host1x_context *context;
-+	u32 engine_streamid_offset;
- };
- 
- struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
--- 
-2.30.0
-
+Mikko
