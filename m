@@ -2,43 +2,43 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 408E0C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF24C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0EE64E26
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BAF464E26
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232754AbhBHQnC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Feb 2021 11:43:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43258 "EHLO
+        id S233528AbhBHQnE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Feb 2021 11:43:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234588AbhBHQm6 (ORCPT
+        with ESMTP id S234589AbhBHQm6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Feb 2021 11:42:58 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D4BC061797;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED00FC061794;
         Mon,  8 Feb 2021 08:41:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=F1rC5T4ZapwS/nZNabUxiFFNVft1bYY7SlMPjy6IXuo=; b=DS/mhD79INrZwg8e4YrAjaoGrY
-        OLcGQqAca31ghk4QNjCMcVtGKSrmtxWS54lbpCoWjGcRQ1vskvtvuYhBZ9R2IYXLiPy8aESnGYKp7
-        jGUgU5jOEatKby0SfdgdnAipPvwSMtkThxlYqRaQ9hj1btn26XgDB80U85N+ooNPGNvSIdxfo0rq/
-        4/77RjmOgwCRILBPW8GYvhfRb2pk5R/7pdOBx3n4WOe5rS5ZZgnwk7FlYMtPbMy+f83CnmKQEGgKz
-        i1Hno+TqAArrtDNvZcGx2/U+egMHWZhuBqAsVM1Wm23dsxQd13DPmmESgHjRXAOAZKWIci75XdM0D
-        +p0C+6xg==;
+        bh=zsMyB8iB5UFqB7I23yLfnPURCPkNxas5AAE7y5zKVNk=; b=0KBKndFzSldu2iADE2qOcDWoAu
+        fI//NkZoWtROK5JPXUNq1Hrz73Ua6/4jCPrvxg5ZN/DgAfcxuEY5bSjcmscNbY3J76I3vYQaKnBi4
+        vYvCv3mMoQeIqJClK6IYUmCRbtxSdNpVz8LBIsrNeN0TBi/oqZ79zQpzRV2549g2zC2RmNK5cXBvb
+        AG3wqRxCgvCHq26ugQI8HxKKF4PV48dJwEiyx7fWF6vr6rngXmlt/PI1jNztMDJsj0v5oasRwFmY1
+        PPModuGvc/3gxr7RPlJ/IyRk/NZY8+4AR5dzrTV96MsiNjCMgn64YCk1Ec57UaOXyEHcxKOwNiXw2
+        XoCsD83w==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1l99as-0000Cr-JC; Mon, 08 Feb 2021 18:40:58 +0200
+        id 1l99as-0000Cr-G2; Mon, 08 Feb 2021 18:40:58 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
@@ -47,12 +47,10 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH 1/8] of/device: Allow specifying a custom iommu_spec to of_dma_configure
-Date:   Mon,  8 Feb 2021 18:38:41 +0200
-Message-Id: <20210208163848.2504291-2-mperttunen@nvidia.com>
+Subject: [RFC PATCH 0/8] Host1x context isolation support
+Date:   Mon,  8 Feb 2021 18:38:40 +0200
+Message-Id: <20210208163848.2504291-1-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210208163848.2504291-1-mperttunen@nvidia.com>
-References: <20210208163848.2504291-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 84.249.134.236
@@ -62,190 +60,83 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-To allow for more customized device tree bindings that point to IOMMUs,
-allow manual specification of iommu_spec to of_dma_configure.
+Hi all,
 
-The initial use case for this is with Host1x, where the driver manages
-a set of device tree-defined IOMMU contexts that are dynamically
-allocated to various users. These contexts don't correspond to
-platform devices and are instead attached to dummy devices on a custom
-software bus.
+this series adds support for Host1x 'context isolation'. Since
+when programming engines through Host1x, userspace can program in
+any addresses it wants, we need some way to isolate the engines'
+memory spaces. Traditionally this has either been done imperfectly
+with a single shared IOMMU domain, or by copying and verifying the
+programming command stream at submit time (Host1x firewall).
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/iommu/of_iommu.c  | 12 ++++++++----
- drivers/of/device.c       |  9 +++++----
- include/linux/of_device.h | 34 +++++++++++++++++++++++++++-------
- include/linux/of_iommu.h  |  6 ++++--
- 4 files changed, 44 insertions(+), 17 deletions(-)
+Since Tegra186 there is a privileged (only usable by kernel)
+Host1x opcode that allows setting the stream ID sent by the engine
+to the SMMU. So, by allocating a number of context banks and stream
+IDs for this purpose, and using this opcode at the beginning of
+each job, we can implement isolation. Due to the limited number of
+context banks only each process gets its own context, and not
+each channel.
 
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index e505b9130a1c..3fefa6c63863 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -87,8 +87,7 @@ int of_get_dma_window(struct device_node *dn, const char *prefix, int index,
- }
- EXPORT_SYMBOL_GPL(of_get_dma_window);
- 
--static int of_iommu_xlate(struct device *dev,
--			  struct of_phandle_args *iommu_spec)
-+int of_iommu_xlate(struct device *dev, struct of_phandle_args *iommu_spec)
- {
- 	const struct iommu_ops *ops;
- 	struct fwnode_handle *fwnode = &iommu_spec->np->fwnode;
-@@ -117,6 +116,7 @@ static int of_iommu_xlate(struct device *dev,
- 	module_put(ops->owner);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(of_iommu_xlate);
- 
- static int of_iommu_configure_dev_id(struct device_node *master_np,
- 				     struct device *dev,
-@@ -177,7 +177,8 @@ static int of_iommu_configure_device(struct device_node *master_np,
- 
- const struct iommu_ops *of_iommu_configure(struct device *dev,
- 					   struct device_node *master_np,
--					   const u32 *id)
-+					   const u32 *id,
-+					   struct of_phandle_args *iommu_spec)
- {
- 	const struct iommu_ops *ops = NULL;
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-@@ -209,7 +210,10 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
- 		err = pci_for_each_dma_alias(to_pci_dev(dev),
- 					     of_pci_iommu_init, &info);
- 	} else {
--		err = of_iommu_configure_device(master_np, dev, id);
-+		if (iommu_spec)
-+			err = of_iommu_xlate(dev, iommu_spec);
-+		else
-+			err = of_iommu_configure_device(master_np, dev, id);
- 
- 		fwspec = dev_iommu_fwspec_get(dev);
- 		if (!err && fwspec)
-diff --git a/drivers/of/device.c b/drivers/of/device.c
-index aedfaaafd3e7..84ada2110c5b 100644
---- a/drivers/of/device.c
-+++ b/drivers/of/device.c
-@@ -88,8 +88,9 @@ int of_device_add(struct platform_device *ofdev)
-  * can use a platform bus notifier and handle BUS_NOTIFY_ADD_DEVICE events
-  * to fix up DMA configuration.
-  */
--int of_dma_configure_id(struct device *dev, struct device_node *np,
--			bool force_dma, const u32 *id)
-+int __of_dma_configure(struct device *dev, struct device_node *np,
-+			bool force_dma, const u32 *id,
-+			struct of_phandle_args *iommu_spec)
- {
- 	const struct iommu_ops *iommu;
- 	const struct bus_dma_region *map = NULL;
-@@ -170,7 +171,7 @@ int of_dma_configure_id(struct device *dev, struct device_node *np,
- 	dev_dbg(dev, "device is%sdma coherent\n",
- 		coherent ? " " : " not ");
- 
--	iommu = of_iommu_configure(dev, np, id);
-+	iommu = of_iommu_configure(dev, np, id, iommu_spec);
- 	if (PTR_ERR(iommu) == -EPROBE_DEFER) {
- 		kfree(map);
- 		return -EPROBE_DEFER;
-@@ -184,7 +185,7 @@ int of_dma_configure_id(struct device *dev, struct device_node *np,
- 	dev->dma_range_map = map;
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(of_dma_configure_id);
-+EXPORT_SYMBOL_GPL(__of_dma_configure);
- 
- int of_device_register(struct platform_device *pdev)
- {
-diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-index 07ca187fc5e4..40cc3e788cb9 100644
---- a/include/linux/of_device.h
-+++ b/include/linux/of_device.h
-@@ -55,14 +55,27 @@ static inline struct device_node *of_cpu_device_node_get(int cpu)
- 	return of_node_get(cpu_dev->of_node);
- }
- 
--int of_dma_configure_id(struct device *dev,
-+int __of_dma_configure(struct device *dev,
- 		     struct device_node *np,
--		     bool force_dma, const u32 *id);
-+		     bool force_dma, const u32 *id,
-+		     struct of_phandle_args *iommu_spec);
- static inline int of_dma_configure(struct device *dev,
- 				   struct device_node *np,
- 				   bool force_dma)
- {
--	return of_dma_configure_id(dev, np, force_dma, NULL);
-+	return __of_dma_configure(dev, np, force_dma, NULL, NULL);
-+}
-+static inline int of_dma_configure_id(struct device *dev,
-+				      struct device_node *np,
-+				      bool force_dma, const u32 *id)
-+{
-+	return __of_dma_configure(dev, np, force_dma, id, NULL);
-+}
-+static inline int
-+of_dma_configure_iommu_spec(struct device *dev, struct device_node *np,
-+			    bool force_dma, struct of_phandle_args *iommu_spec)
-+{
-+	return __of_dma_configure(dev, np, force_dma, NULL, iommu_spec);
- }
- #else /* CONFIG_OF */
- 
-@@ -112,18 +125,25 @@ static inline struct device_node *of_cpu_device_node_get(int cpu)
- 	return NULL;
- }
- 
--static inline int of_dma_configure_id(struct device *dev,
-+static inline int of_dma_configure(struct device *dev,
- 				   struct device_node *np,
- 				   bool force_dma)
- {
- 	return 0;
- }
--static inline int of_dma_configure(struct device *dev,
--				   struct device_node *np,
--				   bool force_dma)
-+
-+static inline int of_dma_configure_id(struct device *dev,
-+				      struct device_node *np,
-+				      bool force_dma, const u32 *id)
- {
- 	return 0;
- }
-+
-+static inline int
-+of_dma_configure_iommu_spec(struct device *dev, struct device_node *np,
-+			    bool force_dma, struct of_phandle_args *iommu_spec)
-+{	return 0;
-+}
- #endif /* CONFIG_OF */
- 
- #endif /* _LINUX_OF_DEVICE_H */
-diff --git a/include/linux/of_iommu.h b/include/linux/of_iommu.h
-index 16f4b3e87f20..e8d1e6d32d77 100644
---- a/include/linux/of_iommu.h
-+++ b/include/linux/of_iommu.h
-@@ -14,7 +14,8 @@ extern int of_get_dma_window(struct device_node *dn, const char *prefix,
- 
- extern const struct iommu_ops *of_iommu_configure(struct device *dev,
- 					struct device_node *master_np,
--					const u32 *id);
-+					const u32 *id,
-+					struct of_phandle_args *iommu_spec);
- 
- #else
- 
-@@ -27,7 +28,8 @@ static inline int of_get_dma_window(struct device_node *dn, const char *prefix,
- 
- static inline const struct iommu_ops *of_iommu_configure(struct device *dev,
- 					 struct device_node *master_np,
--					 const u32 *id)
-+					 const u32 *id,
-+					 struct of_phandle_args *iommu_spec);
- {
- 	return NULL;
- }
+This feature also allows sharing engines among multiple VMs when
+used with Host1x's hardware virtualization support - up to 8 VMs
+can be configured with a subset of allowed stream IDs, enforced
+at hardware level.
+
+To implement this, this series adds a new host1x context bus, which
+will contain the 'struct device's corresponding to each context
+bank / stream ID, changes to device tree and SMMU code to allow
+registering the devices and using the bus, as well as the Host1x
+stream ID programming code and support in TegraDRM.
+
+The series is based on v5 of the "Host1x/TegraDRM UAPI" series,
+which still hasn't quite settled. Also, I haven't updated the
+device tree bindings (or converted them to YAML) yet, so this
+is RFC for now.
+
+Thanks!
+
+Mikko
+
+Mikko Perttunen (8):
+  of/device: Allow specifying a custom iommu_spec to of_dma_configure
+  gpu: host1x: Add context bus
+  gpu: host1x: Add context device management code
+  gpu: host1x: Program context stream ID on submission
+  iommu/arm-smmu: Attach to host1x context device bus
+  arm64: tegra: Add Host1x context stream IDs on Tegra186+
+  drm/tegra: Support context isolation
+  drm/tegra: vic: Implement get_streamid_offset
+
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi  |   9 ++
+ drivers/gpu/Makefile                      |   3 +-
+ drivers/gpu/drm/tegra/drm.h               |   1 +
+ drivers/gpu/drm/tegra/uapi.h              |   1 +
+ drivers/gpu/drm/tegra/uapi/submit.c       |  13 ++
+ drivers/gpu/drm/tegra/uapi/uapi.c         |  34 ++++-
+ drivers/gpu/drm/tegra/vic.c               |  38 +++++
+ drivers/gpu/host1x/Kconfig                |   5 +
+ drivers/gpu/host1x/Makefile               |   2 +
+ drivers/gpu/host1x/context.c              | 161 ++++++++++++++++++++++
+ drivers/gpu/host1x/context.h              |  27 ++++
+ drivers/gpu/host1x/context_bus.c          |  31 +++++
+ drivers/gpu/host1x/dev.c                  |  12 +-
+ drivers/gpu/host1x/dev.h                  |   2 +
+ drivers/gpu/host1x/hw/channel_hw.c        |  52 ++++++-
+ drivers/gpu/host1x/hw/host1x06_hardware.h |  10 ++
+ drivers/gpu/host1x/hw/host1x07_hardware.h |  10 ++
+ drivers/iommu/arm/arm-smmu/arm-smmu.c     |  13 ++
+ drivers/iommu/of_iommu.c                  |  12 +-
+ drivers/of/device.c                       |   9 +-
+ include/linux/host1x.h                    |  21 +++
+ include/linux/host1x_context_bus.h        |  15 ++
+ include/linux/of_device.h                 |  34 ++++-
+ include/linux/of_iommu.h                  |   6 +-
+ 24 files changed, 495 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/gpu/host1x/context.c
+ create mode 100644 drivers/gpu/host1x/context.h
+ create mode 100644 drivers/gpu/host1x/context_bus.c
+ create mode 100644 include/linux/host1x_context_bus.h
+
 -- 
 2.30.0
 
