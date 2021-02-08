@@ -7,20 +7,20 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645C3C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD62FC433E9
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3456B64E9A
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95F1564E92
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Feb 2021 16:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234531AbhBHQm3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Feb 2021 11:42:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43006 "EHLO
+        id S234526AbhBHQmd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Feb 2021 11:42:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234516AbhBHQlt (ORCPT
+        with ESMTP id S234506AbhBHQlt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Feb 2021 11:41:49 -0500
 Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFBFC06178C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D960CC06178B;
         Mon,  8 Feb 2021 08:41:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
          s=20161220; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -28,17 +28,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=XgkqPdbhc7Eos4SdklmvWnaRE8HPTX8F5eh5wHrPTDU=; b=yWh7QlsC/nUQ5tvr3PpYOoox/6
-        2JlnNidIfel5yQwity6QxS9NHZu8cHmiOVXKvUYAXBt2HiIdUim8rViui+uDPinhHhEJw3EThqSYz
-        KqxmLXtEpbXeUfUNRU8DbQq/y/JKePZ0eP4VcEknQAOp5OKG35QJFSIVmQlCSBQECHxf/1nmf6Mtt
-        mRRXeamVkgTC2ufMCXF0XaE1JUS2fF0rEMYhX6aBWHCMza7JLMQV3XPO5jV8nIZRfJUxcqT17MdDe
-        wgvxOk2TwIK59rPGyrmlnq9nulMdWbqkbfaWba0aR2BPRRE5ZBs7OYSlOFw+qHXEI4Bylsj1BK7tz
-        4903+Xrw==;
+        bh=bsWc7c4dIP4yDHF0koFkC7dnWmKUXfKGZepq5TdSPiQ=; b=gZo0l9ksaAG/py3fgt5BTc4TGf
+        DiwYLZVcgko3HrUvkvEtLc9UFGpHgTBazR9fdNUuwRDh06Nm/mxGF4IQ0+kPEKywVCXlb0+5J/qCx
+        aNc1yLZErJCh9KqGwQfM6BSQrnE6sqdvexujAYzT3FFJcYNBuBoFDhA+0WF5NfsE3xb7EKEahy3oH
+        MMyfp2cxGXZV4hMcKIApHU6hA0DI5YsBg34EJ7hC2c37ei5vbI4HNHZv8WZmf9MHhkN3Z9k66c2H6
+        8bqe3nrEil1r7JkFlPi8qEDFlh5FkMMI7OI0KuUmMRJD/5HqZCZ27i5kGGWdl/GJDKjsDcljkr89/
+        zm41ir+w==;
 Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
         by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <mperttunen@nvidia.com>)
-        id 1l99at-0000Cr-8C; Mon, 08 Feb 2021 18:40:59 +0200
+        id 1l99as-0000Cr-Pn; Mon, 08 Feb 2021 18:40:58 +0200
 From:   Mikko Perttunen <mperttunen@nvidia.com>
 To:     thierry.reding@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
         will@kernel.org, robh+dt@kernel.org, frowand.list@gmail.com,
@@ -47,9 +47,9 @@ Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [RFC PATCH 8/8] drm/tegra: vic: Implement get_streamid_offset
-Date:   Mon,  8 Feb 2021 18:38:48 +0200
-Message-Id: <20210208163848.2504291-9-mperttunen@nvidia.com>
+Subject: [RFC PATCH 3/8] gpu: host1x: Add context device management code
+Date:   Mon,  8 Feb 2021 18:38:43 +0200
+Message-Id: <20210208163848.2504291-4-mperttunen@nvidia.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210208163848.2504291-1-mperttunen@nvidia.com>
 References: <20210208163848.2504291-1-mperttunen@nvidia.com>
@@ -62,90 +62,326 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Implement the get_streamid_offset required for supporting context
-isolation. Since old firmware cannot support context isolation
-without hacks that we don't want to implement, check the firmware
-binary to see if context isolation should be enabled.
+Add code to register context devices from device tree, allocate them
+out and manage their refcounts.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/vic.c | 38 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/gpu/host1x/Makefile  |   1 +
+ drivers/gpu/host1x/context.c | 161 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/context.h |  27 ++++++
+ drivers/gpu/host1x/dev.c     |  12 ++-
+ drivers/gpu/host1x/dev.h     |   2 +
+ include/linux/host1x.h       |  17 ++++
+ 6 files changed, 219 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/host1x/context.c
+ create mode 100644 drivers/gpu/host1x/context.h
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 6c2f03faec24..f8d5f381904d 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -37,6 +37,8 @@ struct vic {
- 	struct clk *clk;
- 	struct reset_control *rst;
- 
-+	bool can_use_context;
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index d9fea2885658..9f6797e39057 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -11,6 +11,7 @@ host1x-y = \
+ 	mipi.o \
+ 	uapi.o \
+ 	fence.o \
++	context.o \
+ 	hw/host1x01.o \
+ 	hw/host1x02.o \
+ 	hw/host1x04.o \
+diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
+new file mode 100644
+index 000000000000..c3bbdb5484c3
+--- /dev/null
++++ b/drivers/gpu/host1x/context.c
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, NVIDIA Corporation.
++ */
 +
- 	/* Platform configuration */
- 	const struct vic_config *config;
- };
-@@ -218,6 +220,7 @@ static int vic_load_firmware(struct vic *vic)
- {
- 	struct host1x_client *client = &vic->client.base;
- 	struct tegra_drm *tegra = vic->client.drm;
-+	u32 fce_bin_data_offset;
- 	dma_addr_t iova;
- 	size_t size;
- 	void *virt;
-@@ -266,6 +269,25 @@ static int vic_load_firmware(struct vic *vic)
- 		vic->falcon.firmware.phys = phys;
- 	}
- 
-+	/*
-+	 * Check if firmware is new enough to not require mapping firmware
-+	 * to data buffer domains.
-+	 */
-+	fce_bin_data_offset = *(u32 *)(virt + VIC_UCODE_FCE_DATA_OFFSET);
++#include <linux/device.h>
++#include <linux/kref.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/pid.h>
++#include <linux/slab.h>
 +
-+	if (!vic->config->supports_sid) {
-+		vic->can_use_context = false;
-+	} else if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
-+		/*
-+		 * Firmware will access FCE through STREAMID0, so context
-+		 * isolation cannot be used.
-+		 */
-+		vic->can_use_context = false;
-+		dev_warn_once(vic->dev, "context isolation disabled due to old firmware\n");
-+	} else {
-+		vic->can_use_context = true;
-+	}
++#include "context.h"
++#include "dev.h"
 +
- 	return 0;
- 
- cleanup:
-@@ -357,10 +379,26 @@ static void vic_close_channel(struct tegra_drm_context *context)
- 	pm_runtime_put(vic->dev);
- }
- 
-+static int vic_get_streamid_offset(struct tegra_drm_client *client)
++int host1x_context_list_init(struct host1x *host1x)
 +{
-+	struct vic *vic = to_vic(client);
++	struct host1x_context_list *cdl = &host1x->context_list;
++	struct host1x_context *ctx;
++	struct of_phandle_args iommu_spec;
++	int index;
 +	int err;
 +
-+	err = vic_load_firmware(vic);
-+	if (err < 0)
-+		return err;
++	cdl->devs = NULL;
++	cdl->len = 0;
++	mutex_init(&cdl->lock);
 +
-+	if (vic->can_use_context)
-+		return 0x30;
-+	else
-+		return -ENOTSUPP;
++	err = of_count_phandle_with_args(host1x->dev->of_node,
++					 "nvidia,context-iommus",
++					 "#iommu-cells");
++	if (err < 0)
++		return 0;
++
++	cdl->devs = kcalloc(err, sizeof(*cdl->devs), GFP_KERNEL);
++	if (!cdl->devs)
++		return -ENOMEM;
++	cdl->len = err;
++
++	for (index = 0; index < cdl->len; index++) {
++		err = of_parse_phandle_with_args(host1x->dev->of_node,
++						 "nvidia,context-iommus",
++						 "#iommu-cells", index,
++						 &iommu_spec);
++		if (err) {
++			dev_err(host1x->dev, "could not parse context device %d from device tree: %d\n",
++				index, err);
++			goto del_devices;
++		}
++
++		ctx = &cdl->devs[index];
++
++		ctx->host = host1x;
++
++		device_initialize(&ctx->dev);
++
++		ctx->dev.coherent_dma_mask = host1x->dev->coherent_dma_mask;
++		ctx->dev.dma_mask = &ctx->dev.coherent_dma_mask;
++		dev_set_name(&ctx->dev, "host1x-ctx.%d", index);
++		ctx->dev.bus = &host1x_context_device_bus_type;
++		ctx->dev.parent = host1x->dev;
++
++		dma_set_max_seg_size(&ctx->dev, UINT_MAX);
++
++		err = device_add(&ctx->dev);
++		if (err) {
++			dev_err(host1x->dev, "could not add context device %d: %d\n", index, err);
++			of_node_put(iommu_spec.np);
++			goto del_devices;
++		}
++
++		err = of_dma_configure_iommu_spec(
++			&ctx->dev, host1x->dev->of_node, false, &iommu_spec);
++		of_node_put(iommu_spec.np);
++		if (err) {
++			dev_err(host1x->dev, "IOMMU configuration failed for context device %d: %d\n",
++				index, err);
++			device_del(&ctx->dev);
++			goto del_devices;
++		}
++
++		ctx->stream_id = iommu_spec.args[0] & 0xffff;
++	}
++
++	return 0;
++
++del_devices:
++	while (--index >= 0)
++		device_del(&cdl->devs[index].dev);
++
++	kfree(cdl->devs);
++	cdl->len = 0;
++
++	return err;
 +}
 +
- static const struct tegra_drm_client_ops vic_ops = {
- 	.open_channel = vic_open_channel,
- 	.close_channel = vic_close_channel,
- 	.submit = tegra_drm_submit,
-+	.get_streamid_offset = vic_get_streamid_offset,
- };
++void host1x_context_list_free(struct host1x_context_list *cdl)
++{
++	int i;
++
++	for (i = 0; i < cdl->len; i++)
++		device_del(&cdl->devs[i].dev);
++
++	kfree(cdl->devs);
++	cdl->len = 0;
++}
++
++struct host1x_context *host1x_context_alloc(struct host1x *host1x,
++					    struct pid *pid)
++{
++	struct host1x_context_list *cdl = &host1x->context_list;
++	struct host1x_context *free = NULL;
++	int i;
++
++	if (!cdl->len)
++		return ERR_PTR(-EOPNOTSUPP);
++
++	mutex_lock(&cdl->lock);
++
++	for (i = 0; i < cdl->len; i++) {
++		struct host1x_context *cd = &cdl->devs[i];
++
++		if (cd->owner == pid) {
++			refcount_inc(&cd->ref);
++			mutex_unlock(&cdl->lock);
++			return cd;
++		} else if (!cd->owner && !free) {
++			free = cd;
++		}
++	}
++
++	if (!free) {
++		mutex_unlock(&cdl->lock);
++		return ERR_PTR(-EBUSY);
++	}
++
++	refcount_set(&free->ref, 1);
++	free->owner = get_pid(pid);
++
++	mutex_unlock(&cdl->lock);
++
++	return free;
++}
++EXPORT_SYMBOL(host1x_context_alloc);
++
++void host1x_context_get(struct host1x_context *cd)
++{
++	refcount_inc(&cd->ref);
++}
++EXPORT_SYMBOL(host1x_context_get);
++
++void host1x_context_put(struct host1x_context *cd)
++{
++	struct host1x_context_list *cdl = &cd->host->context_list;
++
++	if (refcount_dec_and_mutex_lock(&cd->ref, &cdl->lock)) {
++		put_pid(cd->owner);
++		cd->owner = NULL;
++		mutex_unlock(&cdl->lock);
++	}
++}
++EXPORT_SYMBOL(host1x_context_put);
+diff --git a/drivers/gpu/host1x/context.h b/drivers/gpu/host1x/context.h
+new file mode 100644
+index 000000000000..268ecdf6b1bb
+--- /dev/null
++++ b/drivers/gpu/host1x/context.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Host1x context devices
++ *
++ * Copyright (c) 2020, NVIDIA Corporation.
++ */
++
++#ifndef __HOST1X_CONTEXT_H
++#define __HOST1X_CONTEXT_H
++
++#include <linux/mutex.h>
++#include <linux/refcount.h>
++
++struct host1x;
++
++extern struct bus_type host1x_context_device_bus_type;
++
++struct host1x_context_list {
++	struct mutex lock;
++	struct host1x_context *devs;
++	unsigned int len;
++};
++
++int host1x_context_list_init(struct host1x *host1x);
++void host1x_context_list_free(struct host1x_context_list *cdl);
++
++#endif
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 8b50fbb22846..300592b5e9a2 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -20,6 +20,7 @@
  
- #define NVIDIA_TEGRA_124_VIC_FIRMWARE "nvidia/tegra124/vic03_ucode.bin"
+ #include "bus.h"
+ #include "channel.h"
++#include "context.h"
+ #include "debug.h"
+ #include "dev.h"
+ #include "intr.h"
+@@ -443,10 +444,16 @@ static int host1x_probe(struct platform_device *pdev)
+ 		goto iommu_exit;
+ 	}
+ 
++	err = host1x_context_list_init(host);
++	if (err) {
++		dev_err(&pdev->dev, "failed to initialize context list\n");
++		goto free_channels;
++	}
++
+ 	err = clk_prepare_enable(host->clk);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable clock\n");
+-		goto free_channels;
++		goto free_contexts;
+ 	}
+ 
+ 	err = reset_control_deassert(host->rst);
+@@ -501,6 +508,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 	reset_control_assert(host->rst);
+ unprepare_disable:
+ 	clk_disable_unprepare(host->clk);
++free_contexts:
++	host1x_context_list_free(&host->context_list);
+ free_channels:
+ 	host1x_channel_list_free(&host->channel_list);
+ iommu_exit:
+@@ -520,6 +529,7 @@ static int host1x_remove(struct platform_device *pdev)
+ 	host1x_syncpt_deinit(host);
+ 	reset_control_assert(host->rst);
+ 	clk_disable_unprepare(host->clk);
++	host1x_context_list_free(&host->context_list);
+ 	host1x_iommu_exit(host);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index e360bc4a25f6..50cbd6ad28e9 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -14,6 +14,7 @@
+ 
+ #include "cdma.h"
+ #include "channel.h"
++#include "context.h"
+ #include "intr.h"
+ #include "job.h"
+ #include "syncpt.h"
+@@ -141,6 +142,7 @@ struct host1x {
+ 	struct mutex syncpt_mutex;
+ 
+ 	struct host1x_channel_list channel_list;
++	struct host1x_context_list context_list;
+ 
+ 	struct dentry *debugfs;
+ 
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 5890f91dd286..3cf3c6a0b225 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -371,4 +371,21 @@ int tegra_mipi_disable(struct tegra_mipi_device *device);
+ int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
+ int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
+ 
++/* host1x context devices */
++
++struct host1x_context {
++	struct host1x *host;
++
++	refcount_t ref;
++	struct pid *owner;
++
++	struct device dev;
++	u32 stream_id;
++};
++
++struct host1x_context *host1x_context_alloc(struct host1x *host1x,
++					    struct pid *pid);
++void host1x_context_get(struct host1x_context *cd);
++void host1x_context_put(struct host1x_context *cd);
++
+ #endif
 -- 
 2.30.0
 
