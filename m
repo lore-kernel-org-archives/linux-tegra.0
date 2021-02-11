@@ -2,92 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17D0C433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1996C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B64DE64E8A
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA71F64E8B
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbhBKPm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Feb 2021 10:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230399AbhBKPkV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Feb 2021 10:40:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D53A864E8A;
-        Thu, 11 Feb 2021 15:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613057980;
-        bh=WkhNi8ol3f1VI1S+4Gsf371AiJwJ79gqlKtzjzdXMUA=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=JkknHSnZybPCBxcOILruAYK5wW9P5YV3XE/aWCQ3Wtd0GrsNhk9pRgH8ZUksmoAdC
-         MCV7CJtO4USAGKEqO7pfZNvjRsoh4amQYycd6fpLhsLrv84ORSbOt711/oEYtOUDv/
-         P89h8UE53rLYviDDI1WxHviiQHWH8mnusX15/aIhnjd1uY7Jt7uL/lWLr1GWGla+OW
-         F2s0Vw0tL9MKeFnQP6NqGs1cOhoaSf3jYcox6fxY6tscTJkyZ1szjlxNhuavfKV9MH
-         DiYPqTD+q50y8xyQtvLkAnmIKNeGIFLKabwknGXHYOyc4n8zhIaTc1aiFD2jAOeJU0
-         FGqHwT1DXsOnQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
-        robh@kernel.org
-Cc:     devicetree@vger.kernel.org, sharadg@nvidia.com,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
-        jonathanh@nvidia.com
-In-Reply-To: <1612939421-19900-1-git-send-email-spujar@nvidia.com>
-References: <1612939421-19900-1-git-send-email-spujar@nvidia.com>
-Subject: Re: [PATCH 0/3] Use clocks property in a device node
-Message-Id: <161305792123.12370.8611418623618908867.b4-ty@kernel.org>
-Date:   Thu, 11 Feb 2021 15:38:41 +0000
+        id S229768AbhBKPyF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Feb 2021 10:54:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231613AbhBKPuw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 11 Feb 2021 10:50:52 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F31EC0613D6;
+        Thu, 11 Feb 2021 07:50:11 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 125381F45C38
+Subject: Re: [PATCH RESEND v2 4/5] iommu/tegra-smmu: Rework
+ tegra_smmu_probe_device()
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     will@kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        jonathanh@nvidia.com, vdumpa@nvidia.com, thierry.reding@gmail.com,
+        joro@8bytes.org, kernel@collabora.com,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "kernelci-results@groups.io" <kernelci-results@groups.io>
+References: <20201125101013.14953-1-nicoleotsuka@gmail.com>
+ <20201125101013.14953-5-nicoleotsuka@gmail.com>
+ <46a96cf9-91cc-2ad4-702a-e95ba7200375@collabora.com>
+ <20210205052422.GA11329@Asurada-Nvidia>
+ <20210205094556.GA32677@Asurada-Nvidia>
+ <f45c94b4-2949-4eac-5944-85d43a8afef5@collabora.com>
+ <20210210082052.GA11455@Asurada-Nvidia>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <df170d15-f5b5-4238-f998-5b8f8e45849a@collabora.com>
+Date:   Thu, 11 Feb 2021 15:50:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210210082052.GA11455@Asurada-Nvidia>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 10 Feb 2021 12:13:38 +0530, Sameer Pujar wrote:
-> It is recommended to not specifiy clocks property in an endpoint subnode.
-> This series moves clocks to device node.
+On 10/02/2021 08:20, Nicolin Chen wrote:
+> Hi Guillaume,
 > 
-> However after moving the clocks to device node, the audio playback or
-> capture fails. The specified clock is not actually getting enabled and
-> hence the failure is seen. There seems to be a bug in simple-card-utils.c
-> where clock handle is not assigned when parsing clocks from device node.
+> On Sat, Feb 06, 2021 at 01:40:13PM +0000, Guillaume Tucker wrote:
+>>> It'd be nicer if I can get both logs of the vanilla kernel (failing)
+>>> and the commit-reverted version (passing), each applying this patch.
+>>
+>> Sure, I've run 3 jobs:
+>>
+>> * v5.11-rc6 as a reference, to see the original issue:
+>>   https://lava.collabora.co.uk/scheduler/job/3187848
+>>
+>> * + your debug patch:
+>>   https://lava.collabora.co.uk/scheduler/job/3187849
+>>
+>> * + the "breaking" commit reverted, passing the tests:
+>>   https://lava.collabora.co.uk/scheduler/job/3187851
 > 
-> [...]
+> Thanks for the help!
+> 
+> I am able to figure out what's probably wrong, yet not so sure
+> about the best solution at this point.
+> 
+> Would it be possible for you to run one more time with another
+> debugging patch? I'd like to see the same logs as previous:
+> 1. Vanilla kernel + debug patch
+> 2. Vanilla kernel + Reverted + debug patch
 
-Applied to
+As it turns out, next-20210210 is passing all the tests again so
+it looks like this got fixed in the meantime:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+  https://lava.collabora.co.uk/scheduler/job/3210192
+  https://lava.collabora.co.uk/results/3210192/0_igt-kms-tegra
 
-Thanks!
+And here's a more extensive list of IGT tests on next-20210211,
+all the regressions have been fixed:
 
-[1/3] ASoC: simple-card-utils: Fix device module clock
-      commit: 1e30f642cf2939bbdac82ea0dd3071232670b5ab
-[2/3] Revert "ASoC: audio-graph-card: Add clocks property to endpoint node"
-      commit: 0be0f142b8323378df6358c36dd15494134f5b94
-[3/3] arm64: tegra: Move clocks from RT5658 endpoint to device node
-      (no commit info)
+  https://kernelci.org/test/plan/id/60254c42f51df36be53abe62/
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I haven't run a reversed bisection to find the fix, but I guess
+it wouldn't be too hard to find out what happened by hand anyway.
+I see the drm/tegra/for-5.12-rc1 tag has been merged into
+linux-next, maybe that solved the issue?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+FYI I've also run some jobs with your debug patch and with the
+breaking patch reverted:
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+  https://lava.collabora.co.uk/scheduler/job/3210245
+  https://lava.collabora.co.uk/scheduler/job/3210596
+
+Meanwhile I'll see what can be done to improve the automated
+bisection so if there are new IGT regressions they would get
+reported earlier.  I guess it would have saved us all some time
+if it had been bisected in December.
 
 Thanks,
-Mark
+Guillaume
