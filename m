@@ -2,115 +2,225 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1996C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE944C433E0
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 17:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA71F64E8B
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 15:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DBED64E7D
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Feb 2021 17:18:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbhBKPyF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Feb 2021 10:54:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
+        id S229964AbhBKRSE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Feb 2021 12:18:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231613AbhBKPuw (ORCPT
+        with ESMTP id S232196AbhBKRPs (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Feb 2021 10:50:52 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F31EC0613D6;
-        Thu, 11 Feb 2021 07:50:11 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 125381F45C38
-Subject: Re: [PATCH RESEND v2 4/5] iommu/tegra-smmu: Rework
- tegra_smmu_probe_device()
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     will@kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        jonathanh@nvidia.com, vdumpa@nvidia.com, thierry.reding@gmail.com,
-        joro@8bytes.org, kernel@collabora.com,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "kernelci-results@groups.io" <kernelci-results@groups.io>
-References: <20201125101013.14953-1-nicoleotsuka@gmail.com>
- <20201125101013.14953-5-nicoleotsuka@gmail.com>
- <46a96cf9-91cc-2ad4-702a-e95ba7200375@collabora.com>
- <20210205052422.GA11329@Asurada-Nvidia>
- <20210205094556.GA32677@Asurada-Nvidia>
- <f45c94b4-2949-4eac-5944-85d43a8afef5@collabora.com>
- <20210210082052.GA11455@Asurada-Nvidia>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <df170d15-f5b5-4238-f998-5b8f8e45849a@collabora.com>
-Date:   Thu, 11 Feb 2021 15:50:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Thu, 11 Feb 2021 12:15:48 -0500
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 170DBC0613D6
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Feb 2021 09:15:08 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id p186so6319061ybg.2
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Feb 2021 09:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8VLvsqUgy0hM9zLhK7gOOsENLHipoK1f59JWtGDzmMU=;
+        b=l9ON6eqapkTIm5gu1QK85Hc1MTr84lWAPXIF3DBz7VTzGC3BZdO2yjputtwkapxU2+
+         NfrkNLkiNdExkuXnfcSGeUAg4sPl4ISOSrmxxvoWYTbjrah4MHaaXJLszV1WD89yok+m
+         hc6YoziDGDi4+Ac/8tsdYmmTdDAlpSBIu7TkxAKNEf81IM7Hb1i0dRWVId+9RHLZIgKk
+         5fALsXsWgWYjTdMZvfkzV2pimGmtkmN5GX01akHLg5cISMosVouBwU/E4rZS2ne3zpkp
+         9YMmhHVe8Ms0y8upL2a7HkLmhrhbCt7/1ULF/WQdWg3ww4KArdQi4swnLkJ3oXaFVK//
+         ffTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8VLvsqUgy0hM9zLhK7gOOsENLHipoK1f59JWtGDzmMU=;
+        b=RO0ws64hbGS1gKopxmHiWFKE0iMPI77oujpKKI4ZJKQlkIHrEQFT/JowwizPkmPKbo
+         nK82ASP/BQWenz9ikGrotnBpT6JQBm8K50wl50FhSRS9nAR9ivsDu6YaNZMtLEp3A9yW
+         /uONF+8IpCgC3anGuJTLHBMFvPb3iNbVytplKlQKJzh3x61/veq0EUxYGdM7IGNAxiio
+         hCnYplriby7VsD1kI02ZbrotDsWIVjKhuqIjiS3Pjmpj/FtET8dijKvM77TWb11gtb18
+         JOfIFsA2ia2OnnYYQ7pPFBX65tx4FsnFtg9Kp0/25rrwmbjf5G2+MD77BmOZgJFUWKWc
+         UpKA==
+X-Gm-Message-State: AOAM530rvwMadOhKLAHbDi52n4iepsRc2sX3IPaBxHarCn9NRG+Ar6D9
+        SY+5QBQwTrxZobRm28i06JYSm4YZmnPGru+AxfDrsQ==
+X-Google-Smtp-Source: ABdhPJyGRwaJZh1jgstd10TgmMoFO0WGA2g9k6jW/LtbmE8drgusUCptPmzi0v2U/tKiMUtdaN757OdaF7ssFVO32V4=
+X-Received: by 2002:a25:3345:: with SMTP id z66mr12961119ybz.466.1613063707018;
+ Thu, 11 Feb 2021 09:15:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210210082052.GA11455@Asurada-Nvidia>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201218031703.3053753-1-saravanak@google.com>
+ <56f7d032-ba5a-a8c7-23de-2969d98c527e@nvidia.com> <CAGETcx9FAAa+gUOTJX76DGGOAE4g3cTbZhwNQ-pLioYzg=fTOw@mail.gmail.com>
+ <17939709-f6f4-fa9c-836f-9779081c4087@nvidia.com> <CAGETcx_1x7LFprsEM+-X8Y42-sbajBav5Bik4U=s4Z5XCSZtUg@mail.gmail.com>
+ <e11bc6a2-ec9d-ea3b-71f7-13c9f764bbfc@nvidia.com> <6a43e209-1d2d-b10a-4564-0289d54135d3@nvidia.com>
+ <CAGETcx9ZaBLRVPqiSkPf_4Tm5dDLNbLBM2RmHk1jr7yLp_1CCQ@mail.gmail.com> <CAJZ5v0iv9fRzM8cbGrPhutPNpod-gLWcZ8fWzDpfJ=NUVmm5Og@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iv9fRzM8cbGrPhutPNpod-gLWcZ8fWzDpfJ=NUVmm5Og@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 11 Feb 2021 09:14:30 -0800
+Message-ID: <CAGETcx9qA-nq01ojfP73UJ0KjJCxd3Qhes0hatQGzNKYxuUj-w@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Enable fw_devlink=on by default
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 10/02/2021 08:20, Nicolin Chen wrote:
-> Hi Guillaume,
-> 
-> On Sat, Feb 06, 2021 at 01:40:13PM +0000, Guillaume Tucker wrote:
->>> It'd be nicer if I can get both logs of the vanilla kernel (failing)
->>> and the commit-reverted version (passing), each applying this patch.
->>
->> Sure, I've run 3 jobs:
->>
->> * v5.11-rc6 as a reference, to see the original issue:
->>   https://lava.collabora.co.uk/scheduler/job/3187848
->>
->> * + your debug patch:
->>   https://lava.collabora.co.uk/scheduler/job/3187849
->>
->> * + the "breaking" commit reverted, passing the tests:
->>   https://lava.collabora.co.uk/scheduler/job/3187851
-> 
-> Thanks for the help!
-> 
-> I am able to figure out what's probably wrong, yet not so sure
-> about the best solution at this point.
-> 
-> Would it be possible for you to run one more time with another
-> debugging patch? I'd like to see the same logs as previous:
-> 1. Vanilla kernel + debug patch
-> 2. Vanilla kernel + Reverted + debug patch
+On Thu, Feb 11, 2021 at 7:03 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Feb 11, 2021 at 1:02 AM Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > On Thu, Jan 28, 2021 at 7:03 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+> > >
+> > >
+> > > On 14/01/2021 16:56, Jon Hunter wrote:
+> > > >
+> > > > On 14/01/2021 16:47, Saravana Kannan wrote:
+> > > >
+> > > > ...
+> > > >
+> > > >>> Yes this is the warning shown here [0] and this is coming from
+> > > >>> the 'Generic PHY stmmac-0:00' device.
+> > > >>
+> > > >> Can you print the supplier and consumer device when this warning is
+> > > >> happening and let me know? That'd help too. I'm guessing the phy is
+> > > >> the consumer.
+> > > >
+> > > >
+> > > > Sorry I should have included that. I added a print to dump this on
+> > > > another build but failed to include here.
+> > > >
+> > > > WARNING KERN Generic PHY stmmac-0:00: supplier 2200000.gpio (status 1)
+> > > >
+> > > > The status is the link->status and looks like the supplier is the
+> > > > gpio controller. I have verified that the gpio controller is probed
+> > > > before this successfully.
+> > > >
+> > > >> So the warning itself isn't a problem -- it's not breaking anything or
+> > > >> leaking memory or anything like that. But the device link is jumping
+> > > >> states in an incorrect manner. With enough context of this code (why
+> > > >> the device_bind_driver() is being called directly instead of going
+> > > >> through the normal probe path), it should be easy to fix (I'll just
+> > > >> need to fix up the device link state).
+> > > >
+> > > > Correct, the board seems to boot fine, we just get this warning.
+> > >
+> > >
+> > > Have you had chance to look at this further?
+> >
+> > Hi Jon,
+> >
+> > I finally got around to looking into this. Here's the email[1] that
+> > describes why it's done this way.
+> >
+> > [1] - https://lore.kernel.org/lkml/YCRjmpKjK0pxKTCP@lunn.ch/
+> >
+> > >
+> > > The following does appear to avoid the warning, but I am not sure if
+> > > this is the correct thing to do ...
+> > >
+> > > index 9179825ff646..095aba84f7c2 100644
+> > > --- a/drivers/base/dd.c
+> > > +++ b/drivers/base/dd.c
+> > > @@ -456,6 +456,10 @@ int device_bind_driver(struct device *dev)
+> > >  {
+> > >         int ret;
+> > >
+> > > +       ret = device_links_check_suppliers(dev);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > >         ret = driver_sysfs_add(dev);
+> > >         if (!ret)
+> > >                 driver_bound(dev);
+> >
+> > So digging deeper into the usage of device_bind_driver and looking at
+> > [1], it doesn't look like returning an error here is a good option.
+> > When device_bind_driver() is called, the driver's probe function isn't
+> > even called. So, there's no way for the driver to even defer probing
+> > based on any of the suppliers. So, we have a couple of options:
+> >
+> > 1. Delete all the links to suppliers that haven't bound.
+>
+> Or maybe convert them to stateless links?  Would that be doable at all?
 
-As it turns out, next-20210210 is passing all the tests again so
-it looks like this got fixed in the meantime:
+Yeah, I think it should be doable.
 
-  https://lava.collabora.co.uk/scheduler/job/3210192
-  https://lava.collabora.co.uk/results/3210192/0_igt-kms-tegra
+>
+> > We'll still leave the links to active suppliers alone in case it helps with
+> > suspend/resume correctness.
+> > 2. Fix the warning to not warn on suppliers that haven't probed if the
+> > device's driver has no probe function. But this will also need fixing
+> > up the cleanup part when device_release_driver() is called. Also, I'm
+> > not sure if device_bind_driver() is ever called when the driver
+> > actually has a probe() function.
+> >
+> > Rafael,
+> >
+> > Option 1 above is pretty straightforward.
+>
+> I would prefer this ->
 
-And here's a more extensive list of IGT tests on next-20210211,
-all the regressions have been fixed:
+Ok
 
-  https://kernelci.org/test/plan/id/60254c42f51df36be53abe62/
+>
+> > Option 2 would look something like what's at the end of this email +
+> > caveat about whether the probe check is sufficient.
+>
+> -> because "fix the warning" really means that we haven't got the
+> device link state machine right and getting it right may imply a major
+> redesign.
+>
+> Overall, I'd prefer to take a step back and allow things to stabilize
+> for a while to let people catch up with this.
+
+Are you referring to if/when we implement Option 2? Or do you want to
+step back for a while even before implementing Option 1?
 
 
-I haven't run a reversed bisection to find the fix, but I guess
-it wouldn't be too hard to find out what happened by hand anyway.
-I see the drm/tegra/for-5.12-rc1 tag has been merged into
-linux-next, maybe that solved the issue?
+-Saravana
 
-FYI I've also run some jobs with your debug patch and with the
-breaking patch reverted:
-
-  https://lava.collabora.co.uk/scheduler/job/3210245
-  https://lava.collabora.co.uk/scheduler/job/3210596
-
-Meanwhile I'll see what can be done to improve the automated
-bisection so if there are new IGT regressions they would get
-reported earlier.  I guess it would have saved us all some time
-if it had been bisected in December.
-
-Thanks,
-Guillaume
+>
+> > Do you have a preference between Option 1 vs 2? Or do you have some
+> > other option in mind?
+> >
+> > Thanks,
+> > Saravana
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 5481b6940a02..8102b3c48bbc 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -1247,7 +1247,8 @@ void device_links_driver_bound(struct device *dev)
+> >                          */
+> >                         device_link_drop_managed(link);
+> >                 } else {
+> > -                       WARN_ON(link->status != DL_STATE_CONSUMER_PROBE);
+> > +                       WARN_ON(link->status != DL_STATE_CONSUMER_PROBE &&
+> > +                               dev->driver->probe);
+> >                         WRITE_ONCE(link->status, DL_STATE_ACTIVE);
+> >                 }
+> >
+> > @@ -1302,7 +1303,8 @@ static void __device_links_no_driver(struct device *dev)
+> >                 if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
+> >                         WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
+> >                 } else {
+> > -                       WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
+> > +                       WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY) &&
+> > +                               dev->driver->probe);
+> >                         WRITE_ONCE(link->status, DL_STATE_DORMANT);
+> >                 }
+> >         }
