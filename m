@@ -2,111 +2,98 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436CAC433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 03:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0DCC433E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 07:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FDD164DE9
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 03:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EE5D64E65
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 07:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbhBLDIP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Feb 2021 22:08:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53670 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229573AbhBLDIM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Feb 2021 22:08:12 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7AB7164DE9;
-        Fri, 12 Feb 2021 03:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613099251;
-        bh=JzVhC9UdJJv6ZQYoxZTHOXMBUYZPfGjZSYy10m7haaw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SYmvPCI5iLDLklNsYLfXsKhdIGU0kxMM/XaL2DlnmiZraToGSaET422RLhim0mkKG
-         RoiGu0ntDl6hHLODMR8ALSW7kpifw5WjKBjNjhs4fdpyAOJVVnJbYvtF6Mpb9ve000
-         0Zrh9JsUqA1ekIBdiTfFZEXtSJmxsXcUcYw80epyZtLr/HcY/wJGMs2NjqqbTrpiKG
-         vSfka5Bd8hbU28plm6Y7njg9koYzROBKyfm+v1ULHhsyN2yv2NsFrjDeJjGvieHg4f
-         ZWDDNV7z8uS/Vg9ApuUuSt3gkxZIgeXFrAnz+7xsEPBw/7+nv2P4FnwnaFYnSH8Nof
-         thlWWB5HE1I8Q==
-Content-Type: text/plain; charset="utf-8"
+        id S229714AbhBLHgG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Feb 2021 02:36:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230126AbhBLHfY (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 12 Feb 2021 02:35:24 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A9EC061574;
+        Thu, 11 Feb 2021 23:34:36 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id f1so11808582lfu.3;
+        Thu, 11 Feb 2021 23:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y3hGEJAC31/KRNjy0ROs+LaCPxDmfXe9m8Xp8ZPqihs=;
+        b=KY8CWmmvhmEQaatRl10NIsd/xWZpEElri4vTuBbzGR3jOEQYF5/lnqnMpFi9JJYTdA
+         FHGHbUjv14vmZWRk+Mhg2jOqINdacPBYl7f9X4jItK/hzKj6pE/PynwWW3bGtPMQOF3M
+         SJ2jBwnmHztFCww+zZ/B6f/aQOiJxdPNxxnDEPTMsOOhkBpMraQ1na9wnxhVpLiane0q
+         pigV+v/6P7L4/ubMyIcSN2wAPmxl7JUxsIvJrLhPP09nYdtQWwMUIt+s+r5kPu7CdaAo
+         GJMpGzQH/BDU1C+NAerp58gxeFROcy7Muq2M0PDWft8tEmsjdIq6aVTRUYk1KH0Bvsq1
+         PXiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y3hGEJAC31/KRNjy0ROs+LaCPxDmfXe9m8Xp8ZPqihs=;
+        b=WNjizBw7sm9PM8lnXEBd5r0b1sVu5wbmRgaLHgep1M7xtESQ9gIldwVidCqUa/T6HD
+         BqfHcIrtx0ZntBRO9JVHfUWV8FJ4A8BgL/usJZDUs0GPVsgdJ4GruTEP86eIIHXNBNEv
+         QMY/czabzXkD3LOJVfIyutA1wqcv40EGZNBa8EFARBytUQg1H+3y7B/gvwgNQQWL7OKk
+         FvdNqUNq0Qv7bfsAbSSCsVi6lST3oKWZMqZW5wLdngpnOFII3+sV/wbZmxPlzbI3aCfI
+         TRrskoch1MSfaaXc6h66drV4fDc3QHqUZ2KaMMHF8PdI8kP4BtFZD7+Vzj5w7RpeFsW+
+         6szA==
+X-Gm-Message-State: AOAM5307b764zyQS323ghEnBS9BFLIa+0qXFn63VA/evnpPnaFgMwC65
+        lledlO5b/HYOpp5hMg6ftSyQov9PU7sXxw==
+X-Google-Smtp-Source: ABdhPJzv5Dw2UavQKAtYF4gkGVlRUlW06E5X49hx6/reBkqFu+Q+yooaflQj2bSHIkYwhLI98r1wcg==
+X-Received: by 2002:a05:6512:505:: with SMTP id o5mr900612lfb.90.1613115274959;
+        Thu, 11 Feb 2021 23:34:34 -0800 (PST)
+Received: from TRWS9215.usr.ingenico.loc ([213.143.229.14])
+        by smtp.gmail.com with ESMTPSA id z11sm883311lfd.98.2021.02.11.23.34.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Feb 2021 23:34:34 -0800 (PST)
+From:   Fatih Yildirim <yildirim.fatih@gmail.com>
+To:     marvin24@gmx.de, gregkh@linuxfoundation.org
+Cc:     Fatih Yildirim <yildirim.fatih@gmail.com>,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH -next] staging: nvec: minor coding style fix
+Date:   Fri, 12 Feb 2021 10:34:23 +0300
+Message-Id: <20210212073423.20562-1-yildirim.fatih@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210211211054.GD4572@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org> <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com> <20210211211054.GD4572@dell>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Date:   Thu, 11 Feb 2021 19:07:30 -0800
-Message-ID: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Quoting Lee Jones (2021-02-11 13:10:54)
-> On Thu, 11 Feb 2021, Stephen Boyd wrote:
->=20
-> > Quoting Lee Jones (2021-01-26 04:45:19)
-> > > This set is part of a larger effort attempting to clean-up W=3D1
-> > > kernel builds, which are currently overwhelmingly riddled with
-> > > niggly little warnings.
-> > >=20
-> > > This is the last set.  Clock is clean after this.
-> >=20
-> > Is it possible to slam in some patch that makes W=3D1 the default for t=
-he
-> > clk directory? I'm trying to avoid seeing this patch series again.
->=20
-> One of my main goals of this project is that everyone (contributors,
-> maintainers auto-builder robots etc) will be enabling W=3D1 builds
-> *locally*.
->=20
-> This isn't something you'll want to do at a global (i.e. in Mainline)
-> level.  That's kinda the point of W=3D1.
->=20
+Fix for the below coding style warning.
+Warning: Move const after static - use 'static const int'
 
-Agreed, but is it possible to pass W=3D1 in the drivers/clk/Makefile?
+Signed-off-by: Fatih Yildirim <yildirim.fatih@gmail.com>
+---
+ drivers/staging/nvec/nvec_power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index 0e861c4bfcbf..b1ef196e1cfe 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -338,7 +338,7 @@ static const struct power_supply_desc nvec_psy_desc = {
+ };
+ 
+ static int counter;
+-static int const bat_iter[] = {
++static const int bat_iter[] = {
+ 	SLOT_STATUS, VOLTAGE, CURRENT, CAPACITY_REMAINING,
+ #ifdef EC_FULL_DIAG
+ 	AVERAGE_CURRENT, TEMPERATURE, TIME_REMAINING,
+-- 
+2.20.1
+
