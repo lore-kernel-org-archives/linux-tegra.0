@@ -2,98 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0DCC433E9
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 07:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EBBC433E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE5D64E65
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 07:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1544064DE3
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbhBLHgG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Feb 2021 02:36:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33942 "EHLO
+        id S229904AbhBLJVR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Feb 2021 04:21:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbhBLHfY (ORCPT
+        with ESMTP id S229905AbhBLJVB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Feb 2021 02:35:24 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A9EC061574;
-        Thu, 11 Feb 2021 23:34:36 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id f1so11808582lfu.3;
-        Thu, 11 Feb 2021 23:34:36 -0800 (PST)
+        Fri, 12 Feb 2021 04:21:01 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9374C061786
+        for <linux-tegra@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id y134so311690wmd.3
+        for <linux-tegra@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=y3hGEJAC31/KRNjy0ROs+LaCPxDmfXe9m8Xp8ZPqihs=;
-        b=KY8CWmmvhmEQaatRl10NIsd/xWZpEElri4vTuBbzGR3jOEQYF5/lnqnMpFi9JJYTdA
-         FHGHbUjv14vmZWRk+Mhg2jOqINdacPBYl7f9X4jItK/hzKj6pE/PynwWW3bGtPMQOF3M
-         SJ2jBwnmHztFCww+zZ/B6f/aQOiJxdPNxxnDEPTMsOOhkBpMraQ1na9wnxhVpLiane0q
-         pigV+v/6P7L4/ubMyIcSN2wAPmxl7JUxsIvJrLhPP09nYdtQWwMUIt+s+r5kPu7CdaAo
-         GJMpGzQH/BDU1C+NAerp58gxeFROcy7Muq2M0PDWft8tEmsjdIq6aVTRUYk1KH0Bvsq1
-         PXiA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
+        b=QFvzjb1GkmDAeWGmn0HBsLlJ5qWtRzXU3LQZdoxoTZf9a7D0uxaXnwTzEi3yg3K+R6
+         0KxRGJAJ40ru1Jy+eFG3H628g1eUsLyx62qGM9QYm3wRfMsp2GN045FaOhN8hM++OVa6
+         9FmtkdB8GGwPPcX3fBFQiEzdjM0yiklqoeJZS3RxJdYdeWoU6cxjyqVMcdmt0asZRjlD
+         cWNvyF51ci/nq/9S/KpoRK3wKuMMN2LcrjgBWQ355U+hBe1RHZKPgxjejrHDvUIK/QRZ
+         UUHuVY3UTJBxhEoGoYvYIDX2kMO8XxAv52ByEvaY6JnnjJacsF9cwmlvuWp1vrsd08GC
+         9DTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=y3hGEJAC31/KRNjy0ROs+LaCPxDmfXe9m8Xp8ZPqihs=;
-        b=WNjizBw7sm9PM8lnXEBd5r0b1sVu5wbmRgaLHgep1M7xtESQ9gIldwVidCqUa/T6HD
-         BqfHcIrtx0ZntBRO9JVHfUWV8FJ4A8BgL/usJZDUs0GPVsgdJ4GruTEP86eIIHXNBNEv
-         QMY/czabzXkD3LOJVfIyutA1wqcv40EGZNBa8EFARBytUQg1H+3y7B/gvwgNQQWL7OKk
-         FvdNqUNq0Qv7bfsAbSSCsVi6lST3oKWZMqZW5wLdngpnOFII3+sV/wbZmxPlzbI3aCfI
-         TRrskoch1MSfaaXc6h66drV4fDc3QHqUZ2KaMMHF8PdI8kP4BtFZD7+Vzj5w7RpeFsW+
-         6szA==
-X-Gm-Message-State: AOAM5307b764zyQS323ghEnBS9BFLIa+0qXFn63VA/evnpPnaFgMwC65
-        lledlO5b/HYOpp5hMg6ftSyQov9PU7sXxw==
-X-Google-Smtp-Source: ABdhPJzv5Dw2UavQKAtYF4gkGVlRUlW06E5X49hx6/reBkqFu+Q+yooaflQj2bSHIkYwhLI98r1wcg==
-X-Received: by 2002:a05:6512:505:: with SMTP id o5mr900612lfb.90.1613115274959;
-        Thu, 11 Feb 2021 23:34:34 -0800 (PST)
-Received: from TRWS9215.usr.ingenico.loc ([213.143.229.14])
-        by smtp.gmail.com with ESMTPSA id z11sm883311lfd.98.2021.02.11.23.34.33
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
+        b=g8AgazulMtUys2c8vdWJKHachOrL/cIkjmDcCNx1YmKxpC3IwkLYMyKurng8PrfuKS
+         RrGSzjE+OqF1Obhi8Nw1HyTS/SgevV6HNlnNc+gwdBJziEVyJkvJodC7c9tocugvvBkq
+         YYs5W4KTJu9YzFKRhrtbMnyazjPlgMKE5ePPk9dc+d48NuTigBapvjNUkxxzXNoby1dM
+         mmU/N9xg9whPtibPn5e+9+885id/ZTJxAhchekQx9B40S3GWOhRkGdpY4rybF2Qz8V1e
+         sRYhkdq4G/dHeFv8CDNAzYeyjq5J4kXJ4C6QCctD1r6y58brRuOb+vc697TliMxKTWWi
+         24lg==
+X-Gm-Message-State: AOAM5326Tz0g1kmob39QwzmOb/gi75dQR9zXIUIe2/rGJ56mWkwaI0hU
+        Oo3CU5J/OIGaVgxHUOifjK1VSQ==
+X-Google-Smtp-Source: ABdhPJzfB+2m0CuwIvKupkk6mtJvy2bOkvYMQcFwy8G4Q2gLr8baAJCjDmApyqiyqqb9nNKw9aR0fQ==
+X-Received: by 2002:a1c:113:: with SMTP id 19mr1795873wmb.7.1613121619466;
+        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
+Received: from dell ([91.110.221.187])
+        by smtp.gmail.com with ESMTPSA id x4sm9178784wrn.64.2021.02.12.01.20.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Feb 2021 23:34:34 -0800 (PST)
-From:   Fatih Yildirim <yildirim.fatih@gmail.com>
-To:     marvin24@gmx.de, gregkh@linuxfoundation.org
-Cc:     Fatih Yildirim <yildirim.fatih@gmail.com>,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH -next] staging: nvec: minor coding style fix
-Date:   Fri, 12 Feb 2021 10:34:23 +0300
-Message-Id: <20210212073423.20562-1-yildirim.fatih@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
+Date:   Fri, 12 Feb 2021 09:20:16 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <20210212092016.GF4572@dell>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+ <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com>
+ <20210211211054.GD4572@dell>
+ <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix for the below coding style warning.
-Warning: Move const after static - use 'static const int'
+On Thu, 11 Feb 2021, Stephen Boyd wrote:
 
-Signed-off-by: Fatih Yildirim <yildirim.fatih@gmail.com>
----
- drivers/staging/nvec/nvec_power.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Quoting Lee Jones (2021-02-11 13:10:54)
+> > On Thu, 11 Feb 2021, Stephen Boyd wrote:
+> > 
+> > > Quoting Lee Jones (2021-01-26 04:45:19)
+> > > > This set is part of a larger effort attempting to clean-up W=1
+> > > > kernel builds, which are currently overwhelmingly riddled with
+> > > > niggly little warnings.
+> > > > 
+> > > > This is the last set.  Clock is clean after this.
+> > > 
+> > > Is it possible to slam in some patch that makes W=1 the default for the
+> > > clk directory? I'm trying to avoid seeing this patch series again.
+> > 
+> > One of my main goals of this project is that everyone (contributors,
+> > maintainers auto-builder robots etc) will be enabling W=1 builds
+> > *locally*.
+> > 
+> > This isn't something you'll want to do at a global (i.e. in Mainline)
+> > level.  That's kinda the point of W=1.
+> > 
+> 
+> Agreed, but is it possible to pass W=1 in the drivers/clk/Makefile?
 
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index 0e861c4bfcbf..b1ef196e1cfe 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -338,7 +338,7 @@ static const struct power_supply_desc nvec_psy_desc = {
- };
- 
- static int counter;
--static int const bat_iter[] = {
-+static const int bat_iter[] = {
- 	SLOT_STATUS, VOLTAGE, CURRENT, CAPACITY_REMAINING,
- #ifdef EC_FULL_DIAG
- 	AVERAGE_CURRENT, TEMPERATURE, TIME_REMAINING,
+That would circumvent the point of W=1.  Level-1 warnings are deemed,
+and I'm paraphrasing/making this up "not worth rejecting pull-requests
+over".  In contrast, if Linus catches any W=0 warnings at pull-time,
+he will reject the pull-request as 'untested'.
+
+W=1 is defiantly something you'll want to enable locally though, and
+subsequently push back on contributors submitting code adding new
+ones.
+
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
