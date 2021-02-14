@@ -6,107 +6,78 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF0AC433E9
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Feb 2021 21:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F1BC433E0
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Feb 2021 23:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20A0564DD6
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Feb 2021 21:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 020AC64DBA
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Feb 2021 23:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhBNVW1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Feb 2021 16:22:27 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:41930 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229901AbhBNVW0 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Feb 2021 16:22:26 -0500
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
-        (envelope-from <andrew@lunn.ch>)
-        id 1lBOp6-006J5x-W6; Sun, 14 Feb 2021 22:20:56 +0100
-Date:   Sun, 14 Feb 2021 22:20:56 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Stephen Boyd <sboyd@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Jan Kotas <jank@cadence.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Tero Kristo <kristo@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <YCmUOHTtc+j4eLkO@lunn.ch>
-References: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
- <20210212092016.GF4572@dell>
- <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
- <20210212212503.GC179940@dell>
- <20210212212630.GD179940@dell>
- <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
- <20210212223739.GE179940@dell>
- <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
- <YCf4kkMsX+Ymgy6N@lunn.ch>
- <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
+        id S230171AbhBNX02 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Feb 2021 18:26:28 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:46202 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229792AbhBNX01 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 14 Feb 2021 18:26:27 -0500
+Date:   15 Feb 2021 08:25:35 +0900
+X-IronPort-AV: E=Sophos;i="5.81,179,1610377200"; 
+   d="scan'208";a="72058223"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Feb 2021 08:25:35 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 905354108E47;
+        Mon, 15 Feb 2021 08:25:35 +0900 (JST)
+Message-ID: <87pn1244gg.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     <broonie@kernel.org>, <robh@kernel.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>
+Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
+In-Reply-To: <93c9d656-8379-b463-e724-e48ce486c17d@nvidia.com>
+References: <1612939421-19900-1-git-send-email-spujar@nvidia.com>
+        <1612939421-19900-2-git-send-email-spujar@nvidia.com>
+        <87im6y5fv8.wl-kuninori.morimoto.gx@renesas.com>
+        <93c9d656-8379-b463-e724-e48ce486c17d@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Feb 14, 2021 at 01:00:42PM -0800, Stephen Boyd wrote:
-> Quoting Andrew Lunn (2021-02-13 08:04:34)
-> > > I'm trying to see if we can make lives better for everyone by exposing
-> > > the warnings by default in the drivers/clk/ directory now that there are
-> > > supposedly none left. Shouldn't we tighten the screws now that we've
-> > > cleaned them?
-> > 
-> > Do you use patchwork? netdev has a bot attached which applies the
-> > patch and does a W=1 build, and will report any new warnings. But it
-> > does not email the developer, as far as i know. It is up to you as the
-> > maintainer to reject the patch and say why.
-> > 
+
+Hi Sameer
+
+> >          /*
+> >           * Parse dai->sysclk come from "clocks = <&xxx>"
+> >           * (if system has common clock)
+> >           *  or "system-clock-frequency = <xxx>"
+> >           *  or device's module clock.
+> >           */
 > 
-> Yes the kernel.org patchwork instance is used but I don't see any bot
-> putting test results there. How is that done?
+> Yes, this can be rephrased now.
+
+Thanks.
+It is not a big-deal. no streass :)
+
+> > And also, this patch has too many unneeded exchange,
+> > thus it was difficult to read for me.
+> > I think it can be simply like this ?
+> > It is understandable what it want to do.
 > 
-> https://patchwork.kernel.org/project/linux-clk/list/
+> I think the patch does exactly the same thing as what you are
+> suggesting below. Am I missing anything?
 
-Compare this with for example:
+Yes, it is 100% same, but is simple patch.
+I wanted to tell was it is easy to read/understand.
+Your patch is already applied, so nothing we can do now ;)
 
-https://patchwork.kernel.org/project/netdevbpf/patch/20210213175257.28642-1-ap420073@gmail.com/
 
-Jakub can explain how he added these checks.
+Thank you for your help !!
 
-      Andrew
+Best regards
+---
+Kuninori Morimoto
