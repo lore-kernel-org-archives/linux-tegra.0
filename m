@@ -2,157 +2,177 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A113C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02517C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 09:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 069A164E05
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC08464E6D
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 09:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbhBOIul (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Feb 2021 03:50:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbhBOIug (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Feb 2021 03:50:36 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913E4C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:49:56 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id v14so7900032wro.7
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:49:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/rH+YIEvuGeVBC9R5oz2oGMVMVZR0r1QY2ZB5B8+/9o=;
-        b=QElcvSo2Qv1gpUhrggGEBhMfVDFIiJErGnpOzPBq7Y1hK7ebTnUVO4yrQ6+BZToA8P
-         LeBi2VldpEIICxzmwlCdbaWUYxgl6A43254lN07jWS9V4f9k9WWMl3zaK59M8ftA8kYi
-         FxX6NZUUrIeAX1NqEVylT9X9LJBoMdQeA5ZLZAmVxb4eDMcTioSMerbG6rDRRIQ8wQOg
-         GtY3lOmcmeYhT9uG2zWjqTM1DEXVN7Si2ErvqnmxKPq84J1u43yRAQcycmhMRQDJD66c
-         r2a1ekDorwBQyIFCtiRmMxy3JCieZeO97HT+zpC69Elq7MWTh5QElJKfDQZjaVcsKQk1
-         n5UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=/rH+YIEvuGeVBC9R5oz2oGMVMVZR0r1QY2ZB5B8+/9o=;
-        b=jmE6TCpYjwqQLJ6B8uAnfLMTkqJRLwG3vVCKZw4+P1CYrDOkAJJ6vpIzOwJQGiHA+/
-         6A3awC8YQ1XFNahlu055e2aFidYiLS0wJzRppBHRFKr1oBQkNzedWwfn5XGWojnw6Gfy
-         pToqhL5J/wRRPzRpDju4Dh5C3EpmCCsHqDcNhU9Vm/3M98hFRBenNlhvk95uVh0qcGo4
-         cKDxSxlQMptb6UZHi6APqZfBoGZHl9jzSaYLir4/MB1j/wW1xX/D/3BVI2wSm8V3zSDG
-         Q9C19B235PZ7bhNf6y0cZQ/oL0Bht7wOp+fv6rTvsbf1jhx1+975EU9ogPKfW8Yt9Bjq
-         e6RA==
-X-Gm-Message-State: AOAM530YBmITagYRwfADyrOX0f1j5dE+I1DM3zDM8wcCSAJKeYPeuyaD
-        62DWa95yVP8cNme/96hM4RM6ZA==
-X-Google-Smtp-Source: ABdhPJxhaNjeFloYjkS8tVt5DeKpLQ+BaxHlwfJeH3jEEaYMRN3v4bXqekkv2M0W9w0ynZuJJwcArQ==
-X-Received: by 2002:adf:f543:: with SMTP id j3mr17591804wrp.203.1613378995318;
-        Mon, 15 Feb 2021 00:49:55 -0800 (PST)
-Received: from dell ([91.110.221.146])
-        by smtp.gmail.com with ESMTPSA id p12sm21981604wmq.1.2021.02.15.00.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Feb 2021 00:49:54 -0800 (PST)
-Date:   Mon, 15 Feb 2021 08:49:52 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Jan Kotas <jank@cadence.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Tero Kristo <kristo@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210215084952.GF179940@dell>
-References: <20210212092016.GF4572@dell>
- <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
- <20210212212503.GC179940@dell>
- <20210212212630.GD179940@dell>
- <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
- <20210212223739.GE179940@dell>
- <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
- <YCf4kkMsX+Ymgy6N@lunn.ch>
- <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
- <YCmUOHTtc+j4eLkO@lunn.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YCmUOHTtc+j4eLkO@lunn.ch>
+        id S230080AbhBOJJx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Feb 2021 04:09:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229595AbhBOJJu (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Feb 2021 04:09:50 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83D8F64E51;
+        Mon, 15 Feb 2021 09:09:09 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lBZsR-00EEeT-7d; Mon, 15 Feb 2021 09:09:07 +0000
+Date:   Mon, 15 Feb 2021 09:08:56 +0000
+Message-ID: <87v9atpujb.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 2/2] of: property: Add fw_devlink support for interrupts
+In-Reply-To: <CAGETcx9mzYbujVW8ALrNvs1FabvuUpZpChxBb0Tp8q7w+TY4=A@mail.gmail.com>
+References: <20210121225712.1118239-1-saravanak@google.com>
+        <20210121225712.1118239-3-saravanak@google.com>
+        <20210213185422.GA195733@roeck-us.net>
+        <CAGETcx_RpG45Fwhty1Uj34Mv01qkH5vFv0J6jVtJgTBFQinOBA@mail.gmail.com>
+        <a76a73e4-f7ba-4893-14b8-01d21943241a@roeck-us.net>
+        <CAGETcx9mzYbujVW8ALrNvs1FabvuUpZpChxBb0Tp8q7w+TY4=A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: saravanak@google.com, linux@roeck-us.net, robh+dt@kernel.org, frowand.list@gmail.com, gregkh@linuxfoundation.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, geert@linux-m68k.org, jonathanh@nvidia.com, khilman@baylibre.com, kernel-team@android.com, robh@kernel.org, treding@nvidia.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 14 Feb 2021, Andrew Lunn wrote:
+Hi Saravana,
 
-> On Sun, Feb 14, 2021 at 01:00:42PM -0800, Stephen Boyd wrote:
-> > Quoting Andrew Lunn (2021-02-13 08:04:34)
-> > > > I'm trying to see if we can make lives better for everyone by exposing
-> > > > the warnings by default in the drivers/clk/ directory now that there are
-> > > > supposedly none left. Shouldn't we tighten the screws now that we've
-> > > > cleaned them?
-> > > 
-> > > Do you use patchwork? netdev has a bot attached which applies the
-> > > patch and does a W=1 build, and will report any new warnings. But it
-> > > does not email the developer, as far as i know. It is up to you as the
-> > > maintainer to reject the patch and say why.
-> > > 
-> > 
-> > Yes the kernel.org patchwork instance is used but I don't see any bot
-> > putting test results there. How is that done?
-> > 
-> > https://patchwork.kernel.org/project/linux-clk/list/
+On Mon, 15 Feb 2021 08:29:53 +0000,
+Saravana Kannan <saravanak@google.com> wrote:
 > 
-> Compare this with for example:
+> On Sun, Feb 14, 2021 at 7:58 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On 2/14/21 1:12 PM, Saravana Kannan wrote:
+> > [ ... ]
+> > >
+> > > Can you please give me the following details:
+> > > * The DTS file for the board (not the SoC).
+> >
+> > The devicetree file extracted from the running system is attached.
+> > Hope it helps.
 > 
-> https://patchwork.kernel.org/project/netdevbpf/patch/20210213175257.28642-1-ap420073@gmail.com/
+> Hi Guenter,
+> 
+> Thanks for the DTS file and logs. That helps a lot.
+> 
+> Looking at the attachment and this line from the earlier email:
+> [   14.084606][   T11] pci 0005:01:00.0: probe deferral - wait for
+> supplier interrupt-controller@0
+> 
+> It's clear the PCI node is waiting on:
+>         interrupt-controller@0 {
+>                 #address-cells = <0x00>;
+>                 device_type = "PowerPC-Interrupt-Source-Controller";
+>                 compatible = "ibm,opal-xive-vc\0IBM,opal-xics";
+>                 #interrupt-cells = <0x02>;
+>                 reg = <0x00 0x00 0x00 0x00>;
+>                 phandle = <0x804b>;
+>                 interrupt-controller;
+>         };
+> 
+> If I grep for "ibm,opal-xive-vc", I see only one instance of it in the
+> code. And that eventually ends up getting called like this:
+> irq_find_matching_fwspec() -> xive_irq_domain_match() -> xive_native_match()
+> 
+> static bool xive_native_match(struct device_node *node)
+> {
+>         return of_device_is_compatible(node, "ibm,opal-xive-vc");
+> }
+> 
+> However, when the IRQ domain are first registered, in xive_init_host()
+> the "np" passed in is NOT the same node that xive_native_match() would
+> match.
+> static void __init xive_init_host(struct device_node *np)
+> {
+>         xive_irq_domain = irq_domain_add_nomap(np, XIVE_MAX_IRQ,
+>                                                &xive_irq_domain_ops, NULL);
+>         if (WARN_ON(xive_irq_domain == NULL))
+>                 return;
+>         irq_set_default_host(xive_irq_domain);
+> }
+> 
+> Instead, the "np" here is:
+>         interrupt-controller@6030203180000 {
+>                 ibm,xive-provision-page-size = <0x10000>;
+>                 ibm,xive-eq-sizes = <0x0c 0x10 0x15 0x18>;
+>                 single-escalation-support;
+>                 ibm,xive-provision-chips = <0x00>;
+>                 ibm,xive-#priorities = <0x08>;
+>                 compatible = "ibm,opal-xive-pe\0ibm,opal-intc";
+>                 reg = <0x60302 0x3180000 0x00 0x10000 0x60302
+> 0x3190000 0x00 0x10000 0x60302 0x31a0000 0x00 0x10000 0x60302
+> 0x31b0000 0x00 0x10000>;
+>                 phandle = <0x8051>;
+>         };
+> 
+> There are many ways to fix this, but I first want to make sure this is
+> a valid way to register irqdomains before trying to fix it. I just
+> find it weird that the node that's registered is unrelated (not a
+> parent/child) of the node that matches.
+> 
+> Marc,
+> 
+> Is this a valid way to register irqdomains? Just registering
+> interrupt-controller@6030203180000 DT node where there are multiple
+> interrupt controllers?
 
-Oh, that's nice.
+Absolutely.
 
-> Jakub can explain how he added these checks.
+The node is only one of the many possible ways to retrieve a
+domain. In general, what you pass as the of_node/fwnode_handle can be
+anything you want. It doesn't have to represent anything in the system
+(we even create then ex-nihilo in some cases), and the match/select
+callbacks are authoritative when they exist.
 
-Yes, please share.
+There is also the use of a default domain, which is used as a fallback
+when no domain is found via the normal matching procedure.
+
+PPC has established a way of dealing with domains long before ARM did,
+closer to the board files of old than what we would do today (code
+driven rather than data structure driven).
+
+Strictly mapping domains onto HW blocks is a desirable property, but
+that is all it is. That doesn't affect the very purpose of the IRQ
+domains, which is to translate numbers from one context into another.
+
+I'd be all for rationalising this, but it is pretty hard to introduce
+semantic where there is none.
+
+Thanks,
+
+	M.
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Without deviation from the norm, progress is not possible.
