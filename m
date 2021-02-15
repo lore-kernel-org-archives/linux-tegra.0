@@ -2,161 +2,157 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F5DC433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A113C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3370664E51
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 069A164E05
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 08:50:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhBOIbQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Feb 2021 03:31:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33446 "EHLO
+        id S229895AbhBOIul (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Feb 2021 03:50:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbhBOIbM (ORCPT
+        with ESMTP id S229693AbhBOIug (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Feb 2021 03:31:12 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BBEC0613D6
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:30:32 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id m188so6312149yba.13
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:30:32 -0800 (PST)
+        Mon, 15 Feb 2021 03:50:36 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913E4C061574
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:49:56 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id v14so7900032wro.7
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 00:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IosKC9haWoEFEaZa0BZbxfuLVeZ+4qcWUxhFQ2haJCg=;
-        b=tr6tzTp61UKCAo6zjUbgQjCWLVR9C3MkYtoPLEDgxQK21qGZhplxp/zzCQThUxX8p+
-         Gx0bMuurqxbRZyRrvSGp1cP+MIEk8JVudbLZuv+BYXQXH88j27X+AZkgw8StQY3Z6Qlk
-         mIMGAXMl9Bb2we03isnTNkWiO0W6DlvGr+kSYruqZ7TrJcPqpE0VckUYgQOOTk9brmt/
-         9FQKLGTpYzAacgPq/VvjIWRS+i4qM5+EOh8vZHPLja69cmNxvaF5eflA5FjGL7kGhrXb
-         ONNho7ShMEYHxu4yCY6My94qvl2lUHZ2l4ztBdxO/XqnnNbH39MPy1lqFQnbJJx3fvEo
-         C+Qw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/rH+YIEvuGeVBC9R5oz2oGMVMVZR0r1QY2ZB5B8+/9o=;
+        b=QElcvSo2Qv1gpUhrggGEBhMfVDFIiJErGnpOzPBq7Y1hK7ebTnUVO4yrQ6+BZToA8P
+         LeBi2VldpEIICxzmwlCdbaWUYxgl6A43254lN07jWS9V4f9k9WWMl3zaK59M8ftA8kYi
+         FxX6NZUUrIeAX1NqEVylT9X9LJBoMdQeA5ZLZAmVxb4eDMcTioSMerbG6rDRRIQ8wQOg
+         GtY3lOmcmeYhT9uG2zWjqTM1DEXVN7Si2ErvqnmxKPq84J1u43yRAQcycmhMRQDJD66c
+         r2a1ekDorwBQyIFCtiRmMxy3JCieZeO97HT+zpC69Elq7MWTh5QElJKfDQZjaVcsKQk1
+         n5UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IosKC9haWoEFEaZa0BZbxfuLVeZ+4qcWUxhFQ2haJCg=;
-        b=Xf/+RVngbZIzB391MtMmfYcoTfRkMbM5JD3BzBcxg/ipM0LFEwcQARAn35m0V+eymd
-         h3GO7Ccwr+z2llM7nmTqc9yDAaYzn+7pkpMGKILCG7DDWH+XUblCqCIbcgrg3dKEzdlH
-         yech4S/0DvqCD8milsbnvt6VhdvFXv9yNSy+sIZwroS0Tike3Vtq93qicZ/8cpmrK8fQ
-         KXYS54M9zjZuX0+nMLjDaw/UMlUxV+gnMUVdeG/D4y0u/jrtVKNMpwSjtimpR2syBHp9
-         v7SnurI2NQG93WENCQRUYpygOISOyv6eNKrguQzlhoQyrPRmP054RAaXu3i+Kodj8Pbb
-         Ocxg==
-X-Gm-Message-State: AOAM531fPNsWH4+5s7Zn5LD1xopkYO7FvG2lDcUE/Ure3kDBP2+gyrjf
-        8XT0k4+cncorPXMXcTmR/d5PwLBOR/JkosbIcYaJgg==
-X-Google-Smtp-Source: ABdhPJzKa3jhEnQQhhwY5N+nH8GasiMlAFPRDmalbwkm6hAFH+qDOWb86TO1KQ5bewNrePhGX/XW1FbFRlLYKdO4LsI=
-X-Received: by 2002:a25:3345:: with SMTP id z66mr21333926ybz.466.1613377829136;
- Mon, 15 Feb 2021 00:30:29 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/rH+YIEvuGeVBC9R5oz2oGMVMVZR0r1QY2ZB5B8+/9o=;
+        b=jmE6TCpYjwqQLJ6B8uAnfLMTkqJRLwG3vVCKZw4+P1CYrDOkAJJ6vpIzOwJQGiHA+/
+         6A3awC8YQ1XFNahlu055e2aFidYiLS0wJzRppBHRFKr1oBQkNzedWwfn5XGWojnw6Gfy
+         pToqhL5J/wRRPzRpDju4Dh5C3EpmCCsHqDcNhU9Vm/3M98hFRBenNlhvk95uVh0qcGo4
+         cKDxSxlQMptb6UZHi6APqZfBoGZHl9jzSaYLir4/MB1j/wW1xX/D/3BVI2wSm8V3zSDG
+         Q9C19B235PZ7bhNf6y0cZQ/oL0Bht7wOp+fv6rTvsbf1jhx1+975EU9ogPKfW8Yt9Bjq
+         e6RA==
+X-Gm-Message-State: AOAM530YBmITagYRwfADyrOX0f1j5dE+I1DM3zDM8wcCSAJKeYPeuyaD
+        62DWa95yVP8cNme/96hM4RM6ZA==
+X-Google-Smtp-Source: ABdhPJxhaNjeFloYjkS8tVt5DeKpLQ+BaxHlwfJeH3jEEaYMRN3v4bXqekkv2M0W9w0ynZuJJwcArQ==
+X-Received: by 2002:adf:f543:: with SMTP id j3mr17591804wrp.203.1613378995318;
+        Mon, 15 Feb 2021 00:49:55 -0800 (PST)
+Received: from dell ([91.110.221.146])
+        by smtp.gmail.com with ESMTPSA id p12sm21981604wmq.1.2021.02.15.00.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Feb 2021 00:49:54 -0800 (PST)
+Date:   Mon, 15 Feb 2021 08:49:52 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Jan Kotas <jank@cadence.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
+        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Tero Kristo <kristo@kernel.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <20210215084952.GF179940@dell>
+References: <20210212092016.GF4572@dell>
+ <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
+ <20210212212503.GC179940@dell>
+ <20210212212630.GD179940@dell>
+ <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
+ <20210212223739.GE179940@dell>
+ <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
+ <YCf4kkMsX+Ymgy6N@lunn.ch>
+ <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
+ <YCmUOHTtc+j4eLkO@lunn.ch>
 MIME-Version: 1.0
-References: <20210121225712.1118239-1-saravanak@google.com>
- <20210121225712.1118239-3-saravanak@google.com> <20210213185422.GA195733@roeck-us.net>
- <CAGETcx_RpG45Fwhty1Uj34Mv01qkH5vFv0J6jVtJgTBFQinOBA@mail.gmail.com> <a76a73e4-f7ba-4893-14b8-01d21943241a@roeck-us.net>
-In-Reply-To: <a76a73e4-f7ba-4893-14b8-01d21943241a@roeck-us.net>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 15 Feb 2021 00:29:53 -0800
-Message-ID: <CAGETcx9mzYbujVW8ALrNvs1FabvuUpZpChxBb0Tp8q7w+TY4=A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] of: property: Add fw_devlink support for interrupts
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Rob Herring <robh@kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YCmUOHTtc+j4eLkO@lunn.ch>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Feb 14, 2021 at 7:58 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 2/14/21 1:12 PM, Saravana Kannan wrote:
-> [ ... ]
-> >
-> > Can you please give me the following details:
-> > * The DTS file for the board (not the SoC).
->
-> The devicetree file extracted from the running system is attached.
-> Hope it helps.
+On Sun, 14 Feb 2021, Andrew Lunn wrote:
 
-Hi Guenter,
+> On Sun, Feb 14, 2021 at 01:00:42PM -0800, Stephen Boyd wrote:
+> > Quoting Andrew Lunn (2021-02-13 08:04:34)
+> > > > I'm trying to see if we can make lives better for everyone by exposing
+> > > > the warnings by default in the drivers/clk/ directory now that there are
+> > > > supposedly none left. Shouldn't we tighten the screws now that we've
+> > > > cleaned them?
+> > > 
+> > > Do you use patchwork? netdev has a bot attached which applies the
+> > > patch and does a W=1 build, and will report any new warnings. But it
+> > > does not email the developer, as far as i know. It is up to you as the
+> > > maintainer to reject the patch and say why.
+> > > 
+> > 
+> > Yes the kernel.org patchwork instance is used but I don't see any bot
+> > putting test results there. How is that done?
+> > 
+> > https://patchwork.kernel.org/project/linux-clk/list/
+> 
+> Compare this with for example:
+> 
+> https://patchwork.kernel.org/project/netdevbpf/patch/20210213175257.28642-1-ap420073@gmail.com/
 
-Thanks for the DTS file and logs. That helps a lot.
+Oh, that's nice.
 
-Looking at the attachment and this line from the earlier email:
-[   14.084606][   T11] pci 0005:01:00.0: probe deferral - wait for
-supplier interrupt-controller@0
+> Jakub can explain how he added these checks.
 
-It's clear the PCI node is waiting on:
-        interrupt-controller@0 {
-                #address-cells = <0x00>;
-                device_type = "PowerPC-Interrupt-Source-Controller";
-                compatible = "ibm,opal-xive-vc\0IBM,opal-xics";
-                #interrupt-cells = <0x02>;
-                reg = <0x00 0x00 0x00 0x00>;
-                phandle = <0x804b>;
-                interrupt-controller;
-        };
+Yes, please share.
 
-If I grep for "ibm,opal-xive-vc", I see only one instance of it in the
-code. And that eventually ends up getting called like this:
-irq_find_matching_fwspec() -> xive_irq_domain_match() -> xive_native_match()
-
-static bool xive_native_match(struct device_node *node)
-{
-        return of_device_is_compatible(node, "ibm,opal-xive-vc");
-}
-
-However, when the IRQ domain are first registered, in xive_init_host()
-the "np" passed in is NOT the same node that xive_native_match() would
-match.
-static void __init xive_init_host(struct device_node *np)
-{
-        xive_irq_domain = irq_domain_add_nomap(np, XIVE_MAX_IRQ,
-                                               &xive_irq_domain_ops, NULL);
-        if (WARN_ON(xive_irq_domain == NULL))
-                return;
-        irq_set_default_host(xive_irq_domain);
-}
-
-Instead, the "np" here is:
-        interrupt-controller@6030203180000 {
-                ibm,xive-provision-page-size = <0x10000>;
-                ibm,xive-eq-sizes = <0x0c 0x10 0x15 0x18>;
-                single-escalation-support;
-                ibm,xive-provision-chips = <0x00>;
-                ibm,xive-#priorities = <0x08>;
-                compatible = "ibm,opal-xive-pe\0ibm,opal-intc";
-                reg = <0x60302 0x3180000 0x00 0x10000 0x60302
-0x3190000 0x00 0x10000 0x60302 0x31a0000 0x00 0x10000 0x60302
-0x31b0000 0x00 0x10000>;
-                phandle = <0x8051>;
-        };
-
-There are many ways to fix this, but I first want to make sure this is
-a valid way to register irqdomains before trying to fix it. I just
-find it weird that the node that's registered is unrelated (not a
-parent/child) of the node that matches.
-
-Marc,
-
-Is this a valid way to register irqdomains? Just registering
-interrupt-controller@6030203180000 DT node where there are multiple
-interrupt controllers?
-
-Thanks,
-Saravana
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
