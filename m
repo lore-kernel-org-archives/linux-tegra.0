@@ -2,102 +2,195 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E087BC433E9
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 17:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45ACDC433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 22:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B55ED64DA3
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 17:47:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE5A64DFF
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Feb 2021 22:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231169AbhBORqy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Feb 2021 12:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232184AbhBORpz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Feb 2021 12:45:55 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0EAEA60C3D;
-        Mon, 15 Feb 2021 17:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613411111;
-        bh=H142txNXU7FRt9uW2Sv16n19CyrevXPqFbx8ThdGOrI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uglK3kwezVaW8PF9O7FxFnlzq7edOQYRV4JhCChBfp7IC1sZiO5UIKu4xOQ6CEbW0
-         9xuJibheu2jwvY9Fk3sEeGOyqm9b9LEUm3T7vPODQumpsqGUaGbMWpwakK5tdZRLh1
-         FsNuf+PV84M6z3tZ3okItznTl+4JAB0yOYeo3t1y+v8MvauJ89KKKgCMB+tqVRnAiC
-         4rXdPqCkNqgMoVW068L3bL/2Z7i5JSJoqmsEdsMsvAQ5RAsgsjvO+7jHs+gsVpMxXY
-         BOgODid5IqWfH0ncdktLpmuQr59nm0hZpCcT8hBeZWUwySMhkBk8M9e+yLrhjzfbZC
-         lDA4fVbX9OE7g==
-Date:   Mon, 15 Feb 2021 09:45:09 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Jan Kotas <jank@cadence.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
-        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Tero Kristo <kristo@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210215094509.0b1f0bbf@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <20210215084952.GF179940@dell>
-References: <20210212092016.GF4572@dell>
-        <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
-        <20210212212503.GC179940@dell>
-        <20210212212630.GD179940@dell>
-        <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
-        <20210212223739.GE179940@dell>
-        <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
-        <YCf4kkMsX+Ymgy6N@lunn.ch>
-        <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
-        <YCmUOHTtc+j4eLkO@lunn.ch>
-        <20210215084952.GF179940@dell>
+        id S229713AbhBOW0Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Feb 2021 17:26:16 -0500
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:41310 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229662AbhBOW0O (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Feb 2021 17:26:14 -0500
+Received: by mail-yb1-f174.google.com with SMTP id m9so6532436ybk.8
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Feb 2021 14:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WCYjBj19j1mBgoUgFAPx3GRqxMEDCFPUmgnbsB//gL4=;
+        b=oiEC2/2OMUPQ8FofQhJj5TF/v8RcIGyWdLp1COtoqmIUZpcsb99BTkmkTNjpXe/+PH
+         fCiBLptsPUMudu8VwUaiAy0MkQTJesz/DpSmZKJfoQjJvTkDNPWQKpnrJOZdehsLTOQF
+         CWK8lzVhk8AHmdLWFVYkzi9VxSEkwUmZffCzjJUv0PbFFPuEa3s5oTvFF4d/Nd3BrRMT
+         yCYdC5SsDF82ZYxyYWLDu6FoWsqDLNn7M3FexUKFLdBgW6pJfPCd5Y4wTL5HvqvNWWfr
+         n05M+aDh4i7y5RqdqnbxaF4fdVl5iZHeUFX5zdHoD3XG2mXWzWNjucMPlGOX/whAamFY
+         Kx6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WCYjBj19j1mBgoUgFAPx3GRqxMEDCFPUmgnbsB//gL4=;
+        b=WXAW+4cf/zou4RuGWkDyjHQ5wuLGXZaDXaHws58C2yWnLQZaRn5J7yGglrSXWw5ucH
+         xIAs+OVFER4ucLNh5eLvD2STy9UKkq2+UtVo8dWF14GVbFqZSmkYHZDRguiDHQPAmuIM
+         ZADFwkt3FkbPtEUhMWoYT8cTdkD4UPaTjR3fWqNDUKvI+u7ieHr7UP5+oN75p9IPRKF5
+         1x5BEy//0RqE1TzwKYRTgKFN2knj24PYRmvsHNf+EOFce4kt8wMiU0KW8H+KGwtqouUL
+         nPHA/CIL2ongKhE6JP9+QbgRwFnMgB/jLD/zhdlssgeu3hfHSUvmvj3a4gVPepAGGoI/
+         LWJQ==
+X-Gm-Message-State: AOAM531irGNpkWQ7QqXt3CGuAfCYAMK10bP+cWL9UynWk8uBLurgr/fT
+        l8c0QyveipSk7Uz5M2HVICRP6+kazXu5GBKjqYOj1w==
+X-Google-Smtp-Source: ABdhPJzI25brqTRNPiKDbaw8zxs/3dnPSzw2CkyA2hA+yWam9mqbXj74HyGpnIFgah+oTmvic3SS4tAP2Nj47L0hJvw=
+X-Received: by 2002:a25:dc94:: with SMTP id y142mr15188087ybe.346.1613427873211;
+ Mon, 15 Feb 2021 14:24:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20210121225712.1118239-1-saravanak@google.com>
+ <20210121225712.1118239-3-saravanak@google.com> <20210213185422.GA195733@roeck-us.net>
+ <CAGETcx_RpG45Fwhty1Uj34Mv01qkH5vFv0J6jVtJgTBFQinOBA@mail.gmail.com>
+ <a76a73e4-f7ba-4893-14b8-01d21943241a@roeck-us.net> <CAGETcx9mzYbujVW8ALrNvs1FabvuUpZpChxBb0Tp8q7w+TY4=A@mail.gmail.com>
+ <87v9atpujb.wl-maz@kernel.org>
+In-Reply-To: <87v9atpujb.wl-maz@kernel.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 15 Feb 2021 14:23:57 -0800
+Message-ID: <CAGETcx8msCsFnPk2SV-r2QfVDPBY2RvJQumd9RzbrFCvVUxCXA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] of: property: Add fw_devlink support for interrupts
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 15 Feb 2021 08:49:52 +0000 Lee Jones wrote:
-> > Jakub can explain how he added these checks.  
-> 
-> Yes, please share.
+On Mon, Feb 15, 2021 at 1:09 AM Marc Zyngier <maz@kernel.org> wrote:
+>
+> Hi Saravana,
+>
+> On Mon, 15 Feb 2021 08:29:53 +0000,
+> Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > On Sun, Feb 14, 2021 at 7:58 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > On 2/14/21 1:12 PM, Saravana Kannan wrote:
+> > > [ ... ]
+> > > >
+> > > > Can you please give me the following details:
+> > > > * The DTS file for the board (not the SoC).
+> > >
+> > > The devicetree file extracted from the running system is attached.
+> > > Hope it helps.
+> >
+> > Hi Guenter,
+> >
+> > Thanks for the DTS file and logs. That helps a lot.
+> >
+> > Looking at the attachment and this line from the earlier email:
+> > [   14.084606][   T11] pci 0005:01:00.0: probe deferral - wait for
+> > supplier interrupt-controller@0
+> >
+> > It's clear the PCI node is waiting on:
+> >         interrupt-controller@0 {
+> >                 #address-cells = <0x00>;
+> >                 device_type = "PowerPC-Interrupt-Source-Controller";
+> >                 compatible = "ibm,opal-xive-vc\0IBM,opal-xics";
+> >                 #interrupt-cells = <0x02>;
+> >                 reg = <0x00 0x00 0x00 0x00>;
+> >                 phandle = <0x804b>;
+> >                 interrupt-controller;
+> >         };
+> >
+> > If I grep for "ibm,opal-xive-vc", I see only one instance of it in the
+> > code. And that eventually ends up getting called like this:
+> > irq_find_matching_fwspec() -> xive_irq_domain_match() -> xive_native_match()
+> >
+> > static bool xive_native_match(struct device_node *node)
+> > {
+> >         return of_device_is_compatible(node, "ibm,opal-xive-vc");
+> > }
+> >
+> > However, when the IRQ domain are first registered, in xive_init_host()
+> > the "np" passed in is NOT the same node that xive_native_match() would
+> > match.
+> > static void __init xive_init_host(struct device_node *np)
+> > {
+> >         xive_irq_domain = irq_domain_add_nomap(np, XIVE_MAX_IRQ,
+> >                                                &xive_irq_domain_ops, NULL);
+> >         if (WARN_ON(xive_irq_domain == NULL))
+> >                 return;
+> >         irq_set_default_host(xive_irq_domain);
+> > }
+> >
+> > Instead, the "np" here is:
+> >         interrupt-controller@6030203180000 {
+> >                 ibm,xive-provision-page-size = <0x10000>;
+> >                 ibm,xive-eq-sizes = <0x0c 0x10 0x15 0x18>;
+> >                 single-escalation-support;
+> >                 ibm,xive-provision-chips = <0x00>;
+> >                 ibm,xive-#priorities = <0x08>;
+> >                 compatible = "ibm,opal-xive-pe\0ibm,opal-intc";
+> >                 reg = <0x60302 0x3180000 0x00 0x10000 0x60302
+> > 0x3190000 0x00 0x10000 0x60302 0x31a0000 0x00 0x10000 0x60302
+> > 0x31b0000 0x00 0x10000>;
+> >                 phandle = <0x8051>;
+> >         };
+> >
+> > There are many ways to fix this, but I first want to make sure this is
+> > a valid way to register irqdomains before trying to fix it. I just
+> > find it weird that the node that's registered is unrelated (not a
+> > parent/child) of the node that matches.
+> >
+> > Marc,
+> >
+> > Is this a valid way to register irqdomains? Just registering
+> > interrupt-controller@6030203180000 DT node where there are multiple
+> > interrupt controllers?
+>
+> Absolutely.
+>
+> The node is only one of the many possible ways to retrieve a
+> domain. In general, what you pass as the of_node/fwnode_handle can be
+> anything you want. It doesn't have to represent anything in the system
+> (we even create then ex-nihilo in some cases), and the match/select
+> callbacks are authoritative when they exist.
+>
+> There is also the use of a default domain, which is used as a fallback
+> when no domain is found via the normal matching procedure.
+>
+> PPC has established a way of dealing with domains long before ARM did,
+> closer to the board files of old than what we would do today (code
+> driven rather than data structure driven).
+>
+> Strictly mapping domains onto HW blocks is a desirable property, but
+> that is all it is. That doesn't affect the very purpose of the IRQ
+> domains, which is to translate numbers from one context into another.
+>
+> I'd be all for rationalising this, but it is pretty hard to introduce
+> semantic where there is none.
 
-https://github.com/kuba-moo/nipa
+Ok, I'm going to disable parsing "interrupts" for PPC. It doesn't look
+like any of the irq drivers are even remotely ready to be converted to
+a proper device driver anyway.
+
+And if this continues for other properties, I'll just disable
+fw_devlink for PPC entirely.
+
+-Saravana
