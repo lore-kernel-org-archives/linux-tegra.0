@@ -2,180 +2,123 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1183AC433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D43C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2F7864E0F
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A72C64DF0
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbhBPPQw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:16:52 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9563 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbhBPPQv (ORCPT
+        id S230224AbhBPPst (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Feb 2021 10:48:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40382 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229708AbhBPPsr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:16:51 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B602be1bb0000>; Tue, 16 Feb 2021 07:16:11 -0800
-Received: from [10.21.180.91] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 16 Feb
- 2021 15:16:08 +0000
-Subject: Re: [PATCH 3/3] drm/tegra: Add NVDEC driver
-To:     Mikko Perttunen <mperttunen@nvidia.com>,
-        <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <robh+dt@kernel.org>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20210213101512.3275069-1-mperttunen@nvidia.com>
- <20210213101512.3275069-4-mperttunen@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ae6c0ee3-244b-896f-63c6-7c8a88e56f07@nvidia.com>
-Date:   Tue, 16 Feb 2021 15:16:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 16 Feb 2021 10:48:47 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57835C06174A;
+        Tue, 16 Feb 2021 07:48:06 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id o7so6482831pgl.1;
+        Tue, 16 Feb 2021 07:48:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yKpUz4pp/u/PHJPYKcG1YaVfe5CKl2imPNvR4JyBFYE=;
+        b=bfsYo575GoJd041ok+laM4Ze2S7KyjHJf0Srx5FyNMReJb74sZo75MjvzAVGc1anAQ
+         6lgCnMT+leWn3V8hJesoG9eeQ93b7XrMlXcfyIXEc3idRL1auUm4wDo0TsTVBoPN0joV
+         ou/TaTydMyNYRMIVv2ppEyXf0drLwBGQReum0gV/fhojLcA2Haz4I/f4RTFJldjbOrrI
+         RyQ/mWRqnDQPSQMFjrvvhR//MY5L5O9CdzXq8v3nDW4Zb0x5GI7djRS8aWRV05sP8UKB
+         yaX/6fsnhdA08FPa5rKljfhsuRJza+x8f/ZvF7c8VL5S4TOUIqfgsa16dah9NO2dMSr3
+         QRkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yKpUz4pp/u/PHJPYKcG1YaVfe5CKl2imPNvR4JyBFYE=;
+        b=P/bnM5H1rbb+JMzCsE4AkhjPVyoNKG/pvtTSX/A8zae/MSLHWUh29G1kfHj5h6CE1n
+         Vt0XK6VGc5nA64+PoKAtBJHVDx/aV1IJePUSHig13zM+9kpHBUArBBqslsFz/Kt4D0zO
+         IsrXgxcJMbvwgokKhkiRy6O7scsC912O0biBO/qc2CQi9m2tla2iu5IkpkqzJ4yu9NfY
+         sqSKx7wue59x040wAo44ZQUrP0QtDe3Ip6NpRz43yHMb85lGtve9TtgKRQgAC2AOpSHD
+         hLmPrd2CHCBO1m/tICpzc/Uha1WwU4nIZ+s5EgVnFtsOLZYsDLLJgmqv/O2YRiy5hiFN
+         cYNQ==
+X-Gm-Message-State: AOAM5339+vHp5wUnCrEvkuAb5+UZ2ZZpKS++xWCUoQybxFwYm4kYtI/b
+        sF9jwh6dshG77ufNxA1efFo=
+X-Google-Smtp-Source: ABdhPJwaooUaIKDd1k8p39TS9r9FEuHlOTnCnoBBnatGbzSGokeWf0RqRcRmZatTM6RlcbYYacdx4w==
+X-Received: by 2002:a63:c1d:: with SMTP id b29mr19918863pgl.9.1613490485842;
+        Tue, 16 Feb 2021 07:48:05 -0800 (PST)
+Received: from localhost ([2402:3a80:11ea:c83a:a2a4:c5ff:fe20:7222])
+        by smtp.gmail.com with ESMTPSA id n142sm22804138pfd.82.2021.02.16.07.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Feb 2021 07:48:05 -0800 (PST)
+Date:   Tue, 16 Feb 2021 21:18:00 +0530
+From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
+To:     Alex Elder <elder@ieee.org>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
+        Mark Greer <mgreer@animalcreek.com>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Marc Dietrich <marvin24@gmx.de>,
+        Jens Frederich <jfrederich@gmail.com>,
+        Daniel Drake <dsd@laptop.org>,
+        Jon Nettleton <jon.nettleton@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        William Cohen <wcohen@redhat.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Robert Richter <rric@kernel.org>, greybus-dev@lists.linaro.org,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 02/13] staging: greybus: Switch from strlcpy to strscpy
+Message-ID: <20210216154800.jg24ahfj52t6qgbd@apollo>
+References: <20210131172838.146706-1-memxor@gmail.com>
+ <20210131172838.146706-3-memxor@gmail.com>
+ <b565bdae-10a9-9b6c-ae60-dcee88f7dedd@ieee.org>
 MIME-Version: 1.0
-In-Reply-To: <20210213101512.3275069-4-mperttunen@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1613488571; bh=Bvyw6WYHS0mbF0ur9xBy954MChniTTgGJ4L0kjaX+u8=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=lk3EOjYXOLK0NepzoWjxeuF/wR5m7nIqsxWx3AQqCRoEkZQDSISxI6QvyKFJCPYjI
-         rAD/ZnzRVXuRz4SOn4xG8FqfT6j0uMH6+M9fp0cRpVCPpmUg8mISk9Z9cEic/RsFd/
-         kkGT7wevChVcD6Hqf2QpfigXny05X5lX+A/RrlRnAl/NsuhXpYGUthA24Z9W0GTlEg
-         nWKmlciN96kHnsfT9AfsvqZ7lYu/HZ2mG9zZWqBpPUpmSNZxA3qPu5mXvecCqi1OeY
-         vh5vDIXPBKpN94HwT3uq7PMQ6ky3nk0M+wTS3/I48PJAvAGMpWNI3uwAp+CJSsRhX3
-         TNUb+taWWqtYQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b565bdae-10a9-9b6c-ae60-dcee88f7dedd@ieee.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 13/02/2021 10:15, Mikko Perttunen wrote:
-> Add support for booting and using NVDEC on Tegra210, Tegra186
-> and Tegra194 to the Host1x and TegraDRM drivers. Booting in
-> secure mode is not currently supported.
+On Tue, Feb 16, 2021 at 08:24:59PM IST, Alex Elder wrote:
+> This is a good change.  But while you're at it, I would
+> appreciate if you would convert a few spots to use
+> sizeof(dest) rather than a fixed constant.  I will
+> point them out below.
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/Makefile |   3 +-
->  drivers/gpu/drm/tegra/drm.c    |   4 +
->  drivers/gpu/drm/tegra/drm.h    |   1 +
->  drivers/gpu/drm/tegra/nvdec.c  | 497 +++++++++++++++++++++++++++++++++
->  drivers/gpu/host1x/dev.c       |  12 +
->  include/linux/host1x.h         |   1 +
->  6 files changed, 517 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/tegra/nvdec.c
+> If this is the *only* request for a change on your
+> series, please tell me that and I can sign off on
 
-...
+So far, this has been the only request.
 
-> +static int nvdec_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct host1x_syncpt **syncpts;
-> +	struct resource *regs;
-> +	struct nvdec *nvdec;
-> +	int err;
-> +
-> +	/* inherit DMA mask from host1x parent */
-> +	err = dma_coerce_mask_and_coherent(dev, *dev->parent->dma_mask);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	nvdec = devm_kzalloc(dev, sizeof(*nvdec), GFP_KERNEL);
-> +	if (!nvdec)
-> +		return -ENOMEM;
-> +
-> +	nvdec->config = of_device_get_match_data(dev);
-> +
-> +	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
-> +	if (!syncpts)
-> +		return -ENOMEM;
-> +
-> +	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!regs) {
-> +		dev_err(&pdev->dev, "failed to get registers\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	nvdec->regs = devm_ioremap_resource(dev, regs);
-> +	if (IS_ERR(nvdec->regs))
-> +		return PTR_ERR(nvdec->regs);
-> +
+> this without you implementing my suggestion.  But
+> if you post a version 2, please do what I describe.
+> 
 
-We should be able to use devm_platform_get_and_ioremap_resource() here.
+I will incorporate these if I end up sending a v2.
 
-> +	nvdec->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(nvdec->clk)) {
-> +		dev_err(&pdev->dev, "failed to get clock\n");
-> +		return PTR_ERR(nvdec->clk);
-> +	}
-> +
-> +	if (!dev->pm_domain) {
-
-Looks like the power-domain is required by device-tree and so do we need
-this?
-
-> +		nvdec->rst = devm_reset_control_get(dev, "nvdec");
-> +		if (IS_ERR(nvdec->rst)) {
-> +			dev_err(&pdev->dev, "failed to get reset\n");
-> +			return PTR_ERR(nvdec->rst);
-> +		}
-> +	}
-> +
-> +	nvdec->falcon.dev = dev;
-> +	nvdec->falcon.regs = nvdec->regs;
-> +
-> +	err = falcon_init(&nvdec->falcon);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	platform_set_drvdata(pdev, nvdec);
-> +
-> +	INIT_LIST_HEAD(&nvdec->client.base.list);
-> +	nvdec->client.base.ops = &nvdec_client_ops;
-> +	nvdec->client.base.dev = dev;
-> +	nvdec->client.base.class = HOST1X_CLASS_NVDEC;
-> +	nvdec->client.base.syncpts = syncpts;
-> +	nvdec->client.base.num_syncpts = 1;
-> +	nvdec->dev = dev;
-> +
-> +	INIT_LIST_HEAD(&nvdec->client.list);
-> +	nvdec->client.version = nvdec->config->version;
-> +	nvdec->client.ops = &nvdec_ops;
-> +
-> +	err = host1x_client_register(&nvdec->client.base);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to register host1x client: %d\n", err);
-> +		goto exit_falcon;
-> +	}
-> +
-> +	pm_runtime_enable(&pdev->dev);
-> +	if (!pm_runtime_enabled(&pdev->dev)) {
-> +		err = nvdec_runtime_resume(&pdev->dev);
-> +		if (err < 0)
-> +			goto unregister_client;
-> +	}
-
-pm_runtime should always be enabled for 64-bit Tegra and so we should
-not need to check pm_runtime_enabled().
-
-Cheers
-Jon
+Alternatively, would a separate patch with your suggestions applied on top of
+this be acceptable, if I don't?
 
 -- 
-nvpublic
+Kartikeya
