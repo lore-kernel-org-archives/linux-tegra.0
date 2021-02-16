@@ -5,208 +5,177 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A29C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 14:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1183AC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A01C64D7F
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 14:55:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F7864E0F
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbhBPOzo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Feb 2021 09:55:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbhBPOzm (ORCPT
+        id S229894AbhBPPQw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Feb 2021 10:16:52 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9563 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229812AbhBPPQv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Feb 2021 09:55:42 -0500
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2200EC061574
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Feb 2021 06:55:03 -0800 (PST)
-Received: by mail-il1-x130.google.com with SMTP id p15so8482913ilq.8
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Feb 2021 06:55:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0L3LUUd4CN2tocODr+9FJOieK/FWdEsnDt1BTgQNXTw=;
-        b=Iufza7OCXAe9UVW0oYI17XE7VpPSXowcoZafTUF02MMumA7XJp0ZoetVtQ3PsYCWWe
-         Zr1G4+kCX4mc8LI6YmNgY+RUQAYwnFVmOC0dHr8pxlcpfqr64GyKSfiERsxQoLqNyDJD
-         WTZe+0OcPC4dsMztfh+85nt4N6c0nmgcFfPbs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0L3LUUd4CN2tocODr+9FJOieK/FWdEsnDt1BTgQNXTw=;
-        b=ji9xBmvKurTVjMf63jaQhYIxHCROMo9coywmv9bNuJs0YuQqRUBvF3JJt5+uqQmXS+
-         /Fe5fk8xyI+zs9qRZ7chx8Jgf2ki2mQFZNLHRZKC9B/ZGviPZuXsw7wbNMvk+Zc+V19l
-         bzOYdR7rkbHzWBZVzvaBfP8p9VNYMd3BlWTTm38QmvbuUrXJ87MAeHbzfe0STJZnw4QO
-         V4BnQdkuIsOqTjTtrVWKHjWdtwicT5cvLm74QXdIEB6ZhIJZVkA0Ztf1YQ29MYfQvRXf
-         PjQscN/+mQQAmOPrBfRFeDRPUDvGCiFiDBBH5dfVDSqycqqpHnt+4mcXbAkuqRgytxih
-         /YUA==
-X-Gm-Message-State: AOAM531zqsYIatqorRoxT/Ovu2Di5+0ZguW7jjEmgdRNSROaDDGU9CHq
-        QJ3Jxurf0fZDqW5IhwS3Vn/K/A==
-X-Google-Smtp-Source: ABdhPJzt5Yfzzw7DoFwQ768GJoYdE5YZWKfKbrolE9kxw0DKXKKgAyl+O5kXJCVCjLWqfVLjJfLRUQ==
-X-Received: by 2002:a05:6e02:164c:: with SMTP id v12mr16847550ilu.49.1613487301947;
-        Tue, 16 Feb 2021 06:55:01 -0800 (PST)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id g11sm874048iom.23.2021.02.16.06.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Feb 2021 06:55:01 -0800 (PST)
-Subject: Re: [PATCH 02/13] staging: greybus: Switch from strlcpy to strscpy
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        William Cohen <wcohen@redhat.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rric@kernel.org>, greybus-dev@lists.linaro.org,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-References: <20210131172838.146706-1-memxor@gmail.com>
- <20210131172838.146706-3-memxor@gmail.com>
-From:   Alex Elder <elder@ieee.org>
-Message-ID: <b565bdae-10a9-9b6c-ae60-dcee88f7dedd@ieee.org>
-Date:   Tue, 16 Feb 2021 08:54:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Tue, 16 Feb 2021 10:16:51 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B602be1bb0000>; Tue, 16 Feb 2021 07:16:11 -0800
+Received: from [10.21.180.91] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 16 Feb
+ 2021 15:16:08 +0000
+Subject: Re: [PATCH 3/3] drm/tegra: Add NVDEC driver
+To:     Mikko Perttunen <mperttunen@nvidia.com>,
+        <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <robh+dt@kernel.org>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20210213101512.3275069-1-mperttunen@nvidia.com>
+ <20210213101512.3275069-4-mperttunen@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <ae6c0ee3-244b-896f-63c6-7c8a88e56f07@nvidia.com>
+Date:   Tue, 16 Feb 2021 15:16:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210131172838.146706-3-memxor@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210213101512.3275069-4-mperttunen@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1613488571; bh=Bvyw6WYHS0mbF0ur9xBy954MChniTTgGJ4L0kjaX+u8=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=lk3EOjYXOLK0NepzoWjxeuF/wR5m7nIqsxWx3AQqCRoEkZQDSISxI6QvyKFJCPYjI
+         rAD/ZnzRVXuRz4SOn4xG8FqfT6j0uMH6+M9fp0cRpVCPpmUg8mISk9Z9cEic/RsFd/
+         kkGT7wevChVcD6Hqf2QpfigXny05X5lX+A/RrlRnAl/NsuhXpYGUthA24Z9W0GTlEg
+         nWKmlciN96kHnsfT9AfsvqZ7lYu/HZ2mG9zZWqBpPUpmSNZxA3qPu5mXvecCqi1OeY
+         vh5vDIXPBKpN94HwT3uq7PMQ6ky3nk0M+wTS3/I48PJAvAGMpWNI3uwAp+CJSsRhX3
+         TNUb+taWWqtYQ==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 1/31/21 11:28 AM, Kumar Kartikeya Dwivedi wrote:
-> strlcpy is marked as deprecated in Documentation/process/deprecated.rst,
-> and there is no functional difference when the caller expects truncation
-> (when not checking the return value). strscpy is relatively better as it
-> also avoids scanning the whole source string.
+
+On 13/02/2021 10:15, Mikko Perttunen wrote:
+> Add support for booting and using NVDEC on Tegra210, Tegra186
+> and Tegra194 to the Host1x and TegraDRM drivers. Booting in
+> secure mode is not currently supported.
 > 
-> This silences the related checkpatch warnings from:
-> 5dbdb2d87c29 ("checkpatch: prefer strscpy to strlcpy")
-> 
-> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-
-This is a good change.  But while you're at it, I would
-appreciate if you would convert a few spots to use
-sizeof(dest) rather than a fixed constant.  I will
-point them out below.
-
-If this is the *only* request for a change on your
-series, please tell me that and I can sign off on
-this without you implementing my suggestion.  But
-if you post a version 2, please do what I describe.
-
-Thanks.
-
-					-Alex
-
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->   drivers/staging/greybus/audio_helper.c   | 2 +-
->   drivers/staging/greybus/audio_module.c   | 2 +-
->   drivers/staging/greybus/audio_topology.c | 6 +++---
->   drivers/staging/greybus/power_supply.c   | 2 +-
->   drivers/staging/greybus/spilib.c         | 4 ++--
->   5 files changed, 8 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/tegra/Makefile |   3 +-
+>  drivers/gpu/drm/tegra/drm.c    |   4 +
+>  drivers/gpu/drm/tegra/drm.h    |   1 +
+>  drivers/gpu/drm/tegra/nvdec.c  | 497 +++++++++++++++++++++++++++++++++
+>  drivers/gpu/host1x/dev.c       |  12 +
+>  include/linux/host1x.h         |   1 +
+>  6 files changed, 517 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/tegra/nvdec.c
 
-. . .
+...
 
+> +static int nvdec_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct host1x_syncpt **syncpts;
+> +	struct resource *regs;
+> +	struct nvdec *nvdec;
+> +	int err;
+> +
+> +	/* inherit DMA mask from host1x parent */
+> +	err = dma_coerce_mask_and_coherent(dev, *dev->parent->dma_mask);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	nvdec = devm_kzalloc(dev, sizeof(*nvdec), GFP_KERNEL);
+> +	if (!nvdec)
+> +		return -ENOMEM;
+> +
+> +	nvdec->config = of_device_get_match_data(dev);
+> +
+> +	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
+> +	if (!syncpts)
+> +		return -ENOMEM;
+> +
+> +	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!regs) {
+> +		dev_err(&pdev->dev, "failed to get registers\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	nvdec->regs = devm_ioremap_resource(dev, regs);
+> +	if (IS_ERR(nvdec->regs))
+> +		return PTR_ERR(nvdec->regs);
+> +
 
-> diff --git a/drivers/staging/greybus/audio_module.c b/drivers/staging/greybus/audio_module.c
-> index a243d60f0..0f9fdc077 100644
-> --- a/drivers/staging/greybus/audio_module.c
-> +++ b/drivers/staging/greybus/audio_module.c
-> @@ -342,7 +342,7 @@ static int gb_audio_probe(struct gb_bundle *bundle,
->   	/* inform above layer for uevent */
->   	dev_dbg(dev, "Inform set_event:%d to above layer\n", 1);
->   	/* prepare for the audio manager */
-> -	strlcpy(desc.name, gbmodule->name, GB_AUDIO_MANAGER_MODULE_NAME_LEN);
-> +	strscpy(desc.name, gbmodule->name, GB_AUDIO_MANAGER_MODULE_NAME_LEN);
+We should be able to use devm_platform_get_and_ioremap_resource() here.
 
-Please use this here instead:
+> +	nvdec->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(nvdec->clk)) {
+> +		dev_err(&pdev->dev, "failed to get clock\n");
+> +		return PTR_ERR(nvdec->clk);
+> +	}
+> +
+> +	if (!dev->pm_domain) {
 
-	strscpy(desc.name, gbmodule->name, sizeof(desc.name));
+Looks like the power-domain is required by device-tree and so do we need
+this?
 
->   	desc.vid = 2; /* todo */
->   	desc.pid = 3; /* todo */
->   	desc.intf_id = gbmodule->dev_id;
-> diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging/greybus/audio_topology.c
-> index 662e3e8b4..e816e4db5 100644
-> --- a/drivers/staging/greybus/audio_topology.c
-> +++ b/drivers/staging/greybus/audio_topology.c
-> @@ -200,7 +200,7 @@ static int gbcodec_mixer_ctl_info(struct snd_kcontrol *kcontrol,
->   			return -EINVAL;
->   		name = gbaudio_map_controlid(module, data->ctl_id,
->   					     uinfo->value.enumerated.item);
-> -		strlcpy(uinfo->value.enumerated.name, name, NAME_SIZE);
-> +		strscpy(uinfo->value.enumerated.name, name, NAME_SIZE);
+> +		nvdec->rst = devm_reset_control_get(dev, "nvdec");
+> +		if (IS_ERR(nvdec->rst)) {
+> +			dev_err(&pdev->dev, "failed to get reset\n");
+> +			return PTR_ERR(nvdec->rst);
+> +		}
+> +	}
+> +
+> +	nvdec->falcon.dev = dev;
+> +	nvdec->falcon.regs = nvdec->regs;
+> +
+> +	err = falcon_init(&nvdec->falcon);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	platform_set_drvdata(pdev, nvdec);
+> +
+> +	INIT_LIST_HEAD(&nvdec->client.base.list);
+> +	nvdec->client.base.ops = &nvdec_client_ops;
+> +	nvdec->client.base.dev = dev;
+> +	nvdec->client.base.class = HOST1X_CLASS_NVDEC;
+> +	nvdec->client.base.syncpts = syncpts;
+> +	nvdec->client.base.num_syncpts = 1;
+> +	nvdec->dev = dev;
+> +
+> +	INIT_LIST_HEAD(&nvdec->client.list);
+> +	nvdec->client.version = nvdec->config->version;
+> +	nvdec->client.ops = &nvdec_ops;
+> +
+> +	err = host1x_client_register(&nvdec->client.base);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to register host1x client: %d\n", err);
+> +		goto exit_falcon;
+> +	}
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	if (!pm_runtime_enabled(&pdev->dev)) {
+> +		err = nvdec_runtime_resume(&pdev->dev);
+> +		if (err < 0)
+> +			goto unregister_client;
+> +	}
 
-Please use this here instead:
+pm_runtime should always be enabled for 64-bit Tegra and so we should
+not need to check pm_runtime_enabled().
 
-		strscpy(uinfo->value.enumerated.name, name,
-			sizeof(uinfo->valiue.enumerated.name));
+Cheers
+Jon
 
-(I know NAME_SIZE is used throughout this file, and
-could also be converted in this way, but we can save
-that for another patch.)
-
->   		break;
->   	default:
->   		dev_err(comp->dev, "Invalid type: %d for %s:kcontrol\n",
-> @@ -1047,7 +1047,7 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
->   	}
->   
->   	/* Prefix dev_id to widget control_name */
-> -	strlcpy(temp_name, w->name, NAME_SIZE);
-> +	strscpy(temp_name, w->name, NAME_SIZE);
-
-Please use this here instead:
-
-	strscpy(temp_name, w->name, sizeof(temp_name));
-
->   	snprintf(w->name, NAME_SIZE, "GB %d %s", module->dev_id, temp_name);
->   
->   	switch (w->type) {
-> @@ -1169,7 +1169,7 @@ static int gbaudio_tplg_process_kcontrols(struct gbaudio_module_info *module,
->   		}
->   		control->id = curr->id;
->   		/* Prefix dev_id to widget_name */
-> -		strlcpy(temp_name, curr->name, NAME_SIZE);
-> +		strscpy(temp_name, curr->name, NAME_SIZE);
-
-
-Please use this here instead:
-
-		strscpy(temp_name, curr->name, sizeof(temp_name));
-
->   		snprintf(curr->name, NAME_SIZE, "GB %d %s", module->dev_id,
->   			 temp_name);
->   		control->name = curr->name;
-
-. . .
+-- 
+nvpublic
