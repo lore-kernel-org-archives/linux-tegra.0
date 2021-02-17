@@ -2,129 +2,119 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C491C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A16C43331
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Feb 2021 18:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49166614A5
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Feb 2021 15:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9D264DEC
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Feb 2021 18:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbhBPPuR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:50:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbhBPPuQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:50:16 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29EBC061756
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Feb 2021 07:49:35 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id n201so10560627iod.12
-        for <linux-tegra@vger.kernel.org>; Tue, 16 Feb 2021 07:49:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=y7FAAueIFMAXFTE9aqqwaVuxVLzWJ41n1RibstBf/uw=;
-        b=SHCf+Lr8Fai0+JIKF6loXEw9yJRu+EiA1D8AdZuiQpbpVYhDAoGb5wb0MZdfDrE+I8
-         wqw5SVPw5Haw+RsZQ25HkOw81kkwDgzLKgQWVChvG9y2l/EYO5gmn0d3nglSTU5XWHoA
-         xosoQ8MpYSKhzMu6bczvWbOudi2SHjqAjmSZ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y7FAAueIFMAXFTE9aqqwaVuxVLzWJ41n1RibstBf/uw=;
-        b=qWUEX9OL8xj7uay9TXF0KYg2XG1TfmNjrEnZmS6ymnOoAdFvyQHKXxoy5YTG8bROtf
-         JIIw9g4VTqtfkeAo/GQq81WkliSa8+JIihzD7nN6fPi7dUMxC9N9MfCQLjgLLdQqZ+mP
-         vzETNs2yuG2L8PwyrCEh97vDmAq+IgSARoZ6RotkVvhG2+epkUDgXC7ZB/tqDuTe8KWK
-         UV2kNdrc0SiPQ37LDwu39sk+vEHAR4tYPqswz42F8fhcfHvTdK+MuBsPJNV3QhowWOkZ
-         1tJ64Q5Yotpo1maUvpqau4OS4npk0data93KmMZOQjk4Un70S4t8jYoNFi3hiW6D+Cms
-         B1Pw==
-X-Gm-Message-State: AOAM531/XkpSaFUAhncyaGEFU9FaXrgP1Bf6c7Jw3QUQpC2uqshZ7PSb
-        knK9IeFUao8c3gWGkKk0sVo8+A==
-X-Google-Smtp-Source: ABdhPJwUZNvwU49wt0M7ae6klwO05ufg/idd6YcypAKodnZIVmawBJoecT36s9t00oRUiMz2HIYfrw==
-X-Received: by 2002:a5e:a911:: with SMTP id c17mr17526518iod.20.1613490575345;
-        Tue, 16 Feb 2021 07:49:35 -0800 (PST)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id i20sm10877449ila.82.2021.02.16.07.49.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Feb 2021 07:49:34 -0800 (PST)
-Subject: Re: [PATCH 02/13] staging: greybus: Switch from strlcpy to strscpy
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        William Cohen <wcohen@redhat.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rric@kernel.org>, greybus-dev@lists.linaro.org,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-References: <20210131172838.146706-1-memxor@gmail.com>
- <20210131172838.146706-3-memxor@gmail.com>
- <b565bdae-10a9-9b6c-ae60-dcee88f7dedd@ieee.org>
- <20210216154800.jg24ahfj52t6qgbd@apollo>
-From:   Alex Elder <elder@ieee.org>
-Message-ID: <8b51d270-5d25-919d-2034-8452513e3eaf@ieee.org>
-Date:   Tue, 16 Feb 2021 09:49:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S233017AbhBQSJS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 Feb 2021 13:09:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233065AbhBQSJN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 17 Feb 2021 13:09:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 254BD64E42;
+        Wed, 17 Feb 2021 18:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613585312;
+        bh=mlVck3mitGbq4KsjHsg+Yp+wLuiTRge4SmXhwvupCJA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pcpUB+bwniLXzIs+cBvLaPRAEjbhPwkCX4VK8YS1MQe3zULOCs4fJgwHYw7Uqo6We
+         gu5Z5Ji2v15gLmkbSOWs4bsN2PwW/6RAAYgicliuB3fHgpcP1Jx2XlrROvRpUS/F9H
+         bhmT6TbKs8+Lgqkb7Y4K5hcHMtuMsAjkmyGZ7XUfcVBaV9aKRFeEwI2wh4hXgPQ/yO
+         xfUcGFLc3bRSqJBkHyzgX53Ubi4iYZOrJk6iQfSHxMloXEsRah/REjZYCj0738UQ2E
+         eIURxqB8vya/y3sxmy0UoW4jXclmaE9h0FL1XeXDlv/1K2Ce7f3Il6dYkUHs7ri+Tc
+         slowUVQ5DxHkA==
+Date:   Wed, 17 Feb 2021 10:08:30 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Jan Kotas <jank@cadence.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
+        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Tero Kristo <kristo@kernel.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <20210217100830.50db2195@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20210216082046.GA4803@dell>
+References: <20210212212503.GC179940@dell>
+        <20210212212630.GD179940@dell>
+        <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
+        <20210212223739.GE179940@dell>
+        <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
+        <YCf4kkMsX+Ymgy6N@lunn.ch>
+        <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
+        <YCmUOHTtc+j4eLkO@lunn.ch>
+        <20210215084952.GF179940@dell>
+        <20210215094509.0b1f0bbf@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <20210216082046.GA4803@dell>
 MIME-Version: 1.0
-In-Reply-To: <20210216154800.jg24ahfj52t6qgbd@apollo>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2/16/21 9:48 AM, Kumar Kartikeya Dwivedi wrote:
-> On Tue, Feb 16, 2021 at 08:24:59PM IST, Alex Elder wrote:
->> This is a good change.  But while you're at it, I would
->> appreciate if you would convert a few spots to use
->> sizeof(dest) rather than a fixed constant.  I will
->> point them out below.
->>
->> If this is the *only* request for a change on your
->> series, please tell me that and I can sign off on
+On Tue, 16 Feb 2021 08:20:46 +0000 Lee Jones wrote:
+> On Mon, 15 Feb 2021, Jakub Kicinski wrote:
+> > On Mon, 15 Feb 2021 08:49:52 +0000 Lee Jones wrote:  
+> > > Yes, please share.  
+> > 
+> > https://github.com/kuba-moo/nipa  
 > 
-> So far, this has been the only request.
+> Thanks for this.
 > 
->> this without you implementing my suggestion.  But
->> if you post a version 2, please do what I describe.
->>
-> 
-> I will incorporate these if I end up sending a v2.
-> 
-> Alternatively, would a separate patch with your suggestions applied on top of
-> this be acceptable, if I don't?
+> Oh, I see.  So you conduct tests locally, then post them up in a
+> section called 'Checks' using the provided API.  
 
-Yes.  Assuming you do that, for this patch (as-is):
+For some definition of "locally" - NIPA runs on a rented VM.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+> I assume that Patchwork does not alert the user when something has
+> gone awry?  Is this something Nipa does?
 
+The way we run it on netdev is maintainer-centric, IOW we see 
+the failures in patchwork and complain to people manually.
+The netdev mailing list gets too many messages as is, if NIPA 
+responded with results automatically (which is not that hard
+technically) my concern is that people would be more likely to
+send untested patches to the mailing list and rely on the bot.
