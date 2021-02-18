@@ -2,133 +2,207 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD42C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Feb 2021 18:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B832C433E6
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Feb 2021 18:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD85B64EB3
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Feb 2021 18:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA2B64EB4
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Feb 2021 18:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231734AbhBRSWK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Feb 2021 13:22:10 -0500
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:39243 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233774AbhBRQiV (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Feb 2021 11:38:21 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id DF1EFE1F;
-        Thu, 18 Feb 2021 11:35:18 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 18 Feb 2021 11:35:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=9glu1NqYQ89GMrISno2hyWbjb5g
-        /OTCuIq2T05YOits=; b=G6pm+BxV6Dh9oiD6SJUz1xXNJ7zPPCZpBW9AEchzgQY
-        SsCnHwIhIZleE9PczJeaxSABPuNfyZNS1u3Zj2kDGJdZzYOuF3md0m5GftSNoeev
-        ZavMKbuw+WSPSBcY4VpVTBkV/ddPDz1xHbCCETt+RAuJ3CD0g/aAsRM9ST0bJ2+t
-        +6ifUhzBy+1w+NmK0Bu03Ar0ji4npJeGmU9jySby/2b7puTSkKn/YECDpUC+LyuL
-        6Guj5EkOzfnyrZ7fuCEdeNrI7VmN9ZSWN6LpeNmu5/FnzVAUNcjxOj673ayo+RK2
-        5fiMH3d3rCy4RcepJW9kS8GD2lNioOxaP+2WrEFLkFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=9glu1N
-        qYQ89GMrISno2hyWbjb5g/OTCuIq2T05YOits=; b=F8tizhTRDZ1QmkV4IX/nKz
-        GFGeeljOv0nlv95ycFp0ze5k8JaZwhxcx+uGwtKUsVGuJaf3wBvlVHShQ6AEUuUa
-        nYa/M+CR3Q7nQv96fSu/CfaeIwuzJxRKrhn2B8yNMcGRvghgtZ0Vp/RbSek1ItaO
-        Huq8VE54K1HbMzSfgJ/qk4vTktg7KPqCaeXhHlIBqpyMVIsKqMHjMXcuPGS+ft/T
-        80Nr4qrm62gEv7vJ1wWgcbm6pcoegFAPfttgQ+bfSTEtA0b5vB4AgmFNGzLe9Jjp
-        2mDgst8VHznkjEYhvASc+FuMU+CJuXELKFptery4MIiY6qnvOy5wsWIYxYIQt8qA
-        ==
-X-ME-Sender: <xms:Q5cuYNHGf4DP6s5Yrk94g87bEt9maVsvZUvIZ5_OSwOa3ygXsvSckA>
-    <xme:Q5cuYCWJqVHxc0TBvW8RaM0wSdODYkxfn4yClOKahSKwcF7ZJMIFzdXO9brx_KJON
-    wVOak8LO-iBIzeTj3U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeggdekjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:Q5cuYPL64pGtEXDOIjB2LytBtepgEjTDIlirUSWB4Z_2bk7CHwRyNw>
-    <xmx:Q5cuYDGxFYNq90q1Kozd9_sE8xI5mkNSdlmaFJwB_t_-qpDhKS53yA>
-    <xmx:Q5cuYDU83mA2iruvPx6pKrkqUS3fSvQrhe9kV_x71Rp0kdmagu5q-g>
-    <xmx:RpcuYHmzfxpDFq6rYEjERoNkSWa7GUcR73y9VFLtc6uo7hgIIot_W0suCF8>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DE99E24005C;
-        Thu, 18 Feb 2021 11:35:14 -0500 (EST)
-Date:   Thu, 18 Feb 2021 17:35:12 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     airlied@linux.ie, daniel@ffwll.ch,
-        maarten.lankhorst@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2] drm/gem: Move drm_gem_fb_prepare_fb() to GEM atomic
- helpers
-Message-ID: <20210218163512.arnmixdkygysxrqk@gilmour>
-References: <20210211081636.28311-1-tzimmermann@suse.de>
+        id S229784AbhBRSWS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Feb 2021 13:22:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229879AbhBRQrZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 18 Feb 2021 11:47:25 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 99C9F64EDC;
+        Thu, 18 Feb 2021 16:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613666715;
+        bh=jDSsxhHhJQLjYvRcW7R89rFyId6lOBeirV5E6VbIGXw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qdtn2vnXIAtkwB8ZWBGCgpSoRGr9T7059zLwBcRgY85RV2BfoDH1+QpiwKrBzu52p
+         h0xYt3P5XWUSR1jMZeL3rHhrdct6AnpNMefjllybFvm8SGlXXTvrfd5N6REnsTUBZ+
+         13FJbrn/y/mPiEdJJtPop2/k23pzofmlJ9BN07n+ZKWcSY4peJP9LkxulPG8E+LIZx
+         F0IQZYvxjtX6s9d4VFqcvux4lH7q0ShWoqWssrtzoOj2LyUmV3nXM9yTTAxDCVNy0v
+         C3gB2c5WEii1+tqqC+PLvVgMUVImN6wgxWS+oxU8UkMlxLqxz9FVyJfu43agR51x0L
+         M4It0EobXBYvw==
+Received: by mail-ed1-f46.google.com with SMTP id o3so5193078edv.4;
+        Thu, 18 Feb 2021 08:45:15 -0800 (PST)
+X-Gm-Message-State: AOAM532repfYSZlKObGuH9XzxMrnqcXy0Ndk6Kzzaxy4pZi3yLeEqcPK
+        shpM6fvq+VzzT6NUb3nrhP3Zy6ixD1LP7Nko2Q==
+X-Google-Smtp-Source: ABdhPJzcR7G8p/C+KLX15Pa4+7UbxRXGkJr8RrCBFGB5NAS+BPryBN+SzFQLQGBlF82UdD7UBNzMWizKS/iLFZ2s82I=
+X-Received: by 2002:aa7:cd51:: with SMTP id v17mr5100382edw.194.1613666713964;
+ Thu, 18 Feb 2021 08:45:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qyrmapmaovukaths"
-Content-Disposition: inline
-In-Reply-To: <20210211081636.28311-1-tzimmermann@suse.de>
+References: <20210213101512.3275069-1-mperttunen@nvidia.com>
+ <20210213101512.3275069-2-mperttunen@nvidia.com> <20210217214935.GA2804400@robh.at.kernel.org>
+ <9f0152cc-ca9a-5b45-df5d-e61a79c87ea4@kapsi.fi>
+In-Reply-To: <9f0152cc-ca9a-5b45-df5d-e61a79c87ea4@kapsi.fi>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 18 Feb 2021 10:45:00 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKpUChquFh9zz0Ec8eTeL6KdGAY+eJyW3wTBDm06w13-A@mail.gmail.com>
+Message-ID: <CAL_JsqKpUChquFh9zz0Ec8eTeL6KdGAY+eJyW3wTBDm06w13-A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: Add YAML bindings for Host1x and NVDEC
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Feb 18, 2021 at 5:04 AM Mikko Perttunen <cyndis@kapsi.fi> wrote:
+>
+> On 2/17/21 11:49 PM, Rob Herring wrote:
+> > On Sat, Feb 13, 2021 at 12:15:10PM +0200, Mikko Perttunen wrote:
+> >> Convert the original Host1x bindings to YAML and add new bindings for
+> >> NVDEC, now in a more appropriate location. The old text bindings
+> >> for Host1x and engines are still kept at display/tegra/ since they
+> >> encompass a lot more engines that haven't been converted over yet.
+> >>
+> >> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> >> ---
+> >>   .../gpu/host1x/nvidia,tegra20-host1x.yaml     | 129 ++++++++++++++++++
+> >>   .../gpu/host1x/nvidia,tegra210-nvdec.yaml     |  90 ++++++++++++
+> >>   MAINTAINERS                                   |   1 +
+> >>   3 files changed, 220 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra20-host1x.yaml
+> >>   create mode 100644 Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra20-host1x.yaml
+> >> new file mode 100644
+> >> index 000000000000..613c6601f0f1
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra20-host1x.yaml
+> >> @@ -0,0 +1,129 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra20-host1x.yaml#"
+> >> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> >> +
+> >> +title: Device tree binding for NVIDIA Host1x
+> >> +
+> >> +maintainers:
+> >> +  - Thierry Reding <treding@gmail.com>
+> >> +  - Mikko Perttunen <mperttunen@nvidia.com>
+> >> +
+> >> +properties:
+> >> +  $nodename:
+> >> +    pattern: "^host1x@[0-9a-f]*$"
+> >> +
+> >> +  compatible:
+> >> +    oneOf:
+> >> +      - const: nvidia,tegra20-host1x
+> >> +      - const: nvidia,tegra30-host1x
+> >> +      - const: nvidia,tegra114-host1x
+> >> +      - const: nvidia,tegra124-host1x
+> >> +      - items:
+> >> +          - const: nvidia,tegra132-host1x
+> >> +          - const: nvidia,tegra124-host1x
+> >> +      - const: nvidia,tegra210-host1x
+> >> +
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +
+> >> +  interrupts:
+> >> +    items:
+> >> +      - description: Syncpoint threshold interrupt
+> >> +      - description: General interrupt
+> >> +
+> >> +  interrupt-names:
+> >> +    items:
+> >> +      - const: syncpt
+> >> +      - const: host1x
+> >> +
+> >> +  clocks:
+> >> +    maxItems: 1
+> >> +
+> >> +  clock-names:
+> >> +    items:
+> >> +      - const: host1x
+> >> +
+> >> +  resets:
+> >> +    maxItems: 1
+> >> +
+> >> +  reset-names:
+> >> +    items:
+> >> +      - const: host1x
+> >> +
+> >> +  iommus:
+> >> +    maxItems: 1
+> >> +
+> >> +  interconnects:
+> >> +    maxItems: 1
+> >> +
+> >> +  interconnect-names:
+> >> +    items:
+> >> +      - const: dma-mem
+> >> +
+> >> +  '#address-cells':
+> >> +    const: 1
+> >> +
+> >> +  '#size-cells':
+> >> +    const: 1
+> >> +
+> >> +  ranges: true
+> >> +
+> >> +required:
+> >> +  - compatible
+> >> +  - reg
+> >> +  - interrupts
+> >> +  - interrupt-names
+> >> +  - clocks
+> >> +  - clock-names
+> >> +  - resets
+> >> +  - reset-names
+> >> +  - '#address-cells'
+> >> +  - '#size-cells'
+> >> +  - ranges
+> >> +
+> >> +additionalProperties:
+> >> +  type: object
+> >> +
+> >> +if:
+> >> +  properties:
+> >> +    compatible:
+> >> +      contains:
+> >> +        anyOf:
+> >> +          - const: nvidia,tegra186-host1x
+> >> +          - const: nvidia,tegra194-host1x
+> >
+> > Just use 'enum' instead of 'anyOf' and 'const'.
+>
+> Yep, will fix.
+>
+> >
+> >> +then:
+> >> +  properties:
+> >> +    reg:
+> >> +      items:
+> >> +        - description: Hypervisor-accessible register area
+> >> +        - description: VM-accessible register area
+> >
+> > If you test this, it will fail due to the 'maxItems: 1' above. The main
+> > section has to pass for all conditions and then if/them schema add
+> > constraints.
+>
+> Interesting, I did run the schema check and DTB check but I didn't see
+> issues there. In any case, will fix.
 
---qyrmapmaovukaths
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It may pass if you had 'reg = <base1 size1 base2 size2>' rather than
+'reg = <base1 size1>, <base2 size2>'. While the bracketing doesn't
+matter for dtbs, it does currently for the schema.
 
-Hi,
-
-On Thu, Feb 11, 2021 at 09:16:36AM +0100, Thomas Zimmermann wrote:
-> diff --git a/include/drm/drm_gem_framebuffer_helper.h b/include/drm/drm_gem_framebuffer_helper.h
-> index 6b013154911d..495d174d9989 100644
-> --- a/include/drm/drm_gem_framebuffer_helper.h
-> +++ b/include/drm/drm_gem_framebuffer_helper.h
-> @@ -9,9 +9,11 @@ struct drm_framebuffer;
->  struct drm_framebuffer_funcs;
->  struct drm_gem_object;
->  struct drm_mode_fb_cmd2;
-> +#if 0
->  struct drm_plane;
->  struct drm_plane_state;
->  struct drm_simple_display_pipe;
-> +#endif
-
-That's probably not what you meant?
-
-With that fixed,
-Acked-by: Maxime Ripard <mripard@kernel.org>
-
-Thanks!
-Maxime
-
---qyrmapmaovukaths
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYC6XQAAKCRDj7w1vZxhR
-xeYjAQDBp12JMmHuiBCHQBmWyl9fGbmCMg6R9psxq9edd+0vigD+MjBWZAmh8A1d
-2S0DtBQtnfgH07vDxZs1Eb8jJZ+x/QQ=
-=WmxA
------END PGP SIGNATURE-----
-
---qyrmapmaovukaths--
+Rob
