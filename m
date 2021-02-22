@@ -2,286 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115E0C433E9
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Feb 2021 09:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3D8C433E9
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Feb 2021 13:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0AC864EEF
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Feb 2021 09:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCBF464E12
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Feb 2021 13:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbhBVJDT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 Feb 2021 04:03:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56210 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230100AbhBVJCw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 Feb 2021 04:02:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E218DAF99;
-        Mon, 22 Feb 2021 09:02:01 +0000 (UTC)
-Subject: Re: [PATCH v3 02/11] drm: Rename plane atomic_check state names
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Dave Airlie <airlied@redhat.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Alison Wang <alison.wang@nxp.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>, Eric Anholt <eric@anholt.net>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
-        Zack Rusin <zackr@vmware.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-References: <20210219120032.260676-1-maxime@cerno.tech>
- <20210219120032.260676-2-maxime@cerno.tech>
- <51bb5aaf-f771-020b-9a48-77d8679de6a2@suse.de>
- <20210219151235.dsv4mujqyrzndhsn@gilmour>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <2abb00b3-23d2-e652-4194-a10fbf171b88@suse.de>
-Date:   Mon, 22 Feb 2021 10:01:56 +0100
+        id S230228AbhBVNSS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 Feb 2021 08:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231481AbhBVNQ1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 22 Feb 2021 08:16:27 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3776C061574;
+        Mon, 22 Feb 2021 05:15:44 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 4087B1F44D43
+Subject: Re: [PATCH] iommu/tegra-smmu: Fix mc errors on tegra124-nyan
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, joro@8bytes.org,
+        thierry.reding@gmail.com, will@kernel.org
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com, digetx@gmail.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>
+References: <20210218220702.1962-1-nicoleotsuka@gmail.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <7a664911-41bf-2647-716d-0836acd8078a@collabora.com>
+Date:   Mon, 22 Feb 2021 13:15:41 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <20210219151235.dsv4mujqyrzndhsn@gilmour>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="w1lSYWSR69EiDDUmRFseCwFhMSFWd2baX"
+In-Reply-To: <20210218220702.1962-1-nicoleotsuka@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---w1lSYWSR69EiDDUmRFseCwFhMSFWd2baX
-Content-Type: multipart/mixed; boundary="sEqTb7DLvEQPgunNTOiF1zujXM8e72iqO";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Maxime Ripard <maxime@cerno.tech>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
- dri-devel@lists.freedesktop.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, "James (Qian) Wang"
- <james.qian.wang@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Mihail Atanassov <mihail.atanassov@arm.com>,
- Brian Starkey <brian.starkey@arm.com>, Russell King <linux@armlinux.org.uk>,
- Dave Airlie <airlied@redhat.com>, Inki Dae <inki.dae@samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>,
- Tian Tao <tiantao6@hisilicon.com>, John Stultz <john.stultz@linaro.org>,
- Xinwei Kong <kong.kongxinwei@hisilicon.com>,
- Chen Feng <puck.chen@hisilicon.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Philipp Zabel
- <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
- Paul Cercueil <paul@crapouillou.net>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Edmund Dea <edmund.j.dea@intel.com>, Chun-Kuang Hu
- <chunkuang.hu@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Ben Skeggs <bskeggs@redhat.com>, Tomi Valkeinen <tomba@kernel.org>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=c3=bcbner?=
- <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>,
- Vincent Abriou <vincent.abriou@st.com>,
- Yannick Fertre <yannick.fertre@st.com>,
- Philippe Cornu <philippe.cornu@st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Eric Anholt <eric@anholt.net>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- VMware Graphics <linux-graphics-maintainer@vmware.com>,
- Roland Scheidegger <sroland@vmware.com>, Zack Rusin <zackr@vmware.com>,
- Hyun Kwon <hyun.kwon@xilinx.com>, Michal Simek <michal.simek@xilinx.com>,
- amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
-Message-ID: <2abb00b3-23d2-e652-4194-a10fbf171b88@suse.de>
-Subject: Re: [PATCH v3 02/11] drm: Rename plane atomic_check state names
-References: <20210219120032.260676-1-maxime@cerno.tech>
- <20210219120032.260676-2-maxime@cerno.tech>
- <51bb5aaf-f771-020b-9a48-77d8679de6a2@suse.de>
- <20210219151235.dsv4mujqyrzndhsn@gilmour>
-In-Reply-To: <20210219151235.dsv4mujqyrzndhsn@gilmour>
+On 18/02/2021 22:07, Nicolin Chen wrote:
+> Commit 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
+> removed certain hack in the tegra_smmu_probe() by relying on IOMMU core to
+> of_xlate SMMU's SID per device, so as to get rid of tegra_smmu_find() and
+> tegra_smmu_configure() that are typically done in the IOMMU core also.
+> 
+> This approach works for both existing devices that have DT nodes and other
+> devices (like PCI device) that don't exist in DT, on Tegra210 and Tegra3
+> upon testing. However, Page Fault errors are reported on tegra124-Nyan:
+> 
+>   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
+> 	 EMEM address decode error (SMMU translation error [--S])
+>   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
+> 	 Page fault (SMMU translation error [--S])
+> 
+> After debugging, I found that the mentioned commit changed some function
+> callback sequence of tegra-smmu's, resulting in enabling SMMU for display
+> client before display driver gets initialized. I couldn't reproduce exact
+> same issue on Tegra210 as Tegra124 (arm-32) differs at arch-level code.
+> 
+> Actually this Page Fault is a known issue, as on most of Tegra platforms,
+> display gets enabled by the bootloader for the splash screen feature, so
+> it keeps filling the framebuffer memory. A proper fix to this issue is to
+> 1:1 linear map the framebuffer memory to IOVA space so the SMMU will have
+> the same address as the physical address in its page table. Yet, Thierry
+> has been working on the solution above for a year, and it hasn't merged.
+> 
+> Therefore, let's partially revert the mentioned commit to fix the errors.
+> 
+> The reason why we do a partial revert here is that we can still set priv
+> in ->of_xlate() callback for PCI devices. Meanwhile, devices existing in
+> DT, like display, will go through tegra_smmu_configure() at the stage of
+> bus_set_iommu() when SMMU gets probed(), as what it did before we merged
+> the mentioned commit.
+> 
+> Once we have the linear map solution for framebuffer memory, this change
+> can be cleaned away.
+> 
+> [Big thank to Guillaume who reported and helped debugging/verification]
+> 
+> Fixes: 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
+> Reported-by: Guillaume Tucker <guillaume.tucker@collabora.com>
 
---sEqTb7DLvEQPgunNTOiF1zujXM8e72iqO
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+You're welcome.  I would actually prefer to see it as reported by
+kernelci.org since I wouldn't have found it without the automated
+testing and bisection.  If you're OK to change this trailer:
 
+  Reported-by: "kernelci.org bot" <bot@kernelci.org>
 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+> 
+> Guillaume, would you please give a "Tested-by" to this change? Thanks!
 
-Am 19.02.21 um 16:12 schrieb Maxime Ripard:
-> Hi Thomas,
->=20
-> Thanks for your review!
->=20
-> On Fri, Feb 19, 2021 at 03:49:22PM +0100, Thomas Zimmermann wrote:
->>> diff --git a/drivers/gpu/drm/imx/ipuv3-plane.c b/drivers/gpu/drm/imx/=
-ipuv3-plane.c
->>> index 075508051b5f..1873a155bb26 100644
->>> --- a/drivers/gpu/drm/imx/ipuv3-plane.c
->>> +++ b/drivers/gpu/drm/imx/ipuv3-plane.c
->>> @@ -337,12 +337,12 @@ static const struct drm_plane_funcs ipu_plane_f=
-uncs =3D {
->>>    };
->>>    static int ipu_plane_atomic_check(struct drm_plane *plane,
->>> -				  struct drm_plane_state *state)
->>> +				  struct drm_plane_state *new_state)
->>
->> This function uses a different naming convention then the others?
->>
->>>    {
->>>    	struct drm_plane_state *old_state =3D plane->state;
->=20
-> So, the function already had a variable named old_state, so I was
-> actually trying to make the drivers consistent here: having one variabl=
-e
-> with old_state and new_plane_state felt weird.
->=20
-> The heuristic is thus to use the convention of the driver if one exists=
+Sure. https://lava.collabora.co.uk/scheduler/job/3249387
 
-> already, and if there's none pick new_plane_state.
->=20
-> It makes it indeed inconsistent across drivers, but it felt more natura=
-l
-> to be consistent within a single driver.
+  Tested-by: Guillaume Tucker <guillaume.tucker@collabora.com>
 
-Makes sense.
-
->=20
-> Maxime
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-(HRB 36809, AG N=FCrnberg)
-Gesch=E4ftsf=FChrer: Felix Imend=F6rffer
-
-
---sEqTb7DLvEQPgunNTOiF1zujXM8e72iqO--
-
---w1lSYWSR69EiDDUmRFseCwFhMSFWd2baX
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmAzcwQFAwAAAAAACgkQlh/E3EQov+BQ
-PRAApEdNgQ+vqv+VzwVCbZGvaYSJtb908qPub+x6G/TOtgTxy8nU/+4qswCNV1TRb47fJcScii5P
-muJ5755oRh4YUO4NVEtX8GKHOgjfCwpAUXuwlWMs7HX4yxmi5IlBj1w5nsFNF88DhVuB+2AEFXkd
-ata8+bV5tpBKfULJcNvMYIG/sYzusZAf2m8hmCGpNKXC5Y1MkdVAaNzoZDmjOMdvyC8YVmiyuQYm
-XH6RqvBNEdrVf8QpbecMX946GtVx/ZYhheMzeojAjs6BSN56nkEbFyeDTDZy5Dj2exfMb7r4c2Md
-yXh3NGjtYAZc9AYFG5Gm23hEioOh1NeLQm5V2YA7FxtDqonl3w1pTvIBSdb/6tBAPFUWfiMOZIkI
-FgBteGCFHY7zTITnY+R0RGDY6oFZApyVwiXtxj2bybCEyBG7dHBAJ7ga+tRvT7fG5T94Q6y1cyKj
-v86blGFaPEZYZfeRbwrKbmwq/fbT6/OFH7eZLxzn5fLH1NJora6NM5gDXssJ77KwbVhbra2uzHuB
-uzpM8wC0JU7YFsd8boCIoxlST7QHttvFX8pSd///+Hub0U1/QXZPfQ4t0J1AheysqA/onDRoyd8U
-k3hPMvUtSmZwZSAGSO/6jzkR1Tki5qIgqmKJ6VDh8w7gpWSnDWkXcPiQlrNo4sWJnQQgDrL11BMb
-e3E=
-=cO2r
------END PGP SIGNATURE-----
-
---w1lSYWSR69EiDDUmRFseCwFhMSFWd2baX--
+Thanks,
+Guillaume
