@@ -2,77 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D9BC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 09:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2044FC433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 11:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B29E164F18
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 09:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06DF64F1E
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 11:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236079AbhBYJIr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Feb 2021 04:08:47 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:52544 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234781AbhBYJGo (ORCPT
+        id S233269AbhBYLsN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Feb 2021 06:48:13 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6883 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232296AbhBYLsM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Feb 2021 04:06:44 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UPWiIBt_1614243960;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0UPWiIBt_1614243960)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 25 Feb 2021 17:06:00 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
-To:     krzk@kernel.org
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Yang Li <yang.lee@linux.alibaba.com>
-Subject: [PATCH] memory: tegra: Replace DEFINE_SIMPLE_ATTRIBUTE with  DEFINE_DEBUGFS_ATTRIBUTE
-Date:   Thu, 25 Feb 2021 17:05:58 +0800
-Message-Id: <1614243958-55847-1-git-send-email-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 25 Feb 2021 06:48:12 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B60378e510000>; Thu, 25 Feb 2021 03:47:29 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 25 Feb
+ 2021 11:47:29 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Thu, 25 Feb 2021 11:47:29 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/17] 5.4.101-rc1 review
+In-Reply-To: <20210225092515.001992375@linuxfoundation.org>
+References: <20210225092515.001992375@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <7e3d68d32b8c47bb92ad7c74f2d164d5@HQMAIL111.nvidia.com>
+Date:   Thu, 25 Feb 2021 11:47:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1614253649; bh=d1SPA5jeCfakh0LZd8OjZXUIp21/mqXJsr35+Xt4Zfk=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=p12qLBCX4yD5z+bXhj1parQi9p+Zw3kMkEwI7n1ObExdG/cAZ8um00U+CCayNEFim
+         q9vOpbc6YAh8K2DbCDZicU2A0GkTB3xwkrJsy09Xwx6MnhP//APlRtLgaxOWs6xSPt
+         V3OkDEkoKhRgJdr3876PxMReBfqDbb2/GqgSflgKs/7xjDD9BGLciujaRKVZS6VbOc
+         L/G+HgA/UWI+LMYAdmnQNNM6Zau4tB2VzzuHUSLXLsWj2dbI77woSnepwkDtd/bMY1
+         43DlPWoXZaQlyVcx1eOvflMXh/tUWk3sVuVrajqr7y3UYmOonEjn9hHzc8XuuU5t8Y
+         xcV7n42Y2zCZg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix the following coccicheck warning:
-./drivers/memory/tegra/tegra124-emc.c:1207:0-23: WARNING:
-tegra_emc_debug_min_rate_fops should be defined with
-DEFINE_DEBUGFS_ATTRIBUTE
-./drivers/memory/tegra/tegra124-emc.c:1237:0-23: WARNING:
-tegra_emc_debug_max_rate_fops should be defined with
-DEFINE_DEBUGFS_ATTRIBUTE
+On Thu, 25 Feb 2021 10:53:45 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.101 release.
+> There are 17 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 27 Feb 2021 09:25:06 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- drivers/memory/tegra/tegra124-emc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+All tests passing for Tegra ...
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index bee8d9f..874e1a0 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1204,7 +1204,7 @@ static int tegra_emc_debug_min_rate_set(void *data, u64 rate)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
-+DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
- 			tegra_emc_debug_min_rate_get,
- 			tegra_emc_debug_min_rate_set, "%llu\n");
- 
-@@ -1234,7 +1234,7 @@ static int tegra_emc_debug_max_rate_set(void *data, u64 rate)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
-+DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
- 			tegra_emc_debug_max_rate_get,
- 			tegra_emc_debug_max_rate_set, "%llu\n");
- 
--- 
-1.8.3.1
+Test results for stable-v5.4:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    57 tests:	57 pass, 0 fail
 
+Linux version:	5.4.101-rc1-g981a14c3f325
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
