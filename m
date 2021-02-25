@@ -2,103 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05071C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 08:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D9BC433E6
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 09:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B22A464F0D
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 08:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B29E164F18
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 09:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234158AbhBYIVj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Feb 2021 03:21:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235637AbhBYIVi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Feb 2021 03:21:38 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 746F464E20;
-        Thu, 25 Feb 2021 08:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1614241257;
-        bh=iMeoBjzeFfpbu7+tl/5FrzCPg2irHTLYGC43/ajtGFU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K3SNhUAIzyEjLv2Tg11FSv3fzaLqsKphLp9zZ+OqKd21eie6RKsWoSlwNDzuEPA9V
-         RpGSkZ3ILF2jg3H9VflfMtE5LscQ3i93CJrtSwBCvuE6KkZtWCDdmRCvfDuETyc/oc
-         bEVOSuK8YJ2cWfliIlbc5S8ihVfmd36rYRhhIaSI=
-Date:   Thu, 25 Feb 2021 09:20:54 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/13] 5.4.100-rc1 review
-Message-ID: <YDdd5lMwU3O1t1Nb@kroah.com>
-References: <20210222121013.583922436@linuxfoundation.org>
- <8bf31a259854471a8c448905f47ebcb1@HQMAIL105.nvidia.com>
- <81009a52-c35c-ccd2-a430-171b9828216d@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81009a52-c35c-ccd2-a430-171b9828216d@nvidia.com>
+        id S236079AbhBYJIr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Feb 2021 04:08:47 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:52544 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234781AbhBYJGo (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Feb 2021 04:06:44 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UPWiIBt_1614243960;
+Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0UPWiIBt_1614243960)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 25 Feb 2021 17:06:00 +0800
+From:   Yang Li <yang.lee@linux.alibaba.com>
+To:     krzk@kernel.org
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Yang Li <yang.lee@linux.alibaba.com>
+Subject: [PATCH] memory: tegra: Replace DEFINE_SIMPLE_ATTRIBUTE with  DEFINE_DEBUGFS_ATTRIBUTE
+Date:   Thu, 25 Feb 2021 17:05:58 +0800
+Message-Id: <1614243958-55847-1-git-send-email-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 03:06:31PM +0000, Jon Hunter wrote:
-> 
-> On 23/02/2021 14:47, Jon Hunter wrote:
-> > On Mon, 22 Feb 2021 13:13:17 +0100, Greg Kroah-Hartman wrote:
-> >> This is the start of the stable review cycle for the 5.4.100 release.
-> >> There are 13 patches in this series, all will be posted as a response
-> >> to this one.  If anyone has any issues with these being applied, please
-> >> let me know.
-> >>
-> >> Responses should be made by Wed, 24 Feb 2021 12:07:46 +0000.
-> >> Anything received after that time might be too late.
-> >>
-> >> The whole patch series can be found in one patch at:
-> >> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.100-rc1.gz
-> >> or in the git tree and branch at:
-> >> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> >> and the diffstat can be found below.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v5.4:
-> >     12 builds:	12 pass, 0 fail
-> >     26 boots:	26 pass, 0 fail
-> >     57 tests:	56 pass, 1 fail
-> > 
-> > Linux version:	5.4.100-rc1-gb467dd44a81c
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                 tegra194-p2972-0000, tegra20-ventana,
-> >                 tegra210-p2371-2180, tegra210-p3450-0000,
-> >                 tegra30-cardhu-a04
-> > 
-> > Test failures:	tegra210-p2371-2180: tegra-audio-hda-playback.sh
-> 
-> 
-> You can ignore the above failure. This is an intermittent failure we
-> have been observing on this board and is not new to this -rc. This has
-> been fixed by the following mainline and has been tagged for stable.
-> 
-> commit 1e0ca5467445bc1f41a9e403d6161a22f313dae7
-> Author: Sameer Pujar <spujar@nvidia.com>
-> Date:   Thu Jan 7 10:36:10 2021 +0530
-> 
->     arm64: tegra: Add power-domain for Tegra210 HDA
-> 
-> Usually, I try to filter out these known issues, but missed this one.
-> Anyway, for Tegra ...
+Fix the following coccicheck warning:
+./drivers/memory/tegra/tegra124-emc.c:1207:0-23: WARNING:
+tegra_emc_debug_min_rate_fops should be defined with
+DEFINE_DEBUGFS_ATTRIBUTE
+./drivers/memory/tegra/tegra124-emc.c:1237:0-23: WARNING:
+tegra_emc_debug_max_rate_fops should be defined with
+DEFINE_DEBUGFS_ATTRIBUTE
 
-Now queued that patch up, thanks.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/memory/tegra/tegra124-emc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index bee8d9f..874e1a0 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1204,7 +1204,7 @@ static int tegra_emc_debug_min_rate_set(void *data, u64 rate)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
++DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
+ 			tegra_emc_debug_min_rate_get,
+ 			tegra_emc_debug_min_rate_set, "%llu\n");
+ 
+@@ -1234,7 +1234,7 @@ static int tegra_emc_debug_max_rate_set(void *data, u64 rate)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
++DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
+ 			tegra_emc_debug_max_rate_get,
+ 			tegra_emc_debug_max_rate_set, "%llu\n");
+ 
+-- 
+1.8.3.1
+
