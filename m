@@ -2,96 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F6DC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 11:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B094CC433E6
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 15:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5BB64F13
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 11:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D5964F1E
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Feb 2021 15:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbhBYLsN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Feb 2021 06:48:13 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8513 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbhBYLsM (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Feb 2021 06:48:12 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B60378e520001>; Thu, 25 Feb 2021 03:47:30 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 25 Feb
- 2021 11:47:30 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Thu, 25 Feb 2021 11:47:30 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.11 00/12] 5.11.2-rc1 review
-In-Reply-To: <20210225092515.015261674@linuxfoundation.org>
-References: <20210225092515.015261674@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S230371AbhBYPLj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Feb 2021 10:11:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229722AbhBYPLi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Feb 2021 10:11:38 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8508964F10;
+        Thu, 25 Feb 2021 15:10:56 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lFII2-00Fscv-9C; Thu, 25 Feb 2021 15:10:54 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 00/13] PCI: MSI: Getting rid of msi_controller, and other cleanups
+Date:   Thu, 25 Feb 2021 15:10:10 +0000
+Message-Id: <20210225151023.3642391-1-maz@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Message-ID: <ca892a0a17574119909bfe9bc2bfabcd@HQMAIL101.nvidia.com>
-Date:   Thu, 25 Feb 2021 11:47:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614253650; bh=RhvSPkKVrmGjNq4qCGosIPACvDgSEtRseSmux79bxPg=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=HLJ2q0h9Vm1sbnj1lA8DCN6I1LMfM7OzDkkawJUD/ZwpI8nuNPLCzjUDIFIBQ5rQ2
-         twQh+PIy+QVV9vjnKCSWDZuAjeEVVUvVV6eyZcbRnbYBkXOlaYhsSwcrVGZWtnOkqv
-         QjV2zmBCsLnvcYaTXYqL6Tyv5ubc9X5PzvThAVgwtWAaqz+vxu6gZDx+AkGZEULua+
-         3nQtYRiXCUBMgWFLjnWyKfDM3ZXSox/jeIFJYyqF2lExkC7bEEOqGl+wxUKd//UHxq
-         Ime/7qO/LSAg6pioEB1U2NeB+pjlyyKE7H+55CPTzvCmjGrEt4dwhmpItccDqTfSqR
-         YSeV2wAMS9MiQ==
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, frank-w@public-files.de, treding@nvidia.com, tglx@linutronix.de, robh@kernel.org, will@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com, wei.liu@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, ryder.lee@mediatek.com, marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, michal.simek@xilinx.com, paul.walmsley@sifive.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 25 Feb 2021 10:53:34 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.11.2 release.
-> There are 12 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 27 Feb 2021 09:25:06 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The msi_controller data structure was the first attempt at treating
+MSIs like any other interrupt. We replaced it a few years ago with the
+generic MSI framework, but as it turns out, some older drivers are
+still using it.
 
-All tests passing for Tegra ...
+This series aims at converting these stragglers, drop msi_controller,
+and fix some other nits such as having ways for a host bridge to
+advertise whether it supports MSIs or not.
 
-Test results for stable-v5.11:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    65 tests:	65 pass, 0 fail
+A few notes:
 
-Linux version:	5.11.2-rc1-g68eabe17bf08
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+- The Tegra patch is the result of back and forth work with Thierry: I
+  wrote the initial patch, which didn't work (I didn't have any HW at
+  the time). Thierry made it work, and I subsequently fixed a couple
+  of bugs/cleanups. I'm responsible for the result, so don't blame
+  Thierry for any of it! FWIW, I'm now running a Jetson TX2 with its
+  root fs over NVME, and MSIs are OK.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+- RCAR is totally untested, though Marek had a go at a previous
+  version. More testing required.
 
-Jon
+- The xilinx stuff is *really* untested. Paul, if you have a RISC-V
+  board that uses it, could you please give it a go? Michal, same
+  thing for the stuff you have at hand...
+
+- hyperv: I don't have access to such hypervisor, and no way to test
+  it. Help welcomed.
+
+- The patches dealing with the advertising of MSI handling are the
+  result of a long discussion that took place here[1]. I took the
+  liberty to rejig Thomas' initial patches, and add what I needed for
+  the MSI domain stuff. Again, blame me if something is wrong, and not
+  Thomas.
+
+Feedback welcome.
+
+	M.
+
+[1] https://lore.kernel.org/r/20201031140330.83768-1-linux@fw-web.de
+
+Marc Zyngier (11):
+  PCI: tegra: Convert to MSI domains
+  PCI: rcar: Convert to MSI domains
+  PCI: xilinx: Convert to MSI domains
+  PCI: hyperv: Drop msi_controller structure
+  PCI: MSI: Drop use of msi_controller from core code
+  PCI: MSI: Kill msi_controller structure
+  PCI: MSI: Kill default_teardown_msi_irqs()
+  PCI: MSI: Let PCI host bridges declare their reliance on MSI domains
+  PCI: Make pci_host_common_probe() declare its reliance on MSI domains
+  PCI: MSI: Document the various ways of ending up with NO_MSI
+  PCI: quirks: Refactor advertising of the NO_MSI flag
+
+Thomas Gleixner (2):
+  PCI: MSI: Let PCI host bridges declare their lack of MSI handling
+  PCI: mediatek: Advertise lack of MSI handling
+
+ drivers/pci/controller/Kconfig           |   4 +-
+ drivers/pci/controller/pci-host-common.c |   1 +
+ drivers/pci/controller/pci-hyperv.c      |   4 -
+ drivers/pci/controller/pci-tegra.c       | 343 ++++++++++++-----------
+ drivers/pci/controller/pcie-mediatek.c   |   4 +
+ drivers/pci/controller/pcie-rcar-host.c  | 342 +++++++++++-----------
+ drivers/pci/controller/pcie-xilinx.c     | 238 +++++++---------
+ drivers/pci/msi.c                        |  46 +--
+ drivers/pci/probe.c                      |   4 +-
+ drivers/pci/quirks.c                     |  15 +-
+ include/linux/msi.h                      |  17 +-
+ include/linux/pci.h                      |   4 +-
+ 12 files changed, 463 insertions(+), 559 deletions(-)
+
+-- 
+2.29.2
+
