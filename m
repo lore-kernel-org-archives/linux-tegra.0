@@ -2,109 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05C8C2BA12
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8746BC2BA17
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0FF764E27
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46D996023B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378118AbhCCDbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
+        id S1378451AbhCCDbg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350249AbhCBMOh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:14:37 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CB5C061221;
-        Tue,  2 Mar 2021 04:11:05 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id q25so10667410lfc.8;
-        Tue, 02 Mar 2021 04:11:05 -0800 (PST)
+        with ESMTP id S1350751AbhCBMrB (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:47:01 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ECCDC0611BC
+        for <linux-tegra@vger.kernel.org>; Tue,  2 Mar 2021 04:45:46 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id 7so19739608wrz.0
+        for <linux-tegra@vger.kernel.org>; Tue, 02 Mar 2021 04:45:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HiatAXu0lWhq9U5RWdBwNxgOQuzIndCSuyRgNWnlqxw=;
-        b=B1LgZelZza2Xk8md17v//5JYYCGTpx0XG3spYIuWR+lLTHZ6TfDyEDN1j4OHcUFz5q
-         8WC+BMmPHAT/OeNX+ewqtGuCVZvKImesniikeIUsAR3MwmmQpiwLDBYlidXOLo4Tfkm9
-         l8+VhfOPTzqIs8a5DYI/vxdU16cqvukKaRh8m+RRz2LHtkwtRWZ/XdPsdHcNt1TZQ4pV
-         y2exNx484M0PI2h9RPs3zFLcpbdlnuTKIv4jioK2fYKGlWFWW9kgZdAAwZcs5JhHyUER
-         iw5ApRbDge7z77UzpWjpXbTnIhp2GDIjV33zO9KFToUdFJdjAjAkG6l/6QETlE/rHM2q
-         EVNQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4euAoXNn6FQqfmTSnFOsjkjdbyGvfspTApnyHwWUciA=;
+        b=LqNnTf0i5fCnl4xx9VAq6Pu6sSlRDkWtkujkH1GBClOZvrooBcRYyeRolHIfQ85wWv
+         HlsaqLv1aXj9dY8Ddfbs7nEK108330zMu8hYqTEgoiJs/+Sv498Srmcz7UBX5ZZWta2U
+         zVjd/ivC4bvu875db7aV24OIT8lyizvBnuI04iC+zfmRJvg5QfNu5EHz7qvjGJf7gbxN
+         FQxv5QYB0vq6kf//7lxz3S2lPrkLMGCAzvUJVUPFJk9TJ2yvHP3w9LEMyjKA3odC4je8
+         ZTCVEds1jevMGWuklRBtZOxpZqxdSOP8fa14NtOqRDU0wDtdPGXbRnbS5mtwnVyaOhKN
+         6KZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HiatAXu0lWhq9U5RWdBwNxgOQuzIndCSuyRgNWnlqxw=;
-        b=VWsnHeZWPV0uPyavG5/fddMydW3v/24kuw3B9SvmOncw4ObGh4FY/cRxLBDsRqd46A
-         P/zOSep6lagpBbAb6Panac/5VUuc7oWtFTXVBgCrdSA4qACgxRWEYh8hr0Na9zQ9DstJ
-         PJC1EGHsYwcSxDj3967zPGTFI/+FBAAsMjbGyi9kekxOJsJ7ds6AZtrDo5hgmP20BbL6
-         3sBYLVY48Itk7RGwOWWylOttMV3zPVS9TTB4CgntiB47Ody7bt2f6DLGb5VmFPYH4Xvr
-         4pxrZM8umZofqVAHFsX36sCE2SPTjUN5gibdUAs96Ni0m9T0bOx1vwDUmMxVpBuXQ0fH
-         Hbrg==
-X-Gm-Message-State: AOAM530q6vibtb4/RJmiAAOrIdY80AC4vszh8rZVADyAJta7pzOQXkn0
-        /Y4TAcc1HKUEEJf9RVtJcmM=
-X-Google-Smtp-Source: ABdhPJynu7QCwDxAEUiR/j9ELrs1hbgBm2xKfm/BYGoCMCcUyAiP1iBFWRvdZT2Sw1XhpJJqc4qg8w==
-X-Received: by 2002:a05:6512:1054:: with SMTP id c20mr11966414lfb.170.1614687064368;
-        Tue, 02 Mar 2021 04:11:04 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id d21sm835097ljo.55.2021.03.02.04.11.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 04:11:04 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4euAoXNn6FQqfmTSnFOsjkjdbyGvfspTApnyHwWUciA=;
+        b=kZBgvO+qJ9oys8LDWAxYMMTVMyHjphogxXTuJZMWd3F0wHKUMKBt2bBWSGYc5fb+mL
+         NPIoZyELDucz88q4p708uZbch0yKJ9FZX4d3R+xXa+586y5kduueNCyV7dr9QvvCOQQo
+         0sDil63qVaYJcQsC0JeCfTZ4bDvlXSMAjYjyHZZs1Xgy6cVq0vxm5sPALyUBwY4GjsYa
+         06zC5QDX8GFwjPzr9KkWSY34zW3yP715/Q9NCgtL4serG7T9qMdG06Niqg5oUKHcbwZ8
+         k8h8MHHWajIGcku+32R/nqjlWXtzC6KWnJt+OJLe/popoloUYEEuBqAZV3Jr6dzUinVR
+         6bdg==
+X-Gm-Message-State: AOAM532Q7f4oj63xEl1fbXPjVr8+viqQmliw2lIX7d4H7EM/BOnKxJwP
+        HFtY/JQhP83St642P1DhHnmvRCH5ppbryg==
+X-Google-Smtp-Source: ABdhPJyQIazlL9gr2QbnjHUu4wmXs/ydg+N9QfOHzrHtxvZQ4y8uisyp2biBKsxWd/+sILULsvRd9g==
+X-Received: by 2002:a05:6000:18a3:: with SMTP id b3mr22144213wri.373.1614689144334;
+        Tue, 02 Mar 2021 04:45:44 -0800 (PST)
+Received: from [192.168.0.41] (lns-bzn-59-82-252-144-192.adsl.proxad.net. [82.252.144.192])
+        by smtp.googlemail.com with ESMTPSA id o2sm2441521wme.16.2021.03.02.04.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 04:45:43 -0800 (PST)
+Subject: Re: [PATCH RESEND v2 2/2] cpuidle: tegra: Remove do_idle firmware
+ call
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Anton Bambura <jenneron@protonmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/14] ARM: tegra: acer-a500: Enable core voltage scaling
-Date:   Tue,  2 Mar 2021 15:09:55 +0300
-Message-Id: <20210302121003.15058-7-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302121003.15058-1-digetx@gmail.com>
-References: <20210302121003.15058-1-digetx@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210302095405.28453-1-digetx@gmail.com>
+ <20210302095405.28453-2-digetx@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <dd5cff9e-b86b-7fea-c88b-c32b5c428705@linaro.org>
+Date:   Tue, 2 Mar 2021 13:45:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210302095405.28453-2-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Allow lower core voltages on Acer A500.
+On 02/03/2021 10:54, Dmitry Osipenko wrote:
+> The do_idle firmware call is unused by all Tegra SoCs, hence remove it in
+> order to keep driver's code clean.
+> 
+> Tested-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
+> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2: - No changes. V1 got no attention, hence re-sending.
+> 
+>  drivers/cpuidle/cpuidle-tegra.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+> index 29c5e83500d3..508bd9f23792 100644
+> --- a/drivers/cpuidle/cpuidle-tegra.c
+> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> @@ -48,11 +48,6 @@ enum tegra_state {
+>  static atomic_t tegra_idle_barrier;
+>  static atomic_t tegra_abort_flag;
+>  
+> -static inline bool tegra_cpuidle_using_firmware(void)
+> -{
+> -	return firmware_ops->prepare_idle && firmware_ops->do_idle;
+> -}
+> -
+>  static void tegra_cpuidle_report_cpus_state(void)
+>  {
+>  	unsigned long cpu, lcpu, csr;
+> @@ -139,10 +134,6 @@ static int tegra_cpuidle_c7_enter(void)
+>  	if (err && err != -ENOSYS)
+>  		return err;
+>  
+> -	err = call_firmware_op(do_idle, 0);
+> -	if (err != -ENOSYS)
+> -		return err;
+> -
+>  	return cpu_suspend(0, tegra30_pm_secondary_cpu_suspend);
+>  }
+>  
+> @@ -356,9 +347,7 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
+>  	 * is disabled.
+>  	 */
+>  	if (!IS_ENABLED(CONFIG_PM_SLEEP)) {
+> -		if (!tegra_cpuidle_using_firmware())
+> -			tegra_cpuidle_disable_state(TEGRA_C7);
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So firmware_ops->do_idle is always NULL, thus
+tegra_cpuidle_using_firmware() is always false and
+tegra_cpuidle_disable_state() always called, right ?
 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index 40c1bab22155..8531abf329c6 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -578,7 +578,7 @@ sys_reg: sys {
- 
- 				vdd_core: sm0 {
- 					regulator-name = "vdd_sm0,vdd_core";
--					regulator-min-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
- 					regulator-coupled-max-spread = <170000 550000>;
-@@ -619,7 +619,7 @@ ldo1 {
- 
- 				rtc_vdd: ldo2 {
- 					regulator-name = "vdd_ldo2,vdd_rtc";
--					regulator-min-microvolt = <1200000>;
-+					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&vdd_core &vdd_cpu>;
- 					regulator-coupled-max-spread = <170000 550000>;
+
+> +		tegra_cpuidle_disable_state(TEGRA_C7);
+>  		tegra_cpuidle_disable_state(TEGRA_CC6);
+>  	}
+>  
+> 
+
+
 -- 
-2.29.2
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
