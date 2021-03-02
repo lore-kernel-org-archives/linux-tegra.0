@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAE8C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6357C433E6
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA31F64E74
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B869064E87
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235294AbhCCD0X (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:26:23 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16864 "EHLO
+        id S245175AbhCCD1Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:27:24 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17175 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382413AbhCBJZ5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 04:25:57 -0500
+        with ESMTP id S1446380AbhCBJ17 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 04:27:59 -0500
 Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B603e03940003>; Tue, 02 Mar 2021 01:21:24 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
- 2021 09:21:24 +0000
+        id <B603e03930003>; Tue, 02 Mar 2021 01:21:23 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
+ 2021 09:21:22 +0000
 Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Tue, 2 Mar 2021 09:21:24 +0000
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Tue, 2 Mar 2021 09:21:22 +0000
 From:   Jon Hunter <jonathanh@nvidia.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,43 +35,43 @@ CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
         <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
         <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/661] 5.10.20-rc2 review
-In-Reply-To: <20210301193642.707301430@linuxfoundation.org>
-References: <20210301193642.707301430@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/175] 4.14.223-rc2 review
+In-Reply-To: <20210301193533.081071873@linuxfoundation.org>
+References: <20210301193533.081071873@linuxfoundation.org>
 X-NVConfidentiality: public
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Message-ID: <8f6b387f2a8f490e8bd062805cf936cd@HQMAIL101.nvidia.com>
-Date:   Tue, 2 Mar 2021 09:21:24 +0000
+Message-ID: <dd655f3d061e45eba9245a7bba925acf@HQMAIL111.nvidia.com>
+Date:   Tue, 2 Mar 2021 09:21:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614676885; bh=znNcv8kGPDQtm6cRD20tvyvyLv5tEtGqIYjK5NFwfmg=;
+        t=1614676883; bh=S83KJDjEfm0sDeUFnE9RwBo9Lmsqk+qvf9H4vS/UZW8=;
         h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
          Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
          Date;
-        b=j3gC7iLnKirGWoDeIPTUG6SYw1Lamwc+3+rvK6BFDg0d95tKHGjPZlsp9b/tyRo1F
-         u5tSxrBrcyiAnhlzOg4k4Y+5pNd0J1U8qM1xznG/XuV7H5dOItMWT/vI+YHh64V86K
-         9nVSciTantXPzSllgg8Vl8DLOkPcurGw2172sJ1T9XV2zlphzOIvvGJTexGZgMZ+Jx
-         7OJfAOnEnE6IRz0q9NRzJBAFT79urEOEStHla0eC6fM1sROaUirnvpXnJfZCMvPpVT
-         9WW4oUwQGRHTHkBgblh/Y3DDBOIMNu8a4MuZoCnAxar4lkdD/Xsn6SJ1IK7dwmpeCo
-         OB4zqIKDoBiTg==
+        b=T2FcHdLPEHjpg60sF3PDd7Mku829Zmd3FhZB0Yok9F3RaW+3OOGkLVELKZbdPgTDB
+         PS+V/KWRD7gPTU31ZxAZsvrFsDvnExuQ5dGjO1DO6PGvAt4VuK1KQ3zIXLxCrgBeUd
+         hU4bsslbk62e5MwiM1ofSxGJkKrm9GyzW4EdQcQWIm7+5/zbgUohKpJ9KG+ZFrL09f
+         PYpgyewaSPQsKYeXJELxjUMaZJPOpi/BP9pnqITvuT5wHV24vxuW+CP3IqB62PGKHJ
+         RogpRTJgcjborKsCzFDMmc3Noe6KWtwpDl4Xvl+JqeaJP5ffY1fkGXyyEO/UdgICCt
+         3MMR1EdNWCt/Q==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 01 Mar 2021 20:37:55 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.20 release.
-> There are 661 patches in this series, all will be posted as a response
+On Mon, 01 Mar 2021 20:36:28 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.223 release.
+> There are 175 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Wed, 03 Mar 2021 19:34:53 +0000.
+> Responses should be made by Wed, 03 Mar 2021 19:34:58 +0000.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.20-rc2.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.223-rc2.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -80,16 +80,14 @@ On Mon, 01 Mar 2021 20:37:55 +0100, Greg Kroah-Hartman wrote:
 
 All tests passing for Tegra ...
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    65 tests:	65 pass, 0 fail
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
-Linux version:	5.10.20-rc2-g92929e15cdc0
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+Linux version:	4.14.223-rc2-gd172906dd3e2
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
 Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
