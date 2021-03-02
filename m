@@ -5,103 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC30BC43381
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C245C28E86
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84ACB64EEF
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D09A6023B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377348AbhCCDaz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:30:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54076 "EHLO
+        id S1377844AbhCCDbL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344065AbhCBLXe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 06:23:34 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED7AC06178B;
-        Tue,  2 Mar 2021 03:22:07 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id u4so23439525ljh.6;
-        Tue, 02 Mar 2021 03:22:07 -0800 (PST)
+        with ESMTP id S1350099AbhCBLyC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 06:54:02 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9C3C061797;
+        Tue,  2 Mar 2021 03:51:44 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id f1so30840832lfu.3;
+        Tue, 02 Mar 2021 03:51:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6Pw3GTr/GjOIi01Z3q0PpRjgmUtwICxpPYij6S5wwcI=;
-        b=rAeqU7sAJzvubjRxRBvRPb0Xflif2/Ah/bGNEHgWmu+/qMN17futs5w/h0G2v5btvR
-         ulRQ7DirUjesXRkGzZfp1Lho3KVLbwvkKQlo+3su/+lWoKp+Zs5L7Bdx/8dLlSBUnPOl
-         8wxQV4GfyCy/19GKbdc1SZ1VEYOqAtNT8iUtBaK8pDQramHT1kYhKejtTATwZe1lVaO5
-         +CW1jzinKThVdFaH9ZUGdojzZMdg39nlbrJkz/Io/LT+0XHkJ9rZj28tclXXmFyyc0iv
-         l87aJSmd2WUZmHX0WYuh+jXeG9hl1Ao+eLoEg6JZp5tSObo5bWGeJbYkARntYkvYVgkd
-         FNig==
+        bh=nodRndiEDIjf1gGT+DYIeX0Kc5JMeKV6FJI5gzT7BG8=;
+        b=CvRDaXF912OTEXjfcLWbBLXzKCQWh4HSDSe0nKBk/XdfU8q6OTGN4ebOOyyrXT7xbP
+         NoyShRE9UZ4PmUqMPqs+xGxTHiJi27HlpvGRIXxEpePhpFDDrdV+cb2Snaf2fmnM2Mnw
+         0A6fxrMVsbMbF/8iOOC3XKEuwzhaPLm0c0dy5+qpQAF1c5rmw24h235SEAt8wW7aw0cY
+         JcdE0h8kNAMo4SveeM0OXvAoAp03If/LP4dxo6AszWpTnfFWMQvvsDU7aOgTuHpX6vuG
+         rf93F/I8+KxonK2HF8Cgpw5k03V1JaNKKKq6ZwY+QZs+O3kwnxjlhItcEnlBGhRCUoyJ
+         1/Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6Pw3GTr/GjOIi01Z3q0PpRjgmUtwICxpPYij6S5wwcI=;
-        b=ZzhRQazQhS0O8yuc5P2u+BtDcMALFVebSL3zcj6q7eU3npJ770kaBsahxo9f1z8mnl
-         7ZkLDh1hXhmziGTYiTrwwfxJpcrz335CEBImnhLChVLMVBudBsZ2TgvmbyJEH5JK5Ipg
-         qib7siFya+3tTXJzaqIzQ9mTWsZSmWHgpXju+kAv22bNBahoXVF6rhIFfN0LQ96vUJxt
-         EVqqWiG+YraA6TVdkmo8AGJS+UcGr+7un3FoAjSQyr4MSM7PpdD+owV0FLvXe647pMam
-         D+u5pLoXOrx6a0VP7IU4cNYiKSrVnyOvrFvleeZkiBahmjptRllojUeLuSvyWoM238fF
-         u1vQ==
-X-Gm-Message-State: AOAM532SapOO54adJLTU0VzYjmAsZLt6+2m4JqhANHNXpTjrkk27xvpV
-        AK6mXCfVLfHx9NBfLUtGK/A=
-X-Google-Smtp-Source: ABdhPJz+HoWgkAqzXnvMEVoBpss7bHPZEO+Q5RCteeV43AIfK/+skRujNOfzl7jNkdQpdps0XG12ng==
-X-Received: by 2002:a2e:9f08:: with SMTP id u8mr7152270ljk.50.1614684125824;
-        Tue, 02 Mar 2021 03:22:05 -0800 (PST)
+        bh=nodRndiEDIjf1gGT+DYIeX0Kc5JMeKV6FJI5gzT7BG8=;
+        b=XHkbjuow6tRQWhVsv3mqgjOSgeMfisJkIXLRS5V0qMqpCOk8NfyfuFEET9texdH1UI
+         1evAZUghA5OziJz8bIgOX5hHX6mF6Ax+qcu0ldM5FWRsjYfPKA1G8Nw01c83xL78iXlF
+         VFfgoJo8UUUk8/W4LjSPww+T1Y8A2hyt4jAYlp9hLQ+8V2fy5g+MpAJV6DNRus8aGkGq
+         uqsJSzadXf5aTtqU0jhEsyar66zc4DMdyz26hlLXuHsvRu9h6B+5EwVhWg90C932b16v
+         9yaVjIdW/Dgon5pfG0rpehGm+nK9acSZVbu74/LkmbewwQiBTzuyf9mo7FQyr/8v8DNB
+         XmPA==
+X-Gm-Message-State: AOAM533QX1XOa6dPL6UfTGmWE1WLlFnlbbcoBuvnd66vUT7IXNm0gxjU
+        VSI4k5X0IwO+wCAoEjjiEUtqBar6HbY=
+X-Google-Smtp-Source: ABdhPJwUnGTdT0ZckBWt9aZDAyQD9LHkZSGAQLzxYHoiILJExutrInRxkkDG+lVgaOhzHA52quk37A==
+X-Received: by 2002:ac2:48b1:: with SMTP id u17mr12978490lfg.627.1614685902852;
+        Tue, 02 Mar 2021 03:51:42 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id w7sm2691078lft.0.2021.03.02.03.22.05
+        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 03:22:05 -0800 (PST)
+        Tue, 02 Mar 2021 03:51:42 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Fertser <fercerpav@gmail.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/5] reset: Add devm_reset_control_array_get_exclusive_released()
-Date:   Tue,  2 Mar 2021 14:21:20 +0300
-Message-Id: <20210302112123.24161-3-digetx@gmail.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/6] clk: tegra: Ensure that PLLU configuration is applied properly
+Date:   Tue,  2 Mar 2021 14:51:14 +0300
+Message-Id: <20210302115117.9375-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302112123.24161-1-digetx@gmail.com>
-References: <20210302112123.24161-1-digetx@gmail.com>
+In-Reply-To: <20210302115117.9375-1-digetx@gmail.com>
+References: <20210302115117.9375-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add devm_reset_control_array_get_exclusive_released() which is wanted by
-NVIDIA Tegra drivers.
+The PLLU (USB) consists of the PLL configuration itself and configuration
+of the PLLU outputs. The PLLU programming is inconsistent on T30 vs T114,
+where T114 immediately bails out if PLLU is enabled and T30 re-enables
+a potentially already enabled PLL (left after bootloader) and then fully
+reprograms it, which could be unsafe to do. The correct way should be to
+skip enabling of the PLL if it's already enabled and then apply
+configuration to the outputs. This patch doesn't fix any known problems,
+it's a minor improvement.
 
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/linux/reset.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/tegra/clk-pll.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 3bee086f1f06..ab240a8648ee 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -534,6 +534,12 @@ devm_reset_control_array_get_optional_shared(struct device *dev)
- 	return devm_reset_control_array_get(dev, true, true, true);
- }
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index c5cc0a2dac6f..d709ecb7d8d7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1131,7 +1131,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
  
-+static inline struct reset_control *
-+devm_reset_control_array_get_exclusive_released(struct device *dev)
-+{
-+	return devm_reset_control_array_get(dev, false, false, false);
-+}
-+
- static inline struct reset_control *
- of_reset_control_array_get_exclusive(struct device_node *node)
- {
+-	_clk_pll_enable(hw);
++	if (!clk_pll_is_enabled(hw))
++		_clk_pll_enable(hw);
+ 
+ 	ret = clk_pll_wait_for_lock(pll);
+ 	if (ret < 0)
+@@ -1748,15 +1749,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (clk_pll_is_enabled(hw))
+-		return 0;
+-
+ 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
+ 
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+-	_clk_pll_enable(hw);
++	if (!clk_pll_is_enabled(hw))
++		_clk_pll_enable(hw);
+ 
+ 	ret = clk_pll_wait_for_lock(pll);
+ 	if (ret < 0)
 -- 
 2.29.2
 
