@@ -2,283 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BC1C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA12C28CC5
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B86A664E66
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1092D64ED9
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352273AbhCCDam (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:30:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        id S1377321AbhCCDax (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:30:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379998AbhCBKYn (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 05:24:43 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E01DC061797;
-        Tue,  2 Mar 2021 02:22:08 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id e2so16059180ljo.7;
-        Tue, 02 Mar 2021 02:22:08 -0800 (PST)
+        with ESMTP id S1344461AbhCBLXe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 06:23:34 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CC3C06178C;
+        Tue,  2 Mar 2021 03:22:08 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id m22so30718580lfg.5;
+        Tue, 02 Mar 2021 03:22:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4J6EjSuefLNlwS0ypISOC/mzldjx8zJnTcq60uLqUsg=;
-        b=JVVsQOC48Ok2XChynYCkw4o8UfJ/XjGVY5YTYaANQSHra+TjLkNlliPyRdKNXGaDpd
-         mSIin2dTNXgnuTXLiwcWa9D/cqqx0lkLlD5ZgFDpMvObLb9UJuSKRQMWHXOehpQ9zZPX
-         zeBSlfjAG5iSgyCy5Eet5wOC4MN60Rb12k3yoojwUFsk4ZHltulw3TEnnL2Lw44qZxa+
-         x3v4sZjwkSLQe1E4Yy3ra54naaqCSJbMEFtMdrH36n/nvozGIshq2I1DoehVCG/1G67o
-         MbHItHE5RVb04SszjwHykCXU/hoGYqWzoVgvecFp20fBGij4AoIIv9JgT3Hbbmafu2l9
-         DlYQ==
+        bh=eHJDWKwpMM6cb9JU11x1wUIhvtQqgROewecwtgVy2N0=;
+        b=KA4Y0Tsyx6wny/1fbDCWLOkL6AFPWHKh5/uwf1eSoPg7MlkRHTEMaQ329g1b/M32ZE
+         1088gihSRrQDMld+eMaV6KktUmDbyDoGctQTOr3PXGu049GMiv/fnO406mBNQddyKJ8O
+         ZeEh4RnZKI92iYsaZ8CaLxcmmv2BKybK4dwDYdu7EJJa/az8DgxphnOX0/ILaAjrnGGt
+         m0lxX8tdJs+vZ8+Cni+iZ5evCwhvouv/LJjA1urcEHC8K1kwmStX/XBL6kSvNHF3k8so
+         8Fh8Q9XCjqdzHIqYbcBdxml1WviiOf7CziRtpXoRQUQeUf17/4QrHF7zfYDORQj97UT5
+         J1lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4J6EjSuefLNlwS0ypISOC/mzldjx8zJnTcq60uLqUsg=;
-        b=LNN5Vo8PGKlKgAWF4ntMzJ174YnJUpS1sv8YweQqiL57FtwRgyrP9Swn95QLLRC5mv
-         7vonZQf9eA2Bp0Va1TnE7iajD6AnLvt6GMqhP/fA4bW2ia5N+fnfGY8+z6D61ugDxsvt
-         +mZVGFrxXiQZJisXFhS7Ub/PlmHhdMsh1YEWNLZOQsCR1PglTUr5SkkHSBaQXsrPCT4j
-         JyUruQvQgiujq/+KUjKrCW1ZbUI2p7lxUKcNKYJ3Xc+r0ZVJdyYAYFlVM6FolN8eDEIZ
-         Lnml/o8YC3oJaP8ENrj3EXwsowkXtN8nrvwDxEgse95tnTZHqTxDdWD5xwG9YRnpPXYM
-         nulg==
-X-Gm-Message-State: AOAM533/M6BJgaVPSUm22agcQbGOXXFX0cXVTPNaiK9rYby3Fa37+g3V
-        aXMM8tkH6SYMlXGN7pXsqxU=
-X-Google-Smtp-Source: ABdhPJyXDRoT64bllqqEE0boG4Uwo1agjyjf0DFOPpzGZSqAodcuWIdgJsZtYKsYOksCqlnc/Z6zvw==
-X-Received: by 2002:a2e:910d:: with SMTP id m13mr11690755ljg.189.1614680525507;
-        Tue, 02 Mar 2021 02:22:05 -0800 (PST)
+        bh=eHJDWKwpMM6cb9JU11x1wUIhvtQqgROewecwtgVy2N0=;
+        b=a1oN1peoPQ6hnuQusOzYeDjoTp+YzWT9p0JWqP6VBS0EdlKEEGHarisWWzkpsFsZ23
+         3Iy0PTdMng94cTin5Wt59Pie/2H7bxD2a/xxBDRmlZrMeB8IcpVAnkxG8kxvEfNRdPkJ
+         xHbtItdrMpz2bUTKou/pZSN1aNPu1MhxQOMS1954OQIplKkMkR7nloJ7hxNcqTdnmbqC
+         IjNYIfE/y+D0psNC2OOfnXTfdU+MBxaguHZcWaaHuVzcVoNHD/r1i8LkHFrcEhfExQ9F
+         5MBslfKy551R6PELTxEr9g7+elshTJYPMolsYJY2w0bLSwAkfK3zHrz/EGZsDXb9nEFo
+         9c2A==
+X-Gm-Message-State: AOAM533OODyBfoExyXKWax/u3TWQdlfedwk77/VI9p3QnADrMoofmIQH
+        R0/7TtwepRNtqGzWX7+MrEM=
+X-Google-Smtp-Source: ABdhPJyKxz9BYcUUyxdMZ1AX6m8pDZ9C0dzxbibzbcLo6KkoeOmLZPDAGWCpPc8MBiSr+rey8Jv9bw==
+X-Received: by 2002:a19:3f08:: with SMTP id m8mr12331184lfa.275.1614684126498;
+        Tue, 02 Mar 2021 03:22:06 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id n2sm2586369lfu.274.2021.03.02.02.22.04
+        by smtp.gmail.com with ESMTPSA id w7sm2691078lft.0.2021.03.02.03.22.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 02:22:05 -0800 (PST)
+        Tue, 02 Mar 2021 03:22:06 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Nick Dyer <nick@shmanahar.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiada Wang <jiada_wang@mentor.com>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Fertser <fercerpav@gmail.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/3] Input: atmel_mxt_ts - support wakeup methods
-Date:   Tue,  2 Mar 2021 13:21:57 +0300
-Message-Id: <20210302102158.10533-3-digetx@gmail.com>
+Subject: [PATCH v1 3/5] ASoC: tegra20: ac97: Add reset control
+Date:   Tue,  2 Mar 2021 14:21:21 +0300
+Message-Id: <20210302112123.24161-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302102158.10533-1-digetx@gmail.com>
-References: <20210302102158.10533-1-digetx@gmail.com>
+In-Reply-To: <20210302112123.24161-1-digetx@gmail.com>
+References: <20210302112123.24161-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-According to datasheets, chips like mXT1386 have a WAKE line, it is used
-to wake the chip up from deep sleep mode before communicating with it via
-the I2C-compatible interface.
+Tegra20 AC97 driver doesn't manage the AC97 controller reset, relying on
+implicit deassertion of the reset by tegra-clk driver, which needs to be
+fixed since this behaviour is unacceptable by other Tegra drivers. Add
+explicit reset control to the Tegra20 AC97 driver.
 
-If the WAKE line is connected to a GPIO line, the line must be asserted
-25 ms before the host attempts to communicate with the controller. If the
-WAKE line is connected to the SCL pin, the controller will send a NACK on
-the first attempt to address it, the host must then retry 25 ms later.
+Note that AC97 reset was always specified in Tegra20 device-tree, hence
+DTB ABI changes aren't required.
 
-Implement the wake-up methods in the driver. Touchscreen now works
-properly on devices like Acer A500 tablet, fixing problems like this:
-
- atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-121)
- atmel_mxt_ts 0-004c: mxt_bootloader_read: i2c recv failed (-121)
- atmel_mxt_ts 0-004c: Trying alternate bootloader address
- atmel_mxt_ts 0-004c: mxt_bootloader_read: i2c recv failed (-121)
- atmel_mxt_ts: probe of 0-004c failed with error -121
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 78 ++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ sound/soc/tegra/tegra20_ac97.c | 21 +++++++++++++++++++++
+ sound/soc/tegra/tegra20_ac97.h |  1 +
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 383a848eb601..5ed23689047b 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -31,6 +31,7 @@
- #include <media/v4l2-ioctl.h>
- #include <media/videobuf2-v4l2.h>
- #include <media/videobuf2-vmalloc.h>
-+#include <dt-bindings/input/atmel-maxtouch.h>
+diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+index 06c728ae17ed..c454a34c15c4 100644
+--- a/sound/soc/tegra/tegra20_ac97.c
++++ b/sound/soc/tegra/tegra20_ac97.c
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+@@ -313,6 +314,12 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	}
+ 	dev_set_drvdata(&pdev->dev, ac97);
  
- /* Firmware files */
- #define MXT_FW_NAME		"maxtouch.fw"
-@@ -199,6 +200,7 @@ enum t100_type {
- #define MXT_CRC_TIMEOUT		1000	/* msec */
- #define MXT_FW_RESET_TIME	3000	/* msec */
- #define MXT_FW_CHG_TIMEOUT	300	/* msec */
-+#define MXT_WAKEUP_TIME		25	/* msec */
- 
- /* Command to unlock bootloader */
- #define MXT_UNLOCK_CMD_MSB	0xaa
-@@ -312,6 +314,7 @@ struct mxt_data {
- 	struct mxt_dbg dbg;
- 	struct regulator_bulk_data regulators[2];
- 	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *wake_gpio;
- 	bool use_retrigen_workaround;
- 
- 	/* Cached parameters from object table */
-@@ -342,6 +345,8 @@ struct mxt_data {
- 	unsigned int t19_num_keys;
- 
- 	enum mxt_suspend_mode suspend_mode;
-+
-+	u32 wakeup_method;
- };
- 
- struct mxt_vb2_buffer {
-@@ -621,10 +626,42 @@ static int mxt_send_bootloader_cmd(struct mxt_data *data, bool unlock)
- 	return mxt_bootloader_write(data, buf, sizeof(buf));
- }
- 
-+static bool mxt_wakeup_toggle(struct i2c_client *client,
-+			      bool wake_up, bool in_i2c)
-+{
-+	struct mxt_data *data = i2c_get_clientdata(client);
-+
-+	switch (data->wakeup_method) {
-+	case ATMEL_MXT_WAKEUP_I2C_SCL:
-+		if (!in_i2c)
-+			return false;
-+		break;
-+
-+	case ATMEL_MXT_WAKEUP_GPIO:
-+		if (in_i2c)
-+			return false;
-+
-+		gpiod_set_value(data->wake_gpio, wake_up);
-+		break;
-+
-+	default:
-+		return false;
++	ac97->reset = devm_reset_control_get_exclusive(&pdev->dev, "ac97");
++	if (IS_ERR(ac97->reset)) {
++		dev_err(&pdev->dev, "Can't retrieve ac97 reset\n");
++		return PTR_ERR(ac97->reset);
 +	}
 +
-+	if (wake_up) {
-+		dev_dbg(&client->dev, "waking up controller\n");
-+
-+		msleep(MXT_WAKEUP_TIME);
+ 	ac97->clk_ac97 = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(ac97->clk_ac97)) {
+ 		dev_err(&pdev->dev, "Can't retrieve ac97 clock\n");
+@@ -364,12 +371,26 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ac97->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	ac97->playback_dma_data.maxburst = 4;
+ 
++	ret = reset_control_assert(ac97->reset);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to assert AC'97 reset: %d\n", ret);
++		goto err_clk_put;
 +	}
 +
-+	return true;
-+}
-+
- static int __mxt_read_reg(struct i2c_client *client,
- 			       u16 reg, u16 len, void *val)
- {
- 	struct i2c_msg xfer[2];
-+	bool retried = false;
- 	u8 buf[2];
- 	int ret;
- 
-@@ -643,9 +680,13 @@ static int __mxt_read_reg(struct i2c_client *client,
- 	xfer[1].len = len;
- 	xfer[1].buf = val;
- 
-+retry:
- 	ret = i2c_transfer(client->adapter, xfer, 2);
- 	if (ret == 2) {
- 		ret = 0;
-+	} else if (!retried && mxt_wakeup_toggle(client, true, true)) {
-+		retried = true;
-+		goto retry;
- 	} else {
- 		if (ret >= 0)
- 			ret = -EIO;
-@@ -659,6 +700,7 @@ static int __mxt_read_reg(struct i2c_client *client,
- static int __mxt_write_reg(struct i2c_client *client, u16 reg, u16 len,
- 			   const void *val)
- {
-+	bool retried = false;
- 	u8 *buf;
- 	size_t count;
- 	int ret;
-@@ -672,9 +714,13 @@ static int __mxt_write_reg(struct i2c_client *client, u16 reg, u16 len,
- 	buf[1] = (reg >> 8) & 0xff;
- 	memcpy(&buf[2], val, len);
- 
-+retry:
- 	ret = i2c_master_send(client, buf, count);
- 	if (ret == count) {
- 		ret = 0;
-+	} else if (!retried && mxt_wakeup_toggle(client, true, true)) {
-+		retried = true;
-+		goto retry;
- 	} else {
- 		if (ret >= 0)
- 			ret = -EIO;
-@@ -2975,6 +3021,8 @@ static const struct attribute_group mxt_attr_group = {
- 
- static void mxt_start(struct mxt_data *data)
- {
-+	mxt_wakeup_toggle(data->client, true, false);
-+
- 	switch (data->suspend_mode) {
- 	case MXT_SUSPEND_T9_CTRL:
- 		mxt_soft_reset(data);
-@@ -3009,6 +3057,8 @@ static void mxt_stop(struct mxt_data *data)
- 		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
- 		break;
- 	}
-+
-+	mxt_wakeup_toggle(data->client, false, false);
- }
- 
- static int mxt_input_open(struct input_dev *dev)
-@@ -3155,6 +3205,15 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		return error;
+ 	ret = clk_prepare_enable(ac97->clk_ac97);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
+ 		goto err_clk_put;
  	}
  
-+	/* Request the WAKE line as asserted so we go out of sleep */
-+	data->wake_gpio = devm_gpiod_get_optional(&client->dev,
-+						  "wake", GPIOD_OUT_HIGH);
-+	if (IS_ERR(data->wake_gpio)) {
-+		error = PTR_ERR(data->wake_gpio);
-+		dev_err(&client->dev, "Failed to get wake gpio: %d\n", error);
-+		return error;
++	usleep_range(10, 100);
++
++	ret = reset_control_deassert(ac97->reset);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to deassert AC'97 reset: %d\n", ret);
++		goto err_clk_disable_unprepare;
 +	}
 +
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
- 					  NULL, mxt_interrupt, IRQF_ONESHOT,
- 					  client->name, data);
-@@ -3185,6 +3244,25 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		msleep(MXT_RESET_INVALID_CHG);
- 	}
- 
-+	/*
-+	 * Controllers like mXT1386 have a dedicated WAKE line that could be
-+	 * connected to a GPIO or to I2C SCL pin, or permanently asserted low.
-+	 *
-+	 * This WAKE line is used for waking controller from a deep-sleep and
-+	 * it needs to be asserted low for 25 milliseconds before I2C transfers
-+	 * could be accepted by controller if it was in a deep-sleep mode.
-+	 * Controller will go into sleep automatically after 2 seconds of
-+	 * inactivity if WAKE line is deasserted and deep sleep is activated.
-+	 *
-+	 * If WAKE line is connected to I2C SCL pin, then the first I2C transfer
-+	 * will get an instant NAK and transfer needs to be retried after 25ms.
-+	 *
-+	 * If WAKE line is connected to a GPIO line, the line must be asserted
-+	 * 25ms before the host attempts to communicate with the controller.
-+	 */
-+	device_property_read_u32(&client->dev, "atmel,wakeup-method",
-+				 &data->wakeup_method);
-+
- 	error = mxt_initialize(data);
- 	if (error)
- 		goto err_disable_regulators;
+ 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to set AC'97 ops: %d\n", ret);
+diff --git a/sound/soc/tegra/tegra20_ac97.h b/sound/soc/tegra/tegra20_ac97.h
+index e467cd1ff2ca..870ea09ff301 100644
+--- a/sound/soc/tegra/tegra20_ac97.h
++++ b/sound/soc/tegra/tegra20_ac97.h
+@@ -78,6 +78,7 @@ struct tegra20_ac97 {
+ 	struct clk *clk_ac97;
+ 	struct snd_dmaengine_dai_dma_data capture_dma_data;
+ 	struct snd_dmaengine_dai_dma_data playback_dma_data;
++	struct reset_control *reset;
+ 	struct regmap *regmap;
+ 	int reset_gpio;
+ 	int sync_gpio;
 -- 
 2.29.2
 
