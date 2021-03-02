@@ -2,162 +2,93 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB81C41519
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B877EC2BA57
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 265D36023B
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889336023B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378877AbhCCDbn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45922 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350839AbhCBM7H (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:59:07 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABBBC0611C0;
-        Tue,  2 Mar 2021 04:45:16 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id h4so23555456ljl.0;
-        Tue, 02 Mar 2021 04:45:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AsAU40DSj2V8WyiPA2FnCGE9liTgJLKy+L+ScTeuyXY=;
-        b=PPIYu9Codq6bxO4eijFwZSN7sqEF6h57TWa30qKtAgsbaS4NOYln26tnSZmm5A06uQ
-         HSlmfOCo200P2iltZ9IwZ3LVzotYpr96QK26ldWtZ1io+7hsCOxGGza2jnPCIW7gQhes
-         E2qgUVYUSoZ9Xowjg+T/1rNu+7Ar7PGHkaY0TNLM9j0VPAO0OrQDDruTCl2ILmbeMcZF
-         SgrOs9o/x/0fX6ImLbQCF8YBtoj3QVsoatFFqr9eVXXmfkKtG/s7zCrfJVLi6kVCRqxm
-         AzhWl+4obu7lprBNtTsAlS4O3r0A2DkNlNIJrPl9HWM/qCcsqF2sx5bj8gT+vh91l8b4
-         9Tdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AsAU40DSj2V8WyiPA2FnCGE9liTgJLKy+L+ScTeuyXY=;
-        b=dXz7N9YhMy7Lgari/MoAmOd5xtOzmeG3+6kkIUSElI8wWKaw6Vn4nL1Wk4BdkbOBV4
-         vULchD2n8+O24pOGosAcANyjWLUjkYX83wDumlIjL8ChhFatJGawdUPispbc3TebAQZu
-         UizNJMprJXHvCzECWalARuTshAQHmBdpCCBqNzvkmsAHt8CMqoDJqA+hx6NzRau+sHG+
-         vm4e+rSPsqg3JzVSK7baOKKdi9lyb2lqeRmHEyL/mOF6igXcQMsCnUVkxeUXMZezWRpk
-         2ckt3gLdDaUiMPVBbpR0z75N4tYJya+/Kl+BNZ6r37bXrgdY/l7ixZaoiK0HJCbVqDXE
-         A8gg==
-X-Gm-Message-State: AOAM531hB0IuZPLkAXw62hAsrmFEnv+2K41x0a0bkRjZbrzX4oijANDa
-        N3l9UyPNBUmeAIYk+lhitaA=
-X-Google-Smtp-Source: ABdhPJzhcU+vHPyphQdH9ezeBIdtlG/p4Ceab1j1WVSTIZLVrG5Q9r0fuGhUTYPcz3EHVcVEQbwfLg==
-X-Received: by 2002:a2e:8e28:: with SMTP id r8mr12675196ljk.156.1614689115461;
-        Tue, 02 Mar 2021 04:45:15 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id m16sm2634705lfh.109.2021.03.02.04.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 04:45:15 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v13 2/2] drm/tegra: dc: Extend debug stats with total number of events
-Date:   Tue,  2 Mar 2021 15:44:45 +0300
-Message-Id: <20210302124445.29444-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302124445.29444-1-digetx@gmail.com>
-References: <20210302124445.29444-1-digetx@gmail.com>
+        id S1442244AbhCCDbu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:50 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5289 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349618AbhCBSI5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 13:08:57 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B603e6b850003>; Tue, 02 Mar 2021 08:44:53 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
+ 2021 16:44:52 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Tue, 2 Mar 2021 16:44:52 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 000/135] 4.9.259-rc2 review
+In-Reply-To: <20210302122224.437443882@linuxfoundation.org>
+References: <20210302122224.437443882@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <129f6e0fa5044d57a4d313800e561d30@HQMAIL111.nvidia.com>
+Date:   Tue, 2 Mar 2021 16:44:52 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1614703493; bh=b11B/caSEEJDDC4qQCCSnQlf/I2qS7UZG3EHL0s5N3w=;
+        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
+         Date;
+        b=cykcIqfX+3j9h3KVek1DRxpUoaTQObi4K/yzs7E4AqDqKwapdSa+9UGPw1nCLA97u
+         iTHK8Q/zlXgxOEjv+R0bCj0sDLZIhJfql7tWd+VPlfHGfvgzQk1VTOSsu7pOnWv718
+         mOfiuMQSSxuRKSKMD0qzr9vF23Sodyay1TzgcYCv8vE4ePM1XvjjLwlFaGxCS10JOn
+         NN1xLC6btcbxEzC42qN540K6InJ4NgO3rryew2CvxKlbtY1Zcqa4xLa4acoKrV+YgI
+         DwN3MvujdfQfJogKrZYh6H8WPskwiaEWTomNrraVfcwzocXwKZNRT2VGOBXadgC7HJ
+         YqhMv14nr4/Mg==
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-It's useful to know the total number of underflow events and currently
-the debug stats are getting reset each time CRTC is being disabled. Let's
-account the overall number of events that doesn't get a reset.
+On Tue, 02 Mar 2021 13:26:32 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.259 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 04 Mar 2021 12:22:00 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.259-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/dc.c | 10 ++++++++++
- drivers/gpu/drm/tegra/dc.h |  5 +++++
- 2 files changed, 15 insertions(+)
+All tests passing for Tegra ...
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 7c6079984906..1399e4032701 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1539,6 +1539,11 @@ static int tegra_dc_show_stats(struct seq_file *s, void *data)
- 	seq_printf(s, "underflow: %lu\n", dc->stats.underflow);
- 	seq_printf(s, "overflow: %lu\n", dc->stats.overflow);
- 
-+	seq_printf(s, "frames total: %lu\n", dc->stats.frames_total);
-+	seq_printf(s, "vblank total: %lu\n", dc->stats.vblank_total);
-+	seq_printf(s, "underflow total: %lu\n", dc->stats.underflow_total);
-+	seq_printf(s, "overflow total: %lu\n", dc->stats.overflow_total);
-+
- 	return 0;
- }
- 
-@@ -2310,6 +2315,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): frame end\n", __func__);
- 		*/
-+		dc->stats.frames_total++;
- 		dc->stats.frames++;
- 	}
- 
-@@ -2318,6 +2324,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		dev_dbg(dc->dev, "%s(): vertical blank\n", __func__);
- 		*/
- 		drm_crtc_handle_vblank(&dc->base);
-+		dc->stats.vblank_total++;
- 		dc->stats.vblank++;
- 	}
- 
-@@ -2325,6 +2332,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): underflow\n", __func__);
- 		*/
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
- 
-@@ -2332,11 +2340,13 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): overflow\n", __func__);
- 		*/
-+		dc->stats.overflow_total++;
- 		dc->stats.overflow++;
- 	}
- 
- 	if (status & HEAD_UF_INT) {
- 		dev_dbg_ratelimited(dc->dev, "%s(): head underflow\n", __func__);
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 0d7bdf66a1ec..ba4ed35139fb 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -48,6 +48,11 @@ struct tegra_dc_stats {
- 	unsigned long vblank;
- 	unsigned long underflow;
- 	unsigned long overflow;
-+
-+	unsigned long frames_total;
-+	unsigned long vblank_total;
-+	unsigned long underflow_total;
-+	unsigned long overflow_total;
- };
- 
- struct tegra_windowgroup_soc {
--- 
-2.29.2
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    30 tests:	30 pass, 0 fail
 
+Linux version:	4.9.259-rc2-g5fde7b797e1e
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
