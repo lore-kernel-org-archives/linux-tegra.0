@@ -2,127 +2,122 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1CEC4151A
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:37 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFD7A64E6B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0748AC43603
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id CBCA26023B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442171AbhCCDbp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50206 "EHLO
+        id S1378874AbhCCDbm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578250AbhCBNQR (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 08:16:17 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 910FAC06178C;
-        Tue,  2 Mar 2021 05:15:18 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id u4so23856946ljh.6;
-        Tue, 02 Mar 2021 05:15:18 -0800 (PST)
+        with ESMTP id S1350917AbhCBM7H (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:59:07 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8282C06178C
+        for <linux-tegra@vger.kernel.org>; Tue,  2 Mar 2021 04:58:00 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id u14so19767592wri.3
+        for <linux-tegra@vger.kernel.org>; Tue, 02 Mar 2021 04:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9r1DFAaPtb29HC2sU6gbzgJhxX04EpEmGmNyScrTRWg=;
-        b=PESF8tDUDk6Uz0FlXB9u8W4+2b2xyjPCCVflvcPHroKxon0Hf10BTl6qKtTqsW1wbp
-         BsWsgjRbjrLbixpfJSdObEfyrVG4rwxYvleDu3gsGkUHEvlrQzfuUOQCE0RBcNMpT1sE
-         pW5KXYtwisbRJOvlbz75/0umbgNJ6y+AY7zFI72oNFCuC7Vl9UvchqYxtNER3hwnjg4Q
-         KJDjIclGGbXTwGSNhFjmFJztX5dxyeGA1+9Rx2yrLucwnbP/BxLzndCrKMp85jrk+Qd7
-         ADq1Q5qOFAcqrVX539R4Og0orJwiinDOWTT28iUsWR/25obrx+r0+sV6A/cW6p/q7dXR
-         ZURg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bc1uAF3CzOnRDE8Aqgu7wL4LatneRimFe4/16qAiSCU=;
+        b=BmyFiKNpnw9zFQ4RoQcXlzKvuhqM79VhJ70dx5VmSsfKdv34gSKvwtWwHPoMw5zS1H
+         uWeicpjNjRFWTpOMNQOpDWvlnm+QfuuSGSFhqXt1oQMTB24fqeBgzCRp2U2JBbSJa/BD
+         n12n9tc04x1azCa24C4lRScvdTbdL5PXkBy9WhpVgQoVF158VjY0EgdJCIeHxSHQcM3d
+         73+zaJz2hMkSKfmydHdpFaZDDC336A/gTwmHjlK4PN/MGqwiGohHchJINSP6mlFv1Yjm
+         qW34c5Z2vI0UF8VQFN4BOOT4YFlT5j3fyv301673E7eIhoHVlVZGDME5n7SjbLBp0527
+         0g5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9r1DFAaPtb29HC2sU6gbzgJhxX04EpEmGmNyScrTRWg=;
-        b=aCtdLllvGt8tjs7iDJAEvirEXVcp8uALs0a7UXuooAjzCLEe7QD8lNKrXlsqmv0mFN
-         y07PIiozj1ibr7kO4hQhUY7dT0SbYbZ1sNiMPjLU0KEyNP0QiqN0S/B9219nQXULHV2F
-         pq1Xn3df7ai8zw4uPSMWuY/XstfhOuYr9c+9cIJyY7r0fgrznl+ctSoSbp0+1g6v9t5Y
-         Ys88MEeEqtEIsCCFzQVNCluDozScPHN9cGD0xKvizy3BsH2QZclsb1nxHQ3M+KbOE9kD
-         OCkRTknid8+KgzynW6FS0gQdMO6utzjdvXiwqvQTqDcOEKr+5N+p+bhYcoU8z0Wb+X8z
-         GCZg==
-X-Gm-Message-State: AOAM530ejmCBq/Ch0zb+Ylj8hM/WSwmr6UZTOgD8mt55CI/cL3WFotNa
-        Eqhy4eWxqcOVcGvn9KrUPqM=
-X-Google-Smtp-Source: ABdhPJzRPfagcDRUtiuLO17bXWYhG7ON9ldHSkMJi2dTVgAKGwqZLgthGDdYpJKBH5gxTIZofHmu/g==
-X-Received: by 2002:a2e:b008:: with SMTP id y8mr3207751ljk.233.1614690917063;
-        Tue, 02 Mar 2021 05:15:17 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id i5sm1033370ljn.100.2021.03.02.05.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 05:15:16 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        bh=Bc1uAF3CzOnRDE8Aqgu7wL4LatneRimFe4/16qAiSCU=;
+        b=EGZlMEEA097JSUkOUU/+X1e7JxMUBBGPT9y2R1QIVqUVVoQYMpF2V2++ZTyJTq75C9
+         KLrY5ev6xqMFgv7N8n1o5wY4GW986kMKOTlnFM+wvLTbe/JWRB96QUZ/fP89NwQqD/5k
+         v1lbr6zil7HpOxwAZC0TCSP/wLtK9VQrOiolSv4Ma0+Mno2var/o5X9f5l2AcTiE0AYc
+         3gSo0uCeX8MNCE6UacNRHr7NANfUdRyCLECG9yWevPd1n9o14ae2AM3ps8zuR27j5rSg
+         /QoxKVLJpGqiJ4emUNq/wCkr7B3c4mqX6VaWjwDe2MLIrFEOWRkQ/DPoe2k9RUC7Cczj
+         ckJA==
+X-Gm-Message-State: AOAM532sIvpvoYye0vEm1ukBPQ6w7R9ixAx8QKLENGSVF0Tj9jQPIC9H
+        dc54c7uxnNeJsOJWakKP9sLSCN46Dp1uYw==
+X-Google-Smtp-Source: ABdhPJzgbknmesUIaWl/Uq1TH4TTlNf0NrnJvkouOH1rNm6SEHhgVf0Yy5cMwWgHP6HLRkxdD31BPQ==
+X-Received: by 2002:adf:dd81:: with SMTP id x1mr21649271wrl.233.1614689879296;
+        Tue, 02 Mar 2021 04:57:59 -0800 (PST)
+Received: from [192.168.0.41] (lns-bzn-59-82-252-144-192.adsl.proxad.net. [82.252.144.192])
+        by smtp.googlemail.com with ESMTPSA id o124sm2520532wmo.41.2021.03.02.04.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 04:57:58 -0800 (PST)
+Subject: Re: [PATCH RESEND v2 2/2] cpuidle: tegra: Remove do_idle firmware
+ call
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v1] drm/tegra: dc: Don't set PLL clock to 0Hz
-Date:   Tue,  2 Mar 2021 16:15:06 +0300
-Message-Id: <20210302131506.11790-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210302095405.28453-1-digetx@gmail.com>
+ <20210302095405.28453-2-digetx@gmail.com>
+ <dd5cff9e-b86b-7fea-c88b-c32b5c428705@linaro.org>
+ <1da82ae3-6b23-2aa0-3275-309ffd8738d0@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <9b744a38-5f43-00bb-1972-86a30efaaa96@linaro.org>
+Date:   Tue, 2 Mar 2021 13:57:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <1da82ae3-6b23-2aa0-3275-309ffd8738d0@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-RGB output doesn't allow to change parent clock rate of the display and
-PCLK rate is set to 0Hz in this case. The tegra_dc_commit_state() shall
-not set the display clock to 0Hz since this change propagates to the
-parent clock. The DISP clock is defined as a NODIV clock by the tegra-clk
-driver and all NODIV clocks use the CLK_SET_RATE_PARENT flag.
+On 02/03/2021 13:51, Dmitry Osipenko wrote:
+> 02.03.2021 15:45, Daniel Lezcano пишет:
+>> On 02/03/2021 10:54, Dmitry Osipenko wrote:
+>>> The do_idle firmware call is unused by all Tegra SoCs, hence remove it in
+>>> order to keep driver's code clean.
+>>>
+>>> Tested-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
+>>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
 
-This bug stayed unnoticed because by default PLLP is used as the parent
-clock for the display controller and PLLP silently skips the erroneous 0Hz
-rate changes because it always has active child clocks that don't permit
-rate changes. The PLLP isn't acceptable for some devices that we want to
-upstream (like Samsung Galaxy Tab and ASUS TF700T) due to a display panel
-clock rate requirements that can't be fulfilled by using PLLP and then the
-bug pops up in this case since parent clock is set to 0Hz, killing the
-display output.
+[ ... ]
 
-Don't touch DC clock if pclk=0 in order to fix the problem.
+>>>  	if (!IS_ENABLED(CONFIG_PM_SLEEP)) {
+>>> -		if (!tegra_cpuidle_using_firmware())
+>>> -			tegra_cpuidle_disable_state(TEGRA_C7);
+>>
+>> So firmware_ops->do_idle is always NULL, thus
+>> tegra_cpuidle_using_firmware() is always false and
+>> tegra_cpuidle_disable_state() always called, right ?
+> 
+> Yes, the tegra_cpuidle_disable_state(TEGRA_C7) is always
+> called if CONFIG_PM_SLEEP is disabled in kernel config.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/dc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Ok, thanks.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 1399e4032701..4ecda4cdf345 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1723,6 +1723,11 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
- 			dev_err(dc->dev,
- 				"failed to set clock rate to %lu Hz\n",
- 				state->pclk);
-+
-+		err = clk_set_rate(dc->clk, state->pclk);
-+		if (err < 0)
-+			dev_err(dc->dev, "failed to set clock %pC to %lu Hz: %d\n",
-+				dc->clk, state->pclk, err);
- 	}
- 
- 	DRM_DEBUG_KMS("rate: %lu, div: %u\n", clk_get_rate(dc->clk),
-@@ -1733,11 +1738,6 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
- 		value = SHIFT_CLK_DIVIDER(state->div) | PIXEL_CLK_DIVIDER_PCD1;
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_CLOCK_CONTROL);
- 	}
--
--	err = clk_set_rate(dc->clk, state->pclk);
--	if (err < 0)
--		dev_err(dc->dev, "failed to set clock %pC to %lu Hz: %d\n",
--			dc->clk, state->pclk, err);
- }
- 
- static void tegra_dc_stop(struct tegra_dc *dc)
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+
 -- 
-2.29.2
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
