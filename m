@@ -2,154 +2,172 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C243BC282E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4DFC43142
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9304B6023B
+	by mail.kernel.org (Postfix) with ESMTP id 438C06023B
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352278AbhCCDas (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:30:48 -0500
-Received: from foss.arm.com ([217.140.110.172]:49078 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1838377AbhCBKgK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 2 Mar 2021 05:36:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8851AED1;
-        Tue,  2 Mar 2021 02:35:24 -0800 (PST)
-Received: from [10.57.48.219] (unknown [10.57.48.219])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25EFF3F73C;
-        Tue,  2 Mar 2021 02:35:20 -0800 (PST)
-Subject: Re: Aw: Re: Re: [PATCH 09/13] PCI: mediatek: Advertise lack of MSI
- handling
-To:     Frank Wunderlich <frank-w@public-files.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Chuanjia Liu <chuanjia.liu@mediatek.com>
-Cc:     linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        id S1352275AbhCCDao (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:30:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1379997AbhCBKYn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 05:24:43 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4EFC061794;
+        Tue,  2 Mar 2021 02:22:06 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id v9so12656327lfa.1;
+        Tue, 02 Mar 2021 02:22:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+oFeJHdMdN6sWTiVX2kJ/nUWLcOSOyUM6St3ihjMXLg=;
+        b=b1Eq1J1rv0nxVvSv5zcaUWwSxqxDq5cl0p4txcM2vCqcxIdeOJYK8uyUhO7898GDPC
+         hUyiBBb2FeHlNfnnsqRlW/T7aV/6GP58AycVBMr1yxWcx/KB09lLjFtaO8D5B7lTnK+r
+         FHoMhPCqGaGtv9kHZ7y8V1iPLwpS6nUVZ5fH1Qm7wPgzNjL6E809PLg9xXxqAURP+Vpn
+         T8AYovdAQchAUsi2rEexVCNqWWZ+3hm9YrOQA9r3vOjFhlSuvHcFFjdj7z6KMF8ChMq7
+         SEyhMx3y07S8w3lfYgmfRq/tlSJvy30JA9o+8bZg2dkKbGldeNblbGa65QJfD1syEHti
+         Yq4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+oFeJHdMdN6sWTiVX2kJ/nUWLcOSOyUM6St3ihjMXLg=;
+        b=Pk92hYg2RAokFxoN9Qk3yx97cKWdEqXXALNbmdWWilFPiCs0Gdr3y1AzXzm0YWfLAM
+         rgCQTxBhqCdZRz6e8Bz5rhrUFEkgHLI9QX6adGsXYxYqXHOHlmOXTqW4yMGIEKSVXp4v
+         ok91D0teAlr1Y8pftOxEhwZdj6abLkPA05ujDZP8yz0e89GHFKcxaVn9MvZLcok1cesz
+         uk0vV6nsk6Pyta5z7oT20RUD6f0shJAOreTiAZKXD43M1KQoIZa6ClqGWYiUUBgmBqm4
+         PxQuqJONUuoSMU991Ecw8736geWjISV1VPSsZ3rPn47qMRm2kkqhkjPIMXxwc1Q9QkKd
+         3T7A==
+X-Gm-Message-State: AOAM532poNxfRHtL2reWUWwuoXya5Kq7ejOgfi1TM4JQe6DIIk3yjEOd
+        0WXQurZY6rHQX72ev7gFXpbAbbIzoxY=
+X-Google-Smtp-Source: ABdhPJyLlYt0PdmlcnXPCh5Wjs47IDsKN9AZDUhoZpqzBO7ENx6+25ICT1Y4jyQqelpw9yaWYP+TFg==
+X-Received: by 2002:a19:c74d:: with SMTP id x74mr11218630lff.223.1614680524833;
+        Tue, 02 Mar 2021 02:22:04 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id n2sm2586369lfu.274.2021.03.02.02.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 02:22:04 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh@kernel.org>, Wei Liu <wei.liu@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michal Simek <michal.simek@xilinx.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        linux-mediatek@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20210225151023.3642391-1-maz@kernel.org>
- <20210225151023.3642391-10-maz@kernel.org>
- <trinity-b7e2cf18-f0e6-4d88-8a80-de6758b5a91f-1614595396771@3c-app-gmx-bap67>
- <b7721e2ff751cc9565a662cb713819e3@kernel.org>
- <trinity-9fa6d24e-f9de-4741-bf44-86f6197b174d-1614600961297@3c-app-gmx-bap67>
- <5afd1d656299d87c43bdf31b8ced2d5f@kernel.org>
- <trinity-e6593a34-3e03-4154-a03c-f3aed01e33bf-1614607598428@3c-app-gmx-bap67>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <8b9c013a-b5d5-9b19-f28a-4af543e47fff@arm.com>
-Date:   Tue, 2 Mar 2021 10:35:14 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/3] dt-bindings: input: atmel_mxt_ts: Document atmel,wakeup-method and WAKE line GPIO
+Date:   Tue,  2 Mar 2021 13:21:56 +0300
+Message-Id: <20210302102158.10533-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302102158.10533-1-digetx@gmail.com>
+References: <20210302102158.10533-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <trinity-e6593a34-3e03-4154-a03c-f3aed01e33bf-1614607598428@3c-app-gmx-bap67>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2021-03-01 14:06, Frank Wunderlich wrote:
->> Gesendet: Montag, 01. März 2021 um 14:31 Uhr
->> Von: "Marc Zyngier" <maz@kernel.org>
->>
->> Frank,
->>
->>>>> i guess it's a bug in ath10k driver or my r64 board (it is a v1.1
->>>>> which has missing capacitors on tx lines).
->>>>
->>>> No, this definitely looks like a bug in the MTK PCIe driver,
->>>> where the mutex is either not properly initialised, corrupted,
->>>> or the wrong pointer is passed.
->>>
->>> but why does it happen only with the ath10k-card and not the mt7612 in
->>> same slot?
->>
->> Does mt7612 use MSI? What we have here is a bogus mutex in the
->> MTK PCIe driver, and the only way not to get there would be
->> to avoid using MSIs.
-> 
-> i guess this card/its driver does not use MSI. Did not found anything in "datasheet" [1] or driver [2] about msi
+Some Atmel touchscreen controllers have a WAKE line that needs to be
+asserted low in order to wake up controller from a deep sleep. Document
+the wakeup methods and the new GPIO properties.
 
-FWIW, no need to guess - `lspci -v` (as root) should tell you whether 
-the card has MSI (and/or MSI-X) capability, and whether it is enabled if so.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../bindings/input/atmel,maxtouch.yaml        | 29 +++++++++++++++++++
+ include/dt-bindings/input/atmel-maxtouch.h    | 10 +++++++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 include/dt-bindings/input/atmel-maxtouch.h
 
-Robin.
+diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+index 8c6418f76e94..e6b03a1e7c30 100644
+--- a/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
++++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.yaml
+@@ -39,6 +39,13 @@ properties:
+       (active low). The line must be flagged with
+       GPIO_ACTIVE_LOW.
+ 
++  wake-gpios:
++    maxItems: 1
++    description:
++      Optional GPIO specifier for the touchscreen's wake pin
++      (active low). The line must be flagged with
++      GPIO_ACTIVE_LOW.
++
+   linux,gpio-keymap:
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+     description: |
+@@ -53,6 +60,26 @@ properties:
+       or experiment to determine which bit corresponds to which input. Use
+       KEY_RESERVED for unused padding values.
+ 
++  atmel,wakeup-method:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      The WAKE line is an active-low input that is used to wake up the touch
++      controller from deep-sleep mode before communication with the controller
++      could be started. This optional feature used to minimize current
++      consumption when the controller is in deep sleep mode. This feature is
++      relevant only to some controller families, like mXT1386 controller for
++      example.
++
++      The WAKE pin can be connected in one of the following ways:
++       1) left permanently low
++       2) connected to the I2C-compatible SCL pin
++       3) connected to a GPIO pin on the host
++    enum:
++      - 0 # ATMEL_MXT_WAKEUP_NONE
++      - 1 # ATMEL_MXT_WAKEUP_I2C_SCL
++      - 2 # ATMEL_MXT_WAKEUP_GPIO
++    default: 0
++
+ required:
+   - compatible
+   - reg
+@@ -63,6 +90,7 @@ additionalProperties: false
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/input/atmel-maxtouch.h>
+     #include <dt-bindings/gpio/gpio.h>
+     i2c {
+       #address-cells = <1>;
+@@ -75,6 +103,7 @@ examples:
+         reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
+         vdda-supply = <&ab8500_ldo_aux2_reg>;
+         vdd-supply = <&ab8500_ldo_aux5_reg>;
++        atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
+       };
+     };
+ 
+diff --git a/include/dt-bindings/input/atmel-maxtouch.h b/include/dt-bindings/input/atmel-maxtouch.h
+new file mode 100644
+index 000000000000..7345ab32224d
+--- /dev/null
++++ b/include/dt-bindings/input/atmel-maxtouch.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#ifndef _DT_BINDINGS_ATMEL_MAXTOUCH_H
++#define _DT_BINDINGS_ATMEL_MAXTOUCH_H
++
++#define ATMEL_MXT_WAKEUP_NONE		0
++#define ATMEL_MXT_WAKEUP_I2C_SCL	1
++#define ATMEL_MXT_WAKEUP_GPIO		2
++
++#endif /* _DT_BINDINGS_ATMEL_MAXTOUCH_H */
+-- 
+2.29.2
 
->>>
->>>> This r64 machine is supposed to have working MSIs, right?
->>>
->>> imho mt7622 have working MSI
->>>
->>>> Do you get the same issue without this series?
->>>
->>> tested 5.11.0 [1] without this series (but with your/thomas' patch
->>> from discussion about my old patch) and got same trace. so this series
->>> does not break anything here.
->>
->> Can you retest without any additional patch on top of 5.11?
->> These two patches only affect platforms that do *not* have MSIs at all.
-> 
-> i can revert these 2, but still need patches for mt7622 pcie-support [3]...btw. i see that i miss these in 5.11-main...do not see traceback with them (have firmware not installed...)
-> 
-> root@bpi-r64:~# dmesg | grep ath
-> [    6.450765] ath10k_pci 0000:01:00.0: assign IRQ: got 146
-> [    6.661752] ath10k_pci 0000:01:00.0: enabling device (0000 -> 0002)
-> [    6.697811] ath10k_pci 0000:01:00.0: enabling bus mastering
-> [    6.721293] ath10k_pci 0000:01:00.0: pci irq msi oper_irq_mode 2 irq_mode 0 r
-> eset_mode 0
-> [    6.921030] ath10k_pci 0000:01:00.0: Failed to find firmware-N.bin (N between
->   2 and 6) from ath10k/QCA988X/hw2.0: -2
-> [    6.931698] ath10k_pci 0000:01:00.0: could not fetch firmware files (-2)
-> [    6.940417] ath10k_pci 0000:01:00.0: could not probe fw (-2)
-> 
-> so traceback was caused by missing changes in mtk pcie-driver not yet upstream, added Chuanjia Liu
-> 
->>>
->>>>> Tried with an mt7612e, this seems to work without any errors.
->>>>>
->>>>> so for mt7622/mt7623
->>>>>
->>>>> Tested-by: Frank Wunderlich <frank-w@public-files.de>
->>>>
->>>> We definitely need to understand the above.
->>>
->>> there is a hardware-bug which may cause this...afair i saw this with
->>> the card in r64 with earlier Kernel-versions where other cards work
->>> (like the mt7612e).
->>
->> I don't think a HW bug affecting PCI would cause what we are seeing
->> here, unless it results in memory corruption.
-> 
-> 
-> [1] https://www.asiarf.com/shop/wifi-wlan/wifi_mini_pcie/ws2433-wifi-11ac-mini-pcie-module-manufacturer/
-> [2] grep -Rni 'msi' drivers/net/wireless/mediatek/mt76/mt76x2/
-> [3] https://patchwork.kernel.org/project/linux-mediatek/list/?series=372885
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
