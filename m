@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7766C43332
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D05C8C2BA12
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88F4764E66
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0FF764E27
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377920AbhCCDbU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36930 "EHLO
+        id S1378118AbhCCDbc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350255AbhCBMOh (ORCPT
+        with ESMTP id S1350249AbhCBMOh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:14:37 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D80C0611C0;
-        Tue,  2 Mar 2021 04:11:09 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id m11so22748469lji.10;
-        Tue, 02 Mar 2021 04:11:09 -0800 (PST)
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CB5C061221;
+        Tue,  2 Mar 2021 04:11:05 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id q25so10667410lfc.8;
+        Tue, 02 Mar 2021 04:11:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Vf+9cpXQr7hrQ9itCdssJG4n/IaJKoI9Dc3YxNuM01M=;
-        b=a79JNTAmxtvNJ5JGuSE0z336l1mDz/zK5uQW46fWtOKbjeUZMVxjS5M02Z+V1jX7+s
-         Mc0Rc0LWXtHQKlNebHfmdKZn5QxH+4LMVRx0O6TXKeIRsGuso9q5LkJPzuk09EhMWHml
-         /1BQQNn2gkxFWR9dLZbj6OW4bRZpBKjEt8koEz30KOosrC0BjrQu5r2lt2bsxVt6FHGv
-         PY9ySGUrspX7uUei7VTeXiLTbc0NjZBUMtqS9IaMeAHaUL6Tr7uftQwd+U56QRy+iu56
-         4DQxbnno/OnhVBkFCUuzwwovOJyF2Yrn/HNa5vkfpsPl46lqu1Y3O/R5CXDTMDSzabks
-         dp+w==
+        bh=HiatAXu0lWhq9U5RWdBwNxgOQuzIndCSuyRgNWnlqxw=;
+        b=B1LgZelZza2Xk8md17v//5JYYCGTpx0XG3spYIuWR+lLTHZ6TfDyEDN1j4OHcUFz5q
+         8WC+BMmPHAT/OeNX+ewqtGuCVZvKImesniikeIUsAR3MwmmQpiwLDBYlidXOLo4Tfkm9
+         l8+VhfOPTzqIs8a5DYI/vxdU16cqvukKaRh8m+RRz2LHtkwtRWZ/XdPsdHcNt1TZQ4pV
+         y2exNx484M0PI2h9RPs3zFLcpbdlnuTKIv4jioK2fYKGlWFWW9kgZdAAwZcs5JhHyUER
+         iw5ApRbDge7z77UzpWjpXbTnIhp2GDIjV33zO9KFToUdFJdjAjAkG6l/6QETlE/rHM2q
+         EVNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Vf+9cpXQr7hrQ9itCdssJG4n/IaJKoI9Dc3YxNuM01M=;
-        b=UEhwA0N1sM2V3bzXdYzv6fy5oQoCR7fgvSvQ+FcXjOwF6AlUV60pwp3Wg30+9i2O+Z
-         Rk6zzMMCzvYIrqBz2z799z1VaDArMXNmod7nww9/rRGhUPO/MBBX53+HbRavpUkIDp/r
-         UsZrXb2lvd3nHYh1mXl12+swCOPSn+vEStw1FVCZ/A5mjrhd3pFKZjAfnx/dUGEeOaiT
-         PmYh81Lu5JEecamvLH7YlOx/oQYeDz7RBYK4vtIb3Y56d3sgPm097pEr/jgWikP2cgcm
-         6gEf3lnmdL8J5M+YZjyAMED1EbS/53ESxQZbIgHnqOizxzSZZ/0Gwf5hK8paZgitU9uR
-         Ac0A==
-X-Gm-Message-State: AOAM5319Wt5IRsXsudD2qDhjPH43226kZaTYk5zsO9XkwbxpC7k0dA2F
-        3P804Chg8GA/wIPIVbmUnsI=
-X-Google-Smtp-Source: ABdhPJx17FjX9XMyDkvkanTtQAXGc7m7HBy2dzBAzTomZweAQ3sJUw+Dvy01XtoDy/oWcwRGzJb0fQ==
-X-Received: by 2002:a2e:8e87:: with SMTP id z7mr575457ljk.142.1614687068046;
-        Tue, 02 Mar 2021 04:11:08 -0800 (PST)
+        bh=HiatAXu0lWhq9U5RWdBwNxgOQuzIndCSuyRgNWnlqxw=;
+        b=VWsnHeZWPV0uPyavG5/fddMydW3v/24kuw3B9SvmOncw4ObGh4FY/cRxLBDsRqd46A
+         P/zOSep6lagpBbAb6Panac/5VUuc7oWtFTXVBgCrdSA4qACgxRWEYh8hr0Na9zQ9DstJ
+         PJC1EGHsYwcSxDj3967zPGTFI/+FBAAsMjbGyi9kekxOJsJ7ds6AZtrDo5hgmP20BbL6
+         3sBYLVY48Itk7RGwOWWylOttMV3zPVS9TTB4CgntiB47Ody7bt2f6DLGb5VmFPYH4Xvr
+         4pxrZM8umZofqVAHFsX36sCE2SPTjUN5gibdUAs96Ni0m9T0bOx1vwDUmMxVpBuXQ0fH
+         Hbrg==
+X-Gm-Message-State: AOAM530q6vibtb4/RJmiAAOrIdY80AC4vszh8rZVADyAJta7pzOQXkn0
+        /Y4TAcc1HKUEEJf9RVtJcmM=
+X-Google-Smtp-Source: ABdhPJynu7QCwDxAEUiR/j9ELrs1hbgBm2xKfm/BYGoCMCcUyAiP1iBFWRvdZT2Sw1XhpJJqc4qg8w==
+X-Received: by 2002:a05:6512:1054:: with SMTP id c20mr11966414lfb.170.1614687064368;
+        Tue, 02 Mar 2021 04:11:04 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id d21sm835097ljo.55.2021.03.02.04.11.07
+        by smtp.gmail.com with ESMTPSA id d21sm835097ljo.55.2021.03.02.04.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 04:11:07 -0800 (PST)
+        Tue, 02 Mar 2021 04:11:04 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/14] ARM: tegra: Specify CPU suspend OPP in device-tree
-Date:   Tue,  2 Mar 2021 15:10:01 +0300
-Message-Id: <20210302121003.15058-13-digetx@gmail.com>
+Subject: [PATCH v3 06/14] ARM: tegra: acer-a500: Enable core voltage scaling
+Date:   Tue,  2 Mar 2021 15:09:55 +0300
+Message-Id: <20210302121003.15058-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210302121003.15058-1-digetx@gmail.com>
 References: <20210302121003.15058-1-digetx@gmail.com>
@@ -76,64 +76,35 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Specify CPU suspend OPP in a device-tree, just for consistency. Now CPU
-will always suspend on the same frequency.
+Allow lower core voltages on Acer A500.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-Tested-by: Dmitry Osipenko <digetx@gmail.com> # A500 T20 and Nexus7 T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-cpu-opp.dtsi | 2 ++
- arch/arm/boot/dts/tegra30-cpu-opp.dtsi | 3 +++
- 2 files changed, 5 insertions(+)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-cpu-opp.dtsi b/arch/arm/boot/dts/tegra20-cpu-opp.dtsi
-index 702a635e88e7..135de316383b 100644
---- a/arch/arm/boot/dts/tegra20-cpu-opp.dtsi
-+++ b/arch/arm/boot/dts/tegra20-cpu-opp.dtsi
-@@ -9,12 +9,14 @@ opp@216000000,750 {
- 			clock-latency-ns = <400000>;
- 			opp-supported-hw = <0x0F 0x0003>;
- 			opp-hz = /bits/ 64 <216000000>;
-+			opp-suspend;
- 		};
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index 40c1bab22155..8531abf329c6 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -578,7 +578,7 @@ sys_reg: sys {
  
- 		opp@216000000,800 {
- 			clock-latency-ns = <400000>;
- 			opp-supported-hw = <0x0F 0x0004>;
- 			opp-hz = /bits/ 64 <216000000>;
-+			opp-suspend;
- 		};
+ 				vdd_core: sm0 {
+ 					regulator-name = "vdd_sm0,vdd_core";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&rtc_vdd &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
+@@ -619,7 +619,7 @@ ldo1 {
  
- 		opp@312000000,750 {
-diff --git a/arch/arm/boot/dts/tegra30-cpu-opp.dtsi b/arch/arm/boot/dts/tegra30-cpu-opp.dtsi
-index 0f7135006d19..72f2fe26cc0e 100644
---- a/arch/arm/boot/dts/tegra30-cpu-opp.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cpu-opp.dtsi
-@@ -45,18 +45,21 @@ opp@204000000,800 {
- 			clock-latency-ns = <100000>;
- 			opp-supported-hw = <0x1F 0x31FE>;
- 			opp-hz = /bits/ 64 <204000000>;
-+			opp-suspend;
- 		};
- 
- 		opp@204000000,850 {
- 			clock-latency-ns = <100000>;
- 			opp-supported-hw = <0x1F 0x0C01>;
- 			opp-hz = /bits/ 64 <204000000>;
-+			opp-suspend;
- 		};
- 
- 		opp@204000000,912 {
- 			clock-latency-ns = <100000>;
- 			opp-supported-hw = <0x1F 0x0200>;
- 			opp-hz = /bits/ 64 <204000000>;
-+			opp-suspend;
- 		};
- 
- 		opp@312000000,850 {
+ 				rtc_vdd: ldo2 {
+ 					regulator-name = "vdd_ldo2,vdd_rtc";
+-					regulator-min-microvolt = <1200000>;
++					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt = <1300000>;
+ 					regulator-coupled-with = <&vdd_core &vdd_cpu>;
+ 					regulator-coupled-max-spread = <170000 550000>;
 -- 
 2.29.2
 
