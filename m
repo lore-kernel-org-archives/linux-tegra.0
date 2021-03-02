@@ -5,131 +5,112 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05735C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5515C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE80764E6B
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A3064E27
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352229AbhCCD3F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:29:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34344 "EHLO
+        id S1352249AbhCCDaG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:30:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1577817AbhCBJzH (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 04:55:07 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FADC061356;
-        Tue,  2 Mar 2021 01:54:42 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 18so21751256lff.6;
-        Tue, 02 Mar 2021 01:54:42 -0800 (PST)
+        with ESMTP id S1838287AbhCBKJS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 05:09:18 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29666C061756;
+        Tue,  2 Mar 2021 02:08:37 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id k9so10466502lfo.12;
+        Tue, 02 Mar 2021 02:08:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=A9j1HsnymgCA8/9Sl0iXz8e81BDwl/5z9VxLb7DJwAA=;
-        b=eHoUhvBNjSX1FX3ZdaC9CJirXCvqj7d0gIxx5qDBVt9B5tCP8nHmjEBWvWUGX8UaRM
-         aFd8SbjVy7/n2c2zwvhtzK8jJnNCsWD+5wYUvnGqlLS/A4TyXiYl6SyAmWaLziLsOamS
-         F/Dgc7SzLJs+xW01JKUmBBanFudb9mh1nfTSluBu8tiXmyhDx0C1KtF1DPNSFhOfBVK/
-         mxiQzegLSpK9gujZLRRH34skar5sJxp1m7dYuVV0be7+BW8zX6W3UlbirODVxaNFxXxJ
-         50hkDLv6fSlup1I5G8Qrdcj0cgYemU2xQwWilAwmuvmfzt3kMnDbRwHvgc1XcLfHNhqI
-         lh+A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sfUQ5KkuJugRcswoXUIYuj0VO0djxRHGJcsWdg+KZjU=;
+        b=SREfkOV5YjngyaW6kgRMW6XmqLOOigj8+ADhOCMufJ1iRRUMuNBWbHsCqjUzWWt6RG
+         vqIWfYG3W9ZJBvpHPygONmzb9jyvmYo8JlsNZVPPu26vKOGFUwdYvLcDbUFzTizQbxIb
+         k8M8URlvwnPCw7E3jD0s1PQEzjVkb3vAtm/RzPLZz/HA+RAnsuPv2IY0fZ8ErMCiHdPX
+         MGTznypCqMUo8xtrz2aXggKnx251MUiU6sL9p9EiQNgPxi+9DUtfgEWN74vOmC/iqW6x
+         sPA1esYehtYg6JsvtvY6gu/9od9X3IhrHgWd4s6JP+PMEP+KwUhwvqa9BOOYZqjs7tra
+         hcxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=A9j1HsnymgCA8/9Sl0iXz8e81BDwl/5z9VxLb7DJwAA=;
-        b=RTfRw5AKvtc5BjDQ8gv1LtuWlAcugpPLV6BOErgxeBXZf+Zv6kylCs1gSN/Xw8RiyX
-         fppQll9WO1fWLpTFPXUCwvH+BpoMWF3Akuakk0TBepLxlanO1IYrgD2rjBf6pJ+e9rIu
-         c7mqONDeC+169DCavbKz4i3QPGckNJlRpJblyFan2VSPRDrWssn8ZVNwG9j9YnXZp2VX
-         6ybpu606lH7IrFArPsxXXyCt1MTCY5LuE26N4eIBif/3Wm1nuex/CB+CWNwRDBTglv3r
-         JQbM0whEuGlBtXWdhYHf6lMXrp0mGwAvPy6IYybgzTKXbmDBhNqsj71z3XiKmj0ApRv5
-         Ru/w==
-X-Gm-Message-State: AOAM532J13zLqdy/VZq84QXIdc3ufpHeDaUdXAIEhS4OGrumSQmmCCXU
-        RupC0yXhlXvBCrhejiZTlvM=
-X-Google-Smtp-Source: ABdhPJy8CEf4buuUuXeSpENaB8KF73iTgVULqKkY8FcROf64M2981wA+CuKOpAiwelB8dsoT7sFixg==
-X-Received: by 2002:a05:6512:1315:: with SMTP id x21mr11916068lfu.511.1614678881213;
-        Tue, 02 Mar 2021 01:54:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sfUQ5KkuJugRcswoXUIYuj0VO0djxRHGJcsWdg+KZjU=;
+        b=Rdm7PfEZ7RNQj01dcYqo1P0H4VUDDDRonoiWWmVvYTkCr2YBbnqP//WmgtvoQJAsla
+         R4nqL+HISPxpcLs7LnesuCboE2T/IdNoa+QPtf5vgM0tenJGMrSjhcN5aSdllSTT3Qu1
+         zEZ3KyaajiGpwHZxKiepf1s08A/cr5alFchEHDcQKRzNCsmRJ5yugrHoBxAXMqKOCaE7
+         BsGIhQ+7Pp5g4035UXX9gdi3mxzRyQcvshZG6B0JESiTLC97i3Zz1hVO3tn4iUJLBhKm
+         rVr5nj0hvxLjL1IA6cPzcP04zZ2IfAyMcfbl03unwpsLAlANyWKB+wsWB2xNB4ersG1U
+         p+/Q==
+X-Gm-Message-State: AOAM530+umB0GBY+2Koe//HsWYYQCQ6xY7D/XwTIudyOlnS32anyt6GA
+        ZWFKHickiZ8KIYuQpoXfoe8=
+X-Google-Smtp-Source: ABdhPJzmMFbGapGmoNeZO/smtuHVHtf3ixjTLxqIfeAXFo+Ap5rq6rMyT/sYvROMWjn9/0O+wvBcMg==
+X-Received: by 2002:a05:6512:547:: with SMTP id h7mr12285352lfl.529.1614679715517;
+        Tue, 02 Mar 2021 02:08:35 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id y16sm2783451ljg.83.2021.03.02.01.54.40
+        by smtp.gmail.com with ESMTPSA id g10sm1725052lfe.90.2021.03.02.02.08.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 01:54:40 -0800 (PST)
+        Tue, 02 Mar 2021 02:08:34 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH RESEND v2 2/2] cpuidle: tegra: Remove do_idle firmware call
-Date:   Tue,  2 Mar 2021 12:54:05 +0300
-Message-Id: <20210302095405.28453-2-digetx@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Johnny Chuang <johnny.chuang.emc@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] Input: elants_i2c - fix division by zero if firmware reports zero phys size
+Date:   Tue,  2 Mar 2021 13:08:24 +0300
+Message-Id: <20210302100824.3423-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302095405.28453-1-digetx@gmail.com>
-References: <20210302095405.28453-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The do_idle firmware call is unused by all Tegra SoCs, hence remove it in
-order to keep driver's code clean.
+Touchscreen firmware of ASUS Transformer TF700T reports zeros for the phys
+size. Hence check whether the size is zero and don't set the resolution in
+this case.
 
-Tested-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Reported-by: Jasper Korten <jja2000@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
 
-Changelog:
+Please note that ASUS TF700T isn't yet supported by upstream kernel,
+hence this is not a critical fix.
 
-v2: - No changes. V1 got no attention, hence re-sending.
+ drivers/input/touchscreen/elants_i2c.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
- drivers/cpuidle/cpuidle-tegra.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
-
-diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
-index 29c5e83500d3..508bd9f23792 100644
---- a/drivers/cpuidle/cpuidle-tegra.c
-+++ b/drivers/cpuidle/cpuidle-tegra.c
-@@ -48,11 +48,6 @@ enum tegra_state {
- static atomic_t tegra_idle_barrier;
- static atomic_t tegra_abort_flag;
+diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+index 4c2b579f6c8b..a2e1cc4192b0 100644
+--- a/drivers/input/touchscreen/elants_i2c.c
++++ b/drivers/input/touchscreen/elants_i2c.c
+@@ -1441,14 +1441,16 @@ static int elants_i2c_probe(struct i2c_client *client,
  
--static inline bool tegra_cpuidle_using_firmware(void)
--{
--	return firmware_ops->prepare_idle && firmware_ops->do_idle;
--}
--
- static void tegra_cpuidle_report_cpus_state(void)
- {
- 	unsigned long cpu, lcpu, csr;
-@@ -139,10 +134,6 @@ static int tegra_cpuidle_c7_enter(void)
- 	if (err && err != -ENOSYS)
- 		return err;
+ 	touchscreen_parse_properties(ts->input, true, &ts->prop);
  
--	err = call_firmware_op(do_idle, 0);
--	if (err != -ENOSYS)
--		return err;
--
- 	return cpu_suspend(0, tegra30_pm_secondary_cpu_suspend);
- }
- 
-@@ -356,9 +347,7 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
- 	 * is disabled.
- 	 */
- 	if (!IS_ENABLED(CONFIG_PM_SLEEP)) {
--		if (!tegra_cpuidle_using_firmware())
--			tegra_cpuidle_disable_state(TEGRA_C7);
--
-+		tegra_cpuidle_disable_state(TEGRA_C7);
- 		tegra_cpuidle_disable_state(TEGRA_CC6);
+-	if (ts->chip_id == EKTF3624) {
++	if (ts->chip_id == EKTF3624 && ts->phy_x && ts->phy_y) {
+ 		/* calculate resolution from size */
+ 		ts->x_res = DIV_ROUND_CLOSEST(ts->prop.max_x, ts->phy_x);
+ 		ts->y_res = DIV_ROUND_CLOSEST(ts->prop.max_y, ts->phy_y);
  	}
+ 
+-	input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
+-	input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
++	if (ts->x_res > 0)
++		input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
++	if (ts->y_res > 0)
++		input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
+ 	if (ts->major_res > 0)
+ 		input_abs_set_res(ts->input, ABS_MT_TOUCH_MAJOR, ts->major_res);
  
 -- 
 2.29.2
