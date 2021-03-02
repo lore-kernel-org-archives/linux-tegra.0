@@ -2,103 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDFCC4361A
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B935C4332E
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 026BC64DD8
+	by mail.kernel.org (Postfix) with ESMTP id 26D4764DD8
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378863AbhCCDbl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45924 "EHLO
+        id S1378839AbhCCDbj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350840AbhCBM67 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:58:59 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 996F8C061225;
-        Tue,  2 Mar 2021 04:45:15 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id h4so23555388ljl.0;
-        Tue, 02 Mar 2021 04:45:15 -0800 (PST)
+        with ESMTP id S1447183AbhCBMvH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:51:07 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CDEC061222;
+        Tue,  2 Mar 2021 04:25:16 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id u4so30994447lfs.0;
+        Tue, 02 Mar 2021 04:25:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RODns9c8niEuo2cR8Tivcksr+gvQ6B3mB5cKu2wOr5k=;
-        b=sHlezPC1K+hQ2MvLnVoZTzrGOimIYa8oVDmfP4r4C4JOXwQGq+gkbMFn8966V11zVa
-         2nmO5IkDvXtncMumYS7YEyVoNKBl7rigd6JGEUKKLI/M/NqvQhpVmr/Lc1ZiHf10t7by
-         kb7jZZMhcEHqLa6aAaf/LOnKcKfxi7kocDp8dcBeZI1LWTs1REvkZHyNP3IS2AnJy4nu
-         h9X8Kg3XI/UCcb/ciaqOI5HArHPD8EblMwWnBhfFyNbV6oopQ94x9KrYDHjK9cMhcSdS
-         Isw4r/ERYp5zZ+8GqBSGjbnXU8CjDfMjMNkXPCrbM9oJQf9OsBimXzwQf1nuFwq5gF+W
-         Yh9Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ksrOcQH9Z4oWD/WAExssWru55oblOBFoV4Ung+svFCc=;
+        b=haPOGS/kYytNHfPIwA2jULTwn4IzIIvn/y6rnNxfGYUsw55Bzz0wCuuTfGXxeKSu7x
+         KmsTD5tKm6nN4sdbDqsoF2bTgm4GUP/FhUmx8D2NUaP4aN//maQsL+c9dR0irz3ahZ2w
+         TkDmgwReAryrMO8wrJfWVfU/+NMKeg6HoRsWpFF4x7xMAM1Uf5mxjblhzPgfHet8RSSI
+         nx/V+Rczh5Nos0KP7o5PLsUGx0dj1B5wCxpNID3zCRRpSwMPpN41vTCsHToeX3iMP2dk
+         RQaNz3BfXhUAyEWA6DBKKQoBgsx+z9jlO8JwY1k3oNc6OeyFmJybOi24q9msVir5vSX9
+         Q58A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RODns9c8niEuo2cR8Tivcksr+gvQ6B3mB5cKu2wOr5k=;
-        b=TM2hdfY6sWQ61iuU4E6s4mJnNHgwDhGEAZtapfgt7/WBVmD2+9jbtR3NCN9oaPFvPI
-         cszcLxb4Yo7574k13h3Co106Mso8WKM+JTud8+A808NX/AMkqRRG+zhPgxvlKOfat3Yv
-         z/oBIUztQeplQ44OxUYzNBh3lHKxu64tXoGwzY75X94vKxo/O0G/K0FX62ImqNHL1QrU
-         8CnM8QQsc3mkmJwH5qJZCyefEIrQt48bf/t3hBuOpShOAt2rtOkhddROgYkmlwnxsvoi
-         emxkhOOIbvBfPiM4NM8gkA+vTtyg+bJ0RmSb+dgyaYUqpwgv14O/yH1gRw7+jfh01aM0
-         74Rw==
-X-Gm-Message-State: AOAM531KTWgT8LiiA43dpDvijz8ay2UQx8Nqk1nqFi20XmoZYjvrAxzL
-        zV3DOUZJgidRiIaOsbFsbi4=
-X-Google-Smtp-Source: ABdhPJyu8IppM2jrWh9AXXl+HFGQgEQ6h8mGp7coHcqpb6q77syOlTkR6BmPxcAqrLBBq24PC/N9qw==
-X-Received: by 2002:a2e:7604:: with SMTP id r4mr12550406ljc.60.1614689114186;
-        Tue, 02 Mar 2021 04:45:14 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ksrOcQH9Z4oWD/WAExssWru55oblOBFoV4Ung+svFCc=;
+        b=POWp8N2jXX5JnjD/nGrlK5cqAtBAZ9raubtPA8JDyDjmralE4aP7oYoPET3TGZNhoy
+         qEE03mD1m1ayYrmuqZJOv+k2frGU8CXWIcn5SvwhThtzwCzFsvY/d3CDJ4I8UUeJHvcu
+         H8o7Jj0drjchaUdE4ONpeIwJJ/P1nbcM3uMxa8SPCRA3fYk1wK8M6TPaFqWvlAAj9SRo
+         I+2fHmUYgMYD2K5jGVhg48/zL8JVAZXikPx0CBuqi8g41nQOPIMLCXfmM06otX5FSIkN
+         JMtmL3TyAOf3nLopp9pjPgVLN+KAy9idjZEhdXTSCtRaf9cvSVmFEYbdseoeRfN9om9d
+         SQIg==
+X-Gm-Message-State: AOAM531ywCOjhyHoiaJIdatGVGmZzNx+fYMc9Yfme/KsdFZeG2zB9VEi
+        qlilTIPlXe/lQZHJ+neVJIY=
+X-Google-Smtp-Source: ABdhPJx7YLT8ZCdypQfvLQ72adtoeWRVWEq/B4hutEu9VF+xIaMU+t5KMNGkqfyVDcvBrvFCEuq18A==
+X-Received: by 2002:a19:c3c3:: with SMTP id t186mr11990721lff.596.1614687915143;
+        Tue, 02 Mar 2021 04:25:15 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id m16sm2634705lfh.109.2021.03.02.04.45.13
+        by smtp.gmail.com with ESMTPSA id u4sm2602126lfs.61.2021.03.02.04.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 04:45:13 -0800 (PST)
+        Tue, 02 Mar 2021 04:25:14 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
         Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v13 0/2] Add memory bandwidth management to NVIDIA Tegra DRM driver
-Date:   Tue,  2 Mar 2021 15:44:43 +0300
-Message-Id: <20210302124445.29444-1-digetx@gmail.com>
+        Matt Merhar <mattmerhar@protonmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 5/5] soc/tegra: pmc: Rate-limit error message about failed to acquire of reset
+Date:   Tue,  2 Mar 2021 15:25:02 +0300
+Message-Id: <20210302122502.20874-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302122502.20874-1-digetx@gmail.com>
+References: <20210302122502.20874-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series adds memory bandwidth management to the NVIDIA Tegra DRM driver,
-which is done using interconnect framework. It fixes display corruption that
-happens due to insufficient memory bandwidth.
+PMC domain could be easily bombarded with the enable requests if there is
+a problem in regards to acquiring reset control of a domain and kernel
+log will be flooded with the error message in this case. Hence rate-limit
+the message in order to prevent missing other important messages.
 
-Tegra memory drivers already got the interconnect API support and DRM patches
-were a part of the series that added ICC support to the memory drivers, but
-the DRM patches were left out unreviewed and unapplied. Hence I'm re-sending
-the DRM changes in this new standalone series.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/soc/tegra/pmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changelog:
-
-v13: - No code changes. Patches missed v5.12, re-sending them for v5.13.
-
-Dmitry Osipenko (2):
-  drm/tegra: dc: Support memory bandwidth management
-  drm/tegra: dc: Extend debug stats with total number of events
-
- drivers/gpu/drm/tegra/Kconfig |   1 +
- drivers/gpu/drm/tegra/dc.c    | 359 ++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/dc.h    |  19 ++
- drivers/gpu/drm/tegra/drm.c   |  14 ++
- drivers/gpu/drm/tegra/hub.c   |   3 +
- drivers/gpu/drm/tegra/plane.c | 121 ++++++++++++
- drivers/gpu/drm/tegra/plane.h |  15 ++
- 7 files changed, 532 insertions(+)
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index bf29ea22480a..84ab27d85d92 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -868,8 +868,8 @@ static int tegra_genpd_power_off(struct generic_pm_domain *domain)
+ 
+ 	err = reset_control_acquire(pg->reset);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to acquire resets for PM domain %s: %d\n",
+-			pg->genpd.name, err);
++		dev_err_ratelimited(dev, "failed to acquire resets for PM domain %s: %d\n",
++				    pg->genpd.name, err);
+ 		return err;
+ 	}
+ 
 -- 
 2.29.2
 
