@@ -2,63 +2,60 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7566CC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFF0C4360C
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 467C964E27
+	by mail.kernel.org (Postfix) with ESMTP id 96F0964E27
 	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352264AbhCCDag (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:30:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
+        id S1352270AbhCCDak (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:30:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379939AbhCBKU0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 05:20:26 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC16C061756;
-        Tue,  2 Mar 2021 02:19:45 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id v5so30389897lft.13;
-        Tue, 02 Mar 2021 02:19:45 -0800 (PST)
+        with ESMTP id S1379999AbhCBKYn (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 05:24:43 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C3DC0617A7;
+        Tue,  2 Mar 2021 02:22:09 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id h4so23053942ljl.0;
+        Tue, 02 Mar 2021 02:22:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XIDQ+4kd/LXbhSXCzL5ECgyTEsdEXu9h18StVgaqum4=;
-        b=Pf5mOk+o5dy/vp4SpSQwj77UzCFy+8S4DEJRuT96Kcu83dmmPBijPpcEf2qTcZ7Dxa
-         0j169SGa2OTvzmgVuskgXtXBENmWBQyRp5/It6ErXglDCAOvCH5JwJ+mM9X43ihzIanu
-         S+hIfTD/RRCCeIvxtbUp4g1haBTXHv/AM2kKB3klTmogO8lS9yEF9rRozN9W/q3yJ1V/
-         EJLWaplZcyoyFEgN1W6XZ0SKjkWCXPq54AkhCh+fHSOMxiW67BkQ34+5Qj/PbAj2Bud1
-         DqQwAMvXQ/CxEGi3USAlkqQGjtBBu9GIckbsHgupMMdSgIJcWo6y9Rwul43+w3PenflF
-         Knfw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ez28sRNxxnA+mFrwwNyOygQjyXiZVskV4841e9M5tTE=;
+        b=Qne4+z/IjF+WaFiDJb7UeJbCSjyzc0cZiYik1OfF0ZBeomFum8Oy+OPGD/u+vc4Z5a
+         F61VhUwcMlrAgb14aJ/rCBxQrfuw1bG3bnd1pxZyIcw1Xr9n5uzPcrhxncDYI9nFmT9X
+         a1wkf1jjFTemTpn85Jcas/KT6LN9kRD7j1IM+cb+lQtobBkEy+bMs5tFoLHu5P7cDlnS
+         56p1VFdhGs+JORQGGl423NIE6djgC/pIplzWsHx0+W/tMdaZrFk9nCc6F0kg7e7Lpq1P
+         b124giCYd641SEGPn1HTCl1LH11rMl5w4VpYBBaSC0kXgt7/OVdktFfDPFKIhZff1VpJ
+         KSJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XIDQ+4kd/LXbhSXCzL5ECgyTEsdEXu9h18StVgaqum4=;
-        b=Vh3+rCoXSE2aQM+FLmDgT88jsXjVCOa3HJJiMDnvaenb9h1tmUr+Ui29dlb8srxJ5z
-         f7FXf/HU7cNb+v4hhYe3l30CnfLDyOB2HU6yf0MB4rk5uv99otqU0XK6f9cZJZPprCi7
-         rhGx3mI7q/f+Q2I0CkaY1z8hDAAP6SOjcWQVDwX0ydXg+oPqf97WuFGrtcpHLcq6wmhD
-         Z9sUviR6oY6jeuXojfztn9ROClTCh5v7pre469xtLff/KKz7wvFk2oGHxcX/gawLnF5D
-         CkWK232VoSKKkVRbke5KYw9DAybpNUoSdrXsGdOfg6Rx0PeGqZgd9DQ7LSODYiAhwO8T
-         /npw==
-X-Gm-Message-State: AOAM5338eY1mxrBs9lUlj/BxlWQAhfEfOuO/nzmgfYTGNMni1U8Vw7HX
-        DsW8QrjO+F852DBgZFtKoNGk0mAEvLU=
-X-Google-Smtp-Source: ABdhPJwqxkVhyLw4kBU7lIs0HBZspIqPWScLLdQNWfQ7VwJReaESA/CRZGn7ylwvepdXc5DDPkRJXg==
-X-Received: by 2002:a05:6512:328f:: with SMTP id p15mr11991157lfe.628.1614680383939;
-        Tue, 02 Mar 2021 02:19:43 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id r12sm2497133lfc.79.2021.03.02.02.19.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Mar 2021 02:19:43 -0800 (PST)
-Subject: Re: [PATCH v5 1/3] dt-bindings: input: atmel_mxt_ts: Document
- atmel,wakeup-method and WAKE line GPIO
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ez28sRNxxnA+mFrwwNyOygQjyXiZVskV4841e9M5tTE=;
+        b=Q4u2XDtU4MVWpboEq5V7CGneTEw4hOxzYrGRfWXxJ/fpWGa0dhIrDJovgazPNkXxrK
+         xj2eQHZ2y2pkfolL++coDPoLp/grzokqC5qeMFTEvby0wgyKwIbOjlx4ZVFnEMKAbRET
+         tZ9QMqwAKSEC3K0Y5/QOBpwmAPb9flb5ujAcYKTmoF6HWIOBJnD+z0KjBB0yX56c0Zt9
+         xFgpp/CoAZzLEmhgTOopeKb5pGqjR8kuelzNsE6lUQoshMiP5xtrrxZi+xc10nZ6+6pb
+         JaTdZcefhBobjSME/WyMlPK1eyxs5qOpWJdgZ3u/ensJO4TMwQcNbZI4wF4Qdlu4+18f
+         dw7g==
+X-Gm-Message-State: AOAM532rSYREopCI7KTOTjvSuxkomKEtCeRWzLPCoOtzFPnXyuOSYIAM
+        yTLGAws8OFjIgktW0LDqsfM=
+X-Google-Smtp-Source: ABdhPJwacKskz1iscj45Emaav16iDjjJ3zCeIbF8xVQ4y/Zd4xC03VGoBI7nRTwwfmkU1qhhnTWQfA==
+X-Received: by 2002:a2e:b01a:: with SMTP id y26mr11496407ljk.442.1614680526143;
+        Tue, 02 Mar 2021 02:22:06 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id n2sm2586369lfu.274.2021.03.02.02.22.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 02:22:05 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Nick Dyer <nick@shmanahar.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -69,28 +66,53 @@ To:     Nick Dyer <nick@shmanahar.org>,
         Jiada Wang <jiada_wang@mentor.com>
 Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210302101556.7150-1-digetx@gmail.com>
- <20210302101556.7150-2-digetx@gmail.com>
-Message-ID: <5ea216b8-cff8-9731-2d63-3611ca977381@gmail.com>
-Date:   Tue, 2 Mar 2021 13:19:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+Subject: [PATCH v6 3/3] ARM: tegra: acer-a500: Add atmel,wakeup-method property
+Date:   Tue,  2 Mar 2021 13:21:58 +0300
+Message-Id: <20210302102158.10533-4-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302102158.10533-1-digetx@gmail.com>
+References: <20210302102158.10533-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210302101556.7150-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-02.03.2021 13:15, Dmitry Osipenko пишет:
-> Some Atmel touchscreen controllers have a WAKE line that needs to be
-> asserted low in order to wake up controller from a deep sleep. Document
-> the wakeup methods and the new GPIO properties.
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acer A500 uses Atmel Maxtouch 1386 touchscreen controller. This controller
+has WAKE line which could be connected to I2C clock lane, dedicated GPIO
+or fixed to HIGH level. Controller wakes up from a deep sleep when WAKE
+line is asserted low. Acer A500 has WAKE line connected to I2C clock and
+Linux device driver doesn't work property without knowing what wakeup
+method is used by h/w.
 
-I'll send a v6 shortly because accidentally missed to add r-b from Rob
-Herring to this patch that he gave to v4.
+Add atmel,wakeup-method property to the touchscreen node.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+index d3b99535d755..40c1bab22155 100644
+--- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
++++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /dts-v1/;
+ 
++#include <dt-bindings/input/atmel-maxtouch.h>
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/thermal/thermal.h>
+@@ -450,6 +451,8 @@ touchscreen@4c {
+ 
+ 			avdd-supply = <&vdd_3v3_sys>;
+ 			vdd-supply  = <&vdd_3v3_sys>;
++
++			atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
+ 		};
+ 
+ 		gyroscope@68 {
+-- 
+2.29.2
+
