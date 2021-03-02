@@ -2,93 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E2EC2BB48
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF512C2BA2B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F58F64E27
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B65464E66
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442329AbhCCDbw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:52 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17713 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347508AbhCBSJ3 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 13:09:29 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B603e6b860001>; Tue, 02 Mar 2021 08:44:54 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 2 Mar
- 2021 16:44:54 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Tue, 2 Mar 2021 16:44:54 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 000/176] 4.14.223-rc3 review
-In-Reply-To: <20210302122237.974772983@linuxfoundation.org>
-References: <20210302122237.974772983@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1442185AbhCCDbr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351120AbhCBNbV (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 08:31:21 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AF5C06121D;
+        Tue,  2 Mar 2021 04:25:14 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id 18so22394477lff.6;
+        Tue, 02 Mar 2021 04:25:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+9jSWTZzAfW2e69fnTTJ2x2udl3lL7BijHyOX96SUFA=;
+        b=mO8YuzBgYCibrR2zRlOCFKCYz6sWPENmSOAd5yqT645guqBs7KDYsFR4paZLm/ppXs
+         jhZr9r4S0+uoiBjRme7UdXwL7riarQutzNdkBFYPWd5BTkw+mIBdAS8feJF3I7tP02gj
+         AijzruT/mnKZUs+TfuYneCXr2y91Fy8n8lZ508k4kua2PptF41feMioULalYV3USzN2R
+         k2YBCSkL6nWuEqOp2Njvnml2g4jcENdwj+zW0vCtNnb0ESA1gav1jNwNklboKirfrNK4
+         l+xpGsDyRtFSL5vuuoVRuPbdIO5vK3ojXD6T+D3eZCjXHUoxjDNtbdYtceCa8Y+bCSYF
+         4MKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+9jSWTZzAfW2e69fnTTJ2x2udl3lL7BijHyOX96SUFA=;
+        b=Ve3pZikFN9czqRPDgZUFO39Wocsbf5XnvOamegt+RmKWLyJwlO4UecKFaNKOgcKbJz
+         sOyJ8vpOfjh4+4+xEuOR8h7BFzTSkEStpJXb1UlrBIHjdSH3hSkU2T5B2CIHwgHMGOvN
+         fRplWd/To/N0efG1JY5dwN+va4qgz3LkD0cSpp//kvYOx/ef93U1Q507cZXTW8M78T8H
+         lNCy1oV4ceo4UBe7yfwiT340RcSMCvivUqP4TXcYw3WkDPeImkdXyyq5v1f+5cRTHjTK
+         UnPx0RHiYuJVVn+x2i/YOLSwSxQWS4ivpuyQ+KvegLrSukDiTnCifjdTtr4t1epUaXTg
+         bqMg==
+X-Gm-Message-State: AOAM531/XrM1OuepU/gICUMfJxpmmTejud47pqTS3A+i70sDbXaEMA86
+        6vc2ugZ/YBudsnGoBLPK19U=
+X-Google-Smtp-Source: ABdhPJwfsBIIeJoP4SvdGboxPY9QuKHip9nOU4d5QeTF8wtPM7NVtwzvk8W1LH0KoUoln17SKv5Ajw==
+X-Received: by 2002:a19:74c:: with SMTP id 73mr12181020lfh.316.1614687912606;
+        Tue, 02 Mar 2021 04:25:12 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id u4sm2602126lfs.61.2021.03.02.04.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 04:25:12 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/5] soc/tegra: pmc: Fix imbalanced clock disabling in error code path
+Date:   Tue,  2 Mar 2021 15:24:58 +0300
+Message-Id: <20210302122502.20874-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302122502.20874-1-digetx@gmail.com>
+References: <20210302122502.20874-1-digetx@gmail.com>
 MIME-Version: 1.0
-Message-ID: <6e4feb6269a8494981bf4c9d1d9d17cb@HQMAIL111.nvidia.com>
-Date:   Tue, 2 Mar 2021 16:44:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1614703494; bh=/f9jjVrPiALidgAKTi4iQ+bGk6QUDqp0bO4GpmnEpo4=;
-        h=From:To:CC:Subject:In-Reply-To:References:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:
-         Date;
-        b=UXUaDBO5UvFnYIc81HxJLouOgmf12Ad8Z9XNvki5E/CKXDQpm7wnKNLtzKazZE5nh
-         KWilZqBg0w8Pme1SmAdzsI2FAriChiuzBDK00IBPp/JGmJaBIUFw41PNFx/J13acDL
-         ablfObFh0IYql2lMDx5orRFbKiANSHkpEVCjJetN4rtoTw/d8qTm1BCqaMhY8H2kJS
-         zEkdpdXxIw4HSnbwx1dyXcpPN4h3SsrXdFGIwQ5EonUMVZNV8PqOvvfuoc0AWJGfoE
-         YM2PffCO94jZM8gBD+y8uYdqY61W2YWUaphZTk/L1gIk9AJNd5QmdpgYKBMaN3lQO1
-         Nv6WSlw2tyYqg==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 02 Mar 2021 13:26:45 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.223 release.
-> There are 176 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 04 Mar 2021 12:22:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.223-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The tegra_powergate_power_up() has a typo in the error code path where it
+will try to disable clocks twice, fix it. In practice that error never
+happens, so this is a minor correction.
 
-All tests passing for Tegra ...
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/soc/tegra/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    30 tests:	30 pass, 0 fail
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index df9a5ca8c99c..fd2ba3c59178 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -638,7 +638,7 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
+ 
+ 	err = tegra_powergate_enable_clocks(pg);
+ 	if (err)
+-		goto disable_clks;
++		goto powergate_off;
+ 
+ 	usleep_range(10, 20);
+ 
+-- 
+2.29.2
 
-Linux version:	4.14.223-rc3-ga03a0d1d4a21
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
