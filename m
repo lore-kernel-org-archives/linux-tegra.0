@@ -2,106 +2,143 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2401C2BA1E
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D91C2BA19
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E2A6023B
-	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65DA86023B
+	for <linux-tegra@archiver.kernel.org>; Wed,  3 Mar 2021 03:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441830AbhCCDbp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 2 Mar 2021 22:31:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47012 "EHLO
+        id S1378850AbhCCDbl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 2 Mar 2021 22:31:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242631AbhCBNBb (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 08:01:31 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563C6C06121E;
-        Tue,  2 Mar 2021 04:25:13 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id q14so23668623ljp.4;
-        Tue, 02 Mar 2021 04:25:13 -0800 (PST)
+        with ESMTP id S1447343AbhCBMw2 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 2 Mar 2021 07:52:28 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555F9C061356;
+        Tue,  2 Mar 2021 04:51:47 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id k9so11165357lfo.12;
+        Tue, 02 Mar 2021 04:51:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nnScvCZI6cAu2ypGFQUT8MjO5y66eSGlKO06JBJkuno=;
-        b=pnsSHUx172+8tj6P8OAvqX3eFoZvdUQdb8uwGvkxVg19e2wQ8EMSxu+oyIgvpc1OM4
-         8mcUMcUm1O+/R4pU1a4Rqjh3V7yYjqx9H2tDNoGV0sk7H+9/v7BpIWXaunl5ioDgtyVE
-         JGk/Aa6UAttn8ZvXYsiAnKks75Hmtxga+lvfxOWXOKRxwdS3cuWAO+ILsvrfssTds+JC
-         ONsr4BJMXmWo/auxQZJQLMDXoqQTFiHjsoN/0HcxSUDPzKP0Ey+PklNCKSzxWmQdURua
-         0YVX6aBpJfRSo0nUONvV5RGoIxyO8o2iaWxqPYNwMpmmrRqedoDuqHayzb9WZOZ9A9Cm
-         3uRA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CG/5QlNuJ1KNPPhd8D/4ac7gmQv2YGcSkIDPjvGHLKY=;
+        b=f6IBe6p3Lk5pn7nTThtsyM5m0MTzaHE2c1Ij32oGe/DdyKymToP05XSJY1oZne+M/V
+         YHE+fXxy//S8rsD4J7WmgrHd2/CVvZO04trwVHGSOJRzWkmV8aYVQs6lSVFIh/EkooL4
+         v6l027dFKlhLSdzuesSKmot1xagBK1ozLjKMtYqY/r5rmbnuKbXw3JJIdlGYdBJM5gP+
+         FWn9zNOEpdon0BerfRl1L9DqP8DDmEFG4WP2rW2hHytXhwPf3aAiT0az/2k9HEyuiXtQ
+         OJbStF3biO1BrD2A0aUCd6PsuNcG/Zdwb30YI7BAIrlfsmoTvAAtnERYS/YwvL5XcUII
+         ZLNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nnScvCZI6cAu2ypGFQUT8MjO5y66eSGlKO06JBJkuno=;
-        b=NQDLssaSwezM+CIorPaVomvaKI82huDoWW1t0zRlSYTN80SKpxgSkFCZyzlTgoIJiL
-         oLnUBMEEsvWPVdlEevyHxpDKBb5R9UtylvaIUoNDyj4+s81zepPIYcErqeKxDIDU2fEq
-         UI3Shu1bvAVf7G7EIZ2Dsr3jvaXXReALmK436uMtdwe1N7F8SjW4OC8lnywAH8Ah8eDq
-         VxTjO9gfJEAjE+pzqnLDkc5VKJ8HdG34WQVLkySdSGnZEESnW3JVgfpj1QrggTcrb3Dq
-         IA2iti/ZZ34ZTZr0MZ0m0u9xFCI/zN8rjIgoahzbuctXeimIGrUHgjBSxJZGLIbzwesW
-         P9FA==
-X-Gm-Message-State: AOAM5326ZE+lp7hXva0yR8Z9D8ZsWmyqfKU1UspODkIeFEdH36zmCt92
-        oPcAdkVu4ILncZ8Rl84VyKM=
-X-Google-Smtp-Source: ABdhPJxJjdLQuvoRy2t+5XQEfbwzHPRlXPyTTw4lTci1Dn8sGAbEILcUB9yKPJG+nRjW074FwWfL1w==
-X-Received: by 2002:a05:651c:548:: with SMTP id q8mr11901278ljp.256.1614687911795;
-        Tue, 02 Mar 2021 04:25:11 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id u4sm2602126lfs.61.2021.03.02.04.25.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 04:25:11 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        bh=CG/5QlNuJ1KNPPhd8D/4ac7gmQv2YGcSkIDPjvGHLKY=;
+        b=asJuAZ4ZXQoZ8J60KHTb+Hprq06yEO2eUsxzyj+npqYTuzUw54NTPJdV003U21EM+6
+         wqWqv9YSG/kKia02yLxMZ3OUH1A3JZCDjuuuMBlkoJHlEdVphcM9tanXcCCU2FUHodcB
+         o9ElCwUOfDaAG7P1o51KP2o/ZpFTa1b+VW0MlGGf1KZl6PZOVh276Iwu0Xey03tLEncf
+         hXZ1Fc0iBfwEjkDJMpQsKeCjsdKqfH6+6/tm0yD1L16Tm26mKBE7Y5SLOBcYn+LutaAj
+         QdQBDK9OpLK7joU5I5BPIJJIwJD2xgxr1M+1rI9tLP3HsGzWTFmvW0SGYSbc7F/cVY9j
+         7rgA==
+X-Gm-Message-State: AOAM531pa3pqjAFfq48bSb/5gXVelmJ0kPYYBHtdyxyya/bD9wy4JZGB
+        VutLfsETCyKoaVHlpc/6ttxBDAJSor4=
+X-Google-Smtp-Source: ABdhPJx+iK7c9zLSYUtGA/nvc3RU8int9Y5ss7FRNYjlRREgm+2lybcDRG75VVWriAQj/maa2FVhDw==
+X-Received: by 2002:a05:6512:2206:: with SMTP id h6mr12230604lfu.239.1614689505664;
+        Tue, 02 Mar 2021 04:51:45 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.googlemail.com with ESMTPSA id s24sm2818690ljg.26.2021.03.02.04.51.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Mar 2021 04:51:45 -0800 (PST)
+Subject: Re: [PATCH RESEND v2 2/2] cpuidle: tegra: Remove do_idle firmware
+ call
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/5] Tegra PMC driver fixes and improvements
-Date:   Tue,  2 Mar 2021 15:24:57 +0300
-Message-Id: <20210302122502.20874-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210302095405.28453-1-digetx@gmail.com>
+ <20210302095405.28453-2-digetx@gmail.com>
+ <dd5cff9e-b86b-7fea-c88b-c32b5c428705@linaro.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <1da82ae3-6b23-2aa0-3275-309ffd8738d0@gmail.com>
+Date:   Tue, 2 Mar 2021 15:51:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <dd5cff9e-b86b-7fea-c88b-c32b5c428705@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+02.03.2021 15:45, Daniel Lezcano пишет:
+> On 02/03/2021 10:54, Dmitry Osipenko wrote:
+>> The do_idle firmware call is unused by all Tegra SoCs, hence remove it in
+>> order to keep driver's code clean.
+>>
+>> Tested-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> Changelog:
+>>
+>> v2: - No changes. V1 got no attention, hence re-sending.
+>>
+>>  drivers/cpuidle/cpuidle-tegra.c | 13 +------------
+>>  1 file changed, 1 insertion(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+>> index 29c5e83500d3..508bd9f23792 100644
+>> --- a/drivers/cpuidle/cpuidle-tegra.c
+>> +++ b/drivers/cpuidle/cpuidle-tegra.c
+>> @@ -48,11 +48,6 @@ enum tegra_state {
+>>  static atomic_t tegra_idle_barrier;
+>>  static atomic_t tegra_abort_flag;
+>>  
+>> -static inline bool tegra_cpuidle_using_firmware(void)
+>> -{
+>> -	return firmware_ops->prepare_idle && firmware_ops->do_idle;
+>> -}
+>> -
+>>  static void tegra_cpuidle_report_cpus_state(void)
+>>  {
+>>  	unsigned long cpu, lcpu, csr;
+>> @@ -139,10 +134,6 @@ static int tegra_cpuidle_c7_enter(void)
+>>  	if (err && err != -ENOSYS)
+>>  		return err;
+>>  
+>> -	err = call_firmware_op(do_idle, 0);
+>> -	if (err != -ENOSYS)
+>> -		return err;
+>> -
+>>  	return cpu_suspend(0, tegra30_pm_secondary_cpu_suspend);
+>>  }
+>>  
+>> @@ -356,9 +347,7 @@ static int tegra_cpuidle_probe(struct platform_device *pdev)
+>>  	 * is disabled.
+>>  	 */
+>>  	if (!IS_ENABLED(CONFIG_PM_SLEEP)) {
+>> -		if (!tegra_cpuidle_using_firmware())
+>> -			tegra_cpuidle_disable_state(TEGRA_C7);
+> 
+> So firmware_ops->do_idle is always NULL, thus
+> tegra_cpuidle_using_firmware() is always false and
+> tegra_cpuidle_disable_state() always called, right ?
 
-This is a continuation of [1]. I decided to factor out PMC patches into a
-separate series to ease reviewing and applying of the patches. This series
-is a prerequisite for enabling dynamic power management by Tegra drivers
-that are using PMC domain.
-
-[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=221130
-
-Changelog:
-
-v4: - Dropped "Link power domains to the parent Core domain" patch,
-      moving it to the series which adds driver for the Core domain.
-
-    - Added new minor patch "Rate-limit error message about failed to
-      acquire of reset".
-
-v3: - Added new patch "pmc: Fix completion of power-gate toggling",
-      which fixes toggling power state of PMC domains.
-
-Dmitry Osipenko (5):
-  soc/tegra: pmc: Fix imbalanced clock disabling in error code path
-  soc/tegra: pmc: Fix completion of power-gate toggling
-  soc/tegra: pmc: Ensure that clock rates aren't too high
-  soc/tegra: pmc: Print out domain name when reset fails to acquire
-  soc/tegra: pmc: Rate-limit error message about failed to acquire of
-    reset
-
- drivers/soc/tegra/pmc.c | 165 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 157 insertions(+), 8 deletions(-)
-
--- 
-2.29.2
-
+Yes, the tegra_cpuidle_disable_state(TEGRA_C7) is always
+called if CONFIG_PM_SLEEP is disabled in kernel config.
