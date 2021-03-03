@@ -2,156 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAB4C433E9
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20785C433E6
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8814D64F9D
+	by mail.kernel.org (Postfix) with ESMTP id 0056264F8F
 	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235076AbhCCX7y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S235047AbhCCX7y convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 3 Mar 2021 18:59:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57504 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345548AbhCCS2b (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 Mar 2021 13:28:31 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 821F3C06175F;
-        Wed,  3 Mar 2021 10:26:04 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id d15so9543833wrv.5;
-        Wed, 03 Mar 2021 10:26:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eYt6ZSK+EgInFtZhuqC1D7JLS9QReq7n15THZCTsgVk=;
-        b=So6UcJhCtr+TDGsTKMYMGcEgIvQ8qXS4pXDKMPVBvrdP/soN6tyXdmr6H1WwEx5bx2
-         gDPW3JGvrUYYsRYHxDlhwWpKL2xFRD85s4z/RnPDTafKD/rMB2Wtyu+Ax4GjZXWLjoAD
-         ahEgKEfGQEmNtYLcB5l8ewTYob5tz0S3ywVva2YE/+AJGyetg4W5IyzC5FJfje/q0pLK
-         tPCm8dcSDOG5WCSVIlcSEfK0NC+XXJX5H4nMp72gNHNrEEro7BEIVgQ8x52+L0xypZXF
-         vKDz+0zzeUhqZwMeVl8EkICSriB8JJ+AWWbmnl6vN0PT15NQIRJGiiGwsxJ+0jTH3w3Z
-         XJrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eYt6ZSK+EgInFtZhuqC1D7JLS9QReq7n15THZCTsgVk=;
-        b=pDeg+6hILww59Hylx/bm09NRr0XsjfIoON/5CTl1bjUVmY11tJ6+ApCBaBII1lwWei
-         OFK1fW1kfG3nWoO07srYe8+rlPiIeZ4+9eJ9OBAje5sI8sH36A9/nnOugC3Unj8EdjFa
-         JYh9VPLiLpPciYuVRVr9K30nU2THmecS4kLUZb9/uryAvalF6J75LU/ui/PDcFA5ascu
-         7oKFbYbzuoof30GtI1vZemypMXC8o9yKLu9v9et6rbpSkxRWo4ZOh/tWMYncjRuw18Cq
-         2q3/EbteijND4zXpFIlXzffg8P+jEuUTGUmMHGT5pr4GSD+dD8pJ54+C6/S4JBv/p1lS
-         P8hQ==
-X-Gm-Message-State: AOAM531LCLXO8GywDSv2lu9j76eIQCa1ETEFj4RHmOVUZoIKjNkUXoZf
-        b55KjofT+ZEQDnzH+rHQdRs=
-X-Google-Smtp-Source: ABdhPJxHDJsAroLvERXU4YkzIwdRIoOC7p/qdk/y2QIvgCLRbM4GrW5br5tfym/QqGE47oBEkp/Dbw==
-X-Received: by 2002:adf:e38a:: with SMTP id e10mr16973744wrm.37.1614795963156;
-        Wed, 03 Mar 2021 10:26:03 -0800 (PST)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o11sm13549883wrq.74.2021.03.03.10.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 10:26:01 -0800 (PST)
-Date:   Wed, 3 Mar 2021 19:26:00 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     joro@8bytes.org, will@kernel.org, guillaume.tucker@collabora.com,
-        vdumpa@nvidia.com, jonathanh@nvidia.com, digetx@gmail.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix mc errors on tegra124-nyan
-Message-ID: <YD/UuLSeVTLMh6HG@ulmo.localdomain>
-References: <20210218220702.1962-1-nicoleotsuka@gmail.com>
+        with ESMTP id S236616AbhCCMVT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 3 Mar 2021 07:21:19 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D939C061788
+        for <linux-tegra@vger.kernel.org>; Wed,  3 Mar 2021 04:10:09 -0800 (PST)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1lHQK5-0002tf-66; Wed, 03 Mar 2021 13:09:49 +0100
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1lHQK2-000228-HX; Wed, 03 Mar 2021 13:09:46 +0100
+Message-ID: <f581865a299091371a8450349e23ffdc8abb7b37.camel@pengutronix.de>
+Subject: Re: [PATCH v1 5/5] ASoC: tegra30: i2s: Add reset control
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Paul Fertser <fercerpav@gmail.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 03 Mar 2021 13:09:46 +0100
+In-Reply-To: <cbb1f0d4-ddc5-733d-896d-dd76ce01ca69@gmail.com>
+References: <20210302112123.24161-1-digetx@gmail.com>
+         <20210302112123.24161-6-digetx@gmail.com>
+         <cbb1f0d4-ddc5-733d-896d-dd76ce01ca69@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4ou0ZJPXLgmnnIia"
-Content-Disposition: inline
-In-Reply-To: <20210218220702.1962-1-nicoleotsuka@gmail.com>
-User-Agent: Mutt/2.0.5 (da5e3282) (2021-01-21)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Dmitry,
 
---4ou0ZJPXLgmnnIia
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2021-03-03 at 11:28 +0300, Dmitry Osipenko wrote:
+> 02.03.2021 14:21, Dmitry Osipenko пишет:
+> > The I2S reset may be asserted at a boot time. Tegra30 I2S driver doesn't
+> > manage the reset control and currently it happens to work because reset
+> > is implicitly deasserted by the Tegra AHUB driver, but the reset of I2C
+> > controller should be synchronous and I2S clock is disabled when AHUB is
+> > reset. Add reset control to the Tegra30 I2S driver.
+> > 
+> > Note that I2S reset was always specified in Tegra30+ device-trees, hence
+> > DTB ABI changes aren't required. Also note that AHUB touches I2S resets,
+> > hence AHUB resets are now requested in a released state, allowing both
+> > drivers to control the I2S resets together.
+> > 
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  sound/soc/tegra/tegra30_ahub.c | 14 ++++++++++---
+> >  sound/soc/tegra/tegra30_i2s.c  | 36 +++++++++++++++++++++++++++++++++-
+> >  sound/soc/tegra/tegra30_i2s.h  |  1 +
+> >  3 files changed, 47 insertions(+), 4 deletions(-)
+> 
+> ...
+> > @@ -579,7 +587,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	ahub->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
+> > +	ahub->reset = devm_reset_control_array_get_exclusive_released(&pdev->dev);
+> 
+> Thinking a bit more about this, it looks like we actually want something
+> like:
+> 
+> 	devm_reset_control_array_get_exclusive_released_named()
+> 
+> that will request resets by given names and in a given order, similarly
+> to devm_clk_bulk_get(). This will be very handy for both Tegra audio and
+> GPU drivers. I'll prepare a v2 if there are no objections.
 
-On Thu, Feb 18, 2021 at 02:07:02PM -0800, Nicolin Chen wrote:
-> Commit 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
-> removed certain hack in the tegra_smmu_probe() by relying on IOMMU core to
-> of_xlate SMMU's SID per device, so as to get rid of tegra_smmu_find() and
-> tegra_smmu_configure() that are typically done in the IOMMU core also.
->=20
-> This approach works for both existing devices that have DT nodes and other
-> devices (like PCI device) that don't exist in DT, on Tegra210 and Tegra3
-> upon testing. However, Page Fault errors are reported on tegra124-Nyan:
->=20
->   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
-> 	 EMEM address decode error (SMMU translation error [--S])
->   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
-> 	 Page fault (SMMU translation error [--S])
->=20
-> After debugging, I found that the mentioned commit changed some function
-> callback sequence of tegra-smmu's, resulting in enabling SMMU for display
-> client before display driver gets initialized. I couldn't reproduce exact
-> same issue on Tegra210 as Tegra124 (arm-32) differs at arch-level code.
->=20
-> Actually this Page Fault is a known issue, as on most of Tegra platforms,
-> display gets enabled by the bootloader for the splash screen feature, so
-> it keeps filling the framebuffer memory. A proper fix to this issue is to
-> 1:1 linear map the framebuffer memory to IOVA space so the SMMU will have
-> the same address as the physical address in its page table. Yet, Thierry
-> has been working on the solution above for a year, and it hasn't merged.
->=20
-> Therefore, let's partially revert the mentioned commit to fix the errors.
->=20
-> The reason why we do a partial revert here is that we can still set priv
-> in ->of_xlate() callback for PCI devices. Meanwhile, devices existing in
-> DT, like display, will go through tegra_smmu_configure() at the stage of
-> bus_set_iommu() when SMMU gets probed(), as what it did before we merged
-> the mentioned commit.
->=20
-> Once we have the linear map solution for framebuffer memory, this change
-> can be cleaned away.
->=20
-> [Big thank to Guillaume who reported and helped debugging/verification]
->=20
-> Fixes: 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
-> Reported-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->=20
-> Guillaume, would you please give a "Tested-by" to this change? Thanks!
->=20
->  drivers/iommu/tegra-smmu.c | 72 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 71 insertions(+), 1 deletion(-)
+I do have an untested reset control bulk API patch that I've just never
+finished, because I had no user. I'll send you an RFC, let me know if
+you can build on that.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---4ou0ZJPXLgmnnIia
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmA/1LQACgkQ3SOs138+
-s6HVGg//XRVrMcKyH+kjocZCLqbtvtkJkZW4MT4aOg4HGwc1axFrRTMlHVOWPn3j
-dcMwCbAVNb/ClbkvxsZ5bxbK5/ZnSR2ZQGV9srukln9RWKO+255jlM925qVJ5Yzd
-UNweJ9ToVMeNfkSeU9VK8JnpnJDF/NLxevydeX9UJQVieclLKhjW6dcASIc/sRGI
-X4E8dqtO/sbj5712Qj0A2p7VnrYQ+02tyipiXI3p4KSRiMWArCcLqLs0F9ccv47+
-mEsHB7P8+nstkiatna0jC4xzdBeIznxVwkIYYr+TcHLCrycljQh56giXPN0TnQn0
-7xplMX5OHAHFhJyqXgOw4ZeuXFuc5uOjNFcA6fGJ5uCyOhpQMZhoFQRFxkGy8edc
-bNoLiHjFO2HyS7YXdkzscj15xTS0wq/aKLFMo7I9AJedHnNnfzHEhzcpQmg1eIFl
-svEAap+gQFG1X0Bc5DC8puXRWwkHwrr/xCcfDp53dQirjIJoOQDo7usVtQRWLi/0
-rNWU5r/HQ04pqJZcdEVpT+VmzwcOZoLcQCHjDW2ohllPq8hZGfldaW9OZzXaveKe
-UMikX5lx3ANPkTKTxxq7rfsbzq0UIfII4o391Vdzxk83YIvDbENrfx3tl2LGxJsT
-4O00KcDGgdgfy8oxcy22+TbhdeSdC0MDo/CRLGzPLnwxdMn1s2c=
-=66rd
------END PGP SIGNATURE-----
-
---4ou0ZJPXLgmnnIia--
+regards
+Philipp
