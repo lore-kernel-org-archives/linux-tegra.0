@@ -2,49 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EA8C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 12:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB9CC433E6
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 13:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24F966023B
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 12:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFFD64F4B
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 13:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240397AbhCDMWl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Mar 2021 07:22:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240387AbhCDMWP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Mar 2021 07:22:15 -0500
-Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B905C061574;
-        Thu,  4 Mar 2021 04:21:35 -0800 (PST)
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 342BF22E; Thu,  4 Mar 2021 13:21:33 +0100 (CET)
-Date:   Thu, 4 Mar 2021 13:21:31 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     thierry.reding@gmail.com, will@kernel.org,
-        guillaume.tucker@collabora.com, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, digetx@gmail.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix mc errors on tegra124-nyan
-Message-ID: <20210304122131.GC26414@8bytes.org>
-References: <20210218220702.1962-1-nicoleotsuka@gmail.com>
+        id S233845AbhCDN5H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Mar 2021 08:57:07 -0500
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:36263 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232311AbhCDN4f (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Mar 2021 08:56:35 -0500
+Received: by mail-ot1-f50.google.com with SMTP id t16so7752447ott.3;
+        Thu, 04 Mar 2021 05:56:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nHogkY4V5mONQFOtEdkCE541qP3bkZZgaaRz4f+IIx8=;
+        b=NhwCvt7gE1SeLtH+ol0B9WPimMzeLbf3dsDzbpkYsJXhExfrefSL58ygkMv8PXBBCT
+         y2ZybnjMONHMYjM6VoCpq/SMJWfkC9Mm2OOv/65JfDEsK21g2+LsBcAQp01Q4Qrp7eOv
+         PKpIe2Ondnyx0mO1Wpa43QC+aZa8P0b9rJmcjege93u0nctTjByEckXLx7pto6cD28h8
+         QaiLmZIQt/3oKapI/HYLpU2tKBH6UxI9PAWoIOmIOhWk6IKKscEEyVOspArR46Ci/pMa
+         SOk+t6IPuuyFraKUC/OaOy8qs1Ua/3znpmTFEtI9pAFAyQSpw7pHkGVcDYI8UnG3j3PC
+         kOIQ==
+X-Gm-Message-State: AOAM5339gMrpGMcVAp4YWh3tinrVEEYtcxQvL+TRM67fP534N7NAeDbK
+        0gqfXmG1r99lrxsh21V2ut1NanoBh5U72PuTmjE=
+X-Google-Smtp-Source: ABdhPJyehjD92uivEn/olMcQk5flNsJYmnVCq679v2OVzwprVmaLdTaltkALxkqQdStBSD+MmF0V0VvnGKGc4//PIsA=
+X-Received: by 2002:a05:6830:1057:: with SMTP id b23mr3683936otp.206.1614866155283;
+ Thu, 04 Mar 2021 05:55:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210218220702.1962-1-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210302095405.28453-1-digetx@gmail.com> <36f5d767-d021-d1cb-dfc1-7b9dd63d7d9f@linaro.org>
+In-Reply-To: <36f5d767-d021-d1cb-dfc1-7b9dd63d7d9f@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 4 Mar 2021 14:55:43 +0100
+Message-ID: <CAJZ5v0hZKsTnFSrchxo_=jTv7qzoHgsq6W_5Gj4TWWjU5y71jQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2 1/2] cpuidle: tegra: Fix C7 idling state on Tegra114
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Feb 18, 2021 at 02:07:02PM -0800, Nicolin Chen wrote:
->  drivers/iommu/tegra-smmu.c | 72 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 71 insertions(+), 1 deletion(-)
+On Thu, Mar 4, 2021 at 1:30 AM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On 02/03/2021 10:54, Dmitry Osipenko wrote:
+> > Trusted Foundation firmware doesn't implement the do_idle call and in
+> > this case suspending should fall back to the common suspend path. In order
+> > to fix this issue we will unconditionally set the NOFLUSH_L2 mode via
+> > firmware call, which is a NO-OP on Tegra30/124, and then proceed to the
+> > C7 idling, like it was done by the older Tegra114 cpuidle driver.
+> >
+> > Fixes: 14e086baca50 ("cpuidle: tegra: Squash Tegra114 driver into the common driver")
+> > Cc: stable@vger.kernel.org # 5.7+
+> > Reported-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
+> > Tested-by: Anton Bambura <jenneron@protonmail.com> # TF701 T114
+> > Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> > Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>
+> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Applied for v5.12, thanks.
+So do I gather correctly that I am expected to pick up this series?
