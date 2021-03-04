@@ -2,76 +2,81 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150F3C433E6
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 08:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0766C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 09:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D573F64F1A
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 08:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77CD264F35
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 09:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234896AbhCDICG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Mar 2021 03:02:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35626 "EHLO
+        id S237800AbhCDJn1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Mar 2021 04:43:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235130AbhCDIB4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Mar 2021 03:01:56 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D356AC061756
-        for <linux-tegra@vger.kernel.org>; Thu,  4 Mar 2021 00:01:15 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id u125so8649093wmg.4
-        for <linux-tegra@vger.kernel.org>; Thu, 04 Mar 2021 00:01:15 -0800 (PST)
+        with ESMTP id S237808AbhCDJnN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Mar 2021 04:43:13 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0A2C061574;
+        Thu,  4 Mar 2021 01:42:32 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id q25so21881088lfc.8;
+        Thu, 04 Mar 2021 01:42:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aOAxJBlKBYcN64lRAiG4sf6vUj/R/Ju5OzGJfr7r2WM=;
-        b=gaQZC+ID7+pejJoHhflPtHEPNavxraFBogdPdNYeti1ZPmzj6NntxgPy7vsCDYP74D
-         KTNvgEdjw3VgLlm4KNcvVT/WmfBUJa2o/f3jaRTrxyEAtKsvMVOKM8qEln+CQcOoEZNY
-         Efq+5rwnKGazx0Q0aO/rNJWix7llJzyw6ZrLTatWbh3XUCk4h81xRcowcwqfPuNL0Bdc
-         b3A8lWe52D5AiWkM5vP8R74sg7rY54rd1k2SwbDJiI+r4yn54jt0WsSJMDRT07tmkzn/
-         N2YAUYcPbZ7I1BjOJfjmRM+SCX48iAfrUHszJUrRoV4hEIwoxgRG+niSWDOGmezhnR4E
-         MhwA==
+        bh=bEHZ/Frn9iwzx4diKW6uN1aBQ3lfmU4krVx1yJhDOA4=;
+        b=MoIboQDU+NHyjg+PGQjitOqCTdZNe7jYETiwVCov73FkhT/WyUvCnqjTZlx4A8GmF0
+         OIWew0saIIX+QnCvMdjsg7wKg+BlbKxOcfCGALVX9LG5HPd1mrb3/865f4wnWHriQ7Ez
+         0RZHySAEchv/sekCYdT1+HrvImzUFLj2art5hVnN/BL9u2qLynJd1T3aQYyFJnhMPZX1
+         wTvXT1dpo7nkiJmBhLmGmWZcuy2l5UkomZP0TqXkuu9CazCfi/IEMlqGPVCi062NE5L8
+         msK4XEFkZzFbK1yvts1H5IJAOde4tE8I9PL2qYmv9vUTOJ0sFCmIbh7lx68Jx8oqElwL
+         ROQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=aOAxJBlKBYcN64lRAiG4sf6vUj/R/Ju5OzGJfr7r2WM=;
-        b=nBqt8onPhU656vhnCrtHbI6j3VW6KgJ11cPBMYDOIBJ9MAy7h5y4MOaTrC6RL5hdAR
-         9xzNGVaiEE5PhseU6fXOzJkSD3OQjXx7cbOo2gsvpEBuVJ5k7ZwoDcqb/Ru6kF2BJhTL
-         3eK3EkRPmi3pNinrOiOGhF9rduGwUkWUuT9ybtGVr6mHDkHH+ZN3TiVOGq+uwBl6oN0j
-         sQ6S1qPu4PRB+Ko8pUKQcLHV5z4lmnCOdO2I90vA2KlPOFfbZl+X1wS3RIdZb0LpVLch
-         Hbh0GGOKOb3Digy2ANCC9Dwj3YYfl6EZdfe22yjMrMTxr3oDr8v/Kt1LaME5VJEvorgV
-         rfsg==
-X-Gm-Message-State: AOAM533bcQ3Y2Vh+sNv0JBUhnGo67cfK8dsmd4RnaGgMcFxDef6frcsx
-        FjTlIByuu4ZXTpqcurSQSSxKQw==
-X-Google-Smtp-Source: ABdhPJysNoDApSfkuB/eTC6zhtgU/zqA1iZ645P7qrkMZeZIEC2JPk7gNbQY0PYThf/UfjSryY7Z2A==
-X-Received: by 2002:a7b:c084:: with SMTP id r4mr2582042wmh.166.1614844874345;
-        Thu, 04 Mar 2021 00:01:14 -0800 (PST)
-Received: from [192.168.0.41] (lns-bzn-59-82-252-144-192.adsl.proxad.net. [82.252.144.192])
-        by smtp.googlemail.com with ESMTPSA id n6sm15567967wrt.1.2021.03.04.00.01.12
+        bh=bEHZ/Frn9iwzx4diKW6uN1aBQ3lfmU4krVx1yJhDOA4=;
+        b=Ma6zruhz1QMhiG/I1k8vjW0wpiqQDseYOgXqshTzhFO0aawXxyhu4+gyj37NJ69WP7
+         I1U9AnfJ5tSSBb92K0R7G11Xa2b5ljkDAVgqOyEQvTK9qBra+l3T8OHxup2NZjZwj+6S
+         3fNn3wgdsHOp8nAstQT59DE+jFijsn51SeWDpj6WY8mis//HjLUCXNX5p9+geKr59QD4
+         OjBtPJ4UgZnhoBRnvJoty8RzAsSl9bs0gPZYNsGWaMTFZmnF2m/Z2S/WbHbv4ryJsbOq
+         Pf9o4+zZZB6EdTUtdK+IbAQtn58uOGtsVMBc2SMNrqXoAbYcFh/CZzLgNki/vFwwklNn
+         kJ6A==
+X-Gm-Message-State: AOAM530XwOT/xGRkWfSqFFfsA7i9SKM+N89idW/QpBi/D4hkG+PTnTSJ
+        Z8jfCo9zaAwwI2AM4yfTDjv6nVPTdMs=
+X-Google-Smtp-Source: ABdhPJxiTZQIWODAtj6+oKhwC7rv65S7mwjUAbzllukSkqBegigEZuay9DFOE/w38bc9b6Ft8KD7PQ==
+X-Received: by 2002:ac2:4ecd:: with SMTP id p13mr1730346lfr.421.1614850950963;
+        Thu, 04 Mar 2021 01:42:30 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.googlemail.com with ESMTPSA id r11sm1638373lfn.30.2021.03.04.01.42.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Mar 2021 00:01:13 -0800 (PST)
-Subject: Re: [PATCH v1 1/5] MAINTAINERS: Add Tegra CPUIDLE driver section
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org
-Cc:     ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-References: <1614838092-30398-1-git-send-email-skomatineni@nvidia.com>
- <1614838092-30398-2-git-send-email-skomatineni@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <f73021ed-77c4-8349-d079-e9038b4dd00b@linaro.org>
-Date:   Thu, 4 Mar 2021 09:01:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 04 Mar 2021 01:42:30 -0800 (PST)
+Subject: Re: [PATCH v1 5/5] ASoC: tegra30: i2s: Add reset control
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Paul Fertser <fercerpav@gmail.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210302112123.24161-1-digetx@gmail.com>
+ <20210302112123.24161-6-digetx@gmail.com>
+ <cbb1f0d4-ddc5-733d-896d-dd76ce01ca69@gmail.com>
+ <f581865a299091371a8450349e23ffdc8abb7b37.camel@pengutronix.de>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <26e504b7-1077-d43b-07c7-abe2bcf50cc4@gmail.com>
+Date:   Thu, 4 Mar 2021 12:42:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <1614838092-30398-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <f581865a299091371a8450349e23ffdc8abb7b37.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -79,48 +84,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 04/03/2021 07:08, Sowjanya Komatineni wrote:
-> Add Tegra CPUIDLE driver section with maintainers and mailing list
-> entries.
+03.03.2021 15:09, Philipp Zabel пишет:
+> Hi Dmitry,
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  MAINTAINERS | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> On Wed, 2021-03-03 at 11:28 +0300, Dmitry Osipenko wrote:
+>> 02.03.2021 14:21, Dmitry Osipenko пишет:
+>>> The I2S reset may be asserted at a boot time. Tegra30 I2S driver doesn't
+>>> manage the reset control and currently it happens to work because reset
+>>> is implicitly deasserted by the Tegra AHUB driver, but the reset of I2C
+>>> controller should be synchronous and I2S clock is disabled when AHUB is
+>>> reset. Add reset control to the Tegra30 I2S driver.
+>>>
+>>> Note that I2S reset was always specified in Tegra30+ device-trees, hence
+>>> DTB ABI changes aren't required. Also note that AHUB touches I2S resets,
+>>> hence AHUB resets are now requested in a released state, allowing both
+>>> drivers to control the I2S resets together.
+>>>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  sound/soc/tegra/tegra30_ahub.c | 14 ++++++++++---
+>>>  sound/soc/tegra/tegra30_i2s.c  | 36 +++++++++++++++++++++++++++++++++-
+>>>  sound/soc/tegra/tegra30_i2s.h  |  1 +
+>>>  3 files changed, 47 insertions(+), 4 deletions(-)
+>>
+>> ...
+>>> @@ -579,7 +587,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
+>>>  	if (ret)
+>>>  		return ret;
+>>>  
+>>> -	ahub->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
+>>> +	ahub->reset = devm_reset_control_array_get_exclusive_released(&pdev->dev);
+>>
+>> Thinking a bit more about this, it looks like we actually want something
+>> like:
+>>
+>> 	devm_reset_control_array_get_exclusive_released_named()
+>>
+>> that will request resets by given names and in a given order, similarly
+>> to devm_clk_bulk_get(). This will be very handy for both Tegra audio and
+>> GPU drivers. I'll prepare a v2 if there are no objections.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cac8429..277fcfd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4679,6 +4679,18 @@ S:	Supported
->  F:	drivers/cpuidle/cpuidle-psci.h
->  F:	drivers/cpuidle/cpuidle-psci-domain.c
->  
-> +CPUIDLE DRIVER - TEGRA194
-> +M:	Thierry Reding <thierry.reding@gmail.com>
-> +M:	Jonathan Hunter <jonathanh@nvidia.com>
-> +M:	Krishna Sitaraman <ksitaraman@nvidia.com>
-> +M:	Sanjay Chandrashekara <sanjayc@nvidia.com>
-> +M:	Sowjanya Komatineni <skomatineni@nvidia.com>
+> I do have an untested reset control bulk API patch that I've just never
+> finished, because I had no user. I'll send you an RFC, let me know if
+> you can build on that.
 
-It does not make sense to have so many maintainers for a single file.
-
-
-> +L:	linux-pm@vger.kernel.org
-> +L:	linux-tegra@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/arm/nvidia,tegra194-ccplex.yaml
-> +F:	drivers/cpuidle/cpuidle-tegra194.c
-> +
->  CRAMFS FILESYSTEM
->  M:	Nicolas Pitre <nico@fluxnic.net>
->  S:	Maintained
-> 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Hello, Philipp! Thank you very much for sharing the patch, it should be
+very useful!
