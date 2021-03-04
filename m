@@ -2,131 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0766C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 09:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17CEC433DB
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 10:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77CD264F35
-	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 09:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7633564F37
+	for <linux-tegra@archiver.kernel.org>; Thu,  4 Mar 2021 10:41:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237800AbhCDJn1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 4 Mar 2021 04:43:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57474 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237808AbhCDJnN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 4 Mar 2021 04:43:13 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0A2C061574;
-        Thu,  4 Mar 2021 01:42:32 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id q25so21881088lfc.8;
-        Thu, 04 Mar 2021 01:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bEHZ/Frn9iwzx4diKW6uN1aBQ3lfmU4krVx1yJhDOA4=;
-        b=MoIboQDU+NHyjg+PGQjitOqCTdZNe7jYETiwVCov73FkhT/WyUvCnqjTZlx4A8GmF0
-         OIWew0saIIX+QnCvMdjsg7wKg+BlbKxOcfCGALVX9LG5HPd1mrb3/865f4wnWHriQ7Ez
-         0RZHySAEchv/sekCYdT1+HrvImzUFLj2art5hVnN/BL9u2qLynJd1T3aQYyFJnhMPZX1
-         wTvXT1dpo7nkiJmBhLmGmWZcuy2l5UkomZP0TqXkuu9CazCfi/IEMlqGPVCi062NE5L8
-         msK4XEFkZzFbK1yvts1H5IJAOde4tE8I9PL2qYmv9vUTOJ0sFCmIbh7lx68Jx8oqElwL
-         ROQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bEHZ/Frn9iwzx4diKW6uN1aBQ3lfmU4krVx1yJhDOA4=;
-        b=Ma6zruhz1QMhiG/I1k8vjW0wpiqQDseYOgXqshTzhFO0aawXxyhu4+gyj37NJ69WP7
-         I1U9AnfJ5tSSBb92K0R7G11Xa2b5ljkDAVgqOyEQvTK9qBra+l3T8OHxup2NZjZwj+6S
-         3fNn3wgdsHOp8nAstQT59DE+jFijsn51SeWDpj6WY8mis//HjLUCXNX5p9+geKr59QD4
-         OjBtPJ4UgZnhoBRnvJoty8RzAsSl9bs0gPZYNsGWaMTFZmnF2m/Z2S/WbHbv4ryJsbOq
-         Pf9o4+zZZB6EdTUtdK+IbAQtn58uOGtsVMBc2SMNrqXoAbYcFh/CZzLgNki/vFwwklNn
-         kJ6A==
-X-Gm-Message-State: AOAM530XwOT/xGRkWfSqFFfsA7i9SKM+N89idW/QpBi/D4hkG+PTnTSJ
-        Z8jfCo9zaAwwI2AM4yfTDjv6nVPTdMs=
-X-Google-Smtp-Source: ABdhPJxiTZQIWODAtj6+oKhwC7rv65S7mwjUAbzllukSkqBegigEZuay9DFOE/w38bc9b6Ft8KD7PQ==
-X-Received: by 2002:ac2:4ecd:: with SMTP id p13mr1730346lfr.421.1614850950963;
-        Thu, 04 Mar 2021 01:42:30 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id r11sm1638373lfn.30.2021.03.04.01.42.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Mar 2021 01:42:30 -0800 (PST)
-Subject: Re: [PATCH v1 5/5] ASoC: tegra30: i2s: Add reset control
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Paul Fertser <fercerpav@gmail.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210302112123.24161-1-digetx@gmail.com>
- <20210302112123.24161-6-digetx@gmail.com>
- <cbb1f0d4-ddc5-733d-896d-dd76ce01ca69@gmail.com>
- <f581865a299091371a8450349e23ffdc8abb7b37.camel@pengutronix.de>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <26e504b7-1077-d43b-07c7-abe2bcf50cc4@gmail.com>
-Date:   Thu, 4 Mar 2021 12:42:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        id S233038AbhCDKkb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 4 Mar 2021 05:40:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238894AbhCDKk1 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 4 Mar 2021 05:40:27 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D04BC64F35;
+        Thu,  4 Mar 2021 10:39:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1614854387;
+        bh=8SVNf6+Gl5F0uGhS3+7OLgPoX6iqUp+18NxkLc1jxrA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zYkC7mBosWGKQBOzyA4f/v7zMhXdS5swY+mUeQovFuT6M8eAHKMbM0EdGU3xtFeCx
+         fR/dEpV5nboRBYJ3WibjERYyO/uLi1YWtdqn6gaBowK1/7MKXFerUpwAeNaWqXYwC1
+         ticne9Apt3MSiw5zWklJ7O80CNQzMBl0f2oSSnRw=
+Date:   Thu, 4 Mar 2021 11:39:44 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.10 000/661] 5.10.20-rc2 review
+Message-ID: <YEC48IB+li1aGlyN@kroah.com>
+References: <20210301193642.707301430@linuxfoundation.org>
+ <8f6b387f2a8f490e8bd062805cf936cd@HQMAIL101.nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <f581865a299091371a8450349e23ffdc8abb7b37.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f6b387f2a8f490e8bd062805cf936cd@HQMAIL101.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-03.03.2021 15:09, Philipp Zabel пишет:
-> Hi Dmitry,
+On Tue, Mar 02, 2021 at 09:21:24AM +0000, Jon Hunter wrote:
+> On Mon, 01 Mar 2021 20:37:55 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.20 release.
+> > There are 661 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 03 Mar 2021 19:34:53 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.20-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> On Wed, 2021-03-03 at 11:28 +0300, Dmitry Osipenko wrote:
->> 02.03.2021 14:21, Dmitry Osipenko пишет:
->>> The I2S reset may be asserted at a boot time. Tegra30 I2S driver doesn't
->>> manage the reset control and currently it happens to work because reset
->>> is implicitly deasserted by the Tegra AHUB driver, but the reset of I2C
->>> controller should be synchronous and I2S clock is disabled when AHUB is
->>> reset. Add reset control to the Tegra30 I2S driver.
->>>
->>> Note that I2S reset was always specified in Tegra30+ device-trees, hence
->>> DTB ABI changes aren't required. Also note that AHUB touches I2S resets,
->>> hence AHUB resets are now requested in a released state, allowing both
->>> drivers to control the I2S resets together.
->>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  sound/soc/tegra/tegra30_ahub.c | 14 ++++++++++---
->>>  sound/soc/tegra/tegra30_i2s.c  | 36 +++++++++++++++++++++++++++++++++-
->>>  sound/soc/tegra/tegra30_i2s.h  |  1 +
->>>  3 files changed, 47 insertions(+), 4 deletions(-)
->>
->> ...
->>> @@ -579,7 +587,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> -	ahub->reset = devm_reset_control_array_get_exclusive(&pdev->dev);
->>> +	ahub->reset = devm_reset_control_array_get_exclusive_released(&pdev->dev);
->>
->> Thinking a bit more about this, it looks like we actually want something
->> like:
->>
->> 	devm_reset_control_array_get_exclusive_released_named()
->>
->> that will request resets by given names and in a given order, similarly
->> to devm_clk_bulk_get(). This will be very handy for both Tegra audio and
->> GPU drivers. I'll prepare a v2 if there are no objections.
+> All tests passing for Tegra ...
 > 
-> I do have an untested reset control bulk API patch that I've just never
-> finished, because I had no user. I'll send you an RFC, let me know if
-> you can build on that.
+> Test results for stable-v5.10:
+>     12 builds:	12 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     65 tests:	65 pass, 0 fail
+> 
+> Linux version:	5.10.20-rc2-g92929e15cdc0
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Hello, Philipp! Thank you very much for sharing the patch, it should be
-very useful!
+Thanks for testing them all and letting me know.
+
+greg k-h
