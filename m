@@ -2,94 +2,78 @@ Return-Path: <SRS0=ujg0=ID=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2ADC433E0
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6733FC43381
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A07EB64FE9
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF026509E
+	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbhCEXDG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Mar 2021 18:03:06 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:32669 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229792AbhCEXCe (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 5 Mar 2021 18:02:34 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4Dsjtb56rBzL0;
-        Sat,  6 Mar 2021 00:02:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1614985352; bh=SZHwnu6Rhn8QiMnEN2V1F4jUIvqNotWt5soGJPrBegA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oQId8WMfqBoaRrfZPG9CkUf0ZVKeWwczfSPSv0TOjPq4wAk55pdhc9Ew+V+8lPSCH
-         wR/HYFeMgFz63iYdebjAfc25Ui8cYBPeLUWgyRarMOH8GPzCx1XcoMeuetALOveUeb
-         F/BYmh5JP3VsdTW+4JtEzJAg+X4fmmIL3MyvGXJSOz/EkyQFeJPRWQzaijxbq/3HMy
-         mMgXbpOXMYC5J1H003FVZf2IP2WWemzYzbw3vkpKBP3H8RW991gZHSDohXnSlmY/ow
-         eDpRzkIREhXZfJ4nyAmM3yj8lvnlij5N35ftdWwCULVuL8DhAy0VCYUPbzkTZshKoc
-         B0P2pde08URTw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Sat, 6 Mar 2021 00:02:22 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v13 1/2] drm/tegra: dc: Support memory bandwidth
- management
-Message-ID: <20210305230222.GA28867@qmqm.qmqm.pl>
-References: <20210302124445.29444-1-digetx@gmail.com>
- <20210302124445.29444-2-digetx@gmail.com>
- <20210303230827.GA22628@qmqm.qmqm.pl>
- <1b352c7e-cc72-ba08-32ba-08c05cc3aa03@gmail.com>
+        id S230078AbhCEXFU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 5 Mar 2021 18:05:20 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:33782 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229992AbhCEXEw (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Mar 2021 18:04:52 -0500
+Received: by mail-wr1-f50.google.com with SMTP id 7so3851731wrz.0;
+        Fri, 05 Mar 2021 15:04:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Zsac3OfuacFeKsDDec9qaJduSsHGfEgG+Of192XZXHA=;
+        b=cWnyO32nlktN29n8cUeM5xk/fah25iU/SRTQiA+VQEM5XFc3HiEhlmkfk6EIIkSrzJ
+         0PxOXZeyGwlGr6qlj+VvIjD4H3OIbxfMzn4iPaUj5gz+LDekzTUFK/RZ6bn7jd6/HO3d
+         FIvI6UvT+PO/T5PiR7xJ3dVJ0uwuiC2DaDm2J+oFfefae9G7aRo51m45/1J3ZkTGDYFG
+         4u8GkCXXVDlp2t/EK+t3XRspUSsrNLnqgxkD3dTzzz9qvz20iSyBLBE15j8TbibxCFPu
+         8TNMVw7dzsfJlshZ1JL6a37naswrRbLXRHvT1hhlGy7tWTyf8bE5jnzwwSQ256wZ8E9C
+         ingw==
+X-Gm-Message-State: AOAM530IupPqX8p4t0kKRPkakl/lda9ZX7tezfpugnntnoOdnon35Knx
+        gO2+5DAZ2/8MgbpPXDZ+7Gk=
+X-Google-Smtp-Source: ABdhPJxPgVj0KTQYUwGa8xOR0eHCwLBAgG6szzjRo4J2qTlgQIsccbNp6sC25/dsBWlPU+C1HejTxw==
+X-Received: by 2002:adf:ec0b:: with SMTP id x11mr11126930wrn.175.1614985491458;
+        Fri, 05 Mar 2021 15:04:51 -0800 (PST)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id y205sm6600026wmc.18.2021.03.05.15.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Mar 2021 15:04:50 -0800 (PST)
+Date:   Sat, 6 Mar 2021 00:04:49 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
+        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, lenb@kernel.org,
+        andrew.murray@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V3 2/2] PCI: Add MCFG quirks for Tegra194 host controllers
+Message-ID: <YEK5EW1ZBDOKZE5E@rocinante>
+References: <20200110191500.9538-3-vidyas@nvidia.com>
+ <20210305215749.GA1117765@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b352c7e-cc72-ba08-32ba-08c05cc3aa03@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210305215749.GA1117765@bjorn-Precision-5520>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 05, 2021 at 12:45:51AM +0300, Dmitry Osipenko wrote:
-> 04.03.2021 02:08, Michał Mirosław пишет:
-> > On Tue, Mar 02, 2021 at 03:44:44PM +0300, Dmitry Osipenko wrote:
-> >> Display controller (DC) performs isochronous memory transfers, and thus,
-> >> has a requirement for a minimum memory bandwidth that shall be fulfilled,
-> >> otherwise framebuffer data can't be fetched fast enough and this results
-> >> in a DC's data-FIFO underflow that follows by a visual corruption.
+Hi Bjorn and Vidya,
+
 [...]
-> >> +	/*
-> >> +	 * Horizontal downscale takes extra bandwidth which roughly depends
-> >> +	 * on the scaled width.
-> >> +	 */
-> >> +	if (src_w > dst_w)
-> >> +		mul = (src_w - dst_w) * bpp / 2048 + 1;
-> >> +	else
-> >> +		mul = 1;
-> > 
-> > Does it really need more bandwidth to scale down? Does it read the same
-> > data multiple times just to throw it away?
-> The hardware isn't optimized for downscale, it indeed takes more
-> bandwidth. You'll witness a severe underflow of plane's memory FIFO
-> buffer on trying to downscale 1080p plane to 50x50.
+> > +}
+> > +
+> > +struct pci_ecam_ops tegra194_pcie_ops = {
+> > +	.bus_shift	= 20,
+> 
+> I think e7708f5b10e2 ("PCI: Unify ECAM constants in native PCI Express
+> drivers") means you don't need this .bus_shift.
 [...]
 
-In your example, does it really need 16x the bandwidth compared to
-no scaling case?  The naive way to implement downscaling would be to read
-all the pixels and only take every N-th.  Maybe the problem is that in
-downscaling mode the latency requirements are tighter?  Why would bandwidth
-required be proportional to a difference between the widths (instead e.g.
-to src/dst or dst*cacheline_size)?
+Correct.  If this platform implements ECAM as per the specification,
+then the .bus_shift initializer is no longer needed.
 
-Best Regards
-Michał Mirosław
+Krzysztof
