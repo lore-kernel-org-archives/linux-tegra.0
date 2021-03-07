@@ -2,86 +2,77 @@ Return-Path: <SRS0=gVaW=IF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDEC433E0
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 11:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E95C433DB
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 17:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B82E864FCC
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 11:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A8764D96
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 17:29:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbhCGLjA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Mar 2021 06:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230403AbhCGLi3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 7 Mar 2021 06:38:29 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 957BB64FF2;
-        Sun,  7 Mar 2021 11:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615117103;
-        bh=dtnzCe0JkDEEt2JnU6RZ4bIufLKfA93lfard6fmHAQ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b4Erc/6Q+WZNyi5s1Td+BhmSAwFb0IixrXa9VmvRmbEMsfwApwZSBA0UmL4gUe8l6
-         MECydqM0am/kYPguMo6TpFKOIcV8u++arpT/az5gbrABSNgtgapaDN3RcxsGllg2p7
-         MMSoFC+OrLo/utntx3AMTNzLfiTvsIwcQtxzi8pQ=
-Date:   Sun, 7 Mar 2021 12:38:20 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.11 000/104] 5.11.4-rc1 review
-Message-ID: <YES7LLyYDM2fTZCx@kroah.com>
-References: <20210305120903.166929741@linuxfoundation.org>
- <6831ce864b9249c69fac4828b545bdb0@HQMAIL111.nvidia.com>
+        id S229608AbhCGR2e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Mar 2021 12:28:34 -0500
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:33791 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229637AbhCGR22 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Mar 2021 12:28:28 -0500
+Received: by mail-oi1-f181.google.com with SMTP id a13so8583225oid.0;
+        Sun, 07 Mar 2021 09:28:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=FgL+9rKQ2SbYD82Zdufywe8UTaKB24r3GYmTSLgcyds=;
+        b=dhJHmBLopzDz2rPazy+Bdt1rGgxu7zn9Y1LwCq0ZnmaddBno4Lxj1nueAhNKHr826u
+         oFqPJXw1GJF/UHYqy3Im23ez6DRaACpgDLPAAZ2vsphFsVp8g2izaVmq+U1d2D04QN3q
+         8yjAdw/s8FkzcaEPLzpodvNlyDHl9TMfnAj6nMsG3MceudfaCxvEKzBCJ7QzxiWaBSqw
+         HunnIN/hxP26Ch2sBT7tudjVXESUUqs9F0KcDKqz6MrFUfs2wv1b0wWZwAITcoqD4xv6
+         FCXG6QVkAfQ3ux1tzB6tX3hxgxz8+3ZuSEt1I4tngOgPBNUC+wR6SKYB9POCYWbuTvIf
+         6Ayg==
+X-Gm-Message-State: AOAM530wLhHASGPYy9f1qB7KvWw9nZiYesycggPme6joKKc80HKqHWfl
+        kZ1GZ0RdLcbcMJRlxKY8m/kzWXtKg0V+iw==
+X-Google-Smtp-Source: ABdhPJwMtx8qAEsYusdreSoBbQXAXX5w/wm8CzFxJh9VtYqwg9D85Td5bo7tYZq5lAcu+PcKLNsUZg==
+X-Received: by 2002:aca:4b4d:: with SMTP id y74mr12544964oia.97.1615138107431;
+        Sun, 07 Mar 2021 09:28:27 -0800 (PST)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id h7sm2165816otm.0.2021.03.07.09.28.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Mar 2021 09:28:26 -0800 (PST)
+Date:   Sun, 7 Mar 2021 18:28:22 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: Constify static structs
+Message-ID: <YEUNNlmaZoF89jRl@rocinante>
+References: <20210207221604.48910-1-rikard.falkeborn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6831ce864b9249c69fac4828b545bdb0@HQMAIL111.nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210207221604.48910-1-rikard.falkeborn@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 05, 2021 at 05:51:12PM +0000, Jon Hunter wrote:
-> On Fri, 05 Mar 2021 13:20:05 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.11.4 release.
-> > There are 104 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 07 Mar 2021 12:08:39 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.11:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     65 tests:	65 pass, 0 fail
-> 
-> Linux version:	5.11.4-rc1-gf598f183ed0a
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Hi Rikard,
 
-Thanks for testing them all.
+Thank you for sending the patch over!
 
-greg k-h
+> The only usage of them is to assign their address to the 'ops' field in
+> the pcie_port and the dw_pcie_ep structs, both which are pointers to
+> const. Make them const to allow the compiler to put them in read-only
+> memory.
+[...]
+
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+
+Krzysztof
