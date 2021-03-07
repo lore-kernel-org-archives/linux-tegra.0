@@ -1,79 +1,87 @@
-Return-Path: <SRS0=ujg0=ID=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=gVaW=IF=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6733FC43381
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDEC433E0
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 11:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF026509E
-	for <linux-tegra@archiver.kernel.org>; Fri,  5 Mar 2021 23:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B82E864FCC
+	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 11:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbhCEXFU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 5 Mar 2021 18:05:20 -0500
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:33782 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbhCEXEw (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 5 Mar 2021 18:04:52 -0500
-Received: by mail-wr1-f50.google.com with SMTP id 7so3851731wrz.0;
-        Fri, 05 Mar 2021 15:04:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Zsac3OfuacFeKsDDec9qaJduSsHGfEgG+Of192XZXHA=;
-        b=cWnyO32nlktN29n8cUeM5xk/fah25iU/SRTQiA+VQEM5XFc3HiEhlmkfk6EIIkSrzJ
-         0PxOXZeyGwlGr6qlj+VvIjD4H3OIbxfMzn4iPaUj5gz+LDekzTUFK/RZ6bn7jd6/HO3d
-         FIvI6UvT+PO/T5PiR7xJ3dVJ0uwuiC2DaDm2J+oFfefae9G7aRo51m45/1J3ZkTGDYFG
-         4u8GkCXXVDlp2t/EK+t3XRspUSsrNLnqgxkD3dTzzz9qvz20iSyBLBE15j8TbibxCFPu
-         8TNMVw7dzsfJlshZ1JL6a37naswrRbLXRHvT1hhlGy7tWTyf8bE5jnzwwSQ256wZ8E9C
-         ingw==
-X-Gm-Message-State: AOAM530IupPqX8p4t0kKRPkakl/lda9ZX7tezfpugnntnoOdnon35Knx
-        gO2+5DAZ2/8MgbpPXDZ+7Gk=
-X-Google-Smtp-Source: ABdhPJxPgVj0KTQYUwGa8xOR0eHCwLBAgG6szzjRo4J2qTlgQIsccbNp6sC25/dsBWlPU+C1HejTxw==
-X-Received: by 2002:adf:ec0b:: with SMTP id x11mr11126930wrn.175.1614985491458;
-        Fri, 05 Mar 2021 15:04:51 -0800 (PST)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id y205sm6600026wmc.18.2021.03.05.15.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Mar 2021 15:04:50 -0800 (PST)
-Date:   Sat, 6 Mar 2021 00:04:49 +0100
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Vidya Sagar <vidyas@nvidia.com>, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, lenb@kernel.org,
-        andrew.murray@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3 2/2] PCI: Add MCFG quirks for Tegra194 host controllers
-Message-ID: <YEK5EW1ZBDOKZE5E@rocinante>
-References: <20200110191500.9538-3-vidyas@nvidia.com>
- <20210305215749.GA1117765@bjorn-Precision-5520>
+        id S230260AbhCGLjA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Mar 2021 06:39:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230403AbhCGLi3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 7 Mar 2021 06:38:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 957BB64FF2;
+        Sun,  7 Mar 2021 11:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1615117103;
+        bh=dtnzCe0JkDEEt2JnU6RZ4bIufLKfA93lfard6fmHAQ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b4Erc/6Q+WZNyi5s1Td+BhmSAwFb0IixrXa9VmvRmbEMsfwApwZSBA0UmL4gUe8l6
+         MECydqM0am/kYPguMo6TpFKOIcV8u++arpT/az5gbrABSNgtgapaDN3RcxsGllg2p7
+         MMSoFC+OrLo/utntx3AMTNzLfiTvsIwcQtxzi8pQ=
+Date:   Sun, 7 Mar 2021 12:38:20 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.11 000/104] 5.11.4-rc1 review
+Message-ID: <YES7LLyYDM2fTZCx@kroah.com>
+References: <20210305120903.166929741@linuxfoundation.org>
+ <6831ce864b9249c69fac4828b545bdb0@HQMAIL111.nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210305215749.GA1117765@bjorn-Precision-5520>
+In-Reply-To: <6831ce864b9249c69fac4828b545bdb0@HQMAIL111.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Bjorn and Vidya,
-
-[...]
-> > +}
-> > +
-> > +struct pci_ecam_ops tegra194_pcie_ops = {
-> > +	.bus_shift	= 20,
+On Fri, Mar 05, 2021 at 05:51:12PM +0000, Jon Hunter wrote:
+> On Fri, 05 Mar 2021 13:20:05 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.11.4 release.
+> > There are 104 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun, 07 Mar 2021 12:08:39 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.4-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> I think e7708f5b10e2 ("PCI: Unify ECAM constants in native PCI Express
-> drivers") means you don't need this .bus_shift.
-[...]
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.11:
+>     12 builds:	12 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     65 tests:	65 pass, 0 fail
+> 
+> Linux version:	5.11.4-rc1-gf598f183ed0a
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Correct.  If this platform implements ECAM as per the specification,
-then the .bus_shift initializer is no longer needed.
+Thanks for testing them all.
 
-Krzysztof
+greg k-h
