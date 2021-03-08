@@ -1,127 +1,105 @@
-Return-Path: <SRS0=T+bT=IG=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00A9C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 14:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF87C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 14:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF4B651CD
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 14:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17CD3650E6
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 14:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhCHOVD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Mar 2021 09:21:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
+        id S231295AbhCHOzh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Mar 2021 09:55:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230521AbhCHOU5 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Mar 2021 09:20:57 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D67BC06174A;
-        Mon,  8 Mar 2021 06:20:57 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id v2so8239346lft.9;
-        Mon, 08 Mar 2021 06:20:56 -0800 (PST)
+        with ESMTP id S231184AbhCHOzb (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Mar 2021 09:55:31 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB08C061765
+        for <linux-tegra@vger.kernel.org>; Mon,  8 Mar 2021 06:55:29 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id m9so15135903edd.5
+        for <linux-tegra@vger.kernel.org>; Mon, 08 Mar 2021 06:55:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0qSqLyKBzw4nb8j17jU5SupuAgYw/Y4EGFPBpUKaihs=;
-        b=H1L0Z5d54+bKkv1NMZjlGMdv2lvvIaogWTE4at+h3hahV4w7UFyPR7pcmfObjw2SQQ
-         9K0qL4nLHig0eSQpmZzm6K5Vy2/VwG39JxGa29NIRBlEsRLCeTGHsO9OFpq6RiQ9++7l
-         eoJ5nB1iV47JAXv2LLW0YwiqsqvtVmypkSXlG6MNAQzSomEJZJCIdc+vh1rVQ62JL/2y
-         dWv+qMyUjBhA6MH8CJpwAJ35KwXVjBgR3KKtSTVD6LCRIlRiwz5UcYEich/+TuZybcs2
-         T27tgfeWT9FtKn+gMEKmMx5zg2LkuKixR50cY9tkIloCU6c4H+3oFTFcGzNYAMF9xq4f
-         8+vQ==
+        d=deviqon.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=K1kerxlBQXsnkBW66DYRSLvt3f+bVaEYRPTXorPAb2o=;
+        b=rFtmC2lX9bx1OJQsukKFxbVFYmys8q4JZilYPWNowCRpc+e/TA9cZqZuTTmo16QaR3
+         Zts0P3qeGkvIV/+kY5d/R0/Gw7urqV7JEVAcqMz4uNzUhyurQ0hxY1RtoW1q0pXyENR2
+         w2LLt4h6lI238BNd0PG6+9Q0us3AzZyEyTMu6vptP6nzK+wfcPqaXSegsOW7yGGHWTs4
+         vqBks9FDZgZ3wwSatAgxdylkY+t4TBwvAV4tOIZ6nmLIL5Gc8pNQrKR+rl0KStooCfyt
+         28nw+vmJGXOmQBlF/aBAwnrusLCaNg8aOw8HMdOocFZq4TxTqx7MmHm2sHqz19j4+89R
+         kvbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0qSqLyKBzw4nb8j17jU5SupuAgYw/Y4EGFPBpUKaihs=;
-        b=XR9bHxy/gOo0qrNOI+3HWxW8sMT387hHuEHy6+b4pv5r91Vr0M95ND9pVK9bLqlDE5
-         BnCxgbvcdInceuRkNFp/xO2iZ35jTOIR7INKSltSU4PsQusLY+zCsscZy9cUMgRHggDP
-         8pzVhpyLwg3VQ430O49cEKLGC5Z+FaGxi2ZMt+/6324WZa2Vdo1QGOqrR6T28MJSKa8r
-         PC/GzdSr3h8qymB+8ZncRCwqNi9rLKxkq+Azk3NGPl+9LLSL+IHT8rhHkWZ6e3XB7B6l
-         JfkCBrGYqZs9ZNOJwGGfxfnwkdWReLyrDjypzMaYeULqeufR8Mw5K9BE0xBBPVHowaU0
-         d2Og==
-X-Gm-Message-State: AOAM531tylGJStEkX0Z97aR5AM1MqsISh9sAwPJCe/8FObB5eRSJFDPL
-        Ii+mzQnO/ohwPHEc1ST7aX0=
-X-Google-Smtp-Source: ABdhPJznNPgojN/nObRq+gs8Ca5XApc8sug9k/GrLjNKYrfLSpPuBe0IYA6WM0BuWX8Ci3xWPlXlhQ==
-X-Received: by 2002:a19:ac42:: with SMTP id r2mr5176532lfc.548.1615213255627;
-        Mon, 08 Mar 2021 06:20:55 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id v10sm1367316lfb.238.2021.03.08.06.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Mar 2021 06:20:54 -0800 (PST)
-Subject: Re: [PATCH v13 1/2] drm/tegra: dc: Support memory bandwidth
- management
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20210302124445.29444-1-digetx@gmail.com>
- <20210302124445.29444-2-digetx@gmail.com>
- <20210303230827.GA22628@qmqm.qmqm.pl>
- <1b352c7e-cc72-ba08-32ba-08c05cc3aa03@gmail.com>
- <20210305230222.GA28867@qmqm.qmqm.pl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5cc7aaa9-1168-64ba-f311-2f27038dcf4a@gmail.com>
-Date:   Mon, 8 Mar 2021 17:20:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=K1kerxlBQXsnkBW66DYRSLvt3f+bVaEYRPTXorPAb2o=;
+        b=slxcK9xIJBeKaN22CUTcLJLxSTE89DfRe818fwJDA4VwS+mgzPn4PRyrBWuSx9J//k
+         4EKaBm9WekG4eFTYAIhnQQMnENG51WJPoFIqo3a6KX3K2UXXJ+wd78wLXqVHQexMwBwz
+         m8EUkhHGS9pQMKYfZIgwebDdgJIZU4KgR05Xpi/o154XfTb37VpjShWKN1lVdj0OsM8k
+         Llis0A7mCB7nUgoYq0WqG8csLGuqegJMXsNaKjqVmKmHIpf75nYvABw2LkAPjicaZaxN
+         YC6/f4OhDVKu66ZRazxyIpHqCS8mCD9E4vIYUO4t6vBiP+JWpazpvib6n8MmXDOpbiXQ
+         5+yw==
+X-Gm-Message-State: AOAM532NznKGf3VEo34X2GgSSVWa1lk8QvX3VoOZ39dMSksENRplVe/I
+        Epo48dQJ7/eb0rX2LvqVrLpVAQ==
+X-Google-Smtp-Source: ABdhPJxEzekHbaS2S5/KEJAyRUXUwCnOcpb8YwShTRdZxuCkPKC3qM7GvCvE1zMb6YSlbV7UXjYPrg==
+X-Received: by 2002:a50:e0c3:: with SMTP id j3mr23091988edl.32.1615215328449;
+        Mon, 08 Mar 2021 06:55:28 -0800 (PST)
+Received: from localhost.localdomain ([5.2.193.191])
+        by smtp.gmail.com with ESMTPSA id bt14sm7411234edb.92.2021.03.08.06.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 06:55:28 -0800 (PST)
+From:   Alexandru Ardelean <aardelean@deviqon.com>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Cc:     broonie@kernel.org, gregkh@linuxfoundation.org, elder@kernel.org,
+        johan@kernel.org, vireshk@kernel.org, rmfrfs@gmail.com,
+        f.fainelli@gmail.com, ldewangan@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, linux@deviqon.com,
+        Alexandru Ardelean <aardelean@deviqon.com>
+Subject: [PATCH 02/10] spi: bcm63xx-spi: don't check 'delay_usecs' field
+Date:   Mon,  8 Mar 2021 16:54:54 +0200
+Message-Id: <20210308145502.1075689-3-aardelean@deviqon.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210308145502.1075689-1-aardelean@deviqon.com>
+References: <20210308145502.1075689-1-aardelean@deviqon.com>
 MIME-Version: 1.0
-In-Reply-To: <20210305230222.GA28867@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-06.03.2021 02:02, Michał Mirosław пишет:
-> On Fri, Mar 05, 2021 at 12:45:51AM +0300, Dmitry Osipenko wrote:
->> 04.03.2021 02:08, Michał Mirosław пишет:
->>> On Tue, Mar 02, 2021 at 03:44:44PM +0300, Dmitry Osipenko wrote:
->>>> Display controller (DC) performs isochronous memory transfers, and thus,
->>>> has a requirement for a minimum memory bandwidth that shall be fulfilled,
->>>> otherwise framebuffer data can't be fetched fast enough and this results
->>>> in a DC's data-FIFO underflow that follows by a visual corruption.
-> [...]
->>>> +	/*
->>>> +	 * Horizontal downscale takes extra bandwidth which roughly depends
->>>> +	 * on the scaled width.
->>>> +	 */
->>>> +	if (src_w > dst_w)
->>>> +		mul = (src_w - dst_w) * bpp / 2048 + 1;
->>>> +	else
->>>> +		mul = 1;
->>>
->>> Does it really need more bandwidth to scale down? Does it read the same
->>> data multiple times just to throw it away?
->> The hardware isn't optimized for downscale, it indeed takes more
->> bandwidth. You'll witness a severe underflow of plane's memory FIFO
->> buffer on trying to downscale 1080p plane to 50x50.
-> [...]
-> 
-> In your example, does it really need 16x the bandwidth compared to
-> no scaling case?  The naive way to implement downscaling would be to read
-> all the pixels and only take every N-th.  Maybe the problem is that in
-> downscaling mode the latency requirements are tighter?  Why would bandwidth
-> required be proportional to a difference between the widths (instead e.g.
-> to src/dst or dst*cacheline_size)?
+The 'delay_usecs' field was handled for backwards compatibility in case
+there were some users that still configured SPI delay transfers with
+this field.
 
-Seems you're right, it's actually not the bandwidth. Recently I added
-memory client statistics gathering support to grate-kernel for Tegra20
-and it shows that the consumed bandwidth is actually lower when plane is
-downscaled.
+They should all be removed by now.
 
-So it should be the latency, which depends on memory frequency, and
-thus, on bandwidth. I'll try to improve comment to the code in the next
-version, thanks.
+Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
+---
+ drivers/spi/spi-bcm63xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
+index d08bb7600150..80fa0ef8909c 100644
+--- a/drivers/spi/spi-bcm63xx.c
++++ b/drivers/spi/spi-bcm63xx.c
+@@ -369,7 +369,7 @@ static int bcm63xx_spi_transfer_one(struct spi_master *master,
+ 		}
+ 
+ 		/* CS will be deasserted directly after transfer */
+-		if (t->delay_usecs || t->delay.value) {
++		if (t->delay.value) {
+ 			dev_err(&spi->dev, "unable to keep CS asserted after transfer\n");
+ 			status = -EINVAL;
+ 			goto exit;
+-- 
+2.29.2
+
