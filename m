@@ -1,118 +1,63 @@
-Return-Path: <SRS0=gVaW=IF=vger.kernel.org=linux-tegra-owner@kernel.org>
+Return-Path: <SRS0=T+bT=IG=vger.kernel.org=linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5880FC433E0
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 22:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB4DC433DB
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 04:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD4E65022
-	for <linux-tegra@archiver.kernel.org>; Sun,  7 Mar 2021 22:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6214965159
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 04:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233189AbhCGWKp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 7 Mar 2021 17:10:45 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:36297 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbhCGWKQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 7 Mar 2021 17:10:16 -0500
-Received: by mail-wr1-f48.google.com with SMTP id u14so9436489wri.3;
-        Sun, 07 Mar 2021 14:10:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w0FBb8CnoCr7tqR94rY/v8Qic5qKjXRNMAaFBeahA3I=;
-        b=Vk3g/KrWqq6McpeFshG5xJjZBAIetpzZKsAz8iYGNa9JkXgW1VuO3CZR8c+D84XWey
-         HZB0Ns7/vRhWZqVvrm30u1DJxAe+3rpoig/zgGGx4UwV2S8FFWvf3Pc9C6m4LxtGBhN5
-         u8YtqfY2p3DarXmtvoytreNfJ+3J3hf4ZQPbez2KYfBRhsLj8mpQCTFAdHgGrX2is9Xw
-         cGKzBfHIInJzWO0Zwk+InO7S3bql0vw/9M7Xej2gTsrHTbQCdXOxQS6vfYowF1Kydv4e
-         IN40PizAcxHksWrd73Cvhs5VAnKx5wHDaRfz0csCsFNaYSTtEI3g8d4tG/Gwng57FdX5
-         ec4w==
-X-Gm-Message-State: AOAM532wZlQg92ouPni/5ngYrMV+zPs++CvuBHolzbTq9FHpZdGB7VMS
-        gBje/wCWoEMhPHYL5t1Qu9w=
-X-Google-Smtp-Source: ABdhPJz1EuAgHQbWUMttHlGdzXLBLuK8NfZzUmdIXnw5+kar1/RkTecBM2iv5KBusGCU6NdnIeRj6g==
-X-Received: by 2002:adf:a2d3:: with SMTP id t19mr19655343wra.299.1615155014465;
-        Sun, 07 Mar 2021 14:10:14 -0800 (PST)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id m14sm16525603wmi.27.2021.03.07.14.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Mar 2021 14:10:14 -0800 (PST)
-Date:   Sun, 7 Mar 2021 23:10:12 +0100
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] PCI: dwc: Move dw_pcie_msi_init() from each users
- to designware host
-Message-ID: <YEVPRDt1By8TG9O5@rocinante>
-References: <20200924190421.549cb8fc@xhacker.debian>
- <20200924190742.76939458@xhacker.debian>
+        id S232474AbhCHEib (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 7 Mar 2021 23:38:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:59210 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234204AbhCHEiD (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 7 Mar 2021 23:38:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95019D6E;
+        Sun,  7 Mar 2021 20:38:02 -0800 (PST)
+Received: from bogus (unknown [10.57.15.109])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06E3D3F73C;
+        Sun,  7 Mar 2021 20:37:58 -0800 (PST)
+Date:   Mon, 8 Mar 2021 04:37:55 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 3/5] dt-bindings: arm: Add cpu-idle-states to Tegra194
+ CPU nodes
+Message-ID: <20210308043755.llvdsuz2jwvweovb@bogus>
+References: <1614838092-30398-1-git-send-email-skomatineni@nvidia.com>
+ <1614838092-30398-4-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200924190742.76939458@xhacker.debian>
+In-Reply-To: <1614838092-30398-4-git-send-email-skomatineni@nvidia.com>
+User-Agent: NeoMutt/20171215
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+On Wed, Mar 03, 2021 at 10:08:10PM -0800, Sowjanya Komatineni wrote:
+> This patch adds cpu-idle-states and corresponding state nodes to
+> Tegra194 CPU in dt-binding document
+>
 
-> Currently, dw_pcie_msi_init() allocates and maps page for msi, then
-> program the PCIE_MSI_ADDR_LO and PCIE_MSI_ADDR_HI. The Root Complex
-> may lose power during suspend-to-RAM, so when we resume, we want to
-> redo the latter but not the former. If designware based driver (for
-> example, pcie-tegra194.c) calls dw_pcie_msi_init() in resume path, the
-> previous msi page will be leaked. From another side, except
-> pci-dra7xx.c we can move the dw_pcie_msi_init() from each users to
-> designware host, I.E move the msi page allocation and mapping to
-> dw_pcie_host_init() and move the PCIE_MSI_ADDR_* programming to
-> dw_pcie_setup_rc(). After this moving, we solve the msi page leakage
-> as well.
-[...]
+I see that this platform has PSCI support. Can you care to explain why
+you need additional DT bindings and driver for PSCI based CPU suspend.
+Until the reasons are convincing, consider NACK from my side for this
+driver and DT bindings. You should be really using those bindings and
+the driver may be with minor changes there.
 
-A small nitpick.  All the "designware" should be "DesignWare" both in
-the commit message and the subject.  Similarly, "msi" would be "MSI",
-and "I.E" would become "i.e.,".  If you ever sent another version of the
-patch, that is.
-
-See the following for reference:
-  https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-
-Krzysztof
+-- 
+Regards,
+Sudeep
