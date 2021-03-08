@@ -2,112 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48C9C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E23B3C4321A
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4CF65220
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C049E6522C
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230481AbhCHRHu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Mar 2021 12:07:50 -0500
-Received: from www381.your-server.de ([78.46.137.84]:56058 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbhCHRHZ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Mon, 8 Mar 2021 12:07:25 -0500
-X-Greylist: delayed 1515 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Mar 2021 12:07:24 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID;
-        bh=TzaqzNZ5/Fp8lTYyeKtH9GBmnc2sIncwn71iQvdnlBA=; b=fQ5ZX63LM3J4j/xr/WKkGBW97u
-        pLCR+JdYGE5oAFeNLpqhzoYZmzEKLwmerJmarikSJ/sHl9o8wvZ/OUOLPnFqLa/cuV/+wxylNSzb9
-        wnb1a7viLJ4fXVqTqDEixl3P4vzVN/a0CT71oj3R1+4sMNkkZDHKM6yNyRSGN+uey08bF2pURA5pC
-        guXumxSvr4e2ALghBd4BLRxe+WEW6wgx+atUQHIZu09Jp6F+x5o9a8QZ1hXwqqKh1eQXcYxrfUtzn
-        SxC76aTOTVL0RbTfdN1Cis0i0MP87mmnfPGihVQuiPDfKroXcsrM68S9pqDeYVpGVi+VbgAomQ+Oq
-        uFrjkRwQ==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-        by www381.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <lars@metafoo.de>)
-        id 1lJIxL-0007HI-1U; Mon, 08 Mar 2021 17:42:07 +0100
-Received: from [62.216.202.180] (helo=[192.168.178.20])
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1lJIxK-000WTg-OM; Mon, 08 Mar 2021 17:42:06 +0100
-Subject: Re: [PATCH 01/10] spi: spi-axi-spi-engine: remove usage of
- delay_usecs
-To:     Alexandru Ardelean <aardelean@deviqon.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Cc:     broonie@kernel.org, gregkh@linuxfoundation.org, elder@kernel.org,
-        johan@kernel.org, vireshk@kernel.org, rmfrfs@gmail.com,
-        f.fainelli@gmail.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, linux@deviqon.com
-References: <20210308145502.1075689-1-aardelean@deviqon.com>
- <20210308145502.1075689-2-aardelean@deviqon.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <8a6ec9a1-71f8-ce1d-600a-66eba9244a54@metafoo.de>
-Date:   Mon, 8 Mar 2021 17:42:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <20210308145502.1075689-2-aardelean@deviqon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S231187AbhCHRTJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Mar 2021 12:19:09 -0500
+Received: from mail-bn8nam12on2064.outbound.protection.outlook.com ([40.107.237.64]:30081
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230475AbhCHRTB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 8 Mar 2021 12:19:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O0zX5AwN3/xNAZJmhBZ6bFG3EF2gW18zFagBEiXqvJoIxp3lfXhER18qzwmJwfd7pVdcQTojCNSGPSDq21TejCSe6kh+uJ6H0ODIu8BU/PEfHjGZLwfi6yX2XGjX8sUM6YpiKmHrj6EahavoClsvcOms8Tb67fkCiGN+3r736S+z7v/5ub8xMlOOgWkXfSndxXRw+V7CY1uUKGhb563CHkU6OW8tApzBWX7y2aGhdB+K1kdc1SaVYy1jSKnG/91z9FWemNQcty97ObpOVhOcZhinAL8vWxS27qwtGfjsR9TH7BXp5M6tqWwrzmYBXzu8yihW3QeX/c8yvtMUhJIaww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eqBBqq5MPImCYaP3XE7rwI5/XkYTFg3dSoEpwVGHmQQ=;
+ b=akGSWJwM9Yo9Zo+3V9rGBa+2AGGRHXaaVAx8Wc1/DDhyr5caSE60Y82dyLHfZP6nCgVkAaEv8y3qZImF9crE5NcOQMjVCTdD7vw7wiIpqYSpozkLWKU+eiW5s1D31jk/FMw6TWQ19i7eIau8Hte3Abgz0TWvDd7QodsXgtmd8WQT4Pvg5B9ZGVK3ZMcr/LE6OJjTAg7pN0J8VEsRYDDBHHjH8p9WEA9JuxbQoWFXErV34Qow/BKySqkFGK7vOPOkBgDwqV7aTzC6v2tgt7W3PYtxVgRcqQro54z4GRgZleux+DLLbFOuOB7raYmpF5HsItC1H27cENXzMj4WWBlcjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.32) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eqBBqq5MPImCYaP3XE7rwI5/XkYTFg3dSoEpwVGHmQQ=;
+ b=DNxApICHK7+DkffLa8uXdWaZcdD9uV3cRPXChW312X+GQeVWodnXNXcBvgOd+n6xbQkj71BkIltwnj+XTCnPLnLsVgbzuU1DgqqHkQv6qnqOHd8PRLBdfrKn2Jh/YjB2ecNzSwww4IYgo0GgYG79KhgXAInqc5s606UXuC1hyoI=
+Received: from BN0PR04CA0141.namprd04.prod.outlook.com (2603:10b6:408:ed::26)
+ by BN6PR12MB1844.namprd12.prod.outlook.com (2603:10b6:404:fc::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Mon, 8 Mar
+ 2021 17:18:57 +0000
+Received: from BN8NAM11FT019.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ed:cafe::31) by BN0PR04CA0141.outlook.office365.com
+ (2603:10b6:408:ed::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend
+ Transport; Mon, 8 Mar 2021 17:18:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.32; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.32) by
+ BN8NAM11FT019.mail.protection.outlook.com (10.13.176.158) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3912.17 via Frontend Transport; Mon, 8 Mar 2021 17:18:56 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 8 Mar
+ 2021 17:18:55 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Mon, 8 Mar 2021 17:18:55 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.11 00/44] 5.11.5-rc1 review
+In-Reply-To: <20210308122718.586629218@linuxfoundation.org>
+References: <20210308122718.586629218@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.102.4/26102/Mon Mar  8 13:03:13 2021)
+MIME-Version: 1.0
+Message-ID: <76e87d7a575a48389a952e5b035d0da4@HQMAIL111.nvidia.com>
+Date:   Mon, 8 Mar 2021 17:18:55 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 231e988f-c65f-42a4-8404-08d8e256415d
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1844:
+X-Microsoft-Antispam-PRVS: <BN6PR12MB184476057ABC0FE4B6D915D5D9939@BN6PR12MB1844.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: KRwkZoosagzSctZeyH5KKnPvbRCmCiRX8WgCI6orSAAreVpubaXqu8PEBasRn+D6Le/a4aiku5q4Wvnjil9Oa54qbLRpfmNFUQ5lX7Vpcf5ncB2E6n73z/Q0ZeVajW5U509Ejmty5fTQdfk4SIo9GVMQU7Ra9aTnoFbYf5joDichuVizLBmEV3JloJApS5TsU2NivzS+Ig6GCdJjuHPsaVGnda7dULqEfc/E2c5WfffOIFL7P5YosIY6jZP6yxCOx/mx3De6T4kdDQ2s8koavoTJZWGc1MN2O+tDbznAJpKS7j/+4m9s5SxknBCbVGjjAf8GdiPENIaGJiw5ng8jvjveBWu0Q3qapoy0d2yWYsHpU3e0rhLwEKdFSYwyN4Rd1/bJRXRoa+i4w/nFXZioWHZSFGfkikYNd75UwqS1sPi6jd/8XTHIEpSlj8XyvaJEWg0TUZfLoUJIrx0t7oFkEgOuZutsScMjZHKbqH4vC4mD8nCzwZ1nR3DxiDufqGrJhvpTL4Ue/Pij0XgCCUSgHM2CjU71DsTbJG4JN/rCKNAP3IZh41eYfJLIRu7Y0lOQNdTTaatH70GpVAQyifCk5Vs8Z8Bdroul80J8qEEn9O+tSAfuBNXGwopJxPySOGU99CBbDpcBNJTHPMQzB1MqxMF969JYLVKjln543GVwjltPxGEc+0SvLCFhN4CwItctQVRDWDHzkFdTiRXMsNwcZrc1k6hAwoucAIVnJolKjHxxSP+ChyySjljR4mevD6VFMRVfG1VMTrwaV2eEjK8Nlw==
+X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(39860400002)(346002)(46966006)(36840700001)(7416002)(34020700004)(336012)(426003)(8936002)(6916009)(8676002)(24736004)(966005)(70206006)(356005)(70586007)(5660300002)(36860700001)(316002)(82310400003)(478600001)(2906002)(26005)(186003)(7636003)(54906003)(47076005)(82740400003)(4326008)(86362001)(108616005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2021 17:18:56.3048
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 231e988f-c65f-42a4-8404-08d8e256415d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT019.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1844
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/8/21 3:54 PM, Alexandru Ardelean wrote:
-> The 'delay_usecs' field was handled for backwards compatibility in case
-> there were some users that still configured SPI delay transfers with
-> this field.
->
-> They should all be removed by now.
->
-> Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
-> ---
->   drivers/spi/spi-axi-spi-engine.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-> index af86e6d6e16b..80c3e38f5c1b 100644
-> --- a/drivers/spi/spi-axi-spi-engine.c
-> +++ b/drivers/spi/spi-axi-spi-engine.c
-> @@ -170,14 +170,10 @@ static void spi_engine_gen_sleep(struct spi_engine_program *p, bool dry,
->   	unsigned int t;
->   	int delay;
->   
-> -	if (xfer->delay_usecs) {
-> -		delay = xfer->delay_usecs;
-> -	} else {
-> -		delay = spi_delay_to_ns(&xfer->delay, xfer);
-> -		if (delay < 0)
-> -			return;
-> -		delay /= 1000;
-> -	}
-> +	delay = spi_delay_to_ns(&xfer->delay, xfer);
-> +	if (delay < 0)
-> +		return;
+On Mon, 08 Mar 2021 13:34:38 +0100, gregkh@linuxfoundation.org wrote:
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> This is the start of the stable review cycle for the 5.11.5 release.
+> There are 44 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 10 Mar 2021 12:27:05 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.5-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Bit of a nit, but this could be `delay <= 0` and then drop the check for 
-`delay == 0` below.
+All tests passing for Tegra ...
 
-> +	delay /= 1000;
->   
->   	if (delay == 0)
->   		return;
+Test results for stable-v5.11:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    65 tests:	65 pass, 0 fail
 
+Linux version:	5.11.5-rc1-g89449ac6c715
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
