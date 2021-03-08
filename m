@@ -2,139 +2,140 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F62C15500
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6363AC433DB
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 18:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 941A965244
-	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35C72651A0
+	for <linux-tegra@archiver.kernel.org>; Mon,  8 Mar 2021 18:33:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbhCHRTI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 8 Mar 2021 12:19:08 -0500
-Received: from mail-dm6nam10on2075.outbound.protection.outlook.com ([40.107.93.75]:4898
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S231184AbhCHScl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 8 Mar 2021 13:32:41 -0500
+Received: from mail-bn8nam12on2049.outbound.protection.outlook.com ([40.107.237.49]:58144
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230466AbhCHRS7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 8 Mar 2021 12:18:59 -0500
+        id S230173AbhCHScV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 8 Mar 2021 13:32:21 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lX+rT7wv9T7RJfXuR2tt7XteYF0CXhoIVm0W46PHIjUHwJHkWxJnAebLxHkvJaBaB6ApZXmUj0gZOuSIjFoqddrSUH5KVPGSzMR53XLKTUHNqYhdmoqiKBozqpM7/P/8muAXtsjYLZJG3qL4yIS68w9o2GkNag6Oiw8U76nLP6H7KjQ4J87wHBsUinKWN5Et2d8f2Fijtt+3V5koZqE8VHe6vPMRvqxAGDWICGzLIs7W05fff+GCI+cKS0HlJTUbLQA/+5LOXfr0RLTf8216jFfYdMS++TYRFWIMGhe34dI5acZMgkoGWLn8ZcGyDpl6dPDuK3WCXvj9Sf8ZPHTr4Q==
+ b=oE6JV2EOoZM9nG43jCQmrXd282kzN7KBmjlm2DcaJbxq9eMEATAZfeSi/LeBcZ/Z42Zrg/mkwJTvizHQnquJvbYs14VWnGWGa0znjSASRXbiGRnC6eMV7hQlF87beZi+zsNEHRoaLcAaFkPhmkvIT46zkg2xa8toU3HL/456/2s+TdVxydc+aTuH2kUTNK3ezPVEvtBH7PUoiLAGggH4S5gjpfHIfos3McYjiOfz+HFXIeT1AuEZhWyXo9v+6HeVGpY8kUsbmNsRx8PmDzBTzPTK90Vc/hrlgv8iphIEgKeDll1lTesc0UsUlhVBY74WGfTWmGJ8Uo5lh+/9YHc70w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YbxeTNLB7KgukVigF/GekFFQkUhcTIWYvPVC3tOi3hQ=;
- b=BeY7v9QjvN7yyHh5f8dCGbVRS9iOOiXPAbC5Xu7WwpPNBQouz3mmOQB2Tor47gK1kOhjUyUwu/fvUoM39lgZQiuKT1jhlnEcY5fCPdxCGhXXXEw5i2ytaFkDBUu6xl8OUmatcKdATOmg9h44w1a1XOIhGs0X3L9JwBhRqsB1RAqRpXq1Aifnp1Vbp7/54cLSl9HUNT1ibi3cmVOe5smenHJqW1U8vIUtmqzRDBYTK+FOgiC2NF+vDhnikzwlU4+9Ju2kHQyT9+UpxFQdw+TUljk8XNixk5Yhaxs+H91VEuqdOcABZrvpcVE7kuvHy3NI0XHhsjpLX5m4QTe9Shbu+A==
+ bh=58Hfx1fmBmQjldn69eDS4/4aivr59O+WczkW92z9Ayw=;
+ b=MmzLZY+M426XUnwiiH7vPof3Z4KXSG/KMruyvTfCqhSXTjZzXYOhwC99jhPV8p7XyXV1ow7+FXklWeMEk+Cs60UWgRjio2dzt+SwuXeKiDHIm8biTRrBwOD3B6wOHZ5+ioDTLAXwq/5iJvG6TX4b9kmmI1oAKcl9ckPsttxXNnG3KM32BpqHvRJ62EFbo5NOE5ZntvuUxZY4r/YXmVBN7AiHYEWXeSLh+XwWWMKu3pT8oRt54kS93CPH1+B3kxru14ez493o8ymt+1XTPvWEIY0apaEwPLFgs2Wix7LtOE0fzQMeJIjUS0hox2a3Kl+VCEorZZOTE4xOrGPnAuOFHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ 216.228.112.34) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YbxeTNLB7KgukVigF/GekFFQkUhcTIWYvPVC3tOi3hQ=;
- b=BW5e0hcIyxp7EsBDEs91X3Dg6b2lt5hmbZoxjfuJpAyHI92Lv0dd34jHnpGOxxT+CqJSj01O7YZ1EruvnvOBgpPNuResKT+pNWa5wiwW2Rr2UagSluMWKgayMvZVYpTznvlpBaXMWXhTxozIfrR+M+OCmy/WwICmRq0nREooPgs=
-Received: from BN6PR12CA0046.namprd12.prod.outlook.com (2603:10b6:405:70::32)
- by CY4PR12MB1237.namprd12.prod.outlook.com (2603:10b6:903:3e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20; Mon, 8 Mar
- 2021 17:18:56 +0000
-Received: from BN8NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:405:70:cafe::c7) by BN6PR12CA0046.outlook.office365.com
- (2603:10b6:405:70::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend
- Transport; Mon, 8 Mar 2021 17:18:56 +0000
+ bh=58Hfx1fmBmQjldn69eDS4/4aivr59O+WczkW92z9Ayw=;
+ b=skrpZE/vYBJXRkMgTlmyIDDi3Ai4envTdYq2c9T8Aqq0KgLAhGulM8ijolYz1uINmbSaWf+E1jGopsL1iLknug4uuHuqAWOVlc/8vqevI0DtbONHZSSfIxm92PWQSKgCVaq3mXicW1on1YD5MIXmd3GaTQeTafSIVEWG86AF/Ws=
+Received: from DM5PR05CA0017.namprd05.prod.outlook.com (2603:10b6:3:d4::27) by
+ DM6PR12MB3435.namprd12.prod.outlook.com (2603:10b6:5:39::26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3890.23; Mon, 8 Mar 2021 18:32:19 +0000
+Received: from DM6NAM11FT030.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:d4:cafe::86) by DM5PR05CA0017.outlook.office365.com
+ (2603:10b6:3:d4::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3933.13 via Frontend
+ Transport; Mon, 8 Mar 2021 18:32:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+ smtp.mailfrom=nvidia.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.34 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.34; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT043.mail.protection.outlook.com (10.13.177.218) with Microsoft SMTP
+ DM6NAM11FT030.mail.protection.outlook.com (10.13.172.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3912.17 via Frontend Transport; Mon, 8 Mar 2021 17:18:55 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ 15.20.3912.17 via Frontend Transport; Mon, 8 Mar 2021 18:32:18 +0000
+Received: from [10.2.163.31] (172.20.145.6) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 8 Mar
- 2021 17:18:54 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Mon, 8 Mar 2021 17:18:54 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 00/22] 5.4.104-rc1 review
-In-Reply-To: <20210308122714.391917404@linuxfoundation.org>
-References: <20210308122714.391917404@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ 2021 18:32:17 +0000
+Subject: Re: [PATCH v1 3/5] dt-bindings: arm: Add cpu-idle-states to Tegra194
+ CPU nodes
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <robh+dt@kernel.org>,
+        <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1614838092-30398-1-git-send-email-skomatineni@nvidia.com>
+ <1614838092-30398-4-git-send-email-skomatineni@nvidia.com>
+ <20210308043755.llvdsuz2jwvweovb@bogus>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <4cebf482-a2f8-5a79-a2f6-4ccd7d31c6ad@nvidia.com>
+Date:   Mon, 8 Mar 2021 10:32:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Message-ID: <47f21432b3c24ccfb826bb08fed67e29@HQMAIL107.nvidia.com>
-Date:   Mon, 8 Mar 2021 17:18:54 +0000
+In-Reply-To: <20210308043755.llvdsuz2jwvweovb@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4880bd67-1561-4c52-dc39-08d8e25640e1
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1237:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1237CC2BCE67D872F8D462CBD9939@CY4PR12MB1237.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Office365-Filtering-Correlation-Id: 4f0cf7d4-9397-4f87-99bb-08d8e2608182
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3435:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3435AAC9166C0F93FE81F88CC2939@DM6PR12MB3435.namprd12.prod.outlook.com>
+X-MS-Exchange-Transport-Forked: True
+X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3kn0PvShMGL7BN2hmGf6qj0LSYh4UWdywYMBXovWP1D8449D+WVq5LtGCSqTrzJBO2pfBCi2Vlixz7zR+sALaKU9amSM+JENztU1lfEto56FGr6Nu5SJamz0t9zIholTDfK0MupK9HBDFQwn/HXM6zWlnh9d+DNpGRK9/pzmhyBy8t0T6Ev/V8gADJN77EJi3w0xV/Hn59J0qy3AT+PMNA+FRR7nHGOd+y6YuP6IoeZP2udC+LKaTQDci82wdtk0rAdqfolcLDa5SvaKymLVZ0uIcphwyDDcbW7sXB7UxJGx5GpRUDrhj05AgwinoA11n0mZI5VSXZuaEzyjB3pTziEkxtkbjrlfPfWpjiuMnnOyFYrSg/fFV/Qz2LvQ7XHJRZMX0fvU7KxLfUkUxv5/Irnoi9R/LpInMc1K79nQ454xqC9wMA2xEK9xxqcJxpVU6IZMV5mprs2SB38kbsmBIGAovJX6MHV4KPU6y81kFTRpV85CR+neiUbASNUUuCwESSgyW1vskahJiRnMM3kAzmCryrbpwC3iSDl5OpoEDKIHM7fTatOgyCfhP0p2SLZYLPpfA/hZoXEhny7U62LWlVQEw6Ozvllodvtrj6aC4LertFxGgMJW6VcI54a6J1cYJ1BbdFNp6fti7PUFDJcFKdmqwlkjmI0s8HPnYEAfc11Wxe1vyp16is3weR4usi+UDhSK0Qh6KGSo8XxOmKkTUGFdhREDCCoYCrS0o8VrejTo0JsWj54NklytLotelKQ3+iDI67/9AEgXMynz9Zr7WA==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(396003)(346002)(136003)(46966006)(36840700001)(47076005)(7416002)(4326008)(5660300002)(316002)(82740400003)(8676002)(8936002)(7636003)(70586007)(70206006)(36860700001)(426003)(108616005)(2906002)(966005)(186003)(6916009)(86362001)(356005)(336012)(34020700004)(26005)(36906005)(82310400003)(478600001)(24736004)(54906003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: hRIhupvFmo/cEyFBhYKdfgggdQo4n4r1w6tIutFfuBK6aKK8uiX1NcdCNZU2arChtdLAb4Q5XbSw1NduDR1AvR6gM4HPNfGp878yoRRNA+5Zgvqv342zFJqNddUaS596K7HQFzn7fNubQtJzwNvt809i/lxUh5Gbqm5fFK+3a1uLioqb1wFxsPAD51k4i78XXTRXUFfxmMHXOBnQmX8tE9dT1D+2qS41btf3tUKhA/gQOwUdizQr1ZVa6fe0bLkmyQw9b5gYO5eysrSE53AcrmDIWWRT9gaZ2yLq6qWrBq+je1LzwfubLbBTYcL573c9CeAjdOFf2dO6iiHFyfRxFzh77MTfo68NmC8eizzyITtHZxsY/Po5/f8BL212+xvCNL2Z8wZYZQOSzDhI+2nDbsvsmMYLJJtyDvTyKKbkbJxd/HyzYnCHmgJH4XgFpRaqYbES2w8z4wROJR63vxYMlHmx2vxnOz3bYmHad+Gr/jHmnoi/E60Cz/0TkeMBWz7lRNnMoSNWq3eWtlBR0xmwez2etTLKdP/79KJOfkKpto/Ig7jyhirtFoTAlP9C22GZqEb+Ih34Azm3W9ovLtzTAxUKpjJz2sAZ/+i71uUJRDya2o0cbftBX55KF2kjlQQykPHnUvULLYS9RiiYnzofVDnH74GArTAbqLAnfu452AW9BIuDaFSHuUaym+mHpUrdaXiImWyvdUDBpiMOmwo6YY2yppsaHR9PncB4AG8FK/Y=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(396003)(346002)(376002)(39860400002)(46966006)(36840700001)(83380400001)(6916009)(34020700004)(2616005)(2906002)(478600001)(36906005)(316002)(36860700001)(70206006)(8936002)(16526019)(426003)(4326008)(26005)(36756003)(82310400003)(8676002)(53546011)(70586007)(54906003)(336012)(16576012)(82740400003)(5660300002)(7636003)(186003)(47076005)(31696002)(31686004)(356005)(86362001)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2021 17:18:55.4934
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2021 18:32:18.9403
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4880bd67-1561-4c52-dc39-08d8e25640e1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f0cf7d4-9397-4f87-99bb-08d8e2608182
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT043.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT030.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1237
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3435
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 08 Mar 2021 13:30:17 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.104 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 10 Mar 2021 12:27:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.104-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+On 3/7/21 8:37 PM, Sudeep Holla wrote:
+> On Wed, Mar 03, 2021 at 10:08:10PM -0800, Sowjanya Komatineni wrote:
+>> This patch adds cpu-idle-states and corresponding state nodes to
+>> Tegra194 CPU in dt-binding document
+>>
+> I see that this platform has PSCI support. Can you care to explain why
+> you need additional DT bindings and driver for PSCI based CPU suspend.
+> Until the reasons are convincing, consider NACK from my side for this
+> driver and DT bindings. You should be really using those bindings and
+> the driver may be with minor changes there.
+>
+MCE firmware is in charge of state transition for Tegra194 carmel CPUs.
 
-Test results for stable-v5.4:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    57 tests:	57 pass, 0 fail
+For run-time state transitions, need to provide state request along with 
+its residency time to MCE firmware which is running in the background.
 
-Linux version:	5.4.104-rc1-g1d493929c061
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+State min residency is updated into power_state value along with state 
+id that is passed to psci_cpu_suspend_enter
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Also states cross-over idle times need to be provided to MCE firmware.
 
-Jon
+MCE firmware decides on state transition based on these inputs along 
+with its background work load.
+
+So, Tegra specific CPU idle driver is required mainly to provide 
+cross-over thresholds from DT and run time idle state information to MCE 
+firmware through Tegra MCE communication APIs.
+
+Allowing cross-over threshold through DT allows users to vary idle time 
+thresholds for state transitions based on different use-cases.
+
