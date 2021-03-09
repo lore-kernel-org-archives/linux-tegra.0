@@ -4,86 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB673C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 10:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64F3C433E9
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 13:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7245C6526C
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 10:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 723DC65274
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 13:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229951AbhCIK0W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 Mar 2021 05:26:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40528 "EHLO mail.kernel.org"
+        id S231150AbhCINFn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 Mar 2021 08:05:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229775AbhCIK0N (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 9 Mar 2021 05:26:13 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4001265268;
-        Tue,  9 Mar 2021 10:26:12 +0000 (UTC)
+        id S230477AbhCINFN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 9 Mar 2021 08:05:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 809C765272;
+        Tue,  9 Mar 2021 13:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615285572;
-        bh=FJOJh+a4KsEIpSu9f2mvUj9VhUwHYafoF3hxt5lplFA=;
+        s=korg; t=1615295113;
+        bh=BJBJpVVoiY6gCZUtVubIMzNfBlkVauLEWMwsKwElL1w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qyQrCEMnZ9EUAvHNU+TEoTGlm2+Ee1Ev4+M6gAV72fkREvQySCvtTYOHrcqE0Tjk+
-         QwpZAa3mpSl/2YoDRNn7d5iVpHlf8Be3zM9DdRCYa/Dvx1b1l+pWS3ATkbKOxiHDzg
-         M84WQkJNidY0zFk73u5NeRPN8n+K16wnpkS6dvwE=
-Date:   Tue, 9 Mar 2021 11:26:10 +0100
+        b=wJBItVNZ/Rf6BYqvp1pv4sAaOBG4icG+Nv+1x6/ql225wtv8ohchgyPJN4ynowY3o
+         CbW9B8MKlE/kTa5LY89OlfLifaAqEw7k3iGQzFpUqyBCSO9dID2k2qXYTrsYyDEOG5
+         i5qlF1Ivyl+rJIiDa9hCmmiUbcm7+AScmVMmAHU4=
+Date:   Tue, 9 Mar 2021 14:05:10 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.11 00/44] 5.11.5-rc1 review
-Message-ID: <YEdNQh3H9O4WpQF0@kroah.com>
-References: <20210308122718.586629218@linuxfoundation.org>
- <76e87d7a575a48389a952e5b035d0da4@HQMAIL111.nvidia.com>
+To:     Alexandru Ardelean <aardelean@deviqon.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        thierry.reding@gmail.com, elder@kernel.org, johan@kernel.org,
+        jonathanh@nvidia.com, broonie@kernel.org, ldewangan@nvidia.com,
+        vireshk@kernel.org, f.fainelli@gmail.com, linux@deviqon.com
+Subject: Re: [PATCH 06/10] staging: greybus: spilib: use 'spi_delay_to_ns'
+ for getting xfer delay
+Message-ID: <YEdyhjayjbztoWI+@kroah.com>
+References: <20210308145502.1075689-1-aardelean@deviqon.com>
+ <20210308145502.1075689-7-aardelean@deviqon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <76e87d7a575a48389a952e5b035d0da4@HQMAIL111.nvidia.com>
+In-Reply-To: <20210308145502.1075689-7-aardelean@deviqon.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 08, 2021 at 05:18:55PM +0000, Jon Hunter wrote:
-> On Mon, 08 Mar 2021 13:34:38 +0100, gregkh@linuxfoundation.org wrote:
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > This is the start of the stable review cycle for the 5.11.5 release.
-> > There are 44 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 10 Mar 2021 12:27:05 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.5-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Mon, Mar 08, 2021 at 04:54:58PM +0200, Alexandru Ardelean wrote:
+> The intent is the removal of the 'delay_usecs' field from the
+> spi_transfer struct, as there is a 'delay' field that does the same
+> thing.
 > 
-> All tests passing for Tegra ...
+> The spi_delay_to_ns() can be used to get the transfer delay. It works by
+> using the 'delay_usecs' field first (if it is non-zero), and finally
+> uses the 'delay' field.
 > 
-> Test results for stable-v5.11:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     65 tests:	65 pass, 0 fail
+> Since the 'delay_usecs' field is going away, this change makes use of the
+> spi_delay_to_ns() function. This also means dividing the return value of
+> the function by 1000, to convert it to microseconds.
+> To prevent any potential faults when converting to microseconds and since
+> the result of spi_delay_to_ns() is int, the delay is being computed in 32
+> bits and then clamped between 0 & U16_MAX.
 > 
-> Linux version:	5.11.5-rc1-g89449ac6c715
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
+> Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
+> ---
+>  drivers/staging/greybus/spilib.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> diff --git a/drivers/staging/greybus/spilib.c b/drivers/staging/greybus/spilib.c
+> index 672d540d3365..30655153df6a 100644
+> --- a/drivers/staging/greybus/spilib.c
+> +++ b/drivers/staging/greybus/spilib.c
+> @@ -245,6 +245,7 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
+>  	/* Fill in the transfers array */
+>  	xfer = spi->first_xfer;
+>  	while (msg->state != GB_SPI_STATE_OP_DONE) {
+> +		int xfer_delay;
+>  		if (xfer == spi->last_xfer)
+>  			xfer_len = spi->last_xfer_size;
+>  		else
+> @@ -259,7 +260,9 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
+>  
+>  		gb_xfer->speed_hz = cpu_to_le32(xfer->speed_hz);
+>  		gb_xfer->len = cpu_to_le32(xfer_len);
+> -		gb_xfer->delay_usecs = cpu_to_le16(xfer->delay_usecs);
+> +		xfer_delay = spi_delay_to_ns(&xfer->delay, xfer) / 1000;
+> +		xfer_delay = clamp_t(u16, xfer_delay, 0, U16_MAX);
+> +		gb_xfer->delay_usecs = cpu_to_le16(xfer_delay);
+>  		gb_xfer->cs_change = xfer->cs_change;
+>  		gb_xfer->bits_per_word = xfer->bits_per_word;
+>  
 
-Thanks for testing them all and letting me know.
-
-greg k-h
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
