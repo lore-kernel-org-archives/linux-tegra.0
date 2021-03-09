@@ -2,135 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52118C433E9
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 09:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB673C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 10:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCC265147
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 09:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7245C6526C
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 10:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbhCIJ3x (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 Mar 2021 04:29:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbhCIJ3g (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 Mar 2021 04:29:36 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB5CC06174A;
-        Tue,  9 Mar 2021 01:29:36 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id w11so14412850wrr.10;
-        Tue, 09 Mar 2021 01:29:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sO+epgmRhJDMZTjy7AJEtlpTCWTyWl78HxLY6u7YYT4=;
-        b=K3v2aelY32sKpTuZ0I7x4JWtpKiNpmfBFly7VryV6+xxpJe4g7wPS7xh5S/doLXKcb
-         mo03VIkPcwsmyDMuTKEflW0IX9bQz3bdkpAB8lwn4gHX3Yk/24v3TkRJra1g9MVRDVfr
-         RshKTZw4JxQOHU32eMgwYbxaCNl0qhd5/P7GOvgGILcxFqzGPuyRG274SU6ZXMzZl3/2
-         h5I8RdgVlBNapJaRIhb10UL+wE0BH2uKm4DAHjEIGJbTANjZCF5F5JCUfD1METY6HZv3
-         XN9Gu51SLvvM/NoFw80hy0vNU50IQEDciM2LMZJcycbhpAt5YhLGv3J3l0j0GSzOtIoD
-         sbbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sO+epgmRhJDMZTjy7AJEtlpTCWTyWl78HxLY6u7YYT4=;
-        b=RDh6ow8oglMIstty/O9cAA5FC3ieQtnNFv/PYLgo/bBwgQdrDea/9OIreCCrIv6Jzd
-         5x/3ZPqoVdLHlT/4f+Qn3ys5KACxL7XtWPemIy46zaVP1Nrygdg3Nbiad5YVbXtQnWdE
-         gJKjxIctuFvzeoCWZfFKxpAFJzZtIvDtMu7IHwKaEP95SJ4scHmPR5sPliiZwrmXRexc
-         t2nQlQB8pY+n9BCU+Go2O0AE4vev3Or0g+ghU/liJUdVECS59EUS/dlhL3atthPCqf5U
-         dnrcBLoR3Fldtb+elRyv4xPfhTVUCgUnn8oRlsRUYvAaue4R7G1CZStVKmFIWaeeMbIj
-         5MQQ==
-X-Gm-Message-State: AOAM532X5Rvkkzx7VaRcSAuCOxUlOoJG+Gw+zGRkDaU/smjE//E2+oCG
-        vsL50yf13OR8gwQc1H0ZEEU=
-X-Google-Smtp-Source: ABdhPJxRf5rC6bFM/jX0jWPH/MjxZL5FZ/8xf3aU9Yy6CPERflbdpoh/R7KczYhwdnyHNlKIBhJKmg==
-X-Received: by 2002:adf:f841:: with SMTP id d1mr26884305wrq.36.1615282175248;
-        Tue, 09 Mar 2021 01:29:35 -0800 (PST)
-Received: from arch-thunder.localdomain (a109-49-46-234.cpe.netcabo.pt. [109.49.46.234])
-        by smtp.gmail.com with ESMTPSA id o9sm3154597wmc.8.2021.03.09.01.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Mar 2021 01:29:34 -0800 (PST)
-Date:   Tue, 9 Mar 2021 09:29:32 +0000
-From:   Rui Miguel Silva <rmfrfs@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Alexandru Ardelean <aardelean@deviqon.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, elder@kernel.org,
-        johan@kernel.org, vireshk@kernel.org, f.fainelli@gmail.com,
-        ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux@deviqon.com
-Subject: Re: [PATCH 06/10] staging: greybus: spilib: use 'spi_delay_to_ns'
- for getting xfer delay
-Message-ID: <20210309092932.kliwq6ylqlnpqekk@arch-thunder.localdomain>
-References: <20210308145502.1075689-1-aardelean@deviqon.com>
- <20210308145502.1075689-7-aardelean@deviqon.com>
- <20210309042809.dgop5dli36z27sj2@vireshk-i7>
+        id S229951AbhCIK0W (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 Mar 2021 05:26:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229775AbhCIK0N (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 9 Mar 2021 05:26:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4001265268;
+        Tue,  9 Mar 2021 10:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1615285572;
+        bh=FJOJh+a4KsEIpSu9f2mvUj9VhUwHYafoF3hxt5lplFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qyQrCEMnZ9EUAvHNU+TEoTGlm2+Ee1Ev4+M6gAV72fkREvQySCvtTYOHrcqE0Tjk+
+         QwpZAa3mpSl/2YoDRNn7d5iVpHlf8Be3zM9DdRCYa/Dvx1b1l+pWS3ATkbKOxiHDzg
+         M84WQkJNidY0zFk73u5NeRPN8n+K16wnpkS6dvwE=
+Date:   Tue, 9 Mar 2021 11:26:10 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.11 00/44] 5.11.5-rc1 review
+Message-ID: <YEdNQh3H9O4WpQF0@kroah.com>
+References: <20210308122718.586629218@linuxfoundation.org>
+ <76e87d7a575a48389a952e5b035d0da4@HQMAIL111.nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210309042809.dgop5dli36z27sj2@vireshk-i7>
+In-Reply-To: <76e87d7a575a48389a952e5b035d0da4@HQMAIL111.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
-On Tue, Mar 09, 2021 at 09:58:09AM +0530, Viresh Kumar wrote:
-> On 08-03-21, 16:54, Alexandru Ardelean wrote:
-> > The intent is the removal of the 'delay_usecs' field from the
-> > spi_transfer struct, as there is a 'delay' field that does the same
-> > thing.
+On Mon, Mar 08, 2021 at 05:18:55PM +0000, Jon Hunter wrote:
+> On Mon, 08 Mar 2021 13:34:38 +0100, gregkh@linuxfoundation.org wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > > 
-> > The spi_delay_to_ns() can be used to get the transfer delay. It works by
-> > using the 'delay_usecs' field first (if it is non-zero), and finally
-> > uses the 'delay' field.
+> > This is the start of the stable review cycle for the 5.11.5 release.
+> > There are 44 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > Since the 'delay_usecs' field is going away, this change makes use of the
-> > spi_delay_to_ns() function. This also means dividing the return value of
-> > the function by 1000, to convert it to microseconds.
-> > To prevent any potential faults when converting to microseconds and since
-> > the result of spi_delay_to_ns() is int, the delay is being computed in 32
-> > bits and then clamped between 0 & U16_MAX.
+> > Responses should be made by Wed, 10 Mar 2021 12:27:05 +0000.
+> > Anything received after that time might be too late.
 > > 
-> > Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
-> > ---
-> >  drivers/staging/greybus/spilib.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.5-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
+> > and the diffstat can be found below.
 > > 
-> > diff --git a/drivers/staging/greybus/spilib.c b/drivers/staging/greybus/spilib.c
-> > index 672d540d3365..30655153df6a 100644
-> > --- a/drivers/staging/greybus/spilib.c
-> > +++ b/drivers/staging/greybus/spilib.c
-> > @@ -245,6 +245,7 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
-> >  	/* Fill in the transfers array */
-> >  	xfer = spi->first_xfer;
-> >  	while (msg->state != GB_SPI_STATE_OP_DONE) {
-> > +		int xfer_delay;
-> >  		if (xfer == spi->last_xfer)
-> >  			xfer_len = spi->last_xfer_size;
-> >  		else
-> > @@ -259,7 +260,9 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
-> >  
-> >  		gb_xfer->speed_hz = cpu_to_le32(xfer->speed_hz);
-> >  		gb_xfer->len = cpu_to_le32(xfer_len);
-> > -		gb_xfer->delay_usecs = cpu_to_le16(xfer->delay_usecs);
-> > +		xfer_delay = spi_delay_to_ns(&xfer->delay, xfer) / 1000;
-> > +		xfer_delay = clamp_t(u16, xfer_delay, 0, U16_MAX);
-> > +		gb_xfer->delay_usecs = cpu_to_le16(xfer_delay);
-> >  		gb_xfer->cs_change = xfer->cs_change;
-> >  		gb_xfer->bits_per_word = xfer->bits_per_word;
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.11:
+>     12 builds:	12 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     65 tests:	65 pass, 0 fail
+> 
+> Linux version:	5.11.5-rc1-g89449ac6c715
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra210-p3450-0000,
+>                 tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
+Thanks for testing them all and letting me know.
 
-------
-Cheers,
-     Rui
+greg k-h
