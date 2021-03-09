@@ -2,97 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64F3C433E9
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 13:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CBBC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 14:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 723DC65274
-	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 13:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A497265243
+	for <linux-tegra@archiver.kernel.org>; Tue,  9 Mar 2021 14:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhCINFn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 9 Mar 2021 08:05:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230477AbhCINFN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 9 Mar 2021 08:05:13 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 809C765272;
-        Tue,  9 Mar 2021 13:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615295113;
-        bh=BJBJpVVoiY6gCZUtVubIMzNfBlkVauLEWMwsKwElL1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wJBItVNZ/Rf6BYqvp1pv4sAaOBG4icG+Nv+1x6/ql225wtv8ohchgyPJN4ynowY3o
-         CbW9B8MKlE/kTa5LY89OlfLifaAqEw7k3iGQzFpUqyBCSO9dID2k2qXYTrsYyDEOG5
-         i5qlF1Ivyl+rJIiDa9hCmmiUbcm7+AScmVMmAHU4=
-Date:   Tue, 9 Mar 2021 14:05:10 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Alexandru Ardelean <aardelean@deviqon.com>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        thierry.reding@gmail.com, elder@kernel.org, johan@kernel.org,
-        jonathanh@nvidia.com, broonie@kernel.org, ldewangan@nvidia.com,
-        vireshk@kernel.org, f.fainelli@gmail.com, linux@deviqon.com
-Subject: Re: [PATCH 06/10] staging: greybus: spilib: use 'spi_delay_to_ns'
- for getting xfer delay
-Message-ID: <YEdyhjayjbztoWI+@kroah.com>
-References: <20210308145502.1075689-1-aardelean@deviqon.com>
- <20210308145502.1075689-7-aardelean@deviqon.com>
+        id S230517AbhCIOmY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 9 Mar 2021 09:42:24 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:45197 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230183AbhCIOmD (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 9 Mar 2021 09:42:03 -0500
+Received: from mwalle01.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:fa59:71ff:fe9b:b851])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 3F2AB2223A;
+        Tue,  9 Mar 2021 15:42:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1615300922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G77sUYs1EAeHVxP/hlKiAiqXQYIKCpapQrEwbpPNVXg=;
+        b=s6iNLsfrWa87KzmdWW3KpGsdd9SzT0AD36yQr0f8FQy9+zO1LtxAk2bg0nRM12wqfp99L6
+        YJ9gFMvAv7v/0lwzsukNxRLWOVQX100QsgNbePJ/M2etAOD0/nbTMSAOxXILihMwG31xwt
+        mjhup/PqHo5iS4Gd6O1Dfk9XKtUddec=
+From:   Michael Walle <michael@walle.cc>
+To:     spujar@nvidia.com
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
+        thierry.reding@gmail.com
+Subject: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
+Date:   Tue,  9 Mar 2021 15:41:56 +0100
+Message-Id: <20210309144156.18887-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
+References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210308145502.1075689-7-aardelean@deviqon.com>
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 08, 2021 at 04:54:58PM +0200, Alexandru Ardelean wrote:
-> The intent is the removal of the 'delay_usecs' field from the
-> spi_transfer struct, as there is a 'delay' field that does the same
-> thing.
-> 
-> The spi_delay_to_ns() can be used to get the transfer delay. It works by
-> using the 'delay_usecs' field first (if it is non-zero), and finally
-> uses the 'delay' field.
-> 
-> Since the 'delay_usecs' field is going away, this change makes use of the
-> spi_delay_to_ns() function. This also means dividing the return value of
-> the function by 1000, to convert it to microseconds.
-> To prevent any potential faults when converting to microseconds and since
-> the result of spi_delay_to_ns() is int, the delay is being computed in 32
-> bits and then clamped between 0 & U16_MAX.
-> 
-> Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
-> ---
->  drivers/staging/greybus/spilib.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/spilib.c b/drivers/staging/greybus/spilib.c
-> index 672d540d3365..30655153df6a 100644
-> --- a/drivers/staging/greybus/spilib.c
-> +++ b/drivers/staging/greybus/spilib.c
-> @@ -245,6 +245,7 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
->  	/* Fill in the transfers array */
->  	xfer = spi->first_xfer;
->  	while (msg->state != GB_SPI_STATE_OP_DONE) {
-> +		int xfer_delay;
->  		if (xfer == spi->last_xfer)
->  			xfer_len = spi->last_xfer_size;
->  		else
-> @@ -259,7 +260,9 @@ static struct gb_operation *gb_spi_operation_create(struct gb_spilib *spi,
->  
->  		gb_xfer->speed_hz = cpu_to_le32(xfer->speed_hz);
->  		gb_xfer->len = cpu_to_le32(xfer_len);
-> -		gb_xfer->delay_usecs = cpu_to_le16(xfer->delay_usecs);
-> +		xfer_delay = spi_delay_to_ns(&xfer->delay, xfer) / 1000;
-> +		xfer_delay = clamp_t(u16, xfer_delay, 0, U16_MAX);
-> +		gb_xfer->delay_usecs = cpu_to_le16(xfer_delay);
->  		gb_xfer->cs_change = xfer->cs_change;
->  		gb_xfer->bits_per_word = xfer->bits_per_word;
->  
+Hi,
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> If "clocks = <&xxx>" is specified from the CPU or Codec component
+> device node, the clock is not getting enabled. Thus audio playback
+> or capture fails.
+> 
+> Fix this by populating "simple_dai->clk" field when clocks property
+> is specified from device node as well. Also tidy up by re-organising
+> conditional statements of parsing logic.
+> 
+> Fixes: bb6fc620c2ed ("ASoC: simple-card-utils: add asoc_simple_card_parse_clk()")
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+
+This actually breaks sound on my board
+(arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts).
+The codec on this board (wm8904) has a fixed clock input (only distinct
+frequencies are supported) and uses the FLL of the codec to generate the
+desired sample rate.
+
+It seems that after this patch the clock rate of the codecs clock (rather
+than the FLL) is tried to be changed. Which fails, because it doesn't
+support arbitrary frequencies.
+
+-michael
+
+> ---
+>  sound/soc/generic/simple-card-utils.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+> index bc0b62e..0754d70 100644
+> --- a/sound/soc/generic/simple-card-utils.c
+> +++ b/sound/soc/generic/simple-card-utils.c
+> @@ -173,16 +173,15 @@ int asoc_simple_parse_clk(struct device *dev,
+>  	 *  or device's module clock.
+>  	 */
+>  	clk = devm_get_clk_from_child(dev, node, NULL);
+> -	if (!IS_ERR(clk)) {
+> -		simple_dai->sysclk = clk_get_rate(clk);
+> +	if (IS_ERR(clk))
+> +		clk = devm_get_clk_from_child(dev, dlc->of_node, NULL);
+>  
+> +	if (!IS_ERR(clk)) {
+>  		simple_dai->clk = clk;
+> -	} else if (!of_property_read_u32(node, "system-clock-frequency", &val)) {
+> +		simple_dai->sysclk = clk_get_rate(clk);
+> +	} else if (!of_property_read_u32(node, "system-clock-frequency",
+> +					 &val)) {
+>  		simple_dai->sysclk = val;
+> -	} else {
+> -		clk = devm_get_clk_from_child(dev, dlc->of_node, NULL);
+> -		if (!IS_ERR(clk))
+> -			simple_dai->sysclk = clk_get_rate(clk);
+>  	}
+>  
+>  	if (of_property_read_bool(node, "system-clock-direction-out"))
+> -- 
+> 2.7.4
+> 
+> 
