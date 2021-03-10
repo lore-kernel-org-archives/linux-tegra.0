@@ -2,120 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC96C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 07:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFD1C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 13:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B86A64F97
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 07:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 544A264FEE
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 13:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230458AbhCJHVe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Mar 2021 02:21:34 -0500
-Received: from www381.your-server.de ([78.46.137.84]:60428 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbhCJHVW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Mar 2021 02:21:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID;
-        bh=qz+v/U8OfCpTcBxQ524rjA3+edB4w4v2XAKWVao9tZw=; b=NOcAydZc5yBZM0Muwj7fz+C8N6
-        MLVX5u/dL4dKLslXt9sIydO9khfqiXZy8yYjcv1kT6LDVjL/8hiWkYVoIrzv4E/HCeSH7Qjdz3Fa0
-        jVoOH/9yqvIniidnNF7Nsziu54b/eKK9jz9QFQVAO2ICDFZypDI04wgSKrt1D5SX06TIqupGjiq6y
-        d/71t5fC8hQOTrGNz6/jHWJmo37Ix9C6lsRdQx8RKT+nwmWuuCdc8beN5t4DnJemOfoxj8mzUEYlh
-        XWZvpdDGVsG/PFnkQFgSwOylKlq7ODZf4TnzXtJn691AbSdy+LIzbbdsAJlFF4pFr1zkpUDM83kqI
-        /BUNDg1g==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www381.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <lars@metafoo.de>)
-        id 1lJt9f-0001ZM-Fz; Wed, 10 Mar 2021 08:21:15 +0100
-Received: from [62.216.202.180] (helo=[192.168.178.20])
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <lars@metafoo.de>)
-        id 1lJt9f-00041w-55; Wed, 10 Mar 2021 08:21:15 +0100
-Subject: Re: [PATCH 01/10] spi: spi-axi-spi-engine: remove usage of
- delay_usecs
-To:     Alexandru Ardelean <aardelean@deviqon.com>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, elder@kernel.org,
-        johan@kernel.org, vireshk@kernel.org, rmfrfs@gmail.com,
-        f.fainelli@gmail.com, ldewangan@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, linux@deviqon.com
-References: <20210308145502.1075689-1-aardelean@deviqon.com>
- <20210308145502.1075689-2-aardelean@deviqon.com>
- <8a6ec9a1-71f8-ce1d-600a-66eba9244a54@metafoo.de>
- <CAASAkoZ+3T27KK0HN6YikKczUFS15xSpOssaOmx4NtDQKiKvHQ@mail.gmail.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <bafbb401-d563-dafc-ff11-9fbfd33709a4@metafoo.de>
-Date:   Wed, 10 Mar 2021 08:21:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S234983AbhCJNhe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 Mar 2021 08:37:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233422AbhCJNgq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 10 Mar 2021 08:36:46 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AF1464FD6;
+        Wed, 10 Mar 2021 13:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615383406;
+        bh=/qvD9d3Yt6mfuCTPcp4UZO2U5EnDzRCNvDKcb6MmsJ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fXkTwOG7pbmDGBbDKSu+3o811aK9eFGLJzWdPfdV7IhuvVV2m3Nk/c4z9Li2QpgZq
+         JR5lFEpfU5x63QLFZC/Dg5+8+rA7Qy6i+bmi9WzXRbLRQ9uuLEpqqTPivY7IFzeayg
+         mzUQ1q78M6bMSFonfRUBBV3sSsGBjGfHvBIOyAoFB/+nGnPxHilxCy4AegMTxyxkqn
+         VjCUKcE1gHCAhPSvx/fugTqtMd/AwCxEl52l1MXY0/0FP1VAKrekT+ZcP+nH+lYrtB
+         xdfomGcbcJbdQXlOiQDFTC2QmRVFoe6Sbf/xhWZFNbZhyi3bAQoNn8f7QcqAOFdP+8
+         92FFehlbjeg4Q==
+Date:   Wed, 10 Mar 2021 13:35:34 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH V2] ASoC: soc-core: Prevent warning if no DMI table is
+ present
+Message-ID: <20210310133534.GD4746@sirena.org.uk>
+References: <20210303115526.419458-1-jonathanh@nvidia.com>
+ <91480f92-a3f5-e71f-acdc-ea74488ab0a1@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAASAkoZ+3T27KK0HN6YikKczUFS15xSpOssaOmx4NtDQKiKvHQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.102.4/26103/Tue Mar  9 13:03:37 2021)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9dgjiU4MmWPVapMU"
+Content-Disposition: inline
+In-Reply-To: <91480f92-a3f5-e71f-acdc-ea74488ab0a1@linux.intel.com>
+X-Cookie: no maintenance:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/10/21 8:16 AM, Alexandru Ardelean wrote:
-> On Mon, 8 Mar 2021 at 18:42, Lars-Peter Clausen <lars@metafoo.de> wrote:
->> On 3/8/21 3:54 PM, Alexandru Ardelean wrote:
->>> The 'delay_usecs' field was handled for backwards compatibility in case
->>> there were some users that still configured SPI delay transfers with
->>> this field.
->>>
->>> They should all be removed by now.
->>>
->>> Signed-off-by: Alexandru Ardelean <aardelean@deviqon.com>
->>> ---
->>>    drivers/spi/spi-axi-spi-engine.c | 12 ++++--------
->>>    1 file changed, 4 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
->>> index af86e6d6e16b..80c3e38f5c1b 100644
->>> --- a/drivers/spi/spi-axi-spi-engine.c
->>> +++ b/drivers/spi/spi-axi-spi-engine.c
->>> @@ -170,14 +170,10 @@ static void spi_engine_gen_sleep(struct spi_engine_program *p, bool dry,
->>>        unsigned int t;
->>>        int delay;
->>>
->>> -     if (xfer->delay_usecs) {
->>> -             delay = xfer->delay_usecs;
->>> -     } else {
->>> -             delay = spi_delay_to_ns(&xfer->delay, xfer);
->>> -             if (delay < 0)
->>> -                     return;
->>> -             delay /= 1000;
->>> -     }
->>> +     delay = spi_delay_to_ns(&xfer->delay, xfer);
->>> +     if (delay < 0)
->>> +             return;
->> Bit of a nit, but this could be `delay <= 0` and then drop the check for
->> `delay == 0` below.
-> hmm, that's a bit debatable, because the `delay == 0` check comes
-> after `delay /= 1000` ;
-> to do what you're suggesting, it would probably need a
-> DIV_ROUND_UP(delay, 1000) to make sure that even sub-microsecond
-> delays don't become zero;
 
-Ah, true. Lets keep the code as it is.
+--9dgjiU4MmWPVapMU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On the other hand you could argue that we should round up to ensure the 
-delay is at least as long as requested. But that is something that 
-should be changed independently from this series.
+On Tue, Mar 09, 2021 at 01:41:45PM -0600, Pierre-Louis Bossart wrote:
 
+> The problem is that the cards are platform devices created by the parent
+> (which itself may be a PCI or ACPI device) and have nothing to do with ACPI.
 
+> Could we flip the logic and instead explicitly detect OF devices? That
+> restores functionality for us.
+
+Just change it to a system level check for ACPI, checking for OF would
+leave problems for board files or any other alternative firmware
+interfaces.
+
+--9dgjiU4MmWPVapMU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBIyyUACgkQJNaLcl1U
+h9AD0wf/Zbl1pfIcOCJxOTd8jWQgWmUT9U/NLT5bHSI+QKZCQ8TdhAJx5nbTYpsA
+EIfYRfIOyNbC+orOg933wQsEzmrhboS/ZfORAvfUKtlTHA7hmWO+qIserBNczgEE
+2L0pCqzopDnuD9IVNNzQr5CmEgunXIxShFGiJy2rkqHavvpZPwllhH9qpfQ3bwEO
+HTFhidXy7irpPJrZq1zenN70VzExNcqMUe19mz4M4g0imcyrGmfGOqWUj9c+7ZoY
+VNHHGINTIfh086c3T4PNKpK/pcmyhdsBXdJR3RewnPdMy72VzsAApz3XudGwcAqL
+aH9twLn24x911JXToXymhg7uqhlwuQ==
+=CPbE
+-----END PGP SIGNATURE-----
+
+--9dgjiU4MmWPVapMU--
