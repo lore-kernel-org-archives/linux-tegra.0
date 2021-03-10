@@ -2,121 +2,162 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B076CC433E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB354C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A93764FD7
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793A164FC6
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232898AbhCJTTt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Mar 2021 14:19:49 -0500
-Received: from mail-dm6nam10on2061.outbound.protection.outlook.com ([40.107.93.61]:26336
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232824AbhCJTTY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Mar 2021 14:19:24 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I7j0ZLNZkU8Q5bOCBfiRQLUROcV32POjbVemz/Q6ClhdbZHj8Hn2ofEhU3YIlisd+2mQaCxzu/OQG8lY1n5mP/eUV7iJ59dAhnu2obPwo7gx6zCmA2ATA4tRb9lzbwSiJgzYgTAY+ppEFRVNnX99ulnBnrjiJEyXOno2e6Pp9uKV5ql+A21AKENO60lkdYYFqNsJkf40Rqy/EBxfMo1xSNjS6mpv2JM9yQtK2w5seyBACQUOlNCGzRKtnuY5DxvbE+UV/1xVdfFj796XxecInqI5NmrpcaqATL+CpZ2y4/UNlrQ8QQPAaknnKDwEScXya9sD3hYiKEfubNiJK6uhiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UQ+CQyliHKMEHOtCGTQatjdSVUv3xVaIFcJKRbQJy2s=;
- b=iS10iMH7LhGV8mQlejj0Pfn3blZDucs9ip6hfIL324vbvfApFdJFuHSt/dxJmVk7ha35M/e7XCq3bOdFzjRVNJnHqgC/nU2vIihG3wH5TzMdk2WFtrnmDHFQQKxrXIqNlsUNnQbHJnPIUZgDlNTjAdK0swS7mfKPv/5/eLxFxWDWwnxEXj1tOKZZbQ6L+7Zg0W/Aig0jfbNWsYTgf34RrgiaklvVS1sGncOiHBD5x2Uxl0MTJPtNyDA8XWP4Uq9iY+WQVyVAA2+FNzsDFqrmSVaUamlLryQM57bC1YT2L3wJ5FKTiQUoK4oIGo8e0ieLCNydZB0Ekss8cNAk9J/4kQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=alsa-project.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UQ+CQyliHKMEHOtCGTQatjdSVUv3xVaIFcJKRbQJy2s=;
- b=m6tKKLoTA91jnSVNpd8u3YKP8lyVdHDHShYFYxpP9KQpWigP75ei2EkZU7N2WdzTO4vanFTaEf6dptKdmeFcng7HxxD0riLYur4Hh3Gv25H5/ipi8OtirRoyCtzTrojuZDOPtjpKsvRPH+6METPav9gDI0vxNz2aCxOu/lPzsNLp8xNlm8QOo8Li0zDKI6CL9iVkn6G8Yof4eB4ftdE8s6vSS7B8m86wwfsuplaaJLTh72ze4vXFwSmNKO1Fij9vnpbWDD3guB7Aw5iCi8x3ihzXEjVKIZd07HwyUIyCZ27qUydh8+BDL3Q7nHsu8JrFUNg5aU43Fq8zUfKPnMM/Lg==
-Received: from DM5PR17CA0062.namprd17.prod.outlook.com (2603:10b6:3:13f::24)
- by DM6PR12MB4186.namprd12.prod.outlook.com (2603:10b6:5:21b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Wed, 10 Mar
- 2021 19:19:22 +0000
-Received: from DM6NAM11FT048.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:13f:cafe::dd) by DM5PR17CA0062.outlook.office365.com
- (2603:10b6:3:13f::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend
- Transport; Wed, 10 Mar 2021 19:19:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; alsa-project.org; dkim=none (message not signed)
- header.d=none;alsa-project.org; dmarc=pass action=none
- header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT048.mail.protection.outlook.com (10.13.173.114) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3912.17 via Frontend Transport; Wed, 10 Mar 2021 19:19:20 +0000
-Received: from [10.25.96.88] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 10 Mar
- 2021 19:19:13 +0000
-Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-To:     Michael Walle <michael@walle.cc>, <broonie@kernel.org>
-CC:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <kuninori.morimoto.gx@renesas.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <robh@kernel.org>, <sharadg@nvidia.com>, <thierry.reding@gmail.com>
-References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
- <20210309144156.18887-1-michael@walle.cc>
- <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
- <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
- <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
- <6e6b312eb91b8b86ceaa8a52311ea437@walle.cc>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <a201acf4-ac96-35c3-1703-1b53a304361b@nvidia.com>
-Date:   Thu, 11 Mar 2021 00:49:07 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S230522AbhCJTaI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 Mar 2021 14:30:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233342AbhCJTaA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 10 Mar 2021 14:30:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0FA3F64EF6;
+        Wed, 10 Mar 2021 19:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615404600;
+        bh=e2Z2DQoJIeiblci+Xk9crwWl1In7MRqs54LMBzkItlg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=OnEKcfxiVfKnmrYB3LuZNSCzCJ5RObqvWa5z7S7UYzXT41zckhszQZK3URD5ZROrS
+         mr/AK9os9EhYoQ7PyJyRNqsjKNmTWZueZLoSXevk8tn+f21HuOQRWzC1bNzJKdX9nD
+         xlDbOAIJD6HeE8dQ1olV1H+X8urrhTauCwhKyfJV7cp/WWE5k1qMKvLUm08+e568+c
+         +Yu/chwpdBMmupaC0y+yM2u2jEZuFDM8RVe1Z32xuNAghxpQwKdrVXV5hygXNaa3yy
+         Xxq3HE2lNWKLQJ0FBFojwrg61Orlx6meI5fCKFT2m5ULbr+j0awHh8vAGTAKVnTtuB
+         brXStsZQ/nJvQ==
+Date:   Wed, 10 Mar 2021 13:29:58 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 00/13] PCI: MSI: Getting rid of msi_controller, and other
+ cleanups
+Message-ID: <20210310192958.GA2032926@bjorn-Precision-5520>
 MIME-Version: 1.0
-In-Reply-To: <6e6b312eb91b8b86ceaa8a52311ea437@walle.cc>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8f6103b7-5b02-4e2c-e700-08d8e3f96856
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4186:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB418671677BDB13AFA49983A9A7919@DM6PR12MB4186.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: duO5IU/ofW2okBUAVk8g5p7Pn1KlPUWuIND6P61DKQTvHVOjLQO+HKBdgPjcoobAOrCrN61I9qXzWqc9RQJldwnzlHUfDugPBByVp6NVJEpnoupi1dVyUTi8T5FF7ciy4PXMP5MJAoO7at8/AJruJNCdP/w6SWbn3lOWfb2Moa2QoUN09wJT39feQvD006TykQ2icGmDWqoK9GLoQ/sxSBMMYNmgDDDroPkAngORKexLynkpyuHEvYM0KlLs18YbDf8vYo4mLOt4tEbhswOqPav8IG3ZbWg925sqbG7EiIPsy/VG7AfnOdi535LhJMj2f0JIu0TCxAwvKS76jwkWdSaHVpzLcoSET7ZGB8fWn14SjmhSHwgE7He523RGJXW81D1s5QBQC5ZeggBKgOE1qQ0KTRo+DzCX6iFZNKcB3Bq/88sK6uzh1UB8OBHEn0m2FPIRdMBq8c9fUtdmRL+cYO2RhSD0OPrl/mIsbo/wzfBKyW/NRnx2yLJgssINtNnrPW+Cyzm6oybYHc8us/I1xJb0gl1QaMa2bCkl0FRVNkRrjX7kv708h4F4QihQUFiIR0+uQTWOuZnRqwzYAljXQFeejIr8EKWCt1OZ9gHFhJNZXOPrGGkRYIYODa43eD768ZM6ycIj1M5LImp9AIsEEVdTjLIwh++KCtLSdt+A9Vu+xVkqLXUHDhhkOGL4cHlFHDss/33xdlSD0iQNK9cM5w==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(136003)(396003)(36840700001)(46966006)(6666004)(426003)(356005)(5660300002)(34070700002)(31696002)(36756003)(8936002)(31686004)(7636003)(36860700001)(4744005)(336012)(316002)(82740400003)(36906005)(86362001)(4326008)(70586007)(8676002)(47076005)(16526019)(70206006)(83380400001)(2616005)(54906003)(186003)(82310400003)(26005)(2906002)(53546011)(478600001)(16576012)(110136005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2021 19:19:20.8773
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f6103b7-5b02-4e2c-e700-08d8e3f96856
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT048.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4186
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210225151023.3642391-1-maz@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Thu, Feb 25, 2021 at 03:10:10PM +0000, Marc Zyngier wrote:
+> The msi_controller data structure was the first attempt at treating
+> MSIs like any other interrupt. We replaced it a few years ago with the
+> generic MSI framework, but as it turns out, some older drivers are
+> still using it.
+> 
+> This series aims at converting these stragglers, drop msi_controller,
+> and fix some other nits such as having ways for a host bridge to
+> advertise whether it supports MSIs or not.
+> 
+> A few notes:
+> 
+> - The Tegra patch is the result of back and forth work with Thierry: I
+>   wrote the initial patch, which didn't work (I didn't have any HW at
+>   the time). Thierry made it work, and I subsequently fixed a couple
+>   of bugs/cleanups. I'm responsible for the result, so don't blame
+>   Thierry for any of it! FWIW, I'm now running a Jetson TX2 with its
+>   root fs over NVME, and MSIs are OK.
+> 
+> - RCAR is totally untested, though Marek had a go at a previous
+>   version. More testing required.
+> 
+> - The xilinx stuff is *really* untested. Paul, if you have a RISC-V
+>   board that uses it, could you please give it a go? Michal, same
+>   thing for the stuff you have at hand...
+> 
+> - hyperv: I don't have access to such hypervisor, and no way to test
+>   it. Help welcomed.
+> 
+> - The patches dealing with the advertising of MSI handling are the
+>   result of a long discussion that took place here[1]. I took the
+>   liberty to rejig Thomas' initial patches, and add what I needed for
+>   the MSI domain stuff. Again, blame me if something is wrong, and not
+>   Thomas.
+> 
+> Feedback welcome.
+> 
+> 	M.
+> 
+> [1] https://lore.kernel.org/r/20201031140330.83768-1-linux@fw-web.de
+> 
+> Marc Zyngier (11):
+>   PCI: tegra: Convert to MSI domains
+>   PCI: rcar: Convert to MSI domains
+>   PCI: xilinx: Convert to MSI domains
+>   PCI: hyperv: Drop msi_controller structure
+>   PCI: MSI: Drop use of msi_controller from core code
+>   PCI: MSI: Kill msi_controller structure
+>   PCI: MSI: Kill default_teardown_msi_irqs()
+>   PCI: MSI: Let PCI host bridges declare their reliance on MSI domains
+>   PCI: Make pci_host_common_probe() declare its reliance on MSI domains
+>   PCI: MSI: Document the various ways of ending up with NO_MSI
+>   PCI: quirks: Refactor advertising of the NO_MSI flag
+> 
+> Thomas Gleixner (2):
+>   PCI: MSI: Let PCI host bridges declare their lack of MSI handling
+>   PCI: mediatek: Advertise lack of MSI handling
 
+All looks good to me; I'm guessing Lorenzo will want to apply it or at
+least take a look since the bulk of this is in the native host
+drivers.
 
-On 3/10/2021 11:44 PM, Michael Walle wrote:
+s|PCI: MSI:|PCI/MSI:| above (I use "PCI/<FEATURE>:" and "PCI: <driver>:")
+s|PCI: hyperv:|PCI: hv:| to match previous practice
 
-> Btw I'm pretty sure, the MCLK was enabled and disabled depending on
-> whether there was an audio stream, the last time I've measured the
-> clock.
+Maybe:
 
-This may be true in your case because wm8904 driver does an explicit 
-clock enable/disable and does not rely on simple-card-utils for this. In 
-my case it depends on simple-card-utils.
+  PCI: Refactor HT advertising of NO_MSI flag
+
+since "HT" contains more information than "quirks"?
+
+In the 03/13 commit log, s/appaling/appalling/ :)
+In the patch, it sounds like the MSI capture address change might be
+separable into its own patch?  If it were separate, it would be easier
+to see the problem/fix and watch for it elsewhere.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+>  drivers/pci/controller/Kconfig           |   4 +-
+>  drivers/pci/controller/pci-host-common.c |   1 +
+>  drivers/pci/controller/pci-hyperv.c      |   4 -
+>  drivers/pci/controller/pci-tegra.c       | 343 ++++++++++++-----------
+>  drivers/pci/controller/pcie-mediatek.c   |   4 +
+>  drivers/pci/controller/pcie-rcar-host.c  | 342 +++++++++++-----------
+>  drivers/pci/controller/pcie-xilinx.c     | 238 +++++++---------
+>  drivers/pci/msi.c                        |  46 +--
+>  drivers/pci/probe.c                      |   4 +-
+>  drivers/pci/quirks.c                     |  15 +-
+>  include/linux/msi.h                      |  17 +-
+>  include/linux/pci.h                      |   4 +-
+>  12 files changed, 463 insertions(+), 559 deletions(-)
+> 
+> -- 
+> 2.29.2
+> 
