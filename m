@@ -2,235 +2,176 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B2BC433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99E2C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1E364FB1
-	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB8E64FB4
+	for <linux-tegra@archiver.kernel.org>; Wed, 10 Mar 2021 19:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbhCJTNx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 10 Mar 2021 14:13:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231138AbhCJTNq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 10 Mar 2021 14:13:46 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06571C061760;
-        Wed, 10 Mar 2021 11:13:46 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id v2so22377438lft.9;
-        Wed, 10 Mar 2021 11:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TGVo84MkssIIGFaMlWeB/GdWruWqeKFsQWqj4qPbSMU=;
-        b=HbsI8I4tO0QXv6SbFoersQnW7puDohAmS/pM6fJaJGkWRSDeZFhNtTCNZEeEzA6s+X
-         w2Xp3MfPGHCIZI8D3kxV8emCwmZBLGtFVt9BJbPcvCb77qeFQqHINFY39+LXwMJz7YDo
-         BH6NshzUCP5G985lVE7NGXKZQLR/bgCjoeUATpkxGHpSlnVKYealzTtrIgNiETrsJiag
-         jkc4Yvb0+n6QSSBWBu82vYWbspP7U15YPQwg5glY//VxIi9WmTWSomUZulhKKFC8HbIj
-         NGVjufjAZgw1q1Wu8EdF/QCZpEN3KeUo46kx0SdRb0bHdnsYa4uHvrBtck4Z7AHFa+Nz
-         JnjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TGVo84MkssIIGFaMlWeB/GdWruWqeKFsQWqj4qPbSMU=;
-        b=Qb4+PvqBib69YGh/yl360eSoipMUrP9xPSTjI6CiCsposYfWb9P364Z5mxxfbViXIT
-         8/Yk7krfx1AI0sxvIZ6UklKV4xt668HtQXf0p48iNRRzfuPXxFBVFgrF+oTgn0B3Xqbv
-         nehSIYJ52s/C4eu0cBv82y3IHuKt09vE07HvJUKbrHZoHULxFD3WQeh/bpfdxLX9d/32
-         OylSZY82M61WkIdBWgi8OKALErMC49yFNv7268s1yvCBOFkVP7EqC8Ed3bhIn7HsbTWk
-         jodi9NyY49SFfQprQjI2UVPS8LK3aaHdF6+wnSxscrn2iRTlSOF3Do3yrlUHngBduubZ
-         sQwg==
-X-Gm-Message-State: AOAM531vCga3e0XDSRXTD83wQNABfpTGDPTnjUza+4MzTthdoXxX+Ptw
-        Je9GKTHbzHIVBDn/VuadGsVeezFxl2A=
-X-Google-Smtp-Source: ABdhPJxAxsuCKlrBzioldvdKtUXE1MFNfDCFzDMOqQfbX+L9cAYHE5rvNAvBmQKSPjyj37EoksplAw==
-X-Received: by 2002:a05:6512:1156:: with SMTP id m22mr2808559lfg.637.1615403624284;
-        Wed, 10 Mar 2021 11:13:44 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id k6sm63089lfm.19.2021.03.10.11.13.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Mar 2021 11:13:43 -0800 (PST)
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix mc errors on tegra124-nyan
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, joro@8bytes.org,
-        thierry.reding@gmail.com, will@kernel.org,
-        guillaume.tucker@collabora.com
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20210218220702.1962-1-nicoleotsuka@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a8a7a0af-895f-9d79-410d-5dd03ebbd6dd@gmail.com>
-Date:   Wed, 10 Mar 2021 22:13:42 +0300
+        id S230522AbhCJTRi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 10 Mar 2021 14:17:38 -0500
+Received: from mail-bn7nam10on2043.outbound.protection.outlook.com ([40.107.92.43]:47840
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233357AbhCJTRV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 10 Mar 2021 14:17:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I0AQop/xgd3NLWaLZwxmIlEEVHZAAWSmeroSeRzJV4dAtAgcEg7R5XHwMOKKuXDSNecWp3dRv2bz/kAd02zx9aeOx1oLs6ziYsmISlxGtpuxkOp6iEBRotHe8gATSE3vbmVKLV5YAxuZVz1KaDBTLnRkBfINra47xCsBMvNCkXZCmvtrAF8OiXPFVWZTc3TbTRRWuxHvyudJQogRWMNmOv0JhZtT+1666jhoK4Zgr8tQNJYPSMRdOzZnalw2xp5e/PuHwyEQeAf2r5RDHA5Vt26DhiYcz9Cn32ouWek8ZPyyJ5Br8PiNPALN7U80sxiENzinTIPKS+WvBacbpmxy5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e06trEjxm3VBYonZIs6YUYGfSXJLgHsv5EYk3X6ITr0=;
+ b=mzPcl4rMm9uOahGv4anUsv1P32qnJKzpU9QnZ9CcYx3Jn6D+9JBkTp+OFBISyQFARJFApew8SQMsvTD4ORCXsQ3+9INgANsaegHSnb8Hb0zGUcLk7c6C2HjwFdw+G+aZA6UBj1+a60Y4y/Pfk32cnyeSKJvgHaLNaj8e+t+4WxVygt6dyUr4UfYuEuYM99+LmhjkJgAt6k0GDDWJq6M3iWJnTWh/TB65yu2OhS6c/Li0Lvhqzq1pnyTOMMYPUyHG/MPYuSeAVPr7dYmq3Zc/E9TPlXCtFuukaYuJaLB1eRxDtc0r21LhAf2kocW5imei5xeJ7v/EHlOzTnMIP7y1KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e06trEjxm3VBYonZIs6YUYGfSXJLgHsv5EYk3X6ITr0=;
+ b=YwPm+JjS3RZK4uFh2PBlTfPMVB1+zFo4azy4UXi4Kna8Nhyi0My4Y685txIrKbpvkQHSgc6RwaW+BA8rqixMcHcthMiFT5yfmogJ+Z0AMjw+Hbsr7qI89ePW9Ta88SsAPOPueUSPrSPjxf7NWIys/AxEA/+tlfy4m5z8hU6JO9J6/6tgFHKNqDazjWEOA9WZiEs29QRFEXnhG4bPooNm0kGeJ9PEyCDfvaxhvkKbYsIjQHi2KLBhtD4VAQx0XmETrJUpNkCOzQpeOdnx3aVlmICEW9qgc78eIcMoiuEXYzlWf5/1vXw+aYVgyN2Zmz2LbHsk2RRGjQsDfhjNx1rZHg==
+Received: from DM5PR13CA0064.namprd13.prod.outlook.com (2603:10b6:3:117::26)
+ by SN1PR12MB2496.namprd12.prod.outlook.com (2603:10b6:802:2f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.19; Wed, 10 Mar
+ 2021 19:17:18 +0000
+Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:117:cafe::40) by DM5PR13CA0064.outlook.office365.com
+ (2603:10b6:3:117::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3933.16 via Frontend
+ Transport; Wed, 10 Mar 2021 19:17:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; linux.intel.com; dkim=none (message not signed)
+ header.d=none;linux.intel.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3933.31 via Frontend Transport; Wed, 10 Mar 2021 19:17:18 +0000
+Received: from [10.26.49.11] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 10 Mar
+ 2021 19:17:15 +0000
+Subject: Re: [PATCH V2] ASoC: soc-core: Prevent warning if no DMI table is
+ present
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     <alsa-devel@alsa-project.org>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        <linux-tegra@vger.kernel.org>,
+        Bard liao <yung-chuan.liao@linux.intel.com>
+References: <20210303115526.419458-1-jonathanh@nvidia.com>
+ <91480f92-a3f5-e71f-acdc-ea74488ab0a1@linux.intel.com>
+ <20210310133534.GD4746@sirena.org.uk>
+ <6a2352e6-f2b7-def1-de58-52fbeb7846e5@linux.intel.com>
+ <20210310161814.GA28564@sirena.org.uk> <s5hzgzbvube.wl-tiwai@suse.de>
+ <9b073d01-f2fe-a99b-e53c-4a0b3f95ca05@linux.intel.com>
+ <20210310165235.GD28564@sirena.org.uk>
+ <cf03ce61-1501-e0e7-6887-d921c7d1af62@linux.intel.com>
+ <20210310181611.GE28564@sirena.org.uk>
+ <9e1075c6-da49-d614-e7af-30242dd3d3fe@linux.intel.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <9020a65c-b8b8-ac1e-d0f8-a12e507322b8@nvidia.com>
+Date:   Wed, 10 Mar 2021 19:17:13 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210218220702.1962-1-nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <9e1075c6-da49-d614-e7af-30242dd3d3fe@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 260c4728-e1c8-4242-199c-08d8e3f91f6b
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2496:
+X-Microsoft-Antispam-PRVS: <SN1PR12MB2496916747EAE3075AB970A4D9919@SN1PR12MB2496.namprd12.prod.outlook.com>
+X-MS-Exchange-Transport-Forked: True
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: puqShxzMXjR+zZEA17f0cZV19t5wMmvyowU7zVVtJpQnKGR1wtoB1jyPeEBbeKx6rjs7UkqVbEMK5EQ4LpcFzb+6SWr7bUvqy1KkUYwhv7d3swPVle0eqbz2qvV6ITFr+qT/tJcrmIiUcgnRRpXQ5mL7axMvPfC+u65ZqyIpkDA5/KkmSEnR9F3Vd4fxRp7LwFhqM/GBHCpMUQNXBftnEzzVcn/TM7HeWcxquntff5kJDGJiMXUdYZ2HWoriDSEe/a+9PZ1TKjyfhYLieWuGzAmseGhyFT7aHWXYyirj67IzN8wpla63eDzIvRmL5DUeRi069WvwVqtGkVB8mXFvgt1CG8l01wUsRNa4ULXRFCK0q56oMTGqT8M4C3bOVTGArd4qcI9mqHttxj5uqeGGxfAn2lxq6sgHpITCYyu7TiTfNuGLQOkvuCE3jizlqkB3jhD25+JBh6w1uCBjfPaZeaDehaobnMTV/V2/Fy6yKOFG8pbOH05D9e1GEDx0NHXNyyy9mQikZPpx25NpYwCTHdGh1vSeCoMwBYxCY5pop7wZpEpmqjWEgWuA+pG9Lr5oyjJCqytjUqTUw9zIxQYu2G7ykhSLVyinV3EUcUXdRYnQGMOYdg7ft0k0pW8Am1fEZsSJFn/29NuXxoazolnuVn5vd2ZXkPmZl4sfRn6Q6tFzBXfG4EWYghFyOPuLQP8yJy9xHUBM4Mne2LSFGzojwdvsqO24sT+QHBTBOWXlRyo=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(376002)(136003)(396003)(36840700001)(46966006)(2906002)(478600001)(2616005)(8676002)(5660300002)(4326008)(36860700001)(34070700002)(53546011)(16526019)(70586007)(336012)(7416002)(86362001)(70206006)(186003)(8936002)(47076005)(356005)(83380400001)(426003)(7636003)(31696002)(110136005)(16576012)(316002)(54906003)(31686004)(36756003)(82310400003)(82740400003)(36906005)(26005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2021 19:17:18.5220
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 260c4728-e1c8-4242-199c-08d8e3f91f6b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2496
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.02.2021 01:07, Nicolin Chen Ð¿Ð¸ÑˆÐµÑ‚:
-> Commit 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
-> removed certain hack in the tegra_smmu_probe() by relying on IOMMU core to
-> of_xlate SMMU's SID per device, so as to get rid of tegra_smmu_find() and
-> tegra_smmu_configure() that are typically done in the IOMMU core also.
-> 
-> This approach works for both existing devices that have DT nodes and other
-> devices (like PCI device) that don't exist in DT, on Tegra210 and Tegra3
-> upon testing. However, Page Fault errors are reported on tegra124-Nyan:
-> 
->   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
-> 	 EMEM address decode error (SMMU translation error [--S])
->   tegra-mc 70019000.memory-controller: display0a: read @0xfe056b40:
-> 	 Page fault (SMMU translation error [--S])
-> 
-> After debugging, I found that the mentioned commit changed some function
-> callback sequence of tegra-smmu's, resulting in enabling SMMU for display
-> client before display driver gets initialized. I couldn't reproduce exact
-> same issue on Tegra210 as Tegra124 (arm-32) differs at arch-level code.
-> 
-> Actually this Page Fault is a known issue, as on most of Tegra platforms,
-> display gets enabled by the bootloader for the splash screen feature, so
-> it keeps filling the framebuffer memory. A proper fix to this issue is to
-> 1:1 linear map the framebuffer memory to IOVA space so the SMMU will have
-> the same address as the physical address in its page table. Yet, Thierry
-> has been working on the solution above for a year, and it hasn't merged.
-> 
-> Therefore, let's partially revert the mentioned commit to fix the errors.
-> 
-> The reason why we do a partial revert here is that we can still set priv
-> in ->of_xlate() callback for PCI devices. Meanwhile, devices existing in
-> DT, like display, will go through tegra_smmu_configure() at the stage of
-> bus_set_iommu() when SMMU gets probed(), as what it did before we merged
-> the mentioned commit.
-> 
-> Once we have the linear map solution for framebuffer memory, this change
-> can be cleaned away.
-> 
-> [Big thank to Guillaume who reported and helped debugging/verification]
-> 
-> Fixes: 25938c73cd79 ("iommu/tegra-smmu: Rework tegra_smmu_probe_device()")
-> Reported-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
-> 
-> Guillaume, would you please give a "Tested-by" to this change? Thanks!
-> 
->  drivers/iommu/tegra-smmu.c | 72 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 71 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 4a3f095a1c26..97eb62f667d2 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -798,10 +798,70 @@ static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
->  	return SMMU_PFN_PHYS(pfn) + SMMU_OFFSET_IN_PAGE(iova);
->  }
->  
-> +static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
-> +{
-> +	struct platform_device *pdev;
-> +	struct tegra_mc *mc;
-> +
-> +	pdev = of_find_device_by_node(np);
-> +	if (!pdev)
-> +		return NULL;
-> +
-> +	mc = platform_get_drvdata(pdev);
-> +	if (!mc)
-> +		return NULL;
-> +
-> +	return mc->smmu;
-> +}
-> +
-> +static int tegra_smmu_configure(struct tegra_smmu *smmu, struct device *dev,
-> +				struct of_phandle_args *args)
-> +{
-> +	const struct iommu_ops *ops = smmu->iommu.ops;
-> +	int err;
-> +
-> +	err = iommu_fwspec_init(dev, &dev->of_node->fwnode, ops);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to initialize fwspec: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = ops->of_xlate(dev, args);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to parse SW group ID: %d\n", err);
-> +		iommu_fwspec_free(dev);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
->  {
-> -	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
-> +	struct device_node *np = dev->of_node;
-> +	struct tegra_smmu *smmu = NULL;
-> +	struct of_phandle_args args;
-> +	unsigned int index = 0;
-> +	int err;
-> +
-> +	while (of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
-> +					  &args) == 0) {
-> +		smmu = tegra_smmu_find(args.np);
-> +		if (smmu) {
-> +			err = tegra_smmu_configure(smmu, dev, &args);
-> +			of_node_put(args.np);
->  
-> +			if (err < 0)
-> +				return ERR_PTR(err);
-> +
-> +			break;
-> +		}
-> +
-> +		of_node_put(args.np);
-> +		index++;
-> +	}
-> +
-> +	smmu = dev_iommu_priv_get(dev);
->  	if (!smmu)
->  		return ERR_PTR(-ENODEV);
->  
-> @@ -1028,6 +1088,16 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
->  	if (!smmu)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	/*
-> +	 * This is a bit of a hack. Ideally we'd want to simply return this
-> +	 * value. However the IOMMU registration process will attempt to add
-> +	 * all devices to the IOMMU when bus_set_iommu() is called. In order
-> +	 * not to rely on global variables to track the IOMMU instance, we
-> +	 * set it here so that it can be looked up from the .probe_device()
-> +	 * callback via the IOMMU device's .drvdata field.
-> +	 */
-> +	mc->smmu = smmu;
-> +
->  	size = BITS_TO_LONGS(soc->num_asids) * sizeof(long);
->  
->  	smmu->asids = devm_kzalloc(dev, size, GFP_KERNEL);
-> 
 
-I found that this patch introduced a serious regression on Tegra30 using
-today's linux-next. Tegra30 has two 3d h/w blocks connected in SLI and
-only one of the blocks is now attached to IOMMU domain, meaning that GPU
-is unusable now. All 3d, 2d and display devices share the same "DRM"
-group on Tegra30.
+On 10/03/2021 18:37, Pierre-Louis Bossart wrote:
+> 
+>>>> Build time dependencies aren't going to help anything, arm64 (and to my
+>>>> understanding some future x86 systems, LynxPoint IIRC) supports both DT
+>>>> and ACPI and so you have kernels built with support for both.
+>>
+>>> well, that's what I suggested initially:
+>>>         if (is_of_node(card->dev->fwnode))
+>>
+>>> I used the of_node test as a proxy for 'no DMI' since I am not aware
+>>> of any
+>>> means to detect if DMI is enabled at run-time.
+>>
+>> Can we not fix the DMI code so it lets us check dmi_available either
+>> directly or with an accessor?  I don't understand why all the proposals
+>> are dancing around local bodges here.
+> 
+> something like this then (compile-tested only)?
+> 
+> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+> index d51ca0428bb8..f191a1f901ac 100644
+> --- a/drivers/firmware/dmi_scan.c
+> +++ b/drivers/firmware/dmi_scan.c
+> @@ -166,6 +166,7 @@ static int __init dmi_checksum(const u8 *buf, u8 len)
+>  static const char *dmi_ident[DMI_STRING_MAX];
+>  static LIST_HEAD(dmi_devices);
+>  int dmi_available;
+> +EXPORT_SYMBOL_GPL(dmi_available);
+> 
+>  /*
+>   *     Save a DMI string
+> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+> index 16ba54eb8164..c7e4600b2dd4 100644
+> --- a/sound/soc/soc-core.c
+> +++ b/sound/soc/soc-core.c
+> @@ -1574,7 +1574,7 @@ int snd_soc_set_dmi_name(struct snd_soc_card
+> *card, const char *flavour)
+>         if (card->long_name)
+>                 return 0; /* long name already set by driver or from DMI */
+> 
+> -       if (!is_acpi_device_node(card->dev->fwnode))
+> +       if (!dmi_available)
+>                 return 0;
+> 
+>         /* make up dmi long name as: vendor-product-version-board */
 
-Nicolin, please let me know if have any suggestions. I may take a closer
-look a day later, for now I'll just revert this patch locally. Thanks in
-advance.
+
+Sounds good to me. I would have done the same if I had known that the
+current solution would have caused this regression.
+
+Cheers
+Jon
+
+-- 
+nvpublic
