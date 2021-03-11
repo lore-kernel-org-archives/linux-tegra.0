@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A42C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1130CC28E88
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4421F64F15
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D615464FA7
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230320AbhCKTWf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 14:22:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38104 "EHLO
+        id S229921AbhCKTW3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 14:22:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230198AbhCKTVx (ORCPT
+        with ESMTP id S230047AbhCKTVm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 14:21:53 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A25C061574;
-        Thu, 11 Mar 2021 11:21:53 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id x4so34936355lfu.7;
-        Thu, 11 Mar 2021 11:21:52 -0800 (PST)
+        Thu, 11 Mar 2021 14:21:42 -0500
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4687C061574;
+        Thu, 11 Mar 2021 11:21:41 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id f16so3612465ljm.1;
+        Thu, 11 Mar 2021 11:21:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AJVgMRUFK3IzMuTMQ6MCF0NIQ5mxaF829M4Tu4JWudA=;
-        b=RSJIhEIi9KkDFnqXQP7HofnjVfCK98cRETx3rRcdr03cSKYnyfcVjZ5EtXsjxuGnzC
-         2mQT1vCNpP3G5h9lJ0zRsVneiynpjtFbkjR9qnvGfWyhVZKTDX5ibmCzOIHoY8ozMlVN
-         aLtIHCjXjt3sXdN/fHpTa4EZEI9hlLq8u4YQHBhdjGqblo5RYnl1jZeFEG+4VvkxZQYh
-         6MHOd+iPbPSOaAwmFw08d2TrsCoWt1AFCkqNdz8dOaGXY43gdQpDspGvT4G2Afn/WTMK
-         oepu/2Sl959dqQlFG3crNTW9CJAlC+9DpJO/Lhv0v9wl98N2U9gaQSFvoXgyfWu2u24R
-         /rCA==
+        bh=ov6L/wi+7+c3LJQtnAfH1iT/wWmTs9arji1NNjI5w4w=;
+        b=Yb2xQLauQk9/iW9wuQpdmmzQth3lijiwwro7aLkL5nw59+KYnhhGwe+WIsASJe2cBr
+         of7MVf0dwHgmm84nllvZVdfbbSiTFGCdTKGpaQSwxJ+1mQNO8nd9dFIg901Ya3V8mjHa
+         V3cjPw39w//0pzFRjKGn8TBsMyNb7IVbLBg4vmO5wOyP6grDoA/orJvrEIXjZitenosh
+         65JY/acJLBixVB+TAd71beQ7dZXUBG+OVI7t28wEBifdeUjo15dx4B5AwMHn4yqGi0NZ
+         EDjwMWYGla6li8QVOIPfR3DcF8njHOcUzDeuNpgxKkY9NVrmmTtNQBAN9TEqRiUQUkIE
+         NaMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AJVgMRUFK3IzMuTMQ6MCF0NIQ5mxaF829M4Tu4JWudA=;
-        b=DvkA2NqmerdSkFIF/AVF7O8dIC3pSuqekZcEqQG8YCnhrzdfwcz1IhcrQRxJtxvpp6
-         Sbl4Hw9WHBdnl58s+ar7w5bDRpg3iFAyQn5f0icjp0k8murpWthGSlP1IAwUnHCBS6mH
-         pu1bpCZX80nkBS8nCiOZaO/+ETxkdUWJGxjRVy7oKm3XNoadLvbUR6wrglsb73DBGdRX
-         W93+MKxCB3AwnrOaEnohnLZ4sV3PF7DXNRyR2BEu+sHz/ZTnmoGWKkkZxLaJPDo/y8Xh
-         ZGXfCNKsLGWhS4HmT/BCpNUX+NvDtCbRYq2eXQ5QXqMC5EJ0BEW9JXAoliRSD85lmqJU
-         g1kA==
-X-Gm-Message-State: AOAM530Rm/TCzv6eOxp+MR5Kz6YFJMqm+plq87kLb4eVndMJf00OTw3y
-        3X2u09awDwZ9hQ7O6XMduxU=
-X-Google-Smtp-Source: ABdhPJz1/B25aEhO0U7hCu5XBi0HOfk9HruSzaDgVjYAuZ9+GH7PO6t9RE9gOAUni2yWB4XWCKFKlw==
-X-Received: by 2002:a05:6512:22c2:: with SMTP id g2mr3242058lfu.634.1615490511532;
-        Thu, 11 Mar 2021 11:21:51 -0800 (PST)
+        bh=ov6L/wi+7+c3LJQtnAfH1iT/wWmTs9arji1NNjI5w4w=;
+        b=GRscBF8qmw4jQuBo4hGtvavWFlFNXoce0mdwfP2MrjIClxFhEeUiV+6p6/ppWtyawg
+         03sIa1MO2gyM9HTfVLzQzkOVUbVMvCOcnQVAQCel4wqz+aPyHHe1ERoSmYhyo2zKLcQe
+         IP0O7HyHzUiq3qbXw0orSShPXO+vZuYQ7AmYdOU2jXocMm7wbHaXkA5HKivNcciCWJhM
+         Q5+JdlCx4G4N6gxNWtW+2TThdRfNC+OVRiANxQTrChGq7ik9xKVCV+wq3fkwhTDOJlHG
+         rYNXAQmvrM/UvYlto7ShuwJhzCg9TFlZOq1/Nt1qXUNlCozsx6R5MiUBQGgfGALAALYq
+         wiSA==
+X-Gm-Message-State: AOAM531enb/LcFoitaBvvPWx7+151eg6cWSltYxuNwgBmx6jxyVXLe5D
+        Ff069D2gJBkuau0B5fK76W8=
+X-Google-Smtp-Source: ABdhPJz+liOGeJUMZvP/rB0AsK2HT9znbIStPC1d8LC453bn0G05ViKsvD2ssCnu0cxW5E/Wbnfj7A==
+X-Received: by 2002:a05:651c:124b:: with SMTP id h11mr213713ljh.401.1615490500164;
+        Thu, 11 Mar 2021 11:21:40 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.50
+        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 11:21:51 -0800 (PST)
+        Thu, 11 Mar 2021 11:21:39 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
         Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
@@ -84,9 +84,9 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 12/14] drm/panfrost: Convert to use resource-managed OPP API
-Date:   Thu, 11 Mar 2021 22:21:03 +0300
-Message-Id: <20210311192105.14998-13-digetx@gmail.com>
+Subject: [PATCH v2 03/14] opp: Add devres wrapper for dev_pm_opp_set_supported_hw
+Date:   Thu, 11 Mar 2021 22:20:54 +0300
+Message-Id: <20210311192105.14998-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210311192105.14998-1-digetx@gmail.com>
 References: <20210311192105.14998-1-digetx@gmail.com>
@@ -98,112 +98,91 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-Use resource-managed OPP API to simplify code.
+Add devres wrapper for dev_pm_opp_set_supported_hw() to simplify driver
+code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_devfreq.c | 33 +++++----------------
- drivers/gpu/drm/panfrost/panfrost_devfreq.h |  1 -
- 2 files changed, 8 insertions(+), 26 deletions(-)
+ drivers/opp/core.c     | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/pm_opp.h |  8 ++++++++
+ 2 files changed, 46 insertions(+)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-index 56b3f5935703..eeb50c55c472 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-@@ -93,25 +93,23 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 	struct thermal_cooling_device *cooling;
- 	struct panfrost_devfreq *pfdevfreq = &pfdev->pfdevfreq;
- 
--	opp_table = dev_pm_opp_set_regulators(dev, pfdev->comp->supply_names,
--					      pfdev->comp->num_supplies);
-+	opp_table = devm_pm_opp_set_regulators(dev, pfdev->comp->supply_names,
-+					       pfdev->comp->num_supplies);
- 	if (IS_ERR(opp_table)) {
- 		ret = PTR_ERR(opp_table);
- 		/* Continue if the optional regulator is missing */
- 		if (ret != -ENODEV) {
- 			DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
--			goto err_fini;
-+			return ret;
- 		}
--	} else {
--		pfdevfreq->regulators_opp_table = opp_table;
- 	}
- 
--	ret = dev_pm_opp_of_add_table(dev);
-+	ret = devm_pm_opp_of_add_table(dev);
- 	if (ret) {
- 		/* Optional, continue without devfreq */
- 		if (ret == -ENODEV)
- 			ret = 0;
--		goto err_fini;
-+		return ret;
- 	}
- 	pfdevfreq->opp_of_table_added = true;
- 
-@@ -122,10 +120,8 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 	cur_freq = clk_get_rate(pfdev->clock);
- 
- 	opp = devfreq_recommended_opp(dev, &cur_freq, 0);
--	if (IS_ERR(opp)) {
--		ret = PTR_ERR(opp);
--		goto err_fini;
--	}
-+	if (IS_ERR(opp))
-+		return PTR_ERR(opp);
- 
- 	panfrost_devfreq_profile.initial_freq = cur_freq;
- 	dev_pm_opp_put(opp);
-@@ -134,8 +130,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 					  DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
- 	if (IS_ERR(devfreq)) {
- 		DRM_DEV_ERROR(dev, "Couldn't initialize GPU devfreq\n");
--		ret = PTR_ERR(devfreq);
--		goto err_fini;
-+		return PTR_ERR(devfreq);
- 	}
- 	pfdevfreq->devfreq = devfreq;
- 
-@@ -146,10 +141,6 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 		pfdevfreq->cooling = cooling;
- 
- 	return 0;
--
--err_fini:
--	panfrost_devfreq_fini(pfdev);
--	return ret;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 32fa2bff847b..f9e4ebb7aad0 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1857,6 +1857,44 @@ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table)
  }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_put_supported_hw);
  
- void panfrost_devfreq_fini(struct panfrost_device *pfdev)
-@@ -160,14 +151,6 @@ void panfrost_devfreq_fini(struct panfrost_device *pfdev)
- 		devfreq_cooling_unregister(pfdevfreq->cooling);
- 		pfdevfreq->cooling = NULL;
- 	}
--
--	if (pfdevfreq->opp_of_table_added) {
--		dev_pm_opp_of_remove_table(&pfdev->pdev->dev);
--		pfdevfreq->opp_of_table_added = false;
--	}
--
--	dev_pm_opp_put_regulators(pfdevfreq->regulators_opp_table);
--	pfdevfreq->regulators_opp_table = NULL;
- }
++static void devm_pm_opp_supported_hw_release(void *data)
++{
++	dev_pm_opp_put_supported_hw(data);
++}
++
++/**
++ * devm_pm_opp_set_supported_hw() - Set supported platforms
++ * @dev: Device for which supported-hw has to be set.
++ * @versions: Array of hierarchy of versions to match.
++ * @count: Number of elements in the array.
++ *
++ * This is required only for the V2 bindings, and it enables a platform to
++ * specify the hierarchy of versions it supports. OPP layer will then enable
++ * OPPs, which are available for those versions, based on its 'opp-supported-hw'
++ * property.
++ *
++ * The opp_table structure will be freed after the device is destroyed.
++ */
++struct opp_table *devm_pm_opp_set_supported_hw(struct device *dev,
++					       const u32 *versions,
++					       unsigned int count)
++{
++	struct opp_table *opp_table;
++	int err;
++
++	opp_table = dev_pm_opp_set_supported_hw(dev, versions, count);
++	if (IS_ERR(opp_table))
++		return opp_table;
++
++	err = devm_add_action_or_reset(dev, devm_pm_opp_supported_hw_release,
++				       opp_table);
++	if (err)
++		opp_table = ERR_PTR(err);
++
++	return opp_table;
++}
++EXPORT_SYMBOL_GPL(devm_pm_opp_set_supported_hw);
++
+ /**
+  * dev_pm_opp_set_prop_name() - Set prop-extn name
+  * @dev: Device for which the prop-name has to be set.
+diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+index 284d23665b15..e68c3c29301e 100644
+--- a/include/linux/pm_opp.h
++++ b/include/linux/pm_opp.h
+@@ -144,6 +144,7 @@ int dev_pm_opp_unregister_notifier(struct device *dev, struct notifier_block *nb
  
- void panfrost_devfreq_resume(struct panfrost_device *pfdev)
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.h b/drivers/gpu/drm/panfrost/panfrost_devfreq.h
-index db6ea48e21f9..a51854cc8c06 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.h
-@@ -15,7 +15,6 @@ struct panfrost_device;
+ struct opp_table *dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions, unsigned int count);
+ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table);
++struct opp_table *devm_pm_opp_set_supported_hw(struct device *dev, const u32 *versions, unsigned int count);
+ struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name);
+ void dev_pm_opp_put_prop_name(struct opp_table *opp_table);
+ struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
+@@ -321,6 +322,13 @@ static inline struct opp_table *dev_pm_opp_set_supported_hw(struct device *dev,
  
- struct panfrost_devfreq {
- 	struct devfreq *devfreq;
--	struct opp_table *regulators_opp_table;
- 	struct thermal_cooling_device *cooling;
- 	bool opp_of_table_added;
+ static inline void dev_pm_opp_put_supported_hw(struct opp_table *opp_table) {}
  
++static inline struct opp_table *devm_pm_opp_set_supported_hw(struct device *dev,
++							     const u32 *versions,
++							     unsigned int count)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
+ static inline struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev,
+ 			int (*set_opp)(struct dev_pm_set_opp_data *data))
+ {
 -- 
 2.29.2
 
