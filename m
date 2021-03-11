@@ -2,110 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C01BC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E262C43381
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC64864FE9
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 324D964ECE
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbhCKQmz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 11:42:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229601AbhCKQme (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 11:42:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4193864F9C;
-        Thu, 11 Mar 2021 16:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615480953;
-        bh=/6vQFL+YC53+oP6/fdeoiyO4ZhYeLe3QT/YKKRdQyYY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eR71nWvdnbgmZqCoFZFfpumRGVzmdJTDmB64hingCLqVQQRXFhTLfcutl2Bfsxy01
-         28MHy50cfVkV4BQeNI1j4muoeiVmyUbFZmmFI5HyicrY7tSRG15MqLD1xwvt704x9O
-         8Zm5HWkhWFUI07wObuNbzQHeYgxuARESL4yTNGHOjX5bOumTWAesVqQnk7K09G9O16
-         GZA3troXIT6iGqun/ydwipRCYdN1Y3PuuVmAWzdjsfC1snmJYfcw9rZdO5PD+GK70h
-         mRbXGC4DNt0VNFS5UWyRYTklKGLqSLWDYNwJhURI2IwTRw0+0nkuIbmhw54rVRWNGm
-         pjOXWwstfsySg==
-Date:   Thu, 11 Mar 2021 16:41:21 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-Message-ID: <20210311164121.GH4962@sirena.org.uk>
-References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
- <20210309144156.18887-1-michael@walle.cc>
- <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
- <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
- <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
- <eb26f8e0a4c99d0c9de9d92612102718@walle.cc>
- <fa654e7a-80cc-7ae8-15c6-780e7fa29bb1@nvidia.com>
- <cadc59f29bbb2e0d02235d4c10cb7f4d@walle.cc>
- <36c37df5-dffb-9168-d92f-4b3e482602fa@nvidia.com>
- <d4947632a8b3ebefff7fb6751d05a9bd@walle.cc>
+        id S229639AbhCKRGZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 12:06:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230196AbhCKRGQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 11 Mar 2021 12:06:16 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54DBEC061574;
+        Thu, 11 Mar 2021 09:06:16 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id v9so40991537lfa.1;
+        Thu, 11 Mar 2021 09:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PrdT1wQhy9IxbC6XumdouIDu0exhn3fHS2Os4khyfHU=;
+        b=GMmSyrJfRU2L+dVXxXLx/8DqgviBZWz3HocHK7mj8r0efL5mxrYP0ppCFBnHBbxBGW
+         U5o4ywGa8IIOH0Nz8MMgkoToZdddhZzlHLxxtQfnE29QrbN+OQKozJsL8xemqDgrrSCt
+         BmC2kkjgTNn6jm7DqIUnMd0cl9OK0QFNTnY8EjAAmT43cIFRTts/SbLcWkBr//0YnciY
+         kzBlmt89Y5M1gpGHpZk1ugljriB5kQWwZGUPj4k/iKWenQSOQw4D3HdjUf0MoEHwO2sq
+         Lpuu74Hp3cQmRUPkl0LzDbswMDfJdRQK74ls9YHOyT2gKsDwNsW8kHB6efsFXdSSWmyB
+         JkVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PrdT1wQhy9IxbC6XumdouIDu0exhn3fHS2Os4khyfHU=;
+        b=NjxmXc5JNTTRGrcIhwiyemsdlR+UdbwQ+gAD6DIa46qqJV+LJ5JEvNvR0AyhtC8naw
+         1vRYhohkBG9XVOLxfqwY/QofcQsJaFZBtQLmUB/y3lffUWVfXPABOGyof/kZCZ531vxm
+         B750Etm6J02PInHNeoe5pET0UUiPw327DspwO+LvcgElS7KiqvN5ivZ1hFQR/JayNZ8M
+         ghBfm8JVqtkaXiNNLLYoqfTyec4cRcqyw7zi2S0wdKCpgx8QGaNIrEdLzEKrLCSAt5JU
+         +BRW3NISQFE3Q/LEXgX+CRygybsaKw/QLON1aQUS7qJuaMjzRqLVtnDOAiqjmfxErB7M
+         CyRg==
+X-Gm-Message-State: AOAM532O7V8CesdBEB54Pd7IRPPMtlu+m3SDuzW1nvKwoL7flZ6x+fbz
+        hDoXNgI3o8Mm+30RMgOAD94=
+X-Google-Smtp-Source: ABdhPJwrJiFcYr+8LThGxa9P1GY6Znhfa3CkzooW8UnHgQLBu8SQXV3ps13DVvhLzlk92OR4brVbJA==
+X-Received: by 2002:ac2:46d6:: with SMTP id p22mr2744651lfo.625.1615482374798;
+        Thu, 11 Mar 2021 09:06:14 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id p5sm1166009ljj.26.2021.03.11.09.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 09:06:14 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v14 0/2] Add memory bandwidth management to NVIDIA Tegra DRM driver
+Date:   Thu, 11 Mar 2021 20:06:04 +0300
+Message-Id: <20210311170606.7543-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gKijDXBCEH69PxaN"
-Content-Disposition: inline
-In-Reply-To: <d4947632a8b3ebefff7fb6751d05a9bd@walle.cc>
-X-Cookie: I'm rated PG-34!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series adds memory bandwidth management to the NVIDIA Tegra DRM driver,
+which is done using interconnect framework. It fixes display corruption that
+happens due to insufficient memory bandwidth.
 
---gKijDXBCEH69PxaN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Changelog:
 
-On Thu, Mar 11, 2021 at 04:43:20PM +0100, Michael Walle wrote:
+v14: - Made improvements that were suggested by Michał Mirosław to v13:
 
-> This could be a last resort, yes. But I'd rather see a flag which
-> indicates whether the simple-audio-card should control the (first)
-> clock of the codec or not. Because until now, this wasn't the case.
-> And I don't know if this was an oversight or on purpose. Kuninori would
-> need to comment on that. And with the "we change mclk by default", we
-> break codecs with automatic sysclk generation.
+       - Changed 'unsigned int' to 'bool'.
+       - Renamed functions which calculate bandwidth state.
+       - Reworked comment in the code that explains why downscaled plane
+         require higher bandwidth.
+       - Added round-up to bandwidth calculation.
+       - Added sanity checks of the plane index and fixed out-of-bounds
+         access which happened on T124 due to the cursor plane index.
 
-It shouldn't break anything so long as the clock ends up correct via
-some path.  Where there's multiple options we can also try going through
-them in some order, preferring the clock in the CODEC would probably
-make sense from both a compatibility and quality point of view.
+v13: - No code changes. Patches missed v5.12, re-sending them for v5.13.
 
-> > > And its fetching just the first clock, doesn't it? What happens if a
-> > > codec has two clock inputs?
+Dmitry Osipenko (2):
+  drm/tegra: dc: Support memory bandwidth management
+  drm/tegra: dc: Extend debug stats with total number of events
 
-> > Yes, it would have been more descriptive if it were specifically
-> > looking for clock "mclk". I think the original assumption was codec
-> > takes one input clock (MCLK) and uses it for sysclk.
+ drivers/gpu/drm/tegra/Kconfig |   1 +
+ drivers/gpu/drm/tegra/dc.c    | 362 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.h    |  19 ++
+ drivers/gpu/drm/tegra/drm.c   |  14 ++
+ drivers/gpu/drm/tegra/hub.c   |   3 +
+ drivers/gpu/drm/tegra/plane.c | 127 ++++++++++++
+ drivers/gpu/drm/tegra/plane.h |  15 ++
+ 7 files changed, 541 insertions(+)
 
-> Yeah, I've just noticed that the clk_get_rate() also only works
-> for the first clock of the codec.
+-- 
+2.29.2
 
-simple-audio-card isn't really intended to work with complex devices,
-it's very much only for the simplest of use cases.
-
---gKijDXBCEH69PxaN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBKSDAACgkQJNaLcl1U
-h9BNawf9GPsQcYK9qmE3//5SNFERoM69/yBv84rbvNTtsS0rkB4/XlhUxFM/yrhI
-6PbCDI9RiR1smLwcBsrRv9z3/NPQ2sVeW8uOWvWQvXjPMWxSqNSU6XRVUBFBwuZv
-m4UZqd9ldjRxLGajUkhVCWKCAJ4cx0hx3TvwBjAbKYCfsfFpC6Xx+UcNxsOnMeXt
-FuzFO4NZ7zmnCBRpsa74nvjfoWdb+FCvh15SVz4anlEeD8fagk5Nf4QZT+KgE+nD
-xyqchbWdLgFDs4lLfHlxAt/Pu62fPs8gcNPbfVFO8m4Ge638UVbFipmEhoMaubt0
-TsIEC7GPWF9EMTk0JQs5kHnrAAAoQA==
-=EORL
------END PGP SIGNATURE-----
-
---gKijDXBCEH69PxaN--
