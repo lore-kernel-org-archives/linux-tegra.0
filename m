@@ -2,105 +2,161 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA4AC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 22:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17353C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA20164F78
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 22:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C826964FA6
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhCKWLS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 17:11:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
+        id S231252AbhCKXPe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 18:15:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbhCKWLR (ORCPT
+        with ESMTP id S229683AbhCKXPY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 17:11:17 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2FFC061574;
-        Thu, 11 Mar 2021 14:11:17 -0800 (PST)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 5B5A52224F;
-        Thu, 11 Mar 2021 23:11:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1615500675;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WsPITZ64nIWI+4FRusiGTBCLY0TRr7/LpaTTzy5rpfE=;
-        b=l/wtr47oZIFZkvukRdDqx0Yj4naCigu5BD9AeZS5626ItX0mk4ZONt6BKlZ3+YmjEIxmWW
-        Rjo/kOfBd78omPKmg0B+71lY71DJkeN8Va45ywiR/+rdXrvjMKjt06HRc4uPT/7+zavxCJ
-        +JyyrtHbiqzXJD4XpFEUtijKHJU5G0Q=
+        Thu, 11 Mar 2021 18:15:24 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80967C061574;
+        Thu, 11 Mar 2021 15:15:24 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id v11so731476wro.7;
+        Thu, 11 Mar 2021 15:15:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Y0TGOgSlWiwp+UtOL9hMKxVKRcQgfo1+IEksLgy5FE=;
+        b=D7pE4PJUAXZY8lBo5tIwYrFcXc/m+25PgL/SF1bnIq5m5FJ+M2Vz3sl2VIB25fZhVP
+         C8yvx1bwNDcAlKPhQtp/AsAhFJnSfOdV7TBAjMbTZRLwZS65QnhLbaU7c+vHsLXlYPjc
+         zv4aQ66TuYC4MhclEXRQ4Z2H9JXJLVcB7oEs+9mCqS1YY/BtaptWK7FIimQJnEGW0ViV
+         Hn1mcMr6ZRF78gS364rsaUrdif0PlXCDO/Hwjq9GFKji54Sh3OUdWo8BxyRbKlrptjzE
+         ixfDsAdu5MTIil3o0sfrhAoFZiTLTdglGbEm4Muz3TCvswwQSJLS8LNsT59P6WkD2LJl
+         MWIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Y0TGOgSlWiwp+UtOL9hMKxVKRcQgfo1+IEksLgy5FE=;
+        b=gF2WD0AMbSr/NHTsnkqZKlW+zrdJUNOBzrsOjKl0hWXilAS9Oyp1hQ6R/av3sDAHjw
+         1naoJbTqs1iXcG3gqvOOQisaJF9zIgOHEUKppOYoRsxq+0K97pcdwYiSmBhQNCK+Qrxq
+         OPTUrkQlIWhO1qIlCMluh+iG8beFlhGt67yVjSkHv99DOL2sx4XPBvFjuquhdhSZMZAw
+         qsp9k+fLxa8d6nyO8WUuMmn6yAw8rRlSwChLc69Gzk7HFEPuhCtVdOKPLlT902Djle9k
+         eFIMBhES73H8vrH5thi3/g5qrumEMji9loiXYN0lHZEBB2OYqvAavETFv8uICwggVfUC
+         G8OQ==
+X-Gm-Message-State: AOAM532Yobdy/3rUOKbXfbh3d0NjZcBe3BAHbcdjHGIg2y2j/o9mRvZB
+        4ayV8fMc3nx++RF578E6lFDH4M0yOwA=
+X-Google-Smtp-Source: ABdhPJyJrxLpRLdzDswOw1vbrbTC8YVVF3iqqq7rbjlR1HPs5+KQqztUeJ0czC62uHo/gNqZNeokyA==
+X-Received: by 2002:adf:edc3:: with SMTP id v3mr10637376wro.79.1615504523049;
+        Thu, 11 Mar 2021 15:15:23 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id j203sm263918wmj.40.2021.03.11.15.15.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 15:15:22 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] NVIDIA Tegra core power domain driver and OPP helper
+Date:   Fri, 12 Mar 2021 02:12:02 +0300
+Message-Id: <20210311231208.18180-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 11 Mar 2021 23:11:15 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-In-Reply-To: <20210311161558.GG4962@sirena.org.uk>
-References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
- <20210309144156.18887-1-michael@walle.cc>
- <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
- <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
- <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
- <20210311161558.GG4962@sirena.org.uk>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <f21b87f1afb3eda54b5f00f2d1c146d3@walle.cc>
-X-Sender: michael@walle.cc
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am 2021-03-11 17:15, schrieb Mark Brown:
-> On Wed, Mar 10, 2021 at 08:20:28PM +0530, Sameer Pujar wrote:
-> 
->> If I read this correctly below is the configuration you need,
->> SoC -> MCLK(fixed rate) -> PLL(wm8904) -> PLL output (256 * fs) -> 
->> sysclk
-> 
-> For this device for integration with something like simple-audio-card
-> since there's limited flexibility within the device the simplest thing
-> would be to not make the internal clocking of the device visible and
-> just have it figure out how to use the input clock, using the MCLK
-> directly if possible otherwise using the FLL to generate a suitable
-> clock.
+Hello,
 
-Before this patch, part of this was already happening. That is,
-simple-audio-card called set_sysclk(samplerate * mclk-fs), then
-the codec figured out that its mclk was different than the
-requested sample rate and enabled its FLL to generate the requested
-sample rate automatically.
+This series adds Core power domain driver for NVIDIA Tegra SoCs and a
+common OPP helper which initializes OPP table specifically for Tegra
+drivers. The patches depend on the ongoing series [1] which adds
+resource-managed OPP API.
 
-With this patch applied, simple-audio-card already tries to change
-mclk, which isn't working in my case (the MCLK isn't generated by
-a PLL and just supports fixed frequencies) and thus breaks audio. And
-this patch also propagate to the stable kernels and breaks my
-board there, too.
+[1] https://patchwork.kernel.org/project/linux-pm/list/?series=446525
 
-> The trick is figuring out if it's best to vary the input clock
-> or to use the FLL to adapt a fixed input clock,
+NVIDIA Tegra SoCs have a dedicated "Core" power domain to which
+majority of SoC peripherals belong. The core domain is connected to
+a dedicated voltage rail, which is exposed as a voltage regulator to
+the Linux kernel. Adding support for power management (i.e. voltage
+scaling) of the Core domain allows to significantly improve power
+consumption of the Tegra chip.
 
-For simple-audio-card you can set the "clock" property if you want
-that clock to be changed/enabled/disabled. But that doesn't seem to
-be the way to go, at least it was NAKed by Rob for the audio-graph-card.
-I don't see a way to figure out if MCLK should be controlled by
-simple-*-card without adding further properties to the device tree.
+In particular this PM work solves the overheating problem on Tegra30
+devices. It allows Ouya Tegra30 game console to run at 40C during system
+idle in oppose to going over 60C. Matt Merhar collected temperature stats
+on his Ouya [2] which show a very significant improvement.
 
-> and of course adapting any existing users if things get changed.
+[2] https://imgur.com/a/z4NDWqk
 
-To be frank, I don't see that happening.
+Changelog:
 
--michael
+v3: - This series is a continuation of [3][4]. I factored out and grouped
+      these soc/tegra patches since they have a common dependency on the
+      OPP API patches [1] and the rest of PM patches depend on this series.
+
+      [3] https://lore.kernel.org/lkml/20201217180638.22748-1-digetx@gmail.com/
+      [4] https://lore.kernel.org/linux-pm/20210121191410.13781-1-digetx@gmail.com/
+
+    - Added locking around regulators syncing, which was previously done by
+      the OPP core, but then we (me and Viresh) figured out that it will be
+      better to do it within the PD driver.
+
+    - The Core-PD driver now restores the boot voltage level before
+      shutdown/reboot, which may help some devices not to hang on reboot,
+      like Nexus 7 for example.
+
+    - Added r-b from Ulf Hansson to "regulators: Support Core domain state
+      syncing" patch, which he gave to v2.
+
+    - It should be cleaner to add the Core OPP tables and power domain to
+      the device-trees once all drivers will get the PM support, so this
+      series adds the driver and the binding for now.
+
+    - Added t-b from Paul Fertser, who tested the complete patchset on his
+      AC100 netbook and helped to spot compatibility problem with older DTBs
+      in the patch that will add PM support to the GPU driver.
+
+    - The DT binding now follows the power-domain spec, which was suggested
+      by Krzysztof Kozlowski in his comment to v2.
+
+Dmitry Osipenko (6):
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+  soc/tegra: Add CONFIG_SOC_TEGRA_COMMON and select PM_OPP by default
+  dt-bindings: power: tegra: Add binding for core power domain
+  soc/tegra: Introduce core power domain driver
+  soc/tegra: regulators: Support Core domain state syncing
+  soc/tegra: pmc: Link children power domains to the parent domain
+
+ .../power/nvidia,tegra20-core-domain.yaml     |  52 ++++++
+ drivers/soc/tegra/Kconfig                     |  19 +++
+ drivers/soc/tegra/Makefile                    |   1 +
+ drivers/soc/tegra/common.c                    | 138 ++++++++++++++++
+ drivers/soc/tegra/core-power-domain.c         | 154 ++++++++++++++++++
+ drivers/soc/tegra/pmc.c                       |  16 ++
+ drivers/soc/tegra/regulators-tegra20.c        |  19 ++-
+ drivers/soc/tegra/regulators-tegra30.c        |  18 +-
+ include/soc/tegra/common.h                    |  36 ++++
+ 9 files changed, 451 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+ create mode 100644 drivers/soc/tegra/core-power-domain.c
+
+-- 
+2.29.2
+
