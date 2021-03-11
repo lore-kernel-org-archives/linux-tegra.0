@@ -2,61 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6DAC4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC8C4321A
 	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D57664FB3
+	by mail.kernel.org (Postfix) with ESMTP id C877D64FA6
 	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbhCKXPe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 18:15:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
+        id S231336AbhCKXPg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 18:15:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhCKXP0 (ORCPT
+        with ESMTP id S231219AbhCKXPa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 18:15:26 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8ECC061574;
-        Thu, 11 Mar 2021 15:15:25 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id k8so730714wrc.3;
-        Thu, 11 Mar 2021 15:15:25 -0800 (PST)
+        Thu, 11 Mar 2021 18:15:30 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7FDC061574;
+        Thu, 11 Mar 2021 15:15:29 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id d15so3772491wrv.5;
+        Thu, 11 Mar 2021 15:15:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JQcxIpkyylyA7UoRXMcT1ZE3NtoucJDiZ4XXJPRfnPM=;
-        b=BO8LN4VY0lLh3JtU77B/dACoYsgEsFQ2L9cKTY4K/Pdr4kHAa/4qUsT8G3RSt+/Ldr
-         RKufCQumwdk/cb8/PH9F+MSRPw61iUlim4EqjMm8/q7WOGquN9ORtk7nTsCXwivtthV0
-         6EBk1lG5NNHMTLm9gS5Dzd72VFVnABvq57gbCXm488fbuL18GH5+/T/qkd7+5YBSSFNT
-         l1/oJv4620S3E3j+C3ijcZRhIEYS4cQiZIbaFbFqqi3bJTce6xXfEWersY78RobhOvOO
-         Nt6KQxxVsik9apZiLyQro/C7Rb/V4OxOgTeR0P/qjr79GqjKkFCjfp0Z+6ad1MBb2YGP
-         QVwQ==
+        bh=b2w9mpc636QgZcQ3KhN9N6W9L5fmy+Ks+Eg/JPfevSU=;
+        b=iG9PrCdKaD6u9Ne5dcQTX4Wg12IUSOOxp+Lwx7CuQZrxIuoeF6ZXjmanoN9etX4nLV
+         oxi0bQLOzmIUNTiV9jXEtxzL5irm7hzZRt3pLVA8quZM+eDkVhq4dXuS8F5R7/wnEWNt
+         OS89w2xzNWhjgku+GUjLyJdFKK7sffInvAEt25X8Jf+sstU6DYjkQpUaig+sB4ZZGP8J
+         9cisO47PuHYDKTbNdNWgBKcuNTxYrAcHOwXiMEmjDHg3qbDWAgURARSkG+kwZ7ysbvCW
+         eqp2ArEjEiqzdTsEghvOl6fGNw3wWVE+3pQ6ZanRD1w2bPwDnq8QUW2nwSAkgyrOaCNO
+         Tvsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JQcxIpkyylyA7UoRXMcT1ZE3NtoucJDiZ4XXJPRfnPM=;
-        b=kPfg7bAbDHMfKNI6yChO+jcx1o+SMITnACQtwlWgRBvFwTWduQMnJY0n+a4xi6cR4D
-         8nlwWlaLlPmS4ZL3mXKpNvWNFiONl35no1ccyhwyjgDM5z0pwz1g+9pJWZVCGkeQ7p00
-         H9/4i5KVhS940kT8Z6UVh38ZdC/fqNaAl6YGIkf/+Tb3L3BIR7ehjetXaYObEsoSsnqn
-         UslW77dFeFk0DzJTBBeDWQZSPIjgdB8YYKfJirG72HW8MscORJi6UzQnJDOoAQi0W2PL
-         qKkvPVCJ8JbGU4kz9no2Du1JLnnRJQd6Crod7pMcUKyf1ssCbbsgVZzCfNQ0L1j1mpp0
-         prJg==
-X-Gm-Message-State: AOAM532gaTx7WejALvhh7W4gv56MVw9EUYClAHOoeQqSG+cX2pVj3oTY
-        Flrua3Afi9t2Wcnz+TBU9lI=
-X-Google-Smtp-Source: ABdhPJzQiycmefLxJilSrx+Vhvn+SRoBN2MSt9sNOPgYJk+6YeN4hT6i3/0/oUbfbSnCEhVmCqyvHA==
-X-Received: by 2002:adf:f144:: with SMTP id y4mr11128417wro.408.1615504524463;
-        Thu, 11 Mar 2021 15:15:24 -0800 (PST)
+        bh=b2w9mpc636QgZcQ3KhN9N6W9L5fmy+Ks+Eg/JPfevSU=;
+        b=fYrpXmDAebdWq5elnc4bHcWHbypuMsXoZiahxFzeODW/XOJViMIX3SNlEri2wMzsuV
+         I81/NYr/UKT856sWWZ7EC7THOYzfEMr+voS752qgULDp7Np1CXj/6ps0RFdDPr49M5Jq
+         B9FOeZlEUJ09mPHnpiUfK3th2MQGbPiVxFU3Yig1WjoQIoctFwNHPy8cHai5UgAu5pKL
+         vRP4lJivjXUISH73ZUEnae0Y2BirC4UnfU5TzQBpJW+tqkOP5jaMDJt1SFkUUnh2N37Z
+         NwTVIhgEp6hNeGoZReMkbjyuqgb6sb9WChMG3vAub4u3mr8rAxmrWbMkBpWcBH1m7tvq
+         HRuw==
+X-Gm-Message-State: AOAM530gS1MEc2IE0Lqj7mTZU5+pR23BXJmOeWrmAobmWLQFpi6PxIGR
+        cevU7CLElYLKrg6eb/JAeM8=
+X-Google-Smtp-Source: ABdhPJwmd3xwn+J7g8zPor95wn0hzMJ6537P2c5KCUVb2hPPpDrluJOEiBOy3BnNWiKrw3CcDwoQHQ==
+X-Received: by 2002:a5d:63d2:: with SMTP id c18mr10928605wrw.277.1615504528353;
+        Thu, 11 Mar 2021 15:15:28 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id j203sm263918wmj.40.2021.03.11.15.15.23
+        by smtp.gmail.com with ESMTPSA id j203sm263918wmj.40.2021.03.11.15.15.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 15:15:24 -0800 (PST)
+        Thu, 11 Mar 2021 15:15:28 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -72,9 +72,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] soc/tegra: Add devm_tegra_core_dev_init_opp_table()
-Date:   Fri, 12 Mar 2021 02:12:03 +0300
-Message-Id: <20210311231208.18180-2-digetx@gmail.com>
+Subject: [PATCH v3 4/6] soc/tegra: Introduce core power domain driver
+Date:   Fri, 12 Mar 2021 02:12:06 +0300
+Message-Id: <20210311231208.18180-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210311231208.18180-1-digetx@gmail.com>
 References: <20210311231208.18180-1-digetx@gmail.com>
@@ -84,7 +84,12 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add common helper which initializes OPP table for Tegra SoC core devices.
+NVIDIA Tegra SoCs have multiple power domains, each domain corresponds
+to an external SoC power rail. Core power domain covers vast majority of
+hardware blocks within a Tegra SoC. The voltage of a power domain should
+be set to a value which satisfies all devices within a power domain. Add
+driver for the core power domain which manages the voltage state of the
+domain. This allows us to support a system-wide DVFS on Tegra.
 
 Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
 Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
@@ -92,207 +97,234 @@ Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
 Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/common.c | 138 +++++++++++++++++++++++++++++++++++++
- include/soc/tegra/common.h |  30 ++++++++
- 2 files changed, 168 insertions(+)
+ drivers/soc/tegra/Kconfig             |   6 +
+ drivers/soc/tegra/Makefile            |   1 +
+ drivers/soc/tegra/core-power-domain.c | 154 ++++++++++++++++++++++++++
+ include/soc/tegra/common.h            |   6 +
+ 4 files changed, 167 insertions(+)
+ create mode 100644 drivers/soc/tegra/core-power-domain.c
 
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index 3dc54f59cafe..6d9110fd3645 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -3,9 +3,16 @@
-  * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#define dev_fmt(fmt)	"tegra-soc: " fmt
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index bcd61ae59ba3..fccbc168dd87 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -16,6 +16,7 @@ config ARCH_TEGRA_2x_SOC
+ 	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
++	select SOC_TEGRA_CORE_POWER_DOMAIN
+ 	select SOC_TEGRA20_VOLTAGE_COUPLER
+ 	select TEGRA_TIMER
+ 	help
+@@ -31,6 +32,7 @@ config ARCH_TEGRA_3x_SOC
+ 	select SOC_TEGRA_COMMON
+ 	select SOC_TEGRA_FLOWCTRL
+ 	select SOC_TEGRA_PMC
++	select SOC_TEGRA_CORE_POWER_DOMAIN
+ 	select SOC_TEGRA30_VOLTAGE_COUPLER
+ 	select TEGRA_TIMER
+ 	help
+@@ -170,3 +172,7 @@ config SOC_TEGRA20_VOLTAGE_COUPLER
+ config SOC_TEGRA30_VOLTAGE_COUPLER
+ 	bool "Voltage scaling support for Tegra30 SoCs"
+ 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
 +
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/export.h>
- #include <linux/of.h>
++config SOC_TEGRA_CORE_POWER_DOMAIN
++	bool
++	select PM_GENERIC_DOMAINS
+diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
+index 9c809c1814bd..8f1294f954b4 100644
+--- a/drivers/soc/tegra/Makefile
++++ b/drivers/soc/tegra/Makefile
+@@ -7,3 +7,4 @@ obj-$(CONFIG_SOC_TEGRA_PMC) += pmc.o
+ obj-$(CONFIG_SOC_TEGRA_POWERGATE_BPMP) += powergate-bpmp.o
+ obj-$(CONFIG_SOC_TEGRA20_VOLTAGE_COUPLER) += regulators-tegra20.o
+ obj-$(CONFIG_SOC_TEGRA30_VOLTAGE_COUPLER) += regulators-tegra30.o
++obj-$(CONFIG_SOC_TEGRA_CORE_POWER_DOMAIN) += core-power-domain.o
+diff --git a/drivers/soc/tegra/core-power-domain.c b/drivers/soc/tegra/core-power-domain.c
+new file mode 100644
+index 000000000000..9099290c1b02
+--- /dev/null
++++ b/drivers/soc/tegra/core-power-domain.c
+@@ -0,0 +1,154 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * NVIDIA Tegra SoC Core Power Domain Driver
++ */
++
++#include <linux/mutex.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
 +#include <linux/pm_opp.h>
- 
- #include <soc/tegra/common.h>
-+#include <soc/tegra/fuse.h>
- 
- static const struct of_device_id tegra_machine_match[] = {
- 	{ .compatible = "nvidia,tegra20", },
-@@ -31,3 +38,134 @@ bool soc_is_tegra(void)
- 
- 	return match != NULL;
- }
++#include <linux/slab.h>
 +
-+static int tegra_core_dev_init_opp_state(struct device *dev)
++#include <soc/tegra/common.h>
++
++static struct lock_class_key tegra_core_domain_lock_class;
++static bool tegra_core_domain_state_synced;
++static DEFINE_MUTEX(tegra_core_lock);
++
++bool tegra_soc_core_domain_state_synced(void)
++{
++	return tegra_core_domain_state_synced;
++}
++
++static int tegra_genpd_set_performance_state(struct generic_pm_domain *genpd,
++					     unsigned int level)
 +{
 +	struct dev_pm_opp *opp;
-+	unsigned long rate;
-+	struct clk *clk;
 +	int err;
 +
-+	clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "failed to get clk: %pe\n", clk);
-+		return PTR_ERR(clk);
++	opp = dev_pm_opp_find_level_ceil(&genpd->dev, &level);
++	if (IS_ERR(opp)) {
++		dev_err(&genpd->dev, "failed to find OPP for level %u: %pe\n",
++			level, opp);
++		return PTR_ERR(opp);
 +	}
 +
-+	/*
-+	 * If voltage regulator presents, then we could select the fastest
-+	 * clock rate, but driver doesn't support power management and
-+	 * frequency scaling yet, hence the top freq OPP will vote for a
-+	 * very high voltage that will produce lot's of heat.  Let's select
-+	 * OPP for the current/default rate for now.
-+	 *
-+	 * Clock rate should be pre-initialized (i.e. it's non-zero) either
-+	 * by clock driver or by assigned clocks in a device-tree.
-+	 */
-+	rate = clk_get_rate(clk);
-+	if (!rate) {
-+		dev_err(dev, "failed to get clk rate\n");
-+		return -EINVAL;
-+	}
-+
-+	/* find suitable OPP for the clock rate and supportable by hardware */
-+	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
-+
-+	/*
-+	 * dev_pm_opp_set_rate() doesn't search for a floor clock rate and it
-+	 * will error out if default clock rate is too high, i.e. unsupported
-+	 * by a SoC hardware version.  Hence will find floor rate by ourselves.
-+	 */
-+	if (opp == ERR_PTR(-ERANGE))
-+		opp = dev_pm_opp_find_freq_floor(dev, &rate);
-+
-+	err = PTR_ERR_OR_ZERO(opp);
-+	if (err) {
-+		dev_err(dev, "failed to get OPP for %ld Hz: %d\n",
-+			rate, err);
-+		return err;
-+	}
++	mutex_lock(&tegra_core_lock);
++	err = dev_pm_opp_set_opp(&genpd->dev, opp);
++	mutex_unlock(&tegra_core_lock);
 +
 +	dev_pm_opp_put(opp);
 +
-+	/*
-+	 * First dummy rate-set initializes voltage vote by setting voltage
-+	 * in accordance to the clock rate.  We need to do this because some
-+	 * drivers currently don't support power management and clock is
-+	 * permanently enabled.
-+	 */
-+	err = dev_pm_opp_set_rate(dev, rate);
 +	if (err) {
-+		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
++		dev_err(&genpd->dev, "failed to set voltage to %duV: %d\n",
++			level, err);
 +		return err;
 +	}
 +
 +	return 0;
 +}
 +
-+/**
-+ * devm_tegra_core_dev_init_opp_table() - initialize OPP table
-+ * @dev: device for which OPP table is initialized
-+ * @params: pointer to the OPP table configuration
-+ *
-+ * This function will initialize OPP table and sync OPP state of a Tegra SoC
-+ * core device.
-+ *
-+ * Return: 0 on success or errorno.
-+ */
-+int devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				       struct tegra_core_opp_params *params)
++static unsigned int
++tegra_genpd_opp_to_performance_state(struct generic_pm_domain *genpd,
++				     struct dev_pm_opp *opp)
 +{
++	return dev_pm_opp_get_level(opp);
++}
++
++static int tegra_core_domain_probe(struct platform_device *pdev)
++{
++	struct generic_pm_domain *genpd;
 +	struct opp_table *opp_table;
-+	u32 hw_version;
++	const char *rname = "power";
 +	int err;
 +
-+	opp_table = devm_pm_opp_set_clkname(dev, NULL);
-+	if (IS_ERR(opp_table)) {
-+		dev_err(dev, "failed to set OPP clk %pe\n", opp_table);
-+		return PTR_ERR(opp_table);
-+	}
++	genpd = devm_kzalloc(&pdev->dev, sizeof(*genpd), GFP_KERNEL);
++	if (!genpd)
++		return -ENOMEM;
 +
-+	/* Tegra114+ doesn't support OPP yet */
-+	if (!of_machine_is_compatible("nvidia,tegra20") &&
-+	    !of_machine_is_compatible("nvidia,tegra30"))
-+		return -ENODEV;
++	genpd->name = pdev->dev.of_node->name;
++	genpd->set_performance_state = tegra_genpd_set_performance_state;
++	genpd->opp_to_performance_state = tegra_genpd_opp_to_performance_state;
 +
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		hw_version = BIT(tegra_sku_info.soc_process_id);
-+	else
-+		hw_version = BIT(tegra_sku_info.soc_speedo_id);
++	opp_table = devm_pm_opp_set_regulators(&pdev->dev, &rname, 1);
++	if (IS_ERR(opp_table))
++		return dev_err_probe(&pdev->dev, PTR_ERR(opp_table),
++				     "failed to set OPP regulator\n");
 +
-+	opp_table = devm_pm_opp_set_supported_hw(dev, &hw_version, 1);
-+	if (IS_ERR(opp_table)) {
-+		dev_err(dev, "failed to set OPP supported HW: %pe\n", opp_table);
-+		return PTR_ERR(opp_table);
-+	}
-+
-+	/*
-+	 * Older device-trees have an empty OPP table, hence we will get
-+	 * -ENODEV from devm_pm_opp_of_add_table() for the older DTBs.
-+	 *
-+	 * The OPP table presence also varies per-device and depending
-+	 * on a SoC generation, hence -ENODEV is expected to happen for
-+	 * the newer DTs as well.
-+	 */
-+	err = devm_pm_opp_of_add_table(dev);
++	err = pm_genpd_init(genpd, NULL, false);
 +	if (err) {
-+		if (err == -ENODEV)
-+			dev_err_once(dev, "OPP table not found, please update device-tree\n");
-+		else
-+			dev_err(dev, "failed to add OPP table: %d\n", err);
-+
++		dev_err(&pdev->dev, "failed to init genpd: %d\n", err);
 +		return err;
 +	}
 +
-+	if (params->init_state) {
-+		err = tegra_core_dev_init_opp_state(dev);
-+		if (err)
-+			return err;
++	/*
++	 * We have a "PMC -> Core" hierarchy of the power domains where
++	 * PMC needs to resume and change performance (voltage) of the
++	 * Core domain from the PMC GENPD on/off callbacks, hence we need
++	 * to annotate the lock in order to remove confusion from the
++	 * lockdep checker when a nested access happens.
++	 */
++	lockdep_set_class(&genpd->mlock, &tegra_core_domain_lock_class);
++
++	err = of_genpd_add_provider_simple(pdev->dev.of_node, genpd);
++	if (err) {
++		dev_err(&pdev->dev, "failed to add genpd: %d\n", err);
++		goto remove_genpd;
 +	}
 +
 +	return 0;
++
++remove_genpd:
++	pm_genpd_remove(genpd);
++
++	return err;
 +}
-+EXPORT_SYMBOL_GPL(devm_tegra_core_dev_init_opp_table);
-diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
-index 98027a76ce3d..e8eab13aa199 100644
---- a/include/soc/tegra/common.h
-+++ b/include/soc/tegra/common.h
-@@ -6,6 +6,36 @@
- #ifndef __SOC_TEGRA_COMMON_H__
- #define __SOC_TEGRA_COMMON_H__
- 
-+#include <linux/errno.h>
-+#include <linux/types.h>
 +
-+struct device;
++static void tegra_core_domain_set_synced(struct device *dev, bool synced)
++{
++	int err;
 +
-+/**
-+ * Tegra SoC core device OPP table configuration
-+ *
-+ * @init_state: pre-initialize OPP state of a device
-+ */
-+struct tegra_core_opp_params {
-+	bool init_state;
++	tegra_core_domain_state_synced = synced;
++
++	mutex_lock(&tegra_core_lock);
++	err = dev_pm_opp_sync_regulators(dev);
++	mutex_unlock(&tegra_core_lock);
++
++	if (err)
++		dev_err(dev, "failed to sync regulators: %d\n", err);
++}
++
++static void tegra_core_domain_sync_state(struct device *dev)
++{
++	tegra_core_domain_set_synced(dev, true);
++}
++
++static void tegra_core_domain_shutdown(struct platform_device *pdev)
++{
++	/*
++	 * Ensure that core voltage is at a level suitable for boot-up
++	 * before system is rebooted, which may be important for some
++	 * devices if regulators aren't reset on reboot. This is usually
++	 * the case if PMC soft-reboot is used.
++	 */
++	tegra_core_domain_set_synced(&pdev->dev, false);
++}
++
++static const struct of_device_id tegra_core_domain_match[] = {
++	{ .compatible = "nvidia,tegra20-core-domain", },
++	{ .compatible = "nvidia,tegra30-core-domain", },
++	{ }
 +};
 +
-+#ifdef CONFIG_ARCH_TEGRA
++static struct platform_driver tegra_core_domain_driver = {
++	.driver = {
++		.name = "tegra-core-power",
++		.of_match_table = tegra_core_domain_match,
++		.suppress_bind_attrs = true,
++		.sync_state = tegra_core_domain_sync_state,
++	},
++	.probe = tegra_core_domain_probe,
++	.shutdown = tegra_core_domain_shutdown,
++};
++builtin_platform_driver(tegra_core_domain_driver);
+diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
+index e8eab13aa199..9a4ac3af2401 100644
+--- a/include/soc/tegra/common.h
++++ b/include/soc/tegra/common.h
+@@ -22,6 +22,7 @@ struct tegra_core_opp_params {
+ 
+ #ifdef CONFIG_ARCH_TEGRA
  bool soc_is_tegra(void);
-+int devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				       struct tegra_core_opp_params *params);
-+#else
-+static inline bool soc_is_tegra(void)
++bool tegra_soc_core_domain_state_synced(void);
+ int devm_tegra_core_dev_init_opp_table(struct device *dev,
+ 				       struct tegra_core_opp_params *params);
+ #else
+@@ -30,6 +31,11 @@ static inline bool soc_is_tegra(void)
+ 	return false;
+ }
+ 
++static inline bool tegra_soc_core_domain_state_synced(void)
 +{
 +	return false;
 +}
 +
-+static inline int
-+devm_tegra_core_dev_init_opp_table(struct device *dev,
-+				   struct tegra_core_opp_params *params)
-+{
-+	return -ENODEV;
-+}
-+#endif
- 
- #endif /* __SOC_TEGRA_COMMON_H__ */
+ static inline int
+ devm_tegra_core_dev_init_opp_table(struct device *dev,
+ 				   struct tegra_core_opp_params *params)
 -- 
 2.29.2
 
