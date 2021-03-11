@@ -6,47 +6,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AE3C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00611C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 594F464FE7
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A715464F93
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 16:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234348AbhCKQCT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 11:02:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48626 "EHLO mail.kernel.org"
+        id S234366AbhCKQRQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 11:17:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234418AbhCKQCQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 11:02:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 402CA64FDD;
-        Thu, 11 Mar 2021 16:02:05 +0000 (UTC)
+        id S234527AbhCKQRN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 11 Mar 2021 11:17:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DCD8464F88;
+        Thu, 11 Mar 2021 16:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615478525;
-        bh=k5Mt9Qg9aBLbjUdebuqcA0/O+qs6ydLJzvh3zLJ9niA=;
+        s=k20201202; t=1615479432;
+        bh=tC8xQLvl0ED5iaAOUU3NWeADhke0KZJuMgdD9l7TFWA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=asvfWEmRsr+DqDZNyr2S+UZNW58YvwhqdM66MSke1wE6gY3SsOw3zraq7u+bjslnB
-         8hZT7z/PEmV5nT7/PXtFhqDTS4IWH1tMMnl7Raz9XSFsc/nN1qu5zeEy5DQY5ardn9
-         gm3a/tSCbRbEnkDFD3x20EXp1YiUlebjGo+3c2DrmVXGC6NBvIfoXNKTgQ8iDgrLsP
-         WPTGMzlSUc1KNxK27EX7j5L9K1Iix0nUaVD2hgwu8YMPqXbEvKoeOjUPz33zWpweAe
-         Wb2iQ4F8Q298TbIygnWKpPEQS+VuVL5xw+DQbsi0aYAwgKyHlHJLicrGcq/gWl5k3/
-         46eigJX9Epi5A==
-Date:   Thu, 11 Mar 2021 16:00:52 +0000
+        b=RyuJ62MV0j1/0koV3tq8MZh+/x1RDJHUX5qSrZ3paxvAockMHvG17rC8qJac4MdSf
+         sHjsYIzxL9OLh0PxPjAaWR59N2TlKSdwzPDYcFN/PIrCOxPJ1Kg4hn4kpogdt23424
+         7fYazPCBxabTn60iy1PugT4Y81/xcWpa8tySmBCpMPyACfFXtg8I9dYITP4zcgVR1v
+         xCS5xx73GHuHAf8z11KTd1NiFz5+tksiIeZTJ5ce74kJntcxiJJu8LL87Jd7wMuOYK
+         E1XQe3JZQXwXi6u0TyBhVZzfePlBs7lF2b2B8LZhOh43QTbgnL1VbK4fi3FFU2ApBA
+         DycL7AFAZDTxQ==
+Date:   Thu, 11 Mar 2021 16:15:58 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     spujar@nvidia.com, alsa-devel@alsa-project.org,
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     Michael Walle <michael@walle.cc>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, jonathanh@nvidia.com,
         kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
         thierry.reding@gmail.com
 Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-Message-ID: <20210311160052.GF4962@sirena.org.uk>
+Message-ID: <20210311161558.GG4962@sirena.org.uk>
 References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
  <20210309144156.18887-1-michael@walle.cc>
+ <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
+ <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
+ <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eDB11BtaWSyaBkpc"
+        protocol="application/pgp-signature"; boundary="eMnpOGXCMazMAbfp"
 Content-Disposition: inline
-In-Reply-To: <20210309144156.18887-1-michael@walle.cc>
+In-Reply-To: <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
 X-Cookie: I'm rated PG-34!!
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
@@ -54,38 +57,37 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---eDB11BtaWSyaBkpc
+--eMnpOGXCMazMAbfp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 09, 2021 at 03:41:56PM +0100, Michael Walle wrote:
-> Hi,
->=20
-> > If "clocks =3D <&xxx>" is specified from the CPU or Codec component
-> > device node, the clock is not getting enabled. Thus audio playback
-> > or capture fails.
+On Wed, Mar 10, 2021 at 08:20:28PM +0530, Sameer Pujar wrote:
 
-> This actually breaks sound on my board
-> (arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts).
+> If I read this correctly below is the configuration you need,
+> SoC -> MCLK(fixed rate) -> PLL(wm8904) -> PLL output (256 * fs) -> sysclk
 
-Please, when sending replies format the subject line like normal replies
-with a "Re: " at the start so people can tell it's a reply to an
-existing discussion and not a new patch.
+For this device for integration with something like simple-audio-card
+since there's limited flexibility within the device the simplest thing
+would be to not make the internal clocking of the device visible and
+just have it figure out how to use the input clock, using the MCLK
+directly if possible otherwise using the FLL to generate a suitable
+clock.  The trick is figuring out if it's best to vary the input clock
+or to use the FLL to adapt a fixed input clock, and of course adapting
+any existing users if things get changed.
 
---eDB11BtaWSyaBkpc
+--eMnpOGXCMazMAbfp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBKPrQACgkQJNaLcl1U
-h9Bz8wf/TDlUuWpXDfOMG5KASnW4G2LE4KydQVmKQgJJQ9RT3sRl9JYT7iCFpfVx
-nROTNxkE6gbvTO8YCwzPOKPqDgTM5GvWjxAgoxAEDf0Zw6RnoWeBxDxp5IeahvRG
-e0i0dlSczfB1KOytXcjTSg1l6HMl41kUpsS8mTuEuIQv23rGbLfykAsXFHxvIbIt
-y0sZUgwflgw0dC8CtUObQWnYnepiUvCYoCXwv66lvIW7nnLu+gIPjjAlB3SOZDrc
-yM9sBXsvhLSAmKiGL3FcvqDV401wrMG2poryA9BHvAH50rVdHgyiaxSEOJWn1weF
-AmzzM+gHNpzb5iWKDYON4aX0ZEh+OA==
-=z+cv
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBKQj4ACgkQJNaLcl1U
+h9Bm7Qf/VJ91STTM9RrXZ6oXyjy90lybK+uguct6tIBOH/cCBlf2qGxlWOIaKw2w
+ybRwqTEJm5fKKRDMqvUBk7y7O3VF9onjg5x8N/+FcbPgrK2hEuzBJQlzEn47GEpK
+wangKZc80y5Sz7jPi5yK2dRyMfClSIyv78y5rFHcetDHH2+xLFz7com+SEczQeyx
+gBNaIJ7xyQb6/KUQQLPO21wTy4rzFpurRatmPJTVlUM1qREmptX8SB5lRFXIb8yJ
+gYp353sgoWIwm71bhZl2xtBuNyZJg7w4TnvPIaEBPi/cjaQvSUohaDJXui1tFITq
+JF2ZCpVivFlMaIgQNfKfH+lSv5Feag==
+=OLq0
 -----END PGP SIGNATURE-----
 
---eDB11BtaWSyaBkpc--
+--eMnpOGXCMazMAbfp--
