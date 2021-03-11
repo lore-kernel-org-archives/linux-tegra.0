@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC146C28EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63494C4360C
 	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A86C64F18
+	by mail.kernel.org (Postfix) with ESMTP id 161BA64F10
 	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 19:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230325AbhCKTWi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 14:22:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
+        id S231386AbhCKTWd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 14:22:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbhCKTV4 (ORCPT
+        with ESMTP id S230162AbhCKTVw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 14:21:56 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E4EC061574;
-        Thu, 11 Mar 2021 11:21:55 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id m22so41607188lfg.5;
-        Thu, 11 Mar 2021 11:21:55 -0800 (PST)
+        Thu, 11 Mar 2021 14:21:52 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA682C061574;
+        Thu, 11 Mar 2021 11:21:51 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id 9so3620420ljd.7;
+        Thu, 11 Mar 2021 11:21:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uqKfei5o+p1LDmMPic3/GGcfRGKV9mArN/Kd0be+sRk=;
-        b=iiXXfpB1C+gnbK0/DeT43KLI/fORWdk2wUnK2WbfXh1yfxR6laQU0kdWW9RB9j/u2B
-         +iWWZnNjK92tl5VaWjTwR6B44ECS+loZ74TlWriWfCEo4x34cX20+DAK0Z1yWbk04E1f
-         ykCJ56ZNamFlTXptrAN+d6XLxlaJZKnYdg7Ap3ee/6prcStBNurIfldD+vWg56ijpX+h
-         vWzU8iilkhQqhmL6p8UuEdQphJl4t6wFggy8TATlvH+3hnBz4aZ+NLBzVi03+lB3FFAY
-         xIlmwo/13YpOTDAip7ZeKkJj7mb+NA5I3J4+5/nfz956+QWxhOOatqRWDWgV5TlGblul
-         FPRg==
+        bh=Uc9ZALbRUJDMgYtD3gAPlsGo1E9Iwuohij5k/aUeCLE=;
+        b=syQeyblUfTJg4JpWTbFs8HLjaJ3BGg7i2g2f4FcM8ZzmdlyVndH9X7IfLw2xu+Y0bo
+         utO22qgs972TtNQl4kbRxJP3WVaE7O9VMxx2o5RIWsbABE2oyD1Wd65tpDs/5wBNNUZW
+         Nv5ghPpqbeZuwWwM+ShXcSV8xUVkAlRkPfyFRbnOIv2rdNH1Qlmqz3wYhKnIKWX0zNsO
+         jL7/JGV5h9/E1szuBeGX0f2FfYg8+FTkO75aAIESztji/VzaDGwvsssBFaxE1qBrTaVX
+         iWktzP1mKnKbY+wHgVF1LdeNhn8TqoUzX3t8eejjrIJkxInwFeNnFGvsprW5BwzsG48k
+         Q/AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uqKfei5o+p1LDmMPic3/GGcfRGKV9mArN/Kd0be+sRk=;
-        b=G3GvTBoYxs8iy4SyOdpGoVz0DQj1wUxSFk3SZHvNjeoSUt1/TmdP25yw/rAw8ypQdn
-         WQo8+AtCrg6XVD2RkooynK5u2lWhzxTMBPDGWHdQdkHtro/xYnlzbaigkl0cE0Dn1mGS
-         EjrAXd87ZULczaSn+R2S5Fsm0CZT47Ss1PjVAGshl2qYfpkRc/YDB5hbCb2nP1ssYBUq
-         Y1pVEq5bcQI2avk3UB1jOPhc8Q7zkMO+tr7+HKQDyG+YNvCel2VBrfj50M8vCpfw+bV6
-         Q2quqypdOlcLXkLvfuCE726XH8ygLpxq3kfWnXgKmcXrpbTjFtfvW4pvplmK0l6BZOdb
-         FlKA==
-X-Gm-Message-State: AOAM5313xMXRXcSR9/Y/iqkEKiFEbOWfmPCV3awkXGVeafI8Hw++cpNY
-        sK6PJ3RI0XV2W+tH6vUJ+ck=
-X-Google-Smtp-Source: ABdhPJxHhzSO5qkov352chgUZ1noI4EztWWaTwMtjW0L+gOi4Y6lGvXdtI/aQNvF79jf49rIBHoPxQ==
-X-Received: by 2002:a05:6512:1192:: with SMTP id g18mr3233341lfr.102.1615490514041;
-        Thu, 11 Mar 2021 11:21:54 -0800 (PST)
+        bh=Uc9ZALbRUJDMgYtD3gAPlsGo1E9Iwuohij5k/aUeCLE=;
+        b=ccXwGLH3dhyWIRSbV7+QCg+tTUDSUF58wM82StA5Ow/90uCZHXS0ok1POUDehCZhpw
+         WEXmReZyTauGz+hLPPcBingzBm0KMhoQmnL2ptMx4htGVS4h/HgVkP70PKDRU3WxPj2A
+         z09/VD/yUpa1WFhvOWlVnwMTz4uZcJS9pnhyP/zcgBQSx8k0+gYGKt0jTMTzWLlaWqrJ
+         JTTOUmZr4gYMFXUD9vAlqjsgOR4KMWq7BnvmAbbO4CMz79aEKHegx05bC4RhWqOOy21S
+         HqKFaZ7JbuymxAyl/LpbPgTr5tSnsC+s2uDnrACDwUwJg/6pQwKhr+gyvMVSAv9O0vNX
+         P94A==
+X-Gm-Message-State: AOAM533u14yMbBD3TTQ6ZTXi/z4d3uLuH7deZNRs2543xx+Psg5N2YPO
+        wC0ixigBFmdnfD/f0/dWlFw=
+X-Google-Smtp-Source: ABdhPJwl3cbaBkrbMQqiy6UhEUt/4qPCholtPNloxB9pCiVO6vExsJJS2v+XJQMsEJeUu2CDyzSOhg==
+X-Received: by 2002:a2e:6e1a:: with SMTP id j26mr220588ljc.171.1615490510286;
+        Thu, 11 Mar 2021 11:21:50 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.52
+        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 11:21:53 -0800 (PST)
+        Thu, 11 Mar 2021 11:21:50 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
         Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
@@ -84,9 +84,9 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 14/14] memory: samsung: exynos5422-dmc: Convert to use resource-managed OPP API
-Date:   Thu, 11 Mar 2021 22:21:05 +0300
-Message-Id: <20210311192105.14998-15-digetx@gmail.com>
+Subject: [PATCH v2 11/14] drm/lima: Convert to use resource-managed OPP API
+Date:   Thu, 11 Mar 2021 22:21:02 +0300
+Message-Id: <20210311192105.14998-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210311192105.14998-1-digetx@gmail.com>
 References: <20210311192105.14998-1-digetx@gmail.com>
@@ -98,67 +98,118 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-Use resource-managed API to simplify code.
+Use resource-managed OPP API to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/samsung/exynos5422-dmc.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/lima/lima_devfreq.c | 43 ++++++++---------------------
+ drivers/gpu/drm/lima/lima_devfreq.h |  2 --
+ 2 files changed, 11 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index 1dabb509dec3..56f6e65d40cd 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -343,7 +343,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
- 	int idx;
- 	unsigned long freq;
+diff --git a/drivers/gpu/drm/lima/lima_devfreq.c b/drivers/gpu/drm/lima/lima_devfreq.c
+index 5686ad4aaf7c..e3ccaf269892 100644
+--- a/drivers/gpu/drm/lima/lima_devfreq.c
++++ b/drivers/gpu/drm/lima/lima_devfreq.c
+@@ -99,13 +99,6 @@ void lima_devfreq_fini(struct lima_device *ldev)
+ 		devm_devfreq_remove_device(ldev->dev, devfreq->devfreq);
+ 		devfreq->devfreq = NULL;
+ 	}
+-
+-	dev_pm_opp_of_remove_table(ldev->dev);
+-
+-	dev_pm_opp_put_regulators(devfreq->regulators_opp_table);
+-	dev_pm_opp_put_clkname(devfreq->clkname_opp_table);
+-	devfreq->regulators_opp_table = NULL;
+-	devfreq->clkname_opp_table = NULL;
+ }
  
--	ret = dev_pm_opp_of_add_table(dmc->dev);
-+	ret = devm_pm_opp_of_add_table(dmc->dev);
- 	if (ret < 0) {
- 		dev_err(dmc->dev, "Failed to get OPP table\n");
- 		return ret;
-@@ -354,7 +354,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
- 	dmc->opp = devm_kmalloc_array(dmc->dev, dmc->opp_count,
- 				      sizeof(struct dmc_opp_table), GFP_KERNEL);
- 	if (!dmc->opp)
--		goto err_opp;
-+		return -ENOMEM;
+ int lima_devfreq_init(struct lima_device *ldev)
+@@ -125,40 +118,31 @@ int lima_devfreq_init(struct lima_device *ldev)
  
- 	idx = dmc->opp_count - 1;
- 	for (i = 0, freq = ULONG_MAX; i < dmc->opp_count; i++, freq--) {
-@@ -362,7 +362,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
+ 	spin_lock_init(&ldevfreq->lock);
  
- 		opp = dev_pm_opp_find_freq_floor(dmc->dev, &freq);
- 		if (IS_ERR(opp))
--			goto err_opp;
-+			return PTR_ERR(opp);
+-	opp_table = dev_pm_opp_set_clkname(dev, "core");
+-	if (IS_ERR(opp_table)) {
+-		ret = PTR_ERR(opp_table);
+-		goto err_fini;
+-	}
+-
+-	ldevfreq->clkname_opp_table = opp_table;
++	opp_table = devm_pm_opp_set_clkname(dev, "core");
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
  
- 		dmc->opp[idx - i].freq_hz = freq;
- 		dmc->opp[idx - i].volt_uv = dev_pm_opp_get_voltage(opp);
-@@ -371,11 +371,6 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
+-	opp_table = dev_pm_opp_set_regulators(dev,
+-					      (const char *[]){ "mali" },
+-					      1);
++	opp_table = devm_pm_opp_set_regulators(dev, (const char *[]){ "mali" },
++					       1);
+ 	if (IS_ERR(opp_table)) {
+ 		ret = PTR_ERR(opp_table);
+ 
+ 		/* Continue if the optional regulator is missing */
+ 		if (ret != -ENODEV)
+-			goto err_fini;
+-	} else {
+-		ldevfreq->regulators_opp_table = opp_table;
++			return ret;
  	}
  
+-	ret = dev_pm_opp_of_add_table(dev);
++	ret = devm_pm_opp_of_add_table(dev);
+ 	if (ret)
+-		goto err_fini;
++		return ret;
+ 
+ 	lima_devfreq_reset(ldevfreq);
+ 
+ 	cur_freq = clk_get_rate(ldev->clk_gpu);
+ 
+ 	opp = devfreq_recommended_opp(dev, &cur_freq, 0);
+-	if (IS_ERR(opp)) {
+-		ret = PTR_ERR(opp);
+-		goto err_fini;
+-	}
++	if (IS_ERR(opp))
++		return PTR_ERR(opp);
+ 
+ 	lima_devfreq_profile.initial_freq = cur_freq;
+ 	dev_pm_opp_put(opp);
+@@ -167,8 +151,7 @@ int lima_devfreq_init(struct lima_device *ldev)
+ 					  DEVFREQ_GOV_SIMPLE_ONDEMAND, NULL);
+ 	if (IS_ERR(devfreq)) {
+ 		dev_err(dev, "Couldn't initialize GPU devfreq\n");
+-		ret = PTR_ERR(devfreq);
+-		goto err_fini;
++		return PTR_ERR(devfreq);
+ 	}
+ 
+ 	ldevfreq->devfreq = devfreq;
+@@ -180,10 +163,6 @@ int lima_devfreq_init(struct lima_device *ldev)
+ 		ldevfreq->cooling = cooling;
+ 
  	return 0;
 -
--err_opp:
--	dev_pm_opp_of_remove_table(dmc->dev);
--
--	return -EINVAL;
+-err_fini:
+-	lima_devfreq_fini(ldev);
+-	return ret;
  }
  
- /**
-@@ -1567,8 +1562,6 @@ static int exynos5_dmc_remove(struct platform_device *pdev)
- 	clk_disable_unprepare(dmc->mout_bpll);
- 	clk_disable_unprepare(dmc->fout_bpll);
+ void lima_devfreq_record_busy(struct lima_devfreq *devfreq)
+diff --git a/drivers/gpu/drm/lima/lima_devfreq.h b/drivers/gpu/drm/lima/lima_devfreq.h
+index 2d9b3008ce77..c3bcae76ca07 100644
+--- a/drivers/gpu/drm/lima/lima_devfreq.h
++++ b/drivers/gpu/drm/lima/lima_devfreq.h
+@@ -15,8 +15,6 @@ struct lima_device;
  
--	dev_pm_opp_remove_table(dmc->dev);
--
- 	return 0;
- }
+ struct lima_devfreq {
+ 	struct devfreq *devfreq;
+-	struct opp_table *clkname_opp_table;
+-	struct opp_table *regulators_opp_table;
+ 	struct thermal_cooling_device *cooling;
  
+ 	ktime_t busy_time;
 -- 
 2.29.2
 
