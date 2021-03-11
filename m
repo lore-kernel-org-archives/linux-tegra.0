@@ -2,141 +2,148 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E049C433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 08:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9157BC433E9
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 10:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF81B64E4E
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 08:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5336964FD7
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 10:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbhCKICN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 03:02:13 -0500
-Received: from mail-bn8nam11on2077.outbound.protection.outlook.com ([40.107.236.77]:56032
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230131AbhCKICI (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 03:02:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c9KGQAcCq17EtHSc6f0YIJCja3npztw1RvcOHdmvjojjC4vNfVtmoJEe8sDehsWIlOIwrrhl8Y/umSlBY61bed+/PVpgrdtJDNiQeABEAx7Ibc5dzCbrSJ0ndW0AFiEDEAsQTz4GYsINsu1tMvDtN2xEN6IhGdjPe/FL46VwL+7Tnaw9m3ATEsdtMMIRYZq9hDwOm/AV8TTNKM9l7HiehY4THJm8IKyk+7nC+zQDdiiEh84+H98M6JCXdysNp26kE6wHoCLn1YPrSjGPXvfJPv+LmOjMOFv3b+LfLMn9T9S0UuF+gOIa9S2jVWEUQSeixEhabzzGmc0QaR97eoyJDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0PEuZLOq+5SNX+teeLGJGDWyEX325X/nA9pgI3FuWk=;
- b=HlmauInufK2ZNDEqwglyvEZ2MzqLAXFi0lTuFukkoGjg6t02Zlb8LJjQV5R7ISRtMYWbvr9yWEqnkwq+Akc0Y9fSXg/spElodiRmUTOe3qxMzvProeXmh/ZWfLuNjjcB+1k1H4zs/gegAbigL49JDbr+P/OASkaQN75WGdEWx4GrFeEhPK6CZ93KzneqNjOnoKjs9MQE/NshaJnwP+kVTB+ws+B5y8CWWwbraZ52A6Io6WdLZMP7NPXjCQ8rLjkXYRcbJ1KhSwbfDUmNIGDQ+xNKrY8HpuaHRaAgOBQYOj630pKrKQ4y3WZKmAnLl6+wspbJTQyCs2fW3FBMSpYT4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0PEuZLOq+5SNX+teeLGJGDWyEX325X/nA9pgI3FuWk=;
- b=nJjE0x+5G4WXqnljyqBdD22dYqr3wROqXhZUP6mnLWCTim4jhiemluVPq6O6FzVcosi8jGtUoC+mTYe0R7si6zBvLR9W3zHRajMwk6CmmzRUo+cOYJTCXKxQHrcu3mrDqXMI+ATedW2yRxKrT5RMOK5AxKV6hqIau7tgos9biQb8C2/LRnnUaoJYca25lVP5oLG1IVoKiDrCB2oCR886lQ3bfxjcwD6ZWZiCXKF1LBUikmHkBPnR7W60oJnCNWONQ0xE7Yu+92J3jjOlIWRjIAgkDv/HCs4QWeU9q5fUdy/Rb11BIZHYXhcghAIxF5D00vrXP6Ftz1DKXmZEHwzXuQ==
-Received: from BN6PR13CA0072.namprd13.prod.outlook.com (2603:10b6:404:11::34)
- by SN1PR12MB2544.namprd12.prod.outlook.com (2603:10b6:802:2b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Thu, 11 Mar
- 2021 08:02:03 +0000
-Received: from BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:11:cafe::54) by BN6PR13CA0072.outlook.office365.com
- (2603:10b6:404:11::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.11 via Frontend
- Transport; Thu, 11 Mar 2021 08:02:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT052.mail.protection.outlook.com (10.13.177.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3933.31 via Frontend Transport; Thu, 11 Mar 2021 08:02:01 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 11 Mar
- 2021 08:02:00 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Thu, 11 Mar 2021 08:02:00 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/47] 5.10.23-rc2 review
-In-Reply-To: <20210310182834.696191666@linuxfoundation.org>
-References: <20210310182834.696191666@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S232262AbhCKK2Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 05:28:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232327AbhCKK15 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 11 Mar 2021 05:27:57 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE420C061574;
+        Thu, 11 Mar 2021 02:27:57 -0800 (PST)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id E6F0722253;
+        Thu, 11 Mar 2021 11:27:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1615458472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=F/pKw0dxLFS0KoV3Ebsgp8qficdXlTrq+SBNJfX8nr4=;
+        b=GRjVx3HBxYsMYSofVWTR5ZJiOQCtwJTZeGIpMwTuEKerCg2pEkn+9jx93ZV/TE60Rif77T
+        6Fa/8ObPm3/RcRb46zuXnUnUucsPDPODe/1lIz+m4JZHlbWfYO1dmZuVQW0yun+dAq5C4L
+        e2VvFjiO4wfJkaNSAoHvH4jaoK7ypO0=
 MIME-Version: 1.0
-Message-ID: <594433892f7d4f46a0ef90e98b88a26d@HQMAIL105.nvidia.com>
-Date:   Thu, 11 Mar 2021 08:02:00 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9eaf4896-83a4-4f70-5206-08d8e463f3f3
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2544:
-X-Microsoft-Antispam-PRVS: <SN1PR12MB25446868EAEE7496A4B63B77D9909@SN1PR12MB2544.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7SJJfk1iatv3KMlJEdCLuhLCyjHVR1jCLxqnBz7urUIJBWcZtch480xGVDPMOswSRym0gcWPZmH/TMvtXqT+bber0lKX5OSaK5MxeIXvQBUpQwINd7JSbQp6Vp7PE6Kmd1GmMDBbO4h76D3pJqo9i3ErUhIUtgN247I7YPief3sYRclRQgztEPVaBHax7DF88D7PDsSvI/xhpF484I0Y/pybtqX5gDuDW+fDhyyZTYrBCZWrw/5CHIIi5sMGwLtksnDgl6y2QAyOBFbG9L9KKMT1NIKkA6acSmrM1BdFlBLJy+bXh+gB3VQZE/LDOIyj7Mb7kHUSIjhp8UrHR/UBy1QMSGs+2+EjId2adQz916Ec/h4H5XhGEeIfTZ+j81EXtXvKKoDbtbygyFcHwBR7bF+jAMaH1+oJJSfwXhcCFjUa+yGS55ZSqHCAQyWuywR02J/GLpuawjOu2hDdzm3twZ5fJBm7gmISXYBDeOKM6e78UMq0JFMCegBw0d3Dpd2hdHIof7iheOuctq2sO1qCfQn3efX/yfzQJQWFgoxtc5o9VCB89htOwGXa2T9bi5UVQJrSHDr4Al7nRIMCyWmiXfo8HRUGwMq9TYP7VfMV/e7Iq+obeQ+b/fSQ4g4WZDFvRqF0eHEPopBNRJM6GOuNNqjFaECRJgXbDgjtlTwRM1eh0PKJoeAAiLFNlfqMtSqYJR0dXWvV/2Z1jiQI26SL4YC0wBaZQQqxnyzgTAmum9ch8PQ0B1Zhren7Vu+rb3tpUZrknty/a1UKghLs3icaeA==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(376002)(136003)(39860400002)(36840700001)(46966006)(2906002)(82740400003)(7416002)(86362001)(54906003)(70206006)(966005)(82310400003)(70586007)(478600001)(8676002)(47076005)(36860700001)(426003)(4326008)(316002)(356005)(5660300002)(336012)(34070700002)(186003)(6916009)(7636003)(26005)(8936002)(24736004)(108616005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 08:02:01.5841
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eaf4896-83a4-4f70-5206-08d8e463f3f3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT052.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2544
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 11 Mar 2021 11:27:51 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Sameer Pujar <spujar@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
+        thierry.reding@gmail.com
+Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
+In-Reply-To: <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
+References: <1612939421-19900-2-git-send-email-spujar@nvidia.com>
+ <20210309144156.18887-1-michael@walle.cc>
+ <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
+ <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
+ <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <eb26f8e0a4c99d0c9de9d92612102718@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 10 Mar 2021 19:29:23 +0100, gregkh@linuxfoundation.org wrote:
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This is the start of the stable review cycle for the 5.10.23 release.
-> There are 47 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 12 Mar 2021 18:28:23 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.23-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Sameer,
 
-All tests passing for Tegra ...
+Am 2021-03-10 15:50, schrieb Sameer Pujar:
+> On 3/10/2021 4:00 AM, Michael Walle wrote:
+>> Am 2021-03-09 17:27, schrieb Sameer Pujar:
+>>> On 3/9/2021 8:11 PM, Michael Walle wrote:
+>>>>> If "clocks = <&xxx>" is specified from the CPU or Codec component
+>>>>> device node, the clock is not getting enabled. Thus audio playback
+>>>>> or capture fails.
+>>>>> 
+>>>>> Fix this by populating "simple_dai->clk" field when clocks property
+>>>>> is specified from device node as well. Also tidy up by 
+>>>>> re-organising
+>>>>> conditional statements of parsing logic.
+>>>>> 
+>>>>> Fixes: bb6fc620c2ed ("ASoC: simple-card-utils: add
+>>>>> asoc_simple_card_parse_clk()")
+>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+>>>> 
+>>>> This actually breaks sound on my board
+>>>> (arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts).
+>>>> The codec on this board (wm8904) has a fixed clock input (only
+>>>> distinct
+>>>> frequencies are supported) and uses the FLL of the codec to generate
+>>>> the
+>>>> desired sample rate.
+>>>> 
+>>>> It seems that after this patch the clock rate of the codecs clock
+>>>> (rather
+>>>> than the FLL) is tried to be changed. Which fails, because it 
+>>>> doesn't
+>>>> support arbitrary frequencies.
+>>> 
+>>> Yes, after the given change the clock will be updated if "*mclk-fs"
+>>> property is specified.
+>>> 
+>>> DT you mentioned has property "simple-audio-card,mclk-fs = <256>",
+>>> which means you need a clock that is a function of sample rate. But 
+>>> as
+>>> per above you want a fixed clock for MCLK. I think if you drop this
+>>> property, the clock updates won't happen. Earlier for your case, this
+>>> property was not used at all because the clock handle was not
+>>> populated.
+>> 
+>> You mean to drop the mclk-fs property? I can't do that because I
+>> actually need a frequency of 256 * sample rate. But that doesn't
+>> necessarily need to be the MCLK, because the codec itself has a
+>> FLL/PLL which can be used to generate any frequency for a given
+>> MCLK. So that is a valid scenario. See also commit 13409d27cb39
+>> ("ASoC: wm8904: configure sysclk/FLL automatically").
+>> 
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    65 tests:	65 pass, 0 fail
+I've had a closer look at this and it seems you're messing around
+with the clock of the codec's node (which is _not_ a subnode of
+the simple-audio-card). I don't think this is correct.
 
-Linux version:	5.10.23-rc2-g93276f11b3af
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+I guess you should rather set the clock property in the codec
+subnode of the simple-audio-card, which is then picked up by the
+simple-audio-card driver and changed accordingly.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+For example:
+		simple-audio-card,dai-link@0 {
+			reg = <0>;
+			bitclock-master = <&dailink0_master>;
+			frame-master = <&dailink0_master>;
+			format = "i2s";
 
-Jon
+			cpu {
+				sound-dai = <&sai6>;
+			};
+
+			dailink0_master: codec {
+				sound-dai = <&wm8904>;
+				clocks = <&mclk>;
+			};
+		};
+
+In this case mclk will be enabled and disabled accordingly.
+
+Could you test this?
+
+-michael
