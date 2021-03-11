@@ -2,86 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30DDC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE612C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8939B64FE2
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AFF64FE2
+	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 17:44:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbhCKRjr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 12:39:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230011AbhCKRjZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:39:25 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AB9AD64F97;
-        Thu, 11 Mar 2021 17:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615484365;
-        bh=TlKLoocWrAf+mcnp9qsVWdY3TBaeUf9aJbaJ39+J6z8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mtH/zbCkOKstf4XiUOC85HEJkKRDX6YejxRrZSNq9il9X1VFovULtGaLExKeP+L1Q
-         xl3pX62quqoDjFYEgaM7TNRJzweMU3Lz74CsGb1GR4Epy4h9isUiv2ayjTznSfAKWP
-         tAsgItz03r5S5bb50H5xbEfI4hVJu0P4ANCE55Gc=
-Date:   Thu, 11 Mar 2021 18:39:22 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.11 00/36] 5.11.6-rc1 review
-Message-ID: <YEpVysdRAC1P4GC1@kroah.com>
-References: <20210310132320.510840709@linuxfoundation.org>
- <8b96ff67bd3d4e5ea9ea3d695eb5ba2d@HQMAIL107.nvidia.com>
+        id S229879AbhCKRnd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 12:43:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229705AbhCKRnO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 11 Mar 2021 12:43:14 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94533C061574;
+        Thu, 11 Mar 2021 09:43:13 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id f1so41175389lfu.3;
+        Thu, 11 Mar 2021 09:43:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tV08/S8AYkOlggjIBuODj7Why8Z1+LlJ+V4vGmOX1RE=;
+        b=ECDG4MRiMe5CStYYvkaKYV/dG6cxvGotcx4pATfKF5+buUVugq1PUOLDnIhnG8292C
+         Bk8WZFFoHtcXvw0fBRsh3zQNR1ddjKewwsm7uHNtXPh9nMAMSKhjXEbJ53QUrUC5GvIf
+         gVvZTMmfQjki/ucGrhTIVSFcCGuI+ux35MV3lBcpvl74jtHS8eYR0meRsdF7Xxbnwij0
+         u4yjsAT5O2yBzcJe6STgyR+Jv37tRfcvmXragfxRP8pU/VtHw2YoU4oi/bmLAbGJlB+u
+         +qCFDehB11KbuxefFr7zrSFjUkL9XpU2lxPZ1cGe9CN/SBEFBwZs0x5CAQ04j2cI8+/a
+         5AUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tV08/S8AYkOlggjIBuODj7Why8Z1+LlJ+V4vGmOX1RE=;
+        b=fYCkmUpKDKBH+69hnyAldzxrmG6cRj69WqV96XKMRWJ39Pr/C9GNr/iOIp8kkX+Iu6
+         WrkGu7WHAHY4ZjiKSVh4sNQW3UYDU2T1ahiUkV7NGvCIEmfyb3fX6B2CNeeRbkWj3Q6v
+         iakCrnX+Dq5lTDwNQsmivuiROqWgFqe12/zo0OkH+pLUvI+SHj/2sfPeuqOc7RbeeMKt
+         QiGGxN9/np0oDnCqZ9qzluNlI9C1tgHIBSG9KC2RL0gYwW3eFEJiXfJAK1DZXq8IDVA6
+         nJFLqGqw8p2hF3ZqRzN2WT20Gbk+o3DZeMgebwFQaZ3ebnZjVlfOZVa1fwtz2JJklASb
+         J5dg==
+X-Gm-Message-State: AOAM530HkhEd/8axCYwqWd9hFLdUh6Km2YFdjqQrUbAO2pSmz2lvbceA
+        dN6Y8Zi2oRy+zC/uRqz+AFI=
+X-Google-Smtp-Source: ABdhPJzZoVdzNWaBBpv/V2H46jX+HJmoeEWU1giXzXKNrzi0/bcW1oUOQs8EzXjuFa1ZQ7NacFM8vQ==
+X-Received: by 2002:a19:520b:: with SMTP id m11mr2863398lfb.42.1615484592025;
+        Thu, 11 Mar 2021 09:43:12 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id g10sm1021245lfe.90.2021.03.11.09.43.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 09:43:11 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Paul Fertser <fercerpav@gmail.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] Add missing reset controls to NVIDIA Tegra ASoC drivers
+Date:   Thu, 11 Mar 2021 20:42:57 +0300
+Message-Id: <20210311174302.15430-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b96ff67bd3d4e5ea9ea3d695eb5ba2d@HQMAIL107.nvidia.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Mar 11, 2021 at 07:59:56AM +0000, Jon Hunter wrote:
-> On Wed, 10 Mar 2021 14:23:13 +0100, gregkh@linuxfoundation.org wrote:
-> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > This is the start of the stable review cycle for the 5.11.6 release.
-> > There are 36 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri, 12 Mar 2021 13:23:09 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.6-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.11:
->     12 builds:	12 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     65 tests:	65 pass, 0 fail
-> 
-> Linux version:	5.11.6-rc1-g4107fbb88ee5
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Hi,
 
-thanks for testing them all.
+This series adds missing hardware reset controls to I2S and AC97 drivers.
+Currently drivers happen to work properly because reset is implicitly
+deasserted by tegra-clk driver, but clk driver shouldn't touch the resets
+and we need to fix it because this breaks other Tegra drivers. Previously
+we fixed the resets of the AHUB and HDMI codec drivers, but turned out
+that we missed the I2C and AC97 drivers.
+
+Thanks to Paul Fertser for testing the pending clk patches and finding
+that audio got broken on Tegra20 AC100 netbook because of the missing I2S
+reset.
+
+Changelog:
+
+v3: - Fixed reset stubs for !CONFIG_RESET_CONTROLLER.
+
+v2: - After some more testing I found that I2S control logic doesn't require
+      I2S clock to be enabled for resetting. Hence it's fine to have I2S to
+      be reset by parent AHUB driver, so I dropped "tegra30: i2s: Add reset
+      control" patch.
+
+    - While I was double-checking resets on Tegra30, I found that that
+      Tegra30 I2S driver has a broken runtime PM which doesn't restore
+      hardware state on resume and it's lost after AHUB RPM-resume.
+      Thus, added this new patch "tegra30: i2s: Restore hardware state
+      on runtime PM resume".
+
+    - Added new patches which switch AHUB driver to use reset-bulk API.
+      I took the RFC patch from Philipp Zabel, fixed it and added
+      devm_reset_control_bulk_optional_get_exclusive_released() that
+      will be useful for further Tegra GPU patches. This is a minor
+      improvement which makes code cleaner.
+
+Dmitry Osipenko (4):
+  ASoC: tegra20: ac97: Add reset control
+  ASoC: tegra20: i2s: Add reset control
+  ASoC: tegra30: i2s: Restore hardware state on runtime PM resume
+  ASoC: tegra: ahub: Switch to use reset-bulk API
+
+Philipp Zabel (1):
+  reset: Add reset_control_bulk API
+
+ drivers/reset/core.c           | 215 +++++++++++++++++++++++
+ include/linux/reset.h          | 308 +++++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra20_ac97.c |  21 +++
+ sound/soc/tegra/tegra20_ac97.h |   1 +
+ sound/soc/tegra/tegra20_i2s.c  |  31 ++++
+ sound/soc/tegra/tegra20_i2s.h  |   1 +
+ sound/soc/tegra/tegra30_ahub.c | 104 ++++-------
+ sound/soc/tegra/tegra30_ahub.h |   5 +-
+ sound/soc/tegra/tegra30_i2s.c  |  41 ++---
+ 9 files changed, 629 insertions(+), 98 deletions(-)
+
+-- 
+2.29.2
+
