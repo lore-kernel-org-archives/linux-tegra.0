@@ -2,155 +2,104 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E30DC28E86
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1B0C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 01:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 306B864FC1
-	for <linux-tegra@archiver.kernel.org>; Thu, 11 Mar 2021 23:16:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CB464F92
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 01:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbhCKXPf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 11 Mar 2021 18:15:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
+        id S230175AbhCLBLt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 11 Mar 2021 20:11:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbhCKXP2 (ORCPT
+        with ESMTP id S229775AbhCLBLt (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 11 Mar 2021 18:15:28 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 411A6C061574;
-        Thu, 11 Mar 2021 15:15:28 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id x13so732997wrs.9;
-        Thu, 11 Mar 2021 15:15:28 -0800 (PST)
+        Thu, 11 Mar 2021 20:11:49 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2DA1C061574;
+        Thu, 11 Mar 2021 17:11:48 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso10242947pjb.4;
+        Thu, 11 Mar 2021 17:11:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nZPDfAK/GaZZk1byDwisDbQmbG69Ki4SSVrhCiS1D80=;
-        b=N12BWlr0M5KU//v0sBEXxL7IXPJdEcy4qW1vxeL6ptHTdH37YkEs/0ke8kfjZdv+ye
-         FYklpPTxlvjTVSai4knlL2sMq0250IMnU+9kKNc+067zV6gLrpc8JNwtAy3aWKzG0kpl
-         Da5mJUipQcw2/yHdRB463OldHLFDk3m2ex55WISlzexH6P3DdRuj2Ch2+kNkVEMlNXQd
-         br3Lc+1ueoYua/w4/rpiZZGYohTkhVezl1ZGT7derL2iZT6Z8YPP/BfWujNI+uXNd/UM
-         MeV33Xa8PLLB1vKmp354SGTwaNjq7xFJVnaiA136c8rsiMWWbV5DlrpjPwf7uA2AOLUL
-         4MJg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=16+EGqIhvzNXbdawWsI24XgIQiUgZzzrwVqWt5tsI6Q=;
+        b=k9/V8e9h7lxJGy3+MvDbuIN+ZYqSyUG2tRF5AcbhR75EaTsDgVFbTPeXzQFoCt5Y0z
+         maWum4fpgZCnxzMCM1UnW6bV7Mc2dki6/0AEPh09DM69U4ozafluPUirqWTSkR3qG5ZL
+         TSs0o2z4duN4aAcf3R0oLBDNGwGZ6IBeAhMoS8/4GEYwtyNOWYRgduR3Ucky7rCRJaQS
+         Xd54+6SIcYHnOWuWSRZt5t6f4pxRxV0n12IFfwY3Or+u6tch+nNOSe8ZrKzL38zFBgs5
+         F6esRhGL1FrhBS8hrao32eJDPriSrnDFQBn2dPFJML18s58L0JOwcbt0p9QzSH/54iOD
+         y+PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nZPDfAK/GaZZk1byDwisDbQmbG69Ki4SSVrhCiS1D80=;
-        b=MKcIRObEY1BDCAmVh4JnCBbH4N9wUsEw0kwb6eOuipkYxajyDrEgBVJrtp/dY6pg/B
-         xiu8tGA72UU4W4Y4JbewypYzzZbj7T7+NVVpgKH+YPKzHD+9L1v6QFWGUvzm0DXWj4GF
-         kHbqo8oTyD368eFplVS1h1L7GMrufpUeOYnNyHBtOCAK8SByIQs6x+C/z1WhiiHsmtYg
-         9q4+QtbOYU5vE/dGq/IyQ62LtjLW8LF/g6+UHTyRKEmeWYU+3dvNuU5fRju79Wjxmy7v
-         15TKi6/LkPkjn0uIlJJj7ZcViVsJc917s7GGT4kkMppD+/gHS5E82krBpfC65Ck6Jxqc
-         9/FA==
-X-Gm-Message-State: AOAM531MNB1OwbjssjvCwGimsDCI4kbS4e165bjHLoj4B4SMzib2b/KO
-        2rd7y2z+hl+pAaM0zg9WCto=
-X-Google-Smtp-Source: ABdhPJzbQvhEVffnsKZg3UZPO25ccig+sda6lz+ibiCyMdjzTDC2P4mR/kl00LYpDj2rNc9qziT1lg==
-X-Received: by 2002:adf:f0c1:: with SMTP id x1mr10826975wro.7.1615504527037;
-        Thu, 11 Mar 2021 15:15:27 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id j203sm263918wmj.40.2021.03.11.15.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 15:15:26 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] dt-bindings: power: tegra: Add binding for core power domain
-Date:   Fri, 12 Mar 2021 02:12:05 +0300
-Message-Id: <20210311231208.18180-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210311231208.18180-1-digetx@gmail.com>
-References: <20210311231208.18180-1-digetx@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=16+EGqIhvzNXbdawWsI24XgIQiUgZzzrwVqWt5tsI6Q=;
+        b=AHmNyGG106SHGQVAbRjYufYD3KR7/w6MBJi8+1Wu5kTy+I9M8c7I+avYKyDcz90WbQ
+         EdiHcyV4CjMclX9zoT5XQU6yAYONs8NmdwGZP7orgHsroW3z6w3Wo4pvq50PPQq3l18M
+         5USafL0C3cUFULQmZmaagh5pFjBNUlZE8tgOXht/sxgqzIDTiebUQzA3fS0w8q8Hh5D8
+         WYwAvzcYANCwgoyOU3L+XimGDKHmTxP+9TDz9Z6lxKYaalxYRfB06tkSyfF27HsZFaCL
+         pJ5Jm2eOFdAgQnS7d0aB3DexQ2DaowvVbHymEX9Feqdk87E9RPIRS4LgDcsdL5tf6puK
+         +PSw==
+X-Gm-Message-State: AOAM531oiDhfngZCyEugyZTc62uD0xLr7V7kCS4f/BF1TGxVjckR/wXP
+        cFJbvoqBYIQHp/Vfr4sTS8A=
+X-Google-Smtp-Source: ABdhPJzra0SHtLriT5uJdvG596fUt/NZvuBX6OT9xr5DxY7UWyuTAm+swZOTYPYO+BHr8ri+MLVl2Q==
+X-Received: by 2002:a17:90a:f82:: with SMTP id 2mr11837097pjz.196.1615511508531;
+        Thu, 11 Mar 2021 17:11:48 -0800 (PST)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id y7sm268087pja.25.2021.03.11.17.11.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Mar 2021 17:11:48 -0800 (PST)
+Date:   Thu, 11 Mar 2021 17:09:33 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     joro@8bytes.org, thierry.reding@gmail.com, will@kernel.org,
+        vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iommu/tegra-smmu: Add pagetable mappings to debugfs
+Message-ID: <20210312010932.GB29926@Asurada-Nvidia>
+References: <20210310033614.16772-1-nicoleotsuka@gmail.com>
+ <abcedfa6-fbad-b34d-fba1-d3a778fbf5b4@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <abcedfa6-fbad-b34d-fba1-d3a778fbf5b4@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-All NVIDIA Tegra SoCs have a core power domain where majority of hardware
-blocks reside. Add binding for the core power domain.
+On Thu, Mar 11, 2021 at 05:04:06PM +0300, Dmitry Osipenko wrote:
+> 10.03.2021 06:36, Nicolin Chen пишет:
+> ...
+> > +static int tegra_smmu_mappings_show(struct seq_file *s, void *data)
+> > +{
+> > +	struct tegra_smmu_group_debug *group_debug = s->private;
+> > +	const struct tegra_smmu_swgroup *group;
+> > +	struct tegra_smmu_as *as;
+> > +	struct tegra_smmu *smmu;
+> > +	int pd_index, pt_index;
+> 
+> > +DEFINE_SHOW_ATTRIBUTE(tegra_smmu_mappings);
+> > +
+> >  static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
+> >  {
+> > +	const struct tegra_smmu_soc *soc = smmu->soc;
+> > +	struct tegra_smmu_group_debug *group_debug;
+> > +	struct device *dev = smmu->dev;
+> > +	struct dentry *d;
+> > +	int i;
+> 
+> You should use unsigned types for everything that isn't signed.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- .../power/nvidia,tegra20-core-domain.yaml     | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
-
-diff --git a/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
-new file mode 100644
-index 000000000000..bc68c5757d45
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/power/nvidia,tegra20-core-domain.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra Core Power Domain
-+
-+maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+allOf:
-+  - $ref: power-domain.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nvidia,tegra20-core-domain
-+      - nvidia,tegra30-core-domain
-+
-+  operating-points-v2:
-+    description:
-+      Should contain level, voltages and opp-supported-hw property.
-+      The supported-hw is a bitfield indicating SoC speedo or process
-+      ID mask.
-+
-+  "#power-domain-cells":
-+    const: 0
-+
-+  power-supply:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to voltage regulator connected to the SoC Core power rail.
-+
-+required:
-+  - compatible
-+  - operating-points-v2
-+  - "#power-domain-cells"
-+  - power-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    power-domain {
-+        compatible = "nvidia,tegra20-core-domain";
-+        operating-points-v2 = <&opp_table>;
-+        power-supply = <&regulator>;
-+        #power-domain-cells = <0>;
-+    };
--- 
-2.29.2
-
+Okay. Will fix. Thanks!
