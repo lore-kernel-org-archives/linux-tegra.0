@@ -2,145 +2,151 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA6DC4332B
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 634FCC433E9
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4363D64FFE
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3889564FF5
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:25:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbhCLNTo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Mar 2021 08:19:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbhCLNTS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Mar 2021 08:19:18 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F676C061574;
-        Fri, 12 Mar 2021 05:19:17 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id p21so45635927lfu.11;
-        Fri, 12 Mar 2021 05:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eRvXvpISF4IBOtvYHqIw0A7WGfnjimCkRZ9ja9m0ckM=;
-        b=Ut4qFXpcbkXJ22fKP6ZhuibyOgP96LyuXM/q1+jciXezVPuz/jxw6QKj6NuFX+A8sM
-         Z24vGAlcKIxP07ikydnjBeYEye0+2Q7JDXOPU6lIX+XaRsFrKKr3um681kRjPJZrSRUp
-         eq1JM3cs50lT4lyB9Q4dkTEpyA8USDUYlpj5qmZUY4MXfcP95ewRNJy9Nr+9JEy4KOQL
-         o5kGwjT7Ha1fQEK2V8Fgv9whnKvDILXVU/mNw9cisfDHr5RHMcZm1P090BCHyKsItgDK
-         8pK2wrIS0v0jwm1Gfa9g5rcIlLK4s9gS9RXRX3GlZzQf2Hm2p0knhCQeC4spgT4WR+3f
-         cXDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eRvXvpISF4IBOtvYHqIw0A7WGfnjimCkRZ9ja9m0ckM=;
-        b=kBuIn02rpveGaikYuHrX6s4rnbf1BF+YBsoywZdBicBFvUSlnEarGg/pLTi1huQA0n
-         g2sDyAnWtIj4zkjLndYTfDlIB0ruV0Oo6mZ9sIfr2C921ZmU10n5qfQllKZML0igmH/m
-         xjCaOFrBE8dSXwrFYOSl0m5U33wyzwQjB//diZz6dmIDifrD4Rop2xOLySKip70q0KES
-         iixaZZEYz/drUh67wtHZEXFSzJnSTryYPHcjq334qKw8vQhnkHIzRPoA34vCY1/znu0j
-         qt/DxEkPn1x5yEewYRxjpDVdBNfp1q0zM1/jy0nuy+/+FGFYkznkVVZLFBcE3P57izuD
-         bJSA==
-X-Gm-Message-State: AOAM533nk3N755Ef3jyxp5Lv0oenauyv5yht4fUGyTXJXqIKrHMICFEk
-        +71nJfYj+iHbTVjFoimn5E7nAwVrzTg=
-X-Google-Smtp-Source: ABdhPJyGS6708sF0bdyf6iWMHpkhy9JBsuOZ8wSAehH9LCLLnfAoUBl4FILaQoGRMgX23tFnvBnr5g==
-X-Received: by 2002:a19:a409:: with SMTP id q9mr5244748lfc.654.1615555155774;
-        Fri, 12 Mar 2021 05:19:15 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id x4sm1950915ljj.91.2021.03.12.05.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Mar 2021 05:19:15 -0800 (PST)
-Subject: Re: [PATCH v2 01/14] opp: Add devres wrapper for
- dev_pm_opp_set_clkname
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        lima@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20210311192105.14998-1-digetx@gmail.com>
- <20210311192105.14998-2-digetx@gmail.com>
- <20210312053312.zgke2mzjkqmwn67i@vireshk-i7>
- <CAPDyKFqrUCjTfrNqZ4gFfQS6LpoQCevGc-tv4WVOwuGhx5iiBg@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c9cb7a53-ece7-d71d-7ee2-abb959076954@gmail.com>
-Date:   Fri, 12 Mar 2021 16:19:14 +0300
+        id S230243AbhCLNYn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Mar 2021 08:24:43 -0500
+Received: from mail-bn8nam11on2080.outbound.protection.outlook.com ([40.107.236.80]:35584
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230256AbhCLNYM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 12 Mar 2021 08:24:12 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OllV1AMKcqu0h7JQ/NuEleYUsS5RRFwfnr+30ySqbaDabYQtktJJcvjfW+HtjDgT/fxcDP4t/3kkM5w4O7Hn8CUfc35hIWqW/PRZh1peAi7DpqVD9+2yDFcG++/NsPI5+TDA7BoFbscjkgWmMg2/KgogopFYur5lOpGgU4ZHy1iRi4wvpQ1gXdMmQZuUuUK/DCLnSMO+aR5E9qLcfJYtO87U0ve1Nqftpgml06DGaet99MTIUW+DSjzdAuXaXw3AHL2MoPRI8ci89GNAVMdQCmHVY8IAPJrz3M+BB+JWFIpNFoNC4gCIlq6hlkLHhR7fZITPoqaYu1/p6OqrOPhdKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J7F5G0+S0XPvDnr0eBWtCRChiIQOVK0GkD6IZ+rt4QA=;
+ b=RpP9/Yu5H6yK5Zu4aFqIiawZBA8Xtblpgz5+9d9Juh2zrVCWWl6OzVS9toasvnnrHbuXnHbNwomhi12jxlVg8NXfxgTZbF9FiRvpruGaJvmSALTtSybMpLG3wHlbZY+dWZUmMYEH/i3DUeLNseIsnutRuP3eoSRpC4nao8X/EUSX+vW8EHQYPGiaSqJG2qg3ECca5OJfZqgnoBnZpeF1UVGSTpVGcuQBwg7Mw0qiKZPVkf/QNcYMGkgIFZp+7/lb3gOK6vKdNPJrf6iHXQmNe0CQY6HxruUTXw4s91HzZSNPNuiHqgrraIWzWHJJrCKSCuWvOpiGkZXGETbC3kOdew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J7F5G0+S0XPvDnr0eBWtCRChiIQOVK0GkD6IZ+rt4QA=;
+ b=KgUrleKFnTrdWFUkKVMASAO84kHCxiU0ZIw8uzMBPjrkJQq7uFCvKfK7JIwoYiI03puMQB5Qu0R4cEsNEvuI7V0HMv1FQlCyLKbz4+9+z3k0Amzs4i2bmSQ5ZFc3YXvoVL9vL1JmmlKCCZ+t9G8jchjFageKxcgksloeXoJw7C6d9bubk4JHC2pqDMxrb7Ghb0tNNw915lo9vPNvEXvTln1hLQRLTbB8RI8570JoLuORbhaCA08No/xDpN+rMsbxBeCJZAN8OZijOv1G9Z7TsfNheTnrE12z5htaDbEMVZt3z3146Q+2IUAUDazrvedXD+Q7V+XRvr6lTPvUnYRg4Q==
+Received: from BN6PR12CA0034.namprd12.prod.outlook.com (2603:10b6:405:70::20)
+ by MN2PR12MB3375.namprd12.prod.outlook.com (2603:10b6:208:cc::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Fri, 12 Mar
+ 2021 13:24:10 +0000
+Received: from BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:405:70:cafe::5b) by BN6PR12CA0034.outlook.office365.com
+ (2603:10b6:405:70::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend
+ Transport; Fri, 12 Mar 2021 13:24:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT026.mail.protection.outlook.com (10.13.177.51) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3933.31 via Frontend Transport; Fri, 12 Mar 2021 13:24:09 +0000
+Received: from [10.26.49.11] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 12 Mar
+ 2021 13:24:08 +0000
+Subject: Re: [PATCH] arm64: tegra: Add unit-address for ACONNECT on Tegra186
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Sameer Pujar <spujar@nvidia.com>, <linux-tegra@vger.kernel.org>
+References: <20210312125808.659431-1-thierry.reding@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b24b428d-2d47-89ef-c982-3cc5bdbdd795@nvidia.com>
+Date:   Fri, 12 Mar 2021 13:24:06 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqrUCjTfrNqZ4gFfQS6LpoQCevGc-tv4WVOwuGhx5iiBg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210312125808.659431-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8a0b528f-aab8-40c3-1c41-08d8e55a1ec8
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3375:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB337519802BA1292F7BE739D7D96F9@MN2PR12MB3375.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7D35pKbE7Ct+HpEdoUZeYUDqq5vvrUZWAQinvsotKo7zsneii7JeZ0K0Jri08/Zyx4CHLFj32wC59K2Gfrur7gUwuE4RVqGiwocvmIZ0M8+/OUDGb6ze7bKqdIdDZyd3FVi8/suetqlSWvmWcffzLhmUj6Buwt2bkDG+2QT9qdRQnNPCSorbfNXnDHy7CAsFN9OjB5CqELvU8SUXucF1AY6U5qs0PddmyHr5LByLh1H7xG49I4KNYhRZtwIWZqpKnt+CzN58bY5hhvVwKkTgsuVp66AjhUzH0DAtrsV2CTalUCrbBd06fZDc2lWQkyvwQ/OarZDN8ZUNmdetrdsXHsN59DvDlXO9W+wzVjzOiCIMp0EG8vxullpO+T9sZQumPzA/UM+lr0UJ8/durAPSQUA5eKjXPKrgxRUSUSVMQPJmJwZFqN8EYFU2RJaUESMuBJelm5umGP2lXdJaHldJUbZlHAAHUJWNi7Uqm82sZHgtJty6DgCfrNc5YsyRlGuAMBOxIVOsZsavuS1EzIZ5ZJ0VIe7w2dSPFTte9ZqizKBsHefSBn/RIsu8DPoZOhPHKl/5CFkHG0HRTEKkIx2iXUnQgULH8QoKa+Vy+RzTFKFIyxa5ZQ2riDD5p0xG/2/gqRI18689ayywQIlymcm6VaQWjBdSXck8Q9IW8MNCQv/PfzPk2ws6XrHaLIwfHrwSP2cMVROz7aY48qz/afb+Lkhi6/kEd//LL2R6XOSsF58=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(396003)(136003)(346002)(39860400002)(36840700001)(46966006)(2906002)(478600001)(82740400003)(31696002)(34020700004)(336012)(316002)(36860700001)(70206006)(6916009)(26005)(356005)(47076005)(31686004)(36906005)(5660300002)(186003)(83380400001)(2616005)(54906003)(82310400003)(7636003)(8936002)(8676002)(16576012)(4326008)(16526019)(70586007)(53546011)(36756003)(86362001)(426003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2021 13:24:09.7654
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a0b528f-aab8-40c3-1c41-08d8e55a1ec8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3375
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-12.03.2021 13:36, Ulf Hansson пишет:
-> On Fri, 12 Mar 2021 at 06:33, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>
->> On 11-03-21, 22:20, Dmitry Osipenko wrote:
->>> +struct opp_table *devm_pm_opp_set_clkname(struct device *dev, const char *name)
->>> +{
->>> +     struct opp_table *opp_table;
->>> +     int err;
->>> +
->>> +     opp_table = dev_pm_opp_set_clkname(dev, name);
->>> +     if (IS_ERR(opp_table))
->>> +             return opp_table;
->>> +
->>> +     err = devm_add_action_or_reset(dev, devm_pm_opp_clkname_release, opp_table);
->>> +     if (err)
->>> +             opp_table = ERR_PTR(err);
->>> +
->>> +     return opp_table;
->>> +}
->>
->> I wonder if we still need to return opp_table from here, or a simple
->> integer is fine.. The callers shouldn't be required to use the OPP
->> table directly anymore I believe and so better simplify the return
->> part of this and all other routines you are adding here..
-> 
-> Yes, please. I was thinking along the same lines, when I reviewed the
-> mmc patch (patch9).
-> 
->>
->> If there is a user which needs the opp_table, let it use the regular
->> non-devm variant.
 
-Indeed, that's a very good suggestion! The opp_table isn't needed by the
-devm users, I'll change it in v3, thanks!
+On 12/03/2021 12:58, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The ACONNECT device tree node has a unit-address on all other SoC
+> generations and there's really no reason not to have it on Tegra186.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> index 9f5f5e1fa82e..683743f81849 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+> @@ -10,7 +10,7 @@ / {
+>  	model = "NVIDIA Jetson TX2 Developer Kit";
+>  	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+>  
+> -	aconnect {
+> +	aconnect@2900000 {
+>  		status = "okay";
+>  
+>  		dma-controller@2930000 {
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 02b26b39cedc..9f75bbf00cf7 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -73,7 +73,7 @@ ethernet@2490000 {
+>  		snps,rxpbl = <8>;
+>  	};
+>  
+> -	aconnect {
+> +	aconnect@2900000 {
+>  		compatible = "nvidia,tegra186-aconnect",
+>  			     "nvidia,tegra210-aconnect";
+>  		clocks = <&bpmp TEGRA186_CLK_APE>,
+> 
+
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
+
+-- 
+nvpublic
