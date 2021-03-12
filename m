@@ -2,100 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB6EC433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E95C4332D
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 14:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2161964F77
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 13:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA7C464FFD
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 14:24:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbhCLNsB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Mar 2021 08:48:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230491AbhCLNr4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Mar 2021 08:47:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDD9264F77;
-        Fri, 12 Mar 2021 13:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615556876;
-        bh=sOBXKqeGO4Nq6TKstq0SbVu8mp+HGsMEGseeBq3jg/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QfmMSgY+xABbFrE8pXva2Z+2KoRJjF8hUO0QbnHV52jRHwqqsqBu7djvhyP1BlRy0
-         as1td4ujPDB/8qz9pur2Fp2gmJbCC7Oz2veyQS1ykZQZMlnPnJi7PtAiSo8nXYavRX
-         yzuipZUC87gUAfVZHNpqfBWdfSfBaytYgKO8hm3c+5aVI+6MjyfN+nPPIdwJikV9Nv
-         Mev3vtRCjtt9qRqWV81f0qU07Ikik8s7PmqvrTtv4R0n24H+5LZcjhxjDrFXleVGUq
-         gQohoQEfK/Byb0jI2I6oti8E92QWZBLs94uC2h4xdCvzg4H9boCjjP/z4QfVAJVGa8
-         CBKSkeQC21f8A==
-Date:   Fri, 12 Mar 2021 13:46:42 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-Message-ID: <20210312134642.GF5348@sirena.org.uk>
-References: <20210309144156.18887-1-michael@walle.cc>
- <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
- <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
- <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
- <20210311161558.GG4962@sirena.org.uk>
- <f21b87f1afb3eda54b5f00f2d1c146d3@walle.cc>
- <20210312113544.GB5348@sirena.org.uk>
- <6ed28bb5330879b1919aced5174f319f@walle.cc>
- <20210312120456.GD5348@sirena.org.uk>
- <684332700f8be9f77348a510eb6eba22@walle.cc>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="p8PhoBjPxaQXD0vg"
-Content-Disposition: inline
-In-Reply-To: <684332700f8be9f77348a510eb6eba22@walle.cc>
-X-Cookie: Lake Erie died for your sins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S232109AbhCLOXx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Mar 2021 09:23:53 -0500
+Received: from mail-il1-f177.google.com ([209.85.166.177]:38919 "EHLO
+        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232182AbhCLOXe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 12 Mar 2021 09:23:34 -0500
+Received: by mail-il1-f177.google.com with SMTP id d5so2709781iln.6;
+        Fri, 12 Mar 2021 06:23:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=XxHhsjwJy7g25WZK0LUSCqs3RaOKr506xmdEiRVWi2k=;
+        b=qOsJ5EcJkWeZs/Yxxh+gFrzJ36XPfB/zJefPVOW7TQBDOYW0XvBD62YJz4FcMXaup7
+         wjKIwOBPWHDzcBKyiDWvzL7LbqWMPNLKwmkCCByncjFp6RNqT/pgJGXP3APGexf/UmwK
+         jeBLrZJ8y7qtMdvU1YhISrwtITLgiV2M3ym6NdB8VYVMTeGwf2LO+7ANVK4z17xGmEE5
+         rPOFgAaO9jV6e+ki4yXALvrlbYWC9nnxo8cPUomVw2pzYz7wVVZVafV9/P8NAUEBOiI0
+         R3VEM0fHElNltwsZOq/SwOXSD3DowMmd6mTPeVjnt2SXbwcRclZHkDjESQyPumuHukBj
+         igNQ==
+X-Gm-Message-State: AOAM531X4htN1b2DBFwQPpnMVTaBBO6EUvBGcBwaasXzCsJhYRi2Eze1
+        ygB2zeuYKzKR7yx4UQ3I1NRie/B6UQ==
+X-Google-Smtp-Source: ABdhPJxJpjz2GBDwmGLUkq6ApU5syUA42rdXTaVJFTACslbCnbG7UUeYEm+3qBCpJUXwA+woWTYoXw==
+X-Received: by 2002:a92:194b:: with SMTP id e11mr2925546ilm.184.1615559013695;
+        Fri, 12 Mar 2021 06:23:33 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id 23sm3162088iog.45.2021.03.12.06.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Mar 2021 06:23:32 -0800 (PST)
+Received: (nullmailer pid 2976050 invoked by uid 1000);
+        Fri, 12 Mar 2021 14:23:29 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>, linux-tegra@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?utf-8?b?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20210311231208.18180-4-digetx@gmail.com>
+References: <20210311231208.18180-1-digetx@gmail.com> <20210311231208.18180-4-digetx@gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: power: tegra: Add binding for core power domain
+Date:   Fri, 12 Mar 2021 07:23:29 -0700
+Message-Id: <1615559009.777144.2976049.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, 12 Mar 2021 02:12:05 +0300, Dmitry Osipenko wrote:
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Add binding for the core power domain.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../power/nvidia,tegra20-core-domain.yaml     | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+> 
 
---p8PhoBjPxaQXD0vg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+My bot found errors running 'make dt_binding_check' on your patch:
 
-On Fri, Mar 12, 2021 at 01:30:02PM +0100, Michael Walle wrote:
+yamllint warnings/errors:
 
-> The card calls set_sysclk(), which eventually ends up in the codec.
-> The codec therefore, could figure out if it needs to configure the
-> clock or if it can use its internal FLL.
-> Is that what you mean?
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml: properties:power-supply: '$ref' is not one of ['description', 'deprecated']
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml: ignoring, error in schema: properties: power-supply
+warning: no schema found in file: ./Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
 
-Yes.
+See https://patchwork.ozlabs.org/patch/1451596
 
-> But the set_sysclk() of the codec isn't even called, because the
-> card itself already tries to call clk_set_rate() on the Codec's MCLK,
-> which returns with an error [0].
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-OK, so I think we need to push this down a level so that the clock
-setting is implemented by the core/CODEC rather than by simple-card,
-with the helpers being something the CODEC can opt out of.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---p8PhoBjPxaQXD0vg
-Content-Type: application/pgp-signature; name="signature.asc"
+pip3 install dtschema --upgrade
 
------BEGIN PGP SIGNATURE-----
+Please check and re-submit.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBLcMEACgkQJNaLcl1U
-h9Dpnwf+Ma+xUvei/ETOcavme1+SPoDJipBJaYbklI5qB5IzBS+8YxBxZpncxWkY
-6iuXFmnDpDu8X7u800I+d19Qu/DgQDDdLgq7zPV+NFZKGCscO21J4h3LF3xWk72f
-bV2rNk5tqpGg/gYw/3eyZFr9UubaP63Ubr0iEVtxMe9zEicsmVvwLrhWxgrVsjAw
-HEkX6CWSrVMdgSilAAYIUDb1usJFCd5hcyVr5zP5vOtpOnugFoV9GLd7vuT1otiV
-9LCai/C2xwF+dscvm3PlXi4+acWmS1SorHpaRRZ1w6W8CH1HZp+mWGdfTUDhz+ei
-0k5p1ojMOw4U8Yv+ZpbfnY4fvjxsUw==
-=6MCd
------END PGP SIGNATURE-----
-
---p8PhoBjPxaQXD0vg--
