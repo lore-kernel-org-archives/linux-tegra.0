@@ -2,101 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E95C4332D
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 14:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05433C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA7C464FFD
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 14:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C51F964FF3
+	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 15:56:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232109AbhCLOXx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Mar 2021 09:23:53 -0500
-Received: from mail-il1-f177.google.com ([209.85.166.177]:38919 "EHLO
-        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232182AbhCLOXe (ORCPT
+        id S231597AbhCLP4S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 12 Mar 2021 10:56:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49624 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231907AbhCLP4D (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Mar 2021 09:23:34 -0500
-Received: by mail-il1-f177.google.com with SMTP id d5so2709781iln.6;
-        Fri, 12 Mar 2021 06:23:34 -0800 (PST)
+        Fri, 12 Mar 2021 10:56:03 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B38C061574;
+        Fri, 12 Mar 2021 07:56:03 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id s17so7354945ljc.5;
+        Fri, 12 Mar 2021 07:56:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uz8axRJtNwOGJiSaHqygjzHfEXoywnTTEXk/8QEVZWc=;
+        b=aEk/ptF91oAruIKJCh5kBzObHw8A21+pu5m9So7irpHVhCtzTskmjARilRC8bYCWzo
+         H23ZiWdsa7iQ0D9gXpJ9Zk5iO+ALMlhy5tzcBVABoNID4NDYZH6kVZ3KzScldu36d3fS
+         B49dZb5EMjoRWQvi0JnjaTeKBF8X2CyfkAbkJoqI+xnnsySjWWWt1xi308IiIU1ipgSa
+         ufExRffYHsZxXbJPLY9RrW6tQBOjPKlpwXEDdEbOpP4BpAcp0O/ZlH4/ohREQjrPIvxO
+         JUyatwzzldqu71TeBDPC9rgkpPmYhidxTqTi3uigZGGuTQiffhO83NslnKWLd4qRe8j2
+         RW9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=XxHhsjwJy7g25WZK0LUSCqs3RaOKr506xmdEiRVWi2k=;
-        b=qOsJ5EcJkWeZs/Yxxh+gFrzJ36XPfB/zJefPVOW7TQBDOYW0XvBD62YJz4FcMXaup7
-         wjKIwOBPWHDzcBKyiDWvzL7LbqWMPNLKwmkCCByncjFp6RNqT/pgJGXP3APGexf/UmwK
-         jeBLrZJ8y7qtMdvU1YhISrwtITLgiV2M3ym6NdB8VYVMTeGwf2LO+7ANVK4z17xGmEE5
-         rPOFgAaO9jV6e+ki4yXALvrlbYWC9nnxo8cPUomVw2pzYz7wVVZVafV9/P8NAUEBOiI0
-         R3VEM0fHElNltwsZOq/SwOXSD3DowMmd6mTPeVjnt2SXbwcRclZHkDjESQyPumuHukBj
-         igNQ==
-X-Gm-Message-State: AOAM531X4htN1b2DBFwQPpnMVTaBBO6EUvBGcBwaasXzCsJhYRi2Eze1
-        ygB2zeuYKzKR7yx4UQ3I1NRie/B6UQ==
-X-Google-Smtp-Source: ABdhPJxJpjz2GBDwmGLUkq6ApU5syUA42rdXTaVJFTACslbCnbG7UUeYEm+3qBCpJUXwA+woWTYoXw==
-X-Received: by 2002:a92:194b:: with SMTP id e11mr2925546ilm.184.1615559013695;
-        Fri, 12 Mar 2021 06:23:33 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id 23sm3162088iog.45.2021.03.12.06.23.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uz8axRJtNwOGJiSaHqygjzHfEXoywnTTEXk/8QEVZWc=;
+        b=hQJzpMnxhjvN1sfOSY7DrGSYpYnMrVDogtRb9dJlXXTiVCv79UzF7knGQxJmfM5Z+v
+         11nQp+fnxQjF1r/cXWIA93/iKOp1F/peOzqeNakj4PA6p2D8GLzRW5iZyjGMT9eXBP0c
+         fZSirOHksfzSgmcnk8FB8t8YYKtCXdvwaa8mlAT5lH39jiGzWCCyCS2C1Bt2FnyKuFI0
+         wrbJu7ZASxTXg96ta+Orfw29HVI2bfctC3g5d64UEiO6+UOuEi5NAQizpKjzRaPuAAw0
+         6EaS8J734qlUMPa+Lnv3545Y2TvUxrgPTXM1a0iKamcCs+RUgj2+kmYf3l6dtkELTilT
+         rAzg==
+X-Gm-Message-State: AOAM5302+sVKi2fwOp7BCpqL+Olz6//33AZUfLhLdSa0+vxxkA2haaL6
+        euXMF1W4ULyCxit8MELrcLo5Nm8tBsc=
+X-Google-Smtp-Source: ABdhPJyNqC+zjAUitl09iFh8JuBYf69cws7MGpkC+ezD8XZhsmCo09/B4p/pXb7GbW7EHSEN2ok4Ng==
+X-Received: by 2002:a05:651c:384:: with SMTP id e4mr2690606ljp.500.1615564561904;
+        Fri, 12 Mar 2021 07:56:01 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id u11sm1759224lfg.275.2021.03.12.07.56.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 06:23:32 -0800 (PST)
-Received: (nullmailer pid 2976050 invoked by uid 1000);
-        Fri, 12 Mar 2021 14:23:29 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>, linux-tegra@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?utf-8?b?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20210311231208.18180-4-digetx@gmail.com>
-References: <20210311231208.18180-1-digetx@gmail.com> <20210311231208.18180-4-digetx@gmail.com>
-Subject: Re: [PATCH v3 3/6] dt-bindings: power: tegra: Add binding for core power domain
-Date:   Fri, 12 Mar 2021 07:23:29 -0700
-Message-Id: <1615559009.777144.2976049.nullmailer@robh.at.kernel.org>
+        Fri, 12 Mar 2021 07:56:01 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Will Deacon <will@kernel.org>
+Cc:     iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] iommu/tegra-smmu: Make tegra_smmu_probe_device() to handle all IOMMU phandles
+Date:   Fri, 12 Mar 2021 18:54:39 +0300
+Message-Id: <20210312155439.18477-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 12 Mar 2021 02:12:05 +0300, Dmitry Osipenko wrote:
-> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
-> blocks reside. Add binding for the core power domain.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../power/nvidia,tegra20-core-domain.yaml     | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
-> 
+The tegra_smmu_probe_device() handles only the first IOMMU device-tree
+phandle, skipping the rest. Devices like 3D module on Tegra30 have
+multiple IOMMU phandles, one for each h/w block, and thus, only one
+IOMMU phandle is added to fwspec for the 3D module, breaking GPU.
+Previously this problem was masked by tegra_smmu_attach_dev() which
+didn't use the fwspec, but parsed the DT by itself. The previous commit
+to tegra-smmu driver partially reverted changes that caused problems for
+T124 and now we have tegra_smmu_attach_dev() that uses the fwspec and
+the old-buggy variant of tegra_smmu_probe_device() which skips secondary
+IOMMUs.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Make tegra_smmu_probe_device() not to skip the secondary IOMMUs. This
+fixes a partially attached IOMMU of the 3D module on Tegra30 and now GPU
+works properly once again.
 
-yamllint warnings/errors:
+Fixes: 765a9d1d02b2 ("iommu/tegra-smmu: Fix mc errors on tegra124-nyan")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/iommu/tegra-smmu.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml: properties:power-supply: '$ref' is not one of ['description', 'deprecated']
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml: ignoring, error in schema: properties: power-supply
-warning: no schema found in file: ./Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
-
-See https://patchwork.ozlabs.org/patch/1451596
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 97eb62f667d2..602aab98c079 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -849,12 +849,11 @@ static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
+ 		smmu = tegra_smmu_find(args.np);
+ 		if (smmu) {
+ 			err = tegra_smmu_configure(smmu, dev, &args);
+-			of_node_put(args.np);
+ 
+-			if (err < 0)
++			if (err < 0) {
++				of_node_put(args.np);
+ 				return ERR_PTR(err);
+-
+-			break;
++			}
+ 		}
+ 
+ 		of_node_put(args.np);
+-- 
+2.29.2
 
