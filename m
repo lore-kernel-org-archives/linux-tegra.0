@@ -2,109 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CAEC433E9
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 20:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F18C433E0
+	for <linux-tegra@archiver.kernel.org>; Sat, 13 Mar 2021 22:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAA2164F88
-	for <linux-tegra@archiver.kernel.org>; Fri, 12 Mar 2021 20:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0BAF6146B
+	for <linux-tegra@archiver.kernel.org>; Sat, 13 Mar 2021 22:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234953AbhCLU1J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 12 Mar 2021 15:27:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234902AbhCLU0s (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 12 Mar 2021 15:26:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DDC264F80;
-        Fri, 12 Mar 2021 20:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615580807;
-        bh=fClDrsALBmh9tvjCmxe91v+bcUgFM/0XI3KAbS/DwUk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=J89ia1smuAVNw+Ham5CkN9E+TsyEee/yOZ1YGI/0kD5t+umiwvXDbOczcpWx9C0/b
-         zEk1VqFBCgGswy3Ha0ljx0v+OT1EGCWjYi0eHC4XYyI118UDACzzWSslzUMal1Me9f
-         1Dl6PGJnYInxJrJlRoG3ntlJDHOK+eanNQEVqEuwrbq6dUGfTtmma2tNaaer3536K3
-         8flkresG5nywocNPGAB2CQgypHc3puB9GLaUh6U/uKN6D3+N3CN3axgL7Sems9fio+
-         M3sjUrsObIX1LoxfDOt8qNQ+P6cqtRMvpiLEGMrsRuMT7qsMpJrarOZDJxx1/fXQNG
-         OzaN3x3YXuR2g==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org,
-        linux-tegra@vger.kernel.org,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     linux@deviqon.com, elder@kernel.org, ldewangan@nvidia.com,
-        gregkh@linuxfoundation.org, jonathanh@nvidia.com,
-        vireshk@kernel.org, f.fainelli@gmail.com, johan@kernel.org,
-        thierry.reding@gmail.com
-In-Reply-To: <20210308145502.1075689-1-aardelean@deviqon.com>
-References: <20210308145502.1075689-1-aardelean@deviqon.com>
-Subject: Re: [PATCH 00/10] spi: finalize 'delay_usecs' removal/transition
-Message-Id: <161558072332.11700.3899329199367246111.b4-ty@kernel.org>
-Date:   Fri, 12 Mar 2021 20:25:23 +0000
+        id S233550AbhCMWzB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 13 Mar 2021 17:55:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231205AbhCMWyS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sat, 13 Mar 2021 17:54:18 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B5BC061574;
+        Sat, 13 Mar 2021 14:54:16 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id a22-20020a17090aa516b02900c1215e9b33so12485591pjq.5;
+        Sat, 13 Mar 2021 14:54:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZeQpfKGikM556gB312kKuWrZWMdYA+ch/LZuyQT8OHk=;
+        b=Id27IwZD3Ma6UhBAhLw0/YI2T2aivdYncTisogUPgE8BfvcVqm0Bu1tHUIlkVa65Dd
+         EFbZOcNYK9EA7iVE4NuajCxa18r0Yra2Q6r4ufGugGCbx6AregeCKThvgJUyzM1sSxo3
+         Ean/kUTHHtm5mRmZ4vekDBycT+u3r2Nya2UMgYJWQNnmCbkgwTRFpYqXXu1sW1rsTmb+
+         8Gm983leCcS/FvwiH1coThkX5LLWCiIAGdlDfw46l8w7Pdez9YtCekixZyG4oSI/HqnE
+         zQZDzZb42wQBvSbWoPnlCdOJS0kytfU6plIHZ+R6Y7laK1nUKB3joVZ1C3mhc+bqdVF1
+         CVlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZeQpfKGikM556gB312kKuWrZWMdYA+ch/LZuyQT8OHk=;
+        b=Qxyg+IG90z3VEAV7/UXpl962D0wArVi2Khh3nBTVG9bnjvk0ikO8sA/uPjAE42/RIm
+         jSdZEORCazOkYq3/hIFEQAfWn1hP44YCcemamEHqn7Hpl+cESvAgtUjwjGlyk5M7V+dF
+         Jgxd9uYFJ0hbWxlonft8QExckXlfJGRrlearO18BwBqiMH8UBX2kPISv+wHo7OqA1iNf
+         ura9GaCpjVZwrXVuAYfibOYVgOKUdHcqL/V4LDvRJLW4v4DuxUq/4ERjXaH7F79Zop3B
+         RU0QqYbaOwPPuDhurItI0Tq9/vsyGYPujxWeayW/6Ge+PeeyZON/U57hRZvEcYiY+147
+         DyNw==
+X-Gm-Message-State: AOAM531KmNREhy8oWBcCdEA7J3xBoRU80zJFN6NIq63eagwjU/KlLFVT
+        XxlM0kA8cZPuRo3fjVkzyCejkShfS/YwFA==
+X-Google-Smtp-Source: ABdhPJxR84SoyhWXQcST6ZnPVDKAV8GImHbNh21zVWQYvUvEVGxbpfSU7ZSLBVBEzhDd7SLl2iE2Jg==
+X-Received: by 2002:a17:902:6bca:b029:e2:c5d6:973e with SMTP id m10-20020a1709026bcab02900e2c5d6973emr4890259plt.40.1615676055681;
+        Sat, 13 Mar 2021 14:54:15 -0800 (PST)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id n9sm5865620pjq.38.2021.03.13.14.54.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 13 Mar 2021 14:54:15 -0800 (PST)
+Date:   Sat, 13 Mar 2021 14:52:00 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iommu/tegra-smmu: Make tegra_smmu_probe_device() to
+ handle all IOMMU phandles
+Message-ID: <20210313225159.GA11402@Asurada-Nvidia>
+References: <20210312155439.18477-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210312155439.18477-1-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 8 Mar 2021 16:54:52 +0200, Alexandru Ardelean wrote:
-> A while back I started the introduction of the 'spi_delay' data type:
->   https://lore.kernel.org/linux-spi/20190926105147.7839-1-alexandru.ardelean@analog.com/
+On Fri, Mar 12, 2021 at 06:54:39PM +0300, Dmitry Osipenko wrote:
+> The tegra_smmu_probe_device() handles only the first IOMMU device-tree
+> phandle, skipping the rest. Devices like 3D module on Tegra30 have
+> multiple IOMMU phandles, one for each h/w block, and thus, only one
+> IOMMU phandle is added to fwspec for the 3D module, breaking GPU.
+> Previously this problem was masked by tegra_smmu_attach_dev() which
+> didn't use the fwspec, but parsed the DT by itself. The previous commit
+> to tegra-smmu driver partially reverted changes that caused problems for
+> T124 and now we have tegra_smmu_attach_dev() that uses the fwspec and
+> the old-buggy variant of tegra_smmu_probe_device() which skips secondary
+> IOMMUs.
 > 
-> Users of the 'delay_usecs' were removed from drivers.
+> Make tegra_smmu_probe_device() not to skip the secondary IOMMUs. This
+> fixes a partially attached IOMMU of the 3D module on Tegra30 and now GPU
+> works properly once again.
 > 
-> Now it's time to remove the 'delay_usecs' from the SPI subsystem and use
-> only the 'delay' field.
-> 
-> [...]
+> Fixes: 765a9d1d02b2 ("iommu/tegra-smmu: Fix mc errors on tegra124-nyan")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[01/10] spi: spi-axi-spi-engine: remove usage of delay_usecs
-        commit: 93c941448994a728e691f7dce9ea6475e352b09c
-[02/10] spi: bcm63xx-spi: don't check 'delay_usecs' field
-        commit: e7f2d4c6aacd0a2cded363bb14ef9b6e752798fd
-[03/10] spi: spi-bcm-qspi: replace 'delay_usecs' with 'delay.value' check
-        commit: 66a3aadec42aa001c62ae9a637398d853880a02b
-[04/10] spi: spi-sh: replace 'delay_usecs' with 'delay.value' in pr_debug
-        commit: 506d1a1b441e058e318d8d81141295ff76927367
-[05/10] spi: spi-tegra20-flash: don't check 'delay_usecs' field for spi transfer
-        commit: 7ca660f8212b2fbeb0f3133c3a6fa8805777a877
-[06/10] staging: greybus: spilib: use 'spi_delay_to_ns' for getting xfer delay
-        commit: 33a23423ca0a08b488791fc9d4ca53f4bea4e45b
-[07/10] spi: spi-falcon: remove check for 'delay_usecs'
-        commit: a886010c69718988756fd7873522caa0f26af398
-[08/10] spi: fsl-espi: remove usage of 'delay_usecs' field
-        commit: 55a47532fa4c5dc3291d796dd21cc80034b5d067
-[09/10] spi: core: remove 'delay_usecs' field from spi_transfer
-        commit: 3ab1cce553378fc0df1b1d26d7e23d03bd4dd3b6
-[10/10] spi: docs: update info about 'delay_usecs'
-        commit: 05d8a019eb057d14cdf9483318a7ee8b35a69cda
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
