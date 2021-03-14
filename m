@@ -5,68 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258E3C433E0
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Mar 2021 20:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5930AC433E0
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Mar 2021 20:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E84E964EBE
-	for <linux-tegra@archiver.kernel.org>; Sun, 14 Mar 2021 20:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32D7564E51
+	for <linux-tegra@archiver.kernel.org>; Sun, 14 Mar 2021 20:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234368AbhCNUkc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Mar 2021 16:40:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47924 "EHLO
+        id S233806AbhCNUns (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 14 Mar 2021 16:43:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234457AbhCNUkX (ORCPT
+        with ESMTP id S233634AbhCNUnh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Mar 2021 16:40:23 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D0FBC061574;
-        Sun, 14 Mar 2021 13:40:22 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id p21so53647047lfu.11;
-        Sun, 14 Mar 2021 13:40:22 -0700 (PDT)
+        Sun, 14 Mar 2021 16:43:37 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D73C061574
+        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 13:43:36 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id e7so53785532lft.2
+        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 13:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=p3Ve5P7His6tFAFGdWedVz7byNJj6EBf6mlbKtAtnUI=;
-        b=RrLK+pS4pCc6LbQFW58+72pzy5IPSj65N8WnfjKVcnez8UehQRWvyLnGarCmcPiryq
-         CcwdtYl2MIjKB4/otAv755rLzEWjlO7i7Gv1yerFMCZOKpoz/Q1ZOCbuo2lua57+dkXn
-         ZUD4/C/S9sFF5erqWNAvmoZcsMmzSe7SV1YJzOXkUjd4/uZ2IjxIBJnTDLEYzsPgq/m2
-         ppR9riCmaXCuQYiIFhgCkSvresezgIG/KxAqxAOA5VJhJk8ZdMtzm0QaEutCXHONnhfS
-         rDmedU4KMgOOLj491dIWBGrhEqUKF4mxnCbTx/NAKoDn9KVYYGbs+eDp2+67ow7SoH0R
-         v7HA==
+        bh=8Ctqx999c7Wo5eqbQNlgMEem8uToy6UzHW11+ccWT80=;
+        b=VvC6GNfOBC9bnBMl2B3lSvLlOiuSbJpYGZg6/fBddK7wARVtmWmWe1SJCILyfnXZws
+         o9qcthjGNl0CmThCBHAx2dPNij6+DZ9vH2CaoL/UJQKhOKSSYYTuSZ1sOxtVOrKNzMkh
+         SXPccpZGUwvZdnO1ylv1+j8MIQOTks3U1ToGLHRUZ+WcHBVccv/m3fdqatc8Ev3ZD0+j
+         mXDut2QCdVo/7fqVAWh0Pmd7unMkMV39NODEjFPyc0Wq7M7flexh+Zan5MBF8zBHGFqy
+         6Tox/J94LbEeyG0vd8DujbVHfTyEL33Y3ydQ41UIOmS7jDV3DFvMFL7e33IkXGdOnY9H
+         0IJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=p3Ve5P7His6tFAFGdWedVz7byNJj6EBf6mlbKtAtnUI=;
-        b=FKfcDWZFDaHQhJoVIIT1f///xmnWAF8qjYMOJ1ZHYY8vmfoJd/2PJSd8O4a+eF6xCH
-         +QFouhIQxEcKCx0WH07hXLG1B2B5Sh46sKQcOy08qYfcgO09+TPbfOzclUl1nnOh8mzt
-         oobP1EWg7VU/OuHwuOQVEbicl5V5WaNVwJmtt5tHLuh/StBHcJ2g+g0k39mHO91Egd7G
-         iURFXaAX9cH2McTC24wqbHQAPtd7N4MjrWhkLxElgN7VTV29AxMm8lOayfjDvMxzdirs
-         aEHMsqXWRp+ocUonwwV2Of/UCajV14CHCEdZhJ++qPTAQ54r4heAG/QWyH08NJBWdovR
-         kxJg==
-X-Gm-Message-State: AOAM531Oyj+J23wCZJglQkbBC086qNf17tjSylk6O85YqmGzkuWBTw7c
-        a/CRGWTNqIFCyBehGg/F/EY=
-X-Google-Smtp-Source: ABdhPJxh5LbE4I61veSrydCBa++Isb9y5JkNPNV9Q6iuDDhvUcbS54lYlK3r9auTzxKU+DsIqwfB/A==
-X-Received: by 2002:a05:6512:388f:: with SMTP id n15mr5998055lft.8.1615754421197;
-        Sun, 14 Mar 2021 13:40:21 -0700 (PDT)
+        bh=8Ctqx999c7Wo5eqbQNlgMEem8uToy6UzHW11+ccWT80=;
+        b=V7kjRRPW4LBg6DK0LFTbWSJKfTF253uWtF2hpRuMLGGgRZWS6/AvvRztAfPrO1tgFf
+         y2BesgBokO8pCZMZpg4FKdzXxJqGbdDTTHcpk+/F9FlvWXDk2U+Q5gzc3u5RK80+piPg
+         /t/HPKUWi9Magl16GFtUlFPX49spXMRvieXuKuDJh2OA3WGZrZoOspg+BkDiH1qyyHiW
+         LffTZxZdXXA8PRv8UP4OXu+imIQ72Hdm9zztkdC4dL2nO11wxNw1KgUyN3hdgodeiw5H
+         +F42GzXn9ZJ6WR8rF/V02CG6qz484sOvIAO2TTC2Xo27VxYiiKuoSQbVihmKxZXbo/JL
+         LZIQ==
+X-Gm-Message-State: AOAM532Xf3DdTxIZuoFcEWXHpCnzEdEFovNxF2w1fyLNHDvA3507a6s0
+        5BURROnViWDTYcxzZhE2IcaZW0b9hMs=
+X-Google-Smtp-Source: ABdhPJwG3bsT9cAuukhN80RhHx5Cixj+uv/rapZtn+2AynFR5Xx6aA17GDDgyTzWSKprQ0E5DyEchg==
+X-Received: by 2002:a19:f001:: with SMTP id p1mr6229440lfc.447.1615754614533;
+        Sun, 14 Mar 2021 13:43:34 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id q16sm2438593lfm.35.2021.03.14.13.40.20
+        by smtp.gmail.com with ESMTPSA id c19sm2622319ljk.60.2021.03.14.13.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Mar 2021 13:40:20 -0700 (PDT)
+        Sun, 14 Mar 2021 13:43:34 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] usb: chipidea: tegra: Silence deferred probe error
-Date:   Sun, 14 Mar 2021 23:39:27 +0300
-Message-Id: <20210314203927.2572-1-digetx@gmail.com>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1] drm/tegra: Use dev_err_probe()
+Date:   Sun, 14 Mar 2021 23:43:11 +0300
+Message-Id: <20210314204311.10572-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,33 +71,97 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Silence deferred probe error caused by the PHY driver which is probed
-later than the ChipIdea driver.
+Use generic dev_err_probe() helper which silences noisy error messages
+about deferred probe of the Tegra DRM drivers.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/chipidea/ci_hdrc_tegra.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/tegra/dc.c   | 13 +++----------
+ drivers/gpu/drm/tegra/hdmi.c | 34 +++++++++-------------------------
+ 2 files changed, 12 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 90f2a8b786be..60361141ac04 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -285,11 +285,9 @@ static int tegra_usb_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 0ae3a025efe9..ff7968200d4e 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2589,16 +2589,9 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return -ENXIO;
  
- 	usb->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
--	if (IS_ERR(usb->phy)) {
--		err = PTR_ERR(usb->phy);
--		dev_err(&pdev->dev, "failed to get PHY: %d\n", err);
+ 	err = tegra_dc_rgb_probe(dc);
+-	if (err < 0 && err != -ENODEV) {
+-		const char *level = KERN_ERR;
+-
+-		if (err == -EPROBE_DEFER)
+-			level = KERN_DEBUG;
+-
+-		dev_printk(level, dc->dev, "failed to probe RGB output: %d\n",
+-			   err);
 -		return err;
 -	}
-+	if (IS_ERR(usb->phy))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(usb->phy),
-+				     "failed to get PHY\n");
++	if (err < 0 && err != -ENODEV)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to probe RGB output\n");
  
- 	usb->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(usb->clk)) {
+ 	platform_set_drvdata(pdev, dc);
+ 	pm_runtime_enable(&pdev->dev);
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index e5d2a4026028..f5abb73d20ad 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1635,7 +1635,6 @@ static irqreturn_t tegra_hdmi_irq(int irq, void *data)
+ 
+ static int tegra_hdmi_probe(struct platform_device *pdev)
+ {
+-	const char *level = KERN_ERR;
+ 	struct tegra_hdmi *hdmi;
+ 	struct resource *regs;
+ 	int err;
+@@ -1675,36 +1674,21 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 
+ 	hdmi->hdmi = devm_regulator_get(&pdev->dev, "hdmi");
+ 	err = PTR_ERR_OR_ZERO(hdmi->hdmi);
+-	if (err) {
+-		if (err == -EPROBE_DEFER)
+-			level = KERN_DEBUG;
+-
+-		dev_printk(level, &pdev->dev,
+-			   "failed to get HDMI regulator: %d\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to get HDMI regulator\n");
+ 
+ 	hdmi->pll = devm_regulator_get(&pdev->dev, "pll");
+ 	err = PTR_ERR_OR_ZERO(hdmi->pll);
+-	if (err) {
+-		if (err == -EPROBE_DEFER)
+-			level = KERN_DEBUG;
+-
+-		dev_printk(level, &pdev->dev,
+-			   "failed to get PLL regulator: %d\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to get PLL regulator\n");
+ 
+ 	hdmi->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 	err = PTR_ERR_OR_ZERO(hdmi->vdd);
+-	if (err) {
+-		if (err == -EPROBE_DEFER)
+-			level = KERN_DEBUG;
+-
+-		dev_printk(level, &pdev->dev,
+-			   "failed to get VDD regulator: %d\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to get VDD regulator\n");
+ 
+ 	hdmi->output.dev = &pdev->dev;
+ 
 -- 
 2.30.2
 
