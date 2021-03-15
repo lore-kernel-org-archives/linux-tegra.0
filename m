@@ -2,121 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BFAC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270D9C433E6
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 12:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCBE64E45
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D854864EE1
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 12:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbhCOEG4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Mar 2021 00:06:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58230 "EHLO
+        id S230074AbhCOMFw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Mar 2021 08:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbhCOEGp (ORCPT
+        with ESMTP id S230266AbhCOMFe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Mar 2021 00:06:45 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC1AC061574
-        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id o3so1091188pfh.11
-        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
-        b=TsLroBKaOE0Ndal3uYSavlIbCvocBVruTCmOQbtWNCTqZn34fuCTFqFvPlo8zLD9fM
-         IO6v4CAcDC/jXHA7xn0roPtBnzHafVGRYUD8lfwBtTMxKxCleNiFo9fJ8rFHjAAcLLRG
-         n0IBxgxySYh/5P9qNs36aern3PGV0Kb7uyoKAm7WyekwifeK1ct2o4JPyQ1IQo4HlwZ+
-         40l1RBYIIqEDnveIIc7V/s/pxU7Eti6u2Sl5TecW4wLjWWQTpWhk9UCZrL8vgho1h49/
-         F2BmsDsOvuWGdJf6nM5P+UwNGUZyT5QM3C9s++AMz77q/FQEl28vDvRZAA/JnZ/kvkbJ
-         LAKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
-        b=ula527qOVkQdE//OY4IQBxiS/P/OP7qLX/N6lgKzwC7LF5cp8Wq6GFP6m+rjlT7boF
-         gqSIZ08WO55KLcO7Nk2TiVhqWY3jpg1wRa/qyWp+xnxe1663i4ddQiVwT+rysqS6/xfp
-         fxbzxK4x7ETIumavD3eDZEJRNIEuN+nXC9qdVvURaAUbPrblbpI2JwdfsMT0jPjo6Vm3
-         oT8USwjPYBX3dMhYYrxLwVCJTvR8UGO5j9oOPwsPeI4XRbhicJdRDZ82WZQ8Sz/u1oQg
-         t13zsriVAQ2qC6s4qYOeU+wNLIKTC2cYsE2CLVw19UYx8bUbRSegGnQF+kSA2wCAd08O
-         I8pg==
-X-Gm-Message-State: AOAM5311HF6/gMr6vTYikxjxdW9SkaTGKj4RtsQSThodo9o+Y6+yjmaC
-        dYKyF+Jo2fAu3oqe3yDytuRqew==
-X-Google-Smtp-Source: ABdhPJzvcR9VDnxHyvgDVLMJYlxMP0Ms95A2JMyXTXyYfG5+umOTG/XVCk6roapJ92EyCnrv/2+ArQ==
-X-Received: by 2002:a63:1957:: with SMTP id 23mr3255166pgz.196.1615781204730;
-        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
-Received: from localhost ([122.171.124.15])
-        by smtp.gmail.com with ESMTPSA id l20sm12327033pfd.82.2021.03.14.21.06.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
-Date:   Mon, 15 Mar 2021 09:36:42 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 00/15] Introduce devm_pm_opp_* API
-Message-ID: <20210315040642.mw6jz7nalhthbwlr@vireshk-i7>
-References: <20210314163408.22292-1-digetx@gmail.com>
+        Mon, 15 Mar 2021 08:05:34 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E919C061574;
+        Mon, 15 Mar 2021 05:05:34 -0700 (PDT)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 574BC22172;
+        Mon, 15 Mar 2021 13:05:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1615809930;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=56lCTBoJc0zn0J8RcUtKReFHALPDLgWyoBcvGIIJrSo=;
+        b=BszTYF2fRmRNnTp2xegfjD1M2aL7Lv/SCZp2gUsxRz9qL408p1dFznBJQRUXFOa+pcOgLM
+        Bb3m8lvAeQkYYDvmlC6pzSOI5Sh6XWmUUH2lVRJGgiaPIK+qi8MJqFtiarVOojGSsRK9FE
+        IJQFg0/hF+UbpkNIqCjKlQSBGwk1w+s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210314163408.22292-1-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 15 Mar 2021 13:05:30 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Mark Brown <broonie@kernel.org>, Sameer Pujar <spujar@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        jonathanh@nvidia.com, kuninori.morimoto.gx@renesas.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        robh@kernel.org, sharadg@nvidia.com, thierry.reding@gmail.com
+Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
+In-Reply-To: <20210312134642.GF5348@sirena.org.uk>
+References: <20210309144156.18887-1-michael@walle.cc>
+ <e8b80188-978c-29fa-b5d4-9788a9f2282f@nvidia.com>
+ <611ed3362dee3b3b7c7a80edfe763fd0@walle.cc>
+ <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
+ <20210311161558.GG4962@sirena.org.uk>
+ <f21b87f1afb3eda54b5f00f2d1c146d3@walle.cc>
+ <20210312113544.GB5348@sirena.org.uk>
+ <6ed28bb5330879b1919aced5174f319f@walle.cc>
+ <20210312120456.GD5348@sirena.org.uk>
+ <684332700f8be9f77348a510eb6eba22@walle.cc>
+ <20210312134642.GF5348@sirena.org.uk>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <8cdf1cfa971945792b509a687a4de735@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 14-03-21, 19:33, Dmitry Osipenko wrote:
-> This series adds resource-managed OPP API helpers and makes drivers
-> to use them.
+Am 2021-03-12 14:46, schrieb Mark Brown:
+> On Fri, Mar 12, 2021 at 01:30:02PM +0100, Michael Walle wrote:
 > 
-> Changelog:
+>> The card calls set_sysclk(), which eventually ends up in the codec.
+>> The codec therefore, could figure out if it needs to configure the
+>> clock or if it can use its internal FLL.
+>> Is that what you mean?
 > 
-> v3: - Dropped dev_pm_opp_register_notifier().
+> Yes.
 > 
->     - Changed return type of the devm helpers from opp_table pointer
->       to errno.
+>> But the set_sysclk() of the codec isn't even called, because the
+>> card itself already tries to call clk_set_rate() on the Codec's MCLK,
+>> which returns with an error [0].
 > 
->     - Corrected drm/msm patch which missed to remove opp_put_supported_hw()
->       from a6xx_gpu. Note that the a5xx_gpu driver was missing the
->       opp_put_supported_hw() at all.
-> 
->     - Corrected spelling of the ack from Mark Brown.
+> OK, so I think we need to push this down a level so that the clock
+> setting is implemented by the core/CODEC rather than by simple-card,
+> with the helpers being something the CODEC can opt out of.
 
-Applied all patches except 11/15.
+Sameer, it looks like the proper fix should be to add the clock
+support to your codec.
 
-Thanks.
+I've also looked at other users of "simple-audio-card" and
+it looks like they will break too. For example,
+- arch/arm64/boot/dts/rockchip/rk3399.dtsi
+     If I'm not mistaken, this will try to set the first clock
+     of hdmi@ff940000 there, which is "iahb".
+- arch/arm/boot/dts/sun8i-a33.dtsi
+     There "&ccu CLK_BUS_CODEC" of codec@1c22e00 will be changed
 
--- 
-viresh
+And it doesn't stop there, it also sets the first clock
+of the CPU endpoint, which I guess just works because .set_rate
+is a noop for the most clocks which are used there.
+
+-michael
