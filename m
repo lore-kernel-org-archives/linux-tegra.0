@@ -2,117 +2,89 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D9EC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 15:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C61C433E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E72F164EBD
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 15:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9955264EE9
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 15:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbhCOPku (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:40:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229878AbhCOPkk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 15 Mar 2021 11:40:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C873D64E83;
-        Mon, 15 Mar 2021 15:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615822840;
-        bh=MS5Knu7+w8zdHfWpQWdZkvJd0j/NrYsIJsEVkwhZVDQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e64CxbdGXxbBfrxyhDLcr7WRIhiuR0a+/AVwYupgntpowlAHQLiRpuTzJvJ5dImec
-         FyCjaw9bWiJ1XmtwLNXIw5yM8LX2t/xrGBVxJaoTZiBd0vy9k6sxpoQMoWbEwDFlEp
-         YfpIK5M7p+80lajKUg7sIvMt8pLuctDMypsMMkDyxJVwlrm7ZQ+z9Z62+FSdvMgu1R
-         5OJ3C0WeMrUJq/xrsEEuP6OCFSzWbu06Bn1aFETfDmMJ3JWGmfDekIJzrU5Vbpz/Ga
-         sTZa7s81g4I78AHRLUPunzc5wBHPH5tNAyKtHkvhNLJ+6/Bpgp4Pf1N7HaIFK3xi8l
-         dfwkaAmGrA1aw==
-Date:   Mon, 15 Mar 2021 15:39:25 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     Michael Walle <michael@walle.cc>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jonathanh@nvidia.com,
-        kuninori.morimoto.gx@renesas.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, robh@kernel.org, sharadg@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH 1/3] ASoC: simple-card-utils: Fix device module clock
-Message-ID: <20210315153925.GC4595@sirena.org.uk>
-References: <ca540fb6-2ea7-90b0-66ad-097e99b6e585@nvidia.com>
- <20210311161558.GG4962@sirena.org.uk>
- <f21b87f1afb3eda54b5f00f2d1c146d3@walle.cc>
- <20210312113544.GB5348@sirena.org.uk>
- <6ed28bb5330879b1919aced5174f319f@walle.cc>
- <20210312120456.GD5348@sirena.org.uk>
- <684332700f8be9f77348a510eb6eba22@walle.cc>
- <20210312134642.GF5348@sirena.org.uk>
- <8cdf1cfa971945792b509a687a4de735@walle.cc>
- <6af6439c-bdb8-cd0f-635d-069040ba5b65@nvidia.com>
+        id S230469AbhCOPxi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Mar 2021 11:53:38 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:40935 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230002AbhCOPxN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 15 Mar 2021 11:53:13 -0400
+Received: by mail-io1-f50.google.com with SMTP id m7so14831831iow.7;
+        Mon, 15 Mar 2021 08:53:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qUzbYoLRVLqBw5frbABFgMY67VGZ4J3muyE0zF2BAGI=;
+        b=S/bBDas3d+hlT942LkrOxJWmd1Sc1O5jLyVag4DBn/7xcABpGcLr2matbWEZ7c4zZ6
+         lq9319jLvrImE94ljLIDBLDRZomJC+b1BvFNJm9l8vx4ofU/QegW1ruM5qKb25lU7gFt
+         7qcs06QboRHqjesSfyTIs1XPbAPh1KfrSEDDf7eiSO4JUmopPY/QS+5gBa6jQTURNIDv
+         gd1R8/AmI/2IKWvDUQg2FejhkVFR9sFBGJjbH9RPKaBH0HqsVlRNJGL4+bW7ULi1TGG0
+         w3yW8DlH0D+m/AoCbfGTIgsFRe4ohd1+ivM5HlO44+V9EU6KHYdKTEH9ZKhlNQDhiflk
+         dsnw==
+X-Gm-Message-State: AOAM532aJNU+z3IF8IX2KGEpgPdoWAQqooonnyK33XpZMyvSSQuB21yy
+        lrAdUgs3i3GLHBbfQ2uE3w==
+X-Google-Smtp-Source: ABdhPJwBn8VhCV20lHqxJ2qfBas4ppj+UCeNwTs+/nl+6LEfMl8M7thRj1+mRM9aQeucmUoE1/5tDw==
+X-Received: by 2002:a6b:ed08:: with SMTP id n8mr143877iog.197.1615823592800;
+        Mon, 15 Mar 2021 08:53:12 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id m4sm3399641ilf.80.2021.03.15.08.53.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 08:53:12 -0700 (PDT)
+Received: (nullmailer pid 932438 invoked by uid 1000);
+        Mon, 15 Mar 2021 15:53:10 -0000
+Date:   Mon, 15 Mar 2021 09:53:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 7/7] dt-bindings: clock: tegra: Convert to schema
+Message-ID: <20210315155310.GA926230@robh.at.kernel.org>
+References: <20210312163632.8861-1-digetx@gmail.com>
+ <20210312163632.8861-8-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6af6439c-bdb8-cd0f-635d-069040ba5b65@nvidia.com>
-X-Cookie: Close cover before striking.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210312163632.8861-8-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Fri, Mar 12, 2021 at 07:36:32PM +0300, Dmitry Osipenko wrote:
+> Convert NVIDIA Tegra clock bindings to schema.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/clock/nvidia,tegra-car.yaml      | 118 ++++++++++++++++++
+>  .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
+>  .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
 
---uXxzq0nDebZQVNAZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Seems like this one is a bit different and should remain a separate 
+binding?
 
-On Mon, Mar 15, 2021 at 08:49:00PM +0530, Sameer Pujar wrote:
-> On 3/15/2021 5:35 PM, Michael Walle wrote:
-> > Am 2021-03-12 14:46, schrieb Mark Brown:
-
-> > Sameer, it looks like the proper fix should be to add the clock
-> > support to your codec.
-
-> I agree that complicated clock relationships should be handled within the
-> codec itself, however MCLK rate setting depends on "mclk-fs" factor and this
-> property is specified as part of simple-card/audio-graph-card codec subnode.
-> Right now codec, in general, does not have a way to know this. The
-> set_sysclk() callback takes rate argument and not the factor. Moreover the
-
-I just don't understand what you're saying here at all.  At the point
-where the card is setting the clock API clock rate it can just as well
-set a sysclk, these are equivalent operations.
-
-> same codec is used by other platform vendors too and unless a new DT
-> property is added for codec, runtime MCLK update based on the scaling factor
-> cannot be supported. This would mean that we will be having two methods to
-> specify "mclk-fs" factor, one from simple-card/audio-graph-card and one from
-> respective codec nodes, which does not seem ideal.
-
-Again I just can't follow what you're saying here at all.  Again, if the
-card is able to set a clock API clock rate it can just as well set a
-clock rate via sysclk.
-
-> Yes this is a problem, unfortunately I missed checking some of the
-> simple-card examples. I wonder we should be specifically looking for "mclk"
-> clock here.
-
-That would definitely help mitigate the problem but I really think it's
-cleaner and safer to just push this down to set_sysclk().
-
---uXxzq0nDebZQVNAZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBPf6wACgkQJNaLcl1U
-h9Anfwf+NP6HDFtTMIGn540KNLqeTA05Iyt+oW7RwSiBDgEcmupxmx+Zg3B5DtBv
-91x/ITUTS+eelZ+Vt2drZY36xNxgj1rY5Zp0P4iI0+dsUabcPlueyYy34Rt8kjip
-jyNpLbAJb4RjpfEVssyo2UGKRdon7YwHbz+zgBQt6dxUAumaQa9HrsNDZhxQxe/A
-KAeErTEhg62Z9lazAxPupmgLZyGwa4E6z80yb4t6snS182xNsGGz1iwV0F+9Ccr6
-Rw3bR3UXovnJXjv7sDgJGBL7MQ/W0TAs3wmbnkAYtQ2Px/WQgvvxPHgGN0cWebKE
-xGoRNVLAazs4y/mJB7875+CfQ1plPA==
-=Fwtg
------END PGP SIGNATURE-----
-
---uXxzq0nDebZQVNAZ--
+>  .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
+>  .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
+>  .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
+>  6 files changed, 118 insertions(+), 352 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra-car.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
