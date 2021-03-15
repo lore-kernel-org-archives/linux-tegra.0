@@ -2,395 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B5DC433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 03:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21BEC433E9
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 04:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1068564E64
-	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 03:38:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8075A64E69
+	for <linux-tegra@archiver.kernel.org>; Mon, 15 Mar 2021 04:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbhCODhy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 14 Mar 2021 23:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        id S229742AbhCOEEI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 15 Mar 2021 00:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbhCODhY (ORCPT
+        with ESMTP id S229741AbhCOEDm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 14 Mar 2021 23:37:24 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4720EC061574;
-        Sun, 14 Mar 2021 20:37:24 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id q5so7002399pgk.5;
-        Sun, 14 Mar 2021 20:37:24 -0700 (PDT)
+        Mon, 15 Mar 2021 00:03:42 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0F3C06175F
+        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id c16so14650640ply.0
+        for <linux-tegra@vger.kernel.org>; Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=9VbVR1tgqO4q43fStNQDmGv4+w8fB2LMgAvfOmikYmY=;
-        b=CB4DN2Hg92EGaRpIh043JQO1amtrQnlPL8zRwxSzI/z7+5IEQ+RNOTu65F/Leo2NDt
-         WtHO8RvGv9QDjubSyXJIYgg1FxABqnZI6PIPQ5VN5gmhhXqMB66bBu/cYCfRG6m2eiIC
-         h4DO3j7n8FRNZmO6nvLvKQHc3eJflLjwuIEz4t0EOMQlm4xv0uQox2Tk+NDUPpDGHMMb
-         dCZ6cC+arry24/QatGI+SfuYHeqlLTqHygUpu6ZW88Y62Jg2cjqFMFTNJf/rP7rNpIA1
-         IYyaGPTsht5372I/b+eBIgzwY2skmtTHbO+M73uSltwAJYqzx0ga7sBVtxxwF2U21/gx
-         Ge9Q==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c7OJnHCRmwFk8fofgO7P2TCmA9anENj2NKzvbROCVrw=;
+        b=hqFTPqznnNTRx313WjH/Y3rQxyT1qRk2tsjcNVxk6Hrjol4OfsLVJAACk5S5GCeBIN
+         DUPZ/2/BGxScEjnruZkDvsVu7pnsFXZ7N4zstn9qEl8Fgh/HQaGB5JV/pkl9Br3HoCOi
+         i64U4nBnHPt+1Xi5F2gQwMxITwYJMb1Um+iYOQ6ojSR1WU9DezeWcNfnJiJ8w11ERSEr
+         UChVNzm6vqvXvOO1iZ7xVRBakAg/WIocWyURqM6EHJjAujbHTyE6NgBKuUb+t/F7avLm
+         rWQq2i6tEhG/s1AIiG+/WUpZhYbj36Vuiav5Pq8c+WaDHPXcR8LK3WT+pRJ2r6gMw6bd
+         ep6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9VbVR1tgqO4q43fStNQDmGv4+w8fB2LMgAvfOmikYmY=;
-        b=XSFNsW7zEJyR3ilRBl1GfQ+DoQ51nPvr2CZpmtPDqOfi2lFGY9jivNoGepDEWClXV0
-         88UePEY6JAmom2FZ7DCI8ygb9QFO+JKf144kNjAlGSeM71weJOym97/hGQP/rq8iQSWr
-         QDBAqEZh8ZH6uvJUCoXVoa5E2039Fdn1XKm658Slb3awsSagXkEj1oob4Bi2kEhzG2za
-         Z068vKTcC7a4dW5kRus2c42MkvX+LrLaLGPJFBfR4RYy/46K63+Z1kgPJs9LO6VZINqI
-         Ddd4TlPow6bZfSQS+ZJwzYZ8xBPTWewB1olNIgmfszb6UY3vv8E4+nrZnjQgUslFHYDV
-         TWJw==
-X-Gm-Message-State: AOAM530Fl7SOOb9R/YOJhY/uS0maNbM5f6jHfkNjszk/zSJpclfkit9L
-        YdvanG0zXdTXD4ZJrr8idTY=
-X-Google-Smtp-Source: ABdhPJy7Lqe4xJuWq7AgsmyIH4G32hlZ6e8mCxTLly0ZySOVFobaFq2YCl4IcL8ODIMcvKK4iwGkJQ==
-X-Received: by 2002:a05:6a00:1507:b029:1e4:d81:5586 with SMTP id q7-20020a056a001507b02901e40d815586mr8664107pfu.53.1615779443619;
-        Sun, 14 Mar 2021 20:37:23 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id y24sm11633514pfn.213.2021.03.14.20.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Mar 2021 20:37:23 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     joro@8bytes.org, thierry.reding@gmail.com, will@kernel.org,
-        digetx@gmail.com
-Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4] iommu/tegra-smmu: Add pagetable mappings to debugfs
-Date:   Sun, 14 Mar 2021 20:35:04 -0700
-Message-Id: <20210315033504.23937-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c7OJnHCRmwFk8fofgO7P2TCmA9anENj2NKzvbROCVrw=;
+        b=OrgtwTl3N8AiUlptjT5upbrSiuSwlrNt1AMEtEYcqfHubf9vQxPngHr3XaTLOfNcGu
+         cSMUbU5zGu8n1KquhY/WxYNXRbyvb5hJK0tTJs6fTi8jJAWNy1TRwNX48D0Pt127Y6g9
+         VPJcNd/MUX3P0tbeWLw/EcqnrdZagWU9iqSsHYhFTcoQevj29XJS3I5eXea2DAj7jnc/
+         Pp0+pPhqnp4RYX1KY6wT4FHISn78YJI7mgIhxsVHMGWyYdlIe0gFqlp/c9ETdo1m2WX4
+         +GCo6rP/jYtwbFK0G189pEXgQv6NBJpYZaK2smey3/obhVXcjiXbBssys+T4kTMdm5vU
+         RSjQ==
+X-Gm-Message-State: AOAM533j2B6QJNBJznrOij4YB5BoLptEjWazAYv34tnIrf2cAqpcg0qI
+        yuWjR/dkxdSZsubkI3W8mY+seg==
+X-Google-Smtp-Source: ABdhPJxRDau7gIDAmMsnWR7FCOk4vgRj39P8KqGrKbOykRijnyhWvAXlMXcpaXxZjPuzVl/GOTJ9CQ==
+X-Received: by 2002:a17:902:7889:b029:e6:b9c3:bc0d with SMTP id q9-20020a1709027889b02900e6b9c3bc0dmr5992pll.23.1615781010271;
+        Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
+Received: from localhost ([122.171.124.15])
+        by smtp.gmail.com with ESMTPSA id r23sm9182422pje.38.2021.03.14.21.03.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 14 Mar 2021 21:03:29 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 09:33:27 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 11/15] drm/msm: Convert to use resource-managed OPP API
+Message-ID: <20210315040327.qwn4rt75yqs5datl@vireshk-i7>
+References: <20210314163408.22292-1-digetx@gmail.com>
+ <20210314163408.22292-12-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210314163408.22292-12-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This patch dumps all active mapping entries from pagetable
-to a debugfs directory named "mappings".
+On 14-03-21, 19:34, Dmitry Osipenko wrote:
+> From: Yangtao Li <tiny.windzz@gmail.com>
+> 
+> Use resource-managed OPP API to simplify code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  2 +-
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   |  2 +-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c   | 11 +++------
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h   |  2 --
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 23 +++++++------------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h |  2 --
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c        | 30 +++++--------------------
+>  drivers/gpu/drm/msm/dp/dp_ctrl.h        |  1 -
+>  drivers/gpu/drm/msm/dp/dp_display.c     |  5 +----
+>  drivers/gpu/drm/msm/dsi/dsi_host.c      | 13 ++++-------
+>  11 files changed, 25 insertions(+), 68 deletions(-)
 
-Ataching an example:
+This patch has some updates in linux-next, which I don't have. Please
+get this merged with the drm tree over 5.13-rc1 later.
 
-SWGROUP: hc
-ASID: 0
-reg: 0x250
-PTB_ASID: 0xe0080004
-as->pd_dma: 0x80004000
-{
-        [1023] 0xf008000b (1)
-        {
-                PTE RANGE      | ATTR | PHYS               | IOVA               | SIZE
-                [#1023, #1023] | 0x5  | 0x0000000111a8d000 | 0x00000000fffff000 | 0x1000
-        }
-}
-Total PDE count: 1
-Total PTE count: 1
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
-
-Changelog
-v4:
- * Changed %d to %u for unsigned variables
- * Fixed print format mismatch warnings on ARM32
-v3: https://lkml.org/lkml/2021/3/14/30
- * Fixed PHYS and IOVA print formats
- * Changed variables to unsigned int type
- * Changed the table outputs to be compact
-v2: https://lkml.org/lkml/2021/3/9/1382
- * Expanded mutex range to the entire function
- * Added as->lock to protect pagetable walkthrough
- * Replaced devm_kzalloc with devm_kcalloc for group_debug
- * Added "PTE RANGE" and "SIZE" columns to group contiguous mappings
- * Dropped as->count check; added WARN_ON when as->count mismatches pd[pd_index]
-v1: https://lkml.org/lkml/2020/9/26/70
-
- drivers/iommu/tegra-smmu.c | 180 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 175 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 97eb62f667d2..87e0dd3d2abf 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -19,6 +19,11 @@
- #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
- 
-+struct tegra_smmu_group_debug {
-+	const struct tegra_smmu_swgroup *group;
-+	void *priv;
-+};
-+
- struct tegra_smmu_group {
- 	struct list_head list;
- 	struct tegra_smmu *smmu;
-@@ -47,6 +52,8 @@ struct tegra_smmu {
- 	struct dentry *debugfs;
- 
- 	struct iommu_device iommu;	/* IOMMU Core code handle */
-+
-+	struct tegra_smmu_group_debug *group_debug;
- };
- 
- struct tegra_smmu_as {
-@@ -152,6 +159,9 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
- 
- #define SMMU_PDE_ATTR		(SMMU_PDE_READABLE | SMMU_PDE_WRITABLE | \
- 				 SMMU_PDE_NONSECURE)
-+#define SMMU_PTE_ATTR		(SMMU_PTE_READABLE | SMMU_PTE_WRITABLE | \
-+				 SMMU_PTE_NONSECURE)
-+#define SMMU_PTE_ATTR_SHIFT	(29)
- 
- static unsigned int iova_pd_index(unsigned long iova)
- {
-@@ -163,6 +173,12 @@ static unsigned int iova_pt_index(unsigned long iova)
- 	return (iova >> SMMU_PTE_SHIFT) & (SMMU_NUM_PTE - 1);
- }
- 
-+static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
-+{
-+	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
-+	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
-+}
-+
- static bool smmu_dma_addr_valid(struct tegra_smmu *smmu, dma_addr_t addr)
- {
- 	addr >>= 12;
-@@ -334,7 +350,7 @@ static void tegra_smmu_domain_free(struct iommu_domain *domain)
- }
- 
- static const struct tegra_smmu_swgroup *
--tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
-+tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup, int *index)
- {
- 	const struct tegra_smmu_swgroup *group = NULL;
- 	unsigned int i;
-@@ -342,6 +358,8 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
- 	for (i = 0; i < smmu->soc->num_swgroups; i++) {
- 		if (smmu->soc->swgroups[i].swgroup == swgroup) {
- 			group = &smmu->soc->swgroups[i];
-+			if (index)
-+				*index = i;
- 			break;
- 		}
- 	}
-@@ -350,19 +368,22 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
- }
- 
- static void tegra_smmu_enable(struct tegra_smmu *smmu, unsigned int swgroup,
--			      unsigned int asid)
-+			      struct tegra_smmu_as *as)
- {
- 	const struct tegra_smmu_swgroup *group;
-+	unsigned int asid = as->id;
- 	unsigned int i;
- 	u32 value;
- 
--	group = tegra_smmu_find_swgroup(smmu, swgroup);
-+	group = tegra_smmu_find_swgroup(smmu, swgroup, &i);
- 	if (group) {
- 		value = smmu_readl(smmu, group->reg);
- 		value &= ~SMMU_ASID_MASK;
- 		value |= SMMU_ASID_VALUE(asid);
- 		value |= SMMU_ASID_ENABLE;
- 		smmu_writel(smmu, value, group->reg);
-+		if (smmu->group_debug)
-+			smmu->group_debug[i].priv = as;
- 	} else {
- 		pr_warn("%s group from swgroup %u not found\n", __func__,
- 				swgroup);
-@@ -389,13 +410,15 @@ static void tegra_smmu_disable(struct tegra_smmu *smmu, unsigned int swgroup,
- 	unsigned int i;
- 	u32 value;
- 
--	group = tegra_smmu_find_swgroup(smmu, swgroup);
-+	group = tegra_smmu_find_swgroup(smmu, swgroup, &i);
- 	if (group) {
- 		value = smmu_readl(smmu, group->reg);
- 		value &= ~SMMU_ASID_MASK;
- 		value |= SMMU_ASID_VALUE(asid);
- 		value &= ~SMMU_ASID_ENABLE;
- 		smmu_writel(smmu, value, group->reg);
-+		if (smmu->group_debug)
-+			smmu->group_debug[i].priv = NULL;
- 	}
- 
- 	for (i = 0; i < smmu->soc->num_clients; i++) {
-@@ -499,7 +522,7 @@ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
- 		if (err)
- 			goto disable;
- 
--		tegra_smmu_enable(smmu, fwspec->ids[index], as->id);
-+		tegra_smmu_enable(smmu, fwspec->ids[index], as);
- 	}
- 
- 	if (index == 0)
-@@ -1058,8 +1081,140 @@ static int tegra_smmu_clients_show(struct seq_file *s, void *data)
- 
- DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
- 
-+static int tegra_smmu_mappings_show(struct seq_file *s, void *data)
-+{
-+	struct tegra_smmu_group_debug *group_debug = s->private;
-+	const struct tegra_smmu_swgroup *group;
-+	struct tegra_smmu_as *as;
-+	struct tegra_smmu *smmu;
-+	unsigned int pd_index;
-+	unsigned int pt_index;
-+	unsigned long flags;
-+	u64 pte_count = 0;
-+	u32 pde_count = 0;
-+	u32 val, ptb_reg;
-+	u32 *pd;
-+
-+	if (!group_debug || !group_debug->priv || !group_debug->group)
-+		return 0;
-+
-+	group = group_debug->group;
-+	as = group_debug->priv;
-+	smmu = as->smmu;
-+
-+	mutex_lock(&smmu->lock);
-+
-+	val = smmu_readl(smmu, group->reg) & SMMU_ASID_ENABLE;
-+	if (!val)
-+		goto unlock;
-+
-+	pd = page_address(as->pd);
-+	if (!pd)
-+		goto unlock;
-+
-+	seq_printf(s, "\nSWGROUP: %s\nASID: %d\nreg: 0x%x\n",
-+		   group->name, as->id, group->reg);
-+
-+	smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
-+	ptb_reg = smmu_readl(smmu, SMMU_PTB_DATA);
-+
-+	seq_printf(s, "PTB_ASID: 0x%x\nas->pd_dma: %pad\n",
-+		   ptb_reg, &as->pd_dma);
-+	seq_puts(s, "{\n");
-+
-+	spin_lock_irqsave(&as->lock, flags);
-+
-+	for (pd_index = 0; pd_index < SMMU_NUM_PDE; pd_index++) {
-+		struct page *pt_page;
-+		u32 *addr;
-+		unsigned int i;
-+
-+		/* An empty PDE should not have a pte use count */
-+		WARN_ON_ONCE(!pd[pd_index] ^ !as->count[pd_index]);
-+
-+		/* Skip this empty PDE */
-+		if (!pd[pd_index])
-+			continue;
-+
-+		pde_count++;
-+		pte_count += as->count[pd_index];
-+		seq_printf(s, "\t[%u] 0x%x (%d)\n",
-+			   pd_index, pd[pd_index], as->count[pd_index]);
-+		pt_page = as->pts[pd_index];
-+		addr = page_address(pt_page);
-+
-+		seq_puts(s, "\t{\n");
-+		seq_printf(s, "\t\t%-14s | %-4s | %-10s%s | %-10s%s | %-11s\n",
-+			   "PTE RANGE", "ATTR",
-+			   "PHYS", sizeof(phys_addr_t) > 4 ? "        " : "",
-+			   "IOVA", sizeof(dma_addr_t)  > 4 ? "        " : "",
-+			   "SIZE");
-+		for (pt_index = 0; pt_index < SMMU_NUM_PTE; pt_index += i) {
-+			size_t size = SMMU_SIZE_PT;
-+			dma_addr_t iova;
-+			phys_addr_t pa;
-+
-+			i = 1;
-+
-+			if (!addr[pt_index])
-+				continue;
-+
-+			iova = pd_pt_index_iova(pd_index, pt_index);
-+			pa = SMMU_PFN_PHYS(addr[pt_index] & ~SMMU_PTE_ATTR);
-+
-+			/* Check contiguous mappings and increase size */
-+			while (pt_index + i < SMMU_NUM_PTE) {
-+				dma_addr_t next_iova;
-+				phys_addr_t next_pa;
-+
-+				if (!addr[pt_index + i])
-+					break;
-+
-+				next_iova = pd_pt_index_iova(pd_index, pt_index + i);
-+				next_pa = SMMU_PFN_PHYS(addr[pt_index + i] & ~SMMU_PTE_ATTR);
-+
-+				/* Break at the end of a linear mapping */
-+				if ((next_iova - iova != SMMU_SIZE_PT * i) ||
-+				    (next_pa - pa != SMMU_SIZE_PT * i))
-+					break;
-+
-+				i++;
-+			}
-+
-+			seq_printf(s, "\t\t[#%-4u, #%-4u] | 0x%-2x | %pa | %pad | 0x%-9zx\n",
-+				   pt_index, pt_index + i - 1,
-+				   addr[pt_index] >> SMMU_PTE_ATTR_SHIFT,
-+				   &pa, &iova, size * i);
-+		}
-+		seq_puts(s, "\t}\n");
-+	}
-+
-+	spin_unlock_irqrestore(&as->lock, flags);
-+
-+	seq_puts(s, "}\n");
-+	seq_printf(s, "Total PDE count: %u\n", pde_count);
-+	seq_printf(s, "Total PTE count: %llu\n", pte_count);
-+
-+unlock:
-+	mutex_unlock(&smmu->lock);
-+
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(tegra_smmu_mappings);
-+
- static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
- {
-+	const struct tegra_smmu_soc *soc = smmu->soc;
-+	struct tegra_smmu_group_debug *group_debug;
-+	struct device *dev = smmu->dev;
-+	struct dentry *d;
-+	unsigned int i;
-+
-+	group_debug = devm_kcalloc(dev, soc->num_swgroups, sizeof(*group_debug), GFP_KERNEL);
-+	if (!group_debug)
-+		return;
-+
- 	smmu->debugfs = debugfs_create_dir("smmu", NULL);
- 	if (!smmu->debugfs)
- 		return;
-@@ -1068,6 +1223,21 @@ static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
- 			    &tegra_smmu_swgroups_fops);
- 	debugfs_create_file("clients", S_IRUGO, smmu->debugfs, smmu,
- 			    &tegra_smmu_clients_fops);
-+	d = debugfs_create_dir("mappings", smmu->debugfs);
-+
-+	for (i = 0; i < soc->num_swgroups; i++) {
-+		const struct tegra_smmu_swgroup *group = &soc->swgroups[i];
-+
-+		if (!group->name)
-+			continue;
-+
-+		group_debug[i].group = group;
-+
-+		debugfs_create_file(group->name, 0444, d, &group_debug[i],
-+				    &tegra_smmu_mappings_fops);
-+	}
-+
-+	smmu->group_debug = group_debug;
- }
- 
- static void tegra_smmu_debugfs_exit(struct tegra_smmu *smmu)
 -- 
-2.17.1
-
+viresh
