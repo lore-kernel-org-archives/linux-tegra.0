@@ -2,64 +2,58 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28624C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 16:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C50C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 16:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB76C65104
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 16:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70786510B
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 16:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238522AbhCPQPA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Mar 2021 12:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238519AbhCPQOs (ORCPT
+        id S235935AbhCPQUz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Mar 2021 12:20:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52911 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238647AbhCPQUw (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Mar 2021 12:14:48 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E787C06174A;
-        Tue, 16 Mar 2021 09:14:48 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id z25so21224752lja.3;
-        Tue, 16 Mar 2021 09:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ffXjTSgljOU0Rufckg2oTsu/vt6+DTnxV1QJabnSz6E=;
-        b=k6ZCXH7AzmAKBm+DwMg1r67rkNqjojJnPC/SYDXV6se0bi8R7AA0ctoEE0Lal+EJrB
-         i94vGkudzqEQQ/01pPVj20dnf0fnWKJvEU5aRn9RD2ikj7xDBqF9v5hAtoI6FRkCcinE
-         FHX3kzwsSMVg9jqkQGP58f55VnnsvCqmKOdw20vlPp9eHlnftW4a6hP+alOzFwpNOAnR
-         OJVQX87K5BqY6WJjrsHd6uT5J2WKNAuZh4QJGNBClooH7RRVdeRhckT5o6U3zFRAdk91
-         HUWYHJzeAKQZjJd4ZwEOjozyx7vqWl6KXexqyXWzvVwDqk8cU3HchYkSgDJD2UGL2kR7
-         vBcw==
+        Tue, 16 Mar 2021 12:20:52 -0400
+Received: from mail-ed1-f70.google.com ([209.85.208.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lMCR8-0001pm-RM
+        for linux-tegra@vger.kernel.org; Tue, 16 Mar 2021 16:20:50 +0000
+Received: by mail-ed1-f70.google.com with SMTP id i6so17998304edq.12
+        for <linux-tegra@vger.kernel.org>; Tue, 16 Mar 2021 09:20:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ffXjTSgljOU0Rufckg2oTsu/vt6+DTnxV1QJabnSz6E=;
-        b=TfHrYRm+O/YAYuEiQ6zoh0kWioMbNkjjetk4f0fbHH7kbV05C0TXgKI7BKrxLIV0sL
-         W15iV5ZIGyWiH5kaLyeySU67KSZhczZmUxDv8oeXPVdcqQeb3/yNzwJ+ngBu6YT0fBRs
-         f32V5oyVtD66lXTkFAyucstwx/nTJQMgoGYF7EgSzwGx4FgotdGVeOE5oV6QGkM4Iww9
-         Da0ocT+axUqzMogK0gitEcCPFhxdglnaBVaVJYOQQAwqzrNTK5QbER29bosGilwTp1Za
-         d+04kOIyZk5OxMqp08VO8auY6MRIrn8rXnzckE34tr9AWP16yH5VuApdqrnFBR9wPz5d
-         QpFw==
-X-Gm-Message-State: AOAM532FNR/duRXOs0UTHonBy8dzZ+2WGjlQYVa7XiZT2K3BmcXmbBSu
-        J5B5Izy7PujXOFwTvGUvy1U=
-X-Google-Smtp-Source: ABdhPJwQVotDakRWeSGeIo1Me2m/PynaPumC2TNw/4sBHZoeqG9AfD6z+7rCiADewXJURi6lxaNUzA==
-X-Received: by 2002:a2e:b5d8:: with SMTP id g24mr3257912ljn.64.1615911286566;
-        Tue, 16 Mar 2021 09:14:46 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id 188sm3143152lfo.0.2021.03.16.09.14.45
+        bh=VknwmHw+mafFAf+N/kI7g0yn7Vs0AliFHe5HjOF0pmE=;
+        b=el/9tM2LVNdX5/8dbLYqlQcmzUeGoo2IKlMVjpObKp67alrdYcKJ5Z9RkE6Sa2RIwK
+         38fuUv50m9Oj/anLfIK9ribB1zb+piF6gE2uZ5nYf8JawxRZUnJVN6XbFgpmx+pAWEbu
+         6YeUb3q9b5FJN+v8JsdDGMYd/NnShzleJUU0r3z8J8ooCWODKuUUC0sVQJV95aVX10wJ
+         IYBLFq87y/Cla8Num1gNfT/jDhO/5vz9vWXhwpwlXv+Vhf65dECbsVI2OTsRlvAavafN
+         TaTzhuctAf/EQHgINZAS7zIuA0Mpzur6p8jcbCMYIstIH9Cm/ax9/AY+pDT3CJ3icON7
+         oneA==
+X-Gm-Message-State: AOAM532zBavALT6H3Icv8LOSW5WHAEbQr6/NgGbOyEL8QG8C7s81gCzM
+        ytTKhpeSnFbHO8xGh7K/hj3C7sARP7JZnBd54Ct5kbJtVZD6YArq9k+6s4MetVW4PRzu6urcA4b
+        hAplXt28xQep3NLTexn3sjdpa3u/HfVedyXX0RJhE
+X-Received: by 2002:a05:6402:5252:: with SMTP id t18mr23741590edd.258.1615911650618;
+        Tue, 16 Mar 2021 09:20:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwpZeCcRfGYZrR3Un/ccY9m3ltyvSDI2VewZd/JxmPKV6ZsHbXKVwP308doM2rw+/5RVmvs2A==
+X-Received: by 2002:a05:6402:5252:: with SMTP id t18mr23741572edd.258.1615911650452;
+        Tue, 16 Mar 2021 09:20:50 -0700 (PDT)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id gj26sm9629395ejb.67.2021.03.16.09.20.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 09:14:46 -0700 (PDT)
+        Tue, 16 Mar 2021 09:20:50 -0700 (PDT)
 Subject: Re: [PATCH v2] phy: tegra: depend on COMMON_CLK to fix compile tests
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
@@ -71,13 +65,14 @@ References: <20210316075551.10259-1-krzysztof.kozlowski@canonical.com>
  <0e52e932-e5d7-8116-710a-50956caaf87c@gmail.com>
  <CA+Eumj5c2i30Xh2oBGeR5R_9JkPGiAXRGNYc4hKt9s8XuHjGdA@mail.gmail.com>
  <CA+Eumj4WirHRgr3si=nkQpNdUBcCwqLXvs-ihSi2nuJokxg=Xw@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d280c555-5ee4-7803-ada1-88257f809816@gmail.com>
-Date:   Tue, 16 Mar 2021 19:14:45 +0300
+ <d280c555-5ee4-7803-ada1-88257f809816@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <f0fbc7eb-f180-453c-de64-64c3d00958f8@canonical.com>
+Date:   Tue, 16 Mar 2021 17:20:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <CA+Eumj4WirHRgr3si=nkQpNdUBcCwqLXvs-ihSi2nuJokxg=Xw@mail.gmail.com>
+In-Reply-To: <d280c555-5ee4-7803-ada1-88257f809816@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,68 +80,36 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.03.2021 18:51, Krzysztof Kozlowski пишет:
-> On Tue, 16 Mar 2021 at 16:47, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On Tue, 16 Mar 2021 at 16:43, Dmitry Osipenko <digetx@gmail.com> wrote:
+On 16/03/2021 17:14, Dmitry Osipenko wrote:
+> 16.03.2021 18:51, Krzysztof Kozlowski пишет:
+>>>>
+>>>> But if COMMON_CLK is disabled, then include/linux/clk.h provides a stub
+>>>> for clk_get_parent(), meaning that MIPS has its own COMMON_CLK, no?
 >>>
->>> 16.03.2021 10:55, Krzysztof Kozlowski пишет:
->>>> From: Krzysztof Kozlowski <krzk@kernel.org>
->>>>
->>>> The Tegra USB PHY driver uses Common Clock Framework thus it cannot be
->>>> built on platforms without it (e.g. compile test on MIPS with RALINK and
->>>> SOC_RT305X):
->>>>
->>>>     /usr/bin/mips-linux-gnu-ld: drivers/usb/phy/phy-tegra-usb.o: in function `tegra_usb_phy_init':
->>>>     phy-tegra-usb.c:(.text+0x1dd4): undefined reference to `clk_get_parent'
->>>>
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>>
->>>> ---
->>>>
->>>> Changes since v1:
->>>> 1. Depend on COMMON_CLK always, not only for compile test.
->>>> ---
->>>>  drivers/usb/phy/Kconfig | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
->>>> index 52eebcb88c1f..7500e77a7d01 100644
->>>> --- a/drivers/usb/phy/Kconfig
->>>> +++ b/drivers/usb/phy/Kconfig
->>>> @@ -163,6 +163,7 @@ config USB_MXS_PHY
->>>>  config USB_TEGRA_PHY
->>>>       tristate "NVIDIA Tegra USB PHY Driver"
->>>>       depends on ARCH_TEGRA || COMPILE_TEST
->>>> +     depends on COMMON_CLK
->>>>       select USB_COMMON
->>>>       select USB_PHY
->>>>       select USB_ULPI
->>>>
+>>> Hi,
 >>>
->>> But if COMMON_CLK is disabled, then include/linux/clk.h provides a stub
->>> for clk_get_parent(), meaning that MIPS has its own COMMON_CLK, no?
+>>> It depends on the platform. Not all of them implement every clk API,
+>>> so you can have failures:
+>>> https://lore.kernel.org/lkml/202102170017.MgPVy7aZ-lkp@intel.com/
 >>
->> Hi,
->>
->> It depends on the platform. Not all of them implement every clk API,
->> so you can have failures:
->> https://lore.kernel.org/lkml/202102170017.MgPVy7aZ-lkp@intel.com/
+>> Ah, you mentioned the stub, so let me clarify more. The common clk
+>> stubs are not used for cases like !COMMON_CLK && HAVE_LEGACY_CLK (or
+>> HAVE_CLK, I don't remember). This is why you can have a MIPS platform
+>> defining some of the clock operations thus not using COMMON_CLK at all
+>> (and neither the stubs).
 > 
-> Ah, you mentioned the stub, so let me clarify more. The common clk
-> stubs are not used for cases like !COMMON_CLK && HAVE_LEGACY_CLK (or
-> HAVE_CLK, I don't remember). This is why you can have a MIPS platform
-> defining some of the clock operations thus not using COMMON_CLK at all
-> (and neither the stubs).
+> I see now that the stubs depend on CONFIG_HAVE_CLK and not COMMON_CLK,
+> thanks.
+> 
+> This raises question about why those platforms select CONFIG_HAVE_CLK,
+> while not implementing it fully. Sounds like a better fix should be to
+> add the missing stubs to the MIPS clk implementation, which should avoid
+> the need to patch each driver individually.
+> 
+> https://elixir.bootlin.com/linux/v5.12-rc3/source/arch/mips/ar7/clock.c#L489
 
-I see now that the stubs depend on CONFIG_HAVE_CLK and not COMMON_CLK,
-thanks.
+If such stubs as pointed by you are accepted, then indeed it would be
+better approach.
 
-This raises question about why those platforms select CONFIG_HAVE_CLK,
-while not implementing it fully. Sounds like a better fix should be to
-add the missing stubs to the MIPS clk implementation, which should avoid
-the need to patch each driver individually.
-
-https://elixir.bootlin.com/linux/v5.12-rc3/source/arch/mips/ar7/clock.c#L489
+Best regards,
+Krzysztof
