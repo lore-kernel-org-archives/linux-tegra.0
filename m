@@ -2,96 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB81C433E6
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 18:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012F7C43381
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22A28650D9
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 18:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D542B65139
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 18:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239642AbhCPSBN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Mar 2021 14:01:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239575AbhCPSAV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Mar 2021 14:00:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3575965134;
-        Tue, 16 Mar 2021 18:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615917620;
-        bh=3R/vB/7tMgve+KQBBMahuJ86d+Jwqw3flfkV7zUdYPo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=on8wn5iY+hTmZj0WcRhLLacBP55sAvgJ6lJQWjuz0SxTcA/JhtlNl8CmcvTMjejPY
-         jkxVPvrDOg8LOcnC7iYgCIRDGV2dEL3L3oK4BKkCviDX7HNGkxREk4z5CBgvk2h+PT
-         oVupmcurRB7Xs+RtVTg2pIAWjMN6ABztWP1DfdYrHz1MX7JxYpVnDLF/2MJ0OMjGV+
-         hdEI+fObwtxcD/MEnaKQ/I0x3qD+hfqPjanlldJPcvOQgFZBwUr5Pp/MwvjnPTRzA6
-         nENU/aJDKAh40WjgvxSCtHDZhFZsStfHjpEQnPMnBmj6TU2PvPlZLLQH3H/JsnfWfv
-         GPdxKY1vktzfg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Sameer Pujar <spujar@nvidia.com>, lgirdwood@gmail.com
-Cc:     Mark Brown <broonie@kernel.org>, kuninori.morimoto.gx@renesas.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        oder_chiou@realtek.com, jonathanh@nvidia.com,
-        thierry.reding@gmail.com, michael@walle.cc,
-        alsa-devel@alsa-project.org, sharadg@nvidia.com
-Subject: Re: [PATCH 0/2] Do not handle MCLK device clock in simple-card-utils
-Date:   Tue, 16 Mar 2021 17:59:48 +0000
-Message-Id: <161591744695.13544.12030388405319375507.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <1615829492-8972-1-git-send-email-spujar@nvidia.com>
-References: <1615829492-8972-1-git-send-email-spujar@nvidia.com>
+        id S237562AbhCPSDW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Mar 2021 14:03:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231502AbhCPSBy (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 16 Mar 2021 14:01:54 -0400
+Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A66C061756;
+        Tue, 16 Mar 2021 11:01:53 -0700 (PDT)
+Received: from [2a04:4540:1403:b600:2d8:61ff:fef0:a7c3]
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <john@phrozen.org>)
+        id 1lME0p-0003uU-O6; Tue, 16 Mar 2021 19:01:47 +0100
+Subject: Re: [PATCH] MIPS: ralink: define stubs for clk_set_parent to fix
+ compile testing
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org, digetx@gmail.com,
+        kernel test robot <lkp@intel.com>
+References: <20210316175725.79981-1-krzysztof.kozlowski@canonical.com>
+From:   John Crispin <john@phrozen.org>
+Message-ID: <5f117b2f-90a9-4684-a453-0f7493d89c55@phrozen.org>
+Date:   Tue, 16 Mar 2021 19:01:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210316175725.79981-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 15 Mar 2021 23:01:30 +0530, Sameer Pujar wrote:
-> With commit 1e30f642cf29 ("ASoC: simple-card-utils: Fix device module clock")
-> simple-card-utils can control MCLK clock for rate updates or enable/disable.
-> But this is breaking some platforms where it is expected that codec drivers
-> would actually handle the MCLK clock. One such example is following platform.
->   - "arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts"
-> 
-> In above case codec, wm8904, is using internal PLL and configures sysclk
-> based on fixed MCLK input. In such cases it is expected that, required PLL
-> output or sysclk, is just passed via set_sysclk() callback and card driver
-> need not actually update MCLK rate. Instead, codec can take ownership of
-> this clock and do the necessary configuration.
-> 
-> [...]
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/2] ASoC: simple-card-utils: Do not handle device clock
-      commit: 8ca88d53351cc58d535b2bfc7386835378fb0db2
-[2/2] ASoC: rt5659: Update MCLK rate in set_sysclk()
-      commit: dbf54a9534350d6aebbb34f5c1c606b81a4f35dd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+On 16.03.21 18:57, Krzysztof Kozlowski wrote:
+> The Ralink MIPS platform does not use Common Clock Framework and does
+> not define certain clock operations leading to compile test failures:
+>
+>      /usr/bin/mips-linux-gnu-ld: drivers/usb/phy/phy-tegra-usb.o: in function `tegra_usb_phy_init':
+>      phy-tegra-usb.c:(.text+0x1dd4): undefined reference to `clk_get_parent'
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Acked-by John Crispin <john@phrozen.org>
+> ---
+>   arch/mips/ralink/clk.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+>
+> diff --git a/arch/mips/ralink/clk.c b/arch/mips/ralink/clk.c
+> index 2f9d5acb38ea..8387177a47ef 100644
+> --- a/arch/mips/ralink/clk.c
+> +++ b/arch/mips/ralink/clk.c
+> @@ -70,6 +70,20 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
+>   }
+>   EXPORT_SYMBOL_GPL(clk_round_rate);
+>   
+> +int clk_set_parent(struct clk *clk, struct clk *parent)
+> +{
+> +	WARN_ON(clk);
+> +	return -1;
+> +}
+> +EXPORT_SYMBOL(clk_set_parent);
+> +
+> +struct clk *clk_get_parent(struct clk *clk)
+> +{
+> +	WARN_ON(clk);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(clk_get_parent);
+> +
+>   void __init plat_time_init(void)
+>   {
+>   	struct clk *clk;
