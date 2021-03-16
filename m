@@ -7,77 +7,70 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819BAC433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 22:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A505DC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 23:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A42464F3E
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 22:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7004E64EFD
+	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 23:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbhCPW5G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Mar 2021 18:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
+        id S229878AbhCPXeO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Mar 2021 19:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbhCPW4l (ORCPT
+        with ESMTP id S229492AbhCPXdp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Mar 2021 18:56:41 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67304C06174A;
-        Tue, 16 Mar 2021 15:56:41 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 20so25969lfj.13;
-        Tue, 16 Mar 2021 15:56:41 -0700 (PDT)
+        Tue, 16 Mar 2021 19:33:45 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A403C06174A;
+        Tue, 16 Mar 2021 16:33:44 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id u4so209900lfs.0;
+        Tue, 16 Mar 2021 16:33:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wLg47B/AUgciaorlDGJkN+ovMSLy89KbICE6kVN8kNo=;
-        b=ueGVsl+nBjXtDGVKSJrlDWN3+r+4XYktLURYZS8E7OPlOb3VqBjNq8ymlog3Z8SBeM
-         y+tBOebjwxc8/vhsTFYjzCGqyPOfTNoBFkG36KG6MG63DhPqJ2SvOXPI3EWE/xbivMSZ
-         X2EXbxS6/lH+vxdnXxCOELjD+XwFqRUzwywsLiAjo2eW9U5IwpTP8+XQ4Eg2VEwCkiX8
-         hzziE5vMrEtqTbebDR7aToxhQciDPxU+KYqGXA7DOM8UjGwaR9Efafw+lk+6Scbvl26n
-         UiTW1dKNskJkRV7tlbkTTBC3gOSkOZomnqgbBUMUvPMZUy/T7SnXhCjyH0hDUv2H33f1
-         bcSg==
+        bh=oaA9aMSbFmvtLvb2TvRiLzy5d0VE78dtkAU/7hwZdZE=;
+        b=DL3J3Sn0vCyNg6eH5/0Dv4LknSut5bq7vbVeMZq59Uk2TYiGHaJY7Ys+dKqEtErXrj
+         3QyMiBAdf37NjnOlgxoy2p/sUeYmI30APuT08xhSVOM7kbpMT9lCUfOdKAMrpT+bSHSY
+         m12YV9AxKyBZTJ7ZfHLXvnjv/Ty5IMmYdo510SqS2ODsN7tQQ2ep2sdNUk9kI4jRv+CW
+         GsuZ4y1tJrXl/Q0zSAUV98V2ZqEsCq9/t2p6HXGrpl5av4rlGG8hH35CatGmn0mrvLyS
+         Jgv3BPZ3OAxP7swnT1QqGkD0nXOD6Ewuf16GndpMwK1D2/LSfkReySpVaRjpCTUiIFGo
+         8Meg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wLg47B/AUgciaorlDGJkN+ovMSLy89KbICE6kVN8kNo=;
-        b=NMV3qlgIRwMs+WUAsIIBcfWzP3eDY4BNKTfrzxMukbrrcIWdWCA+dfGCF5H62C4dex
-         37iLqbWpzKFGzwG4AsNfqslYUbK9szkJgrxSMXKpPtGlmYxpjpXEyLGFqpri+Ex0exW+
-         6ecMuQ8sB1wmgB51LMrykLG7P0QMzJueYrY4zp+dywRrTkpG3gAIcqk/9YIyNcM0eYwE
-         /DsYfvciNRaNOs/SMSeS9AUb6ohHXWGrnkcOitL9Tyv5MaBr25OIAOG82eZpIYe2fBLj
-         HJ4ouIgGWI3NyiYJER49X0v0z43KwiX/v5Eg2tLwhI2xUxS7ZrxYMbTKfRLXU2AMbyjY
-         diXA==
-X-Gm-Message-State: AOAM532UomtqmiPiF42u/vlspJckslQuUWkwFh8V2kv1oy89PAOWTWtw
-        TOU3ZiB1Dz385dV9eTsWRwE=
-X-Google-Smtp-Source: ABdhPJzZ7uBVGHZZTofmoJL/AsPmI8yLkdkuqSbSTv013CXLLTBqYD/9Bh6EH8kl6rjB3TwFGmTsng==
-X-Received: by 2002:ac2:51dc:: with SMTP id u28mr573234lfm.322.1615935399908;
-        Tue, 16 Mar 2021 15:56:39 -0700 (PDT)
+        bh=oaA9aMSbFmvtLvb2TvRiLzy5d0VE78dtkAU/7hwZdZE=;
+        b=et1fTkWlnZK3qwDFMcG5j9qA/MFCuzMqdbXg0m9vE77q07DOJJmShi6kXJzjFtovvC
+         Q0FUECtPaULaIJa+zs2f6PZ3UYMfg8J9ij2Zw8bjaqlhFTuFrGgl7URvN//hSaBQcC1Z
+         OHtX7AHig4dHx1+elKqlLY7J2X6Zd2rKhZXRktq5GVhideisQM1obvhXo1sIuhTo1IsT
+         SxkAnr8rWvrrnOZ0/jKdKld66ne5+sVGTwdQFL2EJbenAuaZYThKW4twH8Tn61dnEUr6
+         3t1IZ6NZB5LScjPV9NiuiL/vegULCw128BuSsV6aNBFdXIQonUEhA1wpXHoFmilxsuY9
+         E9lg==
+X-Gm-Message-State: AOAM5324ogV7sirXmWXwrk+pqaAvOObkcrkRzLtAOcL0tYHc2Pm7UxS5
+        u4Dqs/AIqa7nYRapy0JQNOiOrgHJNXg=
+X-Google-Smtp-Source: ABdhPJzvYBL68SGctS5ttbA+a6ftGWGtijNx5S78m8tgSBk/V8Ex98dn8GUgmTKHaNuU45wX8YyjvA==
+X-Received: by 2002:ac2:47e5:: with SMTP id b5mr640818lfp.476.1615937622918;
+        Tue, 16 Mar 2021 16:33:42 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id e18sm3324938ljl.92.2021.03.16.15.56.39
+        by smtp.googlemail.com with ESMTPSA id m19sm828337ljb.10.2021.03.16.16.33.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 15:56:39 -0700 (PDT)
-Subject: Re: [PATCH v15 1/2] drm/tegra: dc: Support memory bandwidth
- management
+        Tue, 16 Mar 2021 16:33:42 -0700 (PDT)
+Subject: Re: [PATCH v5] iommu/tegra-smmu: Add pagetable mappings to debugfs
+To:     Nicolin Chen <nicoleotsuka@gmail.com>, joro@8bytes.org,
+        thierry.reding@gmail.com, will@kernel.org
+Cc:     vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20210315203631.24990-1-nicoleotsuka@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20210311172255.25213-1-digetx@gmail.com>
- <20210311172255.25213-2-digetx@gmail.com>
- <20210314223119.GC2733@qmqm.qmqm.pl>
- <1158bbca-8880-918d-7564-e2e30552e6b3@gmail.com>
-Message-ID: <49a69c69-44e7-741f-b86b-ef4fe83c76b1@gmail.com>
-Date:   Wed, 17 Mar 2021 01:56:38 +0300
+Message-ID: <432fa6a4-23d3-7572-276b-0ee31ff22762@gmail.com>
+Date:   Wed, 17 Mar 2021 02:33:41 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <1158bbca-8880-918d-7564-e2e30552e6b3@gmail.com>
+In-Reply-To: <20210315203631.24990-1-nicoleotsuka@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,30 +78,13 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.03.2021 21:39, Dmitry Osipenko пишет:
->>> +	/*
->>> +	 * Horizontal downscale needs a lower memory latency, which roughly
->>> +	 * depends on the scaled width.  Trying to tune latency of a memory
->>> +	 * client alone will likely result in a strong negative impact on
->>> +	 * other memory clients, hence we will request a higher bandwidth
->>> +	 * since latency depends on bandwidth.  This allows to prevent memory
->>> +	 * FIFO underflows for a large plane downscales, meanwhile allowing
->>> +	 * display to share bandwidth fairly with other memory clients.
->>> +	 */
->>> +	if (src_w > dst_w)
->>> +		mul = (src_w - dst_w) * bpp / 2048 + 1;
->>> +	else
->>> +		mul = 1;
->> [...]
->>
->> One point is unexplained yet: why is the multiplier proportional to a
->> *difference* between src and dst widths? Also, I would expect max (worst
->> case) is pixclock * read_size when src_w/dst_w >= read_size.
-> IIRC, the difference gives a more adequate/practical result than the
-> proportion. Although, downstream driver uses proportion. I'll try to
-> revisit this for the next version of the patch.
+15.03.2021 23:36, Nicolin Chen пишет:
+> +static unsigned long pd_pt_index_iova(unsigned int pd_index, unsigned int pt_index)
+> +{
+> +	return ((dma_addr_t)pd_index & (SMMU_NUM_PDE - 1)) << SMMU_PDE_SHIFT |
+> +	       ((dma_addr_t)pt_index & (SMMU_NUM_PTE - 1)) << SMMU_PTE_SHIFT;
+> +}
 
-I tried to re-test everything and can't reproduce problems that existed
-previously. We didn't have a finished memory drivers back then and I
-think that Tegra30 latency tuning support and various Tegra20 changes
-fixed those problems. I'll remove this hunk in the next version.
+Looking at this again, I'm now wondering whether will be better to
+replace dma_addr_t with u32 everywhere since SMMU only supports 32bits
+for IOVA.
