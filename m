@@ -2,79 +2,82 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47049C433E6
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 17:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1156C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 17:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A58164E0F
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 17:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F10564F0C
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 17:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhCQRVv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 Mar 2021 13:21:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
+        id S232037AbhCQRoZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 Mar 2021 13:44:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232635AbhCQRU3 (ORCPT
+        with ESMTP id S229699AbhCQRoS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 Mar 2021 13:20:29 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E7EC06175F;
-        Wed, 17 Mar 2021 10:20:28 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id a198so83898lfd.7;
-        Wed, 17 Mar 2021 10:20:28 -0700 (PDT)
+        Wed, 17 Mar 2021 13:44:18 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CDEC06174A;
+        Wed, 17 Mar 2021 10:44:18 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 16so4204093ljc.11;
+        Wed, 17 Mar 2021 10:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NFi1kFhrUTgn5FvPk8wh5i9n6BvR2USVpUn/9xflTkk=;
-        b=OoZX2tiIQyHFy7a/jirVKoULGhIrjwPvuvQYgCktz4ZesxRQIDzLxjYERGMvcaXbl7
-         ryx5JZPNhEiujaONPvnTEyRdEh2Ng2lheMKTZRstYdQVPM/2jB3HUccjYkZXVPtkuvCL
-         EqfZCMS7EewunrhZM9O7vYe+c200rM1v8egLvPZN2bAYMqGlTxg7Asacma/8LAFUbrts
-         IOGgi9jIHiCuEn5jWEstEXVelAIqOj77bkrhQkwwnuj3vQ3N6xqO/u/DKvCK3iEs3TeY
-         NKspi5cJRrgqwvKgXLBFsQnrkviRb9cN8vW0kJjjPSRkzLj5itjRAq50N/XjuEgvfjLd
-         Zpug==
+        bh=mSBxrt8q9DwvAyZBfywSCWXzmfoomEQKl5omuxCNzII=;
+        b=Idr/9rQLPqul7i01/KOaoymxiOPXrsLsOEqDPuJlyYc69QQ0ilUZ/lTwIRF2RruyW7
+         cjzQMlgAlGYFMbj+Ph1Miujbudm8NavramFluaxtMEeGhXhRLaHlcyfHKkwv4SYsJJtI
+         rF460YQL76wItNdfmvRSQRNdaFQNlOfea0HS3OvY3SWyDSM9R6pfZk1JRGFn3CODDelv
+         D4t/Zm3j77R/3T9x9aQyBrH4ojRtrEHYGknz4xxPBmwlRBXIR3q+MdokSnhqmJ7DetOX
+         ytHJAav4qxCbQaOQynFcx0BHD/7Jhl+U1XAhKuKt9olpFKCGkFf23Y//hSJGI1LciqB5
+         Dpkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=NFi1kFhrUTgn5FvPk8wh5i9n6BvR2USVpUn/9xflTkk=;
-        b=Rxx6u42TXi2atrCvsWOxN9DRcnQGoPOa0vtj8FzkifIJHj7pJn7h+tjHuxVfSgb/0H
-         xVmDHOiVEawAGnYM9dfHPpzNIRBWU7RYZbiDjyI3JSl3ycUxYQgTqdO9EYE5MSGtKGdq
-         TSlrW6ZOTZT6Pxx9XfyTDN1zh0WFhxmoj2FHnA0ZxPB9Xe2nBkz5WyaG2kQBxFbSIEjN
-         9fvCKC8SjWeLe6weoaqfAH9ObisT2KbzeSsVETA8qTz912wAdettsE7d3ufJt3OS8v7I
-         wgh353TesubwD4yVXnH1uR1BlWgHNuian2ZPG+dwCT0oQu5uyffi87UrRze3qTsosJJU
-         t5AA==
-X-Gm-Message-State: AOAM531xlKFpWcLYcso0sTB1ZUT/4cnXBi9B6Xhki0j+X7fFX56bPywb
-        f9UTMBElCiq7+oPY2XHjuX6OXlhxeg4=
-X-Google-Smtp-Source: ABdhPJxMJd14k9yjtgxRwNLmMWFGlgc0PX7nuLmBb8FfvmGKIWsxLnOUuuJIpmAAfPUbW+HjT4CY2A==
-X-Received: by 2002:a05:6512:108e:: with SMTP id j14mr2741412lfg.364.1616001611659;
-        Wed, 17 Mar 2021 10:20:11 -0700 (PDT)
+        bh=mSBxrt8q9DwvAyZBfywSCWXzmfoomEQKl5omuxCNzII=;
+        b=c8lR1o1MZ2j2GOeXbNeIsOJ5kmX3sv7z6WnhppGCJ7sxXdDWhH7Z8AblobbZ7A6ax7
+         YfpmT3JHi3remCiVBaWZllKowmPq2hYXMd752E37gkyMPSvWMECGLDo+sx3WprK0URyn
+         Z17QS5SYw5Za2tuKJJJPDlwIPpujAbCYYAb4QfB0gk5r/nChS+MSihcQy00dohWzwRfA
+         ojba+/KOPlVZ8VTDFkxf2uA2W1S/9PV6aPeAu87cRWeUl7FpMlg5euZTjlPbnjDJiPx1
+         Rv5BCwIEoRoEAmYTvmc+Wil4OMj3ncPKj4XhB6Fe8SW8vAZpQvs5cNUQVdOmvRRm0wuR
+         hPJg==
+X-Gm-Message-State: AOAM530VuKFLkoNJMkmGMdVFWFHQMUbA7Qm/wPBBaZltsNcQGwaV2mXX
+        YbkuWpzkK2mLhcweUB8zRiI=
+X-Google-Smtp-Source: ABdhPJyFL0v6HaUzAfe1jE2ZqT9UQc02bio2NiVOkXwzCpQ/IQUCZdf2mELXuzdVML9HSEFCkVdvJg==
+X-Received: by 2002:a2e:557:: with SMTP id 84mr3075252ljf.480.1616003056785;
+        Wed, 17 Mar 2021 10:44:16 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id v2sm3576654ljg.89.2021.03.17.10.20.10
+        by smtp.googlemail.com with ESMTPSA id f25sm3448156lfh.226.2021.03.17.10.44.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Mar 2021 10:20:11 -0700 (PDT)
-Subject: Re: [PATCH v5 00/17] Fix reset controls and RPM of NVIDIA Tegra ASoC
- drivers
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        Wed, 17 Mar 2021 10:44:16 -0700 (PDT)
+Subject: Re: [PATCH v15 2/2] drm/tegra: dc: Extend debug stats with total
+ number of events
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Paul Fertser <fercerpav@gmail.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314154459.15375-1-digetx@gmail.com>
-Message-ID: <be93d088-fefe-77f0-9b8e-9c815cc0d0f0@gmail.com>
-Date:   Wed, 17 Mar 2021 20:20:10 +0300
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20210311172255.25213-1-digetx@gmail.com>
+ <20210311172255.25213-3-digetx@gmail.com>
+ <20210314221130.GB2733@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c68ea34c-6b9f-61ce-a58a-8def27a1127a@gmail.com>
+Date:   Wed, 17 Mar 2021 20:44:15 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210314154459.15375-1-digetx@gmail.com>
+In-Reply-To: <20210314221130.GB2733@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,44 +85,17 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.03.2021 18:44, Dmitry Osipenko пишет:
-> Hi,
+15.03.2021 01:11, Michał Mirosław пишет:
+> On Thu, Mar 11, 2021 at 08:22:55PM +0300, Dmitry Osipenko wrote:
+>> It's useful to know the total number of underflow events and currently
+>> the debug stats are getting reset each time CRTC is being disabled. Let's
+>> account the overall number of events that doesn't get a reset.
+> [...]
 > 
-> This series adds missing hardware reset controls to I2S and AC97 drivers,
-> corrects runtime PM usage and drivers probe/remove order. Currently drivers
-> happen to work properly because reset is implicitly deasserted by tegra-clk
-> driver, but clk driver shouldn't touch the resets and we need to fix it
-> because this breaks other Tegra drivers. Previously we fixed the resets of
-> the AHUB and HDMI codec drivers, but turned out that we missed the I2C and
-> AC97 drivers.
+> Looks good. It seems independent from the other patch.
 > 
-> Thanks to Paul Fertser for testing the pending clk patches and finding
-> that audio got broken on Tegra20 AC100 netbook because of the missing I2S
-> reset.
-....
-> Dmitry Osipenko (16):
->   ASoC: tegra20: ac97: Add reset control
->   ASoC: tegra20: i2s: Add reset control
->   ASoC: tegra30: i2s: Restore hardware state on runtime PM resume
->   ASoC: tegra30: ahub: Switch to use reset-bulk API
->   ASoC: tegra20: spdif: Correct driver removal order
->   ASoC: tegra20: spdif: Remove handing of disabled runtime PM
->   ASoC: tegra20: i2s: Add system level suspend-resume callbacks
->   ASoC: tegra20: i2s: Correct driver removal order
->   ASoC: tegra20: i2s: Use devm_clk_get()
->   ASoC: tegra20: i2s: Remove handing of disabled runtime PM
->   ASoC: tegra30: i2s: Correct driver removal order
->   ASoC: tegra30: i2s: Use devm_clk_get()
->   ASoC: tegra30: i2s: Remove handing of disabled runtime PM
->   ASoC: tegra30: ahub: Reset global variable
->   ASoC: tegra30: ahub: Correct suspend-resume callbacks
->   ASoC: tegra30: ahub: Remove handing of disabled runtime PM
+> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 > 
-> Philipp Zabel (1):
->   reset: Add reset_control_bulk API
 
-Mark / Takashi, I may try to split up this series into two or three
-smaller patchsets and then the reset/ patch from Philipp Zabel could be
-merged by Philipp himself. I primarily want to have the audio resets
-fixed and the reset API extended with reset_control_bulk in 5.13 because
-this will unblock other patches. Please let me know what you prefer more.
+This patch was created in order to help with debugging of the bandwidth
+management, but technically it's independent. Thank you for the review.
