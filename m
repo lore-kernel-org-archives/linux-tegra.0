@@ -2,76 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA377C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 23:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1416EC433E6
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 00:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBC8564F18
-	for <linux-tegra@archiver.kernel.org>; Tue, 16 Mar 2021 23:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E82C064FA8
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 00:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbhCPXuU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 16 Mar 2021 19:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32934 "EHLO
+        id S229732AbhCQAKU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 16 Mar 2021 20:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbhCPXuK (ORCPT
+        with ESMTP id S229588AbhCQAKH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 16 Mar 2021 19:50:10 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670A0C06174A;
-        Tue, 16 Mar 2021 16:50:10 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id d3so193322lfg.10;
-        Tue, 16 Mar 2021 16:50:10 -0700 (PDT)
+        Tue, 16 Mar 2021 20:10:07 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC16AC06174A;
+        Tue, 16 Mar 2021 17:10:06 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id r20so1016984ljk.4;
+        Tue, 16 Mar 2021 17:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oXB6+xyPHDZii/8O9jaaLZrloHiccp9uG7TidAIdX0k=;
-        b=kRHoWji8jQln8q8Emkhm9fn17e4lS/p8UsvjfB5cvTetb/Da63gDE39WRgw7dvhu1Y
-         gy9nj9oRpezB2IaqX5GzqvU2ADGDh4HIKqVzPI4WY7cpZl+FguNoXGiiJaeK8d50sht4
-         +w+h2GLqWvKcPGtM2SMGz7s9oNORggO/J2jqjO2PimXt69AEeXMWM0lresu3Jl/eLVEO
-         EveER/6JmJfTjne35NEzUHAecHg2u6oiAruMfEs5YZu57FHHmPCgrkc96jOCUCCUF7TQ
-         ZQvuHF6AT/9HBL4yYzDXgC+fJWbw/UUPh7Z2EfPix4qSYjWCxJJCxz//DoP99uWiJeVS
-         Dv9g==
+        bh=AL2V8ZWV46qlhc0ml5uYpEwu/MvbJHiNjsNGUT8atiA=;
+        b=Agdag1tBJMN2CcCDWRaycmcZsxlpQCsykGn/xj/L8ZF7pmtY1He3O4QBRdXKxYuAYn
+         /Quk8pRXS25wLV7qB1Rlf66XSgfBwkon1wvPb20rNMcz+P+OV1T0E290UqzyNGrBtq3A
+         fby84G56vIyDqKcjZ9kONJidstWPxVTknRhA2IGDm/gxgQtQrloh68PQdFNwGFcsGSJq
+         /t7wtpliOOyFRQkcN0RNQxI4DbBG5nzESRCAtb71IuXe3/oVM7b243DNlltQSZqgMyCc
+         LdxoMYo49u4Oaoqa05eMZjPyswO5BgwHMlluDYcnsu7ikc5lBXhK5LFID1gmvS37StZg
+         jtrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=oXB6+xyPHDZii/8O9jaaLZrloHiccp9uG7TidAIdX0k=;
-        b=M63n9gTl8ymHB8ulXhh+XEFGljlD5dz/lcsNZ59Jnlv4jFcjNNaUanfQNekcM22xbF
-         FACVR93MstWHUMnjPVmevaNjQyVUlCc/g15d0EpcO6WWXjCE4uNjhLYKpTMG3HRSNnDS
-         S6ISZc8tzoqu2SSKJe2P/G6g+aFfxodMFxml/UOaopmWMup0KtOJqUKIBGS0LU5k14Vw
-         It0vkGXxNW/ytiMZFjgItkr7Kbu/KY7p6o4klhkcqZjI8hFM+yuabjMxiezoH2dNYMss
-         vOqu3KD2sIUwcnNRg86qsk2Y5tpOA58gqQDMWxGsu/ByPsCSjqMx01xIQZmdyo+0fSiZ
-         6gNQ==
-X-Gm-Message-State: AOAM531d37Pf+o1vpIhnt7lmTG8zKSEZy88IgXQfgwp7FY+3poIyEMVU
-        W8nzDOwHBd1UEHj001FdBmNZxkM/doY=
-X-Google-Smtp-Source: ABdhPJxOjUQ/S1fQWKKSlk4V0vmyKUunbtYbvY0y9KlqnwZngvig7Kfff6LvYs+wNYWkZY8F4UebjQ==
-X-Received: by 2002:a05:6512:3709:: with SMTP id z9mr628448lfr.557.1615938608636;
-        Tue, 16 Mar 2021 16:50:08 -0700 (PDT)
+        bh=AL2V8ZWV46qlhc0ml5uYpEwu/MvbJHiNjsNGUT8atiA=;
+        b=TuQ8Ux1XTt51wJUVLu+dK3tMhxm561lBt1k8/bXlmuqmCzv/s1gLIAzcS3DmxfVEdY
+         gTQhByok5ewdbtjH453g/1jme8h9mVvpHo0KsiiGES1K21l3LUK80d+LPPjuBLOWpl2k
+         Js9EVmbfS9vazDGAhx6BLTZjCJNqQDW0DK7oCr4sOTNd+ciuQUNpuiOETJIVWiPrrQUU
+         zv4B8T0XXPUkgxNgEPIP7Ilgq9GqYHVvFsNaMAmWnHtAl2FhW89ncsVW97xMdyif/hHk
+         H2cUYKT5fA0jHJgj/ukn+qdWj5hiiHjuPo7pZ2qwGKLXtm8ApEjRoAvxzooEGh+6CO/r
+         /mXA==
+X-Gm-Message-State: AOAM532ZQLJYSMHTPZNMpcG/XlSevGUN5flWT0qeMnLGbTMUZ6aOSWBp
+        ED8WI0jvnww3KWQ96WerVwE=
+X-Google-Smtp-Source: ABdhPJwRzvkNlUJpiFNF69aoxvvhbSsqtWtPRIf5DO9f16I5A+wX666iLi+smMVA7+bdshV2OAnwFQ==
+X-Received: by 2002:a2e:9e8e:: with SMTP id f14mr783096ljk.140.1615939804827;
+        Tue, 16 Mar 2021 17:10:04 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id g21sm3170038lfr.212.2021.03.16.16.50.08
+        by smtp.googlemail.com with ESMTPSA id 194sm3228320lfd.116.2021.03.16.17.10.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 16:50:08 -0700 (PDT)
-Subject: Re: [PATCH v5] iommu/tegra-smmu: Add pagetable mappings to debugfs
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     joro@8bytes.org, will@kernel.org, vdumpa@nvidia.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20210315203631.24990-1-nicoleotsuka@gmail.com>
- <YFCTmwpg9pMQqcSu@orome.fritz.box>
+        Tue, 16 Mar 2021 17:10:04 -0700 (PDT)
+Subject: Re: [PATCH] MIPS: ralink: define stubs for clk_set_parent to fix
+ compile testing
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        John Crispin <john@phrozen.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+References: <20210316175725.79981-1-krzysztof.kozlowski@canonical.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d338d407-8e0a-a94a-dcff-80556174492e@gmail.com>
-Date:   Wed, 17 Mar 2021 02:50:07 +0300
+Message-ID: <44ce8a32-91ff-bb6c-adba-f85c2edf3c18@gmail.com>
+Date:   Wed, 17 Mar 2021 03:10:03 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <YFCTmwpg9pMQqcSu@orome.fritz.box>
+In-Reply-To: <20210316175725.79981-1-krzysztof.kozlowski@canonical.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -79,13 +82,46 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-16.03.2021 14:16, Thierry Reding пишет:
->> +	seq_puts(s, "}\n");
->> +	seq_printf(s, "Total PDE count: %u\n", pde_count);
->> +	seq_printf(s, "Total PTE count: %llu\n", pte_count);
-> Some of the above looks like it wouldn't be very easily consumed by
-> scripts. Is that something we want to do? Or is this targetted primarily
-> at human consumption?
+16.03.2021 20:57, Krzysztof Kozlowski пишет:
+> The Ralink MIPS platform does not use Common Clock Framework and does
+> not define certain clock operations leading to compile test failures:
+> 
+>     /usr/bin/mips-linux-gnu-ld: drivers/usb/phy/phy-tegra-usb.o: in function `tegra_usb_phy_init':
+>     phy-tegra-usb.c:(.text+0x1dd4): undefined reference to `clk_get_parent'
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  arch/mips/ralink/clk.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/mips/ralink/clk.c b/arch/mips/ralink/clk.c
+> index 2f9d5acb38ea..8387177a47ef 100644
+> --- a/arch/mips/ralink/clk.c
+> +++ b/arch/mips/ralink/clk.c
+> @@ -70,6 +70,20 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_round_rate);
+>  
+> +int clk_set_parent(struct clk *clk, struct clk *parent)
+> +{
+> +	WARN_ON(clk);
+> +	return -1;
+> +}
+> +EXPORT_SYMBOL(clk_set_parent);
+> +
+> +struct clk *clk_get_parent(struct clk *clk)
+> +{
+> +	WARN_ON(clk);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(clk_get_parent);
 
-Output should be parsable using a simple regex. Could you please clarify
-what exactly isn't easy?
+I'm wondering whether symbols should be GPL or it doesn't matter in this
+case. Otherwise this looks good to me.
+
+Also, I guess it should be possible to create a generic clk stubs that
+will use weak functions, allowing platforms to override only the wanted
+stubs and then we won't need to worry about the missing stubs for each
+platform individually. But of course that will be a much bigger change.
+Just wanted to share my thoughts.
