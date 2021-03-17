@@ -5,161 +5,104 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E822C43381
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 19:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C76C43332
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 19:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6708D64F7F
-	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 19:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D165164F55
+	for <linux-tegra@archiver.kernel.org>; Wed, 17 Mar 2021 19:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbhCQTAY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 17 Mar 2021 15:00:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57286 "EHLO
+        id S233296AbhCQTbl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 17 Mar 2021 15:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232207AbhCQS7w (ORCPT
+        with ESMTP id S233320AbhCQTbY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 17 Mar 2021 14:59:52 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C838C06175F;
-        Wed, 17 Mar 2021 11:59:52 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id j11so538429lfg.12;
-        Wed, 17 Mar 2021 11:59:52 -0700 (PDT)
+        Wed, 17 Mar 2021 15:31:24 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83604C06174A;
+        Wed, 17 Mar 2021 12:31:24 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id f16so4683539ljm.1;
+        Wed, 17 Mar 2021 12:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ipiAo/zFdoxmHMg8AWua2BzcAdGe0Ogzj6yRlLPPOUs=;
-        b=MBV2/gBuCp22XDC4MSSlbszycii4D8No5J2A00NeO5JKUedUUhV4zpkLgBdEdas1a2
-         YkdIFxAmIDKNTahutCnF5VTg5BImlyHK0pdqQ4Q0GXMOwGZpTr1UXcXrnHPf5DUs7AZX
-         waXojytC63LEku8cZI6y27ZJocD21wl7xOHhB3YFmyvIutTw87datXAsn7TjQuIQzntv
-         qqTbqLo2LIN8ouoyGwi2e8/+gyxSIIlFfJLJjqEiQPg7vSl6PaqM/xUbXm5GmRVrTQ2G
-         eWBbVvaL2ndcmyvP+0u3T/psk25gughRt0zoW6qtCd5xjT8AStjrc5nIpEQDmkYInfuB
-         1Kyg==
+        bh=ofiUnTNVmdhSCPXFUakdrcB5fFxVu8qvsddsoETV6Zo=;
+        b=iveVSg0Mzq0AYZUHI9SLEu1YAn3765NXbf8cmC8RuaJUuq4hd81iq4VuA+acqH+Hi6
+         cFZdsnRTbhzYlJ6w8YlIyBCaiClFiduFLR1SeAK3XybA4DbZYHk1eyovjKPd9Kyp3lqO
+         7iLW8HKLHCvThKNNiPOcxaONyqTzYTYWMnu04cQwCQnIarinL5X0zuC+twWPkRDK88F2
+         l5RZ/x1tuVVzK6lhI1ojfT04OmxWB8YT+kS+ha9ngDc5ozfCh0wjKZjEVKkQq6HNO9sc
+         1MB5iJyojFaO4mV+Vc96Wfu0ziJCJcmaCSm2COOu1hZlmpnJuEsGuO0eWklC/GlCXKeK
+         wthQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ipiAo/zFdoxmHMg8AWua2BzcAdGe0Ogzj6yRlLPPOUs=;
-        b=PXfckNZD4r3duVVzs0jUD+rkiQekVpBaqFg1vKbIJqnCJfzJmPG+qU91J+3NdwIj7W
-         LYfKKinvdCcOU6e9MnyeLioR02zSPReZT5K0KmBCX+D5JT/ySbXy9lfWLNhBs1Kkp54w
-         Ku5TRdqFHqa8j4x7imM524ygyLicyIYP26frv4gp1AckzJ5GzRQ6DAUdqC2E94zo/8Ww
-         Du/Fdl12bUp/pNw+J56/xKEkmkEPKIi3mSH8Fk/X1QNsbXhjDgCc3AcJI1djPPMCXo4F
-         Q4eRrQRtqlRQ7lhMF61m+tUGji3TUzFoBeb3xgY3adfsuqTfqKXbW8akNQauZsk0+Ej/
-         Tfig==
-X-Gm-Message-State: AOAM530wycLKgWyaFtZefIHtWWEUJI8QCJvKAyeNiiS2M3YsLQ3qmm24
-        3DIWKnMGySiw729WOuWfzwo=
-X-Google-Smtp-Source: ABdhPJxXALK2JGzXVYySDferkWlXhCtMFtiONzK9B5d8m/64YAwpuNTpNgtzX+4FRNigIGo7/QEhQA==
-X-Received: by 2002:ac2:465c:: with SMTP id s28mr3108039lfo.135.1616007591063;
-        Wed, 17 Mar 2021 11:59:51 -0700 (PDT)
+        bh=ofiUnTNVmdhSCPXFUakdrcB5fFxVu8qvsddsoETV6Zo=;
+        b=fzH6Hb5AjVCzV5iLn6w5V9Fcio1oHd0rZrjQWD/Po9NiBPYZzC7uZJLon6BZM13+kv
+         2wdqktjnGnRRSJLU80EJvtsd2EcJvCHqipVvijrLKYJtJtKNiXL+jeEEsp/EHXP+DSUZ
+         bw647TRnnRjOhfa+JLqjau0x1ryc4RgdvLZeC2fn3dB8qR85ccfJLdoTuQUIM9D084XW
+         P1ANKpQoJud2UmI4+zAo1S2FtgiIqRYwd0FxcAXylVG8jgEt6bsFfQkc7WSuK69uG7z5
+         /cTeBgpEYJQ+QdsK2f1mOylJSeh7YHcvEmAmVaDVx4Y+vGXNL7xWLQ5gDit7FmlOGMLs
+         gGYg==
+X-Gm-Message-State: AOAM53106qcbkYzN/YSRR+QFk4AqhDPBECdIjDr0MN/yAqLEPklbiMB2
+        Lu5mNNiv1bpIuNTWkcJh25U=
+X-Google-Smtp-Source: ABdhPJyVu3L9PDejWp+duHNyY8pXjPyRpJ5zoSUWJBpNlL1nA9s9yhPcL8fRJwBlyIqtRk75bg9g2g==
+X-Received: by 2002:a2e:87c9:: with SMTP id v9mr3269111ljj.321.1616009482931;
+        Wed, 17 Mar 2021 12:31:22 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id b28sm3442482lfo.219.2021.03.17.11.59.50
+        by smtp.gmail.com with ESMTPSA id q24sm3623098lji.40.2021.03.17.12.31.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 11:59:50 -0700 (PDT)
+        Wed, 17 Mar 2021 12:31:22 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v16 2/2] drm/tegra: dc: Extend debug stats with total number of events
-Date:   Wed, 17 Mar 2021 21:57:34 +0300
-Message-Id: <20210317185734.14661-3-digetx@gmail.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 1/7] clk: tegra30: Use 300MHz for video decoder by default
+Date:   Wed, 17 Mar 2021 22:30:00 +0300
+Message-Id: <20210317193006.29633-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210317185734.14661-1-digetx@gmail.com>
-References: <20210317185734.14661-1-digetx@gmail.com>
+In-Reply-To: <20210317193006.29633-1-digetx@gmail.com>
+References: <20210317193006.29633-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-It's useful to know the total number of underflow events and currently
-the debug stats are getting reset each time CRTC is being disabled. Let's
-account the overall number of events that doesn't get a reset.
+The 600MHz is a too high clock rate for some SoC versions for the video
+decoder hardware and this may cause stability issues. Use 300MHz for the
+video decoder by default, which is supported by all hardware versions.
 
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 10 ++++++++++
- drivers/gpu/drm/tegra/dc.h |  5 +++++
- 2 files changed, 15 insertions(+)
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 96e3a27dc98d..0ecf7027085d 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1551,6 +1551,11 @@ static int tegra_dc_show_stats(struct seq_file *s, void *data)
- 	seq_printf(s, "underflow: %lu\n", dc->stats.underflow);
- 	seq_printf(s, "overflow: %lu\n", dc->stats.overflow);
- 
-+	seq_printf(s, "frames total: %lu\n", dc->stats.frames_total);
-+	seq_printf(s, "vblank total: %lu\n", dc->stats.vblank_total);
-+	seq_printf(s, "underflow total: %lu\n", dc->stats.underflow_total);
-+	seq_printf(s, "overflow total: %lu\n", dc->stats.overflow_total);
-+
- 	return 0;
- }
- 
-@@ -2325,6 +2330,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): frame end\n", __func__);
- 		*/
-+		dc->stats.frames_total++;
- 		dc->stats.frames++;
- 	}
- 
-@@ -2333,6 +2339,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		dev_dbg(dc->dev, "%s(): vertical blank\n", __func__);
- 		*/
- 		drm_crtc_handle_vblank(&dc->base);
-+		dc->stats.vblank_total++;
- 		dc->stats.vblank++;
- 	}
- 
-@@ -2340,6 +2347,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): underflow\n", __func__);
- 		*/
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
- 
-@@ -2347,11 +2355,13 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		/*
- 		dev_dbg(dc->dev, "%s(): overflow\n", __func__);
- 		*/
-+		dc->stats.overflow_total++;
- 		dc->stats.overflow++;
- 	}
- 
- 	if (status & HEAD_UF_INT) {
- 		dev_dbg_ratelimited(dc->dev, "%s(): head underflow\n", __func__);
-+		dc->stats.underflow_total++;
- 		dc->stats.underflow++;
- 	}
- 
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 69d4cca2e58c..ad8d51a55a00 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -48,6 +48,11 @@ struct tegra_dc_stats {
- 	unsigned long vblank;
- 	unsigned long underflow;
- 	unsigned long overflow;
-+
-+	unsigned long frames_total;
-+	unsigned long vblank_total;
-+	unsigned long underflow_total;
-+	unsigned long overflow_total;
- };
- 
- struct tegra_windowgroup_soc {
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 16dbf83d2f62..a33688b2359e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1245,7 +1245,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
+-	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
 -- 
 2.30.2
 
