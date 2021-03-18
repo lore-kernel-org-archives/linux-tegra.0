@@ -2,90 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A64AC433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11811C433E9
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46D6F64F65
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:38:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B94AF64F30
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbhCRKiV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Mar 2021 06:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
+        id S230180AbhCRKpS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Mar 2021 06:45:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbhCRKhy (ORCPT
+        with ESMTP id S229999AbhCRKow (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Mar 2021 06:37:54 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAC3C06174A;
-        Thu, 18 Mar 2021 03:37:54 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id j11so3755843lfg.12;
-        Thu, 18 Mar 2021 03:37:54 -0700 (PDT)
+        Thu, 18 Mar 2021 06:44:52 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A52C06174A;
+        Thu, 18 Mar 2021 03:44:52 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id f26so6866976ljp.8;
+        Thu, 18 Mar 2021 03:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=50NaW/+D7EIVdyftiDyHEsf4hFjsIKckzIbl9gr8M+k=;
-        b=V0NnkydHiXFN4oB7vdGZy8qqdciU4VoyfnJSQuh1zmigW2n3yljcmaqOlthwdsJQbx
-         vM8e9QKjsEOXgAu+s3wTeZUwvHFyOb6RDUyWiHFXTaqmFGZXihabvgScJqhwcyqxKygl
-         7d2G8zrcO6PoqQGbufHJnw93PrHe3h+7w4HuuaQCO82IAylMVp4cxqOjgJXuXn/tdTBj
-         htC8IrZPDR3Mdh3sixma3RUPPWGyT2FKLkiP6NC8s17Om3hTjwSOKHu+3Yg94HmSv4ma
-         EjgfZilAiI/MTBWzORBbPXPMuJbxxwr8x/CgbyMl+PTnpuHKJz9VtrIbVYLz4PpUUwQV
-         8CzA==
+        bh=UZZzq/9McYqHi4InJGaReUkavQ57VQ1UkA2ucnh78uI=;
+        b=gTbIM+eVxHGNlcaYXsqO6C0ktHAtRqi8q20fGcwHQ7semqVJMZXtpkH3pUFPSQzVYl
+         +WeAtppdRYVyjxzgwUh+BgHpEe4qAn3IgFJE50GSbAeZlhxYE1NhbzyWcz0qANY02xD9
+         WP/N8IHj1Xbipui8Hxo0TpkS0cIx3pOqI+fEMQahZIx3V9BTkJvMMa+O4GB3oqVFmtOe
+         PcYtWLGkWX1vePVvpC7ryqpXjGSLfeD9PLLYAl2nESHcF6eZHkofYB/GOLFT3CpPW+cG
+         454A9TWQJ4AC+2RGIkZZU0S6hK9JCBBXxB3v2kxS2/Soah9MHXBtHvehAqnp3ZeAXTMk
+         xD8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=50NaW/+D7EIVdyftiDyHEsf4hFjsIKckzIbl9gr8M+k=;
-        b=qjgm6PmFCKPwL0IO+QG/NhGfaw6C27SUv9JRCLnzG8FuWPMGGYog7RnFRUuXS5HRdB
-         7O87K+VXyhd0YtE+edUwzMaZTu6nt+LH9iFIKqP3ZRqtQtJr75yoNMwwVnTtyVpFEYGR
-         v7zX3fSfc3nA0Q6nJegIp9RXDL7z0ptSV2epyUxu+cx6hGjc/7jSG3dyxfssmy6PZRRK
-         eFP046stvtm/TjPw4/bvrT8rn5XDe0FKcnEpHmXVm45MxJb8ez28SjXjO4o6m/dGvPc1
-         SnPX3kix8FiQblWGS/a8zeHSg5crqQIqNGW910R5zqc+hEgrpEuPaTYZx5Ci5s3MKmoK
-         AkQQ==
-X-Gm-Message-State: AOAM531bg82UsYuAj86fN2mYpCr3vGpQUTf4tGClYbxWtmsOklBwdVrr
-        RmQKJQGbQfFSE+FCJUPAC2E9nTXzj/0=
-X-Google-Smtp-Source: ABdhPJxkWzwNBP1QSOiaYqtUVC+tHdy/6DqYYlDNlu/SLwACu0/5l9tUZ71OFZLaBbljzGOBD8nxCg==
-X-Received: by 2002:a19:e0d:: with SMTP id 13mr4957976lfo.549.1616063872520;
-        Thu, 18 Mar 2021 03:37:52 -0700 (PDT)
+        bh=UZZzq/9McYqHi4InJGaReUkavQ57VQ1UkA2ucnh78uI=;
+        b=cA6hRWkFE5QGmIZebR5CU8VvqaWt2pv2XfEKyM4ZFeYwdmu1GeuiFzOqU6qjvrH04o
+         casrI3RfpUYfnt+WWUcBR6Nqhgg5JEnlNNNK+YyZu7iNIQVmZKT85/J6e99ABgmZo94O
+         lY35j4hu5K3q62SDBeWSHc/k/dOSebN5XMmwP7+ytFwPA+LKElv8Nseb2xdDI+Qd0ebx
+         ZZRZvEndH0omQbJELpa6so46jf79GCpydZOuNfaPNIZl5qbfUtfwbeQxIYfOxB9hjrL4
+         RB4WoPhzKZf3stPutyY3+PNqJj8yrE05XVweWrwsn2Kw7qghWn9h9/MbaaZDU984ICRN
+         D7Eg==
+X-Gm-Message-State: AOAM5318WkY2JDhgDZ7IiIzag436r3VtktkZ+8varTmal4VVNCPPH8lg
+        eCQ8Kb7rPOxFBQ6t4T3DCr7xGZodIvM=
+X-Google-Smtp-Source: ABdhPJyZkPBz604XveIMMKnivIAAlI3Kq+ffrnq13fyiOfAK/uWCFgXw6pG59Ahla1dsNA6XD5eWHQ==
+X-Received: by 2002:a2e:974d:: with SMTP id f13mr4956977ljj.210.1616064290378;
+        Thu, 18 Mar 2021 03:44:50 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id h24sm189257ljg.77.2021.03.18.03.37.51
+        by smtp.googlemail.com with ESMTPSA id a1sm191289ljb.76.2021.03.18.03.44.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 03:37:52 -0700 (PDT)
-Subject: Re: [PATCH v4 1/6] soc/tegra: Add
- devm_tegra_core_dev_init_opp_table()
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
+        Thu, 18 Mar 2021 03:44:50 -0700 (PDT)
+Subject: Re: [PATCH v5 2/7] clk: tegra: Fix refcounting of gate clocks
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314164810.26317-1-digetx@gmail.com>
- <20210314164810.26317-2-digetx@gmail.com>
- <8f78a014-eeab-d788-7d3b-b52b8109cb2c@gmail.com>
- <20210318103250.shjyd66pxw2g2nsd@vireshk-i7>
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20210317193006.29633-1-digetx@gmail.com>
+ <20210317193006.29633-3-digetx@gmail.com>
+ <20210318091219.GA18038@qmqm.qmqm.pl>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2498dd11-1d71-b245-2651-e43ab3f70e17@gmail.com>
-Date:   Thu, 18 Mar 2021 13:37:51 +0300
+Message-ID: <768dcbd3-a29b-33c1-2147-e59e3847e75c@gmail.com>
+Date:   Thu, 18 Mar 2021 13:44:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210318103250.shjyd66pxw2g2nsd@vireshk-i7>
+In-Reply-To: <20210318091219.GA18038@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,32 +86,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.03.2021 13:32, Viresh Kumar пишет:
-> On 18-03-21, 13:27, Dmitry Osipenko wrote:
->> 14.03.2021 19:48, Dmitry Osipenko пишет:
->>> Add common helper which initializes OPP table for Tegra SoC core devices.
->>>
->>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
->>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
->>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
->>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/soc/tegra/common.c | 137 +++++++++++++++++++++++++++++++++++++
->>>  include/soc/tegra/common.h |  30 ++++++++
->>>  2 files changed, 167 insertions(+)
->>
->> Viresh, do you think it will be possible to take this patch via the OPP
->> tree along with the devres patches if Thierry will give an ack? This
->> will allow us to start adding power management support to Tegra drivers
->> once 5.13 will be released.
+18.03.2021 12:12, Michał Mirosław пишет:
+> On Wed, Mar 17, 2021 at 10:30:01PM +0300, Dmitry Osipenko wrote:
+>> The refcounting of the gate clocks has a bug causing the enable_refcnt
+>> to underflow when unused clocks are disabled. This happens because clk
+>> provider erroneously bumps the refcount if clock is enabled at a boot
+>> time, which it shouldn't be doing, and it does this only for the gate
+>> clocks, while peripheral clocks are using the same gate ops and the
+>> peripheral clocks are missing the initial bump. Hence the refcount of
+>> the peripheral clocks is 0 when unused clocks are disabled and then the
+>> counter is decremented further by the gate ops, causing the integer
+>> underflow.
+> [...]
+>> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+>> index 4b31beefc9fc..3c4259fec82e 100644
+>> --- a/drivers/clk/tegra/clk-periph-gate.c
+>> +++ b/drivers/clk/tegra/clk-periph-gate.c
+> [...]
+>> @@ -91,21 +108,28 @@ static void clk_periph_disable(struct clk_hw *hw)
+>>  
+>>  	spin_lock_irqsave(&periph_ref_lock, flags);
+>>  
+>> -	gate->enable_refcnt[gate->clk_num]--;
+>> -	if (gate->enable_refcnt[gate->clk_num] > 0) {
+>> -		spin_unlock_irqrestore(&periph_ref_lock, flags);
+>> -		return;
+>> -	}
+>> +	WARN_ON(!gate->enable_refcnt[gate->clk_num]);
+>> +
+>> +	if (gate->enable_refcnt[gate->clk_num]-- == 1)
+>> +		clk_periph_disable_locked(hw);
 > 
-> I can do that.. OR
+> Nit: "if (--n == 0)" seems more natural, as you want to call
+> clk_periph_disable_locked() when the refcount goes down to 0.
 > 
-> I can give an immutable to Thierry over which he can base these patches..
+> [...]
+>>  	/*
+>> -	 * If peripheral is in the APB bus then read the APB bus to
+>> -	 * flush the write operation in apb bus. This will avoid the
+>> -	 * peripheral access after disabling clock
+>> +	 * Some clocks are duplicated and some of them are marked as critical,
+>> +	 * like fuse and fuse_burn for example, thus the enable_refcnt will
+>> +	 * be non-zero here id the "unused" duplicate is disabled by CCF.
 > 
+> s/id/if/ ?
 
-Thank you!
-
-Thierry, please let us know if you're okay with this patch and what
-variant you prefer more.
+I'll update this patch over the weekend, thanks!
