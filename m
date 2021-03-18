@@ -2,108 +2,67 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC998C433E0
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4955DC433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2DB64EED
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E87D764F18
+	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 10:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbhCRK1r (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Mar 2021 06:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58702 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbhCRK10 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Mar 2021 06:27:26 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C4AC06174A;
-        Thu, 18 Mar 2021 03:27:25 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id q13so3713102lfu.8;
-        Thu, 18 Mar 2021 03:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+G5VKNAaAyEgyOk4kXK4F5H9gvSmpSo6KZM19Tya+Lk=;
-        b=aD929HKe7uY3AZfVyxFMPdWuC9U1T//tmhP7QxvkO0F6yRCI8jfaNPIq7lGNlaqTTO
-         h2nUkumC4xFTgxZ91CfUFlbj7iJPaoKpYPX2fcrKhQooiZ2PLqL9++9Z1d9ODETuCovr
-         iTB4nqgkXPsOnRMd4QnhwwXuzQFo0A4G9urpIxGtCXF/H8HtRpBXzKsLOPUF1LYGbVqa
-         4MXvsYdlq+A2q2AMx74KA4apsgOta8eg2mgdZAInKYg78VekJNaV2OSRZUL10TYFRGAq
-         PI1hbT/CkLdT1qxvrw+St0YQsP5BJGcnObVt/OYbHwSMtrO/iiVwo9jtdwXLcMW6GOvG
-         Gh2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+G5VKNAaAyEgyOk4kXK4F5H9gvSmpSo6KZM19Tya+Lk=;
-        b=oFXi9j9pOZL/fauobyg7IgF4M5POUExmFxlEbKYaTjyfM+ef6I6ohFdUkFZyMb2C7u
-         Tka3oNPCf5+rAbATZgPU4ZIZJhcVNQaCKLTLSEb0MbkRGxUnmZ9t622lKRs48Do+5HIy
-         rOvWQz3lSOMc0eqiQW3G26AtIGzis2KnWtLk4KLwAopEOZtiFTCpXa85s27t0dxAZQSm
-         MgUtQAZdx2Ks2heXBT92lwEPCg8Wf8RblHkl+MeIwW8dmchgQdMEuVueBN3jL5Lf0T0N
-         wQwuAjwj+3NCqtYBvjpOQW5kTipaC1InUcHfx+1T+VT6qdTklIjypkIyxEs35jdBmbeE
-         cV4g==
-X-Gm-Message-State: AOAM5332WyI91BdT3kQD1bpy49bFqSFrkCU5mlP5gCmOrRp8kfq3nDqo
-        AVHFWRwe6JGejv80nVuy4ArZeVYjpOE=
-X-Google-Smtp-Source: ABdhPJy9yoZ8KvENtEhAIDIIhdTp1HL+oReVacHd00IDhBi0w5ioO6SGToZwLeOBVyylCE4ZAfUo/Q==
-X-Received: by 2002:a05:6512:1094:: with SMTP id j20mr5223574lfg.442.1616063243556;
-        Thu, 18 Mar 2021 03:27:23 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id e18sm184915ljl.92.2021.03.18.03.27.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 03:27:22 -0700 (PDT)
-Subject: Re: [PATCH v4 1/6] soc/tegra: Add
- devm_tegra_core_dev_init_opp_table()
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S229844AbhCRKcG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 18 Mar 2021 06:32:06 -0400
+Received: from 8bytes.org ([81.169.241.247]:59686 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229600AbhCRKbd (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 18 Mar 2021 06:31:33 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id B26D72D8; Thu, 18 Mar 2021 11:31:32 +0100 (CET)
+Date:   Thu, 18 Mar 2021 11:31:31 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314164810.26317-1-digetx@gmail.com>
- <20210314164810.26317-2-digetx@gmail.com>
-Message-ID: <8f78a014-eeab-d788-7d3b-b52b8109cb2c@gmail.com>
-Date:   Thu, 18 Mar 2021 13:27:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iommu/tegra-smmu: Make tegra_smmu_probe_device() to
+ handle all IOMMU phandles
+Message-ID: <YFMsAzmkd0Mauj1t@8bytes.org>
+References: <20210312155439.18477-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210314164810.26317-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210312155439.18477-1-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-14.03.2021 19:48, Dmitry Osipenko пишет:
-> Add common helper which initializes OPP table for Tegra SoC core devices.
+On Fri, Mar 12, 2021 at 06:54:39PM +0300, Dmitry Osipenko wrote:
+> The tegra_smmu_probe_device() handles only the first IOMMU device-tree
+> phandle, skipping the rest. Devices like 3D module on Tegra30 have
+> multiple IOMMU phandles, one for each h/w block, and thus, only one
+> IOMMU phandle is added to fwspec for the 3D module, breaking GPU.
+> Previously this problem was masked by tegra_smmu_attach_dev() which
+> didn't use the fwspec, but parsed the DT by itself. The previous commit
+> to tegra-smmu driver partially reverted changes that caused problems for
+> T124 and now we have tegra_smmu_attach_dev() that uses the fwspec and
+> the old-buggy variant of tegra_smmu_probe_device() which skips secondary
+> IOMMUs.
 > 
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+> Make tegra_smmu_probe_device() not to skip the secondary IOMMUs. This
+> fixes a partially attached IOMMU of the 3D module on Tegra30 and now GPU
+> works properly once again.
+> 
+> Fixes: 765a9d1d02b2 ("iommu/tegra-smmu: Fix mc errors on tegra124-nyan")
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/soc/tegra/common.c | 137 +++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/common.h |  30 ++++++++
->  2 files changed, 167 insertions(+)
+>  drivers/iommu/tegra-smmu.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-Viresh, do you think it will be possible to take this patch via the OPP
-tree along with the devres patches if Thierry will give an ack? This
-will allow us to start adding power management support to Tegra drivers
-once 5.13 will be released.
+Applied for v5.12, thanks.
