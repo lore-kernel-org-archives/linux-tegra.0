@@ -2,127 +2,128 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B846EC433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 18:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D6FC433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 07:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 926086023B
-	for <linux-tegra@archiver.kernel.org>; Thu, 18 Mar 2021 18:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F4A64F69
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 07:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232556AbhCRSgP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 18 Mar 2021 14:36:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232476AbhCRSgP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 18 Mar 2021 14:36:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D5F464F1F;
-        Thu, 18 Mar 2021 18:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616092574;
-        bh=O4+Jms1dbCSgB1akhHdOQ5yf5A0hiTEh3B7Z20RU4GA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EwFbcCby8rFgHBAO1ZtPs9Wnhpm7vsF3MFKf/vfHQIldsIE9BmzqOB2NKrDlpX6Xl
-         jC448ZaRf4/ZjmobdFfST2YSWOh4Hl+md5bD9XL1cWlwSr00OoJQwcrFygu+MFqm11
-         v1wkQGWCrjTcK0PsdJ8K4jKH6sKnZ3Jf8QS/IfPqo2Zg8lDcILpUoK2an6pMXaHSOL
-         PrXjYtb+vwg17dCtVjSQpaZLvlfnlXLRnS/s6Yx4JZMU6wL1DlOVa08C2FhTZOD/Wx
-         jO+G+CY8TgZQV2ncBGKJKhQmopF2V91VYCHdhwM/O+6uik7Gr+SS8mj0hGZ4eND2Kc
-         RB9wuiHjeIPvg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Jaroslav Kysela <perex@perex.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 00/17] Fix reset controls and RPM of NVIDIA Tegra ASoC drivers
-Date:   Thu, 18 Mar 2021 18:36:02 +0000
-Message-ID: <161609213718.41838.12060094271609265312.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210314154459.15375-1-digetx@gmail.com>
-References: <20210314154459.15375-1-digetx@gmail.com>
+        id S233946AbhCSHGp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Mar 2021 03:06:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234168AbhCSHG3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 19 Mar 2021 03:06:29 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2DC2C06174A
+        for <linux-tegra@vger.kernel.org>; Fri, 19 Mar 2021 00:06:27 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id u9so7964765ejj.7
+        for <linux-tegra@vger.kernel.org>; Fri, 19 Mar 2021 00:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=awbkTFj7QLP6bW2rMHzN+bTcHkE9ABdCa+aqiLawiHY=;
+        b=LKwNoBOYkMlvY1TPGUbSz89JSimEmpAtOpTtOQVRPAfOGDJIUyrhXmSFqBjy4sDSGH
+         fo4t0BJiKCUO74klnmwuW+ynOyJI69AyuSQx/vxXxDa9SL/rec3X4dv2ZhrcVHNsuoP7
+         ETMPAYYji4vxjFw7NqiA9Rpc4280xCNSxL/I5Tr/0oa/8yQq5oM/LrR72hcbLQgeb/Ag
+         wlZlzHGP72d6nINStD0mrSNZPaDFLfKfYlLWC5H5D3mUwmr3D9BT3LtLobsCKwunV8N6
+         TBI4s4LZqxqgwCoqWAb6juG+lic8qAa0Lb62f8rBqr38ncIMw7gDpMlIp4f+xIpU3szx
+         Pi8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=awbkTFj7QLP6bW2rMHzN+bTcHkE9ABdCa+aqiLawiHY=;
+        b=kRJQCeDZVuNzP6lQUQ6A5Azy/QD3dI4YUT+jS8dP1cs97GWYUwFx2eH6gDo16aK/Zo
+         DnXoiwtqh6VUWPi3uuaSqj/10ms6t+RQnBO+rN0Ucges3eea42uka0qZzSDA2Bspqu+T
+         eQ9H4y5bI77PbSMWY5ZNeKs3ClwTwyUzojfaW1pFvSeEojtpFx94q00O9sy2TuXLZVHQ
+         CZD5lNbA6cdxTTJurFUYCOAzIhAqppZAtdrT7n+O3xma0DuoCORj+9DaYSyJrUiORCj6
+         vGZ9Q2HhXZ2bg4tjZ9tl3sjTtr8F5UF2XZOWzsQcF8RiHVaOg84vW5NILasgQtUS8zs7
+         NDCQ==
+X-Gm-Message-State: AOAM5313Aq81NlR4pNpR0UoPX2kBrv8i6f3ZEprJWLvVhuTCfC5yNiYn
+        qUIApU2IF+U7/WTkZ+EEAXQ+eRf2Bus=
+X-Google-Smtp-Source: ABdhPJzx1K8fVJT+02rkH4k2Hp6IPaMA7iKJMXrcVE/JSgLmXOwokj2EnLSLsTClog+LwYkltBSOHQ==
+X-Received: by 2002:a17:906:3952:: with SMTP id g18mr2737443eje.104.1616137586487;
+        Fri, 19 Mar 2021 00:06:26 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id v8sm3508489edc.30.2021.03.19.00.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Mar 2021 00:06:25 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH] drm/tegra: dc: Restore coupling of display controllers
+Date:   Fri, 19 Mar 2021 08:06:37 +0100
+Message-Id: <20210319070637.675964-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
-Message-ID: <20210318183602.u0X1Ub_UbE6VJL4qM7KGuZhdujk-xLq7Oz9r1cWooZY@z>
 
-On Sun, 14 Mar 2021 18:44:42 +0300, Dmitry Osipenko wrote:
-> This series adds missing hardware reset controls to I2S and AC97 drivers,
-> corrects runtime PM usage and drivers probe/remove order. Currently drivers
-> happen to work properly because reset is implicitly deasserted by tegra-clk
-> driver, but clk driver shouldn't touch the resets and we need to fix it
-> because this breaks other Tegra drivers. Previously we fixed the resets of
-> the AHUB and HDMI codec drivers, but turned out that we missed the I2C and
-> AC97 drivers.
-> 
-> [...]
+From: Thierry Reding <treding@nvidia.com>
 
-Applied to
+Coupling of display controllers used to rely on runtime PM to take the
+companion controller out of reset. Commit fd67e9c6ed5a ("drm/tegra: Do
+not implement runtime PM") accidentally broke this when runtime PM was
+removed.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Restore this functionality by reusing the hierarchical host1x client
+suspend/resume infrastructure that's similar to runtime PM and which
+perfectly fits this use-case.
 
-Thanks!
+Fixes: fd67e9c6ed5a ("drm/tegra: Do not implement runtime PM")
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/tegra/dc.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-[01/17] ASoC: tegra20: ac97: Add reset control
-        commit: a46b78247b852345ae4458711a4aec6744a7838c
-[02/17] ASoC: tegra20: i2s: Add reset control
-        commit: 9c648ef82d7d4696e80b286d37dae07b67a9a32d
-[03/17] ASoC: tegra30: i2s: Restore hardware state on runtime PM resume
-        commit: 0bbcecaaab15a74ba69f93df46c753f2a64eadca
-[04/17] reset: Add reset_control_bulk API
-        commit: 48d71395896d54eec989179dd265e569fcecb15a
-[05/17] ASoC: tegra30: ahub: Switch to use reset-bulk API
-        commit: 050086eb6dc945207b1db1d15cd81e9366dfd2f1
-[06/17] ASoC: tegra20: spdif: Correct driver removal order
-        commit: 0911f154a2ae264ee2a7c868c1267a102396d016
-[07/17] ASoC: tegra20: spdif: Remove handing of disabled runtime PM
-        commit: c53b396f0dd49a626ea2b1fc0a8b9e0a0bf95d4d
-[08/17] ASoC: tegra20: i2s: Add system level suspend-resume callbacks
-        commit: e33fdd9bee12be35d080bfd4acc9d1e3a0d04001
-[09/17] ASoC: tegra20: i2s: Correct driver removal order
-        commit: ca6e960ed6b10ba9236da8b3614574bb4524c65e
-[10/17] ASoC: tegra20: i2s: Use devm_clk_get()
-        commit: d3c6ef98dadd1e500445e4c5a9d684cbf3182c7d
-[11/17] ASoC: tegra20: i2s: Remove handing of disabled runtime PM
-        commit: 80ec4a4cb36d3f8bb56b5aa89faceb1145ef7aea
-[12/17] ASoC: tegra30: i2s: Correct driver removal order
-        commit: f852e1e4acf4ebde4c960bab6f89407fa18ca489
-[13/17] ASoC: tegra30: i2s: Use devm_clk_get()
-        commit: 52674aef9eb678f30d99f77fd53f6c564d5e2d92
-[14/17] ASoC: tegra30: i2s: Remove handing of disabled runtime PM
-        commit: b5f6f781fcb27b3ae5a2f04312a190115b5cbbd1
-[15/17] ASoC: tegra30: ahub: Reset global variable
-        commit: 5d956e3cb806870012c443bc265e6ac6188d3c36
-[16/17] ASoC: tegra30: ahub: Correct suspend-resume callbacks
-        commit: e2965c2ca139e780dc353cef1474103bb037136e
-[17/17] ASoC: tegra30: ahub: Remove handing of disabled runtime PM
-        commit: b5571449e6186bd37e8da16e7bce53f621c05e72
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 795b4e457ab6..2585ba70b706 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2519,22 +2519,18 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+ 	 * POWER_CONTROL registers during CRTC enabling.
+ 	 */
+ 	if (dc->soc->coupled_pm && dc->pipe == 1) {
+-		u32 flags = DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+-		struct device_link *link;
+-		struct device *partner;
++		struct device *companion;
++		struct tegra_dc *parent;
+ 
+-		partner = driver_find_device(dc->dev->driver, NULL, NULL,
+-					     tegra_dc_match_by_pipe);
+-		if (!partner)
++		companion = driver_find_device(dc->dev->driver, NULL, (const void *)0,
++					       tegra_dc_match_by_pipe);
++		if (!companion)
+ 			return -EPROBE_DEFER;
+ 
+-		link = device_link_add(dc->dev, partner, flags);
+-		if (!link) {
+-			dev_err(dc->dev, "failed to link controllers\n");
+-			return -EINVAL;
+-		}
++		parent = dev_get_drvdata(companion);
++		dc->client.parent = &parent->client;
+ 
+-		dev_dbg(dc->dev, "coupled to %s\n", dev_name(partner));
++		dev_dbg(dc->dev, "coupled to %s\n", dev_name(companion));
+ 	}
+ 
+ 	return 0;
+-- 
+2.30.2
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
