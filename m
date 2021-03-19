@@ -2,438 +2,531 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C1DC433E6
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 12:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7990DC433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49AE564EED
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 12:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F44364EFC
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbhCSMoV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 19 Mar 2021 08:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
+        id S229979AbhCSNKr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Mar 2021 09:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230163AbhCSMoG (ORCPT
+        with ESMTP id S229784AbhCSNKS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 19 Mar 2021 08:44:06 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76A53C06174A;
-        Fri, 19 Mar 2021 05:44:05 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id u4so11795155ljo.6;
-        Fri, 19 Mar 2021 05:44:05 -0700 (PDT)
+        Fri, 19 Mar 2021 09:10:18 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E305C06174A;
+        Fri, 19 Mar 2021 06:10:18 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id b83so9903513lfd.11;
+        Fri, 19 Mar 2021 06:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pE9UTROWsh3/pPLe+cr073qMj1X+IQp0oFmUiWqch/8=;
-        b=MFHThy89oJc+dHthFkFMr+lYlYyUobH7v3iQwNWw2XFxe2ml3Q3AjBzhH3eVp3eQvf
-         THEkRTSt/vkypRQNw1Ua4udKIMHBFCx1tNePa3vHyx+dYt9PGhYcwJfZ9qh/EKzDrnuu
-         IyvnhHPcjWt2NCflmyl9rOuIg5G9etAIx2AdVNeXxLrBpH+6c5fnX4QkHAmkm00QufN5
-         aumN8Zj12BJgq3/AmS7Rz+VOZzq1vfz+fKS8ef4jok1QUhbxSYiHW6c5K2OGEsOyFJUk
-         CaMEJipR8UgnvdjkAoJa8kw22WH6v4GHIX7AEuANIw37eQHBHeHT0PDxkKlsCqf2VYVD
-         pwOw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/eQpjSxP42GjU/ki5CnMD/P+2xi/NGBw1exMvB8XY+w=;
+        b=vf7BmHL8LIpowFPxeQFB1CFOsPmf4jPBvn/YIGOsYxtdacsrwMqcu56n4uQ43Rxv+X
+         s/v37wDDmGeOWmCpuI/GcqIW7BfT0WJroP1aA/QyGT1EqWOi6S+xW2SDkq+hHLpfsiaR
+         L1hz/3kXT36xrSLFk5hIP4/SVlwQslXNCplEJqT/ZMclqnNWoog1KmLDh30qxmfM8TL+
+         9VnwplAF6yWh48cBwSUegQdO/IRzRrUIBXUw+ip/A5v+ygWH7H9rjvE+ok/w4AZyYL7X
+         Gw+N6LNw4W/Zha/+25u7lhHxBGOokiScCr6S+eaSAGYaB5HDP8m8E9mminTDoXiEjL43
+         jb8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pE9UTROWsh3/pPLe+cr073qMj1X+IQp0oFmUiWqch/8=;
-        b=Go5IVz/CG00py+D/2QKwBFPvBGIDbEFEO8UeMm7m6IIX5lpWsqT+vzipq7Kh7ITir+
-         1t0CZC9yOKqF11COJPE9R2PK623rxDe74bdx9JktbbPTbrOAwXTgx3EmCPBM8uJ+UUkI
-         Kc8TEnSxuCBkye8Ev+FPpD3k74vCq8CZvxXXjZPBbkTT8yWjtV+GwafqS7TpQo1uppqa
-         nP3A6YFcOhJDYUhSbMeQkhFP0O176mht0VHvCn04RAMSoR75aiXyeK8ymX6lgGVAD/Pw
-         yLUxBN7arJIR5TGV0nLHGSa76TQ79M+6bxUg32uUWMp6rX2ZaYOKdmjHUEKfhq7cONgg
-         1Jjg==
-X-Gm-Message-State: AOAM530eRz5JydcimDoTEnQ5xUdjJfPQiSnXrD/34l5fK3NWtptsskcj
-        F9W/H+m4o/Y5AXVDVwoZHpC6pYqE8Gk=
-X-Google-Smtp-Source: ABdhPJwoCPtn9KGPuEZhQakE51bBvBf2VLF4yHt3RcvpYXwuXr6z/HqAyaNEZohhsA0CCkQGFPceUA==
-X-Received: by 2002:a05:651c:387:: with SMTP id e7mr798035ljp.425.1616157843736;
-        Fri, 19 Mar 2021 05:44:03 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id k5sm752189ljb.78.2021.03.19.05.44.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 05:44:03 -0700 (PDT)
-Subject: Re: [PATCH v4] mm: cma: support sysfs
-To:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        joaodias@google.com, willy@infradead.org, david@redhat.com,
-        surenb@google.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20210309062333.3216138-1-minchan@kernel.org>
+        bh=/eQpjSxP42GjU/ki5CnMD/P+2xi/NGBw1exMvB8XY+w=;
+        b=dnL4N/zLejFuSb3S6ZGL+HAUFW8Pl/f4VUs86oTGkR+MNuYpSWHlmJzvvF1FLBjfW1
+         tS2zYnfUppAAAqS/4djZtENDHUqzhNEDxTFO3vVbzFf7WSVBwJyJcpiadmxT0EmukEmG
+         6akWxNc9HyK5mD0EhKx3JWZHJ1d1wF63S7iM5rnvsPd+ATdLeokqMJDS4uxvHSMdQ2G4
+         nHIG5ErF3HRjCmh9ZhDbrShxT9opwlxwbsDVXzsomup1MyTRKoxe4btbht3e5KmcUwq7
+         7ZUcfgZgSP2xdzBLFtZgqTvu5rJr8dwIiKxEAIQFmXaD5yjORs1KKX7fzT4n4Wya+DTr
+         AMjQ==
+X-Gm-Message-State: AOAM530n36T2TlojxcaPL1rQI94kKvYpbLJJWkeEp9yzx751MdxQnb4i
+        Zi5+mnsnKmKfgB/82ELtY6c=
+X-Google-Smtp-Source: ABdhPJwPJ/h/+PE8ioHXEMZwdEZcRGX38yPRKUhF5ulDKkjR+Vz+7VjIGmK3SJd2iVBi7DRdDx+DsA==
+X-Received: by 2002:a05:6512:ad0:: with SMTP id n16mr760137lfu.205.1616159416471;
+        Fri, 19 Mar 2021 06:10:16 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id f11sm615984lfr.119.2021.03.19.06.10.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Mar 2021 06:10:15 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fead70a2-4330-79ff-e79a-d8511eab1256@gmail.com>
-Date:   Fri, 19 Mar 2021 15:44:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2] memory: tegra20: Add debug statistics
+Date:   Fri, 19 Mar 2021 16:09:33 +0300
+Message-Id: <20210319130933.23261-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210309062333.3216138-1-minchan@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-09.03.2021 09:23, Minchan Kim пишет:
-> Since CMA is getting used more widely, it's more important to
-> keep monitoring CMA statistics for system health since it's
-> directly related to user experience.
-> 
-> This patch introduces sysfs statistics for CMA, in order to provide
-> some basic monitoring of the CMA allocator.
-> 
->  * the number of CMA page successful allocations
->  * the number of CMA page allocation failures
-> 
-> These two values allow the user to calcuate the allocation
-> failure rate for each CMA area.
-> 
-> e.g.)
->   /sys/kernel/mm/cma/WIFI/alloc_pages_[success|fail]
->   /sys/kernel/mm/cma/SENSOR/alloc_pages_[success|fail]
->   /sys/kernel/mm/cma/BLUETOOTH/alloc_pages_[success|fail]
-> 
-> The cma_stat was intentionally allocated by dynamic allocation
-> to harmonize with kobject lifetime management.
-> https://lore.kernel.org/linux-mm/YCOAmXqt6dZkCQYs@kroah.com/
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-> ---
-> From v3 - https://lore.kernel.org/linux-mm/20210303205053.2906924-1-minchan@kernel.org/
->  * fix ZERO_OR_NULL_PTR - kernel test robot
->  * remove prefix cma - david@
->  * resolve conflict with vmstat cma in mmotm - akpm@
->  * rename stat name with success|fail
-> 
-> From v2 - https://lore.kernel.org/linux-mm/20210208180142.2765456-1-minchan@kernel.org/
->  * sysfs doc and description modification - jhubbard
-> 
-> From v1 - https://lore.kernel.org/linux-mm/20210203155001.4121868-1-minchan@kernel.org/
->  * fix sysfs build and refactoring - willy
->  * rename and drop some attributes - jhubbard
-> 
->  Documentation/ABI/testing/sysfs-kernel-mm-cma |  25 ++++
->  mm/Kconfig                                    |   7 ++
->  mm/Makefile                                   |   1 +
->  mm/cma.c                                      |   7 +-
->  mm/cma.h                                      |  20 ++++
->  mm/cma_sysfs.c                                | 110 ++++++++++++++++++
->  6 files changed, 168 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-cma
->  create mode 100644 mm/cma_sysfs.c
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-cma b/Documentation/ABI/testing/sysfs-kernel-mm-cma
-> new file mode 100644
-> index 000000000000..02b2bb60c296
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-mm-cma
-> @@ -0,0 +1,25 @@
-> +What:		/sys/kernel/mm/cma/
-> +Date:		Feb 2021
-> +Contact:	Minchan Kim <minchan@kernel.org>
-> +Description:
-> +		/sys/kernel/mm/cma/ contains a subdirectory for each CMA
-> +		heap name (also sometimes called CMA areas).
-> +
-> +		Each CMA heap subdirectory (that is, each
-> +		/sys/kernel/mm/cma/<cma-heap-name> directory) contains the
-> +		following items:
-> +
-> +			alloc_pages_success
-> +			alloc_pages_fail
-> +
-> +What:		/sys/kernel/mm/cma/<cma-heap-name>/alloc_pages_success
-> +Date:		Feb 2021
-> +Contact:	Minchan Kim <minchan@kernel.org>
-> +Description:
-> +		the number of pages CMA API succeeded to allocate
-> +
-> +What:		/sys/kernel/mm/cma/<cma-heap-name>/alloc_pages_fail
-> +Date:		Feb 2021
-> +Contact:	Minchan Kim <minchan@kernel.org>
-> +Description:
-> +		the number of pages CMA API failed to allocate
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 24c045b24b95..febb7e8e24de 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -513,6 +513,13 @@ config CMA_DEBUGFS
->  	help
->  	  Turns on the DebugFS interface for CMA.
->  
-> +config CMA_SYSFS
-> +	bool "CMA information through sysfs interface"
-> +	depends on CMA && SYSFS
-> +	help
-> +	  This option exposes some sysfs attributes to get information
-> +	  from CMA.
-> +
->  config CMA_AREAS
->  	int "Maximum count of the CMA areas"
->  	depends on CMA
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 72227b24a616..56968b23ed7a 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -109,6 +109,7 @@ obj-$(CONFIG_CMA)	+= cma.o
->  obj-$(CONFIG_MEMORY_BALLOON) += balloon_compaction.o
->  obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
->  obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
-> +obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
->  obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
->  obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
->  obj-$(CONFIG_DEBUG_PAGE_REF) += debug_page_ref.o
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 908f04775686..ac050359faae 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -507,10 +507,13 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
->  
->  	pr_debug("%s(): returned %p\n", __func__, page);
->  out:
-> -	if (page)
-> +	if (page) {
->  		count_vm_event(CMA_ALLOC_SUCCESS);
-> -	else
-> +		cma_sysfs_alloc_pages_count(cma, count);
-> +	} else {
->  		count_vm_event(CMA_ALLOC_FAIL);
-> +		cma_sysfs_fail_pages_count(cma, count);
-> +	}
->  
->  	return page;
->  }
-> diff --git a/mm/cma.h b/mm/cma.h
-> index 42ae082cb067..95d1aa2d808a 100644
-> --- a/mm/cma.h
-> +++ b/mm/cma.h
-> @@ -3,6 +3,16 @@
->  #define __MM_CMA_H__
->  
->  #include <linux/debugfs.h>
-> +#include <linux/kobject.h>
-> +
-> +struct cma_stat {
-> +	spinlock_t lock;
-> +	/* the number of CMA page successful allocations */
-> +	unsigned long nr_pages_succeeded;
-> +	/* the number of CMA page allocation failures */
-> +	unsigned long nr_pages_failed;
-> +	struct kobject kobj;
-> +};
->  
->  struct cma {
->  	unsigned long   base_pfn;
-> @@ -16,6 +26,9 @@ struct cma {
->  	struct debugfs_u32_array dfs_bitmap;
->  #endif
->  	char name[CMA_MAX_NAME];
-> +#ifdef CONFIG_CMA_SYSFS
-> +	struct cma_stat	*stat;
-> +#endif
->  };
->  
->  extern struct cma cma_areas[MAX_CMA_AREAS];
-> @@ -26,4 +39,11 @@ static inline unsigned long cma_bitmap_maxno(struct cma *cma)
->  	return cma->count >> cma->order_per_bit;
->  }
->  
-> +#ifdef CONFIG_CMA_SYSFS
-> +void cma_sysfs_alloc_pages_count(struct cma *cma, size_t count);
-> +void cma_sysfs_fail_pages_count(struct cma *cma, size_t count);
-> +#else
-> +static inline void cma_sysfs_alloc_pages_count(struct cma *cma, size_t count) {};
-> +static inline void cma_sysfs_fail_pages_count(struct cma *cma, size_t count) {};
-> +#endif
->  #endif
-> diff --git a/mm/cma_sysfs.c b/mm/cma_sysfs.c
-> new file mode 100644
-> index 000000000000..3134b2b3a96d
-> --- /dev/null
-> +++ b/mm/cma_sysfs.c
-> @@ -0,0 +1,110 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * CMA SysFS Interface
-> + *
-> + * Copyright (c) 2021 Minchan Kim <minchan@kernel.org>
-> + */
-> +
-> +#include <linux/cma.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +
-> +#include "cma.h"
-> +
-> +static struct cma_stat *cma_stats;
-> +
-> +void cma_sysfs_alloc_pages_count(struct cma *cma, size_t count)
-> +{
-> +	spin_lock(&cma->stat->lock);
-> +	cma->stat->nr_pages_succeeded += count;
-> +	spin_unlock(&cma->stat->lock);
-> +}
-> +
-> +void cma_sysfs_fail_pages_count(struct cma *cma, size_t count)
-> +{
-> +	spin_lock(&cma->stat->lock);
-> +	cma->stat->nr_pages_failed += count;
-> +	spin_unlock(&cma->stat->lock);
-> +}
-> +
-> +#define CMA_ATTR_RO(_name) \
-> +	static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
-> +
-> +static struct kobject *cma_kobj;
-> +
-> +static ssize_t alloc_pages_success_show(struct kobject *kobj,
-> +			struct kobj_attribute *attr, char *buf)
-> +{
-> +	struct cma_stat *stat = container_of(kobj, struct cma_stat, kobj);
-> +
-> +	return sysfs_emit(buf, "%lu\n", stat->nr_pages_succeeded);
-> +}
-> +CMA_ATTR_RO(alloc_pages_success);
-> +
-> +static ssize_t alloc_pages_fail_show(struct kobject *kobj,
-> +			struct kobj_attribute *attr, char *buf)
-> +{
-> +	struct cma_stat *stat = container_of(kobj, struct cma_stat, kobj);
-> +
-> +	return sysfs_emit(buf, "%lu\n", stat->nr_pages_failed);
-> +}
-> +CMA_ATTR_RO(alloc_pages_fail);
-> +
-> +static void cma_kobj_release(struct kobject *kobj)
-> +{
-> +	struct cma_stat *stat = container_of(kobj, struct cma_stat, kobj);
-> +
-> +	kfree(stat);
-> +}
-> +
-> +static struct attribute *cma_attrs[] = {
-> +	&alloc_pages_success_attr.attr,
-> +	&alloc_pages_fail_attr.attr,
-> +	NULL,
-> +};
-> +ATTRIBUTE_GROUPS(cma);
-> +
-> +static struct kobj_type cma_ktype = {
-> +	.release = cma_kobj_release,
-> +	.sysfs_ops = &kobj_sysfs_ops,
-> +	.default_groups = cma_groups
-> +};
-> +
-> +static int __init cma_sysfs_init(void)
-> +{
-> +	int i = 0;
-> +	struct cma *cma;
-> +
-> +	cma_kobj = kobject_create_and_add("cma", mm_kobj);
-> +	if (!cma_kobj)
-> +		return -ENOMEM;
-> +
-> +	cma_stats = kmalloc_array(cma_area_count, sizeof(struct cma_stat),
-> +				GFP_KERNEL|__GFP_ZERO);
+Add debug statistics collection support. The statistics is available
+via debugfs in '/sys/kernel/debug/mc/stats', it shows percent of memory
+controller utilization for each memory client. This information is
+intended to help with debugging of memory performance issues, it already
+was proven to be useful by helping to improve memory bandwidth management
+of the display driver.
 
-Use kcalloc().
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-Code identation is wrong, please use checkpatch.
+Changelog:
 
-> +	if (ZERO_OR_NULL_PTR(cma_stats))
-> +		goto out;
-> +
-> +	do {
-> +		cma = &cma_areas[i];
-> +		cma->stat = &cma_stats[i];
-> +		spin_lock_init(&cma->stat->lock);
-> +		if (kobject_init_and_add(&cma->stat->kobj, &cma_ktype,
-> +					cma_kobj, "%s", cma->name)) {
-> +			kobject_put(&cma->stat->kobj);
-> +			goto out;
-> +		}
-> +	} while (++i < cma_area_count);
-> +
-> +	return 0;
-> +out:
-> +	while (--i >= 0) {
-> +		cma = &cma_areas[i];
-> +		kobject_put(&cma->stat->kobj);
-> +	}
-> +
-> +	kfree(cma_stats);
-> +	kobject_put(cma_kobj);
-> +
-> +	return -ENOMEM;
-> +}
-> +subsys_initcall(cma_sysfs_init);
-> 
+v2: - Removed handling of debugfs creation errors.
 
-Hi,
+    - Added more consts to the code.
 
-There is a NULL derence on ARM32 NVIDIA Tegra SoCs with CONFIG_CMA_SYSFS=y using today's next-20210319, please take a look.
+    - Reduced scope of local variables.
 
-[    1.185423] 8<--- cut here ---
-[    1.186081] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-[    1.186705] pgd = (ptrval)
-[    1.188130] [00000000] *pgd=00000000
-[    1.190554] Internal error: Oops: 5 [#1] PREEMPT SMP THUMB2
-[    1.191545] Modules linked in:
-[    1.192629] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W         5.12.0-rc3-next-20210319-00174-g89b3b421dd2b #7142
-[    1.193540] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[    1.194613] PC is at _raw_spin_lock+0x1a/0x48
-[    1.200352] LR is at cma_sysfs_alloc_pages_count+0x13/0x24
-[    1.200821] pc : [<c0a2d832>]    lr : [<c027762f>]    psr: 00000033
-[    1.201269] sp : c1547e48  ip : f0000080  fp : 0000c800
-[    1.201580] r10: c13bd178  r9 : 00000040  r8 : 00000040
-[    1.201972] r7 : 00000000  r6 : c13bd168  r5 : 00000040  r4 : c13bd168
-[    1.202418] r3 : c1546000  r2 : 00000001  r1 : 00000040  r0 : 00000000
-[    1.203014] Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA Thumb  Segment none
-[    1.203488] Control: 50c5387d  Table: 0000406a  DAC: 00000051
-[    1.203988] Register r0 information: NULL pointer
-[    1.204868] Register r1 information: non-paged memory
-[    1.205233] Register r2 information: non-paged memory
-[    1.205563] Register r3 information: non-slab/vmalloc memory
-[    1.206213] Register r4 information: non-slab/vmalloc memory
-[    1.206578] Register r5 information: non-paged memory
-[    1.206929] Register r6 information: non-slab/vmalloc memory
-[    1.207278] Register r7 information: NULL pointer
-[    1.207594] Register r8 information: non-paged memory
-[    1.207968] Register r9 information: non-paged memory
-[    1.208291] Register r10 information: non-slab/vmalloc memory
-[    1.208648] Register r11 information: non-paged memory
-[    1.209002] Register r12 information: non-paged memory
-[    1.209407] Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-[    1.209956] Stack: (0xc1547e48 to 0xc1548000)
-[    1.211102] 7e40:                   c1199e24 00033800 efe35000 c027706f 0000003f 00000000
-[    1.211999] 7e60: 00000040 0000003f 00000000 00000040 00000cc0 00000000 00000006 00000000
-[    1.212855] 7e80: c1547ed8 00040000 c1141780 00000001 00000000 c1547ed8 00000647 00000040
-[    1.213768] 7ea0: c138c000 c01112ab c0fed0d8 c1141780 c1546000 00000001 c1140d24 00000000
-[    1.214648] 7ec0: c1140d44 c1104af9 c1104a7f 00000001 00000000 00000cc0 00000000 e29968ad
-[    1.215578] 7ee0: c161a077 c1546000 c136d940 c1104a7f ffffe000 c0101d69 c161a077 c161a098
-[    1.216564] 7f00: c1058490 c0138345 c10566cc c0ef58b8 c11003d1 c1546000 00000000 00000002
-[    1.217357] 7f20: 00000002 c0f10280 c0efe3e4 c0efe398 c11003d1 c161a074 c161a077 e29968ad
-[    1.218212] 7f40: c1140d40 e29968ad c161a000 c118d304 00000003 c11003d1 c161a000 c1140d24
-[    1.219164] 7f60: 0000017e c1101141 00000002 00000002 00000000 c11003d1 c0a27fc5 c10566cc
-[    1.220015] 7f80: c1547f98 00000000 c0a27fc5 00000000 00000000 00000000 00000000 00000000
-[    1.220863] 7fa0: 00000000 c0a27fd1 00000000 c0100155 00000000 00000000 00000000 00000000
-[    1.221713] 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.222584] 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[    1.225038] [<c0a2d832>] (_raw_spin_lock) from [<c027762f>] (cma_sysfs_alloc_pages_count+0x13/0x24)
-[    1.226190] [<c027762f>] (cma_sysfs_alloc_pages_count) from [<c027706f>] (cma_alloc+0x153/0x274)
-[    1.226720] [<c027706f>] (cma_alloc) from [<c01112ab>] (__alloc_from_contiguous+0x37/0x8c)
-[    1.227272] [<c01112ab>] (__alloc_from_contiguous) from [<c1104af9>] (atomic_pool_init+0x7b/0x126)
-[    1.233596] [<c1104af9>] (atomic_pool_init) from [<c0101d69>] (do_one_initcall+0x45/0x1e4)
-[    1.234188] [<c0101d69>] (do_one_initcall) from [<c1101141>] (kernel_init_freeable+0x157/0x1a6)
-[    1.234741] [<c1101141>] (kernel_init_freeable) from [<c0a27fd1>] (kernel_init+0xd/0xe0)
-[    1.235289] [<c0a27fd1>] (kernel_init) from [<c0100155>] (ret_from_fork+0x11/0x1c)
+    - Switched to use debugfs_create_devm_seqfile() helper.
+
+    - Corrected error message.
+
+ drivers/memory/tegra/mc.c      |   9 +
+ drivers/memory/tegra/mc.h      |   4 +-
+ drivers/memory/tegra/tegra20.c | 326 +++++++++++++++++++++++++++++++++
+ include/soc/tegra/mc.h         |   7 +
+ 4 files changed, 344 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index a21163ccadc4..e58c3e5baea0 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -827,6 +827,15 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	mc->debugfs.root = debugfs_create_dir("mc", NULL);
++
++	if (mc->soc->init) {
++		err = mc->soc->init(mc);
++		if (err < 0)
++			dev_err(&pdev->dev, "failed to initialize SoC driver: %d\n",
++				err);
++	}
++
+ 	err = tegra_mc_reset_setup(mc);
+ 	if (err < 0)
+ 		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
+diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+index 33e40d600592..1ee34f0da4f7 100644
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -92,12 +92,12 @@ icc_provider_to_tegra_mc(struct icc_provider *provider)
+ 	return container_of(provider, struct tegra_mc, provider);
+ }
+ 
+-static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
++static inline u32 mc_readl(const struct tegra_mc *mc, unsigned long offset)
+ {
+ 	return readl_relaxed(mc->regs + offset);
+ }
+ 
+-static inline void mc_writel(struct tegra_mc *mc, u32 value,
++static inline void mc_writel(const struct tegra_mc *mc, u32 value,
+ 			     unsigned long offset)
+ {
+ 	writel_relaxed(value, mc->regs + offset);
+diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
+index 29ecf02805a0..14caf5b9324c 100644
+--- a/drivers/memory/tegra/tegra20.c
++++ b/drivers/memory/tegra/tegra20.c
+@@ -3,6 +3,8 @@
+  * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
++#include <linux/bitfield.h>
++#include <linux/delay.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+@@ -11,6 +13,77 @@
+ 
+ #include "mc.h"
+ 
++#define MC_STAT_CONTROL				0x90
++#define MC_STAT_EMC_CLOCK_LIMIT			0xa0
++#define MC_STAT_EMC_CLOCKS			0xa4
++#define MC_STAT_EMC_CONTROL_0			0xa8
++#define MC_STAT_EMC_CONTROL_1			0xac
++#define MC_STAT_EMC_COUNT_0			0xb8
++#define MC_STAT_EMC_COUNT_1			0xbc
++
++#define MC_STAT_CONTROL_CLIENT_ID		GENMASK(13,  8)
++#define MC_STAT_CONTROL_EVENT			GENMASK(23, 16)
++#define MC_STAT_CONTROL_PRI_EVENT		GENMASK(25, 24)
++#define MC_STAT_CONTROL_FILTER_CLIENT_ENABLE	GENMASK(26, 26)
++#define MC_STAT_CONTROL_FILTER_PRI		GENMASK(29, 28)
++
++#define MC_STAT_CONTROL_PRI_EVENT_HP		0
++#define MC_STAT_CONTROL_PRI_EVENT_TM		1
++#define MC_STAT_CONTROL_PRI_EVENT_BW		2
++
++#define MC_STAT_CONTROL_FILTER_PRI_DISABLE	0
++#define MC_STAT_CONTROL_FILTER_PRI_NO		1
++#define MC_STAT_CONTROL_FILTER_PRI_YES		2
++
++#define MC_STAT_CONTROL_EVENT_QUALIFIED		0
++#define MC_STAT_CONTROL_EVENT_ANY_READ		1
++#define MC_STAT_CONTROL_EVENT_ANY_WRITE		2
++#define MC_STAT_CONTROL_EVENT_RD_WR_CHANGE	3
++#define MC_STAT_CONTROL_EVENT_SUCCESSIVE	4
++#define MC_STAT_CONTROL_EVENT_ARB_BANK_AA	5
++#define MC_STAT_CONTROL_EVENT_ARB_BANK_BB	6
++#define MC_STAT_CONTROL_EVENT_PAGE_MISS		7
++#define MC_STAT_CONTROL_EVENT_AUTO_PRECHARGE	8
++
++#define EMC_GATHER_RST				(0 << 8)
++#define EMC_GATHER_CLEAR			(1 << 8)
++#define EMC_GATHER_DISABLE			(2 << 8)
++#define EMC_GATHER_ENABLE			(3 << 8)
++
++#define MC_STAT_SAMPLE_TIME_USEC		16000
++
++/* we store collected statistics as a fixed point values */
++#define MC_FX_FRAC_SCALE			100
++
++struct tegra20_mc_stat_gather {
++	unsigned int pri_filter;
++	unsigned int pri_event;
++	unsigned int result;
++	unsigned int client;
++	unsigned int event;
++	bool client_enb;
++};
++
++struct tegra20_mc_stat {
++	struct tegra20_mc_stat_gather gather0;
++	struct tegra20_mc_stat_gather gather1;
++	unsigned int sample_time_usec;
++	const struct tegra_mc *mc;
++};
++
++struct tegra20_mc_client_stat {
++	unsigned int events;
++	unsigned int arb_high_prio;
++	unsigned int arb_timeout;
++	unsigned int arb_bandwidth;
++	unsigned int rd_wr_change;
++	unsigned int successive;
++	unsigned int page_miss;
++	unsigned int auto_precharge;
++	unsigned int arb_bank_aa;
++	unsigned int arb_bank_bb;
++};
++
+ static const struct tegra_mc_client tegra20_mc_clients[] = {
+ 	{
+ 		.id = 0x00,
+@@ -356,6 +429,258 @@ static const struct tegra_mc_icc_ops tegra20_mc_icc_ops = {
+ 	.set = tegra20_mc_icc_set,
+ };
+ 
++static u32 tegra20_mc_stat_gather_control(const struct tegra20_mc_stat_gather *g)
++{
++	u32 control;
++
++	control  = FIELD_PREP(MC_STAT_CONTROL_EVENT, g->event);
++	control |= FIELD_PREP(MC_STAT_CONTROL_CLIENT_ID, g->client);
++	control |= FIELD_PREP(MC_STAT_CONTROL_PRI_EVENT, g->pri_event);
++	control |= FIELD_PREP(MC_STAT_CONTROL_FILTER_PRI, g->pri_filter);
++	control |= FIELD_PREP(MC_STAT_CONTROL_FILTER_CLIENT_ENABLE, g->client_enb);
++
++	return control;
++}
++
++static void tegra20_mc_stat_gather(struct tegra20_mc_stat *stat)
++{
++	u32 clocks, count0, count1, control_0, control_1;
++	const struct tegra_mc *mc = stat->mc;
++
++	control_0 = tegra20_mc_stat_gather_control(&stat->gather0);
++	control_1 = tegra20_mc_stat_gather_control(&stat->gather1);
++
++	/*
++	 * Reset statistic gathers state, select bandwidth mode for the
++	 * statistics collection mode and set clocks counter saturation
++	 * limit to maximum.
++	 */
++	mc_writel(mc, 0x00000000, MC_STAT_CONTROL);
++	mc_writel(mc,  control_0, MC_STAT_EMC_CONTROL_0);
++	mc_writel(mc,  control_1, MC_STAT_EMC_CONTROL_1);
++	mc_writel(mc, 0xffffffff, MC_STAT_EMC_CLOCK_LIMIT);
++
++	mc_writel(mc, EMC_GATHER_ENABLE, MC_STAT_CONTROL);
++	fsleep(stat->sample_time_usec);
++	mc_writel(mc, EMC_GATHER_DISABLE, MC_STAT_CONTROL);
++
++	count0 = mc_readl(mc, MC_STAT_EMC_COUNT_0);
++	count1 = mc_readl(mc, MC_STAT_EMC_COUNT_1);
++	clocks = mc_readl(mc, MC_STAT_EMC_CLOCKS);
++	clocks = max(clocks / 100 / MC_FX_FRAC_SCALE, 1u);
++
++	stat->gather0.result = DIV_ROUND_UP(count0, clocks);
++	stat->gather1.result = DIV_ROUND_UP(count1, clocks);
++}
++
++static void tegra20_mc_stat_events(const struct tegra_mc *mc,
++				   const struct tegra_mc_client *client0,
++				   const struct tegra_mc_client *client1,
++				   unsigned int pri_filter,
++				   unsigned int pri_event,
++				   unsigned int event,
++				   unsigned int *result0,
++				   unsigned int *result1)
++{
++	struct tegra20_mc_stat stat = {};
++
++	stat.gather0.client = client0 ? client0->id : 0;
++	stat.gather0.pri_filter = pri_filter;
++	stat.gather0.client_enb = !!client0;
++	stat.gather0.pri_event = pri_event;
++	stat.gather0.event = event;
++
++	stat.gather1.client = client1 ? client1->id : 0;
++	stat.gather1.pri_filter = pri_filter;
++	stat.gather1.client_enb = !!client1;
++	stat.gather1.pri_event = pri_event;
++	stat.gather1.event = event;
++
++	stat.sample_time_usec = MC_STAT_SAMPLE_TIME_USEC;
++	stat.mc = mc;
++
++	tegra20_mc_stat_gather(&stat);
++
++	*result0 = stat.gather0.result;
++	*result1 = stat.gather1.result;
++}
++
++static void tegra20_mc_collect_stats(const struct tegra_mc *mc,
++				     struct tegra20_mc_client_stat *stats)
++{
++	const struct tegra_mc_client *client0, *client1;
++	unsigned int i;
++
++	/* collect memory controller utilization percent for each client */
++	for (i = 0; i < mc->soc->num_clients; i += 2) {
++		client0 = &mc->soc->clients[i];
++		client1 = &mc->soc->clients[i + 1];
++
++		if (i + 1 == mc->soc->num_clients)
++			client1 = NULL;
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_DISABLE,
++				       MC_STAT_CONTROL_PRI_EVENT_HP,
++				       MC_STAT_CONTROL_EVENT_QUALIFIED,
++				       &stats[i + 0].events,
++				       &stats[i + 1].events);
++	}
++
++	/* collect more info from active clients */
++	for (i = 0; i < mc->soc->num_clients; i++) {
++		unsigned int clienta, clientb = mc->soc->num_clients;
++
++		for (client0 = NULL; i < mc->soc->num_clients; i++) {
++			if (stats[i].events) {
++				client0 = &mc->soc->clients[i];
++				clienta = i++;
++				break;
++			}
++		}
++
++		for (client1 = NULL; i < mc->soc->num_clients; i++) {
++			if (stats[i].events) {
++				client1 = &mc->soc->clients[i];
++				clientb = i;
++				break;
++			}
++		}
++
++		if (!client0 && !client1)
++			break;
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_YES,
++				       MC_STAT_CONTROL_PRI_EVENT_HP,
++				       MC_STAT_CONTROL_EVENT_QUALIFIED,
++				       &stats[clienta].arb_high_prio,
++				       &stats[clientb].arb_high_prio);
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_YES,
++				       MC_STAT_CONTROL_PRI_EVENT_TM,
++				       MC_STAT_CONTROL_EVENT_QUALIFIED,
++				       &stats[clienta].arb_timeout,
++				       &stats[clientb].arb_timeout);
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_YES,
++				       MC_STAT_CONTROL_PRI_EVENT_BW,
++				       MC_STAT_CONTROL_EVENT_QUALIFIED,
++				       &stats[clienta].arb_bandwidth,
++				       &stats[clientb].arb_bandwidth);
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_DISABLE,
++				       MC_STAT_CONTROL_PRI_EVENT_HP,
++				       MC_STAT_CONTROL_EVENT_RD_WR_CHANGE,
++				       &stats[clienta].rd_wr_change,
++				       &stats[clientb].rd_wr_change);
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_DISABLE,
++				       MC_STAT_CONTROL_PRI_EVENT_HP,
++				       MC_STAT_CONTROL_EVENT_SUCCESSIVE,
++				       &stats[clienta].successive,
++				       &stats[clientb].successive);
++
++		tegra20_mc_stat_events(mc, client0, client1,
++				       MC_STAT_CONTROL_FILTER_PRI_DISABLE,
++				       MC_STAT_CONTROL_PRI_EVENT_HP,
++				       MC_STAT_CONTROL_EVENT_PAGE_MISS,
++				       &stats[clienta].page_miss,
++				       &stats[clientb].page_miss);
++	}
++}
++
++static void tegra20_mc_printf_percents(struct seq_file *s,
++				       const char *fmt,
++				       unsigned int percents_fx)
++{
++	char percents_str[8];
++
++	snprintf(percents_str, ARRAY_SIZE(percents_str), "%3u.%02u%%",
++		 percents_fx / MC_FX_FRAC_SCALE, percents_fx % MC_FX_FRAC_SCALE);
++
++	seq_printf(s, fmt, percents_str);
++}
++
++static int tegra20_mc_stats_show(struct seq_file *s, void *unused)
++{
++	const struct tegra_mc *mc = dev_get_drvdata(s->private);
++	struct tegra20_mc_client_stat *stats;
++	unsigned int i;
++
++	stats = kcalloc(mc->soc->num_clients + 1, sizeof(*stats), GFP_KERNEL);
++	if (!stats)
++		return -ENOMEM;
++
++	tegra20_mc_collect_stats(mc, stats);
++
++	seq_puts(s, "Memory client   Events   Timeout   High priority   Bandwidth ARB   RW change   Successive   Page miss\n");
++	seq_puts(s, "-----------------------------------------------------------------------------------------------------\n");
++
++	for (i = 0; i < mc->soc->num_clients; i++) {
++		seq_printf(s, "%-14s  ", mc->soc->clients[i].name);
++
++		/* An event is generated when client performs R/W request. */
++		tegra20_mc_printf_percents(s,  "%-9s", stats[i].events);
++
++		/*
++		 * An event is generated based on the timeout (TM) signal
++		 * accompanying a request for arbitration.
++		 */
++		tegra20_mc_printf_percents(s, "%-10s", stats[i].arb_timeout);
++
++		/*
++		 * An event is generated based on the high-priority (HP) signal
++		 * accompanying a request for arbitration.
++		 */
++		tegra20_mc_printf_percents(s, "%-16s", stats[i].arb_high_prio);
++
++		/*
++		 * An event is generated based on the bandwidth (BW) signal
++		 * accompanying a request for arbitration.
++		 */
++		tegra20_mc_printf_percents(s, "%-16s", stats[i].arb_bandwidth);
++
++		/*
++		 * An event is generated when the memory controller switches
++		 * between making a read request to making a write request.
++		 */
++		tegra20_mc_printf_percents(s, "%-12s", stats[i].rd_wr_change);
++
++		/*
++		 * An even generated when the chosen client has wins arbitration
++		 * when it was also the winner at the previous request.  If a
++		 * client makes N requests in a row that are honored, SUCCESSIVE
++		 * will be counted (N-1) times.  Large values for this event
++		 * imply that if we were patient enough, all of those requests
++		 * could have been coalesced.
++		 */
++		tegra20_mc_printf_percents(s, "%-13s", stats[i].successive);
++
++		/*
++		 * An event is generated when the memory controller detects a
++		 * page miss for the current request.
++		 */
++		tegra20_mc_printf_percents(s, "%-12s\n", stats[i].page_miss);
++	}
++
++	kfree(stats);
++
++	return 0;
++}
++
++static int tegra20_mc_init(struct tegra_mc *mc)
++{
++	debugfs_create_devm_seqfile(mc->dev, "stats", mc->debugfs.root,
++				    tegra20_mc_stats_show);
++
++	return 0;
++}
++
+ const struct tegra_mc_soc tegra20_mc_soc = {
+ 	.clients = tegra20_mc_clients,
+ 	.num_clients = ARRAY_SIZE(tegra20_mc_clients),
+@@ -367,4 +692,5 @@ const struct tegra_mc_soc tegra20_mc_soc = {
+ 	.resets = tegra20_mc_resets,
+ 	.num_resets = ARRAY_SIZE(tegra20_mc_resets),
+ 	.icc_ops = &tegra20_mc_icc_ops,
++	.init = tegra20_mc_init,
+ };
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index d731407e23bb..d2fbe6a8b25b 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -7,6 +7,7 @@
+ #define __SOC_TEGRA_MC_H__
+ 
+ #include <linux/bits.h>
++#include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/interconnect-provider.h>
+ #include <linux/reset-controller.h>
+@@ -175,6 +176,8 @@ struct tegra_mc_soc {
+ 	unsigned int num_resets;
+ 
+ 	const struct tegra_mc_icc_ops *icc_ops;
++
++	int (*init)(struct tegra_mc *mc);
+ };
+ 
+ struct tegra_mc {
+@@ -196,6 +199,10 @@ struct tegra_mc {
+ 	struct icc_provider provider;
+ 
+ 	spinlock_t lock;
++
++	struct {
++		struct dentry *root;
++	} debugfs;
+ };
+ 
+ int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
+-- 
+2.30.2
+
