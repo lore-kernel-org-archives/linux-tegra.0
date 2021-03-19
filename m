@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36623C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 17:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ABFC433C1
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 17:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042816197E
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 17:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E78E961985
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 17:57:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbhCSRoi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 19 Mar 2021 13:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
+        id S230042AbhCSR4b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Mar 2021 13:56:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229974AbhCSRoM (ORCPT
+        with ESMTP id S229956AbhCSR4J (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 19 Mar 2021 13:44:12 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCA7DC06174A;
-        Fri, 19 Mar 2021 10:44:11 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id f3so2899542lfu.5;
-        Fri, 19 Mar 2021 10:44:11 -0700 (PDT)
+        Fri, 19 Mar 2021 13:56:09 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3D6C06174A;
+        Fri, 19 Mar 2021 10:56:08 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 184so13016621ljf.9;
+        Fri, 19 Mar 2021 10:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gq4UIk+ByEdA/Jn9oEYE7L3pIna4OdrooJuJgf5IZnk=;
-        b=uMS9Ttr4YOy2CbXHUE4FhhR3hZMFun1WDEUYtrYbtMLHcT++dD6nYgKvBT2ZR/PByh
-         cudf3+Zx7IO6Z/V2yjkIBkBasjdD/zcGulHderIjLybhn1jWEEvotzkxN9jDEw5NMyc9
-         s0CwM5LXfynfaj7Ij8eoqJLRt2dO7x/z4K915KJr6Qfz0eqBj0qcELhCVR13BMx5yUvq
-         yyFvqUwAQ+EaxFWPjnM5u1Pz4s5pln+2AhrKTVfsxmvK2SaY1fTWZ8mhAD2OjPU0kwVM
-         vNdvmMOVXhTxPZNx/Dc0JiyaUx50MzUOnYU/nCt/V6C/QpinpgReJ9LFVnmlVIRdjZOx
-         PRvQ==
+        bh=EN3uRBxUV6eO1T+kGUJLe9TYovHE3LSSTvhishvZdAI=;
+        b=c+1GxprWueFENyi5K/CZts1MNjoFWJg8eQS3tOBmbBISXM0M/JelqTmfQUv8lPyCUW
+         XiswpSTRG6ELr/fdzcZ424IoINC0GuPR6SfL3Moby6GVLSXPvNdJzQk1Oob3tjzjTg2L
+         HDT3gqB7gupOd0yaZtsMP+0wxcE1xpHGmS7ya7hhpI3s3Sj3NBIKgjjpkADq10BWruzv
+         OaC+UV/CHIBV2GFJA8QQaKUG4JUiy1geLpHIVDYe9mWWtS8q8Doj6vwhZDKb4v2UTxt/
+         9enabFoP27vZEiILngtyCXA4nK52I6+oAhW2tHBNk/tzR205zZanwCHolFibW14G7wNR
+         Oq7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=gq4UIk+ByEdA/Jn9oEYE7L3pIna4OdrooJuJgf5IZnk=;
-        b=WvY8vU9XA995aHQP7ReOuoQjfK4C+A6r01G0HEkLUd4Z2tMGRc/btprdH6zrsLwmOM
-         KopIeBJnOz7/5i/QYExPrG3CUqPof7ll0xDnCbw5CVMeQPnpuQnpsC2Mbc8rx4FC3Tvh
-         2XEyHxf3Hlyvsn45SgpVrWR1ILGiTX9RpspIWclg/RjZ1A1Jkp0Uw79P2a20qMlAqIru
-         HYIUehVkdx6hxDqBe42cFOcce+8yapZLYrpxQg8bEt7Kmji9dNYm3Qj8VYvdr/RmkqXZ
-         hJ7j4JrstWin1TU8gK+PuVieLzI/Cdaax13a1OUpHgjxaSg8YgZbtKSkaPyyc6X/HE67
-         8QPg==
-X-Gm-Message-State: AOAM5310mbq6sfnVPPJaLlmkJ1Y0BlB+LNNsIl0CE7ISZVpO5GRYSX5b
-        1V/FELO+iiEugs4u8o51jwlWJzRP5Yk=
-X-Google-Smtp-Source: ABdhPJw2DmuYYVAqrwygwCq3lofBMOROw4yRj8tSgDsg18peqRXYn+0/Jyf1Y/OhtXfh6VB/SOWB0A==
-X-Received: by 2002:ac2:53a1:: with SMTP id j1mr1472374lfh.298.1616175850302;
-        Fri, 19 Mar 2021 10:44:10 -0700 (PDT)
+        bh=EN3uRBxUV6eO1T+kGUJLe9TYovHE3LSSTvhishvZdAI=;
+        b=QvrE5tlEYNTJ06olR9Rem2vTOkTdUlLYNjtptAVZT9MeITJngBEHhT5siv+1JMxuzo
+         baJmO43YaQzOJYxBSkVLsGiE2xlEZYLZTD0BCz9zZgY1pnp6kv+5uVrYVNazqe2VvdEI
+         2K7MNSYfT0u3X6LYtNMnTXA8BVnPtp+iLuCAghif+dLGSUBlsHJUBcI06Y4zR72I7KAC
+         J4mXvLhQD3fS8spfAREZpd4ETy0UL+Bs2J0Wgx0gd03oHndbwzpJMy/IiUlgXrjxM5hV
+         P0EUahCcvdUzcgq80T60a+MoGEudtzd7UV7bBubEWzHRYgSSBF6JQWXL/ABnd16XFKez
+         y+rA==
+X-Gm-Message-State: AOAM530BFjU0pkYLGwdSABsfHSKs+mfnVC0QQOSdxcqEqVpsxp0HL+vv
+        3v4TXl5P9EpMCMt0Y21+LLWTigjP6Y0=
+X-Google-Smtp-Source: ABdhPJxq1u9oT6lgD+hfhtI3hv0grR3ARQY1SAwmD6LDpEXcJ/1QOK0n2WfApV/cYW4FNb5WkiE5sA==
+X-Received: by 2002:a2e:a0d0:: with SMTP id f16mr1679862ljm.215.1616176567012;
+        Fri, 19 Mar 2021 10:56:07 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id a1sm698495lfh.142.2021.03.19.10.44.09
+        by smtp.googlemail.com with ESMTPSA id e8sm855367ljg.22.2021.03.19.10.56.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 10:44:10 -0700 (PDT)
+        Fri, 19 Mar 2021 10:56:06 -0700 (PDT)
 Subject: Re: [PATCH v4] mm: cma: support sysfs
-From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Minchan Kim <minchan@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -75,14 +74,13 @@ References: <e8ae901d-9521-8de4-ee45-18cb55b8f29c@gmail.com>
  <78883205-e6da-5bc4-dcec-b6eb921567b1@gmail.com> <YFTITw73Wga0/F0V@kroah.com>
  <72db59eb-75dc-d1ed-7a83-17052e8f22a8@gmail.com>
  <YFTRkBEr5T37NFpV@google.com>
- <82bde114-60c0-3fde-43f4-844522b80673@gmail.com>
- <f451e60c-750f-a6d8-e035-e665391f9261@gmail.com>
-Message-ID: <f2187cd5-505b-5274-c2a8-706a9c26aa2d@gmail.com>
-Date:   Fri, 19 Mar 2021 20:44:09 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <071c6681-f492-2c94-5686-30c30778f39d@gmail.com>
+Date:   Fri, 19 Mar 2021 20:56:06 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <f451e60c-750f-a6d8-e035-e665391f9261@gmail.com>
+In-Reply-To: <YFTRkBEr5T37NFpV@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -90,21 +88,12 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.03.2021 20:41, Dmitry Osipenko пишет:
-> 19.03.2021 20:29, Dmitry Osipenko пишет:
->> +void cma_sysfs_alloc_pages_count(struct cma *cma, size_t count)
->> +{
->> +	atomic64_add(count, &cma->nr_pages_succeeded);
->> +}
->> +
->> +void cma_sysfs_fail_pages_count(struct cma *cma, size_t count)
->> +{
->> +	atomic64_add(count, &cma->nr_pages_failed);
->> +}
-> 
-> The atomic looks good, but aren't CMA allocations already protected by
-> the CMA core? Do we really need to worry about racing here?
-> 
+19.03.2021 19:30, Minchan Kim пишет:
+> +static void cma_kobj_release(struct kobject *kobj)
+> +{
+> +	struct cma_kobject *cma_kobj = container_of(kobj, struct cma_kobject, kobj);
+> +
+> +	kfree(cma_kobj);
+> +}
 
-Although, please scratch that. I see now that these functions are called
-outside of the lock.
+Oh, wait.. I think this kfree wrong since cma_kobj belongs to the array.
