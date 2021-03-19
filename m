@@ -8,76 +8,75 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B34C433E0
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2946FC433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 674FA64EEE
-	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC40E64F04
+	for <linux-tegra@archiver.kernel.org>; Fri, 19 Mar 2021 13:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbhCSNpt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 19 Mar 2021 09:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45708 "EHLO
+        id S229903AbhCSNqW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 19 Mar 2021 09:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbhCSNp1 (ORCPT
+        with ESMTP id S230081AbhCSNqA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 19 Mar 2021 09:45:27 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA7FC06174A;
-        Fri, 19 Mar 2021 06:45:23 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id o10so10074357lfb.9;
-        Fri, 19 Mar 2021 06:45:23 -0700 (PDT)
+        Fri, 19 Mar 2021 09:46:00 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF303C06174A;
+        Fri, 19 Mar 2021 06:45:59 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id f3so1736398lfu.5;
+        Fri, 19 Mar 2021 06:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CrdgYAIit68h21frWi2ZVer6TtigI0fqgyoc16zz0Io=;
-        b=tPYUzv/xKUBsLh1NGzoqXhfQNLyRmfQwj+tNEcLeIWzPjq8lyGlFyU2N6kNXfOWeNd
-         fsHjXQcSb3ZzbXGLkE33Ss+nH3TbSLhYlzooJ36/3ieWbrdfBH1W5NjW19wXZix4AqUp
-         2knS9YwX9CLH0TyETD/A/9OH+/YGC3I/Ii35TIATWMkAlSS0CNfKfK6CUiKiYWrFfTCh
-         Dx8PHQjZzq+HdawjImlYY6XXXC1anpHlb2SmhFWnX/uxnuLaTCoDBfWNZ0H2LdUXDFfd
-         km94tay1J/6VU08qGbnKILB752/apws1Sf+ZzmbjhKf6sZqGE14bmjyO2uKVjvM0dHi6
-         VqwQ==
+        bh=zm6BLtowGVk3+ISKouC1h9zvIkxos89pb8oEnL5NIS8=;
+        b=d/nHmMhjTTMvsGTzLwH4k3vaY1L3wQH6aDBlMAsoOo40wtx7L3DTiTQ/eY7Y0rybbw
+         QsiroprLBqmESHuM1Jv7zB8A6PswfeUGK0dbmGStvfK1HtPFQLv6SM6TCJXgDjXsrAk0
+         gQVKBfDiH+oiELc/fF1ROH/D2uG0mPeA5WmrOGttGJJ+hkpDXfsTd2s/nnhl4lidzz4F
+         cmPDQ2F8XJK1gZzyJPRGtzcJJYoUUefhN2/b38kiMvoVOvhXjX/yFhqFhipEC4lhVI09
+         GN2IYAZVH+6m2pzsuc9RUpQFEU8dW+TGzK/twyqwJWQuWmMANe4u6G4ZV4/Knl2MMw9G
+         gOKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=CrdgYAIit68h21frWi2ZVer6TtigI0fqgyoc16zz0Io=;
-        b=ntxYJpjoAvzgKwk91stuP1iRybeNBW6NCZNZcuA59ac2ipjhHFIfd12xEg6NIk9oAN
-         RS05OviPB/1iV3EpGykdf3hBmClernlu/My2//G+qhbXU1cURiIn2SYt4vSq/IqYRvDz
-         sqaC94b2+hhSIaOVyRusMZXo7TRCjB5nLF5JjPZTt/YbDbuz9J7onJMtNSJnmZjtMXwV
-         ft3v2NZvcSqL21ZzGqzpqrBkoIqz4yABvlJtOUZ/HOgF3utuVWUNWFnZoNZ36ut3HdCv
-         Ii+4YjdjLKBs6DvrBKuHJeaNg/cfyBYMMRxgMPpffT/Yu4Iii3dKFaIYdcqDYjaps70m
-         1hkQ==
-X-Gm-Message-State: AOAM531Wx7roO+M9DZFno6/RYk2Kmw/S21T82MDFzz5Lim6SkLPR2CA7
-        3s2gMmjgKYpik1+0HEcr9albZ59uidk=
-X-Google-Smtp-Source: ABdhPJxfx9OTueeAe3Wr0OSGXEVnA61+I9fHIrcN6kyLmBD7u4yIyDFTFFqfxSUAO6+5AQ5NI81poA==
-X-Received: by 2002:ac2:4c8c:: with SMTP id d12mr894834lfl.1.1616161522150;
-        Fri, 19 Mar 2021 06:45:22 -0700 (PDT)
+        bh=zm6BLtowGVk3+ISKouC1h9zvIkxos89pb8oEnL5NIS8=;
+        b=jaC9edaB6b1xtVqTkM8pT2/BVp7H5vO8sBDc/B9ma4OrrSJkIPeAcfy8QPm+aqCNRT
+         RrMT/guxx5eRsDOfRgrOqHLdrsWxsfSnxzQ4dHbsSI7V/CTtuV9/WfiV43WJJdUX7XoS
+         gHOtjOlUKuP/O5cIYQCg7h7bwkQOBrSY6fsLrw6TLgpWzHFyi1VzgTkY/lLT766SEYaZ
+         b/4yoiKb5wnBGSzjVYVPgQ0e9J4mFbN0QvrGyAeA0j3gFzn8/eKkoFtRRx/mDuwfQ7Jr
+         cwni9Jzqlwl7MmutV5cj6JPJ+YbKsHvlWhuEjvxDqn8L97fmlAR8aMPIFsLyI51ShbJd
+         6c1g==
+X-Gm-Message-State: AOAM5328vLJ4LK+IE/FpMuRWWw0bMJzwCTVQcv0ozHnsoKYUlS3HTfbG
+        6pRW5M2zSsiCogrbMUnN3WrQQYVqGhw=
+X-Google-Smtp-Source: ABdhPJz2cKbxJlDbrF6J4FeabfjuKDThfG1N2TnXEXdvR3+u57NbxcOc5w3UrRHNPQEHysr+vjWfNg==
+X-Received: by 2002:ac2:5149:: with SMTP id q9mr843384lfd.619.1616161558226;
+        Fri, 19 Mar 2021 06:45:58 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id h17sm631164lfc.289.2021.03.19.06.45.21
+        by smtp.googlemail.com with ESMTPSA id m22sm640702lfa.170.2021.03.19.06.45.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 06:45:21 -0700 (PDT)
+        Fri, 19 Mar 2021 06:45:57 -0700 (PDT)
 Subject: Re: [PATCH v4] mm: cma: support sysfs
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, joaodias@google.com,
-        willy@infradead.org, david@redhat.com, surenb@google.com,
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        joaodias@google.com, willy@infradead.org, david@redhat.com,
+        surenb@google.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         Nicolas Chauvet <kwizart@gmail.com>,
         "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 References: <20210309062333.3216138-1-minchan@kernel.org>
  <fead70a2-4330-79ff-e79a-d8511eab1256@gmail.com>
- <e8ae901d-9521-8de4-ee45-18cb55b8f29c@gmail.com> <YFSqYUfaxMajR/aq@kroah.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b3cfe38f-bfd0-043a-6063-f5178d4a9b09@gmail.com>
-Date:   Fri, 19 Mar 2021 16:45:21 +0300
+ <e8ae901d-9521-8de4-ee45-18cb55b8f29c@gmail.com>
+Message-ID: <8d7ae527-e0ff-6fa9-7ba3-899a75abc3fa@gmail.com>
+Date:   Fri, 19 Mar 2021 16:45:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <YFSqYUfaxMajR/aq@kroah.com>
+In-Reply-To: <e8ae901d-9521-8de4-ee45-18cb55b8f29c@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,37 +84,49 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-19.03.2021 16:42, Greg Kroah-Hartman пишет:
-> On Fri, Mar 19, 2021 at 04:39:41PM +0300, Dmitry Osipenko wrote:
->> 19.03.2021 15:44, Dmitry Osipenko пишет:
->> ...
->>>>  #include <linux/debugfs.h>
->>>> +#include <linux/kobject.h>
->>>> +
->>>> +struct cma_stat {
->>>> +	spinlock_t lock;
->>>> +	/* the number of CMA page successful allocations */
->>>> +	unsigned long nr_pages_succeeded;
->>>> +	/* the number of CMA page allocation failures */
->>>> +	unsigned long nr_pages_failed;
->>>> +	struct kobject kobj;
->>>> +};
->>>>  
->>>>  struct cma {
->>>>  	unsigned long   base_pfn;
->>>> @@ -16,6 +26,9 @@ struct cma {
->>>>  	struct debugfs_u32_array dfs_bitmap;
->>>>  #endif
->>>>  	char name[CMA_MAX_NAME];
->>>> +#ifdef CONFIG_CMA_SYSFS
->>>> +	struct cma_stat	*stat;
->>>> +#endif
->>
->> What is the point of allocating stat dynamically?
+19.03.2021 16:39, Dmitry Osipenko пишет:
+> 19.03.2021 15:44, Dmitry Osipenko пишет:
+> ...
+>>>  #include <linux/debugfs.h>
+>>> +#include <linux/kobject.h>
+>>> +
+>>> +struct cma_stat {
+>>> +	spinlock_t lock;
+>>> +	/* the number of CMA page successful allocations */
+>>> +	unsigned long nr_pages_succeeded;
+>>> +	/* the number of CMA page allocation failures */
+>>> +	unsigned long nr_pages_failed;
+>>> +	struct kobject kobj;
+>>> +};
+>>>  
+>>>  struct cma {
+>>>  	unsigned long   base_pfn;
+>>> @@ -16,6 +26,9 @@ struct cma {
+>>>  	struct debugfs_u32_array dfs_bitmap;
+>>>  #endif
+>>>  	char name[CMA_MAX_NAME];
+>>> +#ifdef CONFIG_CMA_SYSFS
+>>> +	struct cma_stat	*stat;
+>>> +#endif
 > 
-> Because static kobjects make me cry.
+> What is the point of allocating stat dynamically?
+> 
+> ...
+>>> +void cma_sysfs_alloc_pages_count(struct cma *cma, size_t count)
+>>> +{
+>>> +	spin_lock(&cma->stat->lock);
+>>> +	cma->stat->nr_pages_succeeded += count;
+>>> +	spin_unlock(&cma->stat->lock);
+>>> +}
+>>> +
+>>> +void cma_sysfs_fail_pages_count(struct cma *cma, size_t count)
+>>> +{
+>>> +	spin_lock(&cma->stat->lock);
+>>> +	cma->stat->nr_pages_failed += count;
+>>> +	spin_unlock(&cma->stat->lock);
+>>> +}
+> 
+> You could use atomic increment and then locking isn't needed.
 > 
 
-I meant that it's already a part of struct cma, it looks like the stat
-could be embedded into struct cma and then kobj could be initialized
-separately.
+Actually, the counter should be u64 in order not to worry about overflow.
