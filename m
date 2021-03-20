@@ -4,108 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5ADC433DB
-	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 15:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C54C433E1
+	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 16:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A17BB6196A
-	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 15:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0210D6196D
+	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 16:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbhCTPjY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 20 Mar 2021 11:39:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
+        id S229821AbhCTQCu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 20 Mar 2021 12:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbhCTPi7 (ORCPT
+        with ESMTP id S229865AbhCTQCr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 20 Mar 2021 11:38:59 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46B7C061574;
-        Sat, 20 Mar 2021 08:38:58 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id t20so4359102plr.13;
-        Sat, 20 Mar 2021 08:38:58 -0700 (PDT)
+        Sat, 20 Mar 2021 12:02:47 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3BDC061574;
+        Sat, 20 Mar 2021 09:02:47 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id f26so15675074ljp.8;
+        Sat, 20 Mar 2021 09:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wg8yrfY8Orb7Nenc8qwtk7TJ4R+4DE1IsgvTRhOqrm8=;
-        b=XYeGaqBnaFD7qRAzunKxuOwg5kjn4UOLRo2w/2c4VeMno73zLRRywj8QX3a6U41BVX
-         j06u/JhxY0pFXPT/bM+YFd0181O+R/a0TyIZ2Yq7FXkRJujL0d8lIvUMNsg60HjzxcmP
-         sjWPSYhgJX5cVIDLyRPAiyXdKWwEfbvIBjqkCig8iIYlv/M1aZvGMjUnE4S0gT4qhtFj
-         7QNVK2lWlMXrmbgOUY5RMsLay8DxrGwDUNkfN0YrUcFPmXaVJHmOgsVdByOKnpq2j+Po
-         vnOInaeRfebIaC3QlQrGdBK1Km1lrUJTrBCR7AHyLyFphGo2/qrbHCwQQW6lFydHUD6o
-         3WWA==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ckrcEbmff1iIMspLq9lx4bc/o3J3DdXAByPuLZNU9cg=;
+        b=HzwIqhpBTZUgkPY3d5szguL4q6maumEY/kIcJ7ceQ5vMmlEic7jw/quc0RHxOxs0C3
+         uILyid4u/gwzxEeKIPWVykAhGCEHaLPuTfqfgggE0gD694grWgrVFbcuYZ9gsdjBODQH
+         HV2O2PgS9bu2u6FUKXEXyzTOwHRCW7nq9GixeI6HqEFwvT7AFu4BeOHxwivYVOaORCgg
+         NnnOMumwtvUqYi8drtcJVf4Qb/byXz9KTTjaL6qvQ3Ojpif8iLWOlfFmDMHN8yA1nCpY
+         X9LHEp/3LPY/FDMLjDs/HPCIFqMARvcPWpC7xvdxR9zAuWcig2f0t6C7IdNZKdMhUSgC
+         LkKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wg8yrfY8Orb7Nenc8qwtk7TJ4R+4DE1IsgvTRhOqrm8=;
-        b=p5omX5e8q9PCqgZz+5QN5569A85ENy/3NTQTAh8kZkfQw/a1AbijW/O6YThDyquCJK
-         iVUwhzERa0ME9N6RiXsQ2bm+6lcZ3VZ/vThpHG4QtpyuDZpIqcEqLJdzsEfPmwERjIOL
-         JvNzD5oI3Wh+Vb3JRUfqVN59tKv6HW4xTrCqsEtBPIOhUevzkUzr7B0qGN4oIvroGymu
-         GvZKcXoeN7XmyO36rM3w3anfh97pXBXRU2N/9lGf+ntrBspH2A8Yvv9jkP8eX6Cm1jW5
-         d7oHZrjiI0EIQBix0baXAmMQQS18itCrCYblsr8xEb+GdZUQZoCMi7Gt9GvVUghtpyl7
-         OK1A==
-X-Gm-Message-State: AOAM533zvLcq9ayYyIWE2BkZv6FOnguM8eJ0e0mjizRBbpNX5pAkuoF3
-        OP52m+HKofZPAdEhBEgzAyhrnG0p/Oc=
-X-Google-Smtp-Source: ABdhPJwm/nIFE28+5hzSB/R3dAw4Z1AQUFIg1YMohE0dxy2AgFvLTHeyYzhjLAwC3BK36sC04gVdjg==
-X-Received: by 2002:a17:90a:7a8b:: with SMTP id q11mr4148393pjf.215.1616254738448;
-        Sat, 20 Mar 2021 08:38:58 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2601:645:c000:48:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id c129sm7400330pfb.141.2021.03.20.08.38.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Mar 2021 08:38:57 -0700 (PDT)
-Date:   Sat, 20 Mar 2021 08:38:55 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Networking <netdev@vger.kernel.org>
-Subject: Re: GTE - The hardware timestamping engine
-Message-ID: <20210320153855.GA29456@hoboy.vegasvil.org>
-References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com>
- <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
- <CAK8P3a30CdRKGe++MyBVDLW=p9E1oS+C7d7W4jLE01TAA4k+GA@mail.gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ckrcEbmff1iIMspLq9lx4bc/o3J3DdXAByPuLZNU9cg=;
+        b=bauKiJpBFcpZEQqSLYChddlTZ+N5Bp8WSIM4PaSYVB9LGBLGNmLR3bkT5GvjNhutNU
+         yT0V98nHoy3T3Da78qJQYKNmxbJU233x1Gi9tME92WdIKs7hMGaSztNQUzhHJCkazT+e
+         uUfLyxcbpphrMxJqLHt0eOeeK/TIIdMDKFwD5I54zDntCDmYZAvqJ7iclURZW4PqsDn5
+         3q4veHqQbRjmGqp1N6xia1E6SX+8TJQ4c6zQLnCFFh+KjPOGq8p2FcE3SF+S/TDmrUqW
+         3aED0AVSOQoTu4BUueJQsy7knpO6hc0h4s/h7CsnaC6D97YwloP9qqN45PagpowqYsVq
+         iIkA==
+X-Gm-Message-State: AOAM533G/yXqZQ9ydpvyLItVDsZTwXJK5GwWdz3IqTnrSa+l7NRQ6OVn
+        PZBUZN6NcWfPNHJAwg6+g81f24OzKi8=
+X-Google-Smtp-Source: ABdhPJwfcJXcIHdsjEO62pMyNeYxKV4L0QkLYIMwtkeP29PwQ3/0ZdkIvd3fBIA8Iz+lgQ5CRgBubA==
+X-Received: by 2002:a2e:9e8e:: with SMTP id f14mr4408333ljk.140.1616256164712;
+        Sat, 20 Mar 2021 09:02:44 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.googlemail.com with ESMTPSA id q14sm964257lfd.214.2021.03.20.09.02.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Mar 2021 09:02:44 -0700 (PDT)
+Subject: Re: [PATCH v6 0/3] Support wakeup methods of Atmel maXTouch
+ controllers
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210302102158.10533-1-digetx@gmail.com>
+Message-ID: <8c1280f6-b79f-9c62-a064-68b119d74c49@gmail.com>
+Date:   Sat, 20 Mar 2021 19:02:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a30CdRKGe++MyBVDLW=p9E1oS+C7d7W4jLE01TAA4k+GA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210302102158.10533-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 01:44:20PM +0100, Arnd Bergmann wrote:
-> Adding Richard Cochran as well, for drivers/ptp/, he may be able to
-> identify whether this should be integrated into that framework in some
-> form.
+02.03.2021 13:21, Dmitry Osipenko пишет:
+> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
+> have a WAKE line that needs to be asserted in order to wake controller
+> from a deep sleep, otherwise it will be unusable. This series implements
+> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
+> see page 29 (chapter "5.8 WAKE Line").
+> 
+> The mXT1386 is a widely used controller found on many older Android tablet
+> devices. Touchscreen on Acer A500 tablet now works properly after this
+> series.
+> 
+> This patchset is a continuation of the work originally started by
+> Jiada Wang [2].
+> 
+> [1] https://ww1.microchip.com/downloads/en/DeviceDoc/mXT1386_1vx_Datasheet_LX.pdf
+> [2] https://patchwork.kernel.org/project/linux-input/list/?series=357875
 
-I'm not familiar with the GTE, but it sounds like it is a (free
-running?) clock with time stamping inputs.  If so, then it could
-expose a PHC.  That gets you functionality:
+Hi,
 
-- clock_gettime() and friends
-- comparison ioctl between GTE clock and CLOCK_REALTIME
-- time stamping channels with programmable input selection
+This series is very wanted by Android tablet devices from Acer, Asus and
+other vendors which use Maxtouch 1386 controller. Touchscreens don't
+work without the wakeup support, i.e. without this series. The wakeup
+support is implemented in accordance to the datasheet and touchscreens
+are working excellent using these patches.
 
-The mentioned applications (robotics and autonomous vehicle, so near
-and dear to my heart) surely already use the PHC API for dealing with
-network and system time sources, and so exposing the GTE as a PHC
-means that user space programs will have a consistent API.
+Could you please take this series into v5.13?
 
-[ The only drawback I can see is the naming of the C language
-  identifiers in include/uapi/linux/ptp_clock.h.  If that bothers
-  people, then these can be changed to something more generic while
-  keeping compatibility aliases. ]
+Or could you please let me know what exactly needs to be improved?
 
-Thanks,
-Richard
+Thanks in advance.
