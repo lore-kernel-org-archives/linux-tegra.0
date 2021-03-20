@@ -2,167 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834F0C433DB
-	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 12:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADD0C433C1
+	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 15:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 520DD6191F
-	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 12:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3A7661965
+	for <linux-tegra@archiver.kernel.org>; Sat, 20 Mar 2021 15:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbhCTMos (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 20 Mar 2021 08:44:48 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:39307 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbhCTMol (ORCPT
+        id S229640AbhCTPTd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 20 Mar 2021 11:19:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229606AbhCTPTd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 20 Mar 2021 08:44:41 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1M1YtP-1lQ3oL2SF9-003975; Sat, 20 Mar 2021 13:44:38 +0100
-Received: by mail-ot1-f49.google.com with SMTP id o19-20020a9d22130000b02901bfa5b79e18so11204704ota.0;
-        Sat, 20 Mar 2021 05:44:37 -0700 (PDT)
-X-Gm-Message-State: AOAM533tJ4hARlAND5uzi2rUOkNdBfKTQ8xuyym4T6P13QnyW/XxPStg
-        U5a00vk//QRDE0HAwXZKtHGitOuaxeQC0Pd5J8I=
-X-Google-Smtp-Source: ABdhPJxPabsbC9l0uov8VA+QPfsVO0jOLb9EmBvBROLIp8qu9VlJZY7K8edBl0OEw9G+JsJmxObK2UpoOm2egNiBGoI=
-X-Received: by 2002:a9d:316:: with SMTP id 22mr636124otv.210.1616244276911;
- Sat, 20 Mar 2021 05:44:36 -0700 (PDT)
+        Sat, 20 Mar 2021 11:19:33 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4975C061574;
+        Sat, 20 Mar 2021 08:19:32 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id z8so15541979ljm.12;
+        Sat, 20 Mar 2021 08:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JgAOs5NJiBzLzOw6K7ViZofCJP2VNAXeFfUuuWC+yjo=;
+        b=FJA2mCAqsvG0PTcZmxpC4dMLCLFeW+5dZ6P4IdhjqGNegsZT/eXylQukluWKkPNFmW
+         3kxH/3jNFSrn73diMzxWbiPeTQ0fsa5JVH0gSwZD9yDjIFBO+pxRnytXJkGDIxGhjIHT
+         v8hldbsYuEkz0Q2kR/yUCLoAr/QmheCSJS5we3tbHocpsxqSDCGlObir50n47054vPze
+         Fr2VmhIehDmYVx/wVzyV9atnzkKTl9CDecaB9ZlBruWq9PKs6GKpzhad1r/a6IJOAO1p
+         LNfR5RgfbDgeLEPZHm9OZWzA1h7Xh9lorpCBqpez9T7QP4QMdlwcXEO71LwhworJzPJv
+         R7pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JgAOs5NJiBzLzOw6K7ViZofCJP2VNAXeFfUuuWC+yjo=;
+        b=kIxd6bznvOpTgRtYhhw1l37z+CibR7W7O5bLRSc2+PVi0pV3v0eetX9LRRKfNfL1Fv
+         uR6H7+r0IyAEWgbUQa4s38+vE400ny3V9khO+1Sqr8Ys3OR7oTwTZrsAfMf2cl7r65kQ
+         CZRb679Ut84Lvsj9BGpgygY+5WbQkkolkFxa9mUOVTtVaMysUH9h65QClCi8ApwgdWO3
+         Wa/l165EiqVGx3amtFKbXVf4xNM0paTWB2qUqBdAxT+YeAPwu4XirbUOspAKJRn4oiux
+         axEm5+outnN21p2G6d0VyxjPW6fXRbg9zfiOa6g5acXWJuO1ZWwmLOdlFewUzERVfGCY
+         QWKQ==
+X-Gm-Message-State: AOAM531leIfQ3gRbckhvUjT3EgPFbYQQbheQ1ukZedgq0cucQX7x7uUW
+        AY0GR5n7eYDfExhB6KjLNRY=
+X-Google-Smtp-Source: ABdhPJwJwKczHf7a8qHqvASusL+WQYIgEMXG3VrAZ+oNhdP6HwUw/NfEnVBx6dNL4Pib1cCJwgUcsg==
+X-Received: by 2002:a2e:6e1a:: with SMTP id j26mr4044038ljc.171.1616253569011;
+        Sat, 20 Mar 2021 08:19:29 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id f8sm1162447ljn.1.2021.03.20.08.19.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Mar 2021 08:19:28 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Felipe Balbi <balbi@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] ARM: multi_v7_defconfig: Stop using deprecated USB_EHCI_TEGRA
+Date:   Sat, 20 Mar 2021 18:19:14 +0300
+Message-Id: <20210320151915.7566-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com> <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
-In-Reply-To: <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 20 Mar 2021 13:44:20 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a30CdRKGe++MyBVDLW=p9E1oS+C7d7W4jLE01TAA4k+GA@mail.gmail.com>
-Message-ID: <CAK8P3a30CdRKGe++MyBVDLW=p9E1oS+C7d7W4jLE01TAA4k+GA@mail.gmail.com>
-Subject: Re: GTE - The hardware timestamping engine
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Dipen Patel <dipenp@nvidia.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Networking <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:8WL2U0ZQ9+i5oBZA4YcSoYeOEcSz0EIU4+EG7j07uzzGBzz5PzQ
- G0Rmke1vlmE7RhNOm7gNWYPtGNsEL7eD1y9HIH0KYGwi6MzLriTHKdKZQ/QayOMWXqBqs7U
- Kz3vAjBggCNGSvRL4XlOLSPhYRTXtGQVdsAsNCY5dxPztyYIvC1p+8yVLM+x8ZkVJwnfea6
- gZlk3nz4pIkYRQLeSijgA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kwWt9/LbsDw=:8L6KL4WVrty0aeYmZ+GY+5
- icnxt9Uuij0VPYPBo/YV96dCSUmye27xAyh5E+AxIlvozNjysihheVwbYTaRnxDtNE5HCgvkm
- xa74UP4m9umr7Ypsgpscl65cU2JKR3nmyMSz7V5yB/kWCG3eDGkD9i5U7E6hTVboqBRAHOxOE
- xap2ll3KpnH0f1jy7O+R9k4qhjNCQv+MWDXQYFUmoN3wa+MjWFjvUiUya1NoHPycSjn3QqJ+B
- HFpyMP858Vq5briB/7hyN0XFhJ5oKZ1MprvY6zjTQQ5JqMddY+6ZLn/tlZxjuOd+uXbGXhuLy
- RRGQHyqicfmm3HfwikHe+60rg5IxrzFsbvERA7hKs6f5Jkz9h9s/rUls93HZLcJcuU+8YOKOt
- rkxw6xHyRzzBXiNvn/s2NtSbdJIJCeFBgT+dmJw/jo1UlkNgk+gAsdQaSMnCk
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Mar 20, 2021 at 12:56 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Hi Dipen,
->
-> thanks for your mail!
->
-> I involved some other kernel people to get some discussion.
-> I think Kent Gibson can be of great help because he is using
-> GPIOs with high precision.
->
-> We actually discussed this a bit when adding support for
-> realtime timestamps.
+The USB_EHCI_TEGRA option is deprecated now and replaced by
+USB_CHIPIDEA_TEGRA. Replace USB_EHCI_TEGRA with USB_CHIPIDEA_TEGRA
+in multi_v7_defconfig.
 
-Adding Richard Cochran as well, for drivers/ptp/, he may be able to
-identify whether this should be integrated into that framework in some
-form.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-fullquote below
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 3823da605430..d3242264514e 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -791,7 +791,6 @@ CONFIG_USB_XHCI_MVEBU=y
+ CONFIG_USB_XHCI_TEGRA=m
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_HCD_STI=y
+-CONFIG_USB_EHCI_TEGRA=y
+ CONFIG_USB_EHCI_EXYNOS=m
+ CONFIG_USB_EHCI_MV=m
+ CONFIG_USB_OHCI_HCD=y
+@@ -817,6 +816,7 @@ CONFIG_USB_DWC2=y
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_UDC=y
+ CONFIG_USB_CHIPIDEA_HOST=y
++CONFIG_USB_CHIPIDEA_TEGRA=y
+ CONFIG_USB_ISP1760=y
+ CONFIG_USB_HSIC_USB3503=y
+ CONFIG_AB8500_USB=y
+-- 
+2.30.2
 
-> On Wed, Mar 17, 2021 at 11:29 PM Dipen Patel <dipenp@nvidia.com> wrote:
->
-> > Nvidia Tegra SoCs have generic timestamping engine (GTE) hardware module which
-> > can monitor SoC signals like IRQ lines and GPIO lines for state change, upon
-> > detecting the change, it can timestamp and store in its internal hardware FIFO.
-> > The advantage of the GTE module can be realized in applications like robotics
-> > or autonomous vehicle where it can help record events with precise timestamp.
->
-> That sounds very useful.
->
-> Certainly the kernel shall be able to handle this.
->
-> > ============
-> > For GPIO:
-> > ============
-> > 1.  GPIO has to be configured as input and IRQ must be enabled.
-> > 2.  Ask GPIO controller driver to set corresponding timestamp bit in the
-> >     specified GPIO config register.
-> > 3.  Translate GPIO specified by the client to its internal bitmap.
-> > 3.a For example, If client specifies GPIO line 31, it could be bit 13 of GTE
-> >     register.
-> > 4.  Set internal bits to enable monitoring in GTE module
-> > 5.  Additionally GTE driver can open up lanes for the user space application
-> >     as a client and can send timestamping events directly to the application.
->
-> I have some concerns:
->
-> 1. GPIO should for all professional applications be used with the character
-> device /dev/gpiochipN, under no circumstances shall the old sysfs
-> ABI be used for this. In this case it is necessary because the
-> character device provides events in a FIFO to userspace, which is
-> what we need.
->
-> The timestamp provided to userspace is an opaque 64bit
-> unsigned value. I suppose we assume it is monotonic but
-> you can actually augment the semantics for your specific
-> stamp, as long as 64 bits is gonna work.
->
-> 2. The timestamp for the chardev is currently obtained in
-> drivers/gpio/gpiolib-cdev.c like this:
->
-> static u64 line_event_timestamp(struct line *line)
-> {
->         if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
->                 return ktime_get_real_ns();
->
->         return ktime_get_ns();
-> }
->
-> What you want to do is to add a new flag for hardware timestamps
-> and use that if available. FLAG_EVENT_CLOCK_HARDWARE?
-> FLAG_EVENT_CLOCK_NATIVE?
->
-> Then you need to figure out a mechanism so we can obtain
-> the right timestamp from the hardware event right here,
-> you can hook into the GPIO driver if need be, we can
-> figure out the gpio_chip for a certain line for sure.
->
-> So you first need to augment the userspace
-> ABI and the character device code to add this. See
-> commit 26d060e47e25f2c715a1b2c48fea391f67907a30
-> "gpiolib: cdev: allow edge event timestamps to be configured as REALTIME"
-> by Kent Gibson to see what needs to be done.
->
-> 3. Also patch tools/gpio/gpio-event-mon.c to support this flag and use that
-> for prototyping and proof of concept.
->
-> > ============
-> > For IRQ:
-> > ============
->
-> Marc Zyngier and/or Thomas Gleixner know this stuff.
->
-> It does make sense to add some infrastructure so that GPIO events
-> and IRQs can use the same timestamping hardware.
->
-> And certainly you will also want to use this timestamp for
-> IIO devices? If it is just GPIOs and IRQs today, it will be
-> gyroscopes and accelerometers tomorrow, am I right?
->
-> Yours,
-> Linus Walleij
