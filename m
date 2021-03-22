@@ -2,84 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A24C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 10:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4122C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 11:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A86DC6196F
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 10:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C64861990
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 11:13:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbhCVKgY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 Mar 2021 06:36:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53898 "EHLO mail.kernel.org"
+        id S230205AbhCVLMt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 Mar 2021 07:12:49 -0400
+Received: from mga07.intel.com ([134.134.136.100]:63080 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229761AbhCVKgA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 Mar 2021 06:36:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A354E6198F;
-        Mon, 22 Mar 2021 10:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616409356;
-        bh=jrHBX/HLRZtzoQhT2R3gMkK4qqxzt3mtlKLFiEw5HP4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r1GcUI3CodBI120K8W9OfN3fxMdAxZbFiwZ0Av2N5stN3MchlfKWRyZFQE7etM/yC
-         QmXPHRn9HuLn1oXh6WWd4qLqw3zWfVRoype0A+A50Tn9EMZDKnsWVELkKGSJdwUOmF
-         fOsNJUlPNAxE/NYPd/VEFZXRoKDSDmN3cwVCC5mRV72c3J4xHjZ45En7JJ6DlGPiTl
-         Lbu7hzIhthDafzE8qo5lenJFaao4/KK28cytGj8RbbiCc9/Cy1LUhAvTVpa1AQqGct
-         MBHvbi+8h5Ehm95EaHIHIRxmVBBHevCxne/tJ14+9Vc+brJal5FzOPI+WH9nMZBPPN
-         emByPzwLHMGmg==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Marc Dietrich <marvin24@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] staging/nvec:: avoid Wempty-body warning
-Date:   Mon, 22 Mar 2021 11:35:40 +0100
-Message-Id: <20210322103545.704121-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210322103545.704121-1-arnd@kernel.org>
-References: <20210322103545.704121-1-arnd@kernel.org>
+        id S230189AbhCVLMf (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 22 Mar 2021 07:12:35 -0400
+IronPort-SDR: 0r1DVUhRVaiPq8MB4DUrDtYEdEYt15A7DJUNYW9O3fHCHk3OONo8o/uNQr/Qm71hBAOgg7HX97
+ FI0/EGUg2IGQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9930"; a="254247616"
+X-IronPort-AV: E=Sophos;i="5.81,268,1610438400"; 
+   d="scan'208";a="254247616"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2021 04:12:33 -0700
+IronPort-SDR: RNI6TEEpZmnkks7/3wJ5Br5bQT+uiNHCT39xpi+T3yylzGLTJRVa9nWpX5J7G6SMo36NMOcbCW
+ Xc0Lf7m0yqsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,268,1610438400"; 
+   d="scan'208";a="513270016"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Mar 2021 04:12:32 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: tegra: paz00: Handle device properties with software node API
+Date:   Mon, 22 Mar 2021 14:12:45 +0300
+Message-Id: <20210322111245.3784-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+The old device property API is going to be removed.
+Replacing the device_add_properties() call with the software
+node API equivalent, device_create_managed_software_node().
 
-This driver has a few disabled diagnostics, which can probably
-just get removed, or might still be helpful:
-
-drivers/staging/nvec/nvec_ps2.c: In function 'nvec_ps2_notifier':
-drivers/staging/nvec/nvec_ps2.c:94:77: error: suggest braces around empty body in an 'if' statement [-Werror=empty-body]
-   94 |                         NVEC_PHD("unhandled mouse event: ", msg, msg[1] + 2);
-
-Changing the empty macro to the usual 'do {} while (0)' at least
-shuts up the compiler warnings.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/staging/nvec/nvec_ps2.c | 2 +-
+ arch/arm/mach-tegra/board-paz00.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index 157009015c3b..06041c7f7d4f 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -28,7 +28,7 @@
- 	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
- 			16, 1, buf, len, false)
- #else
--#define NVEC_PHD(str, buf, len)
-+#define NVEC_PHD(str, buf, len) do { } while (0)
- #endif
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index b5c990a7a5af5..18d37f90cdfe3 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -36,7 +36,7 @@ static struct gpiod_lookup_table wifi_gpio_lookup = {
  
- enum ps2_subcmds {
+ void __init tegra_paz00_wifikill_init(void)
+ {
+-	platform_device_add_properties(&wifi_rfkill_device, wifi_rfkill_prop);
++	device_create_managed_software_node(&wifi_rfkill_device.dev, wifi_rfkill_prop, NULL);
+ 	gpiod_add_lookup_table(&wifi_gpio_lookup);
+ 	platform_device_register(&wifi_rfkill_device);
+ }
 -- 
-2.29.2
+2.30.2
 
