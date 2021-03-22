@@ -2,130 +2,228 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16DEC433C1
-	for <linux-tegra@archiver.kernel.org>; Sun, 21 Mar 2021 23:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF826C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 06:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADCE561934
-	for <linux-tegra@archiver.kernel.org>; Sun, 21 Mar 2021 23:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C654A61966
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 06:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230142AbhCUXIi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 21 Mar 2021 19:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
+        id S229874AbhCVGB2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 Mar 2021 02:01:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhCUXIO (ORCPT
+        with ESMTP id S229482AbhCVGA7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 21 Mar 2021 19:08:14 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B659EC061574;
-        Sun, 21 Mar 2021 16:08:13 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id g8so11288635lfv.12;
-        Sun, 21 Mar 2021 16:08:13 -0700 (PDT)
+        Mon, 22 Mar 2021 02:00:59 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA363C061574;
+        Sun, 21 Mar 2021 23:00:54 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id mz6-20020a17090b3786b02900c16cb41d63so7940966pjb.2;
+        Sun, 21 Mar 2021 23:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jbiSYaRoly7YDQ5SJLDPetR8P6ODmQjNdf1sQDmotw8=;
-        b=ff+gaXNO3SSTluTB7T2bmC03+xJqcrP0+E+h7VIJSxc+I1w8JJf5Td4SwNSbYg6dxN
-         Uqr+C2lKLyZ5ls2FfSIhacn5Qcn6k8gGUTgmQMC9bazdY59ocqmdF1YYWJAgjKDe7Eu/
-         UfsZPOnGXLW/UNpzMNO3N3uAca7+Pi7oI2XJkOaqklHLpITIz7buj0CzWCITM7Gqx702
-         Ycqg6cgKC6pz05Dnzkf00gepG6WLM74ubsK1HENqCjUZdnQK5hhJASfLjhl6Uh5Yb4+d
-         2YhMfIZ/M/o2NyzDCrUFPAXHw2ImKEqyZGHS2IXv+0Ip18DDZhUp3qFJtzQ+Qyn0r1UC
-         g5ZA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0WFpTnoFKRhhfXIpK9M98T3Wdznu9u55Il92MVL253g=;
+        b=pKDKx8ENAdzhp+Asv06L9honieS8lcPrAx1Bw3PNeyFWeRNZVBRcBvMkZnWkh0sFVV
+         TKARWaQNc7boHcbxdJ550EbNg1gF9UYo7DaZ3quK8EBdgZXvwvAAvdYojptky20zsIwP
+         s4yk+xeGSc0rmdH6Cc+OIuUUprQYXRUjYP3fyFbWGZM32MtRuuyHhmTOXhmLhFy+G9SW
+         JEqVmBzyz2qqhrADGlpxOqLPPYz0J6CV52U3ZbbuXlTsSmZMjHQqDpAPokz00upSiJ7a
+         TgCwoZtb1g5unneWvCpsVVxneKUWzkOHiALisTrkYhcvJg+pQgVvokVRa52ddr6bC+9u
+         73qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jbiSYaRoly7YDQ5SJLDPetR8P6ODmQjNdf1sQDmotw8=;
-        b=ebMwh1Dxztci/gkxkvOxe3iAUP3HaCIU33JLZeawhvr6CEQ6SZlnadtQf+6bKlpTT/
-         uWnn6KSd7IrffbMESGogzdQiCFz7uDhReWnZNrx2PhCAoJj6lTVFSZ9K+4ver392oNyE
-         0wOUux+jUySt7Dkv1eATGVAFTEmh1pa4guWt028TaMtf7XT87cqgpC0vm2PxYBudeWoK
-         lBh6LGsWYxw+M0gnW9F7n6kCfN2iwbMg4CKCnT2QuNqCXbTdj/qKkfeON4nA8msbkoTY
-         k1QOJyoiG7CVmvVzoC0IfSP3GMqBTtSDtqaGaEbp3aoV+9R6izPtx6/bvd3Wm1kM8mXk
-         hrtQ==
-X-Gm-Message-State: AOAM530QcQLB3H6+frWNPDdKGwexhOeh+gbqlhM6t4gw0Xo88/zFQyod
-        1MkKreJlizQNSWJ72UcDKVLOlytfaV8=
-X-Google-Smtp-Source: ABdhPJysoMEqRcybkZrFHhug/ztvNZPJzxopxxz3Fm57izRLkvgXGQNrHJ1TXpgkzSICRHLKKfazLg==
-X-Received: by 2002:a05:6512:3b95:: with SMTP id g21mr4698937lfv.261.1616368091896;
-        Sun, 21 Mar 2021 16:08:11 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-47.dynamic.spd-mgts.ru. [109.252.193.47])
-        by smtp.googlemail.com with ESMTPSA id g9sm1361501lfc.258.2021.03.21.16.08.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Mar 2021 16:08:11 -0700 (PDT)
-Subject: Re: [PATCH v6 0/3] Support wakeup methods of Atmel maXTouch
- controllers
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Nick Dyer <nick@shmanahar.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210302102158.10533-1-digetx@gmail.com>
- <8c1280f6-b79f-9c62-a064-68b119d74c49@gmail.com>
- <YFfMNQPvaNOjUwBB@google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9f1f1bbb-31ef-c4fe-fcf5-c798e53739cf@gmail.com>
-Date:   Mon, 22 Mar 2021 02:08:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0WFpTnoFKRhhfXIpK9M98T3Wdznu9u55Il92MVL253g=;
+        b=YAZmJ0fx7EYv1tc/K65kqNkU+/b0IqZ9qviCBAg7pKYJSo/bl20GCvddH20chgEOCO
+         kuV7OfRN91D90RqObJe6pw0g7uYx8hLCOykIeaaDSEu1XdzZXa/dbEYoZXTqPhxIjdpa
+         +Z5gTiL1gn1BjOpmcJSL54tcU0vuwy4krmEF1xDchqWezgzqnHYujGiW+IZ7FBIY2Jav
+         L/4kSkz218cfOZPuxSg2Wfq4iasD3ejQSKE/zAum3cPR6tj4GDjSdDsonjZXUGM/fcJm
+         P38C3eeml6R4f7BRriiQddiAC6DD4znuny4LX+GorAfj60A3U9eAioXWZ5l3171VdOcx
+         ZW9w==
+X-Gm-Message-State: AOAM533i45YwNSoIT2CJk895Dhb/mQj37Z+G7E7UK5nEABGzac9oIdve
+        r27ptO1FE0Sk/qGplTYGz+I=
+X-Google-Smtp-Source: ABdhPJyslgxUB6OqND52kxjf3UcLiwlr4DVAk+Sxej+x1/pYZxp7xrLgS7+cHceZ72YKKtxD4lS1+A==
+X-Received: by 2002:a17:90a:ff0f:: with SMTP id ce15mr11689305pjb.15.1616392854026;
+        Sun, 21 Mar 2021 23:00:54 -0700 (PDT)
+Received: from sol (106-69-186-212.dyn.iinet.net.au. [106.69.186.212])
+        by smtp.gmail.com with ESMTPSA id 142sm12281548pfz.196.2021.03.21.23.00.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Mar 2021 23:00:53 -0700 (PDT)
+Date:   Mon, 22 Mar 2021 14:00:47 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <richardcochran@gmail.com>
+Subject: Re: GTE - The hardware timestamping engine
+Message-ID: <20210322060047.GA226745@sol>
+References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com>
+ <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YFfMNQPvaNOjUwBB@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-22.03.2021 01:44, Dmitry Torokhov пишет:
-> Hi Dmitry,
+On Sat, Mar 20, 2021 at 12:56:36PM +0100, Linus Walleij wrote:
+> Hi Dipen,
 > 
-> On Sat, Mar 20, 2021 at 07:02:43PM +0300, Dmitry Osipenko wrote:
->> 02.03.2021 13:21, Dmitry Osipenko пишет:
->>> Some Atmel maXTouch controllers, like mXT1386 and mXT3432S1 for example,
->>> have a WAKE line that needs to be asserted in order to wake controller
->>> from a deep sleep, otherwise it will be unusable. This series implements
->>> support for the wakeup methods in accordance to the mXT1386 datasheet [1],
->>> see page 29 (chapter "5.8 WAKE Line").
->>>
->>> The mXT1386 is a widely used controller found on many older Android tablet
->>> devices. Touchscreen on Acer A500 tablet now works properly after this
->>> series.
->>>
->>> This patchset is a continuation of the work originally started by
->>> Jiada Wang [2].
->>>
->>> [1] https://ww1.microchip.com/downloads/en/DeviceDoc/mXT1386_1vx_Datasheet_LX.pdf
->>> [2] https://patchwork.kernel.org/project/linux-input/list/?series=357875
->>
->> Hi,
->>
->> This series is very wanted by Android tablet devices from Acer, Asus and
->> other vendors which use Maxtouch 1386 controller. Touchscreens don't
->> work without the wakeup support, i.e. without this series. The wakeup
->> support is implemented in accordance to the datasheet and touchscreens
->> are working excellent using these patches.
->>
->> Could you please take this series into v5.13?
->>
->> Or could you please let me know what exactly needs to be improved?
+> thanks for your mail!
 > 
-> Sorry, I was still slightly unhappy that we still are not tracking the
-> state of controller and opportunistically retrying failed I2C transfers,
-> but as I am failing to find time to come up with another solution I have
-> just applied your series.
+> I involved some other kernel people to get some discussion.
+> I think Kent Gibson can be of great help because he is using
+> GPIOs with high precision.
+> 
 
-Thank you! I don't have other solutions either, although /I think/
-potentially it should be possible to differentiate the I2C error here.
-On NVIDIA Tegra I see that I2C controller always gets a h/w NAK on TS
-wake-up and it returns -EREMOTEIO in this case. IIRC, some other
-non-NVIDIA I2C drivers always return -EIO on any error, so this method
-isn't universal, but certainly it feels like there is some a room for
-further improvements.
+Actually I just extended the cdev uAPI to provide the REALTIME option,
+which was the event clock until we changed to MONOTONIC in Linux 5.7,
+as there were some users that were requiring the REALTIME clock.
+
+> We actually discussed this a bit when adding support for
+> realtime timestamps.
+> 
+> On Wed, Mar 17, 2021 at 11:29 PM Dipen Patel <dipenp@nvidia.com> wrote:
+> 
+> > Nvidia Tegra SoCs have generic timestamping engine (GTE) hardware module which
+> > can monitor SoC signals like IRQ lines and GPIO lines for state change, upon
+> > detecting the change, it can timestamp and store in its internal hardware FIFO.
+> > The advantage of the GTE module can be realized in applications like robotics
+> > or autonomous vehicle where it can help record events with precise timestamp.
+> 
+> That sounds very useful.
+> 
+
+Indeed - it could remove the latency and jitter that results from
+timestamping events in the IRQ handler.
+
+> Certainly the kernel shall be able to handle this.
+> 
+> > ============
+> > For GPIO:
+> > ============
+> > 1.  GPIO has to be configured as input and IRQ must be enabled.
+> > 2.  Ask GPIO controller driver to set corresponding timestamp bit in the
+> >     specified GPIO config register.
+> > 3.  Translate GPIO specified by the client to its internal bitmap.
+> > 3.a For example, If client specifies GPIO line 31, it could be bit 13 of GTE
+> >     register.
+> > 4.  Set internal bits to enable monitoring in GTE module
+> > 5.  Additionally GTE driver can open up lanes for the user space application
+> >     as a client and can send timestamping events directly to the application.
+> 
+> I have some concerns:
+> 
+> 1. GPIO should for all professional applications be used with the character
+> device /dev/gpiochipN, under no circumstances shall the old sysfs
+> ABI be used for this. In this case it is necessary because the
+> character device provides events in a FIFO to userspace, which is
+> what we need.
+> 
+
+The cdev uAPI would certainly be the most sensible place to expose
+this to userspace - its line events being a direct analog to what the GTE
+provides.
+
+> The timestamp provided to userspace is an opaque 64bit
+> unsigned value. I suppose we assume it is monotonic but
+> you can actually augment the semantics for your specific
+> stamp, as long as 64 bits is gonna work.
+> 
+> 2. The timestamp for the chardev is currently obtained in
+> drivers/gpio/gpiolib-cdev.c like this:
+> 
+> static u64 line_event_timestamp(struct line *line)
+> {
+>         if (test_bit(FLAG_EVENT_CLOCK_REALTIME, &line->desc->flags))
+>                 return ktime_get_real_ns();
+> 
+>         return ktime_get_ns();
+> }
+> 
+> What you want to do is to add a new flag for hardware timestamps
+> and use that if available. FLAG_EVENT_CLOCK_HARDWARE?
+> FLAG_EVENT_CLOCK_NATIVE?
+> 
+
+HARDWARE looks better to me, as NATIVE is more vague.
+
+> Then you need to figure out a mechanism so we can obtain
+> the right timestamp from the hardware event right here,
+> you can hook into the GPIO driver if need be, we can
+> figure out the gpio_chip for a certain line for sure.
+> 
+
+Firstly, line_event_timestamp() is called from the IRQ handler context.
+That is obviously more constraining than if it were only called from the
+IRQ thread. If the GTE is providing the timestamp then that could be
+put off until the IRQ thread.
+So you probably want to refactor line_event_timestamp() into two flavours
+- one for IRQ handler that returns 0 if HARDWARE is set, and the other for
+IRQ thread, where there is already a fallback call to
+line_event_timestamp() for the nested threaded interrupt case, that gets
+the timestamp from the GTE.
+
+But my primary concern here would be keeping the two event FIFOs (GTE and
+cdev) in sync.  Masking and unmasking in hardware and the kernel needs to
+be coordinated to prevent races that would result in sync loss.
+So this probably needs to be configured in the GTE driver via the irq
+path, rather than pinctrl?
+
+Is every event detected by the GTE guaranteed to trigger an interrupt in
+the kernel?
+
+How to handle GTE FIFO overflows?  Can they be detected or prevented?
+
+> So you first need to augment the userspace
+> ABI and the character device code to add this. See
+> commit 26d060e47e25f2c715a1b2c48fea391f67907a30
+> "gpiolib: cdev: allow edge event timestamps to be configured as REALTIME"
+> by Kent Gibson to see what needs to be done.
+> 
+
+You should also extend gpio_v2_line_flags_validate() to disallow setting
+of multiple event clock flags, similar to the bias flag checks.
+Currently there is only the one event clock flag, so no need to check.
+
+> 3. Also patch tools/gpio/gpio-event-mon.c to support this flag and use that
+> for prototyping and proof of concept.
+> 
+
+The corresponding commit for the REALTIME option is
+commit e0822cf9b892ed051830daaf57896aca48c8567b
+"tools: gpio: add option to report wall-clock time to gpio-event-mon"
+
+Cheers,
+Kent.
+
+> > ============
+> > For IRQ:
+> > ============
+> 
+> Marc Zyngier and/or Thomas Gleixner know this stuff.
+> 
+> It does make sense to add some infrastructure so that GPIO events
+> and IRQs can use the same timestamping hardware.
+> 
+> And certainly you will also want to use this timestamp for
+> IIO devices? If it is just GPIOs and IRQs today, it will be
+> gyroscopes and accelerometers tomorrow, am I right?
+> 
+> Yours,
+> Linus Walleij
