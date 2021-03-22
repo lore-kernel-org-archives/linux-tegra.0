@@ -2,60 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340E2C433E6
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 13:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AABC433E4
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 14:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B587619C9
-	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 13:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EBCB61972
+	for <linux-tegra@archiver.kernel.org>; Mon, 22 Mar 2021 14:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232484AbhCVM7f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 22 Mar 2021 08:59:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:59574 "EHLO foss.arm.com"
+        id S230321AbhCVOET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 22 Mar 2021 10:04:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233296AbhCVM6I (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 22 Mar 2021 08:58:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A1141042;
-        Mon, 22 Mar 2021 05:58:07 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.55.31])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0615D3F719;
-        Mon, 22 Mar 2021 05:58:05 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        id S230227AbhCVOEK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 22 Mar 2021 10:04:10 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAD966196C;
+        Mon, 22 Mar 2021 14:04:09 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lOLA7-00351E-P3; Mon, 22 Mar 2021 14:04:07 +0000
+Date:   Mon, 22 Mar 2021 14:04:06 +0000
+Message-ID: <87mtuvgu95.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Vidya Sagar <vidyas@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: Re: [PATCH] PCI: tegra: Constify static structs
-Date:   Mon, 22 Mar 2021 12:57:57 +0000
-Message-Id: <161641785574.526.7300746340083499342.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210207221604.48910-1-rikard.falkeborn@gmail.com>
-References: <20210207221604.48910-1-rikard.falkeborn@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 03/13] PCI: xilinx: Convert to MSI domains
+In-Reply-To: <20210322122315.GB11469@e121166-lin.cambridge.arm.com>
+References: <20210225151023.3642391-1-maz@kernel.org>
+        <20210225151023.3642391-4-maz@kernel.org>
+        <20210322122315.GB11469@e121166-lin.cambridge.arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, frank-w@public-files.de, treding@nvidia.com, tglx@linutronix.de, robh@kernel.org, will@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com, wei.liu@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, ryder.lee@mediatek.com, marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, michal.simek@xilinx.com, paul.walmsley@sifive.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, 7 Feb 2021 23:16:04 +0100, Rikard Falkeborn wrote:
-> The only usage of them is to assign their address to the 'ops' field in
-> the pcie_port and the dw_pcie_ep structs, both which are pointers to
-> const. Make them const to allow the compiler to put them in read-only
-> memory.
+Hi Lorenzo,
 
-Applied to pci/tegra, thanks!
+On Mon, 22 Mar 2021 12:23:15 +0000,
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> 
+> On Thu, Feb 25, 2021 at 03:10:13PM +0000, Marc Zyngier wrote:
+> > In anticipation of the removal of the msi_controller structure, convert
+> > the ancient xilinx host controller driver to MSI domains.
+> > 
+> > We end-up with the usual two domain structure, the top one being a
+> > generic PCI/MSI domain, the bottom one being xilinx-specific and handling
+> > the actual HW interrupt allocation.
+> > 
+> > This allows us to fix some of the most appaling MSI programming, where
+> > the message programmed in the device is the virtual IRQ number instead
+> > of the allocated vector number. The allocator is also made safe with
+> > a mutex. This should allow support for MultiMSI, but I decided not to
+> > even try, since I cannot test it.
+> > 
+> > Also take the opportunity to get rid of the cargo-culted memory allocation
+> > for the MSI capture address. *ANY* sufficiently aligned address should
+> > be good enough, so use the physical address of the xilinx_pcie_host
+> > structure instead.
+> 
+> I'd agree with Bjorn that the MSI doorbell change is better split into
+> a separate patch, I can do it myself at merge if you agree.
 
-[1/1] PCI: tegra: Constify static structs
-      https://git.kernel.org/lpieralisi/pci/c/d895ce7030
+I need to respin the series as it now conflicts badly with the current
+state of the tree (rcar has introduced one subtle change that needs
+addressing). I'll post that later this week (hopefully tomorrow) with
+rcar and xilinx having the doorbell fix in separate patches.
 
 Thanks,
-Lorenzo
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
