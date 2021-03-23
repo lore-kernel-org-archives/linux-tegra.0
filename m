@@ -2,124 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3676EC433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 09:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73FEC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 10:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00E84619B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 09:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 925B5619C2
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 10:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbhCWJIn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 05:08:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
+        id S229730AbhCWKGw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 06:06:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbhCWJIZ (ORCPT
+        with ESMTP id S229504AbhCWKGX (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 05:08:25 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C82DC061756
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 02:08:13 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id u20so24581867lja.13
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 02:08:13 -0700 (PDT)
+        Tue, 23 Mar 2021 06:06:23 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9205BC061574;
+        Tue, 23 Mar 2021 03:06:22 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id w18so22797309edc.0;
+        Tue, 23 Mar 2021 03:06:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GU8+KGx7zWyRaueXU2MKMvxj0PmLdKNF03uRpvzX5IM=;
-        b=ykIoGA5o+ESPVHYneiLpbYO1VKyj9FzlBgd1tWwMY8nGitgvbjNADm+6Sxb8uGcLrA
-         X/IRJoCgQoxMQeibf0C6rlhtUhSPvXtIOkvGLbrHZ4WfhmjPTc/Ea/Aqt26SJEMHIlGJ
-         A2N9YXKhGqxKxrV/t7Gzy/gJXTH5o5mM4yCPWImzOXdEF9JuF4YidQ+ldhnzMONndTGa
-         KvijCTWwZ7QmSMvCWmMt448XhuV3vSXfh480RkJtIgWabKc8vqVYtPVdI4BZktXvhlSC
-         sQJIwxgZOPMshTw/eNd6LWMc3eonmtWRuVPxIdvM9dDkswnZgqNkwnMiE/NK8Q8Td63C
-         kibA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eBQID3v3SynTOiiBObe4JNz0JqVcgY5182dZdLXPMpY=;
+        b=PIdoTXYP8Rii80/Nja8INUqF7so023eTX4U6Shw1kHORzVP6vvWDR/NKmQHJlEF9r4
+         fA46CkySsO5xPBWLMmkzhXLv6WMReOEc9wOEvnWyo4HzyBpu8R3VLJd8zwdX4apCtoBJ
+         /q7UzLHVVbBW2NJ2z9853FtVN6zMYEXuSqvQrstYaTpYQKOlTUkMsT4nkeynbOGrHjKi
+         2zKR3LBIVPNCXpeGAgJfGbEDhWsKgRQFpTN19weL1XdSUlNID5BzsBSEVbiReLpb1k/t
+         q3SB7NYz0Lrfj+qLXE7h8AjYAVRq8mpltsOfpigFMn3daLkEqqggxVciK88va0rkkGNe
+         LbKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GU8+KGx7zWyRaueXU2MKMvxj0PmLdKNF03uRpvzX5IM=;
-        b=ELZRHcDYWWv4fJyCYGFMpnVpFfinwybBlKTjq7+4Z4u7S9C0pkWI2iIuEdZ/lCpkY9
-         +8T30OHs7H50jYmj1OyjA1R9mNGK2BiM3MnF0SUiJWXIl/jaeUkUmLqVNcUeccOvy6gu
-         p0P8dMjfGDwVRMsiwpPKRC0cOLj82gD7m600l0fkIBOORuOikjQOSsBRXByMjXCIPgvv
-         BrqA8e56HoktHecKfp5eyHK7/HH4QGxiadUDetB6qr+87AR/Yip35T0W0jiP8qOLmbgY
-         iZnOg8pS0O7yvJDZM7Ygy+WwiioQ/ZRBECz1E9SiH/VtM1MwJUY+nDeQ/DtyREsuHhL8
-         wARg==
-X-Gm-Message-State: AOAM532Nb+68T6V4YuDLRsHxpLMa7KBaX2F8FS+6Pxuo4ArAnyoqFzTt
-        Od0dWVC6+Nax1qD76XguoOKynOmYRzyW9p0/rAL6Mg==
-X-Google-Smtp-Source: ABdhPJweyePrKoSgpVunhp5/2Fb9EHr6FazdiSlQ2mVqyflF8O5bVu/9/byx7auFHJl/beHF5YqRbfS6TlP72yvvaZ8=
-X-Received: by 2002:a2e:700a:: with SMTP id l10mr2520383ljc.368.1616490491953;
- Tue, 23 Mar 2021 02:08:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com>
- <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
- <20210322060047.GA226745@sol> <d48fa7b5-8c17-c3d7-10a9-a9811c410a39@nvidia.com>
-In-Reply-To: <d48fa7b5-8c17-c3d7-10a9-a9811c410a39@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 23 Mar 2021 10:08:00 +0100
-Message-ID: <CACRpkdbkmwuAJzD-CpWKqmL3_n1xkvv_2M_DsNs+ZquiaRkKgA@mail.gmail.com>
-Subject: Re: GTE - The hardware timestamping engine
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eBQID3v3SynTOiiBObe4JNz0JqVcgY5182dZdLXPMpY=;
+        b=rcZgstVt6CQYgVQMShF0NIV8RhwNyJi3/GqhUuiq90BidSbbVEFcDvLWvn4REp/6Ow
+         aDSvaoS8NyYXFU4mPkFfv4bc8WaBDbsOhHRehxgbSQ19MXZYgJSXRHdRV/LDr3b7yaoi
+         5T/N1z/PLflDLded+sNru8+KDdsyo7ccMJPcU271QWZj7+7D5IWu32ek935Lm5VU9MVM
+         3Jrl5uPkABoAYtbBEa87UeL5LYrX2reccvAy2CCHC6WiknxEn5nNCSr0Im/CJ0cqWcQm
+         9f31jGk+oZD8Abwe4cM2wS7S0z7I1JPNgER3ZwPbWxbw0TT1bjU1GGE0BElWqDNbw6im
+         cVZA==
+X-Gm-Message-State: AOAM533oEV1nHuurCFuMAlDaUMFMQhQsPi36ea8AY9BnKxunvTAOsIPY
+        JauaVJ0r55KegQESAzMlUSs=
+X-Google-Smtp-Source: ABdhPJxgK2I4mH7QlEvtnzuOcTArpQzrDM0aEzU3KifOFYIv9EZngVGdSileSp55WsMxFqx2Kp+2iA==
+X-Received: by 2002:a05:6402:c88:: with SMTP id cm8mr3867647edb.62.1616493981292;
+        Tue, 23 Mar 2021 03:06:21 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id y2sm10919556ejf.30.2021.03.23.03.06.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 03:06:19 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 11:06:39 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Dipen Patel <dipenp@nvidia.com>,
+        Kent Gibson <warthog618@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Arnd Bergmann <arnd@arndb.de>,
-        Richard Cochran <richardcochran@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Richard Cochran <richardcochran@gmail.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: Re: GTE - The hardware timestamping engine
+Message-ID: <YFm9r/tFkzVlYDEp@orome.fritz.box>
+References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com>
+ <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
+ <20210322060047.GA226745@sol>
+ <d48fa7b5-8c17-c3d7-10a9-a9811c410a39@nvidia.com>
+ <CACRpkdbkmwuAJzD-CpWKqmL3_n1xkvv_2M_DsNs+ZquiaRkKgA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="JLNxn6AUjrnLEyl3"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbkmwuAJzD-CpWKqmL3_n1xkvv_2M_DsNs+ZquiaRkKgA@mail.gmail.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 9:17 PM Dipen Patel <dipenp@nvidia.com> wrote:
 
-> My follow-up concerns on both Linus's and Kent's feedback:
->
-> 1.  Please correct me if I am wrong, lineevent in the gpiolib* is only
->     serves the userspace clients.
-> 1.a What about kernel drivers wanting to use this feature for monitoring its
->     GPIO lines, see gyroscope example somewhere below. In that regards,
->     lineevent implementation is not sufficient.
-> 1.b Are you also implying to extend lineevent implementation to kernel
->     drivers?
+--JLNxn6AUjrnLEyl3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was talking about lineevent because you mentioned things like
-motors and robotics, and those things are traditionally not run in
-kernelspace because they are not generic hardware that fit in the
-kernel subsystems.
+On Tue, Mar 23, 2021 at 10:08:00AM +0100, Linus Walleij wrote:
+> On Mon, Mar 22, 2021 at 9:17 PM Dipen Patel <dipenp@nvidia.com> wrote:
+>=20
+> > My follow-up concerns on both Linus's and Kent's feedback:
+> >
+> > 1.  Please correct me if I am wrong, lineevent in the gpiolib* is only
+> >     serves the userspace clients.
+> > 1.a What about kernel drivers wanting to use this feature for monitorin=
+g its
+> >     GPIO lines, see gyroscope example somewhere below. In that regards,
+> >     lineevent implementation is not sufficient.
+> > 1.b Are you also implying to extend lineevent implementation to kernel
+> >     drivers?
+>=20
+> I was talking about lineevent because you mentioned things like
+> motors and robotics, and those things are traditionally not run in
+> kernelspace because they are not generic hardware that fit in the
+> kernel subsystems.
+>=20
+> Normally industrial automatic control tasks are run in a userspace
+> thread with some realtime priority.
+>=20
+> As Kent says, in-kernel events are exclusively using IRQ as
+> mechanism, and should be modeled as IRQs. Then the question
+> is how you join the timestamp with the IRQ. GPIO chips are
+> just some kind of irqchip in this regard, we reuse the irqchip
+> infrastructure in the kernel for all GPIO drivers that generate
+> "events" in response to state transitions on digital lines.
 
-Normally industrial automatic control tasks are run in a userspace
-thread with some realtime priority.
+One potential problem I see with this is that Kent's proposal, if I
+understand correctly, would supplant the original IRQ of a device with
+the GTE IRQ for the corresponding event. I'm not sure that's desirable
+because that would require modifying the device tree and would no longer
+accurately represent the hardware. Timestamping also sounds like
+something that drivers would want to opt into, and requiring people to
+update the device tree to achieve this just doesn't seem reasonable.
 
-As Kent says, in-kernel events are exclusively using IRQ as
-mechanism, and should be modeled as IRQs. Then the question
-is how you join the timestamp with the IRQ. GPIO chips are
-just some kind of irqchip in this regard, we reuse the irqchip
-infrastructure in the kernel for all GPIO drivers that generate
-"events" in response to state transitions on digital lines.
+This proposal would also only work if there's a 1:1 correspondence
+between hardware IRQ and GTE IRQ. However, as Dipen mentioned, the GTE
+events can be configured with a threshold, so a GTE IRQ might only
+trigger every, say, 5th hardware IRQ. I'm not sure if those are common
+use-cases, though.
 
-> >> And certainly you will also want to use this timestamp for
-> >> IIO devices? If it is just GPIOs and IRQs today, it will be
-> >> gyroscopes and accelerometers tomorrow, am I right?
-> >>
->
-> Gyroscope, accelerometers or any IIO are built on top of i2c/spi and/or GPIOs.
-> So they are covered as long as they serve as client to GTE framework, For
-> example, if gyroscope uses GPIO as an interrupt to indicate frame
-> ready, GTE could timestamp that GPIO as well any IRQs like i2c transaction
-> complete IRQ. To this to happen, gycroscope then register itself with
-> GTE framework and enable required signals that it interfaces/interested with.
+Obviously if we don't integrate this with IRQs directly, it becomes a
+bit more difficult to relate the captured timestamps to the events
+across subsystem boundaries. I'm not sure how this would be solved
+properly. If the events are sufficiently rare, and it's certain that
+none will be missed, then it should be possible to just pull a timestamp
+=66rom the timestamp FIFO for each event.
 
-I think there are IIO devices that provide their own
-hardware timestamp and as such they might want to use that,
-so the mechanism need to be generic enough that a certain
-hardware timestamp can be selected sooner or later.
-But let's not overcomplicate things for now.
+All of that said, I wonder if perhaps hierarchical IRQ domains can
+somehow be used for this. We did something similar on Tegra not too long
+ago for wake events, which are basically IRQs exposed by a parent IRQ
+chip that allows waking up from system sleep. There are some
+similarities between that and GTE in that the wake events also map to a
+subset of GPIOs and IRQs and provide additional functionalities on top.
 
-Yours,
-Linus Walleij
+I managed to mess up the implementation and Marc stepped in to clean
+things up, so Cc'ing him since he's clearly more familiar with the topic
+than I am.
+
+Thierry
+
+--JLNxn6AUjrnLEyl3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBZva0ACgkQ3SOs138+
+s6HAYA/+NUNYhSdq6TYcOT+FW55Sk4Ckt2yxPhow5SdEDtx6GV0L9eYhJRYKazhl
+9RCsfiTYfGUbMvF0USkiztgHeEydFWcvS2WoA93+EJCaPHskIaiU5CIKH2unemNS
+pm3mK7IrwoqzaVmPa572SnszBv7F66TqLJ3CZI7pkppQ7u4vKGdKw91JOz2n2yQ5
+e62may/Z6NlKTYOBa6jTyjc+ShQ6SENjEtscnl2bcNLg5RyIeX2GXuSLwqEqFYbc
+Pmp2n4qg0wFsmqImjJha/M3oPjP/vtDc5zRY5pGn18wtW2+iKXBZT5UKqEf16Nuy
+LeYTpFS1lEW4yePuXYgCeJAHs4XrMqj61bVD/lRZdq4+9cl7krxgQSIMug5WigDo
+ABo0hYr0oTf9mIFzy+b2pZwxWRg4QSceu8zKj5rOv9J8ztbAABuzcefRojD0j+vu
+pQmmI7gQYYb9//DHj/5YS81lVRRyqxyB5M4Q+wdKpkjXWEa3WOg9kfhagtenln7z
+U0cdi6ljnCs0XQvIb5BkOQlNLQ15x6uyZH+nbvPidmJykGrHoDXj7iZKH5Jm0ZoQ
+JUKcBRS3m2XWDNwI9UIjCrdSIT/djUQXm1B1Q6VRiRpOMKvaJisRDN7RWlsUvOaD
++cKFyNCo++BV3w8afo5O0h+DYKDpkVAOmNM1UlubN/YTwPYcr6Q=
+=PGgq
+-----END PGP SIGNATURE-----
+
+--JLNxn6AUjrnLEyl3--
