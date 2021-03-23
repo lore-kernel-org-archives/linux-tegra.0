@@ -2,60 +2,61 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD07C433E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F317FC433E3
 	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 944B1619D7
+	by mail.kernel.org (Postfix) with ESMTP id CB3C8619DB
 	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbhCWPyk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 11:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39064 "EHLO
+        id S232830AbhCWPyl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 11:54:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232803AbhCWPyX (ORCPT
+        with ESMTP id S232833AbhCWPyf (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 11:54:23 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D71C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:22 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id b7so27940047ejv.1
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:22 -0700 (PDT)
+        Tue, 23 Mar 2021 11:54:35 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54661C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:35 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id e14so9713515ejz.11
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VOUSgKbb+tmQ6BrVeKX3GQ/KKdKuR8BaRfZ6V+0QOT4=;
-        b=PdNm6zM8dkCzDqL3k4NIqcGauz36a1hvKs0EcVaQqVfRO0r6OkTXUIfiKm6c3R+N/4
-         4QCL/TJjW/ehjsj2A2AMSeiIZOdB5BBeMjAD9emf5rKD0wVzJ+c5eA2GgFA9gkBT/kcs
-         OuXGZXe3Mv41RX4IvKbaS5A6fhF9FBILwUy7eaGELt2wVjchs7JkHOYQ0RkYHqF3LKDK
-         +hWG7RUnqVx+lPk5/yU0GxVniXz0Taz3ysubj8DuDgLE6t8ekF/o/thMPGswLts4rsjy
-         yMGj2qfd9Fz+RDVawAP0aD0lwUL4U93SjjT8/hc8uZ+GrkprwAfpIO7FLsm+NTcQ1Rzc
-         QCqA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4EQdWnddGJ/kQ9X+WOHcXmmOLEE1Ao3uU331cQ38SAg=;
+        b=loYgVysE6ORMaaMt+k/B9ApXcwMnpLlrv67LOGmHWZRnexFCFZncKpUuMfgKCQmh+p
+         axH8lHObUHObNM04MuUjgUAUnqKLyo8o+1Z3d3M5cZaww0R2IRxS+Q7P6kT+M6/zpZad
+         zyMtZdHpUgmVGb3WskwMhhIvaLIssSj3xzotZUU1AEpTQUI4F1uhxAXHgJmVmY7glgVZ
+         U2qOcEy1AUIs9Ic5LsZLGEH4le/0grWDlGS9hduRtUikBvMVS9MJBxQwkAtBoHiftdTA
+         SQwyY+dILqqDDBKgNoUfbEMoMZw0FRU70e0ENTXtdU0Up8fMxOM5D6vPhJJ5vofY+RH2
+         dQgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VOUSgKbb+tmQ6BrVeKX3GQ/KKdKuR8BaRfZ6V+0QOT4=;
-        b=FXpSTQNsjU09p3I4Lo7QWDAsCArzb/9jcI+aXxj4U5FUmmSq9H6vS9LY+W/ItSJ6x4
-         ek26gHFbEpVY6eHVOUKGBchmViSHhUikecU/Jdi3HqESqN4T6IxbwNwvEmSDgdBlvEFr
-         SnP+7t0RLV5c9cwHIgFpf4WJ6fToCeCpvawSwnWPxvwkSU929rtBdK17LWbx7lwa8ONp
-         G7M2dC60LYESGioD0DJCdd28LAFwr8ZBvaV9PMWghEN8Tm9uqcLP5xWXRCxKif6AT1ex
-         NrqSDI1pBZay6pQ+JGNdVxXB5uzPJUft2Ctc3ryj1O+8/DWXzMA+3eb6/U1A53bf2DEO
-         OLXA==
-X-Gm-Message-State: AOAM530pFZm83kw7uvg//FijdcWiCJj4k5s7dbqguznaBmenrzfHVJKJ
-        Y6HKGs1RBJ936kta+zXMCLM=
-X-Google-Smtp-Source: ABdhPJzue6N2LpPyzl3guDAdUNcg5kxuK19d7aYM/Y2bGxBU8KIujBuzZgBTweoetJBGMtGtvXH4tA==
-X-Received: by 2002:a17:906:c45a:: with SMTP id ck26mr5468014ejb.125.1616514861376;
-        Tue, 23 Mar 2021 08:54:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4EQdWnddGJ/kQ9X+WOHcXmmOLEE1Ao3uU331cQ38SAg=;
+        b=k7mkbYviSjyM1YG/IjwlhFUFGhVt70pOWgO/FJiCvVLnXARf4ByCMizW9t+ThLAejT
+         lIrQ7+AU1E446Su2Od1zuCCqWgVqiyE4X75ZQB2dOy9RaSxF1Qu/LKG98GfaP4I5QnrN
+         rTmbDNG1XedtsTnRqonPdUtV1cbWeFlOlaG/NzoDAqhZuIL2099Cr1BuWLkWf0sK4Ik3
+         WiRkhyN7j/oKnPLk3nabAXqM9p7gqE50G+doV/96LosvfXO7WFodkpfOGVFLDpe82auc
+         d4hIZwRY+ycrE1gqbj1xqZC7CrBplwoFu/omGg8PaPBFHMq3/Q1eWvXj5/D3ej/tkFkX
+         4i6Q==
+X-Gm-Message-State: AOAM530Khwy08vG6QajC14cLTtvZu6UsQoag21G7SHtJFclJldqgPOph
+        4QIh9VLvvseRDvkQg44NROc=
+X-Google-Smtp-Source: ABdhPJx1K2gXlVJwe1h9YPR2Ax4XDjLRHlSeprdecLslQwhR+AZ6J7RDvfjb1/Z6UkfBvMzUKADe6A==
+X-Received: by 2002:a17:906:9386:: with SMTP id l6mr5471956ejx.455.1616514874065;
+        Tue, 23 Mar 2021 08:54:34 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id r17sm11535164ejz.109.2021.03.23.08.54.20
+        by smtp.gmail.com with ESMTPSA id y9sm11295319ejd.110.2021.03.23.08.54.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 08:54:20 -0700 (PDT)
+        Tue, 23 Mar 2021 08:54:33 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -64,10 +65,12 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         James Jones <jajones@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 0/9] drm/tegra: Various improvements
-Date:   Tue, 23 Mar 2021 16:54:28 +0100
-Message-Id: <20210323155437.513497-1-thierry.reding@gmail.com>
+Subject: [PATCH 5/9] drm/tegra: fb: Add diagnostics for framebuffer modifiers
+Date:   Tue, 23 Mar 2021 16:54:33 +0100
+Message-Id: <20210323155437.513497-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210323155437.513497-1-thierry.reding@gmail.com>
+References: <20210323155437.513497-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -76,50 +79,26 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hi,
+Add a debug message to let the user know when a framebuffer modifier is
+not supported.
 
-this fixes a couple of oddities like slightly off DMA masks and add
-support for hardware cursors on newer chips as well as support for the
-sector layout bit in NVIDIA framebuffer modifiers.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/tegra/fb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The first patch in this set is a small helper that I think might be
-useful to other drivers eventually, but if it isn't it's easily
-something I can carry in the Tegra driver. It'd be great to get an
-Acked-by on it from one of the drm-misc maintainers so that I can take
-it through the Tegra tree.
-
-James, I've added you on Cc on this one because it makes use of the
-extended framebuffer modifiers that you introduced a while back to
-support the sector layout mux on Tegra194. It'd be great to get your
-thoughts on this just so this is used as expected.
-
-Thanks,
-Thierry
-
-Thierry Reding (9):
-  drm/fourcc: Add macro to check for the modifier vendor
-  drm/tegra: dc: Inherit DMA mask
-  drm/tegra: dc: Parameterize maximum resolution
-  drm/tegra: dc: Implement hardware cursor on Tegra186 and later
-  drm/tegra: fb: Add diagnostics for framebuffer modifiers
-  drm/tegra: gem: Add a clarifying comment
-  gpu: host1x: Add early init and late exit callbacks
-  drm/tegra: Count number of display controllers at runtime
-  drm/tegra: Support sector layout on Tegra194
-
- drivers/gpu/drm/tegra/dc.c    | 104 +++++++++++++++++++++++++++++++---
- drivers/gpu/drm/tegra/dc.h    |   6 ++
- drivers/gpu/drm/tegra/drm.c   |  13 ++++-
- drivers/gpu/drm/tegra/drm.h   |   5 ++
- drivers/gpu/drm/tegra/fb.c    |  10 ++++
- drivers/gpu/drm/tegra/gem.h   |   6 ++
- drivers/gpu/drm/tegra/hub.c   |  41 +++++++++++++-
- drivers/gpu/drm/tegra/plane.c |  32 +++++++++++
- drivers/gpu/host1x/bus.c      |  31 ++++++++++
- include/linux/host1x.h        |   2 +
- include/uapi/drm/drm_fourcc.h |   3 +
- 11 files changed, 240 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 01939c57fc74..350f33206076 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -86,6 +86,7 @@ int tegra_fb_get_tiling(struct drm_framebuffer *framebuffer,
+ 		break;
+ 
+ 	default:
++		DRM_DEBUG_KMS("unknown format modifier: %llx\n", modifier);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.30.2
 
