@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9094BC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED2AC433E0
 	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66850619D0
+	by mail.kernel.org (Postfix) with ESMTP id 7F476619CD
 	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232806AbhCWPyk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232803AbhCWPyk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 23 Mar 2021 11:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39090 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232819AbhCWPy2 (ORCPT
+        with ESMTP id S232806AbhCWPy0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 11:54:28 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC928C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:27 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id l4so27911657ejc.10
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:27 -0700 (PDT)
+        Tue, 23 Mar 2021 11:54:26 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F3FDC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:25 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id ce10so27917558ejb.6
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vLQx1Cfo6NMYGKyAzHlak3XDgfOSp0H1hbHr7UYGQH4=;
-        b=N+mYceP9vCGRhM3PjsaOHNXvBi4uz1WxWLKOx9peAA38HYDQCVPyXnUTnSzQpB9J4i
-         sk1f2x99Ya8yeXD9FTzn++cxVuAQpeFrWB7NqSIWOxldeIvjG/8/zPUhEz53OaD91unu
-         dQOppyZBIqOr7f1AaXLtpYJNfL9X8asUyS4AHwiuvwM0juPwM1pIHmJ7kmoCVWrD0ru0
-         oIKwoEnTWD5ByP1znDZNW+BgSnhVArsad8nCTeTqjbZSKFYvJ+H6BlJxDS+Lbd+rSUM3
-         DhFbGaMJtMTngvicjq7fomk+KI601UwkvFV5CSKro21VFh9dW6tZ9eogiK3G1gEfYSRc
-         mRYg==
+        bh=ttCD6uCX5tFeOHJNIPofy4nwJsMNY2bP8hvgcMSOHFU=;
+        b=Teog51hXf+U5LdhrN1Q17doEvCKL84mSY7vWRBetExH5CXL+TG0Z2l/cKWD8lBZh5m
+         y/Z9WYcKeW+pMDBc0UR5uduNY7e7RdcDRV9/40hq7DHVZXHeGMMQuaVVxuUK+HfEjt/p
+         qOipRFboiB4Yq69jLCaTeN4uGLt98hxz2gtPETXydBz7jePyWzBNJs4y3FP/EMQXPUXZ
+         zf/OkAVlVK/2QTxnAwswtMpfYf4eNGiKBjl0LREXafjOVOPrGWJVQxl4eovl2U9OWNeS
+         CxRBAYafhW53CnsOP2NJLl2UYeNs8WRxNFU6UYncPdE8srfBCvsfljmpUqSQ1ZhAiG23
+         GiHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vLQx1Cfo6NMYGKyAzHlak3XDgfOSp0H1hbHr7UYGQH4=;
-        b=ua1giZo6MX71mqKdO2lpzkC5XZMceqtVSfxfH9IKvm2IyrOnAI/trnQibRDPKwF4w1
-         J6RgrlagXq3e+Ehpbj45tHFYhfsv6wKZCFJiAuZEHs5WOkW0zys/R6qigK+rq9doF1Hq
-         Ktbou8qZGDVSHsZtYFv1pyTCg38uw26c0Fp21zKK3RRPZUj0B7pF0uguUhqBGwbZeVfg
-         CRIhycqzhSi3naIuDiKtYjEq9UOsZO6cKEfDdvqavgRTQKBrDL+tURDeHZja5VN+rTen
-         +SS7r/wYFaRZFOCv/HtpvqHkoO8yQfr95ryYWoLwBo32V/WUiaz6f/VrXwCiXwi7HRnL
-         PaQQ==
-X-Gm-Message-State: AOAM5311wdbGkcjPBKZQVu/qJVmoISotCNW4SYO83vTgvIxrdh+PdnD3
-        G0jOFZegfpffLoThSZMd1SQ=
-X-Google-Smtp-Source: ABdhPJyKfTt7s+hXj2wrI20wtzxyHA+LfKXIU00VLlyyCJrWQFHBCQThqvsryE6tm85XtLfRjUF3NQ==
-X-Received: by 2002:a17:906:340d:: with SMTP id c13mr5692563ejb.29.1616514866665;
-        Tue, 23 Mar 2021 08:54:26 -0700 (PDT)
+        bh=ttCD6uCX5tFeOHJNIPofy4nwJsMNY2bP8hvgcMSOHFU=;
+        b=ocxShWVXbZxR3DxTgp09LN6zL5RW+LrGwAz0A9a38xKo8v8T/tcKF4xBpAV+xEX5jy
+         AQZARewD/HcIVEyF04VtGVozRyOA3ASMdkxdIGI+BJwkgM95pNxHTidY4d3NpDqoMbYB
+         U6xrqETHXqW6/6hjx/snVJ5FYbEcbtoWTu2udpRvN4GK+XRx/NGbXiNTCHn9M3a4HmJc
+         zD//y7ovcCc5sV3aYdih9X442o8cjWK6Fpc0pChg0Z0IwlY14I6Cwu23pDC1QZH6CtKy
+         acDMJl8L6Jm9qYDzX8Yl3kVoIA+uzkE5ltWo9tJPwbjwwnq3Cba1S6BIofni0LBIalwO
+         obWg==
+X-Gm-Message-State: AOAM533z+rs9CGHnKeVmCIGSd9hcErECDuJ/5i4L+O9LYukKlfG0AcXm
+        30dXfSndrJzlkqy42Nhynp4=
+X-Google-Smtp-Source: ABdhPJxEkR+OjzJB2FpCESzwpXM5NSRSJPKHgeSFb5twIZw/J5vwiPJQQLzHJZTeEJNL6mWGDWLsOw==
+X-Received: by 2002:a17:906:a1c8:: with SMTP id bx8mr5406071ejb.381.1616514863951;
+        Tue, 23 Mar 2021 08:54:23 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id u13sm11560812ejn.59.2021.03.23.08.54.25
+        by smtp.gmail.com with ESMTPSA id g7sm6973977ejw.51.2021.03.23.08.54.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 08:54:25 -0700 (PDT)
+        Tue, 23 Mar 2021 08:54:22 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -65,9 +65,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         James Jones <jajones@nvidia.com>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 2/9] drm/tegra: dc: Inherit DMA mask
-Date:   Tue, 23 Mar 2021 16:54:30 +0100
-Message-Id: <20210323155437.513497-3-thierry.reding@gmail.com>
+Subject: [PATCH 1/9] drm/fourcc: Add macro to check for the modifier vendor
+Date:   Tue, 23 Mar 2021 16:54:29 +0100
+Message-Id: <20210323155437.513497-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210323155437.513497-1-thierry.reding@gmail.com>
 References: <20210323155437.513497-1-thierry.reding@gmail.com>
@@ -79,62 +79,28 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Inherit the DMA mask from host1x (on Tegra210 and earlier) or the
-display hub (on Tegra186 and later). This is necessary in order to
-properly map buffers without SMMU support and use the maximum IOVA
-space available with SMMU support.
+This is useful for checking at runtime whether a given modifier is from
+a specific vendor so that any vendor-specific parsing can be done.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dc.c  | 7 +++++++
- drivers/gpu/drm/tegra/hub.c | 7 +++++++
- 2 files changed, 14 insertions(+)
+ include/uapi/drm/drm_fourcc.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 2585ba70b706..5737a0c4dc9f 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2538,9 +2538,16 @@ static int tegra_dc_couple(struct tegra_dc *dc)
+diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+index f76de49c768f..567fd4566e08 100644
+--- a/include/uapi/drm/drm_fourcc.h
++++ b/include/uapi/drm/drm_fourcc.h
+@@ -366,6 +366,9 @@ extern "C" {
  
- static int tegra_dc_probe(struct platform_device *pdev)
- {
-+	u64 dma_mask = dma_get_mask(pdev->dev.parent);
- 	struct tegra_dc *dc;
- 	int err;
+ #define DRM_FORMAT_RESERVED	      ((1ULL << 56) - 1)
  
-+	err = dma_coerce_mask_and_coherent(&pdev->dev, dma_mask);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-+		return err;
-+	}
++#define fourcc_mod_is_vendor(modifier, vendor) \
++	((((modifier) >> 56) & 0xff) == DRM_FORMAT_MOD_VENDOR_## vendor)
 +
- 	dc = devm_kzalloc(&pdev->dev, sizeof(*dc), GFP_KERNEL);
- 	if (!dc)
- 		return -ENOMEM;
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 8e6d329d062b..617240032c37 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -848,12 +848,19 @@ static const struct host1x_client_ops tegra_display_hub_ops = {
+ #define fourcc_mod_code(vendor, val) \
+ 	((((__u64)DRM_FORMAT_MOD_VENDOR_## vendor) << 56) | ((val) & 0x00ffffffffffffffULL))
  
- static int tegra_display_hub_probe(struct platform_device *pdev)
- {
-+	u64 dma_mask = dma_get_mask(pdev->dev.parent);
- 	struct device_node *child = NULL;
- 	struct tegra_display_hub *hub;
- 	struct clk *clk;
- 	unsigned int i;
- 	int err;
- 
-+	err = dma_coerce_mask_and_coherent(&pdev->dev, dma_mask);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-+		return err;
-+	}
-+
- 	hub = devm_kzalloc(&pdev->dev, sizeof(*hub), GFP_KERNEL);
- 	if (!hub)
- 		return -ENOMEM;
 -- 
 2.30.2
 
