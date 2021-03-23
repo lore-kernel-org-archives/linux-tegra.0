@@ -2,368 +2,332 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69F5C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398E2C433C1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1AAF619C5
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF2F619A5
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbhCWLPv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 07:15:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34810 "EHLO
+        id S230414AbhCWLQX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 07:16:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbhCWLPV (ORCPT
+        with ESMTP id S230438AbhCWLPx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 07:15:21 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1116C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:15:20 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id bf3so22999376edb.6
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NPevtMq3DHV/D2UgNLk5GneTnkOuOy7HBTWldd55wzQ=;
-        b=eUv77P5hxEW9j41DDsWupyx+73x8mIJsh3Tk6tqvMHQuzjy2Lm1dt7kGsDdAB78y/+
-         oUNPfa1lyESp4nfOJASf2rnKTcSNx6rjZ6vYV8YCAXoTInpVL2AqktiR1OqkU0IIekCR
-         UGo9otiu0s+WhETLnP6F+9Lvza8wTFw1+JO73xb0xVBnmbgFpVQZYVTGwVTpr6BjLuxN
-         QK79xTcs+XoaycdBYHMioklp3HXtgHCeTR4yDbD1tRhifCpnRrWG1cFAeNCsploasFik
-         REEkzLWMLozcyiRYdr16s7v2rulvCzASo+RPHtWzmDYtdFr8D6DPBdEXhG4hF0kbpab3
-         qo1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NPevtMq3DHV/D2UgNLk5GneTnkOuOy7HBTWldd55wzQ=;
-        b=UMookvzOQlxToUPKVwtlRBbaOpVP5FBKMiSoJCNF4AYbmcPBUVi7LWGtSpeJ337KdA
-         wG+lQKZjp/0qrarZpDc8XUzBoZ/f0k76uL/ArIN8UjalIkj4YYEUidhrnd7QhullzqpO
-         bl3uSPJ3oi/O/37vM9D6lOM6n7CGXegUaU1sDOwyzvSv8keph0DunKPTd72/mbMRxr5w
-         x3o85y4pncj8FR/d85iOmu8IHuFpNRnAAp9e8r5ZTJtbM/IHmMtwD61GTTDqLI3Y+QFt
-         /zqhhQe+djTRJAui9qbWhtQqRFsY6kV3dZLsmIdx/0l3H0hqrd38lOPvCxOODfc7taLZ
-         UNDA==
-X-Gm-Message-State: AOAM531true/UHyNScen6Bh3ulMEFqpOk+Yar2RMc7ox55MGHH4eZ7DV
-        o8lVqrP2F3F3nMgPaYXlj3A=
-X-Google-Smtp-Source: ABdhPJzhRa7xuApXuKvMIGvAHlXnEQMLHICPitoiUg0fKix/8Vn6qmguDImNPQwitJ4um+LFz6JGog==
-X-Received: by 2002:aa7:c450:: with SMTP id n16mr3985625edr.16.1616498119379;
-        Tue, 23 Mar 2021 04:15:19 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id gr16sm11187845ejb.44.2021.03.23.04.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 04:15:17 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 12:15:37 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
+        Tue, 23 Mar 2021 07:15:53 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9C6C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SESQw2FFXcXHdvW5M5RIfPi+u8HcduNXgvEnwd2qp48=; b=cemSi1F2QHaTXkqPP6Ixx+tv5n
+        Qr4jtssLZ2eQ5AAPo7CI71kkObe7Iri9G9BageYIrg3qhbmzzt8AeHuZfGhNnIOZksanje+9cIJvp
+        myHLN4KCogWblEyaNJABXR1DWuKtPq59rFwCZiQHXM6TZPYesGBF+pTMtANicfRch8OxIVyZqNZzy
+        ZRdQzdjw2ZqI9lGVlCk6V8DpsUjSSic+5fTlLTUQQ4R/08S+FbaXGKrQ22tsekH5VIHONLT0VTR22
+        myz1OzGAvuM8o3lwf1f3etgWJutJ/Bva2/ZK6Ho/5+Xun3lHd2t9Z27LUjN3fG4O2Nu2ZuuE1UGHf
+        +WrpkdEg==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1lOf0n-0007zj-Ib; Tue, 23 Mar 2021 13:15:49 +0200
+Subject: Re: [PATCH v5 08/21] gpu: host1x: Implement /dev/host1x device node
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
 Cc:     jonathanh@nvidia.com, digetx@gmail.com, airlied@linux.ie,
-        daniel@ffwll.ch, linux-tegra@vger.kernel.org, talho@nvidia.com,
-        bhuntsman@nvidia.com, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 09/21] gpu: host1x: DMA fences and userspace fence
- creation
-Message-ID: <YFnN2eIEa59AegPo@orome.fritz.box>
+        daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, talho@nvidia.com,
+        bhuntsman@nvidia.com
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-10-mperttunen@nvidia.com>
+ <20210111130019.3515669-9-mperttunen@nvidia.com>
+ <YFnKz9eCndMnOB61@orome.fritz.box>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <5633656a-b93a-fb5e-a5cb-6ff2f7d2ddfb@kapsi.fi>
+Date:   Tue, 23 Mar 2021 13:15:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UkHz975LzvF9XEUl"
-Content-Disposition: inline
-In-Reply-To: <20210111130019.3515669-10-mperttunen@nvidia.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <YFnKz9eCndMnOB61@orome.fritz.box>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 3/23/21 1:02 PM, Thierry Reding wrote:
+> On Mon, Jan 11, 2021 at 03:00:06PM +0200, Mikko Perttunen wrote:
+>> Add the /dev/host1x device node, implementing the following
+>> functionality:
+>>
+>> - Reading syncpoint values
+>> - Allocating syncpoints (providing syncpoint FDs)
+>> - Incrementing syncpoints (based on syncpoint FD)
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>> v4:
+>> * Put UAPI under CONFIG_DRM_TEGRA_STAGING
+>> v3:
+>> * Pass process name as syncpoint name when allocating
+>>    syncpoint.
+>> ---
+>>   drivers/gpu/host1x/Makefile |   1 +
+>>   drivers/gpu/host1x/dev.c    |   9 ++
+>>   drivers/gpu/host1x/dev.h    |   3 +
+>>   drivers/gpu/host1x/uapi.c   | 282 ++++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/host1x/uapi.h   |  22 +++
+>>   include/linux/host1x.h      |   2 +
+>>   6 files changed, 319 insertions(+)
+>>   create mode 100644 drivers/gpu/host1x/uapi.c
+>>   create mode 100644 drivers/gpu/host1x/uapi.h
+>>
+>> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+>> index 096017b8789d..882f928d75e1 100644
+>> --- a/drivers/gpu/host1x/Makefile
+>> +++ b/drivers/gpu/host1x/Makefile
+>> @@ -9,6 +9,7 @@ host1x-y = \
+>>   	job.o \
+>>   	debug.o \
+>>   	mipi.o \
+>> +	uapi.o \
+>>   	hw/host1x01.o \
+>>   	hw/host1x02.o \
+>>   	hw/host1x04.o \
+>> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>> index d0ebb70e2fdd..641317d23828 100644
+>> --- a/drivers/gpu/host1x/dev.c
+>> +++ b/drivers/gpu/host1x/dev.c
+>> @@ -461,6 +461,12 @@ static int host1x_probe(struct platform_device *pdev)
+>>   		goto deinit_syncpt;
+>>   	}
+>>   
+>> +	err = host1x_uapi_init(&host->uapi, host);
+> 
+> It's a bit pointless to pass &host->uapi and host to the function since
+> you can access the former through the latter.
 
---UkHz975LzvF9XEUl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah. I originally did it to separate the uapi module from the rest of 
+the code interface-wise as much as possible, but I don't think I have 
+done that consistently so it just looks weird.
 
-On Mon, Jan 11, 2021 at 03:00:07PM +0200, Mikko Perttunen wrote:
-> Add an implementation of dma_fences based on syncpoints. Syncpoint
-> interrupts are used to signal fences. Additionally, after
-> software signaling has been enabled, a 30 second timeout is started.
-> If the syncpoint threshold is not reached within this period,
-> the fence is signalled with an -ETIMEDOUT error code. This is to
-> allow fences that would never reach their syncpoint threshold to
-> be cleaned up.
->=20
-> Additionally, add a new /dev/host1x IOCTL for creating sync_file
-> file descriptors backed by syncpoint fences.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-> v5:
-> * Update for change in put_ref prototype.
-> v4:
-> * Fix _signal prototype and include it to avoid warning
-> * Remove use of unused local in error path
-> v3:
-> * Move declaration of host1x_fence_extract to public header
-> ---
->  drivers/gpu/host1x/Makefile |   1 +
->  drivers/gpu/host1x/fence.c  | 208 ++++++++++++++++++++++++++++++++++++
->  drivers/gpu/host1x/fence.h  |  13 +++
->  drivers/gpu/host1x/intr.c   |   9 ++
->  drivers/gpu/host1x/intr.h   |   2 +
->  drivers/gpu/host1x/uapi.c   | 103 ++++++++++++++++++
->  include/linux/host1x.h      |   4 +
->  7 files changed, 340 insertions(+)
->  create mode 100644 drivers/gpu/host1x/fence.c
->  create mode 100644 drivers/gpu/host1x/fence.h
->=20
-> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-> index 882f928d75e1..a48af2cefae1 100644
-> --- a/drivers/gpu/host1x/Makefile
-> +++ b/drivers/gpu/host1x/Makefile
-> @@ -10,6 +10,7 @@ host1x-y =3D \
->  	debug.o \
->  	mipi.o \
->  	uapi.o \
-> +	fence.o \
->  	hw/host1x01.o \
->  	hw/host1x02.o \
->  	hw/host1x04.o \
-> diff --git a/drivers/gpu/host1x/fence.c b/drivers/gpu/host1x/fence.c
-> new file mode 100644
-> index 000000000000..e96ad93ff656
-> --- /dev/null
-> +++ b/drivers/gpu/host1x/fence.c
-> @@ -0,0 +1,208 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Syncpoint dma_fence implementation
-> + *
-> + * Copyright (c) 2020, NVIDIA Corporation.
-> + */
-> +
-> +#include <linux/dma-fence.h>
-> +#include <linux/file.h>
-> +#include <linux/fs.h>
-> +#include <linux/slab.h>
-> +#include <linux/sync_file.h>
-> +
-> +#include "fence.h"
-> +#include "intr.h"
-> +#include "syncpt.h"
-> +
-> +DEFINE_SPINLOCK(lock);
-> +
-> +struct host1x_syncpt_fence {
-> +	struct dma_fence base;
-> +
-> +	atomic_t signaling;
-> +
-> +	struct host1x_syncpt *sp;
-> +	u32 threshold;
-> +
-> +	struct host1x_waitlist *waiter;
-> +	void *waiter_ref;
-> +
-> +	struct delayed_work timeout_work;
-> +};
-> +
-> +static const char *syncpt_fence_get_driver_name(struct dma_fence *f)
-> +{
-> +	return "host1x";
-> +}
-> +
-> +static const char *syncpt_fence_get_timeline_name(struct dma_fence *f)
-> +{
-> +	return "syncpoint";
-> +}
-> +
-> +static bool syncpt_fence_enable_signaling(struct dma_fence *f)
-> +{
-> +	struct host1x_syncpt_fence *sf =3D
-> +		container_of(f, struct host1x_syncpt_fence, base);
+> 
+>> +	if (err) {
+>> +		dev_err(&pdev->dev, "failed to initialize uapi\n");
+> 
+> s/uapi/UAPI/, and perhaps include the error code to give a better hint
+> as to why things failed.
 
-Maybe add a casting helper to make this less annoying.
+Sure (if this code is kept.)
 
-> +const struct dma_fence_ops syncpt_fence_ops =3D {
+> 
+>> +		goto deinit_intr;
+>> +	}
+>> +
+>>   	host1x_debug_init(host);
+>>   
+>>   	if (host->info->has_hypervisor)
+>> @@ -480,6 +486,8 @@ static int host1x_probe(struct platform_device *pdev)
+>>   	host1x_unregister(host);
+>>   deinit_debugfs:
+>>   	host1x_debug_deinit(host);
+>> +	host1x_uapi_deinit(&host->uapi);
+>> +deinit_intr:
+>>   	host1x_intr_deinit(host);
+>>   deinit_syncpt:
+>>   	host1x_syncpt_deinit(host);
+>> @@ -501,6 +509,7 @@ static int host1x_remove(struct platform_device *pdev)
+>>   
+>>   	host1x_unregister(host);
+>>   	host1x_debug_deinit(host);
+>> +	host1x_uapi_deinit(&host->uapi);
+>>   	host1x_intr_deinit(host);
+>>   	host1x_syncpt_deinit(host);
+>>   	reset_control_assert(host->rst);
+>> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+>> index 63010ae37a97..7b8b7e20e32b 100644
+>> --- a/drivers/gpu/host1x/dev.h
+>> +++ b/drivers/gpu/host1x/dev.h
+>> @@ -17,6 +17,7 @@
+>>   #include "intr.h"
+>>   #include "job.h"
+>>   #include "syncpt.h"
+>> +#include "uapi.h"
+>>   
+>>   struct host1x_syncpt;
+>>   struct host1x_syncpt_base;
+>> @@ -143,6 +144,8 @@ struct host1x {
+>>   	struct list_head list;
+>>   
+>>   	struct device_dma_parameters dma_parms;
+>> +
+>> +	struct host1x_uapi uapi;
+>>   };
+>>   
+>>   void host1x_hypervisor_writel(struct host1x *host1x, u32 r, u32 v);
+>> diff --git a/drivers/gpu/host1x/uapi.c b/drivers/gpu/host1x/uapi.c
+>> new file mode 100644
+>> index 000000000000..27b8761c3f35
+>> --- /dev/null
+>> +++ b/drivers/gpu/host1x/uapi.c
+>> @@ -0,0 +1,282 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * /dev/host1x syncpoint interface
+>> + *
+>> + * Copyright (c) 2020, NVIDIA Corporation.
+>> + */
+>> +
+>> +#include <linux/anon_inodes.h>
+>> +#include <linux/cdev.h>
+>> +#include <linux/file.h>
+>> +#include <linux/fs.h>
+>> +#include <linux/host1x.h>
+>> +#include <linux/nospec.h>
+>> +
+>> +#include "dev.h"
+>> +#include "syncpt.h"
+>> +#include "uapi.h"
+>> +
+>> +#include <uapi/linux/host1x.h>
+>> +
+>> +static int syncpt_file_release(struct inode *inode, struct file *file)
+>> +{
+>> +	struct host1x_syncpt *sp = file->private_data;
+>> +
+>> +	host1x_syncpt_put(sp);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int syncpt_file_ioctl_info(struct host1x_syncpt *sp, void __user *data)
+>> +{
+>> +	struct host1x_syncpoint_info args;
+>> +	unsigned long copy_err;
+>> +
+>> +	copy_err = copy_from_user(&args, data, sizeof(args));
+>> +	if (copy_err)
+>> +		return -EFAULT;
+>> +
+>> +	if (args.reserved[0] || args.reserved[1] || args.reserved[2])
+>> +		return -EINVAL;
+> 
+> Yes! \o/
+> 
+>> +
+>> +	args.id = sp->id;
+>> +
+>> +	copy_err = copy_to_user(data, &args, sizeof(args));
+>> +	if (copy_err)
+>> +		return -EFAULT;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int syncpt_file_ioctl_incr(struct host1x_syncpt *sp, void __user *data)
+>> +{
+>> +	struct host1x_syncpoint_increment args;
+>> +	unsigned long copy_err;
+>> +	u32 i;
+>> +
+>> +	copy_err = copy_from_user(&args, data, sizeof(args));
+>> +	if (copy_err)
+>> +		return -EFAULT;
+>> +
+>> +	for (i = 0; i < args.count; i++) {
+>> +		host1x_syncpt_incr(sp);
+>> +		if (signal_pending(current))
+>> +			return -EINTR;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static long syncpt_file_ioctl(struct file *file, unsigned int cmd,
+>> +			      unsigned long arg)
+>> +{
+>> +	void __user *data = (void __user *)arg;
+>> +	long err;
+>> +
+>> +	switch (cmd) {
+>> +	case HOST1X_IOCTL_SYNCPOINT_INFO:
+>> +		err = syncpt_file_ioctl_info(file->private_data, data);
+>> +		break;
+>> +
+>> +	case HOST1X_IOCTL_SYNCPOINT_INCREMENT:
+>> +		err = syncpt_file_ioctl_incr(file->private_data, data);
+>> +		break;
+>> +
+>> +	default:
+>> +		err = -ENOTTY;
+>> +	}
+>> +
+>> +	return err;
+>> +}
+> 
+> I wonder if it's worth adding some more logic to this demuxing. I'm
+> thinking along the lines of what the DRM IOCTL demuxer does, which
+> ultimately allows the IOCTLs to be extended. It does this by doing a
+> bit of sanitizing and removing the parameter size field from the cmd
+> argument so that the same IOCTL may handle different parameter sizes.
 
-I'd prefer this to use the host1x_syncpt_ prefix for better scoping.
+Yep, seems like a good idea (if we keep this).
 
-> +	.get_driver_name =3D syncpt_fence_get_driver_name,
-> +	.get_timeline_name =3D syncpt_fence_get_timeline_name,
-> +	.enable_signaling =3D syncpt_fence_enable_signaling,
-> +	.release =3D syncpt_fence_release,
+> 
+>> +static const struct file_operations syncpt_file_fops = {
+>> +	.owner = THIS_MODULE,
+>> +	.release = syncpt_file_release,
+>> +	.unlocked_ioctl = syncpt_file_ioctl,
+>> +	.compat_ioctl = syncpt_file_ioctl,
+>> +};
+>> +
+>> +struct host1x_syncpt *host1x_syncpt_fd_get(int fd)
+>> +{
+>> +	struct host1x_syncpt *sp;
+>> +	struct file *file = fget(fd);
+>> +
+>> +	if (!file)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if (file->f_op != &syncpt_file_fops) {
+>> +		fput(file);
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	sp = file->private_data;
+>> +
+>> +	host1x_syncpt_get(sp);
+>> +
+>> +	fput(file);
+>> +
+>> +	return sp;
+>> +}
+>> +EXPORT_SYMBOL(host1x_syncpt_fd_get);
+>> +
+>> +static int dev_file_open(struct inode *inode, struct file *file)
+> 
+> Maybe use the more specific host1x_ as prefix instead of the generic
+> dev_? That might make things like stack traces more readable.
 
-Maybe also do that for these, while at it.
+Yep.
 
-> +static int dev_file_ioctl_create_fence(struct host1x *host1x, void __use=
-r *data)
-> +{
-> +	struct host1x_create_fence args;
-> +	unsigned long copy_err;
+> 
+> Otherwise looks good.
+> 
+> Thierry
+> 
 
-Any reason why this needs to have that cumbersome copy_ prefix? There's
-no other "err" variables, so why not just use the shorter "err" for
-this?
-
-> +	int fd;
-> +
-> +	copy_err =3D copy_from_user(&args, data, sizeof(args));
-> +	if (copy_err)
-> +		return -EFAULT;
-> +
-> +	if (args.reserved[0])
-> +		return -EINVAL;
-> +
-> +	if (args.id >=3D host1x_syncpt_nb_pts(host1x))
-> +		return -EINVAL;
-> +
-> +	args.id =3D array_index_nospec(args.id, host1x_syncpt_nb_pts(host1x));
-> +
-> +	fd =3D host1x_fence_create_fd(&host1x->syncpt[args.id], args.threshold);
-> +	if (fd < 0)
-> +		return fd;
-> +
-> +	args.fence_fd =3D fd;
-> +
-> +	copy_err =3D copy_to_user(data, &args, sizeof(args));
-> +	if (copy_err)
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dev_file_ioctl_fence_extract(struct host1x *host1x, void __us=
-er *data)
-> +{
-> +	struct host1x_fence_extract_fence __user *fences_user_ptr;
-> +	struct dma_fence *fence, **fences;
-> +	struct host1x_fence_extract args;
-> +	struct dma_fence_array *array;
-> +	unsigned int num_fences, i;
-> +	unsigned long copy_err;
-
-Can't do the same here, but perhaps just do what other copy_from_user()
-callsites do and just use it directly in the conditional so you don't
-even need to store the return value since you're not reusing it anyway.
-
-In fact you could do the same thing above and just get rid of that
-variable and render the code more idiomatic.
-
-> +	int err;
-> +
-> +	copy_err =3D copy_from_user(&args, data, sizeof(args));
-> +	if (copy_err)
-> +		return -EFAULT;
-> +
-> +	fences_user_ptr =3D u64_to_user_ptr(args.fences_ptr);
-> +
-> +	if (args.reserved[0] || args.reserved[1])
-> +		return -EINVAL;
-> +
-> +	fence =3D sync_file_get_fence(args.fence_fd);
-> +	if (!fence)
-> +		return -EINVAL;
-> +
-> +	array =3D to_dma_fence_array(fence);
-> +	if (array) {
-> +		fences =3D array->fences;
-> +		num_fences =3D array->num_fences;
-> +	} else {
-> +		fences =3D &fence;
-> +		num_fences =3D 1;
-> +	}
-> +
-> +	for (i =3D 0; i < min(num_fences, args.num_fences); i++) {
-> +		struct host1x_fence_extract_fence f;
-> +
-> +		err =3D host1x_fence_extract(fences[i], &f.id, &f.threshold);
-> +		if (err)
-> +			goto put_fence;
-> +
-> +		copy_err =3D copy_to_user(fences_user_ptr + i, &f, sizeof(f));
-> +		if (copy_err) {
-> +			err =3D -EFAULT;
-> +			goto put_fence;
-> +		}
-> +	}
-> +
-> +	args.num_fences =3D i+1;
-
-checkpatch will probably complain about this not having spaces around
-that '+'.
-
-> +
-> +	copy_err =3D copy_to_user(data, &args, sizeof(args));
-> +	if (copy_err) {
-> +		err =3D -EFAULT;
-> +		goto put_fence;
-> +	}
-> +
-> +	return 0;
-> +
-> +put_fence:
-> +	dma_fence_put(fence);
-> +
-> +	return err;
-> +}
-> +
->  static long dev_file_ioctl(struct file *file, unsigned int cmd,
->  			   unsigned long arg)
->  {
-> @@ -210,6 +305,14 @@ static long dev_file_ioctl(struct file *file, unsign=
-ed int cmd,
->  		err =3D dev_file_ioctl_alloc_syncpoint(file->private_data, data);
->  		break;
-> =20
-> +	case HOST1X_IOCTL_CREATE_FENCE:
-> +		err =3D dev_file_ioctl_create_fence(file->private_data, data);
-> +		break;
-> +
-> +	case HOST1X_IOCTL_FENCE_EXTRACT:
-> +		err =3D dev_file_ioctl_fence_extract(file->private_data, data);
-> +		break;
-> +
->  	default:
->  		err =3D -ENOTTY;
->  	}
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index b3178ae51cae..080f9d3d29eb 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -165,6 +165,10 @@ u32 host1x_syncpt_base_id(struct host1x_syncpt_base =
-*base);
-> =20
->  struct host1x_syncpt *host1x_syncpt_fd_get(int fd);
-> =20
-> +struct dma_fence *host1x_fence_create(struct host1x_syncpt *sp, u32 thre=
-shold);
-> +int host1x_fence_create_fd(struct host1x_syncpt *sp, u32 threshold);
-> +int host1x_fence_extract(struct dma_fence *fence, u32 *id, u32 *threshol=
-d);
-
-Do we need these outside of the IOCTL implementations?
-
-Thierry
-
---UkHz975LzvF9XEUl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBZzdYACgkQ3SOs138+
-s6HpJRAApyg1qzhgRD7OV6hUR9fgDDOZ98EHF8xY8350I97NNTQl6FU8cQFdz1gu
-0MDZ32yraMS3pLE+bAlipVQSJJ7ExcRd7pQgs++bDt6DnfvwLSmNxfAJ9LeW5XIH
-Xu0xs3WdHJDk0MaCMoahvK1CukV5ab+mGpiqie5/ZmHpDbTiV/TproOdWqYJ2bHK
-OEwg3ewJldLPYQC2Omo+Rj7d604VhhQfMNhwbjRxw0joKQvKs0eNJvffNgpBnTnn
-dpbMuVNjwtYdBPW3hQaa0jVIWZTeW/JUTR6XxVHjDeBL/4N3bSq9hRQU4gFXCc9J
-vZjq5643biz57HavoZHJgVxyZQremDxBISoL+da1vkbJaeTfqkqQC7AkWcLaqytx
-ekah0JFecactVhh1rrAPRulNU2GiZioz85FprrQNs7+DBBPY+xQIfQ8+FNTzQTHs
-5JxNd5PsQgZFOZYrdvTYuxkJzKmCJFlsSBoTrwdfpogkkFXMe3b8GuSyhS0OuJay
-pvv+IPEgu31FNxZUdLo0MYBZ/UA3ksnmvo0DpgPczoOmduUtjP7PkD30/nw5Vpau
-JQh9Cce4sGfBUgNvdfv64mnby8q83W9m/fjIqfgPCU5yR3WM4KpqnJin6MdG27YM
-eQJMFUO1aPdmpAtovoE1EztrQ/cZE+7OS/R1E388MvD9mFQnsVI=
-=7WQ/
------END PGP SIGNATURE-----
-
---UkHz975LzvF9XEUl--
+thanks,
+Mikko
