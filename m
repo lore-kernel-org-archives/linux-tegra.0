@@ -2,150 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA21C433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4D7C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 12:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E47DE619B1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF9E4619AB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 12:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbhCWLze (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 07:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        id S230320AbhCWMaW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 08:30:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbhCWLzR (ORCPT
+        with ESMTP id S231201AbhCWMaO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 07:55:17 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC06C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:55:16 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id bx7so23086888edb.12
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:55:16 -0700 (PDT)
+        Tue, 23 Mar 2021 08:30:14 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 930CFC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 05:30:11 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a7so26783961ejs.3
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 05:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OmjKsrSUkMAiio37jMcTJDOa+opJ8luWoB+3g0zIs3w=;
-        b=umVjL9x25EitIe3xbYipYvezjGixLcmj+s9CW6Se/Nw65qisVuUgPKPFZr+LnSVrta
-         FqcB1CGmOYFe0BCTtOc6/R3jm8rjKGzXAvDvhZsWl8Tn0ctbA1hHyDPns2gaa9OmV6+9
-         JWK+sp47Z9c4VoD9BivDlscB2FOQa8kTNYE6a090ob2xtpwOn36nTkaJAnWoxUSIf9Bd
-         Z/QswUYtMMXwyQpcEcIswUULmOol3weoStQTbMDctafy2gD0wz8s0omas8j259kzzH7m
-         s98dMjsg7JP33ZiRNJ/HWuSP2JD9cJb1ynAdysUnTdoJm3lVfMGYx1f9B/aPBt77gjqQ
-         mbhg==
+        bh=gQxsCxi8R2285c9pPwuE5UM8utDDKuz2gY6X8LxszO8=;
+        b=EE464Cyk2ElN7q6uAhEh9A9xnSHZfmZDjzuetEvRr5C6/ZvoZcRIQC38E2QQSO0nDD
+         YHCRWrrnsmS2yDGoMLS3hVkmKOtc4fQQuejZG+ElS93oIj+w4staQKtXDSFhN/EiggWU
+         We+MkEC++F/3Knv83MACS+SF/rJ27l/DV8EKF7+xMfNfCFN+Y8WZS3NIQd+Fm9NStfum
+         Yh97CwZrtDkFVBEOxqzBn2fC+Yxl4aPljaA5TAcFM3U/fMcc+YtKam/7IwI3vHkw72kS
+         KpwqkweRlKlXzzBTr8RllPa2T0Ck+ONckOe1lDMJUq34f4SK7GLX+Lod+HxEJ5HtpGq3
+         Lhlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OmjKsrSUkMAiio37jMcTJDOa+opJ8luWoB+3g0zIs3w=;
-        b=a+chcDP4wFy2FgYX0/ngP0R1eUaOEaVd1xl+Ewdab1Z/v7Jq+LvQsRcelA0PN18oRZ
-         hw78pb+ljZLmxQGYYzK6FvJPc2v+p954nEgB5w/S69+XxoOUmxe+FM4zUnZMBJAVZ6BM
-         kBqisXKwIzM52n2HwvrvvlZfz5ID2q52D63dVQk/fZ9FTFbY4VRN9/jZHOlF5jh42geY
-         g9+6dMLczEntR4u8q0YWpQv8Mmvp3z+M7yuj3BKKKxmk0gMz+D7iZvbemvt84mcTxNiN
-         LvkxN0lo31+Zvmu7C9/90AV3gM/9ykOVfLP45p8XpgF8wAzCUNKWtRYLU61UXoR47qBx
-         Fx4Q==
-X-Gm-Message-State: AOAM530UUXt2Bt+KA/UasQ5hSCoyMaudZFqGsuOBp+J0vZH4vSh+2EI0
-        CA7m/teOpKJYBG50/ctakzEZXT6WLlI=
-X-Google-Smtp-Source: ABdhPJwnsgSQN3rBdLXYKbcSOYEsQm4CP13DQ5DyHUfr2wfO0XZomdBxo15acguqtJyoO14+tWjkuA==
-X-Received: by 2002:a05:6402:13ca:: with SMTP id a10mr4195810edx.320.1616500515229;
-        Tue, 23 Mar 2021 04:55:15 -0700 (PDT)
+        bh=gQxsCxi8R2285c9pPwuE5UM8utDDKuz2gY6X8LxszO8=;
+        b=LLH20hrE8SdaV18+9ge7HUOkUu5JTQOYy6kUVhhwyZF/D8XFXeaJuCJ/uj4XkBV74v
+         EDJRsi8OO8t0pKc2kPU7S2k7K9tIL3qro92OgpXrFeW4MPVEc+qPkcP8qdmLg0rewxtJ
+         LkJj0Ytr13LEVGlPc1LcVSDpu/ttRVHNnv8JUHH2hk5/GHolvBXoTnIZfroRM3csx9ug
+         R4zjh+K0stfFwWjdGVVV6O7uOm0V5MNJUGOmJ//7Gh+Qm18IWAnyJB45Zm5y59M2VF9E
+         ogTa/xnlneCW0FMYsAyJA+uZwiocDNWIlpAdXRBItU+UoEKEMwEHoNHF9snEjvLOyqbv
+         a3nQ==
+X-Gm-Message-State: AOAM530N7b1EVaJvzeduNMcBjSVsQ5fs22X0kA+CduNYQ+7guBxJiHcb
+        NlJnUOIETiwNZx361k6AFUM=
+X-Google-Smtp-Source: ABdhPJxDzUoBdNxvCLM1iVteyitb7Ytz4NR01CKTk3+eGqv7qiWAhrmDARGg417sHSGISjOFrDjaLA==
+X-Received: by 2002:a17:906:2551:: with SMTP id j17mr4655872ejb.441.1616502610232;
+        Tue, 23 Mar 2021 05:30:10 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id x21sm12695275eds.53.2021.03.23.04.55.13
+        by smtp.gmail.com with ESMTPSA id hd37sm10687676ejc.114.2021.03.23.05.30.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 04:55:14 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 12:55:34 +0100
+        Tue, 23 Mar 2021 05:30:06 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 13:30:26 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     jonathanh@nvidia.com, digetx@gmail.com, airlied@linux.ie,
-        daniel@ffwll.ch, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, talho@nvidia.com,
-        bhuntsman@nvidia.com
-Subject: Re: [PATCH v5 11/21] gpu: host1x: Add job release callback
-Message-ID: <YFnXNs5vFb+tiwzh@orome.fritz.box>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        talho@nvidia.com, bhuntsman@nvidia.com,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 15/21] drm/tegra: Add new UAPI to header
+Message-ID: <YFnfYsfYaKfSGhon@orome.fritz.box>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-12-mperttunen@nvidia.com>
+ <20210111130019.3515669-16-mperttunen@nvidia.com>
+ <a0fdac0d-88cf-6eda-6611-fca951253060@gmail.com>
+ <cc746d91-e6b2-53d8-17ff-59cbc8bb522f@kapsi.fi>
+ <a51f7552-cec6-efe1-25dd-76422ef7a3e4@gmail.com>
+ <d76c465a-7f07-88c4-0dc3-4be3cb212fcf@kapsi.fi>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FjkUz4QETBgSyCZ4"
+        protocol="application/pgp-signature"; boundary="NdJ6qRU46jo/KUVj"
 Content-Disposition: inline
-In-Reply-To: <20210111130019.3515669-12-mperttunen@nvidia.com>
+In-Reply-To: <d76c465a-7f07-88c4-0dc3-4be3cb212fcf@kapsi.fi>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---FjkUz4QETBgSyCZ4
-Content-Type: text/plain; charset=us-ascii
+--NdJ6qRU46jo/KUVj
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 11, 2021 at 03:00:09PM +0200, Mikko Perttunen wrote:
-> Add a callback field to the job structure, to be called just before
-> the job is to be freed. This allows the job's submitter to clean
-> up any of its own state, like decrement runtime PM refcounts.
+On Thu, Jan 14, 2021 at 12:34:22PM +0200, Mikko Perttunen wrote:
+> On 1/14/21 10:36 AM, Dmitry Osipenko wrote:
+> > 13.01.2021 21:56, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > On 1/13/21 8:14 PM, Dmitry Osipenko wrote:
+> > > > 11.01.2021 16:00, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > +struct drm_tegra_submit_buf {
+> > > > > +=C2=A0=C2=A0=C2=A0 /**
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * @mapping_id: [in]
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 *
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 * Identifier of the mapping to use in t=
+he submission.
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > > +=C2=A0=C2=A0=C2=A0 __u32 mapping_id;
+> > > >=20
+> > > > I'm now in process of trying out the UAPI using grate drivers and t=
+his
+> > > > becomes the first obstacle.
+> > > >=20
+> > > > Looks like this is not going to work well for older Tegra SoCs, in
+> > > > particular for T20, which has a small GART.
+> > > >=20
+> > > > Given that the usefulness of the partial mapping feature is very
+> > > > questionable until it will be proven with a real userspace, we shou=
+ld
+> > > > start with a dynamic mappings that are done at a time of job submis=
+sion.
+> > > >=20
+> > > > DRM already should have everything necessary for creating and manag=
+ing
+> > > > caches of mappings, grate kernel driver has been using drm_mm_scan =
+for a
+> > > > long time now for that.
+> > > >=20
+> > > > It should be fine to support the static mapping feature, but it sho=
+uld
+> > > > be done separately with the drm_mm integration, IMO.
+> > > >=20
+> > > > What do think?
+> > > >=20
+> > >=20
+> > > Can you elaborate on the requirements to be able to use GART? Are the=
+re
+> > > any other reasons this would not work on older chips?
+> >=20
+> > We have all DRM devices in a single address space on T30+, hence having
+> > duplicated mappings for each device should be a bit wasteful.
 >=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/host1x/job.c | 3 +++
->  include/linux/host1x.h   | 4 ++++
->  2 files changed, 7 insertions(+)
->=20
-> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-> index 8f59b34672c2..09097e19c0d0 100644
-> --- a/drivers/gpu/host1x/job.c
-> +++ b/drivers/gpu/host1x/job.c
-> @@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
->  {
->  	struct host1x_job *job =3D container_of(ref, struct host1x_job, ref);
-> =20
-> +	if (job->release)
-> +		job->release(job);
-> +
->  	if (job->waiter)
->  		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
->  				    job->waiter, false);
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index 81ca70066c76..d48cab563d5c 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -265,6 +265,10 @@ struct host1x_job {
-> =20
->  	/* Fast-forward syncpoint increments on job timeout */
->  	bool syncpt_recovery;
-> +
-> +	/* Callback called when job is freed */
-> +	void (*release)(struct host1x_job *job);
-> +	void *user_data;
+> I guess this should be pretty easy to change to only keep one mapping per
+> GEM object.
 
-It's not clean to me what the user_data is used for. It's not used in
-this patch at all, but perhaps it'll become relevant later on. I guess
-I'll see.
+The important point here is the semantics: this IOCTL establishes a
+mapping for a given GEM object on a given channel. If the underlying
+implementation is such that the mapping doesn't fit into the GART, then
+that's an implementation detail that the driver needs to take care of.
+Similarly, if multiple devices share a single address space, that's
+something the driver already knows and can take advantage of by simply
+reusing an existing mapping if one already exists. In both cases the
+semantics would be correctly implemented and that's really all that
+matters.
+
+Overall this interface seems sound from a high-level point of view and
+allows these mappings to be properly created even for the cases we have
+where each channel may have a separate address space. It may not be the
+optimal interface for all use-cases or any one individual case, but the
+very nature of these interfaces is to abstract away certain differences
+in order to provide a unified interface to a common programming model.
+So there will always be certain tradeoffs.
 
 Thierry
 
---FjkUz4QETBgSyCZ4
+--NdJ6qRU46jo/KUVj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBZ1zQACgkQ3SOs138+
-s6EmMQ/9FEDZm2BCmhv9tgumtdiYseMe1QXqFBsAMXgo6rpsxNvYK5JW+5MxfxP/
-viwM32tLpdSYhlheymRFAdMt59xsOewsL9Aa+uKPIFkrl1OdTwUatj4a8XAI7dKB
-HU5pe5Rw/eTqOjzw1QDKKfPznW9xq5sHZ0i52AoPI9k0nDZpTen3RqYXijMl+Al6
-joWUF0NOcYQH+yEOrem1fFBr8UhdcIyTpFwAlyvKr16l4ZQO00Ph+W/0Q8zis58v
-cvH1d+MP3Kk7IrC1T9Wg/zQKC5lOhTAEd7dIeiezVpTAzSqvQ3vk6VEGDXwFKHCa
-zl+p+VbLh3qr+Dp5nP7h15+kqOZWnz7VevV/wSDKHyveDpouLxThoX58vSD96JCe
-RbVwTgjkAFzBVFkHTijeTG+MItbUcNl5PDz4scYI8Wl/NKfFBCiqi0jLJNTOeH7f
-3qoKctVHJUenre8zrZyXYsTgtk5TF65vq/+e4RPE1A145qej9AwVk0UbRBMDxEIj
-TlQckBUQw+4LTtBZkU73EeiRqy+jtL3pePWwkI2zPpNDo23C/4g8AFjJo9UouhcI
-09kNmxwI0/c1hX/QeTNAOjCzNNrheAOoqupsp2jErLA/HAFy9OmXyVprl2ny0jDP
-qY2/NDFRWvrKqcsrC2g4gDUZwWCjTBdhfVdPZXdML52OHnzQzHE=
-=//9i
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBZ32AACgkQ3SOs138+
+s6EUdg//YiljkCtk6TyyBho2Mrf8hWM4ZRBLZ0xncHy0kQmgFAP96ADkgcYWniDK
+kgYqXxFHv3Sy8HRjxkMNmRZW4uWYbgW6PPG70e2Xb2azQ8odl8ruI2AwyPlJCY7V
+U9gutWa0/hesRJ/v7N2LPX1AnjLxNXuf2uvo1HNrPfGsqY9udo7EEefWeroaCNR6
+Kx/rzDMaTmThbeUnVgiI7CURpfLsebu4/gxCRE7aXQtIYETeO+rdvDlGqJM8BuW9
+J5uQu3+sR8BH+8AGAr2ERT3HnN0rzclcbR00UfIudnY9kS+xevvzvR9SC7F0glXY
+tQAZdVXHKCiHSjR82gydRssZSVA1MbLzh/7uUHefHsa9rj4qFgnLWrGIuYmPRM7R
+fqhrBAmCj9s4gsH1VNPol511Vcg5Teur+/Yrz6oaqz0qwraoUUW7ZkzaDGrgaQiQ
+4QT6wkik1y3T3wLSL3lOcyejLDJNXOklkZqJe+bmorm1BqzTkI6gNGG+JtLwVeaT
+GbmtsXRk8fr/EhPhfUU7dGTl9Q6zpYZhuFY6Oj/rf6oXmXRAw/u1BcJx+Qq1XbGq
+2tSHGqCkv+2yM+0GI8Hheqp+m7zVKndbZSliqAE37eZhKcgM+s4odEAL0KNvxnkx
+Sxq2VZ75pN2lmw+p7hLj4GbrTkVKgPWH2DoJUVMtWuyqcAVGi4A=
+=1guJ
 -----END PGP SIGNATURE-----
 
---FjkUz4QETBgSyCZ4--
+--NdJ6qRU46jo/KUVj--
