@@ -2,104 +2,141 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A73C433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F5CC433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 411546191D
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FBED619C3
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbhCWR6P (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 13:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231483AbhCWR5q (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 13:57:46 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF16DC061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:57:44 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id u10so26815079lju.7
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XLxTdLFQwwFdrnajKUv88Hjw3uCEQcJZ82QDErheT38=;
-        b=vKLRoS37YEt73kxWpvOi12Ya1/JLN6HWmCTEYDGadUSpMiUfwkpR6cplisdJ5G0gOB
-         IW2OFKz4c7uu/GWBwGamyUND6VBQSnPcCyGdSRq79trM1LuhP89ZbViMD3DN/8o0iBl4
-         a5AIcWsEHnQRJHS2rlOikrg5Khn48nCjP5T9fdrZYDwEm7TzIcUzixeLdYIUxZoFICf7
-         U8zXpkcd/Q5bagOJuaHTt4ptBjyX6u2Q7Z1EQY13biJz1WcujjhoOAFDNV8+nfRRmtki
-         0i4mShKW3h6222+1zZqSwLStrzf9KH8CtCAirHFn6D8y21Bf3k6rO3HY/jgkYFYFs/Uu
-         UAnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XLxTdLFQwwFdrnajKUv88Hjw3uCEQcJZ82QDErheT38=;
-        b=CXkGLxlwDKufBCmL8xGMRAQ7fW5hhwxB2ah4O7NKgp928aRhOxwo/MjLg+jlDLuAdf
-         PaERwvUnacmuPPaHU5Kh7oTnd5wSsTy4fApTMYx1NwJJrvhl37aWu+0WXyE63MrBs/Hl
-         rEbFYzGjfR7pNDzZXb3VirMpHDH9Bc+GydKAZO1Za5J760MNlVyCTQivDnil9UXdmVM0
-         bkpwqdBiHWUdUvOJBGEv2h3ATVBi8imEnzIFNroEnaZKwUasWC+SlC5xmFPTnvZQRES/
-         6nHHIQPMLDrpyy4CsEyeZ7LaMA2JrCbmVljJDugAmGtcvsrHLFBhCiFomp6n/puj28HI
-         gU1A==
-X-Gm-Message-State: AOAM533ay3K++3HNpIRFzv9gJYvz/kt/RcPE0XxzvmDa1//2eL6U3b1b
-        lX3oZ6wDTsQve3h1UrjXCASIndwK1dA=
-X-Google-Smtp-Source: ABdhPJwK3fQlVVk9I27uIymCqYnIErWow5dboq0PHU9jO11WR0Dp3DjLysQJxJifOlmFND5GyNc3xg==
-X-Received: by 2002:a2e:140e:: with SMTP id u14mr3924997ljd.413.1616522263119;
-        Tue, 23 Mar 2021 10:57:43 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
-        by smtp.googlemail.com with ESMTPSA id t13sm1917433lfq.66.2021.03.23.10.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Mar 2021 10:57:42 -0700 (PDT)
-Subject: Re: [PATCH 4/9] drm/tegra: dc: Implement hardware cursor on Tegra186
- and later
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, James Jones <jajones@nvidia.com>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org
-References: <20210323155437.513497-1-thierry.reding@gmail.com>
- <20210323155437.513497-5-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <454aea05-ee94-5789-2cab-513342cf7614@gmail.com>
-Date:   Tue, 23 Mar 2021 20:57:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-MIME-Version: 1.0
-In-Reply-To: <20210323155437.513497-5-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S231574AbhCWSKK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 14:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231243AbhCWSJk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Mar 2021 14:09:40 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F0F36192B;
+        Tue, 23 Mar 2021 18:09:39 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lOlTF-003MZw-KT; Tue, 23 Mar 2021 18:09:37 +0000
+Date:   Tue, 23 Mar 2021 18:09:36 +0000
+Message-ID: <87im5hkahr.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 12/15] PCI/MSI: Let PCI host bridges declare their reliance on MSI domains
+In-Reply-To: <6a2eaa5d-1d83-159f-69e5-c9e0a00a7b50@arm.com>
+References: <20210322184614.802565-1-maz@kernel.org>
+        <20210322184614.802565-13-maz@kernel.org>
+        <6a2eaa5d-1d83-159f-69e5-c9e0a00a7b50@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: robin.murphy@arm.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com, frank-w@public-files.de, treding@nvidia.com, tglx@linutronix.de, robh@kernel.org, will@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com, mikelley@microsoft.com, wei.liu@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, ryder.lee@mediatek.com, marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, michal.simek@xilinx.com, paul.walmsley@sifive.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.03.2021 18:54, Thierry Reding пишет:
-> @@ -920,15 +934,42 @@ static void tegra_cursor_atomic_update(struct drm_plane *plane,
->  	value = tegra_dc_readl(dc, DC_DISP_BLEND_CURSOR_CONTROL);
->  	value &= ~CURSOR_DST_BLEND_MASK;
->  	value &= ~CURSOR_SRC_BLEND_MASK;
-> -	value |= CURSOR_MODE_NORMAL;
-> +
-> +	if (dc->soc->has_nvdisplay)
-> +		value &= ~CURSOR_COMPOSITION_MODE_XOR;
-> +	else
-> +		value |= CURSOR_MODE_NORMAL;
-> +
->  	value |= CURSOR_DST_BLEND_NEG_K1_TIMES_SRC;
->  	value |= CURSOR_SRC_BLEND_K1_TIMES_SRC;
->  	value |= CURSOR_ALPHA;
->  	tegra_dc_writel(dc, value, DC_DISP_BLEND_CURSOR_CONTROL);
->  
-> +	/* nvdisplay relies on software for clipping */
-> +	if (dc->soc->has_nvdisplay) {
+Hi Robin,
 
-But coordinates already should be clipped by
-drm_atomic_helper_check_plane_state().
+On Tue, 23 Mar 2021 11:45:02 +0000,
+Robin Murphy <robin.murphy@arm.com> wrote:
+> 
+> On 2021-03-22 18:46, Marc Zyngier wrote:
+> > The new 'no_msi' attribute solves the problem of advertising the lack
+> > of MSI capability for host bridges that know for sure that there will
+> > be no MSI for their end-points.
+> > 
+> > However, there is a whole class of host bridges that cannot know
+> > whether MSIs will be provided or not, as they rely on other blocks
+> > to provide the MSI functionnality, using MSI domains.  This is
+> > the case for example on systems that use the ARM GIC architecture.
+> > 
+> > Introduce a new attribute ('msi_domain') indicating that implicit
+> > dependency, and use this property to set the NO_MSI flag when
+> > no MSI domain is found at probe time.
+> > 
+> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > ---
+> >   drivers/pci/probe.c | 2 +-
+> >   include/linux/pci.h | 1 +
+> >   2 files changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index 146bd85c037e..bac9f69a06a8 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -925,7 +925,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
+> >   	device_enable_async_suspend(bus->bridge);
+> >   	pci_set_bus_of_node(bus);
+> >   	pci_set_bus_msi_domain(bus);
+> > -	if (bridge->no_msi)
+> > +	if (bridge->no_msi || (bridge->msi_domain && !bus->dev.msi_domain))
+> >   		bus->bus_flags |= PCI_BUS_FLAGS_NO_MSI;
+> >     	if (!parent)
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 48605cca82ae..d322d00db432 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -551,6 +551,7 @@ struct pci_host_bridge {
+> >   	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
+> >   	unsigned int	size_windows:1;		/* Enable root bus sizing */
+> >   	unsigned int	no_msi:1;		/* Bridge has no MSI support */
+> > +	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
+> 
+> Aren't these really the same thing? Either way we're saying the bridge
+> itself doesn't handle MSIs, it's just in one case we're effectively
+> encoding a platform-specific assumption that an external domain won't
+> be provided. I can't help wondering whether that distinction is really
+> necessary...
+
+There is a subtle difference: no_msi indicates that there is no way
+*any* MSI can be dealt with whatsoever (maybe because the RC doesn't
+forward the corresponding TLPs?). msi_domain says "no MSI unless...".
+
+We could implement the former with the latter, but I have the feeling
+that's not totally bullet proof. Happy to revisit this if you think it
+really matters.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
