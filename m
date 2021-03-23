@@ -2,120 +2,127 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF390C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 19:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11EDC433C1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 19:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9017C61574
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 19:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9D36191D
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 19:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233109AbhCWTFm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 15:05:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233117AbhCWTF0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 15:05:26 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EC2C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 12:05:25 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id o126so18751446lfa.0
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 12:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fd4nuYgAaVbYEZoND2eJf184kvi4RgKD7hJ3TDmQcPM=;
-        b=hT1Ejjq6A2J0XCUZAk3Vabu44kQWxgId5jai2ZyA9cbXbZksfeRkcetzaZSIP2/4NZ
-         3j6E0e4CCOdS7N6sMrbtzUCaGMBxuj7JK4RwEeMTDGmCKLLUsA5prVWI2Pf153idiLOI
-         9aaZkfC5nN0wJgERtnEJ3wNVFfKVoUihb0L6vqizTE7IvIw8PW4MykMTRb3eTqONQqC6
-         dSdTKkUzH5X7q4GkL+eatDKSSKT2gaAKQ8+SMHDPBPJbYrQu8o/io2SHELKj5AUFGiJY
-         Jz9m+MZIiCEv1wrxbtYyLwREg7/pWARPedceVEOZxR4QEWUhW07btMwVAPDvrK57LXxj
-         rM9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fd4nuYgAaVbYEZoND2eJf184kvi4RgKD7hJ3TDmQcPM=;
-        b=a//q34j20qYXeZWiM0QTQt4Wxv6S+tj4rV4Y3NFOeqVzwEklLqOehRVqq0Fpqr+061
-         wZsGn9FH8bGCi5jdaIeFMJiHW4ndJAgEYi7EMY76i9AKQPKmZ6Gz1Vq2qm2oO8poEu1t
-         bWzbL5TTWlGU01ViBMl9J44KZNC6+R31t4FFl44HwM7zUBiTGSZFgivnMVJFvlCMPs7/
-         0yWlmZyAO/wca+simTn3HBcwnYo0XylSxetPHWwnGxasPii3P2wf4zzytITdOOdQFgAV
-         eaxnaULQF7mUv9BKbWYQvUiBJsLsAZ45fnFNbOGE/HZe8ORrm/FomHnXVnB3XhbZAZuo
-         OHAw==
-X-Gm-Message-State: AOAM530ZkznzoRGOwuz4uK7u9NML8dlGCtUmi/3BOJaLkmb8mDHrdfTF
-        adMhQGEEGCn0OHyZTaQZSKEBOns8APg=
-X-Google-Smtp-Source: ABdhPJylnQ3Sr2QV0cFqAMxby2zDHSlfGcoSMVDpk7QUeSXnBsj2ad98sNodXW8Xi6iQrFqJYHHQtg==
-X-Received: by 2002:a05:6512:3d20:: with SMTP id d32mr3511758lfv.9.1616526324273;
-        Tue, 23 Mar 2021 12:05:24 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
-        by smtp.googlemail.com with ESMTPSA id y23sm2451175ljm.53.2021.03.23.12.05.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Mar 2021 12:05:23 -0700 (PDT)
-Subject: Re: [PATCH 4/9] drm/tegra: dc: Implement hardware cursor on Tegra186
- and later
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, James Jones <jajones@nvidia.com>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org
-References: <20210323155437.513497-1-thierry.reding@gmail.com>
- <20210323155437.513497-5-thierry.reding@gmail.com>
- <454aea05-ee94-5789-2cab-513342cf7614@gmail.com>
- <YFoyc5mdYe/5/Cjn@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <487b94d0-a52b-824b-c29d-f88b4605b117@gmail.com>
-Date:   Tue, 23 Mar 2021 22:05:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S233278AbhCWTPz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 15:15:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233300AbhCWTPX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Mar 2021 15:15:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F1FD9619D5;
+        Tue, 23 Mar 2021 19:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616526923;
+        bh=vz1/BwgKsE4QbkxEXRmEGYxQ6lPFuYc202DcZfmWPD8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rQFSHnitQ6+kpGJZuvHSKEGBHFXMX+wwPTFR7qY5UowNPpwAoZNZEy1w0auxbFQV6
+         Waok3+0GibjFa/ysyW3jB6MjhXPl33LPeK2B19lgGhljJFV8L75EYoe+cxy68shxb4
+         D+LtRkf8M3g7UN18j2Gh8Ae5N0nIpDlNjN6X3bQaNRtzJiuMIHoz6VMLIxzDUwVNsu
+         Vx+Dmphj3hlUYjc1I9wtyKZ4JnEcJWm65DDMSFvKbDX/Gfszc6YR30Aglh8ABw2BnY
+         Iny/3S32BZFCHZt8nDApWM8V0aMvTFQjp1AQP2rMWwQ0+9joX8xOvYgpye+oCzHfSu
+         2U6gRYJZKMWxw==
+Received: by mail-ed1-f51.google.com with SMTP id b16so24788293eds.7;
+        Tue, 23 Mar 2021 12:15:22 -0700 (PDT)
+X-Gm-Message-State: AOAM530AQh6dGQ2eqUZ/5Khzj17Dw9hMufAfyZ45pfDw/h+2Q3pwHHqj
+        ZJFnKvV8Bfud63CE9lqmcthqdNJMaCO839VC8w==
+X-Google-Smtp-Source: ABdhPJyQUqDZQDlvFKjPPDtTkz4sNMlGLVxwHNqzDZOmCnzfXNGTmq/LBSdLt5mLoL79k61b8WRMes6qPDOkgy4P01Y=
+X-Received: by 2002:a05:6402:2d0:: with SMTP id b16mr6214654edx.194.1616526921538;
+ Tue, 23 Mar 2021 12:15:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YFoyc5mdYe/5/Cjn@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210323163634.877511-1-robh@kernel.org> <20210323163634.877511-2-robh@kernel.org>
+In-Reply-To: <20210323163634.877511-2-robh@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 23 Mar 2021 13:15:08 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLFj3tUUeEeKoZx=P3AHE4Tu1TzuA-tqK4+qD=4J6c=8Q@mail.gmail.com>
+Message-ID: <CAL_JsqLFj3tUUeEeKoZx=P3AHE4Tu1TzuA-tqK4+qD=4J6c=8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: Move port/ports properties out of audio-graph-port.yaml
+To:     Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-23.03.2021 21:24, Thierry Reding пишет:
-> On Tue, Mar 23, 2021 at 08:57:42PM +0300, Dmitry Osipenko wrote:
->> 23.03.2021 18:54, Thierry Reding пишет:
->>> @@ -920,15 +934,42 @@ static void tegra_cursor_atomic_update(struct drm_plane *plane,
->>>  	value = tegra_dc_readl(dc, DC_DISP_BLEND_CURSOR_CONTROL);
->>>  	value &= ~CURSOR_DST_BLEND_MASK;
->>>  	value &= ~CURSOR_SRC_BLEND_MASK;
->>> -	value |= CURSOR_MODE_NORMAL;
->>> +
->>> +	if (dc->soc->has_nvdisplay)
->>> +		value &= ~CURSOR_COMPOSITION_MODE_XOR;
->>> +	else
->>> +		value |= CURSOR_MODE_NORMAL;
->>> +
->>>  	value |= CURSOR_DST_BLEND_NEG_K1_TIMES_SRC;
->>>  	value |= CURSOR_SRC_BLEND_K1_TIMES_SRC;
->>>  	value |= CURSOR_ALPHA;
->>>  	tegra_dc_writel(dc, value, DC_DISP_BLEND_CURSOR_CONTROL);
->>>  
->>> +	/* nvdisplay relies on software for clipping */
->>> +	if (dc->soc->has_nvdisplay) {
->>
->> But coordinates already should be clipped by
->> drm_atomic_helper_check_plane_state().
-> 
-> Yes, and the driver goes on to use the clipped coordinates later on in
-> this function.
+On Tue, Mar 23, 2021 at 10:36 AM Rob Herring <robh@kernel.org> wrote:
+>
+> Users of the audio-graph-port schema need to define how many ports
+> and what each port is, so they need to define 'ports' and/or 'port'
+> anyways. Let's drop 'ports' and 'port' from the schema and adjust users
+> to reference audio-graph-port.yaml from a port property.
+>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Lubomir Rintel <lkundrak@v3.sk>
+> Cc: Sameer Pujar <spujar@nvidia.com>
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-I see now what it does, looks okay.
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> index 31f3e51974bb..e568d6c7dddd 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> @@ -17,9 +17,6 @@ maintainers:
+>    - Jon Hunter <jonathanh@nvidia.com>
+>    - Sameer Pujar <spujar@nvidia.com>
+>
+> -allOf:
+> -  - $ref: audio-graph-port.yaml#
+> -
+>  properties:
+>    $nodename:
+>      pattern: "^ahub@[0-9a-f]*$"
+> @@ -60,12 +57,18 @@ properties:
+>    ranges: true
+>
+>    ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+>      description: |
+>        Contains list of ACIF (Audio CIF) port nodes for AHUB (Audio Hub).
+>        These are connected to ACIF interfaces of AHUB clients. Thus the
+>        number of port nodes depend on the number of clients that AHUB may
+>        have depending on the SoC revision.
+>
+> +    patternProperties:
+> +      '^port@[0-9]':
+> +        $ref: audio-graph-port.yaml#
+> +        unevaluatedProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -77,7 +80,7 @@ required:
+>    - "#size-cells"
+>    - ranges
+>
+> -unevaluatedProperties: false
+> +additionalProperties: false
 
-Minor nit: the i/j aren't very expressive names, something like sx/sy
-sw/sh should be a bit more appropriate naming.
+Adding this results in schema errors in the example, so a prerequisite
+patch is needed.
 
-You could also make use of drm_rect_width/height helpers.
-
-But this doesn't deserve a v2 if there is nothing more important to improve.
+Rob
