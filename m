@@ -2,492 +2,168 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C0AC433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C986C433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6F50619B8
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 122CB600EF
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbhCWRDy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 13:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54524 "EHLO
+        id S230227AbhCWRdN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 13:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbhCWRDu (ORCPT
+        with ESMTP id S230169AbhCWRcx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 13:03:50 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC504C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:03:49 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id e7so24226500edu.10
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:03:49 -0700 (PDT)
+        Tue, 23 Mar 2021 13:32:53 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A6DEC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:32:53 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id f3so19499071lfu.5
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=adFkLqzzHpthoblLKtQmNHFYR2SQC+gqQfVIf7/hOzs=;
-        b=Wr44zJW1YNq8KBlKItM5vYj88wM4UiGf+odm3lzoOHCitoGF07XXTi1zU+u3btvLi5
-         O68Ou11mLIG3+UXfAZYLCyefop3Jd9/r6/hYV8Qx9OQZHuRKhv8TmjyqFSPKpBjVSy81
-         bcfLHVo1kKmS56KnZmqO/6zKGzEImTGXHGB3IthaU9BaZL+diT77UdycQTXUXb1GGppz
-         twZxz4/Cem8JmO4Jz1VOHOpA9btoHTA7VbNqyS1TpciOfae7MtpuXzi1tiYf8Ftduo3d
-         Jp8wgrbJmVqaeJ0mzlS81H+FQjD850FcGBZIL9iGXdnvX7W9X7KEzeHLppKroe4Bcz7p
-         hWuA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fQt6xCmMqTbZa/RTqpTUck38Lk7jAmjj8bDIroCl9cY=;
+        b=iKDKEABbhNUa0T1Pv7XQXNOm5HZy9Pwyhj5F3vHzHGTzl75hhZL8Df/7H1qyg3jaeB
+         6LxKIXxa4+CKk4uVIObaNimrGISoiG8KAWOMmmoWROirht+FHkRbpmOs4mGn1GV4h5t2
+         4v6HW0dCzJfL6PFe1amo1oul7Z9q+s++KyaEmuoiXBzbZEmSKk6mHlLzXqDDEj65p2Ae
+         sZIshdo5hj+B6kV30U1e0JO2MYFQrdda0jiuZvnAuX45jA5GTBYu12K7t3CbxCh8w7pR
+         UzxyCqRtrwo4EIJJP2Lg/zU9sc3PpHWBmTEQwlxajt4KZ5uhP3Bt0Ypxme+C4HEJmE7+
+         yf5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=adFkLqzzHpthoblLKtQmNHFYR2SQC+gqQfVIf7/hOzs=;
-        b=VcweDyG/DRCpxnEyaj8vP/Ien6vzXuQxfonDXQps6RY1SSh90SAGG3qAPG9lEtDR0l
-         YWfOe4EJH+wABuawhB9JiEHaVnvDsgQaKUkaAhnzy9YXZ/g2mAknLSs9cKOzSyXdizf5
-         6dJU19LAznqieZNmavI3wx0WIPh4EUdCZzaqL1J7mW8BZyExA8ZOAwHUHDH6cxoXBvoF
-         x8Z8bLcjoURnm/4lTwum1glzl+1ZRTyashZyQbPr42mJjGD/rfM3ID+04M7+8qsGUxxp
-         Rn7W5YqUZA6Tyk4zgbsg5a+tkxvuhBYT6kpwq8OssqEGfMuY7jJRN4ld68pi9Py16+I9
-         zlGQ==
-X-Gm-Message-State: AOAM532Bq4DGcrmXbzrvqxLrxytAlCd2ePvxfUe62J/rPbwqvEEIjCkb
-        nEm1YdXsoUxdSjQfuX3TdhQ=
-X-Google-Smtp-Source: ABdhPJyiG0iHWG4fie6XPLD2RHQrk59UnVKpBX+6H0wjyxkoWDtjYwCeKfbs7LxliyllQAADzsWKCA==
-X-Received: by 2002:a05:6402:888:: with SMTP id e8mr5427628edy.51.1616519028567;
-        Tue, 23 Mar 2021 10:03:48 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id v22sm11424727ejj.103.2021.03.23.10.03.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 10:03:46 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 18:04:07 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
-        digetx@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-tegra@vger.kernel.org, talho@nvidia.com,
-        bhuntsman@nvidia.com, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 20/21] drm/tegra: Implement job submission part of new
- UAPI
-Message-ID: <YFofhwT8d6IMsk7U@orome.fritz.box>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fQt6xCmMqTbZa/RTqpTUck38Lk7jAmjj8bDIroCl9cY=;
+        b=UXm3XU5iZVLueJDzjTFU/eWvQYGxMbkk5nujOyiwPVCOw1Hm9qETsI92HZyz0TbIPs
+         sLlI+VN55htR7ykOzJyWvmqy0jgtUE2FWUSDb/bbjiBm3uv1NeLeCQhy5cIoigDBEP7o
+         un3sVyIc3UKCuyimC7pYTQqNvZm9Cw/M+r3mmYj9UjIg03bndhKBPKy3NVVCp4srYSPy
+         qDiRAwlCbo/Qs4AyZAa5WrORU61ZimR4ZJ0ouwIvrQ9g+O09xp5Eic0KUqsB2bv1lCOF
+         Rv1MlvpswrmlMAbY0IPQU17IN2Nud2hG4oPTCbFR5NUKaqI/doH7XF1GiYUYqXeVhCEy
+         nbGQ==
+X-Gm-Message-State: AOAM5332NUw2FAMt43c2H1Nt1WwL2jgWb1/JbFUavqHXmXR1N3tBrbtR
+        G9CRYxAzilRpBLNdasI5yiU=
+X-Google-Smtp-Source: ABdhPJwH6K3S4OE4JZag5tWk0lBSLFj34jgsxu40rASVwxlzsESceA1Rbwo6zW8Vb+GfbzbbZn9DQQ==
+X-Received: by 2002:a19:ee13:: with SMTP id g19mr3168533lfb.657.1616520771923;
+        Tue, 23 Mar 2021 10:32:51 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
+        by smtp.googlemail.com with ESMTPSA id f23sm1914441lfc.283.2021.03.23.10.32.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Mar 2021 10:32:51 -0700 (PDT)
+Subject: Re: [PATCH v5 15/21] drm/tegra: Add new UAPI to header
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        talho@nvidia.com, bhuntsman@nvidia.com,
+        dri-devel@lists.freedesktop.org
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-21-mperttunen@nvidia.com>
- <YFnvQYvT7E/kCAuj@orome.fritz.box>
- <49820423-e3aa-6c99-b92f-3d3ece739ed7@kapsi.fi>
+ <20210111130019.3515669-16-mperttunen@nvidia.com>
+ <a0fdac0d-88cf-6eda-6611-fca951253060@gmail.com>
+ <cc746d91-e6b2-53d8-17ff-59cbc8bb522f@kapsi.fi>
+ <a51f7552-cec6-efe1-25dd-76422ef7a3e4@gmail.com>
+ <d76c465a-7f07-88c4-0dc3-4be3cb212fcf@kapsi.fi>
+ <YFnfYsfYaKfSGhon@orome.fritz.box>
+ <0cc2ec5c-f8aa-ed45-92b6-32f9eadbdc5a@gmail.com>
+ <YFoa57HBFpDu119Y@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c0c21556-1f98-4137-b9a0-568ef3a8c8ac@gmail.com>
+Date:   Tue, 23 Mar 2021 20:32:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1ADNrECtd7zFEDrp"
-Content-Disposition: inline
-In-Reply-To: <49820423-e3aa-6c99-b92f-3d3ece739ed7@kapsi.fi>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <YFoa57HBFpDu119Y@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+23.03.2021 19:44, Thierry Reding пишет:
+> On Tue, Mar 23, 2021 at 05:00:30PM +0300, Dmitry Osipenko wrote:
+>> 23.03.2021 15:30, Thierry Reding пишет:
+>>> On Thu, Jan 14, 2021 at 12:34:22PM +0200, Mikko Perttunen wrote:
+>>>> On 1/14/21 10:36 AM, Dmitry Osipenko wrote:
+>>>>> 13.01.2021 21:56, Mikko Perttunen пишет:
+>>>>>> On 1/13/21 8:14 PM, Dmitry Osipenko wrote:
+>>>>>>> 11.01.2021 16:00, Mikko Perttunen пишет:
+>>>>>>>> +struct drm_tegra_submit_buf {
+>>>>>>>> +    /**
+>>>>>>>> +     * @mapping_id: [in]
+>>>>>>>> +     *
+>>>>>>>> +     * Identifier of the mapping to use in the submission.
+>>>>>>>> +     */
+>>>>>>>> +    __u32 mapping_id;
+>>>>>>>
+>>>>>>> I'm now in process of trying out the UAPI using grate drivers and this
+>>>>>>> becomes the first obstacle.
+>>>>>>>
+>>>>>>> Looks like this is not going to work well for older Tegra SoCs, in
+>>>>>>> particular for T20, which has a small GART.
+>>>>>>>
+>>>>>>> Given that the usefulness of the partial mapping feature is very
+>>>>>>> questionable until it will be proven with a real userspace, we should
+>>>>>>> start with a dynamic mappings that are done at a time of job submission.
+>>>>>>>
+>>>>>>> DRM already should have everything necessary for creating and managing
+>>>>>>> caches of mappings, grate kernel driver has been using drm_mm_scan for a
+>>>>>>> long time now for that.
+>>>>>>>
+>>>>>>> It should be fine to support the static mapping feature, but it should
+>>>>>>> be done separately with the drm_mm integration, IMO.
+>>>>>>>
+>>>>>>> What do think?
+>>>>>>>
+>>>>>>
+>>>>>> Can you elaborate on the requirements to be able to use GART? Are there
+>>>>>> any other reasons this would not work on older chips?
+>>>>>
+>>>>> We have all DRM devices in a single address space on T30+, hence having
+>>>>> duplicated mappings for each device should be a bit wasteful.
+>>>>
+>>>> I guess this should be pretty easy to change to only keep one mapping per
+>>>> GEM object.
+>>>
+>>> The important point here is the semantics: this IOCTL establishes a
+>>> mapping for a given GEM object on a given channel. If the underlying
+>>> implementation is such that the mapping doesn't fit into the GART, then
+>>> that's an implementation detail that the driver needs to take care of.
+>>> Similarly, if multiple devices share a single address space, that's
+>>> something the driver already knows and can take advantage of by simply
+>>> reusing an existing mapping if one already exists. In both cases the
+>>> semantics would be correctly implemented and that's really all that
+>>> matters.
+>>>
+>>> Overall this interface seems sound from a high-level point of view and
+>>> allows these mappings to be properly created even for the cases we have
+>>> where each channel may have a separate address space. It may not be the
+>>> optimal interface for all use-cases or any one individual case, but the
+>>> very nature of these interfaces is to abstract away certain differences
+>>> in order to provide a unified interface to a common programming model.
+>>> So there will always be certain tradeoffs.
+>>
+>> For now this IOCTL isn't useful from a userspace perspective of older
+>> SoCs and I'll need to add a lot of code that won't do anything useful
+>> just to conform to the specific needs of the newer SoCs. Trying to unify
+>> everything into a single API doesn't sound like a good idea at this
+>> point and I already suggested to Mikko to try out variant with a
+>> separated per-SoC code paths in the next version, then the mappings
+>> could be handled separately by the T186+ paths.
+> 
+> I'm not sure I understand what you're saying. Obviously the underlying
+> implementation of this might have to differ depending on SoC generation.
+> But it sounds like you're suggesting having different UAPIs depending on
+> SoC generation.
 
---1ADNrECtd7zFEDrp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 23, 2021 at 04:16:00PM +0200, Mikko Perttunen wrote:
-> On 3/23/21 3:38 PM, Thierry Reding wrote:
-> > On Mon, Jan 11, 2021 at 03:00:18PM +0200, Mikko Perttunen wrote:
-> > > Implement the job submission IOCTL with a minimum feature set.
-> > >=20
-> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > ---
-> > > v5:
-> > > * Add 16K size limit to copies from userspace.
-> > > * Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
-> > >    to prevent oversized shift on 32-bit platforms.
-> > > v4:
-> > > * Remove all features that are not strictly necessary.
-> > > * Split into two patches.
-> > > v3:
-> > > * Remove WRITE_RELOC. Relocations are now patched implicitly
-> > >    when patching is needed.
-> > > * Directly call PM runtime APIs on devices instead of using
-> > >    power_on/power_off callbacks.
-> > > * Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
-> > > * Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
-> > > * Accommodate for removal of timeout field and inlining of
-> > >    syncpt_incrs array.
-> > > * Copy entire user arrays at a time instead of going through
-> > >    elements one-by-one.
-> > > * Implement waiting of DMA reservations.
-> > > * Split out gather_bo implementation into a separate file.
-> > > * Fix length parameter passed to sg_init_one in gather_bo
-> > > * Cosmetic cleanup.
-> > > ---
-> > >   drivers/gpu/drm/tegra/Makefile         |   2 +
-> > >   drivers/gpu/drm/tegra/drm.c            |   2 +
-> > >   drivers/gpu/drm/tegra/uapi/gather_bo.c |  86 +++++
-> > >   drivers/gpu/drm/tegra/uapi/gather_bo.h |  22 ++
-> > >   drivers/gpu/drm/tegra/uapi/submit.c    | 428 ++++++++++++++++++++++=
-+++
-> > >   drivers/gpu/drm/tegra/uapi/submit.h    |  17 +
-> > >   6 files changed, 557 insertions(+)
-> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.c
-> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.h
-> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/submit.c
-> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/submit.h
-> > >=20
-> > > diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/M=
-akefile
-> > > index 0abdb21b38b9..059322e88943 100644
-> > > --- a/drivers/gpu/drm/tegra/Makefile
-> > > +++ b/drivers/gpu/drm/tegra/Makefile
-> > > @@ -4,6 +4,8 @@ ccflags-$(CONFIG_DRM_TEGRA_DEBUG) +=3D -DDEBUG
-> > >   tegra-drm-y :=3D \
-> > >   	drm.o \
-> > >   	uapi/uapi.o \
-> > > +	uapi/submit.o \
-> > > +	uapi/gather_bo.o \
-> > >   	gem.o \
-> > >   	fb.o \
-> > >   	dp.o \
-> > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> > > index 6a51035ce33f..60eab403ae9b 100644
-> > > --- a/drivers/gpu/drm/tegra/drm.c
-> > > +++ b/drivers/gpu/drm/tegra/drm.c
-> > > @@ -737,6 +737,8 @@ static const struct drm_ioctl_desc tegra_drm_ioct=
-ls[] =3D {
-> > >   			  DRM_RENDER_ALLOW),
-> > >   	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_UNMAP, tegra_drm_ioctl_channel_unm=
-ap,
-> > >   			  DRM_RENDER_ALLOW),
-> > > +	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_SUBMIT, tegra_drm_ioctl_channel_sub=
-mit,
-> > > +			  DRM_RENDER_ALLOW),
-> > >   	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_drm_ioctl_gem_create,
-> > >   			  DRM_RENDER_ALLOW),
-> > >   	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_drm_ioctl_gem_mmap,
-> > > diff --git a/drivers/gpu/drm/tegra/uapi/gather_bo.c b/drivers/gpu/drm=
-/tegra/uapi/gather_bo.c
-> > > new file mode 100644
-> > > index 000000000000..b487a0d44648
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/tegra/uapi/gather_bo.c
-> > > @@ -0,0 +1,86 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/* Copyright (c) 2020 NVIDIA Corporation */
-> > > +
-> > > +#include <linux/scatterlist.h>
-> > > +#include <linux/slab.h>
-> > > +
-> > > +#include "gather_bo.h"
-> > > +
-> > > +static struct host1x_bo *gather_bo_get(struct host1x_bo *host_bo)
-> > > +{
-> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
-se);
-> > > +
-> > > +	kref_get(&bo->ref);
-> > > +
-> > > +	return host_bo;
-> > > +}
-> > > +
-> > > +static void gather_bo_release(struct kref *ref)
-> > > +{
-> > > +	struct gather_bo *bo =3D container_of(ref, struct gather_bo, ref);
-> > > +
-> > > +	kfree(bo->gather_data);
-> > > +	kfree(bo);
-> > > +}
-> > > +
-> > > +void gather_bo_put(struct host1x_bo *host_bo)
-> > > +{
-> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
-se);
-> > > +
-> > > +	kref_put(&bo->ref, gather_bo_release);
-> > > +}
-> > > +
-> > > +static struct sg_table *
-> > > +gather_bo_pin(struct device *dev, struct host1x_bo *host_bo, dma_add=
-r_t *phys)
-> > > +{
-> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
-se);
-> > > +	struct sg_table *sgt;
-> > > +	int err;
-> > > +
-> > > +	if (phys) {
-> > > +		*phys =3D virt_to_phys(bo->gather_data);
-> > > +		return NULL;
-> > > +	}
-> > > +
-> > > +	sgt =3D kzalloc(sizeof(*sgt), GFP_KERNEL);
-> > > +	if (!sgt)
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	err =3D sg_alloc_table(sgt, 1, GFP_KERNEL);
-> > > +	if (err) {
-> > > +		kfree(sgt);
-> > > +		return ERR_PTR(err);
-> > > +	}
-> > > +
-> > > +	sg_init_one(sgt->sgl, bo->gather_data, bo->gather_data_words*4);
-> > > +
-> > > +	return sgt;
-> > > +}
-> > > +
-> > > +static void gather_bo_unpin(struct device *dev, struct sg_table *sgt)
-> > > +{
-> > > +	if (sgt) {
-> > > +		sg_free_table(sgt);
-> > > +		kfree(sgt);
-> > > +	}
-> > > +}
-> > > +
-> > > +static void *gather_bo_mmap(struct host1x_bo *host_bo)
-> > > +{
-> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
-se);
-> > > +
-> > > +	return bo->gather_data;
-> > > +}
-> > > +
-> > > +static void gather_bo_munmap(struct host1x_bo *host_bo, void *addr)
-> > > +{
-> > > +}
-> > > +
-> > > +const struct host1x_bo_ops gather_bo_ops =3D {
-> > > +	.get =3D gather_bo_get,
-> > > +	.put =3D gather_bo_put,
-> > > +	.pin =3D gather_bo_pin,
-> > > +	.unpin =3D gather_bo_unpin,
-> > > +	.mmap =3D gather_bo_mmap,
-> > > +	.munmap =3D gather_bo_munmap,
-> > > +};
-> > > diff --git a/drivers/gpu/drm/tegra/uapi/gather_bo.h b/drivers/gpu/drm=
-/tegra/uapi/gather_bo.h
-> > > new file mode 100644
-> > > index 000000000000..6b4c9d83ac91
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/tegra/uapi/gather_bo.h
-> > > @@ -0,0 +1,22 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > > +/* Copyright (c) 2020 NVIDIA Corporation */
-> > > +
-> > > +#ifndef _TEGRA_DRM_SUBMIT_GATHER_BO_H
-> > > +#define _TEGRA_DRM_SUBMIT_GATHER_BO_H
-> > > +
-> > > +#include <linux/host1x.h>
-> > > +#include <linux/kref.h>
-> > > +
-> > > +struct gather_bo {
-> > > +	struct host1x_bo base;
-> > > +
-> > > +	struct kref ref;
-> > > +
-> > > +	u32 *gather_data;
-> > > +	size_t gather_data_words;
-> > > +};
-> > > +
-> > > +extern const struct host1x_bo_ops gather_bo_ops;
-> > > +void gather_bo_put(struct host1x_bo *host_bo);
-> > > +
-> > > +#endif
-> > > diff --git a/drivers/gpu/drm/tegra/uapi/submit.c b/drivers/gpu/drm/te=
-gra/uapi/submit.c
-> > > new file mode 100644
-> > > index 000000000000..398be3065e21
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/tegra/uapi/submit.c
-> > > @@ -0,0 +1,428 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/* Copyright (c) 2020 NVIDIA Corporation */
-> > > +
-> > > +#include <linux/dma-fence-array.h>
-> > > +#include <linux/file.h>
-> > > +#include <linux/host1x.h>
-> > > +#include <linux/iommu.h>
-> > > +#include <linux/kref.h>
-> > > +#include <linux/list.h>
-> > > +#include <linux/nospec.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <linux/sync_file.h>
-> > > +
-> > > +#include <drm/drm_drv.h>
-> > > +#include <drm/drm_file.h>
-> > > +
-> > > +#include "../uapi.h"
-> > > +#include "../drm.h"
-> > > +#include "../gem.h"
-> > > +
-> > > +#include "gather_bo.h"
-> > > +#include "submit.h"
-> > > +
-> > > +static struct tegra_drm_mapping *
-> > > +tegra_drm_mapping_get(struct tegra_drm_channel_ctx *ctx, u32 id)
-> > > +{
-> > > +	struct tegra_drm_mapping *mapping;
-> > > +
-> > > +	xa_lock(&ctx->mappings);
-> > > +	mapping =3D xa_load(&ctx->mappings, id);
-> > > +	if (mapping)
-> > > +		kref_get(&mapping->ref);
-> > > +	xa_unlock(&ctx->mappings);
-> > > +
-> > > +	return mapping;
-> > > +}
-> > > +
-> > > +static void *alloc_copy_user_array(void __user *from, size_t count, =
-size_t size)
-> > > +{
-> > > +	unsigned long copy_err;
-> > > +	size_t copy_len;
-> > > +	void *data;
-> > > +
-> > > +	if (check_mul_overflow(count, size, &copy_len))
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	if (copy_len > 0x4000)
-> > > +		return ERR_PTR(-E2BIG);
-> > > +
-> > > +	data =3D kvmalloc(copy_len, GFP_KERNEL);
-> > > +	if (!data)
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	copy_err =3D copy_from_user(data, from, copy_len);
-> > > +	if (copy_err) {
-> > > +		kvfree(data);
-> > > +		return ERR_PTR(-EFAULT);
-> > > +	}
-> > > +
-> > > +	return data;
-> > > +}
-> > > +
-> > > +static int submit_copy_gather_data(struct drm_device *drm,
-> > > +				   struct gather_bo **pbo,
-> > > +				   struct drm_tegra_channel_submit *args)
-> > > +{
-> > > +	unsigned long copy_err;
-> > > +	struct gather_bo *bo;
-> > > +	size_t copy_len;
-> > > +
-> > > +	if (args->gather_data_words =3D=3D 0) {
-> > > +		drm_info(drm, "gather_data_words can't be 0");
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	if (check_mul_overflow((size_t)args->gather_data_words, (size_t)4, =
-&copy_len))
-> > > +		return -EINVAL;
-> > > +
-> > > +	bo =3D kzalloc(sizeof(*bo), GFP_KERNEL);
-> > > +	if (!bo)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	kref_init(&bo->ref);
-> > > +	host1x_bo_init(&bo->base, &gather_bo_ops);
-> > > +
-> > > +	bo->gather_data =3D kmalloc(copy_len, GFP_KERNEL | __GFP_NOWARN);
-> > > +	if (!bo->gather_data) {
-> > > +		kfree(bo);
-> > > +		return -ENOMEM;
-> > > +	}
-> > > +
-> > > +	copy_err =3D copy_from_user(bo->gather_data,
-> > > +				  u64_to_user_ptr(args->gather_data_ptr),
-> > > +				  copy_len);
-> > > +	if (copy_err) {
-> > > +		kfree(bo->gather_data);
-> > > +		kfree(bo);
-> > > +		return -EFAULT;
-> > > +	}
-> > > +
-> > > +	bo->gather_data_words =3D args->gather_data_words;
-> > > +
-> > > +	*pbo =3D bo;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int submit_write_reloc(struct gather_bo *bo,
-> > > +			      struct drm_tegra_submit_buf *buf,
-> > > +			      struct tegra_drm_mapping *mapping)
-> > > +{
-> > > +	/* TODO check that target_offset is within bounds */
-> > > +	dma_addr_t iova =3D mapping->iova + buf->reloc.target_offset;
-> > > +	u32 written_ptr =3D (u32)(iova >> buf->reloc.shift);
-> > > +
-> > > +#ifdef CONFIG_ARM64
-> > > +	if (buf->flags & DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR)
-> > > +		written_ptr |=3D BIT(39);
-> > > +#endif
-> >=20
-> > Sorry, but this still isn't correct. written_ptr is still only 32-bits
-> > wide, so your BIT(39) is going to get discarded even on 64-bit ARM. The
-> > idiomatic way to do this is to make written_ptr dma_addr_t and use a
-> > CONFIG_ARCH_DMA_ADDR_T_64BIT guard. >
-> > But even with that this looks wrong because you're OR'ing this in after
-> > shifting by buf->reloc.shift. Doesn't that OR it in at the wrong offset?
-> > Should you perhaps be doing this instead:
-> >=20
-> > 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> > 		if (buf->flags & DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR)
-> > 			iova |=3D BIT(39);
-> > 	#endif
-> >=20
-> > 	written_ptr =3D (u32)(iova >> buf->reloc_shift);
-> >=20
-> > ?
->=20
-> Yes, you are of course right.. will fix this. That might explain some of =
-the
-> VIC test failures I've seen.
->=20
-> >=20
-> > Also, on a side-note: BLOCKLINEAR really isn't the right term here. I
-> > recently dealt with this for display (though I haven't sent out that
-> > patch yet) and this is actually a bit that selects which sector layout
-> > swizzling is being applied. That's independent of block linear format
-> > and I think you can have different sector layouts irrespective of the
-> > block linear format (though I don't think that's usually done).
-> >=20
-> > That said, I wonder if a better interface here would be to reuse format
-> > modifiers here. That would allow us to more fully describe the format of
-> > a surface in case we ever need it, and it already includes the sector
-> > layout information as well.
->=20
-> I think having just a flag that enables or disables the swizzling is bett=
-er
-> -- that way it is the responsibility of the userspace, which is where all
-> the engine knowledge is as well, to know for each buffer whether it wants
-> swizzling or not. Now, in practice at the moment the kernel can just look=
-up
-> the format and set the bit based on that, but e.g. if there was an engine
-> that could do the swizzling natively, and we had the format modifier here,
-> we'd need to have the knowledge in the kernel to decide for each chip/eng=
-ine
-> whether to apply the bit.
-
-Fine, let's try it this way. I'm just slightly worried that we'll end up
-duplicating a lot of the same information that we already have in the
-framebuffer modifiers. We made the same mistake a long time ago with
-those odd flags in the CREATE IOCTL and that turned out not to be usable
-at all, and also completely insufficient.
-
-Thierry
-
---1ADNrECtd7zFEDrp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaH4cACgkQ3SOs138+
-s6GEeg/9GLAnJbpXImko4Bh12lixFOFUPpsNQKmNfeTYUYZCXlRPwiJmiMDESo6l
-01f9pOpyhrJDsHC8GfT1rYB/4kd8DiIJ0zkUfDGnLIj1/d512eT2m2hhvjAKlwci
-ZvdWMH4c2nRo4u3fY93LreXeZF0Xb6CmNEXKJ+S4chXJMvo00SGSeCEw1wcYkKZN
-GmcUy5y02HawT6UuU2u2EOjlQHchM5UdLXhPuTxcy+Dr62ozY2gjUYRsAKlI/yom
-JajLJwb27TF+xuHWU0/JPpsPj/eC5B0XKsPs9sSY5h3+UVkTzYD4bu1Qwv5rcZYj
-DJOjyWHfOKO31vohbI8/bKofDMFnn4A3SYwikUSzyIXM22Bvkw+OjcV1whda6rz4
-0tzr5GGsjI8pnwCirDdgppfcPn/kUb4dZo7iU+eXnmyYJGtHajzo/nMeuu5aGZxd
-B6rHfLvz5hpUU1I8jlBES0Cr96SZIWTdVT/ju9cIcz2/mTLLIx9+qfTLFDQOs42j
-RqfcNkIpseipTuJJH0GbvpAmZ0U/hYk2Din3fsZzMHNZzhw3HtUzwIykMFtgfIv0
-oe2csZyKR6DzaRDAKwETbbcx74P7v5vGQGsiSxYfRCHPz10Yqw1iLaTBD4Uapnz4
-0cPeGzZJW6AzWuz2lqEHWxV9XGj+xyIkmOTXVQPUWMRiCn2iu1w=
-=Dmku
------END PGP SIGNATURE-----
-
---1ADNrECtd7zFEDrp--
+I suggested that this IOCTL shouldn't be mandatory for older SoCs, which
+we should to have anyways for preserving the older UAPI. Yes, this makes
+UAPI different and I want to see how it will look like in the next
+version since the current variant was sub-optimal.
