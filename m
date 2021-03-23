@@ -2,189 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE9AC433E2
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD4DC433C1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6A55619C9
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB8C619C5
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:22:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbhCWSVn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 14:21:43 -0400
-Received: from mail-co1nam11on2053.outbound.protection.outlook.com ([40.107.220.53]:29664
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231426AbhCWSVb (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 14:21:31 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RPFHZkSR0+I3YC2/kXOAydJfCs3EQQmf2m1ztV8JROHmI1fXHwFpUT8bQty4HTTEdFC5FD/BsiVbghutGLMmgdp5znevJzjqWz8kOrDeyhSeovr0I5dQynzp361WiW7DAy4q1k/kiMeoI6hHx2YGQQb0AXocG8bkrZwOpQPNEXnMGYupIR9K75s04ZSFXTXA4uFFYV1rMf/h1bRMNWM4hjjaK1Bde/hcbwmwUq5vNyqWA8hIklvBCFq8ycT0ERnmltLoZUVgjr1kz1RImRa26Voq3eOCnpo0SIsVuxruV8xB92p1aOc3rKV8vEHjcB95ffvGXx9JZB2TNtO1wP279w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7vH3teZCek7pgh0YYJfHUQtV6irGT8W3XyI15JfdSY=;
- b=l6YhmUr+o0BqzfslcjhTXdjwazV6GunPYpAPRtUrH4v9Hnwo1t3N3nRQN8lcqdfh4/KRVv8NQY/7+5DVjLLy2GLHG0tfesdcOcZGn7YdARWaD0ac9zS+fXnwsRVj/vc5Qo86QXFVzofRxZZ1Qsd9hY094H3qtMhvq1uS7KW8c42ErYf8NJ7ZNSOlHvOVvQ/j6EXyReGdZE6s5l31yKTXnDdx5vIcvsUWn7Sne8fgrMMhpHqaylEkSRoTJkBj94gJ/2CxDvalkVRrx9K7B6amvLPfRcafK7rVG4cItjAGfLSSqeBe6xrUQucE+0sybLjRY3E53vbwtGInA07yYUxc/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7vH3teZCek7pgh0YYJfHUQtV6irGT8W3XyI15JfdSY=;
- b=HUM8sZITPCElWckV9YI8CKmI3v3PiMRXeVaB9vGsBOWP4fSqG/wmpxS8XLRZ/o5QV8M8k1seGATQWAJ5M41aw3cQq/o53SOqEUmhqSwl3fKu0G1e8wi1DefFPBeATGPONcsgAwPxITwUbRQVOkcOhiCngG5hnUI1CXqU21EOhpxJYMUjPdR7omY3Eb9ECMxReoreMJXHG2RYoE4FuswRppK168csB0zq3MTKWr6uoVqatqIeIn/JlpmJZjbrv0ZDeJ++KAwxgdzj/FhL0T8ExrB3I5wE4nlNp2zGFPb0zMKAN8VXZDybJi2AM/mVVOZwfqgTLwJmmkdnYZF++J04hw==
-Received: from DM5PR19CA0003.namprd19.prod.outlook.com (2603:10b6:3:151::13)
- by MN2PR12MB4656.namprd12.prod.outlook.com (2603:10b6:208:182::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.23; Tue, 23 Mar
- 2021 18:21:28 +0000
-Received: from DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:151:cafe::18) by DM5PR19CA0003.outlook.office365.com
- (2603:10b6:3:151::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18 via Frontend
- Transport; Tue, 23 Mar 2021 18:21:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- DM6NAM11FT015.mail.protection.outlook.com (10.13.172.133) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3955.18 via Frontend Transport; Tue, 23 Mar 2021 18:21:28 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 23 Mar
- 2021 11:21:27 -0700
-Received: from [172.17.173.69] (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Tue, 23 Mar 2021 18:21:27 +0000
-Subject: Re: GTE - The hardware timestamping engine
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     Kent Gibson <warthog618@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Richard Cochran" <richardcochran@gmail.com>,
-        Marc Zyngier <maz@kernel.org>
-References: <4c46726d-fa35-1a95-4295-bca37c8b6fe3@nvidia.com>
- <CACRpkdbmqww6UQ8CFYo=+bCtVYBJwjMxVixc4vS6D3B+dUHScw@mail.gmail.com>
- <20210322060047.GA226745@sol>
- <d48fa7b5-8c17-c3d7-10a9-a9811c410a39@nvidia.com>
- <CACRpkdbkmwuAJzD-CpWKqmL3_n1xkvv_2M_DsNs+ZquiaRkKgA@mail.gmail.com>
- <YFm9r/tFkzVlYDEp@orome.fritz.box>
-X-Nvconfidentiality: public
-From:   Dipen Patel <dipenp@nvidia.com>
-Message-ID: <ccbc3854-b513-34b5-b989-31e23e8540ac@nvidia.com>
-Date:   Tue, 23 Mar 2021 11:25:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S231682AbhCWSWO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 14:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231426AbhCWSVr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Mar 2021 14:21:47 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A4DC061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 11:21:46 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id b7so28694393ejv.1
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 11:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8rKTrvPrWUe8LXJ4SCmd9G3+IJGFtRH5zECn5Wek8XU=;
+        b=EDFj9LyflOSOkBeci+mhSkxFF21IG5JpUq73PlC/dNGeBn5eJbC5PAfqJ7UvCbeQ2a
+         keGbb/IWBddeJjOaPsFaw4LHAV8c6G5C69a08THjPqkCslQpNH/v1KbDCz/Cg1Sx24bL
+         SYbZDVC3PVwcps8Da7bgm8eFYq2/h+2th4MO/7rvdywQKsRSsCe5zAc3QXCxmcN0gmWm
+         ufhvGDj+CNYOo2OSe2COz6QknRdF4lT9UKI2dDtQ1kEW/yO9N6N4mORR7J9TZaZG105g
+         4K3jAhN9fX2QNazWotUiEa+/A5IP08GbPBs0N7T+09IlsSZ7gLaGDStAimJUSOH56znd
+         tt0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8rKTrvPrWUe8LXJ4SCmd9G3+IJGFtRH5zECn5Wek8XU=;
+        b=uY51mo+X8yKkO4+H2LcE6sf9k8gYkxVoqRZK2QDKoPJX61SjI4TKGN0nJxLT8taHwE
+         dZmsVeb6G6xammrTu2VmxfryPNks83llEP21KDHXE3I6ktSaMRNxzVEBNah+0tjQxWpC
+         ih5SNsEa/gN5LQsXOMze0iD9PgbUaCTQtGILpRw3EPQIOrAuPpcfyk2gBH1Xdgf6qxXI
+         YN1iTDKKL4aPgyNmdGn1MBtxBprwYElUofp/lMtBeQmn8uPcw/8wF8R7phoPHNwxJdNI
+         6xmLocNE9BuXsL23RrbrkVte5bcBnS7megRusgSGuX7bEDWrpOAUsZu3KU1H6503eSL6
+         oUTQ==
+X-Gm-Message-State: AOAM531BDaaNUt8IrGmtOfW0F6EpK1Bi3/xqFerl246Ky+o9VQmEmcOp
+        YScTI5xr/Ko5mtrOvfHYOdk=
+X-Google-Smtp-Source: ABdhPJz2pxx36cOVGzdCWwH9REXN1Bd/3nPg8BCtqP9MKaIaUOXMesyAcb2CiZdtuRNipSWqjZuuXg==
+X-Received: by 2002:a17:906:814b:: with SMTP id z11mr6150484ejw.290.1616523705556;
+        Tue, 23 Mar 2021 11:21:45 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id gj26sm11431324ejb.67.2021.03.23.11.21.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 11:21:37 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 19:21:58 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
+        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, talho@nvidia.com,
+        bhuntsman@nvidia.com
+Subject: Re: [PATCH v5 00/21] Host1x sync point UAPI should not be used for
+ tracking DRM jobs
+Message-ID: <YFoxxiMGFcSg3kk+@orome.fritz.box>
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
+ <da085c38-4ac1-19dd-7706-caf323c969d2@gmail.com>
+ <2f999b6d-d781-503a-78f4-d444bce72c58@kapsi.fi>
+ <2ee12338-bd5a-4b99-f86d-13da0d2a899b@gmail.com>
+ <8504c239-d5df-3033-934c-7b3fab52e387@kapsi.fi>
+ <YBLtPv/1mGXwtibX@ulmo>
+ <1ff922b2-161d-c8b9-7b08-4454ff7329f8@gmail.com>
+ <25248139-5487-a15b-8965-1a29a71eacd7@kapsi.fi>
+ <6211ee04-ebd6-74d3-cb5b-955b17acff5b@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YFm9r/tFkzVlYDEp@orome.fritz.box>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 249287d9-2269-452e-c6ab-08d8ee2879ca
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4656:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4656962727D3F913642273C3AE649@MN2PR12MB4656.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Y3aYweWm+JWDBPQGVW8xRM4Nd/ziYemuNcvqjN+BqpTBtWO51oi2qIguFKLDuYzN2g0pGVFVQW6FrVizjUYML8bWFDcljL6U+TunMAX77n+9WH7Gos1r3RIN2qFzuEofOYNHdTNdFxYsp+wQAE3IE0j+vF1naQRmnUy4P5cdin+VR+LvvK309BWodMW9gthnTNNpMMAZZWVtqDGnNU6+DTX1YsqyHn5EtkkWjR2OC2sU/Ww+w8xvJI/WssXfHqwSDC+hwqx+Z4FcOGg4GHvsz4gOflNes4NukjguhbtT0lxDtmUGo5wwliPR2bGSBW1zRUkdQBbPxCgcZgmlcB9Vxbr71mqudh8ZmvXQnaaDDs5wl7WmvnF/F38nuR3koBWeVPjjCRm1AkNy+jNs2QR1eOE/jYVrV3NlNAuXgh7LHhy+PsO+eLaox1Vj221OXgdQeeolReVyxDyODIwIciiqpHVvifeAv6LWN7FK1MdQpDu/YRmBCLjxJ9x5utpn2vM/7GrAyVvBuuL6t1C3zroL7DPV5DLVas4ga55pX5l5ChBAW5unicIcrO6PQ5Pv867e9EnUr4yUO6VMnY+VzX9MPCZrpk28cP1tKnySXMgdxWqMXyD8e4CqqbJC2pwIjjn5VKDqAmuDVC5cOBGlAFhIbEOB52h0Uk6ccrEuNlxI91p1y+Av62U+ghQL6ZWLG5/R
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(376002)(136003)(396003)(39850400004)(36840700001)(46966006)(16576012)(36756003)(82740400003)(8676002)(53546011)(2906002)(83380400001)(26005)(7636003)(110136005)(316002)(54906003)(186003)(6666004)(478600001)(70206006)(70586007)(7416002)(31696002)(31686004)(356005)(47076005)(8936002)(5660300002)(36860700001)(2616005)(336012)(426003)(82310400003)(4326008)(86362001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2021 18:21:28.1210
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 249287d9-2269-452e-c6ab-08d8ee2879ca
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4656
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bT23De0RLxIkDAxt"
+Content-Disposition: inline
+In-Reply-To: <6211ee04-ebd6-74d3-cb5b-955b17acff5b@gmail.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
+--bT23De0RLxIkDAxt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 3/23/21 3:06 AM, Thierry Reding wrote:
-> On Tue, Mar 23, 2021 at 10:08:00AM +0100, Linus Walleij wrote:
->> On Mon, Mar 22, 2021 at 9:17 PM Dipen Patel <dipenp@nvidia.com> wrote:
->>
->>> My follow-up concerns on both Linus's and Kent's feedback:
->>>
->>> 1.  Please correct me if I am wrong, lineevent in the gpiolib* is only
->>>     serves the userspace clients.
->>> 1.a What about kernel drivers wanting to use this feature for monitoring its
->>>     GPIO lines, see gyroscope example somewhere below. In that regards,
->>>     lineevent implementation is not sufficient.
->>> 1.b Are you also implying to extend lineevent implementation to kernel
->>>     drivers?
->>
->> I was talking about lineevent because you mentioned things like
->> motors and robotics, and those things are traditionally not run in
->> kernelspace because they are not generic hardware that fit in the
->> kernel subsystems.
->>
->> Normally industrial automatic control tasks are run in a userspace
->> thread with some realtime priority.
->>
->> As Kent says, in-kernel events are exclusively using IRQ as
->> mechanism, and should be modeled as IRQs. Then the question
->> is how you join the timestamp with the IRQ. GPIO chips are
->> just some kind of irqchip in this regard, we reuse the irqchip
->> infrastructure in the kernel for all GPIO drivers that generate
->> "events" in response to state transitions on digital lines.
-> 
-> One potential problem I see with this is that Kent's proposal, if I
-> understand correctly, would supplant the original IRQ of a device with
-> the GTE IRQ for the corresponding event. I'm not sure that's desirable
-> because that would require modifying the device tree and would no longer
-> accurately represent the hardware. Timestamping also sounds like
-> something that drivers would want to opt into, and requiring people to
-> update the device tree to achieve this just doesn't seem reasonable.
-> 
-> This proposal would also only work if there's a 1:1 correspondence
-> between hardware IRQ and GTE IRQ. However, as Dipen mentioned, the GTE
-> events can be configured with a threshold, so a GTE IRQ might only
-> trigger every, say, 5th hardware IRQ. I'm not sure if those are common
-> use-cases, though.
-> 
-> Obviously if we don't integrate this with IRQs directly, it becomes a
-> bit more difficult to relate the captured timestamps to the events
-> across subsystem boundaries. I'm not sure how this would be solved
-> properly. If the events are sufficiently rare, and it's certain that
-> none will be missed, then it should be possible to just pull a timestamp
-> from the timestamp FIFO for each event.
-> 
-Just to clarify, I am getting impression that GTE is viewed or made to be
-viewed as "event" generating device, which it is not. You can consider GTE
-as "person in a middle" type of device which can monitor configured events
-and on seeing state change, it will just record timestamp and store it.
+On Sat, Feb 27, 2021 at 02:19:39PM +0300, Dmitry Osipenko wrote:
+> 03.02.2021 14:18, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+> >> I'll need more time to think about it.
+> >>
+> >=20
+> > How about something like this:
+> >=20
+> > Turn the syncpt_incr field back into an array of structs like
+> >=20
+> > #define DRM_TEGRA_SUBMIT_SYNCPT_INCR_REPLACE_SYNCOBJ=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 (1<<0)
+> > #define DRM_TEGRA_SUBMIT_SYNCPT_INCR_PATCH_DYNAMIC_SYNCPT=C2=A0=C2=A0=
+=C2=A0 (1<<1)
+> >=20
+> > struct drm_tegra_submit_syncpt_incr {
+> > =C2=A0=C2=A0=C2=A0=C2=A0/* can be left as zero if using dynamic syncpt =
+*/
+> > =C2=A0=C2=A0=C2=A0=C2=A0__u32 syncpt_id;
+> > =C2=A0=C2=A0=C2=A0=C2=A0__u32 flags;
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0struct {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 syncobj;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 value;
+> > =C2=A0=C2=A0=C2=A0=C2=A0} fence;
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0/* patch word as such:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * *word =3D *word | (s=
+yncpt_id << shift)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > =C2=A0=C2=A0=C2=A0=C2=A0struct {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 gather_offset_words;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __u32 shift;
+> > =C2=A0=C2=A0=C2=A0=C2=A0} patch;
+> > };
+> >=20
+> > So this will work similarly to the buffer reloc system; the kernel
+> > driver will allocate a job syncpoint and patch in the syncpoint ID if
+> > requested, and allows outputting syncobjs for each increment.
+>=20
+> I haven't got any great ideas so far, but it feels that will be easier
+> and cleaner if we could have separate job paths (and job IOCTLS) based
+> on hardware generation since the workloads a too different. The needs of
+> a newer h/w are too obscure for me and absence of userspace code,
+> firmware sources and full h/w documentation do not help.
+>=20
+> There still should be quite a lot to share, but things like
+> mapping-to-channel and VM sync points are too far away from older h/w,
+> IMO. This means that code path before drm-sched and path for job-timeout
+> handling should be separate.
+>=20
+> Maybe later on it will become cleaner that we actually could unify it
+> all nicely, but for now it doesn't look like a good idea to me.
 
-I agree with Thierry's point.
+Sorry for jumping in rather randomly here and elsewhere, but it's been a
+long time since the discussion and I just want to share my thoughts on a
+couple of topics in order to hopefully help move this forward somehow.
 
-> All of that said, I wonder if perhaps hierarchical IRQ domains can
-> somehow be used for this. We did something similar on Tegra not too long
-> ago for wake events, which are basically IRQs exposed by a parent IRQ
-> chip that allows waking up from system sleep. There are some
-> similarities between that and GTE in that the wake events also map to a
-> subset of GPIOs and IRQs and provide additional functionalities on top.
-> 
-> I managed to mess up the implementation and Marc stepped in to clean
-> things up, so Cc'ing him since he's clearly more familiar with the topic
-> than I am.
-> 
-> Thierry
-> 
+For UAPI, "unifying it later" doesn't really work. So I think the only
+realistic option is to make a best attempt at getting the UABI right so
+that it works for all existing use-cases and ideally perhaps even as of
+yet unknown use-cases in the future. As with all APIs this means that
+there's going to be a need to abstract away some of the hardware details
+so that we don't have to deal with too many low-level details in
+userspace, because otherwise the UAPI is just going to be a useless
+mess.
+
+I think a proposal such as the above to allow both implicit and explicit
+syncpoints makes sense. For what it's worth, it's fairly similar to what
+we had come up with last time we tried destaging the ABI, although back
+at the time I'm not sure we had even considered explicit syncpoint usage
+yet. I think where reasonably possible this kind of optional behaviour
+is acceptable, but I don't think having two completely separate paths is
+going to help in any way. If anything it's just going to make it more
+difficult to maintain the code and get it to a usable state in the first
+place.
+
+Like I said elsewhere, the programming model for host1x hasn't changed
+since Tegra20. It's rather evolved and gained a couple more features,
+but that doesn't change anything about how userspace uses it.
+
+Thierry
+
+--bT23De0RLxIkDAxt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaMcQACgkQ3SOs138+
+s6FXMg/+OoxiDkzLNCWvfj4075ct69q562Xn3EfEzFu+x7RvJm0G0c+A0nPLk9xc
+nQAxU8k8lxVTffvTtdHcdSROD2hX3gzB/o/IQay0bxH1CF2XaPqTWVzabCEO7xV8
+5FLFhVz1Xlntk0WVHJmgX0zsdSxvZt8oxlpOiXTYCQzE8MWGnB5Nmt9lOAZn93WU
+immLob8p5ku3121pMBufZ5oGcrTDYsR+zzjqntzug9jI0Jw0SAPZbnvQko2ZcH3f
+Yfzo/5+RnI84lqy8zfrxRbLt92WJ1kAvkI4OT35GES421P3gp/B/0zSEaxMNNVUM
+Ilx1JIRYn8rNaCX+Gg/DWGzHTq3Sj5AeoSPdmDb8HCWUcDlRIOKrWHtj/zK8Sh5X
+eQZXBa7QrliiQA8SvjNkmuPjB72vLuevEbkLvlYiE6DzBmza6a5iqFoQdoDhKmjJ
+U24CJlQF4ANDA9elkUuFZrUqw2crHSdAsL67jXDXiXGmICNaywzwd3xmEFQiFFsI
+9N2UxY88J0uMWxFCq1tUkorcBKGb20X58sY9WPcV5vTUQxnT1ek1QvQHMlbkzaZw
+X8bzwk6EA7Bxp9e8tGXnI3pzZjVo6IoB9MWrI6RSrQGv7noODRGkxC33LT6xVXOb
+ye0aypnBMjflChz30IFpj7Z4DnA30f4YSwF9aOii4seP3xo2Ww0=
+=5OHQ
+-----END PGP SIGNATURE-----
+
+--bT23De0RLxIkDAxt--
