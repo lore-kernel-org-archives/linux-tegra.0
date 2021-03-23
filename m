@@ -7,194 +7,117 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E23C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1000FC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD13619BB
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D94A2619C0
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233150AbhCWQoa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 12:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50230 "EHLO
+        id S233186AbhCWQtv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 12:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233267AbhCWQoO (ORCPT
+        with ESMTP id S233238AbhCWQtY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 12:44:14 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6C0C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:44:13 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id jy13so28168034ejc.2
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:44:13 -0700 (PDT)
+        Tue, 23 Mar 2021 12:49:24 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B0BC061763
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:49:23 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id w18so24287331edc.0
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=JFwiBDI03duxQyQ1RvD0yrgjasm6x8x24UVjjZR+I18=;
-        b=IoUkhJi06BNiMCqRZmKha3Lcv+EyMQRtCxonngH0KQovHZPnxR1DnQSWiIFote2kqv
-         m/SVLv3udn+yQn6VA9o5bBmNWBDkDm23X5JKltXGjiZOsnBPpkbHK5lPcpV+qvaPBRAD
-         lA27s0J0VHWZ5lfmyR3Ym05DHRlXUEfhR3VJRvxHpNJ0MITA1aT0+mjcqMveIEFsegsC
-         5C3nH+Ni6O1lOhwH28Dthw9XFStqOWEoiKCleY0JqE/CW28QycMmC2El/eG5fn/5ZUWU
-         Vfj2fixwAVORQWmEjz2q+NaaP4HteCk0UA16KsaWDNsbPBZ+UridEI2ZF5ccDCbGddwO
-         yy6g==
+        bh=iIst2vNUuR9o1HS8SwPrAaScoswSlCZZ25v5hTCN338=;
+        b=KvK4BWg/abYVDAS6lhUQLj0Mh49P6oKeGYyJKr+u4XEMSGrdCFC3EFn390dqyiVWTY
+         u17CuDCkEtxYsUULX7IvtJgLiPYleWNL37H+MOenDj6BwQBEvr2duevSaJJQd+fRy8AU
+         HixlSDg+DHtRJvv3sK5MkdFjns9H5YwMJk5JrCY4N3NMuvEIlbj2NoTLJF6hPsOLiRq/
+         0KUAi7Op7xy8ptVt/HCX36rE/YrhA656Zv4Lb5V3F+W3cwVQtb+Sb+t1b71HA8TqN3Fg
+         Dcc6iqgojZxiLuaEQA0aS7Q5QELzoPP2RcPUFJNZdOokRffIq2bVxD+ZK5qOxHJW3L7g
+         sqoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JFwiBDI03duxQyQ1RvD0yrgjasm6x8x24UVjjZR+I18=;
-        b=PdnoCT8Ksm37k3yXgY9gwj1rmFrRvWbXqxtiMmNodbdSdqa0e/oR3wCOx2PwvCqFN8
-         IJ/PpJ8HwchOwfG9fMQCio3HRIsQGt8kK4Uiz8Kk0vomL3A9w7ipGdq0XjTGDZXzGWj6
-         grQa+licR3R+TOnu8HToyBF3wwYL1pcDpBSIBPlEee2ykAgJsUOcqtVfY6LZcxkuKrFI
-         Z65NNfF21tHywjPXa8NRryIS1MPiVF3ViHhBgU4TVxJmv3YFn6kiUBqdMKUwve8hrYku
-         g7Nlup6TMs7xNDXS/tx1rdnd/JOfKkEvZ6pLIP1fjO6sIfuXS4t76ISGni+PFHw+Nx4J
-         3Zcw==
-X-Gm-Message-State: AOAM5322CCOnXXbnkkMAv7v2xLs1mCsI7BeF36JVH2xhC625qecQfIV0
-        gJBFvk097egOtHUV6pRd4+v17cHEi7E=
-X-Google-Smtp-Source: ABdhPJzqs1v0uk+LMtZymgfRDsaBOvnPlz5o/EIjRG7cSd6s7YGBHF2EkD1c5RZxumrXXABBJVkzag==
-X-Received: by 2002:a17:907:76b6:: with SMTP id jw22mr5741411ejc.11.1616517852343;
-        Tue, 23 Mar 2021 09:44:12 -0700 (PDT)
+        bh=iIst2vNUuR9o1HS8SwPrAaScoswSlCZZ25v5hTCN338=;
+        b=XlIQYhM4jjN52gpJSGOallxq0uoYVLWgjuLC7ze5ldwoFFKPGrJlI6KttC95nCxDMC
+         99iTUY7R3gyVBelqRiqwPHOSC/SWyYVK4+85xAqjpdJhoLh5+RFaFFre3eRf24SMi9Jk
+         +bCtn38GT6t607uN7p+1Fb8Kvbip6899J4y9HSq2f2AEkyq/5wQivABJ8SHzrDmdbyQP
+         JjgwBEcz8LNqbgkaJhT8u+Zf0r3MsPrC2zN6YWj+9GRt0T7DM/8wKgsQf/99hlbpqjG/
+         c86s4OtEyqy1r3Z3fM20OQWHuDWfUZM4VGrYudHxTlC93gq0fsJP6gJx/S2kzwqzeoDG
+         toLg==
+X-Gm-Message-State: AOAM533Hlj0tYLrRG669cUKZ/klnavHJiSj1d4AcB0xhb1Yhn8XsUml9
+        hRO5SsJYOyJK5ayMaXFDavw=
+X-Google-Smtp-Source: ABdhPJyAroDMsy9lYDJuW292LQrc5eHTY4Tj7ifSEn1o8ZA2ls+EEiXsQJkuM8GhNfbd9J1GLnOo8w==
+X-Received: by 2002:a05:6402:1c98:: with SMTP id cy24mr5494989edb.296.1616518162361;
+        Tue, 23 Mar 2021 09:49:22 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id gj13sm11500185ejb.118.2021.03.23.09.44.02
+        by smtp.gmail.com with ESMTPSA id u59sm13706511edc.73.2021.03.23.09.49.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 09:44:02 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 17:44:23 +0100
+        Tue, 23 Mar 2021 09:49:21 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 17:49:42 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
-        talho@nvidia.com, bhuntsman@nvidia.com,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 15/21] drm/tegra: Add new UAPI to header
-Message-ID: <YFoa57HBFpDu119Y@orome.fritz.box>
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-16-mperttunen@nvidia.com>
- <a0fdac0d-88cf-6eda-6611-fca951253060@gmail.com>
- <cc746d91-e6b2-53d8-17ff-59cbc8bb522f@kapsi.fi>
- <a51f7552-cec6-efe1-25dd-76422ef7a3e4@gmail.com>
- <d76c465a-7f07-88c4-0dc3-4be3cb212fcf@kapsi.fi>
- <YFnfYsfYaKfSGhon@orome.fritz.box>
- <0cc2ec5c-f8aa-ed45-92b6-32f9eadbdc5a@gmail.com>
+To:     Simon Ser <contact@emersion.fr>
+Cc:     David Airlie <airlied@linux.ie>, James Jones <jajones@nvidia.com>,
+        dri-devel@lists.freedesktop.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/9] drm/fourcc: Add macro to check for the modifier
+ vendor
+Message-ID: <YFocJrHaB3N1Gudt@orome.fritz.box>
+References: <20210323155437.513497-1-thierry.reding@gmail.com>
+ <20210323155437.513497-2-thierry.reding@gmail.com>
+ <cEyRtluqBdulJxqLBLGpza4_rFKfTtmboo04l2mUFzjOcxGcILAbxPsLVmqQrMrAC0--VT7V_9rgVtvgbW3jLejGf-V8gpnMO10QHK9GtSQ=@emersion.fr>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VncfkK1az1lmuVnP"
+        protocol="application/pgp-signature"; boundary="EnrfyH8bJj4R/c8p"
 Content-Disposition: inline
-In-Reply-To: <0cc2ec5c-f8aa-ed45-92b6-32f9eadbdc5a@gmail.com>
+In-Reply-To: <cEyRtluqBdulJxqLBLGpza4_rFKfTtmboo04l2mUFzjOcxGcILAbxPsLVmqQrMrAC0--VT7V_9rgVtvgbW3jLejGf-V8gpnMO10QHK9GtSQ=@emersion.fr>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---VncfkK1az1lmuVnP
-Content-Type: text/plain; charset=utf-8
+--EnrfyH8bJj4R/c8p
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 23, 2021 at 05:00:30PM +0300, Dmitry Osipenko wrote:
-> 23.03.2021 15:30, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Thu, Jan 14, 2021 at 12:34:22PM +0200, Mikko Perttunen wrote:
-> >> On 1/14/21 10:36 AM, Dmitry Osipenko wrote:
-> >>> 13.01.2021 21:56, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>> On 1/13/21 8:14 PM, Dmitry Osipenko wrote:
-> >>>>> 11.01.2021 16:00, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>>>> +struct drm_tegra_submit_buf {
-> >>>>>> +=C2=A0=C2=A0=C2=A0 /**
-> >>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @mapping_id: [in]
-> >>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 *
-> >>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Identifier of the mapping to use in th=
-e submission.
-> >>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
-> >>>>>> +=C2=A0=C2=A0=C2=A0 __u32 mapping_id;
-> >>>>>
-> >>>>> I'm now in process of trying out the UAPI using grate drivers and t=
-his
-> >>>>> becomes the first obstacle.
-> >>>>>
-> >>>>> Looks like this is not going to work well for older Tegra SoCs, in
-> >>>>> particular for T20, which has a small GART.
-> >>>>>
-> >>>>> Given that the usefulness of the partial mapping feature is very
-> >>>>> questionable until it will be proven with a real userspace, we shou=
-ld
-> >>>>> start with a dynamic mappings that are done at a time of job submis=
-sion.
-> >>>>>
-> >>>>> DRM already should have everything necessary for creating and manag=
-ing
-> >>>>> caches of mappings, grate kernel driver has been using drm_mm_scan =
-for a
-> >>>>> long time now for that.
-> >>>>>
-> >>>>> It should be fine to support the static mapping feature, but it sho=
-uld
-> >>>>> be done separately with the drm_mm integration, IMO.
-> >>>>>
-> >>>>> What do think?
-> >>>>>
-> >>>>
-> >>>> Can you elaborate on the requirements to be able to use GART? Are th=
-ere
-> >>>> any other reasons this would not work on older chips?
-> >>>
-> >>> We have all DRM devices in a single address space on T30+, hence havi=
-ng
-> >>> duplicated mappings for each device should be a bit wasteful.
-> >>
-> >> I guess this should be pretty easy to change to only keep one mapping =
-per
-> >> GEM object.
-> >=20
-> > The important point here is the semantics: this IOCTL establishes a
-> > mapping for a given GEM object on a given channel. If the underlying
-> > implementation is such that the mapping doesn't fit into the GART, then
-> > that's an implementation detail that the driver needs to take care of.
-> > Similarly, if multiple devices share a single address space, that's
-> > something the driver already knows and can take advantage of by simply
-> > reusing an existing mapping if one already exists. In both cases the
-> > semantics would be correctly implemented and that's really all that
-> > matters.
-> >=20
-> > Overall this interface seems sound from a high-level point of view and
-> > allows these mappings to be properly created even for the cases we have
-> > where each channel may have a separate address space. It may not be the
-> > optimal interface for all use-cases or any one individual case, but the
-> > very nature of these interfaces is to abstract away certain differences
-> > in order to provide a unified interface to a common programming model.
-> > So there will always be certain tradeoffs.
+On Tue, Mar 23, 2021 at 04:04:35PM +0000, Simon Ser wrote:
+> Can we instead have a macro/function to get the vendor? This would be
+> useful elsewhere as well, see drmGetFormatModifierVendor in a recent-ish
+> libdrm patch [1].
 >=20
-> For now this IOCTL isn't useful from a userspace perspective of older
-> SoCs and I'll need to add a lot of code that won't do anything useful
-> just to conform to the specific needs of the newer SoCs. Trying to unify
-> everything into a single API doesn't sound like a good idea at this
-> point and I already suggested to Mikko to try out variant with a
-> separated per-SoC code paths in the next version, then the mappings
-> could be handled separately by the T186+ paths.
+> [1]: https://gitlab.freedesktop.org/mesa/drm/-/merge_requests/108/diffs#9=
+1ecb12b27c7154b26013bb95e17a5cc24ea443e_947_947
 
-I'm not sure I understand what you're saying. Obviously the underlying
-implementation of this might have to differ depending on SoC generation.
-But it sounds like you're suggesting having different UAPIs depending on
-SoC generation.
+Either way would work. I chose this because it ends up being much
+shorter than extracting the vendor and comparing to the constant.
+
+Maybe we should just add both?
 
 Thierry
 
---VncfkK1az1lmuVnP
+--EnrfyH8bJj4R/c8p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaGuMACgkQ3SOs138+
-s6Fx4xAAmXi0XiBpe9CgWAt00xt6Fx95E6GuvNJcpO7CPMQKCiy5VsCLrgjZQQ3q
-WqCbeEewcI4UiDmAitSm0V34uLDLXX44KFod4dAvZog/PkQBTwfmFpAKMzExPWoC
-y+ZGkQZ2OmvJjfyUbrkbOl2/GqvqBLOv+EVDVjJ28AtrTMD4FiGubgfSy5wOuNFq
-PXVXNQu5yhGUUfcTXX/tEXI5h7Np4VjgON1Q9ICZVb9jADe5BTpYjUBtLrUhxWkL
-Z6bCs4VPnwDZeWz5m1XsQX0gFD1ULMZ6DmTeJJQcE4wSl5zkXnd0J+DWP0J0Qnzf
-NaXjIZ0BZPp/XOleX+kBDsB9A3TrgVaWb4l2yXb+oaIvecwXnTPkgvSxwfQdwgy7
-XPcJX0XgtyVL0TjzSgBadaZO4xNQB6kMCPEVNfVK5tQiYSVaMwJgnlJzQRFdsuJa
-J+MgIoMRmC0HXx8QHESRDPDrLyIYgzm4USFBoUcXQ65yiYP0eIpM5AW1kwirQDG/
-3jYXiGbNEuxYvBMLMP5Wo0ViqVT0xEUX22ijdnFtBSiZdCZPydPFOFs+q4UmHKOP
-RhCUNVt+asblBjF5wu5WlCJZ5/Rq/A+tQsrB+HijGoS37+rPO6Jinii1Rx/IYZyY
-pbDCW8+ytBwd+2wnpCAujkzrqF8Ss6bAljqKqxJNwomN1YWAZ2A=
-=bEyR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaHCUACgkQ3SOs138+
+s6G/LhAAj35SCy/UYCTDvzLBrqVrHxBeQuXbVxVmSD5jF7SB8/uaUBryWKp1N8bO
+je+9gjkk+UHaeEcbCn6ChZWOGKEP0+5Hwr9nj6tDB+d1M5xkXFYmuyzZgGaoJYTU
++GWX4BnmePGH6IFWQpGNi6WbJXdRp4hZa46cgvCK3JhDrju+1ypUy9bXpu+oZOxW
+TzmeHUUUoNpCAHK8txuLCwcTYqxCpHcosGMQHVOfPKp8Els9hK/cQAQCW7fSrfBU
+097/oB3XudGZnpzjlQtIJ2DP9hEzMS+Fyg/fxoc60RqnluxntwF9mZd3uZJB+xzJ
+UnNjwxOyXWCF1LsJwmLKWJLcPEC/h3Bz+MlGxj5C7M+8k55+luOQdy80JthPDU1b
+hj2OYsiNDFzBAc7lvk9HKMY7IMbIfWJzrd1/gipXDthT09En+g4P3kD66tzt1CBi
+aKOHEmp+lUt9Yt/cL1mE3QZggECjlQ3JshNHMIofiPGeD63F+xdF0dh/yKQNGvaz
+tsWCKlVA8ROIoCbm4t2ZUR6W81KmFv9eUDAPjeVLNnuwnJedgdCncApLvRNzGo/g
+DvwsGigR76XawoQNTkDLi/lr7LejGWtb13k0ATm0an4cbXgp1YCTEbfEKUhmjNqW
+2miDOv6s5gYDRtm41IMBmJrFVhRf5/e8itlCNVIEQihXaAvsz48=
+=9b/f
 -----END PGP SIGNATURE-----
 
---VncfkK1az1lmuVnP--
+--EnrfyH8bJj4R/c8p--
