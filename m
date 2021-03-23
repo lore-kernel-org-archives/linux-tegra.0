@@ -2,123 +2,150 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECC4C433DB
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA21C433C1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FDED619B1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E47DE619B1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 11:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbhCWLpU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 07:45:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:44578 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229728AbhCWLpN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 07:45:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AC0211B3;
-        Tue, 23 Mar 2021 04:45:13 -0700 (PDT)
-Received: from [10.57.50.37] (unknown [10.57.50.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 217AD3F7B4;
-        Tue, 23 Mar 2021 04:45:08 -0700 (PDT)
-Subject: Re: [PATCH v2 12/15] PCI/MSI: Let PCI host bridges declare their
- reliance on MSI domains
-To:     Marc Zyngier <maz@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Frank Wunderlich <frank-w@public-files.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-References: <20210322184614.802565-1-maz@kernel.org>
- <20210322184614.802565-13-maz@kernel.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6a2eaa5d-1d83-159f-69e5-c9e0a00a7b50@arm.com>
-Date:   Tue, 23 Mar 2021 11:45:02 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S230165AbhCWLze (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 07:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230078AbhCWLzR (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Mar 2021 07:55:17 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC06C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:55:16 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id bx7so23086888edb.12
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 04:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OmjKsrSUkMAiio37jMcTJDOa+opJ8luWoB+3g0zIs3w=;
+        b=umVjL9x25EitIe3xbYipYvezjGixLcmj+s9CW6Se/Nw65qisVuUgPKPFZr+LnSVrta
+         FqcB1CGmOYFe0BCTtOc6/R3jm8rjKGzXAvDvhZsWl8Tn0ctbA1hHyDPns2gaa9OmV6+9
+         JWK+sp47Z9c4VoD9BivDlscB2FOQa8kTNYE6a090ob2xtpwOn36nTkaJAnWoxUSIf9Bd
+         Z/QswUYtMMXwyQpcEcIswUULmOol3weoStQTbMDctafy2gD0wz8s0omas8j259kzzH7m
+         s98dMjsg7JP33ZiRNJ/HWuSP2JD9cJb1ynAdysUnTdoJm3lVfMGYx1f9B/aPBt77gjqQ
+         mbhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OmjKsrSUkMAiio37jMcTJDOa+opJ8luWoB+3g0zIs3w=;
+        b=a+chcDP4wFy2FgYX0/ngP0R1eUaOEaVd1xl+Ewdab1Z/v7Jq+LvQsRcelA0PN18oRZ
+         hw78pb+ljZLmxQGYYzK6FvJPc2v+p954nEgB5w/S69+XxoOUmxe+FM4zUnZMBJAVZ6BM
+         kBqisXKwIzM52n2HwvrvvlZfz5ID2q52D63dVQk/fZ9FTFbY4VRN9/jZHOlF5jh42geY
+         g9+6dMLczEntR4u8q0YWpQv8Mmvp3z+M7yuj3BKKKxmk0gMz+D7iZvbemvt84mcTxNiN
+         LvkxN0lo31+Zvmu7C9/90AV3gM/9ykOVfLP45p8XpgF8wAzCUNKWtRYLU61UXoR47qBx
+         Fx4Q==
+X-Gm-Message-State: AOAM530UUXt2Bt+KA/UasQ5hSCoyMaudZFqGsuOBp+J0vZH4vSh+2EI0
+        CA7m/teOpKJYBG50/ctakzEZXT6WLlI=
+X-Google-Smtp-Source: ABdhPJwnsgSQN3rBdLXYKbcSOYEsQm4CP13DQ5DyHUfr2wfO0XZomdBxo15acguqtJyoO14+tWjkuA==
+X-Received: by 2002:a05:6402:13ca:: with SMTP id a10mr4195810edx.320.1616500515229;
+        Tue, 23 Mar 2021 04:55:15 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id x21sm12695275eds.53.2021.03.23.04.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 04:55:14 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 12:55:34 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     jonathanh@nvidia.com, digetx@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, talho@nvidia.com,
+        bhuntsman@nvidia.com
+Subject: Re: [PATCH v5 11/21] gpu: host1x: Add job release callback
+Message-ID: <YFnXNs5vFb+tiwzh@orome.fritz.box>
+References: <20210111130019.3515669-1-mperttunen@nvidia.com>
+ <20210111130019.3515669-12-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20210322184614.802565-13-maz@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FjkUz4QETBgSyCZ4"
+Content-Disposition: inline
+In-Reply-To: <20210111130019.3515669-12-mperttunen@nvidia.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 2021-03-22 18:46, Marc Zyngier wrote:
-> The new 'no_msi' attribute solves the problem of advertising the lack
-> of MSI capability for host bridges that know for sure that there will
-> be no MSI for their end-points.
-> 
-> However, there is a whole class of host bridges that cannot know
-> whether MSIs will be provided or not, as they rely on other blocks
-> to provide the MSI functionnality, using MSI domains.  This is
-> the case for example on systems that use the ARM GIC architecture.
-> 
-> Introduce a new attribute ('msi_domain') indicating that implicit
-> dependency, and use this property to set the NO_MSI flag when
-> no MSI domain is found at probe time.
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+
+--FjkUz4QETBgSyCZ4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jan 11, 2021 at 03:00:09PM +0200, Mikko Perttunen wrote:
+> Add a callback field to the job structure, to be called just before
+> the job is to be freed. This allows the job's submitter to clean
+> up any of its own state, like decrement runtime PM refcounts.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->   drivers/pci/probe.c | 2 +-
->   include/linux/pci.h | 1 +
->   2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 146bd85c037e..bac9f69a06a8 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -925,7 +925,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
->   	device_enable_async_suspend(bus->bridge);
->   	pci_set_bus_of_node(bus);
->   	pci_set_bus_msi_domain(bus);
-> -	if (bridge->no_msi)
-> +	if (bridge->no_msi || (bridge->msi_domain && !bus->dev.msi_domain))
->   		bus->bus_flags |= PCI_BUS_FLAGS_NO_MSI;
->   
->   	if (!parent)
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 48605cca82ae..d322d00db432 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -551,6 +551,7 @@ struct pci_host_bridge {
->   	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
->   	unsigned int	size_windows:1;		/* Enable root bus sizing */
->   	unsigned int	no_msi:1;		/* Bridge has no MSI support */
-> +	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
+>  drivers/gpu/host1x/job.c | 3 +++
+>  include/linux/host1x.h   | 4 ++++
+>  2 files changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> index 8f59b34672c2..09097e19c0d0 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -79,6 +79,9 @@ static void job_free(struct kref *ref)
+>  {
+>  	struct host1x_job *job =3D container_of(ref, struct host1x_job, ref);
+> =20
+> +	if (job->release)
+> +		job->release(job);
+> +
+>  	if (job->waiter)
+>  		host1x_intr_put_ref(job->syncpt->host, job->syncpt->id,
+>  				    job->waiter, false);
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index 81ca70066c76..d48cab563d5c 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -265,6 +265,10 @@ struct host1x_job {
+> =20
+>  	/* Fast-forward syncpoint increments on job timeout */
+>  	bool syncpt_recovery;
+> +
+> +	/* Callback called when job is freed */
+> +	void (*release)(struct host1x_job *job);
+> +	void *user_data;
 
-Aren't these really the same thing? Either way we're saying the bridge 
-itself doesn't handle MSIs, it's just in one case we're effectively 
-encoding a platform-specific assumption that an external domain won't be 
-provided. I can't help wondering whether that distinction is really 
-necessary...
+It's not clean to me what the user_data is used for. It's not used in
+this patch at all, but perhaps it'll become relevant later on. I guess
+I'll see.
 
-Robin.
+Thierry
 
->   
->   	/* Resource alignment requirements */
->   	resource_size_t (*align_resource)(struct pci_dev *dev,
-> 
+--FjkUz4QETBgSyCZ4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBZ1zQACgkQ3SOs138+
+s6EmMQ/9FEDZm2BCmhv9tgumtdiYseMe1QXqFBsAMXgo6rpsxNvYK5JW+5MxfxP/
+viwM32tLpdSYhlheymRFAdMt59xsOewsL9Aa+uKPIFkrl1OdTwUatj4a8XAI7dKB
+HU5pe5Rw/eTqOjzw1QDKKfPznW9xq5sHZ0i52AoPI9k0nDZpTen3RqYXijMl+Al6
+joWUF0NOcYQH+yEOrem1fFBr8UhdcIyTpFwAlyvKr16l4ZQO00Ph+W/0Q8zis58v
+cvH1d+MP3Kk7IrC1T9Wg/zQKC5lOhTAEd7dIeiezVpTAzSqvQ3vk6VEGDXwFKHCa
+zl+p+VbLh3qr+Dp5nP7h15+kqOZWnz7VevV/wSDKHyveDpouLxThoX58vSD96JCe
+RbVwTgjkAFzBVFkHTijeTG+MItbUcNl5PDz4scYI8Wl/NKfFBCiqi0jLJNTOeH7f
+3qoKctVHJUenre8zrZyXYsTgtk5TF65vq/+e4RPE1A145qej9AwVk0UbRBMDxEIj
+TlQckBUQw+4LTtBZkU73EeiRqy+jtL3pePWwkI2zPpNDo23C/4g8AFjJo9UouhcI
+09kNmxwI0/c1hX/QeTNAOjCzNNrheAOoqupsp2jErLA/HAFy9OmXyVprl2ny0jDP
+qY2/NDFRWvrKqcsrC2g4gDUZwWCjTBdhfVdPZXdML52OHnzQzHE=
+=//9i
+-----END PGP SIGNATURE-----
+
+--FjkUz4QETBgSyCZ4--
