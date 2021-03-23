@@ -2,137 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A8CC433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB0C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DBF36148E
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 475CD619C0
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 18:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230378AbhCWSYz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 14:24:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43810 "EHLO
+        id S231380AbhCWS0C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 14:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231383AbhCWSYg (ORCPT
+        with ESMTP id S230378AbhCWSZi (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 14:24:36 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABA3C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 11:24:35 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id l18so16398285edc.9
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 11:24:35 -0700 (PDT)
+        Tue, 23 Mar 2021 14:25:38 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D66B4C061574;
+        Tue, 23 Mar 2021 11:25:37 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id o19so24572271edc.3;
+        Tue, 23 Mar 2021 11:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=DUKPGqPelr6tSzZ7Q2lwzMEmrFjU0t9jqA2NIFQX6cY=;
-        b=FsgHyLgwlMVV6JvPqSqqsM7mSoWNMFpLmihx1HNbNoCNwu0x+FPKBVzFgkn0y/Q35r
-         PvjntJwcDF4owFD1CaJZ7eXAfA79aaVSHsBd2VhnUBt1RJXv0e6uxsw6yQ19RqFMoL3Z
-         ThofH4DDOh0VkzsAfS2H9rIfLA4XxlEc0Z+I6/xAnkL0U9QaLinp1qOR4AiRWjxF6cCT
-         7cpYpgpm60U5fI42q9hwFPbnQsH9FGSjgjR21IkGWfd4mcdWuUJ9wj8usCvNSkpJIO9g
-         268sZdjtVwn7zOQszewiyIqHVrxPDg5ZFqLXKm9JLZz98cO7bZUC+E5ZT/YTZ/kmtaAH
-         JMVg==
+        bh=RL/yMvfsbK2kLwVMu3qOXkXrjIz29yMvsOfbsVlvXuk=;
+        b=casirC+q54L+/GDTIVWTQ9+s7i7XGQut4WdeZOSWnaZ/V+F00SrARas3jdyvojt8pR
+         i5DnYJxgvAuTnK9NNC4LpznZSuFwUndPX6qv2FrrETWyHTpYr3N+LEgsMbYJyuo6KrfP
+         v5dHagLwpJ6m1/QruTy4G5cMc0APTvpI6wVElE+nNo5897Pb9s9w78dVEyC1GH91FPD0
+         It9k94nIfdcIcqwYMaH2t9m6kloxlCMN50V7X9yOYQ9Vjf6wQYZ4Jm8kp3JSp7m/zwFk
+         cjmZh7Nq2LgbqrM0OnWVDjyjBXvqPcf2cX1I0k9rby4bLDMr+NtBtXvMvJfRD0N4irMR
+         t8Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DUKPGqPelr6tSzZ7Q2lwzMEmrFjU0t9jqA2NIFQX6cY=;
-        b=YLgZZqwpPPzj4oAlOAu2drDvXle+Gy1ju1IcGbWzH7o7y0RRhwk/QfrTvIijYOBU7P
-         xf6d4FUDvYamivvgJl8tlBNZbbVASNvgkMsVkJ8PLChwE+pru4AYU/S5zVqUUqcMHlTT
-         SBn0uPGi6HutmmepLTTzCxW7BGEQ0wuLu1PqmQfh6Maps5KANJEthDNr9I29qnJ3YD2n
-         pqKZ5/MqNwOQJzK0lzTKxciG9490x3vbGSilOhv+6hZ7BTE/wYJZtmzjiwUfBSuTflnJ
-         aGM3AET18Q4y+dAG6PvmPbiVweSCB3bDbXkVhaWJMAfhM289eNUYQhmSjN5ksdnOhEId
-         yqMw==
-X-Gm-Message-State: AOAM533zSwm43uWdc0mMe/hASaK/Z5p/nwPbA/gpUh+ORWurI24xrerX
-        s+QQX0bmdsYy422454m1C4k=
-X-Google-Smtp-Source: ABdhPJxr1ce9LXBtbs6Bdy96FQGd0gI+bM7cWoJDp/A7uLBBqHisT3Tq2gLoth3moAG5vv67AWgF2Q==
-X-Received: by 2002:aa7:ca04:: with SMTP id y4mr5800890eds.339.1616523874028;
-        Tue, 23 Mar 2021 11:24:34 -0700 (PDT)
+        bh=RL/yMvfsbK2kLwVMu3qOXkXrjIz29yMvsOfbsVlvXuk=;
+        b=W6I1bBrLUnjyToo8ZUAV2iDJBla545ecUtnEXxmE/Gqo4le+nS4AGFqnlws52OoWDg
+         SBSNJCXuzCLxMF6nFjoW5ogfPYXPSEkQFcjco+6xXGBAOXkLfHZFvxLLEQPJaXRagT3g
+         sSE9gqD8Chf4iDmiCqZ37H0RcM2sanQQO06y6o+Bt7ftTWxnlc3wurvCrA7X4qh0UqDO
+         v0im9FYF1z6/5UHSOOu4dAIgJ1QCGVx+O+XaWXIBUcs1Hs+mcdhnQ4aV9kojQ1YAXAof
+         vkSr3SicsfRG07VDnEhL8GkkOwoHodD/FX0al3tsaIkAOE1K2Ozkd1neNiLCAjYobgLE
+         FkMw==
+X-Gm-Message-State: AOAM530C4tyILyL1fRtbFoZwvZxeBXoHkjyKKs9BzS7qKW1rbjSx2ZSd
+        ucHapH6XGTYWA0RKlBdOLkw=
+X-Google-Smtp-Source: ABdhPJydKbSF4UEFWOTRuav/CiK1rgiPR9YcVluCGcIPzynZGxrHESDRplRTFIlyyMnn51IVzU623w==
+X-Received: by 2002:a05:6402:5113:: with SMTP id m19mr6062668edd.78.1616523936651;
+        Tue, 23 Mar 2021 11:25:36 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id yk8sm11557291ejb.123.2021.03.23.11.24.30
+        by smtp.gmail.com with ESMTPSA id si7sm11667903ejb.84.2021.03.23.11.25.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 11:24:30 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 19:24:51 +0100
+        Tue, 23 Mar 2021 11:25:30 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 19:25:51 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, James Jones <jajones@nvidia.com>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/9] drm/tegra: dc: Implement hardware cursor on Tegra186
- and later
-Message-ID: <YFoyc5mdYe/5/Cjn@orome.fritz.box>
-References: <20210323155437.513497-1-thierry.reding@gmail.com>
- <20210323155437.513497-5-thierry.reding@gmail.com>
- <454aea05-ee94-5789-2cab-513342cf7614@gmail.com>
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     rui.zhang@intel.com, daniel.lezcano@linaro.org, amitk@kernel.org,
+        jonathanh@nvidia.com, p.zabel@pengutronix.de,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rdunlap@infradead.org
+Subject: Re: [PATCH] thermal: Fix a typo in the file soctherm.c
+Message-ID: <YFoyrxkZWrHmu8Ll@orome.fritz.box>
+References: <20210305015320.7614-1-unixbhaskar@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b4npARoslvSwQEhi"
+        protocol="application/pgp-signature"; boundary="t3F6Uw8G/Uh7que2"
 Content-Disposition: inline
-In-Reply-To: <454aea05-ee94-5789-2cab-513342cf7614@gmail.com>
+In-Reply-To: <20210305015320.7614-1-unixbhaskar@gmail.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---b4npARoslvSwQEhi
-Content-Type: text/plain; charset=utf-8
+--t3F6Uw8G/Uh7que2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 23, 2021 at 08:57:42PM +0300, Dmitry Osipenko wrote:
-> 23.03.2021 18:54, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > @@ -920,15 +934,42 @@ static void tegra_cursor_atomic_update(struct drm=
-_plane *plane,
-> >  	value =3D tegra_dc_readl(dc, DC_DISP_BLEND_CURSOR_CONTROL);
-> >  	value &=3D ~CURSOR_DST_BLEND_MASK;
-> >  	value &=3D ~CURSOR_SRC_BLEND_MASK;
-> > -	value |=3D CURSOR_MODE_NORMAL;
-> > +
-> > +	if (dc->soc->has_nvdisplay)
-> > +		value &=3D ~CURSOR_COMPOSITION_MODE_XOR;
-> > +	else
-> > +		value |=3D CURSOR_MODE_NORMAL;
-> > +
-> >  	value |=3D CURSOR_DST_BLEND_NEG_K1_TIMES_SRC;
-> >  	value |=3D CURSOR_SRC_BLEND_K1_TIMES_SRC;
-> >  	value |=3D CURSOR_ALPHA;
-> >  	tegra_dc_writel(dc, value, DC_DISP_BLEND_CURSOR_CONTROL);
-> > =20
-> > +	/* nvdisplay relies on software for clipping */
-> > +	if (dc->soc->has_nvdisplay) {
+On Fri, Mar 05, 2021 at 07:23:20AM +0530, Bhaskar Chowdhury wrote:
 >=20
-> But coordinates already should be clipped by
-> drm_atomic_helper_check_plane_state().
+> s/calibaration/calibration/
+>=20
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, and the driver goes on to use the clipped coordinates later on in
-this function.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---b4npARoslvSwQEhi
+--t3F6Uw8G/Uh7que2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaMnMACgkQ3SOs138+
-s6G4lQ//WySL1iNIPfIelEBP0S0+fcEcfH7fnVfQC102GZB/J0oHiwyBYGVb/Z/h
-mrwdqbP8mxTn5HB1L5JfglWTzGF36ultVNZl+ysW7JxAPRey1C9ngQ/KLrNSvt8p
-mCi3Bn1qYIZRrXUsx6fPf8mN6CDLJmsi218aK6XdACG5KgLw6lMfShHnN1+zOJeD
-5tFa/6A9BizX7+4F/5WsaIqpCcPVY2/aYwBY4ZF59KewPDuEJtGsYRb7vbjeICRe
-oowflqGECdhkMH2z+0vXsLFpr7fQ3QRdmuMQWuj8vGAYWPVOBOUC3MYhQ9bZlzv1
-jhHOvie+tmllCOc3oZwvmWUU6eEetTeL+gDFeIPji/L3PfPXs6zQuO0IHtk7h7p1
-O6+Ddrp0LDj+L7YjIdy1SL2j0Vqk7ch4Lp6Qb0/TRGvk6EhOKYT9BsvkcHBLiaca
-0dTyGgqp7kbp2Knb9LNoISCl7sPrPRL4gKyb28DeN1c6IxAGqXm1iKMMcNoxmp6Q
-7FlypJbwNNs6xzLsrU+gRytICdOXmMKwOHoJ6BgrpsIlX2wa6yEFXPsLtEjGkLIc
-W4O/Stv+S2B1CEdqrI01m8IfIWBERFzE31xbGE/bHBWWbB+6nP1MUx6+KSYlwKsc
-xiIn7sX+62DxuKXX6kUJYLFQU6J/vzlKzZGkKrZErqmQh2v6D0g=
-=CiKo
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaMq8ACgkQ3SOs138+
+s6HgrRAAmGguCBaPzSxRoiAWGnB8WW8dtR9aHF6aoz6npvlyb+vXvF2ZdWgM0pAN
+L2jwQSbqkWSDRGurJ2LZzIifOXrKPYc+bcb9geSN56vBFtLfJyY6q6OD1w7y/2VI
+WyCJ/LTWeFigDynt81GEFkZUNcgIxESuddCHHiWKVLN5VKCniNWqDASDdOUXg/pn
+eyNfK9NXygF1VxjFsyyLKbrN1NEdtc/XM85lUVnBao+8WMSOjsk84R2ea/jGCSs/
+q2ZhV0jwYHpp1Vfuh9nWMZzje1HhX4r1QIwTbsqLznagAX6bqBCu4cBEh2DoDG5Z
+/Yxf07kcnXdmqZBPRXnRiHg/d0djQl+KzR/ftGWPfNOP8qlmuPB/WmIbLZuul86z
+rtEm2NQHc6rx6CGMTPjnE8rvGeZACz2ITaxezR1AabbOsj+9Wb+tOSbnKjPEiICo
+KWwY0Yy3WpQn7C2W2Zg1FHhrRV2mAu9sgldIxbg3NnJaHwEoWGkKMF3biOEwZMp8
+JCtRKC8WPoKLkEFzzULoCkPAoikpCH0bcL7XVpdiatSMh5hmrOLXSqVLlyB8MrPC
+MNQUR2xIX5REqIOo37q+eYeLsLgtm79dWkTYzMd0YpSCe64bHkPkSga9FK3GUA4y
+x2+6tz19Gs28io3FkwgveGZBlmTGj/O9lltdeyA61q5epQ3hfTE=
+=s+sR
 -----END PGP SIGNATURE-----
 
---b4npARoslvSwQEhi--
+--t3F6Uw8G/Uh7que2--
