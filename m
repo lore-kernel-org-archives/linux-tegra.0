@@ -6,89 +6,142 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF56C433E1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 22:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC4CC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 22:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0639B619DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 22:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F99A619E6
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 22:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233924AbhCWWix (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 18:38:53 -0400
-Received: from mail-il1-f169.google.com ([209.85.166.169]:45623 "EHLO
-        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233652AbhCWWiZ (ORCPT
+        id S233872AbhCWWsg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 18:48:36 -0400
+Received: from mail-il1-f179.google.com ([209.85.166.179]:45955 "EHLO
+        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233948AbhCWWsb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 18:38:25 -0400
-Received: by mail-il1-f169.google.com with SMTP id v3so19664826ilj.12;
-        Tue, 23 Mar 2021 15:38:25 -0700 (PDT)
+        Tue, 23 Mar 2021 18:48:31 -0400
+Received: by mail-il1-f179.google.com with SMTP id v3so19683639ilj.12;
+        Tue, 23 Mar 2021 15:48:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=m3KU9ojkcc0Xo1iQNgnxQRVgpyEXyiLaxGNp9t3RWAs=;
-        b=Bxj20ifXx4ksaBGoijx9zT1Yp6AkmRkW4V5KBuPqAM3gbulloQsF75cUt9JbiVfTOv
-         N0pma4pVaMGOYOeimbqtvq8JHeFLUnaNaicqxlCG7QAcBpyOsuY+eQRXmsQIxnA0XDde
-         MhpvgLvhIr10Jpo4v8wHmETbmxxD6XlGE0Rsnx+AUB37hTxI7FC3PQdqAKlWL8AytlJx
-         uHI3PLboZIRLUtNrB+7lzQnc2V6tXOLviC7GnmEEoMN5T8VsH/vQm1nqcPr258tk3F5S
-         Garl3SXANdxZlO4UtJqqDYPIf3RWJU8YxmftPTUAH7HIKfqLqKnEwqMPzGZWga1ta/oJ
-         i1nw==
-X-Gm-Message-State: AOAM533xRjnAjkmGwNK1Fqvj/K7CD7vHC1CjSVsrWrfezoMKQE7m4w4O
-        z/PnCEcY/bvUMo+88CmfkIODgdOUAA==
-X-Google-Smtp-Source: ABdhPJwAEp/g8EW3zhRIlMs4bDjQqMp5SSZ/GzMzFmgnA7JOvlwtyJF4TANQsYYlTTs3fyak6xPTng==
-X-Received: by 2002:a92:d912:: with SMTP id s18mr340012iln.230.1616539104740;
-        Tue, 23 Mar 2021 15:38:24 -0700 (PDT)
+        bh=TsbOqS3D7H1UC+Tnkk8G7bx2IsHza5mWPnO8GsklWKo=;
+        b=WmHsLHq3V7meRsMqzLtBMuAZ5ZaIr0jazB8/86xRGctggNbeNAXHqy2dxWqc87mUTt
+         WcH00ScRtNPk+0xS5YBVS5H4y28r9kpqRKJ96zoPkXtooaUFDfgDK0xAbBsw95vsA4k5
+         YxkboJ9DjjqqTfYoEkJEMiBMdemIRwZyBW6t5qSh9qqNwtACkQRSsXnv7KzQZPgAPS40
+         18e63mJDJ98IyvpKRSjQ+jWW7YRJQqt2KzKuJii68kYspWT/m/66hng4I/ZObo3ek86j
+         Mh6/RihsiEoLwHc75rhIaj0hKxY7kPkPjNhLc9ghsW2iNsAn5jzy14O65p1t3ajhuWfY
+         8edw==
+X-Gm-Message-State: AOAM532HF0u6dO+rbakpJJ0ZoO2lda0v8tt5zBGkRriYHqQptkVioNCB
+        92f2d2Ilq0lint0gpgPqZg==
+X-Google-Smtp-Source: ABdhPJwubxZghVsAD0xrIx2feJaWN7kwLC3Dd7y7fDoh64uTD98wo3ioNm0A2TFtyHQkmDvD+tfisw==
+X-Received: by 2002:a05:6e02:2182:: with SMTP id j2mr392128ila.89.1616539710781;
+        Tue, 23 Mar 2021 15:48:30 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id a14sm112381ilm.68.2021.03.23.15.38.22
+        by smtp.gmail.com with ESMTPSA id g16sm130553iln.29.2021.03.23.15.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 15:38:23 -0700 (PDT)
-Received: (nullmailer pid 1475853 invoked by uid 1000);
-        Tue, 23 Mar 2021 22:38:21 -0000
-Date:   Tue, 23 Mar 2021 16:38:21 -0600
+        Tue, 23 Mar 2021 15:48:29 -0700 (PDT)
+Received: (nullmailer pid 1492587 invoked by uid 1000);
+        Tue, 23 Mar 2021 22:48:27 -0000
+Date:   Tue, 23 Mar 2021 16:48:26 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v6 7/7] dt-bindings: clock: tegra: Convert to schema
-Message-ID: <20210323223821.GA1475819@robh.at.kernel.org>
-References: <20210320152648.8389-1-digetx@gmail.com>
- <20210320152648.8389-8-digetx@gmail.com>
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] dt-bindings: power: tegra: Add binding for core
+ power domain
+Message-ID: <20210323224826.GA1490612@robh.at.kernel.org>
+References: <20210314164810.26317-1-digetx@gmail.com>
+ <20210314164810.26317-4-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210320152648.8389-8-digetx@gmail.com>
+In-Reply-To: <20210314164810.26317-4-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, 20 Mar 2021 18:26:48 +0300, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra clock bindings to schema.
+On Sun, Mar 14, 2021 at 07:48:07PM +0300, Dmitry Osipenko wrote:
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Add binding for the core power domain.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
->  .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
->  .../bindings/clock/nvidia,tegra124-car.yaml   | 115 ++++++++++++++++++
->  .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  69 +++++++++++
->  .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
->  .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
->  7 files changed, 184 insertions(+), 352 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+>  .../power/nvidia,tegra20-core-domain.yaml     | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+> new file mode 100644
+> index 000000000000..4692489d780a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/nvidia,tegra20-core-domain.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Core Power Domain
+> +
+> +maintainers:
+> +  - Dmitry Osipenko <digetx@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +allOf:
+> +  - $ref: power-domain.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra20-core-domain
+> +      - nvidia,tegra30-core-domain
+> +
+> +  operating-points-v2:
+> +    description:
+> +      Should contain level, voltages and opp-supported-hw property.
+> +      The supported-hw is a bitfield indicating SoC speedo or process
+> +      ID mask.
+> +
+> +  "#power-domain-cells":
+> +    const: 0
+> +
+> +  power-supply:
+> +    description:
+> +      Phandle to voltage regulator connected to the SoC Core power rail.
+> +
+> +required:
+> +  - compatible
+> +  - operating-points-v2
+> +  - "#power-domain-cells"
+> +  - power-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    power-domain {
+> +        compatible = "nvidia,tegra20-core-domain";
+> +        operating-points-v2 = <&opp_table>;
+> +        power-supply = <&regulator>;
+> +        #power-domain-cells = <0>;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+AFAICT, there's no way to access this 'hardware'?
+
+> +    };
+> -- 
+> 2.30.2
+> 
