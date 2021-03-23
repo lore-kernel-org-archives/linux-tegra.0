@@ -8,69 +8,63 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4BAC433F8
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0E6C433E0
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3E57619DD
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEBC619D1
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 15:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbhCWPzL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 11:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39150 "EHLO
+        id S232823AbhCWP5V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 11:57:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232867AbhCWPym (ORCPT
+        with ESMTP id S233001AbhCWP4z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 11:54:42 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A77C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:42 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id r12so27933891ejr.5
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 08:54:42 -0700 (PDT)
+        Tue, 23 Mar 2021 11:56:55 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57DEC061574;
+        Tue, 23 Mar 2021 08:56:54 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id y6so24065649eds.1;
+        Tue, 23 Mar 2021 08:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Q6m8a91si1cnDHS00dV1ISUdzK3yedRVU6icgkuZGHU=;
-        b=Q4orDcvrrZquj5F1jtTTvlyeIff8xpcVU+my69IV0dCxaBY6hHIxA56UrrFz759dqo
-         aaGNGLpXz7/mt5DpfAyr7Ul/8Q4OjGyek/HI4PDMrkJVikxG96UJiu1h3hrxOVHzpuXw
-         hYOyds1dIoaqgw+8Y35mb00LVzBbuEPrf9OUORPeaq/w0BmXJe1/BOsqaVuTgiU/YFaw
-         ExTmQbsFJZcf+LLX0r2jBn7jCaSLl2Rs3tu/Li5KIG6bjE57Ziktp2prTO3F1V3HWJ3B
-         0aJnxyyOVs7RnJbq2lWBdQEW7uucij4XSTkuHH8z8w+vkuFsO0Dk4h9kDq65CR8gHGFA
-         xEbQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z5Tj5RZrN0i243a4vjp62s31Axnbl+7HM9j4lz54tzo=;
+        b=RRxMZFVjzCjlVEhRi4puR4IwBHEqSAOsL1885yZmq9MSP4e5GIjMbTHzGKZdRdAE3t
+         CQyMY5jqXh186Lc8XKHmmnR4ZJ4VzS8kyJLIEUGNZf2PnUJTtOpZ1wdXm3LVgBJ/P2F5
+         M1w2w/kGbPCPypLweGICTqlqyj4UkcAKGILxLF6X3+3o3nXhGhUNqDKFazrB4Sf3TG0D
+         VWfDqnj3raOZfwewVZyL3LEJgl7YNmZZuFoaRNA3m5QcVKbtb0DFDKnqfcvttA75csW4
+         ZYBvZXR5pXl7BGk558P/MpSBNi5CujNFZ/H6ZMkQpsXaV7Bo/GQdr+e4pdqUOmdlSxzi
+         bGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Q6m8a91si1cnDHS00dV1ISUdzK3yedRVU6icgkuZGHU=;
-        b=kK4S7B4ktinLaba1kBGr+ezY/bgCx8UiV3G13NlBRZKRZ0SY1e759UkU6ghSC9v0iY
-         GeXR6n3wRUZmKj5KIV0rwQpQoGOAgYmlx2l/YlK1MODysLpvjAO2kyECDSLvum/zDAJJ
-         LpaBPrnTqQa2lWDayi3licBOUdYmOde5QEyTx2/coY3KQBjfOju33CKW609Ci2C5uryl
-         eE5FJX/rJGGz1nLGHrU+feN6RerfRIcQ5+VxWWVFji4Tpw7rMkaIFMyWCNuUtBEGumnb
-         r7hObgAxOA/EYJv23zBE/H4l2UsKRpiPNjUuqkpovEm2GYhox3+rnaoKH5xzixYwKgpS
-         eiyg==
-X-Gm-Message-State: AOAM531AcayxOGOmXIo8rfH7DzwBoAiWDYY0j6BdNIXe1cvWxIbfm/hO
-        0AiPNceAPRNs+7Vtf8unlYU=
-X-Google-Smtp-Source: ABdhPJxfuQJuh6/kUUka0VPQxP/G9nXtoUxnnJwM5UDW2NDN2U9c1LQPQr92SZwuPCF20b1g+G1I2w==
-X-Received: by 2002:a17:906:f210:: with SMTP id gt16mr5574600ejb.206.1616514881056;
-        Tue, 23 Mar 2021 08:54:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z5Tj5RZrN0i243a4vjp62s31Axnbl+7HM9j4lz54tzo=;
+        b=ntagLD8gxTGDce76XvJJcLTg0x6TYwkrektgQIG7Jn9cu8QFklnwYVv9pvSgAeRuYx
+         BCKrCThItSZHxeEczyXxlvlmBkLbnidFPLQAm1MC5Z6mh1is+epo0sVKe9YzciQFkQ8M
+         uHOMWnuVLd5fqHp5GHt30umVj4VgK9VPuU43nyDvM9Zx60O1qW85+TqKD6NSif9mAGOJ
+         eefHbgyWxtk7rTAGYOapXGMhqTORQQnkCtW9KnbPQ7HQ7PEEf+QMh3zT8v8WjJ6zelt/
+         6bU0VWagd4krJTzVRJKzgs+DZ5u5bzYCsDuRMKXm/VdchN51xZKvPwAciOWcSeu61xz4
+         FNTA==
+X-Gm-Message-State: AOAM531+yLilqorZF9BOZ8Jr8HA4zwzY4iNwI8Rzdfxcy64bDXV3sOEe
+        9VFGSIsJxwNwMHTdryCFP+k=
+X-Google-Smtp-Source: ABdhPJxh8W+9ELd4KtZYHNOQjTwnlxHoVUzdGiTXeOpgj83LOiYTtMvvevk2BXDntZUvoj4FGkNUeg==
+X-Received: by 2002:aa7:da46:: with SMTP id w6mr5374313eds.40.1616515013663;
+        Tue, 23 Mar 2021 08:56:53 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id g11sm13185863edw.37.2021.03.23.08.54.39
+        by smtp.gmail.com with ESMTPSA id c20sm11453768eja.22.2021.03.23.08.56.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 08:54:40 -0700 (PDT)
+        Tue, 23 Mar 2021 08:56:52 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        James Jones <jajones@nvidia.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 8/9] drm/tegra: Count number of display controllers at runtime
-Date:   Tue, 23 Mar 2021 16:54:36 +0100
-Message-Id: <20210323155437.513497-9-thierry.reding@gmail.com>
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] i2c: tegra: bpmp: Implement better error handling
+Date:   Tue, 23 Mar 2021 16:57:13 +0100
+Message-Id: <20210323155713.513864-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210323155437.513497-1-thierry.reding@gmail.com>
-References: <20210323155437.513497-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -79,103 +73,54 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-In order to be able to attach planes to all possible display controllers
-the exact number of CRTCs must be known. Keep track of the number of the
-display controllers that register during initialization.
+Inspect a message's return value upon successful IVC transaction to
+determine if the I2C transaction on the BPMP side was successful.
+
+Heavily based on work by Timo Alho <talho@nvidia.com>.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dc.c  | 22 ++++++++++++++++++++++
- drivers/gpu/drm/tegra/drm.h |  1 +
- drivers/gpu/drm/tegra/hub.c |  6 ++++--
- 3 files changed, 27 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra-bpmp.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 4262fd9b9a15..927e6f5a2c24 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2081,6 +2081,16 @@ static bool tegra_dc_has_window_groups(struct tegra_dc *dc)
- 	return false;
- }
+diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
+index c0c7d01473f2..c934d636f625 100644
+--- a/drivers/i2c/busses/i2c-tegra-bpmp.c
++++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
+@@ -217,7 +217,32 @@ static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
+ 	else
+ 		err = tegra_bpmp_transfer(i2c->bpmp, &msg);
  
-+static int tegra_dc_early_init(struct host1x_client *client)
-+{
-+	struct drm_device *drm = dev_get_drvdata(client->host);
-+	struct tegra_drm *tegra = drm->dev_private;
+-	return err;
++	if (err < 0) {
++		dev_err(i2c->dev, "failed to transfer message: %d\n", err);
++		return err;
++	}
 +
-+	tegra->num_crtcs++;
++	if (msg.rx.ret != 0) {
++		if (msg.rx.ret == -BPMP_EAGAIN) {
++			dev_dbg(i2c->dev, "arbitration lost\n");
++			return -EAGAIN;
++		}
++
++		if (msg.rx.ret == -BPMP_ETIMEDOUT) {
++			dev_dbg(i2c->dev, "timeout\n");
++			return -ETIMEDOUT;
++		}
++
++		if (msg.rx.ret == -BPMP_ENXIO) {
++			dev_dbg(i2c->dev, "NAK\n");
++			return -ENXIO;
++		}
++
++		dev_err(i2c->dev, "transaction failed: %d\n", msg.rx.ret);
++		return -EIO;
++	}
 +
 +	return 0;
-+}
-+
- static int tegra_dc_init(struct host1x_client *client)
- {
- 	struct drm_device *drm = dev_get_drvdata(client->host);
-@@ -2229,6 +2239,16 @@ static int tegra_dc_exit(struct host1x_client *client)
- 	return 0;
  }
  
-+static int tegra_dc_late_exit(struct host1x_client *client)
-+{
-+	struct drm_device *drm = dev_get_drvdata(client->host);
-+	struct tegra_drm *tegra = drm->dev_private;
-+
-+	tegra->num_crtcs--;
-+
-+	return 0;
-+}
-+
- static int tegra_dc_runtime_suspend(struct host1x_client *client)
- {
- 	struct tegra_dc *dc = host1x_client_to_dc(client);
-@@ -2293,8 +2313,10 @@ static int tegra_dc_runtime_resume(struct host1x_client *client)
- }
- 
- static const struct host1x_client_ops dc_client_ops = {
-+	.early_init = tegra_dc_early_init,
- 	.init = tegra_dc_init,
- 	.exit = tegra_dc_exit,
-+	.late_exit = tegra_dc_late_exit,
- 	.suspend = tegra_dc_runtime_suspend,
- 	.resume = tegra_dc_runtime_resume,
- };
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 34fbcd6abf2f..9a089b93da24 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -56,6 +56,7 @@ struct tegra_drm {
- 
- 	unsigned int hmask, vmask;
- 	unsigned int pitch_align;
-+	unsigned int num_crtcs;
- 
- 	struct tegra_display_hub *hub;
- };
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 617240032c37..500c9d37e654 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -562,9 +562,8 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 	enum drm_plane_type type = DRM_PLANE_TYPE_OVERLAY;
- 	struct tegra_drm *tegra = drm->dev_private;
- 	struct tegra_display_hub *hub = tegra->hub;
--	/* planes can be assigned to arbitrary CRTCs */
--	unsigned int possible_crtcs = 0x7;
- 	struct tegra_shared_plane *plane;
-+	unsigned int possible_crtcs;
- 	unsigned int num_formats;
- 	const u64 *modifiers;
- 	struct drm_plane *p;
-@@ -583,6 +582,9 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 
- 	p = &plane->base.base;
- 
-+	/* planes can be assigned to arbitrary CRTCs */
-+	possible_crtcs = BIT(tegra->num_crtcs) - 1;
-+
- 	num_formats = ARRAY_SIZE(tegra_shared_plane_formats);
- 	formats = tegra_shared_plane_formats;
- 	modifiers = tegra_shared_plane_modifiers;
+ static int tegra_bpmp_i2c_xfer_common(struct i2c_adapter *adapter,
 -- 
 2.30.2
 
