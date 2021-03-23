@@ -2,135 +2,492 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EABBC433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C0AC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6278619B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 16:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6F50619B8
+	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 17:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233343AbhCWQ7C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 12:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53456 "EHLO
+        id S229547AbhCWRDy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 13:03:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbhCWQ66 (ORCPT
+        with ESMTP id S230031AbhCWRDu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 12:58:58 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0F6C061574
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:58:57 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id e14so10057698ejz.11
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 09:58:57 -0700 (PDT)
+        Tue, 23 Mar 2021 13:03:50 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC504C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:03:49 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id e7so24226500edu.10
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Mar 2021 10:03:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=K8L3H/vAHTL3d60mdwS7q9gMIZNzPk9+XxjVTdimH1A=;
-        b=keRDSq/wMC3PsDbyWWw3r/QpXWbtgGuSup7MR1ShEOngseb3aIG5pW576ETx4KlHGj
-         VOMZJxpf3yFm57OIpK8DSSQBvK99vyZXyGcQ7221xBFWnW55j67b4Q0IJ2YlKdlu7AmZ
-         DV22+KyoS1bREu3b8SqfwdSx7r/6OuNvALYN9yGA4+m8xWU6I6nFHOBMOolLFDxp+p7s
-         KyFsgt+/wUFkdiKm1P7VBkf4mWN4N4UszjGVajPGx+CUJXfSVQnzn7ndnL+G0cvxYktA
-         wKdqtB5K0Cd3X7yrAhABsGgQe6Ox16+cIMFoIdU/onD7Iyx8ciYn/i8/OlFcuKdWAzWw
-         Ch6w==
+        bh=adFkLqzzHpthoblLKtQmNHFYR2SQC+gqQfVIf7/hOzs=;
+        b=Wr44zJW1YNq8KBlKItM5vYj88wM4UiGf+odm3lzoOHCitoGF07XXTi1zU+u3btvLi5
+         O68Ou11mLIG3+UXfAZYLCyefop3Jd9/r6/hYV8Qx9OQZHuRKhv8TmjyqFSPKpBjVSy81
+         bcfLHVo1kKmS56KnZmqO/6zKGzEImTGXHGB3IthaU9BaZL+diT77UdycQTXUXb1GGppz
+         twZxz4/Cem8JmO4Jz1VOHOpA9btoHTA7VbNqyS1TpciOfae7MtpuXzi1tiYf8Ftduo3d
+         Jp8wgrbJmVqaeJ0mzlS81H+FQjD850FcGBZIL9iGXdnvX7W9X7KEzeHLppKroe4Bcz7p
+         hWuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K8L3H/vAHTL3d60mdwS7q9gMIZNzPk9+XxjVTdimH1A=;
-        b=a1qgZ/A+Uj/1F/Zwyj/5GMhMK6/Un8kgUHpnZGK541sLQJumthf23wV/ZdQ8eAgZ3+
-         oAtMIsyynJ91oF8ubOAekyKJNc4oRTiQh+upRH0sSuYoRoDhbP4HX0wuacStHiPmyAkN
-         93y4SrjwoiNf2SehI7aeGVi/XHZTwAOCqpb6Y318T0QhH0mp4ySVKZ2BZIb/m/VBZTMl
-         EJtXo+IdDG/pdYkb7ZJdnzOjJXSeZySVFddc16sz2JMnjobP9nvEJhPnPM0jZEWuvJoX
-         Xn6qXQcVyQd6pEyB394XU4ov19jTnpFAQD1jxc+hkTlthrgviX+HV9hGCZRq3PuwDJH6
-         v7kw==
-X-Gm-Message-State: AOAM53037ilSPyE8kuLfyNGj9MfYYPT1jveuOtg2fa+GcKSrtxvh9VeJ
-        C9uVgMG/9tQicQtYONIlaYk=
-X-Google-Smtp-Source: ABdhPJye6ayGRoSPhvIEgccHD345JkHxw/pxhWtCr+vHoywFF9DPsS2o3GvQKbDOZt69uK7GBqlZRA==
-X-Received: by 2002:a17:906:53d7:: with SMTP id p23mr5928477ejo.140.1616518736691;
-        Tue, 23 Mar 2021 09:58:56 -0700 (PDT)
+        bh=adFkLqzzHpthoblLKtQmNHFYR2SQC+gqQfVIf7/hOzs=;
+        b=VcweDyG/DRCpxnEyaj8vP/Ien6vzXuQxfonDXQps6RY1SSh90SAGG3qAPG9lEtDR0l
+         YWfOe4EJH+wABuawhB9JiEHaVnvDsgQaKUkaAhnzy9YXZ/g2mAknLSs9cKOzSyXdizf5
+         6dJU19LAznqieZNmavI3wx0WIPh4EUdCZzaqL1J7mW8BZyExA8ZOAwHUHDH6cxoXBvoF
+         x8Z8bLcjoURnm/4lTwum1glzl+1ZRTyashZyQbPr42mJjGD/rfM3ID+04M7+8qsGUxxp
+         Rn7W5YqUZA6Tyk4zgbsg5a+tkxvuhBYT6kpwq8OssqEGfMuY7jJRN4ld68pi9Py16+I9
+         zlGQ==
+X-Gm-Message-State: AOAM532Bq4DGcrmXbzrvqxLrxytAlCd2ePvxfUe62J/rPbwqvEEIjCkb
+        nEm1YdXsoUxdSjQfuX3TdhQ=
+X-Google-Smtp-Source: ABdhPJyiG0iHWG4fie6XPLD2RHQrk59UnVKpBX+6H0wjyxkoWDtjYwCeKfbs7LxliyllQAADzsWKCA==
+X-Received: by 2002:a05:6402:888:: with SMTP id e8mr5427628edy.51.1616519028567;
+        Tue, 23 Mar 2021 10:03:48 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id si7sm11573652ejb.84.2021.03.23.09.58.55
+        by smtp.gmail.com with ESMTPSA id v22sm11424727ejj.103.2021.03.23.10.03.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Mar 2021 09:58:55 -0700 (PDT)
-Date:   Tue, 23 Mar 2021 17:59:16 +0100
+        Tue, 23 Mar 2021 10:03:46 -0700 (PDT)
+Date:   Tue, 23 Mar 2021 18:04:07 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, talho@nvidia.com,
-        bhuntsman@nvidia.com
-Subject: Re: [PATCH v5 19/21] drm/tegra: Implement new UAPI
-Message-ID: <YFoeZGptRcu6sism@orome.fritz.box>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
+        digetx@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        linux-tegra@vger.kernel.org, talho@nvidia.com,
+        bhuntsman@nvidia.com, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 20/21] drm/tegra: Implement job submission part of new
+ UAPI
+Message-ID: <YFofhwT8d6IMsk7U@orome.fritz.box>
 References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-20-mperttunen@nvidia.com>
- <YFnsQNiLg/5I/qKA@orome.fritz.box>
- <494e3858-5b29-0b44-f2eb-7a7cc16ff325@kapsi.fi>
- <2c557b45-f78c-5f49-7f9f-e84edacd4a08@gmail.com>
+ <20210111130019.3515669-21-mperttunen@nvidia.com>
+ <YFnvQYvT7E/kCAuj@orome.fritz.box>
+ <49820423-e3aa-6c99-b92f-3d3ece739ed7@kapsi.fi>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WbMVpstfb2Nz7baa"
+        protocol="application/pgp-signature"; boundary="1ADNrECtd7zFEDrp"
 Content-Disposition: inline
-In-Reply-To: <2c557b45-f78c-5f49-7f9f-e84edacd4a08@gmail.com>
+In-Reply-To: <49820423-e3aa-6c99-b92f-3d3ece739ed7@kapsi.fi>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---WbMVpstfb2Nz7baa
-Content-Type: text/plain; charset=utf-8
+--1ADNrECtd7zFEDrp
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 23, 2021 at 06:00:34PM +0300, Dmitry Osipenko wrote:
-> 23.03.2021 17:43, Mikko Perttunen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>
-> >> FWIW, I would've been fine with stashing all of this into drm.c as well
-> >> since the rest of the UAPI is in that already. The churn in this patch
-> >> is reasonably small, but it would've been even less if this was just a=
-ll
-> >> in drm.c.
+On Tue, Mar 23, 2021 at 04:16:00PM +0200, Mikko Perttunen wrote:
+> On 3/23/21 3:38 PM, Thierry Reding wrote:
+> > On Mon, Jan 11, 2021 at 03:00:18PM +0200, Mikko Perttunen wrote:
+> > > Implement the job submission IOCTL with a minimum feature set.
+> > >=20
+> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > ---
+> > > v5:
+> > > * Add 16K size limit to copies from userspace.
+> > > * Guard RELOC_BLOCKLINEAR flag handling to only exist in ARM64
+> > >    to prevent oversized shift on 32-bit platforms.
+> > > v4:
+> > > * Remove all features that are not strictly necessary.
+> > > * Split into two patches.
+> > > v3:
+> > > * Remove WRITE_RELOC. Relocations are now patched implicitly
+> > >    when patching is needed.
+> > > * Directly call PM runtime APIs on devices instead of using
+> > >    power_on/power_off callbacks.
+> > > * Remove incorrect mutex unlock in tegra_drm_ioctl_channel_open
+> > > * Use XA_FLAGS_ALLOC1 instead of XA_FLAGS_ALLOC
+> > > * Accommodate for removal of timeout field and inlining of
+> > >    syncpt_incrs array.
+> > > * Copy entire user arrays at a time instead of going through
+> > >    elements one-by-one.
+> > > * Implement waiting of DMA reservations.
+> > > * Split out gather_bo implementation into a separate file.
+> > > * Fix length parameter passed to sg_init_one in gather_bo
+> > > * Cosmetic cleanup.
+> > > ---
+> > >   drivers/gpu/drm/tegra/Makefile         |   2 +
+> > >   drivers/gpu/drm/tegra/drm.c            |   2 +
+> > >   drivers/gpu/drm/tegra/uapi/gather_bo.c |  86 +++++
+> > >   drivers/gpu/drm/tegra/uapi/gather_bo.h |  22 ++
+> > >   drivers/gpu/drm/tegra/uapi/submit.c    | 428 ++++++++++++++++++++++=
++++
+> > >   drivers/gpu/drm/tegra/uapi/submit.h    |  17 +
+> > >   6 files changed, 557 insertions(+)
+> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.c
+> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/gather_bo.h
+> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/submit.c
+> > >   create mode 100644 drivers/gpu/drm/tegra/uapi/submit.h
+> > >=20
+> > > diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/M=
+akefile
+> > > index 0abdb21b38b9..059322e88943 100644
+> > > --- a/drivers/gpu/drm/tegra/Makefile
+> > > +++ b/drivers/gpu/drm/tegra/Makefile
+> > > @@ -4,6 +4,8 @@ ccflags-$(CONFIG_DRM_TEGRA_DEBUG) +=3D -DDEBUG
+> > >   tegra-drm-y :=3D \
+> > >   	drm.o \
+> > >   	uapi/uapi.o \
+> > > +	uapi/submit.o \
+> > > +	uapi/gather_bo.o \
+> > >   	gem.o \
+> > >   	fb.o \
+> > >   	dp.o \
+> > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> > > index 6a51035ce33f..60eab403ae9b 100644
+> > > --- a/drivers/gpu/drm/tegra/drm.c
+> > > +++ b/drivers/gpu/drm/tegra/drm.c
+> > > @@ -737,6 +737,8 @@ static const struct drm_ioctl_desc tegra_drm_ioct=
+ls[] =3D {
+> > >   			  DRM_RENDER_ALLOW),
+> > >   	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_UNMAP, tegra_drm_ioctl_channel_unm=
+ap,
+> > >   			  DRM_RENDER_ALLOW),
+> > > +	DRM_IOCTL_DEF_DRV(TEGRA_CHANNEL_SUBMIT, tegra_drm_ioctl_channel_sub=
+mit,
+> > > +			  DRM_RENDER_ALLOW),
+> > >   	DRM_IOCTL_DEF_DRV(TEGRA_GEM_CREATE, tegra_drm_ioctl_gem_create,
+> > >   			  DRM_RENDER_ALLOW),
+> > >   	DRM_IOCTL_DEF_DRV(TEGRA_GEM_MMAP, tegra_drm_ioctl_gem_mmap,
+> > > diff --git a/drivers/gpu/drm/tegra/uapi/gather_bo.c b/drivers/gpu/drm=
+/tegra/uapi/gather_bo.c
+> > > new file mode 100644
+> > > index 000000000000..b487a0d44648
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/tegra/uapi/gather_bo.c
+> > > @@ -0,0 +1,86 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/* Copyright (c) 2020 NVIDIA Corporation */
+> > > +
+> > > +#include <linux/scatterlist.h>
+> > > +#include <linux/slab.h>
+> > > +
+> > > +#include "gather_bo.h"
+> > > +
+> > > +static struct host1x_bo *gather_bo_get(struct host1x_bo *host_bo)
+> > > +{
+> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
+se);
+> > > +
+> > > +	kref_get(&bo->ref);
+> > > +
+> > > +	return host_bo;
+> > > +}
+> > > +
+> > > +static void gather_bo_release(struct kref *ref)
+> > > +{
+> > > +	struct gather_bo *bo =3D container_of(ref, struct gather_bo, ref);
+> > > +
+> > > +	kfree(bo->gather_data);
+> > > +	kfree(bo);
+> > > +}
+> > > +
+> > > +void gather_bo_put(struct host1x_bo *host_bo)
+> > > +{
+> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
+se);
+> > > +
+> > > +	kref_put(&bo->ref, gather_bo_release);
+> > > +}
+> > > +
+> > > +static struct sg_table *
+> > > +gather_bo_pin(struct device *dev, struct host1x_bo *host_bo, dma_add=
+r_t *phys)
+> > > +{
+> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
+se);
+> > > +	struct sg_table *sgt;
+> > > +	int err;
+> > > +
+> > > +	if (phys) {
+> > > +		*phys =3D virt_to_phys(bo->gather_data);
+> > > +		return NULL;
+> > > +	}
+> > > +
+> > > +	sgt =3D kzalloc(sizeof(*sgt), GFP_KERNEL);
+> > > +	if (!sgt)
+> > > +		return ERR_PTR(-ENOMEM);
+> > > +
+> > > +	err =3D sg_alloc_table(sgt, 1, GFP_KERNEL);
+> > > +	if (err) {
+> > > +		kfree(sgt);
+> > > +		return ERR_PTR(err);
+> > > +	}
+> > > +
+> > > +	sg_init_one(sgt->sgl, bo->gather_data, bo->gather_data_words*4);
+> > > +
+> > > +	return sgt;
+> > > +}
+> > > +
+> > > +static void gather_bo_unpin(struct device *dev, struct sg_table *sgt)
+> > > +{
+> > > +	if (sgt) {
+> > > +		sg_free_table(sgt);
+> > > +		kfree(sgt);
+> > > +	}
+> > > +}
+> > > +
+> > > +static void *gather_bo_mmap(struct host1x_bo *host_bo)
+> > > +{
+> > > +	struct gather_bo *bo =3D container_of(host_bo, struct gather_bo, ba=
+se);
+> > > +
+> > > +	return bo->gather_data;
+> > > +}
+> > > +
+> > > +static void gather_bo_munmap(struct host1x_bo *host_bo, void *addr)
+> > > +{
+> > > +}
+> > > +
+> > > +const struct host1x_bo_ops gather_bo_ops =3D {
+> > > +	.get =3D gather_bo_get,
+> > > +	.put =3D gather_bo_put,
+> > > +	.pin =3D gather_bo_pin,
+> > > +	.unpin =3D gather_bo_unpin,
+> > > +	.mmap =3D gather_bo_mmap,
+> > > +	.munmap =3D gather_bo_munmap,
+> > > +};
+> > > diff --git a/drivers/gpu/drm/tegra/uapi/gather_bo.h b/drivers/gpu/drm=
+/tegra/uapi/gather_bo.h
+> > > new file mode 100644
+> > > index 000000000000..6b4c9d83ac91
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/tegra/uapi/gather_bo.h
+> > > @@ -0,0 +1,22 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > > +/* Copyright (c) 2020 NVIDIA Corporation */
+> > > +
+> > > +#ifndef _TEGRA_DRM_SUBMIT_GATHER_BO_H
+> > > +#define _TEGRA_DRM_SUBMIT_GATHER_BO_H
+> > > +
+> > > +#include <linux/host1x.h>
+> > > +#include <linux/kref.h>
+> > > +
+> > > +struct gather_bo {
+> > > +	struct host1x_bo base;
+> > > +
+> > > +	struct kref ref;
+> > > +
+> > > +	u32 *gather_data;
+> > > +	size_t gather_data_words;
+> > > +};
+> > > +
+> > > +extern const struct host1x_bo_ops gather_bo_ops;
+> > > +void gather_bo_put(struct host1x_bo *host_bo);
+> > > +
+> > > +#endif
+> > > diff --git a/drivers/gpu/drm/tegra/uapi/submit.c b/drivers/gpu/drm/te=
+gra/uapi/submit.c
+> > > new file mode 100644
+> > > index 000000000000..398be3065e21
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/tegra/uapi/submit.c
+> > > @@ -0,0 +1,428 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/* Copyright (c) 2020 NVIDIA Corporation */
+> > > +
+> > > +#include <linux/dma-fence-array.h>
+> > > +#include <linux/file.h>
+> > > +#include <linux/host1x.h>
+> > > +#include <linux/iommu.h>
+> > > +#include <linux/kref.h>
+> > > +#include <linux/list.h>
+> > > +#include <linux/nospec.h>
+> > > +#include <linux/pm_runtime.h>
+> > > +#include <linux/sync_file.h>
+> > > +
+> > > +#include <drm/drm_drv.h>
+> > > +#include <drm/drm_file.h>
+> > > +
+> > > +#include "../uapi.h"
+> > > +#include "../drm.h"
+> > > +#include "../gem.h"
+> > > +
+> > > +#include "gather_bo.h"
+> > > +#include "submit.h"
+> > > +
+> > > +static struct tegra_drm_mapping *
+> > > +tegra_drm_mapping_get(struct tegra_drm_channel_ctx *ctx, u32 id)
+> > > +{
+> > > +	struct tegra_drm_mapping *mapping;
+> > > +
+> > > +	xa_lock(&ctx->mappings);
+> > > +	mapping =3D xa_load(&ctx->mappings, id);
+> > > +	if (mapping)
+> > > +		kref_get(&mapping->ref);
+> > > +	xa_unlock(&ctx->mappings);
+> > > +
+> > > +	return mapping;
+> > > +}
+> > > +
+> > > +static void *alloc_copy_user_array(void __user *from, size_t count, =
+size_t size)
+> > > +{
+> > > +	unsigned long copy_err;
+> > > +	size_t copy_len;
+> > > +	void *data;
+> > > +
+> > > +	if (check_mul_overflow(count, size, &copy_len))
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	if (copy_len > 0x4000)
+> > > +		return ERR_PTR(-E2BIG);
+> > > +
+> > > +	data =3D kvmalloc(copy_len, GFP_KERNEL);
+> > > +	if (!data)
+> > > +		return ERR_PTR(-ENOMEM);
+> > > +
+> > > +	copy_err =3D copy_from_user(data, from, copy_len);
+> > > +	if (copy_err) {
+> > > +		kvfree(data);
+> > > +		return ERR_PTR(-EFAULT);
+> > > +	}
+> > > +
+> > > +	return data;
+> > > +}
+> > > +
+> > > +static int submit_copy_gather_data(struct drm_device *drm,
+> > > +				   struct gather_bo **pbo,
+> > > +				   struct drm_tegra_channel_submit *args)
+> > > +{
+> > > +	unsigned long copy_err;
+> > > +	struct gather_bo *bo;
+> > > +	size_t copy_len;
+> > > +
+> > > +	if (args->gather_data_words =3D=3D 0) {
+> > > +		drm_info(drm, "gather_data_words can't be 0");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (check_mul_overflow((size_t)args->gather_data_words, (size_t)4, =
+&copy_len))
+> > > +		return -EINVAL;
+> > > +
+> > > +	bo =3D kzalloc(sizeof(*bo), GFP_KERNEL);
+> > > +	if (!bo)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	kref_init(&bo->ref);
+> > > +	host1x_bo_init(&bo->base, &gather_bo_ops);
+> > > +
+> > > +	bo->gather_data =3D kmalloc(copy_len, GFP_KERNEL | __GFP_NOWARN);
+> > > +	if (!bo->gather_data) {
+> > > +		kfree(bo);
+> > > +		return -ENOMEM;
+> > > +	}
+> > > +
+> > > +	copy_err =3D copy_from_user(bo->gather_data,
+> > > +				  u64_to_user_ptr(args->gather_data_ptr),
+> > > +				  copy_len);
+> > > +	if (copy_err) {
+> > > +		kfree(bo->gather_data);
+> > > +		kfree(bo);
+> > > +		return -EFAULT;
+> > > +	}
+> > > +
+> > > +	bo->gather_data_words =3D args->gather_data_words;
+> > > +
+> > > +	*pbo =3D bo;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int submit_write_reloc(struct gather_bo *bo,
+> > > +			      struct drm_tegra_submit_buf *buf,
+> > > +			      struct tegra_drm_mapping *mapping)
+> > > +{
+> > > +	/* TODO check that target_offset is within bounds */
+> > > +	dma_addr_t iova =3D mapping->iova + buf->reloc.target_offset;
+> > > +	u32 written_ptr =3D (u32)(iova >> buf->reloc.shift);
+> > > +
+> > > +#ifdef CONFIG_ARM64
+> > > +	if (buf->flags & DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR)
+> > > +		written_ptr |=3D BIT(39);
+> > > +#endif
 > >=20
-> > I think we shouldn't have the uapi in drm.c -- it just makes the file a
-> > bit of a dumping ground. I think drm.c should have the code that relates
-> > to initialization and initial registration with DRM.
+> > Sorry, but this still isn't correct. written_ptr is still only 32-bits
+> > wide, so your BIT(39) is going to get discarded even on 64-bit ARM. The
+> > idiomatic way to do this is to make written_ptr dma_addr_t and use a
+> > CONFIG_ARCH_DMA_ADDR_T_64BIT guard. >
+> > But even with that this looks wrong because you're OR'ing this in after
+> > shifting by buf->reloc.shift. Doesn't that OR it in at the wrong offset?
+> > Should you perhaps be doing this instead:
+> >=20
+> > 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> > 		if (buf->flags & DRM_TEGRA_SUBMIT_BUF_RELOC_BLOCKLINEAR)
+> > 			iova |=3D BIT(39);
+> > 	#endif
+> >=20
+> > 	written_ptr =3D (u32)(iova >> buf->reloc_shift);
+> >=20
+> > ?
 >=20
-> +1 drm.c is already very unmanageable / difficult to follow, it
-> absolutely must be split up.
+> Yes, you are of course right.. will fix this. That might explain some of =
+the
+> VIC test failures I've seen.
+>=20
+> >=20
+> > Also, on a side-note: BLOCKLINEAR really isn't the right term here. I
+> > recently dealt with this for display (though I haven't sent out that
+> > patch yet) and this is actually a bit that selects which sector layout
+> > swizzling is being applied. That's independent of block linear format
+> > and I think you can have different sector layouts irrespective of the
+> > block linear format (though I don't think that's usually done).
+> >=20
+> > That said, I wonder if a better interface here would be to reuse format
+> > modifiers here. That would allow us to more fully describe the format of
+> > a surface in case we ever need it, and it already includes the sector
+> > layout information as well.
+>=20
+> I think having just a flag that enables or disables the swizzling is bett=
+er
+> -- that way it is the responsibility of the userspace, which is where all
+> the engine knowledge is as well, to know for each buffer whether it wants
+> swizzling or not. Now, in practice at the moment the kernel can just look=
+up
+> the format and set the bit based on that, but e.g. if there was an engine
+> that could do the swizzling natively, and we had the format modifier here,
+> we'd need to have the knowledge in the kernel to decide for each chip/eng=
+ine
+> whether to apply the bit.
 
-I guess this comes down to personal preference. I don't find it
-difficult to navigate large files. On the contrary, I find it much more
-challenging to navigate a code base spread over lots and lots of files.
-I don't feel strongly about moving this code into a separate file,
-though, but let's maybe compromise and leave it at that. No need to
-split this out into 5 (or whatever it was) different tiny files that
-the end result of this series seems to yield.
+Fine, let's try it this way. I'm just slightly worried that we'll end up
+duplicating a lot of the same information that we already have in the
+framebuffer modifiers. We made the same mistake a long time ago with
+those odd flags in the CREATE IOCTL and that turned out not to be usable
+at all, and also completely insufficient.
 
 Thierry
 
---WbMVpstfb2Nz7baa
+--1ADNrECtd7zFEDrp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaHmQACgkQ3SOs138+
-s6GLIQ/9E/66+bzKnF4xwqrC2Zve84Kgk623+q9adwsGhabCie9AVHQ1LM2Zg7RK
-CbHQKFEK0zGjlGjIcRO9nb9AYOMPhmi6lDVeP4ROUqNIF5mQlc5TK4BzC7RNF3yw
-uGnDuV3epV1xbC/lV9v6S66jRtlUwG01vSXZVx6VkqGEWHO0P17MKFnznhLBKC+m
-2ygBG5jqzE+EeNufCDpMtBoRbKl2IkMACEAtw5XIvARS1t3HB2KkWBrmoIQEOfnI
-AeW3CiwiF8VWoV3wsUp47CHaoXJsXG8llUxTNg6/5+jL4Jxt1LmkgQmh74k2enfa
-xW+m0BwkuY+ResziT+s3TbOE21H9PonAea0xUbApnOwi84+xNAqxKGUpp4/KksXX
-cfApwWR/uA2mVgPV0Yoj+cc2ols1kPkqOOj6idvYjKi5P51XHMEx14wYskoMSYZQ
-/UwWo4UoOFO7LOjrXcGhYxi5UxXhWGYgZ4a4FTSoCfp0MAiSd+T+k5sGRNRYXoHK
-BXF1r6BAujcDQzHn/gz5JKCIt6E4XWCEdeTkLRo7VJp2mQsJqOgkN9zqVi6yS312
-ZDfa8XDVrXGiPxTCWlxL/2srS/+1b5UIb4qoEKYlRW0cJVe9THWYmYvUrNE4gzcz
-sXOF2bXNS3oH6W049oFeOg3Ix3tld8cP/xL0PIx2M2LOG6YaChE=
-=GtwR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBaH4cACgkQ3SOs138+
+s6GEeg/9GLAnJbpXImko4Bh12lixFOFUPpsNQKmNfeTYUYZCXlRPwiJmiMDESo6l
+01f9pOpyhrJDsHC8GfT1rYB/4kd8DiIJ0zkUfDGnLIj1/d512eT2m2hhvjAKlwci
+ZvdWMH4c2nRo4u3fY93LreXeZF0Xb6CmNEXKJ+S4chXJMvo00SGSeCEw1wcYkKZN
+GmcUy5y02HawT6UuU2u2EOjlQHchM5UdLXhPuTxcy+Dr62ozY2gjUYRsAKlI/yom
+JajLJwb27TF+xuHWU0/JPpsPj/eC5B0XKsPs9sSY5h3+UVkTzYD4bu1Qwv5rcZYj
+DJOjyWHfOKO31vohbI8/bKofDMFnn4A3SYwikUSzyIXM22Bvkw+OjcV1whda6rz4
+0tzr5GGsjI8pnwCirDdgppfcPn/kUb4dZo7iU+eXnmyYJGtHajzo/nMeuu5aGZxd
+B6rHfLvz5hpUU1I8jlBES0Cr96SZIWTdVT/ju9cIcz2/mTLLIx9+qfTLFDQOs42j
+RqfcNkIpseipTuJJH0GbvpAmZ0U/hYk2Din3fsZzMHNZzhw3HtUzwIykMFtgfIv0
+oe2csZyKR6DzaRDAKwETbbcx74P7v5vGQGsiSxYfRCHPz10Yqw1iLaTBD4Uapnz4
+0cPeGzZJW6AzWuz2lqEHWxV9XGj+xyIkmOTXVQPUWMRiCn2iu1w=
+=Dmku
 -----END PGP SIGNATURE-----
 
---WbMVpstfb2Nz7baa--
+--1ADNrECtd7zFEDrp--
