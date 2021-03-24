@@ -2,157 +2,196 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38810C433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FB8C433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05D8561A01
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685FE61A01
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:32:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233465AbhCXNUS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 09:20:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:33700 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234750AbhCXNTs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 09:19:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFA5D1FB;
-        Wed, 24 Mar 2021 06:19:46 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A55263F718;
-        Wed, 24 Mar 2021 06:19:43 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 13:19:38 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 12/15] PCI/MSI: Let PCI host bridges declare their
- reliance on MSI domains
-Message-ID: <20210324131938.GA16722@e121166-lin.cambridge.arm.com>
-References: <20210322184614.802565-1-maz@kernel.org>
- <20210322184614.802565-13-maz@kernel.org>
- <6a2eaa5d-1d83-159f-69e5-c9e0a00a7b50@arm.com>
- <87im5hkahr.wl-maz@kernel.org>
+        id S235341AbhCXNcJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 09:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235230AbhCXNbr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Mar 2021 09:31:47 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA5EDC061763;
+        Wed, 24 Mar 2021 06:31:46 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id x16so24459584wrn.4;
+        Wed, 24 Mar 2021 06:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e8lPC72F11p8PBhBhydD1cx8exsNe0wRkeHr07SpaS0=;
+        b=Qd6dhey0+eCqZPgZmDNub1vuPD1DQoapTBwS3wk3+jDCZeWSdnP0Y5AAjbU299drNM
+         6kD8jiYya5D/VsfV6Weg5j4hPKGm9NnrPKd43h/URiYNB7GjplubzGCNQhvT6XeIu/kR
+         OPiU6wgsG/6NOFJrUMO83IHDmGJIM3lz795bi/EPNfUKPist1Se3v4uPNBe1mZZVrcQL
+         hBP9Ih4Ieei7iQ1+D5S4RKYt427BBd9TJ0tMQbvXd+Sxvat4WUzjmkN33pTiW/qUS9ZD
+         s7cJ7Cql0fn/+l0Vu3i/GW40D3PvJIvyga3d9WVLBMzrn6xTQXSNiK3Drbp4/tjcFzD3
+         7FTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e8lPC72F11p8PBhBhydD1cx8exsNe0wRkeHr07SpaS0=;
+        b=hUO60XoOsvfl6TUwzMB4VKUuwvZjJTxQmk3w8khW3mwFlicxaOk3Dw/XU6UKYX7Y9V
+         tvIw6q0Zar4J9eDUlVpU1+yjV+rhEbVHsDlhjpvEj+StbiExJx0nAkT0Qm72+ororeAZ
+         Xt2FyN4k8hlvSJEJFloXfKsIdrjVbPIaQN9N/lqSlT0ETdE+DkW8TTuMmDQB1NuXLqZb
+         dCGsV2A7D2pAbxvQo7rdseOxsbBBW847Fqkawo1nEOBnqC1CN8uyIly9saYQGc5PYFK3
+         iV8Djm6PpnbfRbzIyEkasTXJNbZU/y6wXFV+yYH73RChFB7k3KpYWORK/MdnRJ8V0Uyr
+         bF1g==
+X-Gm-Message-State: AOAM533p7T6y8uBlwc0lHxXvMnC/a7jYcbhxtlufP5wMoTe8l0rzD+Sx
+        ZbyisRKGexkJinUMpMAFR5w=
+X-Google-Smtp-Source: ABdhPJwQ5C/96loWRd8zxzj/soRRkiEZKgv1bSIwXrCr85ovOzmXRjHk77oA03hDU91UqxWjumjXnw==
+X-Received: by 2002:adf:e5c4:: with SMTP id a4mr3588623wrn.174.1616592705153;
+        Wed, 24 Mar 2021 06:31:45 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id u2sm3322739wrp.12.2021.03.24.06.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Mar 2021 06:31:43 -0700 (PDT)
+Date:   Wed, 24 Mar 2021 14:32:04 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, JC Kuo <jckuo@nvidia.com>, robh@kernel.org,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, nkristam@nvidia.com,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 00/14] Tegra XHCI controller ELPG support
+Message-ID: <YFs/VBZvZo6mBJqz@orome.fritz.box>
+References: <20210120073414.69208-1-jckuo@nvidia.com>
+ <YB1vGTt0ufzsYBgo@ulmo>
+ <YB1wxazg/QpRSJz6@kroah.com>
+ <YFszBH1JJmjJmjn2@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u5Zpz5lsXNY2k1xR"
 Content-Disposition: inline
-In-Reply-To: <87im5hkahr.wl-maz@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <YFszBH1JJmjJmjn2@orome.fritz.box>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 06:09:36PM +0000, Marc Zyngier wrote:
-> Hi Robin,
-> 
-> On Tue, 23 Mar 2021 11:45:02 +0000,
-> Robin Murphy <robin.murphy@arm.com> wrote:
-> > 
-> > On 2021-03-22 18:46, Marc Zyngier wrote:
-> > > The new 'no_msi' attribute solves the problem of advertising the lack
-> > > of MSI capability for host bridges that know for sure that there will
-> > > be no MSI for their end-points.
-> > > 
-> > > However, there is a whole class of host bridges that cannot know
-> > > whether MSIs will be provided or not, as they rely on other blocks
-> > > to provide the MSI functionnality, using MSI domains.  This is
-> > > the case for example on systems that use the ARM GIC architecture.
-> > > 
-> > > Introduce a new attribute ('msi_domain') indicating that implicit
-> > > dependency, and use this property to set the NO_MSI flag when
-> > > no MSI domain is found at probe time.
-> > > 
-> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > ---
-> > >   drivers/pci/probe.c | 2 +-
-> > >   include/linux/pci.h | 1 +
-> > >   2 files changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > > index 146bd85c037e..bac9f69a06a8 100644
-> > > --- a/drivers/pci/probe.c
-> > > +++ b/drivers/pci/probe.c
-> > > @@ -925,7 +925,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
-> > >   	device_enable_async_suspend(bus->bridge);
-> > >   	pci_set_bus_of_node(bus);
-> > >   	pci_set_bus_msi_domain(bus);
-> > > -	if (bridge->no_msi)
-> > > +	if (bridge->no_msi || (bridge->msi_domain && !bus->dev.msi_domain))
-> > >   		bus->bus_flags |= PCI_BUS_FLAGS_NO_MSI;
-> > >     	if (!parent)
-> > > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > > index 48605cca82ae..d322d00db432 100644
-> > > --- a/include/linux/pci.h
-> > > +++ b/include/linux/pci.h
-> > > @@ -551,6 +551,7 @@ struct pci_host_bridge {
-> > >   	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
-> > >   	unsigned int	size_windows:1;		/* Enable root bus sizing */
-> > >   	unsigned int	no_msi:1;		/* Bridge has no MSI support */
-> > > +	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
-> > 
-> > Aren't these really the same thing? Either way we're saying the bridge
-> > itself doesn't handle MSIs, it's just in one case we're effectively
-> > encoding a platform-specific assumption that an external domain won't
-> > be provided. I can't help wondering whether that distinction is really
-> > necessary...
-> 
-> There is a subtle difference: no_msi indicates that there is no way
-> *any* MSI can be dealt with whatsoever (maybe because the RC doesn't
-> forward the corresponding TLPs?). msi_domain says "no MSI unless...".
-> 
-> We could implement the former with the latter, but I have the feeling
-> that's not totally bullet proof. Happy to revisit this if you think it
-> really matters.
 
-IIUC msi_domain == 1 means: this host bridge needs an msi_domain to enable
-MSIs, which in turn means that there are bridges that do _not_ require
-an msi_domain to enable MSIs. I don't know how other arches handle the 
-msi_domain pointer but I am asking whether making:
+--u5Zpz5lsXNY2k1xR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-if (bridge->no_msi || !bus->dev.msi_domain))
-	bus->bus_flags |= PCI_BUS_FLAGS_NO_MSI;
+On Wed, Mar 24, 2021 at 01:39:32PM +0100, Thierry Reding wrote:
+> On Fri, Feb 05, 2021 at 05:22:29PM +0100, Greg KH wrote:
+> > On Fri, Feb 05, 2021 at 05:15:21PM +0100, Thierry Reding wrote:
+> > > On Wed, Jan 20, 2021 at 03:34:00PM +0800, JC Kuo wrote:
+> > > > Tegra XHCI controler can be placed in ELPG (Engine Level PowerGated)
+> > > > state for power saving when all of the connected USB devices are in
+> > > > suspended state. This patch series includes clk, phy and pmc changes
+> > > > that are required for properly place controller in ELPG and bring
+> > > > controller out of ELPG.
+> > > >=20
+> > > > JC Kuo (14):
+> > > >   clk: tegra: Add PLLE HW power sequencer control
+> > > >   clk: tegra: Don't enable PLLE HW sequencer at init
+> > > >   phy: tegra: xusb: Move usb3 port init for Tegra210
+> > > >   phy: tegra: xusb: Rearrange UPHY init on Tegra210
+> > > >   phy: tegra: xusb: Add Tegra210 lane_iddq operation
+> > > >   phy: tegra: xusb: Add sleepwalk and suspend/resume
+> > > >   soc/tegra: pmc: Provide USB sleepwalk register map
+> > > >   arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
+> > > >   dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
+> > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra210
+> > > >   phy: tegra: xusb: Tegra210 host mode VBUS control
+> > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra186
+> > > >   usb: host: xhci-tegra: Unlink power domain devices
+> > > >   xhci: tegra: Enable ELPG for runtime/system PM
+> > > >=20
+> > > >  .../phy/nvidia,tegra124-xusb-padctl.txt       |    1 +
+> > > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    1 +
+> > > >  drivers/clk/tegra/clk-pll.c                   |   12 -
+> > > >  drivers/clk/tegra/clk-tegra210.c              |   53 +-
+> > > >  drivers/phy/tegra/xusb-tegra186.c             |  558 ++++-
+> > > >  drivers/phy/tegra/xusb-tegra210.c             | 1889 +++++++++++++=
+----
+> > > >  drivers/phy/tegra/xusb.c                      |   92 +-
+> > > >  drivers/phy/tegra/xusb.h                      |   22 +-
+> > > >  drivers/soc/tegra/pmc.c                       |   94 +
+> > > >  drivers/usb/host/xhci-tegra.c                 |  613 ++++--
+> > > >  include/linux/clk/tegra.h                     |    4 +-
+> > > >  include/linux/phy/tegra/xusb.h                |   10 +-
+> > > >  12 files changed, 2784 insertions(+), 565 deletions(-)
+> > > >=20
+> > > > v5 "phy: tegra: xusb: tegra210: Do not reset UPHY PLL" is moved
+> > > > into v6 "phy: tegra: xusb: Rearrange UPHY init on Tegra210"
+> > >=20
+> > > Mike, Stephen,
+> > >=20
+> > > could you guys take a look at the two clk patches here and give an
+> > > Acked-by? There's build-time dependencies throughout the series, so i=
+t'd
+> > > be good if they can all go through either the PHY or USB trees.
+> > >=20
+> > > Kishon, Greg,
+> > >=20
+> > > any comments on these patches? Unfortunately, the USB patches in this
+> > > series have a build-time dependency on the PHY patches, so this should
+> > > all go through one tree. Since this all culminates in the XHCI driver,
+> > > merging this through the USB tree might be best, provided that Kishon
+> > > provides his Acked-by on the PHY patches.
+> > >=20
+> > > Alternatively, I can create a set of branches with the correct
+> > > dependencies and send out pull requests for the three subsystems if
+> > > that's preferrable.
+> >=20
+> > I have no objection for the usb patches to go through your tree as they
+> > are hardware-specific.
+>=20
+> Kishon,
+>=20
+> I haven't heard back from you on this yet. We missed v5.12 but I'd like
+> to get this into v5.13 since it's the last missing piece to get suspend
+> and resume working properly on a number of boards.
+>=20
+> Are you okay if I take this through the Tegra tree to satisfy the
+> interdependencies between clk, PHY and USB patches? I've already got
+> Acked-by's from the clock and USB maintainers.
+>=20
+> I want to tentatively take this into linux-next to give it a bit of soak
+> time before the ARM SoC -rc6 cut-off. Please let me know if you'd prefer
+> to apply these to your tree so I can back them out of the Tegra tree
+> again.
 
-is a possibility (removing the need for the msi_domain flag).
+Also adding Vinod for visibility and in case Kishon's too busy.
 
-At least this looks more like an arch property than a host bridge
-specific property (eg patch [13] pci_host_common_probe() may be used on
-arches other than ARM where it is not necessary true that it requires an
-msi_domain to enable MSIs).
+Thierry
 
-I agree that's complicated to untangle - just asking if there is way
-to simplify it.
+--u5Zpz5lsXNY2k1xR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Lorenzo
+-----BEGIN PGP SIGNATURE-----
 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbP1EACgkQ3SOs138+
+s6G5sBAAh0Lkrr0lTVpTOBr3PZOfIjNoSUKj3pElbX7MikbUbfAwbA6Q5kQsS/6U
+Cl0wrHoCeWPnYGxN8tJtB0p2KgvIxocNryeIZEahFkf+dXzJLX+gi3q7I26G9t0c
+KQdsu40RA28kYoUPeNiwMUyueeimHMt0R9neLagCh0NPjUXhFybPtA8fcynT7psm
+dPFdqBRJL4E49dkcT0pZRdFiISqMDGo+b4xy/iyIMUGHrdINshI1NMdRQgYZ2A50
+EB72FmS8nvxEWHO7U7fcRg2qBFqwp/YjCHmzz5eePMXMYttY8buYG2SjmnsXPHTe
+TQWJhs4pa1Jpadjr40bwz76Zt8PbAC1OHTi9l0N4iGUaa1FIw6hoieD8iFLSyjS5
+DbNqawgDUDXFuu1/idLzFccSNU24CALZT1xhy32cT3DqtHIP09aI5LBpu8sFyjCj
+zjpx8IoO1Nk4UHWspb6RycyBGVNU880RjtrMT2ip5roy10Ff00ryeX7KZu4CGdkZ
+IgvxegtSq0wIkq3JstCK7TuGLxuDii8HeGYip2HkmZ19tguNU0Imn+2f8IhErW2K
+OVPaqa8hsI0Jd7eXvedMWOfUk8DAfRn7gXdQiBQPcHy4Pz08piNBmedeyfdeZetO
+H998/kewk+3bMPDdxi/6zADUcwUXdMC/88XWKa5be6uDIO3jzMI=
+=AbYf
+-----END PGP SIGNATURE-----
+
+--u5Zpz5lsXNY2k1xR--
