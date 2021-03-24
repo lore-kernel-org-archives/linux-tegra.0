@@ -2,162 +2,202 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE34AC433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 23:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8CEC433C1
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 00:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90BF0619CC
-	for <linux-tegra@archiver.kernel.org>; Tue, 23 Mar 2021 23:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42E9619E5
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 00:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233888AbhCWXCA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 23 Mar 2021 19:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233782AbhCWXBd (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 23 Mar 2021 19:01:33 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FF3C061574;
-        Tue, 23 Mar 2021 16:01:32 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id f26so27813805ljp.8;
-        Tue, 23 Mar 2021 16:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=84HXR80VeHqLZESZc4iMlUDSruLJkHK/M+dHGF0r0qw=;
-        b=Oz0KBishfAMWO1yb3BpbgXhz7TWlRcehMQEHkJwal80qEUOQUATrfcXELGBvDnJG7A
-         pQydMuERCrpZLnZ8vLvJMkPPcIbRYJSxvUK8LZ1MGfRuhyb9aheNjSEMjq/dvwB4LpcV
-         2GGTDvDhVMWjzoqypG+Kl2XhsK2dun22t6VmcbdyfuUnG4e9MWbEKh14Mg8WoZCHPJu/
-         g1JCpUSJ65LrsVBftTHkXiljFCBUQF+RDwUS2JRKfKYWybis5CvDe3SaKI6RByO4utA4
-         CbSZWPmabvcoO52k4I0KZa9ey/RJxea+24Kh2LayAB4KgVSIU1Ws87nQ3gcBadNGBSDf
-         pjig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=84HXR80VeHqLZESZc4iMlUDSruLJkHK/M+dHGF0r0qw=;
-        b=HAafdFRUPa06lxaqSKIX07s+J0Xk1JHgS9crRw9xdrZg/AJ7dH6HKoEw+reahB2ZbP
-         hmuRGBrWDldATv3zAl9s7LBZ8VF7c938wutyIEENzg/1wyjhkDw/lfjU8ECz99DNIiAF
-         zjA+MFaPj8J9udnr0JpB4Up7g/6hFvaGiK+EBDYSZyKk4UXo2KAGrHfmN9AuqBF5KR8H
-         VV6DzZ1McVuvvfq71Bdwd+kv9DgBEdIkaBS/4Vf2yzAz2INwiR7rfv36vxy2rmrwWmKy
-         7GbPGyzu6tPSSbaRVbVfnBOk56z8h1dhIGjKSTk3MvSwgVT0R4S9NqPkUOSt5VEDuaE8
-         if4Q==
-X-Gm-Message-State: AOAM530J4U104LHlDynYGoiuc0UZdKfyY5FQPxZQtfHeEAfF+njIdlxc
-        hDeEvyeNT2ankndwFXuzmJZ68nSbQCM=
-X-Google-Smtp-Source: ABdhPJzzkICY/JETPG882gQh1Ch42Yd8ZvDm5b/QmppZiX2s1xgyZyQYX510NiN5cgrBxHKANQKwpw==
-X-Received: by 2002:a2e:8e36:: with SMTP id r22mr131297ljk.427.1616540491159;
-        Tue, 23 Mar 2021 16:01:31 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
-        by smtp.googlemail.com with ESMTPSA id j19sm41718lfg.225.2021.03.23.16.01.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Mar 2021 16:01:30 -0700 (PDT)
-Subject: Re: [PATCH v4 3/6] dt-bindings: power: tegra: Add binding for core
- power domain
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314164810.26317-1-digetx@gmail.com>
- <20210314164810.26317-4-digetx@gmail.com>
- <20210323224826.GA1490612@robh.at.kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fd60e507-37b4-acc1-b19a-a3904cd13f65@gmail.com>
-Date:   Wed, 24 Mar 2021 02:01:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S234497AbhCXA11 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 23 Mar 2021 20:27:27 -0400
+Received: from mail-co1nam11on2089.outbound.protection.outlook.com ([40.107.220.89]:18656
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231374AbhCXA0w (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 23 Mar 2021 20:26:52 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QUkDSoXpxI3SgqGvt0CxCW4z36gH4CwhUUG1M3id4mkk1H8kG8/fo4+to/VHP0AyfI3k1eOzIqV97uEewJqprGynhfLg5FIQvwShuU3Ad+sqoCuCzduHCUenrFMTUQNGIQr2W6NuRNMQX/zcsB/0M5Cyp1w8nNN/TWmOT/Oqyjw6y5w6phjQ92QPsHq+kdVroHsQHSgvo25ck1WK5DN5MVP9vzBIwh1YBwFynfJEXzREUhQrd2RAfJBEpmE2vhxqLs/rREbVrIeoFlP1JF+Y5IZKQUVJeRhz+Y0YRe2UOfmM8nclJaE7y0QSx2CnNT2gZq8NN5CzZ5jGEqqWGh+HrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U/dDyMcUDg1HjV3Ac2lYJGZaONay3zArrvyViZWF+f8=;
+ b=B2uMW5bYv9R7qfwfhmPPZMNGbXr2S4lDmmINlVdfFgk3IaxCU88vI9QYqaaLtvz+m5Iyoj5EL61AodfKxfKcnuEI9NJhs7/j7AC+q1hfTatLnzW4TrmBNhj07ICcaYD1TsRMIdRZ7hgOT9I0BweToEbkI6aYpq6+YOgVd8ztH7RD4PzN7YMRfuPh3JiQp/3Xu205hR4MK25MuHKWOK80LLK1K0oJsNT03CI0K6GZ6UPNut9mnKKCSbaap+H00E8CErJSM8LCLQUvuFprdEsI0EtBd7z0ko2+RmzqiFrUVYuAFXN8U11M5KUczRaKAomQWes9Kg78CRBn8W5PjjTMVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.35) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U/dDyMcUDg1HjV3Ac2lYJGZaONay3zArrvyViZWF+f8=;
+ b=tV1N8t832KB4JXyQlZNDVfa7USFdAdIdE90E4uuyUl79v3U/5udfW+Z+y7vj+pqmz/+S8GRMS8zyM54x0C/bL6Y0+R00psyPRSN84YfXB3cXqTbCxqUC1qrFO4Zusj8b3T+EI6fFqPVuM1Huy/nqZD0pEk14QWDED3DiodHCYottzf94Z7cb1q9QZdeqY3j/B5T/hOGPvusTEMoMv89TJCNN2NeQf+uGtkfo8tn+V7CI3BY8aKF1CKRkeGSfDTCkwB40SYX8QZavCA0cQkfxsoY+JSnU+yPban+ARoMbx8H+f8mcaUb6jmUebkCFzGtEftiK6TZ+MdF66GshH0VhrA==
+Received: from BN9PR03CA0067.namprd03.prod.outlook.com (2603:10b6:408:fc::12)
+ by SN6PR12MB2672.namprd12.prod.outlook.com (2603:10b6:805:6f::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
+ 2021 00:26:48 +0000
+Received: from BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:fc:cafe::3c) by BN9PR03CA0067.outlook.office365.com
+ (2603:10b6:408:fc::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18 via Frontend
+ Transport; Wed, 24 Mar 2021 00:26:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
+ smtp.mailfrom=nvidia.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.35; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.35) by
+ BN8NAM11FT033.mail.protection.outlook.com (10.13.177.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3955.18 via Frontend Transport; Wed, 24 Mar 2021 00:26:48 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 24 Mar
+ 2021 00:26:47 +0000
+Received: from rwileyLinux.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 24 Mar 2021 00:26:47 +0000
+From:   Rich Wiley <rwiley@nvidia.com>
+To:     <catalin.marinas@arm.com>, <will@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, Rich Wiley <rwiley@nvidia.com>
+Subject: [PATCH V2] arm64: kernel: disable CNP on Carmel
+Date:   Tue, 23 Mar 2021 17:28:09 -0700
+Message-ID: <20210324002809.30271-1-rwiley@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20210323224826.GA1490612@robh.at.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: dbf9822a-acf1-420f-ddb5-08d8ee5b831b
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2672:
+X-Microsoft-Antispam-PRVS: <SN6PR12MB2672C9CAE1851D34C5D8BFA9B4639@SN6PR12MB2672.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XMDCGqnjDr2FwWizeIgwVTbXQyv1zX+jk+ZGxcZ644J5yxhxUdGA+i87z5+VgrfvStTZP3saK35mv2c6zafFgpmNwADVaV695vh9LGKqgG6jwRd1OYQomMrMLWLDniaJ4OG8OxKwl8PheaVeVqy4zV6Lj/8URwCD02bgJ6QnB9i2fhOXTqyqF3VrVvteZm2ZgBUYC/xPpxS1RTbJvXyiW2zCrmjbLJKuhf9D78TNl62No9to/DkpDbbOHIXVElVn+qVR6zk6+2F5EOdBgNJ1/c3GbotlxkMYaTOSdpHiEKbnfgiTXhZap9XzC7uFWqyvqEa7onS+bcYom2c2DUhcRv1YygsSH95JmZGl3kqCfDvtjTUCOClxU41x+r74LJxmNchFOptz7Va5hmKvISqCfwtZuifmiguwnl+ZQzbe25Ec4wPE3AwKPPft2gMTrmImgEQLF22Pxa573MQXccApVEFCzMFzjRiMn2P9NoG26dF9SpL0vxPeOL1cPoTP7fzltRM2/lqywe1HzBJod5hRTQUPjPqZgOShksCfQYLM97RBd9P9kBi+peqiZB7RReN9tbi+lbuXBKG8SjQvbW9Vm3+Jv3P5ke4IrFW7rBGi9BEfrCZu2mInRlz+imnuui1hrgVBSqrkj0Fr4fL1HsqPYngA9QgPiHv7BabMxgwkYJQ=
+X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid02.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(376002)(39860400002)(346002)(136003)(36840700001)(46966006)(70586007)(2906002)(82740400003)(36906005)(83380400001)(2616005)(36756003)(4326008)(8676002)(36860700001)(336012)(426003)(70206006)(86362001)(26005)(356005)(1076003)(7696005)(47076005)(6666004)(478600001)(8936002)(186003)(54906003)(110136005)(7636003)(82310400003)(107886003)(316002)(5660300002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 00:26:48.0382
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbf9822a-acf1-420f-ddb5-08d8ee5b831b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2672
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.03.2021 01:48, Rob Herring пишет:
-> On Sun, Mar 14, 2021 at 07:48:07PM +0300, Dmitry Osipenko wrote:
->> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
->> blocks reside. Add binding for the core power domain.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../power/nvidia,tegra20-core-domain.yaml     | 51 +++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->> new file mode 100644
->> index 000000000000..4692489d780a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->> @@ -0,0 +1,51 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/power/nvidia,tegra20-core-domain.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: NVIDIA Tegra Core Power Domain
->> +
->> +maintainers:
->> +  - Dmitry Osipenko <digetx@gmail.com>
->> +  - Jon Hunter <jonathanh@nvidia.com>
->> +  - Thierry Reding <thierry.reding@gmail.com>
->> +
->> +allOf:
->> +  - $ref: power-domain.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - nvidia,tegra20-core-domain
->> +      - nvidia,tegra30-core-domain
->> +
->> +  operating-points-v2:
->> +    description:
->> +      Should contain level, voltages and opp-supported-hw property.
->> +      The supported-hw is a bitfield indicating SoC speedo or process
->> +      ID mask.
->> +
->> +  "#power-domain-cells":
->> +    const: 0
->> +
->> +  power-supply:
->> +    description:
->> +      Phandle to voltage regulator connected to the SoC Core power rail.
->> +
->> +required:
->> +  - compatible
->> +  - operating-points-v2
->> +  - "#power-domain-cells"
->> +  - power-supply
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    power-domain {
->> +        compatible = "nvidia,tegra20-core-domain";
->> +        operating-points-v2 = <&opp_table>;
->> +        power-supply = <&regulator>;
->> +        #power-domain-cells = <0>;
-> 
-> AFAICT, there's no way to access this 'hardware'?
-correct
+On NVIDIA Carmel cores, CNP behaves differently than it does on standard
+ARM cores. On Carmel, if two cores have CNP enabled and share an L2 TLB
+entry created by core0 for a specific ASID, a non-shareable TLBI from
+core1 may still see the shared entry. On standard ARM cores, that TLBI
+will invalidate the shared entry as well.
+
+This causes issues with patchsets that attempt to do local TLBIs based
+on cpumasks instead of broadcast TLBIs. Avoid these issues by disabling
+CNP support for NVIDIA Carmel cores.
+
+Signed-off-by: Rich Wiley <rwiley@nvidia.com>
+---
+ Documentation/arm64/silicon-errata.rst |  3 +++
+ arch/arm64/Kconfig                     | 10 ++++++++++
+ arch/arm64/include/asm/cpucaps.h       |  3 ++-
+ arch/arm64/kernel/cpu_errata.c         |  8 ++++++++
+ arch/arm64/kernel/cpufeature.c         |  3 +++
+ 5 files changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/arm64/silicon-errata.rst b/Documentation/arm64/silicon-errata.rst
+index 719510247292..d410a47ffa57 100644
+--- a/Documentation/arm64/silicon-errata.rst
++++ b/Documentation/arm64/silicon-errata.rst
+@@ -130,6 +130,9 @@ stable kernels.
+ | Marvell        | ARM-MMU-500     | #582743         | N/A                         |
+ +----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
++| NVIDIA         | Carmel Core     | N/A             | NVIDIA_CARMEL_CNP_ERRATUM   |
+++----------------+-----------------+-----------------+-----------------------------+
+++----------------+-----------------+-----------------+-----------------------------+
+ | Freescale/NXP  | LS2080A/LS1043A | A-008585        | FSL_ERRATUM_A008585         |
+ +----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 5656e7aacd69..e4e1b6550115 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -810,6 +810,16 @@ config QCOM_FALKOR_ERRATUM_E1041
+ 
+ 	  If unsure, say Y.
+ 
++config NVIDIA_CARMEL_CNP_ERRATUM
++	bool "NVIDIA Carmel CNP: CNP on Carmel semantically different than ARM cores"
++	default y
++	help
++	  If CNP is enabled on Carmel cores, non-sharable TLBIs on a core will not
++	  invalidate shared TLB entries installed by a different core, as it would
++	  on standard ARM cores.
++
++	  If unsure, say Y.
++
+ config SOCIONEXT_SYNQUACER_PREITS
+ 	bool "Socionext Synquacer: Workaround for GICv3 pre-ITS"
+ 	default y
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index b77d997b173b..c40f2490cd7b 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -66,7 +66,8 @@
+ #define ARM64_WORKAROUND_1508412		58
+ #define ARM64_HAS_LDAPR				59
+ #define ARM64_KVM_PROTECTED_MODE		60
++#define ARM64_WORKAROUND_NVIDIA_CARMEL_CNP	61
+ 
+-#define ARM64_NCAPS				61
++#define ARM64_NCAPS				62
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 506a1cd37973..e2c20c036442 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -525,6 +525,14 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 				  0, 0,
+ 				  1, 0),
+ 	},
++#endif
++#ifdef CONFIG_NVIDIA_CARMEL_CNP_ERRATUM
++	{
++		/* NVIDIA Carmel */
++		.desc = "NVIDIA Carmel CNP erratum",
++		.capability = ARM64_WORKAROUND_NVIDIA_CARMEL_CNP,
++		ERRATA_MIDR_ALL_VERSIONS(MIDR_NVIDIA_CARMEL),
++	},
+ #endif
+ 	{
+ 	}
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 066030717a4c..424d5aa07fd8 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1324,6 +1324,9 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
+ 	 if (is_kdump_kernel())
+ 		return false;
+ 
++	if (cpus_have_const_cap(ARM64_WORKAROUND_NVIDIA_CARMEL_CNP))
++		return false;
++
+ 	return has_cpuid_feature(entry, scope);
+ }
+ 
+-- 
+2.17.1
+
