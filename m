@@ -2,31 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7E7C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482E6C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 11:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6F6961A06
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1987619C2
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 11:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232638AbhCXKut (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 06:50:49 -0400
-Received: from mail-co1nam11on2040.outbound.protection.outlook.com ([40.107.220.40]:44448
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        id S232239AbhCXLSc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 07:18:32 -0400
+Received: from mail-bn8nam11on2057.outbound.protection.outlook.com ([40.107.236.57]:26966
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231646AbhCXKur (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 06:50:47 -0400
+        id S231455AbhCXLSV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Mar 2021 07:18:21 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sjl9L5rRdI1LvlgiU5KjMB7q5SWDPLOdruwE/sBWKJcVIKFeJUwzsEYB/fzBCHJ+1SiuT2co/YAsEtlnDRMVhGQm8+U2ZuUaw25xELOcv2KLprNYXEbIID5D2NPaR3g491q9HqTRzCaT8087+IZnUP4t8884/bMWwGvb+EsosegO4gWLcZ68/bWKToupxW2Uh4wgcV/6C4EFxecmxYkIwO+ALWN9QNB11B/Pt9d4Audz+qJ/gnMzV2oQlH9wmS7nf3lzg044OcZmWb6olENmLJs/zZD8ezXdQtP0q/vatWjuyB3QWomXJPlE2CkGd4QCvgKD50X7yubdVLSGwPngsA==
+ b=hsgRKHYDuEzwOBxxITHZKBba8q60F8D43oBvHb5CEssW3R7B/TPayDD+oefsIQ1FZbysDrdU8Lv6QS43dS/vDPVR7l/2TgI/TpAs3QEiS3sZo7FK4oy3sKbRFANdZ0Q5nN2tnHkjAB2gKA51V0bfMHWHnmxFYrkRO3fLdHvFP/hYH8vJ2UI4f9cyAJTqHenyXP8TFl6K2EzSMNMWm0q9YeAev9VRWFg4JmyAFia88wfluWp+T2qxRc1OVdBwPjw/fiojaCIU+Jm1hBHywOdGs/y2PNdQg4TL1EAArDNheuoTcaiWzKzeteJH8bQJEWiCxNDjiUj+4UCteI1AtkmHEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=943DM7qx3hq+GwxSl74L25sdkmAKo9pznO6FBvgDoLY=;
- b=mYTipMjNlWlmD/pEyphInlBw/i1mRxOiBngODtQQhfGsaA2Jc3nPgeroxMaoq/bpLa1UVL9bC5xgbxOfCq5Q2OD5z7iO98J+gY8OQBvE17wF/f90EIxGs+aF4gRQge6kvisij26bWksMU2b4IAqyxyzkIWx+yNnGMcpFwmsUQforNYeVsn2RiPVL/psi9fe0r9GE0B90afq06C2/eHAutFY02Yy24kx4ASMoMPmDsTliKjnlam+F45CpVWmxPwilZX39DjwdUoQYsj/wuUy+DuSypM6aNxct6Of6Vdhz/KuaqHIuPFfR1qwHfLsrqZ9jUiqtXYIvL1+U1j0+ccL+xQ==
+ bh=u0QAc6Kud6+01O7KSE/Iprlyv16HyR4g+TOQFJ/+TeE=;
+ b=Wp5On4BsHyq8iMn5dEM6/qdNLjiP9zjNE6HVC5DlRUmkbyg65mlXMR2ZI/23rILiNYAVFBDYrVzg3m+bJZyNG8ctSadpPhJmIlzSrTu7Q7H8uxJSDn4OhU212sNlDRLSopZgUv7knK88lhbhX7Jle5yoFe4sO22hkJ9qbA3kh/pJLUE5y1BUb3tOJi0z9IZMy5OmddpArpLAI8aTKSW0joJ4LJ2rWBpucXptR6y6MEapdONL8Rf58HIqSlkkxNHfyKghNDroipIuhs7rNYeg/B73Ew+/VWy8RxEF4NnyY6aJCNjbhABS4d3cRYfeG2KwJbMxPJxpGID5sI3mhr8VXg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
@@ -34,18 +35,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=943DM7qx3hq+GwxSl74L25sdkmAKo9pznO6FBvgDoLY=;
- b=Mzp7yAUTlu8PKtlXCrH/Fq7uQaFiqYWIplJmLKxAvP2YhbbiiGGP/M1WvCnEW8+zyoyLWdHTVZkjA61LDxK3i1oB3frku+NCWBM7IXMxiDtCiuJy/h0VfcrD9cVA9q7VELxrLyWz3co6r3HGnpo1Qt01xhjI+thhwzazXvSvRsYsQWEk0KWNHQYNhc6187LQEjTNBL92SCcbHVyRhKwWCsbCKzKv6PBP7SB9YJm9zFIAhQX0h4YY5odYFqUDDjUUcdFA1WG7A95RAeDEFs66aN3p5aLCXk4Bn50ddGpCL/A2/RUb75TZUhlGx7+auauDZYaia9/370j+3tuT4UhKlg==
-Received: from DS7PR03CA0226.namprd03.prod.outlook.com (2603:10b6:5:3ba::21)
- by DM6PR12MB4337.namprd12.prod.outlook.com (2603:10b6:5:2a9::12) with
+ bh=u0QAc6Kud6+01O7KSE/Iprlyv16HyR4g+TOQFJ/+TeE=;
+ b=qRyEh4/Y2K9sbhQCn5n1CtHYmjMVL79SWhcKPDYXSlCsAy4KiTbD5XeRmd0zRil++jsrU/Cwa8DXK9hz51nmBQPo8b/L/OSP4Apv4miyZbwy0UbSLlqRL3uVrnm7PxTxG2IGDd/rFzEIlQFywW/r3UjXhAn3/yMRhtldf+sr/ACJgzYbYSDBHGPoftkHMKaYfaM3hnenmeUCzHsNJxosPog8YwlB3EUS8x3yPL7WtRWgv5MPH7GER/+5LiIXcbOPlTfKzU7ZfExQihc/jRKWNB5l/GFZHFbUDQVs1PoyB7wiKvnefstqefF3QMDf6EcaknJd4PI16STiHrrsnRHg8g==
+Received: from MW4PR04CA0364.namprd04.prod.outlook.com (2603:10b6:303:81::9)
+ by MN2PR12MB2941.namprd12.prod.outlook.com (2603:10b6:208:a9::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
- 2021 10:50:46 +0000
-Received: from DM6NAM11FT021.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ba:cafe::70) by DS7PR03CA0226.outlook.office365.com
- (2603:10b6:5:3ba::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24 via Frontend
- Transport; Wed, 24 Mar 2021 10:50:46 +0000
+ 2021 11:18:19 +0000
+Received: from CO1NAM11FT037.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:81:cafe::be) by MW4PR04CA0364.outlook.office365.com
+ (2603:10b6:303:81::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18 via Frontend
+ Transport; Wed, 24 Mar 2021 11:18:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
  smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
@@ -53,78 +54,119 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.34 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.34; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT021.mail.protection.outlook.com (10.13.173.76) with Microsoft SMTP
+ CO1NAM11FT037.mail.protection.outlook.com (10.13.174.91) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3955.18 via Frontend Transport; Wed, 24 Mar 2021 10:50:45 +0000
-Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
+ 15.20.3955.18 via Frontend Transport; Wed, 24 Mar 2021 11:18:18 +0000
+Received: from [10.25.96.178] (172.20.145.6) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 24 Mar
- 2021 10:50:40 +0000
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Subject: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac resume
- back
-Message-ID: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
-Date:   Wed, 24 Mar 2021 10:50:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ 2021 11:18:12 +0000
+Subject: Re: [PATCH] ASoC: dt-bindings: nvidia,tegra210-ahub: Add missing
+ child nodes
+To:     Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>
+References: <20210323200005.1196572-1-robh@kernel.org>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <6b6d57fb-8596-fa22-0a5a-9d535803d10a@nvidia.com>
+Date:   Wed, 24 Mar 2021 16:48:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20210323200005.1196572-1-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
  HQMAIL107.nvidia.com (172.20.187.13)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b8dfadca-c16d-454b-b583-08d8eeb2add5
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4337:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB43374BF26264938999ABDD6CD9639@DM6PR12MB4337.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Office365-Filtering-Correlation-Id: 42854e5b-27e3-43ac-d677-08d8eeb686f4
+X-MS-TrafficTypeDiagnostic: MN2PR12MB2941:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB29412CB732ABCD1CF6CBEFFCA7639@MN2PR12MB2941.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2089;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BU6sDxfCy74thlR/mrsukmRKI5Q6bQmW7ew5wOoQSh/hFiqGjbpRllneWOKdj5I6gD61vXx5yTW+eBbab8myenV6Yy8xQee48ffai4QssRDHAONHpp9PYsTRq3MUrj/jamCoFUyRBXjjqSUVzEvdTVWBJUOnWqTU22l/wAhXpjdfqnP8G3IV0d6eNN1tB9gWNW2Vc79+hDsaZOrFouDu69Wh9l7TRgQIkY5r3jsTQ9+o3z5UN379ZoI1eIAKY4NuDrzutHn2g+tWFzKvCOa/7lI1s5fUjrD+nmUdIeVqKs+EjzkoJeHVO09N+hCgacW4kfF3V1bo+W6by98wfjttrORiqo7XMLJNihUpdVEsMA34MMN+SvCog0XFXYaegf8OH0acXzW/UooWGW7q9BuYd4cVw3w/RzPlSdfWQyiJ8b7/3SKpnR8XWrjCgrDW8+CrFGzoudmO31YX/paLtOSOODHiisFOIUTdT8THSi1ooKg72ukpD92FrYMNX5BDiCSL/ELe6oJIxL76uD+EujnmLGZNFRIT9FNFBPDQ1ehfU7o1qzI40cedXk9Itl/yFYH/yVM0GgtEOfV+Kj7T06F4mVQivnaCxlEy8ETUWEGJ7yPnkosdWXRkJVQkvtR85upjJ+AOTJTqyQUSvOz7e6GByZq2IhPCzf91C/27oglA5zWcCDWqKhzrhiY6ZLJNAffi
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(39860400002)(376002)(136003)(36840700001)(46966006)(356005)(7636003)(8936002)(82740400003)(82310400003)(26005)(36906005)(4326008)(86362001)(36860700001)(70206006)(8676002)(16576012)(478600001)(316002)(2906002)(2616005)(31686004)(70586007)(5660300002)(31696002)(6916009)(83380400001)(47076005)(36756003)(186003)(54906003)(16526019)(336012)(426003)(4744005)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: VSi8QgUlmuA6hL/IlNXAFL0VDWbPLsE98FWNTgoAMZLrVJ2w4O7FUWlR5SlrOl54xCe2as5ipOW5uNKe8Pu1Y+TNdaDbsaBnQ3gfSx8/sdePQZ6SE1gQuWbqEfmdPTl5Intfuc4zqUX60fv0MD9d24asibmwYN9bzAsN+4B9/6rzghEr1B6TxQv3yb8ZMayXNEkfPfyEOlhN+9xsXX0g5DIINJbLMzEQJ3VYB8UYIeIfPcTlx2FY/2rkbSXvNbVRedyJDcH70/9NuYNlcz04bucZ25+tLIwHTOczJnU3Lzp9VNGMAklS3pjrKcFNRUrC9DVsdkbx5V/3VbjIaequ0IuA0zLE5qD76jjB9aqDg9L7Ntv/a7TOjm7GaDpwfQh7o8pt+XtglOZoFsfxUOSf9UPPqe7ZTFSDE1TT8rxHixZW/boi1UjGEl8uPaaRzRISvYfJyb+8pcXqBEVH7DyAFj6MF9LiR3D7MtHqpHYqRC9GhxqW8jkTZC/zm4Sqc+YJcxFy6xxuOrzc4/PdF6naPBubSw9w9SwO7zRm/Axb8QGDyXOEp+Zhz+e5VkCToPTBrXWGmllCzr9BAqX0lRaQB4th2sFFKm4R80Qc0zmfFyS02ULVzfMVMYT8s3pcAs91eh70WYBZePfo12yYtNa+wbeW6UJS6K1BakQQFsFoduiH59RhagmJ0EYKSSVttHMQooY/ry3LRLlWfmWfDvJEMjZv2vqkTvIqKaoF0rYLz1eQSgbvq83mec19/gUMtYwY3NvBUOQov6+ZDOyX1cVgeCWJtxu6YrHgbfKKR8vqVhc=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(346002)(39860400002)(136003)(376002)(46966006)(36840700001)(47076005)(36756003)(336012)(31686004)(4326008)(5660300002)(70206006)(426003)(8936002)(8676002)(316002)(2616005)(82310400003)(70586007)(86362001)(186003)(26005)(36860700001)(83380400001)(966005)(53546011)(478600001)(6666004)(110136005)(82740400003)(16526019)(7636003)(2906002)(356005)(54906003)(31696002)(36906005)(16576012)(21314003)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 10:50:45.9899
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 11:18:18.7516
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8dfadca-c16d-454b-b583-08d8eeb2add5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42854e5b-27e3-43ac-d677-08d8eeb686f4
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT021.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT037.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4337
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB2941
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Joakim,
 
-Starting with v5.12-rc3 I noticed that one of our boards, Tegra186
-Jetson TX2, was not long resuming from suspend. Bisect points to commit
-9c63faaa931e ("net: stmmac: re-init rx buffers when mac resume back")
-and reverting this on top of mainline fixes the problem.
 
-Interestingly, the board appears to partially resume from suspend and I
-see ethernet appear to resume ...
+On 3/24/2021 1:30 AM, Rob Herring wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> The nvidia,tegra210-ahub binding is missing schema for child nodes. This
+> results in warnings if 'additionalProperties: false' is set (or when the
+> tools implement 'unevaluatedProperties' support). Add the child nodes
+> and reference their schema if one exists.
+>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Sameer Pujar <spujar@nvidia.com>
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> This patch ideally should be applied before this series[1].
+>
+> [1] https://lore.kernel.org/r/20210323163634.877511-1-robh@kernel.org/
+>
+>   .../bindings/sound/nvidia,tegra210-ahub.yaml         | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> index e568d6c7dddd..d7a5eb77ed4f 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+> @@ -69,6 +69,18 @@ properties:
+>           $ref: audio-graph-port.yaml#
+>           unevaluatedProperties: false
+>
+> +patternProperties:
+> +  '^i2s@[0-9a-f]+$':
+> +    type: object
+> +
+> +  '^dmic@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-dmic.yaml#
+> +
+> +  '^admaif@[0-9a-f]+$':
+> +    type: object
+> +    $ref: nvidia,tegra210-admaif.yaml#
+> +
 
- dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link
- mode
- dwmac4: Master AXI performs any burst length
- dwc-eth-dwmac 2490000.ethernet eth0: No Safety Features support found
- dwc-eth-dwmac 2490000.ethernet eth0: Link is Up - 1Gbps/Full - flow
- control rx/tx
+There is "dspk@xxx" child node as well for ahub, though schema example 
+does not show this. I am seeing error because of this during 
+"dtbs_check". Wondering if we can add following with this patch?
 
-I don't see any crash, but then it hangs at some point. Please note that
-this board is using NFS for mounting the rootfs.
++  '^dspk@[0-9a-f]+$':
++    type: object
++    $ref: nvidia,tegra186-dspk.yaml#
 
-Let me know if there is any more info I can provide or tests I can run.
 
-Thanks
-Jon
-
+>   required:
+>     - compatible
+>     - reg
+> --
+> 2.27.0
+>
 
