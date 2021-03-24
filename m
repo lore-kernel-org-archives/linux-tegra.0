@@ -2,397 +2,129 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE01C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7E7C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E671A61A07
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6F6961A06
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 10:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235681AbhCXKVv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 06:21:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235696AbhCXKVh (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 06:21:37 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03109C0613DE
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Mar 2021 03:21:37 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id h34so7667214uah.5
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Mar 2021 03:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7apWozlOt2FqRFycW0Hur3TIoMg6mDhSrYsqHBdsqD4=;
-        b=hGdgJIzrda8kSnAFgL4/2AUpL5DTF8JT9DcD9XJSSpJprxaISt3xgyXRR3jSTS8hG5
-         uL4YqQ/0t1Wc4rlLCIuHzW2N0vlvtZQcUqKEXndQDVU8y9ab7HORaN2ubRe0VbcnfiF7
-         SWAF2+YXtocGRkfGZPFjC88QArPPOgUXpu5lNHGECtxP/9a6i8uiLSTQh/ldr9aO6OU6
-         Z8x+8pP+FbqFtXh2Lr1o9Z2lpL8IjqMDs/Dyk351DYp+IgUrv9G6/kEQV6+BsfmBMqYm
-         NhKE8+zdjIas5GNlgwbqdTrMbWauhdm9//jvwQXb4FC9hqIXfrtUfXnrSw4lqBzQUiRW
-         ySYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7apWozlOt2FqRFycW0Hur3TIoMg6mDhSrYsqHBdsqD4=;
-        b=kyp/SumOVNNzQrLRrEBW0B99MWDerNH6Dj/HNX+SHDWhUR4UEWDeSJARA7YVGGPHmJ
-         KN6hvbRG1S2rvy/K0AgKC/FqU5JakB9AYeGijP33I6/UjdKs75Bi+X+BrPqpOf3Cxvm7
-         pdOPkVIhYvvB/tJ5al2eUKa6QNIL6VJRJ8TMv9l/A5vjxoS2Mh1xhl/Xwyvm0AZw1bO3
-         CmZzp0vVNFGEB1+Beo5GcbXdh+NTHc/Dr9mfrqzfzsQj0Br7g1cXG5qlU8okVFmsH4vZ
-         EUqWDY3opOknkozQDecWvKXt8aqKCG4BZUX8r++I03+dxJQIOtCfxwlJgy41ab+nFvIq
-         PQOg==
-X-Gm-Message-State: AOAM530aJrUTIXtQFOMfslQ34OklnQEp1BOn6iQFFNV5HIDf6ylNhF4F
-        7g5cL753i7HZfsmYnEpsssYWqyC6+bd4eusG8+V4QDkbauflRw==
-X-Google-Smtp-Source: ABdhPJx11OsxN0jvvUTrVF43kL0pyJRkssrUH5DhNuWjNKYwMbxeLZCTPogRmz6xHOov1pAOQN7zV2LeS3TnJLPKDIA=
-X-Received: by 2002:a9f:2843:: with SMTP id c61mr952901uac.129.1616581295909;
- Wed, 24 Mar 2021 03:21:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210324155013.1e5faa3c@xhacker.debian>
-In-Reply-To: <20210324155013.1e5faa3c@xhacker.debian>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 24 Mar 2021 11:20:59 +0100
-Message-ID: <CAPDyKFpau=FRCupREsgZiwFv-XRhH04si1wKiEPwM4K2+fct1w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci: replace mmc->parent with mmc_dev() for consistency
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Angelo Dureghello <angelo.dureghello@timesys.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
+        id S232638AbhCXKut (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 06:50:49 -0400
+Received: from mail-co1nam11on2040.outbound.protection.outlook.com ([40.107.220.40]:44448
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231646AbhCXKur (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Mar 2021 06:50:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Sjl9L5rRdI1LvlgiU5KjMB7q5SWDPLOdruwE/sBWKJcVIKFeJUwzsEYB/fzBCHJ+1SiuT2co/YAsEtlnDRMVhGQm8+U2ZuUaw25xELOcv2KLprNYXEbIID5D2NPaR3g491q9HqTRzCaT8087+IZnUP4t8884/bMWwGvb+EsosegO4gWLcZ68/bWKToupxW2Uh4wgcV/6C4EFxecmxYkIwO+ALWN9QNB11B/Pt9d4Audz+qJ/gnMzV2oQlH9wmS7nf3lzg044OcZmWb6olENmLJs/zZD8ezXdQtP0q/vatWjuyB3QWomXJPlE2CkGd4QCvgKD50X7yubdVLSGwPngsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=943DM7qx3hq+GwxSl74L25sdkmAKo9pznO6FBvgDoLY=;
+ b=mYTipMjNlWlmD/pEyphInlBw/i1mRxOiBngODtQQhfGsaA2Jc3nPgeroxMaoq/bpLa1UVL9bC5xgbxOfCq5Q2OD5z7iO98J+gY8OQBvE17wF/f90EIxGs+aF4gRQge6kvisij26bWksMU2b4IAqyxyzkIWx+yNnGMcpFwmsUQforNYeVsn2RiPVL/psi9fe0r9GE0B90afq06C2/eHAutFY02Yy24kx4ASMoMPmDsTliKjnlam+F45CpVWmxPwilZX39DjwdUoQYsj/wuUy+DuSypM6aNxct6Of6Vdhz/KuaqHIuPFfR1qwHfLsrqZ9jUiqtXYIvL1+U1j0+ccL+xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=943DM7qx3hq+GwxSl74L25sdkmAKo9pznO6FBvgDoLY=;
+ b=Mzp7yAUTlu8PKtlXCrH/Fq7uQaFiqYWIplJmLKxAvP2YhbbiiGGP/M1WvCnEW8+zyoyLWdHTVZkjA61LDxK3i1oB3frku+NCWBM7IXMxiDtCiuJy/h0VfcrD9cVA9q7VELxrLyWz3co6r3HGnpo1Qt01xhjI+thhwzazXvSvRsYsQWEk0KWNHQYNhc6187LQEjTNBL92SCcbHVyRhKwWCsbCKzKv6PBP7SB9YJm9zFIAhQX0h4YY5odYFqUDDjUUcdFA1WG7A95RAeDEFs66aN3p5aLCXk4Bn50ddGpCL/A2/RUb75TZUhlGx7+auauDZYaia9/370j+3tuT4UhKlg==
+Received: from DS7PR03CA0226.namprd03.prod.outlook.com (2603:10b6:5:3ba::21)
+ by DM6PR12MB4337.namprd12.prod.outlook.com (2603:10b6:5:2a9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
+ 2021 10:50:46 +0000
+Received: from DM6NAM11FT021.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3ba:cafe::70) by DS7PR03CA0226.outlook.office365.com
+ (2603:10b6:5:3ba::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24 via Frontend
+ Transport; Wed, 24 Mar 2021 10:50:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT021.mail.protection.outlook.com (10.13.173.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3955.18 via Frontend Transport; Wed, 24 Mar 2021 10:50:45 +0000
+Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 24 Mar
+ 2021 10:50:40 +0000
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Subject: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac resume
+ back
+Message-ID: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
+Date:   Wed, 24 Mar 2021 10:50:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b8dfadca-c16d-454b-b583-08d8eeb2add5
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4337:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB43374BF26264938999ABDD6CD9639@DM6PR12MB4337.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BU6sDxfCy74thlR/mrsukmRKI5Q6bQmW7ew5wOoQSh/hFiqGjbpRllneWOKdj5I6gD61vXx5yTW+eBbab8myenV6Yy8xQee48ffai4QssRDHAONHpp9PYsTRq3MUrj/jamCoFUyRBXjjqSUVzEvdTVWBJUOnWqTU22l/wAhXpjdfqnP8G3IV0d6eNN1tB9gWNW2Vc79+hDsaZOrFouDu69Wh9l7TRgQIkY5r3jsTQ9+o3z5UN379ZoI1eIAKY4NuDrzutHn2g+tWFzKvCOa/7lI1s5fUjrD+nmUdIeVqKs+EjzkoJeHVO09N+hCgacW4kfF3V1bo+W6by98wfjttrORiqo7XMLJNihUpdVEsMA34MMN+SvCog0XFXYaegf8OH0acXzW/UooWGW7q9BuYd4cVw3w/RzPlSdfWQyiJ8b7/3SKpnR8XWrjCgrDW8+CrFGzoudmO31YX/paLtOSOODHiisFOIUTdT8THSi1ooKg72ukpD92FrYMNX5BDiCSL/ELe6oJIxL76uD+EujnmLGZNFRIT9FNFBPDQ1ehfU7o1qzI40cedXk9Itl/yFYH/yVM0GgtEOfV+Kj7T06F4mVQivnaCxlEy8ETUWEGJ7yPnkosdWXRkJVQkvtR85upjJ+AOTJTqyQUSvOz7e6GByZq2IhPCzf91C/27oglA5zWcCDWqKhzrhiY6ZLJNAffi
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(39860400002)(376002)(136003)(36840700001)(46966006)(356005)(7636003)(8936002)(82740400003)(82310400003)(26005)(36906005)(4326008)(86362001)(36860700001)(70206006)(8676002)(16576012)(478600001)(316002)(2906002)(2616005)(31686004)(70586007)(5660300002)(31696002)(6916009)(83380400001)(47076005)(36756003)(186003)(54906003)(16526019)(336012)(426003)(4744005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 10:50:45.9899
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8dfadca-c16d-454b-b583-08d8eeb2add5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT021.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4337
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 24 Mar 2021 at 08:50, Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
->
-> As pointed out by Ulf, "both "mmc->parent" and mmc_dev(mmc) are being
-> used in the entire c-file". Convert all the mmc->parent usage in all
-> sdhci host driver to mmc_dev() for consistency.
->
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Hi Joakim,
 
-Applied for next, thanks!
+Starting with v5.12-rc3 I noticed that one of our boards, Tegra186
+Jetson TX2, was not long resuming from suspend. Bisect points to commit
+9c63faaa931e ("net: stmmac: re-init rx buffers when mac resume back")
+and reverting this on top of mainline fixes the problem.
 
-Kind regards
-Uffe
+Interestingly, the board appears to partially resume from suspend and I
+see ethernet appear to resume ...
+
+ dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link
+ mode
+ dwmac4: Master AXI performs any burst length
+ dwc-eth-dwmac 2490000.ethernet eth0: No Safety Features support found
+ dwc-eth-dwmac 2490000.ethernet eth0: Link is Up - 1Gbps/Full - flow
+ control rx/tx
+
+I don't see any crash, but then it hangs at some point. Please note that
+this board is using NFS for mounting the rootfs.
+
+Let me know if there is any more info I can provide or tests I can run.
+
+Thanks
+Jon
 
 
-> ---
->  drivers/mmc/host/sdhci-esdhc-mcf.c |  8 +++----
->  drivers/mmc/host/sdhci-of-aspeed.c |  2 +-
->  drivers/mmc/host/sdhci-tegra.c     | 34 +++++++++++++++---------------
->  drivers/mmc/host/sdhci.c           | 24 ++++++++++-----------
->  drivers/mmc/host/sdhci_am654.c     |  2 +-
->  5 files changed, 35 insertions(+), 35 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-mcf.c b/drivers/mmc/host/sdhci-esdhc-mcf.c
-> index ca7a1690b2a8..05926bf5ecf9 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-mcf.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-mcf.c
-> @@ -367,14 +367,14 @@ static int esdhc_mcf_plat_init(struct sdhci_host *host,
->                                struct pltfm_mcf_data *mcf_data)
->  {
->         struct mcf_esdhc_platform_data *plat_data;
-> +       struct device *dev = mmc_dev(host->mmc);
->
-> -       if (!host->mmc->parent->platform_data) {
-> -               dev_err(mmc_dev(host->mmc), "no platform data!\n");
-> +       if (!dev->platform_data) {
-> +               dev_err(dev, "no platform data!\n");
->                 return -EINVAL;
->         }
->
-> -       plat_data = (struct mcf_esdhc_platform_data *)
-> -                       host->mmc->parent->platform_data;
-> +       plat_data = (struct mcf_esdhc_platform_data *)dev->platform_data;
->
->         /* Card_detect */
->         switch (plat_data->cd_type) {
-> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
-> index 7d8692e90996..d001c51074a0 100644
-> --- a/drivers/mmc/host/sdhci-of-aspeed.c
-> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
-> @@ -181,7 +181,7 @@ aspeed_sdhci_configure_phase(struct sdhci_host *host, unsigned long rate)
->         struct aspeed_sdhci *sdhci;
->         struct device *dev;
->
-> -       dev = host->mmc->parent;
-> +       dev = mmc_dev(host->mmc);
->         sdhci = sdhci_pltfm_priv(sdhci_priv(host));
->
->         if (!sdhci->phase_desc)
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 41d193fa77bb..c61f797a853f 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -596,49 +596,49 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->                         &tegra_host->autocal_offsets;
->         int err;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-3v3",
->                         &autocal->pull_up_3v3);
->         if (err)
->                 autocal->pull_up_3v3 = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-3v3",
->                         &autocal->pull_down_3v3);
->         if (err)
->                 autocal->pull_down_3v3 = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-1v8",
->                         &autocal->pull_up_1v8);
->         if (err)
->                 autocal->pull_up_1v8 = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-1v8",
->                         &autocal->pull_down_1v8);
->         if (err)
->                 autocal->pull_down_1v8 = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-sdr104",
->                         &autocal->pull_up_sdr104);
->         if (err)
->                 autocal->pull_up_sdr104 = autocal->pull_up_1v8;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-sdr104",
->                         &autocal->pull_down_sdr104);
->         if (err)
->                 autocal->pull_down_sdr104 = autocal->pull_down_1v8;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-hs400",
->                         &autocal->pull_up_hs400);
->         if (err)
->                 autocal->pull_up_hs400 = autocal->pull_up_1v8;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-hs400",
->                         &autocal->pull_down_hs400);
->         if (err)
-> @@ -653,7 +653,7 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->         if (!(tegra_host->soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL))
->                 return;
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-3v3-timeout",
->                         &autocal->pull_up_3v3_timeout);
->         if (err) {
-> @@ -664,7 +664,7 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->                 autocal->pull_up_3v3_timeout = 0;
->         }
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-3v3-timeout",
->                         &autocal->pull_down_3v3_timeout);
->         if (err) {
-> @@ -675,7 +675,7 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->                 autocal->pull_down_3v3_timeout = 0;
->         }
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-up-offset-1v8-timeout",
->                         &autocal->pull_up_1v8_timeout);
->         if (err) {
-> @@ -686,7 +686,7 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
->                 autocal->pull_up_1v8_timeout = 0;
->         }
->
-> -       err = device_property_read_u32(host->mmc->parent,
-> +       err = device_property_read_u32(mmc_dev(host->mmc),
->                         "nvidia,pad-autocal-pull-down-offset-1v8-timeout",
->                         &autocal->pull_down_1v8_timeout);
->         if (err) {
-> @@ -720,17 +720,17 @@ static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
->         struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
->         int err;
->
-> -       err = device_property_read_u32(host->mmc->parent, "nvidia,default-tap",
-> +       err = device_property_read_u32(mmc_dev(host->mmc), "nvidia,default-tap",
->                                        &tegra_host->default_tap);
->         if (err)
->                 tegra_host->default_tap = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent, "nvidia,default-trim",
-> +       err = device_property_read_u32(mmc_dev(host->mmc), "nvidia,default-trim",
->                                        &tegra_host->default_trim);
->         if (err)
->                 tegra_host->default_trim = 0;
->
-> -       err = device_property_read_u32(host->mmc->parent, "nvidia,dqs-trim",
-> +       err = device_property_read_u32(mmc_dev(host->mmc), "nvidia,dqs-trim",
->                                        &tegra_host->dqs_trim);
->         if (err)
->                 tegra_host->dqs_trim = 0x11;
-> @@ -741,7 +741,7 @@ static void tegra_sdhci_parse_dt(struct sdhci_host *host)
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
->
-> -       if (device_property_read_bool(host->mmc->parent, "supports-cqe"))
-> +       if (device_property_read_bool(mmc_dev(host->mmc), "supports-cqe"))
->                 tegra_host->enable_hwcq = true;
->         else
->                 tegra_host->enable_hwcq = false;
-> @@ -1529,7 +1529,7 @@ static int sdhci_tegra_add_host(struct sdhci_host *host)
->
->         host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
->
-> -       cq_host = devm_kzalloc(host->mmc->parent,
-> +       cq_host = devm_kzalloc(mmc_dev(host->mmc),
->                                 sizeof(*cq_host), GFP_KERNEL);
->         if (!cq_host) {
->                 ret = -ENOMEM;
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index aefd0441658c..bf238ade1602 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -188,7 +188,7 @@ static void sdhci_runtime_pm_bus_on(struct sdhci_host *host)
->         if (host->bus_on)
->                 return;
->         host->bus_on = true;
-> -       pm_runtime_get_noresume(host->mmc->parent);
-> +       pm_runtime_get_noresume(mmc_dev(host->mmc));
->  }
->
->  static void sdhci_runtime_pm_bus_off(struct sdhci_host *host)
-> @@ -196,7 +196,7 @@ static void sdhci_runtime_pm_bus_off(struct sdhci_host *host)
->         if (!host->bus_on)
->                 return;
->         host->bus_on = false;
-> -       pm_runtime_put_noidle(host->mmc->parent);
-> +       pm_runtime_put_noidle(mmc_dev(host->mmc));
->  }
->
->  void sdhci_reset(struct sdhci_host *host, u8 mask)
-> @@ -648,7 +648,7 @@ static int sdhci_pre_dma_transfer(struct sdhci_host *host,
->                         }
->                 }
->                 /* Switch ownership to the DMA */
-> -               dma_sync_single_for_device(host->mmc->parent,
-> +               dma_sync_single_for_device(mmc_dev(host->mmc),
->                                            host->bounce_addr,
->                                            host->bounce_buffer_size,
->                                            mmc_get_dma_dir(data));
-> @@ -1176,7 +1176,7 @@ static int sdhci_external_dma_init(struct sdhci_host *host)
->         int ret = 0;
->         struct mmc_host *mmc = host->mmc;
->
-> -       host->tx_chan = dma_request_chan(mmc->parent, "tx");
-> +       host->tx_chan = dma_request_chan(mmc_dev(mmc), "tx");
->         if (IS_ERR(host->tx_chan)) {
->                 ret = PTR_ERR(host->tx_chan);
->                 if (ret != -EPROBE_DEFER)
-> @@ -1185,7 +1185,7 @@ static int sdhci_external_dma_init(struct sdhci_host *host)
->                 return ret;
->         }
->
-> -       host->rx_chan = dma_request_chan(mmc->parent, "rx");
-> +       host->rx_chan = dma_request_chan(mmc_dev(mmc), "rx");
->         if (IS_ERR(host->rx_chan)) {
->                 if (host->tx_chan) {
->                         dma_release_channel(host->tx_chan);
-> @@ -2489,14 +2489,14 @@ void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
->         unsigned long flags;
->
->         if (enable)
-> -               pm_runtime_get_noresume(mmc->parent);
-> +               pm_runtime_get_noresume(mmc_dev(mmc));
->
->         spin_lock_irqsave(&host->lock, flags);
->         sdhci_enable_sdio_irq_nolock(host, enable);
->         spin_unlock_irqrestore(&host->lock, flags);
->
->         if (!enable)
-> -               pm_runtime_put_noidle(mmc->parent);
-> +               pm_runtime_put_noidle(mmc_dev(mmc));
->  }
->  EXPORT_SYMBOL_GPL(sdhci_enable_sdio_irq);
->
-> @@ -3063,7 +3063,7 @@ static bool sdhci_request_done(struct sdhci_host *host)
->                                                 length = host->bounce_buffer_size;
->                                         }
->                                         dma_sync_single_for_cpu(
-> -                                               host->mmc->parent,
-> +                                               mmc_dev(host->mmc),
->                                                 host->bounce_addr,
->                                                 host->bounce_buffer_size,
->                                                 DMA_FROM_DEVICE);
-> @@ -3074,7 +3074,7 @@ static bool sdhci_request_done(struct sdhci_host *host)
->                                 } else {
->                                         /* No copying, just switch ownership */
->                                         dma_sync_single_for_cpu(
-> -                                               host->mmc->parent,
-> +                                               mmc_dev(host->mmc),
->                                                 host->bounce_addr,
->                                                 host->bounce_buffer_size,
->                                                 mmc_get_dma_dir(data));
-> @@ -4053,7 +4053,7 @@ static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
->          * speedups by the help of a bounce buffer to group scattered
->          * reads/writes together.
->          */
-> -       host->bounce_buffer = devm_kmalloc(mmc->parent,
-> +       host->bounce_buffer = devm_kmalloc(mmc_dev(mmc),
->                                            bounce_size,
->                                            GFP_KERNEL);
->         if (!host->bounce_buffer) {
-> @@ -4067,11 +4067,11 @@ static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
->                 return;
->         }
->
-> -       host->bounce_addr = dma_map_single(mmc->parent,
-> +       host->bounce_addr = dma_map_single(mmc_dev(mmc),
->                                            host->bounce_buffer,
->                                            bounce_size,
->                                            DMA_BIDIRECTIONAL);
-> -       ret = dma_mapping_error(mmc->parent, host->bounce_addr);
-> +       ret = dma_mapping_error(mmc_dev(mmc), host->bounce_addr);
->         if (ret)
->                 /* Again fall back to max_segs == 1 */
->                 return;
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index 7a34649b0754..1fad6e442688 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -558,7 +558,7 @@ static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
->         struct cqhci_host *cq_host;
->         int ret;
->
-> -       cq_host = devm_kzalloc(host->mmc->parent, sizeof(struct cqhci_host),
-> +       cq_host = devm_kzalloc(mmc_dev(host->mmc), sizeof(struct cqhci_host),
->                                GFP_KERNEL);
->         if (!cq_host)
->                 return -ENOMEM;
-> --
-> 2.31.0
->
