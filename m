@@ -5,155 +5,181 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5EAC433E2
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29863C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09FFA619F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBD3161A10
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236428AbhCXPDi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 11:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57360 "EHLO
+        id S236450AbhCXPMK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 11:12:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236431AbhCXPD3 (ORCPT
+        with ESMTP id S236531AbhCXPMF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:03:29 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652F9C061763
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Mar 2021 08:03:29 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id x16so24778798wrn.4
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Mar 2021 08:03:29 -0700 (PDT)
+        Wed, 24 Mar 2021 11:12:05 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBE9C061763;
+        Wed, 24 Mar 2021 08:12:04 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so2887394wma.0;
+        Wed, 24 Mar 2021 08:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=IDKzYBeJOgv9qLIaDrU+wAUvzFLKQpmDTW9lmztzjik=;
-        b=qClg+6lv2EifrUhyMpMrWcEh7b5b10HjoP0gn40W0tF3cnL2OhY8m2StXmHUr8X6gN
-         SmNJKkfO8XW7pKikYoygLsKy747CBnigccicR7ahxjl1Y7oLy1XTNhsaIIfEC8xLxe8L
-         9zr82go09EO0EhlJmltmkbCWogdcYtVrc+ixB7NKxFQC8jobAapc+pT7kaVtkDJaEG9L
-         a23A36uIoxxMeTkE4Iw0P5vUoxRveZvn6crJS9LRbjN1LHolSqoXymehdiMuq3SG5KRc
-         LQGc/l/B6BMT+74r76o+oS23ueZdNyWqkItvjBZXMOgaU2gfr2jdaCRalh0eosb9xW0n
-         TlOg==
+        bh=TDYF5ErOLHEJ+hIFEGfywBCNbHx+JNBmcnAt70zbjjQ=;
+        b=FBMT4AAOZPxQR987rajfHBV3eU/Ahs24p1NtzKjDWRiCuwoznwnYVyno336zSZ53rZ
+         DaC7QmmZuTDATkhpr0dxv3VlCJcZag/UQFsc9yZ+AzCsUVma8pFXFYuScE3z6QY0zW2e
+         zPx9OmSXtI9x01HHjeJXCH72azdg5bYXc/2vX2g4iPdb4qROrsVLf9jk4V2S2B0IF10P
+         GP45bKkLWlUJ5dTgNKjFaO1TewRQA4p3mkam32tlMjYNpz9bCjWODp/LB7Kn0fjRuX3W
+         njtrPzDUvzHiX0f0xYPMXV38GhD/8zY6YDe4Cb17fxlEokjjZNQ5oH0rg+iwpKCU+XLH
+         Apjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IDKzYBeJOgv9qLIaDrU+wAUvzFLKQpmDTW9lmztzjik=;
-        b=jIEaxFV5SeYV3CeRKpE9URsTTD73TZLBlG0s5cpXmFIsEvTCdxgWt++UNwWZ6knGTY
-         YrEMGa9CdWobqg5hU6bg5xH7f45J9CN/LVQ1vLd9N18HNlsMtaRyQRPv4LQCiOQ+RDV4
-         yJyNpdtGDl2qop465hXsyI1ZxyS1jN3Ji0+85QWk8aUc/yr8XDlLrNhE2dSgi8BTjqci
-         +D1TRSof7Nknuyk2p6mZha5jd2OvlvT3JjBVXp4gVUPo8il2HvWv1GxhPuyFyMGVb0qC
-         PY63EyCEQLba6HxPYevCSwYrAun329llt7XsFh+AAsXjxHubR1o+oeYX1F7opeamreAE
-         7ejw==
-X-Gm-Message-State: AOAM530arp6kLVGq3A9bhGSd8q3MzNaQoKw3uWS7azUcyP2iY0WXKdlA
-        X8p4ftCDKSsvHzxMRgmSbbE=
-X-Google-Smtp-Source: ABdhPJy1XfnIikyWvdAUdSZ4707VIXXXwM3BsUNQ1QkJ7/ooNMEZK0Wv0k6GfkpbcZM77haS03EqEg==
-X-Received: by 2002:adf:f307:: with SMTP id i7mr4004127wro.142.1616598208116;
-        Wed, 24 Mar 2021 08:03:28 -0700 (PDT)
+        bh=TDYF5ErOLHEJ+hIFEGfywBCNbHx+JNBmcnAt70zbjjQ=;
+        b=KkNYqLJ30lhZlS2KWhJH5EnSqYwWjR8xwvaV1De1yjyiNX3iszFO53x34hFHiCZQTB
+         fUVBEZP2vt644zktwjyfJq8KgNXaFYQwa3KRhivKZuGyEEt1boeXAiVblhyFWBHi6Un5
+         3dQ1Sre1PUjKYXqJQ2YfyzavdbkkF23wuST6y6OMkGbWQkqWeMkB0IHJacOZXZz9DJM+
+         pUcvuWAkhfIdSuk/XGKxVb/HHwYQUvu7Wcx4q0rBi99MTNVCAKfSu8lKFE0BxISeWy2j
+         W5lKeuIDJTmT41JxN1yaDNMDYgLCqo+U4omU0Oi459/CZTRjDRYpnaIm2KzYVvPOWnk+
+         sZZg==
+X-Gm-Message-State: AOAM5300UI4BZ8AhztQe8yxijMKg5J8x3/bWAE19qFpXwlEWANP7+Oc3
+        La+Q8twjNmNb0VXaS41AC50=
+X-Google-Smtp-Source: ABdhPJynhubUNp2wL5Zrc24t08eDL1nTjuWQ/0omKuvJKwCaajPcrmWji6DTk7EOKUJ3tkkoYySXzw==
+X-Received: by 2002:a7b:c4d1:: with SMTP id g17mr3433264wmk.101.1616598723306;
+        Wed, 24 Mar 2021 08:12:03 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j123sm2850867wmb.1.2021.03.24.08.03.25
+        by smtp.gmail.com with ESMTPSA id b15sm3374606wrx.73.2021.03.24.08.11.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 08:03:25 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 16:03:46 +0100
+        Wed, 24 Mar 2021 08:11:57 -0700 (PDT)
+Date:   Wed, 24 Mar 2021 16:12:18 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, James Jones <jajones@nvidia.com>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/9] drm/tegra: dc: Implement hardware cursor on Tegra186
- and later
-Message-ID: <YFtU0rw+BaF6dHKy@orome.fritz.box>
-References: <20210323155437.513497-1-thierry.reding@gmail.com>
- <20210323155437.513497-5-thierry.reding@gmail.com>
- <454aea05-ee94-5789-2cab-513342cf7614@gmail.com>
- <YFoyc5mdYe/5/Cjn@orome.fritz.box>
- <487b94d0-a52b-824b-c29d-f88b4605b117@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/14] NVIDIA Tegra ARM32 device-tree improvements
+Message-ID: <YFtW0sfEk2gUwAWe@orome.fritz.box>
+References: <20210302121003.15058-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8a7+mhvPDJypAwVi"
+        protocol="application/pgp-signature"; boundary="FqyHv5d3fWN99NbQ"
 Content-Disposition: inline
-In-Reply-To: <487b94d0-a52b-824b-c29d-f88b4605b117@gmail.com>
+In-Reply-To: <20210302121003.15058-1-digetx@gmail.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---8a7+mhvPDJypAwVi
-Content-Type: text/plain; charset=utf-8
+--FqyHv5d3fWN99NbQ
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 23, 2021 at 10:05:23PM +0300, Dmitry Osipenko wrote:
-> 23.03.2021 21:24, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Tue, Mar 23, 2021 at 08:57:42PM +0300, Dmitry Osipenko wrote:
-> >> 23.03.2021 18:54, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>> @@ -920,15 +934,42 @@ static void tegra_cursor_atomic_update(struct d=
-rm_plane *plane,
-> >>>  	value =3D tegra_dc_readl(dc, DC_DISP_BLEND_CURSOR_CONTROL);
-> >>>  	value &=3D ~CURSOR_DST_BLEND_MASK;
-> >>>  	value &=3D ~CURSOR_SRC_BLEND_MASK;
-> >>> -	value |=3D CURSOR_MODE_NORMAL;
-> >>> +
-> >>> +	if (dc->soc->has_nvdisplay)
-> >>> +		value &=3D ~CURSOR_COMPOSITION_MODE_XOR;
-> >>> +	else
-> >>> +		value |=3D CURSOR_MODE_NORMAL;
-> >>> +
-> >>>  	value |=3D CURSOR_DST_BLEND_NEG_K1_TIMES_SRC;
-> >>>  	value |=3D CURSOR_SRC_BLEND_K1_TIMES_SRC;
-> >>>  	value |=3D CURSOR_ALPHA;
-> >>>  	tegra_dc_writel(dc, value, DC_DISP_BLEND_CURSOR_CONTROL);
-> >>> =20
-> >>> +	/* nvdisplay relies on software for clipping */
-> >>> +	if (dc->soc->has_nvdisplay) {
-> >>
-> >> But coordinates already should be clipped by
-> >> drm_atomic_helper_check_plane_state().
-> >=20
-> > Yes, and the driver goes on to use the clipped coordinates later on in
-> > this function.
+On Tue, Mar 02, 2021 at 03:09:49PM +0300, Dmitry Osipenko wrote:
+> Hi,
 >=20
-> I see now what it does, looks okay.
+> This series is partially factored out from [1] since the DT patches
+> could be applied separately. In addition I added couple more new
+> patches and implemented suggestion given by Daniel Lezcano to [1],
+> see "Specify all CPU cores as cooling devices" patches.
 >=20
-> Minor nit: the i/j aren't very expressive names, something like sx/sy
-> sw/sh should be a bit more appropriate naming.
+> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D221130
 >=20
-> You could also make use of drm_rect_width/height helpers.
+> Please note that this patchset enables voltage scaling for a few boards,
+> but currently voltage scaling is limited in kernel by the regulator coupl=
+er
+> drivers, so it's safe to change the device-trees. Voltage scaling will
+> be fully unlocked once [1] will be merged.
 >=20
-> But this doesn't deserve a v2 if there is nothing more important to impro=
-ve.
+> Changelog:
+>=20
+> v3: - Added new "Specify tps65911 as wakeup source" patch, which previous=
+ly
+>       was a part of series that added wakeup-source support to TPS65911 R=
+TC
+>       driver [1]. The RTC series was partially applied, excluding the DT
+>       patch.
+>=20
+>       [1] https://lore.kernel.org/linux-rtc/20210120211603.18555-1-digetx=
+@gmail.com/
+>=20
+> v2: - The "acer-a500: Rename avdd to vdda of touchscreen node" patch
+>       now shouldn't have merge conflicts with the upstream kernel since
+>       v1 was based on a patch that adds a new atmel,wakeup-method propert=
+y,
+>       which is not supported by upstream yet.
+>=20
+>     - Fixed unwrapped commit description in the "cardhu: Support CPU
+>       frequency and voltage" patch.
+>=20
+> Dmitry Osipenko (14):
+>   ARM: tegra: ventana: Support CPU and Core voltage scaling
+>   ARM: tegra: ventana: Support CPU thermal throttling
+>   ARM: tegra: cardhu: Support CPU frequency and voltage scaling on all
+>     board variants
+>   ARM: tegra: cardhu: Support CPU thermal throttling
+>   ARM: tegra: paz00: Enable full voltage scaling ranges for CPU and Core
+>     domains
+>   ARM: tegra: acer-a500: Enable core voltage scaling
+>   ARM: tegra: acer-a500: Reduce thermal throttling hysteresis to 0.2C
+>   ARM: tegra: acer-a500: Specify all CPU cores as cooling devices
+>   ARM: tegra: acer-a500: Rename avdd to vdda of touchscreen node
+>   ARM: tegra: nexus7: Specify all CPU cores as cooling devices
+>   ARM: tegra: ouya: Specify all CPU cores as cooling devices
+>   ARM: tegra: Specify CPU suspend OPP in device-tree
+>   ARM: tegra: Specify memory suspend OPP in device-tree
+>   ARM: tegra: Specify tps65911 as wakeup source
+>=20
+>  .../boot/dts/tegra124-peripherals-opp.dtsi    |  5 ++
+>  .../boot/dts/tegra20-acer-a500-picasso.dts    | 14 ++--
+>  arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |  2 +
+>  arch/arm/boot/dts/tegra20-paz00.dts           | 14 ++--
+>  .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  1 +
+>  arch/arm/boot/dts/tegra20-ventana.dts         | 78 ++++++++++++++---
+>  arch/arm/boot/dts/tegra30-apalis.dtsi         |  1 +
+>  .../tegra30-asus-nexus7-grouper-common.dtsi   | 14 +++-
+>  .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |  1 +
+>  arch/arm/boot/dts/tegra30-beaver.dts          |  1 +
+>  arch/arm/boot/dts/tegra30-cardhu-a04.dts      | 48 -----------
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi         | 84 ++++++++++++++++++-
+>  arch/arm/boot/dts/tegra30-colibri.dtsi        |  1 +
+>  arch/arm/boot/dts/tegra30-cpu-opp.dtsi        |  3 +
+>  arch/arm/boot/dts/tegra30-ouya.dts            | 16 +++-
+>  .../arm/boot/dts/tegra30-peripherals-opp.dtsi |  3 +
+>  16 files changed, 202 insertions(+), 84 deletions(-)
 
-As I was browsing through the drm_rect helpers, I also came across
-drm_rect_fp_to_int(), which helps simplify this further. As a result I
-was able to just get rid of most of these temporary variables in favor
-of just the integer version of drm_rect.
-
-Thanks for the hint.
+All of these applied, thanks.
 
 Thierry
 
---8a7+mhvPDJypAwVi
+--FqyHv5d3fWN99NbQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbVNIACgkQ3SOs138+
-s6FWtxAAt8h4TuclxE5yAV+CJVMHbWT9PtMeF3agHADYed6OqrdYK1Rgp9Q28k5J
-o92AH9QOjf3RsMVKJ+fcJQTrRA6vVjVqWNKw9T/ACa/kutuGZmDJLKPa6yOsnFo8
-vOTnH0YsZRubq51XD90v0CTR1Dvo3reo5Kl7351IxPLZvU29YsXzmoC0zQeon2+9
-NLnPaB8Ejy+ostty55IZoaVEfiotZ/nSv58iAVjCetSlH4HAEgFl/ZA19am4HVWb
-nDCiBoaDrOjlJpIIlo+R1YsEygBgh8BG4KEDkJYeaXV3UMa5vDSDan8T9wGZ2zMj
-xUEOox9hmf0sGIEcoFJlY2z+iqGCmzD1xKoxRUDWSST7fSOAqhY35fgKy1kiAAfL
-Ua/DCOLjCanErEhofZWBSk5n8cHPaKEezONi2QowGnp3nQ4nuET71VdN7az42gVv
-4PrHFsEk3vNAHLO6qALqKQ4OtfGv9nacBNBvy6ftOODmjfdwGWl9TjMIa+SrV5md
-yAILgy2yJd4052E9UZMd0jvFGwbMWlTAik0QIuYqPcvS/pcn5KjVieSMSLAm17By
-1tVx+HaEq3dObN6DnMHYtvvwMIgKBTz5LMderTsKx6gwacCFbJJQAUB6GDG0LXN3
-tt7EdlPkWgvwbHzpcJJgPKUy7CXcRpPYntxtSfxFSJIecNCsqKg=
-=EM7w
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbVtIACgkQ3SOs138+
+s6HPkA//cy8YJ2iHisZpY5NR3MmAfVKK8tZR0cSbikz8+UotKeNM8Nc7YChgr/9V
+WqMKlHKyMTYhp90mtCKAj16RIU4xeqfFtEsgEOoKKKMjhkiQEByEp5f8s6T0WzAm
+KapJQJvTVQGP4WGXpeFEbQPpCNvFoGu+mjJoXlUmAiQWMKYYD5oiKgh7D55dsa0g
+GIPLnxi61JiAp8OfBvjhhZbH35lbM1I6cwkSFjS8OhiVdNp1lNGgiWOfqy8NxUOj
+fdIFgBTyg/BXvQuSN9rDDhs1CI2PQy6Wv4ah+GPrbJ1e56/mvC5O4JbvfH/CSjt0
+tE0pBDZpyd8vEbty4w9qhMbOdYN7GUKX/QrC1aHHcigksdgUU2HsUXUUBBAQMaj9
+JLH+a6HH8++DLt0F8yCVJl9/AxxPz0R8Sj9ac6szBHJPwu5QhOiDzGOT326H9AZ0
+bnHg5pl3YeyBo33ZebJqXDi9UhV50zZRKrbqjhiu3DFm0svxVgI9qFvLgFjG3KNl
+vkPnG/TIBTJxaCmAfJ4fFBmy8J/XyHbK8QIjeAzBhf7JQQsabeWpA/UTuhf6ZhO0
+oLaqAtMKc1YJ4P1uUSX7k+IrfrVqR6ChZuW7dQF/uVDgua34KiDnEkbVS9Qn5EU1
+PmVg9s8g04vvP2RjrNBcT0S9ZUSOZW/ufDEVLh1YL59KdF/Gqmo=
+=aWLb
 -----END PGP SIGNATURE-----
 
---8a7+mhvPDJypAwVi--
+--FqyHv5d3fWN99NbQ--
