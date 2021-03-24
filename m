@@ -2,133 +2,121 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7D2C433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93DAC433E0
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4B7619B8
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B386C61581
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 15:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236555AbhCXPOv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 11:14:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59784 "EHLO
+        id S236631AbhCXPZA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 11:25:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236524AbhCXPOk (ORCPT
+        with ESMTP id S236643AbhCXPYe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:14:40 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC89C061763;
-        Wed, 24 Mar 2021 08:14:39 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id g25so13141936wmh.0;
-        Wed, 24 Mar 2021 08:14:39 -0700 (PDT)
+        Wed, 24 Mar 2021 11:24:34 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B0AC061763;
+        Wed, 24 Mar 2021 08:24:33 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id s17so30709333ljc.5;
+        Wed, 24 Mar 2021 08:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vjgABm8xHVXIhTgFNyGGl8fWrWAzbbNLflcWKceQnNA=;
-        b=ccgkR98ZWcERYLV/CzKzwcs2nvnlp8jwnRIBMEHVYaiEx7btvyBNNCl2umNmTD1UHQ
-         JWgc/bErkLKOwPFvbGSzZ1dJdEkqGtltI08GzIM1cd3zUnoc5A1j9rH5TATCOfcUI+H/
-         IeY3xS0PK9z4C6ucUOlDXE4t4sxDRmZGTJuPNk4lWXQzraG50chCiguSYX70q+RadCjr
-         wJnu1y2Xx4MVz1e+AJr7UJidUTrakZIMDtTf2VyzcjAnLFESp7iR+8gPpWmOhIeDur+V
-         cq2H/K8RJTd1V9MkHxLMXE+VdE1+wxyrzcNxS1GkjOXWbXPh7pk/GbPHbi3B1SNGks56
-         Ga1Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WabpO9Jg+oYK8+rZmwUQlO8LiyhHGR6h2+8UibET5H8=;
+        b=seZYZo2xYh6/QCouIHeuUEvwkrSF+uKZaCUDtKw8qvka2eFhR2n6rIANlEwcmC/eOJ
+         B0jXE3PZ+2xNDy8kWrprJngg8a7MeX6HsDNCjP73pKw2JZAMvgGuA+j8WugMiy8QZNmi
+         sgWdeJ6XhcMx68ItJIguD7vJ2/POS1xMfTupNutSELYYGLLZ4+/y5bWBTqip6FFt1CdK
+         qDRL+/hN20Q59AX4dfsLwLaCJY27GQ9mm9VilnvUPSWYeiOsmOgXtOK15dg2O9fHsZ25
+         ei1mfTKX6sXmhswYFDS0GFYCjNcqOoYKNb3N+zztt44X4YT99uxpKq10SF8hyw/KffaD
+         mXow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vjgABm8xHVXIhTgFNyGGl8fWrWAzbbNLflcWKceQnNA=;
-        b=JZt8sN43f/YwsUfMU6hCzL3leSqh2qC5SkaUrQ9V2GXg+IVARgxdAkUOfeEdI4rQQL
-         WV7NTfGBdQHcDDUe7idENIQS0vi5fSp2JhENOYOnoTwp5x2X9Xco8ErTyoo0rp6oxqUw
-         gyTuTOyOWU13XHxn9zVHxz5INSjShoiNY/cPjnAvZHc9aYSZ5LCThbvl5CQyfyD0SlH1
-         +S9PdbpZwajawxqZdk7vqSOuf4szKoRin7ww43T0ckBxyttjk+lUlssA2Lf10BJnkIRW
-         ZjGXrrhgwAORT+pfbm6cn0zmWulaoEqJm6PkdFsg73NxxTd3hrWBX6QY9GyxTZS2n5+V
-         IKaQ==
-X-Gm-Message-State: AOAM533o1y144z0V78pFHc/nI9jnymL20gfe+SyeHRBAj6xCebHktKWd
-        4xpDzMGdoAcfTjGd26Jald0=
-X-Google-Smtp-Source: ABdhPJyOvj1GeY/MtJ72u5NFtRr76OvRZgU6wn3YvkmCUvRWkKpYuEWGPhaiiuhVtZEXft9guX4iMQ==
-X-Received: by 2002:a1c:1f94:: with SMTP id f142mr3460945wmf.180.1616598878302;
-        Wed, 24 Mar 2021 08:14:38 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id f126sm2840936wmf.17.2021.03.24.08.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 08:14:37 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 16:14:57 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WabpO9Jg+oYK8+rZmwUQlO8LiyhHGR6h2+8UibET5H8=;
+        b=q54u9gjwz3P+hSIRiSxiNbFVR4aJv3isUgLfWu4U6fWvKZIxcMENHo0kFX+CEGuGVP
+         3RVkKV07Zeq99meYNfMBsM0P/JktlPXk6RyxLJxugyz74sCxefTmoetpD1Fa/a3vBKh6
+         6OgCl9+l1JQ8OmSxu51UM+Rqnx5OzQc6j45k9vhCIkyoDBIfWXl6oVPAlUrrOrTsXiEd
+         3CDhPeMF7bLyYZgzmom71gpfJOJqW3yPDiRUUEJnLZ2g4COsYdX6bYYm8d9NQG2wS7kx
+         55Vf1xojBqv6QET5mc/3JjeskeTHO13ASDvuF0X5tXtY3NneErWKnDHzRTJQCg6Ys0Jo
+         JYPA==
+X-Gm-Message-State: AOAM532y253kIjGW2MfLhyHfKmq1Zi0/0WV/3IE+9aRdkUjvchqLHMpr
+        pdvZsEiCMN2KxUIqREbDCKkXoxBRwQE=
+X-Google-Smtp-Source: ABdhPJw1i+fkeXHRMsvwoEM81I6tbhhY3vUJAhZFC1jeb5ToJ4ldWHIUpjzljlX0WqxBH4KDdV31nQ==
+X-Received: by 2002:a2e:9755:: with SMTP id f21mr2419817ljj.319.1616599471815;
+        Wed, 24 Mar 2021 08:24:31 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
+        by smtp.googlemail.com with ESMTPSA id n5sm259268lfh.173.2021.03.24.08.24.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Mar 2021 08:24:31 -0700 (PDT)
+Subject: Re: [PATCH v3 09/14] ARM: tegra: acer-a500: Rename avdd to vdda of
+ touchscreen node
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        David Heidelberg <david@ixit.cz>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v1] drm/tegra: dc: Don't set PLL clock to 0Hz
-Message-ID: <YFtXcTyLrBJShWac@orome.fritz.box>
-References: <20210302131506.11790-1-digetx@gmail.com>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210302121003.15058-1-digetx@gmail.com>
+ <20210302121003.15058-10-digetx@gmail.com> <YFtWuoV4/Kiilbzb@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <479ad8da-2b70-786a-e08e-708c5ee26718@gmail.com>
+Date:   Wed, 24 Mar 2021 18:24:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7irehgoz3UdKwUP2"
-Content-Disposition: inline
-In-Reply-To: <20210302131506.11790-1-digetx@gmail.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <YFtWuoV4/Kiilbzb@orome.fritz.box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+24.03.2021 18:11, Thierry Reding пишет:
+> On Tue, Mar 02, 2021 at 03:09:58PM +0300, Dmitry Osipenko wrote:
+>> Rename avdd supply to vdda of the touchscreen node. The old supply name
+>> was incorrect.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> This one didn't apply cleanly, but applying it manually was fine...
 
---7irehgoz3UdKwUP2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Great, thank you. This is the correct fix for this trouble.
 
-On Tue, Mar 02, 2021 at 04:15:06PM +0300, Dmitry Osipenko wrote:
-> RGB output doesn't allow to change parent clock rate of the display and
-> PCLK rate is set to 0Hz in this case. The tegra_dc_commit_state() shall
-> not set the display clock to 0Hz since this change propagates to the
-> parent clock. The DISP clock is defined as a NODIV clock by the tegra-clk
-> driver and all NODIV clocks use the CLK_SET_RATE_PARENT flag.
->=20
-> This bug stayed unnoticed because by default PLLP is used as the parent
-> clock for the display controller and PLLP silently skips the erroneous 0Hz
-> rate changes because it always has active child clocks that don't permit
-> rate changes. The PLLP isn't acceptable for some devices that we want to
-> upstream (like Samsung Galaxy Tab and ASUS TF700T) due to a display panel
-> clock rate requirements that can't be fulfilled by using PLLP and then the
-> bug pops up in this case since parent clock is set to 0Hz, killing the
-> display output.
->=20
-> Don't touch DC clock if pclk=3D0 in order to fix the problem.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/dc.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>> diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+>> index 8a98e4a9d994..d852527db707 100644
+>> --- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+>> +++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
+>> @@ -449,7 +449,7 @@ touchscreen@4c {
+>>  
+>>  			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_LOW>;
+>>  
+>> -			avdd-supply = <&vdd_3v3_sys>;
+>> +			vdda-supply = <&vdd_3v3_sys>;
+>>  			vdd-supply  = <&vdd_3v3_sys>;
+>>  
+>>  			atmel,wakeup-method = <ATMEL_MXT_WAKEUP_I2C_SCL>;
+> 
+> Looks like this line is not upstream. Did I miss a patch somewhere?
 
-Applied, thanks.
+Indeed! I kept forgetting to rebase this patch properly, nevertheless
+that line already got into -next a day ago [1].
 
-Thierry
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=f0a77ed9080a39a75faecff53fa37b3328926421
 
---7irehgoz3UdKwUP2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbV3EACgkQ3SOs138+
-s6E1XRAAp4wJgbqgYTYH9FLgeuJ25xmXJbnsEMINM4Cro0mcWnXPCUpZ1TKcCiCa
-pxwtGihRgbOU8u1beBuSxK+U6VAmI2Tf/hMUPd0lsr+iyoBK4dF/WnDbswvsyD+h
-cA+3B7C8hrAjPEDRvCoJy2AOuqAIaDt76H/NmYcIHXTE3vkqrqyGs27XVos4YJF6
-MEuU7BMcnWQsnHmbx9Y0E6gb5mEvAy8uKSeMEOqYb2b0uMdOuN+VYkCH2IlK/tR9
-GPOnbaexCpgr1KlaRQ9KQN9agtyVvq+7tZevHVblh9/VOz4IaEWcC8rMM2nNc46O
-qibUiITW2qjn2hQdIxezlBVP5TvQdkk1ofNkGGpHi/bnUV8Agn8ptJn09RIExv9f
-eQFXbYYRpdSNj+CaXH5OoJA8mlIHKOlyDXdI+xPdn81npecwPMfjfUqcxuaLNPTY
-ySvb0qGJAM+6OVLJarR+3VN9jlJe0aNP7zrTS3LI7vxhMNq2tsUb7NrHA6fRFpBz
-atgr7fvabtizdkxoMq/ln1LLnGRclB1MtOoIAzetNhuRCGv2YU1MOqr2L0XDLVk8
-8cUXSH+YKRs86SYhGYji1K9g2AwWBDUGSv2hYDpYWMyDlcqcs5tGpoWTalPa7yr5
-Nv3ayMVv3kjpHpKU2UywwBXAlEzn7/YdYzdrokRLXFf8i7F/29I=
-=xaGH
------END PGP SIGNATURE-----
-
---7irehgoz3UdKwUP2--
+This [1] patch should be in yours inbox.
