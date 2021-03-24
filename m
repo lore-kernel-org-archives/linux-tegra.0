@@ -2,191 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AF4C433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA899C433E5
 	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 12:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1526361A19
+	by mail.kernel.org (Postfix) with ESMTP id 7F594619D5
 	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 12:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233738AbhCXMjb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232650AbhCXMjb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Wed, 24 Mar 2021 08:39:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54126 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbhCXMjP (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 08:39:15 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16FE3C061763;
-        Wed, 24 Mar 2021 05:39:15 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id w203-20020a1c49d40000b029010c706d0642so2637865wma.0;
-        Wed, 24 Mar 2021 05:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AZ734CjXzkZxxW7LJ76u2/6BjErh6hqwyWyypNcJoZw=;
-        b=G+Jlmg/ALd2lsMKtIHlvZdWKGU6MzG80pmxqLdEYEbINLeYjJgnurKhqJjNy88Shpj
-         8vQvMBdvyxusqhDmvAVKgnNpqqTjK+C7sxDKlDMq7jMiU6PDj1qjOPSg7btSTnrD2ZvP
-         zfNpk17h3Bsotz7iltdEPaD3tmBhfnCgDSqbwFfUubhhrGsW9vVgOcMRQ72DEYyJOp1Z
-         loGI+jCuh1CDaSnqj7TjH12rkIYieWGORG48hsC7/XT8m+YjeH9MuoEMRuQZdgVczChb
-         V7zrq3vmjSA5U1cimpMEekfBHv+pSntC5v4uEY420tByZmKCQD5lsibrCx/0iGpoA1L2
-         fdcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AZ734CjXzkZxxW7LJ76u2/6BjErh6hqwyWyypNcJoZw=;
-        b=r6DF6QEOAN89zP++JiilmEWxDjO9J6MHwPfIkpdyo1zwb3UCu0SVHSkVvbmxfu/m4C
-         ff/zO6gEj2ytRzIPSo/+r2gYBIakfTQHcQSC4Ao3tpoNGTpnUu+KR7Pc5CXU2c3TdrGM
-         W66iLHYyLjFz+5KZJtjgA6kxxZ2iRxByx7yGXTby9aJvUGY86lTvyQXLz8CgoQujUruV
-         RG8XxmsCYCU2RALV3Za3/GuoQSZlNHC6MZKy4rnGHe/4cmr/eCBoZvkwTrOmOfKvIS+e
-         f+w53DaZ2XXdauVlpcjbIbCWnAUcwvInROMF6NtIL7wg90+wcDCXHy8O6UA7kiXDbUvz
-         aAWg==
-X-Gm-Message-State: AOAM530XWymL71LHD53AHr9ym3FTIS9zFwLEL/3Fx8Vm6JbW3eIZPmj6
-        SB2O/4kV3l4d9J1Wvk1mRKw=
-X-Google-Smtp-Source: ABdhPJys5Jrb6PdF4VBtE5c10/wMy5i+PsWuFX7nrooh4zkWIx0qwo0EbEpsVIBILsQXWSszjk4ubw==
-X-Received: by 2002:a7b:cc84:: with SMTP id p4mr2798680wma.10.1616589553802;
-        Wed, 24 Mar 2021 05:39:13 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id u4sm3055247wrm.24.2021.03.24.05.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 05:39:12 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 13:39:32 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, JC Kuo <jckuo@nvidia.com>, robh@kernel.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, nkristam@nvidia.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 00/14] Tegra XHCI controller ELPG support
-Message-ID: <YFszBH1JJmjJmjn2@orome.fritz.box>
-References: <20210120073414.69208-1-jckuo@nvidia.com>
- <YB1vGTt0ufzsYBgo@ulmo>
- <YB1wxazg/QpRSJz6@kroah.com>
+Received: from mail-dm6nam11on2083.outbound.protection.outlook.com ([40.107.223.83]:53408
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232658AbhCXMjJ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Mar 2021 08:39:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EWWMuXczHP4+TARPd2ONhbiNIlA6hcZQYS9ougbdOY+G5Cp6Xi60gCV0OqMUEZ5vzvcHNmTFMV7i3X9CZtoSzcRaikXY4dLymPDgE+UCs21CRybOP0tZ7JrzzpWLgnhEacCz3OcomP4i7tQT6MEFcCCB3WepOKYaNf52HUhBVBnqpOtAa3JpkAkPnDWSFA8Nj+VrmSMkuccW0JIXnJXqnpwHF3K8HRLv9nE4xF/ysRuFWCjFDr7lc81iEi9N5bic6SjkiF4+Ekb/q6p+x8TDsQMvYZ55BjZ1agEpxflbSpWCi1BAoVfEKgIt0XZv/gECap9t/Y6aMpSubw6u3hmD4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=enfJoRjarHJ1mLxyuWHAcs0u/1+oAf80jRbEZxjwWro=;
+ b=dpor8qOUFFgFMxRby1NhKZQWJ876vM8XwCGzoBKEEqlJ+Wo3kAZlgqCU4sV3iLx5wK3B+03b6JisTVvkzC/qayqVpo4xt0gEyYIjodEvbGinReeQcM0GCrs7OWq2HXU5jhL+cMKgV0tRXfPFRFR2fahl8ipRa4d+Y9E8IqmlR42uV6K0WetPcXXLtIq/xJIZRmcEAUc/9QXk4qpisECMfF0v5HhBcrJ1rE7lnifqGwG/EeilVwYfbKBkPiP1pg1pfOteSw26jptYItJhO/LGcFEz+SXxtRWpqDUf+tPDA4qJrCpkiwHmPy/tbuY5GyY+sy14jibNPNz3sZ98kWDtdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=enfJoRjarHJ1mLxyuWHAcs0u/1+oAf80jRbEZxjwWro=;
+ b=owZQJ25Vzl2xR6hy5XL+W4EAMnXY/d4fBhUf4+m+bPH4L7l+A6D0Qbu0ZkTkFCeL7CyLHPIcAKezEyvCzeoxN7TXK329WG4FVDnPCKyGcqKe6/oSt8dt+i6yJdTKE3QDhgsilU/TY7qhY4XPM5ceKfUcZnMxOOibFjr/7K7lkRggYQSnrOrUL+NmANAKeg/NSZsVHLsqscedSBbyZOSVgG4wqKBqqDrQhTYGO1RHbOBcnSiimoHMKQC1TZDSdjEdU8CJ/3VT6fAcaTVUcuCWNX5Y3BTtJQqMzp84EqCE0mckxmQJZbbCxmr3UxrrdFbTN6jgmZAhSIqtzR6d1NKQ0w==
+Received: from DM6PR18CA0023.namprd18.prod.outlook.com (2603:10b6:5:15b::36)
+ by BN6PR12MB1796.namprd12.prod.outlook.com (2603:10b6:404:106::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24; Wed, 24 Mar
+ 2021 12:39:07 +0000
+Received: from DM6NAM11FT066.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:15b:cafe::4c) by DM6PR18CA0023.outlook.office365.com
+ (2603:10b6:5:15b::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.25 via Frontend
+ Transport; Wed, 24 Mar 2021 12:39:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT066.mail.protection.outlook.com (10.13.173.179) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.3955.18 via Frontend Transport; Wed, 24 Mar 2021 12:39:06 +0000
+Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 24 Mar
+ 2021 12:39:04 +0000
+Subject: Re: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
+ resume back
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>
+References: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
+ <DB8PR04MB679546EC2493ABC35414CCF9E6639@DB8PR04MB6795.eurprd04.prod.outlook.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <0d0ddc16-dc74-e589-1e59-91121c1ad4e0@nvidia.com>
+Date:   Wed, 24 Mar 2021 12:39:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OPsgcSQYCpWKq5eH"
-Content-Disposition: inline
-In-Reply-To: <YB1wxazg/QpRSJz6@kroah.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <DB8PR04MB679546EC2493ABC35414CCF9E6639@DB8PR04MB6795.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1331b623-35f2-40d5-fbc8-08d8eec1d071
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1796:
+X-Microsoft-Antispam-PRVS: <BN6PR12MB179621C0A3F199A85EFC0725D9639@BN6PR12MB1796.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rs3hRYzt5boXrhG4jlAuZ3Rb/5P8JMrJLrPnK508G3w9y+HA2yx9x3iK57JiDC6vwfgrCOx3xwp3Zfhn2e1SOfEMB4sKjFJgJfGGTltprmFAZ7pmR1kgzwyE0ksEvQov73klhzXcgNOn3f9b5pWTz7w29WH1mtogivIr56bzmQVZuijvDAoX9tGiBzntP0g6+F+ODD8IWRkkNKMwR+TQgD7cLZZVqX4Qy3yDrjOB2SJGJW8iVn+mMNq6XxtboYSKEsIJMf7upD7Hm7l7M8UM3AnlpWJyD0l2tb7E0HLdkL31zrxtdYVREapRVgLXmA+vD9qOZNeF+MCITfh6CBd+hUulGGwL80dJOTlxgfM/o3s9V4f0ceZ5bPcLPGW/68O3r/jJaDxYCZKuNM0kButg3AIhUnqcNfvHsnhu5oJ36AbcgzHW5zlM9LCltIACWiy5NLFeDg2XUz4L/dAav4Rk/HiObpgn1W7tKn9197w/3sHtvUpLmkOqcv6VI/nMUfZyT1A6FDCF4pAjnaajSJWgkWNNhG20xkkgSPCxso/kugwSfN7r6S5Ci0tadD4oz+BPpcxbrOLlzIVJipHmtJSgmtwEhjipxxGSTMF6ltNvxJNJgCNfcKwyHY4/3F7mD+GJLAqaGMwtBZjsTGcsIdzYHYgB8NyRghxs2xFC6EgJgMGM4BEl67EQLT0njkOz5jkU
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(376002)(396003)(39860400002)(346002)(36840700001)(46966006)(2906002)(36860700001)(86362001)(36906005)(426003)(2616005)(336012)(53546011)(356005)(82740400003)(54906003)(16526019)(478600001)(47076005)(7636003)(8936002)(6916009)(83380400001)(4326008)(186003)(70586007)(31686004)(26005)(5660300002)(8676002)(36756003)(316002)(4744005)(16576012)(31696002)(82310400003)(70206006)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2021 12:39:06.5105
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1331b623-35f2-40d5-fbc8-08d8eec1d071
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT066.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1796
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---OPsgcSQYCpWKq5eH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 05, 2021 at 05:22:29PM +0100, Greg KH wrote:
-> On Fri, Feb 05, 2021 at 05:15:21PM +0100, Thierry Reding wrote:
-> > On Wed, Jan 20, 2021 at 03:34:00PM +0800, JC Kuo wrote:
-> > > Tegra XHCI controler can be placed in ELPG (Engine Level PowerGated)
-> > > state for power saving when all of the connected USB devices are in
-> > > suspended state. This patch series includes clk, phy and pmc changes
-> > > that are required for properly place controller in ELPG and bring
-> > > controller out of ELPG.
-> > >=20
-> > > JC Kuo (14):
-> > >   clk: tegra: Add PLLE HW power sequencer control
-> > >   clk: tegra: Don't enable PLLE HW sequencer at init
-> > >   phy: tegra: xusb: Move usb3 port init for Tegra210
-> > >   phy: tegra: xusb: Rearrange UPHY init on Tegra210
-> > >   phy: tegra: xusb: Add Tegra210 lane_iddq operation
-> > >   phy: tegra: xusb: Add sleepwalk and suspend/resume
-> > >   soc/tegra: pmc: Provide USB sleepwalk register map
-> > >   arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
-> > >   dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
-> > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra210
-> > >   phy: tegra: xusb: Tegra210 host mode VBUS control
-> > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra186
-> > >   usb: host: xhci-tegra: Unlink power domain devices
-> > >   xhci: tegra: Enable ELPG for runtime/system PM
-> > >=20
-> > >  .../phy/nvidia,tegra124-xusb-padctl.txt       |    1 +
-> > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    1 +
-> > >  drivers/clk/tegra/clk-pll.c                   |   12 -
-> > >  drivers/clk/tegra/clk-tegra210.c              |   53 +-
-> > >  drivers/phy/tegra/xusb-tegra186.c             |  558 ++++-
-> > >  drivers/phy/tegra/xusb-tegra210.c             | 1889 +++++++++++++--=
---
-> > >  drivers/phy/tegra/xusb.c                      |   92 +-
-> > >  drivers/phy/tegra/xusb.h                      |   22 +-
-> > >  drivers/soc/tegra/pmc.c                       |   94 +
-> > >  drivers/usb/host/xhci-tegra.c                 |  613 ++++--
-> > >  include/linux/clk/tegra.h                     |    4 +-
-> > >  include/linux/phy/tegra/xusb.h                |   10 +-
-> > >  12 files changed, 2784 insertions(+), 565 deletions(-)
-> > >=20
-> > > v5 "phy: tegra: xusb: tegra210: Do not reset UPHY PLL" is moved
-> > > into v6 "phy: tegra: xusb: Rearrange UPHY init on Tegra210"
-> >=20
-> > Mike, Stephen,
-> >=20
-> > could you guys take a look at the two clk patches here and give an
-> > Acked-by? There's build-time dependencies throughout the series, so it'd
-> > be good if they can all go through either the PHY or USB trees.
-> >=20
-> > Kishon, Greg,
-> >=20
-> > any comments on these patches? Unfortunately, the USB patches in this
-> > series have a build-time dependency on the PHY patches, so this should
-> > all go through one tree. Since this all culminates in the XHCI driver,
-> > merging this through the USB tree might be best, provided that Kishon
-> > provides his Acked-by on the PHY patches.
-> >=20
-> > Alternatively, I can create a set of branches with the correct
-> > dependencies and send out pull requests for the three subsystems if
-> > that's preferrable.
->=20
-> I have no objection for the usb patches to go through your tree as they
-> are hardware-specific.
+On 24/03/2021 12:20, Joakim Zhang wrote:
 
-Kishon,
+...
 
-I haven't heard back from you on this yet. We missed v5.12 but I'd like
-to get this into v5.13 since it's the last missing piece to get suspend
-and resume working properly on a number of boards.
+> Sorry for this breakage at your side.
+> 
+> You mean one of your boards? Does other boards with STMMAC can work fine?
 
-Are you okay if I take this through the Tegra tree to satisfy the
-interdependencies between clk, PHY and USB patches? I've already got
-Acked-by's from the clock and USB maintainers.
+We have two devices with the STMMAC and one works OK and the other
+fails. They are different generation of device and so there could be
+some architectural differences which is causing this to only be seen on
+one device.
 
-I want to tentatively take this into linux-next to give it a bit of soak
-time before the ARM SoC -rc6 cut-off. Please let me know if you'd prefer
-to apply these to your tree so I can back them out of the Tegra tree
-again.
+> We do daily test with NFS to mount rootfs, on issue found. And I add this patch at the resume patch, and on error check, this should not break suspend.
+> I even did the overnight stress test, there is no issue found.
+> 
+> Could you please do more test to see where the issue happen?
 
-Thanks,
-Thierry
+The issue occurs 100% of the time on the failing board and always on the
+first resume from suspend. Is there any more debug I can enable to track
+down what the problem is?
 
---OPsgcSQYCpWKq5eH
-Content-Type: application/pgp-signature; name="signature.asc"
+Jon
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbMwIACgkQ3SOs138+
-s6EVZxAAtadd18gHHhsUYyV3OGqDMG+1Y6bGQIcRaAfgqF+SctUTzdCGHkVvyuO5
-sShSqOUZBQeYmbeih8zierPXi0FgGCKf9jjN2J3EPLtgNZG8XrdEl82igowsQVoA
-mTE8WuaEIvJ2A8ffLECTS4oXZcjkSRfEH4YgaBuWMvMx/YjRicjfJzUHM6UIxUdq
-ajqMCLXwfr9ckZ6idNZKcH7kXipIgV5+G+4YXrIX9fl5lc4uV1rg2xU5B5z2Nz6y
-TGzmcWCtO8ns4ls8fJ8ofYKWFWNCcKsAHRn7H8yZmu1vGWYoIgpjxikoJnJdAlM6
-1Jl87sAxHwLgalVkinsCjGWcbWaYiaJnxV4bkXx0QDwMfDAYR/UbLUuU5pJ+ZNsQ
-174ElKGin/GUtz6qX2Ylm/5m4l+E/eP1NJgFTPILBjitaqOekHOVOJwHuZZJK04x
-VlBCobbia0U6N05BE+yqniU3CponP1XgaB7nm1nsk3YW7T/Vnoy05x5sfmSBZ7+S
-4ZbTLXUQSeaJhVrLynDqGQkj/yb7UM3Z9VJyVIk+ZbtTC164SgxprDyGtesNYNry
-pnqaLPtK9weDG09Dh/inyBXvIAhDTq3kLzEcewE/ySdjc+Sc7WC9RObM8d94IIlw
-xRYFZ3OcLfWhTE2LkoYrD8G2YuORb7KXYZM3PfEW0VHEQLmI7rQ=
-=wSm7
------END PGP SIGNATURE-----
-
---OPsgcSQYCpWKq5eH--
+-- 
+nvpublic
