@@ -2,196 +2,262 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FB8C433E0
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F01BC433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 685FE61A01
-	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CFB61A01
+	for <linux-tegra@archiver.kernel.org>; Wed, 24 Mar 2021 13:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbhCXNcJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 24 Mar 2021 09:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235230AbhCXNbr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 24 Mar 2021 09:31:47 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA5EDC061763;
-        Wed, 24 Mar 2021 06:31:46 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id x16so24459584wrn.4;
-        Wed, 24 Mar 2021 06:31:46 -0700 (PDT)
+        id S235592AbhCXN4i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 24 Mar 2021 09:56:38 -0400
+Received: from mail-eopbgr770052.outbound.protection.outlook.com ([40.107.77.52]:45554
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235793AbhCXN4T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 24 Mar 2021 09:56:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UllG1U6PCB15oD7uRc49V7sBJMcZQxQiUU+6W6D/N1M/pKg3P+eRfzgmkiZ9G04MbqeXpNdicmdQtaTx+L//trkTwxsnT4TFohEXNwChw5/9tmvxja074PK10V1aSPAvaGH2o4RHEWze813i44+JTfvc86UtibRWpTWFhaPByh+2zKRFxS99+PVEtceBZYUImWvwDHpIPoTj67TfQBX1lXWFsdQlba8FuejzWXYDtW9Gai5ToRFrdoCBruYiepXM6D42Exd1q+UNz9LvybJ30CZk+x5K30fS6YA9jnWd8vRmaPwPGdwfAdHfkxT0C3182pAjsQDTbemPoatWSysz7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ma9VBPHSJAXFz8V/7f6vlUdnTsmXhusqfeS8VBf/+F8=;
+ b=WTFegcHr7dmqi5LZrw5wdfqdRlAd/7+gOhWykokZ9ZuQPNSJNTSiXxfmSUhKL78fEoIEJfSFdmHHtpJ1FCYfX8K6hU4jcWw9aIR/4Atx2ts7YvY3HscIVA1zvEHphTeIfOi2ROhON/jlr+lnnAtstu8GltyX+UEu3E5BUAq1CyLJBjLJacmZA0HeCw02tPey8LsDoNydgSaHOytUkiw5Vciujpa8YLflARwYLmpwpqkeqe/QHPyCjbe3w1CwOCdZga4iKlmU+ippXFe5RaucmkhmdK0v9FJDM/JsuALNgvSl6oys7QfSWHSQN2VDFm7Yxf54rflhasx7CaLVIExDKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e8lPC72F11p8PBhBhydD1cx8exsNe0wRkeHr07SpaS0=;
-        b=Qd6dhey0+eCqZPgZmDNub1vuPD1DQoapTBwS3wk3+jDCZeWSdnP0Y5AAjbU299drNM
-         6kD8jiYya5D/VsfV6Weg5j4hPKGm9NnrPKd43h/URiYNB7GjplubzGCNQhvT6XeIu/kR
-         OPiU6wgsG/6NOFJrUMO83IHDmGJIM3lz795bi/EPNfUKPist1Se3v4uPNBe1mZZVrcQL
-         hBP9Ih4Ieei7iQ1+D5S4RKYt427BBd9TJ0tMQbvXd+Sxvat4WUzjmkN33pTiW/qUS9ZD
-         s7cJ7Cql0fn/+l0Vu3i/GW40D3PvJIvyga3d9WVLBMzrn6xTQXSNiK3Drbp4/tjcFzD3
-         7FTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e8lPC72F11p8PBhBhydD1cx8exsNe0wRkeHr07SpaS0=;
-        b=hUO60XoOsvfl6TUwzMB4VKUuwvZjJTxQmk3w8khW3mwFlicxaOk3Dw/XU6UKYX7Y9V
-         tvIw6q0Zar4J9eDUlVpU1+yjV+rhEbVHsDlhjpvEj+StbiExJx0nAkT0Qm72+ororeAZ
-         Xt2FyN4k8hlvSJEJFloXfKsIdrjVbPIaQN9N/lqSlT0ETdE+DkW8TTuMmDQB1NuXLqZb
-         dCGsV2A7D2pAbxvQo7rdseOxsbBBW847Fqkawo1nEOBnqC1CN8uyIly9saYQGc5PYFK3
-         iV8Djm6PpnbfRbzIyEkasTXJNbZU/y6wXFV+yYH73RChFB7k3KpYWORK/MdnRJ8V0Uyr
-         bF1g==
-X-Gm-Message-State: AOAM533p7T6y8uBlwc0lHxXvMnC/a7jYcbhxtlufP5wMoTe8l0rzD+Sx
-        ZbyisRKGexkJinUMpMAFR5w=
-X-Google-Smtp-Source: ABdhPJwQ5C/96loWRd8zxzj/soRRkiEZKgv1bSIwXrCr85ovOzmXRjHk77oA03hDU91UqxWjumjXnw==
-X-Received: by 2002:adf:e5c4:: with SMTP id a4mr3588623wrn.174.1616592705153;
-        Wed, 24 Mar 2021 06:31:45 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id u2sm3322739wrp.12.2021.03.24.06.31.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 06:31:43 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 14:32:04 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, JC Kuo <jckuo@nvidia.com>, robh@kernel.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, nkristam@nvidia.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 00/14] Tegra XHCI controller ELPG support
-Message-ID: <YFs/VBZvZo6mBJqz@orome.fritz.box>
-References: <20210120073414.69208-1-jckuo@nvidia.com>
- <YB1vGTt0ufzsYBgo@ulmo>
- <YB1wxazg/QpRSJz6@kroah.com>
- <YFszBH1JJmjJmjn2@orome.fritz.box>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ma9VBPHSJAXFz8V/7f6vlUdnTsmXhusqfeS8VBf/+F8=;
+ b=mPVPVpnt242CMk7u5TsK81fEABamInPBxZM9ujWOaGT1KzXriaZsyHwirC7i5b9Tggcx7IYYwr4/R8nM1iQhy7KTxaCipCRBSquUa1FB5sFYeCar5mt79RAEHkGHAkFmGLfiqeNoX7RUIKbvlmzqfrICs3T5HP6kWwRe6fT0r8A=
+Received: from BYAPR02MB5559.namprd02.prod.outlook.com (2603:10b6:a03:a1::18)
+ by BYAPR02MB5429.namprd02.prod.outlook.com (2603:10b6:a03:99::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3955.18; Wed, 24 Mar
+ 2021 13:56:16 +0000
+Received: from BYAPR02MB5559.namprd02.prod.outlook.com
+ ([fe80::2418:b7d2:cbb:27f]) by BYAPR02MB5559.namprd02.prod.outlook.com
+ ([fe80::2418:b7d2:cbb:27f%5]) with mapi id 15.20.3955.027; Wed, 24 Mar 2021
+ 13:56:16 +0000
+From:   Bharat Kumar Gogada <bharatku@xilinx.com>
+To:     Marc Zyngier <maz@kernel.org>
+CC:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michals@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>
+Subject: RE: [PATCH v2 05/15] PCI: xilinx: Convert to MSI domains
+Thread-Topic: [PATCH v2 05/15] PCI: xilinx: Convert to MSI domains
+Thread-Index: AQHXH0vIUXC892kDXkW3zUak9HM8+aqTE3EQgAANhwCAAArBcA==
+Date:   Wed, 24 Mar 2021 13:56:16 +0000
+Message-ID: <BYAPR02MB5559590C1395C15205582976A5639@BYAPR02MB5559.namprd02.prod.outlook.com>
+References: <20210322184614.802565-1-maz@kernel.org>
+        <20210322184614.802565-6-maz@kernel.org>
+        <BYAPR02MB5559A0B0DA88866EDC7BDFE5A5639@BYAPR02MB5559.namprd02.prod.outlook.com>
+ <877dlwk805.wl-maz@kernel.org>
+In-Reply-To: <877dlwk805.wl-maz@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [149.199.50.129]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a388b3a0-3cba-402d-98ce-08d8eecc983e
+x-ms-traffictypediagnostic: BYAPR02MB5429:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR02MB5429BAB4DD62B44DA18CCE72A5639@BYAPR02MB5429.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WdJg/UkTD7+8URxl0VsYK0Y03V+knyrmOmTNRONz/qBAgPabt+aY3KrUrw0BNkxNOaEUeZzHKjjRQaVpd7x2uOcptVipZQI8/zraYxtbXNzJu5tygid98dReUEkSHk5N/pG61jKXaLdfGvIEM6vECRLGgtR9TvXbVxCV+w2NUGxIxzPp7v5boWC2lujQwK+fy5U/EZdyQ7HrX0jE/oGVy/SkhpqTYBzL7c602j0uqOmTzONt+QN3h2BNxIESvSEIT0OGYUUgj2BYu8xtSTVC5BCjljvpA9hW7pusiAWfclTR4jLzHbHcG3fl+e2or5n19UD4qp9Blgspry4mBRGBMZadW3r7+2ze6JZeP9vtXBGc3c/s3QTmRYoo+ngW8kgsrsgYiJPgYVx74ghb7JmXQi+45d8E2KIeW47N/QZU7rWmDSyzOCpBOJ4m/uYc+6MONSsgBtyDO6dln8PmxtZhu6Z/1RK5/Rl7K+Serp1/fvDIAztzb5nXO3KsnN+OdjtfILl8g1SMVmwrEmqo6wwNX64PyLDQCM+6ZpG2pK3S8rSnnA9MpDLFJeAio45gp1vHOknWw+vHCBPiFerdEGna4gQsN0jsoQhTVHp37KGAIfiYS2WuzHpt8wTmbl53vAiSt1IVYT4HR6K0BVqQw6OHyWJZND2GOkcVv2k2J6P3Brw=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR02MB5559.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(39860400002)(346002)(136003)(396003)(6916009)(4326008)(478600001)(66946007)(64756008)(76116006)(54906003)(66446008)(7696005)(38100700001)(8936002)(86362001)(66556008)(52536014)(5660300002)(55016002)(2906002)(83380400001)(71200400001)(316002)(33656002)(9686003)(186003)(8676002)(7416002)(66476007)(6506007)(26005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?CwCz9iBx19ly093Y32ZCmxPnp5bUFISqk6soD9jZRlhaMCE0dTKDnc9F7qyr?=
+ =?us-ascii?Q?4NwH72Xshat9crKQVTFWqTtX5Ugfy19hmM5Zs0YrPzahML32G1GOIRPp4Jmo?=
+ =?us-ascii?Q?fCUSPkYTxg31hFohiG92aPo5nE/Jp5m23KJyxLH9RP+0dSetzpigSi66Bdbl?=
+ =?us-ascii?Q?dzfxSI5fVtdgKJiQHYKPoHaraX1SJ4uKIYqdqM8FQmhPxQMxqap+S2hasJ4l?=
+ =?us-ascii?Q?bMCDWvaGnKDvjxX3MWt6kD79N31Q71nXAUMJDFzpAAYp8JjybPkqnNqUAbx0?=
+ =?us-ascii?Q?58RW8pkV7MgTe01CtgZJiK96acbymmBeoWaNDk6PekCLu2WsS+ZDPEb5zcJR?=
+ =?us-ascii?Q?B7XyIixW+Ef8xd+XDJojVczdD/TiXNOT9almZAS3SSI0wmIw/YwYVqOjoNZw?=
+ =?us-ascii?Q?0bttGHFvdP90Tt5cq3eaKPeZYKoWgrTdAdlNBdypKwIUBcqhJiKPAf3XAggN?=
+ =?us-ascii?Q?k1TGDT/O8YJPFeQWIq7Wgpn+li77RGB6ohujsirASHxHRbkCLAcrwZK7Mamz?=
+ =?us-ascii?Q?V3SQ/DohD2hqvyh/B+Bm3pgZWj6KohOl9oFgTrQ2juX0XmSxbSErEJ8BYdzL?=
+ =?us-ascii?Q?eI0S/nNu/xLx+2VVzbyO2ycps896RKZ8gu4IQpMFQO+SSftGL3qaqCn1Qa/i?=
+ =?us-ascii?Q?kNPBxIJtBTJKCgphQTbE74qwzzcI2Sj74D4j+GnPNq0jJfnHTwlvV+UxylZL?=
+ =?us-ascii?Q?y8kxO1aTEpaklB6YJ+xdo1czdRa2W+rdz4sQarHCYjaOnVYnYcHnEMVcuvfx?=
+ =?us-ascii?Q?t6M0yQyIy4WizHvNeuR3EJco9awTsqvzOJ0CP8GnlQICJph2/FEeKnd2J6K8?=
+ =?us-ascii?Q?qk4rUZglhFeKbtdZVVM2stXhLrKbd5ZdldC0obdDl+FKpIr+e1bjquy7dyXF?=
+ =?us-ascii?Q?n4OkWS19kntodaZM5wrJRQPQHq04MMUcNNPjq6lQ3ub0y+pSDJoAHvAj52qj?=
+ =?us-ascii?Q?9P097yJsTpZOC/8jn2UY8Za/TcXQ3KuQCWMU5HV1RRfbGAbhUI3ADFwd80bQ?=
+ =?us-ascii?Q?Xj4ejVQpCMVk1lnBojvGsVc799L7gy739JFMg/L238C+I4wSdKVZLQB6Mhsi?=
+ =?us-ascii?Q?zVmQSRrbVmG/relfKuRwPvh9H/wCB2T26zE5wSB4M2KQ4N2qNld0jGrG6lyC?=
+ =?us-ascii?Q?gORCNN/dM1IE4xocFkbbgj8xGueRCgpnVeUAb/s208bBkgjxVJk5rGaUOfyl?=
+ =?us-ascii?Q?jwTOTDpfjojIzkkim09eK/fsba516LJCO/hvEGJLvb8OStR34rkM0R/KvQyL?=
+ =?us-ascii?Q?7Q/cJA/jbbfRIlDBstsAK0iYZRl+yYDzZFABgu+bFx8vnq1fPV69V9fd2q1o?=
+ =?us-ascii?Q?og5qiPX0vJhOBpoJgq03IjE8?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u5Zpz5lsXNY2k1xR"
-Content-Disposition: inline
-In-Reply-To: <YFszBH1JJmjJmjn2@orome.fritz.box>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR02MB5559.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a388b3a0-3cba-402d-98ce-08d8eecc983e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2021 13:56:16.5814
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sF6iO+SVrS+nD9WueX/IqrzeK3Jd+fsj7QFytRUl1raTRGI2hNDQoJME87yOa6BQ+hP9a2SeKxYNyAAt5LqSsw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5429
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---u5Zpz5lsXNY2k1xR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 24, 2021 at 01:39:32PM +0100, Thierry Reding wrote:
-> On Fri, Feb 05, 2021 at 05:22:29PM +0100, Greg KH wrote:
-> > On Fri, Feb 05, 2021 at 05:15:21PM +0100, Thierry Reding wrote:
-> > > On Wed, Jan 20, 2021 at 03:34:00PM +0800, JC Kuo wrote:
-> > > > Tegra XHCI controler can be placed in ELPG (Engine Level PowerGated)
-> > > > state for power saving when all of the connected USB devices are in
-> > > > suspended state. This patch series includes clk, phy and pmc changes
-> > > > that are required for properly place controller in ELPG and bring
-> > > > controller out of ELPG.
-> > > >=20
-> > > > JC Kuo (14):
-> > > >   clk: tegra: Add PLLE HW power sequencer control
-> > > >   clk: tegra: Don't enable PLLE HW sequencer at init
-> > > >   phy: tegra: xusb: Move usb3 port init for Tegra210
-> > > >   phy: tegra: xusb: Rearrange UPHY init on Tegra210
-> > > >   phy: tegra: xusb: Add Tegra210 lane_iddq operation
-> > > >   phy: tegra: xusb: Add sleepwalk and suspend/resume
-> > > >   soc/tegra: pmc: Provide USB sleepwalk register map
-> > > >   arm64: tegra210: XUSB PADCTL add "nvidia,pmc" prop
-> > > >   dt-bindings: phy: tegra-xusb: Add nvidia,pmc prop
-> > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra210
-> > > >   phy: tegra: xusb: Tegra210 host mode VBUS control
-> > > >   phy: tegra: xusb: Add wake/sleepwalk for Tegra186
-> > > >   usb: host: xhci-tegra: Unlink power domain devices
-> > > >   xhci: tegra: Enable ELPG for runtime/system PM
-> > > >=20
-> > > >  .../phy/nvidia,tegra124-xusb-padctl.txt       |    1 +
-> > > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |    1 +
-> > > >  drivers/clk/tegra/clk-pll.c                   |   12 -
-> > > >  drivers/clk/tegra/clk-tegra210.c              |   53 +-
-> > > >  drivers/phy/tegra/xusb-tegra186.c             |  558 ++++-
-> > > >  drivers/phy/tegra/xusb-tegra210.c             | 1889 +++++++++++++=
-----
-> > > >  drivers/phy/tegra/xusb.c                      |   92 +-
-> > > >  drivers/phy/tegra/xusb.h                      |   22 +-
-> > > >  drivers/soc/tegra/pmc.c                       |   94 +
-> > > >  drivers/usb/host/xhci-tegra.c                 |  613 ++++--
-> > > >  include/linux/clk/tegra.h                     |    4 +-
-> > > >  include/linux/phy/tegra/xusb.h                |   10 +-
-> > > >  12 files changed, 2784 insertions(+), 565 deletions(-)
-> > > >=20
-> > > > v5 "phy: tegra: xusb: tegra210: Do not reset UPHY PLL" is moved
-> > > > into v6 "phy: tegra: xusb: Rearrange UPHY init on Tegra210"
-> > >=20
-> > > Mike, Stephen,
-> > >=20
-> > > could you guys take a look at the two clk patches here and give an
-> > > Acked-by? There's build-time dependencies throughout the series, so i=
-t'd
-> > > be good if they can all go through either the PHY or USB trees.
-> > >=20
-> > > Kishon, Greg,
-> > >=20
-> > > any comments on these patches? Unfortunately, the USB patches in this
-> > > series have a build-time dependency on the PHY patches, so this should
-> > > all go through one tree. Since this all culminates in the XHCI driver,
-> > > merging this through the USB tree might be best, provided that Kishon
-> > > provides his Acked-by on the PHY patches.
-> > >=20
-> > > Alternatively, I can create a set of branches with the correct
-> > > dependencies and send out pull requests for the three subsystems if
-> > > that's preferrable.
-> >=20
-> > I have no objection for the usb patches to go through your tree as they
-> > are hardware-specific.
+> > Hi Marc,
+> >
+> > Thanks for the patch.
+> >
+> > > Subject: [PATCH v2 05/15] PCI: xilinx: Convert to MSI domains
+> > >
+> > > In anticipation of the removal of the msi_controller structure,
+> > > convert the ancient xilinx host controller driver to MSI domains.
+> > >
+> > > We end-up with the usual two domain structure, the top one being a
+> > > generic PCI/MSI domain, the bottom one being xilinx-specific and
+> > > handling the actual HW interrupt allocation.
+> > >
+> > > This allows us to fix some of the most appalling MSI programming,
+> > > where the message programmed in the device is the virtual IRQ number
+> > > instead of the allocated vector number. The allocator is also made
+> > > safe with a mutex. This should allow support for MultiMSI, but I
+> > > decided not to even try, since I cannot test it.
+> > >
+> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > > ---
+> > >  drivers/pci/controller/Kconfig       |   2 +-
+> > >  drivers/pci/controller/pcie-xilinx.c | 234
+> > > +++++++++++----------------
+> > >  2 files changed, 97 insertions(+), 139 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/Kconfig
+> > > b/drivers/pci/controller/Kconfig index 5cc07d28a3a0..60045f7aafc5
+> > > 100644
+> > ...
+> >
+> >
+> > > +static struct irq_chip xilinx_msi_bottom_chip =3D {
+> > > +	.name			=3D "Xilinx MSI",
+> > > +	.irq_set_affinity 	=3D xilinx_msi_set_affinity,
+> > > +	.irq_compose_msi_msg	=3D xilinx_compose_msi_msg,
+> > > +};
+> > >
+> > I see a crash while testing MSI in handle_edge_irq [<c015bdd4>]
+> > (handle_edge_irq) from [<c0157164>] (generic_handle_irq+0x28/0x38)
+> > [<c0157164>] (generic_handle_irq) from [<c03a9714>]
+> > (xilinx_pcie_intr_handler+0x17c/0x2b0)
+> > [<c03a9714>] (xilinx_pcie_intr_handler) from [<c0157d94>]
+> > (__handle_irq_event_percpu+0x3c/0xc0)
+> > [<c0157d94>] (__handle_irq_event_percpu) from [<c0157e44>]
+> > (handle_irq_event_percpu+0x2c/0x7c)
+> > [<c0157e44>] (handle_irq_event_percpu) from [<c0157ecc>]
+> > (handle_irq_event+0x38/0x5c) [<c0157ecc>] (handle_irq_event) from
+> > [<c015bc8c>] (handle_fasteoi_irq+0x9c/0x114)
 >=20
-> Kishon,
+> Thanks for that. Can you please try the following patch and let me know i=
+f it
+> helps?
 >=20
-> I haven't heard back from you on this yet. We missed v5.12 but I'd like
-> to get this into v5.13 since it's the last missing piece to get suspend
-> and resume working properly on a number of boards.
+> Thanks,
 >=20
-> Are you okay if I take this through the Tegra tree to satisfy the
-> interdependencies between clk, PHY and USB patches? I've already got
-> Acked-by's from the clock and USB maintainers.
+> 	M.
 >=20
-> I want to tentatively take this into linux-next to give it a bit of soak
-> time before the ARM SoC -rc6 cut-off. Please let me know if you'd prefer
-> to apply these to your tree so I can back them out of the Tegra tree
-> again.
+> diff --git a/drivers/pci/controller/pcie-xilinx.c b/drivers/pci/controlle=
+r/pcie-
+> xilinx.c
+> index ad9abf405167..14001febf59a 100644
+> --- a/drivers/pci/controller/pcie-xilinx.c
+> +++ b/drivers/pci/controller/pcie-xilinx.c
+> @@ -194,8 +194,18 @@ static struct pci_ops xilinx_pcie_ops =3D {
+>=20
+>  /* MSI functions */
+>=20
+> +static void xilinx_msi_top_irq_ack(struct irq_data *d) {
+> +	/*
+> +	 * xilinx_pcie_intr_handler() will have performed the Ack.
+> +	 * Eventually, this should be fixed and the Ack be moved in
+> +	 * the respective callbacks for INTx and MSI.
+> +	 */
+> +}
+> +
+>  static struct irq_chip xilinx_msi_top_chip =3D {
+>  	.name		=3D "PCIe MSI",
+> +	.irq_ack	=3D xilinx_msi_top_irq_ack,
+>  };
+>=20
+>  static int xilinx_msi_set_affinity(struct irq_data *d, const struct cpum=
+ask
+> *mask, bool force) @@ -206,7 +216,7 @@ static int
+> xilinx_msi_set_affinity(struct irq_data *d, const struct cpumask *mas  st=
+atic
+> void xilinx_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)  =
+{
+>  	struct xilinx_pcie_port *pcie =3D irq_data_get_irq_chip_data(data);
+> -	phys_addr_t pa =3D virt_to_phys(pcie);
+> +	phys_addr_t pa =3D ALIGN_DOWN(virt_to_phys(pcie), SZ_4K);
+>=20
+>  	msg->address_lo =3D lower_32_bits(pa);
+>  	msg->address_hi =3D upper_32_bits(pa);
+> @@ -468,7 +478,7 @@ static int xilinx_pcie_init_irq_domain(struct
+> xilinx_pcie_port *port)
+>=20
+>  	/* Setup MSI */
+>  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> -		phys_addr_t pa =3D virt_to_phys(port);
+> +		phys_addr_t pa =3D ALIGN_DOWN(virt_to_phys(port), SZ_4K);
+>=20
+>  		ret =3D xilinx_allocate_msi_domains(port);
+>  		if (ret)
+>=20
+Thanks Marc.
+With above patch now everything works fine, tested a Samsung NVMe SSD.=20
+tst~# lspci
+00:00.0 PCI bridge: Xilinx Corporation Device 0706
+01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD=
+ Controller 172Xa/172Xb (rev 01)
 
-Also adding Vinod for visibility and in case Kishon's too busy.
-
-Thierry
-
---u5Zpz5lsXNY2k1xR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBbP1EACgkQ3SOs138+
-s6G5sBAAh0Lkrr0lTVpTOBr3PZOfIjNoSUKj3pElbX7MikbUbfAwbA6Q5kQsS/6U
-Cl0wrHoCeWPnYGxN8tJtB0p2KgvIxocNryeIZEahFkf+dXzJLX+gi3q7I26G9t0c
-KQdsu40RA28kYoUPeNiwMUyueeimHMt0R9neLagCh0NPjUXhFybPtA8fcynT7psm
-dPFdqBRJL4E49dkcT0pZRdFiISqMDGo+b4xy/iyIMUGHrdINshI1NMdRQgYZ2A50
-EB72FmS8nvxEWHO7U7fcRg2qBFqwp/YjCHmzz5eePMXMYttY8buYG2SjmnsXPHTe
-TQWJhs4pa1Jpadjr40bwz76Zt8PbAC1OHTi9l0N4iGUaa1FIw6hoieD8iFLSyjS5
-DbNqawgDUDXFuu1/idLzFccSNU24CALZT1xhy32cT3DqtHIP09aI5LBpu8sFyjCj
-zjpx8IoO1Nk4UHWspb6RycyBGVNU880RjtrMT2ip5roy10Ff00ryeX7KZu4CGdkZ
-IgvxegtSq0wIkq3JstCK7TuGLxuDii8HeGYip2HkmZ19tguNU0Imn+2f8IhErW2K
-OVPaqa8hsI0Jd7eXvedMWOfUk8DAfRn7gXdQiBQPcHy4Pz08piNBmedeyfdeZetO
-H998/kewk+3bMPDdxi/6zADUcwUXdMC/88XWKa5be6uDIO3jzMI=
-=AbYf
------END PGP SIGNATURE-----
-
---u5Zpz5lsXNY2k1xR--
+Regards,
+Bharat
