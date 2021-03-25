@@ -2,94 +2,86 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A61EC433E3
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 11:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EE8C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 12:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A75161A2C
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 11:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B6A61A39
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 12:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231206AbhCYLgj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 07:36:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:14902 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbhCYLeS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 07:34:18 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F5jdL5BxNzkfcT;
-        Thu, 25 Mar 2021 19:32:38 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 25 Mar 2021 19:34:15 +0800
-From:   Tian Tao <tiantao6@hisilicon.com>
-To:     <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH] drm/tegra: Remove useless error message
-Date:   Thu, 25 Mar 2021 19:34:49 +0800
-Message-ID: <1616672089-32934-1-git-send-email-tiantao6@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S229869AbhCYMIK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 08:08:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230331AbhCYMIB (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Mar 2021 08:08:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 31C6661A1B;
+        Thu, 25 Mar 2021 12:07:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1616674080;
+        bh=UU3ECMAN5S3QxAfiQZRTUqVRCzvxrpa1/MZ6PjHvyEU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RhlVzKzCejxh728OA9WMoFfOvqHHxv84Gzqp7JirwjtPaBwod/YYDeW9OYelco6E9
+         Vw5EOrR82yPQ/E4V9keiJaIdydAoOQEAo61XE2FYcWUsR73rztK5F+cC7RURuGyXol
+         gd5bwKjRbDIDIi2KCTtvDQnKrjdAG2XSp61/bCgI=
+Date:   Thu, 25 Mar 2021 13:07:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.10 000/150] 5.10.26-rc3 review
+Message-ID: <YFx9HmmDU67fKieW@kroah.com>
+References: <20210324093435.962321672@linuxfoundation.org>
+ <13fdb47de47d4b5984f1cee069fe99e6@HQMAIL109.nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13fdb47de47d4b5984f1cee069fe99e6@HQMAIL109.nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fix the following coccicheck report:
+On Wed, Mar 24, 2021 at 04:51:06AM -0700, Jon Hunter wrote:
+> On Wed, 24 Mar 2021 10:40:21 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.26 release.
+> > There are 150 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 26 Mar 2021 09:33:54 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.26-rc3.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> All tests passing for Tegra ...
+> 
+> Test results for stable-v5.10:
+>     12 builds:	12 pass, 0 fail
+>     28 boots:	28 pass, 0 fail
+>     70 tests:	70 pass, 0 fail
+> 
+> Linux version:	5.10.26-rc3-gf6bd595b6fda
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-drivers/gpu/drm/tegra/dpaux.c:471:2-9:
-line 471 is redundant because platform_get_irq() already prints an error
-drivers/gpu/drm/tegra/sor.c:3793:2-9:
-line 3793 is redundant because platform_get_irq() already prints an error
+Thanks for all the testing.
 
-Remove dev_err() messages after platform_get_irq() failures.
-
-Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-Signed-off-by: Zihao Tang <tangzihao1@hisilicon.com>
-Signed-off-by: Jay Fang <f.fangjian@huawei.com>
----
- drivers/gpu/drm/tegra/dpaux.c | 4 +---
- drivers/gpu/drm/tegra/sor.c   | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 105fb9c..044e5ee 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -467,10 +467,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 		return PTR_ERR(dpaux->regs);
- 
- 	dpaux->irq = platform_get_irq(pdev, 0);
--	if (dpaux->irq < 0) {
--		dev_err(&pdev->dev, "failed to get IRQ\n");
-+	if (dpaux->irq < 0)
- 		return -ENXIO;
--	}
- 
- 	if (!pdev->dev.pm_domain) {
- 		dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index f02a035..01b9e1d 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -3789,10 +3789,8 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 	}
- 
- 	err = platform_get_irq(pdev, 0);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to get IRQ: %d\n", err);
-+	if (err < 0)
- 		goto remove;
--	}
- 
- 	sor->irq = err;
- 
--- 
-2.7.4
-
+greg k-h
