@@ -8,70 +8,84 @@ X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091F4C433C1
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB64C433E1
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C95F361A01
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7575E61A33
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhCYRUz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 13:20:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60564 "EHLO
+        id S230241AbhCYRin (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 13:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbhCYRUe (ORCPT
+        with ESMTP id S230195AbhCYRiT (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 13:20:34 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4915AC06174A;
-        Thu, 25 Mar 2021 10:20:34 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 75so3671266lfa.2;
-        Thu, 25 Mar 2021 10:20:34 -0700 (PDT)
+        Thu, 25 Mar 2021 13:38:19 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60454C06174A;
+        Thu, 25 Mar 2021 10:38:19 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id f16so4248442ljm.1;
+        Thu, 25 Mar 2021 10:38:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p1KeodbuGWMDyTs6ausZFxyrBcpgyG8oe8WdaIAVZPs=;
-        b=h0k8p75+H2fkeOXitrFSXG3rb+8KB9COOng/LwUdtO1tGAoWANJ4F/v4HUiT007UwR
-         PNwiwHnwcBPVVJqsQM9/p15w1PnxvB3CayUORBHlTphE1gjgM799B5JJKMdxOgUGlhPL
-         u6U0QDqxA6F3LeAF6vADjVz7/FZ5EjkDWl1PmaBN/rxE0JAqd+fYSmqbGPewTAfcCASH
-         Ypf2i8k4B5cdAZtkMde2pVXUTEWErNShkf04lr6JPOLJQqjPNRelhzFPJpt0TVUkm35W
-         xC+fNi+bYDJBIZ0Yclp/NZu53gD77bICvvfgHmTh0qh/q1aiug1pqSpNuiCcmgsMd4QT
-         TrUg==
+        bh=IWF2rjUL4RNwP8tqxzEk+CP2xWiPvF7wgM2YggJx29k=;
+        b=Glpk9vDYOel/oYy7nTxAS0XwpNBQzx7ylsJKz74gzs46Eg2558qdSoJDyl+XTKMsk0
+         oNmILuqlxpG+5fw8XZLVvup+A0wXMbs17UWj68DkZcO09STg6NO7DjiYbRIQ4gsCpKx3
+         +ZZE5UKC36gzw4bW3qXcVbLik+GHLeGdbfJoTyIVeWJUpHJLgVtayZsMG/3vgT9Cmncn
+         qihMzZ8p1ZeL89p9vF6AkWK6AFMlTC+slsTCRCqLG8r7GzIlxy6SUuE5RcHojopU8gnP
+         yJ263VxCri8YwQJ+RqpS7Tn6CSAsc7v7H3GV3b1J0dwAd6Hs21OoSBdVLSYVV6ztZ/+I
+         0mDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=p1KeodbuGWMDyTs6ausZFxyrBcpgyG8oe8WdaIAVZPs=;
-        b=eCqX8q+tel+kky5aXqxSfmap+AXsleZrSRPycC3sYkEHKP5F6In4t1na0jXjOtS4Gd
-         Z9YJRUH8E9mGGLA5KJHr2I4wNJuhsL+XyImwzLHZgfCaRQdSc6QZQjX7Mu49dflhxOcu
-         xdEynEpAakEpgcQfTvRYcE/TM337JEgtMMktqWurxiWII+uHeDxEkya6ZIifIGRRRv7F
-         Pe0vVDB82sl5349zxy+34DQBtA+6FjX0yUiSYC/v4X/gOROXvQkwElxu9Omr+goPh0dz
-         DtJmNUzhLuH/HptY/Fg2O+RGFxvQHSnjGk4sA8NErKA2l4/J+jmuUkmzZjp0c/cmVJlg
-         zuDQ==
-X-Gm-Message-State: AOAM533wOlAQS9xVUfLkuJ4RVTyCeX4aIvsbZWDwP0H2ZbwinjlmbmER
-        nNqwm1NNVFQtT8jk8bwicES6s5NIDQI=
-X-Google-Smtp-Source: ABdhPJyEeAMez5OVsm0Xv98iTg+rCo6MWO3Jq3trdKl35QrRfwaaDs6zrH3QCnm1cUolICCZ/qT7Jg==
-X-Received: by 2002:a05:6512:3327:: with SMTP id l7mr5728175lfe.639.1616692832603;
-        Thu, 25 Mar 2021 10:20:32 -0700 (PDT)
+        bh=IWF2rjUL4RNwP8tqxzEk+CP2xWiPvF7wgM2YggJx29k=;
+        b=pWWjIhjXWTVh1vGkkNYvIlKxO9OJ7C9I/YZVSveCQkQ6RY1sXYdFqUG/hoKF7qZp/1
+         JblIBJFoCL77Uqm12f26QrUfPhxz5NHjgwzhhXVKrVSpnx0dDFvh9xHASnDujdNuw9Sp
+         oNuHEA+mK8tMB5ag5wAxoN+Z/7MSwDoOix9xJsLaTW3lR9wzbnaQQFotJYCRVZAwHVB/
+         Rso2+6Wanz8I8970kw8hW6W9a36E8Gc9FwB16vYpgUznB9wrCelQrm4SU8V4g7xdImMi
+         VtHOf6I8WP+f9UPpkKLQdcRC/TFhGqAB5nEmQVBp1XjsAbFXySKqQCQ/cZT6xSkXEB50
+         cC6A==
+X-Gm-Message-State: AOAM533r+emAQIVXPk97IwJSxB0/qEUWF4eszdHksuIut9b95wGSvDPx
+        kC7eoAuSkK/q93zBZG96ytXvtXgG8aY=
+X-Google-Smtp-Source: ABdhPJy+HFyDQ+YADIRrHEHy+wVQ5U68wTuP3H8gv88XId02H1UxV0aV3nF1ktHee9bm7TnbQmkaWA==
+X-Received: by 2002:a2e:8051:: with SMTP id p17mr6307832ljg.130.1616693897519;
+        Thu, 25 Mar 2021 10:38:17 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
-        by smtp.googlemail.com with ESMTPSA id g7sm285491lfc.179.2021.03.25.10.20.31
+        by smtp.googlemail.com with ESMTPSA id m20sm836193ljj.93.2021.03.25.10.38.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 10:20:32 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] memory: tegra20: Correct comment to MC_STAT
- registers writes
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 25 Mar 2021 10:38:17 -0700 (PDT)
+Subject: Re: [PATCH v4 3/6] dt-bindings: power: tegra: Add binding for core
+ power domain
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210323210446.24867-1-digetx@gmail.com>
-Message-ID: <799f54f6-6023-338f-4e8f-cc0dfbac30d8@gmail.com>
-Date:   Thu, 25 Mar 2021 20:20:31 +0300
+        Mark Brown <broonie@kernel.org>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210314164810.26317-1-digetx@gmail.com>
+ <20210314164810.26317-4-digetx@gmail.com>
+ <20210323224826.GA1490612@robh.at.kernel.org>
+ <fd60e507-37b4-acc1-b19a-a3904cd13f65@gmail.com>
+ <YFyjDNYAkbTQU5G0@orome.fritz.box>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <80410199-3b5f-13b7-25b7-3fbd009c31e7@gmail.com>
+Date:   Thu, 25 Mar 2021 20:38:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210323210446.24867-1-digetx@gmail.com>
+In-Reply-To: <YFyjDNYAkbTQU5G0@orome.fritz.box>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -79,36 +93,109 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.03.2021 00:04, Dmitry Osipenko пишет:
-> The code was changed multiple times and the comment to MC_STAT
-> registers writes became slightly outdated. The MC_STAT programming
-> now isn't hardcoded to the "bandwidth" mode, let's clarify this in
-> the comment.
+25.03.2021 17:49, Thierry Reding пишет:
+> On Wed, Mar 24, 2021 at 02:01:29AM +0300, Dmitry Osipenko wrote:
+>> 24.03.2021 01:48, Rob Herring пишет:
+>>> On Sun, Mar 14, 2021 at 07:48:07PM +0300, Dmitry Osipenko wrote:
+>>>> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+>>>> blocks reside. Add binding for the core power domain.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  .../power/nvidia,tegra20-core-domain.yaml     | 51 +++++++++++++++++++
+>>>>  1 file changed, 51 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..4692489d780a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
+>>>> @@ -0,0 +1,51 @@
+>>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/power/nvidia,tegra20-core-domain.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: NVIDIA Tegra Core Power Domain
+>>>> +
+>>>> +maintainers:
+>>>> +  - Dmitry Osipenko <digetx@gmail.com>
+>>>> +  - Jon Hunter <jonathanh@nvidia.com>
+>>>> +  - Thierry Reding <thierry.reding@gmail.com>
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: power-domain.yaml#
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - nvidia,tegra20-core-domain
+>>>> +      - nvidia,tegra30-core-domain
+>>>> +
+>>>> +  operating-points-v2:
+>>>> +    description:
+>>>> +      Should contain level, voltages and opp-supported-hw property.
+>>>> +      The supported-hw is a bitfield indicating SoC speedo or process
+>>>> +      ID mask.
+>>>> +
+>>>> +  "#power-domain-cells":
+>>>> +    const: 0
+>>>> +
+>>>> +  power-supply:
+>>>> +    description:
+>>>> +      Phandle to voltage regulator connected to the SoC Core power rail.
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - operating-points-v2
+>>>> +  - "#power-domain-cells"
+>>>> +  - power-supply
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    power-domain {
+>>>> +        compatible = "nvidia,tegra20-core-domain";
+>>>> +        operating-points-v2 = <&opp_table>;
+>>>> +        power-supply = <&regulator>;
+>>>> +        #power-domain-cells = <0>;
+>>>
+>>> AFAICT, there's no way to access this 'hardware'?
+>> correct
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/tegra20.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
-> index 14caf5b9324c..4659c0cea30d 100644
-> --- a/drivers/memory/tegra/tegra20.c
-> +++ b/drivers/memory/tegra/tegra20.c
-> @@ -451,9 +451,8 @@ static void tegra20_mc_stat_gather(struct tegra20_mc_stat *stat)
->  	control_1 = tegra20_mc_stat_gather_control(&stat->gather1);
->  
->  	/*
-> -	 * Reset statistic gathers state, select bandwidth mode for the
-> -	 * statistics collection mode and set clocks counter saturation
-> -	 * limit to maximum.
-> +	 * Reset statistic gathers state, select statistics collection mode
-> +	 * and set clocks counter saturation limit to maximum.
->  	 */
->  	mc_writel(mc, 0x00000000, MC_STAT_CONTROL);
->  	mc_writel(mc,  control_0, MC_STAT_EMC_CONTROL_0);
-> 
+> To avoid exposing this "virtual" device in device tree, could this
+> instead be modelled as a child node of the PMC node? We already expose a
+> couple of generic power domains that way on Tegra210 and later, so
+> perhaps some of that infrastructure can be reused? I suppose given that
+> this is different from the standard powergate domains that we expose so
+> far, this may need a different implementation, but from a device tree
+> bindings point of view it could fit in with that.
 
-Krzysztof, please feel free to squash these 2 minor follow up patches
-into the original patch which added the the debug support, if you prefer
-this way more. I happened to notice these small itches only after you
-already picked up the previous patch.
+At a quick glance this should be too troublesome because OPP and regulator frameworks require a proper/real backing device.
+
+Perhaps we could either turn the whole PMC into a core-domain or add a virtual device as a child of PMC, like this:
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 79364cdafeab..717273048caf 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -850,6 +850,12 @@ pd_mpe: mpe {
+ 				#power-domain-cells = <0>;
+ 			};
+ 		};
++
++		pd_core: core-domain {
++			compatible = "nvidia,tegra20-core-domain";
++			operating-points-v2 = <&core_opp_table>;
++			#power-domain-cells = <0>;
++		};
+ 	};
+ 
+ 	mc: memory-controller@7000f000 {
+
+but then this is still a virtual device, although in a bit nicer way.
+
+It feels like yours suggestion might result in a hardware description that is closer to reality since PMC controls fan out of all power rails within SoC.
