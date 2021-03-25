@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29225C433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D999C433E6
 	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D34F161A2C
+	by mail.kernel.org (Postfix) with ESMTP id F3F31619BF
 	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229524AbhCYQlX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 12:41:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51998 "EHLO
+        id S229619AbhCYQlW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 12:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbhCYQlF (ORCPT
+        with ESMTP id S229651AbhCYQlA (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 12:41:05 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B23AC06174A;
-        Thu, 25 Mar 2021 09:41:04 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id o16so3011323wrn.0;
-        Thu, 25 Mar 2021 09:41:04 -0700 (PDT)
+        Thu, 25 Mar 2021 12:41:00 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5136EC06174A;
+        Thu, 25 Mar 2021 09:41:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id u5-20020a7bcb050000b029010e9316b9d5so1550245wmj.2;
+        Thu, 25 Mar 2021 09:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=THw8zcgbqLcO16dUqauFb0z8OAhU7380cxSadcHRy9U=;
-        b=IloW8Z33ZDvYuKx2XBziTeFxCxMoDYKa2NhSguqvWJsy76doeS3uEx7rrkXSy+VKzz
-         BWbxBOAjRnb89Bd5P5tQlGnn+/JgzAFTlXVlJL9Z1SUC0lv4+8R3ueo/oPDFUyy8fGHn
-         1wPjz4s88BAIv0gJFqEeTMCQOJXDx/WPNl2LM4q9EMJCn9306irOl1jnHcWDHgdXQxYd
-         YKUNXJOloW5VBG4dIDj2cdClJzXgFkXshnWRJJjrXkN4pncRX+eseRdyd3xLFQrmDY+V
-         kaM2Hkc3gFw/dYDyePPYYSL30Q99s/fQU00yUbo4RueJl9EiTrlR1i3++nqhkuwaaGft
-         m1TQ==
+        bh=EpEbA6CM/P+xQGbvt44AnGB0qjb5n3dM+VQpCNtPqmM=;
+        b=j+tp6SfV0bfa/JnbEw3236v8dfeZo+yaidQwTkurboXKO7+DX08vw1X1aYhciD8fg/
+         0mn/95q25Qe1RGhHMrmQOlOPu8A6mYAw4W3RMt9+kMB8aEUOvGry753YlkZLGEnAElVR
+         z05g6AyKoI826aKOtGQUcKq9xNkWxwPjp5wf1iTNDvFu7DIGwy+rSFD5YhGQ7lLwRYoo
+         /RcG4vlCb+AcemL2qPPHCV4T0J5oqcC5P3zMKrFoEMnB7Z2j/VGk5m8sD0nrCcothxyU
+         qBMXCcfYC0f3SdJlVw8m5SpjrAend5fS5KpGna/amlf76rOpcTBy65f7BDRWhuxxpz95
+         d7yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=THw8zcgbqLcO16dUqauFb0z8OAhU7380cxSadcHRy9U=;
-        b=gTgX/56ta4LH6fuaKx0j8kv24d6vraV/T38kC2y6nuQIoZbyD5X6oidP3CjrhgjloJ
-         GskhbNAX+n+v+gMXN2U2N5BKks/FdxdKnSCvcOW7vztrtl2Mvp6deF68Pj8nMflhtuWi
-         2zy4QrPIsyPfAVEJdD84/RW9Qt9PhCctOYXG0Z5fLhMDVzMTImb0FDtjbKyXm3bmeMfo
-         ay81KLscAlQXOrrSVdi46rt5hQZ2VL3g/mug8H8umrfpLUaxwCx0OPh7NED8ltT6Lau0
-         mfx+Tg8U82L5yTKMP/QWQ72nhLj/NsRx/SdtFy7YQmC7MT+DyZbagHNJqJsQSfU3PcHN
-         x2sQ==
-X-Gm-Message-State: AOAM531dzFtAgo8WZ4zIu5obI+kwiwtwj18CLmVMV4QjTnH2aVjypdt5
-        vronRixc4SGBGN1TTkw4CXU=
-X-Google-Smtp-Source: ABdhPJwS8D3jR/+zm9zeYJjDu4IIIl3Zh0tcS8mq+uGfbnHw8pab8S329eTtv5epyq7ZB+aN8xZozQ==
-X-Received: by 2002:adf:d236:: with SMTP id k22mr9959080wrh.144.1616690463074;
-        Thu, 25 Mar 2021 09:41:03 -0700 (PDT)
+        bh=EpEbA6CM/P+xQGbvt44AnGB0qjb5n3dM+VQpCNtPqmM=;
+        b=GM8/50Sos80XSjmm1JggKL42xxUuDThDk/sdL/DgxY0oQxlNG0bKyolLpA1fSxTCHp
+         jKviP0awOI6QC9XoPU3eJDFzIjGAXJiQdZ6A6AwpTd94z34MjFsMmne19YVivXzwkAcs
+         oOOpTGz5HrHSUF7Y1kqRmdmzeXCTT9BD1aIoTiJJh6crYJ2+ex/yqz0VXQpJ5G4vTZMC
+         K5p0WS42eiPBoBn9jaYoBAdkwMr1vtc4CE+ClRPMBPndeJFqVmEMZlLZFZuowi/2gvgx
+         10sfOis/O7PDU2BWYk7gpLy5EtfcCusUl7ukxr4w2zUjZbDRyL37OZOMZrfSIU0Sv3pL
+         b1DA==
+X-Gm-Message-State: AOAM531lXK3cajKU0z3YyG9hVOA/Hu5OqYsOOqz+p8B2NvXUepTuLYeg
+        lLH5B4wiwHA67vWSOLIykBg=
+X-Google-Smtp-Source: ABdhPJwe09p97Asz1de3vmAHa8PX+hcWWVthf2x8ZLCdzwVPwxpOio3pTUB3zoFMKqg2vVcH5vUIbg==
+X-Received: by 2002:a05:600c:287:: with SMTP id 7mr9345030wmk.23.1616690458100;
+        Thu, 25 Mar 2021 09:40:58 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id k11sm7115040wmj.1.2021.03.25.09.40.59
+        by smtp.gmail.com with ESMTPSA id d18sm8367429wra.8.2021.03.25.09.40.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 09:40:59 -0700 (PDT)
+        Thu, 25 Mar 2021 09:40:57 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Vinod Koul <vkoul@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -65,9 +65,9 @@ Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
         linux-usb@vger.kernel.org
-Subject: [PATCH v8 06/13] phy: tegra: xusb: Add sleepwalk and suspend/resume
-Date:   Thu, 25 Mar 2021 17:40:50 +0100
-Message-Id: <20210325164057.793954-7-thierry.reding@gmail.com>
+Subject: [PATCH v8 05/13] phy: tegra: xusb: Add Tegra210 lane_iddq operation
+Date:   Thu, 25 Mar 2021 17:40:49 +0100
+Message-Id: <20210325164057.793954-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210325164057.793954-1-thierry.reding@gmail.com>
 References: <20210325164057.793954-1-thierry.reding@gmail.com>
@@ -79,209 +79,200 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: JC Kuo <jckuo@nvidia.com>
 
-This commit adds sleepwalk/wake and suspend/resume interfaces
-to Tegra XUSB PHY driver.
-
-Tegra XUSB host controller driver makes use of sleepwalk functions
-to enable/disable sleepwalk circuit which is in always-on partition
-and can respond to USB resume signals when controller is not powered.
-Sleepwalk can be enabled/disabled for any USB UPHY individually.
-
-  - tegra_xusb_padctl_enable_phy_sleepwalk()
-  - tegra_xusb_padctl_disable_phy_sleepwalk()
-
-Tegra XUSB host controller driver makes use of wake functions to
-enable/disable/query wake circuit which is in always-on partition
-can wake system up when USB resume happens.
-Wake circuit can be enabled/disabled for any USB PHY individually.
-
-  - tegra_xusb_padctl_enable_phy_wake()
-  - tegra_xusb_padctl_disable_phy_wake()
-  - tegra_xusb_padctl_remote_wake_detected()
-
-This commit also adds two system suspend stubs that can be used to
-save and restore XUSB PADCTL context during system suspend and
-resume.
-  - tegra_xusb_padctl_suspend_noirq()
-  - tegra_xusb_padctl_resume_noirq()
+As per Tegra210 TRM, before changing lane assignments, driver should
+keep lanes in IDDQ and sleep state; after changing lane assignments,
+driver should bring lanes out of IDDQ.
+This commit implements the required operations.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/phy/tegra/xusb.c       | 82 ++++++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.h       |  8 ++++
- include/linux/phy/tegra/xusb.h | 10 ++++-
- 3 files changed, 99 insertions(+), 1 deletion(-)
+ drivers/phy/tegra/xusb-tegra210.c | 82 ++++++++++++++++++++++++++++---
+ drivers/phy/tegra/xusb.c          |  6 +++
+ drivers/phy/tegra/xusb.h          |  6 +++
+ 3 files changed, 86 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index faacb866cd1f..b038d032fea1 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -198,6 +198,18 @@
+ #define XUSB_PADCTL_UPHY_MISC_PAD_CTL1_AUX_RX_TERM_EN BIT(18)
+ #define XUSB_PADCTL_UPHY_MISC_PAD_CTL1_AUX_RX_MODE_OVRD BIT(13)
+ 
++#define XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(x) (0x464 + (x) * 0x40)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ BIT(0)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD BIT(1)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK (0x3 << 4)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL (0x3 << 4)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD BIT(24)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ BIT(8)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD BIT(9)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK (0x3 << 12)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL (0x3 << 12)
++#define XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD BIT(25)
++
+ #define XUSB_PADCTL_UPHY_PLL_S0_CTL1 0x860
+ 
+ #define XUSB_PADCTL_UPHY_PLL_S0_CTL2 0x864
+@@ -209,6 +221,7 @@
+ #define XUSB_PADCTL_UPHY_PLL_S0_CTL8 0x87c
+ 
+ #define XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL1 0x960
++#define XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL2 0x964
+ 
+ #define XUSB_PADCTL_UPHY_USB3_PADX_ECTL1(x) (0xa60 + (x) * 0x40)
+ #define XUSB_PADCTL_UPHY_USB3_PAD_ECTL1_TX_TERM_CTRL_SHIFT 16
+@@ -1640,6 +1653,55 @@ static const struct tegra_xusb_pad_soc tegra210_hsic_pad = {
+ 	.ops = &tegra210_hsic_ops,
+ };
+ 
++static void tegra210_uphy_lane_iddq_enable(struct tegra_xusb_lane *lane)
++{
++	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	u32 value;
++
++	value = padctl_readl(padctl, lane->soc->regs.misc_ctl2);
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL;
++	padctl_writel(padctl, value, lane->soc->regs.misc_ctl2);
++}
++
++static void tegra210_uphy_lane_iddq_disable(struct tegra_xusb_lane *lane)
++{
++	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	u32 value;
++
++	value = padctl_readl(padctl, lane->soc->regs.misc_ctl2);
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ_OVRD;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ_OVRD;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_PWR_OVRD;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_PWR_OVRD;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_IDDQ;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_MASK;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_TX_SLEEP_VAL;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_IDDQ;
++	value &= ~XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_MASK;
++	value |= XUSB_PADCTL_UPHY_MISC_PAD_CTL2_RX_SLEEP_VAL;
++	padctl_writel(padctl, value, lane->soc->regs.misc_ctl2);
++}
++
++#define TEGRA210_UPHY_LANE(_name, _offset, _shift, _mask, _type, _misc)	\
++	{								\
++		.name = _name,						\
++		.offset = _offset,					\
++		.shift = _shift,					\
++		.mask = _mask,						\
++		.num_funcs = ARRAY_SIZE(tegra210_##_type##_functions),	\
++		.funcs = tegra210_##_type##_functions,			\
++		.regs.misc_ctl2 = _misc,				\
++	}
++
+ static const char *tegra210_pcie_functions[] = {
+ 	"pcie-x1",
+ 	"usb3-ss",
+@@ -1648,13 +1710,13 @@ static const char *tegra210_pcie_functions[] = {
+ };
+ 
+ static const struct tegra_xusb_lane_soc tegra210_pcie_lanes[] = {
+-	TEGRA210_LANE("pcie-0", 0x028, 12, 0x3, pcie),
+-	TEGRA210_LANE("pcie-1", 0x028, 14, 0x3, pcie),
+-	TEGRA210_LANE("pcie-2", 0x028, 16, 0x3, pcie),
+-	TEGRA210_LANE("pcie-3", 0x028, 18, 0x3, pcie),
+-	TEGRA210_LANE("pcie-4", 0x028, 20, 0x3, pcie),
+-	TEGRA210_LANE("pcie-5", 0x028, 22, 0x3, pcie),
+-	TEGRA210_LANE("pcie-6", 0x028, 24, 0x3, pcie),
++	TEGRA210_UPHY_LANE("pcie-0", 0x028, 12, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(0)),
++	TEGRA210_UPHY_LANE("pcie-1", 0x028, 14, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(1)),
++	TEGRA210_UPHY_LANE("pcie-2", 0x028, 16, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(2)),
++	TEGRA210_UPHY_LANE("pcie-3", 0x028, 18, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(3)),
++	TEGRA210_UPHY_LANE("pcie-4", 0x028, 20, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(4)),
++	TEGRA210_UPHY_LANE("pcie-5", 0x028, 22, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(5)),
++	TEGRA210_UPHY_LANE("pcie-6", 0x028, 24, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_PX_CTL2(6)),
+ };
+ 
+ static struct tegra_xusb_usb3_port *
+@@ -1815,6 +1877,8 @@ static void tegra210_pcie_lane_remove(struct tegra_xusb_lane *lane)
+ static const struct tegra_xusb_lane_ops tegra210_pcie_lane_ops = {
+ 	.probe = tegra210_pcie_lane_probe,
+ 	.remove = tegra210_pcie_lane_remove,
++	.iddq_enable = tegra210_uphy_lane_iddq_enable,
++	.iddq_disable = tegra210_uphy_lane_iddq_disable,
+ };
+ 
+ static int tegra210_pcie_phy_init(struct phy *phy)
+@@ -1939,7 +2003,7 @@ static const struct tegra_xusb_pad_soc tegra210_pcie_pad = {
+ };
+ 
+ static const struct tegra_xusb_lane_soc tegra210_sata_lanes[] = {
+-	TEGRA210_LANE("sata-0", 0x028, 30, 0x3, pcie),
++	TEGRA210_UPHY_LANE("sata-0", 0x028, 30, 0x3, pcie, XUSB_PADCTL_UPHY_MISC_PAD_S0_CTL2),
+ };
+ 
+ static struct tegra_xusb_lane *
+@@ -1978,6 +2042,8 @@ static void tegra210_sata_lane_remove(struct tegra_xusb_lane *lane)
+ static const struct tegra_xusb_lane_ops tegra210_sata_lane_ops = {
+ 	.probe = tegra210_sata_lane_probe,
+ 	.remove = tegra210_sata_lane_remove,
++	.iddq_enable = tegra210_uphy_lane_iddq_enable,
++	.iddq_disable = tegra210_uphy_lane_iddq_disable,
+ };
+ 
+ static int tegra210_sata_phy_init(struct phy *phy)
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index a34d304677bb..0aadac678191 100644
+index 3110aafa8cf6..a34d304677bb 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -1273,10 +1273,36 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
- 	return err;
+@@ -321,11 +321,17 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
+ 	if (soc->num_funcs < 2)
+ 		return;
+ 
++	if (lane->pad->ops->iddq_enable)
++		lane->pad->ops->iddq_enable(lane);
++
+ 	/* choose function */
+ 	value = padctl_readl(padctl, soc->offset);
+ 	value &= ~(soc->mask << soc->shift);
+ 	value |= lane->function << soc->shift;
+ 	padctl_writel(padctl, value, soc->offset);
++
++	if (lane->pad->ops->iddq_disable)
++		lane->pad->ops->iddq_disable(lane);
  }
  
-+static int tegra_xusb_padctl_suspend_noirq(struct device *dev)
-+{
-+	struct tegra_xusb_padctl *padctl = dev_get_drvdata(dev);
-+
-+	if (padctl->soc && padctl->soc->ops && padctl->soc->ops->suspend_noirq)
-+		return padctl->soc->ops->suspend_noirq(padctl);
-+
-+	return 0;
-+}
-+
-+static int tegra_xusb_padctl_resume_noirq(struct device *dev)
-+{
-+	struct tegra_xusb_padctl *padctl = dev_get_drvdata(dev);
-+
-+	if (padctl->soc && padctl->soc->ops && padctl->soc->ops->resume_noirq)
-+		return padctl->soc->ops->resume_noirq(padctl);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops tegra_xusb_padctl_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_xusb_padctl_suspend_noirq,
-+				      tegra_xusb_padctl_resume_noirq)
-+};
-+
- static struct platform_driver tegra_xusb_padctl_driver = {
- 	.driver = {
- 		.name = "tegra-xusb-padctl",
- 		.of_match_table = tegra_xusb_padctl_of_match,
-+		.pm = &tegra_xusb_padctl_pm_ops,
- 	},
- 	.probe = tegra_xusb_padctl_probe,
- 	.remove = tegra_xusb_padctl_remove,
-@@ -1343,6 +1369,62 @@ int tegra_xusb_padctl_hsic_set_idle(struct tegra_xusb_padctl *padctl,
- }
- EXPORT_SYMBOL_GPL(tegra_xusb_padctl_hsic_set_idle);
- 
-+int tegra_xusb_padctl_enable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy,
-+					   enum usb_device_speed speed)
-+{
-+	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->pad->ops->enable_phy_sleepwalk)
-+		return lane->pad->ops->enable_phy_sleepwalk(lane, speed);
-+
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_enable_phy_sleepwalk);
-+
-+int tegra_xusb_padctl_disable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy)
-+{
-+	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->pad->ops->disable_phy_sleepwalk)
-+		return lane->pad->ops->disable_phy_sleepwalk(lane);
-+
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_disable_phy_sleepwalk);
-+
-+int tegra_xusb_padctl_enable_phy_wake(struct tegra_xusb_padctl *padctl, struct phy *phy)
-+{
-+	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->pad->ops->enable_phy_wake)
-+		return lane->pad->ops->enable_phy_wake(lane);
-+
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_enable_phy_wake);
-+
-+int tegra_xusb_padctl_disable_phy_wake(struct tegra_xusb_padctl *padctl, struct phy *phy)
-+{
-+	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->pad->ops->disable_phy_wake)
-+		return lane->pad->ops->disable_phy_wake(lane);
-+
-+	return -EOPNOTSUPP;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_disable_phy_wake);
-+
-+bool tegra_xusb_padctl_remote_wake_detected(struct tegra_xusb_padctl *padctl, struct phy *phy)
-+{
-+	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
-+
-+	if (lane->pad->ops->remote_wake_detected)
-+		return lane->pad->ops->remote_wake_detected(lane);
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tegra_xusb_padctl_remote_wake_detected);
-+
- int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
- 					   unsigned int port, bool enable)
- {
+ static void tegra_xusb_pad_program(struct tegra_xusb_pad *pad)
 diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index e789d5ff4eb8..034f7a2c28d6 100644
+index ccb5dc9b1220..e789d5ff4eb8 100644
 --- a/drivers/phy/tegra/xusb.h
 +++ b/drivers/phy/tegra/xusb.h
-@@ -11,6 +11,7 @@
- #include <linux/mutex.h>
- #include <linux/workqueue.h>
+@@ -35,6 +35,10 @@ struct tegra_xusb_lane_soc {
  
-+#include <linux/usb/ch9.h>
- #include <linux/usb/otg.h>
- #include <linux/usb/role.h>
+ 	const char * const *funcs;
+ 	unsigned int num_funcs;
++
++	struct {
++		unsigned int misc_ctl2;
++	} regs;
+ };
  
-@@ -132,6 +133,11 @@ struct tegra_xusb_lane_ops {
+ struct tegra_xusb_lane {
+@@ -126,6 +130,8 @@ struct tegra_xusb_lane_ops {
+ 					 struct device_node *np,
+ 					 unsigned int index);
  	void (*remove)(struct tegra_xusb_lane *lane);
- 	void (*iddq_enable)(struct tegra_xusb_lane *lane);
- 	void (*iddq_disable)(struct tegra_xusb_lane *lane);
-+	int (*enable_phy_sleepwalk)(struct tegra_xusb_lane *lane, enum usb_device_speed speed);
-+	int (*disable_phy_sleepwalk)(struct tegra_xusb_lane *lane);
-+	int (*enable_phy_wake)(struct tegra_xusb_lane *lane);
-+	int (*disable_phy_wake)(struct tegra_xusb_lane *lane);
-+	bool (*remote_wake_detected)(struct tegra_xusb_lane *lane);
++	void (*iddq_enable)(struct tegra_xusb_lane *lane);
++	void (*iddq_disable)(struct tegra_xusb_lane *lane);
  };
  
  bool tegra_xusb_lane_check(struct tegra_xusb_lane *lane, const char *function);
-@@ -396,6 +402,8 @@ struct tegra_xusb_padctl_ops {
- 			 const struct tegra_xusb_padctl_soc *soc);
- 	void (*remove)(struct tegra_xusb_padctl *padctl);
- 
-+	int (*suspend_noirq)(struct tegra_xusb_padctl *padctl);
-+	int (*resume_noirq)(struct tegra_xusb_padctl *padctl);
- 	int (*usb3_save_context)(struct tegra_xusb_padctl *padctl,
- 				 unsigned int index);
- 	int (*hsic_set_idle)(struct tegra_xusb_padctl *padctl,
-diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
-index 71d956935405..3a35e74cdc61 100644
---- a/include/linux/phy/tegra/xusb.h
-+++ b/include/linux/phy/tegra/xusb.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2016-2020, NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #ifndef PHY_TEGRA_XUSB_H
-@@ -8,6 +8,7 @@
- 
- struct tegra_xusb_padctl;
- struct device;
-+enum usb_device_speed;
- 
- struct tegra_xusb_padctl *tegra_xusb_padctl_get(struct device *dev);
- void tegra_xusb_padctl_put(struct tegra_xusb_padctl *padctl);
-@@ -23,4 +24,11 @@ int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
- int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
- int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
- 					 unsigned int port);
-+int tegra_xusb_padctl_enable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy,
-+					   enum usb_device_speed speed);
-+int tegra_xusb_padctl_disable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy);
-+int tegra_xusb_padctl_enable_phy_wake(struct tegra_xusb_padctl *padctl, struct phy *phy);
-+int tegra_xusb_padctl_disable_phy_wake(struct tegra_xusb_padctl *padctl, struct phy *phy);
-+bool tegra_xusb_padctl_remote_wake_detected(struct tegra_xusb_padctl *padctl, struct phy *phy);
-+
- #endif /* PHY_TEGRA_XUSB_H */
 -- 
 2.30.2
 
