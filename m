@@ -5,137 +5,144 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78FDC433C1
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2F7C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81B9061A2A
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B1961A23
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231401AbhCYOcX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:32:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51354 "EHLO
+        id S230358AbhCYOjU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 10:39:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbhCYOcB (ORCPT
+        with ESMTP id S231211AbhCYOjM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:32:01 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5372FC06174A;
-        Thu, 25 Mar 2021 07:32:01 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id b2-20020a7bc2420000b029010be1081172so1310850wmj.1;
-        Thu, 25 Mar 2021 07:32:01 -0700 (PDT)
+        Thu, 25 Mar 2021 10:39:12 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6D7C06174A;
+        Thu, 25 Mar 2021 07:39:11 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id e18so2529277wrt.6;
+        Thu, 25 Mar 2021 07:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8X/ErCd/PUHyh7uEayt0AfWxZBWOxuGE5goHChuzl9M=;
-        b=oe5h4IjS1khlBr3H69CXdHoY3Sp2GPifGMVuufqgDA5wCqFRWdvs332qj+2YH+DEY4
-         /HVasUQEmhQTgFvsx5ibJ4PfnBZ9Ha+kGDeMOhu1KNWsWj8z1MOZrmoAKb/lX8AdLVZK
-         Wz2mdPdPWXL/yE9FOBA8t1wUesXMJrg/RhhgHE1XFCAAcgneyuesFhXIrpJlk/fFF16S
-         hStHlzjEwLGFseytjWQKrqwCk7t6Ncx1cYVCBFLGVAhfiHzQ8ww2JS9WnA1exqWjLhAG
-         sOevmWxzU5qZ8xUYpqcPg37fYq/10LPioJFnUA7ytetztSJ0IMmid5IVUsm2jbtfRLd9
-         efyg==
+        bh=eVMg9U8Kdz9xJ+s917StRu9WI7qS3OmAkOKawdzzeY4=;
+        b=Sv0VCIJljaIN3OM4TNc131cDMS3qydGQPSbjknsIPQCiIolufWD9r65z1ZtsWtFjj7
+         gvwXYvyUTBdwl/KZWLkLcOZ+agkT6Z4LU9xCo7O/c31Nb1xL9GyhFVF9+XVwguKN7z05
+         et9m6FTMLBb5LG+aBmawx/JQ60/8/917as9wQ3wP30Kod13WwziNbVH3GrRtpwzuvfwu
+         DmP/IcHoYeQeEVTC7c50ivewRk3F1vFGOLEeC263WZPFqosQOkRy8DvKtnFFgLYLh6Ou
+         yAoz4x2MIsWUcZmF5fxbHibNh839BvPxSc8F5xrfwvyeGVcRL/SmSebINU9p2jyR2EHn
+         BYXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8X/ErCd/PUHyh7uEayt0AfWxZBWOxuGE5goHChuzl9M=;
-        b=ciqssViPVa5cB2HHMC+XDWNYZUs8e2ohXgXLk5CHZgnQx4D0Hm0TGps3hY4Q8t8maG
-         XU7RI3SWHNCxlNzq5R/iORajdUGuWilfm6rzPhL5O7cL4gvrv18KpZYKdB7y9lLudkqd
-         eZ1XEc5XFFtIloqVRLdjclmc7aIv2QW39FcmqVFqP7C+O4gN87NYPsipfSdZDcmaBdJa
-         O/mehXwnE6oosEgkisFzWsl77yEXLrnA4wY8RQ9FPufCh6viv76wWOFXJur1IvZ/smN4
-         sjOS/dvGNTiiQDpUKniGpevLGQGH9ljEcIOCahWhWxJfC8RG8YheE/Z5+mhAJSnTkc5K
-         myKA==
-X-Gm-Message-State: AOAM530o2dNrjca3EwG34SS6zf6AVoLAUkPkRpEQk9d+kzvA5l8vp6eR
-        eehuqhekOoThAOHDckO6ihSLqnddT8o=
-X-Google-Smtp-Source: ABdhPJwCP8SyVnHbVU/Xq0ABavcKyhlBcdUKDjFNpnHjTjex3u9ZXgml/hz3Y+XZ5w4ETpW2CyUtmw==
-X-Received: by 2002:a1c:6305:: with SMTP id x5mr8097290wmb.156.1616682720074;
-        Thu, 25 Mar 2021 07:32:00 -0700 (PDT)
+        bh=eVMg9U8Kdz9xJ+s917StRu9WI7qS3OmAkOKawdzzeY4=;
+        b=jZpnm8zFJ2w1bwGazAN2OIcMyPko3Q7IfOLblWdRWuomANPJeASf2WNzo0obefZExQ
+         c1hf3sUmyyIwHunCbzZJAwaadbV7SXMLx0RJhvZ9I6orFZRuhOJwOSMiqNwTqzqWtNAy
+         Tj8lkcK1o9L6ljORJX7vKzCnPjL23ndpAwUyFQr5y9MWAtvMiMiTLkjkfvgVg+9glQHu
+         ADMTlwIAYL63H4fUXctO7GUG/MoLFuM5wcAE/lWVVwIQwOjHO7V0GrUTm7S3E77qadXt
+         2II+Li2uprhRwa7IvidBHK7GhV/E8gFQjHlfZlJiUEajKpUtB+jK0gXTBaElujLccAaq
+         z3nQ==
+X-Gm-Message-State: AOAM532/b9ys4D6AT+05Vqhh8Bx/hHxoOwCiL2dAyqoEIJ8WUWweVs3G
+        b6rVfbiQPmVAWXQ38myfExw=
+X-Google-Smtp-Source: ABdhPJy8EOX1pW7R72AiKQ4GwnutLnz5MMzh8zqbBLSCvfdKFtjg/AAh6mLClf/2txlZt6HexfxLag==
+X-Received: by 2002:a5d:570c:: with SMTP id a12mr9441809wrv.209.1616683149870;
+        Thu, 25 Mar 2021 07:39:09 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id c8sm8927942wrd.55.2021.03.25.07.31.58
+        by smtp.gmail.com with ESMTPSA id l9sm6232289wmq.2.2021.03.25.07.39.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 07:31:59 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 15:32:21 +0100
+        Thu, 25 Mar 2021 07:39:08 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 15:39:30 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Peter Geis <pgwipeout@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] soc/tegra: pmc: Fix completion of power-gate
- toggling
-Message-ID: <YFye9WEL489M1KOk@orome.fritz.box>
+Subject: Re: [PATCH v4 3/5] soc/tegra: pmc: Ensure that clock rates aren't
+ too high
+Message-ID: <YFygotHKjgPQ/R4G@orome.fritz.box>
 References: <20210302122502.20874-1-digetx@gmail.com>
- <20210302122502.20874-3-digetx@gmail.com>
+ <20210302122502.20874-4-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6sCD7rN+0LZ2PNul"
+        protocol="application/pgp-signature"; boundary="Tcr+9zq/JqP5m3Qd"
 Content-Disposition: inline
-In-Reply-To: <20210302122502.20874-3-digetx@gmail.com>
+In-Reply-To: <20210302122502.20874-4-digetx@gmail.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---6sCD7rN+0LZ2PNul
+--Tcr+9zq/JqP5m3Qd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 02, 2021 at 03:24:59PM +0300, Dmitry Osipenko wrote:
-> The SW-initiated power gate toggling is dropped by PMC if there is
-> contention with a HW-initiated toggling, i.e. when one of CPU cores is
-> gated by cpuidle driver. Software should retry the toggling after 10
-> microseconds on Tegra20/30 SoCs, hence add the retrying. On Tegra114+ the
-> toggling method was changed in hardware, the TOGGLE_START bit indicates
-> whether PMC is busy or could accept the command to toggle, hence handle
-> that bit properly.
+On Tue, Mar 02, 2021 at 03:25:00PM +0300, Dmitry Osipenko wrote:
+> Switch all clocks of a power domain to a safe rate which is suitable
+> for all possible voltages in order to ensure that hardware constraints
+> aren't violated when power domain state toggles.
 >=20
-> The problem pops up after enabling dynamic power gating of 3d hardware,
-> where 3d power domain fails to turn on/off "randomly".
->=20
-> The programming sequence and quirks are documented in TRMs, but PMC
-> driver obliviously re-used the Tegra20 logic for Tegra30+, which strikes
-> back now. The 10 microseconds and other timeouts aren't documented in TRM,
-> they are taken from downstream kernel.
->=20
-> Link: https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-2.6.git;a=3Dcommit;h=
-=3D311dd1c318b70e93bcefec15456a10ff2b9eb0ff
-> Link: https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-3.10.git;a=3Dcommit;h=
-=3D7f36693c47cb23730a6b2822e0975be65fb0c51d
 > Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
 > Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
 > Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/soc/tegra/pmc.c | 70 ++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 65 insertions(+), 5 deletions(-)
+>  drivers/soc/tegra/pmc.c | 92 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 90 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index f970b615ee27..a87645fac735 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -237,6 +237,7 @@ struct tegra_powergate {
+>  	unsigned int id;
+>  	struct clk **clks;
+>  	unsigned int num_clks;
+> +	unsigned long *clk_rates;
+>  	struct reset_control *reset;
+>  };
+> =20
+> @@ -641,6 +642,57 @@ static int __tegra_powergate_remove_clamping(struct =
+tegra_pmc *pmc,
+>  	return 0;
+>  }
+> =20
+> +static int tegra_powergate_prepare_clocks(struct tegra_powergate *pg)
+> +{
+> +	unsigned long safe_rate =3D 100 * 1000 * 1000;
 
-Applied, thanks.
+This seems a bit arbitrary. Where did you come up with that value?
+
+I'm going to apply this to see how it fares in our testing.
 
 Thierry
 
---6sCD7rN+0LZ2PNul
+--Tcr+9zq/JqP5m3Qd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBcnvQACgkQ3SOs138+
-s6G5/Q/9FRt5aws4mzuM8015M9rGNntDN6xh2eUTzYsN2fQQopSFWmwCFr/3554P
-S5PyV7vuNtFmI8V7VH7RAZlNC3uA1XBeav4CUTfy/UqaZwZzrnwakKQMD+93djDd
-X0zZ07qzWdObTCYmQ/iZbv3kbl3F5DFg87Apv99vJMtc5SsA6n+lXhDhOHN4uqkt
-+p/pcYQV2RFwXQ91mo6F8BKtqjxyuY+eL0dh1h0L888Vk0Z5vy8xd9t8gdudHZz4
-eT9s4pP9sencxWq48kpR+9KzEue5oNi6c8oVazEwlz/wUeV+mjVeleuIiDE2RFoH
-favsVTCFiJstqPBfxoZz/b6orcpgbukrsuALj0l6qjzJm5xparFy6Bxz/g5taRge
-oGs87AKTk+4Z+AkzRRgyBKSfNzBIHPY7iVSRfJpH9iFJatQFEvk9k3KuMC6A2s+H
-AR+NdEgS9Hw2I04caQo0LvzvfdkkxB2yApDssk3Sh2E4qwbVi/KQ3S4/94XIRAql
-PnnUk4OLbNgkPW1QUZN9qNFNiLqyOo0ymjqbC1VHEfIfHHuc/ub/iN8hJgYLPcy3
-WHD1ZrLflLl1vSx32rMpF7TxtUIiVAqgE+NpdL0tSL265xpnKHWZ0PVZTzADXw1m
-mv31taCkqVXQvsLuoJyX6PKIu+W56sptWcZ7uEp64ryITgOt3p8=
-=APmv
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBcoKIACgkQ3SOs138+
+s6EX/g/+J6USwbUaTKlXIziLfJz1hm2pPY/lsfoXVaA24s+d6nfV8Lq3hFtJ/A3K
+Wfs/MtOEE8CUX5zMIhSlxVKNkl+ZVlypEG6/cMxpARlFNxaOuq/3+y3l7GdoM26m
+o/PYrZV624lgbusvtmQQwMEbrnSggDJgO3irSRPJHy4y83guoj8vg+XVSdxIT9dP
+2XOotLgyMd3SfbU480wE8MZw+q0mhsBKFMZxoeRjibUCER4RKJP8iT9CNBKQBMS1
+96cHdEip/avubYiCY1H+vMntYdfkukNF3cw9baNfEKvSpsMixPMcYibuEJ14/qjS
+15yr88EucjWfsr4P4PX7aqgGfJOUWFcOFpBinHQk+0O8IVTMXYXe/eyhbX//jr8X
+jYFj8Bum6FD3zaWiEKSuo2efMdVTAr54Bm5D51KzlAsJnJ9H4AshMiJFl/0JQnDc
+1XNtsrDsGpr3oBcUsSbn/gcNbRy3pEHweD1izUG3WCg8khrBbUnhWNSJgwk314ua
+Z8soVf9kXOiuW1KLPYKHNst8OwqufhNUDU8tRs5rdNOHJQAykWKBLxPtLI88nP1F
+4UFqpQMMJ2bSw7/N9iE4pMeJiM3QVpOQQ6HdGamdqjCJL2SPGP9/++EV1cB7v/8d
+F4kxvFc88IPS7zNxejMfxcLFVK9MYC6tezjvEkZLNSOZj5MBzkM=
+=OQxL
 -----END PGP SIGNATURE-----
 
---6sCD7rN+0LZ2PNul--
+--Tcr+9zq/JqP5m3Qd--
