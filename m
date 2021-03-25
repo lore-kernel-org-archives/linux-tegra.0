@@ -2,73 +2,72 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E1CC433E6
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 10:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B39FC433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 11:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78EA161A28
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 10:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4008B61A23
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 11:20:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbhCYKBb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 06:01:31 -0400
-Received: from elvis.franken.de ([193.175.24.41]:58864 "EHLO elvis.franken.de"
+        id S229659AbhCYLT2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 07:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229616AbhCYKBM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 06:01:12 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1lPMnd-00074f-04; Thu, 25 Mar 2021 11:01:09 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 3205DC1C81; Thu, 25 Mar 2021 11:00:57 +0100 (CET)
-Date:   Thu, 25 Mar 2021 11:00:57 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     John Crispin <john@phrozen.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sergei.shtylyov@gmail.com,
-        thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        balbi@kernel.org, digetx@gmail.com,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] MIPS: ralink: define stubs for clk_set_parent to fix
- compile testing
-Message-ID: <20210325100057.GE5775@alpha.franken.de>
-References: <20210317112644.24502-1-krzysztof.kozlowski@canonical.com>
+        id S229626AbhCYLTM (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Mar 2021 07:19:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 53A4861A23;
+        Thu, 25 Mar 2021 11:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616671152;
+        bh=F4az6keRu8dHjgjKyxlJfL/xOF5s8ykWjZ6nhddtwVw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l+wV1t/71lxpBa0r8TKPItZ0v0WisMF4JdWBBmmg5MJ9+hekOPLH0swpH4EF+7uMf
+         +Sj5NMLcRFetWXt4IS20zQaFUM9N8cSi7+tR86YboaYDiKMrDJX2vFGbtSSj40xPHh
+         wcYi7IiMDjOhMPs1XJD7S0gyQ76991IN4WvhCUT8H4KMWHmZ5qB/ap7ygq0+jvZkHU
+         eK6I2gYRluFLuMj8SqugU6DHzUiOC43+7nG7e7RmA+p/kxSSMGE803yv+8w4b2cqKC
+         hXNk9Dg4eHSR3lPVDUY6w5qnjUqtNzwc8QAKjhu15h2Z8yrVjw7gq5nrpjsfHfSZeA
+         tenoxOnPbcRcg==
+From:   Will Deacon <will@kernel.org>
+To:     Rich Wiley <rwiley@nvidia.com>, catalin.marinas@arm.com
+Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2] arm64: kernel: disable CNP on Carmel
+Date:   Thu, 25 Mar 2021 11:19:04 +0000
+Message-Id: <161666594391.223463.996446144212506291.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210324002809.30271-1-rwiley@nvidia.com>
+References: <20210324002809.30271-1-rwiley@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210317112644.24502-1-krzysztof.kozlowski@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Mar 17, 2021 at 12:26:44PM +0100, Krzysztof Kozlowski wrote:
-> The Ralink MIPS platform does not use Common Clock Framework and does
-> not define certain clock operations leading to compile test failures:
+On Tue, 23 Mar 2021 17:28:09 -0700, Rich Wiley wrote:
+> On NVIDIA Carmel cores, CNP behaves differently than it does on standard
+> ARM cores. On Carmel, if two cores have CNP enabled and share an L2 TLB
+> entry created by core0 for a specific ASID, a non-shareable TLBI from
+> core1 may still see the shared entry. On standard ARM cores, that TLBI
+> will invalidate the shared entry as well.
 > 
->     /usr/bin/mips-linux-gnu-ld: drivers/usb/phy/phy-tegra-usb.o: in function `tegra_usb_phy_init':
->     phy-tegra-usb.c:(.text+0x1dd4): undefined reference to `clk_get_parent'
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Acked-by: John Crispin <john@phrozen.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Use EXPORT_SYMBOL_GPL like two other stubs in the file.
-> 2. Add Ack
-> ---
->  arch/mips/ralink/clk.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> This causes issues with patchsets that attempt to do local TLBIs based
+> on cpumasks instead of broadcast TLBIs. Avoid these issues by disabling
+> CNP support for NVIDIA Carmel cores.
 
-applied to mips-next.
+Applied to arm64 (for-next/fixes), thanks!
 
-Thomas.
+[1/1] arm64: kernel: disable CNP on Carmel
+      https://git.kernel.org/arm64/c/20109a859a9b
 
+Cheers,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
