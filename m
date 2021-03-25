@@ -2,200 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB64C433E1
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF73C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 18:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7575E61A33
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 17:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A5761A31
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 18:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230241AbhCYRin (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 13:38:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
+        id S229581AbhCYSQU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 14:16:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbhCYRiT (ORCPT
+        with ESMTP id S229930AbhCYSP6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 13:38:19 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60454C06174A;
-        Thu, 25 Mar 2021 10:38:19 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id f16so4248442ljm.1;
-        Thu, 25 Mar 2021 10:38:19 -0700 (PDT)
+        Thu, 25 Mar 2021 14:15:58 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94581C06174A;
+        Thu, 25 Mar 2021 11:15:58 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id j25so2910935pfe.2;
+        Thu, 25 Mar 2021 11:15:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IWF2rjUL4RNwP8tqxzEk+CP2xWiPvF7wgM2YggJx29k=;
-        b=Glpk9vDYOel/oYy7nTxAS0XwpNBQzx7ylsJKz74gzs46Eg2558qdSoJDyl+XTKMsk0
-         oNmILuqlxpG+5fw8XZLVvup+A0wXMbs17UWj68DkZcO09STg6NO7DjiYbRIQ4gsCpKx3
-         +ZZE5UKC36gzw4bW3qXcVbLik+GHLeGdbfJoTyIVeWJUpHJLgVtayZsMG/3vgT9Cmncn
-         qihMzZ8p1ZeL89p9vF6AkWK6AFMlTC+slsTCRCqLG8r7GzIlxy6SUuE5RcHojopU8gnP
-         yJ263VxCri8YwQJ+RqpS7Tn6CSAsc7v7H3GV3b1J0dwAd6Hs21OoSBdVLSYVV6ztZ/+I
-         0mDQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fFkDrhnvgiRe+loeaLRgeNukDq8LEqELpmrdaCkopMk=;
+        b=HznVWzNJ1uepmVFF9ibp2m0G4d+aUeOI9jzVNUXtjwhubrus/JeqYekm0Lw8o2BFas
+         IUMOJ1r173SjyJLkPug3QBVlY/z2L9zJ+z5NJKsyFfSYC7Nfhr7ldZO1AWt21OkKRmGn
+         M6RGbv7fV86asTQEhuROVut2nwiIR9XEs8Wt7A4QtWQjn25SrlVtbzvKFjeblhusWXBA
+         ucHR46nw/BgE0ZFr71nbNROo0jAWfgqC1K4TlEf86ZfPlChJ2+hVSnwgCbIIFa3zft6R
+         AZjBY1msCu3CY+depDV/ShzBmRMk+2q5yzY3rWoKBaxrjmH2x0oWWWvYiRDU8erpjLsK
+         dLPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IWF2rjUL4RNwP8tqxzEk+CP2xWiPvF7wgM2YggJx29k=;
-        b=pWWjIhjXWTVh1vGkkNYvIlKxO9OJ7C9I/YZVSveCQkQ6RY1sXYdFqUG/hoKF7qZp/1
-         JblIBJFoCL77Uqm12f26QrUfPhxz5NHjgwzhhXVKrVSpnx0dDFvh9xHASnDujdNuw9Sp
-         oNuHEA+mK8tMB5ag5wAxoN+Z/7MSwDoOix9xJsLaTW3lR9wzbnaQQFotJYCRVZAwHVB/
-         Rso2+6Wanz8I8970kw8hW6W9a36E8Gc9FwB16vYpgUznB9wrCelQrm4SU8V4g7xdImMi
-         VtHOf6I8WP+f9UPpkKLQdcRC/TFhGqAB5nEmQVBp1XjsAbFXySKqQCQ/cZT6xSkXEB50
-         cC6A==
-X-Gm-Message-State: AOAM533r+emAQIVXPk97IwJSxB0/qEUWF4eszdHksuIut9b95wGSvDPx
-        kC7eoAuSkK/q93zBZG96ytXvtXgG8aY=
-X-Google-Smtp-Source: ABdhPJy+HFyDQ+YADIRrHEHy+wVQ5U68wTuP3H8gv88XId02H1UxV0aV3nF1ktHee9bm7TnbQmkaWA==
-X-Received: by 2002:a2e:8051:: with SMTP id p17mr6307832ljg.130.1616693897519;
-        Thu, 25 Mar 2021 10:38:17 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-60.dynamic.spd-mgts.ru. [109.252.193.60])
-        by smtp.googlemail.com with ESMTPSA id m20sm836193ljj.93.2021.03.25.10.38.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 10:38:17 -0700 (PDT)
-Subject: Re: [PATCH v4 3/6] dt-bindings: power: tegra: Add binding for core
- power domain
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fFkDrhnvgiRe+loeaLRgeNukDq8LEqELpmrdaCkopMk=;
+        b=ce1Fe5P/FHD5zkmMOGyugvVBo/9pPysJRe4YHcrIUKcXz4P4sbSKahLwD2VJ4vEtQk
+         o/ixJiaciROrM3HB0axRyVkOiyBo01JRRZYGpbEym/IoELGijrxcbwN2d5b27uJnjDQX
+         h8uuADvbW6NNsYPWbhQZmZc50rrbVWYdHX4hLNCBzVpXG/LL4aqNbD2SKY/nzh5fgJuG
+         3v/ClXcHhwXB+IQdVV7z4IFxM5bD+GRv5Ng8+I/S/jg5gZwnyzJqiKObPRMq8LymzSyf
+         q7f+ax/w8BQSwni1PQ03y26tAD7SVQnhOD1/1YztjJom/4OtZWrnjogalGwODP1Vj6WF
+         vlXw==
+X-Gm-Message-State: AOAM530zdHcdIWYBrkCwwWKydbI2q8ZC/Szf1XNqtE2ijTL2dwUmm0eF
+        8fAj/2eF3ZTzFRQdY/LGr2c=
+X-Google-Smtp-Source: ABdhPJzj9ne5PO3D+01uzhXw6K+GiAchPv6g8QNXVVUSEghBRxDYpUWhXoVje64VW97iM8PFp5/xUw==
+X-Received: by 2002:aa7:881a:0:b029:1f1:6148:15c3 with SMTP id c26-20020aa7881a0000b02901f1614815c3mr9273155pfo.30.1616696158022;
+        Thu, 25 Mar 2021 11:15:58 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:3991:e59d:d2d4:59dd])
+        by smtp.gmail.com with ESMTPSA id a21sm6618880pfk.83.2021.03.25.11.15.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 11:15:56 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 11:15:54 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
+Cc:     Dmitry Osipenko <digetx@gmail.com>, Nick Dyer <nick@shmanahar.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314164810.26317-1-digetx@gmail.com>
- <20210314164810.26317-4-digetx@gmail.com>
- <20210323224826.GA1490612@robh.at.kernel.org>
- <fd60e507-37b4-acc1-b19a-a3904cd13f65@gmail.com>
- <YFyjDNYAkbTQU5G0@orome.fritz.box>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <80410199-3b5f-13b7-25b7-3fbd009c31e7@gmail.com>
-Date:   Thu, 25 Mar 2021 20:38:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] ARM: tegra: acer-a500: Add atmel,wakeup-method
+ property
+Message-ID: <YFzTWuUZbdXvnpHC@google.com>
+References: <20210302102158.10533-1-digetx@gmail.com>
+ <20210302102158.10533-4-digetx@gmail.com>
+ <YFfLXLDIuRdj2bWs@google.com>
+ <YFyZ0ejrSxWc3JZT@orome.fritz.box>
 MIME-Version: 1.0
-In-Reply-To: <YFyjDNYAkbTQU5G0@orome.fritz.box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YFyZ0ejrSxWc3JZT@orome.fritz.box>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-25.03.2021 17:49, Thierry Reding пишет:
-> On Wed, Mar 24, 2021 at 02:01:29AM +0300, Dmitry Osipenko wrote:
->> 24.03.2021 01:48, Rob Herring пишет:
->>> On Sun, Mar 14, 2021 at 07:48:07PM +0300, Dmitry Osipenko wrote:
->>>> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
->>>> blocks reside. Add binding for the core power domain.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  .../power/nvidia,tegra20-core-domain.yaml     | 51 +++++++++++++++++++
->>>>  1 file changed, 51 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->>>> new file mode 100644
->>>> index 000000000000..4692489d780a
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/power/nvidia,tegra20-core-domain.yaml
->>>> @@ -0,0 +1,51 @@
->>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/power/nvidia,tegra20-core-domain.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: NVIDIA Tegra Core Power Domain
->>>> +
->>>> +maintainers:
->>>> +  - Dmitry Osipenko <digetx@gmail.com>
->>>> +  - Jon Hunter <jonathanh@nvidia.com>
->>>> +  - Thierry Reding <thierry.reding@gmail.com>
->>>> +
->>>> +allOf:
->>>> +  - $ref: power-domain.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - nvidia,tegra20-core-domain
->>>> +      - nvidia,tegra30-core-domain
->>>> +
->>>> +  operating-points-v2:
->>>> +    description:
->>>> +      Should contain level, voltages and opp-supported-hw property.
->>>> +      The supported-hw is a bitfield indicating SoC speedo or process
->>>> +      ID mask.
->>>> +
->>>> +  "#power-domain-cells":
->>>> +    const: 0
->>>> +
->>>> +  power-supply:
->>>> +    description:
->>>> +      Phandle to voltage regulator connected to the SoC Core power rail.
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - operating-points-v2
->>>> +  - "#power-domain-cells"
->>>> +  - power-supply
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    power-domain {
->>>> +        compatible = "nvidia,tegra20-core-domain";
->>>> +        operating-points-v2 = <&opp_table>;
->>>> +        power-supply = <&regulator>;
->>>> +        #power-domain-cells = <0>;
->>>
->>> AFAICT, there's no way to access this 'hardware'?
->> correct
+On Thu, Mar 25, 2021 at 03:10:25PM +0100, Thierry Reding wrote:
+> On Sun, Mar 21, 2021 at 03:40:28PM -0700, Dmitry Torokhov wrote:
+> > On Tue, Mar 02, 2021 at 01:21:58PM +0300, Dmitry Osipenko wrote:
+> > > Acer A500 uses Atmel Maxtouch 1386 touchscreen controller. This controller
+> > > has WAKE line which could be connected to I2C clock lane, dedicated GPIO
+> > > or fixed to HIGH level. Controller wakes up from a deep sleep when WAKE
+> > > line is asserted low. Acer A500 has WAKE line connected to I2C clock and
+> > > Linux device driver doesn't work property without knowing what wakeup
+> > > method is used by h/w.
+> > > 
+> > > Add atmel,wakeup-method property to the touchscreen node.
+> > > 
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > 
+> > Applied, thank you.
 > 
-> To avoid exposing this "virtual" device in device tree, could this
-> instead be modelled as a child node of the PMC node? We already expose a
-> couple of generic power domains that way on Tegra210 and later, so
-> perhaps some of that infrastructure can be reused? I suppose given that
-> this is different from the standard powergate domains that we expose so
-> far, this may need a different implementation, but from a device tree
-> bindings point of view it could fit in with that.
+> I noticed that you had applied this as I was applying a different patch
+> that touches the same area and it causes a conflict. In general I prefer
+> to pick up all device tree changes into the Tegra tree, specifically to
+> avoid such conflicts.
+> 
+> That said, I didn't see an email from Stephen about this causing a
+> conflict in linux-next, so perhaps it's fine. If this pops up again it
+> might be worth considering to drop this from your tree so that I can
+> resolve the conflict in the Tegra tree.
 
-At a quick glance this should be too troublesome because OPP and regulator frameworks require a proper/real backing device.
+Sorry about that, I went ahead and dropped the patch from my branch.
 
-Perhaps we could either turn the whole PMC into a core-domain or add a virtual device as a child of PMC, like this:
+Thanks.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 79364cdafeab..717273048caf 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -850,6 +850,12 @@ pd_mpe: mpe {
- 				#power-domain-cells = <0>;
- 			};
- 		};
-+
-+		pd_core: core-domain {
-+			compatible = "nvidia,tegra20-core-domain";
-+			operating-points-v2 = <&core_opp_table>;
-+			#power-domain-cells = <0>;
-+		};
- 	};
- 
- 	mc: memory-controller@7000f000 {
-
-but then this is still a virtual device, although in a bit nicer way.
-
-It feels like yours suggestion might result in a hardware description that is closer to reality since PMC controls fan out of all power rails within SoC.
+-- 
+Dmitry
