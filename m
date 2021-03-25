@@ -2,124 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 654B4C433DB
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE95C433DB
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CB4361A23
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C5861A2A
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 14:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231322AbhCYO1C (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:27:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbhCYO1B (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:27:01 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955E4C06174A;
-        Thu, 25 Mar 2021 07:27:00 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id f22-20020a7bc8d60000b029010c024a1407so3220903wml.2;
-        Thu, 25 Mar 2021 07:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AX6+kHKK/qwOM4FzMEsGgoKG3nu6wTe2Lo/9dWt/bdY=;
-        b=ctWyWNVRu8jSWez3kmcrzujTjN/ZaAFPuBuHHOTElAlkfW46jESUdyDfAMCRmCzuKR
-         JUM1TMlVktiOvRlmuxlEAHY1FHVZjSW2PBG3D0NU0m2T7OJRBLDrxKV3nyogedZBBfb/
-         km1wyxCWfbn67KdWnqg6UbfHNHVufL9whM9FhBgemgwI+XXNNKa/4g7ZSM7GIk8aRJSk
-         K96d/CDb2WLfnjvV7UnIuBIE/YwsG+5h17hVKkuztB/qbkbuB1K4szAjrtwGN4FtFd+u
-         JpFwckJBDlCkF35mW/51AtGYWg7vaX4tYmAGvNb2BdONGVEc140GMDo0+HHyrGR55m4r
-         0Jcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AX6+kHKK/qwOM4FzMEsGgoKG3nu6wTe2Lo/9dWt/bdY=;
-        b=URTjXU1b0C68VlYHudiIjsvcXnL4xhIu2SEiT1LOtj5cCV81G0ChTGnBHSUkGMKcq1
-         2Q/hPUx/hqDTkxvfb40gxnwJuNNQXKcxk/4AeOVtNI4iWGOjxxJwrLp1ALNHmO+vrC3d
-         vJAWXt0MUoGREYvrBtlLe3meB31+8elZCeqCl7Fn1/a5UBBtNO9RkN70+5PHW8klvTJq
-         w27sBu5ACif7UNCaQ9697MZGw69/FKssvp3AD8wkcWqcsU00yhilrovwaD7oHFdN38gN
-         Ykrb/TaGdDrzj+lNPwxEgz1tyDGBwtDT8gQG/Kki/2a5rG75eqEbJN3i57MW8U/i6tHC
-         wf+A==
-X-Gm-Message-State: AOAM532ExUZBlbYNxzCpzvyUXpQzcbEYN1Ptn48B6HJl8W03D7lc+UAI
-        JCGLJ5Vn/64971erBEbOMSJLGuGrTPI=
-X-Google-Smtp-Source: ABdhPJyrR4ncok+DuO7e04LqHdGMrK/QDtmw9FEUugwXv2Xa9ePbBAbXSyEzsc3dsX/mDPpk3fMOEg==
-X-Received: by 2002:a1c:541a:: with SMTP id i26mr8069918wmb.75.1616682419352;
-        Thu, 25 Mar 2021 07:26:59 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p10sm8032235wrw.33.2021.03.25.07.26.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 07:26:58 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 15:27:20 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] soc/tegra: pmc: Fix imbalanced clock disabling in
- error code path
-Message-ID: <YFydyG+ZmG2gU1QA@orome.fritz.box>
-References: <20210302122502.20874-1-digetx@gmail.com>
- <20210302122502.20874-2-digetx@gmail.com>
+        id S231406AbhCYO1f (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 10:27:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:50758 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231400AbhCYO1S (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 25 Mar 2021 10:27:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74462143D;
+        Thu, 25 Mar 2021 07:27:17 -0700 (PDT)
+Received: from [10.57.50.37] (unknown [10.57.50.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A88963F792;
+        Thu, 25 Mar 2021 07:27:15 -0700 (PDT)
+Subject: Re: [PATCH 3/9] memory: tegra: Implement SID override programming
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210325130332.778208-1-thierry.reding@gmail.com>
+ <20210325130332.778208-4-thierry.reding@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e994810f-7c3c-0f3a-b5af-b318b6eb31f8@arm.com>
+Date:   Thu, 25 Mar 2021 14:27:10 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TnDqhOWTa3f6ocxD"
-Content-Disposition: inline
-In-Reply-To: <20210302122502.20874-2-digetx@gmail.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <20210325130332.778208-4-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 2021-03-25 13:03, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Instead of programming all SID overrides during early boot, perform the
+> operation on-demand after the SMMU translations have been set up for a
+> device. This reuses data from device tree to match memory clients for a
+> device and programs the SID specified in device tree, which corresponds
+> to the SID used for the SMMU context banks for the device.
 
---TnDqhOWTa3f6ocxD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can you clarify what exactly the SID override does? I'm guessing it's 
+more than just changing the ID presented to the SMMU from one value to 
+another, since that alone wouldn't help under disable_bypass.
 
-On Tue, Mar 02, 2021 at 03:24:58PM +0300, Dmitry Osipenko wrote:
-> The tegra_powergate_power_up() has a typo in the error code path where it
-> will try to disable clocks twice, fix it. In practice that error never
-> happens, so this is a minor correction.
->=20
-> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/soc/tegra/pmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/memory/tegra/tegra186.c | 70 +++++++++++++++++++++++++++++++++
+>   include/soc/tegra/mc.h          | 10 +++++
+>   2 files changed, 80 insertions(+)
+> 
+> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+> index efa922d51d83..a89e8e40d875 100644
+> --- a/drivers/memory/tegra/tegra186.c
+> +++ b/drivers/memory/tegra/tegra186.c
+> @@ -4,6 +4,7 @@
+>    */
+>   
+>   #include <linux/io.h>
+> +#include <linux/iommu.h>
+>   #include <linux/module.h>
+>   #include <linux/mod_devicetable.h>
+>   #include <linux/of_device.h>
+> @@ -19,6 +20,10 @@
+>   #include <dt-bindings/memory/tegra194-mc.h>
+>   #endif
+>   
+> +#define MC_SID_STREAMID_OVERRIDE_MASK GENMASK(7, 0)
+> +#define MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED BIT(16)
+> +#define MC_SID_STREAMID_SECURITY_OVERRIDE BIT(8)
+> +
+>   struct tegra186_mc_client {
+>   	const char *name;
+>   	unsigned int id;
+> @@ -1808,6 +1813,71 @@ static struct platform_driver tegra186_mc_driver = {
+>   };
+>   module_platform_driver(tegra186_mc_driver);
+>   
+> +static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
+> +					    const struct tegra186_mc_client *client,
+> +					    unsigned int sid)
+> +{
+> +	u32 value, old;
+> +
+> +	value = readl(mc->regs + client->regs.security);
+> +	if ((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0) {
+> +		/*
+> +		 * If the secure firmware has locked this down the override
+> +		 * for this memory client, there's nothing we can do here.
+> +		 */
+> +		if (value & MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED)
+> +			return;
 
-Applied, thanks.
+How likely is that in practice? If it's anything more than vanishingly 
+rare then that would seem to be a strong pointer back towards 
+persevering with the common solution that will work for everyone.
 
-Thierry
+> +
+> +		/*
+> +		 * Otherwise, try to set the override itself. Typically the
+> +		 * secure firmware will never have set this configuration.
+> +		 * Instead, it will either have disabled write access to
+> +		 * this field, or it will already have set an explicit
+> +		 * override itself.
+> +		 */
+> +		WARN_ON((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0);
 
---TnDqhOWTa3f6ocxD
-Content-Type: application/pgp-signature; name="signature.asc"
+Given the context that's just WARN_ON(1), but either way I'm struggling 
+to understand who the report is for and what they're supposed to do 
+about it :/
 
------BEGIN PGP SIGNATURE-----
+Robin.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBcncgACgkQ3SOs138+
-s6HmthAAg2B9ykkDo47tixsHqUBy+Gx1aVwux9aneN6mTlFerK3j/pPQH4fhEkSN
-fcsBqdmiivMYRxEAN2Bns9zxp82ves/mjGK2vGxmun3PvM2Ob9fJlrz7bWxUu9Zg
-+qVDQQ46JXk0zBTBrTFuTQIPG3goSCtLPH/b3RSY+Bm7NJcOorN8fStjKiMMPqbO
-3+6Yd7h87ov4qMV1peLTq+huVYK+C5R/NDvrCAj7BI/0Reu2WsByAcYhFYkai+w8
-K0Zyd0Ny4TYKzWN7l+yQMbafHyIkSLIK5+9AwGoabZzjhLGilcoOFbbqOM0gfqNo
-nTb5c8qhOouQ12OWudIMJNyPa+CLlqrrDByBHJE7nS59rupOd+x3pVCPiUZm1U0x
-8iFMrcypQid4sTEdW83DcVxKRlIObTAVBcwnibdI51+BBxLZ93WppG2oUTWwVsEU
-yL40ShoZEBZ0qW2qI2KmAVmW5lYvYNZGYO4O6QfJroDhCvt87rQBZ44t8eaRMygC
-oJvi1yNutW5woxfVJK7SrMuC7yj4DjxKrtlQkGNMK3PGMdYoi+dAfcF4A7Jff4CG
-A8ae3y46P27UD/ysO4ErM+r5qWSXiVUB57RIsugCeZvzMxYItLPlx+gQHYAYwf5s
-zfe1UvzTDTYNkRDld8mbq8wy1rjoSc3VpEyOqxa0DHRfBclBl+Q=
-=ILRw
------END PGP SIGNATURE-----
-
---TnDqhOWTa3f6ocxD--
+> +
+> +		value |= MC_SID_STREAMID_SECURITY_OVERRIDE;
+> +		writel(value, mc->regs + client->regs.security);
+> +	}
+> +
+> +	value = readl(mc->regs + client->regs.override);
+> +	old = value & MC_SID_STREAMID_OVERRIDE_MASK;
+> +
+> +	if (old != sid) {
+> +		dev_dbg(mc->dev, "overriding SID %x for %s with %x\n", old,
+> +			client->name, sid);
+> +		writel(sid, mc->regs + client->regs.override);
+> +	}
+> +}
+> +
+> +int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+> +{
+> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> +	struct of_phandle_args args;
+> +	unsigned int i, index = 0;
+> +
+> +	while (!of_parse_phandle_with_args(dev->of_node, "interconnects", "#interconnect-cells",
+> +					   index, &args)) {
+> +		if (args.np == mc->dev->of_node && args.args_count != 0) {
+> +			for (i = 0; i < mc->soc->num_clients; i++) {
+> +				const struct tegra186_mc_client *client = &mc->soc->clients[i];
+> +
+> +				if (client->id == args.args[0]) {
+> +					u32 sid = fwspec->ids[0] & MC_SID_STREAMID_OVERRIDE_MASK;
+> +
+> +					tegra186_mc_client_sid_override(mc, client, sid);
+> +				}
+> +			}
+> +		}
+> +
+> +		index++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra186_mc_probe_device);
+> +
+>   MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+>   MODULE_DESCRIPTION("NVIDIA Tegra186 Memory Controller driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+> index 7be8441c6e9e..73d5ecf0e76a 100644
+> --- a/include/soc/tegra/mc.h
+> +++ b/include/soc/tegra/mc.h
+> @@ -168,4 +168,14 @@ devm_tegra_memory_controller_get(struct device *dev)
+>   }
+>   #endif
+>   
+> +#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
+> +    IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
+> +int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev);
+> +#else
+> +static inline int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>   #endif /* __SOC_TEGRA_MC_H__ */
+> 
