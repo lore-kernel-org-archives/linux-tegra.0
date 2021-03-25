@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D102AC433C1
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 13:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AC8C433E2
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 13:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8953F61A11
+	by mail.kernel.org (Postfix) with ESMTP id EADA5619E4
 	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 13:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbhCYNDv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 09:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
+        id S230229AbhCYNDx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 09:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbhCYNDW (ORCPT
+        with ESMTP id S230377AbhCYNDe (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 09:03:22 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F72C06174A
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Mar 2021 06:03:22 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id o16so2261938wrn.0
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Mar 2021 06:03:21 -0700 (PDT)
+        Thu, 25 Mar 2021 09:03:34 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9DAC06174A
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Mar 2021 06:03:34 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id g25so1158743wmh.0
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Mar 2021 06:03:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eKTLVgXnpvjbazWRAvYU9QVKhpZ/RAu3/Gpz9BY4uVw=;
-        b=KFeothr6D71F3V2OXxn/HRBCWxvrTBYpmNGhPi9V+JxZhJ6pWCxgAP1aaMrEhmZ07i
-         6oScVl+zTvPEAN8yn1CbSk/xdcdGUQr+q02kWeBad3OFf3/tpMYiuVMJ9VlknYt1J5MS
-         +97xz9GH00xHbJCW68FlbyFaxNoFm+EKzwRbmMotU7phTKMxQEL9JaVEuhc+3IFciyZ2
-         vwwIAQ3ifi1NX6n3BRLudXPV7heZmfJheZHUMymDcjYBhXVr92M3wLpqwnE2TFj2g4Nv
-         EV3dqewe9iIQOX0Q6W0fwGT5j+wVmgNMJ2N9712sviOpK6ZYGNUpzSjKOQXBfaLk5Kzd
-         8LTA==
+        bh=sKlX6lxFZZDQx81KHxlBAuS3KXxxabdkg7deqsQD9E8=;
+        b=Q6MDJba0++Cqa2FqTPpBKYmteCnTmb4Qj0MNVThccjPAfe15l8jJHB4MfP1IhSBvAd
+         oPEObUu5jLZZMLijGS4X/S5BqL4OxtVllLkwGG7MM5SSHYYAqBQDawvPV3OwbScjr0Yn
+         AVBqjKfgS7IuniJewPzzMgK/pm2odVCKwZdFXnZj8vDDMMcvHsej5IMPLgju9BC4Cr4r
+         tc0smQFkTOhHAusLixUPjzS1lfptjzJwjKpxOZoiSpR0QlE4ayuY9Jz4ZARnDHX184jH
+         ebhG9llOkxRw6sMsZsgTQBSTdGl8G9vKOOZthtsvQFvC7IfdHGnQgTVhmojD2fU2dJUT
+         xlsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eKTLVgXnpvjbazWRAvYU9QVKhpZ/RAu3/Gpz9BY4uVw=;
-        b=R94fvIT5cFH0Y2fVybkaqoLb2bhMU5jQeNRtWVwBlbrteczXOlQBRRlNmqJ3Frti5W
-         QmR1SKUBvI1MMh5rYmY/L+Z4nNy45QQF0bcb7D4Y3+ZUA1TzE0+og+Ahlpw+Ge6Amjkq
-         nJdzs7beXSmHwEwK+UCMvdjAQpE36I7ZaBZdrep+ryyu+JOhlK5GuO1qnRSGI3vRZtUb
-         LwteJabX6TkfHPo0eAx8Ystojn9cfLm4jRpn/N2SudOQie8OOWdIkQmgNVnnZ6QmcMvJ
-         ll8t8vxLUBFbcG7jYj8iaTGKScR+g/YT1Hupyy/DM1r0KxV04HqH9KNRFU9r3UnzuE0k
-         IuKA==
-X-Gm-Message-State: AOAM530JeRH0ANFWbxk1ipuZuFB+3zZ3DkgfvgKbeBqyj6WnQeluL8Yh
-        1q39vCNpN/c6mJfKY4t7GX4=
-X-Google-Smtp-Source: ABdhPJx3GmEqYfvOBuvZb2Uk9r0KJU7t8FHVQTFIZtLY/uBVG5wGedbz/YmLbwu74t9njeQ0AJUQpg==
-X-Received: by 2002:adf:d1e2:: with SMTP id g2mr8997953wrd.104.1616677400702;
-        Thu, 25 Mar 2021 06:03:20 -0700 (PDT)
+        bh=sKlX6lxFZZDQx81KHxlBAuS3KXxxabdkg7deqsQD9E8=;
+        b=QSqhBk4w0QIYCPVVvNZXRCnZ95ke8yQwMySNsjaBeZ8fyNad0mhUCA/D6xmmr6CxNN
+         MXsK6lSuCEnTebzvj7ubR38JVHhsi4cT97+vgKnZpokpg33NHkCfuHrH9+Ta/IovZG0H
+         CWNXKK+e32iUHTKKekNUSoh3uuVw4KeYZ09cIiJCPDFnW6fTbY9AxmqqNW1XV/exmKjc
+         MiWKv5ULH7nri2Jy7pPZfM2C5RVWiuS4abokjKKwCGkPqCSS00c7zAAdQ/bzMd38d6ea
+         LYFuBExaFgQ9nRkhHkhgGoxvSzEL+zsGRq3CKCvslhFhP61Y2djOv2C8kfThz8M9Nwa0
+         4AGw==
+X-Gm-Message-State: AOAM530c0uLkyy+1Gu0OslTHrpuMYDvK22zPdS+7GAFhJlyqiqF7OpkJ
+        6EjWP4Dqa9B8EDCW4LusBnjX0YnHJhM=
+X-Google-Smtp-Source: ABdhPJzB3TMNW+Kkz/jNUXXcFJCRi95WiLM+uNOvGfihjgYU+d8eM8S/suCmJcW+aLLKKTBKPIBLwg==
+X-Received: by 2002:a05:600c:198c:: with SMTP id t12mr7822026wmq.183.1616677412792;
+        Thu, 25 Mar 2021 06:03:32 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id u63sm6494706wmg.24.2021.03.25.06.03.19
+        by smtp.gmail.com with ESMTPSA id h13sm5678667wmq.29.2021.03.25.06.03.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 06:03:19 -0700 (PDT)
+        Thu, 25 Mar 2021 06:03:31 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Will Deacon <will@kernel.org>,
@@ -68,9 +68,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/9] memory: tegra: Move internal data structures into separate header
-Date:   Thu, 25 Mar 2021 14:03:24 +0100
-Message-Id: <20210325130332.778208-2-thierry.reding@gmail.com>
+Subject: [PATCH 4/9] iommu/arm-smmu: Implement ->probe_finalize()
+Date:   Thu, 25 Mar 2021 14:03:27 +0100
+Message-Id: <20210325130332.778208-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210325130332.778208-1-thierry.reding@gmail.com>
 References: <20210325130332.778208-1-thierry.reding@gmail.com>
@@ -82,252 +82,63 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-From Tegra20 through Tegra210, either the GART or SMMU drivers need
-access to the internals of the memory controller driver because they are
-tightly coupled (in fact, the GART and SMMU are part of the memory
-controller). On later chips, a separate hardware block implements the
-SMMU functionality, so this is no longer needed. However, we still want
-to reuse some of the existing infrastructure on later chips, so split
-the memory controller internals into a separate header file to avoid
-conflicts with the implementation on newer chips.
+Implement a ->probe_finalize() callback that can be used by vendor
+implementations to perform extra programming necessary after devices
+have been attached to the SMMU.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/iommu/tegra-gart.c      |  2 +-
- drivers/iommu/tegra-smmu.c      |  2 +-
- drivers/memory/tegra/mc.h       |  2 +-
- drivers/memory/tegra/tegra186.c | 12 ++++---
- include/soc/tegra/mc-internal.h | 62 +++++++++++++++++++++++++++++++++
- include/soc/tegra/mc.h          | 50 --------------------------
- 6 files changed, 72 insertions(+), 58 deletions(-)
- create mode 100644 include/soc/tegra/mc-internal.h
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 17 +++++++++++++++++
+ drivers/iommu/arm/arm-smmu/arm-smmu.h |  1 +
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 6f130e51f072..716185234b2a 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -17,7 +17,7 @@
- #include <linux/spinlock.h>
- #include <linux/vmalloc.h>
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index d8c6bfde6a61..4589e76543a8 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -1447,6 +1447,22 @@ static void arm_smmu_release_device(struct device *dev)
+ 	iommu_fwspec_free(dev);
+ }
  
--#include <soc/tegra/mc.h>
-+#include <soc/tegra/mc-internal.h>
- 
- #define GART_REG_BASE		0x24
- #define GART_CONFIG		(0x24 - GART_REG_BASE)
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 602aab98c079..fdb798c62596 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -17,7 +17,7 @@
- #include <linux/dma-mapping.h>
- 
- #include <soc/tegra/ahb.h>
--#include <soc/tegra/mc.h>
-+#include <soc/tegra/mc-internal.h>
- 
- struct tegra_smmu_group {
- 	struct list_head list;
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index 1ee34f0da4f7..116bf68325b7 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -10,7 +10,7 @@
- #include <linux/io.h>
- #include <linux/types.h>
- 
--#include <soc/tegra/mc.h>
-+#include <soc/tegra/mc-internal.h>
- 
- #define MC_INTSTATUS					0x00
- #define MC_INTMASK					0x04
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index e25c954dde2e..aa676c45650b 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -9,6 +9,8 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-+#include <soc/tegra/mc.h>
++static void arm_smmu_probe_finalize(struct device *dev)
++{
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
++	struct arm_smmu_master_cfg *cfg;
++	struct arm_smmu_device *smmu;
 +
- #if defined(CONFIG_ARCH_TEGRA_186_SOC)
- #include <dt-bindings/memory/tegra186-mc.h>
- #endif
-@@ -31,14 +33,14 @@ struct tegra186_mc_soc {
- 	unsigned int num_clients;
++	if (!fwspec || fwspec->ops != &arm_smmu_ops)
++		return;
++
++	cfg = dev_iommu_priv_get(dev);
++	smmu = cfg->smmu;
++
++	if (smmu->impl->probe_finalize)
++		smmu->impl->probe_finalize(smmu, dev);
++}
++
+ static struct iommu_group *arm_smmu_device_group(struct device *dev)
+ {
+ 	struct arm_smmu_master_cfg *cfg = dev_iommu_priv_get(dev);
+@@ -1630,6 +1646,7 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.iova_to_phys		= arm_smmu_iova_to_phys,
+ 	.probe_device		= arm_smmu_probe_device,
+ 	.release_device		= arm_smmu_release_device,
++	.probe_finalize		= arm_smmu_probe_finalize,
+ 	.device_group		= arm_smmu_device_group,
+ 	.domain_get_attr	= arm_smmu_domain_get_attr,
+ 	.domain_set_attr	= arm_smmu_domain_set_attr,
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+index d2a2d1bc58ba..6779db30cebb 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+@@ -439,6 +439,7 @@ struct arm_smmu_impl {
+ 				  struct device *dev, int start);
+ 	void (*write_s2cr)(struct arm_smmu_device *smmu, int idx);
+ 	void (*write_sctlr)(struct arm_smmu_device *smmu, int idx, u32 reg);
++	void (*probe_finalize)(struct arm_smmu_device *smmu, struct device *dev);
  };
  
--struct tegra186_mc {
-+struct tegra_mc {
- 	struct device *dev;
- 	void __iomem *regs;
- 
- 	const struct tegra186_mc_soc *soc;
- };
- 
--static void tegra186_mc_program_sid(struct tegra186_mc *mc)
-+static void tegra186_mc_program_sid(struct tegra_mc *mc)
- {
- 	unsigned int i;
- 
-@@ -1523,8 +1525,8 @@ static const struct tegra186_mc_soc tegra194_mc_soc = {
- 
- static int tegra186_mc_probe(struct platform_device *pdev)
- {
--	struct tegra186_mc *mc;
- 	struct resource *res;
-+	struct tegra_mc *mc;
- 	int err;
- 
- 	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
-@@ -1552,7 +1554,7 @@ static int tegra186_mc_probe(struct platform_device *pdev)
- 
- static int tegra186_mc_remove(struct platform_device *pdev)
- {
--	struct tegra186_mc *mc = platform_get_drvdata(pdev);
-+	struct tegra_mc *mc = platform_get_drvdata(pdev);
- 
- 	of_platform_depopulate(mc->dev);
- 
-@@ -1577,7 +1579,7 @@ static int __maybe_unused tegra186_mc_suspend(struct device *dev)
- 
- static int __maybe_unused tegra186_mc_resume(struct device *dev)
- {
--	struct tegra186_mc *mc = dev_get_drvdata(dev);
-+	struct tegra_mc *mc = dev_get_drvdata(dev);
- 
- 	tegra186_mc_program_sid(mc);
- 
-diff --git a/include/soc/tegra/mc-internal.h b/include/soc/tegra/mc-internal.h
-new file mode 100644
-index 000000000000..4f327695d58c
---- /dev/null
-+++ b/include/soc/tegra/mc-internal.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2014 NVIDIA Corporation
-+ * Copyright (C) 2021 NVIDIA Corporation
-+ */
-+
-+#ifndef __SOC_TEGRA_MC_INTERNAL_H__
-+#define __SOC_TEGRA_MC_INTERNAL_H__
-+
-+#include <soc/tegra/mc.h>
-+
-+struct tegra_mc_soc {
-+	const struct tegra_mc_client *clients;
-+	unsigned int num_clients;
-+
-+	const unsigned long *emem_regs;
-+	unsigned int num_emem_regs;
-+
-+	unsigned int num_address_bits;
-+	unsigned int atom_size;
-+
-+	u8 client_id_mask;
-+
-+	const struct tegra_smmu_soc *smmu;
-+
-+	u32 intmask;
-+
-+	const struct tegra_mc_reset_ops *reset_ops;
-+	const struct tegra_mc_reset *resets;
-+	unsigned int num_resets;
-+
-+	const struct tegra_mc_icc_ops *icc_ops;
-+
-+	int (*init)(struct tegra_mc *mc);
-+};
-+
-+struct tegra_mc {
-+	struct device *dev;
-+	struct tegra_smmu *smmu;
-+	struct gart_device *gart;
-+	void __iomem *regs;
-+	struct clk *clk;
-+	int irq;
-+
-+	const struct tegra_mc_soc *soc;
-+	unsigned long tick;
-+
-+	struct tegra_mc_timing *timings;
-+	unsigned int num_timings;
-+
-+	struct reset_controller_dev reset;
-+
-+	struct icc_provider provider;
-+
-+	spinlock_t lock;
-+
-+	struct {
-+		struct dentry *root;
-+	} debugfs;
-+};
-+
-+#endif /* __SOC_TEGRA_MC_INTERNAL_H__ */
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index d2fbe6a8b25b..7be8441c6e9e 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -155,56 +155,6 @@ struct tegra_mc_icc_ops {
- 						void *data);
- };
- 
--struct tegra_mc_soc {
--	const struct tegra_mc_client *clients;
--	unsigned int num_clients;
--
--	const unsigned long *emem_regs;
--	unsigned int num_emem_regs;
--
--	unsigned int num_address_bits;
--	unsigned int atom_size;
--
--	u8 client_id_mask;
--
--	const struct tegra_smmu_soc *smmu;
--
--	u32 intmask;
--
--	const struct tegra_mc_reset_ops *reset_ops;
--	const struct tegra_mc_reset *resets;
--	unsigned int num_resets;
--
--	const struct tegra_mc_icc_ops *icc_ops;
--
--	int (*init)(struct tegra_mc *mc);
--};
--
--struct tegra_mc {
--	struct device *dev;
--	struct tegra_smmu *smmu;
--	struct gart_device *gart;
--	void __iomem *regs;
--	struct clk *clk;
--	int irq;
--
--	const struct tegra_mc_soc *soc;
--	unsigned long tick;
--
--	struct tegra_mc_timing *timings;
--	unsigned int num_timings;
--
--	struct reset_controller_dev reset;
--
--	struct icc_provider provider;
--
--	spinlock_t lock;
--
--	struct {
--		struct dentry *root;
--	} debugfs;
--};
--
- int tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate);
- unsigned int tegra_mc_get_emem_device_count(struct tegra_mc *mc);
- 
+ #define INVALID_SMENDX			-1
 -- 
 2.30.2
 
