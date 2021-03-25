@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8BEC433E5
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A229C433EA
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A96E161A26
-	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC4C61A1E
+	for <linux-tegra@archiver.kernel.org>; Thu, 25 Mar 2021 16:42:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229906AbhCYQl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 25 Mar 2021 12:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
+        id S229882AbhCYQl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 25 Mar 2021 12:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbhCYQlf (ORCPT
+        with ESMTP id S229798AbhCYQl0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 25 Mar 2021 12:41:35 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010B7C06174A;
-        Thu, 25 Mar 2021 09:41:35 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso3466779wmi.3;
-        Thu, 25 Mar 2021 09:41:34 -0700 (PDT)
+        Thu, 25 Mar 2021 12:41:26 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6053BC06174A;
+        Thu, 25 Mar 2021 09:41:26 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so1543302wmi.3;
+        Thu, 25 Mar 2021 09:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M7/JLbQJjUSymQX4uhScOBeXFiJb3pKiltILERb+d5I=;
-        b=M9HnA5WWjzJNuB/7uB5CtL4EUy7cJyJNnYQjmW5dRwzoXBsbP5CP6uoymTGta3ZNzB
-         MRN9pYs17bo81ZqAq15s04ecIIQsQcngvtv9xyOqleoLLcv0kCEW+c1EI6gZdi2qwLGh
-         FioDUR9SkFyk7MPNTKd5sqZLX3WvTZzHqRCIgRcA0jGvp2zGxnCnc6BAbmNsz2CU199L
-         an/ae2YrfJRcXIfqs68iUkA4WRHr1+5ZIxUSHW5bj3aRarW7yzt4cdC+xkI4q5QA0uq+
-         ra3KLXgLHl8wt7loNiBmjZa7KBQAo8k0xqlvg0SvEkSYUaacr7zIANsuuzQkPgHawfdQ
-         cy2w==
+        bh=+mgUd3FfBG5V1WiGiq7Sg4bslUVk/BI3WMScbkkNnvo=;
+        b=HDU9cNu0XKgix9QOGNKr3nLH70tx8Q2u5VwwF7ZMJ3ce5mq0PCs8Pv97HWyNwjeXGR
+         RxBOyzvnY7d3oztATGgWrUCzWHhdHgMJ+eO02W/3xsCZ8QCVf9z9K1nqg/5tpHN9Z4tE
+         t2eoxQLNO+KbxhTu3CArygjVjJ4vxUe/b8whrkEeKE3FqQsS3Hkhyr0u1czxHzAsoWCd
+         hI4u5/bdf4IoTewIn1k2DLFGKhp45dU/3U3y7mBk9+MPcdfCU+oTcCCuRaADPQ8O5/I7
+         0U50ulzmGzBiBzNQ0V2rtxqpVOakvqQcpwVh07B46hC/mFlFvzX8fqNFADxhUUhQRCF4
+         qidA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M7/JLbQJjUSymQX4uhScOBeXFiJb3pKiltILERb+d5I=;
-        b=MZJSmAtrPR2J77KzMaQu1CqHlRQOio16xZ4ssLmZqSChfcON0RkZeBRHCC3oC30JIh
-         yFa+iTIE//648K80qu/lU9fX6EJHIn7hSZIqNziN3xRoq3P1kf27VPtxE5WLUJ4EnJpl
-         jK1sLh2f6mqmseJKf70VIXqOPzGlawG7sp4mYyP1nXGcSDYKKdlWgwYSDYdOe0HlvTA1
-         +H6yxIYp7O3HZsD371tpODu2pszp60vOumh2he/BZ9XkiPrfpWHOZDr2oRv/l0YmKWLx
-         V8Db6a0L38Jq2sJJGdqkqowhej6bv8+Ud+r+uR60t6FBnap96CorQAfDJxQuUfnjwPih
-         lDiQ==
-X-Gm-Message-State: AOAM531Yaa82fOSV6VN7Af2Kgo53JtpaumpXsBzB51308dGyji0VEYyy
-        086UxZE4v0/67nqyZhHHpno=
-X-Google-Smtp-Source: ABdhPJx8N3Yxnfw/JNUeLdh2tYls8aL3hFOM4UkxY2TDsbWWQblrIYTMQLBAsBfHyNicg6gChAeVyA==
-X-Received: by 2002:a05:600c:364c:: with SMTP id y12mr8971267wmq.96.1616690493669;
-        Thu, 25 Mar 2021 09:41:33 -0700 (PDT)
+        bh=+mgUd3FfBG5V1WiGiq7Sg4bslUVk/BI3WMScbkkNnvo=;
+        b=mWyzE7tJXLLE9JGT0MnC6+uxDSc9CeiOHgpa56+O9VZeGZcNzjBouvFvi1Nmm70U6r
+         uonshhS3eL6Zz4US0hKxvvU3gr7jZF+N9Qp/V92V6Hotc8gl/5tn4NjtYWZxSMAwIHDR
+         RwlBV4tbHM9CdrK5clw5HkxbIVPWOMuTUx7oXsDiDS9C/VmrC1usV99G/CXKB6NeT4zQ
+         srEjbhP9CKmBM+BeZ9IhRj2dBMYr0Tc2B2v7QTOi2HRBuify5Fy7oMF4L9zks5pgcDbt
+         efHxdsI0MWCBPgUrcPgm24MtHnusKFVl2Ys1iwDWZw7Xa/G8OgDVfu1SR5LiJTjHLwyt
+         SCmw==
+X-Gm-Message-State: AOAM530udnw2AeOmMHuh31/TTArYR1QmNBhPh+FYxRWqPQBroxL6J2vK
+        DSIusYI6wA36S8dASi6NGGE=
+X-Google-Smtp-Source: ABdhPJwecxKmDPs8sTv0ICfk8y8FLcz6o1BYpe4/XmBXW2UfZiktm5sFyZ8X94fBst1OiLGjH2miEg==
+X-Received: by 2002:a1c:f614:: with SMTP id w20mr8746936wmc.70.1616690485017;
+        Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p16sm9055793wrt.54.2021.03.25.09.41.30
+        by smtp.gmail.com with ESMTPSA id n3sm7141949wmi.7.2021.03.25.09.41.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 09:41:30 -0700 (PDT)
+        Thu, 25 Mar 2021 09:41:23 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Vinod Koul <vkoul@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -65,9 +65,9 @@ Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
         linux-usb@vger.kernel.org
-Subject: [PATCH v8 12/13] usb: host: xhci-tegra: Unlink power domain devices
-Date:   Thu, 25 Mar 2021 17:40:56 +0100
-Message-Id: <20210325164057.793954-13-thierry.reding@gmail.com>
+Subject: [PATCH v8 10/13] phy: tegra: xusb: Tegra210 host mode VBUS control
+Date:   Thu, 25 Mar 2021 17:40:54 +0100
+Message-Id: <20210325164057.793954-11-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210325164057.793954-1-thierry.reding@gmail.com>
 References: <20210325164057.793954-1-thierry.reding@gmail.com>
@@ -79,352 +79,131 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: JC Kuo <jckuo@nvidia.com>
 
-This commit unlinks xhci-tegra platform device with SS/host power
-domain devices. Reasons for this change is - at ELPG entry, PHY
-sleepwalk and wake configuration need to be done before powering
-down SS/host partitions, and PHY need be powered off after powering
-down SS/host partitions. Sequence looks like roughly below:
-
-  tegra_xusb_enter_elpg() -> xhci_suspend()
-                          -> enable PHY sleepwalk and wake if needed
-                          -> power down SS/host partitions
-                          -> power down PHY
-
-If SS/host power domains are linked to xhci-tegra platform device, we
-are not able to perform the sequence like above.
-
-This commit introduces:
-  1. tegra_xusb_unpowergate_partitions() to power up SS and host
-     partitions together. If SS/host power domain devices are
-     available, it invokes pm_runtime_get_sync() to request power
-     driver to power up partitions; If power domain devices are not
-     available, tegra_powergate_sequence_power_up() will be used to
-     power up partitions.
-
-  2. tegra_xusb_powergate_partitions() to power down SS and host
-     partitions together. If SS/host power domain devices are
-     available, it invokes pm_runtime_put_sync() to request power
-     driver to power down partitions; If power domain devices are not
-     available, tegra_powergate_power_off() will be used to power down
-     partitions.
+To support XUSB host controller ELPG, this commit moves VBUS control
+.phy_power_on()/.phy_power_off() to .phy_init()/.phy_exit().
+When XUSB host controller enters ELPG, host driver invokes
+.phy_power_off(), VBUS should remain ON so that USB devices will not
+disconnect. VBUS can be turned OFF when host driver invokes
+.phy_exit() which indicates disabling a USB port.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/usb/host/xhci-tegra.c | 206 ++++++++++++++++++----------------
- 1 file changed, 112 insertions(+), 94 deletions(-)
+ drivers/phy/tegra/xusb-tegra210.c | 52 ++++++++++++++++++++++++-------
+ 1 file changed, 40 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 50bb91b6a4b8..5b39a739f8f0 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -2,7 +2,7 @@
- /*
-  * NVIDIA Tegra xHCI host controller driver
-  *
-- * Copyright (C) 2014 NVIDIA Corporation
-+ * Copyright (c) 2014-2020, NVIDIA CORPORATION. All rights reserved.
-  * Copyright (C) 2014 Google, Inc.
-  */
- 
-@@ -249,8 +249,7 @@ struct tegra_xusb {
- 
- 	struct device *genpd_dev_host;
- 	struct device *genpd_dev_ss;
--	struct device_link *genpd_dl_host;
--	struct device_link *genpd_dl_ss;
-+	bool use_genpd;
- 
- 	struct phy **phys;
- 	unsigned int num_phys;
-@@ -821,36 +820,12 @@ static void tegra_xusb_phy_disable(struct tegra_xusb *tegra)
- 
- static int tegra_xusb_runtime_suspend(struct device *dev)
+diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+index 8af73ba78ad7..9d39f812fb43 100644
+--- a/drivers/phy/tegra/xusb-tegra210.c
++++ b/drivers/phy/tegra/xusb-tegra210.c
+@@ -1819,8 +1819,25 @@ static int tegra210_usb2_phy_init(struct phy *phy)
  {
--	struct tegra_xusb *tegra = dev_get_drvdata(dev);
--
--	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
--	tegra_xusb_clk_disable(tegra);
--
+ 	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	unsigned int index = lane->index;
++	struct tegra_xusb_usb2_port *port;
++	int err;
+ 	u32 value;
+ 
++	port = tegra_xusb_find_usb2_port(padctl, index);
++	if (!port) {
++		dev_err(&phy->dev, "no port found for USB2 lane %u\n", index);
++		return -ENODEV;
++	}
++
++	if (port->supply && port->mode == USB_DR_MODE_HOST) {
++		err = regulator_enable(port->supply);
++		if (err)
++			return err;
++	}
++
++	mutex_lock(&padctl->lock);
++
+ 	value = padctl_readl(padctl, XUSB_PADCTL_USB2_PAD_MUX);
+ 	value &= ~(XUSB_PADCTL_USB2_PAD_MUX_USB2_BIAS_PAD_MASK <<
+ 		   XUSB_PADCTL_USB2_PAD_MUX_USB2_BIAS_PAD_SHIFT);
+@@ -1828,11 +1845,30 @@ static int tegra210_usb2_phy_init(struct phy *phy)
+ 		 XUSB_PADCTL_USB2_PAD_MUX_USB2_BIAS_PAD_SHIFT;
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_PAD_MUX);
+ 
++	mutex_unlock(&padctl->lock);
++
  	return 0;
  }
  
- static int tegra_xusb_runtime_resume(struct device *dev)
+ static int tegra210_usb2_phy_exit(struct phy *phy)
  {
--	struct tegra_xusb *tegra = dev_get_drvdata(dev);
--	int err;
--
--	err = tegra_xusb_clk_enable(tegra);
--	if (err) {
--		dev_err(dev, "failed to enable clocks: %d\n", err);
--		return err;
--	}
--
--	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
--	if (err) {
--		dev_err(dev, "failed to enable regulators: %d\n", err);
--		goto disable_clk;
--	}
--
++	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
++	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	struct tegra_xusb_usb2_port *port;
++	int err;
++
++	port = tegra_xusb_find_usb2_port(padctl, lane->index);
++	if (!port) {
++		dev_err(&phy->dev, "no port found for USB2 lane %u\n", lane->index);
++		return -ENODEV;
++	}
++
++	if (port->supply && port->mode == USB_DR_MODE_HOST) {
++		err = regulator_disable(port->supply);
++		if (err)
++			return err;
++	}
++
  	return 0;
--
--disable_clk:
--	tegra_xusb_clk_disable(tegra);
--	return err;
  }
  
- #ifdef CONFIG_PM_SLEEP
-@@ -1026,10 +1001,9 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
- static void tegra_xusb_powerdomain_remove(struct device *dev,
- 					  struct tegra_xusb *tegra)
- {
--	if (tegra->genpd_dl_ss)
--		device_link_del(tegra->genpd_dl_ss);
--	if (tegra->genpd_dl_host)
--		device_link_del(tegra->genpd_dl_host);
-+	if (!tegra->use_genpd)
-+		return;
-+
- 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_ss))
- 		dev_pm_domain_detach(tegra->genpd_dev_ss, true);
- 	if (!IS_ERR_OR_NULL(tegra->genpd_dev_host))
-@@ -1055,20 +1029,84 @@ static int tegra_xusb_powerdomain_init(struct device *dev,
- 		return err;
- 	}
+@@ -1953,6 +1989,8 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
  
--	tegra->genpd_dl_host = device_link_add(dev, tegra->genpd_dev_host,
--					       DL_FLAG_PM_RUNTIME |
--					       DL_FLAG_STATELESS);
--	if (!tegra->genpd_dl_host) {
--		dev_err(dev, "adding host device link failed!\n");
--		return -ENODEV;
-+	tegra->use_genpd = true;
-+
-+	return 0;
-+}
-+
-+static int tegra_xusb_unpowergate_partitions(struct tegra_xusb *tegra)
-+{
-+	struct device *dev = tegra->dev;
-+	int rc;
-+
-+	if (tegra->use_genpd) {
-+		rc = pm_runtime_get_sync(tegra->genpd_dev_ss);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB SS partition\n");
-+			return rc;
-+		}
-+
-+		rc = pm_runtime_get_sync(tegra->genpd_dev_host);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB Host partition\n");
-+			pm_runtime_put_sync(tegra->genpd_dev_ss);
-+			return rc;
-+		}
-+	} else {
-+		rc = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
-+							tegra->ss_clk,
-+							tegra->ss_rst);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB SS partition\n");
-+			return rc;
-+		}
-+
-+		rc = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							tegra->host_clk,
-+							tegra->host_rst);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to enable XUSB Host partition\n");
-+			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
-+			return rc;
-+		}
- 	}
+ 	priv = to_tegra210_xusb_padctl(padctl);
  
--	tegra->genpd_dl_ss = device_link_add(dev, tegra->genpd_dev_ss,
--					     DL_FLAG_PM_RUNTIME |
--					     DL_FLAG_STATELESS);
--	if (!tegra->genpd_dl_ss) {
--		dev_err(dev, "adding superspeed device link failed!\n");
--		return -ENODEV;
-+	return 0;
-+}
++	mutex_lock(&padctl->lock);
 +
-+static int tegra_xusb_powergate_partitions(struct tegra_xusb *tegra)
-+{
-+	struct device *dev = tegra->dev;
-+	int rc;
-+
-+	if (tegra->use_genpd) {
-+		rc = pm_runtime_put_sync(tegra->genpd_dev_host);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB Host partition\n");
-+			return rc;
-+		}
-+
-+		rc = pm_runtime_put_sync(tegra->genpd_dev_ss);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB SS partition\n");
-+			pm_runtime_get_sync(tegra->genpd_dev_host);
-+			return rc;
-+		}
-+	} else {
-+		rc = tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB Host partition\n");
-+			return rc;
-+		}
-+
-+		rc = tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
-+		if (rc < 0) {
-+			dev_err(dev, "failed to disable XUSB SS partition\n");
-+			tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
-+							  tegra->host_clk,
-+							  tegra->host_rst);
-+			return rc;
-+		}
- 	}
+ 	if (port->usb3_port_fake != -1) {
+ 		value = padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
+ 		value &= ~XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_MASK(
+@@ -2046,14 +2084,6 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ 	padctl_writel(padctl, value,
+ 		      XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(index));
+ 
+-	if (port->supply && port->mode == USB_DR_MODE_HOST) {
+-		err = regulator_enable(port->supply);
+-		if (err)
+-			return err;
+-	}
+-
+-	mutex_lock(&padctl->lock);
+-
+ 	if (pad->enable > 0) {
+ 		pad->enable++;
+ 		mutex_unlock(&padctl->lock);
+@@ -2062,7 +2092,7 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
+ 
+ 	err = clk_prepare_enable(pad->clk);
+ 	if (err)
+-		goto disable_regulator;
++		goto out;
+ 
+ 	value = padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
+ 	value &= ~((XUSB_PADCTL_USB2_BIAS_PAD_CTL1_TRK_START_TIMER_MASK <<
+@@ -2094,8 +2124,7 @@ static int tegra210_usb2_phy_power_on(struct phy *phy)
  
  	return 0;
-@@ -1432,25 +1470,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 				err);
- 			goto put_padctl;
- 		}
--
--		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBA,
--							tegra->ss_clk,
--							tegra->ss_rst);
--		if (err) {
--			dev_err(&pdev->dev,
--				"failed to enable XUSBA domain: %d\n", err);
--			goto put_padctl;
--		}
--
--		err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_XUSBC,
--							tegra->host_clk,
--							tegra->host_rst);
--		if (err) {
--			tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--			dev_err(&pdev->dev,
--				"failed to enable XUSBC domain: %d\n", err);
--			goto put_padctl;
--		}
- 	} else {
- 		err = tegra_xusb_powerdomain_init(&pdev->dev, tegra);
- 		if (err)
-@@ -1525,10 +1544,22 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	 */
- 	platform_set_drvdata(pdev, tegra);
  
-+	err = tegra_xusb_clk_enable(tegra);
-+	if (err) {
-+		dev_err(tegra->dev, "failed to enable clocks: %d\n", err);
-+		goto put_hcd;
-+	}
-+
-+	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
-+	if (err) {
-+		dev_err(tegra->dev, "failed to enable regulators: %d\n", err);
-+		goto disable_clk;
-+	}
-+
- 	err = tegra_xusb_phy_enable(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
--		goto put_hcd;
-+		goto disable_regulator;
- 	}
- 
- 	/*
-@@ -1547,30 +1578,22 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto disable_phy;
- 	}
- 
--	pm_runtime_enable(&pdev->dev);
--
--	if (!pm_runtime_enabled(&pdev->dev))
--		err = tegra_xusb_runtime_resume(&pdev->dev);
--	else
--		err = pm_runtime_get_sync(&pdev->dev);
--
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to enable device: %d\n", err);
-+	err = tegra_xusb_unpowergate_partitions(tegra);
-+	if (err)
- 		goto free_firmware;
--	}
- 
- 	tegra_xusb_config(tegra);
- 
- 	err = tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
--		goto put_rpm;
-+		goto powergate;
- 	}
- 
- 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
--		goto put_rpm;
-+		goto powergate;
- 	}
- 
- 	device_wakeup_enable(tegra->hcd->self.controller);
-@@ -1622,24 +1645,21 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	usb_put_hcd(xhci->shared_hcd);
- remove_usb2:
- 	usb_remove_hcd(tegra->hcd);
--put_rpm:
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		tegra_xusb_runtime_suspend(&pdev->dev);
--put_hcd:
--	usb_put_hcd(tegra->hcd);
-+powergate:
-+	tegra_xusb_powergate_partitions(tegra);
- free_firmware:
- 	dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
- 			  tegra->fw.phys);
- disable_phy:
- 	tegra_xusb_phy_disable(tegra);
--	pm_runtime_disable(&pdev->dev);
-+disable_regulator:
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
-+disable_clk:
-+	tegra_xusb_clk_disable(tegra);
-+put_hcd:
-+	usb_put_hcd(tegra->hcd);
- put_powerdomains:
--	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--	} else {
--		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
--	}
-+	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
- put_padctl:
- 	tegra_xusb_padctl_put(tegra->padctl);
+-disable_regulator:
+-	regulator_disable(port->supply);
++out:
+ 	mutex_unlock(&padctl->lock);
  	return err;
-@@ -1664,15 +1684,13 @@ static int tegra_xusb_remove(struct platform_device *pdev)
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
+ }
+@@ -2154,7 +2183,6 @@ static int tegra210_usb2_phy_power_off(struct phy *phy)
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
  
--	if (!of_property_read_bool(pdev->dev.of_node, "power-domains")) {
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
--		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
--	} else {
--		tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
--	}
-+	tegra_xusb_powergate_partitions(tegra);
- 
--	tegra_xusb_phy_disable(tegra);
-+	tegra_xusb_powerdomain_remove(&pdev->dev, tegra);
- 
-+	tegra_xusb_phy_disable(tegra);
-+	tegra_xusb_clk_disable(tegra);
-+	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
- 	tegra_xusb_padctl_put(tegra->padctl);
- 
+ out:
+-	regulator_disable(port->supply);
+ 	mutex_unlock(&padctl->lock);
  	return 0;
+ }
 -- 
 2.30.2
 
