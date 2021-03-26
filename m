@@ -2,212 +2,347 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A45DC433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17285C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 15:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3486561A13
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACF061A28
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 15:30:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbhCZOzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
+        id S230100AbhCZP3y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Mar 2021 11:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbhCZOzA (ORCPT
+        with ESMTP id S230333AbhCZP3g (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 10:55:00 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECC6C0613AA
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=qlCr9DYUNxaSIyqRMEavX/tZoTiLlQL37Afi2jZuhpM=; b=dtsuFBitQHCZQASQF8I/2YIk7A
-        UkXykv2C5D6WIB7OqGBsdXIed5Rn6w8rJPJyINiSylGHUJxFIBK7+D5hqepte3rGXtyXTKjnFEid9
-        Ht3UKJD7l/1fTe06d2syZuTjKoGFSmjhIKSHEJHUUppc9MvP8hWKD9ZkwqWs/yOZpGN2KBqMBVu6F
-        T5H/aGfAH7zNtaor73W4eij9u3iMzO0E2nFCsIO9pKmxiu6u6bkNOn0V6rM+2n9yiJ2r3uB6UPyyp
-        lFQw9Zo1BpKPo51y3wnVErijk+vsZIFkA6Ci387c+bankE10vJWK+WGKWRgjkvhJrI4R1g92deOk+
-        xKCxpCyg==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1lPnrT-0001Vd-93; Fri, 26 Mar 2021 16:54:55 +0200
-Subject: Re: [PATCH v5 01/21] gpu: host1x: Use different lock classes for each
- client
-To:     Mikko Perttunen <mperttunen@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-2-mperttunen@nvidia.com>
- <YFitsk3I2l7IBnLR@orome.fritz.box>
- <6615105f-ccf1-7833-512c-090817c47952@gmail.com>
- <645366c2-c500-efcc-f44c-b933f6f470c4@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <0fb1b458-66bb-c9d8-04c7-174165b39811@kapsi.fi>
-Date:   Fri, 26 Mar 2021 16:54:55 +0200
+        Fri, 26 Mar 2021 11:29:36 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B903C0613AA
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 08:29:32 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id u20so7782503lja.13
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 08:29:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CDqE9vrcj1hVYR1Qio+oAMmx5oB7eUaXUDsWFAo0YM8=;
+        b=X7gp95Wks2FrUQ6QSGjc2hklU15PkIfdha4o+jsBqFPPLz0an8++kk3Z2D4J898frx
+         vzPDrWigAhPuBQZmmbkyEOJXdy7sUsxPprO6dvZ3psb9zUyBs0WlHhYn6sND00GexVZv
+         F7jM9KTL1zstL+Az/8FYthcty5KPeUcGLX4dFJioW9BzaEpJXAn1LiQnYwyrrhFSraVB
+         evNuiDbgT4Ynk138Gwg/HTVgZEATt+Zuo60LA6CxIvLdK6zB179+wWend+NvjsV1+Heh
+         AzmtQAz+/WUqwtToa27vTVKQTaSRsTA34ce3t8Hn9HXcNSKpoeAyQaDaDUqViQnAyXOQ
+         XVZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CDqE9vrcj1hVYR1Qio+oAMmx5oB7eUaXUDsWFAo0YM8=;
+        b=ZAMgWEDy5aQ7uNJynAz2RQhoJPb/BkQLCXKuchVYdXeEv8k9sCejfbJelwIyDHFi5C
+         zckryQOPXVj+89K5kWpTnrSIg0DbEdEr2OUvyXo8LhlGMvewWp5coDo5H2xJ06RU79yr
+         S37fPvRVYv8dFj6J9y5oO0Xs8MIx11lCQeVegQgUZL5v9hlZdfC+bwwyI94szmnz/kmM
+         8lTZD3xOXFfFXO4jzLw99U1tEUYkDcbCFMJExNimI03eqUGh9SwID7gvh3EffPe3t/J2
+         /HbzuFrOINis491dMLYxR9kE378mq+Pv/IuTyHMfnPNkox01ZRyCh/wMTZPx1QqaxHpu
+         2E0Q==
+X-Gm-Message-State: AOAM533HdQET7/105UNFp27920h7/b0Cg4Pm6JCpEQEtIyz01EV74Uha
+        x+69r2Jctswb+WnhPuAlXS8=
+X-Google-Smtp-Source: ABdhPJx12U15GGk4a78IpgYE5ICDEt05Z8yf0tkg++6YgErTCwvtCZlbNc9cL0oC/9HMtpu2PmUXUA==
+X-Received: by 2002:a2e:85d5:: with SMTP id h21mr9468864ljj.20.1616772570513;
+        Fri, 26 Mar 2021 08:29:30 -0700 (PDT)
+Received: from ?IPv6:2a00:1370:814d:99a9:a10:76ff:fe69:21b6? ([2a00:1370:814d:99a9:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id h11sm901491lfc.191.2021.03.26.08.29.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Mar 2021 08:29:30 -0700 (PDT)
+Subject: Re: [PATCH 0/9] arm64: tegra: Prevent early SMMU faults
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     iommu@lists.linux-foundation.org,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20210325130332.778208-1-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <197876d1-0046-f673-5d3e-818d1002542b@gmail.com>
+Date:   Fri, 26 Mar 2021 18:29:28 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <645366c2-c500-efcc-f44c-b933f6f470c4@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210325130332.778208-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/22/21 5:19 PM, Mikko Perttunen wrote:
-> On 22.3.2021 16.48, Dmitry Osipenko wrote:
->> 22.03.2021 17:46, Thierry Reding пишет:
->>> On Mon, Jan 11, 2021 at 02:59:59PM +0200, Mikko Perttunen wrote:
->>>> To avoid false lockdep warnings, give each client lock a different
->>>> lock class, passed from the initialization site by macro.
->>>>
->>>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->>>> ---
->>>>   drivers/gpu/host1x/bus.c | 7 ++++---
->>>>   include/linux/host1x.h   | 9 ++++++++-
->>>>   2 files changed, 12 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
->>>> index 347fb962b6c9..8fc79e9cb652 100644
->>>> --- a/drivers/gpu/host1x/bus.c
->>>> +++ b/drivers/gpu/host1x/bus.c
->>>> @@ -715,13 +715,14 @@ EXPORT_SYMBOL(host1x_driver_unregister);
->>>>    * device and call host1x_device_init(), which will in turn call 
->>>> each client's
->>>>    * &host1x_client_ops.init implementation.
->>>>    */
->>>> -int host1x_client_register(struct host1x_client *client)
->>>> +int __host1x_client_register(struct host1x_client *client,
->>>> +               struct lock_class_key *key)
->>>
->>> I've seen the kbuild robot warn about this because the kerneldoc is now
->>> out of date.
->>>
->>>>   {
->>>>       struct host1x *host1x;
->>>>       int err;
->>>>       INIT_LIST_HEAD(&client->list);
->>>> -    mutex_init(&client->lock);
->>>> +    __mutex_init(&client->lock, "host1x client lock", key);
->>>
->>> Should we maybe attempt to make this unique? Could we use something like
->>> dev_name(client->dev) for this?
->>
->> I'm curious who the lockdep warning could be triggered at all, I don't
->> recall ever seeing it. Mikko, could you please clarify how to reproduce
->> the warning?
->>
+25.03.2021 16:03, Thierry Reding пишет:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> This is pretty difficult to read but I guess it's some interaction 
-> related to the delayed initialization of host1x clients? In any case, I 
-> consistently get it at boot (though it may be triggered by vic probe 
-> instead of nvdec).
+> Hi,
 > 
-> I'll fix the kbuild robot warnings and see if I can add a 
-> client-specific lock name for v6.
+> this is a set of patches that is the result of earlier discussions
+> regarding early identity mappings that are needed to avoid SMMU faults
+> during early boot.
+> 
+> The goal here is to avoid early identity mappings altogether and instead
+> postpone the need for the identity mappings to when devices are attached
+> to the SMMU. This works by making the SMMU driver coordinate with the
+> memory controller driver on when to start enforcing SMMU translations.
+> This makes Tegra behave in a more standard way and pushes the code to
+> deal with the Tegra-specific programming into the NVIDIA SMMU
+> implementation.
 
-Lockdep doesn't seem to be liking dev_name() for the name, and I think 
-allocating a string for this purpose seems a bit overkill, so I'll keep 
-the lock name as is if there are no objections.
+It is an interesting idea which inspired me to try to apply a somewhat similar thing to Tegra SMMU driver by holding the SMMU ASID enable-bit until display driver allows to toggle it. This means that we will need an extra small tegra-specific SMMU API function, but it should be okay.
 
-Mikko
+I typed a patch and seems it's working good, I'll prepare a proper patch if you like it.
 
-> 
-> Mikko
-> 
-> [   38.128257] WARNING: possible recursive locking detected
-> [   38.133567] 5.11.0-rc2-next-20210108+ #102 Tainted: G S
-> [   38.140089] --------------------------------------------
-> [   38.145395] systemd-udevd/239 is trying to acquire lock:
-> [   38.150703] ffff0000997aa218 (&client->lock){+.+.}-{3:3}, at: 
-> host1x_client_resume+0x30/0x100 [host1x]
-> [   38.160142]
-> [   38.160142] but task is already holding lock:
-> [   38.165968] ffff000080c3b148 (&client->lock){+.+.}-{3:3}, at: 
-> host1x_client_resume+0x30/0x100 [host1x]
-> [   38.175398]
-> [   38.175398] other info that might help us debug this:
-> [   38.181918]  Possible unsafe locking scenario:
-> [   38.181918]
-> [   38.187830]        CPU0
-> [   38.190275]        ----
-> [   38.192719]   lock(&client->lock);
-> [   38.196129]   lock(&client->lock);
-> [   38.199537]
-> [   38.199537]  *** DEADLOCK ***
-> [   38.199537]
-> [   38.205449]  May be due to missing lock nesting notation
-> [   38.205449]
-> [   38.212228] 6 locks held by systemd-udevd/239:
-> [   38.216669]  #0: ffff00009261c188 (&dev->mutex){....}-{3:3}, at: 
-> device_driver_attach+0x60/0x130
-> [   38.225487]  #1: ffff800009a17168 (devices_lock){+.+.}-{3:3}, at: 
-> host1x_client_register+0x7c/0x220 [host1x]
-> [   38.235441]  #2: ffff000083f94bb8 (&host->devices_lock){+.+.}-{3:3}, 
-> at: host1x_client_register+0xac/0x220 [host1x]
-> [   38.245996]  #3: ffff0000a2267190 (&dev->mutex){....}-{3:3}, at: 
-> __device_attach+0x8c/0x230
-> [   38.254372]  #4: ffff000092c880f0 (&wgrp->lock){+.+.}-{3:3}, at: 
-> tegra_display_hub_prepare+0xd8/0x170 [tegra_drm]
-> [   38.264788]  #5: ffff000080c3b148 (&client->lock){+.+.}-{3:3}, at: 
-> host1x_client_resume+0x30/0x100 [host1x]
-> [   38.274658]
-> [   38.274658] stack backtrace:
-> [   38.279012] CPU: 0 PID: 239 Comm: systemd-udevd Tainted: G S       
-> 5.11.0-rc2-next-20210108+ #102
-> [   38.288660] Hardware name: NVIDIA Jetson TX2 Developer Kit (DT)
-> [   38.294577] Call trace:
-> [   38.297022]  dump_backtrace+0x0/0x2c0
-> [   38.300695]  show_stack+0x18/0x6c
-> [   38.304013]  dump_stack+0x120/0x19c
-> [   38.307507]  __lock_acquire+0x171c/0x2c34
-> [   38.311521]  lock_acquire.part.0+0x230/0x490
-> [   38.315793]  lock_acquire+0x70/0x90
-> [   38.319285]  __mutex_lock+0x11c/0x6d0
-> [   38.322952]  mutex_lock_nested+0x58/0x90
-> [   38.326877]  host1x_client_resume+0x30/0x100 [host1x]
-> [   38.332047]  host1x_client_resume+0x44/0x100 [host1x]
-> [   38.337200]  tegra_display_hub_prepare+0xf8/0x170 [tegra_drm]
-> [   38.343084]  host1x_drm_probe+0x1fc/0x4f0 [tegra_drm]
-> [   38.348256]  host1x_device_probe+0x3c/0x50 [host1x]
-> [   38.353240]  really_probe+0x148/0x6f0
-> [   38.356906]  driver_probe_device+0x78/0xe4
-> [   38.361005]  __device_attach_driver+0x10c/0x170
-> [   38.365536]  bus_for_each_drv+0xf0/0x160
-> [   38.369461]  __device_attach+0x168/0x230
-> [   38.373385]  device_initial_probe+0x14/0x20
-> [   38.377571]  bus_probe_device+0xec/0x100
-> [   38.381494]  device_add+0x580/0xbcc
-> [   38.384985]  host1x_subdev_register+0x178/0x1cc [host1x]
-> [   38.390397]  host1x_client_register+0x138/0x220 [host1x]
-> [   38.395808]  nvdec_probe+0x240/0x3ec [tegra_drm]
-> [   38.400549]  platform_probe+0x8c/0x110
-> [   38.404302]  really_probe+0x148/0x6f0
-> [   38.407966]  driver_probe_device+0x78/0xe4
-> [   38.412065]  device_driver_attach+0x120/0x130
-> [   38.416423]  __driver_attach+0xb4/0x190
-> [   38.420261]  bus_for_each_dev+0xe8/0x160
-> [   38.424185]  driver_attach+0x34/0x44
-> [   38.427761]  bus_add_driver+0x1a4/0x2b0
-> [   38.431598]  driver_register+0xe0/0x210
-> [   38.435437]  __platform_register_drivers+0x6c/0x104
-> [   38.440318]  host1x_drm_init+0x54/0x1000 [tegra_drm]
-> [   38.445405]  do_one_initcall+0xec/0x5e0
-> [   38.449244]  do_init_module+0xe0/0x384
-> [   38.453000]  load_module+0x32d8/0x3c60
+What do you think about this:
+
+diff --git a/drivers/gpu/drm/grate/dc.c b/drivers/gpu/drm/grate/dc.c
+index 45a41586f153..8874cfba40a1 100644
+--- a/drivers/gpu/drm/grate/dc.c
++++ b/drivers/gpu/drm/grate/dc.c
+@@ -17,6 +17,7 @@
+ #include <linux/reset.h>
+ 
+ #include <soc/tegra/common.h>
++#include <soc/tegra/mc.h>
+ #include <soc/tegra/pmc.h>
+ 
+ #include <drm/drm_atomic.h>
+@@ -2640,6 +2641,11 @@ static int tegra_dc_init(struct host1x_client *client)
+ 		return err;
+ 	}
+ 
++	if (dc->soc->sync_smmu) {
++		struct iommu_domain *domain = iommu_get_domain_for_dev(dc->dev);
++		tegra_smmu_sync_domain(domain, dc->dev);
++	}
++
+ 	if (dc->soc->wgrps)
+ 		primary = tegra_dc_add_shared_planes(drm, dc);
+ 	else
+@@ -2824,6 +2830,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.has_win_b_vfilter_mem_client = true,
+ 	.has_win_c_without_vert_filter = true,
+ 	.plane_tiled_memory_bandwidth_x2 = false,
++	.sync_smmu = false,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+@@ -2846,6 +2853,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.has_win_b_vfilter_mem_client = true,
+ 	.has_win_c_without_vert_filter = false,
+ 	.plane_tiled_memory_bandwidth_x2 = true,
++	.sync_smmu = true,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+@@ -2868,6 +2876,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.has_win_b_vfilter_mem_client = false,
+ 	.has_win_c_without_vert_filter = false,
+ 	.plane_tiled_memory_bandwidth_x2 = true,
++	.sync_smmu = true,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+@@ -2890,6 +2899,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.has_win_b_vfilter_mem_client = false,
+ 	.has_win_c_without_vert_filter = false,
+ 	.plane_tiled_memory_bandwidth_x2 = false,
++	.sync_smmu = true,
+ };
+ 
+ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+@@ -2912,6 +2922,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.has_win_b_vfilter_mem_client = false,
+ 	.has_win_c_without_vert_filter = false,
+ 	.plane_tiled_memory_bandwidth_x2 = false,
++	.sync_smmu = true,
+ };
+ 
+ static const struct tegra_windowgroup_soc tegra186_dc_wgrps[] = {
+@@ -2961,6 +2972,7 @@ static const struct tegra_dc_soc_info tegra186_dc_soc_info = {
+ 	.wgrps = tegra186_dc_wgrps,
+ 	.num_wgrps = ARRAY_SIZE(tegra186_dc_wgrps),
+ 	.plane_tiled_memory_bandwidth_x2 = false,
++	.sync_smmu = false,
+ };
+ 
+ static const struct tegra_windowgroup_soc tegra194_dc_wgrps[] = {
+@@ -3010,6 +3022,7 @@ static const struct tegra_dc_soc_info tegra194_dc_soc_info = {
+ 	.wgrps = tegra194_dc_wgrps,
+ 	.num_wgrps = ARRAY_SIZE(tegra194_dc_wgrps),
+ 	.plane_tiled_memory_bandwidth_x2 = false,
++	.sync_smmu = false,
+ };
+ 
+ static const struct of_device_id tegra_dc_of_match[] = {
+diff --git a/drivers/gpu/drm/grate/dc.h b/drivers/gpu/drm/grate/dc.h
+index 316a56131cf1..e0057bf7be99 100644
+--- a/drivers/gpu/drm/grate/dc.h
++++ b/drivers/gpu/drm/grate/dc.h
+@@ -91,6 +91,7 @@ struct tegra_dc_soc_info {
+ 	bool has_win_b_vfilter_mem_client;
+ 	bool has_win_c_without_vert_filter;
+ 	bool plane_tiled_memory_bandwidth_x2;
++	bool sync_smmu;
+ };
+ 
+ struct tegra_dc {
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 602aab98c079..e750b1844a88 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -47,6 +47,9 @@ struct tegra_smmu {
+ 	struct dentry *debugfs;
+ 
+ 	struct iommu_device iommu;	/* IOMMU Core code handle */
++
++	bool display_synced[2];
++	bool display_enabled[2];
+ };
+ 
+ struct tegra_smmu_as {
+@@ -78,6 +81,10 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
+ 	return readl(smmu->regs + offset);
+ }
+ 
++/* all Tegra SoCs use the same group IDs for displays */
++#define SMMU_SWGROUP_DC		1
++#define SMMU_SWGROUP_DCB	2
++
+ #define SMMU_CONFIG 0x010
+ #define  SMMU_CONFIG_ENABLE (1 << 0)
+ 
+@@ -253,6 +260,20 @@ static inline void smmu_flush(struct tegra_smmu *smmu)
+ 	smmu_readl(smmu, SMMU_PTB_ASID);
+ }
+ 
++static int smmu_swgroup_to_display_id(unsigned int swgroup)
++{
++	switch (swgroup) {
++	case SMMU_SWGROUP_DC:
++		return 0;
++
++	case SMMU_SWGROUP_DCB:
++		return 1;
++
++	default:
++		return -1;
++	}
++}
++
+ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
+ {
+ 	unsigned long id;
+@@ -352,10 +373,21 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
+ static void tegra_smmu_enable(struct tegra_smmu *smmu, unsigned int swgroup,
+ 			      unsigned int asid)
+ {
++	const int disp_id = smmu_swgroup_to_display_id(swgroup);
+ 	const struct tegra_smmu_swgroup *group;
+ 	unsigned int i;
+ 	u32 value;
+ 
++	if (disp_id >= 0) {
++		smmu->display_enabled[disp_id] = true;
++
++		if (!smmu->display_synced[disp_id]) {
++			pr_debug("%s deferred for swgroup %u\n",
++				 __func__, swgroup);
++			return;
++		}
++	}
++
+ 	group = tegra_smmu_find_swgroup(smmu, swgroup);
+ 	if (group) {
+ 		value = smmu_readl(smmu, group->reg);
+@@ -385,10 +417,14 @@ static void tegra_smmu_enable(struct tegra_smmu *smmu, unsigned int swgroup,
+ static void tegra_smmu_disable(struct tegra_smmu *smmu, unsigned int swgroup,
+ 			       unsigned int asid)
+ {
++	const int disp_id = smmu_swgroup_to_display_id(swgroup);
+ 	const struct tegra_smmu_swgroup *group;
+ 	unsigned int i;
+ 	u32 value;
+ 
++	if (disp_id >= 0)
++		smmu->display_enabled[disp_id] = false;
++
+ 	group = tegra_smmu_find_swgroup(smmu, swgroup);
+ 	if (group) {
+ 		value = smmu_readl(smmu, group->reg);
+@@ -410,6 +446,32 @@ static void tegra_smmu_disable(struct tegra_smmu *smmu, unsigned int swgroup,
+ 	}
+ }
+ 
++void tegra_smmu_sync_domain(struct iommu_domain *domain, struct device *dev)
++{
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
++	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
++	unsigned int index;
++
++	if (!fwspec || !domain)
++		return;
++
++	for (index = 0; index < fwspec->num_ids; index++) {
++		const unsigned int swgroup = fwspec->ids[index];
++		const int disp_id = smmu_swgroup_to_display_id(swgroup);
++
++		if (disp_id < 0 || smmu->display_synced[disp_id])
++			continue;
++
++		smmu->display_synced[disp_id] = true;
++
++		if (!smmu->display_enabled[disp_id])
++			continue;
++
++		tegra_smmu_enable(smmu, swgroup, to_smmu_as(domain)->id);
++	}
++}
++EXPORT_SYMBOL_GPL(tegra_smmu_sync_domain);
++
+ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 				 struct tegra_smmu_as *as)
+ {
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index cfd3b35e23e5..ac1f3226b2ac 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -15,6 +15,7 @@
+ 
+ struct clk;
+ struct device;
++struct iommu_domain;
+ struct page;
+ 
+ struct tegra_smmu_enable {
+@@ -88,6 +89,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
+ 				    const struct tegra_smmu_soc *soc,
+ 				    struct tegra_mc *mc);
+ void tegra_smmu_remove(struct tegra_smmu *smmu);
++void tegra_smmu_sync_domain(struct iommu_domain *domain, struct device *dev);
+ #else
+ static inline struct tegra_smmu *
+ tegra_smmu_probe(struct device *dev, const struct tegra_smmu_soc *soc,
+@@ -99,6 +101,11 @@ tegra_smmu_probe(struct device *dev, const struct tegra_smmu_soc *soc,
+ static inline void tegra_smmu_remove(struct tegra_smmu *smmu)
+ {
+ }
++
++static inline void tegra_smmu_sync_domain(struct iommu_domain *domain,
++					  struct device *dev)
++{
++}
+ #endif
+ 
+ #ifdef CONFIG_TEGRA_IOMMU_GART
