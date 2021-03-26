@@ -2,114 +2,152 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87370C433DB
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 07:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9814C433E0
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 12:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB9B60200
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 07:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7779561A38
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 12:22:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbhCZHi0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Mar 2021 03:38:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56498 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230381AbhCZHiF (ORCPT
+        id S230057AbhCZMV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Mar 2021 08:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52134 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229982AbhCZMVa (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 03:38:05 -0400
-Received: from mail-wm1-f72.google.com ([209.85.128.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lPh2h-0004q5-Ti
-        for linux-tegra@vger.kernel.org; Fri, 26 Mar 2021 07:38:03 +0000
-Received: by mail-wm1-f72.google.com with SMTP id o9-20020a05600c4fc9b029010cea48b602so2022988wmq.0
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 00:38:03 -0700 (PDT)
+        Fri, 26 Mar 2021 08:21:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B215C0613AA;
+        Fri, 26 Mar 2021 05:21:29 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id u5so8102387ejn.8;
+        Fri, 26 Mar 2021 05:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nbQsoryEk92rLekDHSfut3bgAyGsVyag4LxOglKoE94=;
+        b=ookfuc199rsjHG+T5xjkFH7iy6zEQnRkp+QXK8eZliunXE0WfOhVnlaoMLktYVwzMc
+         P4IaHcCo8s8QNLCkH2edI7eKrwWroxWArPZn+QI0jPbeGQV7rYVVVRzGRvHTFiwBliRg
+         HZjK9k5Aq+x7EiGYMvjKR3uggJcsvf/Ey1nEhzSI8x5pKQARNGA5GYQaPFTqTe5vgpIc
+         NqwS0UNkZ8FieQKLCt5ABldhh7Z9TEy7tYyZpTnG64Q61ToFZy/P0zfpFkDpPR70/avI
+         9YCIgO5hzngp9qtaH3ETB9+JmmLOUMUzJm5EWoCzVjJuOSQggwvRkt+6yP9KoIo6HYFK
+         F01g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dRtqa7yLsQvFT2lpOj4EynM8RgSn4Vk0wfShrT8ILwQ=;
-        b=IVuNbJ/fZKak7ijgUk6HBjjehW42jRHXNxotjTvwjRmwXAc6pzYLUl7aWl8e2XT5R7
-         5KjoUv6oBl3/bxZhjhJ4ITfjBHoxLZNV+hE+JiQkJhQzWJBnIEMqWPlzbQhEjNF93Dih
-         jVYQ7OccXPvxr3oystU8iv0GTuHyKk/j52wtm5AG86Il69VhSxuf7UEP731ghgD0ICcC
-         cIyWycXE56OYcd9KvOYSwShqNTXrL49okVMv4QkAeIeg1C8rd14Y01Hj3Xp7EFzhU+xI
-         prFBqezk0UwHb2rLmb4f2Tp8sj0xQxdixh5i38eXbSnWPItjByN4MOtUtMAq5rTtw7Uv
-         kNOg==
-X-Gm-Message-State: AOAM531E4jKlVz7PEstrHqmQDYk6JV1YAQwOvM9X/faHF39hW5wNm3Nd
-        KYAqZpouINy2izWB2ne5gSHJFKbQSXdPZnh/AMReW514owsHIm9CSPRreQ+5RnyRM+vpOVC3VZ/
-        MaEYjZGAv2Wzc08WLvEeVzKmEhKoNH+4iqWCBf7ax
-X-Received: by 2002:adf:8b4e:: with SMTP id v14mr12732357wra.103.1616744283163;
-        Fri, 26 Mar 2021 00:38:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzYcIF96pDeU5oc+LG7wrlIU/oMqagEKGvMa3QKpMiYqcmsN21wshw8dnjUa8GuRloLw8gKpQ==
-X-Received: by 2002:adf:8b4e:: with SMTP id v14mr12732344wra.103.1616744283011;
-        Fri, 26 Mar 2021 00:38:03 -0700 (PDT)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id j12sm11449357wrx.59.2021.03.26.00.38.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Mar 2021 00:38:02 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] memory: tegra20: Correct comment to MC_STAT
- registers writes
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20210323210446.24867-1-digetx@gmail.com>
- <799f54f6-6023-338f-4e8f-cc0dfbac30d8@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <63a3225e-7cae-8592-653e-04a76b7cf9c1@canonical.com>
-Date:   Fri, 26 Mar 2021 08:38:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nbQsoryEk92rLekDHSfut3bgAyGsVyag4LxOglKoE94=;
+        b=V+0hq9D/j7scefo0k5wIhxEsqG2aJd+YoMo5qNAsDAz3WIJ4FWJpFyVMxIPsXPgIdF
+         BuTUsJiM/FQefk8OOcZ5QHjpqpHyrims3brincSvI1yt6yAvNi+iU3ZBVhxvE1+f4CRb
+         vUlGMOqPeck1dyn1S7tHyZC8tjPiZyxtgdk+Hv5RBjrPjih3Cy9cS315m82Znk9Y8nRI
+         lGq3BUA+G9L8QMG8bViSwJdPdPws1jUfjqXYSTCMQiha85iKKttAcZ1ztVFpqp+1ViXj
+         qB0nNE9pA0EHeH6hC+PLqLJ1fMtcW/yRPVYqkDJ9L/MZya2fHZ+gY/oVHcHxAu4F4jbG
+         667w==
+X-Gm-Message-State: AOAM532APoYlQAhfOqI1lvY9kpkqLEJAXwHLy1sST7ZuwAVsOyLKXk0d
+        zweQIvCE/kjlrQ4C81LC1YA=
+X-Google-Smtp-Source: ABdhPJxZTzgokw3RmwK20GRb6fjH4x+c/u/JZEMfB94uORdnCdqAScVxZOBsHrXaTE+rk1MtdwSvbQ==
+X-Received: by 2002:a17:907:211b:: with SMTP id qn27mr14893910ejb.203.1616761288185;
+        Fri, 26 Mar 2021 05:21:28 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id d5sm3767522ejc.98.2021.03.26.05.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 05:21:26 -0700 (PDT)
+Date:   Fri, 26 Mar 2021 13:21:48 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>, Nick Dyer <nick@shmanahar.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] ARM: tegra: acer-a500: Add atmel,wakeup-method
+ property
+Message-ID: <YF3R3JYOvMVhugD/@orome.fritz.box>
+References: <20210302102158.10533-1-digetx@gmail.com>
+ <20210302102158.10533-4-digetx@gmail.com>
+ <YFfLXLDIuRdj2bWs@google.com>
+ <YFyZ0ejrSxWc3JZT@orome.fritz.box>
+ <YFzTWuUZbdXvnpHC@google.com>
 MIME-Version: 1.0
-In-Reply-To: <799f54f6-6023-338f-4e8f-cc0dfbac30d8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6dKXrJS0aK0RfFDp"
+Content-Disposition: inline
+In-Reply-To: <YFzTWuUZbdXvnpHC@google.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25/03/2021 18:20, Dmitry Osipenko wrote:
-> 24.03.2021 00:04, Dmitry Osipenko пишет:
->> The code was changed multiple times and the comment to MC_STAT
->> registers writes became slightly outdated. The MC_STAT programming
->> now isn't hardcoded to the "bandwidth" mode, let's clarify this in
->> the comment.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/memory/tegra/tegra20.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
->> index 14caf5b9324c..4659c0cea30d 100644
->> --- a/drivers/memory/tegra/tegra20.c
->> +++ b/drivers/memory/tegra/tegra20.c
->> @@ -451,9 +451,8 @@ static void tegra20_mc_stat_gather(struct tegra20_mc_stat *stat)
->>  	control_1 = tegra20_mc_stat_gather_control(&stat->gather1);
->>  
->>  	/*
->> -	 * Reset statistic gathers state, select bandwidth mode for the
->> -	 * statistics collection mode and set clocks counter saturation
->> -	 * limit to maximum.
->> +	 * Reset statistic gathers state, select statistics collection mode
->> +	 * and set clocks counter saturation limit to maximum.
->>  	 */
->>  	mc_writel(mc, 0x00000000, MC_STAT_CONTROL);
->>  	mc_writel(mc,  control_0, MC_STAT_EMC_CONTROL_0);
->>
-> 
-> Krzysztof, please feel free to squash these 2 minor follow up patches
-> into the original patch which added the the debug support, if you prefer
-> this way more. I happened to notice these small itches only after you
-> already picked up the previous patch.
 
-No problem, in general I prefer to have incremental improvements.
+--6dKXrJS0aK0RfFDp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Thu, Mar 25, 2021 at 11:15:54AM -0700, Dmitry Torokhov wrote:
+> On Thu, Mar 25, 2021 at 03:10:25PM +0100, Thierry Reding wrote:
+> > On Sun, Mar 21, 2021 at 03:40:28PM -0700, Dmitry Torokhov wrote:
+> > > On Tue, Mar 02, 2021 at 01:21:58PM +0300, Dmitry Osipenko wrote:
+> > > > Acer A500 uses Atmel Maxtouch 1386 touchscreen controller. This con=
+troller
+> > > > has WAKE line which could be connected to I2C clock lane, dedicated=
+ GPIO
+> > > > or fixed to HIGH level. Controller wakes up from a deep sleep when =
+WAKE
+> > > > line is asserted low. Acer A500 has WAKE line connected to I2C cloc=
+k and
+> > > > Linux device driver doesn't work property without knowing what wake=
+up
+> > > > method is used by h/w.
+> > > >=20
+> > > > Add atmel,wakeup-method property to the touchscreen node.
+> > > >=20
+> > > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > >=20
+> > > Applied, thank you.
+> >=20
+> > I noticed that you had applied this as I was applying a different patch
+> > that touches the same area and it causes a conflict. In general I prefer
+> > to pick up all device tree changes into the Tegra tree, specifically to
+> > avoid such conflicts.
+> >=20
+> > That said, I didn't see an email from Stephen about this causing a
+> > conflict in linux-next, so perhaps it's fine. If this pops up again it
+> > might be worth considering to drop this from your tree so that I can
+> > resolve the conflict in the Tegra tree.
+>=20
+> Sorry about that, I went ahead and dropped the patch from my branch.
+
+Applied to the Tegra tree now.
+
+Thanks,
+Thierry
+
+--6dKXrJS0aK0RfFDp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBd0dkACgkQ3SOs138+
+s6FNXw/8C3M9TrBiS8Rj/hZlPOHZcvXOu7JIqiQUFgSZAWm8KNTg8F1MxoU0Olvd
+qnL/qiB8qX7deTEIJgUONJ7GVRh2BRLaFFGHtJoIaXOMIOWhZ1zYOt8SrpG0ULIW
+KNXU2p6yY5rbUWFwhiGUAIVKBZFA/AdMsTAsu+XM5J5Lk2GHiVgBNS+SwmPwlW3V
+LzUzRtj9x+MygSb76uGZ7WwFoZX1BFA+zAghV987+YO6jwUHXAbh0/6OGqCEAYpa
+MId/GXCkOzoEWpVPKhvIrwTSJPVOrLXQqvQFZh/kgt9z0Y5saBsPGsRXgrqHRqmV
+4E+jENCp88UsMi3XPQnhgQHJb4RibgWmgkcrzAmSycgariOnMiVkb4TkHiqUnx7o
+QCew2Tsfn+zNCmDWOk/5+byF5IBqd2b1M1r3poUBa6Vcfsw+zcSY7KR+EFkQZuO8
+jo7vqA9L4j9k9XHgT6UAV4NTjNTmlhbned15ara4ggT4PWjYH234QhcwWz9i68kD
+WT/CzVMljPhntMlAcfIOimL4W6Bo5DNtCWyIJrGKiujV9pu5qlRk1umQ+l4E3Bmv
+RPLSXADES6H0bFFmvs35njpbKvpzZUc4N/TYVFE7LzDajs4pzbqtBn3fDX4wvRD7
+XJqP0171uNzyp/RtPdt68xRFZ7HY/lwa4esO9YD1gPZR9yHMTqA=
+=JvNV
+-----END PGP SIGNATURE-----
+
+--6dKXrJS0aK0RfFDp--
