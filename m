@@ -2,137 +2,133 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F547C433C1
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C1CC433C1
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5E2261A27
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 262E8619C9
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhCZOej (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52442 "EHLO
+        id S230179AbhCZOva (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Mar 2021 10:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhCZOeU (ORCPT
+        with ESMTP id S230142AbhCZOvY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 10:34:20 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8990FC0613AA
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WYurMalcA80LHwmSwZD2JyGRThXW9kCy4921GdZjeFE=; b=CIheYyOlSfdn6BVvz6PA/JS9Vc
-        vgWfelLZGDIiA+NmGZZWivfcDJBWGyI/mYaI+e9kz+Kqd+O3fWqzggKcNiTOk00PwPqP+ctE0nJNh
-        zpyPwxfm5Xo3O6kyenZxOdQTHyzatxpNq+b4kObUUsnoq1HikbGmRqKJ+lykqpSwlc9ukJj9ZM50N
-        nZQwNkgv/XgGIxqXMNtw/LxPnGwAbgL71MU0dgXjfwLA0NaBT2Rawg6pIsbSpk/0DAIwt0AzbmRqa
-        RP7LiCEm1KgGRixDQvN4NRFO1lzSrkcJ9x5pSo6PRDlvbPTJpGzs8exrBvWEut7LCqpmz3V5re07t
-        LYcCztfg==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1lPnXS-0004mf-DM; Fri, 26 Mar 2021 16:34:14 +0200
-Subject: Re: [PATCH v5 03/21] gpu: host1x: Show number of pending waiters in
- debugfs
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     jonathanh@nvidia.com, digetx@gmail.com, airlied@linux.ie,
-        daniel@ffwll.ch, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, talho@nvidia.com,
-        bhuntsman@nvidia.com
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-4-mperttunen@nvidia.com>
- <YFm/431gaaP6wY1A@orome.fritz.box>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <1010683e-56c9-4b06-1540-d8c60a632c70@kapsi.fi>
-Date:   Fri, 26 Mar 2021 16:34:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Fri, 26 Mar 2021 10:51:24 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB7FC0613AA
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:23 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id k8so5933264wrc.3
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GBUopuwRuoU809B1RvDUEH/H8rKOYACoDyOwEHmoXWc=;
+        b=Z+yZnpimiNbbiycvDQ5RIgnrO/2zLAts7i1gjj/fdmUpJca6mwGi6GanM1ojjleRpX
+         GfCabLmrTdvO5Yuen8Ukx7J5Dq7rN9qkYsnV9SkEvfC6VsmJjlupkDRc5QXTQrWmoc8p
+         RNWMWILC9pUi5Ls9KMip6XzXhtnW2tleP/LU390Im5rHTqxjHqq6Au+HCz/VyfbGLFqz
+         i9iHxhIgxplXJbLy8IikUUY5JMejzPM2pTf/9eAopOwKrNQvNQ46V6PWvpbw4aXtp+Da
+         y905sPFIZoVkZVhwN9VWfIU+kHWk7or0kKIPPnqqUg7atfVDLqv4BiM0xmcpkhcDR7al
+         06Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GBUopuwRuoU809B1RvDUEH/H8rKOYACoDyOwEHmoXWc=;
+        b=reDWLfjY2PIcIJIuW7amsZXwiU+d8ClFNIyxXm7MCRTTtu8NkE17cQn2F883in+hC7
+         NsWLEpIy1ax6sefgZnY0m9xvQlHLjjx9NA+FY6SAGw9hch+DajsYD34Ihcu/9ZrOrc0g
+         wE145ohbAyZpxlq7jkeQ7fwxsZa4jynC0oE7SgvyoKLCDlASM4WyBwwCmrM6xqq4ri5L
+         Iwwvr9Tm7566SiLQAuH15v8SDJTmcTzetaUdfgpkEVKJ2yXZH/InUprsAn7HmwVXa2zF
+         5q39yH09neH8YP0GCsd9Cg2yY0TzCtsTeN/xPAOnua9yYQ+2hgKUwdH5GJ2Qv9P4HivV
+         uZRg==
+X-Gm-Message-State: AOAM531c62r5pn6YzKkJoFbsWle8Lbrm4efyBND9+DFMCwrs1gFn+G1f
+        Ig50eIqdeC0vPGfyQ3Qu1FQ=
+X-Google-Smtp-Source: ABdhPJx4qpTguGUDobXvwQdijzOIGyAko1v4hxfrWV2ZDnLh6WaljMY8gK92Nv3iOiffb+/LgBoR4w==
+X-Received: by 2002:a5d:628c:: with SMTP id k12mr14808648wru.316.1616770282500;
+        Fri, 26 Mar 2021 07:51:22 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id h62sm14048068wmf.37.2021.03.26.07.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 07:51:21 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        James Jones <jajones@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Simon Ser <contact@emersion.fr>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2 00/10] drm/tegra: Various improvements
+Date:   Fri, 26 Mar 2021 15:51:29 +0100
+Message-Id: <20210326145139.467072-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <YFm/431gaaP6wY1A@orome.fritz.box>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/23/21 12:16 PM, Thierry Reding wrote:
-> On Mon, Jan 11, 2021 at 03:00:01PM +0200, Mikko Perttunen wrote:
->> Show the number of pending waiters in the debugfs status file.
->> This is useful for testing to verify that waiters do not leak
->> or accumulate incorrectly.
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/gpu/host1x/debug.c | 14 +++++++++++---
->>   1 file changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
->> index 1b4997bda1c7..8a14880c61bb 100644
->> --- a/drivers/gpu/host1x/debug.c
->> +++ b/drivers/gpu/host1x/debug.c
->> @@ -69,6 +69,7 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
->>   
->>   static void show_syncpts(struct host1x *m, struct output *o)
->>   {
->> +	struct list_head *pos;
->>   	unsigned int i;
->>   
->>   	host1x_debug_output(o, "---- syncpts ----\n");
->> @@ -76,12 +77,19 @@ static void show_syncpts(struct host1x *m, struct output *o)
->>   	for (i = 0; i < host1x_syncpt_nb_pts(m); i++) {
->>   		u32 max = host1x_syncpt_read_max(m->syncpt + i);
->>   		u32 min = host1x_syncpt_load(m->syncpt + i);
->> +		unsigned int waiters = 0;
->>   
->> -		if (!min && !max)
->> +		spin_lock(&m->syncpt[i].intr.lock);
->> +		list_for_each(pos, &m->syncpt[i].intr.wait_head)
->> +			waiters++;
->> +		spin_unlock(&m->syncpt[i].intr.lock);
-> 
-> Would it make sense to keep a running count so that we don't have to
-> compute it here?
+From: Thierry Reding <treding@nvidia.com>
 
-Considering this is just a debug facility, I think I prefer not adding a 
-new field just for it.
+Hi,
 
-> 
->> +
->> +		if (!min && !max && !waiters)
->>   			continue;
->>   
->> -		host1x_debug_output(o, "id %u (%s) min %d max %d\n",
->> -				    i, m->syncpt[i].name, min, max);
->> +		host1x_debug_output(o,
->> +				    "id %u (%s) min %d max %d (%d waiters)\n",
->> +				    i, m->syncpt[i].name, min, max, waiters);
-> 
-> Or alternatively, would it be useful to collect a bit more information
-> about waiters so that when they leak we get a better understanding of
-> which ones leak?
-> 
-> It doesn't look like we currently have much information in struct
-> host1x_waitlist to identify waiters, but perhaps that can be extended?
+this fixes a couple of oddities like slightly off DMA masks and add
+support for hardware cursors on newer chips as well as support for the
+sector layout bit in NVIDIA framebuffer modifiers.
 
-I added this patch mainly for use with integration tests, so they can 
-verify no waiters leaked in negative tests. I think let's put off adding 
-other information until there's some need for it.
+The first patch in this set is a small helper that I think might be
+useful to other drivers eventually, but if it isn't it's easily
+something I can carry in the Tegra driver. It'd be great to get an
+Acked-by on it from one of the drm-misc maintainers so that I can take
+it through the Tegra tree.
 
-Mikko
+James, I've added you on Cc on this one because it makes use of the
+extended framebuffer modifiers that you introduced a while back to
+support the sector layout mux on Tegra194. It'd be great to get your
+thoughts on this just so this is used as expected.
 
-> 
-> Thierry
-> 
+Changes in v2:
+- add patch 2 that makes use of the new fourcc_mod_is_vendor() macro
+- use more drm_rect helpers for hardware cursor support
+
+Thanks,
+Thierry
+
+Thierry Reding (10):
+  drm/fourcc: Add macros to determine the modifier vendor
+  drm/arm: malidp: Use fourcc_mod_is_vendor() helper
+  drm/tegra: dc: Inherit DMA mask
+  drm/tegra: dc: Parameterize maximum resolution
+  drm/tegra: dc: Implement hardware cursor on Tegra186 and later
+  drm/tegra: fb: Add diagnostics for framebuffer modifiers
+  drm/tegra: gem: Add a clarifying comment
+  gpu: host1x: Add early init and late exit callbacks
+  drm/tegra: Count number of display controllers at runtime
+  drm/tegra: Support sector layout on Tegra194
+
+ drivers/gpu/drm/arm/malidp_planes.c |   2 +-
+ drivers/gpu/drm/tegra/dc.c          | 101 +++++++++++++++++++++++++---
+ drivers/gpu/drm/tegra/dc.h          |   6 ++
+ drivers/gpu/drm/tegra/drm.c         |  13 +++-
+ drivers/gpu/drm/tegra/drm.h         |   5 ++
+ drivers/gpu/drm/tegra/fb.c          |  10 +++
+ drivers/gpu/drm/tegra/gem.h         |   6 ++
+ drivers/gpu/drm/tegra/hub.c         |  41 ++++++++++-
+ drivers/gpu/drm/tegra/plane.c       |  32 +++++++++
+ drivers/gpu/host1x/bus.c            |  31 +++++++++
+ include/linux/host1x.h              |   2 +
+ include/uapi/drm/drm_fourcc.h       |   6 ++
+ 12 files changed, 241 insertions(+), 14 deletions(-)
+
+-- 
+2.30.2
+
