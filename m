@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C79C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAD0C433E0
 	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 071C261A10
+	by mail.kernel.org (Postfix) with ESMTP id 1AC24619C9
 	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbhCZOwF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S230188AbhCZOwF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Fri, 26 Mar 2021 10:52:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56304 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhCZOvj (ORCPT
+        with ESMTP id S230170AbhCZOv3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 10:51:39 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544F6C0613AA
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:39 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id g20so3124997wmk.3
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:39 -0700 (PDT)
+        Fri, 26 Mar 2021 10:51:29 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537C4C0613AA
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:28 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso5059769wmi.3
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qvvKebFi6ANZJRVhz63aix9PqvdlCopB57+FLZgaRmQ=;
-        b=ioyO77vdPbBwIAGXEoneFnDs3te1YMC09DrUxw7JXz6JEnPHevslOe0F4KXrXge3cr
-         4+AyBA5IFsEMkONIdZ03KGhUnbgxYRDAN8As3DPUvSV4rfitfb6jJwiiazsPKihhtzU6
-         5/qMipZZVDWB9VDdE0B7t3PKL/J7fV/4Xql1s+/E7ZkmOCpvQ7YaQLWM0dv2UZM0yg43
-         iXUfShS5LDOjPkHOrS8JOD1WgzZ0IFSHTgLNgKBMVBXG60Egy1LXdO4tBY1K5fdSSZR7
-         2DNRnGdYxZwfHfHZhagcWDYcYDpc3HsIFCqvwy0xoiakS55tPMx2RAJRvPPVYfEgh3J/
-         F5/g==
+        bh=dexBEjYiMkS4XXfyY7Y63BCfCtQuPvt6wAmmNMM9uiU=;
+        b=sy0LpR6CO/+hGOGtblTJwkDRNfJ0OIYrkXpVb7gzm3NNWD+WbbNHcwjYquArjfkiLp
+         3pqD/CIluuv2EH803a7w+8Zpruec3tTOpAo2v9DrUADG0Q1vvvb6t5KkdWBVl4aszjOs
+         8WuiMFf8IJtBqfs2rjLhZBYeUQfTVeyUxvSLw2XQ/Q8x3QoT1c5Zb0O/zTD2e59YE3b8
+         vRYwATWOzwE/06IhBA/Zbcvh1dmygCiWgw5r3tqYHhKd2DJ2O1zNkA77pygVOqb6CQMf
+         Bbhaw4FCKRLPrklpt3UaeOBU5OtLlHNLwHuUVla0NBptfyCpPdwIetjAufT1nb2/0A4/
+         wBHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qvvKebFi6ANZJRVhz63aix9PqvdlCopB57+FLZgaRmQ=;
-        b=YtsLez7gyM/qm2Cgs3TbZ7SwEV92jPqKhiiqb8mQxiC7afzA6+pzC2iuGueGAfSxt/
-         LYGL0zyqhl8wr/1RzsFR9KDiTgTC1XXVL3sRXhneK6Aavy2YP0D4Gd3vMZj/Z34ZF0wo
-         sgi1g6R4dW1bjX6MZkQjpnQ6IGBpuHQchj99+r9ARnYozTzBccVdpJefAa6kdSG5UiYD
-         5fP+9yjFFCYo+1YVkChthuD7skIRnC8co++zhgVBClQ+lFnHsTy/5zwQgHDNxroCAtfY
-         Xa+GI6Y3SJgRd4JbNMKoiBTq+vmc0xpm7zjynlJ/RCq7Wt2v6oSbXcEQUit697Vcx25j
-         KFFA==
-X-Gm-Message-State: AOAM532qpUqqAdaMwj/M/uwnjTKwBIuqkZnPJ7XArAPBu+cYUy1lf7CG
-        bL0dZsimOxtEufEFyJd9jf4=
-X-Google-Smtp-Source: ABdhPJxVMnW3n5wLI2IGz2koUVdaJcq9DLQu8PsG7a8tOW5BbglpyPRd22ABNJDrjsM43WPJD4RtRQ==
-X-Received: by 2002:a7b:c242:: with SMTP id b2mr13938512wmj.119.1616770298117;
-        Fri, 26 Mar 2021 07:51:38 -0700 (PDT)
+        bh=dexBEjYiMkS4XXfyY7Y63BCfCtQuPvt6wAmmNMM9uiU=;
+        b=OYmExo6A2oF5rVGmXx422tSX/UBUnl/cJ2UYxjIrKvLXJRkZyZClMa5Cu5vJb+xQBq
+         ypgTl4iFRFg55th3wGbntxM6frWUXSHXQ08ftMjTv2nzkeCj8rCvvfcZib32iSGtuha7
+         OJ5bsd2DqnIgb6n7t4VDYIoB3ezg9UtmTQD8aHasNUrnfEajpTdTvDbxFj7J+jVI7ALb
+         kWM/Z2sTWH0lY9EPQTxE+FTop8ACBR2y1Iss++Cpr9ygEhQRIekpQwJqOn8BpBYKJMkz
+         DKEPwug+ZqGBqoV6K4LBmZgzwZHa3ModtDft+2lK9ow6QcaKF5qHE5mrMxxmzZmpPfHn
+         22BQ==
+X-Gm-Message-State: AOAM530saaQdtL/K2DodHteH7rAzeLTeyjLu17IVSu0LKQTVTpoToHL1
+        CH5d4SSKNR+EDbKGOvaDr5U=
+X-Google-Smtp-Source: ABdhPJyAMzgOJyXp6zRFVElVkH/XLVwQcbL0T9qq9DXloPusNrJUNrrxtee7Loh7WIWQCUuT5ehcaQ==
+X-Received: by 2002:a7b:c083:: with SMTP id r3mr13414453wmh.177.1616770287127;
+        Fri, 26 Mar 2021 07:51:27 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j136sm12156895wmj.35.2021.03.26.07.51.30
+        by smtp.gmail.com with ESMTPSA id r16sm8022566wrx.75.2021.03.26.07.51.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 07:51:31 -0700 (PDT)
+        Fri, 26 Mar 2021 07:51:26 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -67,9 +67,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Dmitry Osipenko <digetx@gmail.com>,
         Simon Ser <contact@emersion.fr>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 04/10] drm/tegra: dc: Parameterize maximum resolution
-Date:   Fri, 26 Mar 2021 15:51:33 +0100
-Message-Id: <20210326145139.467072-5-thierry.reding@gmail.com>
+Subject: [PATCH v2 02/10] drm/arm: malidp: Use fourcc_mod_is_vendor() helper
+Date:   Fri, 26 Mar 2021 15:51:31 +0100
+Message-Id: <20210326145139.467072-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210326145139.467072-1-thierry.reding@gmail.com>
 References: <20210326145139.467072-1-thierry.reding@gmail.com>
@@ -81,76 +81,27 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Tegra186 and later support a higher maximum resolution than earlier
-chips, so make sure to reflect that in the mode configuration.
+Rather than open-coding the vendor extraction operation, use the newly
+introduced helper macro.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dc.c  |  6 ++++++
- drivers/gpu/drm/tegra/drm.c | 13 ++++++++++---
- drivers/gpu/drm/tegra/drm.h |  1 +
- 3 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/arm/malidp_planes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 935717e7410d..0541d7b5c841 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -2117,6 +2117,12 @@ static int tegra_dc_init(struct host1x_client *client)
- 	if (dc->soc->pitch_align > tegra->pitch_align)
- 		tegra->pitch_align = dc->soc->pitch_align;
+diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
+index ddbba67f0283..cd218883cff8 100644
+--- a/drivers/gpu/drm/arm/malidp_planes.c
++++ b/drivers/gpu/drm/arm/malidp_planes.c
+@@ -165,7 +165,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
+ 		return !malidp_hw_format_is_afbc_only(format);
+ 	}
  
-+	/* track maximum resolution */
-+	if (dc->soc->has_nvdisplay)
-+		drm->mode_config.max_width = drm->mode_config.max_height = 16384;
-+	else
-+		drm->mode_config.max_width = drm->mode_config.max_height = 4096;
-+
- 	err = tegra_dc_rgb_init(drm, dc);
- 	if (err < 0 && err != -ENODEV) {
- 		dev_err(dc->dev, "failed to initialize RGB output: %d\n", err);
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 6015913fef83..bbc504763bd4 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1144,9 +1144,8 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 
- 	drm->mode_config.min_width = 0;
- 	drm->mode_config.min_height = 0;
--
--	drm->mode_config.max_width = 4096;
--	drm->mode_config.max_height = 4096;
-+	drm->mode_config.max_width = 0;
-+	drm->mode_config.max_height = 0;
- 
- 	drm->mode_config.allow_fb_modifiers = true;
- 
-@@ -1165,6 +1164,14 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	if (err < 0)
- 		goto fbdev;
- 
-+	/*
-+	 * Now that all display controller have been initialized, the maximum
-+	 * supported resolution is known and the bitmask for horizontal and
-+	 * vertical bitfields can be computed.
-+	 */
-+	tegra->hmask = drm->mode_config.max_width - 1;
-+	tegra->vmask = drm->mode_config.max_height - 1;
-+
- 	if (tegra->use_explicit_iommu) {
- 		u64 carveout_start, carveout_end, gem_start, gem_end;
- 		u64 dma_mask = dma_get_mask(&dev->dev);
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 1af57c2016eb..34fbcd6abf2f 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -54,6 +54,7 @@ struct tegra_drm {
- 	struct tegra_fbdev *fbdev;
- #endif
- 
-+	unsigned int hmask, vmask;
- 	unsigned int pitch_align;
- 
- 	struct tegra_display_hub *hub;
+-	if ((modifier >> 56) != DRM_FORMAT_MOD_VENDOR_ARM) {
++	if (!fourcc_mod_is_vendor(modifier, ARM)) {
+ 		DRM_ERROR("Unknown modifier (not Arm)\n");
+ 		return false;
+ 	}
 -- 
 2.30.2
 
