@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAD0C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609C8C433E1
 	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC24619C9
+	by mail.kernel.org (Postfix) with ESMTP id 4031261A24
 	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 14:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbhCZOwF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Mar 2021 10:52:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56264 "EHLO
+        id S230210AbhCZOwG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Mar 2021 10:52:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbhCZOv3 (ORCPT
+        with ESMTP id S230213AbhCZOvo (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 10:51:29 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537C4C0613AA
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:28 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso5059769wmi.3
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:28 -0700 (PDT)
+        Fri, 26 Mar 2021 10:51:44 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97C2DC0613AA
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:44 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id x7so5893198wrw.10
+        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 07:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dexBEjYiMkS4XXfyY7Y63BCfCtQuPvt6wAmmNMM9uiU=;
-        b=sy0LpR6CO/+hGOGtblTJwkDRNfJ0OIYrkXpVb7gzm3NNWD+WbbNHcwjYquArjfkiLp
-         3pqD/CIluuv2EH803a7w+8Zpruec3tTOpAo2v9DrUADG0Q1vvvb6t5KkdWBVl4aszjOs
-         8WuiMFf8IJtBqfs2rjLhZBYeUQfTVeyUxvSLw2XQ/Q8x3QoT1c5Zb0O/zTD2e59YE3b8
-         vRYwATWOzwE/06IhBA/Zbcvh1dmygCiWgw5r3tqYHhKd2DJ2O1zNkA77pygVOqb6CQMf
-         Bbhaw4FCKRLPrklpt3UaeOBU5OtLlHNLwHuUVla0NBptfyCpPdwIetjAufT1nb2/0A4/
-         wBHA==
+        bh=4EQdWnddGJ/kQ9X+WOHcXmmOLEE1Ao3uU331cQ38SAg=;
+        b=enao8mgcKZYIHmmSc8fP82R7Uvh5QdsPispc717XCpG6siaR54TOWpeF3DKjpLc+Ja
+         79PmIeugt5218rNrH3KIVqmI4FL2tBxuFWQOx9vj5cNY35FpMtFflT+pwLSoJb8Sy4vO
+         19mDrwlvSEu2rNPMAOwxQvhBH+9dCBWXkq3wU3gChs9cFfxr2UHT6LRktMB3c18OxpiZ
+         83CE5WA6zDOlCUqEzGPIJxd4v00sdapJ9CTurSR+brPo5AYl8C2gjeMaxps4vHQ/4L5H
+         2F9TY+3AcZ29uI1ynUFfPSaE0IdvTxFQbR1qE7gb43l9+vZnXbFsd/xyawtRdSAdzCK0
+         Ec3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dexBEjYiMkS4XXfyY7Y63BCfCtQuPvt6wAmmNMM9uiU=;
-        b=OYmExo6A2oF5rVGmXx422tSX/UBUnl/cJ2UYxjIrKvLXJRkZyZClMa5Cu5vJb+xQBq
-         ypgTl4iFRFg55th3wGbntxM6frWUXSHXQ08ftMjTv2nzkeCj8rCvvfcZib32iSGtuha7
-         OJ5bsd2DqnIgb6n7t4VDYIoB3ezg9UtmTQD8aHasNUrnfEajpTdTvDbxFj7J+jVI7ALb
-         kWM/Z2sTWH0lY9EPQTxE+FTop8ACBR2y1Iss++Cpr9ygEhQRIekpQwJqOn8BpBYKJMkz
-         DKEPwug+ZqGBqoV6K4LBmZgzwZHa3ModtDft+2lK9ow6QcaKF5qHE5mrMxxmzZmpPfHn
-         22BQ==
-X-Gm-Message-State: AOAM530saaQdtL/K2DodHteH7rAzeLTeyjLu17IVSu0LKQTVTpoToHL1
-        CH5d4SSKNR+EDbKGOvaDr5U=
-X-Google-Smtp-Source: ABdhPJyAMzgOJyXp6zRFVElVkH/XLVwQcbL0T9qq9DXloPusNrJUNrrxtee7Loh7WIWQCUuT5ehcaQ==
-X-Received: by 2002:a7b:c083:: with SMTP id r3mr13414453wmh.177.1616770287127;
-        Fri, 26 Mar 2021 07:51:27 -0700 (PDT)
+        bh=4EQdWnddGJ/kQ9X+WOHcXmmOLEE1Ao3uU331cQ38SAg=;
+        b=DYPyrUDA1TM7Srcv4UB5deROOOgua5RR02cRFTd/f+rXLWe7WoXv4tcNbEBo56VuGF
+         e6FLorXQ5hHJFJrChbd92ZYQ9M2Gevg0nLZdrQrNPm3PN09Ejn4hSupa308Pm5ii+e3G
+         Y30Vp8cExwzudf99PBiaWn2Izeg4Oejzua0++1K3P/9dw46fb59ZJeqbZTfJzRsuFcSV
+         ff53P7DLvhhTOvhB37swkyddWvFGaAetFIxu6HxcXj52iosqEez/OU4etKq7qKQ2vOCg
+         KYxieHV2QMfTVJAxhs6vN3XP6hwcIrHySVSWrrg/AlJzTqNIcE6uUTIFAyTM+fyO1Lp+
+         M3jQ==
+X-Gm-Message-State: AOAM5327OwLn2Ov51gMrB+r4Gaz2GpZdMA1Hwq0mtUN572Lk9kmvGFcm
+        ROAMAfkIVNK0Cr1LF88coj8=
+X-Google-Smtp-Source: ABdhPJwiV0JfMVHYmX9QVc6SlgIQK3InJMu/Yympz5YY5VgTY6Mefe9ZAZ/YHRIpFZvbvFX+mH+RMQ==
+X-Received: by 2002:adf:e391:: with SMTP id e17mr14934194wrm.285.1616770303332;
+        Fri, 26 Mar 2021 07:51:43 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id r16sm8022566wrx.75.2021.03.26.07.51.26
+        by smtp.gmail.com with ESMTPSA id i10sm13028664wrs.11.2021.03.26.07.51.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 07:51:26 -0700 (PDT)
+        Fri, 26 Mar 2021 07:51:42 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -67,9 +67,9 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Dmitry Osipenko <digetx@gmail.com>,
         Simon Ser <contact@emersion.fr>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 02/10] drm/arm: malidp: Use fourcc_mod_is_vendor() helper
-Date:   Fri, 26 Mar 2021 15:51:31 +0100
-Message-Id: <20210326145139.467072-3-thierry.reding@gmail.com>
+Subject: [PATCH v2 06/10] drm/tegra: fb: Add diagnostics for framebuffer modifiers
+Date:   Fri, 26 Mar 2021 15:51:35 +0100
+Message-Id: <20210326145139.467072-7-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210326145139.467072-1-thierry.reding@gmail.com>
 References: <20210326145139.467072-1-thierry.reding@gmail.com>
@@ -81,27 +81,26 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Rather than open-coding the vendor extraction operation, use the newly
-introduced helper macro.
+Add a debug message to let the user know when a framebuffer modifier is
+not supported.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/arm/malidp_planes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/fb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index ddbba67f0283..cd218883cff8 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -165,7 +165,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
- 		return !malidp_hw_format_is_afbc_only(format);
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 01939c57fc74..350f33206076 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -86,6 +86,7 @@ int tegra_fb_get_tiling(struct drm_framebuffer *framebuffer,
+ 		break;
+ 
+ 	default:
++		DRM_DEBUG_KMS("unknown format modifier: %llx\n", modifier);
+ 		return -EINVAL;
  	}
  
--	if ((modifier >> 56) != DRM_FORMAT_MOD_VENDOR_ARM) {
-+	if (!fourcc_mod_is_vendor(modifier, ARM)) {
- 		DRM_ERROR("Unknown modifier (not Arm)\n");
- 		return false;
- 	}
 -- 
 2.30.2
 
