@@ -2,90 +2,114 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04399C433C1
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 19:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8B5C433DB
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 19:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAD86619F9
-	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 19:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7E3161A13
+	for <linux-tegra@archiver.kernel.org>; Fri, 26 Mar 2021 19:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbhCZTLU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 26 Mar 2021 15:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56176 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231308AbhCZTKy (ORCPT
+        id S230150AbhCZTui (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 26 Mar 2021 15:50:38 -0400
+Received: from mail-io1-f51.google.com ([209.85.166.51]:33317 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230106AbhCZTuG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 26 Mar 2021 15:10:54 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7B3C0613AA
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Mar 2021 12:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=erHlh/QTqIRNBeQcZ402/xZoPrZyyfh2s9Bmv0LbzRc=; b=idQ0hJQEM20zC1tvjCOgiHa/ax
-        CYh5nEMkxBgbvHOBb0xNt7iA3W2YXioVGjSD4HwA+WOV+tY/57gRlO95JMJEtJKNKSGEUlrP5cAQQ
-        eyCa6uR/9Ia9CG3IZHbz8yF561S1cuPbLEqgedCRoVum7wobkpvosK5IT1JlV1KsVdWt8gWVajX/8
-        hIDW1BvMTwl50PVaDaIdlULeJ+O9mZS2960H8ArrsliQlG4FTamqKZbklrlP1G3uD6QkhUVtMwsC/
-        b+M7x5sOKMaTu7xxqhjTxOPDuXmZMyvyH4wwYFci0IZLoVmK4kpK2eO9Cv3WcxUNMrNrJvl0kFzMK
-        eMa8NJCw==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1lPrr6-0002vo-DZ; Fri, 26 Mar 2021 21:10:48 +0200
-Subject: Re: [PATCH v5 01/21] gpu: host1x: Use different lock classes for each
- client
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     jonathanh@nvidia.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-2-mperttunen@nvidia.com>
- <YFitsk3I2l7IBnLR@orome.fritz.box>
- <6615105f-ccf1-7833-512c-090817c47952@gmail.com>
- <645366c2-c500-efcc-f44c-b933f6f470c4@nvidia.com>
- <0fb1b458-66bb-c9d8-04c7-174165b39811@kapsi.fi>
- <222f5544-6710-c931-5992-7ac11e440042@gmail.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <48367008-1786-6cb6-15a0-03b526f53fe9@kapsi.fi>
-Date:   Fri, 26 Mar 2021 21:10:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Fri, 26 Mar 2021 15:50:06 -0400
+Received: by mail-io1-f51.google.com with SMTP id n198so6635965iod.0;
+        Fri, 26 Mar 2021 12:50:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QMADa3hLSWQ6fsdPZyxglXagkduiht0CfsajenFjEE8=;
+        b=IhQY693YZqnTE1PDJBeskfLwXVvZVmAsx9jZmKO0NYZoWlsEbDsdfxIdpAK7Oq5MmW
+         8fWy/7y9sJEzndMauJwNRWMUFOlKNWj0wz4GsThq/vckNqbo6cPdVPLsURrrVXJ7BhbM
+         RZCQJoU+7uell97DqummmXz/GRXzz3fMVzkIP6/wO0OnGyD5yQfYbhqV1noCAieIR7yE
+         fTrHA6lHbO6ugFMTdzet62EBp35I5nPCt7T3grCspggR40Bq5aSTvdhZw8los0thptiY
+         Cht/Z0YcKQav9V2Lb63MNInDgbawrM+ELT75sSq1TNMxP75CJtzQCkmm10c3N4A5DjTR
+         sNRg==
+X-Gm-Message-State: AOAM533loejv2Oj9QrGaeoZbpFnJ9oKmGz2qj6xO/AMsm5ZSq7OWuCfd
+        GVzR7Rk/yUxop4YYji5Row==
+X-Google-Smtp-Source: ABdhPJx+B5BxlFABLodj85dQF/ZfrrYTvXbR1H6ArMkSNfY0AO+aQiPUFwiyecNqyYOc/2oHUxRoVw==
+X-Received: by 2002:a05:6638:2603:: with SMTP id m3mr13456452jat.64.1616788205884;
+        Fri, 26 Mar 2021 12:50:05 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.253])
+        by smtp.googlemail.com with ESMTPSA id h2sm4645441ioj.30.2021.03.26.12.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 12:50:05 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v2] ASoC: dt-bindings: nvidia,tegra210-ahub: Add missing child nodes
+Date:   Fri, 26 Mar 2021 13:50:03 -0600
+Message-Id: <20210326195003.3756394-1-robh@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <222f5544-6710-c931-5992-7ac11e440042@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 3/26/21 8:31 PM, Dmitry Osipenko wrote:
-> 26.03.2021 17:54, Mikko Perttunen пишет:
->>
->> Lockdep doesn't seem to be liking dev_name() for the name, and I think
->> allocating a string for this purpose seems a bit overkill, so I'll keep
->> the lock name as is if there are no objections.
-> 
-> What does "liking" mean?
-> 
+The nvidia,tegra210-ahub binding is missing schema for child nodes. This
+results in warnings if 'additionalProperties: false' is set (or when the
+tools implement 'unevaluatedProperties' support). Add the child nodes
+and reference their schema if one exists.
 
-kernel/locking/lockdep.c:894 (on my local tree):
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Sameer Pujar <spujar@nvidia.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+v2:
+ - Also add 'dspk' child node
 
-                        WARN_ON_ONCE(class->name != lock->name &&
-                                      lock->key != 
-&__lockdep_no_validate__);
+This patch ideally should be applied before this series[1].
 
-Mikko
+[1] https://lore.kernel.org/r/20210323163634.877511-1-robh@kernel.org/
+---
+ .../bindings/sound/nvidia,tegra210-ahub.yaml     | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+index e568d6c7dddd..1118a9488345 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-ahub.yaml
+@@ -69,6 +69,22 @@ properties:
+         $ref: audio-graph-port.yaml#
+         unevaluatedProperties: false
+ 
++patternProperties:
++  '^i2s@[0-9a-f]+$':
++    type: object
++
++  '^dmic@[0-9a-f]+$':
++    type: object
++    $ref: nvidia,tegra210-dmic.yaml#
++
++  '^admaif@[0-9a-f]+$':
++    type: object
++    $ref: nvidia,tegra210-admaif.yaml#
++
++  '^dspk@[0-9a-f]+$':
++    type: object
++    $ref: nvidia,tegra186-dspk.yaml#
++
+ required:
+   - compatible
+   - reg
+-- 
+2.27.0
+
