@@ -2,111 +2,87 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC93C433DB
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Mar 2021 18:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30595C433E1
+	for <linux-tegra@archiver.kernel.org>; Sat, 27 Mar 2021 20:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6395D619CB
-	for <linux-tegra@archiver.kernel.org>; Sat, 27 Mar 2021 18:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1992619B1
+	for <linux-tegra@archiver.kernel.org>; Sat, 27 Mar 2021 20:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhC0Stl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 27 Mar 2021 14:49:41 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:38520 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbhC0St3 (ORCPT
+        id S230224AbhC0UeQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sat, 27 Mar 2021 16:34:16 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:40463 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230114AbhC0UeE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 27 Mar 2021 14:49:29 -0400
-Received: by mail-ot1-f51.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so8410229otk.5;
-        Sat, 27 Mar 2021 11:49:29 -0700 (PDT)
+        Sat, 27 Mar 2021 16:34:04 -0400
+Received: by mail-ot1-f44.google.com with SMTP id w31-20020a9d36220000b02901f2cbfc9743so8539455otb.7;
+        Sat, 27 Mar 2021 13:34:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t9vjwbvSA4d41LnakPvjiWArh3waV0/TTjrDzhlkYGw=;
-        b=GrCusGQ4G6GfOsD8Dm25EWJrfAbl0Zia3LUA++nn+JHpc+tSE8f2VhnoiYBC9H8/Uy
-         ndUvgcswy29P3PYCs1DjBgQAZ3RoWxTKnZuqxoIXMlVsqnRf7nJoMf5FBVobVjecm6xk
-         SO8HtFBQK32xB4ioAtbUMwkQXlBTN9zbYL5rILNJX0H5v+T4iibNI24KNQdcEwtZjQ1A
-         ywQcA3fjwjLQIsLLcyvNj2sEPDBM2IEppImuzBMBDmraicIF8QaV7t9+8jh6y1x9Gs1+
-         tQjGiSFxY/CdtgQwPI8aFeAXkETss5OARZDFkR/uUgwEcvWqFFrcO1iEfUrCPSZn0RUN
-         Fc3w==
-X-Gm-Message-State: AOAM531Sls0YNzI4QvdWGUeQ4ZgEKtyYZfOKjlC5yb5EGVCgO9spYDpN
-        XiVCqNQmtXPvKY/B9lSdWg==
-X-Google-Smtp-Source: ABdhPJzcEQ/l3YzGg0qv1bIIijL8QD6vUoMjgfYQ79J1paaFNbOt8kLJUpdjEWD2HDxAhjgSM4fHyQ==
-X-Received: by 2002:a9d:6855:: with SMTP id c21mr13398834oto.146.1616870968778;
-        Sat, 27 Mar 2021 11:49:28 -0700 (PDT)
-Received: from robh.at.kernel.org ([172.58.99.41])
-        by smtp.gmail.com with ESMTPSA id x18sm3016496otr.73.2021.03.27.11.49.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UQr/YqDsL+N492tX6ZjUqsg1uzoT4TgP24HOhBmQEDc=;
+        b=oYgSwWR67448JSls+1HW11JwnJa6fP6y+XDmoEU2jm0KRA9K2TMKLsuD5ZdVYZjfSA
+         KnndGXkiZJE6nP+f5GW9EN+D1/UR/qqkMrCcWKPvAQBc2QiNBbcdeDLkdsJD/jdnZcvG
+         0r15sm/om7xQmY5GSj/Mlaxr0z6ZeuO5r4FTNc+UYe9Cu/sPkXWvwE7TliTydx4DDGYo
+         76IPUxfFQaEMCbCwG8qNG+CjACxpkGNGCLeHSTHfDlOIVxrnrHlGWkkXgeFnA7pSPf+h
+         x/XR124tQrLOuEfba8R83Guoi9LC4dwA2CwaAqo3MN940P1ebQ4BFW3FXW7l72K127u7
+         9bNA==
+X-Gm-Message-State: AOAM53386/vYn+sG92YF515H7D0KlCQUIK8NWNvjYiWqcVlsNq5fgvvc
+        rQV4ynWZMoSOCTgMN20Fwg==
+X-Google-Smtp-Source: ABdhPJxnwkzW4ynrK8b9s45ZSbG6Op+W2lZ+P3SHBvp8SxMAvx7JmrZb6yxUP07j651JgD22SDKGxA==
+X-Received: by 2002:a9d:663:: with SMTP id 90mr14934121otn.311.1616877243571;
+        Sat, 27 Mar 2021 13:34:03 -0700 (PDT)
+Received: from localhost.localdomain ([172.58.99.41])
+        by smtp.googlemail.com with ESMTPSA id t19sm3121198otm.40.2021.03.27.13.34.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Mar 2021 11:49:28 -0700 (PDT)
-Received: (nullmailer pid 376600 invoked by uid 1000);
-        Sat, 27 Mar 2021 18:49:25 -0000
-Date:   Sat, 27 Mar 2021 12:49:25 -0600
+        Sat, 27 Mar 2021 13:34:02 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: serial: tegra-tcu: Document "reg"
- property
-Message-ID: <20210327184925.GA367052@robh.at.kernel.org>
-References: <20210326174641.1612738-1-thierry.reding@gmail.com>
- <20210326174641.1612738-3-thierry.reding@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] spi: dt-bindings: nvidia,tegra210-quad: Use documented compatible "jedec,spi-nor" in example
+Date:   Sat, 27 Mar 2021 15:33:57 -0500
+Message-Id: <20210327203357.552794-1-robh@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210326174641.1612738-3-thierry.reding@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 06:46:40PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> In order to support early console support with the Tegra TCU, add an
-> optional "reg" property that points to the TX mailbox.
+The 'spi-nor' compatible used in the example is not documented. Use the
+documented 'jedec,spi-nor' compatible instead.
 
-This will mean the same address in in DT twice which we try to avoid, 
-right? I guess it's fine, we could drop it if we ever enforce that. I'm 
-sure there's worse abuses with duplicates than this.
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-spi@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../devicetree/bindings/serial/nvidia,tegra194-tcu.yaml     | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.yaml
-> index 0a321658ccb5..8c9ed7cfaa52 100644
-> --- a/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.yaml
-> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.yaml
-> @@ -24,6 +24,9 @@ properties:
->    compatible:
->      const: nvidia,tegra194-tcu
->  
-> +  reg:
-> +    maxItems: 1
-> +
->    mbox-names:
->      items:
->        - const: rx
-> @@ -48,8 +51,9 @@ examples:
->    - |
->      #include <dt-bindings/mailbox/tegra186-hsp.h>
->  
-> -    tcu: tcu {
-> +    tcu: tcu@c168000 {
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+index 35a8045b2c70..53627c6e2ae3 100644
+--- a/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
++++ b/Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml
+@@ -106,7 +106,7 @@ examples:
+             dma-names = "rx", "tx";
+ 
+             flash@0 {
+-                    compatible = "spi-nor";
++                    compatible = "jedec,spi-nor";
+                     reg = <0>;
+                     spi-max-frequency = <104000000>;
+                     spi-tx-bus-width = <2>;
+-- 
+2.27.0
 
-While you're here:
-
-serial@...
-
->          compatible = "nvidia,tegra194-tcu";
-> +        reg = <0x0c168000 0x4>;
->          mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
->                   <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
->          mbox-names = "rx", "tx";
-> -- 
-> 2.30.2
-> 
