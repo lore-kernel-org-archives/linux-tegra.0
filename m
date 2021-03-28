@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D55C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA725C433E0
 	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 23:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF846188B
+	by mail.kernel.org (Postfix) with ESMTP id 668AE61968
 	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 23:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbhC1Xet (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Mar 2021 19:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
+        id S230339AbhC1Xes (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Mar 2021 19:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230333AbhC1Xei (ORCPT
+        with ESMTP id S230252AbhC1Xeg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Mar 2021 19:34:38 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6A4C061756;
-        Sun, 28 Mar 2021 16:34:38 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id y18so10862013qky.11;
-        Sun, 28 Mar 2021 16:34:38 -0700 (PDT)
+        Sun, 28 Mar 2021 19:34:36 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4787BC061756;
+        Sun, 28 Mar 2021 16:34:36 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id 1so7563542qtb.0;
+        Sun, 28 Mar 2021 16:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=utR9Ua8PasQv/qM4orgEKume/FeHhlE56ieKCoQZzf8=;
-        b=CU9ivXrg2DYVFljOnN+YtABR/taupBmETagCLavCliciPvfDyHuUYSjjvWw16wAhhu
-         moIalC15lKpeeZnufYNzBLqNbWxLxz23itVfLCbBmV5udE5DJLnFBEqg6DjsCr9gdoDy
-         HOdGG6K6St9bO4t+lQ7y78rZ2Gt0g5HZDaU328m6CjlUlHKt4qIvqvxqnAfsK/3J5uQX
-         f/46tGH08UyZQhNMjsGXxZVEGQNQ2bqKz2K8vX32meCyWqb/SZiyZOHhQGr/0RnCTtPL
-         OL74/lTsHLTSkA4h8eEXIh8r/NNK8SYL+8M7ufmn0TebTNV9P+5ujdz9C3/T0wsyKOZ0
-         rs2A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tNDuIurJKv2MqMA4UB9CY1OUJzVsBHPWot7sK8TYg6w=;
+        b=DqA6tizyrKnmoIMviQDuYLkBANPFRFcffoyyTYgkbMp05XWdYNrn/Mt8bbIvLyK1oy
+         gqv2FPT6fedG+qIi4ykiNv/81Z27lO7CMZidt70A5JcytM4dSBE9OewKlaUR28ZM3eoj
+         VNa1X8DM5HEI2B5ur+jJ+2Ntn49gA6rB6bCf2eIwTsTwlIkKA9HpyZj7vuW+Kk+9YXnl
+         jRB+zxpnuNRJ9QSWpbiZWR44Oy16TRQLIeaS1nNBu6YIp7u8WicJGJU1WTqFCF1IPlaf
+         DzPonDHLrX3wP8LUccPrBQEKR2VFZTK+d01jJjUNCwOYuLdwBUdNjLroRcfqZmnP4aVX
+         L54w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=utR9Ua8PasQv/qM4orgEKume/FeHhlE56ieKCoQZzf8=;
-        b=TGiaIZh/3ngg5O4Xq7aauGyIxoXQHbdN3qyF1YwthJ3uhXyvCcvMfuEA9SBCJWI1c4
-         Nym+lQZV5LtRF9NV2o/Ob8HDE0M7QYWmTGlVQDyw5W5TVOxp14PxB5c6BZr/sETPcrhD
-         Cmh3miAxDnnL3zOOuD0EXCw8vcDGrDPy2nfKGIT/rF9GzDzeTRi0KhNQ36nDetOVw4Sn
-         74heX0Ek3bVPnl8vGP+w9RUIAuFccmLvRiNDAXKYK/bJy5E2DlyWbpDAx8XJD7AmWaE1
-         J/0EV3p8b0YEsdH7HaemEvtv5OfvdQpI/oqEgL9kOpWN7QSivxvuayyNS6l0JxG7z/dp
-         IZ0g==
-X-Gm-Message-State: AOAM531ZY/AM8DN/LUAXYZNQ6wVoAcn0ujgh1mdEFFF55P0A8+k2nPVr
-        4wOrS5dhi7jq3SUsLXQPvaZNHOgGpW8=
-X-Google-Smtp-Source: ABdhPJz4mD3jUksqqD9/XrLKQu8py5npXtytv1j0f1hmNJ31dgMwOw2zHiMSuKpP3/WpcAhNZELOcg==
-X-Received: by 2002:a05:620a:15b4:: with SMTP id f20mr15849272qkk.175.1616974477751;
-        Sun, 28 Mar 2021 16:34:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tNDuIurJKv2MqMA4UB9CY1OUJzVsBHPWot7sK8TYg6w=;
+        b=bqeKqfGL9k021gJyTrqG5Ly7HddJQT0A56yG2kcLGhWlM7HqrjyQXLFvapyBO9r6pq
+         8PG2Uu30H7RFUaR5Y0aZLykq1EmqmE1x9lf6xRe/DmBf8kXoaCPzSQInXxaZcwCgK9ym
+         nYicHqaL3JT+0RJZWXA71D0E0kDSsovjqbXDY/EW9waNMggCAXvYjNTdk7JGodSSRHFb
+         HbvkUVH+4J9dQ0+MQ2Uwxt/ZbslvV7VHJaVUXcJXCwzpDxG5vreraWB+Fz7A79F/t0PK
+         pCeIRFulYlJhkjV47QPT6LfvhDRSL+u8OWDNhy2xZCxYLlTkGI+g4VPCj/zI4uJ3bmPn
+         +XCA==
+X-Gm-Message-State: AOAM531IOftCgQgNer5Dd3Xr1+vxjLIRse8M+oOQKFkcjBfzFBXcrS6H
+        7ZG+DgRdQUVhotCQEu5m17s=
+X-Google-Smtp-Source: ABdhPJxstrUoBBxCBUfxS1VZCB0g5E9sW8H/zIcXKNt0B0bdws4RkNv2vZ2oYIWngDm84IyXd5m28g==
+X-Received: by 2002:ac8:4d02:: with SMTP id w2mr19936201qtv.126.1616974475497;
+        Sun, 28 Mar 2021 16:34:35 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.gmail.com with ESMTPSA id g2sm10117905qtu.0.2021.03.28.16.34.35
+        by smtp.gmail.com with ESMTPSA id g2sm10117905qtu.0.2021.03.28.16.34.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Mar 2021 16:34:37 -0700 (PDT)
+        Sun, 28 Mar 2021 16:34:35 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -66,121 +66,166 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Will Deacon <will@kernel.org>
 Cc:     iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] iommu/tegra-smmu: Revert workaround that was needed for Nyan Big Chromebook
-Date:   Mon, 29 Mar 2021 02:32:56 +0300
-Message-Id: <20210328233256.20494-2-digetx@gmail.com>
+Subject: [PATCH v1 1/2] iommu/tegra-smmu: Defer attachment of display clients
+Date:   Mon, 29 Mar 2021 02:32:55 +0300
+Message-Id: <20210328233256.20494-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210328233256.20494-1-digetx@gmail.com>
-References: <20210328233256.20494-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The previous commit fixes problem where display client was attaching too
-early to IOMMU during kernel boot in a multi-platform kernel configuration
-which enables CONFIG_ARM_DMA_USE_IOMMU=y. The workaround that helped to
-defer the IOMMU attachment for Nyan Big Chromebook isn't needed anymore,
-revert it.
+All consumer-grade Android and Chromebook devices show a splash screen
+on boot and then display is left enabled when kernel is booted. This
+behaviour is unacceptable in a case of implicit IOMMU domains to which
+devices are attached during kernel boot since devices, like display
+controller, may perform DMA at that time. We can work around this problem
+by deferring the enable of SMMU translation for a specific devices,
+like a display controller, until the first IOMMU mapping is created,
+which works good enough in practice because by that time h/w is already
+stopped.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-smmu.c | 71 +-------------------------------------
- 1 file changed, 1 insertion(+), 70 deletions(-)
+ drivers/iommu/tegra-smmu.c | 71 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
 diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index af1e4b5adb27..572a4544ae88 100644
+index 602aab98c079..af1e4b5adb27 100644
 --- a/drivers/iommu/tegra-smmu.c
 +++ b/drivers/iommu/tegra-smmu.c
-@@ -869,69 +869,10 @@ static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 	return SMMU_PFN_PHYS(pfn) + SMMU_OFFSET_IN_PAGE(iova);
+@@ -60,6 +60,8 @@ struct tegra_smmu_as {
+ 	dma_addr_t pd_dma;
+ 	unsigned id;
+ 	u32 attr;
++	bool display_attached[2];
++	bool attached_devices_need_sync;
+ };
+ 
+ static struct tegra_smmu_as *to_smmu_as(struct iommu_domain *dom)
+@@ -78,6 +80,10 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
+ 	return readl(smmu->regs + offset);
  }
  
--static struct tegra_smmu *tegra_smmu_find(struct device_node *np)
--{
--	struct platform_device *pdev;
--	struct tegra_mc *mc;
--
--	pdev = of_find_device_by_node(np);
--	if (!pdev)
--		return NULL;
--
--	mc = platform_get_drvdata(pdev);
--	if (!mc)
--		return NULL;
--
--	return mc->smmu;
--}
--
--static int tegra_smmu_configure(struct tegra_smmu *smmu, struct device *dev,
--				struct of_phandle_args *args)
--{
--	const struct iommu_ops *ops = smmu->iommu.ops;
--	int err;
--
--	err = iommu_fwspec_init(dev, &dev->of_node->fwnode, ops);
--	if (err < 0) {
--		dev_err(dev, "failed to initialize fwspec: %d\n", err);
--		return err;
--	}
--
--	err = ops->of_xlate(dev, args);
--	if (err < 0) {
--		dev_err(dev, "failed to parse SW group ID: %d\n", err);
--		iommu_fwspec_free(dev);
--		return err;
--	}
--
--	return 0;
--}
--
- static struct iommu_device *tegra_smmu_probe_device(struct device *dev)
++/* all Tegra SoCs use the same group IDs for displays */
++#define SMMU_SWGROUP_DC		1
++#define SMMU_SWGROUP_DCB	2
++
+ #define SMMU_CONFIG 0x010
+ #define  SMMU_CONFIG_ENABLE (1 << 0)
+ 
+@@ -253,6 +259,20 @@ static inline void smmu_flush(struct tegra_smmu *smmu)
+ 	smmu_readl(smmu, SMMU_PTB_ASID);
+ }
+ 
++static int smmu_swgroup_to_display_id(unsigned int swgroup)
++{
++	switch (swgroup) {
++	case SMMU_SWGROUP_DC:
++		return 0;
++
++	case SMMU_SWGROUP_DCB:
++		return 1;
++
++	default:
++		return -1;
++	}
++}
++
+ static int tegra_smmu_alloc_asid(struct tegra_smmu *smmu, unsigned int *idp)
  {
--	struct device_node *np = dev->of_node;
--	struct tegra_smmu *smmu = NULL;
--	struct of_phandle_args args;
--	unsigned int index = 0;
--	int err;
--
--	while (of_parse_phandle_with_args(np, "iommus", "#iommu-cells", index,
--					  &args) == 0) {
--		smmu = tegra_smmu_find(args.np);
--		if (smmu) {
--			err = tegra_smmu_configure(smmu, dev, &args);
--
--			if (err < 0) {
--				of_node_put(args.np);
--				return ERR_PTR(err);
--			}
--		}
--
--		of_node_put(args.np);
--		index++;
--	}
-+	struct tegra_smmu *smmu = dev_iommu_priv_get(dev);
+ 	unsigned long id;
+@@ -318,6 +338,9 @@ static struct iommu_domain *tegra_smmu_domain_alloc(unsigned type)
+ 	as->domain.geometry.aperture_end = 0xffffffff;
+ 	as->domain.geometry.force_aperture = true;
  
--	smmu = dev_iommu_priv_get(dev);
- 	if (!smmu)
- 		return ERR_PTR(-ENODEV);
++	/* work around implicit attachment of devices with active DMA */
++	as->attached_devices_need_sync = true;
++
+ 	return &as->domain;
+ }
  
-@@ -1158,16 +1099,6 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 	if (!smmu)
- 		return ERR_PTR(-ENOMEM);
+@@ -410,6 +433,31 @@ static void tegra_smmu_disable(struct tegra_smmu *smmu, unsigned int swgroup,
+ 	}
+ }
  
--	/*
--	 * This is a bit of a hack. Ideally we'd want to simply return this
--	 * value. However the IOMMU registration process will attempt to add
--	 * all devices to the IOMMU when bus_set_iommu() is called. In order
--	 * not to rely on global variables to track the IOMMU instance, we
--	 * set it here so that it can be looked up from the .probe_device()
--	 * callback via the IOMMU device's .drvdata field.
--	 */
--	mc->smmu = smmu;
--
- 	size = BITS_TO_LONGS(soc->num_asids) * sizeof(long);
++static void tegra_smmu_attach_deferred_devices(struct iommu_domain *domain)
++{
++	struct tegra_smmu_as *as = to_smmu_as(domain);
++
++	if (!as->attached_devices_need_sync)
++		return;
++
++	if (as->display_attached[0] || as->display_attached[1]) {
++		struct tegra_smmu *smmu = as->smmu;
++		unsigned int i;
++
++		for (i = 0; i < smmu->soc->num_clients; i++) {
++			const struct tegra_mc_client *client = &smmu->soc->clients[i];
++			const int disp_id = smmu_swgroup_to_display_id(client->swgroup);
++
++			if (disp_id < 0 || !as->display_attached[disp_id])
++				continue;
++
++			tegra_smmu_enable(smmu, client->swgroup, as->id);
++		}
++	}
++
++	as->attached_devices_need_sync = false;
++}
++
+ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
+ 				 struct tegra_smmu_as *as)
+ {
+@@ -495,10 +543,26 @@ static int tegra_smmu_attach_dev(struct iommu_domain *domain,
+ 		return -ENOENT;
  
- 	smmu->asids = devm_kzalloc(dev, size, GFP_KERNEL);
+ 	for (index = 0; index < fwspec->num_ids; index++) {
++		const unsigned int swgroup = fwspec->ids[index];
++		const int disp_id = smmu_swgroup_to_display_id(swgroup);
++
+ 		err = tegra_smmu_as_prepare(smmu, as);
+ 		if (err)
+ 			goto disable;
+ 
++		if (disp_id >= 0) {
++			as->display_attached[disp_id] = true;
++
++			/*
++			 * In most cases display is performing DMA before
++			 * driver is initialized by showing a splash screen
++			 * and in this case we should defer the h/w attachment
++			 * until the first mapping is created by display driver.
++			 */
++			if (as->attached_devices_need_sync)
++				continue;
++		}
++
+ 		tegra_smmu_enable(smmu, fwspec->ids[index], as->id);
+ 	}
+ 
+@@ -527,6 +591,12 @@ static void tegra_smmu_detach_dev(struct iommu_domain *domain, struct device *de
+ 		return;
+ 
+ 	for (index = 0; index < fwspec->num_ids; index++) {
++		const unsigned int swgroup = fwspec->ids[index];
++		const int disp_id = smmu_swgroup_to_display_id(swgroup);
++
++		if (disp_id >= 0)
++			as->display_attached[disp_id] = false;
++
+ 		tegra_smmu_disable(smmu, fwspec->ids[index], as->id);
+ 		tegra_smmu_as_unprepare(smmu, as);
+ 	}
+@@ -762,6 +832,7 @@ static int tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
+ 	int ret;
+ 
+ 	spin_lock_irqsave(&as->lock, flags);
++	tegra_smmu_attach_deferred_devices(domain);
+ 	ret = __tegra_smmu_map(domain, iova, paddr, size, prot, gfp, &flags);
+ 	spin_unlock_irqrestore(&as->lock, flags);
+ 
 -- 
 2.30.2
 
