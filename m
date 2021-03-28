@@ -2,83 +2,80 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B147BC433C1
-	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 15:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48294C433E0
+	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 17:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7879D61976
-	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 15:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16E6D61999
+	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 17:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbhC1Pgw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 28 Mar 2021 11:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59520 "EHLO
+        id S231388AbhC1RV2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 28 Mar 2021 13:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbhC1Pgr (ORCPT
+        with ESMTP id S231340AbhC1RVF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Mar 2021 11:36:47 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84CCDC061756;
-        Sun, 28 Mar 2021 08:36:46 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id z8so13059780ljm.12;
-        Sun, 28 Mar 2021 08:36:46 -0700 (PDT)
+        Sun, 28 Mar 2021 13:21:05 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17A8C061756;
+        Sun, 28 Mar 2021 10:21:04 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id m12so14902784lfq.10;
+        Sun, 28 Mar 2021 10:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4McCAtm/bgYfEvyy6rwiTH7xGHWa8NKknSEfmeF9cro=;
-        b=JjOH+vLDlZTRgODNsnxEA3Qad9ZZO7kp9drxRf4eVuyjWvJSt7y5EgCqyQsiiGH+1H
-         CXF3FBFNig0cAK1y4S8Gd9J/sMUOCkKCc6f0zFlc5xmMKgpqKpK56JcrIYs0bF+U76um
-         yHJY0nBos3xXxZW/As3///NEgv8DEFC5le2pX7biJuw0Q27RdrCkyP+xZ+UUPLw0POTW
-         eaCu6VLrtSsOEoLztxp+EGGf2eqhkKwLYACYyTKLntTTiRzvsjzN3HeTW6n5tbxe6/Tv
-         FKjMAKJEb2xBrmWjkNdQxBNZhW/dLQRcsPg1e0Zy5DhgkRILQslHn4nJppuuj2RemcyK
-         yqsQ==
+        bh=m5n0YXOwW9Hi1GIX7USstKgF3p3m11IaefFXa7cKRmM=;
+        b=KG3dCp5GSUH47Hc4LdQZI/2q+2sU74KRV1LkWlb44jlV8t0LNd9rAUJchmXnEREkEq
+         /kYJkVSUl3siYQIm385XNBBQ9C77ekcH/01si1fudYx3Y2b5V6zQwbcbADBSQI/MakQM
+         1V5T9CO7mhb93jWtlxvISFxEbNj7t1sydOSow4uf5u9CcvVjpys3Wes/upgxBps4D3lG
+         SmD6mqXf6605g9NgIsHVWzzHmrivf+XsXl4MNwNLXplZ0JHin6I7QRMgrNAenXcmTXYE
+         6yvMddvTR02ywUBh8bQ/6Fj2AXxiLd+jj8/sFViDJc25fABhQSLRvgVmmpKbDy2NW9A2
+         KWOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=4McCAtm/bgYfEvyy6rwiTH7xGHWa8NKknSEfmeF9cro=;
-        b=jJ+CWBBQE2flKFnMc6lGPfcxBv2aNUJ9CXbGci34MIcI3pCF7182+swovevOxxtFlF
-         FAC9gZv3B2I290+S2ucAavSXF4gjzRi7Om3IqPMVioNPBxxzDMCwF4OmQIvNmZIVBO5x
-         I9ejJubxegHevpu9c9Wztov+8alzG2Dfdh3c7xdcjWQLoG/iar7GUQtSHM010UARquM1
-         AF6BFI1ZC2nNhUXz8TGFDialLfn3p9K4qvhNxr6Kr5+obA3zGpCXuW7srqs6f9yoW0TO
-         GNOmODNcfsBvbwTIJUMqv9a/ynq46wagoHVBurFDAUUjBDahU9FzBuaKaLGr5K9lBxiX
-         4tow==
-X-Gm-Message-State: AOAM532rQl8z3QRfTBraO+zIHFMvsnHeYPHgXVF6/doH16Sh4Jd1RXt7
-        WneipgXumzn8/YIkLJbv9WCeSmHIiRc=
-X-Google-Smtp-Source: ABdhPJzfJzm0Y5jnPOR/i07q0qCt3tFIfqvC/u2H0GBy/FuPgEqkpdtkZiKccT0LosHkzt1ZS6bgMg==
-X-Received: by 2002:a2e:9a0a:: with SMTP id o10mr15113901lji.243.1616945804830;
-        Sun, 28 Mar 2021 08:36:44 -0700 (PDT)
+        bh=m5n0YXOwW9Hi1GIX7USstKgF3p3m11IaefFXa7cKRmM=;
+        b=s+tRyqFmhpBmaPanx8yEKxE4AIckLdXfdJ/XIdUYEKPdDFpWBKsDKd478aM7Hx84I5
+         CqrKYOYCupMer7oPCADM5+V3iw27pQnZBWlanIG2xPQZ0w6JQYGqXIWY4S0tb3sF5chL
+         7c4ICVbD3TK2BbolcNGSVPjRhTKcGBBghh2rpFT2e+M1QEPLSErpubwGqUrkYVqeuDvy
+         L/tTU3cdHr1BCTLbD2ztJ52BYpP+ikgbORP6gdc7Cd093uecU8wfs734oSPqYGBwYQPj
+         LGEPJgM7BUgbv7idSBSHsuPjvjTrmHi19EC9rvZEsGCtoggeslPizy3a9Eh896wB4kfe
+         sWSw==
+X-Gm-Message-State: AOAM5307zu2+JTaztGDEpWPXwWSlsiBKl7FGMmV4Aksb3iN3ovDDacYr
+        cLXv7qmDlb7SzgZHHIOitlDk2LE6Qow=
+X-Google-Smtp-Source: ABdhPJzOcVq18vABympiFDVg8EaHQrSG8xdwAihOObkL26wxulKBKB82BxgIOg9JVbo/eOe1tKdBFQ==
+X-Received: by 2002:a05:6512:b97:: with SMTP id b23mr14338302lfv.101.1616952063168;
+        Sun, 28 Mar 2021 10:21:03 -0700 (PDT)
 Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id d26sm1512544lfl.84.2021.03.28.08.36.43
+        by smtp.googlemail.com with ESMTPSA id f26sm1534567lfe.118.2021.03.28.10.21.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Mar 2021 08:36:44 -0700 (PDT)
-Subject: Re: [PATCH] iommu/tegra-smmu: Fix mc errors on tegra124-nyan
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, thierry.reding@gmail.com
-Cc:     joro@8bytes.org, will@kernel.org, guillaume.tucker@collabora.com,
-        vdumpa@nvidia.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Sun, 28 Mar 2021 10:21:02 -0700 (PDT)
+Subject: Re: [PATCH v1] Input: elants_i2c - fix division by zero if firmware
+ reports zero phys size
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Johnny Chuang <johnny.chuang.emc@gmail.com>,
+        Jasper Korten <jja2000@gmail.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-input@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20210218220702.1962-1-nicoleotsuka@gmail.com>
- <9d6445c0-9574-1650-e327-32b11716f87e@gmail.com>
- <20210223021343.GA6539@Asurada-Nvidia>
- <79bb1248-497f-8adf-663b-74448bea3849@gmail.com>
- <20210225062742.GA13353@Asurada-Nvidia>
- <ee0f40f4-dffe-2987-5d4b-c5896f27ec24@gmail.com>
- <20210302230856.GA22992@Asurada-Nvidia>
- <4a407ad8-33cb-94e9-398a-78fa65178e08@gmail.com>
- <94f8f949-197c-e8fc-38d9-74360dca8c51@gmail.com>
-Message-ID: <4e2391af-8423-bee6-e45b-f4b434b1e9b0@gmail.com>
-Date:   Sun, 28 Mar 2021 18:36:43 +0300
+References: <20210302100824.3423-1-digetx@gmail.com>
+ <YGAJmGqNitQ9XwVl@google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ee24fc68-0e58-df10-8b3f-a1b18f95e4ad@gmail.com>
+Date:   Sun, 28 Mar 2021 20:21:01 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <94f8f949-197c-e8fc-38d9-74360dca8c51@gmail.com>
+In-Reply-To: <YGAJmGqNitQ9XwVl@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,73 +83,54 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.03.2021 18:25, Dmitry Osipenko пишет:
-> 03.03.2021 12:47, Dmitry Osipenko пишет:
->> 03.03.2021 02:08, Nicolin Chen пишет:
->>> On Sat, Feb 27, 2021 at 12:59:17PM +0300, Dmitry Osipenko wrote:
->>>> 25.02.2021 09:27, Nicolin Chen пишет:
->>>> ...
->>>>>> The partially revert should be okay, but it's not clear to me what makes
->>>>>> difference for T124 since I don't see that problem on T30, which also
->>>>>> has active display at a boot time.
->>>>> Hmm..do you see ->attach_dev() is called from host1x_client_iommu_attach
->>>>> or from of_dma_configure_id/arch_setup_dma_ops?
->>>>>
->>>> I applied yours debug-patch, please see dmesg.txt attached to the email.
->>>> Seems probe-defer of the tegra-dc driver prevents the implicit
->>>> tegra_smmu_attach_dev, so it happens to work by accident.
->>>> [    0.327826] tegra-dc 54200000.dc: -------tegra_smmu_of_xlate: id 1
->>>> [    0.328641] [<c052ec75>] (tegra_smmu_of_xlate) from [<c052e591>] (of_iommu_xlate+0x51/0x70)
->>>> [    0.328740] [<c052e591>] (of_iommu_xlate) from [<c052e6d7>] (of_iommu_configure+0x127/0x150)
->>>> [    0.328896] [<c052e6d7>] (of_iommu_configure) from [<c073f697>] (of_dma_configure_id+0x1fb/0x2ec)
->>>> [    0.329060] [<c073f697>] (of_dma_configure_id) from [<c059743f>] (really_probe+0x7b/0x2a0)
->>>> [    0.331438] tegra-dc 54200000.dc: --------tegra_smmu_probe_device, 822
->>>> [    0.332234] [<c052ebed>] (tegra_smmu_probe_device) from [<c052bd6d>] (__iommu_probe_device+0x35/0x1c4)
->>>> [    0.332391] [<c052bd6d>] (__iommu_probe_device) from [<c052c3cd>] (iommu_probe_device+0x19/0xec)
->>>> [    0.332545] [<c052c3cd>] (iommu_probe_device) from [<c052e6ab>] (of_iommu_configure+0xfb/0x150)
->>>> [    0.332701] [<c052e6ab>] (of_iommu_configure) from [<c073f697>] (of_dma_configure_id+0x1fb/0x2ec)
->>>> [    0.332804] [<c073f697>] (of_dma_configure_id) from [<c059743f>] (really_probe+0x7b/0x2a0)
->>>> [    0.335202] tegra-dc 54200000.dc: ---------iommu_group_get_for_dev, 1572
->>>> [    0.335292] tegra-dc 54200000.dc: ---------tegra_smmu_device_group, 862
->>>> [    0.335474] tegra-dc 54200000.dc: ---------tegra_smmu_device_group, 909: 1: drm
->>>> [    0.335566] tegra-dc 54200000.dc: ---------iommu_group_get_for_dev, 1574
->>>> [    0.335718] tegra-dc 54200000.dc: ---------iommu_group_add_device, 858
->>>> [    0.335862] tegra-dc 54200000.dc: Adding to iommu group 1
->>>> [    0.335955] tegra-dc 54200000.dc: ---------iommu_alloc_default_domain, 1543: type 3
->>>> [    0.336101] iommu: ------iommu_group_alloc_default_domain: platform, (null), drm
->>>> [    0.336187] ---------tegra_smmu_domain_alloc, 284: type 3
->>>  [    0.336968] [<c0a0ff45>] (tegra_smmu_domain_alloc) from [<c0a0f87b>] (iommu_group_alloc_default_domain+0x4b/0xfa)
->>>> [    0.337127] [<c0a0f87b>] (iommu_group_alloc_default_domain) from [<c052c41d>] (iommu_probe_device+0x69/0xec)
->>>> [    0.337285] [<c052c41d>] (iommu_probe_device) from [<c052e6ab>] (of_iommu_configure+0xfb/0x150)
->>>> [    0.337441] [<c052e6ab>] (of_iommu_configure) from [<c073f697>] (of_dma_configure_id+0x1fb/0x2ec)
->>>> [    0.337599] [<c073f697>] (of_dma_configure_id) from [<c059743f>] (really_probe+0x7b/0x2a0)
->>>> [    0.339913] tegra-dc 54200000.dc: ---------iommu_probe_device, 272
->>>> [    0.348144] tegra-dc 54200000.dc: failed to probe RGB output: -517
->>> Hmm..not sure where this EPROBE_DEFER comes from.
->> DC driver on Nexus 7 depends on LVDS bridge and display panel, which
->> cause the probe defer.
+28.03.2021 07:44, Dmitry Torokhov пишет:
+> Hi Dmitry,
+> 
+> On Tue, Mar 02, 2021 at 01:08:24PM +0300, Dmitry Osipenko wrote:
+>> Touchscreen firmware of ASUS Transformer TF700T reports zeros for the phys
+>> size. Hence check whether the size is zero and don't set the resolution in
+>> this case.
 >>
->>> But you are right,
->>> as of_dma_configure_id() returns because of that so it didn't run to
->>> arch_setup_dma_ops() call, which allocates an UNMANAGED iommu domain
->>> and attaches DC to it on Tegra124.
->>>
->>> By the way, anyone can accept this change? It doesn't feel right to
->>> leave a regression in the newer release...
+>> Reported-by: Jasper Korten <jja2000@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> Please note that ASUS TF700T isn't yet supported by upstream kernel,
+>> hence this is not a critical fix.
+>>
+>>  drivers/input/touchscreen/elants_i2c.c | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+>> index 4c2b579f6c8b..a2e1cc4192b0 100644
+>> --- a/drivers/input/touchscreen/elants_i2c.c
+>> +++ b/drivers/input/touchscreen/elants_i2c.c
+>> @@ -1441,14 +1441,16 @@ static int elants_i2c_probe(struct i2c_client *client,
+>>  
+>>  	touchscreen_parse_properties(ts->input, true, &ts->prop);
+>>  
+>> -	if (ts->chip_id == EKTF3624) {
+>> +	if (ts->chip_id == EKTF3624 && ts->phy_x && ts->phy_y) {
+>>  		/* calculate resolution from size */
+>>  		ts->x_res = DIV_ROUND_CLOSEST(ts->prop.max_x, ts->phy_x);
+>>  		ts->y_res = DIV_ROUND_CLOSEST(ts->prop.max_y, ts->phy_y);
+>>  	}
+>>  
+>> -	input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
+>> -	input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
+>> +	if (ts->x_res > 0)
+>> +		input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
 > 
-> Guys, I have a good and bad news.
+> There is absolutely no difference between setting respluton to 0 vs not
+> setting it at all, so I dropped the conditionals and applied.
 > 
-> The good news is that I figured out why I didn't see this problem on
-> Nexus 7 and the reason is that I had CONFIG_ARM_DMA_USE_IOMMU=n.
+>> +	if (ts->y_res > 0)
+>> +		input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
+>>  	if (ts->major_res > 0)
 > 
-> The other good news is that I have a simple workaround which fixes the
-> implicit IOMMU problem by deferring the ASID enabling for display clients.
+> We could drop this condition as well.
 > 
-> The bad news is that CONFIG_ARM_DMA_USE_IOMMU=y breaks GPU (DRM, host1x)
-> drivers because they aren't properly prepared to this case and
-> CONFIG_ARM_DMA_USE_IOMMU is enabled in multi-platform kernel config. I
-> will try to fix up the drivers, but not sure how much time this may take.
-> 
+>>  		input_abs_set_res(ts->input, ABS_MT_TOUCH_MAJOR, ts->major_res);
 
-Oh, actually the old workaround with arm_iommu_detach_device() still
-works, so we just need to bring it back. I'll prepare the patches.
+I'll make a follow up patch to clean up this condition, if you haven't
+done it yet. Thanks!
