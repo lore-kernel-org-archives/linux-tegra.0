@@ -8,64 +8,66 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C12C433C1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F3C433E0
 	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 23:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E198A61948
-	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 23:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1251A61954
+	for <linux-tegra@archiver.kernel.org>; Sun, 28 Mar 2021 23:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbhC1Xm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S229504AbhC1Xm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Sun, 28 Mar 2021 19:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50032 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbhC1XmY (ORCPT
+        with ESMTP id S229861AbhC1XmZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 28 Mar 2021 19:42:24 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0531C061756
-        for <linux-tegra@vger.kernel.org>; Sun, 28 Mar 2021 16:42:23 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id q26so10911807qkm.6
-        for <linux-tegra@vger.kernel.org>; Sun, 28 Mar 2021 16:42:23 -0700 (PDT)
+        Sun, 28 Mar 2021 19:42:25 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FBA3C061756
+        for <linux-tegra@vger.kernel.org>; Sun, 28 Mar 2021 16:42:25 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id q26so10911892qkm.6
+        for <linux-tegra@vger.kernel.org>; Sun, 28 Mar 2021 16:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aTqt/IVdoBlaweXDgOQKvMZ70/sSbJXfKH4bXe6aqUM=;
-        b=gFX5ao+Q598pGd/nrbaYkgTyuyk7q5H00T/LXO/arsc0O/9mvCQEFBVYEOZ2TSBLRR
-         ma4M6lU8PSt5aU5Mq0Xb0MMgMWUAIQH1fvvCBTxWsNB09yoa6vY50DZthHeFWAFmU5ua
-         0inlPz5d3dOsMAC2tO/wgM8eAMU+Br4M7QaiveO0XrEw5Niow6GJehlJx030x3Z988Xw
-         w9+5a2G+KVY71BU6rLIoKuaAWskeYr0RBqjYa+mV6R8Q8qtQfOiQZZJR97+mn2OEy6b2
-         dufh1Mkch8gON1dnaxfhOWcdo4+/YW7JB1Bw7Vx1qnKcf95FeOTpMjbVf1EAV2ucijkB
-         VU+Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=itHFjcc0HHEjD8/QZKzRDfHBiqClATPJH3jmZ+mXHJM=;
+        b=ac9dj5yz+kBU4bumk7JSHyDbyFWc1Xio4+cyGoxIJbl1s0LSPZKH0VCu4P+5eNuDQO
+         J74cEydJQ25uusun2CVrtYdFoFevNHv9zQLBFJevcAJCFf3Eicw+ZiSi+p4yBuKnwZTB
+         ubG14+fdD9TJxkqOUdRpY16/aWEJ2x9PJidqK5LaU+cZPZyMk0wlBKNTDx2t/KrN52am
+         qz41pfF9WwJnYO9BJ7ft37ANQWEV/B/dgO05bIKkKmzcv9xhFZBEOXHZGtpdkmMa1V5L
+         YYsiK3i2ujk9QkCsJ8Ggf1mhRmB0O2Vj1Lo0X8ZIcqybIKaPxSBQ88AjM18tAAcih3i3
+         Et2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aTqt/IVdoBlaweXDgOQKvMZ70/sSbJXfKH4bXe6aqUM=;
-        b=VgNjYnrWw+Zxf93XEtBW/HBwnQ3h+KCcGQOtsAkcNuQUEhEA2wLGd3m+NK4Co/op7o
-         fd2RLliT5mB9b55MQ3NCirclrYAXmiG/1wEOl+rU7RBvzvEV6iK8Xbx6Lw3hsG3xiFfP
-         mGeRqV/uEANdtjuHGNeqUidMQPEkDAKOIhZ0Pe3HT7//KXBEi3uvNo6N5yNBU2tb6TK0
-         zo1CLdJ/rdNLTx4tQ1wQ3ve4CdTZ2UxF6RdZQllwxJn5IvVcy+v9OsT30Vc2vHOwL0Y+
-         JHM+VSzNMA2g+3o59sn3XfBF1Dvrr/J/YbuiToudzrZCCFoQimCvuZ+QAFMoSWtHkT+G
-         1Dsg==
-X-Gm-Message-State: AOAM530r8pbtYcBwoGnmGgSWNnxc/i/dnKOFpMgHlDVvDI0StlWCJvdc
-        d1XZ6lAj2/n4v/Ow7r5ocyw=
-X-Google-Smtp-Source: ABdhPJz145Az4LUx7LhDMvD7ZV5b6PUHcvEPr/qXE19/8MCJO3m4SnTCjocT6soNLQfHxskoa0mKEw==
-X-Received: by 2002:a37:a603:: with SMTP id p3mr22782756qke.362.1616974942840;
-        Sun, 28 Mar 2021 16:42:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=itHFjcc0HHEjD8/QZKzRDfHBiqClATPJH3jmZ+mXHJM=;
+        b=Ad8oQmomOj2nTeDQU6P0X5rUU+uqMqFOdnW0ew58QZVhXD2P+df66/GXO9sXkWeygG
+         RBkW2eTqWG2NFn6Fnh0y63nOEG4XkPCJrrrs0XPFaYC9VOcp3upYbknnDxpxU2cVrZwe
+         4ZuEkXd8mShrpO/GuqCgSubVmgDh9/nwnlnvUH1Jr32qUPjlNIYEDZVLoR5rWi7D9Vsv
+         N7mVLwtor4skRrK8ba5bm8d74G+XBXIsCSNOK3JmjTv5/IjyzqL7UrIiLBkUtJ45s/I1
+         BcY+zj5xBnCh1qM+wsfFMaVz/GMWpx2VoQ8poKsfATV/+b+VlBtDLbQLLOqZ+ZA8eofP
+         VjYg==
+X-Gm-Message-State: AOAM533P7OWYG+lXLIjBtHirUeN45hhiWQFpIaHUmsbCFt8KHs0k/gHB
+        96+W3FKUrcKfez/G8HKje5E=
+X-Google-Smtp-Source: ABdhPJwLsk109xh3k2+bEHIFVVVmGTt8cVxrc1Ya6c7QuIjX0xtLX/fraJUxT4QTcUiJ7QZBMRK6Ng==
+X-Received: by 2002:a05:620a:14ac:: with SMTP id x12mr22843641qkj.409.1616974944529;
+        Sun, 28 Mar 2021 16:42:24 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.gmail.com with ESMTPSA id o21sm9900848qtp.72.2021.03.28.16.42.21
+        by smtp.gmail.com with ESMTPSA id o21sm9900848qtp.72.2021.03.28.16.42.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Mar 2021 16:42:22 -0700 (PDT)
+        Sun, 28 Mar 2021 16:42:24 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Mikko Perttunen <cyndis@kapsi.fi>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 1/2] gpu: host1x: Add back arm_iommu_detach_device()
-Date:   Mon, 29 Mar 2021 02:41:41 +0300
-Message-Id: <20210328234142.12920-1-digetx@gmail.com>
+Subject: [PATCH v1 2/2] drm/tegra: Add back arm_iommu_detach_device()
+Date:   Mon, 29 Mar 2021 02:41:42 +0300
+Message-Id: <20210328234142.12920-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210328234142.12920-1-digetx@gmail.com>
+References: <20210328234142.12920-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -73,49 +75,49 @@ List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 The case of CONFIG_ARM_DMA_USE_IOMMU=y was found to be broken for
-host1x driver. Add back the workaround using arm_iommu_detach_device()
+DRM driver. Add back the workaround using arm_iommu_detach_device()
 as a temporary solution.
 
 Cc: stable@vger.kernel.org
-Fixes: af1cbfb9bf0f ("gpu: host1x: Support DMA mapping of buffers"
+Fixes: fa6661b7aa0b ("drm/tegra: Optionally attach clients to the IOMMU")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/host1x/dev.c | 15 +++++++++++++++
+ drivers/gpu/drm/tegra/drm.c | 15 +++++++++++++++
  1 file changed, 15 insertions(+)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index d0ebb70e2fdd..a2c09dca4eef 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -18,6 +18,10 @@
- #include <trace/events/host1x.h>
- #undef CREATE_TRACE_POINTS
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 90709c38c993..a949cb678e08 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -20,6 +20,10 @@
+ #include <drm/drm_prime.h>
+ #include <drm/drm_vblank.h>
  
 +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
 +#include <asm/dma-iommu.h>
 +#endif
 +
- #include "bus.h"
- #include "channel.h"
- #include "debug.h"
-@@ -232,6 +236,17 @@ static struct iommu_domain *host1x_iommu_attach(struct host1x *host)
- 	struct iommu_domain *domain = iommu_get_domain_for_dev(host->dev);
+ #include "drm.h"
+ #include "gem.h"
+ 
+@@ -909,6 +913,17 @@ int host1x_client_iommu_attach(struct host1x_client *client)
+ 	struct iommu_group *group = NULL;
  	int err;
  
 +#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	if (host->dev->archdata.mapping) {
++	if (client->dev->archdata.mapping) {
 +		struct dma_iommu_mapping *mapping =
-+				to_dma_iommu_mapping(host->dev);
-+		arm_iommu_detach_device(host->dev);
++				to_dma_iommu_mapping(client->dev);
++		arm_iommu_detach_device(client->dev);
 +		arm_iommu_release_mapping(mapping);
 +
-+		domain = iommu_get_domain_for_dev(host->dev);
++		domain = iommu_get_domain_for_dev(client->dev);
 +	}
 +#endif
 +
  	/*
- 	 * We may not always want to enable IOMMU support (for example if the
- 	 * host1x firewall is already enabled and we don't support addressing
+ 	 * If the host1x client is already attached to an IOMMU domain that is
+ 	 * not the shared IOMMU domain, don't try to attach it to a different
 -- 
 2.30.2
 
