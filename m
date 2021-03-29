@@ -2,96 +2,79 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EA8C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34585C433E2
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 17:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FCFE6193A
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5BB36196E
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 17:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231873AbhC2Nxd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Mar 2021 09:53:33 -0400
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:42808 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231774AbhC2NxC (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Mar 2021 09:53:02 -0400
-Received: by mail-ot1-f53.google.com with SMTP id 31-20020a9d00220000b02901b64b9b50b1so12310351ota.9;
-        Mon, 29 Mar 2021 06:53:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2kx0G07YczhDjJFsWiCaS8pRYvouvk30VF+p/QfTjfQ=;
-        b=uGe+wqwHHs1k8mCZaonfi2DWNjIl9/YHTG3UjuaQbg7XjhEupKR5q0TI6nqdkuavs9
-         A1DYQ+7rBJEgCNBwCcwkGtHa1iF8Bf9U/RyXnbsFNRBRti68nH2qUIxDhLRgC94SPg0j
-         xwOXporZsJv2OIqEGKNVxxm9BJhshoF22iDBj2dumfOj7HMKVKExEIH6dzZnqZPWd9i9
-         0DHxj5tPC09CxiLoP7VhkNRYCV6ViNmUiqJTcJIL2wRGGDnNxG6ldil/s4eEEtsmmddC
-         SE/fVswPszUUU7xjVvGqH2oGHGCU4ddIKvnKDE4cFgH1j0TDExD/kLpaRSecjcGrBNEE
-         LCWQ==
-X-Gm-Message-State: AOAM530gbm/MJSUWyX7fpcWTpxRZ98JXGqAt5SzxKORVaG51LDEfKlmA
-        RJXGXAssSDJZZfHlEN7Huw==
-X-Google-Smtp-Source: ABdhPJwaihSqXeKVUznslk6PKBV7X4dxzic9ks8hZXlzs/XK31nyBmCTPSWG7Qb7dkg/ViDIU/d4RQ==
-X-Received: by 2002:a9d:20c6:: with SMTP id x64mr22311868ota.262.1617025981177;
-        Mon, 29 Mar 2021 06:53:01 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y10sm3450231oih.37.2021.03.29.06.52.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Mar 2021 06:53:00 -0700 (PDT)
-Received: (nullmailer pid 2469448 invoked by uid 1000);
-        Mon, 29 Mar 2021 13:52:59 -0000
-Date:   Mon, 29 Mar 2021 08:52:59 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S229630AbhC2RcQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Mar 2021 13:32:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45014 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229502AbhC2RcG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 29 Mar 2021 13:32:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 437BAAFDC;
+        Mon, 29 Mar 2021 17:32:02 +0000 (UTC)
+Date:   Mon, 29 Mar 2021 10:31:51 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] spi: dt-bindings: nvidia,tegra210-quad: Use documented
- compatible "jedec,spi-nor" in example
-Message-ID: <20210329135259.GA2423613@robh.at.kernel.org>
-References: <20210327203357.552794-1-robh@kernel.org>
+        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
+        David Heidelberg <david@ixit.cz>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ion Agorria <AG0RRIA@yahoo.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] partitions/efi: Support gpt_sector parameter
+ needed by NVIDIA Tegra devices
+Message-ID: <20210329173151.urs4x36m3bq6txrf@offworld>
+References: <20210327212100.3834-1-digetx@gmail.com>
+ <20210327212100.3834-4-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20210327203357.552794-1-robh@kernel.org>
+In-Reply-To: <20210327212100.3834-4-digetx@gmail.com>
+User-Agent: NeoMutt/20201120
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Mar 27, 2021 at 03:33:57PM -0500, Rob Herring wrote:
-> The 'spi-nor' compatible used in the example is not documented. Use the
-> documented 'jedec,spi-nor' compatible instead.
-> 
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, 28 Mar 2021, Dmitry Osipenko wrote:
 
-Ugg, I guess I should have tested this first:
+>All NVIDIA Tegra20..124 Android devices use proprietary bootloader
+>which supplies the gpt_sector=<sector> kernel cmdline parameter that
+>should be used for looking up the EFI partition table on internal EMMC
+>storage.  If the kernel cmdline parameter isn't supplied, then the
+>partition is expected to be placed around the last but one sector of EMMC.
+>
+>Apparently this was done in order to hide the PT from a usual userspace
+>tools since EFI entry exists only for compatibility with a Linux kernel,
+>while a custom proprietary partition table is what is really used by
+>these Android devices, thus these tools may corrupt the real PT, making
+>device unbootable and very difficult to restore.
+>
+>Add support for the gpt_sector cmdline parameter which will be used
+>for finding EFI entry on internal EMMC storage of NVIDIA Tegra20+ devices.
 
-Documentation/devicetree/bindings/spi/nvidia,tegra210-quad.example.dt.yaml: flash@0: 'nvidia,rx-clk-tap-delay', 'nvidia,tx-clk-tap-delay' do not match any of the regexes: '^partition@', 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+Since this is proprietary and playing yucky games hiding the pt, why not
+just force for the fallback on Nvidia's side and always just use the entry
+at the end of the block device? I'm not loving introducing a generic parameter
+for an obscure ad-hoc feature.
 
-
-This issue has come up a couple of times recently. There's not really an 
-easy fix for this other than dropping the properties from the example 
-and that doesn't help for actual dts file checks.
-
-The issue is nvidia,tegra210-quad.yaml is applied to the SPI controller 
-node and jedec,spi-nor.yaml is applied to the child node. Since those 
-are independent, there's never a single schema with all possible child 
-properties.
-
-We could have a schema listing all these slave properties and every SPI 
-slave binding has to reference that schema.
-
-Rob
+Thanks,
+Davidlohr
