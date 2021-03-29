@@ -2,88 +2,134 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E518C433E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 06:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A36C433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 06:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23D606197C
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 06:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 168AD6196C
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 06:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbhC2GUI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Mar 2021 02:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
+        id S229441AbhC2Gts (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Mar 2021 02:49:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbhC2GUG (ORCPT
+        with ESMTP id S230328AbhC2Gtg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Mar 2021 02:20:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A10C061574;
-        Sun, 28 Mar 2021 23:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Sq1uYVoQTXMfZgTwubV+poh66gR8IPfBn1Jh5qo2ZyY=; b=HIK9ChXrCn4n0LY/ocJkIAnMC8
-        hhbVgZNJI/kqZXN9AUUxXdCB7IOhpm+6+SRihZNCTNRKYvkNqoNt4K+e12MGcT5aogaP3puBewvp/
-        ia2NKSC+MocnJmo0CMN+INON/2xS61wz1GpQ1WETJaSb6vLYuByjnxTtzmr1RorMRKC5QlY/bzQy7
-        Ebo5tfJLPPLisXlgZy4Sh5oTvD9Vc2/+h36KoyWFi/bVAIMKDciKjEvTiFO1/a6KjcRIiaHlN2kc7
-        TXvwb4r+cLIjO1XSOfg5Cr2EQyZ0wjhX82Y0Gsu0yLK+aQ0z9okx/6epXfG2om0kidjUxOIUWQt0v
-        P7PC91kw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lQlEg-0015iv-Km; Mon, 29 Mar 2021 06:18:56 +0000
-Date:   Mon, 29 Mar 2021 07:18:50 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 29 Mar 2021 02:49:36 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1972C061574;
+        Sun, 28 Mar 2021 23:49:35 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id dm8so12990336edb.2;
+        Sun, 28 Mar 2021 23:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dvJrD38+Gd0ZZfT3SZAwY+e98dco9w+l9AERMmUkun4=;
+        b=ew+I8Zx3kLnvSgMLoTHkAJaNu+rvPBxtmPFiLXJz1lS4Tx+N+rBMis1LTjcK9rRx7n
+         2/Tav3DObTgXUf7PbtOWdAgB4s/F1Ie76PLgsyQ1HYFIUWAoviKOYes6dmy/GE0agGyh
+         +1SicMn1MhsCW4Q/8Nfpj+YyExvb1w8F9jKEQPgdqplos5pV3py7PWTEyJ6l3TogDnhX
+         NLp2uq5CavP+ukvEg73Z3axM8efl3Q4z1xbDKp17XSnuOKnrqFLcX+YgYMIiNyoup293
+         6NEm7YDoEdCXL4N2fSNioyFawWwE5gXGKqnCm0V/RgX9XHg4wI4tQi6Go4Kos+xcrih1
+         k7uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dvJrD38+Gd0ZZfT3SZAwY+e98dco9w+l9AERMmUkun4=;
+        b=f36sIXzfymYXWX1+/GLhzFKsTUlFf1OQHc7PONkCD2MaszATrfCxYwV2JHHCMqh8BA
+         XbhRw/N0eQZ3uC9LGMLQjKkjmnLe8NEogj7Cuihm8nZ3WOXaq8f0VKGfeoX3jJfL6gcr
+         s3Rc6ExGAeqfSc3aUNgspobXyyo8nZajnZ5QKKR+KCsI7qO08XNuBn22N8ctOKVwguz/
+         MF77wY+dVGrSmYKVKETuGESfmXWAjlVJMb/0r4KQw59LzbK9HRlx3cGbkRGEdNTmuTzt
+         5LkoIGCsXp/lRsXp+mvRu/JoyhKnvj8jIr6qk99Crm7cT+WQMKveorfpQ59Q7na+iIKR
+         DIFA==
+X-Gm-Message-State: AOAM530JmNdWarBr3pjrsm6S3C/DOwYwit1SRAS8v6kQsSXP0Ea6rVmA
+        lTybXHw1emtVDi7TBp0imDhCjuy/lWM=
+X-Google-Smtp-Source: ABdhPJydy6eDabhN/L6gwqCNv1MYhFf0/Yc5thGJOO9FABN3b0uIVZgU/ie3tTad8ORQ3j1ow6MYgg==
+X-Received: by 2002:aa7:cb90:: with SMTP id r16mr27693945edt.139.1617000573716;
+        Sun, 28 Mar 2021 23:49:33 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id eo22sm7682061ejc.0.2021.03.28.23.49.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Mar 2021 23:49:32 -0700 (PDT)
+Date:   Mon, 29 Mar 2021 08:49:57 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] partitions/efi: Support gpt_sector parameter
- needed by NVIDIA Tegra devices
-Message-ID: <20210329061850.GA258398@infradead.org>
-References: <20210327212100.3834-1-digetx@gmail.com>
- <20210327212100.3834-4-digetx@gmail.com>
+        Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: dt-bindings: nvidia,tegra210-ahub: Add missing
+ child nodes
+Message-ID: <YGF4laeEP3v7bP9X@orome.fritz.box>
+References: <20210326195003.3756394-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ijQsMv6nekEBJq7o"
 Content-Disposition: inline
-In-Reply-To: <20210327212100.3834-4-digetx@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20210326195003.3756394-1-robh@kernel.org>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Mar 28, 2021 at 12:21:00AM +0300, Dmitry Osipenko wrote:
-> All NVIDIA Tegra20..124 Android devices use proprietary bootloader
-> which supplies the gpt_sector=<sector> kernel cmdline parameter that
-> should be used for looking up the EFI partition table on internal EMMC
-> storage.  If the kernel cmdline parameter isn't supplied, then the
-> partition is expected to be placed around the last but one sector of EMMC.
-> 
-> Apparently this was done in order to hide the PT from a usual userspace
-> tools since EFI entry exists only for compatibility with a Linux kernel,
 
-That's weird, because nothin in Linux relies in EFI partition tables.
+--ijQsMv6nekEBJq7o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> while a custom proprietary partition table is what is really used by
-> these Android devices, thus these tools may corrupt the real PT, making
-> device unbootable and very difficult to restore.
-> 
-> Add support for the gpt_sector cmdline parameter which will be used
-> for finding EFI entry on internal EMMC storage of NVIDIA Tegra20+ devices.
+On Fri, Mar 26, 2021 at 01:50:03PM -0600, Rob Herring wrote:
+> The nvidia,tegra210-ahub binding is missing schema for child nodes. This
+> results in warnings if 'additionalProperties: false' is set (or when the
+> tools implement 'unevaluatedProperties' support). Add the child nodes
+> and reference their schema if one exists.
+>=20
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Sameer Pujar <spujar@nvidia.com>
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> v2:
+>  - Also add 'dspk' child node
+>=20
+> This patch ideally should be applied before this series[1].
+>=20
+> [1] https://lore.kernel.org/r/20210323163634.877511-1-robh@kernel.org/
+> ---
+>  .../bindings/sound/nvidia,tegra210-ahub.yaml     | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-Didn't we plan to just support the actual partition table format insted?
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--ijQsMv6nekEBJq7o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBheJMACgkQ3SOs138+
+s6GRJA//SwwwKllKwUX2o66Qc7knEWeus1NCiU3TvglA4jxSC+pf74q4wyOIWu3y
+T/LTXQBUaDsagPelNfETPnOJbdMbUjpNwHFSy3tsMbmP9LDC9caNOhLHgx5EICdq
+j//Ni9BhTN/GtLQup6XKKoE20g2Z+L9chB/8rh6lIBY98TTImJn5e/dZzEnhs00+
+oIWn7jhIQLGyICN5K3RBbtLaB4gBlIZExABmYOXCRL9Or6ku1KjrNpVFIGlRIn0Z
+FiaxFLJpDGAXITI+M8xVDFg6nEY2k0/iXLTC/dncmuWR7oyIJ3Z0eNB4vos3LNA6
+b9Cchxrx5bkOoGErHtROtPdmuvwFFKwlM1SR782EkuVDUHinVmyndTlF5ax9q/2c
+LK8T8/XPwr8V7Ip2EUxKcnotAsm3YK5KXma2O4pIxHdnFsgnMC4Rcz6WTQCsd1GV
+aMIqtS/7rZb/CyxiHsuJ8BdUWxgl5hT588cGKbVaNWpgGDYdIGpvHwbShnnGb6Ow
+P5O9EeBy93UxjrY5pZVWmBCOEPLuW1fSOhuGc9mYetjy4nJylBy9yDGkPQ6FxlgK
+a2eGJqEx199Gq7TwCpLZcv87mW6Njm4DqJJ4Cu2yp09ig/0uzIfE67RUVKqnVjSi
+DLBMBmqxdPzdjXYAfT7BXy/9TTcUKWR6wmh/LFZhALywMF+uT1Y=
+=znco
+-----END PGP SIGNATURE-----
+
+--ijQsMv6nekEBJq7o--
