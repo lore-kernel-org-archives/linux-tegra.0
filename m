@@ -2,130 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2058C433E2
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315DDC433DB
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 887D561969
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 095BD6193A
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 13:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbhC2NII (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Mar 2021 09:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55906 "EHLO
+        id S230434AbhC2Njg (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Mar 2021 09:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbhC2NHn (ORCPT
+        with ESMTP id S231448AbhC2NjO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Mar 2021 09:07:43 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF10C061574;
-        Mon, 29 Mar 2021 06:07:43 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 12so7953856lfq.13;
-        Mon, 29 Mar 2021 06:07:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=stYWrf6XqmrqozR7EKI3OutzUa6M7NoWU7A27SKipUk=;
-        b=SO+Aaeu9h/qX5vUuAAEYjKxeugr3j+fLh6zztUyNzyi35/YzGozj9NFHkMugfYMOsn
-         hdbv3HRDktcqJNqeX+ijxHZoxVvEkOENq0xC0WyMD9dDbQMoodsthWjQ56dlduRZor2W
-         7jwNtyLcg5SPtnU/K86SsMKQD2TVgvCxTmIUZffGadAf/UXpy/pPisA0xCqlg5tcsAEb
-         OZDUEV8ffqUtEgEK109F4W9emCj2mjL7OCbY+GoAX4eyYXNpQgsf5QCbLryfrUFsP1+b
-         uU2PPtfLddgx/Td7vWsHfVIIkWAJYgkW78K94EyEgzFdXf0XcSq1gDah3tjlvvzLPFae
-         F5iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=stYWrf6XqmrqozR7EKI3OutzUa6M7NoWU7A27SKipUk=;
-        b=OC5QK9OJU79GMKBXN726ZKNu1FFrRf33g0TuqLgVU6o0eagFJN1iCpicH2iR3/nf+k
-         lYkieeDGMlX00Iabw1fUXORzuj4A0jVvKTqABrOiiqYDRFgDJTRNrZkoD82HGvSL5yjq
-         zHDcjaibKIKoScwBVH04pwUpMeNZfXAWwjyuV6T+qy1wRqOHgsa8Fw5epMw7HCwVGFFF
-         XP9WLdluwNdBYhxLOnYTngGRxULrvZC2YDSaiW1p5gQzjo9EiMR5+kGKlFUtdUiRSnOJ
-         NUJ03vh8/oM2GqDu8EyD9ffL+fd5uPJ5wgsspp2CzXrqaEx1Q76QP3RPiyw1gAiW+6NU
-         hqkQ==
-X-Gm-Message-State: AOAM5318HNiu3eei87+XvRHT8BIsg7px5HFXcTFgaLT0vt1XiNhOKqdq
-        VciMN6Bvldr4XgusCO/9fxwpTGCYkiU=
-X-Google-Smtp-Source: ABdhPJwDjWcRRWvvdt96aIeYPGRR0KJHG7TVqzSKddHHCzlbLMyz4bjc82k80czSwB5ZBsLM2cx8Wg==
-X-Received: by 2002:ac2:4245:: with SMTP id m5mr16850937lfl.168.1617023261449;
-        Mon, 29 Mar 2021 06:07:41 -0700 (PDT)
-Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id d22sm1828163lfm.267.2021.03.29.06.07.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Mar 2021 06:07:40 -0700 (PDT)
-Subject: Re: [PATCH v1 3/3] partitions/efi: Support gpt_sector parameter
- needed by NVIDIA Tegra devices
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
-        David Heidelberg <david@ixit.cz>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ion Agorria <AG0RRIA@yahoo.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>
-References: <20210327212100.3834-1-digetx@gmail.com>
- <20210327212100.3834-4-digetx@gmail.com>
- <20210329061850.GA258398@infradead.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4666087a-05a5-1065-da17-8dc86248b338@gmail.com>
-Date:   Mon, 29 Mar 2021 16:07:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mon, 29 Mar 2021 09:39:14 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9EA2C061764
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Mar 2021 06:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=yl67bH94qy5Pt9ciMAHMDbLn2WQgXsoBoWQ8GOH12R4=; b=uF4MKBQKH3tsmSV6R3miwzTWnR
+        c5e8ZijmAt19HeNUmo5G4rr3mF4P/fbM1XiQYXxFUeEgLRT/0daPOH5AHl3tcgThkMvgx+Yg3aQbH
+        AHpRgNeAnStrFyuk0auI+pWw7ZPklp4BL/llXqE0Jtu26r2bbcvMKPllCYxZeta7L21RePlHM9nCQ
+        zZfZP1jV1Th7ZPCVFb/ppS/2AnFtK7HGd3poHEPcw/XoRWT5cn+TCChMTwS+FOW2/+LcLxIIbpLjz
+        RIcyfggNcomd0HbQat6TJwgSu9kWtAzuTVlAD78Ag5kfqdtLURupHK66HxoVFYCB1+HJh910vW7RD
+        ugIcyXPg==;
+Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <mperttunen@nvidia.com>)
+        id 1lQs6n-0000Yj-AG; Mon, 29 Mar 2021 16:39:09 +0300
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v6 00/10] Fixes and cleanups for Host1x
+Date:   Mon, 29 Mar 2021 16:38:26 +0300
+Message-Id: <20210329133836.2115236-1-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-In-Reply-To: <20210329061850.GA258398@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 84.249.134.236
+X-SA-Exim-Mail-From: mperttunen@nvidia.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-29.03.2021 09:18, Christoph Hellwig пишет:
-> On Sun, Mar 28, 2021 at 12:21:00AM +0300, Dmitry Osipenko wrote:
->> All NVIDIA Tegra20..124 Android devices use proprietary bootloader
->> which supplies the gpt_sector=<sector> kernel cmdline parameter that
->> should be used for looking up the EFI partition table on internal EMMC
->> storage.  If the kernel cmdline parameter isn't supplied, then the
->> partition is expected to be placed around the last but one sector of EMMC.
->>
->> Apparently this was done in order to hide the PT from a usual userspace
->> tools since EFI entry exists only for compatibility with a Linux kernel,
-> 
-> That's weird, because nothin in Linux relies in EFI partition tables.
-> 
->> while a custom proprietary partition table is what is really used by
->> these Android devices, thus these tools may corrupt the real PT, making
->> device unbootable and very difficult to restore.
->>
->> Add support for the gpt_sector cmdline parameter which will be used
->> for finding EFI entry on internal EMMC storage of NVIDIA Tegra20+ devices.
-> 
-> Didn't we plan to just support the actual partition table format insted?
-> 
+This is the first part of the Host1x/TegraDRM UAPI series, split out
+into a separate series that should be easier to merge. It contains
+a number of Host1x-related cleanups and fixes. In addition to the
+previous series there are a couple of new fixes.
 
-Ideally we need to support both forced-gpt and tegra-partition.  At
-first we should check whether GPT entry exists and use it on success,
-otherwise fall back to tegra-partition.  This will allow to properly
-support all kind of devices.  The majority of devices have the GPT
-entry, so will be good to support it at least.
+Tested on Jetson TX2.
 
-My understanding that this all require involvement from Jens Axboe in
-order to get the patches merged.  Previously he didn't show interest to
-any of the patches and my assumption was that he didn't want to have
-another partition, although I don't know for sure because he never answered.
+Thanks,
+Mikko
 
-If you could help with reviewing and applying of the patches, then I
-will be happy to try again with re-sending a full patchset, which
-includes the tegra-partition support.
+Jon Hunter (1):
+  gpu: host1x: Fix Tegra194 syncpt interrupt threshold
+
+Mikko Perttunen (9):
+  gpu: host1x: Use different lock classes for each client
+  gpu: host1x: Allow syncpoints without associated client
+  gpu: host1x: Show number of pending waiters in debugfs
+  gpu: host1x: Remove cancelled waiters immediately
+  gpu: host1x: Use HW-equivalent syncpoint expiration check
+  gpu: host1x: Cleanup and refcounting for syncpoints
+  gpu: host1x: Reset max value when freeing a syncpoint
+  gpu: host1x: Reserve VBLANK syncpoints at initialization
+  gpu: host1x: Assign intr waiter inside lock
+
+ drivers/gpu/drm/tegra/dc.c             |  10 +-
+ drivers/gpu/drm/tegra/drm.c            |  14 +-
+ drivers/gpu/drm/tegra/gr2d.c           |   4 +-
+ drivers/gpu/drm/tegra/gr3d.c           |   4 +-
+ drivers/gpu/drm/tegra/vic.c            |   4 +-
+ drivers/gpu/host1x/bus.c               |  10 +-
+ drivers/gpu/host1x/cdma.c              |  11 +-
+ drivers/gpu/host1x/debug.c             |  14 +-
+ drivers/gpu/host1x/dev.c               |   6 +
+ drivers/gpu/host1x/dev.h               |  13 +-
+ drivers/gpu/host1x/hw/cdma_hw.c        |   2 +-
+ drivers/gpu/host1x/hw/channel_hw.c     |  10 +-
+ drivers/gpu/host1x/hw/debug_hw.c       |   2 +-
+ drivers/gpu/host1x/hw/hw_host1x07_vm.h |   2 +-
+ drivers/gpu/host1x/intr.c              |  28 +++-
+ drivers/gpu/host1x/intr.h              |   4 +-
+ drivers/gpu/host1x/job.c               |   5 +-
+ drivers/gpu/host1x/syncpt.c            | 202 +++++++++++++++----------
+ drivers/gpu/host1x/syncpt.h            |   4 +-
+ drivers/staging/media/tegra-video/vi.c |   4 +-
+ include/linux/host1x.h                 |  23 ++-
+ 21 files changed, 235 insertions(+), 141 deletions(-)
+
+-- 
+2.30.1
+
