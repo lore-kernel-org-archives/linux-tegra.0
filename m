@@ -2,83 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360F1C433DB
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 19:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38181C433E9
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 19:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D94E76198A
-	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 19:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1553E6198A
+	for <linux-tegra@archiver.kernel.org>; Mon, 29 Mar 2021 19:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbhC2TQJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 29 Mar 2021 15:16:09 -0400
-Received: from sauhun.de ([88.99.104.3]:40786 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230359AbhC2TPi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 29 Mar 2021 15:15:38 -0400
-Received: from localhost (p5486ce89.dip0.t-ipconnect.de [84.134.206.137])
-        by pokefinder.org (Postfix) with ESMTPSA id 404B72C00E6;
-        Mon, 29 Mar 2021 21:15:32 +0200 (CEST)
-Date:   Mon, 29 Mar 2021 21:15:31 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        id S231749AbhC2T23 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 29 Mar 2021 15:28:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230346AbhC2T2Q (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 29 Mar 2021 15:28:16 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888BBC061574;
+        Mon, 29 Mar 2021 12:28:16 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id u4so17218159ljo.6;
+        Mon, 29 Mar 2021 12:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=GQrZO+7mqiYzqAmSSzQn1gDRn2Mbnb/SUnnWgNTEkqI=;
+        b=bhpsR/F29ROiyh6PG+lxUa+1SbMauPFwXd6L4MfGriKfW+iFzZrL6cCEV+JEPVAPhL
+         FI93iR9dw5yH6DtdcqKRuwE2O7S+VtQDdJ09irdCEUYg0LN45Ch312oKEQMFnUEzfPmC
+         7jggbtriBu65br6BAf0w/nyjamLV0KkAh2R7xGsPfhlrsdlEMACjG6Le72E7sEoyVf9G
+         Ij9Z6sqTLwLXmfI+M34KqilMht+w3V5LKge7WFBwB+/aU07gShDJ/JKCjUTRfBUm05l/
+         kKfwX0R6Nxi1kaUzzgRQTUczMYNjiZTPepfcN1qrCPv8XB0lKnNjTTrw5kfxACpbXxet
+         Tx8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GQrZO+7mqiYzqAmSSzQn1gDRn2Mbnb/SUnnWgNTEkqI=;
+        b=ZfwkTk0+ieUd3gyv+5hSLAvzBcKNGt4mG22fbzDe2DBZzFfWVk/DAqjQzhxSDeWpS5
+         0nSEw1uOEMY/CI6v1jiBC/D/cZR+96lAJwRv84jHMtnOVoWXvaNIaB3geduNSjcUGgna
+         KsZY7eCRZbWTvV32BK6ZE6nnz0zp5zPmEE4xWcOmFXxhBh9ALa+C3vD9gbDXT61TYPLy
+         RbFLLjIDpc17eeotILMJgRkUy6FNq96SkQrdw3VWoZaF/YmTClZNnPzumR8X+gDEedcy
+         WLnwdb/o7+dkwLSS5etYMvREnP13TBbDwPNcKTp3L+a39nTBYc1DiNDsJw+Zkin9pP+k
+         7MDQ==
+X-Gm-Message-State: AOAM531R5uh6MNf15wiy32TkA9d7jdo11HatfoCUiyvVIxnkjPc01ZQI
+        mJ+pz4uH/zoVcp6QmVhRtmiHjnCJU1E=
+X-Google-Smtp-Source: ABdhPJyNHRDzvCjP4qOOKnZzqdYALof2GTGF9Gkmzwk/dS1OSaDbhKGf1V+NMI9KvKs0wcSYp9viCA==
+X-Received: by 2002:a2e:a48f:: with SMTP id h15mr19093669lji.234.1617046094927;
+        Mon, 29 Mar 2021 12:28:14 -0700 (PDT)
+Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id i123sm2526715lji.108.2021.03.29.12.28.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Mar 2021 12:28:14 -0700 (PDT)
+Subject: Re: [PATCH v1] i2c: tegra: Improve handling of i2c_recover_bus()
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: tegra: Improve handling of i2c_recover_bus()
-Message-ID: <20210329191531.GA6654@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20210329190546.24869-1-digetx@gmail.com>
+ <20210329191531.GA6654@kunai>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7b5e8060-abee-a9e1-1c88-78f0a20e2e96@gmail.com>
+Date:   Mon, 29 Mar 2021 22:28:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <20210329190546.24869-1-digetx@gmail.com>
+In-Reply-To: <20210329191531.GA6654@kunai>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+29.03.2021 22:15, Wolfram Sang пишет:
+> On Mon, Mar 29, 2021 at 10:05:46PM +0300, Dmitry Osipenko wrote:
+>> The i2c_recover_bus() returns -EOPNOTSUPP if bus recovery isn't wired up,
+>> which the case for older Tegra SoCs at the moment. This error code is then
+>> propagated to I2C client and might be confusing, thus return -EIO instead.
+> 
+> Hmm, makes sense. Maybe we should change it in the core? But with EBUSY
+> instead?
+> 
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Mar 29, 2021 at 10:05:46PM +0300, Dmitry Osipenko wrote:
-> The i2c_recover_bus() returns -EOPNOTSUPP if bus recovery isn't wired up,
-> which the case for older Tegra SoCs at the moment. This error code is then
-> propagated to I2C client and might be confusing, thus return -EIO instead.
-
-Hmm, makes sense. Maybe we should change it in the core? But with EBUSY
-instead?
-
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBiJ08ACgkQFA3kzBSg
-KbZXcQ//b4NDYu49tVixZRw1UuqFH90MPZl+g5ZducdspzSu8V1HRKEV1LZb980q
-JbVxhTb0b1VImvGtmR2uaRTTb2SKGEBbQ8CzlOz9st3PVvukOpycQZSyHNTTJv0p
-m/mYzu9VPrH4HTPqLmXRL2SPD4AGlaFTl+qXr78x6HFRb6u125a4C9zekEAYdi5P
-t4dFBsyEaswHgbGD7W4eAWzav7zFPmmJjjQsvC96gyo/muGplZQEjta33Pi6vSjF
-7xx3R4To8Tbqnq+2pk07IP7hnCann5tsePHcXqbgRxAgCGStNNHCoJxfyUHO5V0t
-flHD//nE0snrOLNBx5JE/wq0UxVefAg+kesDL4YI353CAyN4LX/WhhA2W8j7PQ1T
-9z3MBiiNxFBUSTm3Ck5Ps6CfK2pT9PgJyhOQjoBaBHT06V6RL2cZJdlD+GDzUvXa
-tqfIe0Iu83ZBYb3BdnB8xXIW4MTVSjDNW/8CAWsoMxeFBnTBKnBE6kw8Dh9GGo9A
-B8ZVFj5UmPGh/Gc/eNEVIrPfqacvaqQt1ucAcJY1SmmLw3p2okIwKElgNnIhM/WP
-M5cyUjyGwFUsdEnWiZrusvta0iel+PG75p8W/EpfgRCt0hLLRFUA+U9NHzOigrnl
-LE+lpnas/0ovqKGQ/cs7gv4aH7eOu7PaD8zdNgMaVWvHMen7cf0=
-=nuLF
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
+This also should be a good variant. I'll update the patch, thanks.
