@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECE0C43333
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21F1C433FC
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06C39619D6
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC407619D9
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbhC3PMq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60046 "EHLO mail.kernel.org"
+        id S232392AbhC3PMZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:12:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232261AbhC3PMA (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:12:00 -0400
+        id S231655AbhC3PLx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 11:11:53 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C436B619D2;
-        Tue, 30 Mar 2021 15:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35B3B619CD;
+        Tue, 30 Mar 2021 15:11:52 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1lRG2A-004i6i-5O; Tue, 30 Mar 2021 16:11:58 +0100
+        id 1lRG22-004i6i-4k; Tue, 30 Mar 2021 16:11:50 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -52,12 +52,10 @@ Cc:     Frank Wunderlich <frank-w@public-files.de>,
         linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v3 08/14] PCI/MSI: Kill msi_controller structure
-Date:   Tue, 30 Mar 2021 16:11:39 +0100
-Message-Id: <20210330151145.997953-9-maz@kernel.org>
+Subject: [PATCH v3 00/14] PCI/MSI: Getting rid of msi_controller, and other cleanups
+Date:   Tue, 30 Mar 2021 16:11:31 +0100
+Message-Id: <20210330151145.997953-1-maz@kernel.org>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210330151145.997953-1-maz@kernel.org>
-References: <20210330151145.997953-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
@@ -68,52 +66,61 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-msi_controller had a good, long life as the abstraction for
-a driver providing MSIs to PCI devices. But it has been replaced
-in all drivers by the more expressive generic MSI framework.
+This is a respin of the series described at [1].
 
-Farewell, struct msi_controller.
+* From v2 [2]:
+  - Fixed the Xilinx driver, thanks to Bharat for testing it
+  - Dropped the no_msi attribute, and solely rely on msi_domain, which
+    has the same effect for the only platform that was using it.
+  - Fixed compilation on architectures that do not select the generic
+    MSI support
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- include/linux/msi.h | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+* From v1:
+  - Extracted the changes dealing with the MSI capture address
+    for rcar and xilinx and moved them to separate patches
+  - Changed the rcar code to cope with c4e0fec2f7ee ("PCI: rcar: Always
+    allocate MSI addresses in 32bit space")
+  - Fixed rcar resume code
+  - Reworked commit messages
+  - Rebased onto v5.12-rc4
+  - Collected Acks, and TBs, with thanks.
 
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index aef35fd1cf11..3f21e77b57b7 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -240,8 +240,7 @@ void pci_msi_unmask_irq(struct irq_data *data);
- /*
-  * The arch hooks to setup up msi irqs. Default functions are implemented
-  * as weak symbols so that they /can/ be overriden by architecture specific
-- * code if needed. These hooks must be enabled by the architecture or by
-- * drivers which depend on them via msi_controller based MSI handling.
-+ * code if needed. These hooks can only be enabled by the architecture.
-  *
-  * If CONFIG_PCI_MSI_ARCH_FALLBACKS is not selected they are replaced by
-  * stubs with warnings.
-@@ -272,19 +271,6 @@ static inline void arch_teardown_msi_irqs(struct pci_dev *dev)
- void arch_restore_msi_irqs(struct pci_dev *dev);
- void default_restore_msi_irqs(struct pci_dev *dev);
- 
--struct msi_controller {
--	struct module *owner;
--	struct device *dev;
--	struct device_node *of_node;
--	struct list_head list;
--
--	int (*setup_irq)(struct msi_controller *chip, struct pci_dev *dev,
--			 struct msi_desc *desc);
--	int (*setup_irqs)(struct msi_controller *chip, struct pci_dev *dev,
--			  int nvec, int type);
--	void (*teardown_irq)(struct msi_controller *chip, unsigned int irq);
--};
--
- #ifdef CONFIG_GENERIC_MSI_IRQ_DOMAIN
- 
- #include <linux/irqhandler.h>
+[1] https://lore.kernel.org/r/20210225151023.3642391-1-maz@kernel.org
+[2] https://lore.kernel.org/r/20210322184614.802565-1-maz@kernel.org
+
+Marc Zyngier (13):
+  PCI: tegra: Convert to MSI domains
+  PCI: rcar: Don't allocate extra memory for the MSI capture address
+  PCI: rcar: Convert to MSI domains
+  PCI: xilinx: Don't allocate extra memory for the MSI capture address
+  PCI: xilinx: Convert to MSI domains
+  PCI: hv: Drop msi_controller structure
+  PCI/MSI: Drop use of msi_controller from core code
+  PCI/MSI: Kill msi_controller structure
+  PCI/MSI: Kill default_teardown_msi_irqs()
+  PCI/MSI: Let PCI host bridges declare their reliance on MSI domains
+  PCI/MSI: Make pci_host_common_probe() declare its reliance on MSI
+    domains
+  PCI/MSI: Document the various ways of ending up with NO_MSI
+  PCI: Refactor HT advertising of NO_MSI flag
+
+Thomas Gleixner (1):
+  PCI: mediatek: Advertise lack of built-in MSI handling
+
+ drivers/pci/controller/Kconfig           |   4 +-
+ drivers/pci/controller/pci-host-common.c |   1 +
+ drivers/pci/controller/pci-hyperv.c      |   4 -
+ drivers/pci/controller/pci-tegra.c       | 343 ++++++++++++----------
+ drivers/pci/controller/pcie-mediatek.c   |   4 +
+ drivers/pci/controller/pcie-rcar-host.c  | 356 +++++++++++------------
+ drivers/pci/controller/pcie-xilinx.c     | 246 +++++++---------
+ drivers/pci/msi.c                        |  45 +--
+ drivers/pci/probe.c                      |   4 +-
+ drivers/pci/quirks.c                     |  15 +-
+ include/linux/msi.h                      |  17 +-
+ include/linux/pci.h                      |   3 +-
+ 12 files changed, 484 insertions(+), 558 deletions(-)
+
 -- 
 2.29.2
 
