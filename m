@@ -2,159 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788F5C433E0
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE959C433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2F2619D6
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CEF619D4
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:33:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232059AbhC3P3e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:29:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:38796 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232240AbhC3P3G (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:29:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A653C31B;
-        Tue, 30 Mar 2021 08:29:05 -0700 (PDT)
-Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 263A73F719;
-        Tue, 30 Mar 2021 08:29:02 -0700 (PDT)
-Date:   Tue, 30 Mar 2021 16:28:57 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Marc Zyngier <maz@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
+        id S232429AbhC3Pcs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231532AbhC3PcX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 11:32:23 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BEF7C061574;
+        Tue, 30 Mar 2021 08:32:23 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id i26so24360738lfl.1;
+        Tue, 30 Mar 2021 08:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c2IZxiP/PHTUNylXu7cGThAF7WUnRTJb00OUl3ALDOE=;
+        b=V2WsCB9e+V4zvZcDi+ZiIVqL966DXzs5U1s6M1jZTGaLKgvlC4B/LL1fIdX3obzY5W
+         v4v0f+gQGfhvbjdqAgdmMnbQZf+8dKGXGlHa/ka+pQ9QgXqrDExWLpyiw6e0GiOzcEh1
+         ME0gJCTG+4vRvTSzZEqoq4l0W7gHBxSg6pzf9fGVt0bl6Du0r4Xy7mOpqtxDuOLN5TUz
+         ImgQ48ySQElZD0rVxrIn7Otmrceu+MzNz46m+b94mRa/tPr8IBXnOam6VeBNOV7M/tXl
+         SrqaffD19nG6GxBYX/ayZMP6/B3irEi+NYyWYvORNr5IXiKuGFIlXqdXf0eW1QZc3Bj4
+         GDuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c2IZxiP/PHTUNylXu7cGThAF7WUnRTJb00OUl3ALDOE=;
+        b=WcXJ+ABgCbuU25VTcENvVpyVq5KS9trgMne+AIkYKskk32tFumSvT9J8gXeJq4avSu
+         qhqf8UV79eBMHYP+zHyTAPCA3jOcoXq2Acer4eDyRCPN27bb4hxOusxxk6x1V/hZYby8
+         d53CVgl+xKYCX7mu2I+htcamQTjHX4rFBXsKJoCbc2p0ZEkDps95GwnQCJvw73GF0BqW
+         0QgYy9AXZh4vRII1f7X9TedtigFjdmGDxYbqOZZHVFZLsIzlbyt4/HxJLZVAGrVaQOS6
+         PCYhUU/j14U6nPvZ3N6DD4PzXTDTJTjWImwatNnhBU4VyczqB9dvD8SekvbSJMh6+lIq
+         VywQ==
+X-Gm-Message-State: AOAM532R1zYxEOk7K2Rbhi4sSV7q83BDbVc9xQCpx5HksdWCCCGDNOv8
+        UG7BIoO76taZWvTeU+h1tDe2ZQvfuks=
+X-Google-Smtp-Source: ABdhPJzl+nrn7AEc/akvrf/8yMHU22UkGVLpS22NsjqkyIingW81F7l/JaMXP09VghP8+TQqhk8mfQ==
+X-Received: by 2002:ac2:4c29:: with SMTP id u9mr16310671lfq.164.1617118341879;
+        Tue, 30 Mar 2021 08:32:21 -0700 (PDT)
+Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
+        by smtp.googlemail.com with ESMTPSA id j22sm225899lfh.31.2021.03.30.08.32.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Mar 2021 08:32:21 -0700 (PDT)
+Subject: Re: [PATCH v1 5/6] dt-bindings: memory: tegra20: emc: Convert to
+ schema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Bharat Kumar Gogada <bharatku@xilinx.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
- MSI capture address
-Message-ID: <20210330152857.GA27749@lpieralisi>
-References: <20210330151145.997953-1-maz@kernel.org>
- <20210330151145.997953-3-maz@kernel.org>
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20210329194602.17049-1-digetx@gmail.com>
+ <20210329194602.17049-6-digetx@gmail.com>
+ <7e45375c-3e24-4fc1-5776-190db32681e5@canonical.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2ded3a2d-6487-6e6d-d211-0cae45f4f948@gmail.com>
+Date:   Tue, 30 Mar 2021 18:32:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210330151145.997953-3-maz@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <7e45375c-3e24-4fc1-5776-190db32681e5@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Mar 30, 2021 at 04:11:33PM +0100, Marc Zyngier wrote:
-> A long cargo-culted behaviour of PCI drivers is to allocate memory
-> to obtain an address that is fed to the controller as the MSI
-> capture address (i.e. the MSI doorbell).
+30.03.2021 11:48, Krzysztof Kozlowski пишет:
+>> +  nvidia,use-ram-code:
+>> +    type: boolean
+>> +    description:
+>> +      If present, the emc-tables@ sub-nodes will be addressed.
+>> +
+>> +patternProperties:
+>> +  "^emc-table@[0-9]+$":
+> This might not be easy but you should add constraints when emc-table and
+> emc-tables are expected. The schema should check if proper node is used
+> depending on "nvidia,use-ram-code".
 > 
-> But there is no actual requirement for this address to be RAM.
-> All it needs to be is a suitable aligned address that will
-> *not* be DMA'd to.
-> 
-> Since the rcar platform already has a requirement that this
-> address should be in the first 4GB of the physical address space,
-> use the controller's own base address as the capture address.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
 
-Marek, Yoshihiro,
+I'm afraid this is not doable. If you have an example how to do this,
+please share it with me.
 
-can you test this patch please and report back ? It is not fundamental
-for the rest of the series (ie the rest of the series does not depend on
-it) and we can still merge the series without it but it would be good if
-you can review and test anyway.
-
-I'd like to merge this series into -next shortly.
-
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> index a728e8f9ad3c..ce952403e22c 100644
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -36,7 +36,6 @@ struct rcar_msi {
->  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
->  	struct irq_domain *domain;
->  	struct msi_controller chip;
-> -	unsigned long pages;
->  	struct mutex lock;
->  	int irq1;
->  	int irq2;
-> @@ -680,14 +679,15 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie_host *host)
->  static void rcar_pcie_hw_enable_msi(struct rcar_pcie_host *host)
->  {
->  	struct rcar_pcie *pcie = &host->pcie;
-> -	struct rcar_msi *msi = &host->msi;
-> -	unsigned long base;
-> +	struct device *dev = pcie->dev;
-> +	struct resource res;
->  
-> -	/* setup MSI data target */
-> -	base = virt_to_phys((void *)msi->pages);
-> +	if (WARN_ON(of_address_to_resource(dev->of_node, 0, &res)))
-> +		return;
->  
-> -	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
-> -	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
-> +	/* setup MSI data target */
-> +	rcar_pci_write_reg(pcie, lower_32_bits(res.start) | MSIFE, PCIEMSIALR);
-> +	rcar_pci_write_reg(pcie, upper_32_bits(res.start), PCIEMSIAUR);
->  
->  	/* enable all MSI interrupts */
->  	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-> @@ -735,7 +735,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
->  	}
->  
->  	/* setup MSI data target */
-> -	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA32, 0);
->  	rcar_pcie_hw_enable_msi(host);
->  
->  	return 0;
-> @@ -748,7 +747,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
->  static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
->  {
->  	struct rcar_pcie *pcie = &host->pcie;
-> -	struct rcar_msi *msi = &host->msi;
->  
->  	/* Disable all MSI interrupts */
->  	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
-> @@ -756,8 +754,6 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
->  	/* Disable address decoding of the MSI interrupt, MSIFE */
->  	rcar_pci_write_reg(pcie, 0, PCIEMSIALR);
->  
-> -	free_pages(msi->pages, 0);
-> -
->  	rcar_pcie_unmap_msi(host);
->  }
->  
-> -- 
-> 2.29.2
-> 
+I see that there is a "dependencies:", but it doesn't work with the
+patterns, IIUC.
