@@ -2,97 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC84C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788F5C433E0
 	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0E4619B9
+	by mail.kernel.org (Postfix) with ESMTP id 4D2F2619D6
 	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232274AbhC3P3e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232059AbhC3P3e (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 30 Mar 2021 11:29:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231636AbhC3P3Y (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:29:24 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF19C061574;
-        Tue, 30 Mar 2021 08:29:23 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id b14so24396030lfv.8;
-        Tue, 30 Mar 2021 08:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OSsJ/4+KgnHiu5gezRczsING3scAbDi33DDKOpy2Q28=;
-        b=dOTBZNhnDGa7nDdY5+QtDDh48H+hcfPpTnDpCUbV/Fpi47iVCM5+kQe7Bd5hH+8/oh
-         nVvlCz204RTDlF9lWgnzhBSFr4oOYA3ONB75zwe5dISLTRY9o/3Xdwjjm87GEtIMNrXw
-         tpYBDG4VZEfS7dTli+6+2dVQ3mw5TtZ70CqIdNpKO6Z8juq5BYmDNgC0SWI3pXzFSBLC
-         GgLdRqe2dp/BQ/W4SRNGzUVmKVdyxKw/SBg3pKbK6AYdKAH4nPbHD/Fan4vP/1u8za5C
-         UpEXUraQAXOwOZmTT9xPq5QG0vcQAF9aSPbbrTQZ0XrPki/5KB41lwM8EHtz0Mk+N4Ps
-         LW6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OSsJ/4+KgnHiu5gezRczsING3scAbDi33DDKOpy2Q28=;
-        b=L3iztkydrbC/sX5EgfoCVtjTWzZNG/wZpFR//sbOz5loQ2RF5uyNLvC0TzP3S6z38S
-         L++OgQHi8mB9hIMQyo0DoOpTcXfn2OEz9hh28/NTabPktTULJf2mbDTqrlcojcyCfnDc
-         cOAD6JIJxPN7d1OSj1PuY7pYm0HXSq+YRaiCovWquzasc9KpkE7//uQKlbobhXwNpm4e
-         +UmHbA0Gj4vmo9epYwseN2nGIEuq6QK9NDXbkmevXZUtJ6n2o2ztVCld5nsiAVgrUggQ
-         oY3pZ8e3m6bwG6LhHBGV54Mvvdo121z6WeYizxKd9xD8w1+T6dwEYMegj3sSzlDrJJWW
-         qvng==
-X-Gm-Message-State: AOAM532/5WY4F8gapYq52/qFefKaojG/qzb/OKXAaehPlSoYaDt6+sCw
-        xDa+QOGPcrvOTS6FP3OyeC9Unit7krs=
-X-Google-Smtp-Source: ABdhPJyKCU1iIoyVTxHNos8jN66if7O3aIGQJzgxIM5LJMHGkYFrvzuq6bdiWgUgY2yvRdMUYeADPg==
-X-Received: by 2002:ac2:41d4:: with SMTP id d20mr19473965lfi.213.1617118162380;
-        Tue, 30 Mar 2021 08:29:22 -0700 (PDT)
-Received: from ?IPv6:2a00:1370:814d:b259:a10:76ff:fe69:21b6? ([2a00:1370:814d:b259:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id z7sm2743362ljo.64.2021.03.30.08.29.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Mar 2021 08:29:22 -0700 (PDT)
-Subject: Re: [PATCH v1 5/6] dt-bindings: memory: tegra20: emc: Convert to
- schema
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+Received: from foss.arm.com ([217.140.110.172]:38796 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232240AbhC3P3G (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 11:29:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A653C31B;
+        Tue, 30 Mar 2021 08:29:05 -0700 (PDT)
+Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 263A73F719;
+        Tue, 30 Mar 2021 08:29:02 -0700 (PDT)
+Date:   Tue, 30 Mar 2021 16:28:57 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Marc Zyngier <maz@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20210329194602.17049-1-digetx@gmail.com>
- <20210329194602.17049-6-digetx@gmail.com>
- <7e45375c-3e24-4fc1-5776-190db32681e5@canonical.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <989c3c70-3f0c-abff-ed07-c2dea3b66a2d@gmail.com>
-Date:   Tue, 30 Mar 2021 18:29:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Bharat Kumar Gogada <bharatku@xilinx.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
+ MSI capture address
+Message-ID: <20210330152857.GA27749@lpieralisi>
+References: <20210330151145.997953-1-maz@kernel.org>
+ <20210330151145.997953-3-maz@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7e45375c-3e24-4fc1-5776-190db32681e5@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210330151145.997953-3-maz@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-30.03.2021 11:48, Krzysztof Kozlowski пишет:
->> +  power-domains:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle of the SoC "core" power domain.
-> I think the core checks the type, so you only need to limit max items.
+On Tue, Mar 30, 2021 at 04:11:33PM +0100, Marc Zyngier wrote:
+> A long cargo-culted behaviour of PCI drivers is to allocate memory
+> to obtain an address that is fed to the controller as the MSI
+> capture address (i.e. the MSI doorbell).
 > 
+> But there is no actual requirement for this address to be RAM.
+> All it needs to be is a suitable aligned address that will
+> *not* be DMA'd to.
+> 
+> Since the rcar platform already has a requirement that this
+> address should be in the first 4GB of the physical address space,
+> use the controller's own base address as the capture address.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
 
-It's a bit confusing that both variants work and it's not apparent what
-variant is better.
+Marek, Yoshihiro,
 
-I actually used the max items limit initially and then changed it to
-$ref phandle because it appeared to me that it's a better choice. I'll
-switch back to the limit in v2, thanks.
+can you test this patch please and report back ? It is not fundamental
+for the rest of the series (ie the rest of the series does not depend on
+it) and we can still merge the series without it but it would be good if
+you can review and test anyway.
+
+I'd like to merge this series into -next shortly.
+
+Thanks,
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+> index a728e8f9ad3c..ce952403e22c 100644
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -36,7 +36,6 @@ struct rcar_msi {
+>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+>  	struct irq_domain *domain;
+>  	struct msi_controller chip;
+> -	unsigned long pages;
+>  	struct mutex lock;
+>  	int irq1;
+>  	int irq2;
+> @@ -680,14 +679,15 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie_host *host)
+>  static void rcar_pcie_hw_enable_msi(struct rcar_pcie_host *host)
+>  {
+>  	struct rcar_pcie *pcie = &host->pcie;
+> -	struct rcar_msi *msi = &host->msi;
+> -	unsigned long base;
+> +	struct device *dev = pcie->dev;
+> +	struct resource res;
+>  
+> -	/* setup MSI data target */
+> -	base = virt_to_phys((void *)msi->pages);
+> +	if (WARN_ON(of_address_to_resource(dev->of_node, 0, &res)))
+> +		return;
+>  
+> -	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
+> -	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
+> +	/* setup MSI data target */
+> +	rcar_pci_write_reg(pcie, lower_32_bits(res.start) | MSIFE, PCIEMSIALR);
+> +	rcar_pci_write_reg(pcie, upper_32_bits(res.start), PCIEMSIAUR);
+>  
+>  	/* enable all MSI interrupts */
+>  	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
+> @@ -735,7 +735,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+>  	}
+>  
+>  	/* setup MSI data target */
+> -	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA32, 0);
+>  	rcar_pcie_hw_enable_msi(host);
+>  
+>  	return 0;
+> @@ -748,7 +747,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+>  static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
+>  {
+>  	struct rcar_pcie *pcie = &host->pcie;
+> -	struct rcar_msi *msi = &host->msi;
+>  
+>  	/* Disable all MSI interrupts */
+>  	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
+> @@ -756,8 +754,6 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
+>  	/* Disable address decoding of the MSI interrupt, MSIFE */
+>  	rcar_pci_write_reg(pcie, 0, PCIEMSIALR);
+>  
+> -	free_pages(msi->pages, 0);
+> -
+>  	rcar_pcie_unmap_msi(host);
+>  }
+>  
+> -- 
+> 2.29.2
+> 
