@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6E9C433C1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E21C433E3
 	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 23:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08D5B619CA
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 23:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D20A619DC
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 23:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233026AbhC3XF3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 19:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        id S233132AbhC3XFa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 19:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233092AbhC3XFT (ORCPT
+        with ESMTP id S233093AbhC3XFU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 19:05:19 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B5EC061762;
-        Tue, 30 Mar 2021 16:05:18 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id s2so13155299qtx.10;
-        Tue, 30 Mar 2021 16:05:18 -0700 (PDT)
+        Tue, 30 Mar 2021 19:05:20 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F88CC061574;
+        Tue, 30 Mar 2021 16:05:20 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id 7so17620203qka.7;
+        Tue, 30 Mar 2021 16:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hM3oGGoU1XkWBbm6zDENhRNBn2pOgCUo+5XYNt0fTmQ=;
-        b=tAvQD6Or/Bw9+JB2UesVPL106yzmM4wE+EMgRYlM42jvxraIBaGX8i+kjuc6sVVBbj
-         lqyuB1MXOImr7IB4NquJrZRrJxsYcWHGxI1RkqIN5wCvzQxH8f4HVstbNBY1PdEBPBIZ
-         rLEfE9BNfJOKmATdTTKqipLW8JRjvK228nuplkGK5ybvHCsRGEmPSqRRzpD1tDw1TtnS
-         umkvhdD8qG5k4ow4vgWG36qnMPh/Bv27KqPBT2kjqxAktc1okulguZnNDZROiaXjgWwZ
-         n3dvOf+jtUhsaAT5wbjfqxAJmV0LhvWlwsVHlImm5BLhYiF1MQHKEjZZKL0IE3VW52ot
-         D7Fg==
+        bh=vD7aA50daokeImwQI/Xuv/wV35uFSogSSArZHXkVpXw=;
+        b=MqAir8VAOaL65B4g4ozKoGcvXhnOh/80s/TvA2rdwPF8krxAlGRhiMEq0ngiPLdb+A
+         VdT1kXFKLA4n4+n+ZA/rMF6Ak3fwvpLHTAyPBqlxaQlpe4HHe38O5q2VY3W1W7pgtXS8
+         2JC+tpstL+OQzP6v8LsGuTkE+ww0+WYVgUTO/EdWXLdGRoAC1qGn8KT3guxnpmoGuVB+
+         Vy7KWIX8T5XqherHj4V8RWyPm07wR5h5q0lOtxFztPWqQiFR+ykqjLRdIydFT22zo6wD
+         1nz8FaRTHH3CaQEMdPy5LiTBeiueY4rFPABW7pcmwtniqP/7WjKctwgw36gvDeDCJIV5
+         1gjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hM3oGGoU1XkWBbm6zDENhRNBn2pOgCUo+5XYNt0fTmQ=;
-        b=m+eNWlnqQ5aLh9HGhaBRoCMalvCnTThW9IkwKUqaGcJSvGtjAKGKIEfICqZrRbw8Ep
-         Nt2D2Os+ZQUW1l+pGWdtcsY2Rngg1A5L9jQIUlZWGvvGeqPFiHG/KEGAOqSyo60/HuYB
-         dPG1+Re9hudHQpM36ugBdxABhOJtSPs6zf5KzvfI0/AEPUKNtng6uhJEmM9P/2p9uyo+
-         19/WwHxicuWViacNCl7hGbykUiAKIYhM8DRFMBAc72QdMTF1an5Hit4gmBITRXeFYydG
-         anp215dj4+yhaYXQCaQsgNWavljL7JD2rw8UsWZM/OmVbyUsHPk8tYRaFmIz4EQfSZnE
-         vzcQ==
-X-Gm-Message-State: AOAM531pOJ7LO26ZTSPZZSyY3USbpFQEUkaS9jGtFjRrCFFmbzn8PiSz
-        D+DEDfqfNrsZDNJzk2dQrTk=
-X-Google-Smtp-Source: ABdhPJzH6PK1fDnceudOBLmD65OS7s8i8QLKp/hZ3qUZ9FrX8lYCTQEnq80jRmGj1/h97TBzv9HX2w==
-X-Received: by 2002:ac8:7951:: with SMTP id r17mr127118qtt.207.1617145517487;
-        Tue, 30 Mar 2021 16:05:17 -0700 (PDT)
+        bh=vD7aA50daokeImwQI/Xuv/wV35uFSogSSArZHXkVpXw=;
+        b=bD0GmaegB1VMQhoPBIli+XPeZge+OHlFu8WJu0Ai/u6dqON47xUAMfPdglAZnay69f
+         4ffl1Edu+N08Sbk9/VCJKN6pJ0I/FsbxX0SQcUXxQNtxIo57Jade8jiTrV0DVmh5VHzn
+         NzypiVf4xhYSw5MYZiY2HpiR3saU+Zhc7czjWblr7oqAppLnNS8pNIE1WZFrkKL7dR2d
+         hff6ljegI87iyD5kksU69oycZsi8B56bhzOMVhQesyMx3rm9+jqhbQAtiuH027LPMgAU
+         dZ7eSkaFxuVpOo3WiARH5vt4jHud2Rmj8M4LZrgwlMOShZFJ/dj3aNVSPP+stiJzfxUr
+         m2SQ==
+X-Gm-Message-State: AOAM532jzlISBd43xLukjsKxWu6Flez2mY4n+CiKoADgegDbJWgRiSAv
+        IFAhfiKO6D9Z1pdF8Wyt1nmj5EV6SYI=
+X-Google-Smtp-Source: ABdhPJwKDAX9PJmdWpyX7H4JrqUrvt8DXbd3FGqPIdAaJcaGE5kGnEbINmXluuR/7TSeRzEnzLcGmA==
+X-Received: by 2002:a37:7985:: with SMTP id u127mr587652qkc.333.1617145519481;
+        Tue, 30 Mar 2021 16:05:19 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-98.dynamic.spd-mgts.ru. [109.252.193.98])
-        by smtp.gmail.com with ESMTPSA id 10sm160061qkc.83.2021.03.30.16.05.15
+        by smtp.gmail.com with ESMTPSA id 10sm160061qkc.83.2021.03.30.16.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Mar 2021 16:05:17 -0700 (PDT)
+        Tue, 30 Mar 2021 16:05:19 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 1/6] dt-bindings: memory: tegra20: emc: Replace core regulator with power domain
-Date:   Wed, 31 Mar 2021 02:04:40 +0300
-Message-Id: <20210330230445.26619-2-digetx@gmail.com>
+Subject: [PATCH v2 2/6] dt-bindings: memory: tegra30: emc: Replace core regulator with power domain
+Date:   Wed, 31 Mar 2021 02:04:41 +0300
+Message-Id: <20210330230445.26619-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210330230445.26619-1-digetx@gmail.com>
 References: <20210330230445.26619-1-digetx@gmail.com>
@@ -82,33 +82,36 @@ Hence replace the core regulator with the power domain. Note that this
 doesn't affect any existing DTBs because we haven't started to use the
 regulator yet, and thus, it's okay to change it.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../bindings/memory-controllers/nvidia,tegra20-emc.txt        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/memory-controllers/nvidia,tegra30-emc.yaml    | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-index cc443fcf4bec..d2250498c36d 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-@@ -23,7 +23,7 @@ For each opp entry in 'operating-points-v2' table:
- 	matches, the OPP gets enabled.
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+index 0a2e2c0d0fdd..fb6af14cb49c 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+@@ -39,9 +39,10 @@ properties:
+     description:
+       Phandle of the Memory Controller node.
  
- Optional properties:
--- core-supply: Phandle of voltage regulator of the SoC "core" power domain.
-+- power-domains: Phandle of the SoC "core" power domain.
+-  core-supply:
++  power-domains:
++    maxItems: 1
+     description:
+-      Phandle of voltage regulator of the SoC "core" power domain.
++      Phandle of the SoC "core" power domain.
  
- Child device nodes describe the memory settings for different configurations and clock rates.
+   operating-points-v2:
+     description:
+@@ -241,7 +242,7 @@ examples:
  
-@@ -48,7 +48,7 @@ Example:
- 		interrupts = <0 78 0x04>;
- 		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 		nvidia,memory-controller = <&mc>;
--		core-supply = <&core_vdd_reg>;
-+		power-domains = <&domain>;
- 		operating-points-v2 = <&opp_table>;
- 	}
+         nvidia,memory-controller = <&mc>;
+         operating-points-v2 = <&dvfs_opp_table>;
+-        core-supply = <&vdd_core>;
++        power-domains = <&domain>;
+ 
+         #interconnect-cells = <0>;
  
 -- 
 2.30.2
