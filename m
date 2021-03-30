@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7816C4332D
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4453AC433DB
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C5E619CD
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247BF619D4
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232406AbhC3PM1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:12:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59728 "EHLO mail.kernel.org"
+        id S232342AbhC3PMs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232192AbhC3PLy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:11:54 -0400
+        id S232283AbhC3PMH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 11:12:07 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1F61619CB;
-        Tue, 30 Mar 2021 15:11:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5767619D1;
+        Tue, 30 Mar 2021 15:12:00 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1lRG24-004i6i-3Y; Tue, 30 Mar 2021 16:11:52 +0100
+        id 1lRG2B-004i6i-2y; Tue, 30 Mar 2021 16:11:59 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -52,9 +52,9 @@ Cc:     Frank Wunderlich <frank-w@public-files.de>,
         linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the MSI capture address
-Date:   Tue, 30 Mar 2021 16:11:33 +0100
-Message-Id: <20210330151145.997953-3-maz@kernel.org>
+Subject: [PATCH v3 09/14] PCI/MSI: Kill default_teardown_msi_irqs()
+Date:   Tue, 30 Mar 2021 16:11:40 +0100
+Message-Id: <20210330151145.997953-10-maz@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210330151145.997953-1-maz@kernel.org>
 References: <20210330151145.997953-1-maz@kernel.org>
@@ -68,82 +68,56 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-A long cargo-culted behaviour of PCI drivers is to allocate memory
-to obtain an address that is fed to the controller as the MSI
-capture address (i.e. the MSI doorbell).
+It doesn't have any caller left.
 
-But there is no actual requirement for this address to be RAM.
-All it needs to be is a suitable aligned address that will
-*not* be DMA'd to.
-
-Since the rcar platform already has a requirement that this
-address should be in the first 4GB of the physical address space,
-use the controller's own base address as the capture address.
-
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/pci/msi.c   | 11 +----------
+ include/linux/msi.h |  1 -
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index a728e8f9ad3c..ce952403e22c 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -36,7 +36,6 @@ struct rcar_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
- 	struct irq_domain *domain;
- 	struct msi_controller chip;
--	unsigned long pages;
- 	struct mutex lock;
- 	int irq1;
- 	int irq2;
-@@ -680,14 +679,15 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie_host *host)
- static void rcar_pcie_hw_enable_msi(struct rcar_pcie_host *host)
- {
- 	struct rcar_pcie *pcie = &host->pcie;
--	struct rcar_msi *msi = &host->msi;
--	unsigned long base;
-+	struct device *dev = pcie->dev;
-+	struct resource res;
- 
--	/* setup MSI data target */
--	base = virt_to_phys((void *)msi->pages);
-+	if (WARN_ON(of_address_to_resource(dev->of_node, 0, &res)))
-+		return;
- 
--	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
--	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
-+	/* setup MSI data target */
-+	rcar_pci_write_reg(pcie, lower_32_bits(res.start) | MSIFE, PCIEMSIALR);
-+	rcar_pci_write_reg(pcie, upper_32_bits(res.start), PCIEMSIAUR);
- 
- 	/* enable all MSI interrupts */
- 	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-@@ -735,7 +735,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
- 	}
- 
- 	/* setup MSI data target */
--	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA32, 0);
- 	rcar_pcie_hw_enable_msi(host);
- 
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index 79b5a995bd02..d9c73c173c14 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -94,11 +94,7 @@ int __weak arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
  	return 0;
-@@ -748,7 +747,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
- static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
- {
- 	struct rcar_pcie *pcie = &host->pcie;
--	struct rcar_msi *msi = &host->msi;
- 
- 	/* Disable all MSI interrupts */
- 	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
-@@ -756,8 +754,6 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
- 	/* Disable address decoding of the MSI interrupt, MSIFE */
- 	rcar_pci_write_reg(pcie, 0, PCIEMSIALR);
- 
--	free_pages(msi->pages, 0);
--
- 	rcar_pcie_unmap_msi(host);
  }
  
+-/*
+- * We have a default implementation available as a separate non-weak
+- * function, as it is used by the Xen x86 PCI code
+- */
+-void default_teardown_msi_irqs(struct pci_dev *dev)
++void __weak arch_teardown_msi_irqs(struct pci_dev *dev)
+ {
+ 	int i;
+ 	struct msi_desc *entry;
+@@ -108,11 +104,6 @@ void default_teardown_msi_irqs(struct pci_dev *dev)
+ 			for (i = 0; i < entry->nvec_used; i++)
+ 				arch_teardown_msi_irq(entry->irq + i);
+ }
+-
+-void __weak arch_teardown_msi_irqs(struct pci_dev *dev)
+-{
+-	return default_teardown_msi_irqs(dev);
+-}
+ #endif /* CONFIG_PCI_MSI_ARCH_FALLBACKS */
+ 
+ static void default_restore_msi_irq(struct pci_dev *dev, int irq)
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index 3f21e77b57b7..6aff469e511d 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -250,7 +250,6 @@ int arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc);
+ void arch_teardown_msi_irq(unsigned int irq);
+ int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type);
+ void arch_teardown_msi_irqs(struct pci_dev *dev);
+-void default_teardown_msi_irqs(struct pci_dev *dev);
+ #else
+ static inline int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+ {
 -- 
 2.29.2
 
