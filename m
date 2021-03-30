@@ -2,140 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37758C433C1
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC81C433E1
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 13:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6F3361957
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 12:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F962619BB
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 13:09:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231986AbhC3MvQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 08:51:16 -0400
-Received: from mail-dm6nam10on2081.outbound.protection.outlook.com ([40.107.93.81]:7904
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232025AbhC3Muz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 08:50:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zlf2tMIN2eckoT+okOGUcYBVw9ncVTniErw2DA3jKNWs+SqV7iDkluRGM5bp6rhzJDAfkn6UND44iEjXr5bsKzOhGNcEXwnAHI71ccCJUdg/f9W2+QDX4IjIpJ1GYvxY0ybweQoWi6nHOXxFlsj2l1NcIZuoWYb5fHzDyXtBGkjRI/mEhaiBLstjOTU/hiHtgRNwsJPCzAorTYj9GWBXqq228sUFhm6zbuph6Td9x5x2rlcSRVOS9hakn/dyX2Ki8H4o28VnkNMm84tZDqqksmFsMFzDg+tpxOQ8GhLPuE107CA/0h8Mowh+j88q8hezRkf/2jhZRJM/RQNFrdogxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=maYFdigKmgUl6zfPIy3uif8tpJ7HAfWWepiQcAresU0=;
- b=oIQMjiQSUDBN71uvgv/94SUNpLdqeWsulNnG9p/LDp6ZjEoV88CaRxkBDEPIiv7Cogr29kxd26PO/KXK3Bg8HDOZgM8It3A8vwlRZghaa77c3UmTEsWhzRn2AupIxUa+HmMwVeG5SLJPEejvUObsN8cF2uM7ITtYUtD7NtCeNgtz2C3nzTANt21V2l5Z8wnunNCDFpxegFIPPja5Y5igjgubARe1lpF27LWzE9H4M0i18ivpCi/0gHikntxrmOlS4D4OSK51i3kTN8sdpHFhJ2fR4d8MRP2clVwaXzU+CKKd17qvqtSmbaouPLpvyM9D7i5zBVAUhHwJMwtq7Q+oOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=maYFdigKmgUl6zfPIy3uif8tpJ7HAfWWepiQcAresU0=;
- b=YRRndB5c6u+qHnjRHscycN/58+3sahz5/GdiHBPabftQV+gv3vlpE2aWm87zXiRx5YDHfZ1V3qPw1L5yBx1GxNrMWYz4L8ZX/ylqt+uXgSj28ORs5S80OwkbnBH7XeVWitHDwLUNqZ6gvTpdCyb4eS9P9eV7zeCCcWFeydrszEiv3lfPKav0or9zGScWdfCQNTy62fT2wct3GJh3gJJdGPek6u8uKPPqas5/2S+f+9MQuALn/lxNrpCElQ4Bf8mrmsmcLOfw8eZzu37pc3cG946cCEhplbsaX03l8A9Hp/W1QdcajKYIns7yL9x9Q1uGy/L/g/RuMVb7ba53+3y/dg==
-Received: from BN9PR03CA0533.namprd03.prod.outlook.com (2603:10b6:408:131::28)
- by MN2PR12MB3869.namprd12.prod.outlook.com (2603:10b6:208:16f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.25; Tue, 30 Mar
- 2021 12:50:52 +0000
-Received: from BN8NAM11FT060.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:131:cafe::68) by BN9PR03CA0533.outlook.office365.com
- (2603:10b6:408:131::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.26 via Frontend
- Transport; Tue, 30 Mar 2021 12:50:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT060.mail.protection.outlook.com (10.13.177.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3955.18 via Frontend Transport; Tue, 30 Mar 2021 12:50:52 +0000
-Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 30 Mar
- 2021 12:50:50 +0000
-Subject: Re: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
- resume back
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
- <DB8PR04MB679546EC2493ABC35414CCF9E6639@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <0d0ddc16-dc74-e589-1e59-91121c1ad4e0@nvidia.com>
- <DB8PR04MB6795863753DAD71F1F64F81DE6629@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <8e92b562-fa8f-0a2b-d8da-525ee52fc2d4@nvidia.com>
- <DB8PR04MB67959FC7AF5CFCF1A08D10B2E6629@DB8PR04MB6795.eurprd04.prod.outlook.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ac9f8a31-536e-ec75-c73f-14a0623c5d56@nvidia.com>
-Date:   Tue, 30 Mar 2021 13:50:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
-MIME-Version: 1.0
-In-Reply-To: <DB8PR04MB67959FC7AF5CFCF1A08D10B2E6629@DB8PR04MB6795.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 33dddbf6-3df3-4666-f8ea-08d8f37a737f
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3869:
-X-Microsoft-Antispam-PRVS: <MN2PR12MB3869E6DC8EE871AC38F75C0FD97D9@MN2PR12MB3869.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D35axSq6rGYtjHvTWol2l17IcttO9+TVTJxacrFiHqAmnEabKyRywcuGJd1PV6q9bBOM3z/WVoZQQeAppQWXirx9SkWmpxRWmjB280Zi/1NR8ELcbcylinuv/d5DXkKyTnSHWK2lntnGCn8kJj8rVTi0vv0cBwMHy6MmBxNPuvQ2zfejtcm7AFjoZ2XJyAEkWiyv2C74bTj0U8m492Vr5di3Rktut1B78hU2FNqILsqMVdIoW4cBVvV83WPpHfCbJzPwiHjmJchn6dqIiBjJPgxOPmPHMXgdN8zoAVyOTlOM6fKivLZfoH6c+mU5HH1ciEXPBtKEddx6L2069yc+qjyPvB+x8JoiqtqZndjND7Hix5+IUtDQcjL87oGGubsAHMZvskAU9b+i/amvwhFI3bZ8IoV/40Nd4kT9aiLJ4lPE4u0yUknvw3LFjPmt53vSypeDnQ4jWLh3OJa+wIkIm38ZEalaKzPNohHlgFN4pUvD0FYJB0iyqlM6YSFCw4vfN+LVvsYEKO7WIuH7JK3Ehd+Sa5szI6JTpuvIgnXYn5oPRitS1q2Njj/YZyWGQV+mf9V7qwjvvmpJCaMXUbcdVTfF2BLmLjZIob+jTGBjdHsnlUgH4mECFOBapd8MfaQvMJczTkJyyBUZGU7Nzkn+gTkl3u3uy1AX8BTS3Y0CQFOdP+EackBruRBscXMGUxOe
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(39860400002)(376002)(396003)(136003)(36840700001)(46966006)(7636003)(31696002)(186003)(36756003)(6916009)(82740400003)(36860700001)(8676002)(82310400003)(4326008)(426003)(4744005)(70586007)(356005)(16526019)(336012)(31686004)(16576012)(54906003)(2616005)(478600001)(5660300002)(47076005)(316002)(2906002)(70206006)(53546011)(26005)(8936002)(86362001)(36906005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 12:50:52.0682
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33dddbf6-3df3-4666-f8ea-08d8f37a737f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT060.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3869
+        id S232000AbhC3NJA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 09:09:00 -0400
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:41643 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231960AbhC3NIv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 09:08:51 -0400
+Received: by mail-ot1-f46.google.com with SMTP id l12-20020a9d6a8c0000b0290238e0f9f0d8so15512530otq.8;
+        Tue, 30 Mar 2021 06:08:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=iKB56ZUcP8zgJEiOdPOBtoB1UcSHBt1H37xe9WGB7n0=;
+        b=fULaSxisZg0KmC10B9dMd13/TXSQOZGbqVuOK47R/JMvxY1iClN9F9B/axzkuKbQ/P
+         chSYeg/lcM5+SYk3z8Xe9vtzsDPgD+Sr2Zwh9U5jRnzLEVq0sk7sUVajofep21KIhpEq
+         LlyMzH77BikZEjJvgGc0J3k6i5HVRNwrPP8Pg+BFJ8TR0CjgSzPtWAsIuSPE7HYNggRn
+         GqekubqKSfo8yDp+yuTqjHG5TTAaVgZCxooojGRrH9yfj36vSoOsp/Zyx/0ucus1wMUF
+         St4Hai7UngywKPe5XlgTdghOpudjpUHwa192DlatZjm8/Y18IvfyEDwNTxv+mTSRMGSn
+         pPeA==
+X-Gm-Message-State: AOAM532JQlztP/VHeR7XEl4twSry2nQZfY/N23JK8yApg9JZtjEeTBuB
+        wwyPD/nyEw2ew5nMNSRW8w==
+X-Google-Smtp-Source: ABdhPJxDqWGl0VBW7OfmjvVPNEmDWE+83l8ZMf8lB3tTWUlXMVcnv6l2OgsUMcG18Y0tl0Cc6B5taQ==
+X-Received: by 2002:a9d:7699:: with SMTP id j25mr21076624otl.177.1617109730364;
+        Tue, 30 Mar 2021 06:08:50 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 24sm4026567oij.58.2021.03.30.06.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Mar 2021 06:08:49 -0700 (PDT)
+Received: (nullmailer pid 173733 invoked by uid 1000);
+        Tue, 30 Mar 2021 13:08:43 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+In-Reply-To: <20210329194602.17049-5-digetx@gmail.com>
+References: <20210329194602.17049-1-digetx@gmail.com> <20210329194602.17049-5-digetx@gmail.com>
+Subject: Re: [PATCH v1 4/6] dt-bindings: memory: tegra20: mc: Convert to schema
+Date:   Tue, 30 Mar 2021 08:08:43 -0500
+Message-Id: <1617109723.704724.173732.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On Mon, 29 Mar 2021 22:46:00 +0300, Dmitry Osipenko wrote:
+> Convert Tegra20 Memory Controller binding to schema.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../memory-controllers/nvidia,tegra20-mc.txt  | 40 ----------
+>  .../memory-controllers/nvidia,tegra20-mc.yaml | 78 +++++++++++++++++++
+>  2 files changed, 78 insertions(+), 40 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.yaml
+> 
 
+My bot found errors running 'make dt_binding_check' on your patch:
 
-On 25/03/2021 08:12, Joakim Zhang wrote:
+yamllint warnings/errors:
 
-...
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.example.dt.yaml:0:0: /example-0/memory-controller@7000f000: failed to match any schema with compatible: ['nvidia,tegra20-mc']
 
->>>>> You mean one of your boards? Does other boards with STMMAC can work
->>>> fine?
->>>>
->>>> We have two devices with the STMMAC and one works OK and the other
->> fails.
->>>> They are different generation of device and so there could be some
->>>> architectural differences which is causing this to only be seen on one device.
->>> It's really strange, but I also don't know what architectural differences could
->> affect this. Sorry.
+See https://patchwork.ozlabs.org/patch/1459800
 
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-I realised that for the board which fails after this change is made, it
-has the IOMMU enabled. The other board does not at the moment (although
-work is in progress to enable). If I add 'iommu.passthrough=1' to
-cmdline for the failing board, then it works again. So in my case, the
-problem is linked to the IOMMU being enabled.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-Does you platform enable the IOMMU?
+pip3 install dtschema --upgrade
 
-Thanks
-Jon
+Please check and re-submit.
 
--- 
-nvpublic
