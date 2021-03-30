@@ -2,32 +2,32 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21F1C433FC
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7816C4332D
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC407619D9
-	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C5E619CD
+	for <linux-tegra@archiver.kernel.org>; Tue, 30 Mar 2021 15:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232392AbhC3PMZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59616 "EHLO mail.kernel.org"
+        id S232406AbhC3PM1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 30 Mar 2021 11:12:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231655AbhC3PLx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:11:53 -0400
+        id S232192AbhC3PLy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 30 Mar 2021 11:11:54 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35B3B619CD;
-        Tue, 30 Mar 2021 15:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1F61619CB;
+        Tue, 30 Mar 2021 15:11:53 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1lRG22-004i6i-4k; Tue, 30 Mar 2021 16:11:50 +0100
+        id 1lRG24-004i6i-3Y; Tue, 30 Mar 2021 16:11:52 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -52,10 +52,12 @@ Cc:     Frank Wunderlich <frank-w@public-files.de>,
         linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v3 00/14] PCI/MSI: Getting rid of msi_controller, and other cleanups
-Date:   Tue, 30 Mar 2021 16:11:31 +0100
-Message-Id: <20210330151145.997953-1-maz@kernel.org>
+Subject: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the MSI capture address
+Date:   Tue, 30 Mar 2021 16:11:33 +0100
+Message-Id: <20210330151145.997953-3-maz@kernel.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210330151145.997953-1-maz@kernel.org>
+References: <20210330151145.997953-1-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 62.31.163.78
@@ -66,61 +68,82 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This is a respin of the series described at [1].
+A long cargo-culted behaviour of PCI drivers is to allocate memory
+to obtain an address that is fed to the controller as the MSI
+capture address (i.e. the MSI doorbell).
 
-* From v2 [2]:
-  - Fixed the Xilinx driver, thanks to Bharat for testing it
-  - Dropped the no_msi attribute, and solely rely on msi_domain, which
-    has the same effect for the only platform that was using it.
-  - Fixed compilation on architectures that do not select the generic
-    MSI support
+But there is no actual requirement for this address to be RAM.
+All it needs to be is a suitable aligned address that will
+*not* be DMA'd to.
 
-* From v1:
-  - Extracted the changes dealing with the MSI capture address
-    for rcar and xilinx and moved them to separate patches
-  - Changed the rcar code to cope with c4e0fec2f7ee ("PCI: rcar: Always
-    allocate MSI addresses in 32bit space")
-  - Fixed rcar resume code
-  - Reworked commit messages
-  - Rebased onto v5.12-rc4
-  - Collected Acks, and TBs, with thanks.
+Since the rcar platform already has a requirement that this
+address should be in the first 4GB of the physical address space,
+use the controller's own base address as the capture address.
 
-[1] https://lore.kernel.org/r/20210225151023.3642391-1-maz@kernel.org
-[2] https://lore.kernel.org/r/20210322184614.802565-1-maz@kernel.org
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-Marc Zyngier (13):
-  PCI: tegra: Convert to MSI domains
-  PCI: rcar: Don't allocate extra memory for the MSI capture address
-  PCI: rcar: Convert to MSI domains
-  PCI: xilinx: Don't allocate extra memory for the MSI capture address
-  PCI: xilinx: Convert to MSI domains
-  PCI: hv: Drop msi_controller structure
-  PCI/MSI: Drop use of msi_controller from core code
-  PCI/MSI: Kill msi_controller structure
-  PCI/MSI: Kill default_teardown_msi_irqs()
-  PCI/MSI: Let PCI host bridges declare their reliance on MSI domains
-  PCI/MSI: Make pci_host_common_probe() declare its reliance on MSI
-    domains
-  PCI/MSI: Document the various ways of ending up with NO_MSI
-  PCI: Refactor HT advertising of NO_MSI flag
-
-Thomas Gleixner (1):
-  PCI: mediatek: Advertise lack of built-in MSI handling
-
- drivers/pci/controller/Kconfig           |   4 +-
- drivers/pci/controller/pci-host-common.c |   1 +
- drivers/pci/controller/pci-hyperv.c      |   4 -
- drivers/pci/controller/pci-tegra.c       | 343 ++++++++++++----------
- drivers/pci/controller/pcie-mediatek.c   |   4 +
- drivers/pci/controller/pcie-rcar-host.c  | 356 +++++++++++------------
- drivers/pci/controller/pcie-xilinx.c     | 246 +++++++---------
- drivers/pci/msi.c                        |  45 +--
- drivers/pci/probe.c                      |   4 +-
- drivers/pci/quirks.c                     |  15 +-
- include/linux/msi.h                      |  17 +-
- include/linux/pci.h                      |   3 +-
- 12 files changed, 484 insertions(+), 558 deletions(-)
-
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index a728e8f9ad3c..ce952403e22c 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -36,7 +36,6 @@ struct rcar_msi {
+ 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+ 	struct irq_domain *domain;
+ 	struct msi_controller chip;
+-	unsigned long pages;
+ 	struct mutex lock;
+ 	int irq1;
+ 	int irq2;
+@@ -680,14 +679,15 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie_host *host)
+ static void rcar_pcie_hw_enable_msi(struct rcar_pcie_host *host)
+ {
+ 	struct rcar_pcie *pcie = &host->pcie;
+-	struct rcar_msi *msi = &host->msi;
+-	unsigned long base;
++	struct device *dev = pcie->dev;
++	struct resource res;
+ 
+-	/* setup MSI data target */
+-	base = virt_to_phys((void *)msi->pages);
++	if (WARN_ON(of_address_to_resource(dev->of_node, 0, &res)))
++		return;
+ 
+-	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
+-	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
++	/* setup MSI data target */
++	rcar_pci_write_reg(pcie, lower_32_bits(res.start) | MSIFE, PCIEMSIALR);
++	rcar_pci_write_reg(pcie, upper_32_bits(res.start), PCIEMSIAUR);
+ 
+ 	/* enable all MSI interrupts */
+ 	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
+@@ -735,7 +735,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+ 	}
+ 
+ 	/* setup MSI data target */
+-	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA32, 0);
+ 	rcar_pcie_hw_enable_msi(host);
+ 
+ 	return 0;
+@@ -748,7 +747,6 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
+ static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
+ {
+ 	struct rcar_pcie *pcie = &host->pcie;
+-	struct rcar_msi *msi = &host->msi;
+ 
+ 	/* Disable all MSI interrupts */
+ 	rcar_pci_write_reg(pcie, 0, PCIEMSIIER);
+@@ -756,8 +754,6 @@ static void rcar_pcie_teardown_msi(struct rcar_pcie_host *host)
+ 	/* Disable address decoding of the MSI interrupt, MSIFE */
+ 	rcar_pci_write_reg(pcie, 0, PCIEMSIALR);
+ 
+-	free_pages(msi->pages, 0);
+-
+ 	rcar_pcie_unmap_msi(host);
+ }
+ 
 -- 
 2.29.2
 
