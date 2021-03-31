@@ -2,65 +2,48 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C675CC433DB
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 11:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E326C433DB
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 11:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A09361994
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 11:31:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4F96198F
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 11:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235206AbhCaLav (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 31 Mar 2021 07:30:51 -0400
-Received: from mail-mw2nam12on2066.outbound.protection.outlook.com ([40.107.244.66]:38393
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        id S235145AbhCaLlR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 31 Mar 2021 07:41:17 -0400
+Received: from mail-eopbgr60089.outbound.protection.outlook.com ([40.107.6.89]:63296
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235199AbhCaLaW (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 31 Mar 2021 07:30:22 -0400
+        id S234995AbhCaLlC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 31 Mar 2021 07:41:02 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oJGu6FYDVWgMHUioAkwvlhN+uGcGl3+tKtMprpPPFNqWbAz1AE5wbziNAi7ejYRDVmppNOqm56OgN/jNkl84XIdiUfW6L0CPBnd9ATjfhVWkLrjRE29Qk5rQT65o08Dv8xinW12p76TPcX1rIiO7eLF7UQ3Rpeb/KiYMh8C4EQNGzKIZr2LQq65d6WbXLFhsNkE3scZGG8sZqvB7DVWJGZ6dNMDwBAaBeT3OAMoYO3AxkGkR83g226YNTzpW7WJ5Oq5CNS5Uic/YGsdjK/XDIm6BS/hC1eVc4ERLn2YEQifA2WAoB+MmMtBUNy9ZWSNiAlc0FoBg3FPWfOM5yM6aGw==
+ b=XtxAm/cBiAN6cHE/k+inlluYMLLJWfE+9XsqIzj3okbnY1i0q/hzkKuDqH8tXcn5B3+ANwkwA4krIVq99XQjx2MwEvc7HEYMsyDMU+dLi7HrwyMuz04uJGrPOlkGedm7m9UeJfpBmseIbAW0HWubYCpyt39NvHsL4SoXFcHjNYwBqFubxML0n8LH65pKvqwd9Y9/dZZk28/lJslFe0Gt/tgYRPTE0dgeDNVeLqwasHcPXMN1yajCmLDjNZ4vlCIPwx9lT0EniVuh6I/L61Ql6pvZrlta1Jl4LPaEkwTQEciy6Xcd+MDJVHUnTUsv5YKE8m1EmYUKA1oRfzMbDxFC2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/pK6DsKrPx2zdBZhSSixGjrFDwqBIY6E156+koF1jOE=;
- b=hCCdRLpZi1I4jth9S8Vpv5u+zhVBpTFQHoM6jdg8oE2WBQccwahFJdoEc5ONgd8CAExLhMstP2fjhIQonz3cKZjTmpnA1OkpekXomZCosmfOWc2ZQ4l2EVHy7g/9nAvZ9Oal+2OJIFuQceXJgfVV57ViQHKP0YWzTqDIClE6q4+XvgShXzJRaMcMkCSKHrdkKrmAAAGdPGfJzr7SfpI5Nv6632MLG7WQ/ZlBrCRo65m9F1L5CFwpbA6Q+2ZR0+gycS/BWb/5ZczbOK6xmiGbi8Vy6M6w3ESo7+sgyRQv7//dHu9D+ISZokFqx/jLjRrCtUkEeos541kKp/0/84/fvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=st.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=jUBfL5FEwE4VEBeOefnf8oeDetv2tHAjhcUZemJwX20=;
+ b=Zqi7b6mOH3TQQH9N/iW3TwJ2Ll21F/DpQl54ZkHKRm8gUyjc/6hqSdhuMZ3VZ2Ie/IbrQ4movGozk2EPUzEuPxDxEIsPUlTAlVQYaZ8jDzQn13I2UCGMThUeUkBqd3M/Ah+1pqKGVQaAfDjEPUEPRmXC9Zm6QOk9kgA4zuL4ymSbYTXvBP/pTninwhN/RdlA5vKbws+6qeSjtXjp/GCBIe2w6U872IxtlVRv6jtNJ4b85w++pjNc5+2ruayrNZ8LMH8WFv8Q5VYleMvX5IHn8zLiNiKualh3xXMk2/+nPrliskiDCHQUpvGfsQty6YXRWuWBi4RzP/PRwLbobFt9Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/pK6DsKrPx2zdBZhSSixGjrFDwqBIY6E156+koF1jOE=;
- b=k9Hj5Pw1SF5w8PJ+hApjJ8k6NkYj29QQEZwoheVAW36gSSXwXJQKQooO2PyIRv30/vDOdZBd9moPYmn/xJhsOPc7FkALGqyYHggDMVbcIDmuGSVBYb/tYNYSxfHISFAs2EPzqQ/ujIk8PmcuWO8qAb4KsZ890aOhQGHGyzr37W5OeRp+K/Up5JBqEr40m5DK/J32GepfbRlUPYMpfIsjJtG9K2SxyPMUQB3tLJc2LsKd6pR9sscXzIO0l/XKWQWFqJYEDkrySYhf8AY8hZy0ozCxV5MmuP2QbwhOM8HtfSQcTWK0n9a7U1G8smX+StkfR317QvXa4QT//C62sLwVug==
-Received: from MWHPR10CA0024.namprd10.prod.outlook.com (2603:10b6:301::34) by
- SN6PR12MB2686.namprd12.prod.outlook.com (2603:10b6:805:72::30) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3977.24; Wed, 31 Mar 2021 11:29:06 +0000
-Received: from CO1NAM11FT067.eop-nam11.prod.protection.outlook.com
- (2603:10b6:301:0:cafe::42) by MWHPR10CA0024.outlook.office365.com
- (2603:10b6:301::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.26 via Frontend
- Transport; Wed, 31 Mar 2021 11:29:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; st.com; dkim=none (message not signed)
- header.d=none;st.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT067.mail.protection.outlook.com (10.13.174.212) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3955.18 via Frontend Transport; Wed, 31 Mar 2021 11:29:05 +0000
-Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 31 Mar
- 2021 11:29:03 +0000
-Subject: Re: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
- resume back
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+ bh=jUBfL5FEwE4VEBeOefnf8oeDetv2tHAjhcUZemJwX20=;
+ b=GkmosbJnckpnZdeuNIrxo5hga6ZVLXlaHt5DI8wsHnzQ8o7JuCd38RMT3wBnBD6+e9eDC7K1Q880jgZKrXSZNYcPXEoGmWm32JblZcRKHcWDqma0YLorxWxc/F4Ki0ursb1ZnX6UbI2qbiDD6yTANg08SUU3GhKr5wRyG7XJm4w=
+Received: from DB8PR04MB6795.eurprd04.prod.outlook.com (2603:10a6:10:fa::15)
+ by DBAPR04MB7429.eurprd04.prod.outlook.com (2603:10a6:10:1a2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.27; Wed, 31 Mar
+ 2021 11:41:00 +0000
+Received: from DB8PR04MB6795.eurprd04.prod.outlook.com
+ ([fe80::9598:ace0:4417:d1d5]) by DB8PR04MB6795.eurprd04.prod.outlook.com
+ ([fe80::9598:ace0:4417:d1d5%5]) with mapi id 15.20.3999.027; Wed, 31 Mar 2021
+ 11:41:00 +0000
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Jose Abreu <joabreu@synopsys.com>
@@ -68,6 +51,13 @@ CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
         Jakub Kicinski <kuba@kernel.org>
+Subject: RE: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
+ resume back
+Thread-Topic: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
+ resume back
+Thread-Index: AQHXIJuN/Okb/PN4nkWB+yH0VnH6i6qTC9OwgAAITACAAT8a8IAABYcAgAABmVCACCsMAIABO0DQgAA346CAAAhZgIAAAU1g
+Date:   Wed, 31 Mar 2021 11:41:00 +0000
+Message-ID: <DB8PR04MB6795ECCB5E6E2091A45DADAEE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
 References: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
  <DB8PR04MB679546EC2493ABC35414CCF9E6639@DB8PR04MB6795.eurprd04.prod.outlook.com>
  <0d0ddc16-dc74-e589-1e59-91121c1ad4e0@nvidia.com>
@@ -77,91 +67,120 @@ References: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
  <ac9f8a31-536e-ec75-c73f-14a0623c5d56@nvidia.com>
  <DB8PR04MB6795F4333BCA9CE83C288FEEE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
  <DB8PR04MB6795D4C733DC4938B1D62EBDE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <85f02fbc-6956-2b19-1779-cd51b2e71e3d@nvidia.com>
-Date:   Wed, 31 Mar 2021 12:29:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
-MIME-Version: 1.0
-In-Reply-To: <DB8PR04MB6795D4C733DC4938B1D62EBDE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+ <85f02fbc-6956-2b19-1779-cd51b2e71e3d@nvidia.com>
+In-Reply-To: <85f02fbc-6956-2b19-1779-cd51b2e71e3d@nvidia.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e6044614-290d-4fe0-2042-08d8f438313d
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2686:
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2686386BC9BC1F96DBB142EAD97C9@SN6PR12MB2686.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NF3CZ5Potxk9hCAbrbYBQdCbWJNspKZRQJ9Yr1sLCZZUkRRkczpKQDWS182QQA/b5h7u4szO52KkN0ywEiKtkL0KGJ/9ko2fB28I57qZyLqTv3Btv52yJ8tj4EcmAt2xmTrKFua8KElxOGBTjGq38wwohWkaoi9+D9CcbGbZOI0TV004ijKzph7IY8y4t291GHoCOKKfME8FvvLCe41A/4Vf1qYWBZpSHBxMuQekqFmBQnBCIilq0GuBeVUTrMrJHISikSmxB8Lqs3cjodPYY5ufq4yez3GRVsMqbfpaLV/2LZkfJ25CcIoHBbde/qRmrLyKnzfwOfRby/4BTWpxKOrcI1wcjfAqYYEI5unH0Epm87gE5NptNYL9Pay5HtYMIylE1FEioSnakyyHGPLGYaMSRqip674rb1yh4i2HbBv7Lrt7yRHD87pokehVQbJpNF1i79UmcOgQSVnhuYSS+CWLULDhlM0UKb5NIfg3zNskRoBtSKAmTaRtvNbanRGkcGYDeT7b85oklO6m0stqaUOG+WfbxhdYnQ8Kk5+Ggp+bD8t/O8N5T20t7gTbjlrqGkSb1ZNycGQCWSpSvQyerjep36AYxxV/MVzGBBe27G9pQuJ4mVgqangInWihFei9yTv8g6AztJ+FHhSM8vdjU4IgHLDGx3yLvsikn8XBTh+zBCdwxSKVNEgsyBgLrL9T
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(396003)(376002)(136003)(36840700001)(46966006)(8676002)(31696002)(36756003)(47076005)(7636003)(70206006)(2616005)(356005)(53546011)(70586007)(83380400001)(4326008)(82740400003)(426003)(82310400003)(16576012)(36860700001)(2906002)(186003)(110136005)(16526019)(26005)(336012)(5660300002)(54906003)(478600001)(86362001)(8936002)(31686004)(36906005)(316002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2021 11:29:05.3281
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nvidia.com; dkim=none (message not signed)
+ header.d=none;nvidia.com; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9e815c66-86b1-4164-9ca0-08d8f439db65
+x-ms-traffictypediagnostic: DBAPR04MB7429:
+x-microsoft-antispam-prvs: <DBAPR04MB742955C5A98E242FADAF6270E67C9@DBAPR04MB7429.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VLpUlgj+AVzpTRLEHTkfxSYWE8K8HfLOGuQQu1oVJaPFA6NYiA3ul9cRx9O9HjUQd/w+P2InWQKInTVj0NYtLy3p6uyRxIYMlAIbbJ32hivY66Aj7sA4o8jTjxCsQNhlpHCDuZZXqGMLMTwq7C5FXpU89j2gae7PF38QvTCGLA5yQoHVdIygdUEu6G1EfELO2pzcB0u0AFGmQfSpiWc77X3wMrJS75SNsDyQsFPMLHth0/3UzeIKfqDWGLBzwrHVXQxD/WzRLVRMbyC2iCBlqVts1XRdWdFxBj1njnpfvLirXP7U5CP6G/q13PX23L698VNLX4a6GmWvFhgArSCsR+YoQnrI5fOM1uAN4TEbnqscCUizieW3vhGB6/t/xrt9oILUiKHg336sYQH6u5KJ/2PIQn/WPMRlPIbGoyLJLvoFYbj+Ad6BQiBcFv0Fhb/hW02opKnTfycnwhigd2uYJfidqBdCOpOD+5jltYBMZm8FU3Tzw7kNCw+TQcScScVTtQrl176Rl437xJ6uB/sYUL3nxav90KZxDaZehVw6ezv784LG9IbPOMXwJpXhMdS661NDdKBtyd7dToolZ/XglhxAoX81YQ/DF+bIUuMeCoi83UGZFfdHLdW6GWePGRJCxHVGw5+tk/XaLQDjWpfX9yP92FeunNrON2ioOOKM2cs=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6795.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(52536014)(86362001)(76116006)(83380400001)(498600001)(8676002)(4326008)(8936002)(9686003)(55016002)(33656002)(2906002)(6506007)(5660300002)(71200400001)(7696005)(38100700001)(66446008)(64756008)(186003)(53546011)(110136005)(54906003)(66946007)(66556008)(26005)(66476007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?RjNoRnR2dFJzMzJKRFArempzbENLUUdLb0V4L05BajJRV3lIMUVYbjdJZG43?=
+ =?utf-8?B?VW9nMDBOb2MyVGlGcWg4T3E1Y25OOWFVVEdJT2MzbGJwd005TzlhaDQ4YXE5?=
+ =?utf-8?B?UnBneExuMnNWL2JQcGk2aklDcG9UdkpkQndDVDNlU2NKQ2IzSzhQTnNvMks4?=
+ =?utf-8?B?VGdYOUpPUkIxYlA2NXpsbkhlMHMvNkhaYVQyTkVzZ015ZHRwbWpEZmQ4bVFJ?=
+ =?utf-8?B?WWNGdkJyWHpTYkhOSFRteXNrQk1qblZHbVRxb05CQVFBYXQwMTlyTldSZFZJ?=
+ =?utf-8?B?cEFlL0ZmblNRYkJhQjk0K2NqREdzeDc2eDJjWjhMVGpYa2xmVldDQXdYUjRK?=
+ =?utf-8?B?RmtCbHFLUkRuK3BSVlgxMkJHVkoyVWpkTFVJUlBqRmE4aU1XbFpFelNWWlFB?=
+ =?utf-8?B?VWRFL3hXU3NRbkF4aHR5OVVMUCtYUnp0bHcwalpHVW9kOUlIOXU1WWtXWTFv?=
+ =?utf-8?B?bVpZQjRVeU5yMnB3dlNqa1NJUDZneGJnR0hCcVFvRDRhQnhEWUROMHJDNzFP?=
+ =?utf-8?B?cUcreGlVcGlnbEZWNVdhYzF1WUdUcS90c3FxWUVNNWtYMTVnVXhmTERvTThW?=
+ =?utf-8?B?UEZ1N0xWOFZuY1lxdkpLNFZmK0dYcVVFR0pZNHFDUGtIbitUUkZTdzF5bllu?=
+ =?utf-8?B?VitseHFnbTBIdUNBUjJwMWl1eXdzaEF4VGQvbllkYWxFOTVYWUlXbzhZV1RI?=
+ =?utf-8?B?aVNjU0Jhdkl0aHZxZ2h6TEpkWVJseFV0RlBzemlsN0JQVk9GYlN0WXFXQ3Bx?=
+ =?utf-8?B?UUVLM3Y4eUFzNGFSSFNqczhuZDU1bG5oOEhDRDZETHRpeFJXcGhhdTdVRXli?=
+ =?utf-8?B?T3FsMS9DRWlGU3hQSWZpZzhkSW0xbTZjT1RUL280d0FUbVU2d3p5MzdmbmVX?=
+ =?utf-8?B?RVRYMndGblppZFF1TmwrcGhTZ3RKcnhpV1hNbnc2Z3FGanh4Mi93VGlBM2FN?=
+ =?utf-8?B?Y0RqcDRJaW04WW5RQk9ud0ZwSWw0bm50SDFnYmZERlNWSE1uRU1kcXNrbkQ2?=
+ =?utf-8?B?T1BMaFkzNTZhaFdKWklvSXd5bUJZZnRPTUs2WXgwWXQ2WDB1dVZydkd1c21p?=
+ =?utf-8?B?VVRkSVFvNGt5RXJXQmdIZWNEcmRPSVVCaTRsNEQ2Q0w3Mk0vWnB2TEE1eGN0?=
+ =?utf-8?B?azdWUFE1MnJuS0dWTm5WRWc5OTROanFJMTFyTkRERm16TytRT0dWK3dHdHZR?=
+ =?utf-8?B?YzNyVndYLy9BM0g0aDJlRElMQTZ5QkRZcHBMVUtsdmgvZGxJUDlMbGw3b0tH?=
+ =?utf-8?B?eVFVR0ZUbm8yVTdQZTFEdThvQ05BQ1JvY1VzZzNMQmcrMGFwYXZzYVJJblpC?=
+ =?utf-8?B?aTNuMUpmVnFLcitwbGllZzIyS0lZWXEvWXg0WG53QjQySjB0cWs3eHlsTHdj?=
+ =?utf-8?B?VkpOenRsS3kwVGREUmtHL25kblE2MCt1bkJRbUxiRi9UaFZmdHQ0UTJ5SVhI?=
+ =?utf-8?B?WEl2b08yU0Z5L2hsbHVKNi80M01RMHpEb3VHdGdoYU1qVW5uVDEvYzFzUU5s?=
+ =?utf-8?B?QWx6WFQydlB1MWthUFdJSi9tc2hrK2R0dlphL2l2MXhncE9XTWR5c0FPVkNC?=
+ =?utf-8?B?UTBKQlVTQ2o4RVVGbmxsUUFsL2lKWjVkbUMyUXZmZ0w2UkJaYWZKczFBTUY5?=
+ =?utf-8?B?eW9VWW50Rjg2QkY4SWo5diszcDJpVU9nNWJOOXVvMlRVdkREVGRwbjhLbFRS?=
+ =?utf-8?B?ZjBSMUJSOXkvUklqckxlbTREWDVSUXQ5VzczRkpaSUxlVnlUbTQ3MDNxcGF4?=
+ =?utf-8?Q?FvUf3qtkE4cfFTkUAfasNphZL73chr/RwaoY7Cl?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB6795.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e815c66-86b1-4164-9ca0-08d8f439db65
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Mar 2021 11:41:00.2813
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6044614-290d-4fe0-2042-08d8f438313d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT067.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2686
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pW9bTT1TTRdMVoko33PX0HL3g2ZZ/0KHUqVxuqjMicAM+Nv4U7PeHqIamNYWmtqnu5Gd2S1+7iXUdq0eWOaNcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7429
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 31/03/2021 12:10, Joakim Zhang wrote:
-
-...
-
->>>>>>>> You mean one of your boards? Does other boards with STMMAC can
->>>>>>>> work
->>>>>>> fine?
->>>>>>>
->>>>>>> We have two devices with the STMMAC and one works OK and the
->>>>>>> other
->>>>> fails.
->>>>>>> They are different generation of device and so there could be
->>>>>>> some architectural differences which is causing this to only be
->>>>>>> seen on one
->>> device.
->>>>>> It's really strange, but I also don't know what architectural
->>>>>> differences could
->>>>> affect this. Sorry.
->>>
->>>
->>> I realised that for the board which fails after this change is made,
->>> it has the IOMMU enabled. The other board does not at the moment
->>> (although work is in progress to enable). If I add
->>> 'iommu.passthrough=1' to cmdline for the failing board, then it works
->>> again. So in my case, the problem is linked to the IOMMU being enabled.
->>>
->>> Does you platform enable the IOMMU?
->>
->> Hi Jon,
->>
->> There is no IOMMU hardware available on our boards. But why IOMMU would
->> affect it during suspend/resume, and no problem in normal mode?
-> 
-> One more add, I saw drivers/iommu/tegra-gart.c(not sure if is this) support suspend/resume, is it possible iommu resume back after stmmac?
-
-
-This board is the tegra186-p2771-0000 (Jetson TX2) and uses the
-arm,mmu-500 and not the above driver.
-
-In answer to your question, resuming from suspend does work on this
-board without your change. We have been testing suspend/resume now on
-this board since Linux v5.8 and so we have the ability to bisect such
-regressions. So it is clear to me that this is the change that caused
-this, but I am not sure why.
-
-Thanks
-Jon
-
--- 
-nvpublic
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEpvbiBIdW50ZXIgPGpvbmF0
+aGFuaEBudmlkaWEuY29tPg0KPiBTZW50OiAyMDIx5bm0M+aciDMx5pelIDE5OjI5DQo+IFRvOiBK
+b2FraW0gWmhhbmcgPHFpYW5ncWluZy56aGFuZ0BueHAuY29tPjsgR2l1c2VwcGUgQ2F2YWxsYXJv
+DQo+IDxwZXBwZS5jYXZhbGxhcm9Ac3QuY29tPjsgQWxleGFuZHJlIFRvcmd1ZSA8YWxleGFuZHJl
+LnRvcmd1ZUBzdC5jb20+Ow0KPiBKb3NlIEFicmV1IDxqb2FicmV1QHN5bm9wc3lzLmNvbT4NCj4g
+Q2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IExpbnV4IEtlcm5lbCBNYWlsaW5nIExpc3QNCj4g
+PGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC10ZWdyYSA8bGludXgtdGVncmFA
+dmdlci5rZXJuZWwub3JnPjsNCj4gSmFrdWIgS2ljaW5za2kgPGt1YmFAa2VybmVsLm9yZz4NCj4g
+U3ViamVjdDogUmU6IFJlZ3Jlc3Npb24gdjUuMTItcmMzOiBuZXQ6IHN0bW1hYzogcmUtaW5pdCBy
+eCBidWZmZXJzIHdoZW4gbWFjDQo+IHJlc3VtZSBiYWNrDQo+IA0KPiANCj4gT24gMzEvMDMvMjAy
+MSAxMjoxMCwgSm9ha2ltIFpoYW5nIHdyb3RlOg0KPiANCj4gLi4uDQo+IA0KPiA+Pj4+Pj4+PiBZ
+b3UgbWVhbiBvbmUgb2YgeW91ciBib2FyZHM/IERvZXMgb3RoZXIgYm9hcmRzIHdpdGggU1RNTUFD
+IGNhbg0KPiA+Pj4+Pj4+PiB3b3JrDQo+ID4+Pj4+Pj4gZmluZT8NCj4gPj4+Pj4+Pg0KPiA+Pj4+
+Pj4+IFdlIGhhdmUgdHdvIGRldmljZXMgd2l0aCB0aGUgU1RNTUFDIGFuZCBvbmUgd29ya3MgT0sg
+YW5kIHRoZQ0KPiA+Pj4+Pj4+IG90aGVyDQo+ID4+Pj4+IGZhaWxzLg0KPiA+Pj4+Pj4+IFRoZXkg
+YXJlIGRpZmZlcmVudCBnZW5lcmF0aW9uIG9mIGRldmljZSBhbmQgc28gdGhlcmUgY291bGQgYmUN
+Cj4gPj4+Pj4+PiBzb21lIGFyY2hpdGVjdHVyYWwgZGlmZmVyZW5jZXMgd2hpY2ggaXMgY2F1c2lu
+ZyB0aGlzIHRvIG9ubHkgYmUNCj4gPj4+Pj4+PiBzZWVuIG9uIG9uZQ0KPiA+Pj4gZGV2aWNlLg0K
+PiA+Pj4+Pj4gSXQncyByZWFsbHkgc3RyYW5nZSwgYnV0IEkgYWxzbyBkb24ndCBrbm93IHdoYXQg
+YXJjaGl0ZWN0dXJhbA0KPiA+Pj4+Pj4gZGlmZmVyZW5jZXMgY291bGQNCj4gPj4+Pj4gYWZmZWN0
+IHRoaXMuIFNvcnJ5Lg0KPiA+Pj4NCj4gPj4+DQo+ID4+PiBJIHJlYWxpc2VkIHRoYXQgZm9yIHRo
+ZSBib2FyZCB3aGljaCBmYWlscyBhZnRlciB0aGlzIGNoYW5nZSBpcyBtYWRlLA0KPiA+Pj4gaXQg
+aGFzIHRoZSBJT01NVSBlbmFibGVkLiBUaGUgb3RoZXIgYm9hcmQgZG9lcyBub3QgYXQgdGhlIG1v
+bWVudA0KPiA+Pj4gKGFsdGhvdWdoIHdvcmsgaXMgaW4gcHJvZ3Jlc3MgdG8gZW5hYmxlKS4gSWYg
+SSBhZGQNCj4gPj4+ICdpb21tdS5wYXNzdGhyb3VnaD0xJyB0byBjbWRsaW5lIGZvciB0aGUgZmFp
+bGluZyBib2FyZCwgdGhlbiBpdA0KPiA+Pj4gd29ya3MgYWdhaW4uIFNvIGluIG15IGNhc2UsIHRo
+ZSBwcm9ibGVtIGlzIGxpbmtlZCB0byB0aGUgSU9NTVUgYmVpbmcNCj4gZW5hYmxlZC4NCj4gPj4+
+DQo+ID4+PiBEb2VzIHlvdSBwbGF0Zm9ybSBlbmFibGUgdGhlIElPTU1VPw0KPiA+Pg0KPiA+PiBI
+aSBKb24sDQo+ID4+DQo+ID4+IFRoZXJlIGlzIG5vIElPTU1VIGhhcmR3YXJlIGF2YWlsYWJsZSBv
+biBvdXIgYm9hcmRzLiBCdXQgd2h5IElPTU1VDQo+ID4+IHdvdWxkIGFmZmVjdCBpdCBkdXJpbmcg
+c3VzcGVuZC9yZXN1bWUsIGFuZCBubyBwcm9ibGVtIGluIG5vcm1hbCBtb2RlPw0KPiA+DQo+ID4g
+T25lIG1vcmUgYWRkLCBJIHNhdyBkcml2ZXJzL2lvbW11L3RlZ3JhLWdhcnQuYyhub3Qgc3VyZSBp
+ZiBpcyB0aGlzKSBzdXBwb3J0DQo+IHN1c3BlbmQvcmVzdW1lLCBpcyBpdCBwb3NzaWJsZSBpb21t
+dSByZXN1bWUgYmFjayBhZnRlciBzdG1tYWM/DQo+IA0KPiANCj4gVGhpcyBib2FyZCBpcyB0aGUg
+dGVncmExODYtcDI3NzEtMDAwMCAoSmV0c29uIFRYMikgYW5kIHVzZXMgdGhlDQo+IGFybSxtbXUt
+NTAwIGFuZCBub3QgdGhlIGFib3ZlIGRyaXZlci4NCg0KT0suDQoNCj4gSW4gYW5zd2VyIHRvIHlv
+dXIgcXVlc3Rpb24sIHJlc3VtaW5nIGZyb20gc3VzcGVuZCBkb2VzIHdvcmsgb24gdGhpcyBib2Fy
+ZA0KPiB3aXRob3V0IHlvdXIgY2hhbmdlLiBXZSBoYXZlIGJlZW4gdGVzdGluZyBzdXNwZW5kL3Jl
+c3VtZSBub3cgb24gdGhpcyBib2FyZA0KPiBzaW5jZSBMaW51eCB2NS44IGFuZCBzbyB3ZSBoYXZl
+IHRoZSBhYmlsaXR5IHRvIGJpc2VjdCBzdWNoIHJlZ3Jlc3Npb25zLiBTbyBpdCBpcw0KPiBjbGVh
+ciB0byBtZSB0aGF0IHRoaXMgaXMgdGhlIGNoYW5nZSB0aGF0IGNhdXNlZCB0aGlzLCBidXQgSSBh
+bSBub3Qgc3VyZSB3aHkuDQoNClllcywgSSBrbm93IHRoaXMgaXNzdWUgaXMgcmVncmVzc2lvbiBj
+YXVzZWQgYnkgbXkgcGF0Y2guIEkganVzdCB3YW50IHRvIGFuYWx5emUgdGhlIHBvdGVudGlhbCBy
+ZWFzb25zLiBEdWUgdG8gdGhlIGNvZGUgY2hhbmdlIG9ubHkgcmVsYXRlZCB0byB0aGUgcGFnZSBy
+ZWN5Y2xlIGFuZCByZWFsbG9jYXRlLg0KU28gSSBndWVzcyBpZiB0aGlzIHBhZ2Ugb3BlcmF0ZSBu
+ZWVkIElPTU1VIHdvcmtzIHdoZW4gSU9NTVUgaXMgZW5hYmxlZC4gQ291bGQgeW91IGhlbHAgY2hl
+Y2sgaWYgSU9NTVUgZHJpdmVyIHJlc3VtZSBiZWZvcmUgU1RNTUFDPyBPdXIgY29tbW9uIGRlc2ly
+ZSBpcyB0byBmaW5kIHRoZSByb290IGNhdXNlLCByaWdodD8NCg0KQmVzdCBSZWdhcmRzLA0KSm9h
+a2ltIFpoYW5nDQo+IFRoYW5rcw0KPiBKb24NCj4gDQo+IC0tDQo+IG52cHVibGljDQo=
