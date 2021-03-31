@@ -8,75 +8,85 @@ X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE45EC433ED
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75847C43470
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD7760BBB
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:00:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0E361028
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236166AbhCaPAA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 31 Mar 2021 11:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52282 "EHLO
+        id S235811AbhCaPqF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 31 Mar 2021 11:46:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235987AbhCaO7p (ORCPT
+        with ESMTP id S235410AbhCaPpm (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 31 Mar 2021 10:59:45 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FE0C061574;
-        Wed, 31 Mar 2021 07:59:42 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id n138so29620012lfa.3;
-        Wed, 31 Mar 2021 07:59:42 -0700 (PDT)
+        Wed, 31 Mar 2021 11:45:42 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A33C061574;
+        Wed, 31 Mar 2021 08:45:41 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id o16so10372710ljp.3;
+        Wed, 31 Mar 2021 08:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PsO89NOx80DUPq/uoqBfqzP3oyAMU/I135Iw3m4lDgM=;
-        b=l0hxprmLlYVfUUB4XOawxL21b7Mnqt1Tj5hOz4aCWZLoGkiocEAY3EIbRMDvZB9T0S
-         LTtsIBrykLpWKN3iH4v609s/WtQ5u8VwXQuMInZbGKj5yv0aMplLf5K4faExnwIZFsAj
-         YB0z5KfNXg8JhfB2EeAS1E3rTM0R5/LjbBAJs1wswgbgRduHlHVa1h7GU3drNZbWpGHC
-         65krI08iZU4q6rtsxYNDSeYVaok/9r7N34HAdda6kv1uMDImA91t5lkbLeLr+PSxH4Wr
-         JzYr2kpPpBwvYSZZAGTLF7kqsDy3BVtjfDWpLKacEufrqZnky01B00N7KFc58xxcxe/a
-         IgOA==
+        bh=Sg2M5vnLvA6N/v/unukjBIy2TElIYCrmD7g4frzymRQ=;
+        b=rkkFwJ9Cpq5k0SUA92s1t0S+rpZf1whcRDyyhdYF+yvH3fJ0KJOD9TbUObQp19+2fw
+         jDRmZCOQXy5+egCihBqXOdI3vaOo7iTf+81KhlvNjtfLU4UGfXe+m9j9P8s/N223jj5P
+         kV2AbMwLHyDSvlM8yyrWOSUirPB892b0kMffK/xzpKLw3COLvH9/RcB7p2/FLlrYNDvn
+         54LvMqE6zZPXp4r5n2pAk+imsO/ckDLs68Zn2Gx/e8FI2ZLDaJtabr2nuTFTfMt5hVKs
+         D2r2d1G6PV1QxYpdjW8zNg84dU45ihBEWLc4vI/v+lrjvTVqmYLNChgExA8xotU2t2nn
+         VVfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PsO89NOx80DUPq/uoqBfqzP3oyAMU/I135Iw3m4lDgM=;
-        b=s7oNq8ec18htY2PL7noR4eitDqW953lm1c7KlMvzP6oKGHmfw+ReIh1Xt0gmVHCV3q
-         /Cs1ALNoC13eIgL2RSQhF9oZDOAjcpyoDRcG+VKxy7dumaLnZiV/yq5ZZeue/+d/fWo7
-         vpBnnQj8env1vhJhY+ZTJFKx2fRzNdd6f9jZCZgL1ltfMzXpT0HEEcU/Byjw0sjAbhnM
-         FF7rXxIVQoY+gy1fAUMwMlEHkvVVIZvU5a2JGdOLyWwjKLQ/aZaGwkNYt7DWD9x6EIsK
-         pdtZUJ9dq0ghTLYnIyAdqGO3aejg/FhU9+Hsys8mx49c3NSj5ZIEi38B+S/LJgbjdcl5
-         tbGw==
-X-Gm-Message-State: AOAM531mLSlGwcaShmMRCpyHsnGz7bEIz4cgE+plYViMMx1Fape9GOfE
-        S1vksTQbvk7xCV5HXU9dQsXvIaswud25lg==
-X-Google-Smtp-Source: ABdhPJx8es0d3p6vHRKIE2PW9CFQRyDk59ibGGL5NkPTZv7S9RNLZEkG8zAX1hwSptm5jyU2pU63Aw==
-X-Received: by 2002:ac2:58cf:: with SMTP id u15mr2423994lfo.397.1617202781069;
-        Wed, 31 Mar 2021 07:59:41 -0700 (PDT)
+        bh=Sg2M5vnLvA6N/v/unukjBIy2TElIYCrmD7g4frzymRQ=;
+        b=FrxcAk1mYVwLa3Z8OYpLXumXgVB0g9WH8PBqMDvH93ub8gvFiDlMJTUOurrIMB/zJo
+         AONlwt7N4dhS2WPYktr4c+GlwrRetEmw/Zr+hgSrkCh/u3w9EJIc8Dkv7vfikRapxl//
+         BeWtmLBy2+lCLzT36oHfm9rN1xAYqTzOXNZzzLroJIhgMkHHRIuEsO4XC9uo/oIRCN5l
+         B4Qf5xVeQJ8ivxGyCb93o7aXhfnItOLPfi6raEAY+zwBiKtScKwh96tgAOSUVvofWPk1
+         8Z8wGv7ex0kg5p3z9ZUzT5dOeQyw1xmxtGUpQ9RQjeRS05j45Zm8gPBkqV8YO4mSin7z
+         bR/g==
+X-Gm-Message-State: AOAM530rtOZrZRyiqrIU315UEA7y1ZgBEBuFFgZ/VS8mP5nuqiEB4WC3
+        jAdya5Msw/mQe+g1GsCqaCjV8T0GlPQ=
+X-Google-Smtp-Source: ABdhPJxlLOpGqgOWnEgE7B4HJ0pcInOcka2zS2ofj5+/faiRKNsihhdztJFakPdBZVJRL1tzI5FcDQ==
+X-Received: by 2002:a2e:b88c:: with SMTP id r12mr2476537ljp.212.1617205539966;
+        Wed, 31 Mar 2021 08:45:39 -0700 (PDT)
 Received: from ?IPv6:2a00:1370:814d:c71f:a10:76ff:fe69:21b6? ([2a00:1370:814d:c71f:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id f20sm262375ljn.123.2021.03.31.07.59.40
+        by smtp.googlemail.com with ESMTPSA id 203sm275275ljf.41.2021.03.31.08.45.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Mar 2021 07:59:40 -0700 (PDT)
-Subject: Re: [PATCH v2 5/6] dt-bindings: memory: tegra20: emc: Convert to
- schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210330230445.26619-1-digetx@gmail.com>
- <20210330230445.26619-6-digetx@gmail.com>
- <1617198059.590387.2074856.nullmailer@robh.at.kernel.org>
+        Wed, 31 Mar 2021 08:45:39 -0700 (PDT)
+Subject: Re: [PATCH v4 1/6] soc/tegra: Add
+ devm_tegra_core_dev_init_opp_table()
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b4f7c7fb-1332-8490-fb4f-293fd357338e@gmail.com>
-Date:   Wed, 31 Mar 2021 17:59:39 +0300
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210314164810.26317-1-digetx@gmail.com>
+ <20210314164810.26317-2-digetx@gmail.com>
+ <8f78a014-eeab-d788-7d3b-b52b8109cb2c@gmail.com>
+ <20210318103250.shjyd66pxw2g2nsd@vireshk-i7>
+ <2498dd11-1d71-b245-2651-e43ab3f70e17@gmail.com>
+Message-ID: <9115b38c-5d00-03e2-f51a-8c1ea15b9b6b@gmail.com>
+Date:   Wed, 31 Mar 2021 18:45:38 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <1617198059.590387.2074856.nullmailer@robh.at.kernel.org>
+In-Reply-To: <2498dd11-1d71-b245-2651-e43ab3f70e17@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -84,39 +94,38 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-31.03.2021 16:40, Rob Herring пишет:
-> On Wed, 31 Mar 2021 02:04:44 +0300, Dmitry Osipenko wrote:
->> Convert Tegra20 External Memory Controller binding to schema.
+18.03.2021 13:37, Dmitry Osipenko пишет:
+> 18.03.2021 13:32, Viresh Kumar пишет:
+>> On 18-03-21, 13:27, Dmitry Osipenko wrote:
+>>> 14.03.2021 19:48, Dmitry Osipenko пишет:
+>>>> Add common helper which initializes OPP table for Tegra SoC core devices.
+>>>>
+>>>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>>>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+>>>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+>>>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/soc/tegra/common.c | 137 +++++++++++++++++++++++++++++++++++++
+>>>>  include/soc/tegra/common.h |  30 ++++++++
+>>>>  2 files changed, 167 insertions(+)
+>>>
+>>> Viresh, do you think it will be possible to take this patch via the OPP
+>>> tree along with the devres patches if Thierry will give an ack? This
+>>> will allow us to start adding power management support to Tegra drivers
+>>> once 5.13 will be released.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../memory-controllers/nvidia,tegra20-emc.txt | 130 --------
->>  .../nvidia,tegra20-emc.yaml                   | 294 ++++++++++++++++++
->>  2 files changed, 294 insertions(+), 130 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
->>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+>> I can do that.. OR
+>>
+>> I can give an immutable to Thierry over which he can base these patches..
 >>
 > 
-> My bot found errors running 'make dt_binding_check' on your patch:
+> Thank you!
 > 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.example.dts:33.26-55.15: Warning (unit_address_vs_reg): /example-0/external-memory-controller@7000f400/emc-tables@0: node has a unit name, but no reg or ranges property
-> 
-> See https://patchwork.ozlabs.org/patch/1460288
-> 
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
+> Thierry, please let us know if you're okay with this patch and what
+> variant you prefer more.
 > 
 
-FYI, I'm aware about this warning and I think it's fine to skip it in
-the case of this binding. The dtbs_check doesn't bother with that warning.
+It's a bit too late now for 5.13, so I'll re-send this patch later on
+for 5.14 separately and along with other patches that will make use of
+this new helper.
