@@ -2,130 +2,135 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75847C43470
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75B0C43461
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 16:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0E361028
-	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 15:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 845CA6102A
+	for <linux-tegra@archiver.kernel.org>; Wed, 31 Mar 2021 16:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235811AbhCaPqF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 31 Mar 2021 11:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        id S233816AbhCaQbw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 31 Mar 2021 12:31:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235410AbhCaPpm (ORCPT
+        with ESMTP id S234126AbhCaQbj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 31 Mar 2021 11:45:42 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A33C061574;
-        Wed, 31 Mar 2021 08:45:41 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id o16so10372710ljp.3;
-        Wed, 31 Mar 2021 08:45:41 -0700 (PDT)
+        Wed, 31 Mar 2021 12:31:39 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8448BC061574;
+        Wed, 31 Mar 2021 09:31:38 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id kt15so30950784ejb.12;
+        Wed, 31 Mar 2021 09:31:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Sg2M5vnLvA6N/v/unukjBIy2TElIYCrmD7g4frzymRQ=;
-        b=rkkFwJ9Cpq5k0SUA92s1t0S+rpZf1whcRDyyhdYF+yvH3fJ0KJOD9TbUObQp19+2fw
-         jDRmZCOQXy5+egCihBqXOdI3vaOo7iTf+81KhlvNjtfLU4UGfXe+m9j9P8s/N223jj5P
-         kV2AbMwLHyDSvlM8yyrWOSUirPB892b0kMffK/xzpKLw3COLvH9/RcB7p2/FLlrYNDvn
-         54LvMqE6zZPXp4r5n2pAk+imsO/ckDLs68Zn2Gx/e8FI2ZLDaJtabr2nuTFTfMt5hVKs
-         D2r2d1G6PV1QxYpdjW8zNg84dU45ihBEWLc4vI/v+lrjvTVqmYLNChgExA8xotU2t2nn
-         VVfQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WYLc7tpXXlAdzQcAM50oPpnT2QvCfzZa3KC3TsmrTA0=;
+        b=DbLfIr+jCyhFpfkmEFPvn55IdcfEfDzRQQRKPGfJN5f7C6SJN7gpJYe/XCypcsjo0O
+         4IC4DeELTRvs246b2L/g+V08C0140ZGwHLcBwRC7qn1N2YgIlvQRx3tfqIMtv6VLCFVX
+         8cPtyOFSyBKpaD8H8+cxgRE2PcQXpMtDf4WMflX506JBnWhcHYuk+O0r7zc4JSZ3Avwu
+         ia/40l+WZjNCTezR+4rl2XNYcHdwSTMGgMMgdb/3zBiwQyzENUOJa9S2B4hBQ5q3a++Q
+         8eAFictjjETBkEKvf5A5drl7pRTZy8b8/lOg3gQAYNBV0fnF07hGeZaxthU5CHEW1uJV
+         ekwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sg2M5vnLvA6N/v/unukjBIy2TElIYCrmD7g4frzymRQ=;
-        b=FrxcAk1mYVwLa3Z8OYpLXumXgVB0g9WH8PBqMDvH93ub8gvFiDlMJTUOurrIMB/zJo
-         AONlwt7N4dhS2WPYktr4c+GlwrRetEmw/Zr+hgSrkCh/u3w9EJIc8Dkv7vfikRapxl//
-         BeWtmLBy2+lCLzT36oHfm9rN1xAYqTzOXNZzzLroJIhgMkHHRIuEsO4XC9uo/oIRCN5l
-         B4Qf5xVeQJ8ivxGyCb93o7aXhfnItOLPfi6raEAY+zwBiKtScKwh96tgAOSUVvofWPk1
-         8Z8wGv7ex0kg5p3z9ZUzT5dOeQyw1xmxtGUpQ9RQjeRS05j45Zm8gPBkqV8YO4mSin7z
-         bR/g==
-X-Gm-Message-State: AOAM530rtOZrZRyiqrIU315UEA7y1ZgBEBuFFgZ/VS8mP5nuqiEB4WC3
-        jAdya5Msw/mQe+g1GsCqaCjV8T0GlPQ=
-X-Google-Smtp-Source: ABdhPJxlLOpGqgOWnEgE7B4HJ0pcInOcka2zS2ofj5+/faiRKNsihhdztJFakPdBZVJRL1tzI5FcDQ==
-X-Received: by 2002:a2e:b88c:: with SMTP id r12mr2476537ljp.212.1617205539966;
-        Wed, 31 Mar 2021 08:45:39 -0700 (PDT)
-Received: from ?IPv6:2a00:1370:814d:c71f:a10:76ff:fe69:21b6? ([2a00:1370:814d:c71f:a10:76ff:fe69:21b6])
-        by smtp.googlemail.com with ESMTPSA id 203sm275275ljf.41.2021.03.31.08.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Mar 2021 08:45:39 -0700 (PDT)
-Subject: Re: [PATCH v4 1/6] soc/tegra: Add
- devm_tegra_core_dev_init_opp_table()
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210314164810.26317-1-digetx@gmail.com>
- <20210314164810.26317-2-digetx@gmail.com>
- <8f78a014-eeab-d788-7d3b-b52b8109cb2c@gmail.com>
- <20210318103250.shjyd66pxw2g2nsd@vireshk-i7>
- <2498dd11-1d71-b245-2651-e43ab3f70e17@gmail.com>
-Message-ID: <9115b38c-5d00-03e2-f51a-8c1ea15b9b6b@gmail.com>
-Date:   Wed, 31 Mar 2021 18:45:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WYLc7tpXXlAdzQcAM50oPpnT2QvCfzZa3KC3TsmrTA0=;
+        b=h4UiOjkRGErTZGCp4JvkNcgIccOMyDRHlQw61XTqibxlibvGwtkhAOxkn7QeHdSFZO
+         Frtxyv8Tl1BBMkJkA2hGPfjkEpKOFdXiTBou2Wpydd8B6KuzPOHmXkhKzma2GPWP3rIH
+         w1SIOPdlVRI1u+Nm56caCfuHoglPNJ+2k60eAjAJ0r0h6v3gdXYytS904NDbssFKHIu7
+         OS6uetRWFB2jorE1l3hfli2pGWW9i5xADJAdYv2SxNqd+5MEoySTlAW+44UvOs8FLFWt
+         29ll5J5Kr1oc2gSpsieU+gClQ9gzNS5HUMBH8d4v9592MKfUVT44mtrdBUJ/Dq9T/t/I
+         RmTQ==
+X-Gm-Message-State: AOAM533Ls3KIj4UDI141QEGykYggnnYR32Q9H1rzUeoxfAgMRHhw71Bj
+        fc7xNCMfiLvjCGWslzJ419I=
+X-Google-Smtp-Source: ABdhPJywJZ0p2Osdd/88+UOBzGYvSL2LLonJcD3VhQAXpMV7ZNhD9VK0KfC5Fzpn3KiPxA/cyvtfVQ==
+X-Received: by 2002:a17:906:4c56:: with SMTP id d22mr4615970ejw.426.1617208297305;
+        Wed, 31 Mar 2021 09:31:37 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id v24sm1534193ejw.17.2021.03.31.09.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 09:31:35 -0700 (PDT)
+Date:   Wed, 31 Mar 2021 18:32:01 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 03/13] phy: tegra: xusb: Move usb3 port init for
+ Tegra210
+Message-ID: <YGSkAcRLByY8zNnu@orome.fritz.box>
+References: <20210325164057.793954-1-thierry.reding@gmail.com>
+ <20210325164057.793954-4-thierry.reding@gmail.com>
+ <YGMx5cLmX+d48XKO@vkoul-mobl.Dlink>
 MIME-Version: 1.0
-In-Reply-To: <2498dd11-1d71-b245-2651-e43ab3f70e17@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cJELGr4MZm8FUmtf"
+Content-Disposition: inline
+In-Reply-To: <YGMx5cLmX+d48XKO@vkoul-mobl.Dlink>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-18.03.2021 13:37, Dmitry Osipenko пишет:
-> 18.03.2021 13:32, Viresh Kumar пишет:
->> On 18-03-21, 13:27, Dmitry Osipenko wrote:
->>> 14.03.2021 19:48, Dmitry Osipenko пишет:
->>>> Add common helper which initializes OPP table for Tegra SoC core devices.
->>>>
->>>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
->>>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
->>>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
->>>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/soc/tegra/common.c | 137 +++++++++++++++++++++++++++++++++++++
->>>>  include/soc/tegra/common.h |  30 ++++++++
->>>>  2 files changed, 167 insertions(+)
->>>
->>> Viresh, do you think it will be possible to take this patch via the OPP
->>> tree along with the devres patches if Thierry will give an ack? This
->>> will allow us to start adding power management support to Tegra drivers
->>> once 5.13 will be released.
->>
->> I can do that.. OR
->>
->> I can give an immutable to Thierry over which he can base these patches..
->>
-> 
-> Thank you!
-> 
-> Thierry, please let us know if you're okay with this patch and what
-> variant you prefer more.
-> 
 
-It's a bit too late now for 5.13, so I'll re-send this patch later on
-for 5.14 separately and along with other patches that will make use of
-this new helper.
+--cJELGr4MZm8FUmtf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Mar 30, 2021 at 07:42:53PM +0530, Vinod Koul wrote:
+> Hi Thierry,
+>=20
+> On 25-03-21, 17:40, Thierry Reding wrote:
+>=20
+> > +static struct tegra_xusb_usb3_port *
+> > +tegra210_lane_to_usb3_port(struct tegra_xusb_lane *lane)
+> > +{
+> > +	int port;
+> > +
+> > +	if (!lane || !lane->pad || !lane->pad->padctl)
+> > +		return NULL;
+>=20
+> This looks problematic to me, so if lane is NULL, it will still go ahead
+> and check lane->pad which would result in NULL pointer dereference.
+
+No, this isn't going to result in a NULL pointer dereference because the
+compiler will short-circuit this if the first expression is true. If the
+lane parameter is NULL, then the entire expression is going to be true
+no matter what lane->pad and lane->pad->padctl evaluate to (because of
+the logical OR) and hence the compiler knows that it can skip the rest.
+
+This is a fairly common construct in kernel code.
+
+Thierry
+
+--cJELGr4MZm8FUmtf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBko/4ACgkQ3SOs138+
+s6FiNxAAi2R7ZrHKx1o63uc5yjc36lI4yojCCgztYi1WzRo1mQZjlGWhhtrA88rK
+LipD2lMrK2Acm9ZxURPgWhFet0MtptgZ0fbBbfGjOXwdMKE/9nGsHvpMqFAeHdmC
+UgMhyAavacUnP9WnlwjQpoIooc8VPAS/IzuKmcNUZH6v9k3ncjv1Rm9Cc1cdoOBK
+dP5KLQWH2/LFLfTzPfyJF1XayW5U4QZ7Z40qbubcs0xE96oam++LLfk9NgMsCoIR
+M1W4xtgQNPIkM2LFjHhGR7Vx539mxD/eKOYBtGM5oiIUThWmmgrSTyweOl63tkOP
+a/Z8E7ypZWC5G7kpTXreDZ1mp3cS/VKOXRzKMDiNZ9CHoAx+yWtrSA0dvL9VYXpA
+UrBfypQO36bwR/XMhNB04s3q80Wmp7FygbmBKsVE6u/inmdYLaeKHmsSfZuVk7IY
+LVJgOPwWxHErqakmTCro2Ja+vv6UctvLQ0e0IRZiuJ4rqu7tp0CMGrYv2p2p4dKK
+wsEakXE8kq4nerNsTL1io6ISBvnA8Nqesu6YSWhxDNilZtYg6jr9dbBDFL56XB8F
+alej1rDjL9KLKZmxW5unXLVv623xbgYtVnrr9xbuHCGbI9+knev4JsSRekk0cfxB
+kSRNU+fgjJB2MmsTTioUzvnSjAvlsYC6np0ASaaSBebZf2oex6g=
+=AgrR
+-----END PGP SIGNATURE-----
+
+--cJELGr4MZm8FUmtf--
