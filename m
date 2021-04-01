@@ -2,184 +2,197 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19037C43460
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75C3C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEE35610E6
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7F1D6108B
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234191AbhDAK7v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 06:59:51 -0400
-Received: from mail-eopbgr1410131.outbound.protection.outlook.com ([40.107.141.131]:11291
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S234336AbhDAK7T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Apr 2021 06:59:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MaVjsyH5HWxZL2fVR1WXhgfwtuT9r8vns05MY15+ZIU+70LRb8/zIFn8L/lIi7e18KsAtJVnlGzHp8Dw7c7Qw/uKXzE+gnVJB3/e+iviVIlHqUW+xRhH7O2cRyem+DwKLyh6HLbu/BPdL1w8DPMB0OIuCWg1BZwiMA+4zY/LF6VuCLNAbEqzCrZ1GLhHwxLB9FrF2FS8kCBD0OHpd2YbmXDeIZi7xnsD+gHMGzqWmYzQmr/JcMHfXqsT3SLRfJkchg4Sluu3JT0stHgoLG/3atLCaRB5sD5UdkmssZNucaSs5zGDjCclDX6Akam95+Gc/CppP55qa2sgUmpFNozInA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uBnSNyEQ4+n0IfClSmayoekAUJgxtFLKBnvPxD89qac=;
- b=iSTN2nozyoWb2b4hJDYZ0WRh/Y4EcMUaUPoyle2eaB/w3iv/i7vbp7Ft01i8y1a3LaDy1eIfh1/eEBIqhCvxPt7x9rRd8pFGw+Ru6kTyCJ4J19vAqecbx4LW6XnsQmADW5bVu0g7dA8CnLkn8PMd/52jK2WjvyJJcStsOlV+5hqksP7NwsnPpq04OXxVzrrP6R+Bzys0I4DjSNoQhaCoJ9/FFjG7kcOI7sIpBGYZAyOTmGW7+I+80Aa/Y1TQudV/OS9bOw3x+7kIRtFirQHDOIb9UVgq5AHeqNh2ZSGa6+XMza9WdyhjUCD/fg0HGM/5fkQYZCzUqnG/9Q0Q/JbgsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        id S233553AbhDALAX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Apr 2021 07:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234035AbhDAK74 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Apr 2021 06:59:56 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953C6C0613E6;
+        Thu,  1 Apr 2021 03:59:55 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id hq27so2217615ejc.9;
+        Thu, 01 Apr 2021 03:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uBnSNyEQ4+n0IfClSmayoekAUJgxtFLKBnvPxD89qac=;
- b=ICIV1OooPu4vC2H6B2eoBTUDtU1MANgsjrMvRs3IE8NLWAODbF1r2TMXNrxg4AL07T2RW+Tf9Bb9s0HXC4QHFbkjyt39OKZakaPi/W7WYKPS/MVYz/S0iOjRgyT4LjTM521KZHchF2n0PEOdwZRQukWzH30NQ1jUDY0ixm1EhfQ=
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
- by TYCPR01MB6656.jpnprd01.prod.outlook.com (2603:1096:400:9d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.26; Thu, 1 Apr
- 2021 10:59:16 +0000
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::e413:c5f8:a40a:a349]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::e413:c5f8:a40a:a349%4]) with mapi id 15.20.3999.028; Thu, 1 Apr 2021
- 10:59:16 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Bharat Kumar Gogada <bharatku@xilinx.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>
-Subject: RE: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
- MSI capture address
-Thread-Topic: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
- MSI capture address
-Thread-Index: AQHXJXcG+5u1h/7Mf0S8wvROOYQXFqqcp96AgALYqkA=
-Date:   Thu, 1 Apr 2021 10:59:16 +0000
-Message-ID: <TY2PR01MB36924566960FE203EF3B2FC9D87B9@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-References: <20210330151145.997953-1-maz@kernel.org>
- <20210330151145.997953-3-maz@kernel.org> <20210330152857.GA27749@lpieralisi>
-In-Reply-To: <20210330152857.GA27749@lpieralisi>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: arm.com; dkim=none (message not signed)
- header.d=none;arm.com; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [240f:60:5f3e:1:30e0:e1c4:8f10:3212]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 44742a11-5ebb-4f88-b5b6-08d8f4fd314e
-x-ms-traffictypediagnostic: TYCPR01MB6656:
-x-microsoft-antispam-prvs: <TYCPR01MB66566514FC9C90AF41AB6EFED87B9@TYCPR01MB6656.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kMCoqHNYwJEcw4JyAJbiNoSjOPBD5mmVTiZcIJ42FdN0oJmJYvJwhlm2Tmeg+iZrCHOz6FvfdPMHOz1xybYih8fNb6JB5zRtCYXR90+ygV7czS7Dm2M2qdxcA0CEhU3LObNoBORB5LwAxiLqKXxosRpV1YEEMZLgKanMehMChgzDye1MHNS+MOsmyV9Kn9IeZo7+SJEXEqJ1M/jf/tANGOevMQbbZmusrcgtrsQKJ+ogr3y96Sib5HpkqPahSL6FkmVE/10cSmE4a5p9wECLHfoG0NgTE7QNip4gbEPuwsPQGtTtZuOTxJLqQdWDdxJOPLHynnsP7u+2/xDtDdq34TsGDofSRAH8bRhamLh/lokLobl6iWVbZuwAGA1JVbK7mj6nOrj1ZHdLi9rjnvWh98BFAqGMuOkC0gPoRrfoHVf9sdmUO9GUol+IDJHt+9yCitWsHrfa809TA0aflhXhOQi2uFo8qOflbZ5DnDzDcINOsf1OOdjgChjtk1VbvEVLt6TF5t3axaqUXoaZHRYt+sUbXHiQjQx7F0bzibm3WJK8Z2zVBnJcm08clXSV9PCWSwXPOXXjid21rfnFrojB70spctY62w/C2EA/87Soz8ENJ/x5AVs/2Pl0i+Filv9FhOGpcLUWtgRv3gEsXeS9i1TIgNKmMImKsFq5YHD1RLM=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(396003)(366004)(136003)(39860400002)(376002)(110136005)(5660300002)(4326008)(33656002)(66946007)(478600001)(7696005)(83380400001)(54906003)(186003)(6506007)(8936002)(8676002)(38100700001)(86362001)(9686003)(55016002)(2906002)(7416002)(76116006)(66476007)(316002)(64756008)(66556008)(71200400001)(66446008)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?gPyjddPLC//OX/VzRDZ9M7Opb+zucWQvxhqGAYywK+j/uExuF/NWfBxPNZXt?=
- =?us-ascii?Q?j+XIqdNEYaAZwRQlLOyZPKpVMhT5H22f5kBsPUzw1fq4B+/8oEfBPMtYjwep?=
- =?us-ascii?Q?LwAAICoCgmm6+vXJ0kDGJq+9FA4y34dRREP/o9POHzyp5qBaHKD0onWBHVPD?=
- =?us-ascii?Q?aaoB9dlCbkex1KI5lXyCbR+W8Tps55NHvUvVkBbAcBU/3hUFTLdNrUqr6df3?=
- =?us-ascii?Q?T/4Zs0tc+RYnfvNB0nYNylob1Fm40CZ/7D0x9O3vmy1FQtxLG3k+lZyd52wr?=
- =?us-ascii?Q?WLD/IrGDDe9YwpazQZNQBro2/MCmih2gr4Z1BP/9bstRvVt95L5FpT6yISgX?=
- =?us-ascii?Q?jTPQNtcMm5HXne3jn728JfnAWdNU/aQZ0qWqrLGLstQdVzC5koXFzBQkJYo7?=
- =?us-ascii?Q?+lHhKe593dRSqiR7R/heEDAM4iVCcchT3ucclFZSs0hHfmXzteSOAPsBs1jY?=
- =?us-ascii?Q?04i9HwD+GDPVcoJFrgWHfA1WOYJk01TaR909PcOrrYMgtCA3Fi6vRMdrTvy/?=
- =?us-ascii?Q?QfoNMtwKiaEwXNW3aijcHc40KSX15JX8PeWAwGM50M5sUlPZ1IZg0XxEaQXz?=
- =?us-ascii?Q?rrEBPtfxxaadUgBdEs14zcOniI9oBu+VTJZIxtaI6hZCqb76DqHNHXB+/9XH?=
- =?us-ascii?Q?7/fMTyKRWhFsyYH95FQsW8qUFM//ESVYN5vyV0G9PKKSjamupyO7JXpnemcQ?=
- =?us-ascii?Q?Utg+qLYjB6BGuxs/mQh7Pyft7bUuR2aIoSOHbF0+mwMM+YllmXtWu4RS0zwg?=
- =?us-ascii?Q?bGipPaZ5tOB3NlyD/s5jNOTBpz6EQpOz7tWveECB225Y7RrJFX0xtwjIDJf5?=
- =?us-ascii?Q?if0V0KKTXOpT7RECvL/fiSZQufPRrBcDrWGPKGYA8HsTFZJKn60zLrXXJVjX?=
- =?us-ascii?Q?KLF69uFCY1zyAY9LLcw1b21IeGUqvMcd1wD0iyh+rDRB1BhbE7GwEwZ3wYXQ?=
- =?us-ascii?Q?Cktn/rP6CFVlVwgVwQrAsgPwT7ca2rIWRsC+XE1qbpALFeL1NYiWP69MVMZG?=
- =?us-ascii?Q?ADPEA7Aapaz4Mm6IppAlq/KMTOlaK6npZitWV3zG7Kkqw7rCpRzxj1YBuh+j?=
- =?us-ascii?Q?oKQ+6ZxYlJ7sRvuAATjLKWcLNwCLjuIE2reHKUnPfZWll6DsUKn17JjiVQ2v?=
- =?us-ascii?Q?yIPyMbMmhwgxosfNpwp6RXtGnfOEonVIS0QICdmb5BVOid6HVH/awY5Yn8o/?=
- =?us-ascii?Q?5gNmJUFehyW0mrzOxYIYGf1+sUwTUf2rJMQcKw+XTvXPhuB5Xnowl4FgdN2F?=
- =?us-ascii?Q?hqR7weCk7FVTN37A4yByjreIsOUdX2PnrSFdHK2cIFGmxCEqXwWePZ6nloSX?=
- =?us-ascii?Q?kQ5ex6cE6pX9ggVAtyoUtrO13CcMFqQd/W6Ycsmk8/j1/qRPr3yytkReURO/?=
- =?us-ascii?Q?zJ0PLqU=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HQT+MfXSbU3OrSCCpbcdilBmnY1F0nrfdGq3rre+Jq8=;
+        b=sFdAa+KJ/72QxV7NWhfK6r4ms6/34selgLvWkNEGEPm4Q42S6Pc5jt5i7K1iyP7Nzx
+         lYYaR1y+DcPvsqXaO3evhm93l1p3KJXlYvXpjuwGoADenT/cOZ/ZllNb4PKHTTf6fGXA
+         sRR87zOBDkUnvSuzSEhIJXT3I6vtm2qbFsjrFQWUhsGxGDu/HSmP7Wl7C+5EboaMXMQx
+         TS0Of0dwpicC3laUDxrPIhJRjLjqw8uj2m7SayqIRhzKaUBAdFXizwyP1lGUQ1NraFsw
+         2rQ9MlQncIR+P8mK7iKeqJCMx4wAVMCrR95I9LRFwAnaLpgne4In3P+YyFv/SQIVRRUG
+         9qhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HQT+MfXSbU3OrSCCpbcdilBmnY1F0nrfdGq3rre+Jq8=;
+        b=XwPTDPO4i5M2T5xDehXdhOCiLlpx8sMQJFGHrWajw5R5nuw+pjuzsqpiqU9U1uOFcP
+         LKoXkpix+akVoyG2IoSe2MtBahry8xicRGrU6Yd+7e3FCRck4MKT9X7cFMpat7NLGu2p
+         07Eo32vUKakE3rnihRVOvGfJ+tszuEfExo/q3QQj8sMD+FFT9683KtdlA1iDkU7N5Kg5
+         pb9P5wXHZvKjFqR84uNgLWCi/fULBi5kVBtoUU89uiNAvpDrhfnFyqX3r0o7QS2VCBiY
+         UmDAtZhXCZNvwi+McZhL7S2pR+w6jTNmWcl9MRAiQa3xdp16ZOvdtPp7hlo45HxLutsi
+         cv6g==
+X-Gm-Message-State: AOAM531tW06BnKBvwlksk87QnFo0egfUKo8IBJUHAPIDX0HQFUZ6+Otd
+        6fQILR+rt7QI5pSNqAVnFSQXG2mp0Ks=
+X-Google-Smtp-Source: ABdhPJwif69oPS/oE0DnF294MN6X53YGdyUxADFwKndhXaPMFcJS6q3Z9IqzRYL8CHmdmuLaZzoYwA==
+X-Received: by 2002:a17:906:2612:: with SMTP id h18mr8341376ejc.309.1617274794368;
+        Thu, 01 Apr 2021 03:59:54 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id ci22sm2597916ejc.54.2021.04.01.03.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 03:59:51 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 13:00:18 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 11/13] phy: tegra: xusb: Add wake/sleepwalk for
+ Tegra186
+Message-ID: <YGWnwhhiEZ596ct4@orome.fritz.box>
+References: <20210325164057.793954-1-thierry.reding@gmail.com>
+ <20210325164057.793954-12-thierry.reding@gmail.com>
+ <YGVs5/57Z+6zKuQa@vkoul-mobl.Dlink>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44742a11-5ebb-4f88-b5b6-08d8f4fd314e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2021 10:59:16.2111
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LcEgNJjADl6LHZnO+kPHZOziidTGgtgapanU0ndez/FB1+gEs0Kk6q333UW3loj8jxtHShbLjRreZbpg81j5DQPfjTHyW+6sFoZCQ6IQ6wM3X1zUfcOFoQeVKs04bLbW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6656
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BQy/s5Q8W1hUIwRV"
+Content-Disposition: inline
+In-Reply-To: <YGVs5/57Z+6zKuQa@vkoul-mobl.Dlink>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Lorenzo, Marc,
 
-> From: Lorenzo Pieralisi, Sent: Wednesday, March 31, 2021 12:29 AM
->=20
-> On Tue, Mar 30, 2021 at 04:11:33PM +0100, Marc Zyngier wrote:
-> > A long cargo-culted behaviour of PCI drivers is to allocate memory
-> > to obtain an address that is fed to the controller as the MSI
-> > capture address (i.e. the MSI doorbell).
-> >
-> > But there is no actual requirement for this address to be RAM.
-> > All it needs to be is a suitable aligned address that will
-> > *not* be DMA'd to.
-> >
-> > Since the rcar platform already has a requirement that this
-> > address should be in the first 4GB of the physical address space,
-> > use the controller's own base address as the capture address.
-> >
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+--BQy/s5Q8W1hUIwRV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 01, 2021 at 12:19:11PM +0530, Vinod Koul wrote:
+> On 25-03-21, 17:40, Thierry Reding wrote:
+> > From: JC Kuo <jckuo@nvidia.com>
+> >=20
+> > This commit implements Tegra186/Tegra194 XUSB PADCTL/AO wake and
+> > sleepwalk operations.
+> >=20
+> > Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
-> >  1 file changed, 7 insertions(+), 11 deletions(-)
+> >  drivers/phy/tegra/xusb-tegra186.c | 558 +++++++++++++++++++++++++++++-
+> >  1 file changed, 557 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb=
+-tegra186.c
+> > index 5d64f69b39a9..6378bf722745 100644
+> > --- a/drivers/phy/tegra/xusb-tegra186.c
+> > +++ b/drivers/phy/tegra/xusb-tegra186.c
+> > @@ -1,6 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /*
+> > - * Copyright (c) 2016-2019, NVIDIA CORPORATION.  All rights reserved.
+> > + * Copyright (c) 2016-2020, NVIDIA CORPORATION.  All rights reserved.
+> >   */
+> > =20
+> >  #include <linux/delay.h>
+> > @@ -113,6 +113,117 @@
+> >  #define  ID_OVERRIDE_FLOATING			ID_OVERRIDE(8)
+> >  #define  ID_OVERRIDE_GROUNDED			ID_OVERRIDE(0)
+> > =20
+> > +/* XUSB AO registers */
+> > +#define XUSB_AO_USB_DEBOUNCE_DEL		(0x4)
+> > +#define   UHSIC_LINE_DEB_CNT(x)			(((x) & 0xf) << 4)
+> > +#define   UTMIP_LINE_DEB_CNT(x)			((x) & 0xf)
+> > +
+> > +#define XUSB_AO_UTMIP_TRIGGERS(x)		(0x40 + (x) * 4)
+> > +#define   CLR_WALK_PTR				(1 << 0)
+> > +#define   CAP_CFG				(1 << 1)
+> > +#define   CLR_WAKE_ALARM			(1 << 3)
+> > +
+> > +#define XUSB_AO_UHSIC_TRIGGERS(x)		(0x60 + (x) * 4)
+> > +#define   HSIC_CLR_WALK_PTR			(1 << 0)
+> > +#define   HSIC_CLR_WAKE_ALARM			(1 << 3)
+> > +#define   HSIC_CAP_CFG				(1 << 4)
+> > +
+> > +#define XUSB_AO_UTMIP_SAVED_STATE(x)		(0x70 + (x) * 4)
+> > +#define   SPEED(x)				((x) & 0x3)
+> > +#define     UTMI_HS				SPEED(0)
+> > +#define     UTMI_FS				SPEED(1)
+> > +#define     UTMI_LS				SPEED(2)
+> > +#define     UTMI_RST				SPEED(3)
+> > +
+> > +#define XUSB_AO_UHSIC_SAVED_STATE(x)		(0x90 + (x) * 4)
+> > +#define   MODE(x)				((x) & 0x1)
+> > +#define   MODE_HS				MODE(0)
+> > +#define   MODE_RST				MODE(1)
+> > +
+> > +#define XUSB_AO_UTMIP_SLEEPWALK_CFG(x)		(0xd0 + (x) * 4)
+> > +#define XUSB_AO_UHSIC_SLEEPWALK_CFG(x)		(0xf0 + (x) * 4)
+> > +#define   FAKE_USBOP_VAL			(1 << 0)
+> > +#define   FAKE_USBON_VAL			(1 << 1)
+> > +#define   FAKE_USBOP_EN				(1 << 2)
+> > +#define   FAKE_USBON_EN				(1 << 3)
+> > +#define   FAKE_STROBE_VAL			(1 << 0)
+> > +#define   FAKE_DATA_VAL				(1 << 1)
+> > +#define   FAKE_STROBE_EN			(1 << 2)
+> > +#define   FAKE_DATA_EN				(1 << 3)
+> > +#define   WAKE_WALK_EN				(1 << 14)
+> > +#define   MASTER_ENABLE				(1 << 15)
+> > +#define   LINEVAL_WALK_EN			(1 << 16)
 >=20
-> Marek, Yoshihiro,
+> BIT() or GENMASK() please
 >=20
-> can you test this patch please and report back ? It is not fundamental
-> for the rest of the series (ie the rest of the series does not depend on
-> it) and we can still merge the series without it but it would be good if
-> you can review and test anyway.
+> > +static inline void ao_writel(struct tegra186_xusb_padctl *priv, u32 va=
+lue, unsigned int offset)
+> > +{
+> > +	dev_dbg(priv->base.dev, "ao %08x < %08x\n", offset, value);
+>=20
+> Too many debug prints in this patch as well...
+>=20
+> With the nits fixed:
+>=20
+> Acked-By: Vinod Koul <vkoul@kernel.org>
 
-I reviewed and tested this patch and it worked correctly.
-So,
+Done, thanks.
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Thierry
 
-Best regards,
-Yoshihiro Shimoda
+--BQy/s5Q8W1hUIwRV
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBlp8AACgkQ3SOs138+
+s6FNYQ//ZCu0RiXY4bKYD0YkdSBK952Z/KYrEDrhuDPEBc3i9RA8TE6l/IJqgA6l
+gvczZki7xJf5xxfPYVQz47kCpP6aVYTQhx2tkqIopBvjf6pIxTpxvSZYQak7bg9h
+x63nuX/TsJg1pZhInBMmN1pex1a6W1HeDthgOvMjInP08qJiRcHuePWNOfMVYMxR
+m1EmYOD3SvSnMU6OchsmZ//pRn8E32JGZmJbxHotF/JTvPvoyb/vhOESBFDkaw/X
+L0qHzDJf7Bq94qrJkB7/L09qCfnXT85eg6UvIPSeKY2oCRAZejRcOoLDEzWkpgWi
+MSrU2k/ltVbdZQuaGEw3zJxBsALkBXKLqZMFQBZ5jAVF+pYtCYY65uThu+Xl5OKh
+pTkQNRJiL4vFG6NSuTUgGrddTi2BXrD9OC+N0OJhLp7gK2wzjRUO4g0OMHYlnsE4
+6ukP6vQ7/y5w1R89pKPabN1Hua9/ealW6FQtOq3IP+LgKp655AC36POOS5GdPJAT
+J+4I89T1STHN4ebmiQHjMDm4rKZYZIuWRaTduMgaXthxYXMt7vUZI5MTDlsBawWz
+4MuVs6bDQa3vV3ivwNn8ILyDFEdzQivGg6T8Ad3J5UgqyrR6LtWi4v7a64zgHYel
+6Rg+Xj78dfixdNoG73VW2kUHCnr9/kBXx7eqYQGOk627xjctIno=
+=5jX+
+-----END PGP SIGNATURE-----
+
+--BQy/s5Q8W1hUIwRV--
