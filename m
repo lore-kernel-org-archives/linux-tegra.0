@@ -2,137 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE5CC433ED
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 06:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE775C43460
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 08:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB13610A5
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 06:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C54610D0
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 08:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233153AbhDAGt2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 02:49:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232565AbhDAGtQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Apr 2021 02:49:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2006A610A5;
-        Thu,  1 Apr 2021 06:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617259756;
-        bh=Hhp02BDYFoPZ7/j9E5Md/2IuILswyJ5r7RdCPV+U47w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=onj8inPvOhaCKXVInG9Tn/7/DE5X3bUbeScYXRgfk3lF/pDtQnEIugcfOi6x0TDrA
-         +UC7Cg79GFTvv/mKxkzFUaE44kvxbtoMUpSapqUSlbFGp0IszWZeJ7z5nkK6WXy8p/
-         hCrbH+08vhBaLl/j2P0lijOntLuGhEdTRVG/ionIY94gUUAt0b9sYkzo004xf3HzJX
-         ABxKy+TQpYLP/O3HsUKW9jJyLZM4bxmwlMCdXQ+7q0bCtnBCJCGYErzKgeAjzggZ7q
-         YKT4Tuk8zY1xH9FOiChKIDkNRGH2vh3AvswjJA1xumrH1/6ioTyXBKY0Os9gI7s0/L
-         r1dd803h8S4WQ==
-Date:   Thu, 1 Apr 2021 12:19:11 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 11/13] phy: tegra: xusb: Add wake/sleepwalk for
- Tegra186
-Message-ID: <YGVs5/57Z+6zKuQa@vkoul-mobl.Dlink>
-References: <20210325164057.793954-1-thierry.reding@gmail.com>
- <20210325164057.793954-12-thierry.reding@gmail.com>
+        id S233504AbhDAI6D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Apr 2021 04:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233637AbhDAI5v (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Apr 2021 04:57:51 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D475CC0613E6;
+        Thu,  1 Apr 2021 01:57:50 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id gb6so829809pjb.0;
+        Thu, 01 Apr 2021 01:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oXtJ821yB9S8peS7jwk7jXIhvNxqy4kwSPnw73VGxuY=;
+        b=aA5+PCF5ZjUkVztXBPOOYY2ElzvNGYpU+nmwQbZeikkytPRSBL3KM0UIJYvlGV43eZ
+         jMCLFVWtv0tNz/qNiQPUDKTbOuAKOXQT4Go8yTJZx6BLJP5iiPI7E2pbfp6ObQK7cNGo
+         NGpuNX7kaEnW/v3sJsAQnq1p21TchRmAm8ofsDXDzn786S0o+0sTpP7zb49tQ5mZ0BE6
+         WwyMNvXZVwqy6nMZ0SfONJmIxRNDW885ZzzFzjySanxNQrl3E1un6u8Zl9S8DZjXTpCm
+         eCqk0n3W/gKZkEH/ySIRus1BQ6SeM9T/sv16mkNcKIok3heNI6DMJdfbjqaElZfyHiZs
+         CyJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oXtJ821yB9S8peS7jwk7jXIhvNxqy4kwSPnw73VGxuY=;
+        b=dlqkRZQK2cN5/c9kaCtn0lqBBZ0OApRDh7Aw4G22t7f5UgNyXADcjp00kYuUEBUK8T
+         YOHOeuAz17J1YFCZpCPpsPP03UBWLAXa4/kzrYmdkxCP4thDhvP0KcEe/75YLH3wRXOp
+         2GZ5zvKzUPNqTD9Niova5AGd1lvN9pH/a0ZR3ukSC4NrR+JWjpJhAkziXKtuITl+ACbT
+         8uolstOWbkN6kNguIO3VuLRKKAmkga+gUgoPPKvQrT9A/sOklYj9VqpKWq/p8Iy2ZOaP
+         WGUDBokk84Ppbn1aeERyeHxIExDYUp9FgRXKGxW1KLpNoGlleFFrV49guwxcNbfmrT5q
+         WFJw==
+X-Gm-Message-State: AOAM530859A+OtlQFu8/IqX/tu4WVqh8viAN66WTqyojTVny47BHcTsa
+        vSZ/Rmk8L/0ia5d2EkNHLRE=
+X-Google-Smtp-Source: ABdhPJzvGu1N/wS8TdEjPhRmZPGQtvMqhoK8l4yaacUdBjiNF8CVAyTyrCf93DCUjT3hj2p3hpmsTg==
+X-Received: by 2002:a17:902:a502:b029:e8:3a40:bc6d with SMTP id s2-20020a170902a502b02900e83a40bc6dmr4974818plq.14.1617267470411;
+        Thu, 01 Apr 2021 01:57:50 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id y7sm4824167pja.25.2021.04.01.01.57.49
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Apr 2021 01:57:50 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 01:55:49 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, guillaume.tucker@collabora.com
+Subject: Re: [PATCH v1 2/2] iommu/tegra-smmu: Revert workaround that was
+ needed for Nyan Big Chromebook
+Message-ID: <20210401085549.GA31146@Asurada-Nvidia>
+References: <20210328233256.20494-1-digetx@gmail.com>
+ <20210328233256.20494-2-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210325164057.793954-12-thierry.reding@gmail.com>
+In-Reply-To: <20210328233256.20494-2-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 25-03-21, 17:40, Thierry Reding wrote:
-> From: JC Kuo <jckuo@nvidia.com>
-> 
-> This commit implements Tegra186/Tegra194 XUSB PADCTL/AO wake and
-> sleepwalk operations.
-> 
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/phy/tegra/xusb-tegra186.c | 558 +++++++++++++++++++++++++++++-
->  1 file changed, 557 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-> index 5d64f69b39a9..6378bf722745 100644
-> --- a/drivers/phy/tegra/xusb-tegra186.c
-> +++ b/drivers/phy/tegra/xusb-tegra186.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (c) 2016-2019, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2016-2020, NVIDIA CORPORATION.  All rights reserved.
->   */
->  
->  #include <linux/delay.h>
-> @@ -113,6 +113,117 @@
->  #define  ID_OVERRIDE_FLOATING			ID_OVERRIDE(8)
->  #define  ID_OVERRIDE_GROUNDED			ID_OVERRIDE(0)
->  
-> +/* XUSB AO registers */
-> +#define XUSB_AO_USB_DEBOUNCE_DEL		(0x4)
-> +#define   UHSIC_LINE_DEB_CNT(x)			(((x) & 0xf) << 4)
-> +#define   UTMIP_LINE_DEB_CNT(x)			((x) & 0xf)
-> +
-> +#define XUSB_AO_UTMIP_TRIGGERS(x)		(0x40 + (x) * 4)
-> +#define   CLR_WALK_PTR				(1 << 0)
-> +#define   CAP_CFG				(1 << 1)
-> +#define   CLR_WAKE_ALARM			(1 << 3)
-> +
-> +#define XUSB_AO_UHSIC_TRIGGERS(x)		(0x60 + (x) * 4)
-> +#define   HSIC_CLR_WALK_PTR			(1 << 0)
-> +#define   HSIC_CLR_WAKE_ALARM			(1 << 3)
-> +#define   HSIC_CAP_CFG				(1 << 4)
-> +
-> +#define XUSB_AO_UTMIP_SAVED_STATE(x)		(0x70 + (x) * 4)
-> +#define   SPEED(x)				((x) & 0x3)
-> +#define     UTMI_HS				SPEED(0)
-> +#define     UTMI_FS				SPEED(1)
-> +#define     UTMI_LS				SPEED(2)
-> +#define     UTMI_RST				SPEED(3)
-> +
-> +#define XUSB_AO_UHSIC_SAVED_STATE(x)		(0x90 + (x) * 4)
-> +#define   MODE(x)				((x) & 0x1)
-> +#define   MODE_HS				MODE(0)
-> +#define   MODE_RST				MODE(1)
-> +
-> +#define XUSB_AO_UTMIP_SLEEPWALK_CFG(x)		(0xd0 + (x) * 4)
-> +#define XUSB_AO_UHSIC_SLEEPWALK_CFG(x)		(0xf0 + (x) * 4)
-> +#define   FAKE_USBOP_VAL			(1 << 0)
-> +#define   FAKE_USBON_VAL			(1 << 1)
-> +#define   FAKE_USBOP_EN				(1 << 2)
-> +#define   FAKE_USBON_EN				(1 << 3)
-> +#define   FAKE_STROBE_VAL			(1 << 0)
-> +#define   FAKE_DATA_VAL				(1 << 1)
-> +#define   FAKE_STROBE_EN			(1 << 2)
-> +#define   FAKE_DATA_EN				(1 << 3)
-> +#define   WAKE_WALK_EN				(1 << 14)
-> +#define   MASTER_ENABLE				(1 << 15)
-> +#define   LINEVAL_WALK_EN			(1 << 16)
+On Mon, Mar 29, 2021 at 02:32:56AM +0300, Dmitry Osipenko wrote:
+> The previous commit fixes problem where display client was attaching too
+> early to IOMMU during kernel boot in a multi-platform kernel configuration
+> which enables CONFIG_ARM_DMA_USE_IOMMU=y. The workaround that helped to
+> defer the IOMMU attachment for Nyan Big Chromebook isn't needed anymore,
+> revert it.
 
-BIT() or GENMASK() please
+Sorry for the late reply. I have been busy with downstream tasks.
 
-> +static inline void ao_writel(struct tegra186_xusb_padctl *priv, u32 value, unsigned int offset)
-> +{
-> +	dev_dbg(priv->base.dev, "ao %08x < %08x\n", offset, value);
-
-Too many debug prints in this patch as well...
-
-With the nits fixed:
-
-Acked-By: Vinod Koul <vkoul@kernel.org>
-
--- 
-~Vinod
+I will give them a try by the end of the week. Yet, probably it'd
+be better to include Guillaume also as he has the Nyan platform.
