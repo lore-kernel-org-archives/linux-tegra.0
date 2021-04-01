@@ -4,51 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E80C43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CA2C43470
 	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 10:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3F466108B
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 10:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 833C6610C7
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 10:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233994AbhDAKRX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S234012AbhDAKRX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Thu, 1 Apr 2021 06:17:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38712 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233926AbhDAKRH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Apr 2021 06:17:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CBF2B610CA;
-        Thu,  1 Apr 2021 10:17:06 +0000 (UTC)
+        id S233946AbhDAKRK (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Apr 2021 06:17:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 038996108B;
+        Thu,  1 Apr 2021 10:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617272227;
-        bh=EIrQgPFlkTqPA7xToyxwP9zrW21fScMH9YJARgGuBdA=;
+        s=k20201202; t=1617272230;
+        bh=0XIMTKPbBSfQ0mStj2Kgtksi0YRnTlzwQGmNyWpKKDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i1b4LWb5h3mxG99vNqWH6h6CoSFG+jtujoAX5FHkpc8zcbZjk95+SJiZy8AtG6UAf
-         rb1YgjLA6JBv3BZ/7WU4On9MsvA9raSQxcN399IycTRm5L8UEFYNH4YfgVpbLhC88U
-         YgXTweGlccahyPmaHb1FQoq0HpdqJcgua4JG+pEfFf07GS2+xNF5cyVBm0brk0X+Df
-         4npDaFC0O+ccya0UYNJuRLjKWbyRu7BexQIIYJPz3ZGxVEuur+pyWf32+RmWaJUvVd
-         rZdT6j8gbJyseq+UanJzKqfN+QEFExmxth9kY3vjyXTAmQSbd1XuGXcUFXsSgliXpn
-         3cvQKPU5XEA1w==
+        b=TwLJ/F9pVHytgO8o8WFfwwcD6cthVx34SLFCkhEqJEUH8D33dGAJaWfedq4nfCXRi
+         elvaA1+DicvJIBSRTIHIfpCT+k0jHlmJ1ewCfaVAASUM0u2x/Q0hoBD44QAfOOw2B8
+         /p4E6es6QXuACpuPgXXnfR1DTzUTg4Mk2ouH0xZAgVYrAUKWkKBWlCvXPtsf7IjQFq
+         Chf7j0kJjO02uYMHXSrdEcNg6jmpL31l6PTg5/6IufxIKQlsHdfIFGFpi40X3HGZF+
+         H1KQMg24oUPVpDlPdFc2KRbmuNiH86Hyt8JlKHS6cPep8tHJ/C9flBUHB0eSDnEvn/
+         /uLjTIu7FJItw==
 From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sameer Pujar <spujar@nvidia.com>, linux-kernel@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org,
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Sameer Pujar <spujar@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 0/3] ASoC: dt-bindings: Rework audio-graph-port schema
-Date:   Thu,  1 Apr 2021 11:16:21 +0100
-Message-Id: <161726938994.2219.6158932183318290762.b4-ty@kernel.org>
+        linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH] ASoC: tegra: Set driver name explicitly
+Date:   Thu,  1 Apr 2021 11:16:22 +0100
+Message-Id: <161726938993.2219.5747332081985016926.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210331142748.2163272-1-robh@kernel.org>
-References: <20210331142748.2163272-1-robh@kernel.org>
+In-Reply-To: <20210330180657.1867971-1-thierry.reding@gmail.com>
+References: <20210330180657.1867971-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,16 +51,13 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 31 Mar 2021 09:27:45 -0500, Rob Herring wrote:
-> This series refactors the audio-graph-port.yaml schema moving the
-> 'port' node out of the schema and updating to use graph.yaml schema.
-> This allows users to define what each 'port' node is like other graph
-> binding users.
+On Tue, 30 Mar 2021 20:06:57 +0200, Thierry Reding wrote:
+> The SoC sound core will generate a driver name by normalizing the card
+> name. However, most of the time that name does not tell anything about
+> the driver and is therefore useless for this purpose.
 > 
-> v2:
-> - Rebase on ASoC tree
-> 
-> [...]
+> Make the driver name more useful by setting it explicitly during card
+> initialization.
 
 Applied to
 
@@ -73,12 +65,8 @@ Applied to
 
 Thanks!
 
-[1/3] ASoC: dt-bindings: Move port/ports properties out of audio-graph-port.yaml
-      commit: 9c1e0439ada9973ec99cc1e0887eb84fd26444b8
-[2/3] ASoC: dt-bindings: Use OF graph schema
-      commit: ec1c8302178a946986bb7b52ac7bb9ccdcdf7d92
-[3/3] ASoC: dt-bindings: socionext: Use audio-graph-port schema
-      commit: f1321c9766b2c9e79de268225e291dead0a8f969
+[1/1] ASoC: tegra: Set driver name explicitly
+      commit: 868d5c6340d878f44acf73c92923995b896b6454
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
