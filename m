@@ -2,333 +2,184 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C8DC433ED
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 10:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19037C43460
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DCDE60FED
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 10:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEE35610E6
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 11:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhDAKoa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 06:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233866AbhDAKn6 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Apr 2021 06:43:58 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2918AC0613E6;
-        Thu,  1 Apr 2021 03:43:58 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id r12so2180139ejr.5;
-        Thu, 01 Apr 2021 03:43:58 -0700 (PDT)
+        id S234191AbhDAK7v (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Apr 2021 06:59:51 -0400
+Received: from mail-eopbgr1410131.outbound.protection.outlook.com ([40.107.141.131]:11291
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234336AbhDAK7T (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Apr 2021 06:59:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MaVjsyH5HWxZL2fVR1WXhgfwtuT9r8vns05MY15+ZIU+70LRb8/zIFn8L/lIi7e18KsAtJVnlGzHp8Dw7c7Qw/uKXzE+gnVJB3/e+iviVIlHqUW+xRhH7O2cRyem+DwKLyh6HLbu/BPdL1w8DPMB0OIuCWg1BZwiMA+4zY/LF6VuCLNAbEqzCrZ1GLhHwxLB9FrF2FS8kCBD0OHpd2YbmXDeIZi7xnsD+gHMGzqWmYzQmr/JcMHfXqsT3SLRfJkchg4Sluu3JT0stHgoLG/3atLCaRB5sD5UdkmssZNucaSs5zGDjCclDX6Akam95+Gc/CppP55qa2sgUmpFNozInA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uBnSNyEQ4+n0IfClSmayoekAUJgxtFLKBnvPxD89qac=;
+ b=iSTN2nozyoWb2b4hJDYZ0WRh/Y4EcMUaUPoyle2eaB/w3iv/i7vbp7Ft01i8y1a3LaDy1eIfh1/eEBIqhCvxPt7x9rRd8pFGw+Ru6kTyCJ4J19vAqecbx4LW6XnsQmADW5bVu0g7dA8CnLkn8PMd/52jK2WjvyJJcStsOlV+5hqksP7NwsnPpq04OXxVzrrP6R+Bzys0I4DjSNoQhaCoJ9/FFjG7kcOI7sIpBGYZAyOTmGW7+I+80Aa/Y1TQudV/OS9bOw3x+7kIRtFirQHDOIb9UVgq5AHeqNh2ZSGa6+XMza9WdyhjUCD/fg0HGM/5fkQYZCzUqnG/9Q0Q/JbgsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z2Xj9X++1xKNjk6Nkw+jJ5VVq86lauIjuo/R8uGXA1Q=;
-        b=JMJUL97JvyV4vzgt4RoMBmpjB9ZN25b3h9VsWlVl9AbUtg4U77lylxgBc/8CN4o0e9
-         1ZLFGC/bmYe5YzbuV/6xZHnh+PYQGdpKAkIuEjvftBWqNQRrVZiTWNGTLP9teJF3pIo4
-         FYAWOoLUQB4isIJyZBRXauVdYt4QD0Xou4WVVvtIgGCkHqfnBmckOgiqXnz18lA/TnCG
-         5AqQXs+zKt/nxpBFKoSnUJsTzff3mSGMGiYTTXX5ecSspsdvil21wuYTSKLSC8Q4KN0+
-         0xK40WicPNz2TTitj5vwe1K0MIl9Eo85PM9km75MFmZtuKyVlBcXqSlbKcn6oqQTMEEh
-         d9IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z2Xj9X++1xKNjk6Nkw+jJ5VVq86lauIjuo/R8uGXA1Q=;
-        b=dBC2xhJeJnLMjjOC2TbpKgyAwXkgItMBSJnQAye4HSXsHHdMmYakPyp4s04cEluyc8
-         S+KFhGIMEl1bCts8dRpRPCAIQCo9NuAjV1od2ItwS4GW3+hCAs3OlKRTUTxL5Mn7iH+P
-         SvYeBni52jfJircooKwCGllC5poqTvGQlKIi7GYAlev5JEUaOklznsrxTlaoDkq4STrz
-         GAPTyDuN4IrxfTHCB/vLpxqI4lsLUy2B/jbbIP75UfuP4uiukTip/nZ10RhmFbILIrYu
-         1d+TIbqb2ZP6LgQTJUPffp745K3+Q3I08oKGyjvjonts4ovQMBVGysTXuwErhNYuOzr3
-         iv/Q==
-X-Gm-Message-State: AOAM530Jq1TikZE4C4Ll3jICMcdML1K6OQUSVFIFiGVU3C/eFMG8GhIE
-        VZbZJLGNQqbpn71oOqPCVsM=
-X-Google-Smtp-Source: ABdhPJxbblLGWVTf/sepUozDRnpyY5PZ4mzcupZDOP0VB1Ffw9zjvwvn9AOV/Qlh0/6jB4duxvP0Xg==
-X-Received: by 2002:a17:906:4ada:: with SMTP id u26mr8385823ejt.129.1617273836871;
-        Thu, 01 Apr 2021 03:43:56 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id x4sm3104954edd.58.2021.04.01.03.43.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 03:43:54 -0700 (PDT)
-Date:   Thu, 1 Apr 2021 12:44:22 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        JC Kuo <jckuo@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 09/13] phy: tegra: xusb: Add wake/sleepwalk for
- Tegra210
-Message-ID: <YGWkBsGu0R/dnYcA@orome.fritz.box>
-References: <20210325164057.793954-1-thierry.reding@gmail.com>
- <20210325164057.793954-10-thierry.reding@gmail.com>
- <YGVr9EIBOHC9N/+/@vkoul-mobl.Dlink>
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uBnSNyEQ4+n0IfClSmayoekAUJgxtFLKBnvPxD89qac=;
+ b=ICIV1OooPu4vC2H6B2eoBTUDtU1MANgsjrMvRs3IE8NLWAODbF1r2TMXNrxg4AL07T2RW+Tf9Bb9s0HXC4QHFbkjyt39OKZakaPi/W7WYKPS/MVYz/S0iOjRgyT4LjTM521KZHchF2n0PEOdwZRQukWzH30NQ1jUDY0ixm1EhfQ=
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
+ by TYCPR01MB6656.jpnprd01.prod.outlook.com (2603:1096:400:9d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.26; Thu, 1 Apr
+ 2021 10:59:16 +0000
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::e413:c5f8:a40a:a349]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::e413:c5f8:a40a:a349%4]) with mapi id 15.20.3999.028; Thu, 1 Apr 2021
+ 10:59:16 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Bharat Kumar Gogada <bharatku@xilinx.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>
+Subject: RE: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
+ MSI capture address
+Thread-Topic: [PATCH v3 02/14] PCI: rcar: Don't allocate extra memory for the
+ MSI capture address
+Thread-Index: AQHXJXcG+5u1h/7Mf0S8wvROOYQXFqqcp96AgALYqkA=
+Date:   Thu, 1 Apr 2021 10:59:16 +0000
+Message-ID: <TY2PR01MB36924566960FE203EF3B2FC9D87B9@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+References: <20210330151145.997953-1-maz@kernel.org>
+ <20210330151145.997953-3-maz@kernel.org> <20210330152857.GA27749@lpieralisi>
+In-Reply-To: <20210330152857.GA27749@lpieralisi>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: arm.com; dkim=none (message not signed)
+ header.d=none;arm.com; dmarc=none action=none header.from=renesas.com;
+x-originating-ip: [240f:60:5f3e:1:30e0:e1c4:8f10:3212]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 44742a11-5ebb-4f88-b5b6-08d8f4fd314e
+x-ms-traffictypediagnostic: TYCPR01MB6656:
+x-microsoft-antispam-prvs: <TYCPR01MB66566514FC9C90AF41AB6EFED87B9@TYCPR01MB6656.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kMCoqHNYwJEcw4JyAJbiNoSjOPBD5mmVTiZcIJ42FdN0oJmJYvJwhlm2Tmeg+iZrCHOz6FvfdPMHOz1xybYih8fNb6JB5zRtCYXR90+ygV7czS7Dm2M2qdxcA0CEhU3LObNoBORB5LwAxiLqKXxosRpV1YEEMZLgKanMehMChgzDye1MHNS+MOsmyV9Kn9IeZo7+SJEXEqJ1M/jf/tANGOevMQbbZmusrcgtrsQKJ+ogr3y96Sib5HpkqPahSL6FkmVE/10cSmE4a5p9wECLHfoG0NgTE7QNip4gbEPuwsPQGtTtZuOTxJLqQdWDdxJOPLHynnsP7u+2/xDtDdq34TsGDofSRAH8bRhamLh/lokLobl6iWVbZuwAGA1JVbK7mj6nOrj1ZHdLi9rjnvWh98BFAqGMuOkC0gPoRrfoHVf9sdmUO9GUol+IDJHt+9yCitWsHrfa809TA0aflhXhOQi2uFo8qOflbZ5DnDzDcINOsf1OOdjgChjtk1VbvEVLt6TF5t3axaqUXoaZHRYt+sUbXHiQjQx7F0bzibm3WJK8Z2zVBnJcm08clXSV9PCWSwXPOXXjid21rfnFrojB70spctY62w/C2EA/87Soz8ENJ/x5AVs/2Pl0i+Filv9FhOGpcLUWtgRv3gEsXeS9i1TIgNKmMImKsFq5YHD1RLM=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(396003)(366004)(136003)(39860400002)(376002)(110136005)(5660300002)(4326008)(33656002)(66946007)(478600001)(7696005)(83380400001)(54906003)(186003)(6506007)(8936002)(8676002)(38100700001)(86362001)(9686003)(55016002)(2906002)(7416002)(76116006)(66476007)(316002)(64756008)(66556008)(71200400001)(66446008)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?gPyjddPLC//OX/VzRDZ9M7Opb+zucWQvxhqGAYywK+j/uExuF/NWfBxPNZXt?=
+ =?us-ascii?Q?j+XIqdNEYaAZwRQlLOyZPKpVMhT5H22f5kBsPUzw1fq4B+/8oEfBPMtYjwep?=
+ =?us-ascii?Q?LwAAICoCgmm6+vXJ0kDGJq+9FA4y34dRREP/o9POHzyp5qBaHKD0onWBHVPD?=
+ =?us-ascii?Q?aaoB9dlCbkex1KI5lXyCbR+W8Tps55NHvUvVkBbAcBU/3hUFTLdNrUqr6df3?=
+ =?us-ascii?Q?T/4Zs0tc+RYnfvNB0nYNylob1Fm40CZ/7D0x9O3vmy1FQtxLG3k+lZyd52wr?=
+ =?us-ascii?Q?WLD/IrGDDe9YwpazQZNQBro2/MCmih2gr4Z1BP/9bstRvVt95L5FpT6yISgX?=
+ =?us-ascii?Q?jTPQNtcMm5HXne3jn728JfnAWdNU/aQZ0qWqrLGLstQdVzC5koXFzBQkJYo7?=
+ =?us-ascii?Q?+lHhKe593dRSqiR7R/heEDAM4iVCcchT3ucclFZSs0hHfmXzteSOAPsBs1jY?=
+ =?us-ascii?Q?04i9HwD+GDPVcoJFrgWHfA1WOYJk01TaR909PcOrrYMgtCA3Fi6vRMdrTvy/?=
+ =?us-ascii?Q?QfoNMtwKiaEwXNW3aijcHc40KSX15JX8PeWAwGM50M5sUlPZ1IZg0XxEaQXz?=
+ =?us-ascii?Q?rrEBPtfxxaadUgBdEs14zcOniI9oBu+VTJZIxtaI6hZCqb76DqHNHXB+/9XH?=
+ =?us-ascii?Q?7/fMTyKRWhFsyYH95FQsW8qUFM//ESVYN5vyV0G9PKKSjamupyO7JXpnemcQ?=
+ =?us-ascii?Q?Utg+qLYjB6BGuxs/mQh7Pyft7bUuR2aIoSOHbF0+mwMM+YllmXtWu4RS0zwg?=
+ =?us-ascii?Q?bGipPaZ5tOB3NlyD/s5jNOTBpz6EQpOz7tWveECB225Y7RrJFX0xtwjIDJf5?=
+ =?us-ascii?Q?if0V0KKTXOpT7RECvL/fiSZQufPRrBcDrWGPKGYA8HsTFZJKn60zLrXXJVjX?=
+ =?us-ascii?Q?KLF69uFCY1zyAY9LLcw1b21IeGUqvMcd1wD0iyh+rDRB1BhbE7GwEwZ3wYXQ?=
+ =?us-ascii?Q?Cktn/rP6CFVlVwgVwQrAsgPwT7ca2rIWRsC+XE1qbpALFeL1NYiWP69MVMZG?=
+ =?us-ascii?Q?ADPEA7Aapaz4Mm6IppAlq/KMTOlaK6npZitWV3zG7Kkqw7rCpRzxj1YBuh+j?=
+ =?us-ascii?Q?oKQ+6ZxYlJ7sRvuAATjLKWcLNwCLjuIE2reHKUnPfZWll6DsUKn17JjiVQ2v?=
+ =?us-ascii?Q?yIPyMbMmhwgxosfNpwp6RXtGnfOEonVIS0QICdmb5BVOid6HVH/awY5Yn8o/?=
+ =?us-ascii?Q?5gNmJUFehyW0mrzOxYIYGf1+sUwTUf2rJMQcKw+XTvXPhuB5Xnowl4FgdN2F?=
+ =?us-ascii?Q?hqR7weCk7FVTN37A4yByjreIsOUdX2PnrSFdHK2cIFGmxCEqXwWePZ6nloSX?=
+ =?us-ascii?Q?kQ5ex6cE6pX9ggVAtyoUtrO13CcMFqQd/W6Ycsmk8/j1/qRPr3yytkReURO/?=
+ =?us-ascii?Q?zJ0PLqU=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="scOahIY3tU/uvpTQ"
-Content-Disposition: inline
-In-Reply-To: <YGVr9EIBOHC9N/+/@vkoul-mobl.Dlink>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44742a11-5ebb-4f88-b5b6-08d8f4fd314e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2021 10:59:16.2111
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LcEgNJjADl6LHZnO+kPHZOziidTGgtgapanU0ndez/FB1+gEs0Kk6q333UW3loj8jxtHShbLjRreZbpg81j5DQPfjTHyW+6sFoZCQ6IQ6wM3X1zUfcOFoQeVKs04bLbW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6656
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Hi Lorenzo, Marc,
 
---scOahIY3tU/uvpTQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Apr 01, 2021 at 12:15:08PM +0530, Vinod Koul wrote:
-> On 25-03-21, 17:40, Thierry Reding wrote:
+> From: Lorenzo Pieralisi, Sent: Wednesday, March 31, 2021 12:29 AM
 >=20
-> > +static int tegra210_usb3_enable_phy_sleepwalk(struct tegra_xusb_lane *=
-lane,
-> > +					      enum usb_device_speed speed)
-> > +{
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	int port =3D tegra210_usb3_lane_map(lane);
-> > +	struct device *dev =3D padctl->dev;
-> > +	u32 value;
-> > +
-> > +	if (port < 0) {
-> > +		dev_err(dev, "invalid usb3 port number\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	dev_dbg(dev, "phy enable sleepwalk usb3 %d\n", port);
+> On Tue, Mar 30, 2021 at 04:11:33PM +0100, Marc Zyngier wrote:
+> > A long cargo-culted behaviour of PCI drivers is to allocate memory
+> > to obtain an address that is fed to the controller as the MSI
+> > capture address (i.e. the MSI doorbell).
+> >
+> > But there is no actual requirement for this address to be RAM.
+> > All it needs to be is a suitable aligned address that will
+> > *not* be DMA'd to.
+> >
+> > Since the rcar platform already has a requirement that this
+> > address should be in the first 4GB of the physical address space,
+> > use the controller's own base address as the capture address.
+> >
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  drivers/pci/controller/pcie-rcar-host.c | 18 +++++++-----------
+> >  1 file changed, 7 insertions(+), 11 deletions(-)
 >=20
-> Too much noise for my taste :)
-> (here and other places)
-
-These are purely for debugging purposes. The idea being that they can be
-quickly enabled by defining DEBUG. Otherwise if something ever goes
-wrong in this code somebody will have to add this exact same code again
-just to troubleshoot.
-
-But if you insist I can remove this and similar other debug messages.
-
-> > +static int tegra210_pmc_utmi_enable_phy_sleepwalk(struct tegra_xusb_la=
-ne *lane,
-> > +						  enum usb_device_speed speed)
-> > +{
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	struct tegra210_xusb_padctl *priv =3D to_tegra210_xusb_padctl(padctl);
-> > +	struct device *dev =3D padctl->dev;
-> > +	unsigned int port =3D lane->index;
-> > +	u32 value, tctrl, pctrl, rpd_ctrl;
-> > +
-> > +	if (!priv->regmap)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	if (speed > USB_SPEED_HIGH)
-> > +		return -EINVAL;
-> > +
-> > +	dev_dbg(dev, "phy enable sleepwalk usb2 %d speed %d\n", port, speed);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
-> > +	tctrl =3D TCTRL_VALUE(value);
-> > +	pctrl =3D PCTRL_VALUE(value);
-> > +
-> > +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(port));
-> > +	rpd_ctrl =3D RPD_CTRL_VALUE(value);
-> > +
-> > +	/* ensure sleepwalk logic is disabled */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_SLEEP_CFG(port));
-> > +	value &=3D ~UTMIP_MASTER_ENABLE(port);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_SLEEP_CFG(port));
-> > +
-> > +	/* ensure sleepwalk logics are in low power mode */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_MASTER_CONFIG);
-> > +	value |=3D UTMIP_PWR(port);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_MASTER_CONFIG);
+> Marek, Yoshihiro,
 >=20
-> We really should have a read_modify_write() helper.. quite repeat of
-> this here
+> can you test this patch please and report back ? It is not fundamental
+> for the rest of the series (ie the rest of the series does not depend on
+> it) and we can still merge the series without it but it would be good if
+> you can review and test anyway.
 
-I actually tried this once a while back, but the resulting code didn't
-look much better, in my opinion. In this particular case it might
-actually work because what we modify is simple, but consider the case
-of some of the other expressions where individual arguments to the
-functions will become really long and then the code ends up very
-unreadable.
+I reviewed and tested this patch and it worked correctly.
+So,
 
-One alternative that I had considered was to have a mix and use the
-read/modify/write helper only where it wouldn't hurt readability, but
-that is perhaps half of the time and it would make register accesses
-completely inconsistent.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-I agree that this looks like a bit of boilerplate, but on the other hand
-it's consistent and it's also very trivial to follow.
+Best regards,
+Yoshihiro Shimoda
 
-> > +	/* set debounce time */
-> > +	value =3D padctl_pmc_readl(priv, PMC_USB_DEBOUNCE_DEL);
-> > +	value &=3D ~UTMIP_LINE_DEB_CNT(~0);
-> > +	value |=3D UTMIP_LINE_DEB_CNT(0x1);
-> > +	padctl_pmc_writel(priv, value, PMC_USB_DEBOUNCE_DEL);
-> > +
-> > +	/* ensure fake events of sleepwalk logic are desiabled */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_FAKE(port));
-> > +	value &=3D ~(UTMIP_FAKE_USBOP_VAL(port) | UTMIP_FAKE_USBON_VAL(port) |
-> > +			UTMIP_FAKE_USBOP_EN(port) | UTMIP_FAKE_USBON_EN(port));
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_FAKE(port));
-> > +
-> > +	/* ensure wake events of sleepwalk logic are not latched */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_LINE_WAKEUP);
-> > +	value &=3D ~UTMIP_LINE_WAKEUP_EN(port);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_LINE_WAKEUP);
-> > +
-> > +	/* disable wake event triggers of sleepwalk logic */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_SLEEP_CFG(port));
-> > +	value &=3D ~UTMIP_WAKE_VAL(port, ~0);
-> > +	value |=3D UTMIP_WAKE_VAL_NONE(port);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_SLEEP_CFG(port));
-> > +
-> > +	/* power down the line state detectors of the pad */
-> > +	value =3D padctl_pmc_readl(priv, PMC_USB_AO);
-> > +	value |=3D (USBOP_VAL_PD(port) | USBON_VAL_PD(port));
-> > +	padctl_pmc_writel(priv, value, PMC_USB_AO);
-> > +
-> > +	/* save state per speed */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_SAVED_STATE(port));
-> > +	value &=3D ~SPEED(port, ~0);
-> > +	if (speed =3D=3D USB_SPEED_HIGH)
-> > +		value |=3D UTMI_HS(port);
-> > +	else if (speed =3D=3D USB_SPEED_FULL)
-> > +		value |=3D UTMI_FS(port);
-> > +	else if (speed =3D=3D USB_SPEED_LOW)
-> > +		value |=3D UTMI_LS(port);
-> > +	else
-> > +		value |=3D UTMI_RST(port);
->=20
-> This could look better with a switch statement
-
-Agreed, I've switched this to a switch statement.
-
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_SAVED_STATE(port));
-> > +
-> > +	/* enable the trigger of the sleepwalk logic */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_SLEEPWALK_CFG(port));
-> > +	value |=3D UTMIP_LINEVAL_WALK_EN(port);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_SLEEPWALK_CFG(port));
-> > +
-> > +	/* reset the walk pointer and clear the alarm of the sleepwalk logic,
-> > +	 * as well as capture the configuration of the USB2.0 pad
-> > +	 */
->=20
-> /*
->  * multi
->  * line style please
->  */
-
-Done.
-
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_UHSIC_TRIGGERS);
-> > +	value |=3D (UTMIP_CLR_WALK_PTR(port) | UTMIP_CLR_WAKE_ALARM(port) |
-> > +		UTMIP_CAP_CFG(port));
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_UHSIC_TRIGGERS);
-> > +
-> > +	/* program electrical parameters read from XUSB PADCTL */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_TERM_PAD_CFG);
-> > +	value &=3D ~(TCTRL_VAL(~0) | PCTRL_VAL(~0));
-> > +	value |=3D (TCTRL_VAL(tctrl) | PCTRL_VAL(pctrl));
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_TERM_PAD_CFG);
-> > +
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_PAD_CFGX(port));
-> > +	value &=3D ~RPD_CTRL_PX(~0);
-> > +	value |=3D RPD_CTRL_PX(rpd_ctrl);
-> > +	padctl_pmc_writel(priv, value, PMC_UTMIP_PAD_CFGX(port));
-> > +
-> > +	/* setup the pull-ups and pull-downs of the signals during the four
-> > +	 * stages of sleepwalk.
-> > +	 * if device is connected, program sleepwalk logic to maintain a J and
-> > +	 * keep driving K upon seeing remote wake.
-> > +	 */
-> > +	value =3D padctl_pmc_readl(priv, PMC_UTMIP_SLEEPWALK_PX(port));
-> > +	value =3D (UTMIP_USBOP_RPD_A | UTMIP_USBOP_RPD_B | UTMIP_USBOP_RPD_C |
-> > +		UTMIP_USBOP_RPD_D);
-> > +	value |=3D (UTMIP_USBON_RPD_A | UTMIP_USBON_RPD_B | UTMIP_USBON_RPD_C=
- |
-> > +		UTMIP_USBON_RPD_D);
-> > +	if (speed =3D=3D USB_SPEED_UNKNOWN) {
-> > +		value |=3D (UTMIP_HIGHZ_A | UTMIP_HIGHZ_B | UTMIP_HIGHZ_C |
-> > +			UTMIP_HIGHZ_D);
-> > +	} else if ((speed =3D=3D USB_SPEED_HIGH) || (speed =3D=3D USB_SPEED_F=
-ULL)) {
-> > +		/* J state: D+/D- =3D high/low, K state: D+/D- =3D low/high */
-> > +		value |=3D UTMIP_HIGHZ_A;
-> > +		value |=3D UTMIP_AP_A;
-> > +		value |=3D (UTMIP_AN_B | UTMIP_AN_C | UTMIP_AN_D);
-> > +	} else if (speed =3D=3D USB_SPEED_LOW) {
-> > +		/* J state: D+/D- =3D low/high, K state: D+/D- =3D high/low */
-> > +		value |=3D UTMIP_HIGHZ_A;
-> > +		value |=3D UTMIP_AN_A;
-> > +		value |=3D (UTMIP_AP_B | UTMIP_AP_C | UTMIP_AP_D);
-> > +	}
->=20
-> no else? err case? Also this could use a switch too
-
-There's no else or error case here because all other values have already
-been rejected by the "speed > USB_SPEED_HIGH" check earlier in this
-function. I agree that this looks better as a switch, though, so I've
-changed to that.
-
-> > +static int tegra210_pmc_utmi_disable_phy_sleepwalk(struct tegra_xusb_l=
-ane *lane)
-> > +{
-> > +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> > +	struct tegra210_xusb_padctl *priv =3D to_tegra210_xusb_padctl(padctl);
-> > +	struct device *dev =3D padctl->dev;
-> > +	unsigned int port =3D lane->index;
-> > +	u32 value;
-> > +
-> > +	if (!priv->regmap)
-> > +		return -EOPNOTSUPP;
->=20
-> That should be an error like EIO as we always expect regmap to be set,
-> no an unsupported error right?
-
-This is for backwards-compatibility with older device trees. Device
-trees prior to this patch series don't have a reference to that regmap,
-but the code should keep working with such device trees, otherwise USB
-will be broken on newer kernel versions if you don't update the device
-tree.
-
-"unsupported" here means that this particular feature isn't supported
-because the regmap is missing, so we can't reprogram the registers
-needed to make this work.
-
-FWIW, the ->probe() function will print a warning if the regmap is
-absent, so in combination with this -EOPNOTSUPP that is hopefully going
-to make this clearer to users.
-
-Thierry
-
---scOahIY3tU/uvpTQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBlpAQACgkQ3SOs138+
-s6GZ6hAAmhcGixFEuOzP/8dzao8GjIg64Y26a8H3scO7s4v9HPqfDVbHoPNgQPfX
-yxouvPhV+a7GEYaEdmot9roPKiwVxZM3ZXVlnAzrELHsBR4s6vlqYkDE+4I6lh+e
-Ga19/8JTpiJLPex9M6RsW/EHb7oOwhclfQzqunruyhMaCfwKMb1d5iEAWtBEHNAo
-RvT3ERs5rsgdyWARj/dAkG9nxh3JW3QgK6trUn40/axrTeDFl1Efp0ZI0BO1j0L8
-QCmvbmdvnYvAttlslijQDGPzsqbR273yC9xZ3eqHxTajYWeIYDPym8fxCBa5pFmn
-+gUZhFwduSoyjC7XTmLoLG85hs/bwQyzncptKH/7C50/eI4/c3SJPOvTdosh333G
-YheLDcrqgt522iE2KegwWFH64Cx8fMnWvpZ0Gyh/si1skJs873JFQGrGtyV26TOt
-RoHMu0sPh5WP3wrnJ/Fd4Q1cYrMZQqN2hNJFXqHjs3Ye63zW2tK6/5Q9nEzbE1n7
-lxJ36nMSvxFPRWSJPW/u+zyINAp3vnxzmnE2Hije1gIIlM9Hvp29rrtUmWV9hnJJ
-aM/OMlBm/VUWHDrhzi6sQ2vll7+XqU/4scjZx0mWTbfrDW28shRqgsg/FcKOqHZT
-1JXwFIqVRW0+ZwWoX8Rw0Tu/WI0fgzkb1IWvf4Qo6BLAgndLobo=
-=Jhuu
------END PGP SIGNATURE-----
-
---scOahIY3tU/uvpTQ--
