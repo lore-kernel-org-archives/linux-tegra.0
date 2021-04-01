@@ -2,82 +2,109 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F5CC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D21C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A543C601FC
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 724E060FDA
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235545AbhDAS3H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237543AbhDASTc (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Apr 2021 14:19:32 -0400
-Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54E3C0319C4;
-        Thu,  1 Apr 2021 10:17:48 -0700 (PDT)
-Received: by mail-oo1-xc2d.google.com with SMTP id 125-20020a4a1a830000b02901b6a144a417so713141oof.13;
-        Thu, 01 Apr 2021 10:17:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rTYpQxnYeisun6vuUDJAUFTYg5NuDKCDGsq0N/u9+TQ=;
-        b=RWcnkAuE/4lS55uJ9WqNlDsvP0mUpga3lNK034a+UvICNh2X8k2bw8IqGay1YQOQGs
-         HI5jqmWctPALEXXjxkiIhIxxLFShwddjID79gVrFr3xg63oN/TjFYPvpuIDwML6gEgMk
-         9o//h+0Z/6Dh4sLYhqlweeGqS7jE85Af+8X+p6u63+Gt0lE8SWPtWy4zlkyzgoC6dqPi
-         gJqk2ZzbxFhzbwpUeMKfFWZQhl8V9yOVLyoqx2Iia8HySGahu3DWSeEEn6LzOVB1w/VE
-         Rsn5l18sgHxkLSSqh4oj45UPQqZ3kxG1j52fltgPBIFSmYeQ3lk13mdqCsrlmha7H1z3
-         Qekg==
-X-Gm-Message-State: AOAM5327rdUggi8z4QoykYpbjcugb9gfKg+FOzal3RmthNezewbCuad4
-        VGIP0y04JT5gvdALdhX0A1Espyxj0Q==
-X-Google-Smtp-Source: ABdhPJzWzVT5IQc4aLRQt2NzaPCyhgFdVeHL9nOVBmHSD87cvob9pcfyrMrymy98s/V5kxzd6Smfbw==
-X-Received: by 2002:a4a:b102:: with SMTP id a2mr7975195ooo.30.1617297465008;
-        Thu, 01 Apr 2021 10:17:45 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d1sm1246305oth.13.2021.04.01.10.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 10:17:44 -0700 (PDT)
-Received: (nullmailer pid 636777 invoked by uid 1000);
-        Thu, 01 Apr 2021 17:17:43 -0000
-Date:   Thu, 1 Apr 2021 12:17:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        id S237088AbhDASiA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:38:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:46726 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240340AbhDASaH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Apr 2021 14:30:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4AD3D6E;
+        Thu,  1 Apr 2021 04:27:53 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.56.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D3193F694;
+        Thu,  1 Apr 2021 04:27:49 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>, linux-pci@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bharat Kumar Gogada <bharatku@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        linux-mediatek@lists.infradead.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-hyperv@vger.kernel.org, Will Deacon <will@kernel.org>,
+        kernel-team@android.com, Michael Kelley <mikelley@microsoft.com>,
         linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] dt-bindings: memory: tegra124: emc: Replace core
- regulator with power domain
-Message-ID: <20210401171743.GA636437@robh.at.kernel.org>
-References: <20210330230445.26619-1-digetx@gmail.com>
- <20210330230445.26619-4-digetx@gmail.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 00/14] PCI/MSI: Getting rid of msi_controller, and other cleanups
+Date:   Thu,  1 Apr 2021 12:27:42 +0100
+Message-Id: <161727636757.32506.11592578621890085687.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20210330151145.997953-1-maz@kernel.org>
+References: <20210330151145.997953-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210330230445.26619-4-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 31 Mar 2021 02:04:42 +0300, Dmitry Osipenko wrote:
-> Power domain fits much better than a voltage regulator in regards to
-> a proper hardware description and from a software perspective as well.
-> Hence replace the core regulator with the power domain. Note that this
-> doesn't affect any existing DTBs because we haven't started to use the
-> regulator yet, and thus, it's okay to change it.
+On Tue, 30 Mar 2021 16:11:31 +0100, Marc Zyngier wrote:
+> This is a respin of the series described at [1].
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/memory-controllers/nvidia,tegra124-emc.yaml   | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> * From v2 [2]:
+>   - Fixed the Xilinx driver, thanks to Bharat for testing it
+>   - Dropped the no_msi attribute, and solely rely on msi_domain, which
+>     has the same effect for the only platform that was using it.
+>   - Fixed compilation on architectures that do not select the generic
+>     MSI support
 > 
+> [...]
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I have applied it to pci/msi and should be moved into -next shortly
+for further testing/visibility, thanks a lot for putting it together.
+
+[01/14] PCI: tegra: Convert to MSI domains
+        https://git.kernel.org/lpieralisi/pci/c/973a28677e
+[02/14] PCI: rcar: Don't allocate extra memory for the MSI capture address
+        https://git.kernel.org/lpieralisi/pci/c/c244dc15dc
+[03/14] PCI: rcar: Convert to MSI domains
+        https://git.kernel.org/lpieralisi/pci/c/516286287d
+[04/14] PCI: xilinx: Don't allocate extra memory for the MSI capture address
+        https://git.kernel.org/lpieralisi/pci/c/cc8cf90738
+[05/14] PCI: xilinx: Convert to MSI domains
+        https://git.kernel.org/lpieralisi/pci/c/b66873599e
+[06/14] PCI: hv: Drop msi_controller structure
+        https://git.kernel.org/lpieralisi/pci/c/65b131816a
+[07/14] PCI/MSI: Drop use of msi_controller from core code
+        https://git.kernel.org/lpieralisi/pci/c/54729d2a7a
+[08/14] PCI/MSI: Kill msi_controller structure
+        https://git.kernel.org/lpieralisi/pci/c/27278a3fac
+[09/14] PCI/MSI: Kill default_teardown_msi_irqs()
+        https://git.kernel.org/lpieralisi/pci/c/f68f571db9
+[10/14] PCI/MSI: Let PCI host bridges declare their reliance on MSI domains
+        https://git.kernel.org/lpieralisi/pci/c/419150a4ff
+[11/14] PCI/MSI: Make pci_host_common_probe() declare its reliance on MSI domains
+        https://git.kernel.org/lpieralisi/pci/c/98be0634c8
+[12/14] PCI: mediatek: Advertise lack of built-in MSI handling
+        https://git.kernel.org/lpieralisi/pci/c/77cbd88c90
+[13/14] PCI/MSI: Document the various ways of ending up with NO_MSI
+        https://git.kernel.org/lpieralisi/pci/c/44ec480daf
+[14/14] PCI: Refactor HT advertising of NO_MSI flag
+        https://git.kernel.org/lpieralisi/pci/c/18d56e5afe
+
+Thanks,
+Lorenzo
