@@ -2,81 +2,96 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A976C433ED
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667FDC43460
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 406E86023C
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:13:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435F0610F9
+	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 18:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235592AbhDASNb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:13:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35824 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236837AbhDASHj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 1 Apr 2021 14:07:39 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0ECAC0319C5;
-        Thu,  1 Apr 2021 10:18:30 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id y19-20020a0568301d93b02901b9f88a238eso2733001oti.11;
-        Thu, 01 Apr 2021 10:18:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LIjI2NUwDFlAYdJOBAJek6rk7rUaA28ZeDcvyQ9Nhm0=;
-        b=Q/L10nBE34UdT/g10T0xeDrajVtKUuryGAwndb66qHC5CgF2643yeNksqQSMV/HIyJ
-         jnQc0o1OdlLBbb1lW8yp+3mMRCO5sKdHKHhEuLnGskOGEeHzvE/DVs3ikGVhFDAmbJFC
-         MjR97vbLSOSyWF7575Io1gZaHTCnZg750h5jBV5eP7QEvrKgkm+KZpmMKZx4tgfuCsCc
-         qtmg2Z/c5xp/XVMI0X3aWJueyeo3zvGPQMkGIdJdy0cCk1ZNJavY6WgBlLt5PT65ycNO
-         CO1DoFqo1yi2E8hmj9aCKkXPaXv0eGhLvhRUkgCvHkTssxINBWv0eI03CGQSyw5HfaSf
-         Dmsw==
-X-Gm-Message-State: AOAM530+cEQ3siN6gyib1aRb5vIoRhm3LIC6MreKZkEIl9oU7RZsyA5D
-        XJgY8qSVFBOfmuJFN3wkoQ==
-X-Google-Smtp-Source: ABdhPJzTwRBGIosUW74Hf7hJbz23dNYIA7uex/H49XPguHIvYAQWA7pqj4y6jdKNAirvM1WZ0YDtZg==
-X-Received: by 2002:a05:6830:1515:: with SMTP id k21mr7651423otp.269.1617297506910;
-        Thu, 01 Apr 2021 10:18:26 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m14sm1316149otn.69.2021.04.01.10.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 10:18:26 -0700 (PDT)
-Received: (nullmailer pid 637987 invoked by uid 1000);
-        Thu, 01 Apr 2021 17:18:25 -0000
-Date:   Thu, 1 Apr 2021 12:18:25 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     devicetree@vger.kernel.org,
+        id S237730AbhDAS3F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 1 Apr 2021 14:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239664AbhDASQp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 1 Apr 2021 14:16:45 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C9D0610E9;
+        Thu,  1 Apr 2021 12:07:21 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lRw6Z-0056AE-Bb; Thu, 01 Apr 2021 13:07:19 +0100
+Date:   Thu, 01 Apr 2021 13:07:18 +0100
+Message-ID: <87v996p5s9.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>, linux-pci@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-tegra@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Bharat Kumar Gogada <bharatku@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        linux-mediatek@lists.infradead.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-hyperv@vger.kernel.org, Will Deacon <will@kernel.org>,
+        kernel-team@android.com, Michael Kelley <mikelley@microsoft.com>,
         linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 4/6] dt-bindings: memory: tegra20: mc: Convert to
- schema
-Message-ID: <20210401171825.GA637934@robh.at.kernel.org>
-References: <20210330230445.26619-1-digetx@gmail.com>
- <20210330230445.26619-5-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210330230445.26619-5-digetx@gmail.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 00/14] PCI/MSI: Getting rid of msi_controller, and other cleanups
+In-Reply-To: <161727636757.32506.11592578621890085687.b4-ty@arm.com>
+References: <20210330151145.997953-1-maz@kernel.org>
+        <161727636757.32506.11592578621890085687.b4-ty@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: lorenzo.pieralisi@arm.com, bhelgaas@google.com, frank-w@public-files.de, michal.simek@xilinx.com, kys@microsoft.com, linux-pci@vger.kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, robh@kernel.org, jonathanh@nvidia.com, bharatku@xilinx.com, paul.walmsley@sifive.com, treding@nvidia.com, marek.vasut+renesas@gmail.com, wei.liu@kernel.org, sthemmin@microsoft.com, ryder.lee@mediatek.com, linux-mediatek@lists.infradead.org, haiyangz@microsoft.com, linux-hyperv@vger.kernel.org, will@kernel.org, kernel-team@android.com, mikelley@microsoft.com, linux-kernel@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, linux-renesas-soc@vger.kernel.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 31 Mar 2021 02:04:43 +0300, Dmitry Osipenko wrote:
-> Convert Tegra20 Memory Controller binding to schema.
+On Thu, 01 Apr 2021 12:27:42 +0100,
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../memory-controllers/nvidia,tegra20-mc.txt  | 40 ----------
->  .../memory-controllers/nvidia,tegra20-mc.yaml | 79 +++++++++++++++++++
->  2 files changed, 79 insertions(+), 40 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.yaml
+> On Tue, 30 Mar 2021 16:11:31 +0100, Marc Zyngier wrote:
+> > This is a respin of the series described at [1].
+> > 
+> > * From v2 [2]:
+> >   - Fixed the Xilinx driver, thanks to Bharat for testing it
+> >   - Dropped the no_msi attribute, and solely rely on msi_domain, which
+> >     has the same effect for the only platform that was using it.
+> >   - Fixed compilation on architectures that do not select the generic
+> >     MSI support
+> > 
+> > [...]
 > 
+> I have applied it to pci/msi and should be moved into -next shortly
+> for further testing/visibility, thanks a lot for putting it together.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks Lorenzo.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
