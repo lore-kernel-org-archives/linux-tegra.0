@@ -2,104 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC163C433B4
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 21:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7707C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri,  2 Apr 2021 04:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABA87610A0
-	for <linux-tegra@archiver.kernel.org>; Thu,  1 Apr 2021 21:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE99610E7
+	for <linux-tegra@archiver.kernel.org>; Fri,  2 Apr 2021 04:21:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234640AbhDAVVA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 1 Apr 2021 17:21:00 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:14351 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234645AbhDAVU7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 1 Apr 2021 17:20:59 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4FBGLx49rqz99;
-        Thu,  1 Apr 2021 23:20:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1617312058; bh=wp5ulMslV+FO69Dd/0Jm8lzma8RRu75a3i/ED0uo47k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CLrLR2FCkR6a12kYONrJnIXsv38tlxC/3HNh9p5eLw9AvZxOXine3CuiMQuzs6H+e
-         ukIabSDHFDLbYx2hgXpQyil9IVH593zNWkE4eIknX9sLeou1zgNKuxpsK9iz9cXSW4
-         WwuQZVvPG6z+B1aKiLqhhzTuNqRUBjIXzSxpVjtKFW9iEM4q70PObqUhBWW1v3xu2L
-         7ASqrkzOwb0N80jU3zdZlLNmt2uScP5jEIkqMINL9RwEVhs2EH2pLa0JKLY1rrK+fW
-         ymH3s7GUv2uJGGc/FionG1j80Tli7AtxUakFQqQY3yXyohH36W5DSr8IvDTv2pJjsK
-         zY3q+0bOi5IQg==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Thu, 1 Apr 2021 23:19:49 +0200
-From:   =?iso-8859-2?B?TWljaGGzoE1pcm9zs2F3?= <mirq-linux@rere.qmqm.pl>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
-        digetx@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        talho@nvidia.com, bhuntsman@nvidia.com
-Subject: Re: [PATCH v5 03/21] gpu: host1x: Show number of pending waiters in
- debugfs
-Message-ID: <20210401211949.GA25223@qmqm.qmqm.pl>
-References: <20210111130019.3515669-1-mperttunen@nvidia.com>
- <20210111130019.3515669-4-mperttunen@nvidia.com>
- <YFm/431gaaP6wY1A@orome.fritz.box>
- <1010683e-56c9-4b06-1540-d8c60a632c70@kapsi.fi>
+        id S229522AbhDBEV6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 2 Apr 2021 00:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229518AbhDBEV5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 2 Apr 2021 00:21:57 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E77C0613E6;
+        Thu,  1 Apr 2021 21:21:55 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id x126so2848598pfc.13;
+        Thu, 01 Apr 2021 21:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WpaaAD4PmenHHvOL/jyRNYMJvLhUShrEir1c7Nvth/w=;
+        b=TiJLbOXPDzTlqOKy5t1e7/FJ7kHujYcoRlmf0TDUDrdD+jIAB9lqtjO4UDN/+Xl9nY
+         7d/nJ1e1UlB3HmHXr1mZ0lLpdl3ZjZRHTEr1SoofgI7XmUtSGRI6NJKNfn9tVIFF+u4A
+         T5p2fCub/HvLz3VC7QesCriApf1lEOQ/uHcSjaqHFgsTtqD3xUnPvtFQylPiLUspBj/0
+         u7hi9LIVl28SO/7ChuAPzlofRIEP99j833FvcqOfI0Vkj1PrEwFxDhReBA0LWRArtSEs
+         Xwnk6Qx2nLc35xpHoDJv4xlCXISvv2KmZyvv8PEzF4UT3ZN2ykvHT6RmqJe+TezFcu+2
+         9bbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WpaaAD4PmenHHvOL/jyRNYMJvLhUShrEir1c7Nvth/w=;
+        b=gj/+Xm2zVycBK9aa2GPckSKE0XOd08/EAaUxTraGTieC/iYk74By4okqxszXJMbzcR
+         8DsNYC+Z3jrGU6SE2x42GXQoq39s8EiYual9AWJHEQfQRR0I7SISWwCFJZ2xER+SsAtk
+         SLDF4OfGlo0v9sTXj0Imeq9Y/Z53/fe4fqeaEqVYFBcCrgWvXLS7AsMNH6xrC89bUnT7
+         cC9/bP/YRAKpnmHjS5up7MiCaifY7bWkEwo3IXHaTDXPxhwKqxyMhFfUw1H6643A9wFf
+         OEoE9S3BPpY/fUO9/9oLi/hIJDEmr/f2uN92oYDnHgRHvhdjd6C60rYEue9Psf+ahGys
+         FyYg==
+X-Gm-Message-State: AOAM530xA0WOTGXci14CezqnLI9Iw3eZVxsxaJlOZiri5n9cVU8z630S
+        1RN6ij1hlhkqIy2qEWl7iJ0=
+X-Google-Smtp-Source: ABdhPJyMgaBfBZCLfajiEHBf2YuYh0t6oFpmY6xtz0Nj9SKi5CRXY7FXqgFjYwPvIDhkjivbml4vhQ==
+X-Received: by 2002:a62:1ad5:0:b029:1fa:c667:2776 with SMTP id a204-20020a621ad50000b02901fac6672776mr10524988pfa.6.1617337314902;
+        Thu, 01 Apr 2021 21:21:54 -0700 (PDT)
+Received: from Asurada-Nvidia (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id v13sm6423592pfu.54.2021.04.01.21.21.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Apr 2021 21:21:54 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 21:19:56 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     joro@8bytes.org, will@kernel.org, digetx@gmail.com,
+        vdumpa@nvidia.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] iommu/tegra-smmu: Add pagetable mappings to debugfs
+Message-ID: <20210402041954.GB31146@Asurada-Nvidia>
+References: <20210315203631.24990-1-nicoleotsuka@gmail.com>
+ <YFCTmwpg9pMQqcSu@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1010683e-56c9-4b06-1540-d8c60a632c70@kapsi.fi>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YFCTmwpg9pMQqcSu@orome.fritz.box>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 04:34:13PM +0200, Mikko Perttunen wrote:
-> On 3/23/21 12:16 PM, Thierry Reding wrote:
-> > On Mon, Jan 11, 2021 at 03:00:01PM +0200, Mikko Perttunen wrote:
-> > > Show the number of pending waiters in the debugfs status file.
-> > > This is useful for testing to verify that waiters do not leak
-> > > or accumulate incorrectly.
-> > > 
-> > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > ---
-> > >   drivers/gpu/host1x/debug.c | 14 +++++++++++---
-> > >   1 file changed, 11 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-> > > index 1b4997bda1c7..8a14880c61bb 100644
-> > > --- a/drivers/gpu/host1x/debug.c
-> > > +++ b/drivers/gpu/host1x/debug.c
-> > > @@ -69,6 +69,7 @@ static int show_channel(struct host1x_channel *ch, void *data, bool show_fifo)
-> > >   static void show_syncpts(struct host1x *m, struct output *o)
-> > >   {
-> > > +	struct list_head *pos;
-> > >   	unsigned int i;
-> > >   	host1x_debug_output(o, "---- syncpts ----\n");
-> > > @@ -76,12 +77,19 @@ static void show_syncpts(struct host1x *m, struct output *o)
-> > >   	for (i = 0; i < host1x_syncpt_nb_pts(m); i++) {
-> > >   		u32 max = host1x_syncpt_read_max(m->syncpt + i);
-> > >   		u32 min = host1x_syncpt_load(m->syncpt + i);
-> > > +		unsigned int waiters = 0;
-> > > -		if (!min && !max)
-> > > +		spin_lock(&m->syncpt[i].intr.lock);
-> > > +		list_for_each(pos, &m->syncpt[i].intr.wait_head)
-> > > +			waiters++;
-> > > +		spin_unlock(&m->syncpt[i].intr.lock);
-> > 
-> > Would it make sense to keep a running count so that we don't have to
-> > compute it here?
+On Tue, Mar 16, 2021 at 12:16:43PM +0100, Thierry Reding wrote:
+
+> > +struct tegra_smmu_group_debug {
+> > +	const struct tegra_smmu_swgroup *group;
+> > +	void *priv;
 > 
-> Considering this is just a debug facility, I think I prefer not adding a new
-> field just for it.
+> This always stores the address space, so why not make this:
+> 
+> 	struct tegra_smmu_as *as;
+> 
+> ? While at it, perhaps throw in a const to make sure we don't modify
+> this structure in the debugfs code.
 
-This looks like IRQ-disabled region, so unless only root can trigger
-this code, maybe the additional field could save a potential headache?
-How many waiters can there be in the worst case?
+OK. I will try to change that.
 
-Best Regards
-Micha³ Miros³aw
+> > @@ -334,7 +350,7 @@ static void tegra_smmu_domain_free(struct iommu_domain *domain)
+> >  }
+> >  
+> >  static const struct tegra_smmu_swgroup *
+> > -tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
+> > +tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup, int *index)
+> >  {
+> >  	const struct tegra_smmu_swgroup *group = NULL;
+> >  	unsigned int i;
+> > @@ -342,6 +358,8 @@ tegra_smmu_find_swgroup(struct tegra_smmu *smmu, unsigned int swgroup)
+> >  	for (i = 0; i < smmu->soc->num_swgroups; i++) {
+> >  		if (smmu->soc->swgroups[i].swgroup == swgroup) {
+> >  			group = &smmu->soc->swgroups[i];
+> > +			if (index)
+> > +				*index = i;
+> 
+> This doesn't look like the right place for this. And this also makes
+> things hard to follow because it passes out-of-band data in the index
+> parameter.
+> 
+> I'm thinking that this could benefit from a bit of refactoring where
+> we could for example embed struct tegra_smmu_group_debug into struct
+> tegra_smmu_group and then reference that when necessary instead of
+> carrying all that data in an orthogonal array. That should also make
+> it easier to track this.
+> 
+> Come to think of it, everything that's currently in your new struct
+> tegra_smmu_group_debug would be useful in struct tegra_smmu_group,
+> irrespective of debugfs support.
+
+Will try to embed it or see what I can do following the suggestion.
+
+> > +static int tegra_smmu_mappings_show(struct seq_file *s, void *data)
+> > +{
+
+> > +	seq_printf(s, "\nSWGROUP: %s\nASID: %d\nreg: 0x%x\n",
+> > +		   group->name, as->id, group->reg);
+> 
+> Is group->reg really that useful here?
+
+Can drop it.
+
+> > +
+> > +	smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
+> > +	ptb_reg = smmu_readl(smmu, SMMU_PTB_DATA);
+> > +
+> > +	seq_printf(s, "PTB_ASID: 0x%x\nas->pd_dma: %pad\n",
+> > +		   ptb_reg, &as->pd_dma);
+> 
+> This looks somewhat redundant because as->pd_dma is already part of the
+> PTB_ASID register value. Instead, perhaps decode the upper bits of that
+> register and simply output as->pdma so that we don't duplicate the base
+> address of the page table?
+
+That's a good idea. Will change that too.
