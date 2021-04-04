@@ -2,144 +2,103 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA3EC433B4
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Apr 2021 13:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A85C433B4
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Apr 2021 15:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8517A61210
-	for <linux-tegra@archiver.kernel.org>; Sun,  4 Apr 2021 13:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C5F761369
+	for <linux-tegra@archiver.kernel.org>; Sun,  4 Apr 2021 15:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbhDDNSz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 4 Apr 2021 09:18:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54774 "EHLO
+        id S231201AbhDDP4U (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 4 Apr 2021 11:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbhDDNSy (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Apr 2021 09:18:54 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62EEC061756;
-        Sun,  4 Apr 2021 06:18:49 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id w28so13852628lfn.2;
-        Sun, 04 Apr 2021 06:18:49 -0700 (PDT)
+        with ESMTP id S230210AbhDDP4S (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Sun, 4 Apr 2021 11:56:18 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B13C0613E6;
+        Sun,  4 Apr 2021 08:56:13 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id d13so14203269lfg.7;
+        Sun, 04 Apr 2021 08:56:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=E7aNZvCUDgiEjUhfnA4glDPpLYVUgb36VhtZ187jO8I=;
-        b=FBIhlLRuKT2iOCtYms9q3RJ9cRnINvZIlcX78ZKu1og0SfU+hYGrx2RLUB5CNVaSgU
-         RdZ/vYPssH6vSbf+DqcoUHzGqbHA3Eu1sxj6gp9IyyjRo3IAaOOjZ510oSc5jugvio6N
-         +sZkftL81xYjnacVRynT/MRyYka8TqS44k8E7p3lh/hi8g8LU7pKOmcQco2FMayU1Qw3
-         itIFo0zWyMLYW1vAs9lP8EDRlFs75/bqhhd/N58P47nS6BeqdGTxnrO8iRPakL72z+hy
-         3YrR2aBaQK5lBdv6PCA6tL/G0xeqxWEp+TwflD9iDNRrLhWQSay/v/O51dexk1hrBLy8
-         QZ/w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c2GicbZKkN6LfcZ4MLArm9B1njH7t58AaL5mU7ipO98=;
+        b=lC4kDJVRbnh/iTn1E1QXkNR7F1sTI35TxrzxhPxt4UbXpLyi8f7UGPvhSFUumGgpEo
+         TloGwK0jQMwLzHqTJrW8oF506EMBZlpCH1V/nEhddI/JLyNFgTHKkMf5bpr/EBDqIOzH
+         /pXpt4hBVSZyjQlO2KSFVcbypX/Px2nitz8MKin7xBf0yRW6CyV3IPx30iO0/ijPJg51
+         Q8Q+ZgCqu/Swvs50TawuDdPY2wT6WeVZkrZo0nv3sJoXhM4T7CC//hR1FNZUSnYal2a0
+         ADfDfwAyE3tuKVhg+TV/hmyVsV6xO7W97QDLuClfGtl7J+n2rqVqFRT1V4KMKtggZsOV
+         Hjow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=E7aNZvCUDgiEjUhfnA4glDPpLYVUgb36VhtZ187jO8I=;
-        b=fXoDA99jFAMVPQDb5nOpKhnK8rX1+CjgFMkyEUjS3dt7Jt0LQNAFLVfWdLduNOtsTy
-         GUkTx9oU/5usnSsVx96op4AOD/q2nJbBCr75760w7d2ho4eBhdQwPhSQF9/MgKXCJKf0
-         /lg5LfT9spAffX2IjE9bEcw7ClPVkTVln9JoXKLK0sINIHAitzvf2SSRCAuSFIq+jrN6
-         yP8ja+tYXNMAgmM3Z/nbXq0TmjpCYBzjw6wDcB/cF75TW4tvUTknvTYjlGeBRfcQCQ8Y
-         YTBHDAHRuBxGnSEzLALfrgithfLK/VBpegvfwJTI5jMOsNGAa5DepvtZEIxV8/5mdoNY
-         k6Bw==
-X-Gm-Message-State: AOAM530t/9YOaUHqvSzUCSWuC21SgF1buFvcZZX0R1/TZeTDWKu89TX8
-        P+LmQGDrIQ/00CSWoSFiMFbecVfOw1M=
-X-Google-Smtp-Source: ABdhPJxm2VHeLRHi4vimnBIFgT5n3NMnfwmEkQ+Zgo7nj1yXGdOBWJFLPpBrbbd60hnzFXffArcwWQ==
-X-Received: by 2002:ac2:5a1b:: with SMTP id q27mr13917243lfn.189.1617542328210;
-        Sun, 04 Apr 2021 06:18:48 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-85.dynamic.spd-mgts.ru. [109.252.193.85])
-        by smtp.googlemail.com with ESMTPSA id t11sm1505856ljk.65.2021.04.04.06.18.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Apr 2021 06:18:47 -0700 (PDT)
-Subject: Re: [PATCH v2 5/6] dt-bindings: memory: tegra20: emc: Convert to
- schema
+        bh=c2GicbZKkN6LfcZ4MLArm9B1njH7t58AaL5mU7ipO98=;
+        b=PpS39mRF0wd5oZeMOGbECi1wznbje7xkt4/cdtUvdALkN3XT40KhF5NDEo8artflfU
+         kWf+s9ibINpNIBC1MKUqlTJECMCNZH7DY65nZ6cguO8I0Hk1u/QS67mIOvTwmBAappwW
+         4QXAFJQIpaTUKo9GXua5CzbOowL5LuV8cHgbkO4eSuFu1hk/TK5Jd+ExudY8gDQN79r6
+         DUvUT4u1ihBNwsuLMtEM/tY1WvO0xMEaOLL6CuJ9rOtzj26L9taL6prGIUuMde+EUDOu
+         sHkCXORxz+Mb9j4ByjrDZMTmto49f+81DZGQsiIvGypIqLeLZM/ltKtepzAshvlEd51O
+         gGSw==
+X-Gm-Message-State: AOAM530Zm6+AqxBvlnuHhI4akq11SKh+k+8Jkv5z2lKGgkrMZPzBdhKx
+        vrdrb7eK+5aeCvwq7Swvxqs=
+X-Google-Smtp-Source: ABdhPJwdEZ1UXR6qyOOGTlCj7Qw0/HOPEYdW+KGBEIG60OYYhZOr7J5G5E8HDsieVaCKfSKg92kP7A==
+X-Received: by 2002:ac2:490b:: with SMTP id n11mr14363800lfi.491.1617551771834;
+        Sun, 04 Apr 2021 08:56:11 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-85.dynamic.spd-mgts.ru. [109.252.193.85])
+        by smtp.gmail.com with ESMTPSA id u6sm1483273lfm.56.2021.04.04.08.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Apr 2021 08:56:11 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210330230445.26619-1-digetx@gmail.com>
- <20210330230445.26619-6-digetx@gmail.com>
- <1617198059.590387.2074856.nullmailer@robh.at.kernel.org>
- <b4f7c7fb-1332-8490-fb4f-293fd357338e@gmail.com>
- <20210401155506.GA498681@robh.at.kernel.org>
- <a584f3b9-ba15-a027-2496-bf757cf7ca06@gmail.com>
-Message-ID: <c5e6028e-1732-5e0e-a11d-d8e4c645cf83@gmail.com>
-Date:   Sun, 4 Apr 2021 16:18:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/1] NVIDIA Tegra memory improvements
+Date:   Sun,  4 Apr 2021 18:55:00 +0300
+Message-Id: <20210404155501.5066-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <a584f3b9-ba15-a027-2496-bf757cf7ca06@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-02.04.2021 17:45, Dmitry Osipenko пишет:
-> 01.04.2021 18:55, Rob Herring пишет:
->> On Wed, Mar 31, 2021 at 05:59:39PM +0300, Dmitry Osipenko wrote:
->>> 31.03.2021 16:40, Rob Herring пишет:
->>>> On Wed, 31 Mar 2021 02:04:44 +0300, Dmitry Osipenko wrote:
->>>>> Convert Tegra20 External Memory Controller binding to schema.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  .../memory-controllers/nvidia,tegra20-emc.txt | 130 --------
->>>>>  .../nvidia,tegra20-emc.yaml                   | 294 ++++++++++++++++++
->>>>>  2 files changed, 294 insertions(+), 130 deletions(-)
->>>>>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
->>>>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
->>>>>
->>>>
->>>> My bot found errors running 'make dt_binding_check' on your patch:
->>>>
->>>> yamllint warnings/errors:
->>>>
->>>> dtschema/dtc warnings/errors:
->>>> Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.example.dts:33.26-55.15: Warning (unit_address_vs_reg): /example-0/external-memory-controller@7000f400/emc-tables@0: node has a unit name, but no reg or ranges property
->>>>
->>>> See https://patchwork.ozlabs.org/patch/1460288
->>>>
->>>> This check can fail if there are any dependencies. The base for a patch
->>>> series is generally the most recent rc1.
->>>>
->>>> If you already ran 'make dt_binding_check' and didn't see the above
->>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->>>> date:
->>>>
->>>> pip3 install dtschema --upgrade
->>>>
->>>> Please check and re-submit.
->>>>
->>>
->>> FYI, I'm aware about this warning and I think it's fine to skip it in
->>> the case of this binding. 
->>
->> It's not because dt_binding_check should be warning free.
->>
->>> The dtbs_check doesn't bother with that warning.
->>
->> With W=1 it will. It's off by default because there are too many of 
->> these warnings. Patches welcome.
-> 
-> Such warning could be silenced with some kind of a new pragma option in
-> schema which will tell what warnings are inappropriate.
-> 
-> But since there is no such option today, perhaps indeed should be better
-> to just add a dummy reg property and fix the device-trees.
-> 
+Hi,
 
-This actually was my bad, the reg property is already specified in this
-version of binding as required. Apparently I got confused while was
-looking at some device-tree that doesn't have the reg property and it
-should be corrected.
+Here is the last patch of the series which had minor problem in v2,
+the rest of the patches are already applied by Krzysztof Kozlowski.
+
+Changelog:
+
+v3: - Added new optional reg property for emc-tables nodes in order to
+      fix dt_binding_check warning.
+
+      Please note that I will prepare a separate patch for v5.14 that will
+      add the new property to the device-trees since Thierry already
+      sent out PR for v5.13.
+
+v2: - Fixed typos in the converted schemas.
+    - Corrected reg entry of tegra20-mc-gart schema to use fixed number of items.
+    - Made power-domain to use maxItems instead of $ref phandle in schemas.
+
+Dmitry Osipenko (1):
+  dt-bindings: memory: tegra20: emc: Convert to schema
+
+ .../memory-controllers/nvidia,tegra20-emc.txt | 130 --------
+ .../nvidia,tegra20-emc.yaml                   | 303 ++++++++++++++++++
+ 2 files changed, 303 insertions(+), 130 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+
+-- 
+2.30.2
+
