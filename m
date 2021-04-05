@@ -2,111 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D764C433ED
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4829DC433B4
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 21:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04E9B613DF
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1217F611AF
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 21:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242232AbhDEQFe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Apr 2021 12:05:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57626 "EHLO mail.kernel.org"
+        id S241215AbhDEVDK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Apr 2021 17:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239112AbhDEQFa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:05:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C9318613D7;
-        Mon,  5 Apr 2021 16:05:21 +0000 (UTC)
+        id S235325AbhDEVDH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 5 Apr 2021 17:03:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5C391613C9;
+        Mon,  5 Apr 2021 21:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617638722;
-        bh=VwyTyc1eI318qj0z3bpjXi4ZkjQ7OVSzfFptGPlngNM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frEqV7kb/GvIMdA7zT+tlhsCxj6LFfbGwtV+U13KPNOpWwer8UCekD6mZeVAtiw5m
-         YCrVDGyORbZWSwvb+XuSJ0gxIaFUExbzUeW7xk5+UpXtpN9S9e6L7Bzn8mfHqL9aTd
-         KihhliFV8Jq25zsm1TIe2ruOrc7Ed5Usd3nLyzUQCRxZF2y4mT/ebntueMgJG2Cfvx
-         ausgwOteYxVxjqFfwjdbOWBGSCHhpyHcnOnEOtFX7hErySVvdT90oKDQCY9jzpSJWb
-         6zsBPHLa/jEfCXivhNlwGDrFJ1osSlTNmIsKVinUiP7YxDh1JVoaL2J3P/+GRIMQGr
-         LqKrhKqIld3ZQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 5/8] drm/tegra: dc: Don't set PLL clock to 0Hz
-Date:   Mon,  5 Apr 2021 12:05:12 -0400
-Message-Id: <20210405160515.269020-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210405160515.269020-1-sashal@kernel.org>
-References: <20210405160515.269020-1-sashal@kernel.org>
+        s=k20201202; t=1617656580;
+        bh=HgQvN2jxd6pqNuQlUKDgj72sVC1cpzJWfPe39RipIoU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y2ijAu26mkYYPXYCoIyD6Hrthus5fUXIPKGiW4/+Q+HLZa0l0+HwCFSw8aCW9Qyip
+         nTuEaThTQnJupCBEsYIHkxyN247v+lqAuHS4NSvHAb+mlXv3ju26kIk+w+NQn9gTIQ
+         pZ+Wb/zulKMEHhs0sKP/uA+s+c2gjmIglWCoh/1YlNcwu0a65Bny2w/SRJyGV6WcSe
+         /P93yOWjdv5zVSW1XbFPVqfbdFMSLrwaBSWhmgr+vxXD/LosnY7ZaUMT+T+3fZ6nMx
+         e3qXtjveyNTaAVyVrVLsOlfVtZ8/fLw16R5cuqoa/6M8jgSho8FWEKreHXhZOHZQoe
+         iCeD62jKUGZow==
+Date:   Mon, 5 Apr 2021 23:02:56 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     linux-i2c@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT 1/2] i2c: tegra-bpmp: don't modify input variable in
+ xlate_flags
+Message-ID: <20210405210256.GG3945@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210331075141.22227-1-wsa@kernel.org>
+ <20210331075141.22227-2-wsa@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Qf1oXS95uex85X0R"
+Content-Disposition: inline
+In-Reply-To: <20210331075141.22227-2-wsa@kernel.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit f8fb97c915954fc6de6513cdf277103b5c6df7b3 ]
+--Qf1oXS95uex85X0R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-RGB output doesn't allow to change parent clock rate of the display and
-PCLK rate is set to 0Hz in this case. The tegra_dc_commit_state() shall
-not set the display clock to 0Hz since this change propagates to the
-parent clock. The DISP clock is defined as a NODIV clock by the tegra-clk
-driver and all NODIV clocks use the CLK_SET_RATE_PARENT flag.
+On Wed, Mar 31, 2021 at 09:51:40AM +0200, Wolfram Sang wrote:
+> Since commit bc1c2048abbe ("i2c: bpmp-tegra: Ignore unknown I2C_M
+> flags") we don't need to mask out flags and can keep the input variable
+> as is to save quite some lines.
+>=20
+> Signed-off-by: Wolfram Sang <wsa@kernel.org>
 
-This bug stayed unnoticed because by default PLLP is used as the parent
-clock for the display controller and PLLP silently skips the erroneous 0Hz
-rate changes because it always has active child clocks that don't permit
-rate changes. The PLLP isn't acceptable for some devices that we want to
-upstream (like Samsung Galaxy Tab and ASUS TF700T) due to a display panel
-clock rate requirements that can't be fulfilled by using PLLP and then the
-bug pops up in this case since parent clock is set to 0Hz, killing the
-display output.
+Applied to for-next, thanks!
 
-Don't touch DC clock if pclk=0 in order to fix the problem.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/tegra/dc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+--Qf1oXS95uex85X0R
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 965088afcfad..03adb4cf325b 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1670,6 +1670,11 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
- 			dev_err(dc->dev,
- 				"failed to set clock rate to %lu Hz\n",
- 				state->pclk);
-+
-+		err = clk_set_rate(dc->clk, state->pclk);
-+		if (err < 0)
-+			dev_err(dc->dev, "failed to set clock %pC to %lu Hz: %d\n",
-+				dc->clk, state->pclk, err);
- 	}
- 
- 	DRM_DEBUG_KMS("rate: %lu, div: %u\n", clk_get_rate(dc->clk),
-@@ -1680,11 +1685,6 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
- 		value = SHIFT_CLK_DIVIDER(state->div) | PIXEL_CLK_DIVIDER_PCD1;
- 		tegra_dc_writel(dc, value, DC_DISP_DISP_CLOCK_CONTROL);
- 	}
--
--	err = clk_set_rate(dc->clk, state->pclk);
--	if (err < 0)
--		dev_err(dc->dev, "failed to set clock %pC to %lu Hz: %d\n",
--			dc->clk, state->pclk, err);
- }
- 
- static void tegra_dc_stop(struct tegra_dc *dc)
--- 
-2.30.2
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBrewAACgkQFA3kzBSg
+KbZ1jBAAkcvQKOklEKraEG7adpnwlA9ciDavTAYR14IfwvF0xXhuGrkuooxf4oL9
+2/ZoSUsy+yAJmP8Crs6MewgWtjwMYH5h7UvtZVWYqEdYuh9OfRrlXBdl4a2PeClb
+rKEJJteKgnENLF+S6TfOWEfaAHwCqvqmO1idT2sLvlEB04U2KEE1H/y4aprK5r7k
+1NdprdP0QTrmEStusv/09pmkVvAkespn3Yst9dg5XJZw0EmtqJsWKZ42XiEDaui4
+1X19++qnY/uQ9AiNpVwYiwIn9H8yZFvSj9R5vdgxOlTl6P9E9v/7m8e0bKuJdveh
+eFGtf+Kp6a+T/JE7pN21dgf3RAYtko8SccDZVxQTTSwX2vdUUzGwRRdDvf1Mo946
+T1umphUGgmTT14epUQtk0JPVvICJFZyfuB9fughkHxvBL2MbvaNTMKGgKc1DFZV9
+cZlvkesP3ojVBRWvAk8FPMGyms4PfEpPwW5vcsp7eHathyZSaD6o4wpcGJJM//vn
+UuDHKiZdA524tO3cBbAEsoBmmnXQgDqzgk3RKNb8v76XoxiTrfLBxvEuQbA5WxWw
+dSYk09mll4jEuoZ/McqrB2tuKwzODs+SPEaVBVUnt0wZ0W41/I5MnVaWqMVxcKmR
+iwIgyl9wvfZqIm45qrZpi6j8RL4fS29bVV7POeTTGQvJGv668Bs=
+=3b4P
+-----END PGP SIGNATURE-----
+
+--Qf1oXS95uex85X0R--
