@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8453CC433ED
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D764C433ED
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4573A613ED
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04E9B613DF
+	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 16:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241990AbhDEQFa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Apr 2021 12:05:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57204 "EHLO mail.kernel.org"
+        id S242232AbhDEQFe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Apr 2021 12:05:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242173AbhDEQFN (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:05:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 537BE613DD;
-        Mon,  5 Apr 2021 16:05:06 +0000 (UTC)
+        id S239112AbhDEQFa (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:05:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C9318613D7;
+        Mon,  5 Apr 2021 16:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617638707;
-        bh=TXztknuaVtG48pbylDS46y44Jtupw/59hlWRCyx51hY=;
+        s=k20201202; t=1617638722;
+        bh=VwyTyc1eI318qj0z3bpjXi4ZkjQ7OVSzfFptGPlngNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UUw65nq7Hp/s18tzK8lPtvr0Hj/PvKfDKgH93SB0R74MI4d5BrM+jBo/aYIHsPuDd
-         tXedsl28xxVrs3j+Xg9RTZFdnQmBD5OBcr9EKwt+lMdNWgRlmi5XRg3An5Tg3Nrzsq
-         mBbCacDxUlz0qlMggsI9NvrJMJk6pgLrQK8fX6KJ64a/oCqPSjOXuidVa9XlQ28kQD
-         hLFOf2EPeiJpLpPGXBFVyDTTEdz7Jk0qRPZxsIQLb+N6u1t0SXOJ4UPBkW3RNOaSwD
-         K/U8Fcg71EfNgtt8oy5dYqaJQBx5cmTkhVzTEmqygfZv3WEqt1IJC1GlVNestLA879
-         I/Ll457UOduoA==
+        b=frEqV7kb/GvIMdA7zT+tlhsCxj6LFfbGwtV+U13KPNOpWwer8UCekD6mZeVAtiw5m
+         YCrVDGyORbZWSwvb+XuSJ0gxIaFUExbzUeW7xk5+UpXtpN9S9e6L7Bzn8mfHqL9aTd
+         KihhliFV8Jq25zsm1TIe2ruOrc7Ed5Usd3nLyzUQCRxZF2y4mT/ebntueMgJG2Cfvx
+         ausgwOteYxVxjqFfwjdbOWBGSCHhpyHcnOnEOtFX7hErySVvdT90oKDQCY9jzpSJWb
+         6zsBPHLa/jEfCXivhNlwGDrFJ1osSlTNmIsKVinUiP7YxDh1JVoaL2J3P/+GRIMQGr
+         LqKrhKqIld3ZQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 06/13] drm/tegra: dc: Don't set PLL clock to 0Hz
-Date:   Mon,  5 Apr 2021 12:04:51 -0400
-Message-Id: <20210405160459.268794-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 5/8] drm/tegra: dc: Don't set PLL clock to 0Hz
+Date:   Mon,  5 Apr 2021 12:05:12 -0400
+Message-Id: <20210405160515.269020-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210405160459.268794-1-sashal@kernel.org>
-References: <20210405160459.268794-1-sashal@kernel.org>
+In-Reply-To: <20210405160515.269020-1-sashal@kernel.org>
+References: <20210405160515.269020-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -80,10 +80,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index fbf57bc3cdab..617cbe468aec 100644
+index 965088afcfad..03adb4cf325b 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1667,6 +1667,11 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
+@@ -1670,6 +1670,11 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
  			dev_err(dc->dev,
  				"failed to set clock rate to %lu Hz\n",
  				state->pclk);
@@ -95,7 +95,7 @@ index fbf57bc3cdab..617cbe468aec 100644
  	}
  
  	DRM_DEBUG_KMS("rate: %lu, div: %u\n", clk_get_rate(dc->clk),
-@@ -1677,11 +1682,6 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
+@@ -1680,11 +1685,6 @@ static void tegra_dc_commit_state(struct tegra_dc *dc,
  		value = SHIFT_CLK_DIVIDER(state->div) | PIXEL_CLK_DIVIDER_PCD1;
  		tegra_dc_writel(dc, value, DC_DISP_DISP_CLOCK_CONTROL);
  	}
