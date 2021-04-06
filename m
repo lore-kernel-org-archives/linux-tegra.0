@@ -2,89 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B516C43460
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 21:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAAAC433B4
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Apr 2021 03:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4B4613D6
-	for <linux-tegra@archiver.kernel.org>; Mon,  5 Apr 2021 21:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79436613AF
+	for <linux-tegra@archiver.kernel.org>; Tue,  6 Apr 2021 03:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241227AbhDEVDZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 5 Apr 2021 17:03:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241232AbhDEVDO (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 5 Apr 2021 17:03:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 592316117A;
-        Mon,  5 Apr 2021 21:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617656588;
-        bh=hgMdEZfKlgTEAMlXGXhRkerARCNyZcju+QslGwOa0+w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CuiKqK6svPBMbgSzIV0swbko66D/AF3rArVuHPgVfs8zqbZ51XIxJoy5Rms5WZocO
-         FdYtsFXO+pJiN0boea7dUBCuru/Ppj7hCkZvlBTQPQIfsyxkmjMEnLpEkqjCeFErmK
-         7EpAnv4PnrCvNumPAGB7HknxP3HYlm5Ax6dKvd42s3HK5Me+cUeHeS9wKzP4TA/bqL
-         Y0NATtShghJzuuh7wddqqFX5j/56G8uYm8IHj6ymVW36jgxBSKqfOYDNWAWBPCjueh
-         ZDOcVgP4W7mVhE9V1M6efpa/VZa+NDvNpFJ9eQSLD8mLfMhSDgKZUu4PcT3/oPgWSl
-         I32DbOIUEpepg==
-Date:   Mon, 5 Apr 2021 23:03:05 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     linux-i2c@vger.kernel.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT 2/2] i2c: tegra-bpmp: make some functions void
-Message-ID: <20210405210305.GH3945@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210331075141.22227-1-wsa@kernel.org>
- <20210331075141.22227-3-wsa@kernel.org>
+        id S243510AbhDFDGN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 5 Apr 2021 23:06:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15601 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239562AbhDFDGN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 5 Apr 2021 23:06:13 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDsmp4C1Wz18H3v;
+        Tue,  6 Apr 2021 11:03:54 +0800 (CST)
+Received: from huawei.com (10.174.28.241) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Tue, 6 Apr 2021
+ 11:05:56 +0800
+From:   Bixuan Cui <cuibixuan@huawei.com>
+To:     <linux-tegra@vger.kernel.org>, <swarren@nvidia.com>,
+        <perex@perex.cz>
+CC:     <linux-kernel@vger.kernel.org>, <john.wanghui@huawei.com>,
+        <abudankov@huawei.com>, <yz.yuzhou@huawei.com>
+Subject: [PATCH] ASoC: tegra: fix build warning
+Date:   Tue, 6 Apr 2021 11:05:22 +0800
+Message-ID: <20210406030522.22941-1-cuibixuan@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y9PDtDHaFrXNoMPU"
-Content-Disposition: inline
-In-Reply-To: <20210331075141.22227-3-wsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.28.241]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+The following function may have no callers, so they're marked
+__maybe_unused to avoid warning:
 
---y9PDtDHaFrXNoMPU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+sound/soc/tegra/tegra30_i2s.c:50:12: warning: ‘tegra30_i2s_runtime_resume’ defined but not used [-Wunused-function]
+ static int tegra30_i2s_runtime_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra30_i2s.c:39:12: warning: ‘tegra30_i2s_runtime_suspend’ defined but not used [-Wunused-function]
+ static int tegra30_i2s_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra20_i2s.c:48:12: warning: ‘tegra20_i2s_runtime_resume’ defined but not used [-Wunused-function]
+ static int tegra20_i2s_runtime_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra20_i2s.c:37:12: warning: ‘tegra20_i2s_runtime_suspend’ defined but not used [-Wunused-function]
+ static int tegra20_i2s_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra30_ahub.c:64:12: warning: ‘tegra30_ahub_runtime_resume’ defined but not used [-Wunused-function]
+ static int tegra30_ahub_runtime_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/soc/tegra/tegra30_ahub.c:43:12: warning: ‘tegra30_ahub_runtime_suspend’ defined but not used [-Wunused-function]
+ static int tegra30_ahub_runtime_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On Wed, Mar 31, 2021 at 09:51:41AM +0200, Wolfram Sang wrote:
-> They return 0 always, so save some lines and code.
->=20
-> Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Fixes: 82ef0ae46b86 ('ASoC: tegra: add runtime PM support')
+Fixes: be944d42ccc1 ('ASoC: tegra: add tegra30-ahub driver')
+Fixes: 4fb0384f3dc6 ('ASoC: tegra: add tegra30-i2s driver')
 
-Applied to for-next, thanks!
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+---
+ sound/soc/tegra/tegra20_i2s.c  | 4 ++--
+ sound/soc/tegra/tegra30_ahub.c | 4 ++--
+ sound/soc/tegra/tegra30_i2s.c  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
+index 1b27f81c10fe..b280ebd72591 100644
+--- a/sound/soc/tegra/tegra20_i2s.c
++++ b/sound/soc/tegra/tegra20_i2s.c
+@@ -34,7 +34,7 @@
+ 
+ #define DRV_NAME "tegra20-i2s"
+ 
+-static int tegra20_i2s_runtime_suspend(struct device *dev)
++static __maybe_unused int tegra20_i2s_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
+ 
+@@ -45,7 +45,7 @@ static int tegra20_i2s_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra20_i2s_runtime_resume(struct device *dev)
++static __maybe_unused int tegra20_i2s_runtime_resume(struct device *dev)
+ {
+ 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
+ 	int ret;
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index d1718f3af3cd..4692c70ed933 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -40,7 +40,7 @@ static inline void tegra30_audio_write(u32 reg, u32 val)
+ 	regmap_write(ahub->regmap_ahub, reg, val);
+ }
+ 
+-static int tegra30_ahub_runtime_suspend(struct device *dev)
++static __maybe_unused int tegra30_ahub_runtime_suspend(struct device *dev)
+ {
+ 	regcache_cache_only(ahub->regmap_apbif, true);
+ 	regcache_cache_only(ahub->regmap_ahub, true);
+@@ -61,7 +61,7 @@ static int tegra30_ahub_runtime_suspend(struct device *dev)
+  * stopping streams should dynamically adjust the clock as required.  However,
+  * this is not yet implemented.
+  */
+-static int tegra30_ahub_runtime_resume(struct device *dev)
++static __maybe_unused int tegra30_ahub_runtime_resume(struct device *dev)
+ {
+ 	int ret;
+ 
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index 8730ffa0f691..36344f0a64c1 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -36,7 +36,7 @@
+ 
+ #define DRV_NAME "tegra30-i2s"
+ 
+-static int tegra30_i2s_runtime_suspend(struct device *dev)
++static __maybe_unused int tegra30_i2s_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra30_i2s *i2s = dev_get_drvdata(dev);
+ 
+@@ -47,7 +47,7 @@ static int tegra30_i2s_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra30_i2s_runtime_resume(struct device *dev)
++static __maybe_unused int tegra30_i2s_runtime_resume(struct device *dev)
+ {
+ 	struct tegra30_i2s *i2s = dev_get_drvdata(dev);
+ 	int ret;
+-- 
+2.17.1
 
---y9PDtDHaFrXNoMPU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBrewkACgkQFA3kzBSg
-KbYD5Q/4yRzQqwhyuGPyBrn+LjCcl54QozSdFBOpPGtnsq0ZxeTQxqk6E2D04DA2
-nIinuPWGXvrxGU2S7zI9GgLyoheobAaHrLl7mBZtB7RZhVfPDupALN6BCUtsRi8q
-Tn3CIL2rehKkcwykwvVzluVZ45Ko4PdNVqZLqKNc2+I9B8eyK8K5lAZ9k+SSTtLs
-Lctp2pDvzktlf6cotzhCXR6Hv6K9gNenSsC10VvJ0Meme3cGWBcFKTCiWa0bz5aQ
-HISoDgjo+ySNrt7JntzT1Xd1WFwFS4BO1lh/IlljP1ppFXRE9L79UUTSYXPfzL3x
-z/QFhs134/cqrxqMcx2tVOm93eg9lPa6/Q1Gd4vYNzepWTrrNE5i+yz7MKd3nzfz
-/KjxwSwS/aLfQLe/zeEhT8CKgrWXBdaDoC1ZgS7/UECJPcUOrcujE3nQpQ2ZHN5C
-0o5gjc4Enf7oKCv6goOzG1xKf7jEbNPEwsc0tjmNo0dCOZ/nwPuP6jj8JN0Ox0Tk
-s3VTvk0NZdiAfaPwhlR3BAZACAc1N+hLV4f4tchHDJw2UZfFqwxhosXwYbvujWHw
-OYQ0BKTc7otuz7kZj30cVkyBYEJITYStk99F/PHw6KV7zfs260xTJ0SuyMyV0pZt
-SY3UMsowpNuPhdQ4n0mFgv6VBOxOjy3Tvj7qCsZVh6pmJSk9OA==
-=bObP
------END PGP SIGNATURE-----
-
---y9PDtDHaFrXNoMPU--
