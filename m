@@ -2,147 +2,124 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CAAC433B4
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A03C433B4
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F419A6138B
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5455F61262
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234191AbhDGLW4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Apr 2021 07:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231138AbhDGLW4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 7 Apr 2021 07:22:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BA3B961363;
-        Wed,  7 Apr 2021 11:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1617794565;
-        bh=HR/CgHMltIkIf6LYPeEio6BsB0RbZRGx7aLluoffiyo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y5K/Aemp5j7kyq/OIzWtqEQV6Aw92P/HlTKx6lcr4z4lkJac7ZeeP5gvtTjrh/Df6
-         2NNM4PZzqoWHSsJL8ObEzCObH1tXCiUXQ3OsGZw6uKfza5J2y0tkpzuL8JRE9di5Gp
-         ZJ4wqYzZTx6YcvLzDOmdovBaAAMUmBqdchETKtsQ=
-Date:   Wed, 7 Apr 2021 13:22:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-        stable@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/74] 5.4.110-rc1 review
-Message-ID: <YG2WAmvr6OUpG6A4@kroah.com>
-References: <20210405085024.703004126@linuxfoundation.org>
- <9d26603c91264ce4921639affafb16ab@HQMAIL105.nvidia.com>
- <fbf7fc89-8a74-3a92-63be-6cb429360b13@nvidia.com>
+        id S1353284AbhDGPET (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Apr 2021 11:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55766 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353287AbhDGPES (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Apr 2021 11:04:18 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30667C061756;
+        Wed,  7 Apr 2021 08:04:07 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id b7so28260224ejv.1;
+        Wed, 07 Apr 2021 08:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1t4RL4yv0gY9xykK7QETl02rSiyVW266AV2ADMw4tEg=;
+        b=Ht2LkJG2M6J280K78XIWrSR9Gbtz0z4CIlzOnl/FVzC9qkHm1/YpsaHXO817GTOYm+
+         LwFXLQ2Z7bBN6DGmmgL1s8ZSFU27Mn6BIZQTHaco3s5deX0KkJ5DjbNkEA38NJ3mLf9x
+         7Ug4HZdqb6mcqTd7AWsp3ecxH4wcb3rgIg58Pn9wTNTwJjGk0LN1Moq4krf06ilcNKEN
+         4f8tn1yDMEWEEvt1P+m7zixz9TuCavGCaeTpJGov7HYiDA3UeFoiZXcAspSxv3L3p0D2
+         LSt4fP1bsGk+z1wzjvTfXXqm3lUt8ujaBQrR8PAGCUfuGXzahPkzS5DAJBwxqej/xJ3c
+         7r5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1t4RL4yv0gY9xykK7QETl02rSiyVW266AV2ADMw4tEg=;
+        b=M0yLAu18PZQOX8ZNMz/4yUmpWdKR3+zlnfChSo29hnrKduEH3ciUjNtleNJEcYBW5l
+         3mZbSltoVGRWJVxPRaWaFepqBXFAFsGpEyQZeNvKnHp95pjRPqJ4KkJ9YpoUxjztwTxt
+         MxFk8PJHIRONvJL3WyJaFMlCaD2WzaHY62+VNfJWDLuaZlf4iE+pJxxvfKNTMitoQNu+
+         rhNg07TwacQPWEny7TJM7UGHNiPTtRvliS5rMr2Sr1WAAjR8l9l7FTZY5H9tiBAzpy0Z
+         yJFobis6ztM0aXvBxHEpXBHCweZ3Dzp0wqOe0UvIGylgoe5luz8uzbjOxYeW7CowxIJs
+         GzDg==
+X-Gm-Message-State: AOAM532pXIAtOWY2daiCiK8QRldeVQM1KeoU4BbsOMBUqqizodpnoqRT
+        y5n6dhlr4vXExwCWl+y87ZXqiQzazyQ=
+X-Google-Smtp-Source: ABdhPJyqRYwVP8aGoIneu6ErqOgqrfPMFnLcI7ea1bveeQFKSZeBTOVvH2J2svkUf1SwKgG6S9gJDQ==
+X-Received: by 2002:a17:906:f42:: with SMTP id h2mr2986949ejj.317.1617807845921;
+        Wed, 07 Apr 2021 08:04:05 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id z4sm2995442edb.97.2021.04.07.08.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Apr 2021 08:04:04 -0700 (PDT)
+Date:   Wed, 7 Apr 2021 17:04:39 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     axboe@kernel.dk, jonathanh@nvidia.com, robh+dt@kernel.org,
+        pchandru@nvidia.com, devicetree@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: ata: tegra: Convert binding
+ documentation to YAML
+Message-ID: <YG3KB/gWWuu60AZG@orome.fritz.box>
+References: <1617758731-12380-1-git-send-email-skomatineni@nvidia.com>
+ <1617758731-12380-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5mb2SXUnzjXTbYRb"
 Content-Disposition: inline
-In-Reply-To: <fbf7fc89-8a74-3a92-63be-6cb429360b13@nvidia.com>
+In-Reply-To: <1617758731-12380-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 09:27:37AM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 07/04/2021 09:21, Jon Hunter wrote:
-> > On Mon, 05 Apr 2021 10:53:24 +0200, Greg Kroah-Hartman wrote:
-> >> This is the start of the stable review cycle for the 5.4.110 release.
-> >> There are 74 patches in this series, all will be posted as a response
-> >> to this one.  If anyone has any issues with these being applied, please
-> >> let me know.
-> >>
-> >> Responses should be made by Wed, 07 Apr 2021 08:50:09 +0000.
-> >> Anything received after that time might be too late.
-> >>
-> >> The whole patch series can be found in one patch at:
-> >> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.110-rc1.gz
-> >> or in the git tree and branch at:
-> >> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> >> and the diffstat can be found below.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v5.4:
-> >     12 builds:	12 pass, 0 fail
-> >     26 boots:	26 pass, 0 fail
-> >     59 tests:	58 pass, 1 fail
-> > 
-> > Linux version:	5.4.110-rc1-gc6f7c5a01d5a
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                 tegra194-p2972-0000, tegra20-ventana,
-> >                 tegra210-p2371-2180, tegra210-p3450-0000,
-> >                 tegra30-cardhu-a04
-> > 
-> > Test failures:	tegra194-p2972-0000: boot.py
-> 
-> 
-> The following change ...
-> 
-> Thierry Reding <treding@nvidia.com>
->     drm/tegra: sor: Grab runtime PM reference across reset
-> 
-> 
-> ... is causing this error ...
-> 
-> boot: logs: [      16.166043] WARNING KERN ------------[ cut here ]------------
-> boot: logs: [      16.166061] WARNING KERN reset bpmp (ID: 89) is not acquired
-> boot: logs: [      16.166132] WARNING KERN WARNING: CPU: 2 PID: 90 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/reset/core.c:379 reset_control_assert+0x174/0x1a8
-> boot: logs: [      16.166136] WARNING KERN Modules linked in: tegra_drm(+) drm_kms_helper drm snd_hda_codec_hdmi snd_hda_tegra snd_hda_codec host1x crct10dif_ce pwm_tegra snd_hda_core pwm_fan pcie_tegra194(+) lm90 phy_tegra194_p2u tegra_bpmp_thermal ip_tables x_tables ipv6
-> boot: logs: [      16.166216] WARNING KERN CPU: 2 PID: 90 Comm: kworker/2:1 Not tainted 5.4.110-rc1-gc6f7c5a01d5a #1
-> boot: logs: [      16.166220] WARNING KERN Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
-> boot: logs: [      16.166233] WARNING KERN Workqueue: pm pm_runtime_work
-> boot: logs: [      16.166242] WARNING KERN pstate: 40c00009 (nZcv daif +PAN +UAO)
-> boot: logs: [      16.166248] WARNING KERN pc : reset_control_assert+0x174/0x1a8
-> boot: logs: [      16.166252] WARNING KERN lr : reset_control_assert+0x174/0x1a8
-> boot: logs: [      16.166256] WARNING KERN sp : ffff800011bc3ba0
-> boot: logs: [      16.166265] WARNING KERN x29: ffff800011bc3ba0 x28: 0000000000000000
-> boot: logs: [      16.166288] WARNING KERN x27: 0000000000000008 x26: ffff8000114d9000
-> boot: logs: [      16.166303] WARNING KERN x25: 000000032b5183e0 x24: ffff0003e3443800
-> boot: logs: [      16.166317] WARNING KERN x23: 0000000000000000 x22: ffff800010710638
-> boot: logs: [      16.166332] WARNING KERN x21: ffff0003eb967410 x20: ffff0003eb84a360
-> boot: logs: [      16.166347] WARNING KERN x19: ffff0003e12fd080 x18: ffffffffffffffff
-> boot: logs: [      16.166361] WARNING KERN x17: 0000000000000000 x16: 0000000000000000
-> boot: logs: [      16.166375] WARNING KERN x15: ffff8000114d98c8 x14: 00000000fffffff0
-> boot: logs: [      16.166416] WARNING KERN x13: ffff8000116b9fa8 x12: ffff8000114f25e8
-> boot: logs: [      16.166424] WARNING KERN x11: ffff8000114f2000 x10: 0000000000000000
-> boot: logs: [      16.166430] WARNING KERN x9 : 000000000000017a x8 : 0000000000000004
-> boot: logs: [      16.166436] WARNING KERN x7 : 000000000000017a x6 : ffff0003ee17c180
-> boot: logs: [      16.166442] WARNING KERN x5 : 0000000000000007 x4 : ffff0003ee17c180
-> boot: logs: [      16.166449] WARNING KERN x3 : 0000000000000006 x2 : 0000000000000007
-> boot: logs: [      16.166460] WARNING KERN x1 : aa01989c70ddbd00 x0 : 0000000000000000
-> boot: logs: [      16.166467] WARNING KERN Call trace:
-> boot: logs: [      16.166474] WARNING KERN  reset_control_assert+0x174/0x1a8
-> boot: logs: [      16.166516] WARNING KERN  tegra_sor_suspend+0x24/0x88 [tegra_drm]
-> boot: logs: [      16.166526] WARNING KERN  pm_generic_runtime_suspend+0x28/0x40
-> boot: logs: [      16.166534] WARNING KERN  genpd_runtime_suspend+0x90/0x240
-> boot: logs: [      16.166541] WARNING KERN  __rpm_callback+0xd8/0x150
-> boot: logs: [      16.166546] WARNING KERN  rpm_callback+0x24/0x98
-> boot: logs: [      16.166551] WARNING KERN  rpm_suspend+0xe0/0x480
-> boot: logs: [      16.166556] WARNING KERN  rpm_idle+0x124/0x140
-> boot: logs: [      16.166561] WARNING KERN  pm_runtime_work+0xa0/0xb8
-> boot: logs: [      16.166569] WARNING KERN  process_one_work+0x1c8/0x358
-> boot: logs: [      16.166575] WARNING KERN  worker_thread+0x48/0x460
-> boot: logs: [      16.166580] WARNING KERN  kthread+0x120/0x150
-> boot: logs: [      16.166587] WARNING KERN  ret_from_fork+0x10/0x18
-> boot: logs: [      16.166592] WARNING KERN ---[ end trace ec6031475f7a0830 ]---
-> boot: logs: [      16.166670] ERR KERN tegra-sor 15b80000.sor: failed to assert reset: -1
-> 
-> 
-> Sorry we should have checked which kernels to back port
-> this fix for. Can we drop this for v5.4? Appears to be
-> fine for v5.10+.
 
-Thanks, I've now dropped this for 5.4.
+--5mb2SXUnzjXTbYRb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Tue, Apr 06, 2021 at 06:25:29PM -0700, Sowjanya Komatineni wrote:
+> This patch converts text based dt-binding document to YAML based
+> dt-binding document.
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  .../devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 138 +++++++++++++++=
+++++++
+>  .../bindings/ata/nvidia,tegra124-ahci.txt          |  44 -------
+>  2 files changed, 138 insertions(+), 44 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ah=
+ci.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra124=
+-ahci.txt
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--5mb2SXUnzjXTbYRb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBtygYACgkQ3SOs138+
+s6H6hw//c3uqroCC9lbnly0fq8JL13Z8EsOwQuwqSkQqXGuCjNg1zbxHd9d8viFq
+NKbXyluX/5Pycwtkfh9BDusg3N+nz2BnmWEE7mp8Ly4Xr3uWSg7EzrIwuVNoLn2J
+4ZN8j0YgIjiksYf5nvSEcn3zOtwIrAf/3l5tRDuqWQI7d6ZLApjBjwjNmkU6CWg2
+dxK/1v2hnMuVO6Lg85NmjhlMHZy/V+NiTb8doqL5ufMYIL4pcxpOQLPBe7IBRZw2
+ViEioKTV2RdMrFAYlf8xKoe+/rQDXxr2BzjTpS1L0+usLcQi8L7P+O1XlhxG6HXY
+VYSlz8cRNxcO+aQZoIWfatpgkdjiy5VTHUYiaQa8PiT6b+uXJ0PduoWLlXFCgoMo
+TCqj8mYyBwipNpNuU2KkBNSBo/tahEn+WQIdad/IbDwXnjRdUjNXv9np+QMOyPJa
+p1qGz9b5zF0M9u1UreDGqYQ4eXT8lTYf4x/6y376YWN/2zKtVJ6tc+ExcLIIcXHU
+ReD1wtJb/+vLcz3Mu41bSGRVXBJui/P52XlILahqkqVVYOcOpfdyZxuCdFlUNdNZ
+TSqlyI9rN3moHTUOgsyi9m/1SVezQLWGj27/N/vw/cht00zUrCHRTnTlm7jUrbNl
+/Q4KL5Y35mSCnLM8xAiGIxIWhIQ1USyLyM8LLcONhj1lJv0bwUw=
+=K5hz
+-----END PGP SIGNATURE-----
+
+--5mb2SXUnzjXTbYRb--
