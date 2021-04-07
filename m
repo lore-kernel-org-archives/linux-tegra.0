@@ -2,124 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388C6C433B4
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0840C43461
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19B3561284
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:07:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0CA161284
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 15:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353318AbhDGPHW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Apr 2021 11:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56462 "EHLO
+        id S234273AbhDGPpK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Apr 2021 11:45:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242586AbhDGPHW (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Apr 2021 11:07:22 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AC8C061756;
-        Wed,  7 Apr 2021 08:07:12 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id mh7so18276451ejb.12;
-        Wed, 07 Apr 2021 08:07:12 -0700 (PDT)
+        with ESMTP id S1353688AbhDGPpJ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 7 Apr 2021 11:45:09 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E1CC061756
+        for <linux-tegra@vger.kernel.org>; Wed,  7 Apr 2021 08:45:00 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id n38so3509459pfv.2
+        for <linux-tegra@vger.kernel.org>; Wed, 07 Apr 2021 08:45:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DMi90Bi1B5eEKIW6qtlBkubiu414LxmGczys0i5jgMk=;
-        b=gNQG8lxuAYON632rgm2noHLWPLKbWXU1NsupWZu/radPDfcVLuWIS5qmXS44L9v2pN
-         atrveYSKSIzIijbETOpwSGofIs1jknTltXodL17PT24VLRLG7TvYNvXiqeoES/Gz++PH
-         wQfUaKUeenkEEWqix0/iDqFIQi4D92OVV26MqG5Q4mZIn0Z9l0OcZJNURrezdd1nek0J
-         /39PUdT8YTHGPe4FvrSurEHrtbIIjMWICrK3pszRTyde/bq+V0DjeWZi0+IHPvx3ob5j
-         hjqo3AUDukUSs8wbqcY8WgoZ/jeyRAs7n/OEt0w+I6/6OPdTnNnS4eN4WsDygvQLOvDZ
-         lPiQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+qfQCQqId0WTspRAj4kz6DuPB09HIJxxoSgf5ROVgtM=;
+        b=zmWDPmjOJmFr7kDuBGoTtaYx65S49XI98JpsvFJrN+najC/kfuYlju+4YXn2rnHmUi
+         hKq9yUAR5Hwnc9WnhI7+GZ3iJQCBlLZ8HXqvdrIg96e3uB0ancsgISylaUSWqVmXEpU4
+         hh10dqyrwlEo9q/hJ0S7WdeynSlbcT2CA5aM0AlXyPP2nRHf79TDkn3djBC6sPIriyWO
+         xrkkUgoxRlKNfEAXyKMfeSTntfwt27rm61Xb7lqMuTAgs3EZ3ON8UuXiLye6oHU22zxl
+         Ne7ffG+3Xzb+BEyrXLheNR++l2nfE82BE3WWePEyL/TJz2GW8N0cfxJZK6jZAQxeXFnt
+         nXTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DMi90Bi1B5eEKIW6qtlBkubiu414LxmGczys0i5jgMk=;
-        b=dk1zntqabD8KxlpNg2TaH4t5ocGWLjwU9Qx+3BX5pSmPUV41Vy1XAWhhEDlvED3ejV
-         bD9Y8p7XbyenZtuaMFRZUISgwBuXGyoQ0EJ+3fAWJFFjpgscezrZQs437aGHVg3hr1NX
-         /upIg/9HucgFW1Gg115L6/0DJZRtSBAHiMY2bXthsYS95exqt0vhhKUnZHCPVJDBycex
-         Iufu2rrwu3/b4/BFzZFg70G5EADh8MKttx0WdamzfPsp/J3GFuwT4asbxGNJF4zE/rZq
-         N+GOTYBuTSqCVCVOAZFYdrGJzuhtOb9LuHeyLfpgwcR4B+EdCDmtAJ32+dc/OtBSuxoP
-         HknQ==
-X-Gm-Message-State: AOAM531J8+hOYVrH91sMn0bRBPXDkmZLjDbvdHzYP4+A4HAiY66/jw3h
-        R6uS3jsBiKe4Ow4Cr0BYNBg=
-X-Google-Smtp-Source: ABdhPJzjG5+vMalTo5MF4+sxjPdA2bO0Qz5I9laTTPnuMeEiykLdz9SCx7bfzkG4imeHbwoJ/is/2Q==
-X-Received: by 2002:a17:906:4e8a:: with SMTP id v10mr4170803eju.6.1617808030878;
-        Wed, 07 Apr 2021 08:07:10 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id gn19sm12436243ejc.4.2021.04.07.08.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 08:07:09 -0700 (PDT)
-Date:   Wed, 7 Apr 2021 17:07:44 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Aniruddha Tvs Rao <anrao@nvidia.com>,
-        Kamal Mostafa <kamal@canonical.com>
-Subject: Re: [PATCH] mmc: sdhci-tegra: Add required callbacks to set/clear
- CQE_EN bit
-Message-ID: <YG3KwJdljfJdawDQ@orome.fritz.box>
-References: <20210407094617.770495-1-jonathanh@nvidia.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+qfQCQqId0WTspRAj4kz6DuPB09HIJxxoSgf5ROVgtM=;
+        b=deRbnsQSnqJScDmhQiMRzvZceTiqUot928+cFb71QhsIckAjyMk899GtbHD61IHS18
+         GgVU8KUZk3VXAENG0VvKzybNOhq7D5t/tkx6zvteaPzjeIafNJ124wz3T985jrGhf+F/
+         nRws0g+3k3fGRttiWWgSnDTl9dJN4EVbOjzKS5TKjl4swgXIpdOr/y7qvVxYpy0dI/K9
+         d1qfwUKaV6Io+EUX0xl2wmQPPeeYjhDti6wBZ//Q7RGIoNsqCyp/kh/zyo+/Ha1DH3On
+         TdgUBU/sMNVoOlezTkPmAZTeCEqnjd7rYTqevkKXwqYNr6aQ3K2Ho33Q3uMXpmYHdJUz
+         cJ4w==
+X-Gm-Message-State: AOAM532kFdbqpy/E9ErSnnROV3CJYcqtgLpgn2M9vrQKz4lvsrqRlc1E
+        NdpwxHmHivZKmktN79FpPSTTbg==
+X-Google-Smtp-Source: ABdhPJzuYOTIM+pn84VM/EafCuxxJjRcVVjW6OOlNG5TbX/HcZet0ywbD5ohAK0Cux12gVhNKEUXuA==
+X-Received: by 2002:a63:770e:: with SMTP id s14mr3749330pgc.377.1617810299745;
+        Wed, 07 Apr 2021 08:44:59 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id x1sm21865932pfj.209.2021.04.07.08.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Apr 2021 08:44:58 -0700 (PDT)
+Subject: Re: [PATCH v4 0/3] Add AHCI support for Tegra186
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, robh+dt@kernel.org
+Cc:     pchandru@nvidia.com, devicetree@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1617758731-12380-1-git-send-email-skomatineni@nvidia.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2cf9a0ee-034c-7d31-1fa4-66e6ad3ceb43@kernel.dk>
+Date:   Wed, 7 Apr 2021 09:44:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MLJd7CPH3Lqt6IQZ"
-Content-Disposition: inline
-In-Reply-To: <20210407094617.770495-1-jonathanh@nvidia.com>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <1617758731-12380-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+On 4/6/21 7:25 PM, Sowjanya Komatineni wrote:
+> Re-sending dt-binding and ahci_tegra driver patches as v4 as device
+> tree patches from v3 are merged but not the AHCI Tegra driver.
+> 
+> Missed to add Jens Axboe to mailing list in v3. Adding for v4.
+> 
+> This series adds support for AHCI-compliant SATA to Tegra186 SoC.
+> 
+> This series includes patches for
+> - Converting text based dt-binding document to YAML.
+> - Adding dt-bindings for Tegra186.
+> - Adding Tegra186 support to Tegra AHCI driver.
+> 
+> Delta between patch versions:
+> [v4]:	Same as v3 except removed device tree patches as they are
+> 	merged.
+> [v3]:	fixed yaml example to pass dt_binding_check
+> [v2]:	v1 feedback related to yaml dt-binding.
+> 	Removed conditional reset order in yaml and updated dts files
+> 	to maintain same order for commonly available resets across
+> 	Tegra124 thru Tegra186.
 
---MLJd7CPH3Lqt6IQZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Assuming the libata tree is the best way for this to go in, so I applied
+it for 5.13.
 
-On Wed, Apr 07, 2021 at 10:46:17AM +0100, Jon Hunter wrote:
-> From: Aniruddha Tvs Rao <anrao@nvidia.com>
->=20
-> CMD8 is not supported with Command Queue Enabled. Add required callback
-> to clear CQE_EN and CQE_INTR fields in the host controller register
-> before sending CMD8. Add corresponding callback in the CQHCI resume path
-> to re-enable CQE_EN and CQE_INTR fields.
->=20
-> Reported-by: Kamal Mostafa <kamal@canonical.com>
-> Tested-by: Kamal Mostafa <kamal@canonical.com>
-> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+-- 
+Jens Axboe
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---MLJd7CPH3Lqt6IQZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBtyr8ACgkQ3SOs138+
-s6Gc3A/+OGjGBSu6DmmRhG25bPJqJTS6udCn0nIbbTgme6IMj4BvdH7z4GxX3viH
-yGeKA2Ws3vv71lOST//HqJlUnVlcVC1y/vLlC07NnQ8a+csVehGF/1SOW/hmc3Vw
-wF5nAKSTdzttlLm0j3yxsfIaw7l2JXh3Q4Snd/Nj0jR6fhw3dFcwTcn4RGI+qbbt
-O30+luDa0U4vmlVPyzlkabF1A28YfJ7lzE6bbFslwwyBDirJEwBvipG+1ys4ARU5
-A/XoDF03V2NMxY5LceHf/Ef6UbWOsV1+BDFC01k7roQKVeYmLa6oA7PMT9e9uR03
-2Ejb5SOAcLuc/BQTHoaQxLJaHUiBipYgw5JO+IGq36CSxH1OnYbT2rTZv1A7btq4
-bFiT4CeORks3d6fWsm0UFUyvNAGoCx9JnVnxIWJPXNQNccF/MAA8SUFMQjW6HTyG
-mba4A3HGK3SjNn31Cl2y+fYDj8sQhYz3FUvtH/PPZOpgmIA95VLRSeV0sUzB5Dgn
-8129mHHTQR+stlzmkDVcyjtvTXnORXGvDiDX7JVChky0OQLQBGxM7WU814EYmSaV
-5m2OflVzRkb6pFlRsuXShqEZwvMbysrwbci5vXKJ6fh2SD1z/RNqtiomeTum6vj0
-YlK4VsCK0VPJseFxu/NVEw2CJ7/GXo9Erm0+jAkixfUK9VjUXoM=
-=JaU+
------END PGP SIGNATURE-----
-
---MLJd7CPH3Lqt6IQZ--
