@@ -2,164 +2,147 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C63C433ED
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CAAC433B4
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3436161363
-	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F419A6138B
+	for <linux-tegra@archiver.kernel.org>; Wed,  7 Apr 2021 11:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234304AbhDGLD3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 7 Apr 2021 07:03:29 -0400
-Received: from mga05.intel.com ([192.55.52.43]:61574 "EHLO mga05.intel.com"
+        id S234191AbhDGLW4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 7 Apr 2021 07:22:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241815AbhDGLD2 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 7 Apr 2021 07:03:28 -0400
-IronPort-SDR: BkbfwqJQiT33IGCreyCI3lWoHbYpn/w6JWqHLTWVV0+stxCLDKwLAfY8q8OnSRdjJjmcdo2YCj
- SAl3FCw0NceQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9946"; a="278548276"
-X-IronPort-AV: E=Sophos;i="5.82,203,1613462400"; 
-   d="scan'208";a="278548276"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2021 04:03:19 -0700
-IronPort-SDR: MUPx8tiQB10NIqhWzpWGMTW5QY3lSIU3HLFlYyF65q/XQAookVznosvg38tHDxlHuz9bpj2zvt
- hZzReUeRwXRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,203,1613462400"; 
-   d="scan'208";a="458320452"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.174]) ([10.237.72.174])
-  by orsmga001.jf.intel.com with ESMTP; 07 Apr 2021 04:03:16 -0700
-Subject: Re: [PATCH] mmc: sdhci-tegra: Add required callbacks to set/clear
- CQE_EN bit
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Aniruddha Tvs Rao <anrao@nvidia.com>,
-        Kamal Mostafa <kamal@canonical.com>
-References: <20210407094617.770495-1-jonathanh@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <0964b587-5682-fee8-333e-8e2a23cdfe83@intel.com>
-Date:   Wed, 7 Apr 2021 14:03:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S231138AbhDGLW4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 7 Apr 2021 07:22:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BA3B961363;
+        Wed,  7 Apr 2021 11:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617794565;
+        bh=HR/CgHMltIkIf6LYPeEio6BsB0RbZRGx7aLluoffiyo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y5K/Aemp5j7kyq/OIzWtqEQV6Aw92P/HlTKx6lcr4z4lkJac7ZeeP5gvtTjrh/Df6
+         2NNM4PZzqoWHSsJL8ObEzCObH1tXCiUXQ3OsGZw6uKfza5J2y0tkpzuL8JRE9di5Gp
+         ZJ4wqYzZTx6YcvLzDOmdovBaAAMUmBqdchETKtsQ=
+Date:   Wed, 7 Apr 2021 13:22:42 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+        stable@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/74] 5.4.110-rc1 review
+Message-ID: <YG2WAmvr6OUpG6A4@kroah.com>
+References: <20210405085024.703004126@linuxfoundation.org>
+ <9d26603c91264ce4921639affafb16ab@HQMAIL105.nvidia.com>
+ <fbf7fc89-8a74-3a92-63be-6cb429360b13@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20210407094617.770495-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbf7fc89-8a74-3a92-63be-6cb429360b13@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 7/04/21 12:46 pm, Jon Hunter wrote:
-> From: Aniruddha Tvs Rao <anrao@nvidia.com>
+On Wed, Apr 07, 2021 at 09:27:37AM +0100, Jon Hunter wrote:
+> Hi Greg,
 > 
-> CMD8 is not supported with Command Queue Enabled. Add required callback
-> to clear CQE_EN and CQE_INTR fields in the host controller register
-> before sending CMD8. Add corresponding callback in the CQHCI resume path
-> to re-enable CQE_EN and CQE_INTR fields.
+> On 07/04/2021 09:21, Jon Hunter wrote:
+> > On Mon, 05 Apr 2021 10:53:24 +0200, Greg Kroah-Hartman wrote:
+> >> This is the start of the stable review cycle for the 5.4.110 release.
+> >> There are 74 patches in this series, all will be posted as a response
+> >> to this one.  If anyone has any issues with these being applied, please
+> >> let me know.
+> >>
+> >> Responses should be made by Wed, 07 Apr 2021 08:50:09 +0000.
+> >> Anything received after that time might be too late.
+> >>
+> >> The whole patch series can be found in one patch at:
+> >> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.110-rc1.gz
+> >> or in the git tree and branch at:
+> >> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> >> and the diffstat can be found below.
+> >>
+> >> thanks,
+> >>
+> >> greg k-h
+> > 
+> > Failures detected for Tegra ...
+> > 
+> > Test results for stable-v5.4:
+> >     12 builds:	12 pass, 0 fail
+> >     26 boots:	26 pass, 0 fail
+> >     59 tests:	58 pass, 1 fail
+> > 
+> > Linux version:	5.4.110-rc1-gc6f7c5a01d5a
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                 tegra194-p2972-0000, tegra20-ventana,
+> >                 tegra210-p2371-2180, tegra210-p3450-0000,
+> >                 tegra30-cardhu-a04
+> > 
+> > Test failures:	tegra194-p2972-0000: boot.py
 > 
-> Reported-by: Kamal Mostafa <kamal@canonical.com>
-> Tested-by: Kamal Mostafa <kamal@canonical.com>
-> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> The following change ...
+> 
+> Thierry Reding <treding@nvidia.com>
+>     drm/tegra: sor: Grab runtime PM reference across reset
+> 
+> 
+> ... is causing this error ...
+> 
+> boot: logs: [      16.166043] WARNING KERN ------------[ cut here ]------------
+> boot: logs: [      16.166061] WARNING KERN reset bpmp (ID: 89) is not acquired
+> boot: logs: [      16.166132] WARNING KERN WARNING: CPU: 2 PID: 90 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/reset/core.c:379 reset_control_assert+0x174/0x1a8
+> boot: logs: [      16.166136] WARNING KERN Modules linked in: tegra_drm(+) drm_kms_helper drm snd_hda_codec_hdmi snd_hda_tegra snd_hda_codec host1x crct10dif_ce pwm_tegra snd_hda_core pwm_fan pcie_tegra194(+) lm90 phy_tegra194_p2u tegra_bpmp_thermal ip_tables x_tables ipv6
+> boot: logs: [      16.166216] WARNING KERN CPU: 2 PID: 90 Comm: kworker/2:1 Not tainted 5.4.110-rc1-gc6f7c5a01d5a #1
+> boot: logs: [      16.166220] WARNING KERN Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
+> boot: logs: [      16.166233] WARNING KERN Workqueue: pm pm_runtime_work
+> boot: logs: [      16.166242] WARNING KERN pstate: 40c00009 (nZcv daif +PAN +UAO)
+> boot: logs: [      16.166248] WARNING KERN pc : reset_control_assert+0x174/0x1a8
+> boot: logs: [      16.166252] WARNING KERN lr : reset_control_assert+0x174/0x1a8
+> boot: logs: [      16.166256] WARNING KERN sp : ffff800011bc3ba0
+> boot: logs: [      16.166265] WARNING KERN x29: ffff800011bc3ba0 x28: 0000000000000000
+> boot: logs: [      16.166288] WARNING KERN x27: 0000000000000008 x26: ffff8000114d9000
+> boot: logs: [      16.166303] WARNING KERN x25: 000000032b5183e0 x24: ffff0003e3443800
+> boot: logs: [      16.166317] WARNING KERN x23: 0000000000000000 x22: ffff800010710638
+> boot: logs: [      16.166332] WARNING KERN x21: ffff0003eb967410 x20: ffff0003eb84a360
+> boot: logs: [      16.166347] WARNING KERN x19: ffff0003e12fd080 x18: ffffffffffffffff
+> boot: logs: [      16.166361] WARNING KERN x17: 0000000000000000 x16: 0000000000000000
+> boot: logs: [      16.166375] WARNING KERN x15: ffff8000114d98c8 x14: 00000000fffffff0
+> boot: logs: [      16.166416] WARNING KERN x13: ffff8000116b9fa8 x12: ffff8000114f25e8
+> boot: logs: [      16.166424] WARNING KERN x11: ffff8000114f2000 x10: 0000000000000000
+> boot: logs: [      16.166430] WARNING KERN x9 : 000000000000017a x8 : 0000000000000004
+> boot: logs: [      16.166436] WARNING KERN x7 : 000000000000017a x6 : ffff0003ee17c180
+> boot: logs: [      16.166442] WARNING KERN x5 : 0000000000000007 x4 : ffff0003ee17c180
+> boot: logs: [      16.166449] WARNING KERN x3 : 0000000000000006 x2 : 0000000000000007
+> boot: logs: [      16.166460] WARNING KERN x1 : aa01989c70ddbd00 x0 : 0000000000000000
+> boot: logs: [      16.166467] WARNING KERN Call trace:
+> boot: logs: [      16.166474] WARNING KERN  reset_control_assert+0x174/0x1a8
+> boot: logs: [      16.166516] WARNING KERN  tegra_sor_suspend+0x24/0x88 [tegra_drm]
+> boot: logs: [      16.166526] WARNING KERN  pm_generic_runtime_suspend+0x28/0x40
+> boot: logs: [      16.166534] WARNING KERN  genpd_runtime_suspend+0x90/0x240
+> boot: logs: [      16.166541] WARNING KERN  __rpm_callback+0xd8/0x150
+> boot: logs: [      16.166546] WARNING KERN  rpm_callback+0x24/0x98
+> boot: logs: [      16.166551] WARNING KERN  rpm_suspend+0xe0/0x480
+> boot: logs: [      16.166556] WARNING KERN  rpm_idle+0x124/0x140
+> boot: logs: [      16.166561] WARNING KERN  pm_runtime_work+0xa0/0xb8
+> boot: logs: [      16.166569] WARNING KERN  process_one_work+0x1c8/0x358
+> boot: logs: [      16.166575] WARNING KERN  worker_thread+0x48/0x460
+> boot: logs: [      16.166580] WARNING KERN  kthread+0x120/0x150
+> boot: logs: [      16.166587] WARNING KERN  ret_from_fork+0x10/0x18
+> boot: logs: [      16.166592] WARNING KERN ---[ end trace ec6031475f7a0830 ]---
+> boot: logs: [      16.166670] ERR KERN tegra-sor 15b80000.sor: failed to assert reset: -1
+> 
+> 
+> Sorry we should have checked which kernels to back port
+> this fix for. Can we drop this for v5.4? Appears to be
+> fine for v5.10+.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Thanks, I've now dropped this for 5.4.
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index c61f797a853f..387ce9cdbd7c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -119,6 +119,10 @@
->  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
->  #define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
->  
-> +#define SDHCI_TEGRA_CQE_TRNS_MODE	(SDHCI_TRNS_MULTI | \
-> +					 SDHCI_TRNS_BLK_CNT_EN | \
-> +					 SDHCI_TRNS_DMA)
-> +
->  struct sdhci_tegra_soc_data {
->  	const struct sdhci_pltfm_data *pdata;
->  	u64 dma_mask;
-> @@ -1156,6 +1160,7 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
->  static void tegra_cqhci_writel(struct cqhci_host *cq_host, u32 val, int reg)
->  {
->  	struct mmc_host *mmc = cq_host->mmc;
-> +	struct sdhci_host *host = mmc_priv(mmc);
->  	u8 ctrl;
->  	ktime_t timeout;
->  	bool timed_out;
-> @@ -1170,6 +1175,7 @@ static void tegra_cqhci_writel(struct cqhci_host *cq_host, u32 val, int reg)
->  	 */
->  	if (reg == CQHCI_CTL && !(val & CQHCI_HALT) &&
->  	    cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
-> +		sdhci_writew(host, SDHCI_TEGRA_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->  		sdhci_cqe_enable(mmc);
->  		writel(val, cq_host->mmio + reg);
->  		timeout = ktime_add_us(ktime_get(), 50);
-> @@ -1205,6 +1211,7 @@ static void sdhci_tegra_update_dcmd_desc(struct mmc_host *mmc,
->  static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
->  {
->  	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	struct sdhci_host *host = mmc_priv(mmc);
->  	u32 val;
->  
->  	/*
-> @@ -1218,6 +1225,7 @@ static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
->  		if (val & CQHCI_ENABLE)
->  			cqhci_writel(cq_host, (val & ~CQHCI_ENABLE),
->  				     CQHCI_CFG);
-> +		sdhci_writew(host, SDHCI_TEGRA_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->  		sdhci_cqe_enable(mmc);
->  		if (val & CQHCI_ENABLE)
->  			cqhci_writel(cq_host, val, CQHCI_CFG);
-> @@ -1281,12 +1289,36 @@ static void tegra_sdhci_set_timeout(struct sdhci_host *host,
->  	__sdhci_set_timeout(host, cmd);
->  }
->  
-> +static void sdhci_tegra_cqe_pre_enable(struct mmc_host *mmc)
-> +{
-> +	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	u32 reg;
-> +
-> +	reg = cqhci_readl(cq_host, CQHCI_CFG);
-> +	reg |= CQHCI_ENABLE;
-> +	cqhci_writel(cq_host, reg, CQHCI_CFG);
-> +}
-> +
-> +static void sdhci_tegra_cqe_post_disable(struct mmc_host *mmc)
-> +{
-> +	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	u32 reg;
-> +
-> +	reg = cqhci_readl(cq_host, CQHCI_CFG);
-> +	reg &= ~CQHCI_ENABLE;
-> +	cqhci_writel(cq_host, reg, CQHCI_CFG);
-> +	sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +}
-> +
->  static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
->  	.write_l    = tegra_cqhci_writel,
->  	.enable	= sdhci_tegra_cqe_enable,
->  	.disable = sdhci_cqe_disable,
->  	.dumpregs = sdhci_tegra_dumpregs,
->  	.update_dcmd_desc = sdhci_tegra_update_dcmd_desc,
-> +	.pre_enable = sdhci_tegra_cqe_pre_enable,
-> +	.post_disable = sdhci_tegra_cqe_post_disable,
->  };
->  
->  static int tegra_sdhci_set_dma_mask(struct sdhci_host *host)
-> 
-
+greg k-h
