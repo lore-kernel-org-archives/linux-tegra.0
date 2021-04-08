@@ -2,146 +2,188 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D99FEC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 12:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DB0C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 12:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1F2E610C8
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 12:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2804361106
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 12:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229964AbhDHMe5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Apr 2021 08:34:57 -0400
-Received: from mail-dm6nam08on2060.outbound.protection.outlook.com ([40.107.102.60]:18400
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229741AbhDHMez (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 8 Apr 2021 08:34:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LHGJKdVRvVcnkts+JNUav4tFMV2ZHTV3opAf+y2drTj1U4RgVWsPAGKk8anrviE4lU/J/k7yg+hXly+1PJCIccNg/7Mk12ciDtDvu6lc3QuhROJv4/hMtlYAh+5Yfd/22AizDGvMrwrsaVy9bO38N39h1JeTTKoBZwUsQxDW3p7UEDLgzsK1Sdrk86ZBdbcutEqlEFsx1SwnLu4aosFeIhBaXWfVKFL8ZUDnQM7pX4pmV9gqznk7f4jscI96i6zfBWe5lA2agoTz/YkDaIDkvqWkAnlGps1erQlIKUA/SMwOO6WUnSoGPVRj0NPLhlfbMo/9zhSNX6yz/mY95hNGgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hYk2q2cb/3NeVg4oymiu2JtnLsDpresVBCUCCeRmI+k=;
- b=d3Bu5xYpgExyN13RIncmHoeXesWtpDFlEKQWeSBR6EHNOAcpD/nhSZQu7EcGCyRja1I8ed8f52xuKq+SaehM7XTwVl/RU2pQTnIiohzcDNXTAPXpYDB3YQK5sjP7xERORjuWHYQfvez8zJLJsDeP4+sMH5+JlX0ghxV0sgwMRnDoY1lf7qXPHsYucfcgr2brhyDAAPotkMDZ5JUW2tFnVh3wZFj4zFathfzqPmd0whOWqsna3sB/bSxP67Gl1bSnQe6NEy+dXEdPtuyGQ2zJuCg1GB+qBULvp7435hf8FTJI3KeFvrAtG+I9iuf62aHQ3Vg/9ULDOpMkUP0m6Zd1bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hYk2q2cb/3NeVg4oymiu2JtnLsDpresVBCUCCeRmI+k=;
- b=YEKNbeovuiCzFTYuPHQHa5RbgrCTCq29bsE7HbzhCwKA5IEyOIqMunthnGJhrZPHyHIwgI3XbH9nu/bENXQueySa3/GFkjuO+5bQQpQXzPkcghAOeFOwRb6MGpGIS0aa8YHT9EEGU5wCqXjTKH+Fy6HAo/CY3/WIRzFfgyz/v91nZX468G12bpQJoH1vtnml0axJMauVHv60kJWNC6qpm5mH5RnzGEx80UuGKzsglHXSAAGWrp7mrO95gIzRm08R7+UCfo6norXNDeA7z5Ouj09E6lgs7K03HLt4a+3GG2JLiWK8qLpFvf2Ry6RcDnh7ua7a50ZdxjYB0/FJl9C7+w==
-Received: from BN6PR11CA0070.namprd11.prod.outlook.com (2603:10b6:404:f7::32)
- by DM6PR12MB4730.namprd12.prod.outlook.com (2603:10b6:5:30::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.29; Thu, 8 Apr
- 2021 12:34:43 +0000
-Received: from BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:f7:cafe::3) by BN6PR11CA0070.outlook.office365.com
- (2603:10b6:404:f7::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend
- Transport; Thu, 8 Apr 2021 12:34:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT031.mail.protection.outlook.com (10.13.177.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4020.17 via Frontend Transport; Thu, 8 Apr 2021 12:34:42 +0000
-Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 8 Apr
- 2021 12:34:39 +0000
-Subject: Re: [PATCH] PCI: tegra: Fix runtime PM imbalance in
- pex_ep_event_pex_rst_deassert
-To:     Dinghao Liu <dinghao.liu@zju.edu.cn>, <kjlu@umn.edu>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210408072700.15791-1-dinghao.liu@zju.edu.cn>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <11feff02-c466-5296-b4c3-85754c755c9a@nvidia.com>
-Date:   Thu, 8 Apr 2021 13:34:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S231617AbhDHMkI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Apr 2021 08:40:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231615AbhDHMkG (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Apr 2021 08:40:06 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECCCC061760;
+        Thu,  8 Apr 2021 05:39:55 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id w23so2227195edx.7;
+        Thu, 08 Apr 2021 05:39:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ldEtYBSo9icSaV7Ru0Hgvo2mRzkssFWyJBEPkEeuVk4=;
+        b=UyR9UA0A0wJCi8qmeXIQbtws/BwABZpv5E3G4DfYWkynZ4AZSKJA0X07IxuY8kLZ2I
+         bkTmOwhTtIfJV/jvW3KDqhl8ITs+MguxyZ6dNi7Pvn2oAddnmEtQBVAa6VAI2Coem93S
+         KQf1hkxEUWYXaSkopNw0L8RLEZZjiqFSTs9CYdzDw1YUn3KHHXdVSxUhgTpY50cKKTtJ
+         M/5YmdNBl20CiiTe/U7VHrE/KbNvP3DRM1eHxlfTaYjT3G5P0okTHhGK29rWshq1U5Ei
+         yTpiC22lMYCeWX1V6ZSRv1Ph5tYFFajua6PyzQAKUzs4h7dMK/q41AojnxeRH2nj2sq/
+         pFQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ldEtYBSo9icSaV7Ru0Hgvo2mRzkssFWyJBEPkEeuVk4=;
+        b=Nu7TtWupfTp8YyngtbE3D8u2OPsEvnO7CkcR5XmeL7TiaSLkhHxCH2CRQEDiubAmRQ
+         0KApO8k3wMl0WZXgSiOCZd2wU/4CgwYmX6L2s1aQ3kDdDuaJ2fvLtr8FefV4t7sqWmDz
+         scBLsS8C2tvFPHXqO0igN/UeLh5mRiTOwO9Scx0YbvEiY+nAxuOS3NmCtWdyO60o5vl1
+         8QNVV9WqM9vmBZ54bsc/8xTpBZQb4Xs4AvvvByldpAq1XFk4XMBKuYJ0xmgiPpLhGA9a
+         iwilee2yzw5fNID7ndmv+K41sO/X9c54YAHvyr6XiVTWrCbpkDbkFuq0CMENkM79sHNC
+         7Bdg==
+X-Gm-Message-State: AOAM530qAJxrO6kE9o/A+MGruRUXixg++w5w64B+eZsE+vCQjQRUChFH
+        +Yge4r3HRyVM3ursczSGsoM=
+X-Google-Smtp-Source: ABdhPJx18kttbZszeC9sn/xiBvZQ6GO5acnFzqNWeXNeymfbXJ3mMOGR5EBVk3Szl2zG0Ov2DT5xXQ==
+X-Received: by 2002:aa7:da46:: with SMTP id w6mr11545868eds.30.1617885593751;
+        Thu, 08 Apr 2021 05:39:53 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id w1sm9660802edt.89.2021.04.08.05.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 05:39:52 -0700 (PDT)
+Date:   Thu, 8 Apr 2021 14:40:26 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] iommu/tegra-smmu: Defer attachment of display
+ clients
+Message-ID: <YG75urcXAb90Jj12@orome.fritz.box>
+References: <20210328233256.20494-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210408072700.15791-1-dinghao.liu@zju.edu.cn>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0e876ea1-a1f5-4ca5-d961-08d8fa8aaf98
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4730:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4730C21919897466540FCFE1D9749@DM6PR12MB4730.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: eFmCuG5zupDiOc41OqAMuO4pZe5hjO7CRRaQfFvetsoVVECrdFcIM2BfcELHMHvUz1bK1D792/DBt/se837Mred0zMo44OSPK6NT4AG80xrC1P7faK41QHBHcjd7unKaDprhqkWD7bsjog3ByT3nYXJKzTZtVUwuxA+PqQfLlTPJBu91v4saRcz72WpeNLoHhdWy50ve9n6Rq2/JkR0Dc6Pquqz06TlafUEDy3w3CUT0K2OVkGqFMDWbTPDPfIK/nJGP2KMtyzb+YXHZFQl9oXe73cJaNOnjASmM2VZN6pR8mPzmsrSq6s7noqJl887bjIxRPgO3/V/GshyYob+/wp1sNJkwT2+RsvoxVvI8uKTwj9otwEzWJRNYQmg2AtaMSBc7FGdGl248wu41fR/kPjRhWgQJkJ2Hh4Qq/yq8KnMMvrCEMVsQZob07A9RGilT5s0/UqmVqZ0djzdK65gR+VTYcPr+Wts909vPxe/9U1Xvttv4tEspQDvNmEBEnKSK6rZdrW4ZJp19eHnT0ydDxQC2U4xn93BArqp0LKAxEJ1ZCuLX9bmE0Yuo5CEUkvIRWT9UHIxWU+elzeYB3Nsgk6u9YeEiet2d2dYaFUDxEgkooBC1k+YwPZsUeTK4XPAW/ugQqET9DFvJddNbPfmuKlM8wneSa0auXk9bpzi2gJm5jhFZZ3H9v14ZVH4sm0OM
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(39860400002)(396003)(376002)(136003)(36840700001)(46966006)(26005)(36860700001)(83380400001)(36906005)(36756003)(426003)(7636003)(16576012)(47076005)(70206006)(186003)(2616005)(478600001)(356005)(16526019)(2906002)(70586007)(8676002)(7416002)(82740400003)(82310400003)(53546011)(54906003)(31696002)(110136005)(8936002)(316002)(4326008)(5660300002)(86362001)(336012)(31686004)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2021 12:34:42.9766
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e876ea1-a1f5-4ca5-d961-08d8fa8aaf98
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT031.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4730
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="WuhvTUWuu4INKIyN"
+Content-Disposition: inline
+In-Reply-To: <20210328233256.20494-1-digetx@gmail.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 08/04/2021 08:26, Dinghao Liu wrote:
-> pm_runtime_get_sync() will increase the runtime PM counter
-> even it returns an error. Thus a pairing decrement is needed
-> to prevent refcount leak. Fix this by replacing this API with
-> pm_runtime_resume_and_get(), which will not change the runtime
-> PM counter on error.
-> 
-> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+--WuhvTUWuu4INKIyN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 29, 2021 at 02:32:55AM +0300, Dmitry Osipenko wrote:
+> All consumer-grade Android and Chromebook devices show a splash screen
+> on boot and then display is left enabled when kernel is booted. This
+> behaviour is unacceptable in a case of implicit IOMMU domains to which
+> devices are attached during kernel boot since devices, like display
+> controller, may perform DMA at that time. We can work around this problem
+> by deferring the enable of SMMU translation for a specific devices,
+> like a display controller, until the first IOMMU mapping is created,
+> which works good enough in practice because by that time h/w is already
+> stopped.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 6fa216e52d14..0e94190ca4e8 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1645,7 +1645,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  	if (pcie->ep_state == EP_STATE_ENABLED)
->  		return;
->  
-> -	ret = pm_runtime_get_sync(dev);
-> +	ret = pm_runtime_resume_and_get(dev);
->  	if (ret < 0) {
->  		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
->  			ret);
-> 
+>  drivers/iommu/tegra-smmu.c | 71 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
 
-There are two places in the driver where pm_runtime_get_sync() is called.
+In general I do see why we would want to enable this. However, I think
+this is a bad idea because it's going to proliferate the bad practice of
+not describing things properly in device tree.
 
-Thanks
-Jon
+Whatever happened to the idea of creating identity mappings based on the
+obscure tegra_fb_mem (or whatever it was called) command-line option? Is
+that command-line not universally passed to the kernel from bootloaders
+that initialize display?
 
--- 
-nvpublic
+That idealistic objection aside, this seems a bit over-engineered for
+the hack that it is. See below.
+
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 602aab98c079..af1e4b5adb27 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -60,6 +60,8 @@ struct tegra_smmu_as {
+>  	dma_addr_t pd_dma;
+>  	unsigned id;
+>  	u32 attr;
+> +	bool display_attached[2];
+> +	bool attached_devices_need_sync;
+>  };
+> =20
+>  static struct tegra_smmu_as *to_smmu_as(struct iommu_domain *dom)
+> @@ -78,6 +80,10 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, =
+unsigned long offset)
+>  	return readl(smmu->regs + offset);
+>  }
+> =20
+> +/* all Tegra SoCs use the same group IDs for displays */
+> +#define SMMU_SWGROUP_DC		1
+> +#define SMMU_SWGROUP_DCB	2
+> +
+>  #define SMMU_CONFIG 0x010
+>  #define  SMMU_CONFIG_ENABLE (1 << 0)
+> =20
+> @@ -253,6 +259,20 @@ static inline void smmu_flush(struct tegra_smmu *smm=
+u)
+>  	smmu_readl(smmu, SMMU_PTB_ASID);
+>  }
+> =20
+> +static int smmu_swgroup_to_display_id(unsigned int swgroup)
+> +{
+> +	switch (swgroup) {
+> +	case SMMU_SWGROUP_DC:
+> +		return 0;
+> +
+> +	case SMMU_SWGROUP_DCB:
+> +		return 1;
+> +
+> +	default:
+> +		return -1;
+> +	}
+> +}
+> +
+
+Why do we need to have this two-level mapping? Do we even need to care
+about the specific swgroups IDs? Can we not just simply check at attach
+time if the client that's being attached is a display client and then
+set atteched_devices_need_sync =3D true?
+
+Thierry
+
+--WuhvTUWuu4INKIyN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBu+bgACgkQ3SOs138+
+s6GnYg//akmYGEEg0hZ/wfT4gktVzczuNNA1sjPxwj34gUrKsdRHuZWFr4gFlzqw
+LE/ObmCAkAHO99WeD0cXPbf/Eulr2QWzlNK8DZ2/YcPJgBg7lpnPcVYhro0ujvUJ
+voTVDRp1NnFLesP6CkfLskgsSKRRIJBMf/F4D6EPSKl1NO4fFcwBFvAVcI0cnJpT
+BFeSH6CeBfXYZpsNOOi+4wEPmZ3YQ2ejZ+r9/RLHv+vkqYTqVcVx7g+HOxJIEFpo
+J9ygKJ8WG9NKwaF4x/PXozyIWnxyFTjLe5Cxscn999SM3HUkolb9ncNTMleZE7hb
+94secQ4GBGR7VJcJrkkwSka5LpfWWqnyHSy1MdsCj2dAEHJSc5ELWiir1UmysKX7
+i3LDq8zAJAIqS1gKU58UIDNIqDmfJBeP9bcUGH34YxlUTnAepRsFxB9nX5s5A0Wm
+9MskrIRl3TXhedTQXSd4F3ih/QLuL7V0pMhuYdBCHLgUa0Djn2LLO+MOg3yzluvk
+0AfzPp10SDMw20YZhDOlDOQf5IXJQxKiYiJYUb56wOAkmDpkwx5rTmYiVkoN4JRq
+9f5IuqI+5K9L5vDWjaL+J57E7WDrs1c6OoRC200h9gPZnjUBHxDdJPmDrPovFOUm
+JL0+kPRZNlvkipYSaBP3HHeUtpb88R+MAVKnlANCaejpO7cuCTY=
+=OZ9i
+-----END PGP SIGNATURE-----
+
+--WuhvTUWuu4INKIyN--
