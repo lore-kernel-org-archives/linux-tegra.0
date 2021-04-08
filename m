@@ -2,63 +2,110 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C619DC43460
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 17:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12297C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 19:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ADF661154
-	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 17:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA74C610E8
+	for <linux-tegra@archiver.kernel.org>; Thu,  8 Apr 2021 19:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbhDHRHD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 8 Apr 2021 13:07:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:54900 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232721AbhDHRGi (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 8 Apr 2021 13:06:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C9EE106F;
-        Thu,  8 Apr 2021 10:06:26 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.53.154])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BEB13F792;
-        Thu,  8 Apr 2021 10:06:23 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     kjlu@umn.edu, Dinghao Liu <dinghao.liu@zju.edu.cn>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra: Fix runtime PM imbalance in pex_ep_event_pex_rst_deassert
-Date:   Thu,  8 Apr 2021 18:06:17 +0100
-Message-Id: <161790156432.1262.12744088516106608861.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210408072700.15791-1-dinghao.liu@zju.edu.cn>
-References: <20210408072700.15791-1-dinghao.liu@zju.edu.cn>
+        id S231906AbhDHT6V (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 8 Apr 2021 15:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231947AbhDHT6V (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Thu, 8 Apr 2021 15:58:21 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2BDC061760;
+        Thu,  8 Apr 2021 12:58:09 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id d12so5969932lfv.11;
+        Thu, 08 Apr 2021 12:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c0I+5ABydgeUMYGikWNT2jbIpevXFH6iMkyWNZ96ZK0=;
+        b=ai7/jrDvUdF4dSn5CVBuVxTXAKkrGqJ88wy23hzx41TKa7hZzyNFeQOpvVRsn70DDe
+         5bA0UT7yaL6s1B86Il8NffinLFzrxXSi0iZCaq1nC0VePrrEE0OhhL9urHECOfziKOvu
+         ZXSf10Gp9fp+byDY9ziKnjR5T25vYOhQkRL8yAtljvevw3mlIbz9PTjw70+q4eFNIYcm
+         NNR9/auR2uD9zy3sdZEvlg78N10zMnkn/YI5kv4qTVqetDHzMDRMaUxzN057bqO3fx0I
+         5aEnozkRINRrch2jmL50gWds+YjV/IdKwzmcS6ZwBdikG3P+4wzSxIHP/czoV4oQNZ9N
+         WE0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c0I+5ABydgeUMYGikWNT2jbIpevXFH6iMkyWNZ96ZK0=;
+        b=G0cKVd259uNu+Bxpp3YdFqGsswdKknnfqSAJyrxLbyqsYpthAOcKGTRh1ohwxcLXaf
+         J28yFeju2k3ASiqZh7hfu8M2bZTj0HEiK5xYXtgycsj6gzLoZyiq6kgsdnjKOgLTPvNm
+         Fc+IwCIgsCzFKLOnu2EUwnlIbiDxRGVX5PlIUREmZR8rHRiKu4sN6vi5cw9x/Fe1jxv4
+         yP7So11zPn7xxago1AZMgOA3QuhhBzJuFDXcDesdirLUH4+ACxCQPGDH4dFW5P8AtkT7
+         ni6VaoQL/RViY+ZvLUV2QNWNdH1AS1seDPWLnirSKJVNRDebW0ccLX5bKtcmBvBc3ykU
+         8Jzg==
+X-Gm-Message-State: AOAM532jrw6S3LUn1QsBqPSwLLM9z/AeHqLsRsxQUxFtiyYfJBW2uqUE
+        j9FNbWE0JAt9BeIx/slGIsp1pBGAM5U=
+X-Google-Smtp-Source: ABdhPJw8dBGctQy6gvBJlnwgfYIsNWw4lfW+wh8LlOesfZpw+YSquKgA8n3T/rVzlkaJVcZtaJqNLg==
+X-Received: by 2002:a19:8682:: with SMTP id i124mr7872861lfd.406.1617911887666;
+        Thu, 08 Apr 2021 12:58:07 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-85.dynamic.spd-mgts.ru. [109.252.193.85])
+        by smtp.googlemail.com with ESMTPSA id w5sm29406ljo.11.2021.04.08.12.58.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Apr 2021 12:58:07 -0700 (PDT)
+Subject: Re: [PATCH v1] ata: ahci_tegra: call tegra_powergate_power_off only
+ when PM domain is not present
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, axboe@kernel.dk,
+        thierry.reding@gmail.com
+Cc:     jonathanh@nvidia.com, linux-ide@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1617900043-10506-1-git-send-email-skomatineni@nvidia.com>
+ <1617900043-10506-2-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <32ff84ba-60a7-e498-d656-bcd29d23fb02@gmail.com>
+Date:   Thu, 8 Apr 2021 22:58:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <1617900043-10506-2-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 8 Apr 2021 15:26:58 +0800, Dinghao Liu wrote:
-> pm_runtime_get_sync() will increase the runtime PM counter
-> even it returns an error. Thus a pairing decrement is needed
-> to prevent refcount leak. Fix this by replacing this API with
-> pm_runtime_resume_and_get(), which will not change the runtime
-> PM counter on error.
+08.04.2021 19:40, Sowjanya Komatineni пишет:
+> This patch adds a check on present of PM domain and calls legacy power
+> domain API tegra_powergate_power_off() only when PM domain is not present.
+> 
+> This is a follow-up patch to Tegra186 AHCI support patch series
+> https://lore.kernel.org/patchwork/cover/1408752/
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> 
+> ---
+>  drivers/ata/ahci_tegra.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+> index 56612af..bd484dd 100644
+> --- a/drivers/ata/ahci_tegra.c
+> +++ b/drivers/ata/ahci_tegra.c
+> @@ -287,7 +287,8 @@ static void tegra_ahci_power_off(struct ahci_host_priv *hpriv)
+>  	reset_control_assert(tegra->sata_cold_rst);
+>  
+>  	clk_disable_unprepare(tegra->sata_clk);
+> -	tegra_powergate_power_off(TEGRA_POWERGATE_SATA);
+> +	if (!tegra->pdev->dev.pm_domain)
+> +		tegra_powergate_power_off(TEGRA_POWERGATE_SATA);
+>  
+>  	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+>  }
+> 
 
-Applied to pci/tegra, thanks!
-
-[1/1] PCI: tegra: Fix runtime PM imbalance in pex_ep_event_pex_rst_deassert
-      https://git.kernel.org/lpieralisi/pci/c/571cdd5294
-
-Thanks,
-Lorenzo
+There are two instances of tegra_powergate_power_off() in the driver.
