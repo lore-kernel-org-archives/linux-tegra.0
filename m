@@ -2,126 +2,99 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26CAC43460
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EED9C433ED
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 12:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AACB610C8
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73431610E7
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 12:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231611AbhDILd1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:33:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
+        id S233543AbhDIMz5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Apr 2021 08:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231127AbhDILd1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:33:27 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D290C061760;
-        Fri,  9 Apr 2021 04:33:14 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id p19so2758631wmq.1;
-        Fri, 09 Apr 2021 04:33:14 -0700 (PDT)
+        with ESMTP id S233267AbhDIMz5 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 08:55:57 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF13BC061760;
+        Fri,  9 Apr 2021 05:55:43 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id a1so6363777ljp.2;
+        Fri, 09 Apr 2021 05:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=goQdzeJjJr8DcKUAFQmgInMOHFDCEBHvhVv3cGUH6c0=;
-        b=jsR3HZJ7EnnfRnTXfuKFcQ/leSS/4ZBmClTEZYviDj8+V4AX1awRQs3A4EvL9rrtcm
-         dkihyje7nFcm0Ei6xigNFmL9XvFAQtyPWhnVX6cDbf7LU2nrl3GzK6zM9cN8nR1+aCIV
-         LzFyTcbTexhBTs5lJKsDDlqvAsHPYQCozaIGyRL878zwMn5Ktd19JSvM62b/bdj2dq1U
-         kiEzHXt5tC09jbBR+wCmI//UA9g3qYuUJsBukR5L/HhSTVlLBgzkH5gqX8iT8NkyMZSU
-         Lx6gUMpQgLn7FupvGDVtUAUkKIueIUeQcoFtriUwLE1qv/NBjTrtBEZPlKWRHa8MyyNt
-         +L4A==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z3wFYyzO04/nplltFnv9EO/HsXFohiYyEY626pT7Qy4=;
+        b=N5IB0mR1anzwmgyEkin8MFYd382dilaOTkdDf6VE/2rpDe6d0ZysoE9kB8jS4+q0xd
+         LF2D8V+5o6GHWlEvEP/CdfPGjzWqz7JAU/GV2dtNxJeNoMhWLurwp6wLT8HWLn7Aawyp
+         B03xTraZmRE6YUiaIBjSetc1e/G48JEE07YH/V3iT6U9Sd7oYB0MfHt8bbM9soMdZrSf
+         0pvkVvXu528gM2n0nb6jzgKMztZKLPrZN822mHmMNep4/dVCD6ZcEW2X/ibZir8NuBwW
+         vXCByRcEy7pni3IOeVErQSny6Co1QrrMJ7bVIgerGokMhMkaN6FZiJ9WPbB5PZRuk6ie
+         dmAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=goQdzeJjJr8DcKUAFQmgInMOHFDCEBHvhVv3cGUH6c0=;
-        b=WJOTVPtqr4N4fe9sQU6i7RK+VfJpKUxrv2VoOVf4et71BIeakLLl2Lew9rGFHIWU4S
-         Gp4vVVuHvMfqZlCw5bKZfH9zpq3GY48qDjOALoS2OBPTyl7xca1NCss0PINp29aso/W6
-         hijBr9Z2ZIZZeL/glbDC1bW+bk2LI0ZhBCA47rHmw5LzXl60CoencX532+qZps59WS5a
-         LbWBaMc5nfPZXZozNMxWuCJewnbE73DRxahnFEqhQMDQNuhKZt2dPzda+DFD95Z8h8e9
-         qlTWm3Zrtg8ztGg8krXNOMDzV2/Df16qIFrbrsjF22rdg9I51HIancA6jXykFQGM2d3o
-         qi2g==
-X-Gm-Message-State: AOAM532hBDj3Qhi20nxm0pjwxXkWF/MMt9gSmScAZq5O6/+ZVH4iNE0I
-        C/Dbx0bnX9beAKkg+8Xo9ByyMcaAlFg=
-X-Google-Smtp-Source: ABdhPJwV26fPfpaHepLj3aAzlxUkj/SKn+tRcvBR42PcRXQWMGlewwtMEPHHWMC2UlLi64bQ+lCCzA==
-X-Received: by 2002:a1c:2587:: with SMTP id l129mr13277135wml.135.1617967993264;
-        Fri, 09 Apr 2021 04:33:13 -0700 (PDT)
-Received: from localhost (pd9e51abe.dip0.t-ipconnect.de. [217.229.26.190])
-        by smtp.gmail.com with ESMTPSA id c8sm4635949wrd.55.2021.04.09.04.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 04:33:11 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 13:33:47 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dinghao Liu <dinghao.liu@zju.edu.cn>
-Cc:     kjlu@umn.edu, Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] dmaengine: tegra20: Fix runtime PM imbalance on
- error
-Message-ID: <YHA7m3U1LsU3iKFZ@orome.fritz.box>
-References: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z3wFYyzO04/nplltFnv9EO/HsXFohiYyEY626pT7Qy4=;
+        b=F9leUh7xnrC8Q5GmO3VYFI9CdyQFszqNcTN7jg1SmGGp/6/eM3kFG+eKRble17Ynb5
+         DjfMqaD9ZUfoqEGix6REcljIgAEVd6bLBzFiOwmvN3blH/k6tDJXfNVoUGZ+xzJcMCyZ
+         VDMJ8SY5mamNWsNvx66nVGrWelaUn5KhQaSEGlvq9gpesI+m78EIH7mWCvdNsajE7Z9x
+         DoLHK0a4nU/CFJbq3hjRBOq46s47PrBOzAIGF6GrRVxp6nL4X9JvUSPmA7bmHD1JXQiG
+         chFYmT8LnEuwZCl3fcu60KYhxtKzLOzpVMlROdm8edbkqeI75AyIC1Qspwh6iKnWKgpT
+         3Vww==
+X-Gm-Message-State: AOAM533WylLk53LiGj6k4P8OoAyCZwfd28KkY7iI9gNnC2VgT4Stjpxg
+        Q1DbqZIH57946KZxSlonc5cmU5a9vds=
+X-Google-Smtp-Source: ABdhPJz185o6U1Q1rZo8rGSGiz0mC//A/ohSLg+d4znoLqHTwVSMCs3aWjc1dPVKJ2xmOIGZcaO7gg==
+X-Received: by 2002:a2e:5417:: with SMTP id i23mr6189910ljb.112.1617972941990;
+        Fri, 09 Apr 2021 05:55:41 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-85.dynamic.spd-mgts.ru. [109.252.193.85])
+        by smtp.googlemail.com with ESMTPSA id 13sm258278lfz.40.2021.04.09.05.55.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Apr 2021 05:55:41 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] iommu/tegra-smmu: Defer attachment of display
+ clients
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210328233256.20494-1-digetx@gmail.com>
+ <YG75urcXAb90Jj12@orome.fritz.box>
+ <c4b42a3d-d260-9a69-4ee7-8ad586741f8c@gmail.com>
+Message-ID: <7c1ebbf2-5d27-fa2a-3cae-bedab4c8e30a@gmail.com>
+Date:   Fri, 9 Apr 2021 15:55:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VC5y8KNu2JhZfYaC"
-Content-Disposition: inline
-In-Reply-To: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
-User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
+In-Reply-To: <c4b42a3d-d260-9a69-4ee7-8ad586741f8c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+08.04.2021 17:07, Dmitry Osipenko пишет:
+>> Whatever happened to the idea of creating identity mappings based on the
+>> obscure tegra_fb_mem (or whatever it was called) command-line option? Is
+>> that command-line not universally passed to the kernel from bootloaders
+>> that initialize display?
+> This is still a good idea! The command-line isn't universally passed
+> just because it's up to a user to override the cmdline and then we get a
+> hang (a very slow boot in reality) on T30 since display client takes out
+> the whole memory bus with the constant SMMU faults. For example I don't
+> have that cmdline option in my current setups.
+> 
 
---VC5y8KNu2JhZfYaC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Apr 09, 2021 at 04:28:05PM +0800, Dinghao Liu wrote:
-> pm_runtime_get_sync() will increase the runtime PM counter
-> even it returns an error. Thus a pairing decrement is needed
-> to prevent refcount leak. Fix this by replacing this API with
-> pm_runtime_resume_and_get(), which will not change the runtime
-> PM counter on error.
->=20
-> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
-> ---
->=20
-> Changelog:
->=20
-> v2: - Fix another similar case in tegra_dma_synchronize().
-> ---
->  drivers/dma/tegra20-apb-dma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Looks good:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---VC5y8KNu2JhZfYaC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwO5sACgkQ3SOs138+
-s6Esrg/+JE/EsuV4zBy5yvjs9DvWN14VjfsR1vMV5/yCwXPuXhP3qh1sgT+2TpKh
-TGkSo8wl2QRZprRFsk1nx+fp453dXYqZZnrBCLJysCr+yWuFGMrTf6vHFsSeVC02
-ODwFpOlDsbQLygpL4OzYESaecRh8uKfiqlVq8RTFhh+eSUW8pYcGn7cDRvSCgRf/
-06NI+LfpI61JOICaMn9FD5AYEN8lhlMPUB0VxgP6H3FSw2kjJTwAD6UHTlWjDNdY
-daMskGXzPyL1Ids3KK14oRgVSkB22qwBxBEBrEqayv9XrZ6yewuBfvRb+0VeArD2
-B/gmrNXoOMxdZXQ8ZQWfjB58zxkMF9b3UeXjneSwqwfMqtz7YUHPvMBnVWqM30B4
-BVQTYuVoekiz1LEFxwXVmJxizsrJWhyOG7oyrfAwzewWdi6Hbf/B4h2p0bOJMAps
-nMgn4RoIS0W9fuVI0B8ZjXDLpQ3RhA0eO7Tvg8qljaYOek/dFyMyv9gnAW1twv9r
-rUNeEqUBA9nTz/ZA/fFaLcwt9evaRgqqCL2OaGU+Fyu2+Mm9pBRzp084Zb5uBfpO
-7pNH5pIcaYb2rbox+5TsxLAjRdAQ5fjZMq5Ke6SPl4GmzAT+mRYcGSJN+HnXvt3j
-bAD1EflM/CMQTGVQcmwLcDqj7RQKVCGARwpoq0r0XC5CYsUa4gw=
-=j5Y6
------END PGP SIGNATURE-----
-
---VC5y8KNu2JhZfYaC--
+Thinking a bit more about the identity.. have you consulted with the
+memory h/w people about whether it's always safe to enable ASID in a
+middle of DMA request?
