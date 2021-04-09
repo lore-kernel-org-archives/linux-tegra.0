@@ -2,98 +2,116 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE444C43460
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 08:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE00EC433B4
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B75566115C
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 08:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF396113A
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:25:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbhDII2b (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Apr 2021 04:28:31 -0400
-Received: from spam.zju.edu.cn ([61.164.42.155]:6228 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229846AbhDII2b (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 9 Apr 2021 04:28:31 -0400
-Received: from localhost.localdomain (unknown [222.205.72.8])
-        by mail-app3 (Coremail) with SMTP id cC_KCgBXj9QVEHBgnofxAA--.43349S4;
-        Fri, 09 Apr 2021 16:28:09 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        id S232837AbhDIL0H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Apr 2021 07:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231402AbhDIL0G (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:26:06 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54073C061760;
+        Fri,  9 Apr 2021 04:25:53 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id bx20so4971068edb.12;
+        Fri, 09 Apr 2021 04:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z3iRN/I24Xnjz+j7u+e6vGeVFrbk0mkTz1K2mX1+zZ4=;
+        b=lu1+MscvHl6oYz2WRVYlnwFW4sV6Fxg8Dt5a6PFtxqn8iSZPVQA0jvOxvONLWKJzcf
+         uBLEeUFYzQoaRB88la2aOnulhsqPRPbfM7AdD3Vw9k8nMr1BH5QzFnt9Nb1QWvISB51t
+         VddpT+M5vXl+hYFKCJFaTuST0Y4VZoNW1rpm4SD5rmAX6J6kPBno2yzRU6PzbutuJA/G
+         eBAOb3Bh7ESvcfqC+DCGU+1z3iXnyVHpe/sDhPrH97jwoog6D1HfG9ERo/1IiZ9aeGX+
+         FqG5ESugET/I3+PWUV2tZzb7NOq6VaVVusFGtAKfCjcNwiGGdUdPjFcvz8YDHdP6FJki
+         0jrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z3iRN/I24Xnjz+j7u+e6vGeVFrbk0mkTz1K2mX1+zZ4=;
+        b=fq2L6FXW2PBhuwSYSVPV7H8rTy/kCgjTPReVld7ctWjc3ogy94HZIEX38KA9lqwAWW
+         ZGQJGZdIO7PejrmYFChHctCMHP+B7zLN3x8SoaaVEvah3DzoNxVGbU4GtnWxmbDjfSEd
+         8sLZaBpwlZl63e2YCYo4+8EN9g+80VKDQ0NwcC9Iybcs8SvwldGFc5T3JT81KEV2pd4U
+         VfK2sglXWBbINfl++so6fTo2eV34ObzqBPHUwFfLe1G/LuICGLL9mowpNC1rjDoLF42z
+         nglxZnEg6QwDft4wXEOdTVmjT3fWK63g2JXJH3Ufo4rcc7NZHqvqs/4zxHJUeDZ27cts
+         lrEA==
+X-Gm-Message-State: AOAM533lO3bgPLiIHQ6rngW7rDK/5tGOVEoN+Sv2MeCkT1htFB1C/+SF
+        3OwFVKqklVqs2b9IS/ztmC379K70tg0=
+X-Google-Smtp-Source: ABdhPJwF/w41qz6XqwlgyMjkN5G3/aUYTUyE1FopaLpE5m91LzAeHeRGfDaHKJyyKw3CTvDssukkBg==
+X-Received: by 2002:a05:6402:408:: with SMTP id q8mr16671807edv.201.1617967552100;
+        Fri, 09 Apr 2021 04:25:52 -0700 (PDT)
+Received: from localhost (pd9e51abe.dip0.t-ipconnect.de. [217.229.26.190])
+        by smtp.gmail.com with ESMTPSA id d1sm1097407eje.26.2021.04.09.04.25.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 04:25:50 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 13:26:26 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     axboe@kernel.dk, digetx@gmail.com, jonathanh@nvidia.com,
+        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] dmaengine: tegra20: Fix runtime PM imbalance on error
-Date:   Fri,  9 Apr 2021 16:28:05 +0800
-Message-Id: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: cC_KCgBXj9QVEHBgnofxAA--.43349S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWUXF1ktFW5KF4DKFyUZFb_yoW8Gryfpa
-        1UXFyj93yvq3y3Ja1DCr47Zr98WFW3J3y7WrWrGasFvrsrXFyjvr18GFWIgF48ZF97Aa17
-        tan0q343AF1IgrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvF1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
-        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
-        IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E
-        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_
-        JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48J
-        MxAIw28IcVCjz48v1sIEY20_GFWkJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AK
-        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-        fU538nUUUUU
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgkKBlZdtTUlDwAFsj
+Subject: Re: [PATCH v2] ata: ahci_tegra: call tegra_powergate_power_off only
+ when PM domain is not present
+Message-ID: <YHA54tOh2vLdrwXr@orome.fritz.box>
+References: <1617915315-13639-1-git-send-email-skomatineni@nvidia.com>
+ <1617915315-13639-2-git-send-email-skomatineni@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fIkQHRLcmm9c6Rkl"
+Content-Disposition: inline
+In-Reply-To: <1617915315-13639-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-pm_runtime_get_sync() will increase the runtime PM counter
-even it returns an error. Thus a pairing decrement is needed
-to prevent refcount leak. Fix this by replacing this API with
-pm_runtime_resume_and_get(), which will not change the runtime
-PM counter on error.
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
----
+--fIkQHRLcmm9c6Rkl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changelog:
+On Thu, Apr 08, 2021 at 01:55:15PM -0700, Sowjanya Komatineni wrote:
+> This patch adds check to call legacy power domain API
+> tegra_powergate_power_off() only when PM domain is not present.
+>=20
+> This is a follow-up patch to Tegra186 AHCI support patch series.
+> ---
+>  drivers/ata/ahci_tegra.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-v2: - Fix another similar case in tegra_dma_synchronize().
----
- drivers/dma/tegra20-apb-dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 71827d9b0aa1..b7260749e8ee 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -723,7 +723,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
- 		goto end;
- 	}
- 	if (!tdc->busy) {
--		err = pm_runtime_get_sync(tdc->tdma->dev);
-+		err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 		if (err < 0) {
- 			dev_err(tdc2dev(tdc), "Failed to enable DMA\n");
- 			goto end;
-@@ -818,7 +818,7 @@ static void tegra_dma_synchronize(struct dma_chan *dc)
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	int err;
- 
--	err = pm_runtime_get_sync(tdc->tdma->dev);
-+	err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 	if (err < 0) {
- 		dev_err(tdc2dev(tdc), "Failed to synchronize DMA: %d\n", err);
- 		return;
--- 
-2.17.1
+--fIkQHRLcmm9c6Rkl
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwOeIACgkQ3SOs138+
+s6EK/w/8C9IWiy2sKUPiyf+jE7S7Trl3xGTfNCEvFEwGMUGWrm1vd9oCfpFNTZM0
+x3teuqhV/jU86BHe/dGgegT6iAdCcwHZpV2ctb19ljSUkyfuk/jYFVFpJaBXMuHn
+P/DPWiQRZJLCpFT+u+6eO+diQbmO7qxQfFsHx5yWFYg+1XtTm0nvYRP5RSeGhgYi
+jOBER28uXpyGFzWloMYMkQSrBVkX9Jb6xguImfYhy1Z7WgtnMCt1eT9SeeCo/2y9
+wtqBfVlK2RyxxAuWh8ss9GiCWM9pgyJEHjCurklkBJrnGukaiv3Ng3hwdYQvDRfL
+BpjOi8fFSaV3EKk1pMqhWjcocKLHYTNk+Yz8Tx2g1b4HS+Sx5bfPtSeWdB/z67us
+CvRNOCM1n43V/ZGq221cV6+y2qzwC98n6hxP0MwXZlxYOU5Tdtu7t5wBvJQeVDTm
+PTBQJK1NiX8usbmgMy6E7d7VnLd71Xz7LiqzOkLHyURIRiungwWUjCGY/cLf1vGQ
+Lea9lpDyxGLeO7HKCJEu4WBWB9kCTB5NMQIsUVYm75KiT3ycUCtFutTM8MfN/WlG
+dzBwQSGIRK4JT3NPLD25dhEzT8wznqUjozOmpPtCqH5eaTuhhbK8gJIULRkY5MnM
+7Qn88hpOXRFdOhcPNw4q0AhsSfoD5ILLTiJU+EGF2FEOZVkNhsw=
+=yjN0
+-----END PGP SIGNATURE-----
+
+--fIkQHRLcmm9c6Rkl--
