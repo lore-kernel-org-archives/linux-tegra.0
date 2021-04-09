@@ -6,140 +6,122 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9EEC433B4
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26CAC43460
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7106113A
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AACB610C8
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233028AbhDILcO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:32:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
+        id S231611AbhDILd1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Apr 2021 07:33:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231599AbhDILcO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:32:14 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CD2C061760;
-        Fri,  9 Apr 2021 04:32:01 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id e34so797997wmp.0;
-        Fri, 09 Apr 2021 04:32:01 -0700 (PDT)
+        with ESMTP id S231127AbhDILd1 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:33:27 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D290C061760;
+        Fri,  9 Apr 2021 04:33:14 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id p19so2758631wmq.1;
+        Fri, 09 Apr 2021 04:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OEe6YFfe/Jx9/mKOq9o87zYJfICMbLoDqKrtcURwasI=;
-        b=Fh1lg/uRnalLCCr33soqPo1Q0j0NEuOetXw4MI3EsYdb3SzqSsJDbZY2la+9cmm5+Z
-         0lr7GuLSJNz/FdIXSa0GLxggvKPPJy4dIBIzESbAoQznwkIs0V1AGV7aZxHYdYKmF7zQ
-         4uPUQhlN5HdQcfI8dTcmNklqzyFjhQWR51LLj0FFaIAVcppbz8enltWhxVFWZ2rroyvv
-         LChvClJD8W/t7evnMeWUw0iZLLa+eF8WM936p5nUg9aTNVj7XUziKGV1dbh87s2VhMkk
-         XYRaiuFqS1GTvaw27dBSY7vul7ZY4Jmt9dV1jsya42FgMrJ8w4fHO7QX/i+/47FnIIOp
-         JHhQ==
+        bh=goQdzeJjJr8DcKUAFQmgInMOHFDCEBHvhVv3cGUH6c0=;
+        b=jsR3HZJ7EnnfRnTXfuKFcQ/leSS/4ZBmClTEZYviDj8+V4AX1awRQs3A4EvL9rrtcm
+         dkihyje7nFcm0Ei6xigNFmL9XvFAQtyPWhnVX6cDbf7LU2nrl3GzK6zM9cN8nR1+aCIV
+         LzFyTcbTexhBTs5lJKsDDlqvAsHPYQCozaIGyRL878zwMn5Ktd19JSvM62b/bdj2dq1U
+         kiEzHXt5tC09jbBR+wCmI//UA9g3qYuUJsBukR5L/HhSTVlLBgzkH5gqX8iT8NkyMZSU
+         Lx6gUMpQgLn7FupvGDVtUAUkKIueIUeQcoFtriUwLE1qv/NBjTrtBEZPlKWRHa8MyyNt
+         +L4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OEe6YFfe/Jx9/mKOq9o87zYJfICMbLoDqKrtcURwasI=;
-        b=GtgqLSPjQvZzjH/JgzR4Jo9xBDgtnr+RpDlW58t4mwtdB+tTXbFFFFkNeIlrDVz8Ic
-         cyaqJIjRU3r341xfqDhfrVFA5DHD7aM1J0JXwuuCCG54ETxStvH5I0vHchF5rd5jSUDw
-         M83f543r81F9+htR6dS38zluEe5BOdgOzPr+8CQshD0S8p39KEFh/UDdW6gI3Ng1GEbC
-         c+KmVjJoWFRLOI4YQOFO2LXLTKRTZQLJIPBpp73GRrfOTnQMb6b/6mrnvsK2nbGp3VMx
-         /G9+jNqfJW910yndpp2bUCltPI+OXsPXyuwEUnzjBZtncys4DdfdeiN5etEmwIcvJRFK
-         1bRg==
-X-Gm-Message-State: AOAM532AEb5m+cN8RdK8WuSIW4gDI1XfmH3RxPQa/bFIzR0kfcY447ny
-        ue7jJUSLC6SBMfQ+rAkrSLo=
-X-Google-Smtp-Source: ABdhPJyY4ZqOfyxwZZsVlKMEtJfWHAWIstLoj2pdQrewzW6QAaBGadqRekNu5NuxiFFGgpZG6hoGhg==
-X-Received: by 2002:a05:600c:1457:: with SMTP id h23mr13470302wmi.118.1617967919927;
-        Fri, 09 Apr 2021 04:31:59 -0700 (PDT)
+        bh=goQdzeJjJr8DcKUAFQmgInMOHFDCEBHvhVv3cGUH6c0=;
+        b=WJOTVPtqr4N4fe9sQU6i7RK+VfJpKUxrv2VoOVf4et71BIeakLLl2Lew9rGFHIWU4S
+         Gp4vVVuHvMfqZlCw5bKZfH9zpq3GY48qDjOALoS2OBPTyl7xca1NCss0PINp29aso/W6
+         hijBr9Z2ZIZZeL/glbDC1bW+bk2LI0ZhBCA47rHmw5LzXl60CoencX532+qZps59WS5a
+         LbWBaMc5nfPZXZozNMxWuCJewnbE73DRxahnFEqhQMDQNuhKZt2dPzda+DFD95Z8h8e9
+         qlTWm3Zrtg8ztGg8krXNOMDzV2/Df16qIFrbrsjF22rdg9I51HIancA6jXykFQGM2d3o
+         qi2g==
+X-Gm-Message-State: AOAM532hBDj3Qhi20nxm0pjwxXkWF/MMt9gSmScAZq5O6/+ZVH4iNE0I
+        C/Dbx0bnX9beAKkg+8Xo9ByyMcaAlFg=
+X-Google-Smtp-Source: ABdhPJwV26fPfpaHepLj3aAzlxUkj/SKn+tRcvBR42PcRXQWMGlewwtMEPHHWMC2UlLi64bQ+lCCzA==
+X-Received: by 2002:a1c:2587:: with SMTP id l129mr13277135wml.135.1617967993264;
+        Fri, 09 Apr 2021 04:33:13 -0700 (PDT)
 Received: from localhost (pd9e51abe.dip0.t-ipconnect.de. [217.229.26.190])
-        by smtp.gmail.com with ESMTPSA id w11sm3470311wmb.35.2021.04.09.04.31.58
+        by smtp.gmail.com with ESMTPSA id c8sm4635949wrd.55.2021.04.09.04.33.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 04:31:58 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 13:32:34 +0200
+        Fri, 09 Apr 2021 04:33:11 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 13:33:47 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        jonathanh@nvidia.com
-Subject: Re: [PATCH -next] soc/tegra: fuse: add missing iounmap() on error in
- tegra_init_fuse()
-Message-ID: <YHA7UtJ4o1BNHc1K@orome.fritz.box>
-References: <20210409044903.663632-1-yangyingliang@huawei.com>
+To:     Dinghao Liu <dinghao.liu@zju.edu.cn>
+Cc:     kjlu@umn.edu, Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] dmaengine: tegra20: Fix runtime PM imbalance on
+ error
+Message-ID: <YHA7m3U1LsU3iKFZ@orome.fritz.box>
+References: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JEhcvQN4vxPMMub6"
+        protocol="application/pgp-signature"; boundary="VC5y8KNu2JhZfYaC"
 Content-Disposition: inline
-In-Reply-To: <20210409044903.663632-1-yangyingliang@huawei.com>
+In-Reply-To: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---JEhcvQN4vxPMMub6
+--VC5y8KNu2JhZfYaC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 09, 2021 at 12:49:03PM +0800, Yang Yingliang wrote:
-> Add the missing iounmap() before return from tegra_init_fuse()
-> in the error handling case.
+On Fri, Apr 09, 2021 at 04:28:05PM +0800, Dinghao Liu wrote:
+> pm_runtime_get_sync() will increase the runtime PM counter
+> even it returns an error. Thus a pairing decrement is needed
+> to prevent refcount leak. Fix this by replacing this API with
+> pm_runtime_resume_and_get(), which will not change the runtime
+> PM counter on error.
 >=20
-> Fixes: 9f94fadd75d3 ("soc/tegra: fuse: Register cell lookups for compatib=
-ility")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
 > ---
->  drivers/soc/tegra/fuse/fuse-tegra.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse=
-/fuse-tegra.c
-> index 94b60a692b51..bc8d70e6a676 100644
-> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
-> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-> @@ -489,8 +489,10 @@ static int __init tegra_init_fuse(void)
->  		size_t size =3D sizeof(*fuse->lookups) * fuse->soc->num_lookups;
-> =20
->  		fuse->lookups =3D kmemdup(fuse->soc->lookups, size, GFP_KERNEL);
-> -		if (!fuse->lookups)
-> +		if (!fuse->lookups) {
-> +			iounmap(fuse->base);
->  			return -ENOMEM;
-> +		}
-> =20
->  		nvmem_add_cell_lookups(fuse->lookups, fuse->soc->num_lookups);
->  	}
+> Changelog:
+>=20
+> v2: - Fix another similar case in tegra_dma_synchronize().
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I don't think that's a good idea. Given that this is an early_initcall,
-the failure doesn't actually prevent the driver from loading. There are
-other functions that rely on fuse->base staying around to access some of
-the registers in that I/O memory region.
+Looks good:
 
-I suppose we could remove the -ENOMEM return there and instead just skip
-registering the nvmem cell lookups, perhaps that would make this less
-confusing.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---JEhcvQN4vxPMMub6
+--VC5y8KNu2JhZfYaC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwO1IACgkQ3SOs138+
-s6HxyQ//fisnmhmU+khbPxMFa1WltzGymagZoEzPoW3Nctn24xJpXCcjPMTm13Jf
-z+Ftc6geKqMYBy7cNMcMx3Esq7eb/ioBxwbAPME5kwSe+/95YTjRl+0lgCcrhKAa
-xJPFrhXmlMlc/GOdgP4Ahjv7hI74lVm7QZ8zfBqaZm73+9QsyFE4muXjjzVgRWyf
-QSTKa9lZxk191b7HtzcMskfr4bakwJP5DTOr9FEv6gLxUkv5O13uJ2nd5XHbyi2+
-VKS+KUl+hf9VSXoDau3WflSzH5yR+aK9GQpiEORiynnB/gbSvg/qiY9IetfHYWxb
-EZcSNnr7WqB8skjDKsA8CwkTujCVUVSuFWj37Opm3U8pOwYnV2AAvNGklklrC+AK
-Be8jFh2UI3SXxQWWCMSPwp6OKnrvGcHyoXkEDhyRyFbT3+7T7TdUydXzJmnp/i61
-GUoh98YfAPLBh76tYp7NyuQWlzqZjNb9B4J6CRdlOZQY7kJT+0eOKFU/8a0vxP9U
-pF29vQBmU2bRx1vCso0PR4k1uzuhx6ppNGXnFT580oU8U5a9E1xdBJp94EtQKPIr
-FRWlpijEiH7LxvCccRRft5I9V/2dczSQuzsVNxSZxLLWrB6k70cE1BCmfcvh+K+c
-02l5Sf2AkMRWXkJ5RMMkuwT1B9SiO5S1736QKJ3Yxu+3dwSiILk=
-=wVmr
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwO5sACgkQ3SOs138+
+s6Esrg/+JE/EsuV4zBy5yvjs9DvWN14VjfsR1vMV5/yCwXPuXhP3qh1sgT+2TpKh
+TGkSo8wl2QRZprRFsk1nx+fp453dXYqZZnrBCLJysCr+yWuFGMrTf6vHFsSeVC02
+ODwFpOlDsbQLygpL4OzYESaecRh8uKfiqlVq8RTFhh+eSUW8pYcGn7cDRvSCgRf/
+06NI+LfpI61JOICaMn9FD5AYEN8lhlMPUB0VxgP6H3FSw2kjJTwAD6UHTlWjDNdY
+daMskGXzPyL1Ids3KK14oRgVSkB22qwBxBEBrEqayv9XrZ6yewuBfvRb+0VeArD2
+B/gmrNXoOMxdZXQ8ZQWfjB58zxkMF9b3UeXjneSwqwfMqtz7YUHPvMBnVWqM30B4
+BVQTYuVoekiz1LEFxwXVmJxizsrJWhyOG7oyrfAwzewWdi6Hbf/B4h2p0bOJMAps
+nMgn4RoIS0W9fuVI0B8ZjXDLpQ3RhA0eO7Tvg8qljaYOek/dFyMyv9gnAW1twv9r
+rUNeEqUBA9nTz/ZA/fFaLcwt9evaRgqqCL2OaGU+Fyu2+Mm9pBRzp084Zb5uBfpO
+7pNH5pIcaYb2rbox+5TsxLAjRdAQ5fjZMq5Ke6SPl4GmzAT+mRYcGSJN+HnXvt3j
+bAD1EflM/CMQTGVQcmwLcDqj7RQKVCGARwpoq0r0XC5CYsUa4gw=
+=j5Y6
 -----END PGP SIGNATURE-----
 
---JEhcvQN4vxPMMub6--
+--VC5y8KNu2JhZfYaC--
