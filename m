@@ -6,112 +6,140 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE00EC433B4
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9EEC433B4
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEF396113A
-	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A7106113A
+	for <linux-tegra@archiver.kernel.org>; Fri,  9 Apr 2021 11:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232837AbhDIL0H (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
+        id S233028AbhDILcO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 9 Apr 2021 07:32:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231402AbhDIL0G (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:26:06 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54073C061760;
-        Fri,  9 Apr 2021 04:25:53 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id bx20so4971068edb.12;
-        Fri, 09 Apr 2021 04:25:53 -0700 (PDT)
+        with ESMTP id S231599AbhDILcO (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 9 Apr 2021 07:32:14 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CD2C061760;
+        Fri,  9 Apr 2021 04:32:01 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id e34so797997wmp.0;
+        Fri, 09 Apr 2021 04:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=z3iRN/I24Xnjz+j7u+e6vGeVFrbk0mkTz1K2mX1+zZ4=;
-        b=lu1+MscvHl6oYz2WRVYlnwFW4sV6Fxg8Dt5a6PFtxqn8iSZPVQA0jvOxvONLWKJzcf
-         uBLEeUFYzQoaRB88la2aOnulhsqPRPbfM7AdD3Vw9k8nMr1BH5QzFnt9Nb1QWvISB51t
-         VddpT+M5vXl+hYFKCJFaTuST0Y4VZoNW1rpm4SD5rmAX6J6kPBno2yzRU6PzbutuJA/G
-         eBAOb3Bh7ESvcfqC+DCGU+1z3iXnyVHpe/sDhPrH97jwoog6D1HfG9ERo/1IiZ9aeGX+
-         FqG5ESugET/I3+PWUV2tZzb7NOq6VaVVusFGtAKfCjcNwiGGdUdPjFcvz8YDHdP6FJki
-         0jrg==
+        bh=OEe6YFfe/Jx9/mKOq9o87zYJfICMbLoDqKrtcURwasI=;
+        b=Fh1lg/uRnalLCCr33soqPo1Q0j0NEuOetXw4MI3EsYdb3SzqSsJDbZY2la+9cmm5+Z
+         0lr7GuLSJNz/FdIXSa0GLxggvKPPJy4dIBIzESbAoQznwkIs0V1AGV7aZxHYdYKmF7zQ
+         4uPUQhlN5HdQcfI8dTcmNklqzyFjhQWR51LLj0FFaIAVcppbz8enltWhxVFWZ2rroyvv
+         LChvClJD8W/t7evnMeWUw0iZLLa+eF8WM936p5nUg9aTNVj7XUziKGV1dbh87s2VhMkk
+         XYRaiuFqS1GTvaw27dBSY7vul7ZY4Jmt9dV1jsya42FgMrJ8w4fHO7QX/i+/47FnIIOp
+         JHhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z3iRN/I24Xnjz+j7u+e6vGeVFrbk0mkTz1K2mX1+zZ4=;
-        b=fq2L6FXW2PBhuwSYSVPV7H8rTy/kCgjTPReVld7ctWjc3ogy94HZIEX38KA9lqwAWW
-         ZGQJGZdIO7PejrmYFChHctCMHP+B7zLN3x8SoaaVEvah3DzoNxVGbU4GtnWxmbDjfSEd
-         8sLZaBpwlZl63e2YCYo4+8EN9g+80VKDQ0NwcC9Iybcs8SvwldGFc5T3JT81KEV2pd4U
-         VfK2sglXWBbINfl++so6fTo2eV34ObzqBPHUwFfLe1G/LuICGLL9mowpNC1rjDoLF42z
-         nglxZnEg6QwDft4wXEOdTVmjT3fWK63g2JXJH3Ufo4rcc7NZHqvqs/4zxHJUeDZ27cts
-         lrEA==
-X-Gm-Message-State: AOAM533lO3bgPLiIHQ6rngW7rDK/5tGOVEoN+Sv2MeCkT1htFB1C/+SF
-        3OwFVKqklVqs2b9IS/ztmC379K70tg0=
-X-Google-Smtp-Source: ABdhPJwF/w41qz6XqwlgyMjkN5G3/aUYTUyE1FopaLpE5m91LzAeHeRGfDaHKJyyKw3CTvDssukkBg==
-X-Received: by 2002:a05:6402:408:: with SMTP id q8mr16671807edv.201.1617967552100;
-        Fri, 09 Apr 2021 04:25:52 -0700 (PDT)
+        bh=OEe6YFfe/Jx9/mKOq9o87zYJfICMbLoDqKrtcURwasI=;
+        b=GtgqLSPjQvZzjH/JgzR4Jo9xBDgtnr+RpDlW58t4mwtdB+tTXbFFFFkNeIlrDVz8Ic
+         cyaqJIjRU3r341xfqDhfrVFA5DHD7aM1J0JXwuuCCG54ETxStvH5I0vHchF5rd5jSUDw
+         M83f543r81F9+htR6dS38zluEe5BOdgOzPr+8CQshD0S8p39KEFh/UDdW6gI3Ng1GEbC
+         c+KmVjJoWFRLOI4YQOFO2LXLTKRTZQLJIPBpp73GRrfOTnQMb6b/6mrnvsK2nbGp3VMx
+         /G9+jNqfJW910yndpp2bUCltPI+OXsPXyuwEUnzjBZtncys4DdfdeiN5etEmwIcvJRFK
+         1bRg==
+X-Gm-Message-State: AOAM532AEb5m+cN8RdK8WuSIW4gDI1XfmH3RxPQa/bFIzR0kfcY447ny
+        ue7jJUSLC6SBMfQ+rAkrSLo=
+X-Google-Smtp-Source: ABdhPJyY4ZqOfyxwZZsVlKMEtJfWHAWIstLoj2pdQrewzW6QAaBGadqRekNu5NuxiFFGgpZG6hoGhg==
+X-Received: by 2002:a05:600c:1457:: with SMTP id h23mr13470302wmi.118.1617967919927;
+        Fri, 09 Apr 2021 04:31:59 -0700 (PDT)
 Received: from localhost (pd9e51abe.dip0.t-ipconnect.de. [217.229.26.190])
-        by smtp.gmail.com with ESMTPSA id d1sm1097407eje.26.2021.04.09.04.25.50
+        by smtp.gmail.com with ESMTPSA id w11sm3470311wmb.35.2021.04.09.04.31.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 04:25:50 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 13:26:26 +0200
+        Fri, 09 Apr 2021 04:31:58 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 13:32:34 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     axboe@kernel.dk, digetx@gmail.com, jonathanh@nvidia.com,
-        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ata: ahci_tegra: call tegra_powergate_power_off only
- when PM domain is not present
-Message-ID: <YHA54tOh2vLdrwXr@orome.fritz.box>
-References: <1617915315-13639-1-git-send-email-skomatineni@nvidia.com>
- <1617915315-13639-2-git-send-email-skomatineni@nvidia.com>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        jonathanh@nvidia.com
+Subject: Re: [PATCH -next] soc/tegra: fuse: add missing iounmap() on error in
+ tegra_init_fuse()
+Message-ID: <YHA7UtJ4o1BNHc1K@orome.fritz.box>
+References: <20210409044903.663632-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fIkQHRLcmm9c6Rkl"
+        protocol="application/pgp-signature"; boundary="JEhcvQN4vxPMMub6"
 Content-Disposition: inline
-In-Reply-To: <1617915315-13639-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20210409044903.663632-1-yangyingliang@huawei.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---fIkQHRLcmm9c6Rkl
+--JEhcvQN4vxPMMub6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 08, 2021 at 01:55:15PM -0700, Sowjanya Komatineni wrote:
-> This patch adds check to call legacy power domain API
-> tegra_powergate_power_off() only when PM domain is not present.
+On Fri, Apr 09, 2021 at 12:49:03PM +0800, Yang Yingliang wrote:
+> Add the missing iounmap() before return from tegra_init_fuse()
+> in the error handling case.
 >=20
-> This is a follow-up patch to Tegra186 AHCI support patch series.
+> Fixes: 9f94fadd75d3 ("soc/tegra: fuse: Register cell lookups for compatib=
+ility")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 > ---
->  drivers/ata/ahci_tegra.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse=
+/fuse-tegra.c
+> index 94b60a692b51..bc8d70e6a676 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -489,8 +489,10 @@ static int __init tegra_init_fuse(void)
+>  		size_t size =3D sizeof(*fuse->lookups) * fuse->soc->num_lookups;
+> =20
+>  		fuse->lookups =3D kmemdup(fuse->soc->lookups, size, GFP_KERNEL);
+> -		if (!fuse->lookups)
+> +		if (!fuse->lookups) {
+> +			iounmap(fuse->base);
+>  			return -ENOMEM;
+> +		}
+> =20
+>  		nvmem_add_cell_lookups(fuse->lookups, fuse->soc->num_lookups);
+>  	}
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+I don't think that's a good idea. Given that this is an early_initcall,
+the failure doesn't actually prevent the driver from loading. There are
+other functions that rely on fuse->base staying around to access some of
+the registers in that I/O memory region.
 
---fIkQHRLcmm9c6Rkl
+I suppose we could remove the -ENOMEM return there and instead just skip
+registering the nvmem cell lookups, perhaps that would make this less
+confusing.
+
+Thierry
+
+--JEhcvQN4vxPMMub6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwOeIACgkQ3SOs138+
-s6EK/w/8C9IWiy2sKUPiyf+jE7S7Trl3xGTfNCEvFEwGMUGWrm1vd9oCfpFNTZM0
-x3teuqhV/jU86BHe/dGgegT6iAdCcwHZpV2ctb19ljSUkyfuk/jYFVFpJaBXMuHn
-P/DPWiQRZJLCpFT+u+6eO+diQbmO7qxQfFsHx5yWFYg+1XtTm0nvYRP5RSeGhgYi
-jOBER28uXpyGFzWloMYMkQSrBVkX9Jb6xguImfYhy1Z7WgtnMCt1eT9SeeCo/2y9
-wtqBfVlK2RyxxAuWh8ss9GiCWM9pgyJEHjCurklkBJrnGukaiv3Ng3hwdYQvDRfL
-BpjOi8fFSaV3EKk1pMqhWjcocKLHYTNk+Yz8Tx2g1b4HS+Sx5bfPtSeWdB/z67us
-CvRNOCM1n43V/ZGq221cV6+y2qzwC98n6hxP0MwXZlxYOU5Tdtu7t5wBvJQeVDTm
-PTBQJK1NiX8usbmgMy6E7d7VnLd71Xz7LiqzOkLHyURIRiungwWUjCGY/cLf1vGQ
-Lea9lpDyxGLeO7HKCJEu4WBWB9kCTB5NMQIsUVYm75KiT3ycUCtFutTM8MfN/WlG
-dzBwQSGIRK4JT3NPLD25dhEzT8wznqUjozOmpPtCqH5eaTuhhbK8gJIULRkY5MnM
-7Qn88hpOXRFdOhcPNw4q0AhsSfoD5ILLTiJU+EGF2FEOZVkNhsw=
-=yjN0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmBwO1IACgkQ3SOs138+
+s6HxyQ//fisnmhmU+khbPxMFa1WltzGymagZoEzPoW3Nctn24xJpXCcjPMTm13Jf
+z+Ftc6geKqMYBy7cNMcMx3Esq7eb/ioBxwbAPME5kwSe+/95YTjRl+0lgCcrhKAa
+xJPFrhXmlMlc/GOdgP4Ahjv7hI74lVm7QZ8zfBqaZm73+9QsyFE4muXjjzVgRWyf
+QSTKa9lZxk191b7HtzcMskfr4bakwJP5DTOr9FEv6gLxUkv5O13uJ2nd5XHbyi2+
+VKS+KUl+hf9VSXoDau3WflSzH5yR+aK9GQpiEORiynnB/gbSvg/qiY9IetfHYWxb
+EZcSNnr7WqB8skjDKsA8CwkTujCVUVSuFWj37Opm3U8pOwYnV2AAvNGklklrC+AK
+Be8jFh2UI3SXxQWWCMSPwp6OKnrvGcHyoXkEDhyRyFbT3+7T7TdUydXzJmnp/i61
+GUoh98YfAPLBh76tYp7NyuQWlzqZjNb9B4J6CRdlOZQY7kJT+0eOKFU/8a0vxP9U
+pF29vQBmU2bRx1vCso0PR4k1uzuhx6ppNGXnFT580oU8U5a9E1xdBJp94EtQKPIr
+FRWlpijEiH7LxvCccRRft5I9V/2dczSQuzsVNxSZxLLWrB6k70cE1BCmfcvh+K+c
+02l5Sf2AkMRWXkJ5RMMkuwT1B9SiO5S1736QKJ3Yxu+3dwSiILk=
+=wVmr
 -----END PGP SIGNATURE-----
 
---fIkQHRLcmm9c6Rkl--
+--JEhcvQN4vxPMMub6--
