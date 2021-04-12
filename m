@@ -2,62 +2,115 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BD8C433ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 09:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A84CC43460
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 11:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1D256120B
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 09:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4805261289
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 11:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238517AbhDLJrR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:47:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243070AbhDLJlQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:41:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EA17C61221;
-        Mon, 12 Apr 2021 09:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618220458;
-        bh=doYnKmWvvFZJu0dQidagDHHTL22R/NmtwWLIsanGgmU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JtcfxJvkAh1LM3t2ai/DSDFLRAA6MPqSI+Ve/dsqSdGJvuLkEKl+w9R2ME2AH4k9a
-         PROhYB7hanmdap0MPlr+YjZo1qhcSy1tVyCqIMx4zVGv+tYh4VA+ITiaiTcB82GMbw
-         QOn3eJ9ng+gcFK+ARmI8isTGydvZaHoWDrXyFH0eaRy/hrgtA1CX8C5v1UQ+KD+lyN
-         f/tUS9QRAlsbvE+q3XQrhQ2jxVi0rwhwybM28Nv5SeLUdZO9+l0Wbq0KbJQ1yyKKJg
-         2YovP1KNQ0mT6mgUSUMM3+5OMZbxA0gGxhKefXOSbTLXijLuFFr8bBMcmdUTWU9lhj
-         Ihl1EX/TbOWiA==
-Date:   Mon, 12 Apr 2021 15:10:54 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dinghao Liu <dinghao.liu@zju.edu.cn>
-Cc:     kjlu@umn.edu, Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] dmaengine: tegra20: Fix runtime PM imbalance on
- error
-Message-ID: <YHQVph37qKYy5bHo@vkoul-mobl.Dlink>
-References: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
+        id S240584AbhDLLwX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Apr 2021 07:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238780AbhDLLwX (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 12 Apr 2021 07:52:23 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48839C061574
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 04:52:05 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id k124so6489331vsk.3
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 04:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BE3YDkZvSgZ80+e/3OVAhPMEeA9aRadkKoQynsogWXQ=;
+        b=P0COJN1rhSSKIZLGzUTiZr65atT2F8XqmHrWS+Iqw4HFbkGBL6NBcwMKRV/+b1AfPu
+         qxQ8ZYSeU+wV994NWq+xdRt8Bgmoy4tJMOLKiYy3avvMU/81ULr3iMopWFVTXnhklyGk
+         XXw4iQwZQeNxKWUfrm1VVZKd8q2j/drizWDmagpwyHFcQe2pHlODo7nwt10sAgCt0Qco
+         0Jsci8l7EBnMiV050hh2+qYjirmldvFHZrE1LxnQR9NfRXf57soeXaOe8ekEfa+UQ45h
+         ohHiOhiGio11KivZEfpXXFbsVsb4yMnl4srLjN9enYPP7EQ822nDblYn5eCJs84xDd5A
+         VXuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BE3YDkZvSgZ80+e/3OVAhPMEeA9aRadkKoQynsogWXQ=;
+        b=KR4v+Rr+4fq+xVVQNid0r/+ZwT93lQn1wnkATPG1gG4DphEsTeAYT+xcsBqvJWxvjW
+         XefnUDzU/0OUqtvbLdcx0Gvpv51ZolpavoJjdjl8V40zhEel+Urrn4RiMEkeluU/tinh
+         IV5jdQ23uxVOfTF1c/aPPlFIZyGf4YZ6q8RYKd5NbdcEcrawLum3n1Q9qAAkWRtGjPQf
+         hrP3Dr7SQ1Y01wbh6iKVHSsZwFPhqh0Kvrzl/ZFFYutG6pWLaQff4gk/7pnccVVnyflk
+         +t5ZG7DpVGGN3p+U6iuquQDOySmgbbStsH3Ixn6FuZUfy1fRbmQk5QHP0buQgLlfaTqv
+         p8tg==
+X-Gm-Message-State: AOAM531GERETyaW0yIrewt0gLk/E5I3t6+f6fqaLzvm5AkrpdnOGBVzs
+        mD4T+fD4ApJHw1MdN5HDvPcp4s48itvufjs2g0WBow==
+X-Google-Smtp-Source: ABdhPJwPKKGX+JxDeWt1/IJmeQhG+AbESYOGE2pbjFKpkH8dsW2w3h1WIRpctUEZ4vFMBix2PwNoQ0oG7VE7FeeEodI=
+X-Received: by 2002:a67:6942:: with SMTP id e63mr19729880vsc.48.1618228324579;
+ Mon, 12 Apr 2021 04:52:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210409082805.23643-1-dinghao.liu@zju.edu.cn>
+References: <20210407094617.770495-1-jonathanh@nvidia.com> <CAPDyKFo+HwkBaCkALaSuUiTFE_soptsECmGRQX873_WKAmN_Lw@mail.gmail.com>
+ <69fd5e22-2d85-46bd-8abf-0baf0d97fc95@nvidia.com>
+In-Reply-To: <69fd5e22-2d85-46bd-8abf-0baf0d97fc95@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 12 Apr 2021 13:51:28 +0200
+Message-ID: <CAPDyKFr0Mg5m6ndKf=ge5rj0+XGTXMbtwc7c6oEEma0b-_yi2g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-tegra: Add required callbacks to set/clear
+ CQE_EN bit
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Aniruddha Tvs Rao <anrao@nvidia.com>,
+        Kamal Mostafa <kamal@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 09-04-21, 16:28, Dinghao Liu wrote:
-> pm_runtime_get_sync() will increase the runtime PM counter
-> even it returns an error. Thus a pairing decrement is needed
-> to prevent refcount leak. Fix this by replacing this API with
-> pm_runtime_resume_and_get(), which will not change the runtime
-> PM counter on error.
+On Mon, 12 Apr 2021 at 11:35, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 12/04/2021 08:52, Ulf Hansson wrote:
+> > On Wed, 7 Apr 2021 at 11:46, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>
+> >> From: Aniruddha Tvs Rao <anrao@nvidia.com>
+> >>
+> >> CMD8 is not supported with Command Queue Enabled. Add required callback
+> >> to clear CQE_EN and CQE_INTR fields in the host controller register
+> >> before sending CMD8. Add corresponding callback in the CQHCI resume path
+> >> to re-enable CQE_EN and CQE_INTR fields.
+> >>
+> >> Reported-by: Kamal Mostafa <kamal@canonical.com>
+> >> Tested-by: Kamal Mostafa <kamal@canonical.com>
+> >> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >
+> > Applied for next, thanks!
+> >
+> > Please tell, if you think this needs to be tagged for stable kernels
+> > as well (and if so, perhaps we can set a fixes tag as well?).
+>
+> Thanks. We were talking about that. I believe that the callbacks were
+> only added in v5.10 and so that is the earliest we could apply. The most
+> logical fixes tag would be ...
+>
+> Fixes: 3c4019f97978 ("mmc: tegra: HW Command Queue Support for Tegra SDMMC")
+>
+> However, this does come before the support for the command queue callbacks.
+>
+> I would like to get this into the v5.10 stable branch and I can either
+> send Greg a direct request once merged or we can tag for stable. Let me
+> know what you think.
 
-Applied, thanks
+Let me amend the change and add a stable tag like below:
 
--- 
-~Vinod
+Cc: stable@vger.kerne.org # v5.10+
+
+Kind regards
+Uffe
