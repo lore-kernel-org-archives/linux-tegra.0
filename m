@@ -2,115 +2,139 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A84CC43460
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 11:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F20C433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 13:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4805261289
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 11:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C79A86128C
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 13:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240584AbhDLLwX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Apr 2021 07:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238780AbhDLLwX (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Apr 2021 07:52:23 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48839C061574
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 04:52:05 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id k124so6489331vsk.3
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 04:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BE3YDkZvSgZ80+e/3OVAhPMEeA9aRadkKoQynsogWXQ=;
-        b=P0COJN1rhSSKIZLGzUTiZr65atT2F8XqmHrWS+Iqw4HFbkGBL6NBcwMKRV/+b1AfPu
-         qxQ8ZYSeU+wV994NWq+xdRt8Bgmoy4tJMOLKiYy3avvMU/81ULr3iMopWFVTXnhklyGk
-         XXw4iQwZQeNxKWUfrm1VVZKd8q2j/drizWDmagpwyHFcQe2pHlODo7nwt10sAgCt0Qco
-         0Jsci8l7EBnMiV050hh2+qYjirmldvFHZrE1LxnQR9NfRXf57soeXaOe8ekEfa+UQ45h
-         ohHiOhiGio11KivZEfpXXFbsVsb4yMnl4srLjN9enYPP7EQ822nDblYn5eCJs84xDd5A
-         VXuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BE3YDkZvSgZ80+e/3OVAhPMEeA9aRadkKoQynsogWXQ=;
-        b=KR4v+Rr+4fq+xVVQNid0r/+ZwT93lQn1wnkATPG1gG4DphEsTeAYT+xcsBqvJWxvjW
-         XefnUDzU/0OUqtvbLdcx0Gvpv51ZolpavoJjdjl8V40zhEel+Urrn4RiMEkeluU/tinh
-         IV5jdQ23uxVOfTF1c/aPPlFIZyGf4YZ6q8RYKd5NbdcEcrawLum3n1Q9qAAkWRtGjPQf
-         hrP3Dr7SQ1Y01wbh6iKVHSsZwFPhqh0Kvrzl/ZFFYutG6pWLaQff4gk/7pnccVVnyflk
-         +t5ZG7DpVGGN3p+U6iuquQDOySmgbbStsH3Ixn6FuZUfy1fRbmQk5QHP0buQgLlfaTqv
-         p8tg==
-X-Gm-Message-State: AOAM531GERETyaW0yIrewt0gLk/E5I3t6+f6fqaLzvm5AkrpdnOGBVzs
-        mD4T+fD4ApJHw1MdN5HDvPcp4s48itvufjs2g0WBow==
-X-Google-Smtp-Source: ABdhPJwPKKGX+JxDeWt1/IJmeQhG+AbESYOGE2pbjFKpkH8dsW2w3h1WIRpctUEZ4vFMBix2PwNoQ0oG7VE7FeeEodI=
-X-Received: by 2002:a67:6942:: with SMTP id e63mr19729880vsc.48.1618228324579;
- Mon, 12 Apr 2021 04:52:04 -0700 (PDT)
+        id S241767AbhDLNMz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Apr 2021 09:12:55 -0400
+Received: from mail-dm3nam07on2060.outbound.protection.outlook.com ([40.107.95.60]:2624
+        "EHLO NAM02-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S241706AbhDLNMx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 12 Apr 2021 09:12:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GMNtNegT/kwg+efEzCJb4e43L8uoOFVC4A/+PuLMOVpB+y1jvTE43EbNrbQNf0cn9yachqo9StZafW4jg3RFOv2buYODvba/iHU1Z6g1/ZXwfa5qBrKNDTOUiXLJTNf2CZiy6rp5I35yojxCYeVwnEWkjmPFEa7nrael7THw+oC6iPJb0aE+s/gLemsgd8AsxeDBjbTPh5Q50keukKkkLgCJ5bDvLaXFwABzAuzDEDyrAuAR6NUPHLRr5zCY0zX4jpaE5MTofzd+gMxPWdaNeCscgIyFgWt9MU4rNhZx+GUIu3jT8xpzhKndMrYTAVkTR4d/uEZMlfs5EbVUzYM7SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P3pSW9F2qXibKjzDUUUqb/Y0FIq5g9lEp5lHH2O3/s4=;
+ b=fcMDbhZIkCLp98K90bhPCjKNfP6tIA8EJGcd5QPEQPRF4iRg8lwGjT32qAgFgwa2PkD6HcR3I1hoRYITTI22b74lI+cVQaQ0+S4cWhheN5UQdQF94leJuS+zZkqGm5r0Q1jBNsh7OwzH4GZ3u4AzcMf48ChNp8cEy2JuKwH/3yxxnFwQR57ApckrNSmAjqxjUlNX94IIiQXTxsBl9tcfSKQm8kRL+EWFu1ArpJ150WBm7GRH3cetw5L6eCrfBEX42OZ9kQ3mLixbUZHzB9hpVo7UTF9YsUL9WOU8gnyelhR4ctWVPW6gZREEh8/aA0ddUEarwe1fwrhh7gNlH9uetA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P3pSW9F2qXibKjzDUUUqb/Y0FIq5g9lEp5lHH2O3/s4=;
+ b=lBJ1NGmqpTL9rQAe7Dj2jE3XEnjmLZ8z11nvfqWqZPPTlfYe5TOq8At5f1B2Uy5M17nuTlXc2qKyyvGYBnDD0J0F++2GofvDASf44/DOPnKNaO9OzhfqSDURlUg1rQTRT/DvRBRfaGWeO1BhjdMXMJqQmhoeBrfHOGnn0Vri+IS7G1BIGpCkcm0LIJUt1AnAoSyl8YG+LBt5vnj6+AWxy8RdRf8tzapGVUBCS6K2ePlPWmm5x9iV3ErMQCOYyvytyaBgFvu92Yk6kG71yNechP8HnbjeQkhTCCWlIzACTSZ/6EkVVS65EGiJ0m9KuhL95MeVr78cb6pykoe3JNZbBQ==
+Received: from DM6PR18CA0034.namprd18.prod.outlook.com (2603:10b6:5:15b::47)
+ by BY5PR12MB3650.namprd12.prod.outlook.com (2603:10b6:a03:1a3::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.22; Mon, 12 Apr
+ 2021 13:12:32 +0000
+Received: from DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:15b:cafe::df) by DM6PR18CA0034.outlook.office365.com
+ (2603:10b6:5:15b::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.16 via Frontend
+ Transport; Mon, 12 Apr 2021 13:12:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ DM6NAM11FT006.mail.protection.outlook.com (10.13.173.104) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4020.17 via Frontend Transport; Mon, 12 Apr 2021 13:12:32 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Apr
+ 2021 13:12:32 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Mon, 12 Apr 2021 13:12:31 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.4 000/111] 5.4.112-rc1 review
+In-Reply-To: <20210412084004.200986670@linuxfoundation.org>
+References: <20210412084004.200986670@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20210407094617.770495-1-jonathanh@nvidia.com> <CAPDyKFo+HwkBaCkALaSuUiTFE_soptsECmGRQX873_WKAmN_Lw@mail.gmail.com>
- <69fd5e22-2d85-46bd-8abf-0baf0d97fc95@nvidia.com>
-In-Reply-To: <69fd5e22-2d85-46bd-8abf-0baf0d97fc95@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 12 Apr 2021 13:51:28 +0200
-Message-ID: <CAPDyKFr0Mg5m6ndKf=ge5rj0+XGTXMbtwc7c6oEEma0b-_yi2g@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-tegra: Add required callbacks to set/clear
- CQE_EN bit
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Aniruddha Tvs Rao <anrao@nvidia.com>,
-        Kamal Mostafa <kamal@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <27aa61ecf8d345e3b77c4a6723c50bf9@HQMAIL105.nvidia.com>
+Date:   Mon, 12 Apr 2021 13:12:31 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 714460bf-3bd8-48b1-b659-08d8fdb4a1ed
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3650:
+X-Microsoft-Antispam-PRVS: <BY5PR12MB3650DCDDD7450E460169E9D2D9709@BY5PR12MB3650.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PgkN29/KtpyFv8/mamM3WIZxo2cm/FBQrY4Rh5gUoW0hX/L7e1bmXSqLVSRwOCpvrwII7ubMMxdSs11+S67rdbt0TvWqG+ZEoO9WbAQH5AZrEbNAfrEkHlKDuitOSMqDU2hIsaNHBY5hoQK94a0CMZ/E9O85KyUq7h0IHJhkbxHKWzTXPsyJ1mR8B5zHtRpsSeDFsQl8I8affbdy2eWvAJAIBPvlfhuW/pe2aKqtOLRorDfFwjr7fT3QuzRcx5n8pH49iSY4YQBzoZ3L0knm+tnyEblCmfKUydPdxzKnCzU6ph7FRomZH0o1FMJfePRM6TA1S3ALmj4XQqpJkDEi4uN5K2GxJVvfcWYUqFD82S2CTOLHSkp1tFHyhhan/184xJ51hqh32zcQH+oE4kPP6B0WvuBayEdqWMA0yVqmEdpx9H/i77orkePu39Idzjhu7LPukT3lCQsGiuhYqTFydhKEqIY63PovDIUkc1eYWY6F8QzLvJEhCekVjLGUz7+MN5uqom+7NrrSp53kuGSNJkhsRmQdjD7z0k/tijNOi7QBXyub6TgXyVobfAWDZiBMv6c3ZaHPenvM+d16wumjA2rqjnJZHl5etIZKKhjx4G8+oE4+qDlpExo77YlrbfZcofZDU+AzFbVYJ8ejssV+F2jLx0z+e+Xis1Kx6GwA4QfQaEuFbYAJQB67on0tQuORV77srsblzY5HvJer3av7xN3s3KfM61BaHXUrw9Jpzk8=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(39860400002)(136003)(36840700001)(46966006)(5660300002)(47076005)(8936002)(6916009)(26005)(8676002)(36906005)(70586007)(54906003)(36860700001)(7636003)(2906002)(82310400003)(186003)(7416002)(478600001)(336012)(82740400003)(426003)(966005)(4326008)(316002)(86362001)(108616005)(356005)(24736004)(70206006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2021 13:12:32.4506
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 714460bf-3bd8-48b1-b659-08d8fdb4a1ed
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT006.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3650
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 12 Apr 2021 at 11:35, Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 12/04/2021 08:52, Ulf Hansson wrote:
-> > On Wed, 7 Apr 2021 at 11:46, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >> From: Aniruddha Tvs Rao <anrao@nvidia.com>
-> >>
-> >> CMD8 is not supported with Command Queue Enabled. Add required callback
-> >> to clear CQE_EN and CQE_INTR fields in the host controller register
-> >> before sending CMD8. Add corresponding callback in the CQHCI resume path
-> >> to re-enable CQE_EN and CQE_INTR fields.
-> >>
-> >> Reported-by: Kamal Mostafa <kamal@canonical.com>
-> >> Tested-by: Kamal Mostafa <kamal@canonical.com>
-> >> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
-> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >
-> > Applied for next, thanks!
-> >
-> > Please tell, if you think this needs to be tagged for stable kernels
-> > as well (and if so, perhaps we can set a fixes tag as well?).
->
-> Thanks. We were talking about that. I believe that the callbacks were
-> only added in v5.10 and so that is the earliest we could apply. The most
-> logical fixes tag would be ...
->
-> Fixes: 3c4019f97978 ("mmc: tegra: HW Command Queue Support for Tegra SDMMC")
->
-> However, this does come before the support for the command queue callbacks.
->
-> I would like to get this into the v5.10 stable branch and I can either
-> send Greg a direct request once merged or we can tag for stable. Let me
-> know what you think.
+On Mon, 12 Apr 2021 10:39:38 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.112 release.
+> There are 111 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 14 Apr 2021 08:39:44 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.112-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Let me amend the change and add a stable tag like below:
+All tests passing for Tegra ...
 
-Cc: stable@vger.kerne.org # v5.10+
+Test results for stable-v5.4:
+    12 builds:	12 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    59 tests:	59 pass, 0 fail
 
-Kind regards
-Uffe
+Linux version:	5.4.112-rc1-gf9b2de2cddd4
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
