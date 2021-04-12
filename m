@@ -7,75 +7,102 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2A5C433B4
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 14:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B095C433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 14:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5F396128E
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 14:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A7346128B
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 14:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238881AbhDLOCU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Apr 2021 10:02:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16449 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239173AbhDLOCT (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Apr 2021 10:02:19 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FJr2m2kfqzwRv8;
-        Mon, 12 Apr 2021 21:59:44 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.498.0; Mon, 12 Apr 2021
- 22:01:56 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-CC:     <jonathanh@nvidia.com>, <thierry.reding@gmail.com>
-Subject: [PATCH -next] soc/tegra: fuse: don't return -ENOMEM when allocate lookups failed
-Date:   Mon, 12 Apr 2021 22:05:27 +0800
-Message-ID: <20210412140527.4142735-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        id S238881AbhDLOH5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Apr 2021 10:07:57 -0400
+Received: from mga05.intel.com ([192.55.52.43]:33978 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238015AbhDLOH4 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 12 Apr 2021 10:07:56 -0400
+IronPort-SDR: l2mWL90mY2042G82W3E6yK+L9W9Ba3UaQkmU4rIIxkK8chO+/4KIRAHQhG+ACVQnc3vzKCxxIp
+ ebuN1p5lW1Xw==
+X-IronPort-AV: E=McAfee;i="6200,9189,9952"; a="279498533"
+X-IronPort-AV: E=Sophos;i="5.82,216,1613462400"; 
+   d="scan'208";a="279498533"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2021 07:07:38 -0700
+IronPort-SDR: Uo/sEmcUcwbPsjlWzDghuO/w6fR1yobrChD3JGkkh4PQQTm523NkKotcnWb1LpjrcLtol4DiNp
+ g7tRSdUb1GaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,216,1613462400"; 
+   d="scan'208";a="531890655"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 12 Apr 2021 07:07:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id DC02512A; Mon, 12 Apr 2021 17:07:49 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Drew Fustini <drew@beagleboard.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v1 1/3] pinctrl: Keep enum pin_config_param ordered by name
+Date:   Mon, 12 Apr 2021 17:07:39 +0300
+Message-Id: <20210412140741.39946-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-fuse->base can not be unmapped if allocate lookups failed in
-tegra_init_fuse(), because it is an early_initcall, the driver
-will be loaded anyway and fuse->base will be accessed by other
-functions later, so remove the return -ENOMEM after allocating
-lookups failed to make less confusing.
+It seems the ordering is by name. Keep it that way.
 
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ include/linux/pinctrl/pinconf-generic.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 94b60a692b51..a0def1219501 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -490,9 +490,15 @@ static int __init tegra_init_fuse(void)
- 
- 		fuse->lookups = kmemdup(fuse->soc->lookups, size, GFP_KERNEL);
- 		if (!fuse->lookups)
--			return -ENOMEM;
--
--		nvmem_add_cell_lookups(fuse->lookups, fuse->soc->num_lookups);
-+			/*
-+			 * fuse->base can not be unmapped if allocate lookups failed,
-+			 * because it will be accessed by other functions later.
-+			 * To make less confusing, remove the return -ENOMEM and
-+			 * skip registering the nvmem cell lookups.
-+			 */
-+			pr_err("failed to allocate lookups");
-+		else
-+			nvmem_add_cell_lookups(fuse->lookups, fuse->soc->num_lookups);
- 	}
- 
- 	return 0;
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 6aeb711f7cd1..188db8d84162 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -90,6 +90,7 @@ struct pinctrl_map;
+  * 	value on the line. Use argument 1 to indicate high level, argument 0 to
+  *	indicate low level. (Please see Documentation/driver-api/pinctl.rst,
+  *	section "GPIO mode pitfalls" for a discussion around this parameter.)
++ * @PIN_CONFIG_PERSIST_STATE: retain pin state across sleep or controller reset
+  * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different power
+  *	supplies, the argument to this parameter (on a custom format) tells
+  *	the driver which alternative power source to use.
+@@ -101,7 +102,6 @@ struct pinctrl_map;
+  *	or latch delay (on outputs) this parameter (in a custom format)
+  *	specifies the clock skew or latch delay. It typically controls how
+  *	many double inverters are put in front of the line.
+- * @PIN_CONFIG_PERSIST_STATE: retain pin state across sleep or controller reset
+  * @PIN_CONFIG_END: this is the last enumerator for pin configurations, if
+  *	you need to pass in custom configurations to the pin controller, use
+  *	PIN_CONFIG_END+1 as the base offset.
+@@ -127,11 +127,11 @@ enum pin_config_param {
+ 	PIN_CONFIG_LOW_POWER_MODE,
+ 	PIN_CONFIG_OUTPUT_ENABLE,
+ 	PIN_CONFIG_OUTPUT,
++	PIN_CONFIG_PERSIST_STATE,
+ 	PIN_CONFIG_POWER_SOURCE,
+ 	PIN_CONFIG_SLEEP_HARDWARE_STATE,
+ 	PIN_CONFIG_SLEW_RATE,
+ 	PIN_CONFIG_SKEW_DELAY,
+-	PIN_CONFIG_PERSIST_STATE,
+ 	PIN_CONFIG_END = 0x7F,
+ 	PIN_CONFIG_MAX = 0xFF,
+ };
 -- 
-2.25.1
+2.30.2
 
