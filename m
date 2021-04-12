@@ -2,189 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80664C4360C
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 07:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFC4C433ED
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6948C61356
-	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 07:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0EB461241
+	for <linux-tegra@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237159AbhDLHxH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 12 Apr 2021 03:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237174AbhDLHxG (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 12 Apr 2021 03:53:06 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446BCC06138C
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 00:52:49 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id l8so6168811vsj.13
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Apr 2021 00:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hxbPBuINzsiyQdtXGnDJ0X7XxKPxqap5sLfwm2OcunM=;
-        b=pRICCxPoeEQLl+usptIWO5MabXlg9nq0HNynWGBljJvbY1kqlGSbLIS9SLhIVkvHIP
-         pnLCb9R9+A6737nO+kAFOn7zpHbzuGKn/xSA5BvH+P7OtMca+RIvEcO/xXkghMn2wa8F
-         SNnlNmsXBRwHGLBHs54WsYoD7uhB5lzU44spyQzmplNcrVxyyDzI9VFuqFRS6WDecNZL
-         zP62iYYLZH5MpqMX7U9CpkQnk22ZZAEQdD3JEc+yZvrE4TLennuVnrP109ADuhI4yZnu
-         Ozzd7DHlubjlhcBYhhek66I1jqWniQHJ1+/+rAqBGS0mMpqV2pXtme0EUnhbsDInq4iR
-         b9GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hxbPBuINzsiyQdtXGnDJ0X7XxKPxqap5sLfwm2OcunM=;
-        b=qRlkQMmBy5TZMEmireVA7IvY0gEFGSMarL8ciRvjDIVqXvK6jETh2n2ap7VvmPwh5l
-         LDdFMqGn0SzQtCnUI0eEKrRwEK1g8J5vtQDjrRtExAFh128mF+Ciqwgm5OCkSyM3uY7/
-         jr4OyL1o2UNR847aUSo2clXV5lNDXYP7R2l1hf3cCYH7DvQHqfXMkGbKcSZymKURwq6b
-         /SBcoDT/x8pe2C/MS/3wod2YSFnzO8HZehey+I5fU7pBeHh0MTNvPQTLy+Z8Idngq5iN
-         N6X8ui6k5CWvTYKrEkgO7lMPvphsq7Nm/pAW3zanF3MOfOIQOxGYG9QSwNHLU78nm75f
-         fYOA==
-X-Gm-Message-State: AOAM532b+SLkI8VdQW5CtN+bNZUNW39hcPLZ8kw4DzOtj20J6Bz9934i
-        eNfZdiqJtJ/3nv8fDYXSZoY4JxQNfvk42EsBDbykYITlpmg=
-X-Google-Smtp-Source: ABdhPJwLG4Xhk65p1fnC2Z0IKOXF4S2MAN6Y1KYrnaZOVrhilo6KugfYX4yJhJJYnT8hSXIayThLik0kuU6hu9HxwGk=
-X-Received: by 2002:a67:fe05:: with SMTP id l5mr18245050vsr.34.1618213968496;
- Mon, 12 Apr 2021 00:52:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210407094617.770495-1-jonathanh@nvidia.com>
-In-Reply-To: <20210407094617.770495-1-jonathanh@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 12 Apr 2021 09:52:12 +0200
-Message-ID: <CAPDyKFo+HwkBaCkALaSuUiTFE_soptsECmGRQX873_WKAmN_Lw@mail.gmail.com>
+        id S241334AbhDLJh6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 12 Apr 2021 05:37:58 -0400
+Received: from mail-mw2nam12on2040.outbound.protection.outlook.com ([40.107.244.40]:11706
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S240813AbhDLJfx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 12 Apr 2021 05:35:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L/PqH6EjxUZkFpvRwl6pqEfqtwj+AKMh/sK5SldTPA3UFvvapdsJltj1HB/XnZv9gY9lPlugt48wJx7hSHxOQe6aPbcOd0FB2q9b2LRNSFqIDPX6X3nzQG1V9VH3DKm5Ll4XV1xQiJJLCC5rS6Fj5XKDXcI6zJGx+G/31B9tsa5qf014SnZUD8cN0DtG0cFipDvzKb57dPV2OEr08NUwK9dRfwDaxGewOLDrelhSh3cywr47KUxlySyxn88Ac/jVB9OmtGJQiHm35sPmisyIO0AY1NmWil4vfZora5swth99IXSdMvlZkbtZK12FjCzJ/8k7azih1m9C71tYkLOk+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9JhqmPVRZO8P8wJqlYcn1k1EvgDpCMrwHqaBBq5KfI4=;
+ b=PqsBtZLD8Uw8sSihdkiKjUqqdNB3Q06nnQqtHNyyCVmG5yTxhF3fW8Bq0S6A04Vi4x+MWVbuMKSjU0G+uzE29ehWJo0OBdyC0cLzJVDN8rMhKPqzRl5sfIRIPjSKhlBwubUe3sx3wVqRO9/IRKgJpjj54nJuG3SLd79w9vAc72sORQTkNLboXvcSRpbKtFrM9M5LFPVkArNyofZT9pSJj4mr5n4NgP8rwT3IsqpuHLSNr2JB6lKZQLIUmty2JMTE4nNZBAFayHGFHT9kEh7sbqE+tmCWX1toQwicFAzk/qIl4bYgtEYHlLeRgq7124HPu/VRFLtFcwH20BtVTHcM0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9JhqmPVRZO8P8wJqlYcn1k1EvgDpCMrwHqaBBq5KfI4=;
+ b=gOh8i+szFN6+vXg8pdjlozJa9m8VDgj9N4Hsqu0gDYuZVD0YJH/u2YHyCm9tNZbgfKAQT3re7ssdPrYHdXzYghr2zcxkYuuT5fRqHRitHuV+2z3TRmQBX9w5cEuyHRB4wc7wFAwvBMTPPIYhsh0guVaf1FW16k5GBw63ySkLDnIfgGh3Y1fG4FwGJ/KIOZTNdOnVg9CbMFSGMxTP7U9bMfq1nY8b4YRKtAk/O1sxKtVPjotCT7wYVbqCRPtvYg1cKEqC8XZYqTBOG0aozp25wsgZWA2pfUl8LWCFe9EIJzMco0BHjSfhjnSve5MWuftLiJOKTaSTvHIPm3beSPz/oQ==
+Received: from BN8PR04CA0048.namprd04.prod.outlook.com (2603:10b6:408:d4::22)
+ by MWHPR12MB1950.namprd12.prod.outlook.com (2603:10b6:300:110::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.21; Mon, 12 Apr
+ 2021 09:35:32 +0000
+Received: from BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:d4:cafe::d9) by BN8PR04CA0048.outlook.office365.com
+ (2603:10b6:408:d4::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend
+ Transport; Mon, 12 Apr 2021 09:35:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT063.mail.protection.outlook.com (10.13.177.110) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4020.17 via Frontend Transport; Mon, 12 Apr 2021 09:35:30 +0000
+Received: from [10.26.49.14] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 12 Apr
+ 2021 09:35:28 +0000
 Subject: Re: [PATCH] mmc: sdhci-tegra: Add required callbacks to set/clear
  CQE_EN bit
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Adrian Hunter <adrian.hunter@intel.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         linux-tegra <linux-tegra@vger.kernel.org>,
         Aniruddha Tvs Rao <anrao@nvidia.com>,
         Kamal Mostafa <kamal@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210407094617.770495-1-jonathanh@nvidia.com>
+ <CAPDyKFo+HwkBaCkALaSuUiTFE_soptsECmGRQX873_WKAmN_Lw@mail.gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <69fd5e22-2d85-46bd-8abf-0baf0d97fc95@nvidia.com>
+Date:   Mon, 12 Apr 2021 10:35:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFo+HwkBaCkALaSuUiTFE_soptsECmGRQX873_WKAmN_Lw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9e4e1e3e-c9a4-4e20-6374-08d8fd965090
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1950:
+X-Microsoft-Antispam-PRVS: <MWHPR12MB19505C646FA8F7AA28C2480DD9709@MWHPR12MB1950.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zlhKyzHcFmaH4uL+YFYPazeV+iXOlTn1T+sXzsu9sS5m2KuJEqp5r43XpAbg0lk+ZZ1rYlI5bK9yrtV3fWuGywQcIVyIp5ZydUKSoTFOoG1F57dqU633INmO2VUwG6SF318HJMaGFhhir/NEj3viLxCq9y9Gm3IMCmcf8l8TfQP1mCpRBygfHyCGipMJ+5ufSQdVQNdjwspNdthkcaGKRAQYICrHFxqLQo3yL7dOgnTY22xnWyoKzwqcstRwdWrXpp4hIwtQHJZfEQjjPafDKXVowe3KPKrG8wWLbQDAys2UR0SykQjAirTugTzBbRn9YQeFxHSdnb8tR1yXPKKGE/ykzvWqSaAzB4gMvHLrDyIWyR0JVWBM5p1J/nmvBx6+Kqpf+iAqgwFyxtXjckkR8qNEnmrRJm2YBGH4C9QBW0Sl2caV9IqHSg33qz7Kn1Ai4JBnxFH8rns6Lzu5vt9AI7tkhnat6wywxBEmAeA7vBKlAfhU4tyNPWr2PaZwdT8JzYGnBP+GHzg7UiNtl3zExPmD4Gogd5cl9dCH3SzK640mN+Js5ZOmmRfFIqeNoPIqmyHbQtuPsqStDGBdtPu8TMLvTaJfczn15Fg2Kbt0OJdtn8mybusLfp30lwLidJKvsn2PcbX1DbzhykfKhDTax4nHKwor10SuOY1fWJy6Kmt4Q3WjU74qTZ0J5vfWl6P/
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(396003)(39860400002)(136003)(346002)(376002)(36840700001)(46966006)(426003)(36860700001)(82740400003)(26005)(31696002)(336012)(186003)(2616005)(83380400001)(70586007)(54906003)(36756003)(86362001)(6916009)(316002)(7636003)(8676002)(31686004)(356005)(47076005)(53546011)(70206006)(478600001)(82310400003)(5660300002)(16576012)(2906002)(8936002)(16526019)(4326008)(36906005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2021 09:35:30.9567
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e4e1e3e-c9a4-4e20-6374-08d8fd965090
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT063.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1950
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 7 Apr 2021 at 11:46, Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> From: Aniruddha Tvs Rao <anrao@nvidia.com>
->
-> CMD8 is not supported with Command Queue Enabled. Add required callback
-> to clear CQE_EN and CQE_INTR fields in the host controller register
-> before sending CMD8. Add corresponding callback in the CQHCI resume path
-> to re-enable CQE_EN and CQE_INTR fields.
->
-> Reported-by: Kamal Mostafa <kamal@canonical.com>
-> Tested-by: Kamal Mostafa <kamal@canonical.com>
-> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Applied for next, thanks!
+On 12/04/2021 08:52, Ulf Hansson wrote:
+> On Wed, 7 Apr 2021 at 11:46, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>> From: Aniruddha Tvs Rao <anrao@nvidia.com>
+>>
+>> CMD8 is not supported with Command Queue Enabled. Add required callback
+>> to clear CQE_EN and CQE_INTR fields in the host controller register
+>> before sending CMD8. Add corresponding callback in the CQHCI resume path
+>> to re-enable CQE_EN and CQE_INTR fields.
+>>
+>> Reported-by: Kamal Mostafa <kamal@canonical.com>
+>> Tested-by: Kamal Mostafa <kamal@canonical.com>
+>> Signed-off-by: Aniruddha Tvs Rao <anrao@nvidia.com>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Applied for next, thanks!
+> 
+> Please tell, if you think this needs to be tagged for stable kernels
+> as well (and if so, perhaps we can set a fixes tag as well?).
 
-Please tell, if you think this needs to be tagged for stable kernels
-as well (and if so, perhaps we can set a fixes tag as well?).
+Thanks. We were talking about that. I believe that the callbacks were
+only added in v5.10 and so that is the earliest we could apply. The most
+logical fixes tag would be ...
 
-Kind regards
-Uffe
+Fixes: 3c4019f97978 ("mmc: tegra: HW Command Queue Support for Tegra SDMMC")
 
+However, this does come before the support for the command queue callbacks.
 
+I would like to get this into the v5.10 stable branch and I can either
+send Greg a direct request once merged or we can tag for stable. Let me
+know what you think.
 
+Thanks
+Jon
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index c61f797a853f..387ce9cdbd7c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -119,6 +119,10 @@
->  /* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
->  #define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
->
-> +#define SDHCI_TEGRA_CQE_TRNS_MODE      (SDHCI_TRNS_MULTI | \
-> +                                        SDHCI_TRNS_BLK_CNT_EN | \
-> +                                        SDHCI_TRNS_DMA)
-> +
->  struct sdhci_tegra_soc_data {
->         const struct sdhci_pltfm_data *pdata;
->         u64 dma_mask;
-> @@ -1156,6 +1160,7 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
->  static void tegra_cqhci_writel(struct cqhci_host *cq_host, u32 val, int reg)
->  {
->         struct mmc_host *mmc = cq_host->mmc;
-> +       struct sdhci_host *host = mmc_priv(mmc);
->         u8 ctrl;
->         ktime_t timeout;
->         bool timed_out;
-> @@ -1170,6 +1175,7 @@ static void tegra_cqhci_writel(struct cqhci_host *cq_host, u32 val, int reg)
->          */
->         if (reg == CQHCI_CTL && !(val & CQHCI_HALT) &&
->             cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
-> +               sdhci_writew(host, SDHCI_TEGRA_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->                 sdhci_cqe_enable(mmc);
->                 writel(val, cq_host->mmio + reg);
->                 timeout = ktime_add_us(ktime_get(), 50);
-> @@ -1205,6 +1211,7 @@ static void sdhci_tegra_update_dcmd_desc(struct mmc_host *mmc,
->  static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
->  {
->         struct cqhci_host *cq_host = mmc->cqe_private;
-> +       struct sdhci_host *host = mmc_priv(mmc);
->         u32 val;
->
->         /*
-> @@ -1218,6 +1225,7 @@ static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
->                 if (val & CQHCI_ENABLE)
->                         cqhci_writel(cq_host, (val & ~CQHCI_ENABLE),
->                                      CQHCI_CFG);
-> +               sdhci_writew(host, SDHCI_TEGRA_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->                 sdhci_cqe_enable(mmc);
->                 if (val & CQHCI_ENABLE)
->                         cqhci_writel(cq_host, val, CQHCI_CFG);
-> @@ -1281,12 +1289,36 @@ static void tegra_sdhci_set_timeout(struct sdhci_host *host,
->         __sdhci_set_timeout(host, cmd);
->  }
->
-> +static void sdhci_tegra_cqe_pre_enable(struct mmc_host *mmc)
-> +{
-> +       struct cqhci_host *cq_host = mmc->cqe_private;
-> +       u32 reg;
-> +
-> +       reg = cqhci_readl(cq_host, CQHCI_CFG);
-> +       reg |= CQHCI_ENABLE;
-> +       cqhci_writel(cq_host, reg, CQHCI_CFG);
-> +}
-> +
-> +static void sdhci_tegra_cqe_post_disable(struct mmc_host *mmc)
-> +{
-> +       struct cqhci_host *cq_host = mmc->cqe_private;
-> +       struct sdhci_host *host = mmc_priv(mmc);
-> +       u32 reg;
-> +
-> +       reg = cqhci_readl(cq_host, CQHCI_CFG);
-> +       reg &= ~CQHCI_ENABLE;
-> +       cqhci_writel(cq_host, reg, CQHCI_CFG);
-> +       sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +}
-> +
->  static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
->         .write_l    = tegra_cqhci_writel,
->         .enable = sdhci_tegra_cqe_enable,
->         .disable = sdhci_cqe_disable,
->         .dumpregs = sdhci_tegra_dumpregs,
->         .update_dcmd_desc = sdhci_tegra_update_dcmd_desc,
-> +       .pre_enable = sdhci_tegra_cqe_pre_enable,
-> +       .post_disable = sdhci_tegra_cqe_post_disable,
->  };
->
->  static int tegra_sdhci_set_dma_mask(struct sdhci_host *host)
-> --
-> 2.25.1
->
+-- 
+nvpublic
