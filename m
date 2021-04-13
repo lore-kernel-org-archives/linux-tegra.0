@@ -2,209 +2,153 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B345EC433ED
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Apr 2021 08:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AC6C433ED
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Apr 2021 09:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9001D613B2
-	for <linux-tegra@archiver.kernel.org>; Tue, 13 Apr 2021 08:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04B6E613B8
+	for <linux-tegra@archiver.kernel.org>; Tue, 13 Apr 2021 09:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbhDMIlp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 13 Apr 2021 04:41:45 -0400
-Received: from mail-bn7nam10on2048.outbound.protection.outlook.com ([40.107.92.48]:1248
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229996AbhDMIlp (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 13 Apr 2021 04:41:45 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pv/gka5tPS0bHSmBWv2fBEHc+yt0lDeEQzQHg3TOW+Ho4xs98lPxbBIcYbsRxIcB5Mz6tDzCnLdpGwoJWqLXx63U9B1xDrAkAgORSNimQr+3d51PNd77l/PqfpEj3yrhYuLRxvemUDjfHSEoD03CRVr1LIXMyLmwtZK5ANAzHUmWWAjO9nQYSyk/x+QlEvfD0rzUQ/VB8FeUDiVgQ2Yvw/4QJJ4KgfEmZ/4BoyIocegse+lwMmzWprzl1ljXFwJ6YB2ndvtO1uNuEql6+80ac0QA6gVR7MldJrdAzobQZK2mPmtmzATsNok0Cj337yQECt9kUWSswaOL9tzFnpjXFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YELaEJR1iBQggJC/QAv63uYQ2l7uDc1SUMp5Qj4Ozwg=;
- b=HM41AqZx+hUBPOyw9aid8deJCQMiukeMC5Yyy1oxVwYbNwucenMdXlBCjflK0VFSe9aK8BHUFUOkTlCpS4rxAgW9ZgGQ7Q9o9+hKJE6ipYrMhOvvtxWP7roa7fykj9dAYzad31mrbHLDCLVKmwSHpohUHfda88o47pagIdHmKEL49xR5oms8zX5azYY8v/SWid/tvy9sxXLdOW263O6o0ehi8X6hCKEqVZPJH+B3BfD3NlzYTUzMflXzNZy37YZTCy9hQ07P7bSufUUoJ8y4SB7MlB3ahtikbEjNL5K97bYHj5uvteNhoEN2MKfZYkZ1NqZsRPOT/SuJjRzMZA4D8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=st.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YELaEJR1iBQggJC/QAv63uYQ2l7uDc1SUMp5Qj4Ozwg=;
- b=XLWOPcgrzugpqzksBb4u3KEt1+7g98EE2uXjCtRM46eDzRfm50C/2+FevBGf9mfTMu3OXNZzLWWqY2WaCMnXZqjHTgmPftzXCa40d4Zg+4iO2F33CHZx+HYwXBaujnRLXwjT9S99yFcw4mdICGPWVPTE3uKx5UXL/GdnR+OhaEuFh4EbHL7eTdmITVnQ5GFtHwbMvY4KWu45lVo7UTmspUEMiCo+cy5rvxT2qabEkgvJcbFvww0R1f5tNAP6KpU6sYUn0iGHoWlE6IrsL6DA8j4XMVTY9558fJDpBu14GJ8Owriq/581+WELBz/cphhFEiV3cRch3rpYO3B1JXBoqA==
-Received: from BN1PR10CA0022.namprd10.prod.outlook.com (2603:10b6:408:e0::27)
- by BN8PR12MB3043.namprd12.prod.outlook.com (2603:10b6:408:65::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.21; Tue, 13 Apr
- 2021 08:41:24 +0000
-Received: from BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e0:cafe::60) by BN1PR10CA0022.outlook.office365.com
- (2603:10b6:408:e0::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4020.17 via Frontend
- Transport; Tue, 13 Apr 2021 08:41:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; st.com; dkim=none (message not signed)
- header.d=none;st.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT003.mail.protection.outlook.com (10.13.177.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4020.17 via Frontend Transport; Tue, 13 Apr 2021 08:41:23 +0000
-Received: from [10.26.49.8] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 13 Apr
- 2021 08:41:20 +0000
-Subject: Re: Regression v5.12-rc3: net: stmmac: re-init rx buffers when mac
- resume back
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <708edb92-a5df-ecc4-3126-5ab36707e275@nvidia.com>
- <DB8PR04MB679546EC2493ABC35414CCF9E6639@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <0d0ddc16-dc74-e589-1e59-91121c1ad4e0@nvidia.com>
- <DB8PR04MB6795863753DAD71F1F64F81DE6629@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <8e92b562-fa8f-0a2b-d8da-525ee52fc2d4@nvidia.com>
- <DB8PR04MB67959FC7AF5CFCF1A08D10B2E6629@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <ac9f8a31-536e-ec75-c73f-14a0623c5d56@nvidia.com>
- <DB8PR04MB6795F4333BCA9CE83C288FEEE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <DB8PR04MB6795D4C733DC4938B1D62EBDE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <85f02fbc-6956-2b19-1779-cd51b2e71e3d@nvidia.com>
- <DB8PR04MB6795ECCB5E6E2091A45DADAEE67C9@DB8PR04MB6795.eurprd04.prod.outlook.com>
- <563db756-ebef-6c8b-ce7c-9dcadaecfea1@nvidia.com>
-Message-ID: <e4864046-e52f-63b6-a490-74c3cd8045f4@nvidia.com>
-Date:   Tue, 13 Apr 2021 09:41:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S241072AbhDMJtk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 13 Apr 2021 05:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239994AbhDMJtk (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 13 Apr 2021 05:49:40 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7F9C061574
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Apr 2021 02:49:20 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id r7so3776405wrm.1
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Apr 2021 02:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mwq8zywA+ypXJGwthk+aWxfXnXK//R2FzCHadrl6w7g=;
+        b=RPn10Dkle43eKRGbKP8CCEtMoeX3/n5uj11U8rGkJzvHD1odfR7oGBMV5XGkJLeKPb
+         Zo+oNt4m2664SlNFGxo82FN9Bu22db7GwixB7BL73y3xlMj7QS1DaVFEZtPcHS+IWaJF
+         K1/adg7uet8ndzAelP4fG3upxsd1CAyZSwvIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mwq8zywA+ypXJGwthk+aWxfXnXK//R2FzCHadrl6w7g=;
+        b=gvMW4M0Kh7DsAy2zT0AB2JRv3PicTDVRxSgfqp8Qp7eK+0wdmON9ynonVYrk/x6Zpm
+         1OINxxunXOdo2VG7h6yzafJyBBNdgwLrVJ9+Ve6Km9SikRbv4JKfgra2WxUN+hpcJpS8
+         AIBJ3dgKHlT8/x44qXqloEY55b/wipyYAwkgsFd+aXDhbAC+VvtBeaXXKv92dUOBtyUf
+         6xO4ZMBpktalDJHXRtQw4al8NuSkWjF1l9v3KVIW4aalEtXce1WwPAUKXBBkRod1kbgN
+         t90zDgZ7ZDEkuGA+mx0J9eE5C3hgL1nKu0PqKQxQCNhbd2rg/m3vrIBO1Gs0UtRwPWgz
+         2PKA==
+X-Gm-Message-State: AOAM533kZHznsCCTxjK78IPT7T818c1sPnrPd+38j5I+vK66HktwgqlM
+        FqsSJ/wUY7j1aUnW07iDwbhg3A==
+X-Google-Smtp-Source: ABdhPJxlTrqiBskCjnzrlr2lzj0MoFiML8UzDvveT5cKCCW6RRg7VDInyaCrnkCtopcD1uIeUnQD0g==
+X-Received: by 2002:a5d:6145:: with SMTP id y5mr27967739wrt.27.1618307359464;
+        Tue, 13 Apr 2021 02:49:19 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 64sm1956458wmz.7.2021.04.13.02.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 02:49:19 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, stable@vger.kernel.org,
+        Pekka Paalanen <pekka.paalanen@collabora.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 10/12] drm/tegra: Don't set allow_fb_modifiers explicitly
+Date:   Tue, 13 Apr 2021 11:49:01 +0200
+Message-Id: <20210413094904.3736372-10-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210413094904.3736372-1-daniel.vetter@ffwll.ch>
+References: <20210413094904.3736372-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <563db756-ebef-6c8b-ce7c-9dcadaecfea1@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 192d8826-ae38-4530-b892-08d8fe57eb1d
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3043:
-X-Microsoft-Antispam-PRVS: <BN8PR12MB3043C79BBBFEAF24143925B1D94F9@BN8PR12MB3043.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: oxew9u71Dgh4Ff8RKuSzyEQHNYh5lw/Xn0JYsm0koOXG9oQ1crjJYXcUiPrxEQUg3R16w9jM7gnFQ3WybLE5tY7NHDWb99zZ4T8ZCGhVSOP4zjf5Br0CQfKfKvTrezGyj81Uy3fvlF15XixPLaXjGvB48MjXBu0zya4c2cFkcavr8guXuisbTtMz97FI7+kjyQSMcMfKqfEr9LtT5bOO5l0Vu6nStXdueLp/sLgeE6AE1g0A8X+SxuK6IAGvytTTzqsQdlG7Pk8KUYBmZDRuDAOeEUI6tJkXv0MR4uzgNOLuB50jGFgKQtDpVvave55c1da1UGhexaHa90iQC2MPkmI5m3PhohQJjiI3X1nGZLUda/1rkceF7OcXDqvhL+NvNeYD2oH/e6N6r4zAuooNFqDKnpahmSg9URoe/VgDwFScOxkyOSQa67wzLOykRF9D6jggVHePBr9IcwlP3sExMTu830oZT5J+y2KiQa2EYRpp2cc68I/jlWHporXQCM3wz543BSBgHngnSEoyMi+CcTzOU3ljRtITO7IODQ5W0l+TXBWeufzKZQMRckuaJ+umzfi5x3utZOo0zOFmzUSSzGdZ+SqW9x0zbRKIIXNB0jMQwq50/IAT9mlPsRo1ErnFcKiOtUXKnWlNNufiwnmSpY9rDoBQSNVI9TjHAT+PaNxc2N6YlkSjPQtD+rBCuTuJ
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(376002)(39860400002)(36840700001)(46966006)(186003)(36860700001)(53546011)(426003)(478600001)(110136005)(8676002)(2616005)(82310400003)(16526019)(356005)(7636003)(8936002)(83380400001)(336012)(70586007)(86362001)(316002)(70206006)(82740400003)(31696002)(36906005)(2906002)(54906003)(5660300002)(26005)(36756003)(47076005)(31686004)(16576012)(4326008)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2021 08:41:23.1079
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 192d8826-ae38-4530-b892-08d8fe57eb1d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT003.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3043
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Since
 
-On 01/04/2021 17:28, Jon Hunter wrote:
-> 
-> On 31/03/2021 12:41, Joakim Zhang wrote:
-> 
-> ...
-> 
->>> In answer to your question, resuming from suspend does work on this board
->>> without your change. We have been testing suspend/resume now on this board
->>> since Linux v5.8 and so we have the ability to bisect such regressions. So it is
->>> clear to me that this is the change that caused this, but I am not sure why.
->>
->> Yes, I know this issue is regression caused by my patch. I just want to analyze the potential reasons. Due to the code change only related to the page recycle and reallocate.
->> So I guess if this page operate need IOMMU works when IOMMU is enabled. Could you help check if IOMMU driver resume before STMMAC? Our common desire is to find the root cause, right?
-> 
-> 
-> Yes of course that is the desire here indeed. I had assumed that the
-> suspend/resume order was good because we have never seen any problems,
-> but nonetheless it is always good to check. Using ftrace I enabled
-> tracing of the appropriate suspend/resume functions and this is what
-> I see ...
-> 
-> # tracer: function
-> #
-> # entries-in-buffer/entries-written: 4/4   #P:6
-> #
-> #                                _-----=> irqs-off
-> #                               / _----=> need-resched
-> #                              | / _---=> hardirq/softirq
-> #                              || / _--=> preempt-depth
-> #                              ||| /     delay
-> #           TASK-PID     CPU#  ||||   TIMESTAMP  FUNCTION
-> #              | |         |   ||||      |         |
->          rtcwake-748     [000] ...1   536.700777: stmmac_pltfr_suspend <-platform_pm_suspend
->          rtcwake-748     [000] ...1   536.735532: arm_smmu_pm_suspend <-platform_pm_suspend
->          rtcwake-748     [000] ...1   536.757290: arm_smmu_pm_resume <-platform_pm_resume
->          rtcwake-748     [003] ...1   536.856771: stmmac_pltfr_resume <-platform_pm_resume
-> 
-> 
-> So I don't see any ordering issues that could be causing this. 
+commit 890880ddfdbe256083170866e49c87618b706ac7
+Author: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Date:   Fri Jan 4 09:56:10 2019 +0100
 
+    drm: Auto-set allow_fb_modifiers when given modifiers at plane init
 
-Another thing I have found is that for our platform, if the driver for
-the ethernet PHY (in this case broadcom PHY) is enabled, then it fails
-to resume but if I disable the PHY in the kernel configuration, then
-resume works. I have found that if I move the reinit of the RX buffers
-to before the startup of the phy, then it can resume OK with the PHY
-enabled.
+this is done automatically as part of plane init, if drivers set the
+modifier list correctly. Which is the case here.
 
-Does the following work for you? Does your platform use a specific
-ethernet PHY driver?
+It was slightly inconsistently though, since planes with only linear
+modifier support haven't listed that explicitly. Fix that, and cc:
+stable to allow userspace to rely on this. Again don't backport
+further than where Paul's patch got added.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 208cae344ffa..071d15d86dbe 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -5416,19 +5416,20 @@ int stmmac_resume(struct device *dev)
-                        return ret;
-        }
-+       rtnl_lock();
-+       mutex_lock(&priv->lock);
-+       stmmac_reinit_rx_buffers(priv);
-+       mutex_unlock(&priv->lock);
+Cc: stable@vger.kernel.org # v5.1 +
+Cc: Pekka Paalanen <pekka.paalanen@collabora.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+---
+ drivers/gpu/drm/tegra/dc.c  | 10 ++++++++--
+ drivers/gpu/drm/tegra/drm.c |  2 --
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index c9385cfd0fc1..f9845a50f866 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -959,6 +959,11 @@ static const struct drm_plane_helper_funcs tegra_cursor_plane_helper_funcs = {
+ 	.atomic_disable = tegra_cursor_atomic_disable,
+ };
+ 
++static const uint64_t linear_modifiers[] = {
++	DRM_FORMAT_MOD_LINEAR,
++	DRM_FORMAT_MOD_INVALID
++};
 +
-        if (!device_may_wakeup(priv->device) || !priv->plat->pmt) {
--               rtnl_lock();
-                phylink_start(priv->phylink);
-                /* We may have called phylink_speed_down before */
-                phylink_speed_up(priv->phylink);
--               rtnl_unlock();
-        }
--       rtnl_lock();
-        mutex_lock(&priv->lock);
-        stmmac_reset_queues_param(priv);
--       stmmac_reinit_rx_buffers(priv);
-        stmmac_free_tx_skbufs(priv);
-        stmmac_clear_descriptors(priv);
-
-
-It is still not clear to us why the existing call to
-stmmac_clear_descriptors() is not sufficient to fix your problem.
-
-How often does the issue you see occur?
-
-Thanks
-Jon
-
+ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 						      struct tegra_dc *dc)
+ {
+@@ -987,7 +992,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 
+ 	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
+ 				       &tegra_plane_funcs, formats,
+-				       num_formats, NULL,
++				       num_formats, linear_modifiers,
+ 				       DRM_PLANE_TYPE_CURSOR, NULL);
+ 	if (err < 0) {
+ 		kfree(plane);
+@@ -1106,7 +1111,8 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 
+ 	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
+ 				       &tegra_plane_funcs, formats,
+-				       num_formats, NULL, type, NULL);
++				       num_formats, linear_modifiers,
++				       type, NULL);
+ 	if (err < 0) {
+ 		kfree(plane);
+ 		return ERR_PTR(err);
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 90709c38c993..136fe98f9459 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1125,8 +1125,6 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 	drm->mode_config.max_width = 4096;
+ 	drm->mode_config.max_height = 4096;
+ 
+-	drm->mode_config.allow_fb_modifiers = true;
+-
+ 	drm->mode_config.normalize_zpos = true;
+ 
+ 	drm->mode_config.funcs = &tegra_drm_mode_config_funcs;
 -- 
-nvpublic
+2.31.0
+
