@@ -2,349 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4047CC43470
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Apr 2021 18:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48BBC43461
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Apr 2021 18:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7FE6121E
-	for <linux-tegra@archiver.kernel.org>; Wed, 14 Apr 2021 18:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E7160234
+	for <linux-tegra@archiver.kernel.org>; Wed, 14 Apr 2021 18:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234383AbhDNSMB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 14 Apr 2021 14:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54820 "EHLO
+        id S1352291AbhDNSMZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 14 Apr 2021 14:12:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234198AbhDNSL6 (ORCPT
+        with ESMTP id S1351858AbhDNSMV (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 14 Apr 2021 14:11:58 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E33C061756
-        for <linux-tegra@vger.kernel.org>; Wed, 14 Apr 2021 11:11:35 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id w23so17005936ejb.9
-        for <linux-tegra@vger.kernel.org>; Wed, 14 Apr 2021 11:11:35 -0700 (PDT)
+        Wed, 14 Apr 2021 14:12:21 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC86C06138F
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Apr 2021 11:11:58 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id g5so26115417ejx.0
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Apr 2021 11:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QJ80ky/xAeMUbqqtNjkNOpRw63h5DMH7hNR73rKPRgk=;
-        b=CReSQ546pK3br36paSJmPHY80z4Ba0IlfXpTxbVZ/R8HpgyThdW07QpnDLRLba1lmi
-         Y1JiAD53Pksm33Ya9wL0pXZ//vw/zC/se3gwQ5u9qRL61PfoaBUU/mQLbGNbBkB7hxSw
-         iv4V/3pNXDsdVSI5sCp7OAN3Ta2cOfVjCO8/4R9NhLHr0UlPNh6mlkmRe39smKnFXZa2
-         hl/VWn6oUixfA0I0CDC56wsqf2N/lchNNMfgWYcB2gyaS1ZtdgZ9IRFp8PKui18o8rFU
-         wp00hshqQgT5v0O226RRbPkWlEfsNkU52OFNeId2yc2iWcn/XTK0eM9QG58SRNJDtVPV
-         pJOA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3eBmEmpP5nedaT6CF0cYxLZdFZnV0xaT/BIYm+Gr+8M=;
+        b=MThzkmFRUKDd+ogWiZzUk8lDEkg7NsRlEYWvEnrWnb0Zs6Gc9MF/AZa2ux8C62W8jS
+         aEfPcWANf3ThicXSK/pVqLhuQRR1lQpOw7uP4eFFmx9AqNjIhCaByMoA3ubCPXpvEaZP
+         mWgXJUR9wg45fW+0k8ohM050sXN7p6AM7YL46+FVoKvRnsvyvVN/LHbq61VZAk7nJNOA
+         kvd3Hz2TIh+PJfZ+PIlWMngTSQPle/9+Milvo8gcmAjQfcQf6Qp6tpkc5Ld4PKHRG8Wt
+         xvpbAthJ+t/LG7vpJUeeDZq9r5wuPhpHzF5RSpaL+LvVPBk3xZf2o7c+yE+pstQnJAk2
+         UrFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QJ80ky/xAeMUbqqtNjkNOpRw63h5DMH7hNR73rKPRgk=;
-        b=Sh/VtpQ7hoGQbckpRNV99b7yQMSuB4FqeoPyjFfdzywMQZsGTen6Q2QgeuLOnb0Dk5
-         PEkjwjbs9u5cxn1tYGeS8wVDtKPE+UzCGmSBxdEemNqnj9CAf95TyA6LyEmKwnFTk51N
-         u3k5QRULVEWox94PE3uGknlV2qwWr71VYUyGF54XA99aJhczfQwD+2Cypc8cQ073aiev
-         yZQFc3RC/DPi1x1eecFeeM714bhYdGDz8LEJIQsXeE1Lmb638GHNAGIBFyDPx/5Yy+Xl
-         93WJzAqVr0UJG0DbwIkLT0Qe2ydwB7fO7yaWDx15BynDUEYcHo3rBPK5VArLRLuAqT5R
-         Shvg==
-X-Gm-Message-State: AOAM530zmXHsC78uMTr7pwFgIC3QOK4UZCflEhu0EjZUMo+V7jihOq2W
-        mQDAaKJHg9xNZLfAyt0AnTbRnQ==
-X-Google-Smtp-Source: ABdhPJzcMCCZbKDq1YH1AKKf4Uwep4ri+Gb0BmKrlZP1d0dbTKq2zfJ2dEqvVJSoCV4Fidgc1IvgFQ==
-X-Received: by 2002:a17:906:7942:: with SMTP id l2mr161498ejo.314.1618423894290;
-        Wed, 14 Apr 2021 11:11:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3eBmEmpP5nedaT6CF0cYxLZdFZnV0xaT/BIYm+Gr+8M=;
+        b=O3wPXneRKZ+UjY5EJTsUdVlALB8cmv12G7mk5VhChe0gveOakv1pqAqL/rUO8uPWzp
+         Y8ANY0o+ray5+Pvlf1Fr6enEKYg3J8i2gz6WCjP9uKdYDV2EHrvWWu5fNWyJ9htWP4hH
+         Ih77ht2zagQmkXmHEMIVY7I7u8NcmJ/EA5/OjFxZ8fFhQCrnVoR+arA0sHhC6Igo7nrg
+         xyfrirlULthmoH36MTkSpySWacgjQd5TilvuVRLDlgAzK8XhcAz+ogrw7wV35iHWwb2w
+         h4Kka+B76Vbd+sgfxP500oXv898o79OpGtzo/fO6GzCltLlW3QVLVTxXq9Q0zY/91saD
+         Ulzw==
+X-Gm-Message-State: AOAM5311Exi/zrLtKcRsKjlnuqbMWjbr1iNg3Z+tXkxbU7L0XNRd5MXS
+        Fd2Upw+Smae0AO8J3asjb4bWg8kuTSj84w==
+X-Google-Smtp-Source: ABdhPJygdTpgHp3pXjzAhLc6YhLq0Ki/wwMWnheGqcHudUmeychnb2EIkRDoRhl16hCtZmXVv42O2A==
+X-Received: by 2002:a17:906:b85a:: with SMTP id ga26mr160390ejb.366.1618423917558;
+        Wed, 14 Apr 2021 11:11:57 -0700 (PDT)
 Received: from dell.default ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id v1sm279493eds.17.2021.04.14.11.11.31
+        by smtp.gmail.com with ESMTPSA id v1sm279493eds.17.2021.04.14.11.11.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Apr 2021 11:11:33 -0700 (PDT)
+        Wed, 14 Apr 2021 11:11:57 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, ac100@lists.launchpad.net,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        Allen Pais <apais@linux.microsoft.com>,
-        Anders Blomdell <anders.blomdell@control.lth.se>,
-        Andrea Merello <andrea.merello@gmail.com>,
-        Andres Klode <jak@jak-linux.org>,
-        Andrey Shvetsov <andrey.shvetsov@k2l.de>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Comedi <comedi@comedi.org>, "David A. Schleef" <ds@schleef.org>,
-        dri-devel@lists.freedesktop.org,
-        Fabio Aiuto <fabioaiuto83@gmail.com>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Forest Bond <forest@alittletooquiet.net>,
+Cc:     linux-kernel@vger.kernel.org, Marc Dietrich <marvin24@gmx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herman.Bruyninckx@mech.kuleuven.ac.be,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        Ilya Petrov <ilya.muromec@gmail.com>,
-        Jacob Feder <jacobsfeder@gmail.com>,
-        Jerry chuang <wlanfae@realtek.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "John B. Wyatt IV" <jbwyatt4@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "J.P. Mellor" <jpmellor@rose-hulman.edu>,
-        karthik alapati <mail@karthek.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Team <ac100@lists.lauchpad.net>,
-        Klaas.Gadeyne@mech.kuleuven.ac.be,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Marc Dietrich <marvin24@gmx.de>,
-        Marco Cesati <marcocesati@gmail.com>,
-        Martijn Coenen <maco@android.com>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Michael Straube <straube.linux@gmail.com>,
-        Mori Hess <fmhess@users.sourceforge.net>,
-        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@protonmail.com>,
-        Peter Hurley <peter@hurleysoftware.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
+        Kernel Team <ac100@lists.lauchpad.net>,
         Pierre-Hugues Husson <phhusson@free.fr>,
-        Robert Love <rlove@google.com>,
-        Romain Perier <romain.perier@gmail.com>,
-        Ross Schmidt <ross.schm.dev@gmail.com>,
-        "Spencer E. Olson" <olsonse@umich.edu>, Stanley@BB.SD3,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Sumera Priyadarsini <sylphrenadin@gmail.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@android.com>,
-        Truxton Fulton <trux@truxton.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Wim.Meeussen@mech.kuleuven.ac.be,
-        Zhansaya Bagdauletkyzy <zhansayabagdaulet@gmail.com>
-Subject: [PATCH 00/57] Rid W=1 warnings from Staging
-Date:   Wed, 14 Apr 2021 19:10:32 +0100
-Message-Id: <20210414181129.1628598-1-lee.jones@linaro.org>
+        Ilya Petrov <ilya.muromec@gmail.com>,
+        Andres Klode <jak@jak-linux.org>, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: [PATCH 22/57] staging: nvec: Fix a bunch of kernel-doc issues
+Date:   Wed, 14 Apr 2021 19:10:54 +0100
+Message-Id: <20210414181129.1628598-23-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210414181129.1628598-1-lee.jones@linaro.org>
+References: <20210414181129.1628598-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This set is part of a larger effort attempting to clean-up W=1
-kernel builds, which are currently overwhelmingly riddled with
-niggly little warnings.
+Fixes the following W=1 kernel build warning(s):
 
-Lee Jones (57):
-  staging: r8192U_core: Remove two unused variables 'ret' and
-    'reset_status'
-  staging: android: ashmem: Supply description for 'new_range'
-  staging: comedi_8254: Fix descriptions for 'i8254' and 'iobase'
-  staging: r8192U_core: Do not use kernel-doc formatting for !kernel-doc
-    headers
-  staging: r819xU_phy: Remove some local variables from the stack
-  staging: r819xU_cmdpkt: Remove functionless method
-    'cmpk_handle_query_config_rx'
-  staging: wlan-ng: cfg80211: Move large struct onto the heap
-  staging: rtw_ioctl_set: Move 'channel_table' to the only place it's
-    used
-  staging: rtl8188eu: core: rtw_ieee80211: Fix incorrectly documented
-    function
-  staging: rtl8723bs: core: rtw_mlme: Remove a bunch of unused variables
-  staging: rtl8723bs: core: rtw_mlme_ext: Deal with a bunch of unused
-    variables
-  staging: rtl8712: rtl871x_mp_ioctl: Remove a bunch of unused tables
-  staging: rtl8723bs: core: rtw_recv: Mark debug variable as
-    __maybe_unused
-  staging: rtl8188eu: core: rtw_security: Fix some formatting and
-    misdocumentation
-  staging: rtl8723bs: core: rtw_security: Demote non-conformant
-    kernel-doc header
-  staging: rtl8723bs: core: rtw_sta_mgt: Remove unused variable 'psta'
-  staging: rtl8723bs: core: rtw_sta_mgt: Return error value directly
-  staging: octeon: ethernet-tx: Fix formatting issue in function header
-  staging: rtl8723bs: core: rtw_wlan_util: Remove unused variable
-    'start_seq'
-  staging: rtl8712: rtl871x_mp_ioctl: Move a large data struct onto the
-    heap
-  staging: iio: frequency: ad9834: Provide missing description for
-    'devid'
-  staging: nvec: Fix a bunch of kernel-doc issues
-  staging: ks7010: ks_hostif: Remove a bunch of unused variables
-  staging: fwserial: Demote a whole host of kernel-doc abuses
-  staging: sm750fb: sm750_accel: Provide description for 'accel' and fix
-    function naming
-  staging: most: net: Fix some kernel-doc formatting issues
-  staging: vt6655: upc: Suppress set but not used warning in macro
-  staging: rtl8192u: ieee80211_softmac: Move a large data struct onto
-    the heap
-  staging: most: dim2: Provide missing descriptions and fix doc-rot
-  staging: rtl8723bs: core: rtw_ieee80211: Remove seemingly pointless
-    copy
-  staging: rtl8723bs: core: rtw_mlme: 'retry' is only used if REJOIN is
-    set
-  staging: rtl8723bs: core: rtw_mlme_ext: 'evt_seq' is only used if
-    CHECK_EVENT_SEQ is set
-  staging: most: i2c: Fix a little doc-rot
-  staging: most: dim2: hal: Fix one kernel-doc header and demote two
-    non-conforming ones
-  staging: most: dim2: hal: Demote non-conformant kernel-doc headers
-  staging: axis-fifo: axis-fifo: Fix some formatting issues
-  staging: rtl8188eu: os_dep: ioctl_linux: Move 2 large data buffers
-    into the heap
-  staging: fbtft: fb_ili9320: Remove unused variable 'ret'
-  staging: rtl8723bs: core: rtw_ieee80211: Fix incorrectly named
-    function
-  staging: rtl8723bs: hal: odm_NoiseMonitor: Remove unused variable and
-    dead code
-  staging: rtl8188eu: os_dep: mon: Demote non-conforming kernel-doc
-    headers
-  staging: rtl8188eu: os_dep: rtw_android: Demote kernel-doc abuse
-  staging: rtl8723bs: hal: rtl8723b_hal_init: Remove unused variable and
-    dead code
-  staging: rtl8723bs: hal: rtl8723b_phycfg: Fix a bunch of misnamed
-    functions
-  staging: rtl8723bs: hal: sdio_halinit: 'start' is only used if debug
-    is enabled
-  staging: rtl8723bs: hal: sdio_ops: Mark used 'err' as __maybe_unused
-    and remove another
-  staging: rtl8723bs: os_dep: ioctl_cfg80211: 'ack' is used when debug
-    is enabled
-  staging: comedi: drivers: jr3_pci: Remove set but unused variable
-    'min_full_scale'
-  staging: comedi: drivers: ni_tio: Fix slightly broken kernel-doc and
-    demote others
-  staging: comedi: drivers: ni_routes: Demote non-conforming kernel-doc
-    headers
-  staging: axis-fifo: axis-fifo: Fix function naming in the
-    documentation
-  staging: rtl8723bs: hal: odm_NoiseMonitor: Remove unused variable
-    'func_start'
-  staging: rtl8723bs: core: rtw_mlme_ext: Move very large data buffer
-    onto the heap
-  staging: rtl8723bs: hal: rtl8723b_hal_init: Mark a bunch of debug
-    variables as __maybe_unused
-  staging: comedi: drivers: ni_mio_common: Move 'range_ni_E_ao_ext' to
-    where it is used
-  staging: comedi: drivers: comedi_isadma: Fix misspelling of
-    'dma_chan1'
-  staging: rtl8723bs: hal: sdio_halinit: Remove unused variable 'ret'
+ drivers/staging/nvec/nvec.c:109: warning: Function parameter or member 'events' not described in 'nvec_register_notifier'
+ drivers/staging/nvec/nvec.c:136: warning: Function parameter or member 'nb' not described in 'nvec_status_notifier'
+ drivers/staging/nvec/nvec.c:136: warning: Function parameter or member 'event_type' not described in 'nvec_status_notifier'
+ drivers/staging/nvec/nvec.c:136: warning: Function parameter or member 'data' not described in 'nvec_status_notifier'
+ drivers/staging/nvec/nvec.c:358: warning: Function parameter or member 'ev' not described in 'nvec_event_mask'
+ drivers/staging/nvec/nvec.c:358: warning: Function parameter or member 'mask' not described in 'nvec_event_mask'
 
- drivers/staging/android/ashmem.c              |   1 +
- drivers/staging/axis-fifo/axis-fifo.c         |  18 +--
- drivers/staging/comedi/drivers/comedi_8254.c  |   3 +-
- .../staging/comedi/drivers/comedi_isadma.c    |   2 +-
- drivers/staging/comedi/drivers/jr3_pci.c      |   3 +-
- .../staging/comedi/drivers/ni_mio_common.c    |   9 --
- drivers/staging/comedi/drivers/ni_routes.c    |   6 +-
- drivers/staging/comedi/drivers/ni_stc.h       |   9 +-
- drivers/staging/comedi/drivers/ni_tio.c       |  12 +-
- drivers/staging/fbtft/fb_ili9320.c            |   3 +-
- drivers/staging/fwserial/fwserial.c           |  46 +++----
- drivers/staging/iio/frequency/ad9834.c        |   5 +-
- drivers/staging/ks7010/ks_hostif.c            |  14 +-
- drivers/staging/most/dim2/dim2.c              |  23 ++--
- drivers/staging/most/dim2/hal.c               |  10 +-
- drivers/staging/most/i2c/i2c.c                |  12 +-
- drivers/staging/most/net/net.c                |   6 +-
- drivers/staging/nvec/nvec.c                   |   7 +-
- drivers/staging/octeon/ethernet-tx.c          |   1 -
- drivers/staging/qlge/qlge_main.c              |   4 +-
- .../staging/rtl8188eu/core/rtw_ieee80211.c    |   2 +-
- .../staging/rtl8188eu/core/rtw_ioctl_set.c    |   8 ++
- drivers/staging/rtl8188eu/core/rtw_security.c |  10 +-
- .../staging/rtl8188eu/include/rtw_mlme_ext.h  |   8 --
- .../staging/rtl8188eu/os_dep/ioctl_linux.c    |  12 +-
- drivers/staging/rtl8188eu/os_dep/mon.c        |   6 +-
- .../staging/rtl8188eu/os_dep/rtw_android.c    |   2 +-
- .../rtl8192u/ieee80211/ieee80211_softmac.c    |   9 +-
- drivers/staging/rtl8192u/r8192U_core.c        |  11 +-
- drivers/staging/rtl8192u/r819xU_cmdpkt.c      |  41 ------
- drivers/staging/rtl8192u/r819xU_phy.c         |  48 +++++--
- drivers/staging/rtl8712/rtl871x_mp_ioctl.c    |  29 ++--
- drivers/staging/rtl8712/rtl871x_mp_ioctl.h    | 127 ------------------
- .../staging/rtl8723bs/core/rtw_ieee80211.c    |   6 +-
- drivers/staging/rtl8723bs/core/rtw_mlme.c     |  17 +--
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  19 +--
- drivers/staging/rtl8723bs/core/rtw_recv.c     |   2 +-
- drivers/staging/rtl8723bs/core/rtw_security.c |   2 +-
- drivers/staging/rtl8723bs/core/rtw_sta_mgt.c  |  10 +-
- .../staging/rtl8723bs/core/rtw_wlan_util.c    |   4 +-
- .../staging/rtl8723bs/hal/odm_NoiseMonitor.c  |   9 +-
- .../staging/rtl8723bs/hal/rtl8723b_hal_init.c |  21 +--
- .../staging/rtl8723bs/hal/rtl8723b_phycfg.c   |  10 +-
- drivers/staging/rtl8723bs/hal/sdio_halinit.c  |   8 +-
- drivers/staging/rtl8723bs/hal/sdio_ops.c      |   7 +-
- .../staging/rtl8723bs/os_dep/ioctl_cfg80211.c |   2 +-
- drivers/staging/sm750fb/sm750_accel.c         |   4 +-
- drivers/staging/vt6655/upc.h                  |   2 +-
- drivers/staging/wlan-ng/cfg80211.c            |  30 +++--
- 49 files changed, 256 insertions(+), 404 deletions(-)
-
-Cc: ac100@lists.launchpad.net
-Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: Allen Pais <apais@linux.microsoft.com>
-Cc: Anders Blomdell <anders.blomdell@control.lth.se>
-Cc: Andrea Merello <andrea.merello@gmail.com>
-Cc: Andres Klode <jak@jak-linux.org>
-Cc: Andrey Shvetsov <andrey.shvetsov@k2l.de>
-Cc: "Arve Hjønnevåg" <arve@android.com>
-Cc: Christian Brauner <christian@brauner.io>
-Cc: Comedi <comedi@comedi.org>
-Cc: "David A. Schleef" <ds@schleef.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: Fabio Aiuto <fabioaiuto83@gmail.com>
-Cc: Florian Schilhabel <florian.c.schilhabel@googlemail.com>
-Cc: Forest Bond <forest@alittletooquiet.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Herman.Bruyninckx@mech.kuleuven.ac.be
-Cc: H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Hridya Valsaraju <hridya@google.com>
-Cc: Ian Abbott <abbotti@mev.co.uk>
-Cc: Ilya Petrov <ilya.muromec@gmail.com>
-Cc: Jacob Feder <jacobsfeder@gmail.com>
-Cc: Jerry chuang <wlanfae@realtek.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: "J.P. Mellor" <jpmellor@rose-hulman.edu>
-Cc: karthik alapati <mail@karthek.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Kernel Team <ac100@lists.lauchpad.net>
-Cc: Klaas.Gadeyne@mech.kuleuven.ac.be
-Cc: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: linux-fbdev@vger.kernel.org
-Cc: linux-iio@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org
-Cc: linux-staging@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org
 Cc: Marc Dietrich <marvin24@gmx.de>
-Cc: Marco Cesati <marcocesati@gmail.com>
-Cc: Martijn Coenen <maco@android.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>
-Cc: Michael Straube <straube.linux@gmail.com>
-Cc: Mori Hess <fmhess@users.sourceforge.net>
-Cc: "Nícolas F. R. A. Prado" <nfraprado@protonmail.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Kernel Team <ac100@lists.lauchpad.net>
 Cc: Pierre-Hugues Husson <phhusson@free.fr>
-Cc: Robert Love <rlove@google.com>
-Cc: Romain Perier <romain.perier@gmail.com>
-Cc: Ross Schmidt <ross.schm.dev@gmail.com>
-Cc: "Spencer E. Olson" <olsonse@umich.edu>
-Cc: Stanley@BB.SD3
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Sumera Priyadarsini <sylphrenadin@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Todd Kjos <tkjos@android.com>
-Cc: Truxton Fulton <trux@truxton.com>
-Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
-Cc: Wim.Meeussen@mech.kuleuven.ac.be
-Cc: WLAN FAE <wlanfae@realtek.com>
-Cc: Zhansaya Bagdauletkyzy <zhansayabagdaulet@gmail.com>
+Cc: Ilya Petrov <ilya.muromec@gmail.com>
+Cc: Andres Klode <jak@jak-linux.org>
+Cc: ac100@lists.launchpad.net
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-staging@lists.linux.dev
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/staging/nvec/nvec.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index a80996b2f5ce4..990d15c31a13d 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -99,6 +99,7 @@ static const struct mfd_cell nvec_devices[] = {
+  * nvec_register_notifier - Register a notifier with nvec
+  * @nvec: A &struct nvec_chip
+  * @nb: The notifier block to register
++ * @events: Unused
+  *
+  * Registers a notifier with @nvec. The notifier will be added to an atomic
+  * notifier chain that is called for all received messages except those that
+@@ -125,7 +126,7 @@ int nvec_unregister_notifier(struct nvec_chip *nvec, struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(nvec_unregister_notifier);
+ 
+-/**
++/*
+  * nvec_status_notifier - The final notifier
+  *
+  * Prints a message about control events not handled in the notifier
+@@ -343,8 +344,8 @@ static void nvec_toggle_global_events(struct nvec_chip *nvec, bool state)
+ 
+ /**
+  * nvec_event_mask - fill the command string with event bitfield
+- * ev: points to event command string
+- * mask: bit to insert into the event mask
++ * @ev: points to event command string
++ * @mask: bit to insert into the event mask
+  *
+  * Configure event command expects a 32 bit bitfield which describes
+  * which events to enable. The bitfield has the following structure
 -- 
 2.27.0
 
