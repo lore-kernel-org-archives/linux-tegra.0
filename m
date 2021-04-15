@@ -2,153 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7747EC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 11:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AEAC433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 15:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48F5D6124B
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 11:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C750611AB
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 15:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232279AbhDOLeP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Apr 2021 07:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbhDOLeO (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Apr 2021 07:34:14 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D24C061574
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Apr 2021 04:33:51 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id k128so12282143wmk.4
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Apr 2021 04:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=13k+njGV2uKvtcoZVwTEnL8TyFMpsUTPjBtwvKMVIn0=;
-        b=FA7sBqmNPXF8L1IJzMBiC1C+03+99yGRO7xmwzxSHEiQO8dF+RyiqtUv473TRBl9DJ
-         ofy6vPj3WsLHCTJkVa/VA3GEbj+z04eJQju/RlhR1oPO7IJ+o65MGBUxf1pKuQFxfVJw
-         KoqsWiC/bAs3ilsn2Nalfni+TyiMXOfAvpvqc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=13k+njGV2uKvtcoZVwTEnL8TyFMpsUTPjBtwvKMVIn0=;
-        b=Kn4XLESfU6xV3VlLAkt9omIaiwIxsHe2s3YhwyoYd26886Zdguyfhxn+69fabyqBFG
-         fCZPZBbrYTDXTc/pTBb63YONDtNqrkrRSwCu2kkT3VFTwKs1JyEJEb9fSxIn5k+Xcct8
-         DlEiq751tL3rL3xVRfn5Tcke7DsnNPB/MyQeNulfKCHIrh9bzV7fGFOyyBnyE/L1VsOk
-         HUV4OtNkYl7DLTCcDBOKgej55NyXiMG8UjLZ9+e8+Dx1BWO7p91tzUuSzoKgxOSCx32w
-         D8i2zojjCwbqfriTotLA6jNO3InACleSnUSWRLAtN1ssdPtOHjrTlJFLxq7xDLSVSqP6
-         mbDg==
-X-Gm-Message-State: AOAM532gWFazx/AR4OJKQC2E+ly/Iwv0sA92ZaIbDxxG40DmpuMdcAc4
-        STPsSn2RjhjX1XslQvjumgMML23e7lwh7g==
-X-Google-Smtp-Source: ABdhPJwTws/OP8YfTa+zhDBcdtMyEgxr2rTeY9T3TS8womfbkDSVJm6xM69NBHRm4ORd7JehhSwcVQ==
-X-Received: by 2002:a1c:2985:: with SMTP id p127mr2679848wmp.165.1618486429812;
-        Thu, 15 Apr 2021 04:33:49 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id a22sm2431649wrc.59.2021.04.15.04.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Apr 2021 04:33:48 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 13:33:46 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
+        id S233533AbhDOPaJ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Apr 2021 11:30:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233606AbhDOPaH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 15 Apr 2021 11:30:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 838E86101C;
+        Thu, 15 Apr 2021 15:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618500584;
+        bh=z1SA4q9mQ38Sp1cmrlxiVoVqhe/PV0miNVm8NDA+J3E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GV94Cr4V/6tnbMioEh0KYbJYGrn2GmgMcSDKJU8nt+u2Z5i64Y2be8M1hn1/gQshs
+         opxNYcxc8Q5ZxrOtZph5V5f4a+q481wjKNFj4ej7Cw+vqe77CUEdi3+tBkmmagaUIL
+         QouYyx/dTzaExzlKroMRY/BElBZWM0BULVkKDbxtIWvy36qBqUlQdEnEQfav5smcDx
+         UNlJ5rDJP1wX8LtunPp6qzTTmFCvZQS5TC8DqipSlJ8rV8NXjxKGmODK1bUv13yI6h
+         BF5yBsIwT3hdyJd7E7oqFZ5XFpC37H0vWSPEbHD6ww5XPN4yo4Yz50QjGEyxF3Pnfz
+         FZL26DKz5CRTQ==
+From:   Nathan Chancellor <nathan@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        stable@vger.kernel.org,
-        Pekka Paalanen <pekka.paalanen@collabora.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 10/12] drm/tegra: Don't set allow_fb_modifiers explicitly
-Message-ID: <YHgkmgsvBmMXiHTr@phenom.ffwll.local>
-References: <20210413094904.3736372-1-daniel.vetter@ffwll.ch>
- <20210413094904.3736372-10-daniel.vetter@ffwll.ch>
- <YHWCgpq5fVpSGdSN@orome.fritz.box>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH] drm/tegra: Fix shift overflow in tegra_shared_plane_atomic_update
+Date:   Thu, 15 Apr 2021 08:29:14 -0700
+Message-Id: <20210415152913.1363964-1-nathan@kernel.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHWCgpq5fVpSGdSN@orome.fritz.box>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 01:37:38PM +0200, Thierry Reding wrote:
-> On Tue, Apr 13, 2021 at 11:49:01AM +0200, Daniel Vetter wrote:
-> > Since
-> > 
-> > commit 890880ddfdbe256083170866e49c87618b706ac7
-> > Author: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > Date:   Fri Jan 4 09:56:10 2019 +0100
-> > 
-> >     drm: Auto-set allow_fb_modifiers when given modifiers at plane init
-> > 
-> > this is done automatically as part of plane init, if drivers set the
-> > modifier list correctly. Which is the case here.
-> > 
-> > It was slightly inconsistently though, since planes with only linear
-> > modifier support haven't listed that explicitly. Fix that, and cc:
-> > stable to allow userspace to rely on this. Again don't backport
-> > further than where Paul's patch got added.
-> > 
-> > Cc: stable@vger.kernel.org # v5.1 +
-> > Cc: Pekka Paalanen <pekka.paalanen@collabora.com>
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: linux-tegra@vger.kernel.org
-> > ---
-> >  drivers/gpu/drm/tegra/dc.c  | 10 ++++++++--
-> >  drivers/gpu/drm/tegra/drm.c |  2 --
-> >  2 files changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index c9385cfd0fc1..f9845a50f866 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -959,6 +959,11 @@ static const struct drm_plane_helper_funcs tegra_cursor_plane_helper_funcs = {
-> >  	.atomic_disable = tegra_cursor_atomic_disable,
-> >  };
-> >  
-> > +static const uint64_t linear_modifiers[] = {
-> > +	DRM_FORMAT_MOD_LINEAR,
-> > +	DRM_FORMAT_MOD_INVALID
-> > +};
-> > +
-> >  static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
-> >  						      struct tegra_dc *dc)
-> >  {
-> > @@ -987,7 +992,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
-> >  
-> >  	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
-> >  				       &tegra_plane_funcs, formats,
-> > -				       num_formats, NULL,
-> > +				       num_formats, linear_modifiers,
-> >  				       DRM_PLANE_TYPE_CURSOR, NULL);
-> >  	if (err < 0) {
-> >  		kfree(plane);
-> > @@ -1106,7 +1111,8 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
-> >  
-> >  	err = drm_universal_plane_init(drm, &plane->base, possible_crtcs,
-> >  				       &tegra_plane_funcs, formats,
-> > -				       num_formats, NULL, type, NULL);
-> > +				       num_formats, linear_modifiers,
-> > +				       type, NULL);
-> 
-> I think we can do better than linear_modifiers for overlay planes, but
-> given that this doesn't change existing behaviour, I'll do that in a
-> separate patch.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Clang warns:
 
-Applied to drm-misc-next, thanks for taking a look.
--Daniel
+drivers/gpu/drm/tegra/hub.c:513:11: warning: shift count >= width of
+type [-Wshift-count-overflow]
+                base |= BIT(39);
+                        ^~~~~~~
+
+BIT is unsigned long, which is 32-bit on ARCH=arm, hence the overflow
+warning. Switch to BIT_ULL, which is 64-bit and will not overflow.
+
+Fixes: 7b6f846785f4 ("drm/tegra: Support sector layout on Tegra194")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1351
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/gpu/drm/tegra/hub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index 79bff8b48271..bfae8a02f55b 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -510,7 +510,7 @@ static void tegra_shared_plane_atomic_update(struct drm_plane *plane,
+ 	 * dGPU sector layout.
+ 	 */
+ 	if (tegra_plane_state->tiling.sector_layout == TEGRA_BO_SECTOR_LAYOUT_GPU)
+-		base |= BIT(39);
++		base |= BIT_ULL(39);
+ #endif
+ 
+ 	tegra_plane_writel(p, tegra_plane_state->format, DC_WIN_COLOR_DEPTH);
+
+base-commit: 0265531f0897f890da3f9c2958707af099c7d974
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.31.1.272.g89b43f80a5
+
