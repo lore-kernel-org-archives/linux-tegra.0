@@ -2,132 +2,216 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA089C433ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 15:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850ECC433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 18:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D48C61184
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 15:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D23611BF
+	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 18:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233330AbhDOPs7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Apr 2021 11:48:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56074 "EHLO
+        id S233395AbhDOSAv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 15 Apr 2021 14:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbhDOPs7 (ORCPT
+        with ESMTP id S232759AbhDOSAu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Apr 2021 11:48:59 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B46CFC061574;
-        Thu, 15 Apr 2021 08:48:34 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id g5so30879831ejx.0;
-        Thu, 15 Apr 2021 08:48:34 -0700 (PDT)
+        Thu, 15 Apr 2021 14:00:50 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69067C061574
+        for <linux-tegra@vger.kernel.org>; Thu, 15 Apr 2021 11:00:27 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id e7so29088773edu.10
+        for <linux-tegra@vger.kernel.org>; Thu, 15 Apr 2021 11:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ayGURnHq7wmSKaDUrrltJ9EF5TW5D/i9Qzk+7xK9jcE=;
-        b=bTVqVIniyk/vSt6glC8hYD/mGom31RseQA5JKeyjSmx5myZ2gtxEJ+m0q2Pe6vgtrF
-         Plrm81Posl68o62eVaPU8gBcTvIRZ1K8pbP7HEmLT98g4mgVbYVVcfgIMtCSqRsn7r8o
-         TcJPFU9loC/HUHjAoncJKvmR5TlFCsLfJUlNCld51xw42X3J3NN8A0yWWWf5ivLMPy0r
-         U5/u8s53U/Qjw/bjIE4/lCOwgnkKoEn2IH8pJsQDen7bQsH2Z+SoMMEX2Y3gO+d9R0IM
-         CkHF7eVdGW10hUfYW+aNtHRWvySGKfdsJTQhp+6yOLpSMOpkKTPPp6R5CaGpALKxw65n
-         tdlg==
+        bh=UTwhTiq7D0EG1VtR8EmuKyo1zpQH4L9rGLfT4UoA/Vs=;
+        b=hXSYHomiRUxQ3S28NgYhbgU8mbXk0YwOXO06AKNBNIGP5fkmx4p7gCqkReqFhas9Ab
+         SoAWEgYGtAK+vlDS6RcMCBe6KuueqePAHSsd1vaJwHyKCM1iFFvP4BFSBLDzYVUoRukV
+         GuCYwqINA2SQHBZlhrINh8WmfgXG1sT61hc2akI67wOXMsplw586jvl2iH1uZ1zmpKbP
+         gYUTa6qdjoRQV8kc+u9cOGbD2uoj5qcZneBOpiVDYBzRQe50UwYFMaCMo4YHvHKIFl9m
+         UNJWUVSW6+bnS3ein6G+qV55S8R0UjoVV0T4L0Y9GzBxiGBFIWVvmFo3K+6JIKraSEQA
+         llUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ayGURnHq7wmSKaDUrrltJ9EF5TW5D/i9Qzk+7xK9jcE=;
-        b=UA5tb3kIWj/m8A7gFl+zqc8jZFwYWdF7y05H67gy0mIP7MIGkg8wlFiUajE5SLqhAG
-         O9H1P9CI3SIXgKDQ8F67CrFcdW0raqzPt4Nb1xsjcjtP91Mcg83xmVDF+e4xp7Udjsbe
-         w05LkGxbrEmLomeDKRtRee9DSDvuXi9n/AY6MEfx5jhFO56NPa6tAZj7J6Wjhg/vjl9o
-         nIgCQdl4N9JtdmMKWYGPX0t4pkSm9soFNMoEJMxg4ED5XvjPdjjh19LlSdbLZ0FomJfi
-         1omKSVX4IrjraZfmQyoX5cQr6UZZBvMEilQe21xW4F7JTCf4laD1xnVnEND+4hRGNWSD
-         MGsA==
-X-Gm-Message-State: AOAM530jVmfU1f76oFY8HYUaVNrsxbjYicwjUTlCvg99LexPAONacYZS
-        0Q/u3m9Zy73Unkab+hrADa4=
-X-Google-Smtp-Source: ABdhPJx4xzQ1G5vhPZnh9xgVnUGgcnXe8Bvj4eboHAX0kHDGCJy+E++Wx5gf0Uj4FLxS2/rB+DCmpw==
-X-Received: by 2002:a17:906:c04a:: with SMTP id bm10mr4061202ejb.521.1618501713494;
-        Thu, 15 Apr 2021 08:48:33 -0700 (PDT)
+        bh=UTwhTiq7D0EG1VtR8EmuKyo1zpQH4L9rGLfT4UoA/Vs=;
+        b=H9vNA8JfdCIdoxZ048UlPWPwFhOsSqvFStBT9GWrn88kgq85WLD81tF1VlPdEzLeyZ
+         FVROCpneyfSrzwU9eBg4eM0AIFhyrgJ8sU1cy6IUx3YC+gHHyPnPo0QryogYbWboVgFV
+         X3t8ckqC2iNXXmoZmUVchONTPCM1GecvQ3ztNyFwc/Jx4S3qOnGrCXnZ4rR+/Q2bExD+
+         Q+lGUIhCFSuFGxjr4XfSj87+6hDqcXSTmpbjcsHosoNGr1qnzDnsixe9gLxxIyOx28pw
+         jHds5Ig6SEsb6rORw9LyvuNoBnjUo0j9wFesljUnl8Bcr3OT6jNBjjZq7URKFl3zwDmu
+         flYw==
+X-Gm-Message-State: AOAM531SDSjPsYVAJzid7HtuXBw7w7Zv9Gsoju/kC/ee8jYZ5nb11ajs
+        vHMYuJM7MheiP3DzD+/q6Fw=
+X-Google-Smtp-Source: ABdhPJz673ntS+hSr9aQOFmCMq8/29t/B68TqiW7t2pPJLIct/i8Idj5e/UCzdh0ip0QlAr+PelYNw==
+X-Received: by 2002:a05:6402:518d:: with SMTP id q13mr5702302edd.313.1618509626158;
+        Thu, 15 Apr 2021 11:00:26 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id gn19sm2136640ejc.68.2021.04.15.08.48.31
+        by smtp.gmail.com with ESMTPSA id v19sm1742352ejy.78.2021.04.15.11.00.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Apr 2021 08:48:32 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 17:49:14 +0200
+        Thu, 15 Apr 2021 11:00:24 -0700 (PDT)
+Date:   Thu, 15 Apr 2021 20:01:07 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] drm/tegra: Fix shift overflow in
- tegra_shared_plane_atomic_update
-Message-ID: <YHhgekKvL5te6K6n@orome.fritz.box>
-References: <20210415152913.1363964-1-nathan@kernel.org>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 01/14] ASoC: simple-card-utils: enable flexible
+ CPU/Codec/Platform
+Message-ID: <YHh/Y5fXMxm91Ha3@orome.fritz.box>
+References: <87wntmod33.wl-kuninori.morimoto.gx@renesas.com>
+ <87v996od2c.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Ue6mK/lIz3sBypv6"
+        protocol="application/pgp-signature"; boundary="fWIQhJrNn41Dr28Z"
 Content-Disposition: inline
-In-Reply-To: <20210415152913.1363964-1-nathan@kernel.org>
+In-Reply-To: <87v996od2c.wl-kuninori.morimoto.gx@renesas.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---Ue6mK/lIz3sBypv6
+--fWIQhJrNn41Dr28Z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 15, 2021 at 08:29:14AM -0700, Nathan Chancellor wrote:
-> Clang warns:
+On Thu, Apr 01, 2021 at 01:15:23PM +0900, Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 >=20
-> drivers/gpu/drm/tegra/hub.c:513:11: warning: shift count >=3D width of
-> type [-Wshift-count-overflow]
->                 base |=3D BIT(39);
->                         ^~~~~~~
+> Current simple-card / audio-graph are assuming fixed
+> single-CPU/Codec/Platform.
+> This patch prepares multi-CPU/Codec/Platform support.
 >=20
-> BIT is unsigned long, which is 32-bit on ARCH=3Darm, hence the overflow
-> warning. Switch to BIT_ULL, which is 64-bit and will not overflow.
+> Note is that it is not yet full-multi-support.
 >=20
-> Fixes: 7b6f846785f4 ("drm/tegra: Support sector layout on Tegra194")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1351
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > ---
->  drivers/gpu/drm/tegra/hub.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/sound/simple_card_utils.h     |  8 +++
+>  sound/soc/generic/audio-graph-card.c  | 22 ++++++++
+>  sound/soc/generic/simple-card-utils.c | 72 +++++++++++++++++++--------
+>  sound/soc/generic/simple-card.c       | 30 +++++++++++
+>  4 files changed, 110 insertions(+), 22 deletions(-)
 
-This code never runs on 32-bit platforms, so another option would be to
-not try and build this on 32-bit configurations either. But none of the
-rest of the code is built conditionally, so fixing this is preferable.
+Hi,
 
-Applied, thanks.
+This seems to break display support on a Jetson TX2 board for me, though
+I admittedly don't quite understand how it would be related to display
+at all. Reverting basically the whole series (because subsequent patches
+depend on this on) on top of next-20210415, I get working display again.
+
+There's this in the log, which seems to be related:
+
+[   14.671377] tegra-audio-graph-card sound: too many links
+[   14.799645] tegra-audio-graph-card sound: too many links
+[   14.845375] tegra-audio-graph-card sound: too many links
+[   14.853635] tegra-audio-graph-card sound: too many links
+[   14.860934] tegra-audio-graph-card sound: too many links
+[   14.868781] tegra-audio-graph-card sound: too many links
+[   14.875659] tegra-audio-graph-card sound: too many links
+[   14.907874] tegra-audio-graph-card sound: too many links
+[   14.917351] Unable to handle kernel NULL pointer dereference at virtual =
+address 0000000000000010
+[   14.926255] Mem abort info:
+[   14.929096]   ESR =3D 0x96000047
+[   14.932208]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+[   14.937559]   SET =3D 0, FnV =3D 0
+[   14.940642]   EA =3D 0, S1PTW =3D 0
+[   14.943867] Data abort info:
+[   14.946753]   ISV =3D 0, ISS =3D 0x00000047
+[   14.950611]   CM =3D 0, WnR =3D 1
+[   14.953614] user pgtable: 64k pages, 48-bit VAs, pgdp=3D0000000100b94400
+[   14.960185] [0000000000000010] pgd=3D0800000102280003, p4d=3D08000001022=
+80003, pud=3D0800000102280003, pmd=3D0800000101050003, pte=3D00000000000000=
+00
+[   14.972774] Internal error: Oops: 96000047 [#1] PREEMPT SMP
+[   14.978362] Modules linked in: drm_kms_helper snd_soc_tegra210_admaif sn=
+d_soc_tegra_pcm snd_soc_tegra210_dmic snd_soc_tegra210_i2s snd_soc_tegra186=
+_dspk cfbfillrect cfbimgblt cfbcopyarea snd_soc_tegra210_ahub snd_soc_tegra=
+_audio_graph_card snd_soc_audio_graph_card snd_soc_simple_card_utils crct10=
+dif_ce at24 tegra_aconnect tegra_bpmp_thermal host1x drm fuse drm_panel_ori=
+entation_quirks ipv6
+[   15.012917] CPU: 2 PID: 69 Comm: kworker/u12:3 Tainted: G S             =
+   5.12.0-rc7-next-20210415 #108
+[   15.022390] Hardware name: NVIDIA Jetson TX2 Developer Kit (DT)
+[   15.028303] Workqueue: events_unbound deferred_probe_work_func
+[   15.034159] pstate: 40000005 (nZcv daif -PAN -UAO -TCO BTYPE=3D--)
+[   15.040162] pc : snd_soc_get_dai_name+0x124/0x150
+[   15.044883] lr : snd_soc_get_dai_name+0xa4/0x150
+[   15.049521] sp : ffff800011fef780
+[   15.052849] x29: ffff800011fef780 x28: ffff00008bc14980
+[   15.058181] x27: 0000000000000000 x26: ffff000081aafc10
+[   15.063511] x25: ffff0001f7091680 x24: ffff800011538798
+[   15.068841] x23: 0000000000000010 x22: ffff800011538778
+[   15.074169] x21: ffff800011fef808 x20: 00000000fffffdf4
+[   15.079486] x19: ffff0000809c7880 x18: 0000000000000030
+[   15.084813] x17: 0000000000000000 x16: 0000000000000000
+[   15.090142] x15: ffffffffffffffff x14: ffffffff00000000
+[   15.095468] x13: ffffffffffffffff x12: 0000000000000020
+[   15.100804] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
+[   15.106135] x9 : 7f7f7f7f7f7f7f7f x8 : feff303f73716e6f
+[   15.111464] x7 : 00000000ffffffff x6 : 0000314000000000
+[   15.116791] x5 : ffff0001f7091d28 x4 : ffff00008c41a010
+[   15.122109] x3 : 0000000000000000 x2 : 0000000000000010
+[   15.127439] x1 : 0000000000000000 x0 : ffff8000094614d8
+[   15.132756] Call trace:
+[   15.135201]  snd_soc_get_dai_name+0x124/0x150
+[   15.139560]  asoc_simple_parse_dai.part.0+0x70/0xd0 [snd_soc_audio_graph=
+_card]
+[   15.146784]  graph_dai_link_of_dpcm+0x100/0x38c [snd_soc_audio_graph_car=
+d]
+[   15.153672]  __graph_for_each_link+0x1dc/0x204 [snd_soc_audio_graph_card]
+[   15.160471]  audio_graph_parse_of+0x148/0x20c [snd_soc_audio_graph_card]
+[   15.167178]  tegra_audio_graph_probe+0x6c/0x8c [snd_soc_tegra_audio_grap=
+h_card]
+[   15.174499]  platform_probe+0x68/0xe0
+[   15.178164]  really_probe+0xe4/0x50c
+[   15.181754]  driver_probe_device+0x64/0xc4
+[   15.185861]  __device_attach_driver+0xb4/0x110
+[   15.190314]  bus_for_each_drv+0x78/0xd0
+[   15.194149]  __device_attach+0xd8/0x180
+[   15.197985]  device_initial_probe+0x14/0x20
+[   15.202168]  bus_probe_device+0x9c/0xa4
+[   15.206003]  deferred_probe_work_func+0x88/0xc0
+[   15.210532]  process_one_work+0x1cc/0x350
+[   15.214542]  worker_thread+0x68/0x3ac
+[   15.218203]  kthread+0x128/0x134
+[   15.221431]  ret_from_fork+0x10/0x34
+[   15.225045] Code: fa531004 54ffff81 f9400c00 f9400000 (f90002e0)
+[   15.231134] ---[ end trace 671a11645631ca2f ]---
+
+Any ideas what could be wrong?
+
+Adding Jon and linux-tegra for visibility.
 
 Thierry
 
---Ue6mK/lIz3sBypv6
+--fWIQhJrNn41Dr28Z
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmB4YHgACgkQ3SOs138+
-s6H1eBAApx8g0dh+NPpyZQCcGFt3Hv+BaE/kZh7PJeSDp6ce2EYECbJZ0K92GclY
-DrQwJx6ukiYTTNkJiq3cul1lpEgfnbTvG4VRH8mXDxAIOUmje2p0OTXr1yg30IUZ
-QqfCS3RLXYXQyLGVlej1/1jhrFM65FQMRxVyHty0bF2j7LQ/C4OIiCjFCMvk+/ML
-8HxLpmvH2R159bVxElAW/8B7eakxkwMD84h9/EjUX6EPKxZqEULQb2eMvNHvRCqm
-dNjJPUGF5N78pbNSV4n4me3oN1TpB3W4Q0RKZXRksJKj0e/e5iw7LuaDh0DnHDCG
-ulD0F7XY7esK4rU/4vBuemcO7u96+2wTTf6UM90UD8w2UTmABLmSBKZXvYUffjYM
-fsdtpE2MfG82B2B3GeFgDefDS53bDOR3HMoh8CHP/0jgdxaDM67sk+hnjMgMSIjW
-6qky2nOl6DuODDbH6zB2sjeddrg6z7TCMhkE3LueD/vJsO1smMzIuaRQ81NwUOAc
-0onVjKmrWsv3NCDPDs3Xd1OtGxLHDqzy+PIco7rM/JuOD0sBSzMYpBXP0zzVf8I9
-s+vm53QAuUAV9K9HICZomkkxrUA4ifZ8mpXsAOkH1C3n0g+R3KPMUgDO0mRZmTL7
-/udq89CLU/trkJU+ZUkrthPkIYarB/XAx37LCILdunTeEZFivZQ=
-=/+7x
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmB4f2AACgkQ3SOs138+
+s6HNYBAAk1J+rT+ulfVjWUFrq1a3tTy8N09IMXCR5l4OWCJQ+7YccS61eBbkH5FW
+vUQobR88OqqmBkFMyRNF/BgisrCSUf+oJjGSJGuTBGruvrzB9wfYr5Aq8Rh3raRm
+3Ko1UvU+zyDeFD8x8U65J6QAhSWBs62DljSrD0+8xkw+FJOBRRLX3lAydSfik2ns
+S0VvmhIUj0KcbmPHKEGYA85rrThCkjIp4CQepd6QXmA/k3UreIf4pWy3VmbEqQfY
+ypteb++/0qbIrxlF5xEdnsgbSgP7Y8pgJVFeJIlqxSij8xYAVYakDaGIrEhbXrrR
+FLIiUTZOXJHgO+IBSmN5ESvCaRew7FISSKoBUd9sg2eSiE2e8/1jegsxkfj98sxI
+UOLSHR1bSVQheZqqctaxmXliA1p/aEB4/3sfVzl3MwN3G2Nq6z5//k4QRJ+nv73g
+9TeLLjEIYeo0wX1rYzFKOKnaeWMKw4r+KS/OhPs6wcwtPuzh5dybXcyzO+5OCZ61
+qBLrH6ZlQ86wurXBtaTK/yV8HFDBMtfsGLMW/A572zhRsdrJr8OJ2Vrg6BEeIWn1
+d0pTQgDA8lk0vLEZVMPA39sW4dpWj0V4sAs5L4mhFqlNz/Mi1Rm2WqLm7YPndjxo
+zHNJ3ufouyoQg3VioIruqlT5WV/IdV8rosllojECcQ+FvtLKcqI=
+=huCF
 -----END PGP SIGNATURE-----
 
---Ue6mK/lIz3sBypv6--
+--fWIQhJrNn41Dr28Z--
