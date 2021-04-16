@@ -2,268 +2,101 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1306C433B4
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F3EC433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5B1C60FE5
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1072E613D5
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236105AbhDPOh6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Apr 2021 10:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45138 "EHLO
+        id S242887AbhDPOiZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Apr 2021 10:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235483AbhDPOh4 (ORCPT
+        with ESMTP id S244243AbhDPOiP (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:37:56 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C46C061760
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 07:37:31 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id l4so42443092ejc.10
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 07:37:31 -0700 (PDT)
+        Fri, 16 Apr 2021 10:38:15 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D36C06175F
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 07:37:49 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id v6so41184249ejo.6
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 07:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8GxxDkNQ8xWrJkT9ns8670579onh7Bw+Uvw6ps3Hfzw=;
-        b=sYu24cfTNp3Sk4VoVSTiZqobXGS3o/nl0S6CM7UMymRzJySbfpZpwBn4yOUMeZDO5R
-         TTPZysgH5JwH4gWicDVlSJXvfnJhRa6vSH8N7qnf2cLql+HX6P9eGY8yH05SiJkTTapB
-         cUsa5jSFYsua/vA/qRY+5BCk+jpyp7Bx/plX0fwM/Yavv33fVDc+ZKkJOUdehjEothHN
-         fYbTCXiVvAYkcPlpsALfnFYCAiNnI8LYEyvQX9anXk0VAaVTV2QN40epzPGkkFu/3j8C
-         E7/HouOKLSTw9DWGjH+xF6aSIabcOm+GI/p5GAe1cQxOpvsMQ853+b+kmUjjRUkihTWz
-         a5EQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=61oKXxvl+24t+oBgcuj4NfG+vBqO/3mKOMoXwskYVGU=;
+        b=X4BXqdfG23NXa84B1Vlw8fBJx1H23dD737fq31AW5KzaRwv5QkDL16paKDhgU1wF8W
+         GOL7iCorZFDYIS0EemuA5lDQa4FHfNL/wr/A1E0/ig2HuqDN7oxizMG/QdnscB4oBsDP
+         5WIgMUlhpojZQs9TK06RF1Nrwj9zyQTJbO8BI0VWmYwcphGIQsks2Bps/emwiy+CH/Wk
+         o67Nj1MfKAlRF3jncWbu3AUTyN36ebEjkndRCtA6nkAWNOFo5+SKbfsQIh4rpmjt6Dow
+         F6NMyDFABd2NhOpbIqURgxg4QjDROUlAYJxrkg3GXO/KZ9XSpWXilAKay+z0Aj7Zc9lU
+         0d9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8GxxDkNQ8xWrJkT9ns8670579onh7Bw+Uvw6ps3Hfzw=;
-        b=Jr+Rs7t2KV5M0qk6pXL8BA+8XW0Dxw6YpzMNeX9WukLZaN9eQ/jixNC64Je+Tpg+MP
-         B78akx+p3kKwJmf8lFgRkQx1ifM24vsmjg97pF0O7qk+WqmZApAireIH6nekMABD+3kR
-         IXCie/vOXbl96QeEvy8toZQxO9pxA0Sf76UANliV0UhuZ8/sVkbOgqoDFQA8CP2gFbI2
-         14pKgoQUXNrNMpOsBAa9GUbJqyyb9RJ2gpx5mbCS6QGiBBNjLEI/YVOvm2+n4VVHez6o
-         GZg1Qk5GCujV+9VCnw4z9FvK/K/LSY8y99321+ls/BsQZUrpA0fyLX7lJNhoiwFltzAW
-         O/DQ==
-X-Gm-Message-State: AOAM533dvVx0EaWkVkjn7TuYNEcWpHRqu6/8XcIKhBysE8Ar7XcsR3+F
-        tE6mFJz8VO2Q6hH45KI8pO6RUQ==
-X-Google-Smtp-Source: ABdhPJz9kIi33dwSJ44VTeiCQHZMhDXP4sc0J7Kiq4t3coxWZ1m1x67Zk7mnLNXlBKhO87ldnTNptw==
-X-Received: by 2002:a17:906:1dd3:: with SMTP id v19mr8633955ejh.4.1618583849970;
-        Fri, 16 Apr 2021 07:37:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=61oKXxvl+24t+oBgcuj4NfG+vBqO/3mKOMoXwskYVGU=;
+        b=VidBst+pJq3pRRQsamDdgYGBp37HB0byYYBeHEDp9f9VP1p+MmeNugSO3mw3B7/8fI
+         4nRTlGBVbz0hHY/lGqHZAQqHNN2UixKjD5kzJVaIsxB6J2ZLvS0W6eZOUKylYvEoTJkC
+         kbqyiNViWBVrcJeHYw2n0mNsLZ6/EmoPZqoDE5u1oznAtTdNFNf3qwnGwD3oeHV2ly+n
+         9EzgeSyU2/8/oojNsmYtCHQE4VKbMJ91LTZr+SdJb99ujKMdA48agTrSqoCO1UgbziOt
+         UrHfaWAQj7WnxD9RyY7o/RF9XFNxUTK25i/lBcChaPSFpoDkrvAuB4p6GukXMWwvEk9Y
+         yk7Q==
+X-Gm-Message-State: AOAM532XLHS6jM4tceWqoE25Cq5RI66pvxk4T9xd5wqLucXHaEJhHEYR
+        nA5ilb8kqc8zNcwN6w2IagtBjpZp/sZQlA==
+X-Google-Smtp-Source: ABdhPJxfs0dO3k/tSuzZR0zH09FpnzlHYRFLRl3kEj7fOswxtkCOFLd/lE/Wsujn8Z016ric4zI1mQ==
+X-Received: by 2002:a17:906:9bd3:: with SMTP id de19mr8318214ejc.329.1618583868141;
+        Fri, 16 Apr 2021 07:37:48 -0700 (PDT)
 Received: from dell.default ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id j10sm1326523ejk.93.2021.04.16.07.37.27
+        by smtp.gmail.com with ESMTPSA id j10sm1326523ejk.93.2021.04.16.07.37.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 07:37:29 -0700 (PDT)
+        Fri, 16 Apr 2021 07:37:47 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Adam Jackson <ajax@redhat.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Akshu Agarwal <akshua@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Ben Widawsky <ben@bwidawsk.net>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.net>,
-        freedreno@lists.freedesktop.org, Huang Rui <ray.huang@amd.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jeremy Kolb <jkolb@brandeis.edu>,
-        Jerome Glisse <glisse@freedesktop.org>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Kuogee Hsieh <khsieh@codeaurora.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linaro-mm-sig@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nirmoy Das <nirmoy.das@amd.com>, nouveau@lists.freedesktop.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Clark <rob.clark@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
+Cc:     linux-kernel@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Vincent Abriou <vincent.abriou@st.com>
-Subject: [PATCH 00/40] [Set 16] Rid W=1 warnings from GPU!
-Date:   Fri, 16 Apr 2021 15:36:45 +0100
-Message-Id: <20210416143725.2769053-1-lee.jones@linaro.org>
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 17/40] gpu: host1x: bus: Remove superfluous param description 'key'
+Date:   Fri, 16 Apr 2021 15:37:02 +0100
+Message-Id: <20210416143725.2769053-18-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210416143725.2769053-1-lee.jones@linaro.org>
+References: <20210416143725.2769053-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This set is part of a larger effort attempting to clean-up W=1
-kernel builds, which are currently overwhelmingly riddled with
-niggly little warnings.
+Fixes the following W=1 kernel build warning(s):
 
-Lee Jones (40):
-  drm/nouveau/nvkm/subdev/bios/init: Demote obvious abuse of kernel-doc
-  drm/nouveau/dispnv50/disp: Remove unused variable 'ret'
-  drm/msm/dp/dp_display: Remove unused variable 'hpd'
-  include: drm: drm_atomic: Make use of 'new_plane_state'
-  drm/nouveau/nvkm/subdev/volt/gk20a: Demote non-conformant kernel-doc
-    headers
-  drm/nouveau/nvkm/engine/gr/gf100: Demote non-conformant kernel-doc
-    header
-  drm/nouveau/nouveau_bo: Remove unused variables 'dev'
-  drm/nouveau/nouveau_display: Remove set but unused variable 'width'
-  drm/nouveau/dispnv04/crtc: Demote non-conforming kernel-doc headers
-  drm/nouveau/dispnv50/disp: Remove unused variable 'ret' from function
-    returning void
-  drm/nouveau/dispnv50/headc57d: Make local function 'headc57d_olut'
-    static
-  drm/nouveau/nv50_display: Remove superfluous prototype for local
-    static functions
-  drm/nouveau/dispnv50/disp: Include header containing our prototypes
-  drm/nouveau/nouveau_ioc32: File headers are not good candidates for
-    kernel-doc
-  drm/nouveau/nouveau_svm: Remove unused variable 'ret' from void
-    function
-  drm/nouveau/nouveau_ioc32: Demote kernel-doc abuse to standard comment
-    block
-  gpu: host1x: bus: Remove superfluous param description 'key'
-  drm/omapdrm/omap_irq: Fix a couple of incorrectly documented functions
-  drm/omapdrm/omap_gem: Properly document omap_gem_dumb_map_offset()
-  drm/xlnx/zynqmp_disp: Fix incorrectly documented enum 'zynqmp_disp_id'
-  drm/xlnx/zynqmp_dp: Fix a little potential doc-rot
-  drm/ttm/ttm_tt: Demote non-conformant kernel-doc header
-  drm/ttm/ttm_bo: Fix incorrectly documented function
-    'ttm_bo_cleanup_refs'
-  drm/scheduler/sched_entity: Fix some function name disparity
-  drm/radeon/radeon_device: Provide function name in kernel-doc header
-  drm/amd/amdgpu/amdgpu_device: Remove unused variable 'r'
-  drm/ttm/ttm_device: Demote kernel-doc abuses
-  drm/panel/panel-raspberrypi-touchscreen: Demote kernel-doc abuse
-  drm/amd/amdgpu/amdgpu_fence: Provide description for 'sched_score'
-  drm/vgem/vgem_drv: Demote kernel-doc abuse
-  drm/amd/amdgpu/amdgpu_gart: Correct a couple of function names in the
-    docs
-  drm/amd/amdgpu/amdgpu_ttm: Fix incorrectly documented function
-    'amdgpu_ttm_copy_mem_to_mem()'
-  drm/amd/amdgpu/amdgpu_ring: Provide description for 'sched_score'
-  drm/exynos/exynos_drm_fimd: Realign function name with its header
-  drm/amd/amdgpu/amdgpu_cs: Repair some function naming disparity
-  drm/exynos/exynos7_drm_decon: Realign function name with its header
-  drm/panel/panel-sitronix-st7701: Demote kernel-doc format abuse
-  drm/exynos/exynos_drm_ipp: Fix some function name disparity issues
-  drm/sti/sti_hdmi: Provide kernel-doc headers with function names
-  drm/mediatek/mtk_disp_ccorr: Demote less than half-populated struct
-    header
+ drivers/gpu/host1x/bus.c:774: warning: Excess function parameter 'key' description in '__host1x_client_register'
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c        |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c    |   5 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c     |   1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c      |   4 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c      |   1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c       |   2 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c       |   4 +-
- drivers/gpu/drm/mediatek/mtk_disp_ccorr.c     |   2 +-
- drivers/gpu/drm/msm/dp/dp_display.c           |   3 -
- drivers/gpu/drm/nouveau/dispnv04/crtc.c       |   4 +-
- drivers/gpu/drm/nouveau/dispnv50/disp.c       |  10 +-
- drivers/gpu/drm/nouveau/dispnv50/headc57d.c   |   2 +-
- drivers/gpu/drm/nouveau/nouveau_bo.c          |   4 -
- drivers/gpu/drm/nouveau/nouveau_display.c     |   8 +-
- drivers/gpu/drm/nouveau/nouveau_ioc32.c       |   4 +-
- drivers/gpu/drm/nouveau/nouveau_svm.c         |   5 +-
- drivers/gpu/drm/nouveau/nv50_display.h        |   3 -
- .../gpu/drm/nouveau/nvkm/engine/gr/gf100.c    |   2 +-
- .../gpu/drm/nouveau/nvkm/subdev/bios/init.c   | 204 ++++++------------
- .../gpu/drm/nouveau/nvkm/subdev/volt/gk20a.c  |   4 +-
- drivers/gpu/drm/omapdrm/omap_gem.c            |   2 +-
- drivers/gpu/drm/omapdrm/omap_irq.c            |   4 +-
- .../drm/panel/panel-raspberrypi-touchscreen.c |   2 +-
- drivers/gpu/drm/panel/panel-sitronix-st7701.c |   2 +-
- drivers/gpu/drm/radeon/radeon_device.c        |   3 +-
- drivers/gpu/drm/scheduler/sched_entity.c      |   6 +-
- drivers/gpu/drm/sti/sti_hdmi.c                |  18 +-
- drivers/gpu/drm/ttm/ttm_bo.c                  |   2 +-
- drivers/gpu/drm/ttm/ttm_device.c              |   4 +-
- drivers/gpu/drm/ttm/ttm_tt.c                  |   2 +-
- drivers/gpu/drm/vgem/vgem_drv.c               |   2 +-
- drivers/gpu/drm/xlnx/zynqmp_disp.c            |   2 +-
- drivers/gpu/drm/xlnx/zynqmp_dp.c              |   2 +-
- drivers/gpu/host1x/bus.c                      |   1 -
- include/drm/drm_atomic.h                      |   3 +-
- 37 files changed, 130 insertions(+), 207 deletions(-)
-
-Cc: Adam Jackson <ajax@redhat.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: Akshu Agarwal <akshua@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: amd-gfx@lists.freedesktop.org
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Ben Widawsky <ben@bwidawsk.net>
-Cc: Christian Koenig <christian.koenig@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org
-Cc: Eric Anholt <eric@anholt.net>
-Cc: freedreno@lists.freedesktop.org
-Cc: Huang Rui <ray.huang@amd.com>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Jeremy Kolb <jkolb@brandeis.edu>
-Cc: Jerome Glisse <glisse@freedesktop.org>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Kuogee Hsieh <khsieh@codeaurora.org>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linaro-mm-sig@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: Nirmoy Das <nirmoy.das@amd.com>
-Cc: nouveau@lists.freedesktop.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Clark <rob.clark@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomba@kernel.org>
-Cc: Vincent Abriou <vincent.abriou@st.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/gpu/host1x/bus.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 218e3718fd68c..e293b68acc348 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -761,7 +761,6 @@ EXPORT_SYMBOL(host1x_client_exit);
+ /**
+  * __host1x_client_register() - register a host1x client
+  * @client: host1x client
+- * @key: lock class key for the client-specific mutex
+  *
+  * Registers a host1x client with each host1x controller instance. Note that
+  * each client will only match their parent host1x controller and will only be
 -- 
 2.27.0
 
