@@ -2,93 +2,191 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C39DC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 18:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CFBC433ED
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 07:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60E8F60E09
-	for <linux-tegra@archiver.kernel.org>; Thu, 15 Apr 2021 18:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 448426108E
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 07:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbhDOSb6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 15 Apr 2021 14:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233052AbhDOSb6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 15 Apr 2021 14:31:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CE3396105A;
-        Thu, 15 Apr 2021 18:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618511495;
-        bh=uoR+Kr+blFzetHXbngHy4mfmiD/fgYrOO+y1Xqt+C/0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hhKTV7U0LomOG/BNi9C8cyHsqB1Uhayg8oXAXCsm769dhNfWkikq4igKpepvKzqAI
-         feajl99wBZc+euoKIQ11dl3RY/9mAbW7nZ5Ykmu6nld3KMhbtLu4m8IAjl/1d4JlEQ
-         oBjq8mwxQMNhSZlNl770Uiy055aAPHRfrhnjEWue7tjhv27pAgkdFyCbCBlccdJNN1
-         y7XDWg6Lfk288excqaHEHGa2vgCMqYOoO+0k1oXql6aH7OWltiNScRAnkluOeuJztR
-         blBog1m3z22qOIcRZTXDGlhrV7CAGnb0VrIdl5Ecg+arlwCCj1Rg8BMnNzMXU/HLcU
-         RoavfCIwh8yng==
-Date:   Thu, 15 Apr 2021 19:31:12 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 01/14] ASoC: simple-card-utils: enable flexible
- CPU/Codec/Platform
-Message-ID: <20210415183112.GK5514@sirena.org.uk>
-References: <87wntmod33.wl-kuninori.morimoto.gx@renesas.com>
- <87v996od2c.wl-kuninori.morimoto.gx@renesas.com>
- <YHh/Y5fXMxm91Ha3@orome.fritz.box>
- <20210415181450.GJ5514@sirena.org.uk>
- <YHiFEUUfsn3ni/Uo@orome.fritz.box>
+        id S234010AbhDPHLi (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Apr 2021 03:11:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231666AbhDPHLi (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 16 Apr 2021 03:11:38 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034D1C061574
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 00:11:14 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id r9so40617092ejj.3
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Apr 2021 00:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1OaqrHj95z02mUJg5I8GmywTZZPXMCAVkBh62//UPOA=;
+        b=UGYqfc5Xo3+IrByEO5c0PrV2EvT8svx3aGBdPL1lIp891q42vgBo1AyHIf6L/wB4HZ
+         KewVTuL9XgeYSj76hRocuaKivTWleXDSgq1ayDk2CM5YlwW3tuS+dPngoKZ+Zwt6hzy4
+         zuwEPjeFe2eoNCS59Wrd1MpP+Xld8N1Ot/ZzXSg4d73I+mLLNEzPOdAYl8EbMpqIndKB
+         FdkYBsNWzkDX1t3Zuyuejt86aK4E3eIt/UitSlZDKulQ6zbWyo9jC5+T4En3ILGnQW0o
+         PV0sKkVog132Xgu6JdoXVOH4yf7Aci9JmOrXK8uKwD9ZR31bxqhiu0RrWz1JGbVJtdZ/
+         SBHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1OaqrHj95z02mUJg5I8GmywTZZPXMCAVkBh62//UPOA=;
+        b=WRhYwBOGjaDHHK22rKRqXpjlDYwEuadcZop7RH9j+5aQyojFSSbi5ux/OZE+M4vPMt
+         fp4Hsrv3wlihCV1XCMkCfN8W7AzPcOv2qNOPB8BBd3JUzhm+X1rKjS2gPQxiAFe0lT7s
+         6d4EDLaikfCNNhZ6u7j3X6cnFjc2G/wT07INHNG4eScb5gnXi9Ck11mDL0XfSEysUGIp
+         tyll3OkLgGYW8+J754SYYFV0aN+03sMwDPC1LTq2FPfCRwYtm+R9a5Nu8yoVD6zZ9qLQ
+         8RLoVY7IWhSszgp+hWaXXfH2dwO9vpEDWq2KZL6kclCUCDwbMSbyu/PfbuFvrU/P3W5J
+         7BdQ==
+X-Gm-Message-State: AOAM533GLcym4s6ZcBpLu7DNN3g2elcn1mvuCeHDIgwC8mTRoBo9+EC9
+        coAg6gKX+4KGbEPaRY/4Xac=
+X-Google-Smtp-Source: ABdhPJzA9XroXjTUkZpBMQqDnrJBdNTCik88OkIpZFkcHXsn9PvgoKbFEW45Uf/H4WUs2ORq8+DG2w==
+X-Received: by 2002:a17:906:51da:: with SMTP id v26mr6978466ejk.212.1618557072680;
+        Fri, 16 Apr 2021 00:11:12 -0700 (PDT)
+Received: from localhost (p2e5be10e.dip0.t-ipconnect.de. [46.91.225.14])
+        by smtp.gmail.com with ESMTPSA id w13sm3692224edx.80.2021.04.16.00.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Apr 2021 00:11:11 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] ASoC: simple-card-utils: Propagate errors on too many links
+Date:   Fri, 16 Apr 2021 09:11:46 +0200
+Message-Id: <20210416071147.2149109-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="q6mBvMCt6oafMx9a"
-Content-Disposition: inline
-In-Reply-To: <YHiFEUUfsn3ni/Uo@orome.fritz.box>
-X-Cookie: VMS must die!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---q6mBvMCt6oafMx9a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The DAI counting code doesn't propagate errors when the number of
+maximum links is exceeded, which causes subsequent initialization code
+to continue to run and that eventually leads to memory corruption with
+the code trying to access memory that is out of bounds.
 
-On Thu, Apr 15, 2021 at 08:25:21PM +0200, Thierry Reding wrote:
+Fix this by propgating errors when the maximum number of links is
+reached, which ensures that the driver fails to load and prevents the
+memory corruption.
 
-> In any case, I came up with the attached. I don't know how good it is
-> because now the number of links exceeds SNDRV_MINOR_DEVICES, but perhaps
-> that's just irrelevant and that constant was used merely because it was
-> conveniently there.
+Fixes: f2138aed231c ("ASoC: simple-card-utils: enable flexible CPU/Codec/Platform")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ sound/soc/generic/audio-graph-card.c | 19 +++++++++++--------
+ sound/soc/generic/simple-card.c      | 17 ++++++++++-------
+ 2 files changed, 21 insertions(+), 15 deletions(-)
 
-We shouldn't actually end up creating that many devices, a lot of those
-should be DPCM links which are internal only.
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 0582fe296471..2401212281c2 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -539,8 +539,8 @@ static int graph_for_each_link(struct asoc_simple_priv *priv,
+ 	return ret;
+ }
+ 
+-static void graph_get_dais_count(struct asoc_simple_priv *priv,
+-				 struct link_info *li);
++static int graph_get_dais_count(struct asoc_simple_priv *priv,
++				struct link_info *li);
+ 
+ int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
+ {
+@@ -552,7 +552,10 @@ int audio_graph_parse_of(struct asoc_simple_priv *priv, struct device *dev)
+ 	card->dev = dev;
+ 
+ 	memset(&li, 0, sizeof(li));
+-	graph_get_dais_count(priv, &li);
++	ret = graph_get_dais_count(priv, &li);
++	if (ret < 0)
++		return ret;
++
+ 	if (!li.link)
+ 		return -EINVAL;
+ 
+@@ -657,8 +660,8 @@ static int graph_count_dpcm(struct asoc_simple_priv *priv,
+ 	return 0;
+ }
+ 
+-static void graph_get_dais_count(struct asoc_simple_priv *priv,
+-				 struct link_info *li)
++static int graph_get_dais_count(struct asoc_simple_priv *priv,
++				struct link_info *li)
+ {
+ 	/*
+ 	 * link_num :	number of links.
+@@ -706,9 +709,9 @@ static void graph_get_dais_count(struct asoc_simple_priv *priv,
+ 	 *	=> 4 DAIs  = 2xCPU + 2xCodec
+ 	 *	=> 1 ccnf  = 1xdummy-Codec
+ 	 */
+-	graph_for_each_link(priv, li,
+-			    graph_count_noml,
+-			    graph_count_dpcm);
++	return graph_for_each_link(priv, li,
++				   graph_count_noml,
++				   graph_count_dpcm);
+ }
+ 
+ int audio_graph_card_probe(struct snd_soc_card *card)
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index bf5ddf1ea65f..1d1c4309b582 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -526,8 +526,8 @@ static int simple_count_dpcm(struct asoc_simple_priv *priv,
+ 	return 0;
+ }
+ 
+-static void simple_get_dais_count(struct asoc_simple_priv *priv,
+-				  struct link_info *li)
++static int simple_get_dais_count(struct asoc_simple_priv *priv,
++				 struct link_info *li)
+ {
+ 	struct device *dev = simple_priv_to_dev(priv);
+ 	struct device_node *top = dev->of_node;
+@@ -584,12 +584,12 @@ static void simple_get_dais_count(struct asoc_simple_priv *priv,
+ 		li->num[0].platforms	= 1;
+ 
+ 		li->link = 1;
+-		return;
++		return 0;
+ 	}
+ 
+-	simple_for_each_link(priv, li,
+-			     simple_count_noml,
+-			     simple_count_dpcm);
++	return simple_for_each_link(priv, li,
++				    simple_count_noml,
++				    simple_count_dpcm);
+ }
+ 
+ static int simple_soc_probe(struct snd_soc_card *card)
+@@ -628,7 +628,10 @@ static int asoc_simple_probe(struct platform_device *pdev)
+ 	card->probe		= simple_soc_probe;
+ 
+ 	memset(&li, 0, sizeof(li));
+-	simple_get_dais_count(priv, &li);
++	ret = simple_get_dais_count(priv, &li);
++	if (ret < 0)
++		return ret;
++
+ 	if (!li.link)
+ 		return -EINVAL;
+ 
+-- 
+2.30.2
 
-> The patch restores display on Jetson TX2. I can look around a bit if I
-> can find where the boundary checks might be missing so that we
-> gracefully fail rather than corrupting everything.
-
-That'd be good, thanks.
-
---q6mBvMCt6oafMx9a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmB4hm8ACgkQJNaLcl1U
-h9AqxAf/Rx7T3DVd1aIGp8MQx37ydO3ASpzgL5t616HY7NEnY6zzHfqtQdHCgJUN
-if1vBGRn9v9i22AijDI6M9Y8fOpNbLQSspdcoNiT9WYMaUx0+zwrIGkA7D+FVe1I
-ILiFfFKYRUfm1j2c4a2W74wURGE4JH5mZ6Gu663iaPgyvJOyaEpgrEL6FP52mPMo
-s2gPeg2pePtvZG20wFT1vDoP4Rt6CtPW4UqbUOpV33YLYZZik+pbXKApObi52PYJ
-5KMuBQv+lCBnpl8m50lYPpkx5IIxsSnzbW2wBY602sMQBj4suZkVZOGOhijVifLZ
-crwi0g+jmvW5au6ZICqDhu7CuDQuog==
-=CDdU
------END PGP SIGNATURE-----
-
---q6mBvMCt6oafMx9a--
