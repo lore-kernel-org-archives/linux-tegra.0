@@ -2,197 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5651FC433ED
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C42C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 15:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 253B561184
-	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 14:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD6D2611C2
+	for <linux-tegra@archiver.kernel.org>; Fri, 16 Apr 2021 15:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240740AbhDPOuy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 16 Apr 2021 10:50:54 -0400
-Received: from mail-bn8nam08on2045.outbound.protection.outlook.com ([40.107.100.45]:30168
-        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235990AbhDPOus (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:50:48 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JixC2OvW/KoRfT5/y1jYi3b2PA/Te+NkvpeJR2ksBHX9Wn9IIu0Bzrz5aC4Oj68KDWuETu/eEpBRSpo6bOYypvJb8zBZTghwmDmBlhJ9kyLtkz7mq/1K64AVoUBMskiL8Qx1BggHI5Zv2k5il8H93M81oE2YxhOVnX790W35IApuo0KIwcx3BzMMjXjFeMTGI2WY2k7ulf9W0DuyMhvEbbUrifLUcdj0WN4n6TSVi72D3aStRnYH27KAu3tPM+n1KU02kgDZTVfd0bWPD6xCgYYOCiO063ZsOyaG0MyENlRz7/KTfAL/FasxZSIsaZAaE4rvA/jdzUAvp5K0J+swAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1iOdqsjGsURdeQcor+ksHVoZkLgBiedOzOuPuCRqq3Q=;
- b=hBvCK1iLK3ZFqjtKSLoQxPxpD4QTfvxPLbNR0KZVQs0LF/U3+PiK8O4qrjpt9fpZwJiYVjxBne+gZdQgprsBLCCRaQHPgdC7jHMkpqdeLTEIVYJIYre9MRVM7kFZ0L0OD43ehaI5fTq7iL3KtWAr/PIRoGoE22bgs6S4jOYutUB5UORQinWKwYEY2fiKZqQ+538ZGAQys+A9rU3oDwiU04o2Lz3cj/ovvXHknhfgZLOkwO+BgB7/k5IXeVlzn5nUZIc17oGFQAsC3bI2j6aC6mgAwJpehSdS4ajux3G8Y2ayxP2obxPKAAGZwiryi0TYQjq05Gr2wnQG0KGNiecxRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.32) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1iOdqsjGsURdeQcor+ksHVoZkLgBiedOzOuPuCRqq3Q=;
- b=Govuf1c6rGbydbTJFNZH5joHDsaYWCCZI/5bYLUp9SARnNH/Rt5Rqj2w6n6pt9jBPGDLmGREBKPemcoF8f+OweNezphRt6UVNtr0+Npb0ZMnNv7RUH48QFiZlK525VBGrsC35gEqpDCuIHIQIXd3SiOff/aNydjslrqYxBIq3r05F+OPYNmjh9tISge/ThxnwVYgbMZ0B0MScBWqXQ1cVh7UFj0XhfP+ZSMYE7qoZhv+RxXgRn4DF6mE3MUIJSaPlMcQncLoXtdI0SFSiCAOocAmjGgo64KQEwCYTMO+xDV5BjihF4/OefEfbkLqQ9whKT1+in7qQotSOHseT1bVtw==
-Received: from BN9PR03CA0218.namprd03.prod.outlook.com (2603:10b6:408:f8::13)
- by CH2PR12MB4264.namprd12.prod.outlook.com (2603:10b6:610:a4::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.19; Fri, 16 Apr
- 2021 14:50:19 +0000
-Received: from BN8NAM11FT019.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:f8::4) by BN9PR03CA0218.outlook.office365.com
- (2603:10b6:408:f8::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16 via Frontend
- Transport; Fri, 16 Apr 2021 14:50:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.32)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.32 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.32; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.32) by
- BN8NAM11FT019.mail.protection.outlook.com (10.13.176.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4042.16 via Frontend Transport; Fri, 16 Apr 2021 14:50:18 +0000
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 16 Apr
- 2021 07:50:18 -0700
-Received: from [10.26.49.10] (172.20.145.6) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 16 Apr
- 2021 14:50:16 +0000
-Subject: Re: [PATCH 2/2] ASoC: simple-card-utils: Increase maximum number of
- links to 128
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
-        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>
+        id S235698AbhDPP4E (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 16 Apr 2021 11:56:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235329AbhDPP4E (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 16 Apr 2021 11:56:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 246AE6113D;
+        Fri, 16 Apr 2021 15:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618588539;
+        bh=JEJzzQ+tdLRQxK9H7PGh2vMSOhSroN+byz9JFysxcq8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uxWk475Q0YILN9uDHYFrNZQ8ukASmPIutEUmTOAFlTe984ffKwEEMIVVCub3ibQu0
+         KBv33XMEEdYyEE8BBnNRgIgnsAQ/7bhuLIRKoY7DC8nsino2sFLfD0tlkVZS6k/Bbp
+         cag8aUF27tY/+zPe4R1crDKp3W5QV/BvhkyhaM/FLShmEi5Xv/gHEGYFTWZBdUDfrI
+         fut3nOygjzko26A7GbnNfADKExCr3HeXcxH27I+4eiQggI5GmedKEj1JC6LLxc8pDJ
+         k2KwJMm4khokBX7Pi7YlxxCaQazItCB7f6gpYDbv+VhfJ7TMRqmHHc/he8sQvssyLm
+         757hrI1pJqOYQ==
+Date:   Fri, 16 Apr 2021 16:55:15 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: simple-card-utils: Propagate errors on too
+ many links
+Message-ID: <20210416155515.GG5560@sirena.org.uk>
 References: <20210416071147.2149109-1-thierry.reding@gmail.com>
- <20210416071147.2149109-2-thierry.reding@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <632707a3-a595-13c5-08fe-c0353b1c0c79@nvidia.com>
-Date:   Fri, 16 Apr 2021 15:50:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ <1303b932-5226-0ee6-8f41-fd896908b045@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20210416071147.2149109-2-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 13678a7c-d891-413d-a09c-08d900e6f445
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4264:
-X-Microsoft-Antispam-PRVS: <CH2PR12MB42649D599325324B3BA46C2CD94C9@CH2PR12MB4264.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LDBRt6cNSXoQcScJw7perHclPCxHWlVAuzkB9nm4bvkUThB917qxPQJ/9I1VxeiEBB+//0BO5mCLu47bnBvS7NPTE5IWqFpzReBPiqq5Kjt+E4yu056poKIysxbkn0RKj0pmzsEXNypPxHiSihYhW40NIzwsCFvQJG5sy1VDtyI1VSUH/Uozf0zEYfVBnQ6dzXZTSm0zqdHsjoGWHdX7LbpTxvoVsGVwlWln2LT1qrow8lk8fXsVrplKkNeVP8hrfOlLoTJUn1pqG40iZopk1BsJQupMaItVSEuxHWyHpW7xxjJZnCTJMXTOuYzyTUOtwRt3tH5HYaA1hvP3UJBWNGD40YQSwj8jZBtHlNpqPLBSR+ArSOPz901+nfJU/oQ24EzvZ6z4G82PYtSzIQUuRoPi8anse46XhMJUYLxWI3gHvigT7rK625rTyoF6TgArw92AG2yL6HyjqcsXOfdLGZWoCIJITn8RmgrydTmdTv7GPRyAjiWkpELjgUgdYgjRRdVB5nNaLz2cm0u68RBx22v2UeLbBpigskHOfRwmmv4iZJAxCHTCXn3TRrwblXpuyCEkt/ZGgXf9sa5s0CtuNBHoPh09e+t6SqjbGO9MrueIem96k0A2ZXmpqGtrC2UTNfB9jcGcN1D/bwrnrWPYaJv1Uj/ZnEo6mW6p/9plHcVPCPKUlZo1I3+zvb7xVMNV
-X-Forefront-Antispam-Report: CIP:216.228.112.32;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid01.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(136003)(396003)(36840700001)(46966006)(426003)(47076005)(8936002)(36756003)(36860700001)(70206006)(2616005)(8676002)(2906002)(31686004)(336012)(186003)(16526019)(26005)(110136005)(7636003)(356005)(82310400003)(5660300002)(16576012)(82740400003)(83380400001)(86362001)(53546011)(31696002)(70586007)(4326008)(54906003)(316002)(478600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2021 14:50:18.8478
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13678a7c-d891-413d-a09c-08d900e6f445
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.32];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT019.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4264
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RDS4xtyBfx+7DiaI"
+Content-Disposition: inline
+In-Reply-To: <1303b932-5226-0ee6-8f41-fd896908b045@nvidia.com>
+X-Cookie: Snow Day -- stay home.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
-On 16/04/2021 08:11, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> On Tegra186 and later, the number of links can go up to 72, so bump the
-> maximum number of links to the next power of two (128).
-> 
-> Fixes: f2138aed231c ("ASoC: simple-card-utils: enable flexible CPU/Codec/Platform")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  include/sound/simple_card_utils.h    | 4 +++-
->  sound/soc/generic/audio-graph-card.c | 4 ++--
->  sound/soc/generic/simple-card.c      | 4 ++--
->  3 files changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-> index fac3b832d982..e318a2d4ac44 100644
-> --- a/include/sound/simple_card_utils.h
-> +++ b/include/sound/simple_card_utils.h
-> @@ -115,10 +115,12 @@ struct asoc_simple_priv {
->  		     ((codec) = simple_props_to_dai_codec(props, i));	\
->  	     (i)++)
->  
-> +#define SNDRV_MAX_LINKS 128
-> +
->  struct link_info {
->  	int link; /* number of link */
->  	int cpu;  /* turn for CPU / Codec */
-> -	struct prop_nums num[SNDRV_MINOR_DEVICES];
-> +	struct prop_nums num[SNDRV_MAX_LINKS];
->  };
->  
->  int asoc_simple_parse_daifmt(struct device *dev,
-> diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-> index 2401212281c2..d6d90285967c 100644
-> --- a/sound/soc/generic/audio-graph-card.c
-> +++ b/sound/soc/generic/audio-graph-card.c
-> @@ -616,7 +616,7 @@ static int graph_count_noml(struct asoc_simple_priv *priv,
->  {
->  	struct device *dev = simple_priv_to_dev(priv);
->  
-> -	if (li->link >= SNDRV_MINOR_DEVICES) {
-> +	if (li->link >= SNDRV_MAX_LINKS) {
->  		dev_err(dev, "too many links\n");
->  		return -EINVAL;
->  	}
-> @@ -639,7 +639,7 @@ static int graph_count_dpcm(struct asoc_simple_priv *priv,
->  {
->  	struct device *dev = simple_priv_to_dev(priv);
->  
-> -	if (li->link >= SNDRV_MINOR_DEVICES) {
-> +	if (li->link >= SNDRV_MAX_LINKS) {
->  		dev_err(dev, "too many links\n");
->  		return -EINVAL;
->  	}
-> diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-> index 1d1c4309b582..59b41019c65f 100644
-> --- a/sound/soc/generic/simple-card.c
-> +++ b/sound/soc/generic/simple-card.c
-> @@ -484,7 +484,7 @@ static int simple_count_noml(struct asoc_simple_priv *priv,
->  			     struct device_node *codec,
->  			     struct link_info *li, bool is_top)
->  {
-> -	if (li->link >= SNDRV_MINOR_DEVICES) {
-> +	if (li->link >= SNDRV_MAX_LINKS) {
->  		struct device *dev = simple_priv_to_dev(priv);
->  
->  		dev_err(dev, "too many links\n");
-> @@ -505,7 +505,7 @@ static int simple_count_dpcm(struct asoc_simple_priv *priv,
->  			     struct device_node *codec,
->  			     struct link_info *li, bool is_top)
->  {
-> -	if (li->link >= SNDRV_MINOR_DEVICES) {
-> +	if (li->link >= SNDRV_MAX_LINKS) {
->  		struct device *dev = simple_priv_to_dev(priv);
->  
->  		dev_err(dev, "too many links\n");
-> 
+--RDS4xtyBfx+7DiaI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Apr 16, 2021 at 03:49:34PM +0100, Jon Hunter wrote:
+>=20
+> On 16/04/2021 08:11, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The DAI counting code doesn't propagate errors when the number of
+> > maximum links is exceeded, which causes subsequent initialization code
+> > to continue to run and that eventually leads to memory corruption with
+> > the code trying to access memory that is out of bounds.
+> >=20
+> > Fix this by propgating errors when the maximum number of links is
+>=20
+> s/propgating/propagating
+>=20
+> > reached, which ensures that the driver fails to load and prevents the
+> > memory corruption.
+> >=20
+> > Fixes: f2138aed231c ("ASoC: simple-card-utils: enable flexible CPU/Code=
+c/Platform")
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Thanks!
-Jon
--- 
-nvpublic
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+--RDS4xtyBfx+7DiaI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmB5s2IACgkQJNaLcl1U
+h9AY5Qf/fknqCPfwrUTMIAXJVdVHFkSouCqz2DiWvpg5eePtbojW0X1Ot5RQ0Pwn
+OaDVL5DdzXQ/gVk2EOp2Piv2NNlAnKGNuEApKMhpI64XGRIgXAp32ZoTJwqHCfnV
+GEL7zMXWr0/ddIpDxnB75RRfM85U1so+KFC1zYX0MQJkr6WxQeMn5/vNxUfg8XiP
+EU63NDsfcsaklSP6CoZeFNFfqcyHbueD5ZLUAdx6tQ3g8lklzIPbVQvDMpkUz4OU
+CpC5HQbj0IZlATSPQsk5fkhv8yud+MJXH+k1YmQeRdEU5u8p00odp8FKd6uyS/+D
+bNmX4wcz08PitzQEH8IWBG0nJ6t18w==
+=tM5Y
+-----END PGP SIGNATURE-----
+
+--RDS4xtyBfx+7DiaI--
