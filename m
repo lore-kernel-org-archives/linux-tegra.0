@@ -2,96 +2,73 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B974C43461
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Apr 2021 20:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB3DC433ED
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Apr 2021 22:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4875B613E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 19 Apr 2021 20:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82CCD613AF
+	for <linux-tegra@archiver.kernel.org>; Mon, 19 Apr 2021 22:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242702AbhDSUqN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 19 Apr 2021 16:46:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242675AbhDSUpQ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:45:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 979F9613E4;
-        Mon, 19 Apr 2021 20:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618865075;
-        bh=sL2wviUKoZfmwofxZJu5uW934bvydhzmqXTAzeULgFQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d2XghzsSZPf1s3i1W5kVT+yRyo0BjFRMNB++ZBtoMptB4Tf/vNegcTzhh5vGsRFCz
-         pCihFf4RLK7RtYcXJIcZVmbtsN17uUBDPdBPV59hvii48a1YaoqxZRrtKJiHt8Mq6y
-         nWxbj1cZfiS8c1WggqVkku0knwUKFe6Lh5Xs3ZJrqgc4bV4Ck/JzqpB+7kN3qfyTlg
-         9vhpTfySsN0ZGlB0UZfQNfb6mUJTdwzyB8MBEVSb8QmuDkM/YAs9qLwYpwALVAzKQW
-         t30iCb65sPTv6k0AUP/GngmBJodffe3m+gNqLu78BE/PM5gQANRjTFS5Q/tV0hKK8K
-         KdehBLHp7Wpxw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Thierry Reding <treding@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 10/21] dmaengine: tegra20: Fix runtime PM imbalance on error
-Date:   Mon, 19 Apr 2021 16:44:08 -0400
-Message-Id: <20210419204420.6375-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210419204420.6375-1-sashal@kernel.org>
-References: <20210419204420.6375-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S231213AbhDSWQC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 19 Apr 2021 18:16:02 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:14190 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230488AbhDSWQC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 19 Apr 2021 18:16:02 -0400
+Date:   20 Apr 2021 07:15:31 +0900
+X-IronPort-AV: E=Sophos;i="5.82,235,1613401200"; 
+   d="scan'208";a="78794972"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Apr 2021 07:15:31 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 253A0411556E;
+        Tue, 20 Apr 2021 07:15:31 +0900 (JST)
+Message-ID: <87k0ox53b0.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: simple-card-utils: Increase maximum number of links to 128
+In-Reply-To: <20210419150811.GC5645@sirena.org.uk>
+References: <20210416071147.2149109-1-thierry.reding@gmail.com>
+        <20210416071147.2149109-2-thierry.reding@gmail.com>
+        <8735vn59sw.wl-kuninori.morimoto.gx@renesas.com>
+        <YH2Y/rd2/q5qHvnz@orome.fritz.box>
+        <20210419150811.GC5645@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-[ Upstream commit 917a3200b9f467a154999c7572af345f2470aaf4 ]
+Hi Thierry, Mark
 
-pm_runtime_get_sync() will increase the runtime PM counter
-even it returns an error. Thus a pairing decrement is needed
-to prevent refcount leak. Fix this by replacing this API with
-pm_runtime_resume_and_get(), which will not change the runtime
-PM counter on error.
+> > The data structure seems to be only used during initialization, so
+> > something like a kzalloc()/kfree() pair doesn't seem like it would
+> > hurt much performance-wise. Add in the devm_ variants and the code
+> > complexity should also remain moderately low.
+> 
+> Yes, that'd be much better - ideally we wouldn't have a fixed limit of
+> any kind but that's a more involved change and quite possibly more
+> trouble than it's worth.
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/20210409082805.23643-1-dinghao.liu@zju.edu.cn
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Using "fixed array style" was very easy for me (*^o^*).
+
+OK, let's use kzalloc()/kfree() style.
+I can try it.
+
+Thank you for your help !!
+
+Best regards
 ---
- drivers/dma/tegra20-apb-dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 71827d9b0aa1..b7260749e8ee 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -723,7 +723,7 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
- 		goto end;
- 	}
- 	if (!tdc->busy) {
--		err = pm_runtime_get_sync(tdc->tdma->dev);
-+		err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 		if (err < 0) {
- 			dev_err(tdc2dev(tdc), "Failed to enable DMA\n");
- 			goto end;
-@@ -818,7 +818,7 @@ static void tegra_dma_synchronize(struct dma_chan *dc)
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	int err;
- 
--	err = pm_runtime_get_sync(tdc->tdma->dev);
-+	err = pm_runtime_resume_and_get(tdc->tdma->dev);
- 	if (err < 0) {
- 		dev_err(tdc2dev(tdc), "Failed to synchronize DMA: %d\n", err);
- 		return;
--- 
-2.30.2
-
+Kuninori Morimoto
