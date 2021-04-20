@@ -2,91 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B91C43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 14:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF43C433B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 15:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83EBC613B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 14:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A2EE613C9
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 15:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232609AbhDTOKs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Apr 2021 10:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232419AbhDTOKr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Apr 2021 10:10:47 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8359AC06174A;
-        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id p67so20686496pfp.10;
-        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8zukqXhtvNEllv/hGl2ya5yc48tmrYIRWx5ZeIc3rcM=;
-        b=Sf1X2kdFWDaCcWS2w4twhoI6na8jvjUQPUI9XJ8dbozgPhmvI2CJtHyh1kJ0NdQ08N
-         dccnWzM/cFSUZbKPhYUoComMVzkV9A8hXsF9aYcCWOO1IH0HRIuC4N2TdRk+LcUtMJII
-         le8nt5VLNvcpr9Eqib0GL1rdjFMaboDl17PWgDTeF6Bq3pbESdW3EhrSWvaLvJmwQKyz
-         8R2IFa6bWTwvV21FFXhuqHWFkHlnyXq7LcE434jsUQA6N4q7aELX7ywjJtCTOCgX3ExP
-         DPMf9CoalAW34BKWh0e/kxpFYB6A5v2xmzw0zZBbjNVN80ZZ5Ute337OM5S61OtRzmkc
-         0qcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8zukqXhtvNEllv/hGl2ya5yc48tmrYIRWx5ZeIc3rcM=;
-        b=sxGDV6ayFmXSdXgJHO/dhGbtPRqsMVtGR+Fx23f4dUb/HW/LKdYvweyGkkdJGpUdPw
-         V92+6P21IuBMdGy8X20leM3WD/+cOH7oTaT/2GHkjolgwl0MTDmYoKjfdxA1wCQL+O/X
-         gnvCzGKzp/3d99BqN/FoB2pWg8oGLtQ+YMeHX8RSkBFwNVv5Jo0MuOmom8Bpjv3XcJSc
-         N621YQtkCdOGfle4QhAajIEgTjiwdooImT3yx6fOLiCoc7I6jXOC/6t9eQAqRtFlN33y
-         IOZgskzR589RrBDRNmj+wP9bBCbH8DsV42UIfAJk+v/OruLf+yLnEnYef1WZlYLeuYHe
-         hDfg==
-X-Gm-Message-State: AOAM530Q2AaGlWHG//YC9kOkvB0Fwv1/bKWNOkxUkOtXpZJobsISrx1X
-        3Cwm0Ltg1f/O4CkSh7sib2E=
-X-Google-Smtp-Source: ABdhPJwa0niW02MXZGILXnN/iUHq4R2X8YqgNBbPOoJAx6Zdg6B6wYkPeKMpckpjG8j0mHohVusnZQ==
-X-Received: by 2002:a62:a515:0:b029:263:214f:27ff with SMTP id v21-20020a62a5150000b0290263214f27ffmr4660367pfm.4.1618927816018;
-        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2601:645:c000:35:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id jz8sm2703759pjb.11.2021.04.20.07.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 07:10:15 -0700 (PDT)
-Date:   Tue, 20 Apr 2021 07:10:13 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Jianyong Wu <jianyong.wu@arm.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] ptp: Don't print an error if ptp_kvm is not supported
-Message-ID: <20210420141013.GB1261@hoboy.vegasvil.org>
-References: <20210420132419.1318148-1-jonathanh@nvidia.com>
+        id S232873AbhDTPHn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Apr 2021 11:07:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232450AbhDTPHn (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 20 Apr 2021 11:07:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 767E2613CA;
+        Tue, 20 Apr 2021 15:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618931232;
+        bh=notO+AX1S6KlITWxKZbYDRxBIOFZVLI6wIZs30gVzzE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CuNiazsCxauu6F9r5V/3s0aWzAlE8Abv5Iy5SdLLajuqTpNBCfwOti8jIsbrSyGm+
+         9iCKELjPb1EGXbbSmlzHG/gFTxbKxelDVWcnZTYCMwX6Q/eaj2g3EeOoF1kthwnLfj
+         55eXG0Dixk5p5ibsuYr2E/SHO1uSuGH6mqxLYOlJ6PGllcqlg0kB3+bY0RsLJo0MmK
+         WrByw3DVK0w8cDoxl/y7Iw1fu2pkhyRUeBw+5ukJMmFMfm/9/YV9IN5HPOCRg68h8T
+         wvf92dM1syfqCH21pSjAwBa6Jhl0Ff4vJChLuIFL94Dvj+3RBwcFRISPxUpMxBCm2p
+         QlhAwg+5P3Jvw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kernel test robot <lkp@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH] ASoC: simple-card-utils: Allocate link info structure on heap
+Date:   Tue, 20 Apr 2021 16:06:39 +0100
+Message-Id: <161893058718.55483.6897930067782163061.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210419164117.1422242-1-thierry.reding@gmail.com>
+References: <20210419164117.1422242-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210420132419.1318148-1-jonathanh@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 02:24:19PM +0100, Jon Hunter wrote:
-> Commit 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
-> enable ptp_kvm support for ARM platforms and for any ARM platform that
-> does not support this, the following error message is displayed ...
-> 
->  ERR KERN fail to initialize ptp_kvm
-> 
-> For platforms that do not support ptp_kvm this error is a bit misleading
-> and so fix this by only printing this message if the error returned by
-> kvm_arch_ptp_init() is not -EOPNOTSUPP. Note that -EOPNOTSUPP is only
-> returned by ARM platforms today if ptp_kvm is not supported.
-> 
-> Fixes: 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+On Mon, 19 Apr 2021 18:41:17 +0200, Thierry Reding wrote:
+> struct link_info can grow fairly large and may cause the stack frame
+> size to be exceeded when allocated on the stack. Some architectures
+> such as 32-bit ARM, RISC-V or PowerPC have small stack frames where
+> this causes a compiler warning, so allocate these structures on the
+> heap instead of the stack.
 
-Acked-by: Richard Cochran <richardcochran@gmail.com>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: simple-card-utils: Allocate link info structure on heap
+      commit: ec1af6c64db94e4f24e53011a77b2bf2220ae000
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
