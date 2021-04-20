@@ -2,134 +2,91 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B4DC433B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 13:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B91C43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 14:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0218A613C9
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 13:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83EBC613B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 14:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbhDTNZH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Apr 2021 09:25:07 -0400
-Received: from mail-bn8nam12on2076.outbound.protection.outlook.com ([40.107.237.76]:50816
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230408AbhDTNZH (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:25:07 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JDHyRgglcH3DBA2s8BZusIDTUXtMYC0vQqCUs3o41SatZ9QcHPmu/MdhF29IP3CZsGvlm2UswOHZONcL37qSNI/uj4vVDwFiIxDUAUERXzRYPfJGEs5dUCZg6PK/eFuAFxkZr6ePIYKJ9kxNLx62c302WWeIm51qxGdfj1ZgnsvhaXTVtW4v6h+bqp9H9oryJjql6WvmflaJuamejvRyaS47PTZ+/sUR6HRgx0GRDeeMd7PquVYBrlrseew1sw9JJG3/xp5IGdzd6KQjEhQllX2SJrL8GL8kh0WtySabzDEfALz0m0DFeF8PucYdGxdM8NSQQNLtZHsAjhHbvMEGjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n+dqvTnjuEQpoFBzT4C8/GxWCKT7tY8+nDneVmp5o44=;
- b=MHaAXRYsa7C3fKRH0zW77YZttXjtMN5GnwuuKlyvy7eqnxbcFvWTKetjE7VqQWjqWwl0iB6p4CiLkTc7HJ776h8XnWm14B/uvb2R1S1dRFDwhloOqOyHZ2ljRG9BskNQCV+1sMg0YYdSMbAzdfGDVAmJE1y4bGZL9NtxYmpzVETvZf5IIIgnkzKQu9CsvPjAQ0nXD5kppiScb2qE2IlJibckR53SWzGSnPlV6XRERJ4sdXTibvYStc+q0+KpO84JYArkwl2cnTVzX1nhCydXUZcuE2R1nF8KGTjcQEzzwTenuo4g5n+XWKfMqWj95e4UuxyI61PF2vW4asoHMNNYJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n+dqvTnjuEQpoFBzT4C8/GxWCKT7tY8+nDneVmp5o44=;
- b=qe6c/3/MFhKft8StWmDWHkQp/zyGiQCxgI+lwfR4cjVJuiMujFdWf9ZHFX/D5JqDkfYb4sOr2VpBnU1QpeF4bvPy7kB+51pZCL+WfyEERBBXbZs1hMR6RyMF02ufeMsYq0xaTqrFaiPWscCg7n9/QdHjKtFqTn8fDBC2motcv2v0KBTak1R501JcQ2pQxjukNhj3+QiDu76mfrKCviSIB1MZUHRbW9wS+2t9JkLBZLYV7vnLDeymcbGrc+SnEGnc/9d5M4o/roR8NXeOdOcI+4uYzlaPDOThnoORmK8f97xN+U85IT1bczE9CZTAk63vPsi8df8y0CJp3PsIiHuveA==
-Received: from BN6PR19CA0119.namprd19.prod.outlook.com (2603:10b6:404:a0::33)
- by DM5PR12MB1402.namprd12.prod.outlook.com (2603:10b6:3:73::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16; Tue, 20 Apr
- 2021 13:24:33 +0000
-Received: from BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:a0:cafe::82) by BN6PR19CA0119.outlook.office365.com
- (2603:10b6:404:a0::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.20 via Frontend
- Transport; Tue, 20 Apr 2021 13:24:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- BN8NAM11FT026.mail.protection.outlook.com (10.13.177.51) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4042.16 via Frontend Transport; Tue, 20 Apr 2021 13:24:33 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 20 Apr
- 2021 13:24:32 +0000
-Received: from moonraker.home (172.20.145.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 20 Apr 2021 13:24:30 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Jianyong Wu <jianyong.wu@arm.com>,
-        "Marc Zyngier" <maz@kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] ptp: Don't print an error if ptp_kvm is not supported
-Date:   Tue, 20 Apr 2021 14:24:19 +0100
-Message-ID: <20210420132419.1318148-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+        id S232609AbhDTOKs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Apr 2021 10:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232419AbhDTOKr (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 20 Apr 2021 10:10:47 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8359AC06174A;
+        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id p67so20686496pfp.10;
+        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8zukqXhtvNEllv/hGl2ya5yc48tmrYIRWx5ZeIc3rcM=;
+        b=Sf1X2kdFWDaCcWS2w4twhoI6na8jvjUQPUI9XJ8dbozgPhmvI2CJtHyh1kJ0NdQ08N
+         dccnWzM/cFSUZbKPhYUoComMVzkV9A8hXsF9aYcCWOO1IH0HRIuC4N2TdRk+LcUtMJII
+         le8nt5VLNvcpr9Eqib0GL1rdjFMaboDl17PWgDTeF6Bq3pbESdW3EhrSWvaLvJmwQKyz
+         8R2IFa6bWTwvV21FFXhuqHWFkHlnyXq7LcE434jsUQA6N4q7aELX7ywjJtCTOCgX3ExP
+         DPMf9CoalAW34BKWh0e/kxpFYB6A5v2xmzw0zZBbjNVN80ZZ5Ute337OM5S61OtRzmkc
+         0qcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8zukqXhtvNEllv/hGl2ya5yc48tmrYIRWx5ZeIc3rcM=;
+        b=sxGDV6ayFmXSdXgJHO/dhGbtPRqsMVtGR+Fx23f4dUb/HW/LKdYvweyGkkdJGpUdPw
+         V92+6P21IuBMdGy8X20leM3WD/+cOH7oTaT/2GHkjolgwl0MTDmYoKjfdxA1wCQL+O/X
+         gnvCzGKzp/3d99BqN/FoB2pWg8oGLtQ+YMeHX8RSkBFwNVv5Jo0MuOmom8Bpjv3XcJSc
+         N621YQtkCdOGfle4QhAajIEgTjiwdooImT3yx6fOLiCoc7I6jXOC/6t9eQAqRtFlN33y
+         IOZgskzR589RrBDRNmj+wP9bBCbH8DsV42UIfAJk+v/OruLf+yLnEnYef1WZlYLeuYHe
+         hDfg==
+X-Gm-Message-State: AOAM530Q2AaGlWHG//YC9kOkvB0Fwv1/bKWNOkxUkOtXpZJobsISrx1X
+        3Cwm0Ltg1f/O4CkSh7sib2E=
+X-Google-Smtp-Source: ABdhPJwa0niW02MXZGILXnN/iUHq4R2X8YqgNBbPOoJAx6Zdg6B6wYkPeKMpckpjG8j0mHohVusnZQ==
+X-Received: by 2002:a62:a515:0:b029:263:214f:27ff with SMTP id v21-20020a62a5150000b0290263214f27ffmr4660367pfm.4.1618927816018;
+        Tue, 20 Apr 2021 07:10:16 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2601:645:c000:35:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id jz8sm2703759pjb.11.2021.04.20.07.10.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Apr 2021 07:10:15 -0700 (PDT)
+Date:   Tue, 20 Apr 2021 07:10:13 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Jianyong Wu <jianyong.wu@arm.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] ptp: Don't print an error if ptp_kvm is not supported
+Message-ID: <20210420141013.GB1261@hoboy.vegasvil.org>
+References: <20210420132419.1318148-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 263aedb3-19c0-4a16-2de1-08d903ffa2ea
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1402:
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1402C8DC73CD0FAC97D2FFC2D9489@DM5PR12MB1402.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 63Nk6g7gVPZYq8bZk3rbYkxI8xLYwagTiq8W6P9AOZByaWOpkxfMi1qGinRbLtKh8yaZPAKpbEXjGiL+JOhAY3dLEO5NDMdG3cSxN8IY9jZm9JW3w/9UcpOVmYcrTlOZwVPZFu329htHeJVppJO0PudV+IrCWkOLE4q2XyvH1R4xh+tG5Y+Ju/lcxCMrkWmEWEVoIEV0aIvdAD/fBz+RJCufv/TyhVA/r6Lt5bUlIDOKlXcBJcQB1f5dgh18aH3YS9PSpjKR0UDQ/62nUqsoRU/XoRDblWYpTkZRC+/Q68hBmbR3ojZw5Da3Bqrtkii6zFL/zUb5dEu2JB48z2CBU8qK77gsBjsu2cOg3x6ElU5N39Q1p7KsoBOv5/5NY0NG5WjZMru0qEJCut6i9z7mvLft8Ez+OldJfTw6XMrSwgiYYgfHulG746rtvRZMhqPixozdPC3ihGNJ6qHOI/9j15EbM+dfoU7ceIW0v/efCtL4PYsJQmYX+B/h2hat8AAq+8B7RHYbiGFXyXyaBmzUBo66pxiVEijgWx0kHje36zZYWXu/uLfnXh38r0/8pEs7bXyendQ66MugG75EFYmB1ncj467yc5wPTbpmB2GBX8TX5aU6dPvzE7ppoavTjTwOuvrXUx6MdmBJ5ckE+I8SAA==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(376002)(136003)(39860400002)(36840700001)(46966006)(8676002)(107886003)(316002)(8936002)(36906005)(1076003)(82740400003)(82310400003)(86362001)(7636003)(6666004)(2616005)(6916009)(2906002)(5660300002)(47076005)(36756003)(426003)(83380400001)(478600001)(356005)(70206006)(36860700001)(186003)(54906003)(70586007)(336012)(26005)(4326008);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2021 13:24:33.2736
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 263aedb3-19c0-4a16-2de1-08d903ffa2ea
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT026.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1402
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210420132419.1318148-1-jonathanh@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Commit 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
-enable ptp_kvm support for ARM platforms and for any ARM platform that
-does not support this, the following error message is displayed ...
+On Tue, Apr 20, 2021 at 02:24:19PM +0100, Jon Hunter wrote:
+> Commit 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
+> enable ptp_kvm support for ARM platforms and for any ARM platform that
+> does not support this, the following error message is displayed ...
+> 
+>  ERR KERN fail to initialize ptp_kvm
+> 
+> For platforms that do not support ptp_kvm this error is a bit misleading
+> and so fix this by only printing this message if the error returned by
+> kvm_arch_ptp_init() is not -EOPNOTSUPP. Note that -EOPNOTSUPP is only
+> returned by ARM platforms today if ptp_kvm is not supported.
+> 
+> Fixes: 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
- ERR KERN fail to initialize ptp_kvm
-
-For platforms that do not support ptp_kvm this error is a bit misleading
-and so fix this by only printing this message if the error returned by
-kvm_arch_ptp_init() is not -EOPNOTSUPP. Note that -EOPNOTSUPP is only
-returned by ARM platforms today if ptp_kvm is not supported.
-
-Fixes: 300bb1fe7671 ("ptp: arm/arm64: Enable ptp_kvm for arm/arm64")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/ptp/ptp_kvm_common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ptp/ptp_kvm_common.c b/drivers/ptp/ptp_kvm_common.c
-index 721ddcede5e1..fcae32f56f25 100644
---- a/drivers/ptp/ptp_kvm_common.c
-+++ b/drivers/ptp/ptp_kvm_common.c
-@@ -138,7 +138,8 @@ static int __init ptp_kvm_init(void)
- 
- 	ret = kvm_arch_ptp_init();
- 	if (ret) {
--		pr_err("fail to initialize ptp_kvm");
-+		if (ret != -EOPNOTSUPP)
-+			pr_err("fail to initialize ptp_kvm");
- 		return ret;
- 	}
- 
--- 
-2.25.1
-
+Acked-by: Richard Cochran <richardcochran@gmail.com>
