@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD65C43460
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8F3C43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86A2361076
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C99561076
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233288AbhDTR0Y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Apr 2021 13:26:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34566 "EHLO
+        id S233435AbhDTR01 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Apr 2021 13:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233425AbhDTR0X (ORCPT
+        with ESMTP id S233425AbhDTR0Z (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Apr 2021 13:26:23 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1219BC06138A
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:52 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id w3so59498050ejc.4
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:51 -0700 (PDT)
+        Tue, 20 Apr 2021 13:26:25 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E7FC06174A
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:54 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id g17so45363327edm.6
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vz/zyZ47TrozGRsIa2tK+ufxsCFVoosfjna/ca4O/c0=;
-        b=aVjoNEMiGwN5Lx+kpE0qEfP1uo8Al+w9/1qZbSxv72ywzCQu2k9YlZjwLBxzIGxUN+
-         kcZDfsUTdhASLUq94nNRF4nvKMWEQVwJMww6W7mYpQFODk6JAzP5KOokivLnY3o3O/XE
-         BbTv9xfW5UtNxcGy2iMtGSd7dJEO7cRa56EA1p2XF0Ik9dyKnWGRnOIZy+oHsQILsZws
-         asw61xqlOH4Fj5DCjYezjLZ7A5GZGsM5NqxfUtxjmQrufFp9l0cGHD0WH3ckKC3nAwNB
-         w8bsZz59BZAcouWtPRyvn2fFYRRghJWtFpgxY9laczlHFANH305JGjQySqz42mU+dusz
-         KJWg==
+        bh=oomLXdSqJJ9PIjxb6gjx8hnfwiARzBKAKbIJ+w2GrTw=;
+        b=eE/13PLF3h3U0qvRTkYa6TeUrMFceFJuSDCUczRmCo2Inj1LBOjpIIB0rEy1W5bEJg
+         iaFkgKCLCU5weuxcQXXmQWSLuOppEp4HTDHurXoCN3EJu0C0FKby+NxHs2UPNNlxNvhu
+         sevbaWpTsCYpHjt6RonySoTnbugRJ7XIjZOneWBSgOFw1yqER9kLRq4bx66YZfdGfCYL
+         rm3MS9bd60+fqsurfKzWzPYKPPcnAV3f0AefpJCwNWtqU/CYCnVJmQl3YFewcqnGX0Sw
+         PufgcsGBdXj5Ji/JNEdi4GD8S8BEkQOU6lPrlnege8Xh5Ei8y7wLjPmOSOAJvBuF8EmA
+         dP0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vz/zyZ47TrozGRsIa2tK+ufxsCFVoosfjna/ca4O/c0=;
-        b=QY8PQg8tZ7qFV0GhRBSaAeJOH3cNk2m2vr8Ugn1n9F14xtAFb+kOFp9iDzs1WeLqgq
-         u5qM6ccx2eP7d7OX2ef35sOW4uJVLTkQFhbDqyB2r+V34C1gn9gfim5QoVr/yG05wkeW
-         Qn/hDv8ERpfC5sCt0SaA6MxHxKCdNLDDA+5FjFLP9Vh5wAJ/Xa20qHc1Ff+mNVNXqLUw
-         Bh6LW/I4GvlKJBsPctOuU9i82+l0DkPUgqQtRa7T5UKAec/7RFQVwEFgy3ymVpgppreF
-         IaqjcgjnonjBEUKR6nyjJh7bpcySq7+E601RWLyb2CIFRAQi+UB6xdZLVom/G89MqOH/
-         GZvg==
-X-Gm-Message-State: AOAM530uiMNkTHubf0Q0Ry5wtXzYR6E0oFM/ZJoftYsSnVa9Pvwh6oNk
-        9PsgnFIx+JowjaHp/+tFXKQ=
-X-Google-Smtp-Source: ABdhPJwZCdHDE7NG0mwEAEDc9JwkflUVViR7hF+HAhuinZYY9qCwxULzmByvXibRb3tsjc/edR/Hew==
-X-Received: by 2002:a17:906:134d:: with SMTP id x13mr29062800ejb.61.1618939550792;
-        Tue, 20 Apr 2021 10:25:50 -0700 (PDT)
+        bh=oomLXdSqJJ9PIjxb6gjx8hnfwiARzBKAKbIJ+w2GrTw=;
+        b=oHtYvr5OjzJleeJwCjDPc1nSgvK9o+jQsC7AT67q03K224NyJTpOPq67FkzSEGV33V
+         SZqTwCVqz1jBDYbSFlNt7JHcufdBum86Xgnon4IQaMR2bO8e8iP5nB215z1FLGqaDPL1
+         1vkV37I93tAw83SNVR3J9m4Up6FXdXA5iC2OD2hilZzqrdvsFIekQf9+cQf3NoyUj1jI
+         V071+thQ2lXg9uhfPonIdyDwHTKv/fxSUQN5FNFAC7PBQ0HyJtDLHz+pt7hC1RvvSZu4
+         HZaqABstKg3ANCALjy03mUGfRGcdERLIumb6DKMmiBLfyUsqkSvJ2bw9+kuSHPCuvdjr
+         0UGg==
+X-Gm-Message-State: AOAM5323y6wnPdW/sRm35/JE52mbXELSlm0VeL4xlr5FNzwpDdpP0JG0
+        igOHya78N2rlnfc8PGEwe5Y=
+X-Google-Smtp-Source: ABdhPJwfnXfCe8dBuEZlDPZLuHdnyjrWPd3VkOaXY4jZy4JvAnfGqF/RpKdpuvSmL+X2RLK3gzixrA==
+X-Received: by 2002:aa7:c5c2:: with SMTP id h2mr19812329eds.38.1618939552800;
+        Tue, 20 Apr 2021 10:25:52 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id c13sm10630242edw.88.2021.04.20.10.25.49
+        by smtp.gmail.com with ESMTPSA id o17sm12106708edt.92.2021.04.20.10.25.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 10:25:50 -0700 (PDT)
+        Tue, 20 Apr 2021 10:25:51 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Will Deacon <will@kernel.org>,
@@ -68,9 +68,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 07/10] arm64: tegra: Use correct compatible string for Tegra186 SMMU
-Date:   Tue, 20 Apr 2021 19:26:16 +0200
-Message-Id: <20210420172619.3782831-8-thierry.reding@gmail.com>
+Subject: [PATCH v2 08/10] arm64: tegra: Hook up memory controller to SMMU on Tegra186
+Date:   Tue, 20 Apr 2021 19:26:17 +0200
+Message-Id: <20210420172619.3782831-9-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210420172619.3782831-1-thierry.reding@gmail.com>
 References: <20210420172619.3782831-1-thierry.reding@gmail.com>
@@ -82,29 +82,31 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The SMMU found on Tegra186 requires interoperation with the memory
-controller in order to program stream ID overrides. The generic ARM SMMU
-500 compatible is therefore inaccurate. Replace it with a more correct,
-SoC-specific compatible string.
+On Tegra186 and later, the memory controller needs to be programmed in
+coordination with any of the ARM SMMU instances to configure the stream
+ID used for each memory client.
+
+To support this, add a phandle reference to the memory controller to the
+SMMU device tree node.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 9f75bbf00cf7..a173f40256ae 100644
+index a173f40256ae..d02f6bf3e2ca 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -1082,7 +1082,7 @@ pci@3,0 {
+@@ -1152,6 +1152,8 @@ smmu: iommu@12000000 {
+ 		stream-match-mask = <0x7f80>;
+ 		#global-interrupts = <1>;
+ 		#iommu-cells = <1>;
++
++		nvidia,memory-controller = <&mc>;
  	};
  
- 	smmu: iommu@12000000 {
--		compatible = "arm,mmu-500";
-+		compatible = "nvidia,tegra186-smmu", "nvidia,smmu-500";
- 		reg = <0 0x12000000 0 0x800000>;
- 		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
+ 	host1x@13e00000 {
 -- 
 2.30.2
 
