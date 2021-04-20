@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B3AC433B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82EFC43462
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65579613AF
-	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A371961076
+	for <linux-tegra@archiver.kernel.org>; Tue, 20 Apr 2021 17:25:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233225AbhDTR02 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 20 Apr 2021 13:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34584 "EHLO
+        id S233436AbhDTR0a (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 20 Apr 2021 13:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233436AbhDTR02 (ORCPT
+        with ESMTP id S233425AbhDTR0a (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 20 Apr 2021 13:26:28 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3585BC06174A
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:56 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id r20so9698366ejo.11
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:56 -0700 (PDT)
+        Tue, 20 Apr 2021 13:26:30 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE6CC06174A
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:58 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id d21so25958524edv.9
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Apr 2021 10:25:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5XPg2JTh3w1fx1am6Kys492A+zbxOg5+Kzr89NKkTvM=;
-        b=q+cKD5R5kLe2YX3/JfSu01Lye4CPFM83EgMSjAIlJxLmUhhdTRtAnuwLSDMLLXtwJJ
-         DDzu0JB8OP3wdaOY1T6bC4xJTVAJBk0IStF8zz/yQjo8y24e8xPFL5wuXvhRHkpz8uw0
-         sLqlMEUb163YSl+WD5U+daa8MSiQvIki+z5FXKsb65w3CD9Z2XVi9BsRo/6TrrZzdc4N
-         HRxdPUQx6IlgvXKEZ/Dr1iJEWdJR5QxtFbHcJkkuRR6+Y5DTUCk1q8q6t3rzLdCQ7y1x
-         4agxD623pevDdU1Wz/pZprfScIf0SwhY9lj3glZKyABiNuT6H9yDeW7EGfeZuU1GVDhp
-         2Z8w==
+        bh=b+gcX7QLYFedaKK3PFF/F9GzHOyqGf+ot42j7r1TxHs=;
+        b=sOFsUmtlOkQ1FNXEJgFbhY1pSTlHraytgyFe1/zfDkQq0R3qks8fy5Gv1+b+pQJ8JB
+         LQK/eDSbcL7lrLnXeeRxdecgQEHe9WJONDYUvvKy3jirv4XJ/DIYOFAn2TrHCvsHINTa
+         NRPf61ok9OinrN7mlnkCWs7jys0yPZfKdkTvQ6dIWa0qevTu9YV2yFa7TRtj/Jy1wBB7
+         4AhBWQ7MIftyf5852WoHsekyCxUWEgxeerPynoaShxB14LuYzbEc+077PX2KVQ7V9V8L
+         wsIdl9xXw9LmEasbbO+u7YbAswflpLrIEhkQI+kQO7JxrnfCA02TrlFTH2TGd2ipLb5z
+         nuSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5XPg2JTh3w1fx1am6Kys492A+zbxOg5+Kzr89NKkTvM=;
-        b=WEjvs8s499Yvyaf92+JIm1dB2tO83sVQ6uQhDOdeu9xXOCCgx061dXCGwetbscoVXR
-         JhjYFw8DkTihXmifmuN3m9T/ighUHr9bh3LU0XCO4nuaVvXQEWI9kes/oMAJEwdXJ4GD
-         xCnUT44wXoBsa71fMkuMgj0j/43BhoaPCr0cA2/uVjmxRFA+3R1L7hM4wxw08Sf3ZKUp
-         XHE+9hIK+QN6YFnsPSceyHnoASGs9DSGMtVeuGxmj0J3d9HvaZ3efeHeAGyq6JTCAEhs
-         5Ykc/ywtD/uE+CIQxgLUQQCu34otNgA4hx5da6yvyRyFggY+m4KyJNZpJa8GGpNkhAoA
-         z4Cw==
-X-Gm-Message-State: AOAM533QwAOM/HNZ8wPQp3YhcNhGRVNsKyOfmBhr3nhERHApamtoLH+a
-        SSjUUZWtGhz5aPsztrWgxv2cpZvJsME=
-X-Google-Smtp-Source: ABdhPJw9oEAqsf8xMPS7lkRZP02Qf37iOcl4clpo0e8CcVOjSMlCef1sN8vBxnkU1ihTbDlUFD3pYw==
-X-Received: by 2002:a17:906:ad9a:: with SMTP id la26mr28499401ejb.190.1618939554914;
-        Tue, 20 Apr 2021 10:25:54 -0700 (PDT)
+        bh=b+gcX7QLYFedaKK3PFF/F9GzHOyqGf+ot42j7r1TxHs=;
+        b=MUJifi5CjqFQtpPFA/N35WYLX7sqTQAgazcd4//9PljoREgQjuarWfZna57FxPWwRm
+         2vukHNJ4qI8zs8e3in32WATkSZSxcqwCAZpyMfRx1lBNQLMJtuuNw9GtPy6LjrKFsldU
+         achAPnhT8nTviFNqMRpcSVX10wVZWWd0KoNYR05mSlcTqiBzFpo96teYgbsJ5KlEAHTW
+         dRjqdIROcqS+axJH/HV5NFt/idVmsAQlGWy61jqz6q7qFwhdkbz5LhrZIN+YdQlqCvXB
+         hHAM99nGXGWxw4gun3qAsFoHg2+hUNqjPfRXDeoZuYkU2Ql63mRdXavx9RWLGVraKHUc
+         X6sg==
+X-Gm-Message-State: AOAM532MaNoACZOf0F7z2PvyrZYG9K1eCnqWq9ZXkeseVkASPz6dO9dN
+        158a8QC6BYXT3hYz21eBWK8=
+X-Google-Smtp-Source: ABdhPJyn6VVoJVjh1rOjZCxZEO80f8/wc1nwEZrQ6XMCSWenGkk+FcfiKE+WbZ2gJzzNVqcPPOqQDg==
+X-Received: by 2002:a05:6402:7cf:: with SMTP id u15mr27230480edy.297.1618939557077;
+        Tue, 20 Apr 2021 10:25:57 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id d15sm9875609edu.86.2021.04.20.10.25.53
+        by smtp.gmail.com with ESMTPSA id pv21sm13187833ejb.109.2021.04.20.10.25.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 10:25:53 -0700 (PDT)
+        Tue, 20 Apr 2021 10:25:56 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Will Deacon <will@kernel.org>,
@@ -68,9 +68,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 09/10] arm64: tegra: Enable SMMU support on Tegra194
-Date:   Tue, 20 Apr 2021 19:26:18 +0200
-Message-Id: <20210420172619.3782831-10-thierry.reding@gmail.com>
+Subject: [PATCH v2 10/10] arm64: tegra: Enable SMMU support for display on Tegra194
+Date:   Tue, 20 Apr 2021 19:26:19 +0200
+Message-Id: <20210420172619.3782831-11-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210420172619.3782831-1-thierry.reding@gmail.com>
 References: <20210420172619.3782831-1-thierry.reding@gmail.com>
@@ -82,167 +82,135 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Add the device tree node for the dual-SMMU found on Tegra194 and hook up
-peripherals such as host1x, BPMP, HDA, SDMMC, EQOS and VIC.
+The display controllers are attached to a separate ARM SMMU instance
+that is dedicated to servicing isochronous memory clients. Add this ISO
+instance of the ARM SMMU to device tree and attach all four display
+controllers to it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 86 ++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 80 ++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 4d37ee0ea4d1..6ed296e27158 100644
+index 6ed296e27158..00f8248f216e 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -62,6 +62,7 @@ ethernet@2490000 {
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_EQOSR &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_EQOSW &emc>;
- 			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu TEGRA194_SID_EQOS>;
- 			status = "disabled";
- 
- 			snps,write-requests = <1>;
-@@ -733,6 +734,7 @@ sdmmc1: mmc@3400000 {
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_SDMMCRA &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_SDMMCWA &emc>;
- 			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu TEGRA194_SID_SDMMC1>;
- 			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
- 									<0x07>;
- 			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-@@ -759,6 +761,7 @@ sdmmc3: mmc@3440000 {
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_SDMMCR &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_SDMMCW &emc>;
- 			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu TEGRA194_SID_SDMMC3>;
- 			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
- 			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
- 			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
-@@ -790,6 +793,7 @@ sdmmc4: mmc@3460000 {
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_SDMMCRAB &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_SDMMCWAB &emc>;
- 			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu TEGRA194_SID_SDMMC4>;
- 			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
- 			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
- 			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
-@@ -821,6 +825,7 @@ hda@3510000 {
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_HDAR &emc>,
- 					<&mc TEGRA194_MEMORY_CLIENT_HDAW &emc>;
- 			interconnect-names = "dma-mem", "write";
-+			iommus = <&smmu TEGRA194_SID_HDA>;
- 			status = "disabled";
- 		};
- 
-@@ -1300,6 +1305,84 @@ pmc: pmc@c360000 {
+@@ -1305,6 +1305,82 @@ pmc: pmc@c360000 {
  			interrupt-controller;
  		};
  
-+		smmu: iommu@12000000 {
++		smmu_iso: iommu@10000000 {
 +			compatible = "nvidia,tegra194-smmu", "nvidia,smmu-500";
-+			reg = <0x12000000 0x800000>,
-+			      <0x11000000 0x800000>;
-+			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x10000000 0x800000>;
++			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
 +			stream-match-mask = <0x7f80>;
-+			#global-interrupts = <2>;
++			#global-interrupts = <1>;
 +			#iommu-cells = <1>;
 +
 +			nvidia,memory-controller = <&mc>;
 +			status = "okay";
 +		};
 +
- 		host1x@13e00000 {
- 			compatible = "nvidia,tegra194-host1x";
- 			reg = <0x13e00000 0x10000>,
-@@ -1319,6 +1402,7 @@ host1x@13e00000 {
- 			ranges = <0x15000000 0x15000000 0x01000000>;
- 			interconnects = <&mc TEGRA194_MEMORY_CLIENT_HOST1XDMAR &emc>;
- 			interconnect-names = "dma-mem";
-+			iommus = <&smmu TEGRA194_SID_HOST1X>;
+ 		smmu: iommu@12000000 {
+ 			compatible = "nvidia,tegra194-smmu", "nvidia,smmu-500";
+ 			reg = <0x12000000 0x800000>,
+@@ -1441,6 +1517,7 @@ display@15200000 {
+ 					interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
+ 							<&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
+ 					interconnect-names = "dma-mem", "read-1";
++					iommus = <&smmu_iso TEGRA194_SID_NVDISPLAY>;
  
- 			display-hub@15200000 {
- 				compatible = "nvidia,tegra194-display";
-@@ -1430,6 +1514,7 @@ vic@15340000 {
- 				interconnects = <&mc TEGRA194_MEMORY_CLIENT_VICSRD &emc>,
- 						<&mc TEGRA194_MEMORY_CLIENT_VICSWR &emc>;
- 				interconnect-names = "dma-mem", "write";
-+				iommus = <&smmu TEGRA194_SID_VIC>;
- 			};
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+ 					nvidia,head = <0>;
+@@ -1459,6 +1536,7 @@ display@15210000 {
+ 					interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
+ 							<&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
+ 					interconnect-names = "dma-mem", "read-1";
++					iommus = <&smmu_iso TEGRA194_SID_NVDISPLAY>;
  
- 			dpaux0: dpaux@155c0000 {
-@@ -2136,6 +2221,7 @@ bpmp: bpmp {
- 				<&mc TEGRA194_MEMORY_CLIENT_BPMPDMAR &emc>,
- 				<&mc TEGRA194_MEMORY_CLIENT_BPMPDMAW &emc>;
- 		interconnect-names = "read", "write", "dma-mem", "dma-write";
-+		iommus = <&smmu TEGRA194_SID_BPMP>;
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+ 					nvidia,head = <1>;
+@@ -1477,6 +1555,7 @@ display@15220000 {
+ 					interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
+ 							<&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
+ 					interconnect-names = "dma-mem", "read-1";
++					iommus = <&smmu_iso TEGRA194_SID_NVDISPLAY>;
  
- 		bpmp_i2c: i2c {
- 			compatible = "nvidia,tegra186-bpmp-i2c";
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+ 					nvidia,head = <2>;
+@@ -1495,6 +1574,7 @@ display@15230000 {
+ 					interconnects = <&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR &emc>,
+ 							<&mc TEGRA194_MEMORY_CLIENT_NVDISPLAYR1 &emc>;
+ 					interconnect-names = "dma-mem", "read-1";
++					iommus = <&smmu_iso TEGRA194_SID_NVDISPLAY>;
+ 
+ 					nvidia,outputs = <&sor0 &sor1 &sor2 &sor3>;
+ 					nvidia,head = <3>;
 -- 
 2.30.2
 
