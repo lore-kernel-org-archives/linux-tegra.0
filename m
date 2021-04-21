@@ -2,217 +2,105 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F32EC433B4
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Apr 2021 18:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BD5C433B4
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Apr 2021 23:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6C96144A
-	for <linux-tegra@archiver.kernel.org>; Wed, 21 Apr 2021 18:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AFA7613D7
+	for <linux-tegra@archiver.kernel.org>; Wed, 21 Apr 2021 23:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234970AbhDUSY0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 21 Apr 2021 14:24:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53796 "EHLO
+        id S242491AbhDUXeC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 21 Apr 2021 19:34:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235518AbhDUSYZ (ORCPT
+        with ESMTP id S234681AbhDUXeC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 21 Apr 2021 14:24:25 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E119AC06138B
-        for <linux-tegra@vger.kernel.org>; Wed, 21 Apr 2021 11:23:51 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id k128so22701379wmk.4
-        for <linux-tegra@vger.kernel.org>; Wed, 21 Apr 2021 11:23:51 -0700 (PDT)
+        Wed, 21 Apr 2021 19:34:02 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0154BC06174A
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Apr 2021 16:33:28 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id h36so15123099lfv.7
+        for <linux-tegra@vger.kernel.org>; Wed, 21 Apr 2021 16:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tJ7/2ImOqgNsMlFTe/U5S+rQQA/z5wDSOJMIaWnIOgo=;
-        b=LlgaznfbO9/ZSbTPeEQB5h2fYiuEy/UXnZz4dMzIoZw7XZw5B0iSASvQ9RiESglTm8
-         yfop1QiYJ3v3KQAjSMr/S1H4YOSJRxRCK0YGLCQU00R8wAY3qp0536OxpzbV/VJ1LS68
-         FVLQeGTQ+eDY5zFb9jbA5K0XiyOihaFcbt720mp5lMULdPuMEBqblG8DpaSALBTeXrjv
-         scdfotKNRYeTQiULehH5gPQvE7ubOSXCKVIIkZBzIYySCXbGLKjZKCgyeECkL7IJsEul
-         THUCFR1MTDC0Mn3jwcNMLOByaj6M+6pAxmp8fWY6p3kcdYQxP9g3megC3f3YUlPYf2jp
-         P0CA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e6EH0xRo04NgBzgtXB3b7oeb+R442Tw23QSfh3nfOfQ=;
+        b=JYzToSwrmOzuuudH0QGYpDFqzoYWbWq6SJm+k14NWhber/9sI3QORtFuxDLXhV/vue
+         o55bAM9YpiN0F6l41f2AvUL3BSrPg7zbN759RsGCzhw0uRDyj5ZF/jRSblAj3kDTxqxk
+         g8VsoR64h5+26f+3y46z0CnHEokcW+0TRliuzxehgxGvqiETJaelkFNvaBeQPIsBl+pT
+         7wQwOs6cYFyCNGGQPd1KH9LzGJ//oQ3KRuwwrlLQCd8P08euJmCbN//3LfCQW9cmErDl
+         Bk0WlnaUuSMEjsuufDTr44Mfecu20L0B3+/QV0SjVUwNfzyonYuXkQd/MyN2Z3M9maUf
+         23Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tJ7/2ImOqgNsMlFTe/U5S+rQQA/z5wDSOJMIaWnIOgo=;
-        b=a5+CjKIz0VP4RC0v4aqW6U0gpmNucnwVXqqJlU7y++1/OIYEIX//oih9xytwXgBV7V
-         eUI9weRfUkNDC76w9HH/UabffzG7au/oJDCqeyU0Dt/6WpE7pGDiq9wVYFRa4vPwUYgx
-         C552OQtCP2Q+j7UjHGSCU+QXY3nY9ItIOjHnJ5d/CuMM+cl91BFRHOW9lwppcrHi1oon
-         iS5CFPITVqYTpvvpgFtNa+g614v5brOTnZxJwKwNYh26NYeexxBqqsqMaynb48qiYvVp
-         BFD/w+QF+vSMbkVgt8FiVja0SRVJMdzV5koS6cr5qYK+mJLyuJnCQRfbBWAGvowMOqXj
-         f0Dg==
-X-Gm-Message-State: AOAM533QOIQ+pBQyzVrj0nnaDa82EMJa6/2v01PCz/xKRyZCXqKNPNye
-        SyJoc2R6dyvJRNEadH6ijA8B/w==
-X-Google-Smtp-Source: ABdhPJz4oJRSYRSLilmTZi/+V+8VJ8VJiSw4FBXvscnpE0PMQuvmwXn9sxvIod8vYtqC6Jaz4xsTiA==
-X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr11054836wmi.29.1619029430262;
-        Wed, 21 Apr 2021 11:23:50 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:6273:c89a:6562:e1ba])
-        by smtp.gmail.com with ESMTPSA id m11sm232602wri.44.2021.04.21.11.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 11:23:49 -0700 (PDT)
-Date:   Wed, 21 Apr 2021 20:23:43 +0200
-From:   Marco Elver <elver@google.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Potapenko <glider@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Matt Morehouse <mascasa@google.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, jonathanh@nvidia.com
-Subject: Re: [PATCH v4 05/10] signal: Introduce TRAP_PERF si_code and si_perf
- to siginfo
-Message-ID: <YIBtr2w/8KhOoiUA@elver.google.com>
-References: <CANpmjNM8wEJngK=J8Lt9npkZgrSWoRsqkdajErWEoY_=M1GW5A@mail.gmail.com>
- <43f8a3bf-34c5-0fc9-c335-7f92eaf23022@samsung.com>
- <dccaa337-f3e5-08e4-fe40-a603811bb13e@samsung.com>
- <CANpmjNP6-yKpxHqYFiA8Up-ujBQaeP7xyq1BrsV-NqMjJ-uHAQ@mail.gmail.com>
- <740077ce-efe1-b171-f807-bc5fd95a32ba@samsung.com>
- <f114ff4a-6612-0935-12ac-0e2ac18d896c@samsung.com>
- <CANpmjNM6bQpc49teN-9qQhCXoJXaek5stFGR2kPwDroSFBc0fw@mail.gmail.com>
- <cf6ed5cd-3202-65ce-86bc-6f1eba1b7d17@samsung.com>
- <CANpmjNPr_JtRC762ap8PQVmsFNY5YhHvOk0wNcPHq=ZQt-qxYg@mail.gmail.com>
- <YIBSg7Vi+U383dT7@elver.google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e6EH0xRo04NgBzgtXB3b7oeb+R442Tw23QSfh3nfOfQ=;
+        b=AvRBDex8ZSy1RVudIhnhR35jPAztRXI6Fe01gaG0INy6QxqUK5XpvnsPODFOCFqEkM
+         y0i7cVHUySDg1i86ooWVkMp+H2w/Osl+VvJQAgNxQpWXTTtMdxsbA/04VRzIFM/rzoEk
+         DuVJHDIKAERIxkKVwzxkEgt6CIFJi94b0aQE4ZlKMvxcFIu6gq55z0Yy20OalBdkK4iI
+         i3kdX6MWmeA2Ko3aW9H+oF0ftE5y5fU+amUr8AChHZ2cFN/0QTR5syhAAcWvGJBznAC0
+         V2PsLwyl/y38Gek6cC7O43FPAvU9QZMnQalGv6Hw3ZelL7KIFAp5wXqPHOySxNlWyqb3
+         RkDg==
+X-Gm-Message-State: AOAM5330FznQOyelSwXoQ/DKByGvmCCLjB15NmyD1ShDdt87MvJFCnHt
+        ne/ShHXcsqtMJwpTBO/yAlY=
+X-Google-Smtp-Source: ABdhPJxsK/5csxgiYQ7pJhcu2s+lCyfc+/NOLed586o2XDFUQ1/zL4P3jCF7Jw3NQVMlQn+5qCBSGA==
+X-Received: by 2002:a05:6512:39c9:: with SMTP id k9mr455290lfu.14.1619048006528;
+        Wed, 21 Apr 2021 16:33:26 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-103.dynamic.spd-mgts.ru. [109.252.193.103])
+        by smtp.googlemail.com with ESMTPSA id n3sm92520lfe.77.2021.04.21.16.33.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Apr 2021 16:33:26 -0700 (PDT)
+Subject: Re: [PATCH 06/10] memory: tegra: Parameterize interrupt handler
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210420165237.3523732-1-thierry.reding@gmail.com>
+ <20210420165237.3523732-7-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c0f7359c-4633-986e-be2e-63d47384df11@gmail.com>
+Date:   Thu, 22 Apr 2021 02:33:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YIBSg7Vi+U383dT7@elver.google.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+In-Reply-To: <20210420165237.3523732-7-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 06:27PM +0200, Marco Elver wrote:
-> On Wed, Apr 21, 2021 at 05:11PM +0200, Marco Elver wrote:
-> > +Cc linux-arm-kernel
-> > 
-> [...]
-> > >
-> > > I've managed to reproduce this issue with a public Raspberry Pi OS Lite
-> > > rootfs image, even without deploying kernel modules:
-> > >
-> > > https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-03-25/2021-03-04-raspios-buster-armhf-lite.zip
-> > >
-> > > # qemu-system-arm -M virt -smp 2 -m 512 -kernel zImage -append "earlycon
-> > > console=ttyAMA0 root=/dev/vda2 rw rootwait" -serial stdio -display none
-> > > -monitor null -device virtio-blk-device,drive=virtio-blk -drive
-> > > file=/tmp/2021-03-04-raspios-buster-armhf-lite.img,id=virtio-blk,if=none,format=raw
-> > > -netdev user,id=user -device virtio-net-device,netdev=user
-> > >
-> > > The above one doesn't boot if zImage z compiled from commit fb6cc127e0b6
-> > > and boots if compiled from 2e498d0a74e5. In both cases I've used default
-> > > arm/multi_v7_defconfig and
-> > > gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabi toolchain.
-> > 
-> > Yup, I've narrowed it down to the addition of "__u64 _perf" to
-> > siginfo_t. My guess is the __u64 causes a different alignment for a
-> > bunch of adjacent fields. It seems that x86 and m68k are the only ones
-> > that have compile-time tests for the offsets. Arm should probably add
-> > those -- I have added a bucket of static_assert() in
-> > arch/arm/kernel/signal.c and see that something's off.
-> > 
-> > I'll hopefully have a fix in a day or so.
-> 
-> Arm and compiler folks: are there some special alignment requirement for
-> __u64 on arm 32-bit? (And if there is for arm64, please shout as well.)
-> 
-> With the static-asserts below, the only thing that I can do to fix it is
-> to completely remove the __u64. Padding it before or after with __u32
-> just does not work. It seems that the use of __u64 shifts everything
-> in __sifields by 4 bytes.
-> 
-> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-> index d0bb9125c853..b02a4ac55938 100644
-> --- a/include/uapi/asm-generic/siginfo.h
-> +++ b/include/uapi/asm-generic/siginfo.h
-> @@ -92,7 +92,10 @@ union __sifields {
->  				__u32 _pkey;
->  			} _addr_pkey;
->  			/* used when si_code=TRAP_PERF */
-> -			__u64 _perf;
-> +			struct {
-> +				__u32 _perf1;
-> +				__u32 _perf2;
-> +			} _perf;
->  		};
->  	} _sigfault;
-> 
-> ^^ works, but I'd hate to have to split this into 2 __u32 because it
-> makes the whole design worse.
-> 
-> What alignment trick do we have to do here to fix it for __u64?
+20.04.2021 19:52, Thierry Reding пишет:
+> +const char *const status_names[32] = {
+> +	[ 1] = "External interrupt",
+> +	[ 6] = "EMEM address decode error",
+> +	[ 7] = "GART page fault",
+> +	[ 8] = "Security violation",
+> +	[ 9] = "EMEM arbitration error",
+> +	[10] = "Page fault",
+> +	[11] = "Invalid APB ASID update",
+> +	[12] = "VPR violation",
+> +	[13] = "Secure carveout violation",
+> +	[16] = "MTS carveout violation",
+> +};
+>  
+> -	return IRQ_HANDLED;
+> -}
+> +const char *const error_names[8] = {
+> +	[2] = "EMEM decode error",
+> +	[3] = "TrustZone violation",
+> +	[4] = "Carveout violation",
+> +	[6] = "SMMU translation error",
+> +};
+>  
 
-So I think we just have to settle on 'unsigned long' here. On many
-architectures, like 32-bit Arm, the alignment of a structure is that of
-its largest member. This means that there is no portable way to add
-64-bit integers to siginfo_t on 32-bit architectures.
-
-In the case of the si_perf field, word size is sufficient since the data
-it contains is user-defined. On 32-bit architectures, any excess bits of
-perf_event_attr::sig_data will therefore be truncated when copying into
-si_perf.
-
-Feel free to test the below if you have time, but the below lets me boot
-32-bit arm which previously timed out. It also passes all the
-static_asserts() I added (will send those as separate patches).
-
-Once I'm convinced this passes all others tests too, I'll send a patch.
-
-Thanks,
--- Marco
-
-
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index c8821d966812..f0d2dd35d408 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -237,7 +237,7 @@ typedef struct compat_siginfo {
- 					u32 _pkey;
- 				} _addr_pkey;
- 				/* used when si_code=TRAP_PERF */
--				compat_u64 _perf;
-+				compat_ulong_t _perf;
- 			};
- 		} _sigfault;
- 
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index d0bb9125c853..03d6f6d2c1fe 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -92,7 +92,7 @@ union __sifields {
- 				__u32 _pkey;
- 			} _addr_pkey;
- 			/* used when si_code=TRAP_PERF */
--			__u64 _perf;
-+			unsigned long _perf;
- 		};
- 	} _sigfault;
- 
+These struct names are too generic for a global names, what about
+prefixing them with tegra_mc_ ?
