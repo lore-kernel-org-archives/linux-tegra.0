@@ -2,116 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9AAC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Apr 2021 11:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E0FC433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Apr 2021 12:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 542616145C
-	for <linux-tegra@archiver.kernel.org>; Thu, 22 Apr 2021 11:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6640160FF1
+	for <linux-tegra@archiver.kernel.org>; Thu, 22 Apr 2021 12:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236072AbhDVLfp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 22 Apr 2021 07:35:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54634 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236067AbhDVLfp (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 22 Apr 2021 07:35:45 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9A7C06138C
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Apr 2021 04:35:09 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id m9so31710027wrx.3
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Apr 2021 04:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nesQIfMK+IRA17P6tXXIkpXFOP6516pK+CAAmZXiyyQ=;
-        b=RhrVbOBr+ZTTZC+LRLoruKwjZQua0h/acVoW8lowAFUm8W5rEJoG/dfoHoWhb7uDtI
-         AcqAzJyW9K4jtEvSpb3omnXZyrhFCUf0bDScialHScz3A3olefuHdblE81bLIvnyldiz
-         ZLsNSuu1vXzo4Y5VPGI5dLRWEnBhbWU4B40epR0mdVf2/wMmnZBGy5bVqnMw0oaJatxN
-         PF06h6EvcN/FQA7QtA42pX5cYZQLY5OHANW97/uTQs3ssu8td7zj/4Vf/HIrbZyVQ0OW
-         lWazLWPKaLfZaV6hOGlTKpv/hz6vFFqH9wpSXd878rubD0Kbeykkq2uvCtQkVElEF1Ny
-         /ZRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nesQIfMK+IRA17P6tXXIkpXFOP6516pK+CAAmZXiyyQ=;
-        b=XQ+BQmPLIEwgSggfXlZw+D4pXO4yjEneS4OfC+7yaUosLcmKfJw5Gt2NBdDkMDhO8s
-         XNOdXzDOyVts4+lEFP+McYaENM2B1tpEG3Baq53by/umLIUqREmQ3h4qLRdIkiBeXRNX
-         Ic8292YDj77lhr4aeFP0vD7OQH9wi4xh7kh9Ats+/hPtyooyjN9cgslKJhBFrbYPbs0H
-         nmj6r2H0kZW7jllJH4Gz96IJv7iFZpI67BsLrt2Am6gaxg/9lLUZkiRD7Vo3ks1hWCfv
-         W3dlQIz5JEczEJllpJnC5oJGllVSXRZ9XhnA5fLLs/cIY8kklKVSDwthfN92u2/8OIgX
-         Sy0g==
-X-Gm-Message-State: AOAM532lBcJC2RDYvmTkxTc0J7CDWVDp5218auyCxC1bI8SdJA0mfCXm
-        JzJTBdm1NldA8s0Etsp8rQIjFQ==
-X-Google-Smtp-Source: ABdhPJz/kbxkcLITLyWEZrr8GDI8FPMwCbwPkj6TzcuC+3PHfDz7qgMR6PolesBs2ZD1ZRV/pWxlSw==
-X-Received: by 2002:adf:f80c:: with SMTP id s12mr3657463wrp.115.1619091308380;
-        Thu, 22 Apr 2021 04:35:08 -0700 (PDT)
-Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:e88d:2580:c20:b786])
-        by smtp.gmail.com with ESMTPSA id u6sm3237890wml.23.2021.04.22.04.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 04:35:07 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org
-Cc:     Zhang Rui <rui.zhang@intel.com>, Amit Kucheria <amitk@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        dingsenjie <dingsenjie@yulong.com>,
-        Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] thermal/drivers/tegra: Remove a pointless call get_thermal_instance()
-Date:   Thu, 22 Apr 2021 13:34:55 +0200
-Message-Id: <20210422113457.51578-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        id S236448AbhDVMtG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 22 Apr 2021 08:49:06 -0400
+Received: from mail-co1nam11on2070.outbound.protection.outlook.com ([40.107.220.70]:42272
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S236400AbhDVMtF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 22 Apr 2021 08:49:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KmAR3AAUsLGreJIQsvEc1lsC+BG36yW61v3kMIBJX0Qow8t1ffVqUCNin5JNtEvQSCfAykuIKnyhW71tZMI4fBm/D/9oNCRnShD9acsq6IzHYNpSDg87KyVUL7KVzn6G3SL36uiknO4f4IV9t68yQdlWM55zZtLJeVdgegoUUpd9lfmHTd3gN0y6GomBtJM2k75uAoeyNU8EyQ9fH0giEt5MZdQXSBiHLQRW0oqeoSKTW+pHb/mOPDgxWm+LUiwCkpzTqfYgNqj3l0f0QK0T1HstZX86kZiCBAXmvzl4w7uw2afpVh0d1dFGjadeduG/HJSGKn7RyhpJVDG5KwQu9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+bPKZ/aelUMXzg0H/04htL/UYm5gLAnC07mQFnr0DLc=;
+ b=RBxbEuB4VVe5x+mdQSFnrpD6bhIf7yB/eYB7R3fb6P+V25GKqTfc7lClwfuEVBQ0Y42BrKHRV5otUPR/U9sgiDtviG/ugF+3lLY9SDERcm4d2RdV/xjcWDd4HUtIJrJJZLA8ktuipuRHOSzTGBscDz0O2AREyZrD6oLgzeZNDzwYTayFhrLz+s/kmV19mIQvEgv279dy5TuxNAltrulcSciuM7fwjeWFbSFiVbSgEMtDJ8etdzDgfHYaga5q1/R5e6C/7qmsMfs8HSKShZT5U/rhgZ09bZB/CScgD5IPVjl14lX1aCT0NAIFNsBF0QiXLqT3a3tN7cgU4YQv14Xxyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+bPKZ/aelUMXzg0H/04htL/UYm5gLAnC07mQFnr0DLc=;
+ b=tYm55cSTrXqo7KbzkUpEPTpjGw54rpLUvSlwrvKthi9R/4j2Dbqm2CkdUEtKE2qG7j8gJ9+XvcolV93x93Rm50/Hlxvwwm7vgeoXLj0D/f7v34PrlVcowqqzUKeOqJhEt8ruXlKBgT9psxnBupiQueP9170Zx2MGV3sk8xss5f2Wq/g5SPMZV8mX2IThE2ekc5GEb+1dXjeYs8K6UhdoWz1VHYQeGvzFdNJ5MsB9R4MqP5kEbFHF+xRN9cLmCV7H8nr0PdggY5LOwsdb/E6z8gBTwm0RACvA98vkfuFs6sElfyGwoJaUrGCI/1RMvXIestjnplSRsEP2vUqsqCAkNw==
+Received: from DS7PR03CA0134.namprd03.prod.outlook.com (2603:10b6:5:3b4::19)
+ by CY4PR12MB1751.namprd12.prod.outlook.com (2603:10b6:903:121::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.19; Thu, 22 Apr
+ 2021 12:48:28 +0000
+Received: from DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b4:cafe::97) by DS7PR03CA0134.outlook.office365.com
+ (2603:10b6:5:3b4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.20 via Frontend
+ Transport; Thu, 22 Apr 2021 12:48:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT039.mail.protection.outlook.com (10.13.172.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4065.21 via Frontend Transport; Thu, 22 Apr 2021 12:48:28 +0000
+Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 22 Apr
+ 2021 12:48:26 +0000
+Subject: Re: [PATCH] Revert "net: stmmac: re-init rx buffers when mac resume
+ back"
+To:     Thierry Reding <thierry.reding@gmail.com>, <davem@davemloft.net>,
+        <kuba@kernel.org>
+CC:     <peppe.cavallaro@st.com>, <alexandre.torgue@foss.st.com>,
+        <joabreu@synopsys.com>, <qiangqing.zhang@nxp.com>,
+        <netdev@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <20210414151007.563698-1-thierry.reding@gmail.com>
+ <161843460976.4219.11833628435503987516.git-patchwork-notify@kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d51f9f85-9093-86d7-fe41-a4353eb6599b@nvidia.com>
+Date:   Thu, 22 Apr 2021 13:48:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <161843460976.4219.11833628435503987516.git-patchwork-notify@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 96c734aa-6863-40a1-952e-08d9058ced86
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1751:
+X-Microsoft-Antispam-PRVS: <CY4PR12MB17511499F933CE88DB0DD64ED9469@CY4PR12MB1751.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: f6GG4iriimIWyEFg0Q5i7RCit0Xk4v8QrO3dmLep2nl9hsjZa5NSoh0CzFSOh1IL7IrEyAW689wFVb6rxaVB2AnNigHwNxfTT02dlqUAD9rO/qXARannB6YPQL24ui334PxGaXbiFO5IC7M/ZyiEGm2wfSBWtVIjT+W+yLhvYbTt/UKZiFYZGeWbdf4Vcp8cqPpA2jWi0SDFp3acdEeZmiij32nXy/xqHieIdONu30HN6G3/K2pmKFr+WBBHCgv+NKIdrVdnYOjc6sG8kwqW7x4oLdHlu91lUgVRffnW4kg157MmEoTZzlRYkvQ9yZwYvp10ZaEecwoOPAIUUqZSoBUys4s+lW9aq7GX5+mOhLv20Pf8ttHCEpWpY/+Y54Qn5xyOdqWsG87RLBjg7BdSURm3ZsDmencSHxyl2D4GYgWNN/URb9vtMsF3s2ojcLVFOWjEqVEhX8KvsSgF7ysQuwIXtMhRbK19HxoELee3vvsJqwxPwR7qxmoEsJOCRu04G9tek6yI9+KNQilGDtPZnyRB4FccR2AFcZ+tdw9vwbnS65FBuYSwzE5U1nAlwWIA6rNa50uX5/6+me8zXs7DY5HyBv0NYJzCWx4TvRkydCls0KcO9vxE4C5peHf4WffLR5tCQkmqHRCB9Dv0zuxQ8FORacAcTpR01X/FY9E+4zJbrilUuxJjjqkbafcR5RhRnJceTuSHYvylpOsYDoL4gsZwvFqberQ8hKJmOIOa9/CWeWs6yUr/o5HTTJypvOcUWz7rql1A/tsG+s7fHZ+oIQ==
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(376002)(396003)(346002)(39860400002)(46966006)(36840700001)(478600001)(2616005)(186003)(86362001)(31686004)(4326008)(8936002)(36860700001)(70206006)(70586007)(8676002)(5660300002)(36756003)(82310400003)(36906005)(82740400003)(16576012)(356005)(110136005)(336012)(4744005)(83380400001)(26005)(2906002)(7636003)(426003)(54906003)(966005)(316002)(16526019)(31696002)(53546011)(47076005)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2021 12:48:28.7136
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96c734aa-6863-40a1-952e-08d9058ced86
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1751
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The driver is calling get_thermal_instance() but the lookup can happen
-directly. Remove the call to get_thermal_instance().
+Hi David, Jakub,
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/tegra/soctherm.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On 14/04/2021 22:10, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
+> 
+> This patch was applied to netdev/net.git (refs/heads/master):
+> 
+> On Wed, 14 Apr 2021 17:10:07 +0200 you wrote:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> This reverts commit 9c63faaa931e443e7abbbee9de0169f1d4710546, which
+>> introduces a suspend/resume regression on Jetson TX2 boards that can be
+>> reproduced every time. Given that the issue that this was supposed to
+>> fix only occurs very sporadically the safest course of action is to
+>> revert before v5.12 and then we can have another go at fixing the more
+>> rare issue in the next release (and perhaps backport it if necessary).
+>>
+>> [...]
+> 
+> Here is the summary with links:
+>   - Revert "net: stmmac: re-init rx buffers when mac resume back"
+>     https://git.kernel.org/netdev/net/c/00423969d806
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 8e303e9d1dc0..355fdf32cbc1 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -621,9 +621,8 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 				continue;
- 
- 			cdev = ts->throt_cfgs[i].cdev;
--			if (get_thermal_instance(tz, cdev, trip))
--				stc = find_throttle_cfg_by_name(ts, cdev->type);
--			else
-+			stc = find_throttle_cfg_by_name(ts, cdev->type);
-+			if (!stc)
- 				continue;
- 
- 			return throttrip_program(dev, sg, stc, temp);
-@@ -806,9 +805,8 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 			continue;
- 
- 		cdev = ts->throt_cfgs[i].cdev;
--		if (get_thermal_instance(tz, cdev, trip))
--			stc = find_throttle_cfg_by_name(ts, cdev->type);
--		else
-+		stc = find_throttle_cfg_by_name(ts, cdev->type);
-+		if (!stc)
- 			continue;
- 
- 		ret = throttrip_program(dev, sg, stc, temperature);
+
+This revert is needed for v5.12. I was just checking to see if this
+would be merged this week?
+
+Thanks!
+Jon
+
 -- 
-2.25.1
-
+nvpublic
