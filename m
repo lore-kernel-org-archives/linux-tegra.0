@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4035C43600
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Apr 2021 16:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5D2C4360C
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Apr 2021 16:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1CDF611BF
-	for <linux-tegra@archiver.kernel.org>; Fri, 23 Apr 2021 16:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC6B611C1
+	for <linux-tegra@archiver.kernel.org>; Fri, 23 Apr 2021 16:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236900AbhDWQcc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 23 Apr 2021 12:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
+        id S242270AbhDWQce (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 23 Apr 2021 12:32:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231437AbhDWQcc (ORCPT
+        with ESMTP id S242153AbhDWQce (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 23 Apr 2021 12:32:32 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63E9C061574;
-        Fri, 23 Apr 2021 09:31:55 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id j7so21231674eds.8;
-        Fri, 23 Apr 2021 09:31:55 -0700 (PDT)
+        Fri, 23 Apr 2021 12:32:34 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AAFDC061574;
+        Fri, 23 Apr 2021 09:31:57 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id r20so25009011ejo.11;
+        Fri, 23 Apr 2021 09:31:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1VY28Z37MPEV6Kt+8joC6jx+HXlldXYlWb0gBBnzDC4=;
-        b=qaMHOop5F7+0YNk9A67uQMd5OE8PSCE5QOa1iBh/LMr8E0Tirdwp4pfUQTzGPFHHb5
-         9bsEnUCvZY5Y8Qo0pV/pygqnNN1/sag+yxO3r1g0lov6l3mMMNzoaruSt++Df5nsdPPw
-         skv0XyQLzKEbtmwLdyJEATdfSAoPjBkP3U7MiVA9wg1VasGe90XASNogAm4F/Q54MYKh
-         pxgKoNTtZ4r0V2tLFZOmmGE75xGga+rz0c7muJb4efXBojyTkyGhDMxdJXEXJFfi8IMc
-         XollAZMEqOSb9XuxvCCCgpETuygTlrPB5JQIeAxXSQ/Dhr3B1m7eFZ9j1SIF8IeevaCi
-         GVhw==
+        bh=QcfymhoYhAwy+sqKo+Bx4zKEukw467+NXOcy0hVDFGM=;
+        b=FESlPukByffPHu9CvLIV7AnmA2veAujkMJJetMuD+jr+PVzCDlcGJafOAtL1ymwv3F
+         Sv1wT2AQN/qfkPKYWqCiG08fjIzdsljqSdAgZyMYuvcLX/78WjHkxD64Y2Gjs+kS9zC5
+         jedlkF5hxMPycWay51n4Zr1F7iVkeTmILL72NsBTWhbfQcbIcD/tMcRH4xcr0hnZCdLS
+         V+J4oVzzNRRX/8dDMs8gD6+FYhb59ihRfUENXomHxVjM16BmCrE/Ti1IuYPIxyDl+FfU
+         xcC8Tw8MAtWMRHvWFUIEJW9jxVV/58cFPJQwtTaB7iT5dUQh0J4j2VUNkvfbJdJIBwvJ
+         nMoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1VY28Z37MPEV6Kt+8joC6jx+HXlldXYlWb0gBBnzDC4=;
-        b=q3Hc65BMp/L2QzkGm9B+tRkdm6RTjGX9ST72TuFf9/yBJKqhzAqsaHAamiwkQOclUp
-         5rVaJZunGh3U8FLR+BrvajcyW7RI78q5hTrHKLBiFCHpNqm9ZNpDbLnMdq23kPnd6gtb
-         +gJrn9prL660QYjzHfhKqDostfY2bfK3wX9KdwO48kgnIwjLQYrphqb68OW5PeYUVOQ0
-         uwHQlcRgsdElYNjlwhDSzmxMklRsdMCnAm2sV1L95ql5BSc/4GmWDSfMA8AYXlxwiVVW
-         h07Xoz4yBD2PiB1COUYV0+8eTPlBnNu8RH9MutjImx36kcH78uvUGV3+kYFH6JJa+b5H
-         qDgg==
-X-Gm-Message-State: AOAM530g8AtTVgiDuODD+BfPBIkgRG1XxD3Szr6xAIwwO3fBwHYXSTWP
-        I7G2bK5KW9k1HqykrI/rTqk=
-X-Google-Smtp-Source: ABdhPJx6kev8Evs6lQORshsQLF8RGAF8MELC3qxbd+9sES40NAGXlFm/g7VleXHaG/jO3m87mjyTYg==
-X-Received: by 2002:a05:6402:54f:: with SMTP id i15mr5535218edx.365.1619195514456;
-        Fri, 23 Apr 2021 09:31:54 -0700 (PDT)
+        bh=QcfymhoYhAwy+sqKo+Bx4zKEukw467+NXOcy0hVDFGM=;
+        b=JZaStCSmHrtH8deow5YUau35ifBPu481cbfxBzqtvN5H3C+BhCIXU7r4QeOGdyMjMl
+         3c6AqRR54anqmFbr0Za/oDcU2vmk1MkEljIZ1smJDK/+7tr05jOtoaHIgKk5piWEZImT
+         tzDpWra/0hvAQQ2h1QEomam6SbjYvF5IUppm3VewfIHbl5i4jB2WzZ2MaaotNbpwECZy
+         J1PlMyA4wwzjwHfYftvRYKUUwLXqH9RGss7M5uYIzQtCxdkM8I6wx65xKxsTNYJILzYa
+         vIRlmp5/nnQUBZUe318TjgqV4Vr90FGAxOA2CaLHP9W+/KHcUrknKueQfIKNC71rJmLv
+         FKxg==
+X-Gm-Message-State: AOAM531d57nhZbUVpIj0Tn8pqSXFoANxt69TwMR4eEx1h2oWQLrMwCTF
+        uyYqUU3vO+YgbfZF7psO8eKjDwcbEc4=
+X-Google-Smtp-Source: ABdhPJwoBW+602wRSEps/+5/WYwBNnRe76Ww0Z1tDKz4LgLLc/4LOl5Aj9cVnMsdyWPG6VZDxQS6og==
+X-Received: by 2002:a17:907:daa:: with SMTP id go42mr5140586ejc.120.1619195516115;
+        Fri, 23 Apr 2021 09:31:56 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o9sm4333335ejg.56.2021.04.23.09.31.52
+        by smtp.gmail.com with ESMTPSA id a22sm5064750edu.14.2021.04.23.09.31.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Apr 2021 09:31:53 -0700 (PDT)
+        Fri, 23 Apr 2021 09:31:55 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>
 Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -64,11 +64,10 @@ Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Krishna Reddy <vdumpa@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 2/5] iommu: Implement of_iommu_get_resv_regions()
-Date:   Fri, 23 Apr 2021 18:32:31 +0200
-Message-Id: <20210423163234.3651547-3-thierry.reding@gmail.com>
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH v2 3/5] iommu: dma: Use of_iommu_get_resv_regions()
+Date:   Fri, 23 Apr 2021 18:32:32 +0200
+Message-Id: <20210423163234.3651547-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210423163234.3651547-1-thierry.reding@gmail.com>
 References: <20210423163234.3651547-1-thierry.reding@gmail.com>
@@ -80,130 +79,39 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-This is an implementation that IOMMU drivers can use to obtain reserved
-memory regions from a device tree node. It uses the reserved-memory DT
-bindings to find the regions associated with a given device. If these
-regions are marked accordingly, identity mappings will be created for
-them in the IOMMU domain that the devices will be attached to.
+For device tree nodes, use the standard of_iommu_get_resv_regions()
+implementation to obtain the reserved memory regions associated with a
+device.
 
+Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Frank Rowand <frowand.list@gmail.com>
 Cc: devicetree@vger.kernel.org
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v3:
-- change "active" property to identity mapping flag that is part of the
-  memory region specifier (as defined by #memory-region-cells) to allow
-  per-reference flags to be used
+ drivers/iommu/dma-iommu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v2:
-- use "active" property to determine whether direct mappings are needed
----
- drivers/iommu/of_iommu.c | 54 ++++++++++++++++++++++++++++++++++++++++
- include/linux/of_iommu.h |  8 ++++++
- 2 files changed, 62 insertions(+)
-
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index a9d2df001149..321ebd5fdaba 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -11,12 +11,15 @@
- #include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_iommu.h>
- #include <linux/of_pci.h>
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 7bcdd1205535..52b424176241 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -19,6 +19,7 @@
+ #include <linux/irq.h>
+ #include <linux/mm.h>
+ #include <linux/mutex.h>
++#include <linux/of_iommu.h>
  #include <linux/pci.h>
- #include <linux/slab.h>
- #include <linux/fsl/mc.h>
+ #include <linux/swiotlb.h>
+ #include <linux/scatterlist.h>
+@@ -190,6 +191,8 @@ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+ 	if (!is_of_node(dev_iommu_fwspec_get(dev)->iommu_fwnode))
+ 		iort_iommu_msi_get_resv_regions(dev, list);
  
-+#include <dt-bindings/reserved-memory.h>
-+
- #define NO_IOMMU	1
- 
- /**
-@@ -240,3 +243,54 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
- 
- 	return ops;
++	if (dev->of_node)
++		of_iommu_get_resv_regions(dev, list);
  }
-+
-+/**
-+ * of_iommu_get_resv_regions - reserved region driver helper for device tree
-+ * @dev: device for which to get reserved regions
-+ * @list: reserved region list
-+ *
-+ * IOMMU drivers can use this to implement their .get_resv_regions() callback
-+ * for memory regions attached to a device tree node. See the reserved-memory
-+ * device tree bindings on how to use these:
-+ *
-+ *   Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+ */
-+void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
-+{
-+	struct of_phandle_iterator it;
-+	int err;
-+
-+	of_for_each_phandle(&it, err, dev->of_node, "memory-region", "#memory-region-cells", 0) {
-+		struct iommu_resv_region *region;
-+		struct of_phandle_args args;
-+		struct resource res;
-+
-+		args.args_count = of_phandle_iterator_args(&it, args.args, MAX_PHANDLE_ARGS);
-+
-+		err = of_address_to_resource(it.node, 0, &res);
-+		if (err < 0) {
-+			dev_err(dev, "failed to parse memory region %pOF: %d\n",
-+				it.node, err);
-+			continue;
-+		}
-+
-+		if (args.args_count > 0) {
-+			/*
-+			 * Active memory regions are expected to be accessed by hardware during
-+			 * boot and must therefore have an identity mapping created prior to the
-+			 * driver taking control of the hardware. This ensures that non-quiescent
-+			 * hardware doesn't cause IOMMU faults during boot.
-+			 */
-+			if (args.args[0] & MEMORY_REGION_IDENTITY_MAPPING) {
-+				region = iommu_alloc_resv_region(res.start, resource_size(&res),
-+								 IOMMU_READ | IOMMU_WRITE,
-+								 IOMMU_RESV_DIRECT_RELAXABLE);
-+				if (!region)
-+					continue;
-+
-+				list_add_tail(&region->list, list);
-+			}
-+		}
-+	}
-+}
-+EXPORT_SYMBOL(of_iommu_get_resv_regions);
-diff --git a/include/linux/of_iommu.h b/include/linux/of_iommu.h
-index 16f4b3e87f20..8412437acaac 100644
---- a/include/linux/of_iommu.h
-+++ b/include/linux/of_iommu.h
-@@ -16,6 +16,9 @@ extern const struct iommu_ops *of_iommu_configure(struct device *dev,
- 					struct device_node *master_np,
- 					const u32 *id);
+ EXPORT_SYMBOL(iommu_dma_get_resv_regions);
  
-+extern void of_iommu_get_resv_regions(struct device *dev,
-+				      struct list_head *list);
-+
- #else
- 
- static inline int of_get_dma_window(struct device_node *dn, const char *prefix,
-@@ -32,6 +35,11 @@ static inline const struct iommu_ops *of_iommu_configure(struct device *dev,
- 	return NULL;
- }
- 
-+static inline void of_iommu_get_resv_regions(struct device *dev,
-+					     struct list_head *list)
-+{
-+}
-+
- #endif	/* CONFIG_OF_IOMMU */
- 
- #endif /* __OF_IOMMU_H */
 -- 
 2.30.2
 
