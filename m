@@ -7,71 +7,65 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFFEC433B4
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 08:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6E6C433ED
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 08:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 777C3601FD
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 08:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F0C561139
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 08:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232080AbhDZI32 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Apr 2021 04:29:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41892 "EHLO
+        id S232078AbhDZIrz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Apr 2021 04:47:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42450 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232068AbhDZI31 (ORCPT
+        with ESMTP id S232068AbhDZIrz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Apr 2021 04:29:27 -0400
-Received: from mail-ed1-f70.google.com ([209.85.208.70])
+        Mon, 26 Apr 2021 04:47:55 -0400
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lawbk-0002B1-Kf
-        for linux-tegra@vger.kernel.org; Mon, 26 Apr 2021 08:28:44 +0000
-Received: by mail-ed1-f70.google.com with SMTP id l7-20020aa7c3070000b029038502ffe9f2so16790220edq.16
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 01:28:44 -0700 (PDT)
+        id 1lawtd-0004pg-Ed
+        for linux-tegra@vger.kernel.org; Mon, 26 Apr 2021 08:47:13 +0000
+Received: by mail-wm1-f71.google.com with SMTP id k15-20020a05600c0b4fb029013886a4b6a5so3217952wmr.1
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 01:47:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=COIkDfjubq7aAUAK5liY18XK8WSLoAGQXd5DYCklQ/A=;
-        b=HChDbdiFJW2vbnWFZiFp7pdEFX+yQntWct6m0np63IG2RzE9jdtdsHMojfbI0evb0H
-         eFWuppBkT2MSB4DxExMLezR1ZAEAAnN1XbAg8ycsC/Q9QkkSORTFyBliQ0Ka+J//7gZd
-         vUM8WAxkkcVgdKjT7/HzOpPlc/oR7RQ7aLBVeHJYgYJnGbNdnTICQAFqCCwoq/VVtqmD
-         YAKtSFfXXLnWKc6HzXAVX5qRjdDvJfGXA97GdeyfnVivGqDeub6j4fHYPnfHrvKw9ZsZ
-         L3Jmpp5XpASn9p17sF+zi7X3WvuwTFxwuh4hhQ5jQDxDNEJjrlypMHCo+bpNqYkKUcXc
-         6mqg==
-X-Gm-Message-State: AOAM533lUuh8G7s2J9Pacr4CUH4W62dl86zkrneFGQ7zDl+eXAMDtH9U
-        BDVzLxhEAZqSzCFH7MnVUJCiUpu0iLKR9cJYOp1TiT5XmbtbsPVbCsDLILYhTi6BPWdcmBIqDiW
-        Wqfp2BPyPnkYfmUYv0ZE7ymrtfN0o7utN2HL4HuCw
-X-Received: by 2002:a17:906:6d48:: with SMTP id a8mr17748264ejt.92.1619425724301;
-        Mon, 26 Apr 2021 01:28:44 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyhr25H0tBsBH7bLu7FVjvZjArCD5pPEKSdYyH73P4GGQO0s+LeQ8sv8v4PmZJ+zVnujNggsw==
-X-Received: by 2002:a17:906:6d48:: with SMTP id a8mr17748251ejt.92.1619425724124;
-        Mon, 26 Apr 2021 01:28:44 -0700 (PDT)
+        bh=WNiJ9j/ReCCELnSWT4R1Xa4Eh6A3I3MqyvJFgayyiu0=;
+        b=IDE2K0jEttpkSTuRKcovlz+81+xYQfgx9N6ZUuVh6ghUAimY6zCeBU4nCIP3eyy5bc
+         4+E/8dtv3uAYxJABUZgzcOrmmQgMCCL5QdPwgf/oIp3SpVimafZYSrtqvKd8P4lCG+73
+         db/JeXihv5V8NCSXcnLcH8aVeEy2kwTCQhIP1NQ3s7J4oLn+QnmHf5OYKiGNvy+IJ8n7
+         8GQnIJ1QK0bLcRqbB0nM/shcYKsXBvGxPKgxJmTb76R6PSqiLIwwF1IjEnqiCPWjtSUN
+         3pZjGszMBAVvORTsiWDnP2TKw2zGGHkvUkFJe4m+3m2t2G+9jNzaI4pwfAC/whQ4ivTK
+         OtoQ==
+X-Gm-Message-State: AOAM531uVlUy2Km+THGk0ifHlT7yGGaUuFnCjAHpSt6my/2JXUcR9Br+
+        JR/DJ6mXalAP9alqOgOhLBIYj4lVUbSw7iirPCLyIDWfPsE9pxLwnnxnbM/NiwQMgE25YXxc+L8
+        Sm33fSRusIwFEil1NYEIUuK7AjuDocWshd8UJp6lX
+X-Received: by 2002:a1c:7e82:: with SMTP id z124mr20054569wmc.51.1619426833031;
+        Mon, 26 Apr 2021 01:47:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyrUFfbGUozT8GEmNRuPdPF+EWL2jPVTerTlxDnmXt9wwCFYRqudvrmg9R48/z7Z4pCqLkpZQ==
+X-Received: by 2002:a1c:7e82:: with SMTP id z124mr20054556wmc.51.1619426832804;
+        Mon, 26 Apr 2021 01:47:12 -0700 (PDT)
 Received: from [192.168.1.115] (xdsl-188-155-180-75.adslplus.ch. [188.155.180.75])
-        by smtp.gmail.com with ESMTPSA id l6sm11153810ejc.92.2021.04.26.01.28.43
+        by smtp.gmail.com with ESMTPSA id l9sm19848389wrz.7.2021.04.26.01.47.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 01:28:43 -0700 (PDT)
-Subject: Re: [PATCH v2 01/10] memory: tegra: Implement SID override
- programming
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
+        Mon, 26 Apr 2021 01:47:12 -0700 (PDT)
+Subject: Re: [PATCH 03/10] memory: tegra: Push suspend/resume into SoC drivers
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicolinc@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20210420172619.3782831-1-thierry.reding@gmail.com>
- <20210420172619.3782831-2-thierry.reding@gmail.com>
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20210420165237.3523732-1-thierry.reding@gmail.com>
+ <20210420165237.3523732-4-thierry.reding@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <03e2a655-7dbf-a729-75f6-98db353e2b91@canonical.com>
-Date:   Mon, 26 Apr 2021 10:28:43 +0200
+Message-ID: <d1626fd2-90e3-7a26-51b8-497a344aee6f@canonical.com>
+Date:   Mon, 26 Apr 2021 10:47:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210420172619.3782831-2-thierry.reding@gmail.com>
+In-Reply-To: <20210420165237.3523732-4-thierry.reding@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -79,171 +73,158 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 20/04/2021 19:26, Thierry Reding wrote:
+On 20/04/2021 18:52, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 > 
-> Instead of programming all SID overrides during early boot, perform the
-> operation on-demand after the SMMU translations have been set up for a
-> device. This reuses data from device tree to match memory clients for a
-> device and programs the SID specified in device tree, which corresponds
-> to the SID used for the SMMU context banks for the device.
+> Continuing the scheme of unification, push suspend/resume callbacks into
+> per-SoC driver so that they can be properly parameterized.
+> 
+> While at it, also move the ->init() callback into the new tegra_mc_ops
+> structure to keep things clean.
+
+Please split this part. This is just moving pointer from one structure
+to another, quite small change.
+
+The rest of the patchset is quite different - you now call
+tegra_mc_suspend() from a per-SoC driver and move the code around.
+
 > 
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/memory/tegra/mc.c       |  9 +++++
->  drivers/memory/tegra/tegra186.c | 72 +++++++++++++++++++++++++++++++++
->  include/soc/tegra/mc.h          |  3 ++
->  3 files changed, 84 insertions(+)
+>  drivers/memory/tegra/mc.c       | 24 ++++++++---------------
+>  drivers/memory/tegra/tegra186.c | 27 ++++++++++++++++++++++----
+>  drivers/memory/tegra/tegra20.c  | 34 ++++++++++++++++++++++++++++++++-
+>  include/soc/tegra/mc.h          |  9 +++++++--
+>  4 files changed, 71 insertions(+), 23 deletions(-)
 > 
 > diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index c854639cf30c..bace5ecfe770 100644
+> index b7e104bf6614..2b21131d779c 100644
 > --- a/drivers/memory/tegra/mc.c
 > +++ b/drivers/memory/tegra/mc.c
-> @@ -97,6 +97,15 @@ struct tegra_mc *devm_tegra_memory_controller_get(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(devm_tegra_memory_controller_get);
+> @@ -829,8 +829,8 @@ static int tegra_mc_probe(struct platform_device *pdev)
 >  
-> +int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev)
-> +{
-> +	if (mc->soc->ops && mc->soc->ops->probe_device)
-> +		return mc->soc->ops->probe_device(mc, dev);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_mc_probe_device);
-> +
->  static int tegra_mc_block_dma_common(struct tegra_mc *mc,
->  				     const struct tegra_mc_reset *rst)
->  {
-> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> index 1f87915ccd62..e65eac5764d4 100644
-> --- a/drivers/memory/tegra/tegra186.c
-> +++ b/drivers/memory/tegra/tegra186.c
-> @@ -4,6 +4,7 @@
->   */
+>  	mc->debugfs.root = debugfs_create_dir("mc", NULL);
 >  
->  #include <linux/io.h>
-> +#include <linux/iommu.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/of_device.h>
-> @@ -15,6 +16,10 @@
->  #include <dt-bindings/memory/tegra186-mc.h>
->  #endif
->  
-> +#define MC_SID_STREAMID_OVERRIDE_MASK GENMASK(7, 0)
-> +#define MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED BIT(16)
-> +#define MC_SID_STREAMID_SECURITY_OVERRIDE BIT(8)
-> +
->  static void tegra186_mc_program_sid(struct tegra_mc *mc)
->  {
->  	unsigned int i;
-> @@ -66,10 +71,77 @@ static int tegra186_mc_resume(struct tegra_mc *mc)
+> -	if (mc->soc->init) {
+> -		err = mc->soc->init(mc);
+> +	if (mc->soc->ops && mc->soc->ops->init) {
+> +		err = mc->soc->ops->init(mc);
+>  		if (err < 0)
+>  			dev_err(&pdev->dev, "failed to initialize SoC driver: %d\n",
+>  				err);
+> @@ -867,30 +867,22 @@ static int tegra_mc_probe(struct platform_device *pdev)
 >  	return 0;
 >  }
 >  
-> +static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
-> +					    const struct tegra_mc_client *client,
-> +					    unsigned int sid)
+> -static int tegra_mc_suspend(struct device *dev)
+> +static int __maybe_unused tegra_mc_suspend(struct device *dev)
+>  {
+>  	struct tegra_mc *mc = dev_get_drvdata(dev);
+> -	int err;
+>  
+> -	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && mc->gart) {
+> -		err = tegra_gart_suspend(mc->gart);
+> -		if (err)
+> -			return err;
+> -	}
+> +	if (mc->soc->ops && mc->soc->ops->suspend)
+> +		return mc->soc->ops->suspend(mc);
+>  
+>  	return 0;
+>  }
+>  
+> -static int tegra_mc_resume(struct device *dev)
+> +static int __maybe_unused tegra_mc_resume(struct device *dev)
+>  {
+>  	struct tegra_mc *mc = dev_get_drvdata(dev);
+> -	int err;
+>  
+> -	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && mc->gart) {
+> -		err = tegra_gart_resume(mc->gart);
+> -		if (err)
+> -			return err;
+> -	}
+> +	if (mc->soc->ops && mc->soc->ops->resume)
+> +		return mc->soc->ops->resume(mc);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+> index 8e77567d1378..9d3fdb609d55 100644
+> --- a/drivers/memory/tegra/tegra186.c
+> +++ b/drivers/memory/tegra/tegra186.c
+> @@ -45,6 +45,17 @@ static void tegra186_mc_program_sid(struct tegra_mc *mc)
+>  	}
+>  }
+>  
+> +static int tegra186_mc_resume(struct tegra_mc *mc)
 > +{
-> +	u32 value, old;
-> +
-> +	value = readl(mc->regs + client->regs.sid.security);
-> +	if ((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0) {
-> +		/*
-> +		 * If the secure firmware has locked this down the override
-> +		 * for this memory client, there's nothing we can do here.
-> +		 */
-> +		if (value & MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED)
-> +			return;
-> +
-> +		/*
-> +		 * Otherwise, try to set the override itself. Typically the
-> +		 * secure firmware will never have set this configuration.
-> +		 * Instead, it will either have disabled write access to
-> +		 * this field, or it will already have set an explicit
-> +		 * override itself.
-> +		 */
-> +		WARN_ON((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0);
-> +
-> +		value |= MC_SID_STREAMID_SECURITY_OVERRIDE;
-> +		writel(value, mc->regs + client->regs.sid.security);
-> +	}
-> +
-> +	value = readl(mc->regs + client->regs.sid.override);
-> +	old = value & MC_SID_STREAMID_OVERRIDE_MASK;
-> +
-> +	if (old != sid) {
-> +		dev_dbg(mc->dev, "overriding SID %x for %s with %x\n", old,
-> +			client->name, sid);
-> +		writel(sid, mc->regs + client->regs.sid.override);
-> +	}
-> +}
-> +
-> +static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
-> +{
-> +#if IS_ENABLED(CONFIG_IOMMU_API)
-
-Is this part really build-time dependent? I don't see here any uses of
-IOMMU specific fields, so maybe this should be runtime choice based on
-enabled interconnect devices?
-
-> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +	struct of_phandle_args args;
-> +	unsigned int i, index = 0;
-> +
-> +	while (!of_parse_phandle_with_args(dev->of_node, "interconnects", "#interconnect-cells",
-> +					   index, &args)) {
-> +		if (args.np == mc->dev->of_node && args.args_count != 0) {
-> +			for (i = 0; i < mc->soc->num_clients; i++) {
-> +				const struct tegra_mc_client *client = &mc->soc->clients[i];
-> +
-> +				if (client->id == args.args[0]) {
-> +					u32 sid = fwspec->ids[0] & MC_SID_STREAMID_OVERRIDE_MASK;
-> +
-> +					tegra186_mc_client_sid_override(mc, client, sid);
-> +				}
-> +			}
-> +		}
-> +
-> +		index++;
-> +	}
-> +#endif
+> +	tegra186_mc_program_sid(mc);
 > +
 > +	return 0;
 > +}
 > +
->  const struct tegra_mc_ops tegra186_mc_ops = {
->  	.probe = tegra186_mc_probe,
->  	.remove = tegra186_mc_remove,
->  	.resume = tegra186_mc_resume,
-> +	.probe_device = tegra186_mc_probe_device,
->  };
->  
+> +static const struct tegra_mc_ops tegra186_mc_ops = {
+> +	.resume = tegra186_mc_resume,
+> +};
+> +
 >  #if defined(CONFIG_ARCH_TEGRA_186_SOC)
-> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-> index 1387747d574b..bbad6330008b 100644
-> --- a/include/soc/tegra/mc.h
-> +++ b/include/soc/tegra/mc.h
-> @@ -176,6 +176,7 @@ struct tegra_mc_ops {
->  	int (*suspend)(struct tegra_mc *mc);
->  	int (*resume)(struct tegra_mc *mc);
->  	irqreturn_t (*handle_irq)(int irq, void *data);
-> +	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
+>  static const struct tegra_mc_client tegra186_mc_clients[] = {
+>  	{
+> @@ -701,6 +712,7 @@ static const struct tegra_mc_client tegra186_mc_clients[] = {
+>  static const struct tegra_mc_soc tegra186_mc_soc = {
+>  	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
+>  	.clients = tegra186_mc_clients,
+> +	.ops = &tegra186_mc_ops,
 >  };
->  
->  struct tegra_mc_soc {
-> @@ -240,4 +241,6 @@ devm_tegra_memory_controller_get(struct device *dev)
->  }
 >  #endif
 >  
-> +int tegra_mc_probe_device(struct tegra_mc *mc, struct device *dev);
+> @@ -1909,6 +1921,7 @@ static const struct tegra_mc_client tegra194_mc_clients[] = {
+>  static const struct tegra_mc_soc tegra194_mc_soc = {
+>  	.num_clients = ARRAY_SIZE(tegra194_mc_clients),
+>  	.clients = tegra194_mc_clients,
+> +	.ops = &tegra186_mc_ops,
+>  };
+>  #endif
+>  
+> @@ -1961,22 +1974,28 @@ static const struct of_device_id tegra186_mc_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
+>  
+> -static int __maybe_unused tegra186_mc_suspend(struct device *dev)
+> +static int __maybe_unused tegra_mc_suspend(struct device *dev)
+>  {
+> +	struct tegra_mc *mc = dev_get_drvdata(dev);
 > +
+> +	if (mc->soc->ops && mc->soc->ops->suspend)
+> +		return mc->soc->ops->suspend(mc);
+> +
+>  	return 0;
+>  }
+>  
+> -static int __maybe_unused tegra186_mc_resume(struct device *dev)
+> +static int __maybe_unused tegra_mc_resume(struct device *dev)
+>  {
+>  	struct tegra_mc *mc = dev_get_drvdata(dev);
+>  
+> -	tegra186_mc_program_sid(mc);
+> +	if (mc->soc->ops && mc->soc->ops->resume)
+> +		return mc->soc->ops->resume(mc);
+>  
+>  	return 0;
+>  }
+>  
+>  static const struct dev_pm_ops tegra186_mc_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(tegra186_mc_suspend, tegra186_mc_resume)
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_mc_suspend, tegra_mc_resume)
 
-What about !CONFIG_TEGRA_MC? I think arm-smmmu will fail.
-
->  #endif /* __SOC_TEGRA_MC_H__ */
-> 
+What's the benefit here? You basically define your own suspend-resume
+ops, on top of PM suspend-resume ops... Before it was quite obvious code
+- the Tegra186 MC driver had very simple suspend/resume which did simple
+job. Now it feels like trickier code to follow - Tegra186 driver calls
+it's resume (with the same name as others - another confusion) which is
+a simple wrapper calling somewhere else (need to jump to assinment of
+resume()).
 
 
 Best regards,
