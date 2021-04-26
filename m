@@ -7,122 +7,117 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 971F2C433B4
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 12:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01620C433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 12:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57BAB6109E
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 12:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9ED4610FA
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 12:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbhDZMTC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Apr 2021 08:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45590 "EHLO
+        id S233218AbhDZMUw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Apr 2021 08:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231550AbhDZMS6 (ORCPT
+        with ESMTP id S233212AbhDZMUv (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Apr 2021 08:18:58 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95DEC061574
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 05:18:15 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id e5so26996088wrg.7
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 05:18:15 -0700 (PDT)
+        Mon, 26 Apr 2021 08:20:51 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E776EC061574
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 05:20:07 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id x7so55619642wrw.10
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Apr 2021 05:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=tK15BlmvmIRcfhgXosCMmTiD+iicYMVtt9PlUH1r5cQ=;
-        b=RXOekx7IaygSvK2lipN3ycXY5+ah7vdVbcnRy7yyxmuDwoDiPXgNpQI1ZUym6o1idk
-         1BLpZw1DPaHGhInxsveUS1hiR7DpLXStvt80AV+neFgjDzX3vgLRrORtnZWsIWCsaNA2
-         PHhGLWa+RWtObO0iVxVtzqecLy1UNPh0f7cxTuOmmn185Z/Gr7SO8Oq7e8b9hBHaPbw/
-         tmIz3fLxTJgxTIMetZtuPTHTv0FmU9hcMzRvhkLcoVjK8ckGEB8R7BSMR2bCzrSQwYsL
-         FlgFvtHgNGJ7ndoyBKBlT64K4k/o1nWdJWgeYUD04mGuVcqCtXvhKwEYCQiGzceI4isb
-         xjmA==
+        bh=tpH+QQEkbZc6+vtMNeOllqTuD3uDWkTb+lWH8HNjCTs=;
+        b=QSDEI20mzX1NnoNCWr08mq8SOEaY1vu6Paox4yhODe+p9Vk4c/WbJuSkwucgHtrqn+
+         JYN/hTK+Ted76ldmtSxQSYyEMRz89/ApAToWbgY8mU15k+/ekhB3gcKVZSSVCO0DrGWf
+         iLzg+ju/21RrjGp8FzDTyvfoqOysebrPqgGokz4sWNZHO0W7fqjTea08mtgJr69s97LP
+         hGtVOGRiIR30SykPHgG/RLCM0F9io7Nr/ZBlRajUZPDOm6sJuHETNSl58XuIfqkxt3UD
+         790INAQfiKqQ4lTFsbbrshGdVpkyw+G+g2z6y83S19LH7Xmog+iAR2FcEmdevjvN3XYr
+         iO/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tK15BlmvmIRcfhgXosCMmTiD+iicYMVtt9PlUH1r5cQ=;
-        b=lXAkelVFFuVQDR5SK/mJjb9J4XqycJsfjrguJmAOiq3xKj8BuhTVJ44iuU/JRmJHBW
-         SAtx0nwxoqQvK1iUDnxWxnwDzhnxeAhhEJOhzFqrlIzjVz0Qp87W+yewbstWNHjzNDbW
-         2ZFX5DErSJWSkjQbOg1ORJ7Cqo71MbJXuY8EcTV7c7yDuRrWXVbJ8fo2jiXHFIu9YI0G
-         PTInhaaOxJLR9ooTrp7dLfJBGKhi9nyqfGOnaAwDHkd7YX3OVYwx0gmTnYjSM96/WLkb
-         ZNEI4KPlGryVYZMwXLWh5iSF3sDmokfWNAdoEDh4/w27Zam+EBQ8HydK/nxZ1tkKaitT
-         t0VQ==
-X-Gm-Message-State: AOAM530AkBYVWnFewb9deY1rX8JHwRcF9Nz0On5VNVpt3rbjVZXugS5k
-        TPuij1Z/vx9Suh1eIY/BHdJvKtmVeCM=
-X-Google-Smtp-Source: ABdhPJylzE4JXtBqaLpMFyW67e4U9xwgihBq8qjF2G1I7X4Fzewl8hTbyZoHFDlcTKaEvJOpyBW1MQ==
-X-Received: by 2002:a05:6000:1561:: with SMTP id 1mr22840333wrz.72.1619439494628;
-        Mon, 26 Apr 2021 05:18:14 -0700 (PDT)
+        bh=tpH+QQEkbZc6+vtMNeOllqTuD3uDWkTb+lWH8HNjCTs=;
+        b=F6l2aHTszbLH2oB67kIbI/t1/acWQMwXuKoX/0uQKEXStsJiIeIjI0jTqwXb77GcJW
+         5GX2Y0xfrQO4v7wuiCr5gNXTmUV3EyW95PjepIQGBwArn9RElnJGCQ0DRniiQSAzEynI
+         kwB7zfRJVC3wyNcOxohFq6/CbW33ozVZ4tuit9C0sJqqlbX79jUFhfuCmyUkiP/YChHF
+         Bnm61bI3tFGGcuwcBLr8IGVLV3E1NCt5etk8JyM37ShXsuG5/rcqwOVhHj2WC7pOyMsY
+         cvw8hTiFObvalkbx3mmm9EGczVfS+uEh0K5V/iYqB4qS/6GHOR/3eBKMwnbURLOwTTuu
+         3Itw==
+X-Gm-Message-State: AOAM533fW48YDba9UWcONNQiojJ3ZRlHMtpiZnKOpX2N3QjdSLZ18bzk
+        J3Tm0a8lGFryFFV5N4Fv+10=
+X-Google-Smtp-Source: ABdhPJzmgju8kLtqMK9vbZukR6yA680YTwi+CYecPgmEhe2wJpBt7xaf9+QjA03ehGAFvSVYJ00D8w==
+X-Received: by 2002:a05:6000:10f:: with SMTP id o15mr23256702wrx.98.1619439606750;
+        Mon, 26 Apr 2021 05:20:06 -0700 (PDT)
 Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id q7sm20118478wrr.62.2021.04.26.05.18.13
+        by smtp.gmail.com with ESMTPSA id j7sm4062410wmi.21.2021.04.26.05.20.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Apr 2021 05:18:13 -0700 (PDT)
-Date:   Mon, 26 Apr 2021 14:19:06 +0200
+        Mon, 26 Apr 2021 05:20:05 -0700 (PDT)
+Date:   Mon, 26 Apr 2021 14:20:58 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 06/10] memory: tegra: Parameterize interrupt handler
-Message-ID: <YIavul2o2MCSVxLI@orome.fritz.box>
+Subject: Re: [PATCH 05/10] memory: tegra: Extract setup code into callback
+Message-ID: <YIawKoKFohRC2nfK@orome.fritz.box>
 References: <20210420165237.3523732-1-thierry.reding@gmail.com>
- <20210420165237.3523732-7-thierry.reding@gmail.com>
- <aa5d7581-0cda-596f-8929-ba0dbd8155d1@canonical.com>
+ <20210420165237.3523732-6-thierry.reding@gmail.com>
+ <25ea4721-f9d3-ae4e-6310-73182ad43d8f@canonical.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/L89aHPukja1BO3w"
+        protocol="application/pgp-signature"; boundary="RmJ7DJaEJuep+6vi"
 Content-Disposition: inline
-In-Reply-To: <aa5d7581-0cda-596f-8929-ba0dbd8155d1@canonical.com>
+In-Reply-To: <25ea4721-f9d3-ae4e-6310-73182ad43d8f@canonical.com>
 User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
 
---/L89aHPukja1BO3w
+--RmJ7DJaEJuep+6vi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 26, 2021 at 11:01:00AM +0200, Krzysztof Kozlowski wrote:
+On Mon, Apr 26, 2021 at 10:58:27AM +0200, Krzysztof Kozlowski wrote:
 > On 20/04/2021 18:52, Thierry Reding wrote:
 > > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > Tegra20 requires a slightly different interrupt handler than Tegra30 and
-> > later, so parameterize the handler, so that each SoC implementation can
-> > provide its own.
-> >=20
-> > While at it, also make IRQ support optional, which will help unify the
-> > Tegra186 memory controller driver with this one.
+> > Separate the setup code for Tegra30 and later into a ->setup() callback
+> > and set it for all applicable chips.
 >=20
-> Please split making it optional to separate patch. Looking at the code
-> should be possible and not affect bisectability.
+> I assume the code is functionally equivalent - the same
+> tegra_mc_setup_latency_allowance() will be executed on all these SoCs?
 
-Technically that means I'd have to add a check for valid callback,
-otherwise it'd risks oopsing if for whatever reason that's passed in as
-NULL. It shouldn't be a problem in practice because it'll be valid in
-all cases, at least until the unification patch, so perhaps there's no
-need for the check if it's made optional in a subsequent patch anyway.
+Yes, that's what was previously the case and this holds true after the
+patch. Really the only thing that this patch does is move that code into
+a separate callback in tegra_mc_ops so that it can be changed for later
+chips.
 
 Thierry
 
---/L89aHPukja1BO3w
+--RmJ7DJaEJuep+6vi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmCGr7oACgkQ3SOs138+
-s6FNgBAAuBiq1nkhhxw6MLmZspeT3IqosXzWYAOEKRyvv85sRPetzv/C4esS45vw
-HIWo5Fpvcms3ge4F4jFCGApbI/I1DhTD4Tj5uX6aUvN/SudxFelghptq/lze0MKo
-nAfwJte/jh+VNrPqTw+c1eOtb3dBH6C3efrwzRfuEX1q9tFSU4TI/KO0D/wdQczJ
-r3xwTjEn7jHHNZPtzRIjhN/CSralCXEH6mvmZ+SySleYDgNZXLZBclzX6t2Ux5Xv
-sTk3mtIOZiP5oyRrwHoqZbnQCMj7GmhnZZ3llXyUuAdJK9LwirS4iqCPtHJVVn0k
-86UsjoSY6v7B1KZJLr+LxXTatWireent2/OYALsrZgmdLEV3plp5PP9diFNU8ZDs
-bxxkQr4SQs4HcXp1wdGHzWg9WHoZER0kPSylEVRRSavCRdRmyuYaCSWwRdujXXMC
-MkORODMoBkWd+KO7QXlI5HKQvV67ybK1kp7eB8L4YhoJczQABUOHS1un7YaNQAAV
-jGzU2APuiaAj9dQtghOw4eQ5oKA6Kb8z8FHRD0agaAmBvFo0nvARKkpCGbmzGKbR
-yupcv04pxVIkH5f7KtRkE2KhphwcA9136Po1zM4kyYgR+pImyOArIwSeR9q8FvaS
-kj+VHHCLg0pS9L3sj/PnosYQzQgIrzE+GYBN+As88Df9Qda9Ikw=
-=gYUS
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmCGsCoACgkQ3SOs138+
+s6F7UhAApiDpsLHbeR93j7puRDYR1iR+i+Vp/3pSNod9gTINo8CWny4Nl7dujlUa
+9IiKQHze0Aj0rpeppnuZU6DYhGQAiwwDgSB1PDMEymS7mTb6CZfDO+zH2zANPQzp
+t0L4PO45otYWNTO0kPEMSH92Q7tyEm8slUY2DvzNksv6B3deuWPvVYQZris9qOdy
+93oGDoQNIMcctD2Q0t5nw8qqJIjjP9d0nZEhUiDKLga3+k6lJNIIQlI3fXQkhsNb
+cxPK+dInWTPtVT6CvLoiuvKwx5TRz/owBWY/sZndsm2OL0qBJoa4MR+CTee5K9Ki
+u43L/qhogHyaV+H/2uywQWiZQUlGvHIhLB/Vk8VxkQrAC1gsH+153uMK5U9eIv0K
+dzch+hCWxeTCoe1FujdjDLpv6mybGAeuB38bydWOQaKbFDWBVKAFIj01LpVVto+W
+wV2rFnUJgmWJ6CCDgria9wIgVcwZeootfBKPMcjqH7ilpbuLW5zspmcaTcVU5zMY
+uVSlrtxLjWMrSlFJBF7weXuFxhCkUkOXhlsVyG4WDRgYw3h12Bkzs6PvUlDZ2Gig
+UJ6N3hLnyO0/OM9I+0PLf9oUcIPzsysCvO24Lq0Ky3nX6hAh3bCAWuWF9AkiIEVq
+xZ3eqVbTWx1taUWMVHFpvdITaosCHLxqxfQP1tCTLIsrNmCdQqw=
+=66RF
 -----END PGP SIGNATURE-----
 
---/L89aHPukja1BO3w--
+--RmJ7DJaEJuep+6vi--
