@@ -2,136 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26052C433B4
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 13:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2C9C433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 13:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E842960FE5
-	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 13:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 327CD6135B
+	for <linux-tegra@archiver.kernel.org>; Mon, 26 Apr 2021 13:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233520AbhDZNFX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 26 Apr 2021 09:05:23 -0400
-Received: from mail-eopbgr680063.outbound.protection.outlook.com ([40.107.68.63]:14919
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233378AbhDZNFX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 26 Apr 2021 09:05:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UctLWlQB5wkKvOvEL8ZxleB/nbCia0WfILN90qrwB1uTFA5YEc0qf2z5x5dmnUO4d0f2y7CZ2Bb8jdHKfO6tv2oHo+SftSaEqcrQO/AKyH7rN92fpNhy2y2AsmIzF5qdd9zZx0SraaQ/JXd47gzpQpBIJGrEDmigIIcak3J/31JdSiqV1e+AmJzg40COWQYCihxx0A9mi05+u5p+HAmw/WRHPut8+44EQvQFcpKEpA+BiKn8eJEbeAxWovVfDKTkwovnitQoI2AS3wj8cHAjRUGf6fBspS8QVGxSbpZotBzqCTgG2jgkXB+ceOxoN/eqx1KzLpIG3w02ptCfIB27bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8yeHdbDxRIbWEWB6erBGvdHSASyNLe2T3DiSuscJidE=;
- b=E7g3AKOe0IhJGnEb52DpK8WcWkbREeYrnmUHR0gCb7pMW0S6D8F7IpgFwQ/NF7u2MHlq4GRTw21F3D5v8SvdKYvWtJOIvzZh3UWiq892ZA+nS0zKMWesj9vmR8eqFXJwgLwmdg/SmQ9wmF3MiykeY+q5df1Jx1J3o7g+zgpYDBroJp9c8Mk1r5AuEZRuGNIgLN7SuQMQXFk2LpqgCje5CP3kCf5tHpr9CcO9rfHTFGdf7b7mG/Ff8eHE7EXeyOUxhOBGakS6vvbNXwAkUmNPi3oE5IZ/3NOPMTOs5Quioe/dEzILCxJoTH+3Hu0QifxwIeFj3/Au5U7gn+w5AL0tCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.35) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8yeHdbDxRIbWEWB6erBGvdHSASyNLe2T3DiSuscJidE=;
- b=shJVm5UDUbw+meAFlkOgbkoGngx7I06JuIC57Ka0L+kjmssSb1Spi+SRLzLb7dqklLheirjDdlaTXAOuEuOGRonkCFr/cc3OaDhoQanyGyhTjfe7Jwxiqzar7hZXXPVPecsj3eOyjcJwcpFGyFhZSFjEaQURIzPCYYyMHu7jNLwMAu707IJoWHU5fc7/YF5aaXk6sBpBdSubxE2mnU1AWaPRZrHNzii7Uk8kHj0YAo316jEn9Ji0Lsrvfq3LJxa14nCVrHaDuLSCGsHXvn3j5qahxxXCs0xQNiLqQzOlS4IXN9/Gi1zITM9A9zZIpW89RN2cww8QFFxt3Wac1MdSnQ==
-Received: from DM5PR18CA0093.namprd18.prod.outlook.com (2603:10b6:3:3::31) by
- CY4PR12MB1494.namprd12.prod.outlook.com (2603:10b6:910:f::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4065.23; Mon, 26 Apr 2021 13:04:34 +0000
-Received: from DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:3:cafe::71) by DM5PR18CA0093.outlook.office365.com
- (2603:10b6:3:3::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4065.20 via Frontend
- Transport; Mon, 26 Apr 2021 13:04:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.35)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.35 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.35; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.35) by
- DM6NAM11FT025.mail.protection.outlook.com (10.13.172.197) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4065.21 via Frontend Transport; Mon, 26 Apr 2021 13:04:32 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 26 Apr
- 2021 13:04:16 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Mon, 26 Apr 2021 06:04:16 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.9 00/37] 4.9.268-rc1 review
-In-Reply-To: <20210426072817.245304364@linuxfoundation.org>
-References: <20210426072817.245304364@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S232107AbhDZNMu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 26 Apr 2021 09:12:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:34688 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230250AbhDZNMs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 26 Apr 2021 09:12:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A63F331B;
+        Mon, 26 Apr 2021 06:12:04 -0700 (PDT)
+Received: from e123083-lin (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41D853F70D;
+        Mon, 26 Apr 2021 06:12:02 -0700 (PDT)
+Date:   Mon, 26 Apr 2021 15:11:50 +0200
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Lukasz Luba <lukasz.luba@arm.com>, sudeep.holla@arm.com,
+        souvik.chakravarty@arm.com, thierry.reding@gmail.com,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        jonathanh@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Support for passing runtime state idle time to
+ TF-A
+Message-ID: <20210426131150.GA36549@e123083-lin>
+References: <1619123448-10138-1-git-send-email-skomatineni@nvidia.com>
+ <064341f7-dce3-5ad4-e69b-9568115035c1@arm.com>
+ <486856be-1e66-fd77-e306-949b91bcdb1d@nvidia.com>
 MIME-Version: 1.0
-Message-ID: <34444156891041bdacc0e874f6619edb@HQMAIL109.nvidia.com>
-Date:   Mon, 26 Apr 2021 06:04:16 -0700
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c611f511-4cae-4b65-c943-08d908b3d5c5
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1494:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB14942C5E05FC9940B1900C1ED9429@CY4PR12MB1494.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MM21InPZnkzehxINf8cMEHO5ZdMYB0sUxeeuRbxVqNpiFbDjAepOao4beNuEBtIZqcsTlGHcFF30wY//lZW0YtNoy0HW4o7qDYD6gJS+FtWSCEh2ml7jTZAp2lItUQkbUPAkyHRbVo4qnJSyIBd3Imuo4RjnRNdFaeErTaK32Cupz1oI7cBf7CQneFvomiqLssn9VbVXDuqUXCBb1HzMq6Qj/vpKq1/Qam+yc00TVueHnDigVNdJUVvE82zT3Xxmh6dGx2iSrYwnOzSe7CpYqAutiz/yiH+aRmuuHGYw9WgdIbnRHisT275kqt4HfeHHFz9A4PfM56nKIBnrt/HAKDsZgxSGe9nPZCJvbyBlO78iFB4ARFy6nUDLDkK4vryYwbugF1VWJWhXoZtelO6hRzZzX6dkRGkRs6vWDktU0zIJiJtku5fx+b1aY9f6plkAPqU9oexe16MIowzCU67Huzah78bhMKvPBq+GisCqeJFlmjC8DtHCKBHnfto2YtqW/sCwU8COXV/Cq9doJvG+dnttV+NQtARQ2C6amhlm/7vyMrH9q6qF5It6c/iFvvG62TL8ty5AcBJPQZrwdv3i/mpbSIU2gcQ++TimJ2OPSN4bOHhggOz2qMnbnaEuKsRcDmhIl7wU7lUZJpz0oda6q5rbfjmMOBwNEpHSEo7rJi2cuem8lLu5RObJMTHOGiLJvHhlxN7jnXkWyFW88SyS1VkPAESoOe/zaskqFsQok54=
-X-Forefront-Antispam-Report: CIP:216.228.112.35;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid04.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(396003)(376002)(136003)(36840700001)(46966006)(5660300002)(356005)(82740400003)(86362001)(24736004)(7636003)(108616005)(26005)(4326008)(186003)(8676002)(6916009)(8936002)(2906002)(47076005)(426003)(54906003)(70586007)(966005)(7416002)(316002)(36906005)(82310400003)(336012)(70206006)(36860700001)(478600001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2021 13:04:32.7103
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c611f511-4cae-4b65-c943-08d908b3d5c5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.35];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1494
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <486856be-1e66-fd77-e306-949b91bcdb1d@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 26 Apr 2021 09:29:01 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.268 release.
-> There are 37 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi,
+
+On Fri, Apr 23, 2021 at 03:24:51PM -0700, Sowjanya Komatineni wrote:
+> On 4/23/21 1:16 PM, Lukasz Luba wrote:
+> > Hi Sowjanya,
+> > 
+> > On 4/22/21 9:30 PM, Sowjanya Komatineni wrote:
+> > > Tegra194 and Tegra186 platforms use separate MCE firmware for CPUs
+> > > which is
+> > > in charge of deciding on state transition based on target state,
+> > > state idle
+> > > time, and some other Tegra CPU core cluster states information.
+> > > 
+> > > Current PSCI specification don't have function defined for passing
+> > > runtime
+> > > state idle time predicted by governor (based on next events and
+> > > state target
+> > > residency) to ARM trusted firmware.
+> > 
+> > Do you have some numbers from experiments showing that these idle
+> > governor prediction values, which are passed from kernel to MCE
+> > firmware, are making a good 'guess'?
+> > How much precision (1us? 1ms?) in the values do you need there?
 > 
-> Responses should be made by Wed, 28 Apr 2021 07:28:08 +0000.
-> Anything received after that time might be too late.
+> it could also be in few ms depending on when next cpu event/activity might
+> happen which is not transparent to MCE firmware.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.268-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
+> > 
+> > IIRC (probably Rafael's presentations) predicting in the kernel
+> > something like CPU idle time residency is not a trivial thing.
+> > 
+> > Another idea (depending on DT structure and PSCI bits):
+> > Could this be solved differently, but just having a knowledge that if
+> > the governor requested some C-state, this means governor 'predicted'
+> > an idle residency to be greater that min_residency attached to this
+> > C-state?
+> > Then, when that request shows up in your FW, you know that it must be at
+> > least min_residency because of this C-state id.
+> C6 is the only deepest state for Tegra194 Carmel CPU that we support in
+> addition to C1 (WFI) idle state.
 > 
-> thanks,
+> MCE firmware gets state crossover thresholds for C1 to C6 transition from
+> TF-A and uses it along with state idle time to decide on C6 state entry
+> based on its background work.
 > 
-> greg k-h
+> Assuming for now if we use min_residency as state idle time which is static
+> value from DT, then it enters into deepest state C6 always as we use
+> min_residency value we use is always higher than state crossover threshold.
+> 
+> But MCE firmware is not aware of when next cpu event can happen to predict
+> if next event can take longer than state min_residency time.
+> 
+> Using min residency in such case is very conservative where MCE firmware
+> exits C6 state early where we may not have better power saving.
+> 
+> But with MCE firmware being aware of when next event can happen it can use
+> that to stay in C6 state without early exit for better power savings.
+> 
+> > It would depend on number of available states, max_residency, scale
+> > that you would choose while assigning values from [0, max_residency]
+> > to each state.
+> > IIRC there can be many state IDs for idle, so it would depend on
+> > number of bits encoding this state, and your needs. Example of
+> > linear scale:
+> > 4-bits encoding idle state and max predicted residency 10msec,
+> > that means 10000us / 16 states = 625us/state.
+> > The max_residency might be split differently, using different than
+> > linear function, to have some rage more precised.
+> > 
+> > Open question is if these idle states must be all represented
+> > in DT, or there is a way of describing a 'set of idle states'
+> > automatically.
+> We only support C6 state through DT as C6 is the only deepest state for
+> Tegra194 carmel CPU. WFI idle state is completely handled by kernel and does
+> not require MCE sequences for entry/exit.
 
-All tests passing for Tegra ...
+I think Lukasz's point is that you can encode the predicted idle time by
+having multiple idle_state entries with different min_residency mapping
+to the same actual idle-state. So you would several variants of C6 with
+different min_residencies and if the OS picks one with longer
+min_residency firmware would have a better estimate of the predicted
+idle residency.
 
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    29 tests:	29 pass, 0 fail
+I'm not convinced it is the right way to work around passing this
+information on to firmware. I would rather see an example of how well
+this works (best with numbers) and have a proper solution.
 
-Linux version:	4.9.268-rc1-g0f9e08cfadcb
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Morten
