@@ -2,180 +2,120 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C51DC433ED
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Apr 2021 09:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B206C43462
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Apr 2021 09:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D44D61164
-	for <linux-tegra@archiver.kernel.org>; Tue, 27 Apr 2021 09:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36837613B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 27 Apr 2021 09:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235033AbhD0JXk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 27 Apr 2021 05:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33426 "EHLO mail.kernel.org"
+        id S235213AbhD0Jc7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 27 Apr 2021 05:32:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229938AbhD0JXk (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 27 Apr 2021 05:23:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 64C6B6100B;
-        Tue, 27 Apr 2021 09:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619515377;
-        bh=mETsHWHJFjweReeiHIdDntI2gC9ErHyRmi7GGdO1Me8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cCzcG+yb+hGg8qBGDRs+1VUHDqPZWt84Wx3wIMLNN4e0Y/95F2zGyAdCJX4EBlwRU
-         NjVBGuXtj41ZElmpkJpOtNVvnPehF73RRe0iGmVFmI6CXi29U7I3KraBMCWxNF+rJx
-         gEeTwq+6ju13/7vdihq99/9UyzBpZCejElDhn5CiGCFTN13keERSMerkUIqETHMt3y
-         wm8OlWzfcUM460bpVHHnSm2f4Zdtt83M6GfpMdlWa0SyuI+8LhVxSsxq1xW3Wt+JhI
-         gFWtcWcFDgpseYiymNIOFHZZifrvbrmndQsOJkks7YTUszynMX90v+WeUV+D6AEDII
-         baYjgQAH12f2A==
-Date:   Tue, 27 Apr 2021 11:22:50 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        id S230316AbhD0Jc7 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 27 Apr 2021 05:32:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCC9C61176;
+        Tue, 27 Apr 2021 09:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1619515935;
+        bh=Rbgd9ScvUHvVNgBxoJ/euzCu2miLQ8d0BwdzOdMWw6U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sW0mGt+3GRdyqud1tHJRxYyaMv5pikyhb4v7forC4LGiQ1P83v8XR88ElKxtaNtk7
+         34TSWayASDKBiitd+3v+u/npRqb6xzfOIkKOSuCb4g8/st58TmqoQy5qcxVOvIbWKu
+         sFZPd5XcQrj1J1qZvXPebp2fCFuq5awYbVMVUzdU=
+Date:   Tue, 27 Apr 2021 11:31:12 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, ac100@lists.launchpad.net,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Allen Pais <apais@linux.microsoft.com>,
+        Anders Blomdell <anders.blomdell@control.lth.se>,
+        Andrea Merello <andrea.merello@gmail.com>,
+        Andres Klode <jak@jak-linux.org>,
+        Andrey Shvetsov <andrey.shvetsov@k2l.de>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Comedi <comedi@comedi.org>, "David A. Schleef" <ds@schleef.org>,
+        dri-devel@lists.freedesktop.org,
+        Fabio Aiuto <fabioaiuto83@gmail.com>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Forest Bond <forest@alittletooquiet.net>,
+        Herman.Bruyninckx@mech.kuleuven.ac.be,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        Ilya Petrov <ilya.muromec@gmail.com>,
+        Jacob Feder <jacobsfeder@gmail.com>,
+        Jerry chuang <wlanfae@realtek.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "John B. Wyatt IV" <jbwyatt4@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "J.P. Mellor" <jpmellor@rose-hulman.edu>,
+        karthik alapati <mail@karthek.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Team <ac100@lists.lauchpad.net>,
+        Klaas.Gadeyne@mech.kuleuven.ac.be,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-tegra@vger.kernel.org, Marc Dietrich <marvin24@gmx.de>,
+        Marco Cesati <marcocesati@gmail.com>,
+        Martijn Coenen <maco@android.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        Mori Hess <fmhess@users.sourceforge.net>,
+        =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
+        <nfraprado@protonmail.com>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Pierre-Hugues Husson <phhusson@free.fr>,
+        Robert Love <rlove@google.com>,
+        Romain Perier <romain.perier@gmail.com>,
+        Ross Schmidt <ross.schm.dev@gmail.com>,
+        "Spencer E. Olson" <olsonse@umich.edu>, Stanley@bb.sd3,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Sumera Priyadarsini <sylphrenadin@gmail.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 17/78] staging: media: vde: use
- pm_runtime_resume_and_get()
-Message-ID: <20210427112250.5d40c4f4@coco.lan>
-In-Reply-To: <2349831b-e7cd-d38d-fc19-5fabf06f773e@gmail.com>
-References: <cover.1619191723.git.mchehab+huawei@kernel.org>
-        <0eeb886803679cd908cb4576d35b2314993abd2c.1619191723.git.mchehab+huawei@kernel.org>
-        <2349831b-e7cd-d38d-fc19-5fabf06f773e@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@android.com>,
+        Truxton Fulton <trux@truxton.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Wim.Meeussen@mech.kuleuven.ac.be,
+        Zhansaya Bagdauletkyzy <zhansayabagdaulet@gmail.com>
+Subject: Re: [PATCH 00/57] Rid W=1 warnings from Staging
+Message-ID: <YIfZ4Ad6FxVDtqt/@kroah.com>
+References: <20210414181129.1628598-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210414181129.1628598-1-lee.jones@linaro.org>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On Wed, Apr 14, 2021 at 07:10:32PM +0100, Lee Jones wrote:
+> This set is part of a larger effort attempting to clean-up W=1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
+> 
+> Lee Jones (57):
 
-Em Sat, 24 Apr 2021 10:35:22 +0300
-Dmitry Osipenko <digetx@gmail.com> escreveu:
+44 of these applied to my tree, I'll keep them in my "testing" branch
+for now until -rc1 comes out.  Feel free to rebase your series on that
+and fix up the remaining ones and resend.
 
-> 24.04.2021 09:44, Mauro Carvalho Chehab =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to dea=
-l with usage counter")
-> > added pm_runtime_resume_and_get() in order to automatically handle
-> > dev->power.usage_count decrement on errors.
-> >=20
-> > Use the new API, in order to cleanup the error check logic.
-> >=20
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  drivers/staging/media/tegra-vde/vde.c | 16 ++++++++++------
-> >  1 file changed, 10 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/me=
-dia/tegra-vde/vde.c
-> > index 28845b5bafaf..8936f140a246 100644
-> > --- a/drivers/staging/media/tegra-vde/vde.c
-> > +++ b/drivers/staging/media/tegra-vde/vde.c
-> > @@ -775,9 +775,9 @@ static int tegra_vde_ioctl_decode_h264(struct tegra=
-_vde *vde,
-> >  	if (ret)
-> >  		goto release_dpb_frames;
-> > =20
-> > -	ret =3D pm_runtime_get_sync(dev);
-> > +	ret =3D pm_runtime_resume_and_get(dev);
-> >  	if (ret < 0)
-> > -		goto put_runtime_pm;
-> > +		goto unlock;
-> > =20
-> >  	/*
-> >  	 * We rely on the VDE registers reset value, otherwise VDE
-> > @@ -843,6 +843,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra=
-_vde *vde,
-> >  put_runtime_pm:
-> >  	pm_runtime_mark_last_busy(dev);
-> >  	pm_runtime_put_autosuspend(dev);
-> > +
-> > +unlock:
-> >  	mutex_unlock(&vde->lock);
-> > =20
-> >  release_dpb_frames:
-> > @@ -1069,8 +1071,8 @@ static int tegra_vde_probe(struct platform_device=
- *pdev)
-> >  	 * power-cycle it in order to put hardware into a predictable lower
-> >  	 * power state.
-> >  	 */
-> > -	pm_runtime_get_sync(dev);
-> > -	pm_runtime_put(dev);
-> > +	if (pm_runtime_resume_and_get(dev) >=3D 0)
-> > +		pm_runtime_put(dev);
-> > =20
-> >  	return 0;
-> > =20
-> > @@ -1088,8 +1090,9 @@ static int tegra_vde_remove(struct platform_devic=
-e *pdev)
-> >  {
-> >  	struct tegra_vde *vde =3D platform_get_drvdata(pdev);
-> >  	struct device *dev =3D &pdev->dev;
-> > +	int ret;
-> > =20
-> > -	pm_runtime_get_sync(dev);
-> > +	ret =3D pm_runtime_resume_and_get(dev);
-> >  	pm_runtime_dont_use_autosuspend(dev);
-> >  	pm_runtime_disable(dev);
-> > =20
-> > @@ -1097,7 +1100,8 @@ static int tegra_vde_remove(struct platform_devic=
-e *pdev)
-> >  	 * Balance RPM state, the VDE power domain is left ON and hardware
-> >  	 * is clock-gated. It's safe to reboot machine now.
-> >  	 */
-> > -	pm_runtime_put_noidle(dev);
-> > +	if (ret >=3D 0)
-> > +		pm_runtime_put_noidle(dev);
-> >  	clk_disable_unprepare(vde->clk);
-> > =20
-> >  	misc_deregister(&vde->miscdev);
-> >  =20
->=20
-> Hello Mauro,
->=20
-> Thank you very much for the patch. It looks to me that the original
-> variant was a bit simpler, this patch adds more code lines without
-> changing the previous behaviour. Or am I missing something?
+Note, the comedi drivers have moved to drivers/comedi/ so those patches
+need to be sent as a different series, if you still want to make those
+changes based on the review comments.
 
-While on several places the newer code is simpler, the end goal here is
-to replace all occurrences of pm_runtime_get_sync() from the media=20
-subsystem, due to the number of problems we're having with this:
+thanks,
 
-1. despite its name, this is actually a PM runtime resume call,
-   but some developers didn't seem to realize that, as I got this
-   pattern on some drivers:
-
-        pm_runtime_get_sync(&client->dev);
-        pm_runtime_disable(&client->dev);
-        pm_runtime_set_suspended(&client->dev);
-        pm_runtime_put_noidle(&client->dev);
-
-   It makes no sense to resume PM just to suspend it again ;-)
-
-   The name of the new variant is a lot clearer:
-	pm_runtime_resume_and_get()
-
-2. Usual *_get() methods only increment their use count on success,
-   but pm_runtime_get_sync() increments it unconditionally. Due to
-   that, several drivers were mistakenly not calling
-   pm_runtime_put_noidle() when it fails;
-
-3. Consistency: we did similar changes subsystem wide with
-   for instance strlcpy() and strcpy() that got replaced by
-   strscpy(). Having all drivers using the same known-to-be-safe
-   methods is a good thing;
-
-4. Prevent newer drivers to copy-and-paste a code that it would
-   be easier to break if they don't truly understand what's behind
-   the scenes.
-
-Thanks,
-Mauro
+greg k-h
