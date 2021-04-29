@@ -2,81 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349C2C433ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B905C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 034F0613F4
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA949613FF
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233011AbhD2MjG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Apr 2021 08:39:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43864 "EHLO
+        id S234147AbhD2Mo3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Apr 2021 08:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232657AbhD2MjG (ORCPT
+        with ESMTP id S233731AbhD2Mo3 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Apr 2021 08:39:06 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B54B5C06138B;
-        Thu, 29 Apr 2021 05:38:19 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id b21so3762335ljf.11;
-        Thu, 29 Apr 2021 05:38:19 -0700 (PDT)
+        Thu, 29 Apr 2021 08:44:29 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D259CC06138B;
+        Thu, 29 Apr 2021 05:43:42 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id n138so104745025lfa.3;
+        Thu, 29 Apr 2021 05:43:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C9ADd+O1J2g7WPah5TPp1y5aPWH188p57AR71wN8M7Y=;
-        b=jNb3LRNDZRY9dtWQ93oZg3Us255+OUEcb5r+MjK5sgkqGm7K9ak2patahQ6FZcQ4SG
-         28gHOMaQhLQK4D5cZpgiMVK1xT5XaPCU5pkFtSOVIMAZQ9BBiOgPnc/cXivzWcDrNz2i
-         H9506pQwYfGU9WiNOhZ3cIL0FTWvHooUSMBpK5u6BPyF2ggTLCQG09bdSv95I1JnkX3g
-         nh3pI0amvi5YoTJBsug51S7QoV+mrkdy5sDhpRttOD/vmKonfuRbaUBS+GKkabP6a7Az
-         uTEygRG6Qdg7dwzw0ebu4kUpHrNm2Jc9NyFuOLXfFVRJyurvbkzpJUP+ZLKUZztvchJ2
-         eX7Q==
+        bh=PVk9gFFvxbCFJvq/YZ1h5eGtLwfb3YoRJmsi5P9iLGQ=;
+        b=V30khvUcy3G7kkRwcPcty+E0gg+up+FNSU+ErmcG5jIB+OgEjb0Xg9xSRVbJOsTfaH
+         roMqHqnATraO5DGjYsiUiuScVtAxsEaHPLkNH+Y5vqzFD1GZqPWF+PH6u0TnXAGuIJzT
+         608dkIX/0f6dE0jUjTTBonZS2ZVnRuOH0r8Ua+41fW0jmlo1H9zg8VnrjMHwjSlCEe2X
+         tYitcBqCEdNuy9KPrBjDBeQ8mNk6lNsIXC697ntk/4UgikkNMHij9hXZvWT6zgjDsKr4
+         SINUR9ntBh5EKeSy/yuIP29l7OMmAeXkBcGoHyUjU2h1ewNXNMwfkaY7Nn5lP65cfv94
+         MteQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=C9ADd+O1J2g7WPah5TPp1y5aPWH188p57AR71wN8M7Y=;
-        b=Mm9rHTI72nTTyaQzdJGEmKuoNrI/jp4EG2F7DanwU9C+0/F+sQBAk/Xf1clfXU02X/
-         +l8H4sKrAZvMPMofSR+4/fGpeNBMuemSaYoxa8J9+aP20lz+F+mpk8Jwe8t+XtxyNmtF
-         xOR8CW3Sp8WLF+oPxl1m8nmM5Vu6xISI/Dwhov619MZF36BqEQaCS1uOn2A72blmFrW+
-         A03w+1PDvX06uY5iDGJjTY5KVWIquZpgGCXxq7rJ88M3Gv4Y0piGe7XfY8bdQABppbmB
-         ntswtyKkpFgypWAoB8B8m2nwGVytgl6orrj0lFoIXwVgnM9V56M1VyvsXHvHE03MzG9I
-         y5iw==
-X-Gm-Message-State: AOAM531Xb1KTWqW1fdbWLTTHfNpBSwFHLXeEnGjj9hvKIZ4q6kvANgFV
-        gXOkDwtyTPW+lZdlstvJmJcHF5p3tcI=
-X-Google-Smtp-Source: ABdhPJzTvng8yQNg4q9VfyFfl15qNbeKD7GZ3dV96aB9VC37IqAWamJguU8SXFBqPTn3oiUW9HRVMA==
-X-Received: by 2002:a2e:140b:: with SMTP id u11mr24386345ljd.125.1619699898040;
-        Thu, 29 Apr 2021 05:38:18 -0700 (PDT)
+        bh=PVk9gFFvxbCFJvq/YZ1h5eGtLwfb3YoRJmsi5P9iLGQ=;
+        b=dYdMI1cObYPQGbjrpLpg9R0SriHX/C2Yct78LnYDUiyoMr+zPMHQxKvT2okBCoxQgS
+         Q06FjDj+PK3vJ90NcbDyjWIq3cH49l5fuHenLjZjL0jhmKZjy08n0eNoRJmp99+VrHPo
+         Li+DX8d5PFSM4UhWAbeO6JWbNiWudk+/VwNTrRccS1vRD1mlBXu9f32005iYWTR6Y5FR
+         nvW05alS6nLxV9tEUbDMmRsRn1HeI4AjVtx5QhfAYOQE8wqE/sZbi1pzhkg7XUB7aKnf
+         bXlt/3E8oXQxylkueFgHpp+UatPS4GvIHnSuJT490a6SxNHr+8RLcL7a+P47MuIGYVbO
+         HsDQ==
+X-Gm-Message-State: AOAM533ZcnxevzpcmfVZkGZnUL3f/xoVrV6oF6NzYp1OUevfHLiX3Txz
+        p7CT+ITfmaExm/5PyVzZYx3K31/nDzo=
+X-Google-Smtp-Source: ABdhPJzTUmASQ+X8zCC4YvyqwA/DDAdCGKp2SuYQuR5grWh5yLV0nDvs/9BMEEM1CAb0LKenZPmotQ==
+X-Received: by 2002:a05:6512:108c:: with SMTP id j12mr12271573lfg.403.1619700221262;
+        Thu, 29 Apr 2021 05:43:41 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-102.dynamic.spd-mgts.ru. [109.252.193.102])
-        by smtp.googlemail.com with ESMTPSA id v130sm515026lfa.262.2021.04.29.05.38.17
+        by smtp.googlemail.com with ESMTPSA id a26sm517283ljk.55.2021.04.29.05.43.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 05:38:17 -0700 (PDT)
-Subject: Re: [PATCH v4 25/79] staging: media: tegra-vde: use
- pm_runtime_resume_and_get()
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thu, 29 Apr 2021 05:43:40 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] iommu: Support identity mappings of
+ reserved-memory regions
+To:     Krishna Reddy <vdumpa@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <cover.1619621413.git.mchehab+huawei@kernel.org>
- <bc2b9048d4ad510eec97988ce8f3fd0d2bb26f39.1619621413.git.mchehab+huawei@kernel.org>
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Nicolin Chen <nicolinc@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20210423163234.3651547-1-thierry.reding@gmail.com>
+ <869ec3a2-26df-2ce8-bd21-b681d6ef3985@gmail.com>
+ <BY5PR12MB3764DFDEA8125650799DC76CB3419@BY5PR12MB3764.namprd12.prod.outlook.com>
+ <bbcf6dbe-367b-38b2-91bf-9d5f4cd2c57c@gmail.com>
+ <BY5PR12MB3764DC583BC2AFE0CA674DDFB35F9@BY5PR12MB3764.namprd12.prod.outlook.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ec7048b0-bd5e-82e5-08fb-b51d633105ff@gmail.com>
-Date:   Thu, 29 Apr 2021 15:38:17 +0300
+Message-ID: <ea07db7b-e932-8d7d-0240-625b6e5aa765@gmail.com>
+Date:   Thu, 29 Apr 2021 15:43:40 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <bc2b9048d4ad510eec97988ce8f3fd0d2bb26f39.1619621413.git.mchehab+huawei@kernel.org>
+In-Reply-To: <BY5PR12MB3764DC583BC2AFE0CA674DDFB35F9@BY5PR12MB3764.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -84,24 +87,29 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-28.04.2021 17:51, Mauro Carvalho Chehab пишет:
-> @@ -1069,11 +1071,17 @@ static int tegra_vde_probe(struct platform_device *pdev)
->  	 * power-cycle it in order to put hardware into a predictable lower
->  	 * power state.
->  	 */
-> -	pm_runtime_get_sync(dev);
-> +	if (pm_runtime_resume_and_get(dev) < 0)
-> +		goto err_pm_runtime;
-> +
->  	pm_runtime_put(dev);
->  
->  	return 0;
->  
-> +err_pm_runtime:
-> +	pm_runtime_dont_use_autosuspend(dev);
-> +	pm_runtime_disable(dev);
-> +
->  err_deinit_iommu:
->  	tegra_vde_iommu_deinit(vde);
+29.04.2021 08:51, Krishna Reddy пишет:
+> Hi Dmitry,
+> 
+>> Thank you for the answer. Could you please give more information about:
+>> 1) Are you on software or hardware team, or both?
+> 
+> I am in the software team and has contributed to initial Tegra SMMU driver in the downstream along with earlier team member Hiroshi Doyu.
+> 
+>> 2) Is SMMU a third party IP or developed in-house?
+> 
+> Tegra SMMU is developed in-house. 
+> 
+>> 3) Do you have a direct access to HDL sources? Are you 100% sure that
+>> hardware does what you say?
+> 
+> It was discussed with Hardware team before and again today as well.
+> Enabling ASID for display engine while it continues to access the buffer memory is a safe operation.
+> As per HW team, The only side-effect that can happen is additional latency to transaction as SMMU caches get warmed up.
+> 
+>> 4) What happens when CPU writes to ASID register? Does SMMU state machine
+>> latch ASID status (making it visible) only at a single "safe" point?
+> 
+> MC makes a decision on routing transaction through either SMMU page tables or bypassing based on the ASID register value.  It
+> checks the ASID register only once per transaction in the pipeline.
 
-This is incorrect error unwinding, the miscdev isn't unregistered.
+Thank you very much for the clarification.
