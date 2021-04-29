@@ -2,37 +2,65 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0EAC433ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 10:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE21C43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9D061456
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 10:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AACF613F9
+	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 12:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240376AbhD2KTW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Apr 2021 06:19:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233219AbhD2KTV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Apr 2021 06:19:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 42BDC61453;
-        Thu, 29 Apr 2021 10:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619691514;
-        bh=DM4HV2lnx+GNXVL2Vu40xN6FyVMsrdNcY1mWzrPWhwk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Pr9yW9qY3yfN8RysVDFykRvqbdtpg/mq8Z8ntseE+Apk90jB4exflFSQEUBBScELm
-         a7ld4IIgvO4R6eWiSidptTL4lwtBCWonz6TbAcNnnqoa6UyWst1z2S2I8VEVUcmpmV
-         nOlA88vuZpSNIDERZynyGtFrV/G9CA2ydJch8het8EHNRS9pDSGyojVeQv7Zf36I15
-         nwNvmspeKTVHp5C5y6Ja++sVKcVISX7zsPP7MK/QQyFLiNnd3A7M4kFMo7E9Z0LUdf
-         UoRV6BlmzWqX0fnvJ3BmZ3dIXNZVJYIyCWUDCawrYqctcpCH6pyQiPangvHLt+Iuah
-         aPrgiYw8bEG+Q==
-Date:   Thu, 29 Apr 2021 12:18:16 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
+        id S236023AbhD2Meu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 29 Apr 2021 08:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231490AbhD2Met (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 29 Apr 2021 08:34:49 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213A2C06138B;
+        Thu, 29 Apr 2021 05:34:03 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id z13so23555854lft.1;
+        Thu, 29 Apr 2021 05:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+fbOj539U7JlJxKx94jCmhZjY1EaeG6hVLe/OeyW9BA=;
+        b=pSAPQilu7n+6xTr9GdEG0tb6PJM12QM070qCxvHnWCIze3Gcr+Y1X+IbvGDtRxTUgM
+         EyOOFTxf9hWQBlaRIuLofOaQebEe5v0gWxDauGIRIaLBxzQZQULJfZHJUKxGdkb10gkc
+         nD1wHPGKwDBP5o9agABg3XnIArwOCYPQSKMjVhR3w59xhvXls6FFml/j10Pwe9czFo6Z
+         T7faf5Qfz88VW86L60gbzCGia3II+upwMhl4urxCbGztadHzxAw5ZUEZZpuSIrEqgrti
+         aMKp0DRksQp+N/9uThNAeaKzsoGRnRjp6oHq0CgRtj1ykP9X5KS4ubBguxOUwo/dtsF4
+         c+pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+fbOj539U7JlJxKx94jCmhZjY1EaeG6hVLe/OeyW9BA=;
+        b=NBZ6qrisZK+r/r0egW/szwjs5QHeDlkgBqldSV+slLEvVkjSX8aJY3H28isfeDdx7T
+         njZDSLltdHIQZiiKnI5TVd0FYOfsYXFhgYF34BRq52KQe+BXh9DfjIF4wHGjjUvewOAs
+         iiD4Zdnaai7T01uAJ2+UGcdqtItK14M7tY79FTH+Kj6yaRbyzKYEZ39J6y+X5jfsVK/S
+         RjIgNfbFJImG7targ4SJT81Bqvu358EYtIA67eYZvHUpXUOi/7hL/ZPE8bUUwcUKWS8X
+         ZAMOrl6/yMI0DUv+EAxqXZxzItEaYbiAJ4cO1PdADeqeRwMUQnjj37TltuTkgPshtP7l
+         /wCQ==
+X-Gm-Message-State: AOAM530QECKQsA7rIOeBVAEGH00SJbcCpLFv/Lw5CO0pZkGEUFMSllkv
+        0/WZEkA87ftyUlHrDUIqVMo=
+X-Google-Smtp-Source: ABdhPJxNUnx9qkfhLC3V1HtbXkiFpJiCYsEDSOon3AoeX+SG0EchdE86xX8g0E/VEPlskxpayZqx+w==
+X-Received: by 2002:a19:ad41:: with SMTP id s1mr24627108lfd.306.1619699641558;
+        Thu, 29 Apr 2021 05:34:01 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-102.dynamic.spd-mgts.ru. [109.252.193.102])
+        by smtp.googlemail.com with ESMTPSA id n7sm515001lft.65.2021.04.29.05.33.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Apr 2021 05:34:01 -0700 (PDT)
+Subject: Re: [PATCH v4 00/79] Address some issues with PM runtime at media
+ subsystem
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Johan Hovold <johan@kernel.org>
 Cc:     Shawn Tu <shawnx.tu@intel.com>,
         Ricardo Ribalda <ribalda@kernel.org>,
         Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
@@ -43,7 +71,6 @@ Cc:     Shawn Tu <shawnx.tu@intel.com>,
         "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Dmitry Osipenko <digetx@gmail.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
         Leon Luo <leonl@leopardimaging.com>,
@@ -96,173 +123,50 @@ Cc:     Shawn Tu <shawnx.tu@intel.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         linux-renesas-soc@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
         Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v4 00/79] Address some issues with PM runtime at media
- subsystem
-Message-ID: <20210429121215.64a7cbdb@coco.lan>
-In-Reply-To: <YImEMN/POW5C8lG7@hovoldconsulting.com>
 References: <cover.1619621413.git.mchehab+huawei@kernel.org>
-        <YImEMN/POW5C8lG7@hovoldconsulting.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+ <YImEMN/POW5C8lG7@hovoldconsulting.com> <20210429121215.64a7cbdb@coco.lan>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <de636a0a-3fd7-d61e-c361-fa50a6d34f17@gmail.com>
+Date:   Thu, 29 Apr 2021 15:33:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210429121215.64a7cbdb@coco.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Em Wed, 28 Apr 2021 17:50:08 +0200
-Johan Hovold <johan@kernel.org> escreveu:
-
-> On Wed, Apr 28, 2021 at 04:51:21PM +0200, Mauro Carvalho Chehab wrote:
-
-> > 1. despite its name, this is actually a PM runtime resume call,
-> >    but some developers didn't seem to realize that, as I got this
-> >    pattern on some drivers:
-> > 
-> >         pm_runtime_get_sync(&client->dev);
-> >         pm_runtime_disable(&client->dev);
-> >         pm_runtime_set_suspended(&client->dev);
-> >         pm_runtime_put_noidle(&client->dev);
-> > 
-> >    It makes no sense to resume PM just to suspend it again ;-)  
+29.04.2021 13:18, Mauro Carvalho Chehab пишет:
+>> This is perfectly alright. Take a look at ov7740_remove() for example:
+>>
+>> 	pm_runtime_get_sync(&client->dev);
+>> 	pm_runtime_disable(&client->dev);
+>> 	pm_runtime_set_suspended(&client->dev);
+>> 	pm_runtime_put_noidle(&client->dev);
+>> 	
+>> 	ov7740_set_power(ov7740, 0);
+>>
+>> There's an explicit power-off after balancing the PM count and this will
+>> work regardless of the power state when entering this function.
+> Ok, but this should equally work:
 > 
-> This is perfectly alright. Take a look at ov7740_remove() for example:
+>  	pm_runtime_disable(&client->dev);
+>  	pm_runtime_set_suspended(&client->dev);
+>  	
+>  	ov7740_set_power(ov7740, 0);
 > 
-> 	pm_runtime_get_sync(&client->dev);
-> 	pm_runtime_disable(&client->dev);
-> 	pm_runtime_set_suspended(&client->dev);
-> 	pm_runtime_put_noidle(&client->dev);
-> 	
-> 	ov7740_set_power(ov7740, 0);
+> as there's no additional cleanup made on this particular driver
+> between pm_runtime_get_sync() and pm_runtime_put_noidle().
 > 
-> There's an explicit power-off after balancing the PM count and this will
-> work regardless of the power state when entering this function.
 
-Ok, but this should equally work:
+The pm_runtime_get_sync() turns hardware ON by invoking
+ov7740_set_power(ov7740, 1), and thus, the ON->OFF is kept balanced in
+both RPM-available and RPM-unavailable cases. The RPM state of device
+should be reset after driver removal.
 
- 	pm_runtime_disable(&client->dev);
- 	pm_runtime_set_suspended(&client->dev);
- 	
- 	ov7740_set_power(ov7740, 0);
-
-as there's no additional cleanup made on this particular driver
-between pm_runtime_get_sync() and pm_runtime_put_noidle().
-
-> So this has nothing to do with pm_runtime_get_sync() per se.
-
-Yes, but some patches on this series are cleaning up the driver release
-logic.
-
-> 
-> > 2. Usual *_get() methods only increment their use count on success,
-> >    but pm_runtime_get_sync() increments it unconditionally. Due to
-> >    that, several drivers were mistakenly not calling
-> >    pm_runtime_put_noidle() when it fails;  
-> 
-> Sure, but pm_runtime_get_async() also works this way. You just won't be
-> notified if the async resume fails.
-
-Granted, it makes sense along the pm_runtime kAPI.
-
-It is inconsistent with the behavior of kobject_get*() and other
-*_get*() methods that are based or inspired on it, as, on those, the
-operations are atomic: either everything succeeds and it doesn't return
-an error, or the usage counter is not incremented and the object
-state doesn't change after the call.
-
-> > 3. The name of the new variant is a lot clearer:
-> > 	pm_runtime_resume_and_get()
-> >     As its same clearly says that this is a PM runtime resume function,
-> >     that also increments the usage counter on success;  
-> 
-> It also introduced an inconsistency in the API and does not pair as well
-> with the pm_runtime_put variants.
-
-Agreed. A name that would be more consistent with PM runtime would
-probably be:
-
-	pm_runtime_resume_if_get()
-
-as there are already:
-
-	pm_runtime_get_if_in_use()
-	pm_runtime_get_if_active()
-
-But any such discussions are out of the scope of this patchset ;-)
-
-> 
-> > 4. Consistency: we did similar changes subsystem wide with
-> >    for instance strlcpy() and strcpy() that got replaced by
-> >    strscpy(). Having all drivers using the same known-to-be-safe
-> >    methods is a good thing;  
-> 
-> It's not known to be safe; there are ways to get also this interface
-> wrong as for example this series has shown.
-
-Very true. Yet, it is a lot simpler to use functions that won't change
-the state of the objects when returning an error, as this is by far
-the most common pattern within the Kernel.
-
-Human brains are trained to identify certain patterns. When there's
-something using a similar pattern, but with a different behavior, 
-our brains are more subject to fail identifying problems.
-
-> > 5. Prevent newer drivers to copy-and-paste a code that it would
-> >    be easier to break if they don't truly understand what's behind
-> >    the scenes.  
-> 
-> Cargo-cult programming always runs that risk.
-
-True.
-
-> > This series replace places  pm_runtime_get_sync(), by calling
-> > pm_runtime_resume_and_get() instead.
-> > 
-> > This should help to avoid future mistakes like that, as people
-> > tend to use the existing drivers as examples for newer ones.  
-> 
-> The only valid point about and use for pm_runtime_resume_and_get() is to
-> avoid leaking a PM usage count reference in the unlikely case that
-> resume fails (something which hardly any driver implements recovery
-> from anyway).
-> 
-> It's a convenience wrapper that saves you from writing one extra line in
-> some cases (depending on how you implement runtime-pm support) and not a
-> silver bullet against bugs.
->  
-> > compile-tested only.
-> > 
-> > Patches 1 to 7 fix some issues that already exists at the current
-> > PM runtime code;
-> > 
-> > patches 8 to 20 fix some usage_count problems that still exists
-> > at the media subsystem;
-> > 
-> > patches 21 to 78 repaces pm_runtime_get_sync() by 
-> > pm_runtime_resume_and_get();
-> > 
-> > Patch 79 (and a hunk on patch 78) documents the two exceptions
-> > where pm_runtime_get_sync() will still be used for now.
-> > 
-> > ---
-> > 
-> > v4:
-> >     - Added a couple of additional fixes at existing PM runtime code;
-> >     - Some patches are now more conservative in order to avoid causing
-> >      regressions.
-> > v3:
-> >     - fix a compilation error;
-> > v2:
-> >     - addressed pointed issues and fixed a few other PM issues.  
-> 
-> This really doesn't say much more than "changed stuff" so kinda hard to
-> track if review feedback has been taken into account for example.
-
-I addressed all review feedback I got (as far as I'm aware), and added
-all received reviewed-by/acked-by.
-
-Yeah, I could have written a more comprehensive changes description
-there.
-
-Thanks,
-Mauro
+It doesn't look like any additional cleanups are needed by that ov7740
+driver. The driver removal is opposite to the probe, hence it should be
+correct as-is.
