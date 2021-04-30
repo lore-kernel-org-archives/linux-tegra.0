@@ -2,261 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F57C43462
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 15:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566EBC433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1EE961411
-	for <linux-tegra@archiver.kernel.org>; Thu, 29 Apr 2021 15:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371076146D
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240543AbhD2PRv (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 29 Apr 2021 11:17:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233420AbhD2PRs (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 29 Apr 2021 11:17:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DADC8613F8;
-        Thu, 29 Apr 2021 15:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619709421;
-        bh=0TF/rgI+kIrUM4ucLgyoRQVNDZwjwMCttPCbdF1J2ts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TNblwH+As0w11JRNen3DEa/sKtquJO7N/ed+Wi2cPt5DPo/pzApjHeB4CYlT9czKN
-         RFJnIUjSlU/iXNkujkJ9GfUIBpZYvUPaxBLDLGXBQdVlv5qb6mSpE1DcETxlBJLjdH
-         3g63qgtE3JXAaoo4Aq3ZJQdiRo/RBYWmOp0+Glxzsc1YjsicyiOaSi7GIhQYDFx0Ss
-         xxX7tIodOuoDf+uK3PdOkr9EHdavuGSGLxTjoqehEjaUHaupkr1YkvsH7C4pSmGQvt
-         kJLY88R3n7qjm+eBETbZXRLROLJk7BZhgXtoeO/pKC8+dHkhcGgjRgK0xEL1TOs1c0
-         knRtXQpP0PexA==
-Received: from johan by xi.lan with local (Exim 4.93.0.4)
-        (envelope-from <johan@kernel.org>)
-        id 1lc8Ph-0006kM-4M; Thu, 29 Apr 2021 17:17:13 +0200
-Date:   Thu, 29 Apr 2021 17:17:13 +0200
-From:   Johan Hovold <johan@kernel.org>
+        id S230475AbhD3RLC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Apr 2021 13:11:02 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2969 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229750AbhD3RLC (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 30 Apr 2021 13:11:02 -0400
+Received: from fraeml743-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FWz9t0KM8z689R8;
+        Sat,  1 May 2021 00:59:30 +0800 (CST)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ fraeml743-chm.china.huawei.com (10.206.15.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 30 Apr 2021 19:10:12 +0200
+Received: from localhost (10.52.125.96) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 30 Apr
+ 2021 18:10:11 +0100
+Date:   Fri, 30 Apr 2021 18:08:36 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Shawn Tu <shawnx.tu@intel.com>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>, linuxarm@huawei.com,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
         Dmitry Osipenko <digetx@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dongchun Zhu <dongchun.zhu@mediatek.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devel@driverdev.osuosl.org, Jacopo Mondi <jacopo@jmondi.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-tegra@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        mauro.chehab@huawei.com,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        "Paul J. Murphy" <paul.j.murphy@intel.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        linux-kernel@vger.kernel.org, Robert Foss <robert.foss@linaro.org>,
-        Dan Scally <djrscally@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v4 00/79] Address some issues with PM runtime at media
- subsystem
-Message-ID: <YIrN+VEY9Sf+eztR@hovoldconsulting.com>
+        Thierry Reding <thierry.reding@gmail.com>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v4 25/79] staging: media: tegra-vde: use
+ pm_runtime_resume_and_get()
+Message-ID: <20210430180836.00006da4@Huawei.com>
+In-Reply-To: <bc2b9048d4ad510eec97988ce8f3fd0d2bb26f39.1619621413.git.mchehab+huawei@kernel.org>
 References: <cover.1619621413.git.mchehab+huawei@kernel.org>
- <YImEMN/POW5C8lG7@hovoldconsulting.com>
- <20210429121215.64a7cbdb@coco.lan>
+        <bc2b9048d4ad510eec97988ce8f3fd0d2bb26f39.1619621413.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210429121215.64a7cbdb@coco.lan>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.52.125.96]
+X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 12:18:16PM +0200, Mauro Carvalho Chehab wrote:
-> Em Wed, 28 Apr 2021 17:50:08 +0200
-> Johan Hovold <johan@kernel.org> escreveu:
+On Wed, 28 Apr 2021 16:51:46 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+> added pm_runtime_resume_and_get() in order to automatically handle
+> dev->power.usage_count decrement on errors.
 > 
-> > On Wed, Apr 28, 2021 at 04:51:21PM +0200, Mauro Carvalho Chehab wrote:
+> Use the new API, in order to cleanup the error check logic.
 > 
-> > > 1. despite its name, this is actually a PM runtime resume call,
-> > >    but some developers didn't seem to realize that, as I got this
-> > >    pattern on some drivers:
-> > > 
-> > >         pm_runtime_get_sync(&client->dev);
-> > >         pm_runtime_disable(&client->dev);
-> > >         pm_runtime_set_suspended(&client->dev);
-> > >         pm_runtime_put_noidle(&client->dev);
-> > > 
-> > >    It makes no sense to resume PM just to suspend it again ;-)  
-> > 
-> > This is perfectly alright. Take a look at ov7740_remove() for example:
-> > 
-> > 	pm_runtime_get_sync(&client->dev);
-> > 	pm_runtime_disable(&client->dev);
-> > 	pm_runtime_set_suspended(&client->dev);
-> > 	pm_runtime_put_noidle(&client->dev);
-> > 	
-> > 	ov7740_set_power(ov7740, 0);
-> > 
-> > There's an explicit power-off after balancing the PM count and this will
-> > work regardless of the power state when entering this function.
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+LGTM
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/staging/media/tegra-vde/vde.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
 > 
-> Ok, but this should equally work:
-> 
->  	pm_runtime_disable(&client->dev);
->  	pm_runtime_set_suspended(&client->dev);
->  	
->  	ov7740_set_power(ov7740, 0);
-> 
-> as there's no additional cleanup made on this particular driver
-> between pm_runtime_get_sync() and pm_runtime_put_noidle().
+> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
+> index 28845b5bafaf..1cdacb3f781c 100644
+> --- a/drivers/staging/media/tegra-vde/vde.c
+> +++ b/drivers/staging/media/tegra-vde/vde.c
+> @@ -775,9 +775,9 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	if (ret)
+>  		goto release_dpb_frames;
+>  
+> -	ret = pm_runtime_get_sync(dev);
+> +	ret = pm_runtime_resume_and_get(dev);
+>  	if (ret < 0)
+> -		goto put_runtime_pm;
+> +		goto unlock;
+>  
+>  	/*
+>  	 * We rely on the VDE registers reset value, otherwise VDE
+> @@ -843,6 +843,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  put_runtime_pm:
+>  	pm_runtime_mark_last_busy(dev);
+>  	pm_runtime_put_autosuspend(dev);
+> +
+> +unlock:
+>  	mutex_unlock(&vde->lock);
+>  
+>  release_dpb_frames:
+> @@ -1069,11 +1071,17 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>  	 * power-cycle it in order to put hardware into a predictable lower
+>  	 * power state.
+>  	 */
+> -	pm_runtime_get_sync(dev);
+> +	if (pm_runtime_resume_and_get(dev) < 0)
+> +		goto err_pm_runtime;
+> +
+>  	pm_runtime_put(dev);
+>  
+>  	return 0;
+>  
+> +err_pm_runtime:
+> +	pm_runtime_dont_use_autosuspend(dev);
+> +	pm_runtime_disable(dev);
+> +
+>  err_deinit_iommu:
+>  	tegra_vde_iommu_deinit(vde);
+>  
+> @@ -1089,7 +1097,12 @@ static int tegra_vde_remove(struct platform_device *pdev)
+>  	struct tegra_vde *vde = platform_get_drvdata(pdev);
+>  	struct device *dev = &pdev->dev;
+>  
+> +	/*
+> +	 * As it increments RPM usage_count even on errors, we don't need to
+> +	 * check the returned code here.
+> +	 */
+>  	pm_runtime_get_sync(dev);
+> +
+>  	pm_runtime_dont_use_autosuspend(dev);
+>  	pm_runtime_disable(dev);
+>  
 
-No, that would break the driver as I pointed out to you yesterday:
-
-	https://lore.kernel.org/r/YImG1klSPkFSaS3a@hovoldconsulting.com
-
-If the device is already suspended when remove is called then you'll
-end up with an unbalanced call to ov7740_set_power() that will try to
-disable an already disabled clock.
-
-> > So this has nothing to do with pm_runtime_get_sync() per se.
-> 
-> Yes, but some patches on this series are cleaning up the driver release
-> logic.
-
-You mentioned this example as an argument against using
-pm_runtime_get_sync(), which I don't think makes sense.
-
-> > > 2. Usual *_get() methods only increment their use count on success,
-> > >    but pm_runtime_get_sync() increments it unconditionally. Due to
-> > >    that, several drivers were mistakenly not calling
-> > >    pm_runtime_put_noidle() when it fails;  
-> > 
-> > Sure, but pm_runtime_get_async() also works this way. You just won't be
-> > notified if the async resume fails.
-> 
-> Granted, it makes sense along the pm_runtime kAPI.
-> 
-> It is inconsistent with the behavior of kobject_get*() and other
-> *_get*() methods that are based or inspired on it, as, on those, the
-> operations are atomic: either everything succeeds and it doesn't return
-> an error, or the usage counter is not incremented and the object
-> state doesn't change after the call.
-
-Right, and I'm aware that some people have overlooked this. But its not
-the end of the world since hardly any driver can handle resume failures
-properly anyway. 
-
-This is mostly just an exercise to shut up static checkers.
-
-> > > 3. The name of the new variant is a lot clearer:
-> > > 	pm_runtime_resume_and_get()
-> > >     As its same clearly says that this is a PM runtime resume function,
-> > >     that also increments the usage counter on success;  
-> > 
-> > It also introduced an inconsistency in the API and does not pair as well
-> > with the pm_runtime_put variants.
-> 
-> Agreed. A name that would be more consistent with PM runtime would
-> probably be:
-> 
-> 	pm_runtime_resume_if_get()
-
-Naw, since the get part always succeeds.
-
-It should start with pm_runtime_get, but pm_runtime_get_sync() is
-unfortunately taken.
-
-> as there are already:
-> 
-> 	pm_runtime_get_if_in_use()
-> 	pm_runtime_get_if_active()
-> 
-> But any such discussions are out of the scope of this patchset ;-)
-
-Right.
-
-> > > 4. Consistency: we did similar changes subsystem wide with
-> > >    for instance strlcpy() and strcpy() that got replaced by
-> > >    strscpy(). Having all drivers using the same known-to-be-safe
-> > >    methods is a good thing;  
-> > 
-> > It's not known to be safe; there are ways to get also this interface
-> > wrong as for example this series has shown.
-> 
-> Very true. Yet, it is a lot simpler to use functions that won't change
-> the state of the objects when returning an error, as this is by far
-> the most common pattern within the Kernel.
-
-A resume failure does change the state (and needs to be recovered from),
-but I get what you're saying.
-
-> Human brains are trained to identify certain patterns. When there's
-> something using a similar pattern, but with a different behavior, 
-> our brains are more subject to fail identifying problems.
-
-Sure. But I'm not sure that having two interfaces with different
-semantics to do the job is doing us any favours here. But again, that
-discussion has already been had.
-
-And I realise that this is partly also your motive here (even if the old
-interface isn't going to go away).
-
-> > > compile-tested only.
-> > > Patches 1 to 7 fix some issues that already exists at the current
-> > > PM runtime code;
-> > > 
-> > > patches 8 to 20 fix some usage_count problems that still exists
-> > > at the media subsystem;
-> > > 
-> > > patches 21 to 78 repaces pm_runtime_get_sync() by 
-> > > pm_runtime_resume_and_get();
-> > > 
-> > > Patch 79 (and a hunk on patch 78) documents the two exceptions
-> > > where pm_runtime_get_sync() will still be used for now.
-
-80 patches in one series (posted to lkml) is a bit excessive. Perhaps
-you can break it up in a fixes part and one or more cleanups parts?
-
-Johan
