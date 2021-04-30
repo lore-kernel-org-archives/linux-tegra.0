@@ -2,112 +2,138 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7BCC433ED
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2369C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 18:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3686145B
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFD461468
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 18:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbhD3RP0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Apr 2021 13:15:26 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2971 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbhD3RP0 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Apr 2021 13:15:26 -0400
-Received: from fraeml738-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FWzGy0pltz70gFK;
-        Sat,  1 May 2021 01:03:54 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml738-chm.china.huawei.com (10.206.15.219) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 30 Apr 2021 19:14:36 +0200
-Received: from localhost (10.52.125.96) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 30 Apr
- 2021 18:14:35 +0100
-Date:   Fri, 30 Apr 2021 18:13:00 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 26/79] staging: media: tegra-video: use
- pm_runtime_resume_and_get()
-Message-ID: <20210430181300.00003f78@Huawei.com>
-In-Reply-To: <956254cdffbc7d07b30e41f7b7cb41cf60bbfc72.1619621413.git.mchehab+huawei@kernel.org>
-References: <cover.1619621413.git.mchehab+huawei@kernel.org>
-        <956254cdffbc7d07b30e41f7b7cb41cf60bbfc72.1619621413.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+        id S229990AbhD3SL4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Apr 2021 14:11:56 -0400
+Received: from mail-bn7nam10on2071.outbound.protection.outlook.com ([40.107.92.71]:48865
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229750AbhD3SLy (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 30 Apr 2021 14:11:54 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=n9mqvY1sRJBZpQgBpeWzXRZr2eyadg8aP5esFFAWr1SrRXL+gueuFDtBoTJIoh9JZ0YMVzGyMbIcO7ROTZz61ZSy2Of6c5UlfGQiZwtsamXgrr3GZ6GdDEk4rX+H/47U0QcaXxq5LT05pecBqGrA1Lq+I740KniwFkHNcexHMzOG9JTItil4aH0ViHGxBUYdGNCY51CMh+5n61DX9UuPsuq30WpdJ1H9mq/AP2vwlbeAJF85K4EnuBPSug6XAPkJNVH868IIXnghxrTmiKPLoh67aWHRgka6H6cBepD95eQAXWq/uZbikTEp5LlJg7Aiagw2jTaK2eGXEahO9NyZcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HFTJ/vm7KxT53NkUi9l+WKbq11Hm/GTtUZ+5ClzmDFo=;
+ b=M+hXAn40ZR7caz3w0yOMk6R0SBvQe+R2on0F1mQwZBax89Nb1UmvLEX91eXuKWk0ZraV38wiOnZOUsKttpC1G/RwW6Th0xlDR9VB/zgxmivXx6gJ/6JC17IA0+BriIFbGC3uLphPOQFP+6wGatDV5eEBORGwXLBVMjhIN1ZnASEodbQ2MS1yoTwDwX69cswQGWUz/hCSdau5aomShi22XXUh1RQFYnxrBHOcdngWykuAsR4Bz4ecwJeX7KOFvLHoXcKERTtffHbTeh0jojtdcZlkR1GVK5UV1oEdfTdVe5dz2I+HCdfnwq8e9I8Ot+48lzwc++z/Cj+tPACai/jlkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HFTJ/vm7KxT53NkUi9l+WKbq11Hm/GTtUZ+5ClzmDFo=;
+ b=maeOmozjV410IKPZk9GRJZ76Ecmxv8yvvlfhBWmrAUu/HKFpjzl/FyRXvvZDtupgyNYpPgyAdptZ/oZPdIyg1f78d5rmjgroRrUSBhMRpOZOK3n3FX7gL3Vs1El9jKj2XxYynCMSXcgtdNuPdoIcCtXqL53E8mFduuyNJ/Upe1d7U3CtybRtzNQ17SkWHLr6Ki7Kd/S88OknFA+KyVAfH0z6gVXKt7ZriOZxgieH2RHHgUx4yKZ06r/pEe6h4hFHvlfOJ++MhHNHEu65+nOfLa6OunEQI9x8FpJmYG8Onc6TLj6FYj7nEmixWEn6GAR5CkO4srZQo0QALIvJ4b43fw==
+Received: from DM5PR05CA0019.namprd05.prod.outlook.com (2603:10b6:3:d4::29) by
+ DM5PR12MB2584.namprd12.prod.outlook.com (2603:10b6:4:b0::37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4065.21; Fri, 30 Apr 2021 18:11:05 +0000
+Received: from DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:d4:cafe::87) by DM5PR05CA0019.outlook.office365.com
+ (2603:10b6:3:d4::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.11 via Frontend
+ Transport; Fri, 30 Apr 2021 18:11:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
+ header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ DM6NAM11FT067.mail.protection.outlook.com (10.13.172.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4087.32 via Frontend Transport; Fri, 30 Apr 2021 18:11:04 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 30 Apr
+ 2021 18:11:04 +0000
+Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
+ Transport; Fri, 30 Apr 2021 18:11:04 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.11 0/3] 5.11.18-rc1 review
+In-Reply-To: <20210430141910.693887691@linuxfoundation.org>
+References: <20210430141910.693887691@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.52.125.96]
-X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+MIME-Version: 1.0
+Message-ID: <89708897f2b94a1eaf15a8644eb4de83@HQMAIL101.nvidia.com>
+Date:   Fri, 30 Apr 2021 18:11:04 +0000
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7bdf9d27-45e8-44d6-281f-08d90c035209
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2584:
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2584758351E24C63AB9C3545D95E9@DM5PR12MB2584.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: atayh2nMZPkVyO3mlEZbmbqf6MERc6YXW+Hs/rKquuF4K9zQN9h3ep175wO2ktAdUSWQRo3/++TwNefzFf8fJ4chrAQ6JYXHTAdz7T6iYYua1kANVes0uU5vr7dW0hXc16C1/JMsvDCKzIVSBnEVfK32fxtS7YgHGbUjfWkjZiCPwDieHKxR6RAx4lv8/JnFWDsjSwt0Nk+p22lF/vaqv3h1sGToWggTEkrjR4iQM4K3x0QJV5wvL9dVIFkE1FC8inYXxbiXnanmW8R22igTsry4Vc6JAyDrG2LU/4+BczsAeN2hEo13MgX1tpOGKR1IXAb/c55qybNiBfSHMSI79esjQo5cE0+PtVXKL08+qjIlBCbxZRt/JyeHOgTXIWGb+BsgxFvfAuApswxNgiVGAlc4OyZ3w6dRRTD3yKKjhdw9NuGk3NUCfnC5RtzdJ7VgG+IHszixUyJrVfzWaRURQV6NMbuIABuD0wiapNkXOCDaepnp/kJ1GtfFHh/jnT/qYbXFbxjvJf4r2qqoh9d2EWy8YmcVudzZlk4joq9+52H/xvhGKKigmPxGuZoX3i7hAASw7Ai5iZXTgaEWx/h3Px8MH2W2CLZ9tAgEoM/vKUU4gJgmoboj0N0XQf1A5lendVFxyaFvd8P+nHDi6OcHFV0l4eqIHm+yqAYEa/lAYik2sTKHfZp+McB/D06ITlKbz561tCcVsVSMBgPw/ECFu/YaQMNsOO2TU1LEoEVccQ0=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(376002)(39860400002)(396003)(346002)(46966006)(36840700001)(26005)(47076005)(4326008)(966005)(6916009)(36860700001)(426003)(8676002)(186003)(7416002)(8936002)(54906003)(82310400003)(336012)(86362001)(24736004)(478600001)(36906005)(356005)(70586007)(5660300002)(82740400003)(7636003)(70206006)(2906002)(316002)(108616005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2021 18:11:04.9303
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bdf9d27-45e8-44d6-281f-08d90c035209
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT067.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2584
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, 28 Apr 2021 16:51:47 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Fri, 30 Apr 2021 16:20:49 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.11.18 release.
+> There are 3 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 02 May 2021 14:19:04 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.11.18-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-> added pm_runtime_resume_and_get() in order to automatically handle
-> dev->power.usage_count decrement on errors.
-> 
-> Use the new API, in order to cleanup the error check logic.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-NOP patch so 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/staging/media/tegra-video/csi.c | 3 +--
->  drivers/staging/media/tegra-video/vi.c  | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-> index 033a6935c26d..e938bf4c48b6 100644
-> --- a/drivers/staging/media/tegra-video/csi.c
-> +++ b/drivers/staging/media/tegra-video/csi.c
-> @@ -298,10 +298,9 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
->  	struct tegra_csi *csi = csi_chan->csi;
->  	int ret, err;
->  
-> -	ret = pm_runtime_get_sync(csi->dev);
-> +	ret = pm_runtime_resume_and_get(csi->dev);
->  	if (ret < 0) {
->  		dev_err(csi->dev, "failed to get runtime PM: %d\n", ret);
-> -		pm_runtime_put_noidle(csi->dev);
->  		return ret;
->  	}
->  
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index 7a09061cda57..1298740a9c6c 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -297,10 +297,9 @@ static int tegra_channel_start_streaming(struct vb2_queue *vq, u32 count)
->  	struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
->  	int ret;
->  
-> -	ret = pm_runtime_get_sync(chan->vi->dev);
-> +	ret = pm_runtime_resume_and_get(chan->vi->dev);
->  	if (ret < 0) {
->  		dev_err(chan->vi->dev, "failed to get runtime PM: %d\n", ret);
-> -		pm_runtime_put_noidle(chan->vi->dev);
->  		return ret;
->  	}
->  
+All tests passing for Tegra ...
 
+Test results for stable-v5.11:
+    12 builds:	12 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    70 tests:	70 pass, 0 fail
+
+Linux version:	5.11.18-rc1-g517c2bbecb70
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
