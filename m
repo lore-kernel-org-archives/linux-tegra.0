@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30438C43461
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7BCC433ED
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 103C261090
-	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F3686145B
+	for <linux-tegra@archiver.kernel.org>; Fri, 30 Apr 2021 17:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbhD3RN4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 30 Apr 2021 13:13:56 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2970 "EHLO
+        id S230446AbhD3RP0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 30 Apr 2021 13:15:26 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2971 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbhD3RN4 (ORCPT
+        with ESMTP id S229750AbhD3RP0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 30 Apr 2021 13:13:56 -0400
-Received: from fraeml739-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FWzM049hHz6wl4Y;
-        Sat,  1 May 2021 01:07:24 +0800 (CST)
+        Fri, 30 Apr 2021 13:15:26 -0400
+Received: from fraeml738-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FWzGy0pltz70gFK;
+        Sat,  1 May 2021 01:03:54 +0800 (CST)
 Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml739-chm.china.huawei.com (10.206.15.220) with Microsoft SMTP Server
+ fraeml738-chm.china.huawei.com (10.206.15.219) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 30 Apr 2021 19:13:05 +0200
+ 15.1.2176.2; Fri, 30 Apr 2021 19:14:36 +0200
 Received: from localhost (10.52.125.96) by lhreml710-chm.china.huawei.com
  (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 30 Apr
- 2021 18:13:04 +0100
-Date:   Fri, 30 Apr 2021 18:11:29 +0100
+ 2021 18:14:35 +0100
+Date:   Fri, 30 Apr 2021 18:13:00 +0100
 From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Jonathan Hunter" <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
         <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 25/79] staging: media: tegra-vde: use
+Subject: Re: [PATCH v4 26/79] staging: media: tegra-video: use
  pm_runtime_resume_and_get()
-Message-ID: <20210430181129.00005f1f@Huawei.com>
-In-Reply-To: <20210430180836.00006da4@Huawei.com>
+Message-ID: <20210430181300.00003f78@Huawei.com>
+In-Reply-To: <956254cdffbc7d07b30e41f7b7cb41cf60bbfc72.1619621413.git.mchehab+huawei@kernel.org>
 References: <cover.1619621413.git.mchehab+huawei@kernel.org>
-        <bc2b9048d4ad510eec97988ce8f3fd0d2bb26f39.1619621413.git.mchehab+huawei@kernel.org>
-        <20210430180836.00006da4@Huawei.com>
+        <956254cdffbc7d07b30e41f7b7cb41cf60bbfc72.1619621413.git.mchehab+huawei@kernel.org>
 Organization: Huawei Technologies Research and Development (UK) Ltd.
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
 MIME-Version: 1.0
@@ -62,85 +61,53 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 30 Apr 2021 18:08:36 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+On Wed, 28 Apr 2021 16:51:47 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> On Wed, 28 Apr 2021 16:51:46 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+> added pm_runtime_resume_and_get() in order to automatically handle
+> dev->power.usage_count decrement on errors.
 > 
-> > Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-> > added pm_runtime_resume_and_get() in order to automatically handle
-> > dev->power.usage_count decrement on errors.
-> > 
-> > Use the new API, in order to cleanup the error check logic.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> LGTM
+> Use the new API, in order to cleanup the error check logic.
 > 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-drop that.  I missed the misc unwind thing caught in the other review.
-Too many patches without a break :(
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+NOP patch so 
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/staging/media/tegra-video/csi.c | 3 +--
+>  drivers/staging/media/tegra-video/vi.c  | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> > ---
-> >  drivers/staging/media/tegra-vde/vde.c | 19 ++++++++++++++++---
-> >  1 file changed, 16 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-> > index 28845b5bafaf..1cdacb3f781c 100644
-> > --- a/drivers/staging/media/tegra-vde/vde.c
-> > +++ b/drivers/staging/media/tegra-vde/vde.c
-> > @@ -775,9 +775,9 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
-> >  	if (ret)
-> >  		goto release_dpb_frames;
-> >  
-> > -	ret = pm_runtime_get_sync(dev);
-> > +	ret = pm_runtime_resume_and_get(dev);
-> >  	if (ret < 0)
-> > -		goto put_runtime_pm;
-> > +		goto unlock;
-> >  
-> >  	/*
-> >  	 * We rely on the VDE registers reset value, otherwise VDE
-> > @@ -843,6 +843,8 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
-> >  put_runtime_pm:
-> >  	pm_runtime_mark_last_busy(dev);
-> >  	pm_runtime_put_autosuspend(dev);
-> > +
-> > +unlock:
-> >  	mutex_unlock(&vde->lock);
-> >  
-> >  release_dpb_frames:
-> > @@ -1069,11 +1071,17 @@ static int tegra_vde_probe(struct platform_device *pdev)
-> >  	 * power-cycle it in order to put hardware into a predictable lower
-> >  	 * power state.
-> >  	 */
-> > -	pm_runtime_get_sync(dev);
-> > +	if (pm_runtime_resume_and_get(dev) < 0)
-> > +		goto err_pm_runtime;
-> > +
-> >  	pm_runtime_put(dev);
-> >  
-> >  	return 0;
-> >  
-> > +err_pm_runtime:
-> > +	pm_runtime_dont_use_autosuspend(dev);
-> > +	pm_runtime_disable(dev);
-> > +
-> >  err_deinit_iommu:
-> >  	tegra_vde_iommu_deinit(vde);
-> >  
-> > @@ -1089,7 +1097,12 @@ static int tegra_vde_remove(struct platform_device *pdev)
-> >  	struct tegra_vde *vde = platform_get_drvdata(pdev);
-> >  	struct device *dev = &pdev->dev;
-> >  
-> > +	/*
-> > +	 * As it increments RPM usage_count even on errors, we don't need to
-> > +	 * check the returned code here.
-> > +	 */
-> >  	pm_runtime_get_sync(dev);
-> > +
-> >  	pm_runtime_dont_use_autosuspend(dev);
-> >  	pm_runtime_disable(dev);
-> >  
-> 
+> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+> index 033a6935c26d..e938bf4c48b6 100644
+> --- a/drivers/staging/media/tegra-video/csi.c
+> +++ b/drivers/staging/media/tegra-video/csi.c
+> @@ -298,10 +298,9 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
+>  	struct tegra_csi *csi = csi_chan->csi;
+>  	int ret, err;
+>  
+> -	ret = pm_runtime_get_sync(csi->dev);
+> +	ret = pm_runtime_resume_and_get(csi->dev);
+>  	if (ret < 0) {
+>  		dev_err(csi->dev, "failed to get runtime PM: %d\n", ret);
+> -		pm_runtime_put_noidle(csi->dev);
+>  		return ret;
+>  	}
+>  
+> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+> index 7a09061cda57..1298740a9c6c 100644
+> --- a/drivers/staging/media/tegra-video/vi.c
+> +++ b/drivers/staging/media/tegra-video/vi.c
+> @@ -297,10 +297,9 @@ static int tegra_channel_start_streaming(struct vb2_queue *vq, u32 count)
+>  	struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
+>  	int ret;
+>  
+> -	ret = pm_runtime_get_sync(chan->vi->dev);
+> +	ret = pm_runtime_resume_and_get(chan->vi->dev);
+>  	if (ret < 0) {
+>  		dev_err(chan->vi->dev, "failed to get runtime PM: %d\n", ret);
+> -		pm_runtime_put_noidle(chan->vi->dev);
+>  		return ret;
+>  	}
+>  
 
