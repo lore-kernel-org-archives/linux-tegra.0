@@ -2,145 +2,108 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EEAC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 May 2021 08:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB006C43600
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 May 2021 15:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC6A611AD
-	for <linux-tegra@archiver.kernel.org>; Thu,  6 May 2021 08:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D72A610E9
+	for <linux-tegra@archiver.kernel.org>; Thu,  6 May 2021 15:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233791AbhEFIuV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 6 May 2021 04:50:21 -0400
-Received: from mail-mw2nam08on2071.outbound.protection.outlook.com ([40.107.101.71]:18881
-        "EHLO NAM04-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233464AbhEFIuV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 6 May 2021 04:50:21 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c5G3YeY+e3HEencEqB+J53u1M8MlSuMK0PM0/ibthWyZ0HSSJb2SguVTuEVX0v8zeecwzlhLV0rRob9IsPaIZdG/sDFwBpSWQgRszUxB9BfNK3VNhnCCW0Pr4Idk3GidJuujHl4f/4IcsftTJ1hFpBVBtGd2yEJe/D+sJe3wi6wVyr+SpTOyQSEFRpKImvsMlgqzDCDKnSLeZNRrNqZtrIi98J6Ujx7Hjm8VY2DWAq6J+kbYJzLXBbhdEekRMv8qZZRYaut6EcSQPLzcJDk8zBaHdwv5vWyHR6a1L6EeBB3mxy3T/sFPkCE8vTHXb4CO4h3T03c1Ran0Qy+4AKT4RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cvze2Q4UHFsJPQxmU7Ysn3esafMd5+XWXKybkTOdSrI=;
- b=Ox1nsU9Hftq46qk3T7wNePSmSy5bD9ZorDkiwAoxonbo6+MOHyhg8oc8MNVEuhP9e3/wzyjY7PMOMWMbl5BNhllkT/4nohmdD1luUtZ/ygOiwMe/2fZ5co6xLUSdB1+H3c0v1u4NOpioI5snbfjGa1lxYhow1tu/hbEtKDjXDNoE4PxzHK4idqpdOm+wxXoJStdtmykvL+HRZYgeY4shvt76qeWm8oY0ZpdgItPoIFfkPSsCGsiARPFff+yACNv7jf9+Kpu+niOivfRuTHBLq+j191oNJfPXfSEjJWrC9PNK0P2Gphkyzun5El3sG3hs+iaDrUKaXr4wAZ0qR+IYPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cvze2Q4UHFsJPQxmU7Ysn3esafMd5+XWXKybkTOdSrI=;
- b=YrM7tpEFJ1+T9x719HHHYypAz56iExVcGS04bQ8tzsVMMHV9kCR/0GRHDdklrgdSsDCNVB2ifd2PJRdosZeXWJnHBx4k2bnCpPx5RaRJEWaZJsdMvZscl+wH4gBVbwpnYF1fE8C3wY7xwybKCiYg5zzU5/STy7sbW/ZwPVy95Eo/H2qRIG//SAVs7Ya+iB3lZoTahVSCfMTiXFKE112UcA0aMEw7/1/4mE5Az7rwvl150R/aoQa1BMds7GIhJ4+atwRt0N9+wI9CRqyykxRgzf+dfnjmZbvRse+hoJC9V1qlVhB9OTsgyriBo/jfLtOESd+Mdk0nrjdHvM0Cke/RLA==
-Received: from DM6PR11CA0006.namprd11.prod.outlook.com (2603:10b6:5:190::19)
- by BYAPR12MB4760.namprd12.prod.outlook.com (2603:10b6:a03:9c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.44; Thu, 6 May
- 2021 08:49:21 +0000
-Received: from DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:190:cafe::47) by DM6PR11CA0006.outlook.office365.com
- (2603:10b6:5:190::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend
- Transport; Thu, 6 May 2021 08:49:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT025.mail.protection.outlook.com (10.13.172.197) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4108.25 via Frontend Transport; Thu, 6 May 2021 08:49:21 +0000
-Received: from [10.26.49.8] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 6 May
- 2021 08:49:18 +0000
-Subject: Re: [PATCH] PCI: tegra: Fix host initialization during resume
-To:     Vidya Sagar <vidyas@nvidia.com>, <lorenzo.pieralisi@arm.com>,
-        <robh@kernel.org>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20210504172157.29712-1-vidyas@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <fecc2899-06ef-f91f-4a39-bb4ee664c800@nvidia.com>
-Date:   Thu, 6 May 2021 09:49:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S235337AbhEFP2L (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 6 May 2021 11:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235258AbhEFP1y (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 6 May 2021 11:27:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E8B23613FA;
+        Thu,  6 May 2021 15:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620314800;
+        bh=+0zMMYy+ON6SwtYC6XQ6C9KV32b7wTDojfRwGp+w3d8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pMMoLLDhEFrrk7JMj7h1DriSIg7sK/OLajcE93vvmzfLFDDP7O/Vsyw33qkr0KLGb
+         NdJKp825NUbjkwnNtNhNDVVmiX68hsw2QjrDmuB3k9eani9PHXA8bWtjV7dDh38gUO
+         dBrClA9PQiFYkpGjfp1KflzCK489mV9pkzeU7fCzdxZot+OO7YRIKtDXS7BzETsxTR
+         O3TygaCTWxPkOqu8IcFmlysnKpis+WNSooM4EkbpKuYxpjnYBGnrAoa7HmjeBfb1so
+         tB6M8BU/B8V4MprKvHYQc2B/B+XXRCVHRfaaeUR/CWfl+mCUI2VB6FnOVQjHnziJ2N
+         B3rNQ4HFzjRfQ==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1left7-000SBP-RI; Thu, 06 May 2021 17:26:05 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v5 06/25] staging: media: tegra-video: use pm_runtime_resume_and_get()
+Date:   Thu,  6 May 2021 17:25:44 +0200
+Message-Id: <5a20f9b3cad1136586e2bea7f16e5be4444c906a.1620314616.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1620314616.git.mchehab+huawei@kernel.org>
+References: <cover.1620314616.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210504172157.29712-1-vidyas@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 61a0d96e-ae0f-4426-7e00-08d9106bd784
-X-MS-TrafficTypeDiagnostic: BYAPR12MB4760:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB4760E36BBFDDF955909EEB9DD9589@BYAPR12MB4760.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gXeaxIh9C1cYfubLVTJ1oK8+vs19yERtHIhw4C6lD41LcoewnuqfU9FSVJkpJgjY+khfyTUZKhigHDvg24pi1qIMwxRRrO+3BjK1A6y37hJJ75nnIoWW/TpDFIpm/uor92r8C/drIICpIa13kLNLTn4jEaizBIkeJUHhcB+ue7dEOJS/CdhyZRdeSSGM3ajZgaV0nLBubxqW/NHzlKDhAZeg9r2YAAyzs86fqGHCPPEyDinsaAyPYcL7WYI6xoZXT5YC1ir32iEXUazgqdYCgHzp6Lw3r8YiT9b/nHZjjHQoUt2AXBQcE717U3tLYcAsdHU4SOLWLMbAU0jEZ0AkyX3mMtRT7grr1DHRMfDsGrN+T6QvXTVZimqaxzy9rNgOESFGud27Wt9+v98yKyZtjkqp5ZC/YV7LRDf92J8qQrLrYdQiS57yPy/AHjkkT0k5epjQ7xT9rco+vXqJL7sqakKN+hqJkioWMU3uv5PKXJRBPb8LF/w02vLbvdjy0+RkY4DNkAGgIM0V4y8ZY5KPJwSPx8k/1qJ8IQF31EWr4ZfYo7qAP5/0Sf96CBLBCZ3MnfxLUvarVuqFDS4niz0OPfFim4Sxyd7qqycyFfjC5J9lLKMa6GUTTry1krIW568m7fs0IJkfL3PH//mIzSbHRsb13eAMdegtPZuGA/TjcogzJH8cKLwjgyzxU19kO1H6
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(39860400002)(136003)(46966006)(36840700001)(110136005)(7636003)(2906002)(186003)(31686004)(54906003)(4326008)(336012)(36756003)(5660300002)(26005)(16526019)(36860700001)(6666004)(82310400003)(7416002)(82740400003)(426003)(70206006)(86362001)(70586007)(31696002)(16576012)(8936002)(8676002)(2616005)(478600001)(53546011)(356005)(316002)(47076005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2021 08:49:21.1806
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61a0d96e-ae0f-4426-7e00-08d9106bd784
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT025.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB4760
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+added pm_runtime_resume_and_get() in order to automatically handle
+dev->power.usage_count decrement on errors.
 
-On 04/05/2021 18:21, Vidya Sagar wrote:
-> Commit 275e88b06a27 ("PCI: tegra: Fix host link initialization") broke
-> host initialization during resume as it misses out calling the API
-> dw_pcie_setup_rc() which is required for host and MSI initialization.
-> 
-> Fixes: 275e88b06a27 ("PCI: tegra: Fix host link initialization")
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 6fa216e52d14..4c3c0738f2e6 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -2214,6 +2214,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
->  		goto fail_host_init;
->  	}
->  
-> +	dw_pcie_setup_rc(&pcie->pci.pp);
-> +
->  	ret = tegra_pcie_dw_start_link(&pcie->pci);
->  	if (ret < 0)
->  		goto fail_host_init;
-> 
+Use the new API, in order to cleanup the error check logic.
 
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/staging/media/tegra-video/csi.c | 3 +--
+ drivers/staging/media/tegra-video/vi.c  | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Thanks for fixing!
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-We should also mark this for stable so that this gets back-ported.
-
-Jon
-
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 033a6935c26d..e938bf4c48b6 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -298,10 +298,9 @@ static int tegra_csi_enable_stream(struct v4l2_subdev *subdev)
+ 	struct tegra_csi *csi = csi_chan->csi;
+ 	int ret, err;
+ 
+-	ret = pm_runtime_get_sync(csi->dev);
++	ret = pm_runtime_resume_and_get(csi->dev);
+ 	if (ret < 0) {
+ 		dev_err(csi->dev, "failed to get runtime PM: %d\n", ret);
+-		pm_runtime_put_noidle(csi->dev);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 7a09061cda57..1298740a9c6c 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -297,10 +297,9 @@ static int tegra_channel_start_streaming(struct vb2_queue *vq, u32 count)
+ 	struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
+ 	int ret;
+ 
+-	ret = pm_runtime_get_sync(chan->vi->dev);
++	ret = pm_runtime_resume_and_get(chan->vi->dev);
+ 	if (ret < 0) {
+ 		dev_err(chan->vi->dev, "failed to get runtime PM: %d\n", ret);
+-		pm_runtime_put_noidle(chan->vi->dev);
+ 		return ret;
+ 	}
+ 
 -- 
-nvpublic
+2.30.2
+
