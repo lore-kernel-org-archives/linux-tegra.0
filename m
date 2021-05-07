@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512B2C433B4
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 May 2021 15:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95477C43461
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 May 2021 16:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A48C61006
-	for <linux-tegra@archiver.kernel.org>; Fri,  7 May 2021 15:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D5AB61451
+	for <linux-tegra@archiver.kernel.org>; Fri,  7 May 2021 16:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232050AbhEGPJO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 7 May 2021 11:09:14 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:60749 "EHLO
+        id S238137AbhEGQ1n (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 7 May 2021 12:27:43 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:40313 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237831AbhEGPJN (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 May 2021 11:09:13 -0400
+        with ESMTP id S238135AbhEGQ1m (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 7 May 2021 12:27:42 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d16 with ME
-        id 1r812500h21Fzsu03r83jQ; Fri, 07 May 2021 17:08:10 +0200
+        by mwinf5d33 with ME
+        id 1sSf2500j21Fzsu03sSgHa; Fri, 07 May 2021 18:26:40 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 May 2021 17:08:10 +0200
+X-ME-Date: Fri, 07 May 2021 18:26:40 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ldewangan@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, swarren@nvidia.com, grant.likely@secretlab.ca
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org
 Cc:     linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] spi: tegra114: Fix an error message
-Date:   Fri,  7 May 2021 17:07:59 +0200
-Message-Id: <e2593974c9484b7055177ad0c9237c8e343946be.1620399829.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] spi: tegra210-quad: Fix an error message
+Date:   Fri,  7 May 2021 18:26:39 +0200
+Message-Id: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,26 +45,25 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 'ret' is known to be 0 here.
 No error code is available, so just remove it from the error message.
 
-Fixes: f333a331ad ("spi/tegra114: add spi driver")
+Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI controller")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/spi/spi-tegra114.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/spi/spi-tegra210-quad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index a2e5907276e7..5131141bbf0d 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1071,8 +1071,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 		ret = wait_for_completion_timeout(&tspi->xfer_completion,
- 						SPI_DMA_TIMEOUT);
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 2f806f4b2c34..2354ca1e3858 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -1028,7 +1028,7 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
+ 		ret = wait_for_completion_timeout(&tqspi->xfer_completion,
+ 						  QSPI_DMA_TIMEOUT);
  		if (WARN_ON(ret == 0)) {
--			dev_err(tspi->dev,
--				"spi transfer timeout, err %d\n", ret);
-+			dev_err(tspi->dev, "spi transfer timeout\n");
- 			if (tspi->is_curr_dma_xfer &&
- 			    (tspi->cur_direction & DATA_DIR_TX))
- 				dmaengine_terminate_all(tspi->tx_dma_chan);
+-			dev_err(tqspi->dev, "transfer timeout: %d\n", ret);
++			dev_err(tqspi->dev, "transfer timeout\n");
+ 			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_TX))
+ 				dmaengine_terminate_all(tqspi->tx_dma_chan);
+ 			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_RX))
 -- 
 2.30.2
 
