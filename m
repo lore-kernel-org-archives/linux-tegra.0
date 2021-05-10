@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B6CC43461
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6D7C43618
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 631356157F
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AAB76143B
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbhEJWl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 18:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
+        id S231545AbhEJWl6 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 18:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231451AbhEJWl4 (ORCPT
+        with ESMTP id S231462AbhEJWl4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 10 May 2021 18:41:56 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B5BC061574;
-        Mon, 10 May 2021 15:40:50 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id z9so25721536lfu.8;
-        Mon, 10 May 2021 15:40:50 -0700 (PDT)
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC8AC06175F;
+        Mon, 10 May 2021 15:40:49 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2so25752213lft.4;
+        Mon, 10 May 2021 15:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tdhxEVn/ApgXUS3G+03myNB4Fqv3j3XN+RFKP4M2N/E=;
-        b=RsbL915Fu3Y2xNkXKX9JU3SsNypKl6RXkXtnRiIChU+o0az3SWAmoffX/z3OEfmK8Z
-         NYM9u/Gb8KBF+27QBcAa/Zw9oLnFc2ylp4SQhuOOmKzx7i0RxfwMoJkOMM0oVgP4jJLa
-         zGhTtv4XzugHTA89Yj744v9hRpI7bYGQTpDZMdpBs9GAz4GUqb+9cLlhL1bOhnYt3gcE
-         MOx6mkqks1JqsUfTamjUPQADx5DTkd2fGCjam5iqlNdt2IeW5CEZo2HmqxkOYOZ15aNl
-         CrOmYV9pm32yzDdrXeTF3AxMKTfR0c9i4nmEZ32SHGuD0f6rv3YNVm3VuopOtFCDszDH
-         Te+A==
+        bh=uG0wF9x5J31B5QovgpxzHE3VxGkFw0gZRlBKzlTkO48=;
+        b=tsZdxnMiH149R1Dhw3d33KtAcAFLklb+vJjWxVEJDl4lPAU4VlIugJxbHuAe5g80w+
+         REkbev/MJ3OrjtgBr2IpNWhnMN7td1LuqtSzzyY0iFwS52m07H8V6DRNlw/M5YUVYrCO
+         fXONaqSgvgx1nKwIEP0km8pDbQBUYbP4E673nTz/g77kLRdVZoT03RS0AOTGYPKvKMQz
+         1T72rY2U7pNY2711Vgx3FUmHs67+I9imTXW5C+PQx/P8jKGCreBWGtwif0usYlFQJ0ek
+         jeOeL5feuWpol2GOCSxIKyzwahU5dc8n75WPLexptB486ZURiFUVzgyb7NZs8dFVGcsT
+         T+SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tdhxEVn/ApgXUS3G+03myNB4Fqv3j3XN+RFKP4M2N/E=;
-        b=M3P3wAGZYwG3i0jdAUHFaUkucUmTpV8KrQIo9oAna28UKFy6DxKHyU9UU4Pe+oYf7q
-         XADmeVJYtzJRdk9gZz7RmXFyx2mqPETv9AyygGiAVWCySsHM/emFcNruR/pxJT0/jFy2
-         rK1Qnx9G2U7IN59WUoih09BPoEWJ+NBm56HHiIzA8tl1tjdN3PG9nvxxVnmvMBqnNYfo
-         56Vwj2Ww979/Ax6sZ8YpTdgVz9UfLEDa+DG6UY/qFu4iohpoVuidrFe0cuyIlXs4d4i+
-         gqBxzq4vrmkrgM8dfML5RZ9mB0FNVI4sOlS27iYuzgPI83+1OJyWx26aeGx6B4KnXTaE
-         NLrw==
-X-Gm-Message-State: AOAM531StHoh+LmqhQShECZmY0oqeL88Gekxb8UNfqi6Fjb7L2E7+hRf
-        ixG04yJrlpj/yrWUvbuor8I=
-X-Google-Smtp-Source: ABdhPJzz6fepG+GOMZhdHZxCQ+3aYLSrzsog/VZEUaWf70lRQBPXOCIyrLIyWXkrDw6QPJAZS5T4Lg==
-X-Received: by 2002:a05:6512:1388:: with SMTP id p8mr19368721lfa.269.1620686448932;
+        bh=uG0wF9x5J31B5QovgpxzHE3VxGkFw0gZRlBKzlTkO48=;
+        b=saMpgIAsU7/koyrqgJmxPkvXs/2mk8Y38AaHeDE2Sa/Y8nNvf/7BDrcmgirQGslMji
+         0VVq98EX2DBHA83RsJo3/rws866Z/04fIXj/y9aCzV0UJiHYx2paxChh76Y4mb/NiQ66
+         8PpQ/0ZYY/9B9EW5LauvC4S/Ulq/yzalaTOS9Shwg5r+9eKC4qUcPJOSGcn7uHkiKE2n
+         t+DKWZaeC/XFFSRUYcsu2m60G1qj0Dez4HNdc9zKGz7HDKpZQt7bl9auBhUJqod0kRsm
+         6D7YrofdMu1whR9eKcCTMyXf8w+VDE7wwkMaF8YFzSMWqeE03W1oNT9OyF2Ryxt89neX
+         5CNA==
+X-Gm-Message-State: AOAM533/0Qm3cbILY1CFeMkN9XKhE/g2pqs77tfdvJcZbSbp3ya0UsZp
+        zCdn/FyuhfjTz44Fk9+NC9c=
+X-Google-Smtp-Source: ABdhPJwk9QDTp6EFnUSeNwin5PoUdwbzqLx0YL15DDUf3BuJDlzikg6Ha0c7ropbAuWKBLKj8Lk3gA==
+X-Received: by 2002:a19:7dc4:: with SMTP id y187mr18680565lfc.525.1620686448146;
         Mon, 10 May 2021 15:40:48 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id g24sm2780698lja.63.2021.05.10.15.40.48
+        by smtp.gmail.com with ESMTPSA id g24sm2780698lja.63.2021.05.10.15.40.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 15:40:48 -0700 (PDT)
+        Mon, 10 May 2021 15:40:47 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -73,9 +73,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v1 7/7] ARM: tegra: Add SoC thermal sensor to Tegra30 device-trees
-Date:   Tue, 11 May 2021 01:38:16 +0300
-Message-Id: <20210510223816.18565-8-digetx@gmail.com>
+Subject: [PATCH v1 6/7] ARM: multi_v7_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+Date:   Tue, 11 May 2021 01:38:15 +0300
+Message-Id: <20210510223816.18565-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510223816.18565-1-digetx@gmail.com>
 References: <20210510223816.18565-1-digetx@gmail.com>
@@ -85,188 +85,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add the on-chip SoC thermal sensor to Tegra30 device-trees. Now CPU
-temperature reporting and thermal throttling is available on all Tegra30
-devices universally.
+Enable NVIDIA Tegra30 SoC thermal sensor driver in multi_v7_defconfig.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30-ouya.dts | 16 +++++
- arch/arm/boot/dts/tegra30.dtsi     | 93 ++++++++++++++++++++++++++++--
- 2 files changed, 105 insertions(+), 4 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
-index f008653d843b..619a4df3f4cd 100644
---- a/arch/arm/boot/dts/tegra30-ouya.dts
-+++ b/arch/arm/boot/dts/tegra30-ouya.dts
-@@ -469,6 +469,22 @@ map1 {
- 				};
- 			};
- 		};
-+
-+		tsensor-channel0 {
-+			trips {
-+				dvfs-alert {
-+					temperature = <70000>;
-+				};
-+
-+				cpu-div2-throttle {
-+					temperature = <75000>;
-+				};
-+
-+				soc-critical {
-+					temperature = <90000>;
-+				};
-+			};
-+		};
- 	};
- 
- 	vdd_12v_in: vdd_12v_in {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 576dffdbd0a1..3fe24b6c340d 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/tegra-pmc.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- #include "tegra30-peripherals-opp.dtsi"
- 
-@@ -1155,6 +1156,21 @@ fuse@7000f800 {
- 		reset-names = "fuse";
- 	};
- 
-+	tsensor: tsensor@70014000 {
-+		compatible = "nvidia,tegra30-tsensor";
-+		reg = <0x70014000 0x500>;
-+		interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_TSENSOR>;
-+		resets = <&tegra_car TEGRA30_CLK_TSENSOR>;
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_TSENSOR>;
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_CLK_M>;
-+		assigned-clock-rates = <500000>;
-+
-+		#thermal-sensor-cells = <1>;
-+		#cooling-cells = <2>;
-+	};
-+
- 	hda@70030000 {
- 		compatible = "nvidia,tegra30-hda";
- 		reg = <0x70030000 0x10000>;
-@@ -1417,32 +1433,36 @@ cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clocks = <&tegra_car TEGRA30_CLK_CCLK_G>;
-+			#cooling-cells = <2>;
- 		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
- 			clocks = <&tegra_car TEGRA30_CLK_CCLK_G>;
-+			#cooling-cells = <2>;
- 		};
- 
--		cpu@2 {
-+		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <2>;
- 			clocks = <&tegra_car TEGRA30_CLK_CCLK_G>;
-+			#cooling-cells = <2>;
- 		};
- 
--		cpu@3 {
-+		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <3>;
- 			clocks = <&tegra_car TEGRA30_CLK_CCLK_G>;
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-@@ -1457,4 +1477,69 @@ pmu {
- 				     <&{/cpus/cpu@2}>,
- 				     <&{/cpus/cpu@3}>;
- 	};
-+
-+	thermal-zones {
-+		tsensor-channel0 {
-+			polling-delay-passive = <1000>; /* milliseconds */
-+			polling-delay = <5000>; /* milliseconds */
-+
-+			thermal-sensors = <&tsensor 0>;
-+
-+			trips {
-+				level1_trip: dvfs-alert {
-+					/* throttle at 67C until temperature drops to 66.8C */
-+					temperature = <67000>;
-+					hysteresis = <200>;
-+					type = "passive";
-+				};
-+
-+				level2_trip: cpu-div2-throttle {
-+					/* hardware CPU x2 freq throttle at 70C */
-+					temperature = <70000>;
-+					hysteresis = <200>;
-+					type = "hot";
-+				};
-+
-+				soc-critical {
-+					/* hardware shut down at 80C */
-+					temperature = <80000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&level1_trip>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&actmon THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+
-+				map1 {
-+					trip = <&level2_trip>;
-+					cooling-device = <&tsensor THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		tsensor-channel1 {
-+			status = "disabled";
-+
-+			polling-delay-passive = <1000>; /* milliseconds */
-+			polling-delay = <0>; /* milliseconds */
-+
-+			thermal-sensors = <&tsensor 1>;
-+
-+			trips {
-+				dvfs-alert {
-+					temperature = <80000>;
-+					hysteresis = <200>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+	};
- };
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 52a0400fdd92..fc346f87d7f9 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -523,6 +523,7 @@ CONFIG_BRCMSTB_THERMAL=m
+ CONFIG_GENERIC_ADC_THERMAL=m
+ CONFIG_ST_THERMAL_MEMMAP=y
+ CONFIG_TEGRA_SOCTHERM=m
++CONFIG_TEGRA30_TSENSOR=m
+ CONFIG_UNIPHIER_THERMAL=y
+ CONFIG_DA9063_WATCHDOG=m
+ CONFIG_XILINX_WATCHDOG=y
 -- 
 2.30.2
 
