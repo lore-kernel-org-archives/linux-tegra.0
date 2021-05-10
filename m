@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA43C433ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B6BC43618
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 890E161433
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A07E561139
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232425AbhEJU3R (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 16:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60002 "EHLO
+        id S231518AbhEJU3S (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 16:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbhEJU3R (ORCPT
+        with ESMTP id S232305AbhEJU3R (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 10 May 2021 16:29:17 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F9AC061761;
-        Mon, 10 May 2021 13:28:10 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id e11so8862490ljn.13;
-        Mon, 10 May 2021 13:28:10 -0700 (PDT)
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171CBC061763;
+        Mon, 10 May 2021 13:28:12 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id i9so18746479lfe.13;
+        Mon, 10 May 2021 13:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IBkfnFQmSEpZqi85sXEZYXP16HRwJqEgi4fbLpsogpE=;
-        b=PeX8nX/MQPTReBgAO2iahYc2TaEGHY7AN8X/W5eIhMlN6ggpZJr617dbdHqRfLaKiM
-         bsYVji9AuVjsUWjdCpBsRC5+bAVh3/rOCbtg2nnM2nUJ1yuBcwpXnA0H5x2kHJfss/tE
-         2Xc9O9GHTDzHZuasikEJ1Jw/VaTuSE5jF4S7E0jakl2c2RpBeweB4Om3DWuoi24tfbsr
-         Fgtciw6L7eKnhfgG/Q+Q8AXrKSXUYlEwolYa36r61MMr3Sk52VkjvNCi/ohqB1AiYOxw
-         6XoT6DijszsLLHTk4Mbw0oxRAlX22FJETmigmKQUZlESJzNT7KVYZThw8WxQF3cNdATq
-         JIxg==
+        bh=VthzfLnOcS1voIX7rvlZGQPkXf9UVyHeTP7Ir4OMTuU=;
+        b=Aah2B2cxNpChpZvLpT/W8Hhl24iGAFZuqXGu5HBumfAV81rQtPcit14fXMaNd3703u
+         56utdBv/5QmLvyRRy6nHfD+YSkchUaHj0ScUPHCZGvrpO7GfH4ibT5tcfm8gA3+cjZ/O
+         FXbAHCOzQCJUDMXWqoHEGmFWu5izE8E5zAdw8/K1nKoPjXKtobtSRfHw34lKKp12LeZW
+         W9UzB74cV9Ce0LchP9pEKVIBM5vIq1O3tc1GhUr3KJ0mDzYB7yVQUedGgVehn0FohTWn
+         3r7v703mBk64MxlEPhaApyIWyHfJ+XIDtixb6Rj2veCmjN4qP1x4S+0Y9SsVcg5+bhLI
+         Iulg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IBkfnFQmSEpZqi85sXEZYXP16HRwJqEgi4fbLpsogpE=;
-        b=QWnqbJizY4vmuNqFfGUneJkWP982BaYZkhUrHjmZAg3/j5aXAAjx6xPGAGYJaVLvXc
-         vBJ1jXrIRC9uM9AS59vIcmUYl0mDAG9pir7SwQrr+QIchCy/Q9SyrWbo8Glgna53Hzpz
-         vtEjNUA97NG1uL43r1aDvZQPensJ6PhrEzUl+lw05fEdsX9Bqh6fnBhWqUwiNQxixFNu
-         hPuSLdVkaDspMThcvmAI51Q7rwZCHJ6R9UTkquU1XOeBhSSCe48vH3e7COsQovBG5ePG
-         0YmdeJXHHWad2G0tJhH+TUFO73QwAtLcPKz6A8dI+nEbzufV3FdBHPEnadp/xQ0puY2v
-         cayg==
-X-Gm-Message-State: AOAM533mgDtq8b8aR+jnAM94+9zxwIV/H3sVEtGFfl8jluKxQaGe+52h
-        4OUbgHVgAzwTDdq1I6ja3P8=
-X-Google-Smtp-Source: ABdhPJzhcmgH9tsfhWys55S1LzsM+ZKKqPLtaD8q/U+EndPPFI1ueNixzs4seWmaU8wjhUSpTk3xiA==
-X-Received: by 2002:a2e:9787:: with SMTP id y7mr21457811lji.65.1620678489154;
-        Mon, 10 May 2021 13:28:09 -0700 (PDT)
+        bh=VthzfLnOcS1voIX7rvlZGQPkXf9UVyHeTP7Ir4OMTuU=;
+        b=Po4hxEZpD55yeKBMuCgqP6dfe/6V53u8t23+j/vSLfq+dZ9kD2gMtFM8WXlw5VpLKT
+         kgJG00TSuBDOeLM+fx9AGlNwADqPKomJnsWjAMT4DKdMaKncGVu7JgnrT5tVfj8cqO+q
+         b53a3mJJ3fJAhK/5vF5Q6qmxDNlkI7QDXnJk9BCtWcjSQxa+Bg5sJjokwCVan9mMfAk1
+         AEHy2Q8xFDLEJdS36vM37OBrIL7JDIYK0O2bBpwXaXUBcHNzbtM9uiGnim+b11kvgv0a
+         MNfuLJcAwOSczjxvSn7m8317UuRSpurahkfm8fLJuBQ7eYiog4DNOml6h7XG1mDZ61Tg
+         02uQ==
+X-Gm-Message-State: AOAM533v1fGMVPRomAQkefjo4EnANwzixiaw6BiHdIcmaEUfbfV2SK1U
+        t7FrXWZLKz8DECbZo8vQykY=
+X-Google-Smtp-Source: ABdhPJyZGmyI0lkpKbgU3c+esrFXfMQ3L785lmyDLHjEHHbT1lEjebks6vyO/KKp2kCSie2OgzFPYQ==
+X-Received: by 2002:ac2:4ed9:: with SMTP id p25mr17663561lfr.576.1620678490666;
+        Mon, 10 May 2021 13:28:10 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id z23sm2360662lfq.241.2021.05.10.13.28.08
+        by smtp.gmail.com with ESMTPSA id z23sm2360662lfq.241.2021.05.10.13.28.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 13:28:08 -0700 (PDT)
+        Mon, 10 May 2021 13:28:10 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Agneli <poczt@protonmail.ch>, Paul Fertser <fercerpav@gmail.com>,
         Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/10] ARM: tegra: nexus7: Improve thermal zones
-Date:   Mon, 10 May 2021 23:25:58 +0300
-Message-Id: <20210510202600.12156-9-digetx@gmail.com>
+Subject: [PATCH v1 10/10] ARM: tegra: nexus7: Correct 3v3 regulator GPIO of PM269 variant
+Date:   Mon, 10 May 2021 23:26:00 +0300
+Message-Id: <20210510202600.12156-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510202600.12156-1-digetx@gmail.com>
 References: <20210510202600.12156-1-digetx@gmail.com>
@@ -75,48 +75,29 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Remove unused thermal zone just to clean up device-tree and set critical
-temperature further apart from the passive cooling trip point since
-during or thermal testing of Asus Transformer devices we found that CPU
-could reach the critical temperature in a certain kernel configurations
-for a brief moment if critical trip point is set close to the passive
-trip point and then device will be immediately shut off without getting
-a chance to cool down using passive cooling.
+The 3v3 regulator GPIO is GP6 and not GP7, which is the DDR regulator.
+Both regulators are always-on, nevertheless the DT model needs to be
+corrected, fix it.
 
+Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../boot/dts/tegra30-asus-nexus7-grouper-common.dtsi  | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-index dc773b1bf8ee..3376d06facbb 100644
---- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -1252,13 +1252,6 @@ sound {
+diff --git a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+index 06b5e8a5ce5d..9365ae607239 100644
+--- a/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
++++ b/arch/arm/boot/dts/tegra30-asus-nexus7-grouper-ti-pmic.dtsi
+@@ -144,7 +144,7 @@ vdd_core: core-regulator@60 {
  	};
  
- 	thermal-zones {
--		skin-thermal {
--			polling-delay-passive = <1000>; /* milliseconds */
--			polling-delay = <0>; /* milliseconds */
--
--			thermal-sensors = <&nct72 0>;
--		};
--
- 		cpu-thermal {
- 			polling-delay-passive = <1000>; /* milliseconds */
- 			polling-delay = <5000>; /* milliseconds */
-@@ -1274,8 +1267,8 @@ trip0: cpu-alert0 {
- 				};
+ 	vdd_3v3_sys: regulator@1 {
+-		gpio = <&pmic 7 GPIO_ACTIVE_HIGH>;
++		gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
  
- 				trip1: cpu-crit {
--					/* shut down at 60C */
--					temperature = <60000>;
-+					/* shut down at 65C */
-+					temperature = <65000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
 -- 
 2.30.2
 
