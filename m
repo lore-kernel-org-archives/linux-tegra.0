@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BFEC433ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 23:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81D7C43460
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 23:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 978D96161C
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 23:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B858B61359
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 23:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbhEJXSx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 19:18:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41816 "EHLO
+        id S230038AbhEJXSz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 19:18:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229973AbhEJXSw (ORCPT
+        with ESMTP id S230011AbhEJXSx (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 May 2021 19:18:52 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4839C06175F;
-        Mon, 10 May 2021 16:17:46 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id b21so22801077ljf.11;
-        Mon, 10 May 2021 16:17:46 -0700 (PDT)
+        Mon, 10 May 2021 19:18:53 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F074C061760;
+        Mon, 10 May 2021 16:17:48 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id i9so19288642lfe.13;
+        Mon, 10 May 2021 16:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=99TMTkahJ4QCgWUEiSLbnT5JfgAic6E8hP6s4tmViRw=;
-        b=vdnvIArSFwJWi5xtU+3Cxuq9ZSDmNVEUVq4qgO4DFQcoHdpRwbEj+bG/crq1fAPFBk
-         bkEdTPZFWlHcehe4mA8gfe5TBgg+Cypivd8xXJ6PmDM8pVoov4sSV7z3l6FRN5IUdu0g
-         7h19bfTlETyV/qJMm4mO2PLlhb2YEtl+QX5/UCuMO3CpptoUl4grlrL8ObZHbmnHQMEO
-         Lh4+KbEx/XPxb1s/GJTKAQo2QdQr5pZkZnFNW1lvCdzdfVriddUQkWRcSap16L7FnV5E
-         IGlcMPd2YYP4pKOcsA2+E5R31ElwBPY5hciyOqiBrTO2kPhbl3kbz6AEwqtiN1qzhNpf
-         qy3g==
+        bh=0JGz9I0bXsTqRTuktP7wK1Haki3njJOFWPxNugzWJw4=;
+        b=rzRvKsi/RYRQ2PA0V7XiUatSJMWiYhZSsQYtzRFOJo+HywvFIR/No0Tt15xIU2QF1k
+         +FxsDe47g1P8pOxiU2Ykw1v3EOFzX1M7rs2ZR2uKEv3VoR3llrPMxWfzCaVvxP1iWcsw
+         YhGlnRgZTK1pTpOC0zp+nzaBkhtQvgB4hPRPEZfinmRSCOkleVjI8fvCvOfZWtrOy6V1
+         XR4m+ZbchdQm2gHEz23TmTZFx8u/WOwRs9Kf6IAx5gn4xsd8YKyFzCr6fp8FgWKfQSpx
+         JXN93e1qgHC+GdkxFa55t9N59EYFDY1vWf8H27cjb+gaszGaIySdgfqdcaIRrp9dQNuU
+         7Vzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=99TMTkahJ4QCgWUEiSLbnT5JfgAic6E8hP6s4tmViRw=;
-        b=KlRiuycAUDWmkciTOa3APrpahw4uESRfNEIuW4ThUqM/NWKs3svXVLpG/b6VH3fBYV
-         7bjsIUCpEFDDfMQS9zv0p/1KWmhX70wqOerGSziatAiof1N0N/1JoysOZ4x33C50iClc
-         o6lmErLvYQamT1Uthm2cPzwB0npZanzXD2fvYrexH+r+EtHUOMPyr7VBsitcWqWR0z+k
-         lnFxQ5craDVVlPSWMZe3Js6y9zaFTZDWrBavjogUqdopHrRiZ7EyrJGmzAEu1uOYi98m
-         4hgJ8naPkvzz2Jc1ZFBKNklbqFWWYRHFqkAmYMELZnCyxrCpvGenXLt1ekY5eWDF6sDE
-         gT/Q==
-X-Gm-Message-State: AOAM533IXkkd86/n++a5Ck8mKtmCk+EFZu75NvAccTJ26+eKT7cLsZSE
-        dh6JTLPZTjK48sG48f3hC4k=
-X-Google-Smtp-Source: ABdhPJzrAibelYTcFBmnX7JrVnkHC6nTxhXtVeyiKMQXYnuzoPH+6VGXXN3ryQekx/qv/fjaQRDxRw==
-X-Received: by 2002:a2e:5c7:: with SMTP id 190mr21356059ljf.174.1620688665456;
-        Mon, 10 May 2021 16:17:45 -0700 (PDT)
+        bh=0JGz9I0bXsTqRTuktP7wK1Haki3njJOFWPxNugzWJw4=;
+        b=JEjgRaXHsTfdc2SnEnGycF23YahJUQaOATuQZwYiuUpRDmJMugnVnarAP8LXBPNBy1
+         e23W/yNz2bTxehAYSMnnDyjV9ZrdhpqWTSYfsQJw0hcTv5yevqjXVitg4H53kKstPm4y
+         /tMtRELkCPu7zntGLTtZacP+edDcCP9jP3pICQ7LcdIGIDwrGCydaLWMf0FL8hKISbUE
+         pH+yuEWUtmIxUYEL51v71zZV3FpzsGKYJoe03iJaB53KvULJCmzglsoLoU4jHOurbUvH
+         7XzeVCP/XU4VM8BRGjK4HEfJuaSWw4Cj0ulC9RxT763cxgef/1olmTl2cSrlWJe/yHU4
+         xttw==
+X-Gm-Message-State: AOAM532g4gVyjqgJbYDuhkus3BTkk0zhhiHSXGDpTU1eiljclqkOFkj3
+        NHxLR6pSvc2yv3caishVKiI=
+X-Google-Smtp-Source: ABdhPJwjQ2lRT2oo6ibnYe9KjbGjElGXGNedNxC4RfYL3WZ+CH6P2F6PivjxZIxf4z5qN1mff8qpuQ==
+X-Received: by 2002:a05:6512:20c5:: with SMTP id u5mr18421398lfr.198.1620688666718;
+        Mon, 10 May 2021 16:17:46 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id k8sm2422254lfo.123.2021.05.10.16.17.44
+        by smtp.gmail.com with ESMTPSA id k8sm2422254lfo.123.2021.05.10.16.17.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 16:17:45 -0700 (PDT)
+        Mon, 10 May 2021 16:17:46 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v7 3/8] clk: tegra: Ensure that PLLU configuration is applied properly
-Date:   Tue, 11 May 2021 02:17:32 +0300
-Message-Id: <20210510231737.30313-4-digetx@gmail.com>
+Subject: [PATCH v7 5/8] clk: tegra: Don't allow zero clock rate for PLLs
+Date:   Tue, 11 May 2021 02:17:34 +0300
+Message-Id: <20210510231737.30313-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510231737.30313-1-digetx@gmail.com>
 References: <20210510231737.30313-1-digetx@gmail.com>
@@ -80,53 +80,34 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The PLLU (USB) consists of the PLL configuration itself and configuration
-of the PLLU outputs. The PLLU programming is inconsistent on T30 vs T114,
-where T114 immediately bails out if PLLU is enabled and T30 re-enables
-a potentially already enabled PLL (left after bootloader) and then fully
-reprograms it, which could be unsafe to do. The correct way should be to
-skip enabling of the PLL if it's already enabled and then apply
-configuration to the outputs. This patch doesn't fix any known problems,
-it's a minor improvement.
+Zero clock rate doesn't make sense for PLLs and tegra-clk driver enters
+into infinite loop on trying to calculate PLL parameters for zero rate.
+Make code to error out if requested rate is zero.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Originally this trouble was found by Robert Yang while he was trying to
+bring up upstream kernel on Samsung Galaxy Tab, which happened due to a
+bug in Tegra DRM driver that erroneously sets PLL rate to zero. This
+issues came over again recently during of kernel bring up on ASUS TF700T.
+
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-pll.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0193cebe8c5a..823a567f2adc 100644
+index 823a567f2adc..eaa079c177c3 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -1131,7 +1131,8 @@ static int clk_pllu_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+@@ -558,6 +558,9 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	u32 p_div = 0;
+ 	int ret;
  
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
-@@ -1748,15 +1749,13 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
--	if (clk_pll_is_enabled(hw))
--		return 0;
--
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
--	_clk_pll_enable(hw);
-+	if (!clk_pll_is_enabled(hw))
-+		_clk_pll_enable(hw);
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 	if (ret < 0)
++	if (!rate)
++		return -EINVAL;
++
+ 	switch (parent_rate) {
+ 	case 12000000:
+ 	case 26000000:
 -- 
 2.30.2
 
