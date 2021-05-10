@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B003FC4360C
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E35CC433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 904CB61601
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F0C96157F
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbhEJWl4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 18:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33592 "EHLO
+        id S231488AbhEJWl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 18:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231376AbhEJWly (ORCPT
+        with ESMTP id S231422AbhEJWlz (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 May 2021 18:41:54 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A025C061761;
-        Mon, 10 May 2021 15:40:47 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id y9so22762641ljn.6;
-        Mon, 10 May 2021 15:40:47 -0700 (PDT)
+        Mon, 10 May 2021 18:41:55 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30DDC0613ED;
+        Mon, 10 May 2021 15:40:48 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id x19so25775294lfa.2;
+        Mon, 10 May 2021 15:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AqIoL8w6UW8nZZQW4Ci4myc0ad3mcz0KynC5WY0Sz8A=;
-        b=r48gG7FTNk7nvy6c3GhS4mQRFMjpPOaxlsPn3iyHCwsrM23ZPwYyuub+aYQRMg7NTQ
-         /ZfizXIgvSnbAlTCgpMQWOaIJAjJBAgFH5InHz7lyyICJ94qsywnbLinZ6zFz4yWK9vc
-         piVyDQHIydAQD6ucoNZMjmxPcOuDLIH+uCjeMR3zvpv+K45+jHhqb9ie3A5ck8bBZDBO
-         D+aLZUed9CGLaUomAwbedYJFBePrwylBaewSbqN4QuakSkwTHvSRn1P5bL+hosE30ore
-         rwKUhaZzBaJIJBhAdZUQmI3+O4Plq4DsKyai+WOKOFXtAWnlCP+FNyqfmEMS8tj/urF3
-         MLuA==
+        bh=RXKVqH0Gu1PT1WV5SwHA4/xjxYRDYxbiWQf6ubIWKHM=;
+        b=RhpXB8nQiQOFQ4QC2dEKwCVNXiMkG++cX9ObPSa7BqR3qtDa2obxzBvzWihWn8Qnhj
+         kUr2Nl+3V7XPUMhyQM9h0PyD+XkJUxubQsZ++4sw291mxdk/C8KIji7cJY4BoUw8A6LX
+         1ezABq8RAJqUMXfheG5u7JKvauWFZiqDWa0PFLg1zZejlyZiGCco00PaQ56HjZEaEHuB
+         RgbqhBmQ361M9ufseuAi7FzmwS+AxJLTyYhXMe9RwxYqy2/8o1lh93+eqAFV4Nx733Er
+         8EVizSk48f2vEj5bzUbyWDDQXEFUisy77Lf0m9yTKl7Io2DMxvLsiz0u7/2XVykYYMxu
+         Zp/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AqIoL8w6UW8nZZQW4Ci4myc0ad3mcz0KynC5WY0Sz8A=;
-        b=gFqPxPaSFeFsa2PkhVBNAIWV4lBxVmW7B/kZ1Ko86aMhPDWv6uAhm+lsQsr+EMHpiM
-         gdAnZdrJ5Bg2JVPV07Z5a/owJlYi08l1nHpV4vQipVgSrsNGXgQlhi9xQv9hJTYkggZd
-         rFDbkbz69oz9JXwQ1/KH5q4NOvDvFwz0QwqMu8HQ+VSKqbipibd8GyzrhcwbD/C6kbtJ
-         q7s+UbS68xA90lYfjbKpA/Og5zEWNfoMdcaskTbE+KXFhQ4EXnHQEDnRRbif92aqrCjw
-         wCdO5E/q9z5WTDVkaJ37tEtJlFA09b5eShKYOIMUdYsoTkCK8NyNvk+W1u0ywaCfIDED
-         3LJw==
-X-Gm-Message-State: AOAM532ZptKaSEjG4bARJIvr03c2MKsxx8ZRXEmPtHyWKw7xASTbHV7g
-        vsSgTB8SU3OGCJo+qh/zSK4=
-X-Google-Smtp-Source: ABdhPJzG8yrER2PU/3DrolB04ZZRRywNSpSErJVJnBgK9UoZ9dRINoVP4bt8DhnMH9ZVXjNER865iQ==
-X-Received: by 2002:a05:651c:205e:: with SMTP id t30mr15444805ljo.388.1620686445660;
-        Mon, 10 May 2021 15:40:45 -0700 (PDT)
+        bh=RXKVqH0Gu1PT1WV5SwHA4/xjxYRDYxbiWQf6ubIWKHM=;
+        b=ghxHaFigGFsa002Jgmr4fbGVWIYJLRgAF6H6naXvy9aa1WHGqSAeVvwAK8cWqgAVFm
+         dd1t1sXqTkclnLL+33aTlFz5f45EDdMmAgd2GGm7cKqeI9aWgRlE0+W6fQaCgRDWDN0J
+         XhglcDukI6vElhUk5iyl+xpLk7FIsWeSTefeQtlX01A8fRJN5tesQ79BY+vHZwVANqRf
+         VnivR8KSHdxqELsU7jQPHr2ijhOvxhL4HQmy4IRk0JULyUom0aL3dD7SCA2ExREirnfI
+         +FdicXa+0ZlVzDUB5fcbgW5SfAn8p6TXbL8+LSPuGjie/XaAem8TyLIrPQd36sJ/fqVC
+         i06g==
+X-Gm-Message-State: AOAM530h+AM7SOOjPY3zmAIUZK0UzZOWC9aScin3kFxa+oF1IR/AElQP
+        I1HoClsv3NB3e50ff5sYY/0=
+X-Google-Smtp-Source: ABdhPJw4+KNAdGIoq2cCUN+UMGmsEz5RMz1h818IpW1Te5EHVzfhGx9Stm0xsPpuq/G0PiH/r24ZUg==
+X-Received: by 2002:ac2:4d0d:: with SMTP id r13mr18102156lfi.42.1620686447304;
+        Mon, 10 May 2021 15:40:47 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id g24sm2780698lja.63.2021.05.10.15.40.44
+        by smtp.gmail.com with ESMTPSA id g24sm2780698lja.63.2021.05.10.15.40.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 15:40:45 -0700 (PDT)
+        Mon, 10 May 2021 15:40:47 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -73,9 +73,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter Geis <pgwipeout@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v1 3/7] thermal/core: Export thermal_cooling_device_stats_update()
-Date:   Tue, 11 May 2021 01:38:12 +0300
-Message-Id: <20210510223816.18565-4-digetx@gmail.com>
+Subject: [PATCH v1 5/7] ARM: tegra_defconfig: Enable CONFIG_TEGRA30_TSENSOR
+Date:   Tue, 11 May 2021 01:38:14 +0300
+Message-Id: <20210510223816.18565-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510223816.18565-1-digetx@gmail.com>
 References: <20210510223816.18565-1-digetx@gmail.com>
@@ -85,31 +85,25 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra30 thermal sensor driver has a hardware-controlled CPU cooling
-feature that halves CPU frequency once a specified trip point is breached.
-In order to account the hardware state transitions, which are reported by
-interrupt, the sensor driver needs to report the cooling state transition
-and this is done by thermal_cooling_device_stats_update(). The sensor
-driver could be compiled as a loadable driver module, but this API
-function isn't exported, hence export it.
+Enable NVIDIA Tegra30 SoC thermal sensor driver in tegra_defconfig.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/thermal/thermal_sysfs.c | 1 +
+ arch/arm/configs/tegra_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 1c4aac8464a7..ab373280f853 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -690,6 +690,7 @@ void thermal_cooling_device_stats_update(struct thermal_cooling_device *cdev,
- unlock:
- 	spin_unlock(&stats->lock);
- }
-+EXPORT_SYMBOL_GPL(thermal_cooling_device_stats_update);
- 
- static ssize_t total_trans_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 458b9280224d..581fcea671f8 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -171,6 +171,7 @@ CONFIG_THERMAL_STATISTICS=y
+ CONFIG_CPU_THERMAL=y
+ CONFIG_DEVFREQ_THERMAL=y
+ CONFIG_TEGRA_SOCTHERM=m
++CONFIG_TEGRA30_TSENSOR=m
+ CONFIG_WATCHDOG=y
+ CONFIG_MAX77620_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
 -- 
 2.30.2
 
