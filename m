@@ -8,128 +8,132 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A956C433ED
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 21:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2989EC433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46BB66146E
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 21:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003BA61574
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 22:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232839AbhEJVir (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 17:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47506 "EHLO
+        id S230109AbhEJWIZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 18:08:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232810AbhEJVip (ORCPT
+        with ESMTP id S229807AbhEJWIY (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 May 2021 17:38:45 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C19C06175F;
-        Mon, 10 May 2021 14:37:40 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id h4so25619886lfv.0;
-        Mon, 10 May 2021 14:37:40 -0700 (PDT)
+        Mon, 10 May 2021 18:08:24 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA12AC06175F;
+        Mon, 10 May 2021 15:07:18 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id v6so22679207ljj.5;
+        Mon, 10 May 2021 15:07:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=K+3Jth62X/WohIFiLHRbQiwWXlpx2QSGxWVGelYy8pc=;
-        b=CAJ/tD23zf4X8M5MxJeH2wJI9UgJRDFwnyrHoUCOdHLNlU8gyg6kP5/rPY3dz39zEJ
-         Qj0tQr/2IQnUVdRGrcopRGkhB+utIUnnu5ZB4vRLhmdy/biTBaOu5MKrK7Cpk5jzo0Sl
-         vc+jPvvynoLy43AADvQqbgNCiYHOhPcM+rVEd7T0Lbg4EYZM7HSOETZLcOyrTRZmor8d
-         RN+LGzidc54cFGCaPn3Yerp6r4ipY93FZNOIrrEH20kTb5xmPat52i6Gg2bmO2z0p3Qi
-         e/eJk2ssefTlR1vsanQJHjhPBgfiSU6zDKziRz90LqjGkZltOtIpW3kk8V2kre8N33+n
-         laMw==
+        bh=ilcrEifGqalrK7A7bBBtHS0TKbUU9cT7sHuMPy0qljU=;
+        b=aHK8dZiR30/8lRK3z2+LGJlXRLGlX6GkhapyI3JqJhandAoRw/2EtWaIwzYISt+nMQ
+         di7fZVwYZN+B+0NqIMl/9RbWEMuja0cw20gfSp+t62jczmC2L9LCzEVwR8ZweqpIbOs3
+         7aC0G9jTc/HW67H0Ubx3tvCrWZqmqQnzEPKDT6makcOL8P7bS18bZ9FKqR4wipbQYOTe
+         J7fN+dgJ7oRowP1DHVlzt4xrG10ZUdTXUsNT8BzPsfNNfNmKQIdYVrZg3G/kpDVYKGse
+         6w1SLyOn/Nl3WZNHoHLTlwsW1Mols25pBuXAoWitWgqoQtObAZ0pH2iAOJnm+sd1e2zR
+         RRaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K+3Jth62X/WohIFiLHRbQiwWXlpx2QSGxWVGelYy8pc=;
-        b=QCDF1nFPawIXdYDkbr5lZoDnucct7ASemXwAjOEFpe6ow25HEA4YGi24duEs2UmIsS
-         ABRD4rOrSUrTAyd7ABgE+F5TqmImtZCYFhNFs/q+SKPbKu7MC9fdl0WntHbMFR5ZyFOU
-         lBP70LGAabppyVmfkTRWSz/KROc6+Cd5MjGLwjurrudn2ovZJkdyIng5PToIOWrEGkYz
-         t/pHEgtanDr9mNTMIltqbLPOCh2THUIdjGniGIVimFyjOgFv49h+NyIP9HrFE85m1Qcv
-         03At2+FX9TnwtpcsG+7eWOID5x1fBLaK7F6gUtXe5MKDCp6wgh/m4wRMd0XXiFzXfZlQ
-         qgAw==
-X-Gm-Message-State: AOAM532AX/glbIT940DECiSkjDdtnaJsg87sB+nphaYrHT+Sgr4/yrQ2
-        BfGpgLdVyI9lzO+ZWwmg3rc=
-X-Google-Smtp-Source: ABdhPJyPMEM43l9T1qZgZUYflVMqPDi7gBdjn7rY0kOf3xNehNIQKhCXw/3kVSJiNx9S7V3Lt7xrLw==
-X-Received: by 2002:ac2:488f:: with SMTP id x15mr18074014lfc.413.1620682658690;
-        Mon, 10 May 2021 14:37:38 -0700 (PDT)
+        bh=ilcrEifGqalrK7A7bBBtHS0TKbUU9cT7sHuMPy0qljU=;
+        b=gsdjxQVBOuiNcwzcEJcVoAGW3JqhBDXOMB1i9vh3RCjOD8WuaH1CDy88qpUrFWotHZ
+         PBnU7Btw+l3d7T5AdCCaRWPMrqNkYdwmmTJ55NDhC4O5pVzNP+/lGyjNsEi0dFoBsw1P
+         5sLMIdwNyVZeLKagnkQE1jXvLMVMz7WeZ3cPNsPGecAWwWMyCz7+Wpe/lsE2XGhrEOHQ
+         I/JsFxHjE5ApTR2vreXJc/9XZMJkTQfFJ/bP1adlKXhrWj1Igo1G6p9YktlS0+PtPr0N
+         HogZ63ErfA62GNAlhbUJlTa7L/jsCa/l+MHrOU8m8+u4OvFiKOYyR1EqAl3M9614ZLzN
+         Bz4A==
+X-Gm-Message-State: AOAM532+Mjos7PxqBFVlkzTlC3vgP8VVaX/4chXOfMcnCr4Yz49tl6ch
+        tDY2x8gPCk5TcTrOOygZeTQ=
+X-Google-Smtp-Source: ABdhPJzHGEbCDM9SxLdRq64G0N07VXSJckyF8w0rHbFZzdPlAaWCeEjtnG4HysPzdYBTIfInStEU1w==
+X-Received: by 2002:a2e:9919:: with SMTP id v25mr21350238lji.189.1620684437442;
+        Mon, 10 May 2021 15:07:17 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id 9sm431315lfm.271.2021.05.10.14.37.38
+        by smtp.gmail.com with ESMTPSA id v14sm2390850lfb.201.2021.05.10.15.07.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 14:37:38 -0700 (PDT)
+        Mon, 10 May 2021 15:07:17 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 2/2] memory: tegra: Enable compile testing for all drivers
-Date:   Tue, 11 May 2021 00:37:29 +0300
-Message-Id: <20210510213729.7095-3-digetx@gmail.com>
+Subject: [PATCH v1 1/2] regulator: core: Add regulator_sync_voltage_rdev()
+Date:   Tue, 11 May 2021 01:05:25 +0300
+Message-Id: <20210510220526.11113-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210510213729.7095-1-digetx@gmail.com>
-References: <20210510213729.7095-1-digetx@gmail.com>
+In-Reply-To: <20210510220526.11113-1-digetx@gmail.com>
+References: <20210510220526.11113-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable compile testing for all Tegra memory drivers.
+Some NVIDIA Tegra devices use a CPU soft-reset method for the reboot and
+in this case we need to restore the coupled voltages to the state that is
+suitable for hardware during boot. Add new regulator_sync_voltage_rdev()
+helper which is needed by regulator drivers in order to sync voltage of
+a coupled regulators.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/regulator/core.c         | 23 +++++++++++++++++++++++
+ include/linux/regulator/driver.h |  1 +
+ 2 files changed, 24 insertions(+)
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index a70967a56e52..a910f661105f 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -2,7 +2,7 @@
- config TEGRA_MC
- 	bool "NVIDIA Tegra Memory Controller support"
- 	default y
--	depends on ARCH_TEGRA
-+	depends on (ARCH_TEGRA || COMPILE_TEST)
- 	select INTERCONNECT
- 	help
- 	  This driver supports the Memory Controller (MC) hardware found on
-@@ -11,7 +11,7 @@ config TEGRA_MC
- config TEGRA20_EMC
- 	tristate "NVIDIA Tegra20 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-+	depends on TEGRA_MC && (ARCH_TEGRA_2x_SOC || COMPILE_TEST)
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
- 	help
-@@ -23,7 +23,7 @@ config TEGRA20_EMC
- config TEGRA30_EMC
- 	tristate "NVIDIA Tegra30 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_3x_SOC
-+	depends on TEGRA_MC && (ARCH_TEGRA_3x_SOC || COMPILE_TEST)
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -34,7 +34,7 @@ config TEGRA30_EMC
- config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_124_SOC
-+	depends on TEGRA_MC && (ARCH_TEGRA_124_SOC || COMPILE_TEST)
- 	select TEGRA124_CLK_EMC
- 	select PM_OPP
- 	help
-@@ -49,7 +49,7 @@ config TEGRA210_EMC_TABLE
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f192bf19492e..ead0b6d2af45 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4105,6 +4105,29 @@ int regulator_set_voltage_time_sel(struct regulator_dev *rdev,
+ }
+ EXPORT_SYMBOL_GPL(regulator_set_voltage_time_sel);
  
- config TEGRA210_EMC
- 	tristate "NVIDIA Tegra210 External Memory Controller driver"
--	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	depends on TEGRA_MC && (ARCH_TEGRA_210_SOC || COMPILE_TEST)
- 	select TEGRA210_EMC_TABLE
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
++int regulator_sync_voltage_rdev(struct regulator_dev *rdev)
++{
++	int ret;
++
++	regulator_lock(rdev);
++
++	if (!rdev->desc->ops->set_voltage &&
++	    !rdev->desc->ops->set_voltage_sel) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* balance only, if regulator is coupled */
++	if (rdev->coupling_desc.n_coupled > 1)
++		ret = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
++	else
++		ret = -EOPNOTSUPP;
++
++out:
++	regulator_unlock(rdev);
++	return ret;
++}
++
+ /**
+  * regulator_sync_voltage - re-apply last regulator output voltage
+  * @regulator: regulator source
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 4ea520c248e9..35e5a611db81 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -540,6 +540,7 @@ int regulator_set_current_limit_regmap(struct regulator_dev *rdev,
+ int regulator_get_current_limit_regmap(struct regulator_dev *rdev);
+ void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
+ int regulator_set_ramp_delay_regmap(struct regulator_dev *rdev, int ramp_delay);
++int regulator_sync_voltage_rdev(struct regulator_dev *rdev);
+ 
+ /*
+  * Helper functions intended to be used by regulator drivers prior registering
 -- 
 2.30.2
 
