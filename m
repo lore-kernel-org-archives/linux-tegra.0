@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454CFC43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFF4C43462
 	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 21:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08D78613DF
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 21:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E8216143B
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 21:11:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231904AbhEJVNB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 10 May 2021 17:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        id S231867AbhEJVNC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 10 May 2021 17:13:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbhEJVNA (ORCPT
+        with ESMTP id S231854AbhEJVNB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 10 May 2021 17:13:00 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F1F0C061760;
-        Mon, 10 May 2021 14:11:54 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id t11so25407029lfl.11;
-        Mon, 10 May 2021 14:11:53 -0700 (PDT)
+        Mon, 10 May 2021 17:13:01 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8B8C061763;
+        Mon, 10 May 2021 14:11:55 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id t11so25407116lfl.11;
+        Mon, 10 May 2021 14:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ybiSyEHiHhpZwxGAHloT2ZV0d6LrcnSv5Cr6VIeCqOk=;
-        b=RZ3Hvofan3xeL4p404LLxQOKHcRwb2zlOMHaZ4BV0B24BSnb1o0ZdFLGILHIur4EWx
-         1oPMZ+zWa4QWB4CE2WgJlN5ok+Yg5ZyUvOgGgYif3KEukDSD8sBxqMJ+n/yTtR/yWcHP
-         z2uG2Ymcq5mma6NNssAV10sMpcTXCDpRVeL/qIQBUQBRlRffpV+pKIKX9QCBtWIrWhw4
-         tPWJZ7OjkKbWKVu2yErxtNCQsD2Z1ssKuq6Sywny39QyZ2EKM8PjK1IjdPohCsSCLPfk
-         oSrZvKiRU0IpSGkVa8qyKoo5PQN3vlAIMxy0fxFT31J44dMVyJIPRyZgFJJXyi/MlSCW
-         sSLA==
+        bh=Z0mhM5VOJlBFrF5T1QvpTzNjyhRksc+ReJ2SbVVWnBM=;
+        b=uu/m7eQ/8JNpthgicesTvIUqFAGT/SESV51ET/Dy4Bj9UZB7Q2R/E0ZWR4NFEHvscm
+         hkOYZcjD454dtkvZDk8lobuHaMkSk7TWFYeOJ4pYPo2OnP7i2K/AhBrs0BZEN09Y2bRY
+         uV0V6MNzXWkhiecp1+7RGU4LiBSWZ9JfRt7qJmP7/GM+RLGOWo3IxaLibOd9Vr6jID9e
+         Vl79CpL6Iw6qP+UU86TOD8kk0ksmgCzNv5x7Tr20Jkgr8OEBZvYq2pxYa0t/EqYBUcdM
+         SKV3y58f8MFubjZPzXjM9zw/J3+/GXkNZjCWNFkeoBKtkm4Q+OB+Wr7GaGTya1XQZQaJ
+         BKuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ybiSyEHiHhpZwxGAHloT2ZV0d6LrcnSv5Cr6VIeCqOk=;
-        b=gwrSaLW6RnCIGtMEXGHDU5LB6U0ewpHHuv47lJjikRfnqQEA7dUxrLSSBya9PSuRQr
-         +E4B0WlAi0CpKx+qIwyHb69BhMCkFL2KLMjrhJsFziMohKXH8PQuF7azskJR81wXuInt
-         KJJcTKjRK97oGJ40KSeD2KpCd+Fqw2OGK1RU7hNJ7++U442YtyL8iBBlIifjF+x0mCg/
-         szzvUEmXeH37LNggZpylGgglVEddn0VhWSb+VGT40ktRTmqPGmNAuz9xs6nlnSvUJLoM
-         pJDb0NtkOdcKyZQOlvTobAN0Rg5eQppIg80OqJQ3c2OjNF5a8iTAJ71hkX9HaHg5gKJp
-         TYPA==
-X-Gm-Message-State: AOAM532XVp1MrVOussOG/Gaxc+Dc6NdvLVymEqir35ZJewW9H5pjqw+6
-        foruus2pe84sNR9Wf939/Hg=
-X-Google-Smtp-Source: ABdhPJzY5bf7qKfAVZRtbjolWvcRElCM93yIIsmKgXySglYMaiJNFUAxOip8Axt0PYOkc2fZ71zf1g==
-X-Received: by 2002:a05:6512:2287:: with SMTP id f7mr17746341lfu.475.1620681112593;
-        Mon, 10 May 2021 14:11:52 -0700 (PDT)
+        bh=Z0mhM5VOJlBFrF5T1QvpTzNjyhRksc+ReJ2SbVVWnBM=;
+        b=nZ4fNVBzcNAEObceXdUFDhdKYKVOb7mLYO8L9NDaEmhz2qXXSPMJ+HCJe9Sjp/mIL2
+         VL5DlsNsm4c7mRpgJ8Tuy/oLleAJMX6WMrMthZVqeIhevUVtJxpubN8qxR5BbVtXUgQ9
+         PB5jTJV+vc9oWB0BZ0u6TTEG8aaM5kWeJ+ADJvNxw4UcACSm5A4h0rEVcqU/ilgm5jH8
+         WLeSUI4Uq9sGlM0XYQyVur2UUhlrqO/PrvxwdYwTcIKcxJ+Uogz9ZejJsH+SW1kE6I9y
+         25hrPzRIOhqQGiJqny+5lueT9ebu+HI0NJsnCaSPD5MVWi4XcT5+xRMCQP+EPkGPtOdV
+         HY2Q==
+X-Gm-Message-State: AOAM532Tlr0ubhXiXuQDEevHzSsfRuEYg7URh8o7blvfmsA/QCrzu5zl
+        NhACewXj5zY8DcasDvfkxYgU1fuHqEM=
+X-Google-Smtp-Source: ABdhPJzoFW9yJUJkLUcroWPTsUHs9lhnndXvIXHe0YPdHuXYh4O1M3Wv0dtyF+aPxMPpzomIY6z/EA==
+X-Received: by 2002:a05:6512:b26:: with SMTP id w38mr18220313lfu.152.1620681114021;
+        Mon, 10 May 2021 14:11:54 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id x4sm2365339lfa.173.2021.05.10.14.11.51
+        by smtp.gmail.com with ESMTPSA id x4sm2365339lfa.173.2021.05.10.14.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 14:11:52 -0700 (PDT)
+        Mon, 10 May 2021 14:11:53 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Matt Merhar <mattmerhar@protonmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v1 5/7] ARM: tegra: Add cooling cells to ACTMON device-tree node
-Date:   Tue, 11 May 2021 00:10:06 +0300
-Message-Id: <20210510211008.30300-6-digetx@gmail.com>
+Subject: [PATCH v1 7/7] ARM: tegra: ouya: Enable memory frequency thermal throttling using ACTMON
+Date:   Tue, 11 May 2021 00:10:08 +0300
+Message-Id: <20210510211008.30300-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510211008.30300-1-digetx@gmail.com>
 References: <20210510211008.30300-1-digetx@gmail.com>
@@ -80,59 +80,32 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The ACTMON module monitors activity of memory clients and decisions
-about a minimum required memory frequency are made based on info from
-ACTMON. Add cooling cells to ACTMON device-tree node in order to turn
-it into a cooling device that will throttle memory freq on overheat.
+The ACTMON module monitors activity of memory clients and then devfreq
+driver makes decisions about a required memory frequency based on info
+from ACTMON. Add ACTMON device to the thermal zone of Ouya in order to
+use it as a cooling device which throttles memory freq on overheat.
 
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Matt Merhar <mattmerhar@protonmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 3 ++-
- arch/arm/boot/dts/tegra30.dtsi  | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra30-ouya.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 0b678afb2a5c..8b38f123f554 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -283,7 +283,7 @@ flow-controller@60007000 {
- 		reg = <0x0 0x60007000 0x0 0x1000>;
- 	};
- 
--	actmon@6000c800 {
-+	actmon: actmon@6000c800 {
- 		compatible = "nvidia,tegra124-actmon";
- 		reg = <0x0 0x6000c800 0x0 0x400>;
- 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-@@ -295,6 +295,7 @@ actmon@6000c800 {
- 		operating-points-v2 = <&emc_bw_dfs_opp_table>;
- 		interconnects = <&mc TEGRA124_MC_MPCORER &emc>;
- 		interconnect-names = "cpu-read";
-+		#cooling-cells = <2>;
- 	};
- 
- 	gpio: gpio@6000d000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 44a6dbba7081..c577c191be4b 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -410,7 +410,7 @@ ahb: ahb@6000c000 {
- 		reg = <0x6000c000 0x150>; /* AHB Arbitration + Gizmo Controller */
- 	};
- 
--	actmon@6000c800 {
-+	actmon: actmon@6000c800 {
- 		compatible = "nvidia,tegra30-actmon";
- 		reg = <0x6000c800 0x400>;
- 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-@@ -422,6 +422,7 @@ actmon@6000c800 {
- 		operating-points-v2 = <&emc_bw_dfs_opp_table>;
- 		interconnects = <&mc TEGRA30_MC_MPCORER &emc>;
- 		interconnect-names = "cpu-read";
-+		#cooling-cells = <2>;
- 	};
- 
- 	gpio: gpio@6000d000 {
+diff --git a/arch/arm/boot/dts/tegra30-ouya.dts b/arch/arm/boot/dts/tegra30-ouya.dts
+index 9a10e0d69762..e767ac227a81 100644
+--- a/arch/arm/boot/dts/tegra30-ouya.dts
++++ b/arch/arm/boot/dts/tegra30-ouya.dts
+@@ -463,7 +463,8 @@ map1 {
+ 					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+ 							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+ 							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+-							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&actmon THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 				};
+ 			};
+ 		};
 -- 
 2.30.2
 
