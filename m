@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D442C43462
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2262C43460
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC9461433
-	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A89161482
+	for <linux-tegra@archiver.kernel.org>; Mon, 10 May 2021 20:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232316AbhEJU3O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S232263AbhEJU3O (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 10 May 2021 16:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59976 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbhEJU3M (ORCPT
+        with ESMTP id S231518AbhEJU3M (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Mon, 10 May 2021 16:29:12 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665B0C061574;
-        Mon, 10 May 2021 13:28:07 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id j10so25266325lfb.12;
-        Mon, 10 May 2021 13:28:07 -0700 (PDT)
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52C0C061760;
+        Mon, 10 May 2021 13:28:06 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id z9so25279375lfu.8;
+        Mon, 10 May 2021 13:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Dw+QlXrsFBiM0zWqW8M+Hk3AOAvI8eXnbQfBtso36FY=;
-        b=eoYvWHwVMh+bc2fyZJpdD1jWbKQ7oDtVWB43tLb8YXwUdA1HkdEAuDhvJbczeXXxN6
-         5xBQX4bZJ8ipZ8L/AniL2l6I+LpDbb1p8BvQ+YAwzi/VWe0ksN/UYs9+APyeSvo3oO0g
-         cjuxUY0AwqktEFxrchzz7i1JV8mc1QQkjrM3hFRlTODB2kEpWv0WC3xlyyJ57vQu3yEX
-         QZpDNlAi7wCVECsbptdC5K704AF6Swx8DLiQ0/YbiRMgT7PIvHwKk6iftg4RTFXayQC2
-         sQfQIApc0VJVMeufMzQbrzKQdzIz7t+ijgf91GdWGXvCWhGAmW3QGLDM2wCWKtHgZRAu
-         DFYw==
+        bh=QzSDSsYVLWx4cGGNYAhBY9AP+8XYtLc+owqpUZsYqN8=;
+        b=C7/ddeYTBjUVzdQd/5oKcpt/4+T0QwpcMc49V1xEnOxnBG6EiJLyysN1dWBu1bLfR3
+         fzg//NLmkEdPPVXSsmwg9BQ3X+3cqgUbMk0gByizf2DmfYH+9AW2vbcSw6gpZwDvcVtJ
+         QAnawIgcKMy7Mla4HjaZQLd2whbSX9049sfFg3jFT1CsvdMdjxt5Vvmk76pED2Ykqk/6
+         /5I8yWWEAtEB/xH9kuJqlk9nA7gaqbQwfUY3KP8fQQvoSwXtpMWsc8D0OrQjHFtcNinu
+         LOk8bSDITw+vkCmm3kZC3uZHUNmhVA8CmerrkRrDSE68yMn/I3p/JTl2NzjjMdjo9qFw
+         eekw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Dw+QlXrsFBiM0zWqW8M+Hk3AOAvI8eXnbQfBtso36FY=;
-        b=ptNhc23mQFopqqvGUomGPBdrQtiiYYUjX4R6uUY7bSi472a5+1o83KwkuadpVW/6vq
-         R7G5exfafez7fuXj8RsxIULOXXiC7BZD/Tyy/vt5lVkgx9EsdJFEs33jzIW12ZiTLu3O
-         PBmDVAR6GPa0fq7R42pmi/9YOypmb/13DoznfYU6NKZf6sP4s8xMTpLOdyiE0eVVpYwN
-         xRcl/XtiM2rALrQJ6MeXnWJCNdyyIXs/qoUtJItXyfi9gBEoQsnko1M4Y53VmmwFEWX3
-         CuWFCcy9S/aqL/geZ1bcCSKhj7jpspIcdS/MKwUAmN+NGQGfv4QvYNuuTwPe98E5OudJ
-         +/bA==
-X-Gm-Message-State: AOAM5303qfjwF9ayWLQNQ2qI6eZ/jYgOVPcH7NECqRt03qm9CS8TOvF3
-        aotKkaucyM6UjBHSH/ZgauzkBEtLFhQ=
-X-Google-Smtp-Source: ABdhPJwpGNm/kNL1UdBVp5V5rUJOGVIvn8KK8Immcm2wXvyStQnG9sGeJfwamPShpvJZeX7C4LhB1Q==
-X-Received: by 2002:ac2:4246:: with SMTP id m6mr18215649lfl.611.1620678485998;
+        bh=QzSDSsYVLWx4cGGNYAhBY9AP+8XYtLc+owqpUZsYqN8=;
+        b=d30MVuO0ctkzdZq9HR0aR2ytNxrFavYgiJ3hrREtbvUbypHrIUohRCmgrcAcs+r9D+
+         kS9waePR28VmOF2VLvFQYyDXe/1VePAIRO9hm54Ypxxvie2VXWqnDJ6vjbmwILQThmxu
+         xlvngU27Wc3LOcjmWn0/v/6ulzOaU3LuxgEpA96uBw43AMfudf4poqw3XPb/5DXcKXn3
+         qRjAFpx4L78lYOwO/7io4pyCxI/GMvXStSLIERw1+zSIR4yLwjN5TWcr+zWQyYep+6a5
+         DoaoLJ0Rqd63WFDPkbkE54Rd+02zBGdzodWLXbDQxcHESzhYmCiAYAP+G/mWwCqqyjPV
+         pfkA==
+X-Gm-Message-State: AOAM533QylonVFVv5UAvGaNi2FZtzq4nKqAO4R0uQJGirt4UZ4Aqusmh
+        14z+lfn2E+sURrw0/Xa5dAs=
+X-Google-Smtp-Source: ABdhPJxbl0aRe+Z0RRQUrWK1K+uobWYX1Rp4Uiw6Wz9L8m+wGCJ1g62ZyiT3A94JkoJni2/MyJ0acQ==
+X-Received: by 2002:ac2:5d4c:: with SMTP id w12mr8802665lfd.494.1620678485362;
         Mon, 10 May 2021 13:28:05 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id z23sm2360662lfq.241.2021.05.10.13.28.05
+        by smtp.gmail.com with ESMTPSA id z23sm2360662lfq.241.2021.05.10.13.28.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 10 May 2021 13:28:05 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -63,9 +63,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Agneli <poczt@protonmail.ch>, Paul Fertser <fercerpav@gmail.com>,
         Svyatoslav Ryhel <clamor95@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 03/10] ARM: tegra: acer-a500: Bump thermal trips by 10C
-Date:   Mon, 10 May 2021 23:25:53 +0300
-Message-Id: <20210510202600.12156-4-digetx@gmail.com>
+Subject: [PATCH v1 02/10] ARM: tegra: acer-a500: Specify proper voltage for WiFi SDIO bus
+Date:   Mon, 10 May 2021 23:25:52 +0300
+Message-Id: <20210510202600.12156-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210510202600.12156-1-digetx@gmail.com>
 References: <20210510202600.12156-1-digetx@gmail.com>
@@ -75,43 +75,31 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-It's possible to hit the temperature of the thermal zone in a very warm
-environment under a constant load, like watching a video using software
-decoding. It's even easier to hit the limit with a slightly overclocked
-CPU. Bump the temperature limit by 10C in order to improve user
-experience. Acer A500 has a large board and 10" display panel which are
-used for the heat dissipation, the SoC is placed far away from battery,
-hence we can safely bump the temperature limit.
+Tegra20 has v2.00 SDMMC controller which doesn't support voltage
+switching and the WiFi SDIO bus voltage is fixed to 1.8v in accordance
+to the board's schematics, while MMC core confusingly saying that it's
+3.3v because of the v2.00. Let's correct the voltage in the device-tree
+just for consistency. This is a minor improvement which doesn't fix any
+problems.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index eff9bfb2d442..15b7965599ee 100644
+index d7d97b7e4794..eff9bfb2d442 100644
 --- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
 +++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -1059,15 +1059,15 @@ cpu-thermal {
+@@ -762,7 +762,7 @@ sdmmc1: mmc@c8000000 {
  
- 			trips {
- 				trip0: cpu-alert0 {
--					/* start throttling at 50C */
--					temperature = <50000>;
-+					/* start throttling at 60C */
-+					temperature = <60000>;
- 					hysteresis = <200>;
- 					type = "passive";
- 				};
+ 		mmc-pwrseq = <&brcm_wifi_pwrseq>;
+ 		vmmc-supply = <&vdd_3v3_sys>;
+-		vqmmc-supply = <&vdd_3v3_sys>;
++		vqmmc-supply = <&vdd_1v8_sys>;
  
- 				trip1: cpu-crit {
--					/* shut down at 60C */
--					temperature = <60000>;
-+					/* shut down at 70C */
-+					temperature = <70000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
+ 		/* Azurewave AW-NH611 BCM4329 */
+ 		wifi@1 {
 -- 
 2.30.2
 
