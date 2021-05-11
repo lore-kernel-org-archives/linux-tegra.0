@@ -2,104 +2,83 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801F9C433B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 07:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7CFC43461
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 08:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F9F36192B
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 07:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F02CF613C3
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 08:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230381AbhEKHPb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 May 2021 03:15:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:49685 "EHLO mga06.intel.com"
+        id S230338AbhEKI1z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 May 2021 04:27:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230422AbhEKHP3 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 May 2021 03:15:29 -0400
-IronPort-SDR: YdVnGlzXyd71xhGTfCNp/oOO85xRxoGJWmDlupeJ1rHhGQxIYEGFCaFzmVGdFU4t3IS5r0mDoq
- +iOtdq0fXm/g==
-X-IronPort-AV: E=McAfee;i="6200,9189,9980"; a="260638235"
-X-IronPort-AV: E=Sophos;i="5.82,290,1613462400"; 
-   d="scan'208";a="260638235"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 00:14:22 -0700
-IronPort-SDR: c9aBpxO375CWUx7wQBSZFwPtRRtr9HPVsWUAJ6QjumnKzHL2Jr2PXOzEB/RbxjSno3CUx58zEW
- Tc/8aidWwKIw==
-X-IronPort-AV: E=Sophos;i="5.82,290,1613462400"; 
-   d="scan'208";a="536865524"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 00:14:16 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lgMaq-00BNFg-I9; Tue, 11 May 2021 10:14:12 +0300
-Date:   Tue, 11 May 2021 10:14:12 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Petr Mladek <pmladek@suse.com>, JC Kuo <jckuo@nvidia.com>,
-        Joe Perches <joe@perches.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-tegra@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: Re: [PATCH v1 2/4] kdb: Switch to use %ptTs
-Message-ID: <YJouxMmwwVwqqKi1@smile.fi.intel.com>
-References: <20210510150413.59356-1-andriy.shevchenko@linux.intel.com>
- <20210510150413.59356-2-andriy.shevchenko@linux.intel.com>
- <CAD=FV=VpuyYBv2tj5AHLx7U7vfCpH1A6hfG_amscZ6OupRwEHg@mail.gmail.com>
+        id S230431AbhEKI1v (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 11 May 2021 04:27:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 96A1561107;
+        Tue, 11 May 2021 08:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620721605;
+        bh=bYIaUAprXVrQfA7WorJjuNskjH3tHeoOdXcsy6zWmqM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mdi7DjVpvXPwq3QIlmFS4cQAhgrT1tsoPhmW/v1oaFswrqaVBoZb29Iv6+KgWq/X0
+         RswE5cniiDVxehNo0YPebeIqJ0nI5zirtUbNDV4xM41Y/XfsiGxlY/v+29oFcg+vfB
+         NlO/snxA05F7bZeIRF7ArOp87G9vey6+iepUnmBb2KFzRuwULDyXyfzfJGSqE9aWcI
+         i5YPGqLUycafEUBajh5wuna+e24HWCCvX+lw4hPeslQkhtdIa0ogIjd56fsKH4J6Fa
+         PEmyqFhOV1Yt1X5nnQ0S8zDBuB0Q4fqd4z/xjbaLhpB/C6mM7Tz8dvyWvYjcCBsCuu
+         zuYblQWVBuqUw==
+From:   Mark Brown <broonie@kernel.org>
+To:     skomatineni@nvidia.com, thierry.reding@gmail.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jonathanh@nvidia.com, ldewangan@nvidia.com
+Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra210-quad: Fix an error message
+Date:   Tue, 11 May 2021 09:25:30 +0100
+Message-Id: <162072071981.33404.5625114795994944628.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
+References: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=VpuyYBv2tj5AHLx7U7vfCpH1A6hfG_amscZ6OupRwEHg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, May 10, 2021 at 05:05:46PM -0700, Doug Anderson wrote:
-> On Mon, May 10, 2021 at 8:04 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > Use %ptTs instead of open-coded variant to print contents
-> > of time64_t type in human readable form.
-> >
-> > Cc: Jason Wessel <jason.wessel@windriver.com>
-> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > Cc: kgdb-bugreport@lists.sourceforge.net
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  kernel/debug/kdb/kdb_main.c | 9 +--------
-> >  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> I kinda doubt anyone would really care if we just switched kdb to just
-> the old "%ptT". Probably no machines are parsing this string.
+On Fri, 7 May 2021 18:26:39 +0200, Christophe JAILLET wrote:
+> 'ret' is known to be 0 here.
+> No error code is available, so just remove it from the error message.
 
-Formally it's an ABI.
+Applied to
 
-> ...but in any case, now that the nifty new format is there we might as
-> well use it. Thus:
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] spi: tegra210-quad: Fix an error message
+      commit: 665a990fdbea66a4d2af0287420f8266631be2ab
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
