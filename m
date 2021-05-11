@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D5AC43461
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 15:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0524DC433ED
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 15:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37C036191D
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 15:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CABEA616EB
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 15:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231888AbhEKPk4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 May 2021 11:40:56 -0400
-Received: from mga11.intel.com ([192.55.52.93]:42690 "EHLO mga11.intel.com"
+        id S231956AbhEKPlF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 May 2021 11:41:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28260 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231844AbhEKPkz (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 May 2021 11:40:55 -0400
-IronPort-SDR: xRUX7XWprC3mABLXp1L4Cv1wpdRXaeXGNcfSeoJUicractfQlvhAieYgZTuO2Gn6vzCIQfVHly
- Px9rXjfCLoqA==
-X-IronPort-AV: E=McAfee;i="6200,9189,9981"; a="196377032"
+        id S231890AbhEKPk6 (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 11 May 2021 11:40:58 -0400
+IronPort-SDR: QQ4Sjl5kMqyNo+51Lmncu1VMRud0Nm/Odk8kZGS/tADH8uo99J3m9ecc1+6vBCp7yiWgAv6m1W
+ MSoAtVeU2pRQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9981"; a="260734858"
 X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="196377032"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 08:39:46 -0700
-IronPort-SDR: 86nZRXlTLEaCDpZ77Kn6dY841tLXMMFInjNL2kB6ChDDRP8mHmyFf4eIjAZI0NIK1sw0HbHnIq
- Vz7xzlUM6U6w==
+   d="scan'208";a="260734858"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2021 08:39:45 -0700
+IronPort-SDR: sLP3qUCam69dXxLCBSz/8ZlJdIgbpLY4sMvgUT0yRXe1Fga2ANFRGVLCfv7Gn7pm2jPjT5o8Bd
+ Qrgqnd9cArVQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.82,291,1613462400"; 
-   d="scan'208";a="392345254"
+   d="scan'208";a="434604792"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 11 May 2021 08:39:40 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 11 May 2021 08:39:40 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 41F98249; Tue, 11 May 2021 18:40:01 +0300 (EEST)
+        id 30C4093; Tue, 11 May 2021 18:40:01 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Petr Mladek <pmladek@suse.com>, JC Kuo <jckuo@nvidia.com>,
         Joe Perches <joe@perches.com>,
@@ -55,9 +55,9 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Jason Wessel <jason.wessel@windriver.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 3/4] nilfs2: Switch to use %ptTs
-Date:   Tue, 11 May 2021 18:39:57 +0300
-Message-Id: <20210511153958.34527-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/4] kdb: Switch to use %ptTs
+Date:   Tue, 11 May 2021 18:39:56 +0300
+Message-Id: <20210511153958.34527-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210511153958.34527-1-andriy.shevchenko@linux.intel.com>
 References: <20210511153958.34527-1-andriy.shevchenko@linux.intel.com>
@@ -67,71 +67,47 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Use %ptTs instead of open coded variant to print contents
+Use %ptTs instead of open-coded variant to print contents
 of time64_t type in human readable form.
 
-Use sysfs_emit() at the same time in the changed functions.
-
-Cc: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: linux-nilfs@vger.kernel.org
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: kgdb-bugreport@lists.sourceforge.net
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 v2: collected tags
- fs/nilfs2/sysfs.c | 19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
+ kernel/debug/kdb/kdb_main.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/fs/nilfs2/sysfs.c b/fs/nilfs2/sysfs.c
-index 303d71430bdd..4e10423f0448 100644
---- a/fs/nilfs2/sysfs.c
-+++ b/fs/nilfs2/sysfs.c
-@@ -19,19 +19,6 @@
- /* /sys/fs/<nilfs>/ */
- static struct kset *nilfs_kset;
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index 1baa96a2ecb8..622410c45da1 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -2488,7 +2488,6 @@ static void kdb_sysinfo(struct sysinfo *val)
+ static int kdb_summary(int argc, const char **argv)
+ {
+ 	time64_t now;
+-	struct tm tm;
+ 	struct sysinfo val;
  
--#define NILFS_SHOW_TIME(time_t_val, buf) ({ \
--		struct tm res; \
--		int count = 0; \
--		time64_to_tm(time_t_val, 0, &res); \
--		res.tm_year += 1900; \
--		res.tm_mon += 1; \
--		count = scnprintf(buf, PAGE_SIZE, \
--				    "%ld-%.2d-%.2d %.2d:%.2d:%.2d\n", \
--				    res.tm_year, res.tm_mon, res.tm_mday, \
--				    res.tm_hour, res.tm_min, res.tm_sec);\
--		count; \
--})
+ 	if (argc)
+@@ -2502,13 +2501,7 @@ static int kdb_summary(int argc, const char **argv)
+ 	kdb_printf("domainname %s\n", init_uts_ns.name.domainname);
+ 
+ 	now = __ktime_get_real_seconds();
+-	time64_to_tm(now, 0, &tm);
+-	kdb_printf("date       %04ld-%02d-%02d %02d:%02d:%02d "
+-		   "tz_minuteswest %d\n",
+-		1900+tm.tm_year, tm.tm_mon+1, tm.tm_mday,
+-		tm.tm_hour, tm.tm_min, tm.tm_sec,
+-		sys_tz.tz_minuteswest);
 -
- #define NILFS_DEV_INT_GROUP_OPS(name, parent_name) \
- static ssize_t nilfs_##name##_attr_show(struct kobject *kobj, \
- 					struct attribute *attr, char *buf) \
-@@ -576,7 +563,7 @@ nilfs_segctor_last_seg_write_time_show(struct nilfs_segctor_attr *attr,
- 	ctime = nilfs->ns_ctime;
- 	up_read(&nilfs->ns_segctor_sem);
- 
--	return NILFS_SHOW_TIME(ctime, buf);
-+	return sysfs_emit(buf, "%ptTs\n", &ctime);
- }
- 
- static ssize_t
-@@ -604,7 +591,7 @@ nilfs_segctor_last_nongc_write_time_show(struct nilfs_segctor_attr *attr,
- 	nongc_ctime = nilfs->ns_nongc_ctime;
- 	up_read(&nilfs->ns_segctor_sem);
- 
--	return NILFS_SHOW_TIME(nongc_ctime, buf);
-+	return sysfs_emit(buf, "%ptTs\n", &nongc_ctime);
- }
- 
- static ssize_t
-@@ -724,7 +711,7 @@ nilfs_superblock_sb_write_time_show(struct nilfs_superblock_attr *attr,
- 	sbwtime = nilfs->ns_sbwtime;
- 	up_read(&nilfs->ns_sem);
- 
--	return NILFS_SHOW_TIME(sbwtime, buf);
-+	return sysfs_emit(buf, "%ptTs\n", &sbwtime);
- }
- 
- static ssize_t
++	kdb_printf("date       %ptTs tz_minuteswest %d\n", &now, sys_tz.tz_minuteswest);
+ 	kdb_sysinfo(&val);
+ 	kdb_printf("uptime     ");
+ 	if (val.uptime > (24*60*60)) {
 -- 
 2.30.2
 
