@@ -2,83 +2,85 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDFEC43462
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 08:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87339C433B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 10:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4A5E61942
-	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 08:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5206F610C9
+	for <linux-tegra@archiver.kernel.org>; Tue, 11 May 2021 10:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbhEKI2I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 11 May 2021 04:28:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36318 "EHLO mail.kernel.org"
+        id S231245AbhEKKUe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 11 May 2021 06:20:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230510AbhEKI2D (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 11 May 2021 04:28:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9110A61107;
-        Tue, 11 May 2021 08:26:56 +0000 (UTC)
+        id S231177AbhEKKUc (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 11 May 2021 06:20:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7457961925;
+        Tue, 11 May 2021 10:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620721617;
-        bh=/gcsyHIVR3ayyligcDmVscVEOngbuB8UZJ4DeDdkjFc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CuNDj5D/ix8IfpJN//W6mMfmvFISoHBO7VtKMhLTpN2JxGW5UBPfJARb6OLnO66yk
-         1SUEvrjCq/z+ze/S9cLCxh0wEVA0tRIg+evekNS1fSqLXj+oe9EFbrdvwbyFgIg92V
-         eINd6hP1Rq1RLHsCOM2kGFqi/avQYz7xaQh8cu7tgbDh43EDE19HhzpYQUI9AoLRA6
-         usb1bzj4OYMkHhP9Mne3z4k9/ZEvQRuF3jnxjKgwv/SS7DHA6Vi6tQRzlgMpNvNjjh
-         R5x5HdjzjdavAXYWxc9CFSB4PpJTjC7Vr8ChbHC+eiukFSA/avKL0zZjObvr6dGEpB
-         cOSYtC6WAnb9A==
+        s=k20201202; t=1620728366;
+        bh=NTwAcLgZ6eAgQNE6hZCQNTDUa/YbVo8WCz2+w2cDnok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dDpv3wHiq3IIJ39YHH96Nt1yqogu/e/kvaj5IpOBEGRTPNErZG3XwMMIEO5OgKiaW
+         PV4I517Z7rGmUR2+zv03L22VfeuYWKra2V1OUryRi0uX8jXqLVRHoIFaaGJMARyfxI
+         jdTM0escxYVPBQ4f4KR74SUwWciprmDIpUeCic70+bWLhpSATW+rIM8wWWAoU5OOaq
+         njkoURQkqRe2a2l+wIDZZtn9F/9kZ+7qu3E4utwnQz8bUyiTt3ZsaHCA6USpIn/6ot
+         0EIf4w8NLpX6+Ov6kiG6AYx1RMNk8vMYl+RaEUnh/1e/9bJco/Jf+oAEVKsYDXECgR
+         WWRNSSKw7XRLg==
+Date:   Tue, 11 May 2021 11:18:46 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     grant.likely@secretlab.ca, thierry.reding@gmail.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        swarren@nvidia.com, jonathanh@nvidia.com, ldewangan@nvidia.com
-Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] spi: tegra114: Fix an error message
-Date:   Tue, 11 May 2021 09:25:34 +0100
-Message-Id: <162072071981.33404.15179846944690790249.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <e2593974c9484b7055177ad0c9237c8e343946be.1620399829.git.christophe.jaillet@wanadoo.fr>
-References: <e2593974c9484b7055177ad0c9237c8e343946be.1620399829.git.christophe.jaillet@wanadoo.fr>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Nikola =?utf-8?Q?Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] regulator: core: Add regulator_sync_voltage_rdev()
+Message-ID: <20210511101845.GF4496@sirena.org.uk>
+References: <20210510220526.11113-1-digetx@gmail.com>
+ <20210510220526.11113-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yRA+Bmk8aPhU85Qt"
+Content-Disposition: inline
+In-Reply-To: <20210510220526.11113-2-digetx@gmail.com>
+X-Cookie: Beam me up, Scotty!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, 7 May 2021 17:07:59 +0200, Christophe JAILLET wrote:
-> 'ret' is known to be 0 here.
-> No error code is available, so just remove it from the error message.
 
-Applied to
+--yRA+Bmk8aPhU85Qt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+On Tue, May 11, 2021 at 01:05:25AM +0300, Dmitry Osipenko wrote:
+> Some NVIDIA Tegra devices use a CPU soft-reset method for the reboot and
+> in this case we need to restore the coupled voltages to the state that is
+> suitable for hardware during boot. Add new regulator_sync_voltage_rdev()
+> helper which is needed by regulator drivers in order to sync voltage of
+> a coupled regulators.
 
-Thanks!
+Acked-by: Mark Brown <broonie@kernel.org>
 
-[1/1] spi: tegra114: Fix an error message
-      commit: 86b1d8ecb5f1f271a660ce0b882658447f85904a
+--yRA+Bmk8aPhU85Qt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+-----BEGIN PGP SIGNATURE-----
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmCaWgUACgkQJNaLcl1U
+h9AjCQf8CTR7ZaDymPWRiXN3bB/jhrg5pAdFABzE7UrLDtrbqA0QlHeKIlMI2Poy
+oUqXGJ2W4zg5Owqr06dHJYl14Sgbx6XCyXHNiyKs2g8Y/7XB10f2LzxBTMVMXdRx
+ZA4xi0LMPsD0WM2Gxkg49vZqeauLD2NewZ1f0Lijv95Z40fOn0nRgtvxuJn6vzTd
+4J52qbzgnRDS+K8Yg+3I9agI7K7QTsNa4NwlX380Tnl8OcZq2rUEA1tvwkReGoxE
+rzZz6YVCvPvAJClSyCYHLAG/jJT8kTJ4e+eavlrhajs8pgxruou8bNpy6F63EgTX
+LlInIZMARxI2qQQ1J6qVQLvVSoDeDQ==
+=4SZk
+-----END PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+--yRA+Bmk8aPhU85Qt--
