@@ -2,159 +2,88 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EC5C433ED
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 May 2021 11:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0010AC43619
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 May 2021 19:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2AA613DA
-	for <linux-tegra@archiver.kernel.org>; Wed, 12 May 2021 11:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB656142C
+	for <linux-tegra@archiver.kernel.org>; Wed, 12 May 2021 19:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbhELL7D (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 12 May 2021 07:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbhELL7C (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 12 May 2021 07:59:02 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0E8AC06174A
-        for <linux-tegra@vger.kernel.org>; Wed, 12 May 2021 04:57:54 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id g38so30370495ybi.12
-        for <linux-tegra@vger.kernel.org>; Wed, 12 May 2021 04:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JTFIrIiIiCWw2DizIDGGX4KiOJsOkJ0nyEyBMnURzyw=;
-        b=tM5hpmiLnRMbFfnUBUzTD1fYfzVll4i5LqmZF8eVMSokXIJIQ0i3AicWS0KdrPEvlP
-         +a3Q5XMgtBaOlGzm8eT0m2pjaifHdyQG8SQAbCRgapbJuzqaRIuAjtdDtP1tGJCZuF9b
-         8olRh3E+OW5bvEHn7KAms4K49xV7UPR5Wpok7GJWTPOcWKgo0rjMmKNk9+JgQzSJbWpg
-         4E+HEbixubIa5fzsO93E84cn1Li1UaE2IKKdsDQlKehaRpvDXccBJ4K69CxcxU+/mgai
-         BOZEUB+E3fF7x0RnA2dPtJbHK9AJ89El+FcZqEqVGAuks3wfPorDz/Pj1xHD7ZUCCvuj
-         e4ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JTFIrIiIiCWw2DizIDGGX4KiOJsOkJ0nyEyBMnURzyw=;
-        b=nr9ekL5Rr/5Nv7jgE/8592KASWYYaQG0gJ2wKxIeqQ82LLFylgbn9p9CI58CHtECnl
-         dXdvmZDmGr3KJJIrZAJ8gkGiAIWl/eXKbstAdFye70xZCj5UZTR5yF0Dldc/pR4hTsGv
-         E1Ps58P4hr9lMB1/LweNfujU8F4+cQ8oqwLe+ovnDMRkKtRmzlnacHd6s7eD0tXb8Dfn
-         CscIa98MRVVw4RFq3JVOPHeTiaGXL7XHGrqLUMbJaw8dqbhpsgPfbq8HecuRgHDNmQNc
-         dKK6MQGuQ3Wq92t+sFU9un7EJ3v+Y07xkW8+L2D5l/fGMhqsLdiVshC5Vev9+RKPEV1+
-         SEvQ==
-X-Gm-Message-State: AOAM533u41XkkDQQz+NKnlYdbTJTixMzu8P+Dn29z6E91FC1KVXZ4bjk
-        Jl+0rAndnmaJ0YIi+ekbLq93u8sJbL1LLgTzEOyojA==
-X-Google-Smtp-Source: ABdhPJy6XsMANIlpd9Kpw8oKwewls/90i39QKk0iIhIIA6xdY7fh3xF9LGttF39j5vgqXJEFltnKfF9g9wYGz8TRSQo=
-X-Received: by 2002:a25:cb96:: with SMTP id b144mr41828468ybg.312.1620820674262;
- Wed, 12 May 2021 04:57:54 -0700 (PDT)
+        id S239152AbhELT6z (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 12 May 2021 15:58:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1352054AbhELSCZ (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 12 May 2021 14:02:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BC9DF61425;
+        Wed, 12 May 2021 18:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620842476;
+        bh=GvCpCU7LOFMdC1La32QjDV/EKg3mqUZvXZcpx4mc1MQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Z7EwsdC6GqjfIXfibX9Mcj/VVVORmeNFBZ+k8ZBcHvg8EZKTzEVPtoEnKNoc3/Md6
+         XQbj2w68+/K+N6AXACZui59k9a8dySN/jxE9RyGnBOLp400FLhyrHJjTcJuFh6cNVt
+         kSJl5eSU5+n/hHoxbSDQyjefMa7NPLqmv6MwOhpZTLjdJxFwQm/xgIztsj/3tHBstZ
+         1mmM+fgZkWGKxtEvqbXcJbxiHXlueenJKE0+C0T/h4bwvaKrMKhBihfuyRkSdYie4l
+         cNLEkzxqBxNukT6pYYl8tmPu6HvK5RiKI03/0KmHJF2GkigEGlp8bfz72AOXmXIJUd
+         cKka4Pp3XOM1g==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 08/37] PCI: tegra: Fix runtime PM imbalance in pex_ep_event_pex_rst_deassert()
+Date:   Wed, 12 May 2021 14:00:35 -0400
+Message-Id: <20210512180104.664121-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210512180104.664121-1-sashal@kernel.org>
+References: <20210512180104.664121-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20210507103411.235206-1-jonathanh@nvidia.com>
-In-Reply-To: <20210507103411.235206-1-jonathanh@nvidia.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 12 May 2021 13:57:43 +0200
-Message-ID: <CAMpxmJVa-wfRSx8CC4ac705aHLR=fovX_E3QkOUSNoUwpc-_9A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: tegra186: Don't set parent IRQ affinity
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "Stable # 4 . 20+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, May 7, 2021 at 12:34 PM Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> When hotplugging CPUs on Tegra186 and Tegra194 errors such as the
-> following are seen ...
->
->  IRQ63: set affinity failed(-22).
->  IRQ65: set affinity failed(-22).
->  IRQ66: set affinity failed(-22).
->  IRQ67: set affinity failed(-22).
->
-> Looking at the /proc/interrupts the above are all interrupts associated
-> with GPIOs. The reason why these error messages occur is because there
-> is no 'parent_data' associated with any of the GPIO interrupts and so
-> tegra186_irq_set_affinity() simply returns -EINVAL.
->
-> To understand why there is no 'parent_data' it is first necessary to
-> understand that in addition to the GPIO interrupts being routed to the
-> interrupt controller (GIC), the interrupts for some GPIOs are also
-> routed to the Tegra Power Management Controller (PMC) to wake up the
-> system from low power states. In order to configure GPIO events as
-> wake events in the PMC, the PMC is configured as IRQ parent domain
-> for the GPIO IRQ domain. Originally the GIC was the IRQ parent domain
-> of the PMC and although this was working, this started causing issues
-> once commit 64a267e9a41c ("irqchip/gic: Configure SGIs as standard
-> interrupts") was added, because technically, the GIC is not a parent
-> of the PMC. Commit c351ab7bf2a5 ("soc/tegra: pmc: Don't create fake
-> interrupt hierarchy levels") fixed this by severing the IRQ domain
-> hierarchy for the Tegra GPIOs and hence, there may be no IRQ parent
-> domain for the GPIOs.
->
-> The GPIO controllers on Tegra186 and Tegra194 have either one or six
-> interrupt lines to the interrupt controller. For GPIO controllers with
-> six interrupts, the mapping of the GPIO interrupt to the controller
-> interrupt is configurable within the GPIO controller. Currently a
-> default mapping is used, however, it could be possible to use the
-> set affinity callback for the Tegra186 GPIO driver to do something a
-> bit more interesting. Currently, because interrupts for all GPIOs are
-> have the same mapping and any attempts to configure the affinity for
-> a given GPIO can conflict with another that shares the same IRQ, for
-> now it is simpler to just remove set affinity support and this avoids
-> the above warnings being seen.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: c4e1f7d92cd6 ("gpio: tegra186: Set affinity callback to parent")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra186.c | 11 -----------
->  1 file changed, 11 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 1bd9e44df718..05974b760796 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -444,16 +444,6 @@ static int tegra186_irq_set_wake(struct irq_data *data, unsigned int on)
->         return 0;
->  }
->
-> -static int tegra186_irq_set_affinity(struct irq_data *data,
-> -                                    const struct cpumask *dest,
-> -                                    bool force)
-> -{
-> -       if (data->parent_data)
-> -               return irq_chip_set_affinity_parent(data, dest, force);
-> -
-> -       return -EINVAL;
-> -}
-> -
->  static void tegra186_gpio_irq(struct irq_desc *desc)
->  {
->         struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
-> @@ -700,7 +690,6 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
->         gpio->intc.irq_unmask = tegra186_irq_unmask;
->         gpio->intc.irq_set_type = tegra186_irq_set_type;
->         gpio->intc.irq_set_wake = tegra186_irq_set_wake;
-> -       gpio->intc.irq_set_affinity = tegra186_irq_set_affinity;
->
->         irq = &gpio->gpio.irq;
->         irq->chip = &gpio->intc;
-> --
-> 2.17.1
->
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-Thanks for the very descriptive commit message!
+[ Upstream commit 5859c926d1f052ee61b5815b14658875c14f6243 ]
 
-Patch applied.
+pm_runtime_get_sync() will increase the runtime PM counter
+even it returns an error. Thus a pairing decrement is needed
+to prevent refcount leak. Fix this by replacing this API with
+pm_runtime_resume_and_get(), which will not change the runtime
+PM counter on error.
 
-Bart
+Link: https://lore.kernel.org/r/20210408072700.15791-1-dinghao.liu@zju.edu.cn
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 6fa216e52d14..0e94190ca4e8 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1645,7 +1645,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 	if (pcie->ep_state == EP_STATE_ENABLED)
+ 		return;
+ 
+-	ret = pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+ 			ret);
+-- 
+2.30.2
+
