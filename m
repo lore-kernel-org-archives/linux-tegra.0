@@ -2,138 +2,146 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBADC43461
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 May 2021 08:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A04BBC433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 May 2021 09:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88F4461205
-	for <linux-tegra@archiver.kernel.org>; Thu, 13 May 2021 08:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2A861182
+	for <linux-tegra@archiver.kernel.org>; Thu, 13 May 2021 09:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbhEMJAY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 13 May 2021 05:00:24 -0400
-Received: from mail-bn7nam10on2064.outbound.protection.outlook.com ([40.107.92.64]:10977
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232332AbhEMI7v (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 13 May 2021 04:59:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ABMR82ry4g86JUH4aPiveY0MrZrPm10D7YCd745paMwJP2LUrdAQyXG52Q88pZKPJzTM/zLEEGaMfybrJN6USoRU7/gTwoQeYhu2LdJ5Zab+KNyN226Dfx/3ry8krS9ehOArOmBFDLKh06BBR846ZR3miFZS9lVXHS2L523migtnqWNKIUfNW78LUoqT01g+iWESKsfT0oReQe2UFd/pDzgXjsD/xnSxaZBkmdOJGawKeuAmKsd8ePHFmhRY9gYXRPknoprWf77Vpia9VdZtbs3Gwg1RQn6p0Gbvu878iCoiSwQ+Bc1ckOJUU+zDAHmApQCscxXqKTPL0RdOABRNGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jdJCSry0Xkb2IpmcHmWqk7Lho9topd+p5C/1Zeb2WSg=;
- b=D4UeCKI1oYYWx4fyVfJLqpO/0Qyo7Hl93EA+HsWyRyIEFZkIl7I1xlgfBPnnF6BgLBSYv/feixbsH4QYodIWuho6BmNChkrefqjisMkQtPbZMCjWEtSBCrYWJmmK3R5dqR3WrsgpBY+rJX3IARtXt10k5H6u9YAJVBfda3d+tS7U+wFtfDbjiNZasrRA1CxJwexL/fNHUIBKaAkiPMv/GJi2y9EkGWXW3WUpnwOgV9aoY8KTz2FkBhukb/K3ojhiVL33W5fQFQ/AJ1zD24PRfDag/aSkZnm2xBjeTrE1rj9mvNrMz9hx/9FbdWBSQkaTH8F3DnwTAbyg4tw4K0lxUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jdJCSry0Xkb2IpmcHmWqk7Lho9topd+p5C/1Zeb2WSg=;
- b=fnKV61dO1mGHKV6JB3VcHgZzHiKGWZlW8Ay6CTxCiApgQuwXGVhvjkRoF6ezEM3guvMWipJrloLXpjQaBKimKvkFViKGg/Kz6TZyEdagf8KCghGjl+ul05DZ4T8cIvOtBErSA5qQ93EOsgmVGiyWvUktmGXJHd3KftuRZRKuXnorF5KpM/qwjDxXKVRd4R38ER+jsYEqK60SBW5oUCvP3EtOGQY1KiVAuSLWXTAMrXodmDOPw4DFHAICLcLSTdb/o7RaLXUtd4bofTo/bz1cngtvgBL6N3sjArPgSuW08noNWdN5oPa1CgiQ7VRMRsyq/D/r/sR7VV8vXI+dImnNCg==
-Received: from DS7PR03CA0223.namprd03.prod.outlook.com (2603:10b6:5:3ba::18)
- by BN6PR1201MB0146.namprd12.prod.outlook.com (2603:10b6:405:59::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.24; Thu, 13 May
- 2021 08:58:38 +0000
-Received: from DM6NAM11FT023.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ba:cafe::ba) by DS7PR03CA0223.outlook.office365.com
- (2603:10b6:5:3ba::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend
- Transport; Thu, 13 May 2021 08:58:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; arm.com; dkim=none (message not signed)
- header.d=none;arm.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT023.mail.protection.outlook.com (10.13.173.96) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Thu, 13 May 2021 08:58:38 +0000
-Received: from [10.25.74.214] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 13 May
- 2021 08:58:35 +0000
-Subject: Re: [PATCH -next] PCI: tegra: Add missing MODULE_DEVICE_TABLE
-To:     Zou Wei <zou_wei@huawei.com>, <thierry.reding@gmail.com>,
-        <lorenzo.pieralisi@arm.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1620792422-16535-1-git-send-email-zou_wei@huawei.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <241d64eb-44e4-a838-a07a-8127c189a1c1@nvidia.com>
-Date:   Thu, 13 May 2021 14:28:33 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        id S232627AbhEMJcr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 13 May 2021 05:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231954AbhEMJco (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 13 May 2021 05:32:44 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60287C061574
+        for <linux-tegra@vger.kernel.org>; Thu, 13 May 2021 02:31:34 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id z17so7194603wrq.7
+        for <linux-tegra@vger.kernel.org>; Thu, 13 May 2021 02:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=K2KX3N3qEtXhLRhml3Iacue6w4dhQzMo6cc0mTtnvQM=;
+        b=r0pHg9wLk+EkYR5JCrgzCwvxfLOJCEKZ7rlImrKtZJl/RFxusIlb/dHrHqumPtHekw
+         TuV6M6W+5C+88MZcMWoYC03FLTQRmP+HZMlOaDrQZ05FPxs039l9uS8pmlV0dKcHMLz5
+         CUqwLbiwuftKZoH8oiGOepbGAFDSG4Xu5+/lPafGcdhEnhzFZdCxQq3GbaAARfd4JsuT
+         kHeqskEgSV555dWibYEfk/fmA7mMm6ZrQ1QRkSy9E8MD6r3u6nR2yInb8/OXA+SqhpjS
+         pZLrEoh296DZ+mareJMyQNItfC2RAfn4QvCt91FAO4gpzmeg8UIwAnQk+eaJMz+vsqlG
+         BA4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=K2KX3N3qEtXhLRhml3Iacue6w4dhQzMo6cc0mTtnvQM=;
+        b=kllWw+byNA5jmf258WXY0b5lWGC6w+lH1fmTP8XZVwq5AvAn9i0VqKaBjgtDReao1h
+         o5wwFS/qP3xCiwfrdr+HIpXuU3x5rvG5jpahCQnApWp5WCdjZC2MIwUn13X+m7wvMNjK
+         k4ETTNmmoS8jL/R0RUfwylCEcR4S3STBnNOtQ6Uyr8qjH5oqoEym3Efc3tu2YMDu2MnR
+         PY+BLnMpz1pSmTMw3xup2IzfqXBzunkDQvlbsf+S4CBFGPhvhZmIxECt3RrFtzoVg3F2
+         89m4UFItLwtLo847EvYD7Zpa2M91bms5zX7gF7xMRFnhzgRq5c+3zpzpig7luJUfynMy
+         oyTQ==
+X-Gm-Message-State: AOAM531bMeVIbtYBrxNPX9AyTu2aQ2seW2jtdgbfavZEC3oPFITgf7S8
+        3+4ms1EU1Uz5erA460ZeptCG4A==
+X-Google-Smtp-Source: ABdhPJwmID9w2Hp1ruXNrBudSly/39AHF+tVW4EuRSQip8bKri1BbA6tswXSbk2m1ujO+jkvowzwUw==
+X-Received: by 2002:a05:6000:2cf:: with SMTP id o15mr15604521wry.243.1620898293114;
+        Thu, 13 May 2021 02:31:33 -0700 (PDT)
+Received: from maple.lan (cpc141216-aztw34-2-0-cust174.18-1.cable.virginm.net. [80.7.220.175])
+        by smtp.gmail.com with ESMTPSA id f3sm2252580wrp.7.2021.05.13.02.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 May 2021 02:31:32 -0700 (PDT)
+Date:   Thu, 13 May 2021 10:31:30 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, JC Kuo <jckuo@nvidia.com>,
+        Joe Perches <joe@perches.com>,
+        Sumit Garg <sumit.garg@linaro.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 2/4] kdb: Switch to use %ptTs
+Message-ID: <20210513093130.qzbh6tm7lbclgayh@maple.lan>
+References: <20210511153958.34527-1-andriy.shevchenko@linux.intel.com>
+ <20210511153958.34527-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1620792422-16535-1-git-send-email-zou_wei@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dfac91a3-78a1-402f-0c98-08d915ed4c9b
-X-MS-TrafficTypeDiagnostic: BN6PR1201MB0146:
-X-Microsoft-Antispam-PRVS: <BN6PR1201MB014610B0CD1589B9956D014EB8519@BN6PR1201MB0146.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wzqQQIR1UDtq399FoxXq2qhlTLat9burzVUInRNCNI2fQDPeUN5hqWo+wr4YhvMGamWiiSwUqYZG/j6JhyG16vH+yoCV+YRGJp5Ww3w6CbLkHf2u9crW4GVEPAi/qWOSLEXN/Mg4c2iPc73TdvItWuVelxd/MXhoZy4b2UQA+SAGX4avFnPjdACAntkNbsN+QB0T4FThuqCjqVsfHauDa+eAsCaneUITxeXC4REVz7F43gdizA0xQgZo0VtUsrQoIHQ842cku6uzM9g9CwAFWnn0GctzoSKGaSqktGz/+enq+FndR3D20g5ZQLpOvBDiCcueookpiZddM3e/SYyEGdxD1db0bIB0NLnQdp9FWvInknu7CSAf5Xvt8Cl5n9JOQ+RcHgx2F81bACYEMoU0U1HlIcGS07nn7jbG1lkmyYj7VWtGboqDGTUEgygJC8io7v1JJ6WlnJT6mXrKr5LAQR4NCrqJu/sfpbQ4qY0cd06s+fVyRPZnrlwgzOIDshW21c6IT6IwoMdt4GVZzPsFOiF/CHIVuiI4Cs3TmEGZ9egxxAg/ONSSyWqnaw7Deg6dECe83scE2XVpMchckygohQe070wCwvBiKnlbC/NERK/y71ndMEhw2fU06v3D15JtZ5hi0Y9rdEiVYCunPm6rf0VeOlYlC5Q39HVokHRbDJ5ehgDhxT3BHdOhkWukOi9u
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(39860400002)(346002)(396003)(376002)(136003)(46966006)(36840700001)(53546011)(47076005)(26005)(8936002)(36860700001)(110136005)(70206006)(2616005)(2906002)(70586007)(54906003)(356005)(82740400003)(426003)(86362001)(36756003)(16526019)(186003)(16576012)(478600001)(36906005)(5660300002)(336012)(4326008)(8676002)(7636003)(31696002)(82310400003)(316002)(6636002)(31686004)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2021 08:58:38.5198
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfac91a3-78a1-402f-0c98-08d915ed4c9b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT023.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB0146
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210511153958.34527-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thanks for the patch.
+On Tue, May 11, 2021 at 06:39:56PM +0300, Andy Shevchenko wrote:
+> Use %ptTs instead of open-coded variant to print contents
+> of time64_t type in human readable form.
+> 
+> Cc: Jason Wessel <jason.wessel@windriver.com>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: kgdb-bugreport@lists.sourceforge.net
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-On 5/12/2021 9:37 AM, Zou Wei wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zou Wei <zou_wei@huawei.com>
+Any clue what route this will take into the kernel? I'm certainly happy
+for someone else to take the kdb bits alongside the vsprintf stuff
+(so here's an acked-by too in case they are fussy about that sort of
+thing ;-) ):
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+Daniel.
+
 > ---
->   drivers/pci/controller/pci-tegra.c | 1 +
->   1 file changed, 1 insertion(+)
+> v2: collected tags
+>  kernel/debug/kdb/kdb_main.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 8069bd9..c979229 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2539,6 +2539,7 @@ static const struct of_device_id tegra_pcie_of_match[] = {
->          { .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie },
->          { },
->   };
-> +MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
-> 
->   static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
->   {
-> --
-> 2.6.2
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index 1baa96a2ecb8..622410c45da1 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -2488,7 +2488,6 @@ static void kdb_sysinfo(struct sysinfo *val)
+>  static int kdb_summary(int argc, const char **argv)
+>  {
+>  	time64_t now;
+> -	struct tm tm;
+>  	struct sysinfo val;
+>  
+>  	if (argc)
+> @@ -2502,13 +2501,7 @@ static int kdb_summary(int argc, const char **argv)
+>  	kdb_printf("domainname %s\n", init_uts_ns.name.domainname);
+>  
+>  	now = __ktime_get_real_seconds();
+> -	time64_to_tm(now, 0, &tm);
+> -	kdb_printf("date       %04ld-%02d-%02d %02d:%02d:%02d "
+> -		   "tz_minuteswest %d\n",
+> -		1900+tm.tm_year, tm.tm_mon+1, tm.tm_mday,
+> -		tm.tm_hour, tm.tm_min, tm.tm_sec,
+> -		sys_tz.tz_minuteswest);
+> -
+> +	kdb_printf("date       %ptTs tz_minuteswest %d\n", &now, sys_tz.tz_minuteswest);
+>  	kdb_sysinfo(&val);
+>  	kdb_printf("uptime     ");
+>  	if (val.uptime > (24*60*60)) {
+> -- 
+> 2.30.2
 > 
