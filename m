@@ -7,73 +7,74 @@ X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97216C433B4
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 22:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292B1C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 22:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E02561186
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 22:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F410061454
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 22:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232475AbhENWS5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 May 2021 18:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44484 "EHLO
+        id S231616AbhENWTR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 May 2021 18:19:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbhENWS5 (ORCPT
+        with ESMTP id S229940AbhENWTQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 May 2021 18:18:57 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47939C06174A;
-        Fri, 14 May 2021 15:17:45 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id o8so274656ljp.0;
-        Fri, 14 May 2021 15:17:45 -0700 (PDT)
+        Fri, 14 May 2021 18:19:16 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D378C06174A;
+        Fri, 14 May 2021 15:18:03 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id h4so530356lfv.0;
+        Fri, 14 May 2021 15:18:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=O1jDJoBF1IIxiwPu5dY/r3QCpZYHEApy1Q8WasD1I74=;
-        b=XOe6oz1eSrcyvbewViSVlBdGbWmi+LlldjNnFiaBZEXu6jap0XmE4v25SMXvAt2e6k
-         N9IoyrINuZQtJn46kcbzkD2gyRrIeLUh7rRZcmTCXa7C41G3gvd0+mRT1ZiF571KFdgW
-         e0YMT/r9quhCN4jWlF6iE4ePJakggJK5CPA1P044fN6/N+JOs5G57+T+16bawLPX1W5K
-         0cz2UctZYeCQ5QD8jugq7HuMrlacTAhJOdX7oV0D/IPDt8AeRwZ7GvwPAci/KkKYadMJ
-         uh9vNhPbtXIa2+pmOM2iw0Q77rNgtrAEOW2pWHIpr78TaYwHbPG5raPQhPcOJGsz+qB1
-         rIVA==
+        bh=sSuwnMJwt5TkKzd21q3ncqH2PcAU+59JiCcaK8Su3ls=;
+        b=jdjutopzVNNN7D++SEKeSXxMHEWc3CSDfc5/qC9F00pLkzjPx67A8PBghXQruxJVnI
+         lMIzQig/xUAPi520/jVmaj/zX/2Y7etTp0dnKZvP1vXVIBnv6ioG2EQ3/FDgwD1Y9cYi
+         F270hOlCRFN2LtBBLTEbBD44j2EZyRwP7lEgheBYSMVdrxIUhitEGFAqSbzbAr06mvmE
+         /ZAYKsSyzOAvL2kyjBBBYxwInJeK0+G1WB6UXEj2YX1nPbspDeXMw/aQKTNUO6jcrej9
+         m2g0il3U3pVWqpFpoPdqHzFcQha3H81XOYGujmqAJKf9EfldgfNP7y4x50Vk1+KEz1LF
+         oyJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=O1jDJoBF1IIxiwPu5dY/r3QCpZYHEApy1Q8WasD1I74=;
-        b=n4k+2q2PpAm0NJQqZ9rCPvKE2o6gauuyiz/pI5UpKnLdLDPDevnDryz0dxdsAzAgyB
-         FZaluFQMcjwdph+60JD1Rl2rfSFyzTWr9CShg2WYVk6vaXij6fft83/p5TmUhpTqCtVl
-         BqsHKtBWXHf/3wLYai17syJPF43tN4WHQ6eYihpV5v2JXV5aGJqBNTY5IcWrcnN0Huv3
-         /zrbJoINYutwSv4hHYgLmZaJjyM/pNDeknDSTiUmNaX3XAX29Mj90sc15rXuarDFfZFr
-         hfzCnkyrmHkI34ML45I568utexmLqtxCps+I6cTnys5oPj6FWAtwleKEJ+uur6XFnxjS
-         6aRw==
-X-Gm-Message-State: AOAM533DK/7n/Y/AKYEFAWEclrdlIXlVvMT8kG7HFjrZQm22sYhCE3t5
-        rNj9aQC25wcFFrzOdNEjU4gz7f5eLo0=
-X-Google-Smtp-Source: ABdhPJwPQuk4D+DULcz+oF1lH/aCd4AZW2B2bjMwnM3wqyDIGoWSC1BZsOQ9zXlhKTNgc4Bl8dUVdg==
-X-Received: by 2002:a2e:99c2:: with SMTP id l2mr38438446ljj.125.1621030663504;
-        Fri, 14 May 2021 15:17:43 -0700 (PDT)
+        bh=sSuwnMJwt5TkKzd21q3ncqH2PcAU+59JiCcaK8Su3ls=;
+        b=P2oajS2AVfRv9d/pmPNhK31sBdzu1aS7oSPR4MSgQWpinuptJ07CcYj654uozIBuzt
+         +9oC68h4ikTDbAv2mAe21CxqtLw8ZkiR96Ihfwmozx2DUg2HQwltg8Fjq3QhkB4rZ1oN
+         i2kGmItHOlhvTGwIFFsTKbEbmJswBiqeiALcuKz8L0vQb7hBnhqYQ5IubunHYwB6wjd1
+         hR95Bn7r8Ky5LJ4tXHn2KBRPS6qskoUT+IrdHn8sXlHcVFX9yxx2BkC6B35l+lelF5tq
+         CyuS7IbCUkpZYFLuYW4BEs0yTV1C/D5cS97+atFLM3rGGfEtR3/Ewc1X2k7b5pZ8RLa+
+         valw==
+X-Gm-Message-State: AOAM532CP0OyCuNAo89ePuCsySkv7uq1CBe+iq+nRuxstdilImpgmAX/
+        go1Y9dyobW/HGACEv5fOsK5fa7N7OeU=
+X-Google-Smtp-Source: ABdhPJx6s2KmvRqKK5Sx3043r+5lEkFhJIASs1bCmOy60xh+0wm2AG0ray6aCJKmL3gk/EBkzAjh8w==
+X-Received: by 2002:ac2:4e0a:: with SMTP id e10mr32370473lfr.33.1621030681817;
+        Fri, 14 May 2021 15:18:01 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.googlemail.com with ESMTPSA id t10sm1487311ljj.44.2021.05.14.15.17.42
+        by smtp.googlemail.com with ESMTPSA id b18sm686268lfp.20.2021.05.14.15.18.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 May 2021 15:17:43 -0700 (PDT)
-Subject: Re: [PATCH v1 03/10] ARM: tegra: acer-a500: Bump thermal trips by 10C
+        Fri, 14 May 2021 15:18:01 -0700 (PDT)
+Subject: Re: [PATCH v1 0/2] Restore voltages before rebooting of NVIDIA Tegra
+ SoCs
 To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Agneli <poczt@protonmail.ch>, Paul Fertser <fercerpav@gmail.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210510202600.12156-1-digetx@gmail.com>
- <20210510202600.12156-4-digetx@gmail.com>
- <20210514211601.GA1969@qmqm.qmqm.pl>
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210510220526.11113-1-digetx@gmail.com>
+ <20210514213251.GB1969@qmqm.qmqm.pl>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d961df59-49fe-94b2-fc1c-7ed3ead6abd7@gmail.com>
-Date:   Sat, 15 May 2021 01:17:42 +0300
+Message-ID: <5047e49e-fa86-1e9d-a114-cbaf31f5b86b@gmail.com>
+Date:   Sat, 15 May 2021 01:18:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210514211601.GA1969@qmqm.qmqm.pl>
+In-Reply-To: <20210514213251.GB1969@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -81,21 +82,19 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-15.05.2021 00:16, Michał Mirosław пишет:
-> On Mon, May 10, 2021 at 11:25:53PM +0300, Dmitry Osipenko wrote:
->> It's possible to hit the temperature of the thermal zone in a very warm
->> environment under a constant load, like watching a video using software
->> decoding. It's even easier to hit the limit with a slightly overclocked
->> CPU. Bump the temperature limit by 10C in order to improve user
->> experience. Acer A500 has a large board and 10" display panel which are
->> used for the heat dissipation, the SoC is placed far away from battery,
->> hence we can safely bump the temperature limit.
+15.05.2021 00:32, Michał Mirosław пишет:
+> On Tue, May 11, 2021 at 01:05:24AM +0300, Dmitry Osipenko wrote:
+>> Hi,
+>>
+>> Nikola Milosavljević reported that rebooting wasn't working properly on
+>> Asus Transformer TF101, which is Tegra20-based tablet device.  We found
+>> that TF101 and some other devices have bootloader which doesn't re-initialize
+>> voltages properly on a reboot.  The problem is resolved by ensuring that
+>> SoC voltages are at a levels that are suitable for the rebooting of the
+>> SoC before reboot happens. This series adds reboot handler to the Tegra
+>> regulator couplers, it bumps voltages on the reboot event.
 > 
-> 60^C looks like a touch-safety limit (to avoid burns for users). Did you
-> verify the touchable parts' temperature somehow after the change?
+> Which tree does this series apply to?
 
-The SoC is placed under a can. Both front and back of device are large
-metal planes which dissipate heat efficiently. I don't recall A500
-getting hot ever and I'm holding it in hands every day. From a user
-perspective it may feel like a part of device getting slightly warm in a
-worst case.
+It was made on top of linux-next, but it should apply to 5.13 as well.
+What conflict do you get?
