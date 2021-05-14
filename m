@@ -7,65 +7,67 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7A4C433B4
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 21:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFE0C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 21:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52AD86140A
-	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 21:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2C0D61440
+	for <linux-tegra@archiver.kernel.org>; Fri, 14 May 2021 21:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbhENVRQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 14 May 2021 17:17:16 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:58942 "EHLO rere.qmqm.pl"
+        id S232176AbhENVeF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 14 May 2021 17:34:05 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:10895 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231945AbhENVRP (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 14 May 2021 17:17:15 -0400
+        id S230309AbhENVeF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 14 May 2021 17:34:05 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4FhhCQ0FZsz4w;
-        Fri, 14 May 2021 23:16:01 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4FhhZr1Vpfz4w;
+        Fri, 14 May 2021 23:32:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1621026962; bh=li55lGDO2GrPKLCNo9+gsmtWn3R9e7IO3cLh0c4NkYQ=;
+        t=1621027972; bh=Djm/NR5a0wmp9qybZtVtvTmKM8xCKGXtXFxIgYAHFw4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VtQ3TfkA2B4wA5zn6P70Lc9Wrup+ow437GAFHLAnmODi2cfZtGtzuM6X24HbTn2rK
-         7tgga6wEBmMkZBWAGwqjG5qJO16cJ8sbKknkht/XYfNNCgubMxLo+wg/yxVNyL955O
-         lgocRwhop70I9pMaH4E8qKGVKUiv/Ho+MAQtv7SLV6NGvLk5bjFnk5Cx8gHbnQnqrZ
-         gFomyxCsvrLFpuCcfNIxaTB4QIt610tBAlX4tht9Nx4sMUyuCQFViNMiE7cW1KVn6j
-         +0dyv+P0Vf/00u9SN6jZRBsfX4b/RrGWLaz2SJGcZiOWLA8++/1PpbhmuvJKZ0dw7U
-         66VhSvyHGMvyQ==
+        b=Zn7nMib/DFbb0KOqI5CWVItFDkR/tWNGfUnulNLRCBMoXZwPJobyqrP0mW9jEYL8y
+         K6zLsH+lT2WETFc7a2lKt+Z62a1olLjVywMmMTST0aatFTsrxFaV0JCLBeqJZKYIux
+         cMRNg2HNiE85v0UgeizA/vUEkce8UfW04xLjUJfVOSQ6bwMIbU/o50HJHWnNrQCE+c
+         GJkKNZtVR8+3hBuQFciPeiYDLLvIDqsJ6Zb3r6//KawpephHQZ7C0/6iZNSne7PKRs
+         vUl42YDpP7vlHTR8CqmSCfOFQ8sqXxZvsbSrVaEbs2lFM3BOOVkoNmjCnSefYVxx/p
+         NRFTudhvqK2uw==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.103.2 at mail
-Date:   Fri, 14 May 2021 23:16:01 +0200
+Date:   Fri, 14 May 2021 23:32:51 +0200
 From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Agneli <poczt@protonmail.ch>, Paul Fertser <fercerpav@gmail.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 03/10] ARM: tegra: acer-a500: Bump thermal trips by 10C
-Message-ID: <20210514211601.GA1969@qmqm.qmqm.pl>
-References: <20210510202600.12156-1-digetx@gmail.com>
- <20210510202600.12156-4-digetx@gmail.com>
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Nikola =?iso-8859-2?Q?Milosavljevi=E6?= <mnidza@outlook.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Restore voltages before rebooting of NVIDIA Tegra
+ SoCs
+Message-ID: <20210514213251.GB1969@qmqm.qmqm.pl>
+References: <20210510220526.11113-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210510202600.12156-4-digetx@gmail.com>
+In-Reply-To: <20210510220526.11113-1-digetx@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, May 10, 2021 at 11:25:53PM +0300, Dmitry Osipenko wrote:
-> It's possible to hit the temperature of the thermal zone in a very warm
-> environment under a constant load, like watching a video using software
-> decoding. It's even easier to hit the limit with a slightly overclocked
-> CPU. Bump the temperature limit by 10C in order to improve user
-> experience. Acer A500 has a large board and 10" display panel which are
-> used for the heat dissipation, the SoC is placed far away from battery,
-> hence we can safely bump the temperature limit.
+On Tue, May 11, 2021 at 01:05:24AM +0300, Dmitry Osipenko wrote:
+> Hi,
+> 
+> Nikola Milosavljeviæ reported that rebooting wasn't working properly on
+> Asus Transformer TF101, which is Tegra20-based tablet device.  We found
+> that TF101 and some other devices have bootloader which doesn't re-initialize
+> voltages properly on a reboot.  The problem is resolved by ensuring that
+> SoC voltages are at a levels that are suitable for the rebooting of the
+> SoC before reboot happens. This series adds reboot handler to the Tegra
+> regulator couplers, it bumps voltages on the reboot event.
 
-60^C looks like a touch-safety limit (to avoid burns for users). Did you
-verify the touchable parts' temperature somehow after the change?
+Which tree does this series apply to?
 
 Best Regards
-Micha³ Miros³aw
+Micha³ Miros³aw
