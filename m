@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B88C43461
-	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 21:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B37C43460
+	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 21:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E341E61159
+	by mail.kernel.org (Postfix) with ESMTP id D6120610C8
 	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 21:13:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233899AbhEPVOf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 16 May 2021 17:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35454 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233870AbhEPVOe (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
+        id S233721AbhEPVOe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Sun, 16 May 2021 17:14:34 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDDCC06174A;
-        Sun, 16 May 2021 14:13:17 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id w4so4802567ljw.9;
-        Sun, 16 May 2021 14:13:17 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233863AbhEPVOd (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Sun, 16 May 2021 17:14:33 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DA0C061573;
+        Sun, 16 May 2021 14:13:18 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id h10so5821400lfm.7;
+        Sun, 16 May 2021 14:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ueM1JtdL2WEXVwCBbL9rRWyabHSIsAzV58fGIccOqXs=;
-        b=ByY8TO2C1uEAXr1F3CypAxnTUfK/0fFIAoFZkpVirU/9/aNtE1L7ppLtBl7hynIt8e
-         VIv3l7tYX6bASjAJ+qf2Y1NbkR8CbFBGpiiWogo9wCg8i33EqP+/A8HuTHZjm6QxNIHB
-         wyP+u34A+f7AohY21/HtPZiani/BtLc5uj4Net2cuISyFeYWIY08qgMwB58Ct+wVyCf/
-         SU+lgm8U62nuJzimuJmOojIt2Upwmvl7ufqrFM7QMzG8HmBk9+lnGgNrvdHPgQGFj5dR
-         U2lPG1j2QSXCP+ke7sDgHoDg0cvkdQywFr+1OiudO2+Zr+kCuXO10c+gsAUJw6YLJhGG
-         dKfQ==
+        bh=tBewSlIx5ZiP13Gkx/3IvP55YYjnedIAupIhadAqOmw=;
+        b=rtqFD34JCHRkmMEE049oMG09fGVImJlbH/tFIZ55qtJZh856UJBYJu3DDVX8TTuRGM
+         CNr9R6g6Z3QpRU3WaGUW71sB9H8VldJOME4+t0nRfS4xgcwSTikXQYQXVkGG4pSjnDEQ
+         q3RywhITxMecowbyjXRvf05a7+4iA7SUIrLhrmpSSNNAZirrGQph8PPqSEInF/DyZPKQ
+         +Pg68s7zXA06yT3P//1zk5F5oWIzvDDFgcISSYCy95ggO2F2lb7wPWOyzCz/AxOn6liy
+         q41EGWf92Tv1ccRFoT45UmvA1JRz2kZdUdYWebg7Q1VAiSJXmet3/7tSlmKQDDg8MpFy
+         9QyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ueM1JtdL2WEXVwCBbL9rRWyabHSIsAzV58fGIccOqXs=;
-        b=AX+zSBDQyuUakf5X0Z1nvFwx01TTgL39kwVvHyUL1MsjazGRUYe8772e2oguDW93J3
-         NyGkowe5lQWyj28joYWPW9QIylMa0bshdSCmcT5s/4/fZr+l+AA9duRORzBReJKPse5K
-         39rPVN99l8CI1b8McD7tymM9Qrp1c7HSPqPyKP8wDknvx7Qv3XFmLNmNw4PUL1iXRn7A
-         72bnq2FJ/foiB1yyvdOPCKwAKn2CpunJDN2MxpfX+ZveT/iJzJ1C3KLwjAY493+04Rl4
-         p5dGHApT42qy2bfx8x0svcSIn4bz4lk4IuMrEOIWtPYlKQV8S2lr5x1rBf+0HD4S7IDB
-         s9vQ==
-X-Gm-Message-State: AOAM530cRnkOiQ5LL/bRAfO7ubCPTViQMfe7xVPQhQuYWBMM2r7AXiZb
-        jcIlC8pz4KhTEfllG6aErjc=
-X-Google-Smtp-Source: ABdhPJwIY29VsnxKPTv8WNG7iibZ9VH5/JvBTSBP6Kcj3hgUWojRv3fpFFrgBDl88JRpMBjNohevZQ==
-X-Received: by 2002:a2e:a167:: with SMTP id u7mr45725273ljl.495.1621199596385;
-        Sun, 16 May 2021 14:13:16 -0700 (PDT)
+        bh=tBewSlIx5ZiP13Gkx/3IvP55YYjnedIAupIhadAqOmw=;
+        b=gAmxHHk6Y/bW6oKiZXM+k+fxzCiwjU8wBzc0ujLBd97IZEWp9RMjxL5eV0byXeIvqD
+         Jvkxkbo5JakaIuSIi3ggWyvcTHR1fxOUBmd3KYm+ZoXt6B/gdmcvdUAd6XA+Vb6P4EeT
+         vf37dfyWVnpyDzQ/O2y2RStvlqqZOnNxadSpiq8LWgHgAtCVBuREf2xZIs/C6IJ6hQEQ
+         D+VR2uCXzhVY2w3iKqUaoyrsDoWBZTRup0cnhaCXC7+0K3cvHyZi2oKqG9OOW/eGQw0E
+         tp2OIcYZG4gc8ac3ROMCLYdXvH2OtAvqrhXWXvjNWnY6UgGO+znrFn5aFaXLuCuKqxjU
+         sFeQ==
+X-Gm-Message-State: AOAM533g0kmxUfmEvKa1l4+gd4n+h+VNNPNRsnMSBl9PLcWQjoaJDIXf
+        tsZjyvF4qqYu8HTNxBITDIHpaGTDNAY=
+X-Google-Smtp-Source: ABdhPJya1HCfYZJjxtlkC+Avc2PzRfBGddvw2uxw5cJCVsadswkW3HU3Fz4V0uL0KwXOn8PvJP00iQ==
+X-Received: by 2002:a05:6512:c04:: with SMTP id z4mr38673200lfu.167.1621199597033;
+        Sun, 16 May 2021 14:13:17 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id q27sm1768785lfd.266.2021.05.16.14.13.15
+        by smtp.gmail.com with ESMTPSA id q27sm1768785lfd.266.2021.05.16.14.13.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 16 May 2021 14:13:16 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] memory: tegra20-emc: Use devm_tegra_core_dev_init_opp_table()
-Date:   Mon, 17 May 2021 00:13:01 +0300
-Message-Id: <20210516211302.32404-2-digetx@gmail.com>
+Subject: [PATCH v1 2/2] memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
+Date:   Mon, 17 May 2021 00:13:02 +0300
+Message-Id: <20210516211302.32404-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210516211302.32404-1-digetx@gmail.com>
 References: <20210516211302.32404-1-digetx@gmail.com>
@@ -83,24 +83,24 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Use common devm_tegra_core_dev_init_opp_table() helper for the OPP table
 initialization.
 
-Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20
+Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 48 +++---------------------------
+ drivers/memory/tegra/tegra30-emc.c | 48 +++---------------------------
  1 file changed, 4 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index da8a0da8da79..a534197a5fb2 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -908,49 +908,6 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 829f6d673c96..239074c5ff75 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1480,49 +1480,6 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
  	return err;
  }
  
 -static int tegra_emc_opp_table_init(struct tegra_emc *emc)
 -{
--	u32 hw_version = BIT(tegra_sku_info.soc_process_id);
+-	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
 -	struct opp_table *hw_opp_table;
 -	int err;
 -
@@ -144,15 +144,15 @@ index da8a0da8da79..a534197a5fb2 100644
  static void devm_tegra_emc_unset_callback(void *data)
  {
  	tegra20_clk_set_emc_round_callback(NULL, NULL);
-@@ -1077,6 +1034,7 @@ static int tegra_emc_devfreq_init(struct tegra_emc *emc)
+@@ -1568,6 +1525,7 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
  
  static int tegra_emc_probe(struct platform_device *pdev)
  {
 +	struct tegra_core_opp_params opp_params = {};
  	struct device_node *np;
  	struct tegra_emc *emc;
- 	int irq, err;
-@@ -1122,7 +1080,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	int err;
+@@ -1617,7 +1575,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
  	if (err)
  		return err;
  
