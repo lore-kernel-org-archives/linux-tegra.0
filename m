@@ -2,148 +2,180 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFC2C43461
-	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 16:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AC9C43460
+	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 16:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E19C610A7
-	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 16:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7C4261074
+	for <linux-tegra@archiver.kernel.org>; Sun, 16 May 2021 16:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232564AbhEPQOe (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 16 May 2021 12:14:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54520 "EHLO
+        id S231772AbhEPQcS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 16 May 2021 12:32:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232143AbhEPQOc (ORCPT
+        with ESMTP id S229955AbhEPQcR (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 16 May 2021 12:14:32 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4152C061573;
-        Sun, 16 May 2021 09:13:17 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id w15so4286453ljo.10;
-        Sun, 16 May 2021 09:13:17 -0700 (PDT)
+        Sun, 16 May 2021 12:32:17 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85DFC061573;
+        Sun, 16 May 2021 09:31:00 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id c15so4327335ljr.7;
+        Sun, 16 May 2021 09:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8C9VSduIj0bVkjklKXJSAmIEYwrf0xWcWWaa+mCbouw=;
-        b=Fr07QrljGWl91M4gbvmbRPzsTgy9tEJ6zkWGLccvWZAEngDvbonl1upewQXOcxCAyJ
-         tLUEC/96/VsyjEHGVeCibP06ViE0gYdlbTpmJxyKbIm02OyzCgcKomAx0qwiC/4fAKkE
-         My93IKYhWZQuyTzLxr1TcTztKmdtH8U9Pt4LckVkaUK9sgu+x5lpi/shW9n4YLFyBwKR
-         06OBUhxbK/jFu9PEc3ZP4YYA1W8jdqNa2bzRcvLBb7uN+etGv2JeO735GO4tvAjarXbU
-         Mcov6c/GFC1ehlZR62+x/DYVFUWLjlVQ2svughqUu+sCoRyg37HgwCRfcLpmNTB1U69i
-         etSA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fxlBfjD9rrdff0l547dFdguKUyG+OHefR+tkmXlzxcQ=;
+        b=NDeXlZayRPolYdbkFXX5VpsJnlg2CG0s7eQ1fOfYv3FdOBRki2jfachJ4bo2VatHxL
+         cVtVkQwKjQB97s5c96i5RMoVwUltne2CIIdyMfqF5wt1lRCPBTRCTzM8WWtIr6PwC5df
+         kDr4oH1HrWG+c86taJMmIcmyg/IGTmLwbk7IVK7pSMuFX315JM3DUkWQVBYO2yPFGBAP
+         MY0C0nCT6oOUWD5VEejcpPqTmtz6RL4QD0XbHN/vYt+JqV7BirmtJhqwbCgblc7c+uCw
+         jbjlFZ1RnQSBU/4rOtAQUBlvbyC2HJmwsEw6mt2lNwg40C+nOONaBtXhUGfrrnIZCH35
+         R3EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8C9VSduIj0bVkjklKXJSAmIEYwrf0xWcWWaa+mCbouw=;
-        b=UPqMN+4RCKHf4PCx+/ne32CT//YfjsEZlvAu1e408b/l6YsJd991KE5Ivv+aU3Gv4Z
-         X3SFx/ISm+BflK/DM8c8gqs+o6zvUgWQ/qpyOZDIfsOz8WpKGn13mw45sdK1EmXU37rt
-         GlhU4Or8w27h2ln3QexXkeYk29PGikXwAi7cQb49lc5KXad+VBRhb2CdAWtlG14TbFAJ
-         Gn/uBFhpKs7Y8eNBDdf3Es5Pq1pWZdIp3cqguZ2Ip/fDyrXSjfHd3OrtTlDJUvK4fkTc
-         mZq7eo9QoU3+sQCLQ0W2+8+i99P9Uw5FWU75yWFfIAByi7LKYQeevZeyHfzruO+/JrHT
-         RX+g==
-X-Gm-Message-State: AOAM533S38uHw7GDc3qOztSe1ymJ/3sC+V9tcUKirQfczTQ3in+rzSS0
-        fPYWybAk9q749TwWVyHuh7o=
-X-Google-Smtp-Source: ABdhPJz+y1l8kM2NI74JVZchLDIxHo7yq0KhfM+6Fv9AKaumPuGfsg7rvvOKnbyNKjIeGyMxubcpqQ==
-X-Received: by 2002:a2e:8e63:: with SMTP id t3mr45656337ljk.71.1621181596262;
-        Sun, 16 May 2021 09:13:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fxlBfjD9rrdff0l547dFdguKUyG+OHefR+tkmXlzxcQ=;
+        b=eeTnWTrXjKMPRgSBe149em+Lsekc7tGW4YnN3YGNI9rQfLKw2KWbl4KHivLj3buEVU
+         YmlwTddHyFQxvtoppFSv1DTk6lJvfXC0gdMtC0i/sObOUlI8uoWYJTQMfWRil266gr0D
+         GTWuQIp8PVXk6pB7SmQhXuNFsLZc6IDzvXeVCSTLrjuD9PnV+/uP23q2Zw8I24TYwapE
+         xL/68KjWXT5rOb6f/GgU+N7Yl5G5FpyxSyKug4TC07sJPxyEJqncWDzCVw/1n95OttOq
+         y75Di4V08a1HUxaLdT8AEWRzPw//3HYu0gsUmAZK95tnVai6C/MEjMT5eWn0xTTNA88C
+         6y6w==
+X-Gm-Message-State: AOAM531ZqAKVHVX6R0kLkmoXwTqqZYP0osuAam3ur6FzE00Yx+O14h5S
+        YY6yMe3fvcyzsYq6cZXndD8BbZkz0Ks=
+X-Google-Smtp-Source: ABdhPJwxt36n5XUZKj5CYtPbyxnu327kHvYfLX0xMh5vFiUNUlg9/CwBjOcsK7JplH/dggSx6i4a1Q==
+X-Received: by 2002:a2e:bc1e:: with SMTP id b30mr11912401ljf.6.1621182659290;
+        Sun, 16 May 2021 09:30:59 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.gmail.com with ESMTPSA id d27sm1712547lfq.290.2021.05.16.09.13.15
+        by smtp.gmail.com with ESMTPSA id m2sm1704548lfo.23.2021.05.16.09.30.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 May 2021 09:13:15 -0700 (PDT)
+        Sun, 16 May 2021 09:30:59 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/4] memory: tegra: Enable compile testing for all drivers
-Date:   Sun, 16 May 2021 19:12:14 +0300
-Message-Id: <20210516161214.4693-5-digetx@gmail.com>
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v8 0/9] Couple improvements for Tegra clk driver
+Date:   Sun, 16 May 2021 19:30:32 +0300
+Message-Id: <20210516163041.12818-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210516161214.4693-1-digetx@gmail.com>
-References: <20210516161214.4693-1-digetx@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable compile testing for all Tegra memory drivers.
+This series fixes couple minor standalone problems of the Tegra clk
+driver and adds new features.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/Kconfig | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Changelog:
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index a70967a56e52..c63ffa74ab94 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -2,16 +2,18 @@
- config TEGRA_MC
- 	bool "NVIDIA Tegra Memory Controller support"
- 	default y
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	select INTERCONNECT
- 	help
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
- 
-+if TEGRA_MC
-+
- config TEGRA20_EMC
- 	tristate "NVIDIA Tegra20 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-+	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
- 	help
-@@ -23,7 +25,7 @@ config TEGRA20_EMC
- config TEGRA30_EMC
- 	tristate "NVIDIA Tegra30 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_3x_SOC
-+	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -34,8 +36,8 @@ config TEGRA30_EMC
- config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_124_SOC
--	select TEGRA124_CLK_EMC
-+	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
-+	select TEGRA124_CLK_EMC if ARCH_TEGRA
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -49,10 +51,12 @@ config TEGRA210_EMC_TABLE
- 
- config TEGRA210_EMC
- 	tristate "NVIDIA Tegra210 External Memory Controller driver"
--	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
- 	select TEGRA210_EMC_TABLE
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
- 	  Tegra210 chips. The EMC controls the external DRAM on the board.
- 	  This driver is required to change memory timings / clock rate for
- 	  external memory.
-+
-+endif
+v8: - Replaced division with a shift, which was suggested by Michał Mirosław
+      in a comment to "Handle thermal DIV2 CPU frequency throttling" v7 patch.
+      Cortex A9 CPUs don't have hardware divider and shifting is a minor
+      improvement here, nevertheless it's good to have it.
+
+    - Added new patch "Don't deassert reset on enabling clocks", which I
+      accidentally forgot to include in v7. Previously sound driver
+      was a blocker for this patch, the sound is fixed now in v5.13. The
+      patch itself is needed for maintaining proper clk/reset sequences
+      by PMC and other drivers.
+
+v7: - Added r-b from Rob Herring to the schema patch which he gave to v6.
+
+    - Dropped the MAINTAINERS-update patch. Previously Peter said on IRC
+      that he doesn't have time on the tegra-clk driver anymore and approved
+      the patch, but then he refused to ack the v6 patch, saying that he
+      is not reading mailing lists. So I don't feel comfortable with that
+      patch. Peter could send it by himself if will be necessary.
+
+    - Added these new patches:
+
+        clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
+        clk: tegra: Mark external clocks as not having reset control
+
+      I sent out the new Tegra30 thermal sensor driver and now CPU clock
+      could be throttled by the sensor hardware [1]. The first patch adds
+      support for reporting of the throttled frequency properly.
+
+      [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=243126
+
+      During of debugging sound issues of Asus Transformer devices, I noticed
+      that the external clocks are missing the no-reset flag. The second
+      patch fixes it.
+
+v6: - Made a small improvement and corrected a typo in patch
+      "Fix refcounting of gate clocks" that were spotted by
+      Michał Mirosław.
+
+v5: - Corrected example in the schema binding to silence dt_binding_check
+      warning.
+
+    - The Tegra124 binding is factored out into standalone binding since
+      Tegra124 has properties that aren't used by other SoCs and I couldn't
+      figure out how to make them conditional in schema.
+
+v4: - Added new patch that converts DT bindings to schema.
+
+v3: - Added acks from Thierry Reding that he gave to v2.
+
+    - Added new patch "clk: tegra: Don't allow zero clock rate for PLLs".
+
+v2: - Added these new patches:
+
+      clk: tegra: Halve SCLK rate on Tegra20
+      MAINTAINERS: Hand Tegra clk driver to Jon and Thierry
+
+v1: - Collected clk patches into a single series.
+
+Dmitry Osipenko (9):
+  clk: tegra30: Use 300MHz for video decoder by default
+  clk: tegra: Fix refcounting of gate clocks
+  clk: tegra: Ensure that PLLU configuration is applied properly
+  clk: tegra: Halve SCLK rate on Tegra20
+  clk: tegra: Don't allow zero clock rate for PLLs
+  clk: tegra: cclk: Handle thermal DIV2 CPU frequency throttling
+  clk: tegra: Mark external clocks as not having reset control
+  clk: tegra: Don't deassert reset on enabling clocks
+  dt-bindings: clock: tegra: Convert to schema
+
+ .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
+ .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
+ .../bindings/clock/nvidia,tegra124-car.yaml   | 115 ++++++++++++++++++
+ .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
+ .../bindings/clock/nvidia,tegra20-car.yaml    |  69 +++++++++++
+ .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
+ .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
+ drivers/clk/tegra/clk-periph-gate.c           |  80 +++++++-----
+ drivers/clk/tegra/clk-periph.c                |  11 ++
+ drivers/clk/tegra/clk-pll.c                   |  12 +-
+ drivers/clk/tegra/clk-tegra-periph.c          |   6 +-
+ drivers/clk/tegra/clk-tegra-super-cclk.c      |  16 ++-
+ drivers/clk/tegra/clk-tegra20.c               |   6 +-
+ drivers/clk/tegra/clk-tegra30.c               |   6 +-
+ drivers/clk/tegra/clk.h                       |   4 -
+ 15 files changed, 272 insertions(+), 405 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+
 -- 
 2.30.2
 
