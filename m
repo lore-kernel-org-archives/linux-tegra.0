@@ -2,152 +2,182 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8E6C43460
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 14:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D336C433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 14:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAD2761396
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 14:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA4A6143F
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 14:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238715AbhEQOO4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 May 2021 10:14:56 -0400
-Received: from mail-bn8nam12on2063.outbound.protection.outlook.com ([40.107.237.63]:58846
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S238756AbhEQOMX (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 May 2021 10:12:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mXdKubOLI9QR+Yy3bLd2a2f3NxXs5utlM0FBKNC3AW/mND1wJNARHM8+k5wQks7jkAFW4Ft8p3RwevBVf3VrAgndSZyudsa8NU6YVm1IT5QUPwEKqqsH9lkftSEpx1DN4Q9BsX1LE7K4utsAQUVA+3rLPi2i0PtE8Z/ti2no24vvYWSeKZDNlhATKHpqB8mzlGzuNca4ys9qWOD7eEK/AaUVKm366xFedpIMjg3UewQvVMHxBpJDwVK8Rk3xCu1gZ4hun4o/tKLhFU23wghXkv+Qoa9VCSXUfhjNesOWRi3Q8pWR/zvzmboNcpREsgpnijdULsIJkgerGoVX83r6rA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZgilUNrIXEfRjcKgvViJczoO5z42F8Z8QCENXr1Ypw=;
- b=XpXJy/UqY5MDT0K8xiZ+3ismrJDA0Ti8YK5jsKFTZJPgH65LvGX+lNQlh0m2dTYKMMxSSFutfNzckS096La7qvuSAkfYu84SLihsiUKkIMwDjaLrUh925E7p6QyaPY+f14DLnc7RfoUq7MvigrnrAvfxErXJ/M4ozHZiI754M7ehlSg54j6MSXKIDBBuPdwiL4fcrMYv2UTCr2N1Q4IYCse0AZ2hpwaRZmJYv5Vy1s0arg7sH+RTClgohTDDHoWs9ROlINrCgKsADMdSF7sdIMYwWkCVcIu2jalP+1jq/ymM715Erz8MCrlxJOqpV/68XNnVdG+GAgtfcwpC2ZfVqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZgilUNrIXEfRjcKgvViJczoO5z42F8Z8QCENXr1Ypw=;
- b=RilI0UoT91mNUx8LeU+DnwQTf0LFW7EOSjv/HQvE204PMRKuyh2qo3grbcNBs990wxx3hNTv8+cbUzpppRVkjCOCiVQ0RyPtRuVz1tJXzKb/Jkuqsth3ixkSvXKpVNi74NeXcoSRtqAoBNnqGnozUKuhrpegYWpcFmrnQ4IS8M4jApixiR3gfvFYMtpwM8W/Ykd+47zoP0/LygAUgk9tfAaBP5bVp86QZmBMsgdGzR4wcUFdXWlAmE1/NwuBlrT1kl3MZjLotfLaAZhr2AGCjacTfsQkQOvWunPPRuX398NO5HWSpDDB8FJLXd0QuBlcoVy0MjwOYDtnokB2rhqDVA==
-Received: from DM5PR16CA0019.namprd16.prod.outlook.com (2603:10b6:3:c0::29) by
- SN6PR12MB2829.namprd12.prod.outlook.com (2603:10b6:805:e8::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4129.28; Mon, 17 May 2021 14:11:05 +0000
-Received: from DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:c0:cafe::69) by DM5PR16CA0019.outlook.office365.com
- (2603:10b6:3:c0::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend
- Transport; Mon, 17 May 2021 14:11:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT049.mail.protection.outlook.com (10.13.172.188) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Mon, 17 May 2021 14:11:05 +0000
-Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 17 May
- 2021 14:11:02 +0000
-Subject: Re: [PATCH] PCI: tegra: Fix host initialization during resume
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Vidya Sagar <vidyas@nvidia.com>, <lorenzo.pieralisi@arm.com>,
-        <robh@kernel.org>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20210504172157.29712-1-vidyas@nvidia.com>
- <fecc2899-06ef-f91f-4a39-bb4ee664c800@nvidia.com>
-Message-ID: <7dbc7daf-5512-c938-3aee-3c1994b50d07@nvidia.com>
-Date:   Mon, 17 May 2021 15:11:00 +0100
+        id S239194AbhEQOWR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 May 2021 10:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239476AbhEQOUS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 17 May 2021 10:20:18 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A9FC061237;
+        Mon, 17 May 2021 07:09:48 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id y9so7430460ljn.6;
+        Mon, 17 May 2021 07:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ekVWOzxFNo3Z6IetXdeO7ete5WRacjN7K7wXm46m9JI=;
+        b=Y1UNXA1dDnxigz7B4TIqtAe6/gsDAiaVQDaZaYxe3YIZj9YtdtNFYqMQKilfa1BwT4
+         3fMXEFpMycesElPd//ByP7+dGzqjPbQbE/9KGQ3Lp/5ncuc8MDoJxe0kE/IabDsi1Z9l
+         cpQPbK/EkKyNQbG6/vkl8elZZSkF+yJvAkjn4aTQC8OjPX++nJKDKy13PJIeb+FzaSI1
+         ypLKko5E4cBtYG3fK2iN0xfkAD39AXhwaEIibgrbzBkYgMdUjFUwJt0jTjd1Vy35Yl8R
+         emv6kGUyKROUomQMO491PuolKzUe3FzpsQm7ek6zviituMjXmkV8/QwX9fnDbsvKp+DG
+         RhQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ekVWOzxFNo3Z6IetXdeO7ete5WRacjN7K7wXm46m9JI=;
+        b=A3Z/UH7OMF1BoklHJMedCrkyM/LFNW8qrgQOSFxdJ4vH80NpJ/Q5uDuwfR8MbqXmvR
+         lvGdy74DStgHL6MsrjXkK3YhBKDWoWv47SdevAr7Sy4H9PgcQsV5JsOSwQXAyApbY5/z
+         FdfPZIV5bl23+pm7Y3CB9SPKrwEDS+D4u0dJRmJrn3f3ucYyG/7hpOnuMWsPUudMKJeq
+         WBWxWjA8eFPJ/+xIRTL7j7dXAN8bBnxrLY8v1Fdn55KQpx3EQbp6P1PDQdylEF0MoMNT
+         9tcTTLAl9LbcVcV7yHT40mqThLxGRs+j/AmqZRujmPOD5PXL4W9TInalcIRqAy9+vWoz
+         YthA==
+X-Gm-Message-State: AOAM531qHtYIDbukzTq5fzB8DDAjlC5RbdfG3C+bAu6vhE5OMT9zWLY0
+        4Hqe7Xy6RJe9d/7s9Pa1PUcUltQ1J3o=
+X-Google-Smtp-Source: ABdhPJyPFHPAgpwmjrOkPzJvTF7hXVf40zH4gKfssBN2eC8ZBhL467fig/79fFWajAxgVXf4q059fA==
+X-Received: by 2002:a2e:a30c:: with SMTP id l12mr48969447lje.501.1621260586491;
+        Mon, 17 May 2021 07:09:46 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
+        by smtp.googlemail.com with ESMTPSA id x12sm2928586ljc.70.2021.05.17.07.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 07:09:46 -0700 (PDT)
+Subject: Re: [PATCH v1 1/1] soc/tegra: Add
+ devm_tegra_core_dev_init_opp_table()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210516205138.22501-1-digetx@gmail.com>
+ <20210516205138.22501-2-digetx@gmail.com>
+ <20210517033705.uw5kfj46k6w6ptcl@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d43f5c65-eacc-e953-f2ef-3151d9229729@gmail.com>
+Date:   Mon, 17 May 2021 17:09:45 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <fecc2899-06ef-f91f-4a39-bb4ee664c800@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20210517033705.uw5kfj46k6w6ptcl@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d229e493-739c-49e2-7e15-08d9193d9c39
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2829:
-X-Microsoft-Antispam-PRVS: <SN6PR12MB28293B18F31475C36BB805D8D92D9@SN6PR12MB2829.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WBWfqRUAHmmqcO3rCM6/v49RFcqHSzTuxyXddGThzy3Q+F1CJ2t3PK4vv7c3cthFst4VPDhv03qRdqnD2FvhI872e5CKPlZPDS+1ExyxTNc4JAt8CrGk+LSrUGoYR7Tongu42Y43MAkvyhc0h35vx1kYfmVT2dolaeNp3MAyTjDpHO4TeZni6fOZPDXx85lSbdPvfTZWpTkQxo6HcBNcF2o5hO2gyP/YKVgusKhq7TsoA+ntKTR/R6/ipeqlMyNzYkFrVlu2lcIQRt6BNs04eWu+Lsfgwav+eNG82abjF8HvMUoctJp07IzV0aLkPvxL2E1CUcIWUXmBtx9kC1BbiDRelhwC6FuSaq3JdgAy8pd4q7Td7B5fN5pX078Zqz8BtJS7KS/WeEB1sBXOph4JyAg9aeVizK5UXGvlW2szLJr5IwxFC7F9YIhiL+bh9JTTCbImQLc5eLuxa4CV5AlEQXOowx0BTmFDZQinrFWRHfE4rGXXOzGSKIdAo+iFZF1xVo0pZ86xRiNLP52tkwY1vwabDga91sTYjLMLBoP07nFgOMlM+sZbXZN0ZNLKPCf9Xu/svI4JXW9W6cEr/l8pwUefALEeCSiPwG+TMLeZ6TAcRMC8vSgFY9/uguFhedWFEfWYiDikuAuCgayVOeueHhbZpUdldblAsFh0zZW4wLrpu8QLWXrr68uxDwVCYuAN
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(376002)(136003)(39860400002)(396003)(36840700001)(46966006)(31686004)(2906002)(5660300002)(426003)(16576012)(36860700001)(336012)(478600001)(70206006)(7636003)(36756003)(2616005)(86362001)(186003)(16526019)(4326008)(82740400003)(7416002)(70586007)(8936002)(54906003)(53546011)(8676002)(82310400003)(26005)(356005)(36906005)(110136005)(316002)(47076005)(31696002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2021 14:11:05.3349
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d229e493-739c-49e2-7e15-08d9193d9c39
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2829
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Lorenzo, Bjorn,
+17.05.2021 06:37, Viresh Kumar пишет:
+> I am not sure why you divided this into three different patchsets,
+> while it should really have been one. Like this one just adds the API
+> but doesn't use it.
 
-On 06/05/2021 09:49, Jon Hunter wrote:
-> 
-> On 04/05/2021 18:21, Vidya Sagar wrote:
->> Commit 275e88b06a27 ("PCI: tegra: Fix host link initialization") broke
->> host initialization during resume as it misses out calling the API
->> dw_pcie_setup_rc() which is required for host and MSI initialization.
+Previously Krzysztof Kozlowski asked to split the large series into smaller sets which could be reviewed and applied separately by maintainers. He suggested that the immutable branch is a better option, I decided to implement this suggestion. So far I only sent out the memory patches which make use of the new helper, there will be more patches. The memory patches are intended to show that this helper can be utilized right now. My plan was to finalize this patch first, then Thierry will apply it and I will be able to sent the rest of the patches telling that they depend on the immutable branch.
+
+I'll merge this helper patch and the memory patches into a single series in v2. 
+
+> On 16-05-21, 23:51, Dmitry Osipenko wrote:
+>> Add common helper which initializes OPP table for Tegra SoC core devices.
 >>
->> Fixes: 275e88b06a27 ("PCI: tegra: Fix host link initialization")
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
->>  1 file changed, 2 insertions(+)
+>>  drivers/soc/tegra/common.c | 112 +++++++++++++++++++++++++++++++++++++
+>>  include/soc/tegra/common.h |  30 ++++++++++
+>>  2 files changed, 142 insertions(+)
 >>
->> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
->> index 6fa216e52d14..4c3c0738f2e6 100644
->> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
->> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
->> @@ -2214,6 +2214,8 @@ static int tegra_pcie_dw_resume_noirq(struct device *dev)
->>  		goto fail_host_init;
->>  	}
+>> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+>> index 3dc54f59cafe..c3fd2facfc2d 100644
+>> --- a/drivers/soc/tegra/common.c
+>> +++ b/drivers/soc/tegra/common.c
+>> @@ -3,9 +3,16 @@
+>>   * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
+>>   */
 >>  
->> +	dw_pcie_setup_rc(&pcie->pci.pp);
+>> +#define dev_fmt(fmt)	"tegra-soc: " fmt
 >> +
->>  	ret = tegra_pcie_dw_start_link(&pcie->pci);
->>  	if (ret < 0)
->>  		goto fail_host_init;
->>
+>> +#include <linux/clk.h>
+>> +#include <linux/device.h>
+>> +#include <linux/export.h>
+>>  #include <linux/of.h>
+>> +#include <linux/pm_opp.h>
+>>  
+>>  #include <soc/tegra/common.h>
+>> +#include <soc/tegra/fuse.h>
+>>  
+>>  static const struct of_device_id tegra_machine_match[] = {
+>>  	{ .compatible = "nvidia,tegra20", },
+>> @@ -31,3 +38,108 @@ bool soc_is_tegra(void)
+>>  
+>>  	return match != NULL;
+>>  }
+>> +
+>> +static int tegra_core_dev_init_opp_state(struct device *dev)
+>> +{
+>> +	struct dev_pm_opp *opp;
+>> +	unsigned long rate;
+>> +	struct clk *clk;
+>> +	int err;
+>> +
+>> +	clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(clk)) {
+>> +		dev_err(dev, "failed to get clk: %pe\n", clk);
+>> +		return PTR_ERR(clk);
+>> +	}
+>> +
+>> +	rate = clk_get_rate(clk);
+>> +	if (!rate) {
+>> +		dev_err(dev, "failed to get clk rate\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
+>> +
+>> +	if (opp == ERR_PTR(-ERANGE))
+>> +		opp = dev_pm_opp_find_freq_floor(dev, &rate);
+>> +
+>> +	err = PTR_ERR_OR_ZERO(opp);
+>> +	if (err) {
+>> +		dev_err(dev, "failed to get OPP for %ld Hz: %d\n",
+>> +			rate, err);
+>> +		return err;
+>> +	}
 > 
-> 
-> Thanks for fixing!
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> We should also mark this for stable so that this gets back-ported.
+> Why do you need to do this floor/ceil thing? Why can't you simply do
+> set-rate ? 
 
+The previous versions of this patch had this comment:
 
-Can we queue this as a fix for v5.13 and tag for stable?
+/*
+ * dev_pm_opp_set_rate() doesn't search for a floor clock rate and it
+ * will error out if default clock rate is too high, i.e. unsupported
+ * by a SoC hardware version.  Hence find floor rate by ourselves.
+ */
 
-Thanks!
-Jon
+I removed it because it appeared to me that it should be obvious why this is needed. The reason why it was added in the first place is that the tegra-clk driver initializes some clock rates to values that aren't supported by all hardware versions in accordance to the OPP tables, although technically those higher rates work okay in practice, this made dev_pm_opp_set_rate() to fail without fixing up the clock rate.
 
--- 
-nvpublic
+You might be right that this is not necessary anymore, the code changed since the last time it was needed. I'll re-check it for the v2. Thank you for the review.
