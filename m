@@ -2,86 +2,84 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE782C43462
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 15:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221E3C4360C
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 16:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D736B6108D
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 15:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D01860E0B
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 16:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240662AbhEQPFl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 May 2021 11:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        id S1347367AbhEQQPr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 May 2021 12:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241665AbhEQPCx (ORCPT
+        with ESMTP id S1344536AbhEQQMH (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 May 2021 11:02:53 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E350BC0613ED;
-        Mon, 17 May 2021 07:23:40 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id y9so7489641ljn.6;
-        Mon, 17 May 2021 07:23:40 -0700 (PDT)
+        Mon, 17 May 2021 12:12:07 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4153C0494E3;
+        Mon, 17 May 2021 07:47:11 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id v8so4217685lft.8;
+        Mon, 17 May 2021 07:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iS/P8JiADakXJGpN4rrcz4d8YhejJnZchwPjq0v9rUg=;
-        b=qdykRinAL18KEqBuWZcfNfQwfm2z5zM89Pt2ZxhKeISsCCNJXp+34w7VvYYx6RrRyu
-         7uJYpa4fylSL7d1W+5w8a9LMZE6J9PWjkINlF6GzajPwIOnsZE7xssJUL6dHHVpHhsJD
-         7+xGKFL9Jo4LWYRhb4I2/DkGGJ9CPhFNRGHcOlfBJPCyq4NdMS9X54gD06rEMXJVoYxD
-         8gWRTUX7ORdkJ2jN5QvAtchpQJglMSmGJWdrMLgbdntkE42ufH6ImzjChsnMnT6yJ/fB
-         9TsJnQcU02+vQiKTS2qQOJhxOQK6pXLWipGJ0o8E3lQJtTgsTIZm/8Z5GJjWTc+6TRyQ
-         qSCg==
+        bh=SEA3EwJIt3rzzFHp4o5m/p8jxV9Zmq+VibaWYsv49TE=;
+        b=Hsiv82W97hbMKpEhsQMsW6lcJ2MT0an4aXXxdGMQhZpMeKZgrmcy2WHXuvlQ6QX2ZO
+         WrqmTOsWpd8IFdIR+sjdPPEf2x8qpZMp8pgis1M+h/5XOc/76wUlP4hvohw4+Ix/1/FQ
+         PAn6WK6Tk9+qdaHhIMTCuF3JRqLyK5xQwRa+lyAEBGz+Rmn2C0EYKcZK62cOjkBgT+Ur
+         m8HteSjr3ls4oxbKucPxwpzGRPTLf0ek/Mk98r/gRMQLjTKk8VBx3E5DhyBKZB4nHzGs
+         dqg44BFYcpwMFMC1B+zP40xRXeXmNbyCGXHyJe9RSjPlTML+gBGMcGRMlXLuMaNWBHb6
+         5KqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=iS/P8JiADakXJGpN4rrcz4d8YhejJnZchwPjq0v9rUg=;
-        b=Pl2DwaYXTywtr6IvwFf3yb+aJVXGwPD1eduVaAfgtCfbUNE0FVACp2FVk9NtmuYffH
-         jZU4InijRBywiHbGFwWHUotv4OOyUcSu67IpeO+uYP0a7JZpyW3/b582Pz/7Cu7q5kib
-         /Lv/3eAgPx64MZq/AQGZN8c5sFyg4jeR703n2Y+ktPn/IKOMTqjvwV57Vf3pSXoTkwQI
-         RcVBBLp5jMxX4PkzxwsQ24sKeTcSOKBBwQ+NRtXgYKWwphXMAOKXNxZJ9X8tCJRJq+Z9
-         2bITaJq9ZTePy2dknWq5hNTSXVDmZ9flVQQNTiEv06DPY1N5NwgNb+JyJ+4B149P/ufB
-         BYIQ==
-X-Gm-Message-State: AOAM532Rh/eH7f1H0AXy/OuTOJ4TmjCa9EEd18BdYnRzBjhdcs38wUpJ
-        DGg2hmtlgZ9y7QpnVezHjOPZcSVETiI=
-X-Google-Smtp-Source: ABdhPJxBqu6DBuFtNyji6ErZhGCmOHqKJY0GsPKMO5PS+6vo4jWyVaEXfhEZ6RwwNRXxtnui0t3jNg==
-X-Received: by 2002:a2e:884c:: with SMTP id z12mr51260433ljj.276.1621261419242;
-        Mon, 17 May 2021 07:23:39 -0700 (PDT)
+        bh=SEA3EwJIt3rzzFHp4o5m/p8jxV9Zmq+VibaWYsv49TE=;
+        b=oPXazGV7CgdQXV9RakprUVarPgfNMwPhn+0HnzBbN/eIKLWQlq/BXZ+b3L2Ma1PuIZ
+         +hmjIDmFqdFqX/pgi1LUhv5ynSkI7Mj7W9SA8vNPjB5lSW3+kjRzK19gTgEazuS+xNln
+         uxxZC78yGHqA0mTOw/dlZnUYCOZAlKGBgjZimlZ0WECJNnmmQ3maqHjbRlwEFaVHAdm8
+         5IjOSoDQqNf+6SV+39io2/11E0ujGDMD3Nd5Euna41jnR8+UEyblhYbVsZFk8c/cEHaA
+         mUmVzK75FmdMvfQjLO+OgCWBmpvMf9444HNy6rHp9BQzu1BopmX2R51KbLF6zn5n5XUv
+         r51w==
+X-Gm-Message-State: AOAM530/we7IpSdS3UniwxNliwNVeUaL95yY13RMhprDq5ELP56RVgqq
+        0Zsu2CI7MACqCi1f4en7DWMUiAbvquY=
+X-Google-Smtp-Source: ABdhPJwIhZEsa68lzrxmBmtVnI6PtEzqWJDaxxtZQ37Pt6wE2KuNB43Zd8pMIJlReGk6G8bXJfU6yw==
+X-Received: by 2002:a05:6512:1109:: with SMTP id l9mr183151lfg.550.1621262830161;
+        Mon, 17 May 2021 07:47:10 -0700 (PDT)
 Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
-        by smtp.googlemail.com with ESMTPSA id s11sm2821069ljc.66.2021.05.17.07.23.38
+        by smtp.googlemail.com with ESMTPSA id q2sm61976lfd.84.2021.05.17.07.47.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 07:23:39 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] memory: tegra124-emc: Fix compilation warnings on
- 64bit platforms
+        Mon, 17 May 2021 07:47:09 -0700 (PDT)
+Subject: Re: [PATCH v1 1/1] soc/tegra: Add
+ devm_tegra_core_dev_init_opp_table()
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20210516161214.4693-1-digetx@gmail.com>
- <20210516161214.4693-4-digetx@gmail.com>
- <936cfc7d-737e-a582-ea60-ad2ba5b4ca72@canonical.com>
- <1d80ee0f-de4c-24d0-154f-20841874bf20@gmail.com>
- <4ea1bf29-c353-6fcf-5248-bfee67d5c361@canonical.com>
- <c120ecf5-7202-9f1d-6e70-a99db2f5335f@gmail.com>
- <1cde1d43-f139-cb90-395e-8f8fceb41bce@canonical.com>
+        Paul Fertser <fercerpav@gmail.com>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210516205138.22501-1-digetx@gmail.com>
+ <20210516205138.22501-2-digetx@gmail.com>
+ <3ea6b48f-af3f-51db-8d7b-1292a68ae74e@canonical.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9c2b7fe8-551f-288d-eeab-37810aa3f6ba@gmail.com>
-Date:   Mon, 17 May 2021 17:23:38 +0300
+Message-ID: <a3b42449-4cd8-f692-c41a-205cbaa987eb@gmail.com>
+Date:   Mon, 17 May 2021 17:47:09 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <1cde1d43-f139-cb90-395e-8f8fceb41bce@canonical.com>
+In-Reply-To: <3ea6b48f-af3f-51db-8d7b-1292a68ae74e@canonical.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -89,51 +87,97 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-17.05.2021 17:04, Krzysztof Kozlowski пишет:
-> On 17/05/2021 09:47, Dmitry Osipenko wrote:
->> 17.05.2021 16:39, Krzysztof Kozlowski пишет:
->>>>>>  #define DRAM_DEV_SEL_ALL			0
->>>>>> -#define DRAM_DEV_SEL_0				(2 << 30)
->>>>>> -#define DRAM_DEV_SEL_1				(1 << 30)
->>>>>> +#define DRAM_DEV_SEL_0				(2u << 30)
->>>>>> +#define DRAM_DEV_SEL_1				(1u << 30)
->>>>>
->>>>> Why not using BIT()? This would make even this 2<<30 less awkard...
->>>>
->>>> The bitfield 31:30 is a enum, 3 is a wrong value. Formally it's
->>>> incorrect to use the BIT() macro here.
->>>
->>> Why "3"? BIT(31) is the same as 2<<30.
->>
->> By 3 I meant BIT(31)|BIT(30). This bitfield is explicitly designated as
->> a enum in the hardware documentation.
+17.05.2021 14:43, Krzysztof Kozlowski пишет:
+...
+>> +static int tegra_core_dev_init_opp_state(struct device *dev)
+>> +{
+>> +	struct dev_pm_opp *opp;
+>> +	unsigned long rate;
+>> +	struct clk *clk;
+>> +	int err;
+>> +
+>> +	clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(clk)) {
+>> +		dev_err(dev, "failed to get clk: %pe\n", clk);
+>> +		return PTR_ERR(clk);
+>> +	}
+>> +
+>> +	rate = clk_get_rate(clk);
+>> +	if (!rate) {
+>> +		dev_err(dev, "failed to get clk rate\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	opp = dev_pm_opp_find_freq_ceil(dev, &rate);
+>> +
+>> +	if (opp == ERR_PTR(-ERANGE))
+>> +		opp = dev_pm_opp_find_freq_floor(dev, &rate);
+>> +
+>> +	err = PTR_ERR_OR_ZERO(opp);
+>> +	if (err) {
+>> +		dev_err(dev, "failed to get OPP for %ld Hz: %d\n",
+>> +			rate, err);
+>> +		return err;
+>> +	}
+>> +
+>> +	dev_pm_opp_put(opp);
+>> +
+>> +	/* first dummy rate-setting initializes voltage vote */
+>> +	err = dev_pm_opp_set_rate(dev, rate);
+>> +	if (err) {
+>> +		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
+>> +		return err;
+>> +	}
 > 
-> I understand it and using BIT() here does not mean someone has to set
-> both of them. BIT() is a helper pointing out that you want to toggle one
-> bit. It does not mean that it is allowed to do so always!
 > 
->>
->>> It's common to use BIT for
->>> register fields which do not accept all possible values. Now you
->>> basically reimplement BIT() which is error-prone.
->>
->> Could you please show couple examples? The common practice today is to
->> use FIELD_PREP helpers, but this driver was written before these helpers
->> existed.
-> 
-> 
-> There are plenty of such examples so I guess it would be easier to ask
-> you to provide counter ones. Few IT for enum-like registers found within 2 minutes:
-> 
-> https://elixir.bootlin.com/linux/latest/C/ident/MAX77620_CNFG_GPIO_INT_MASK
-> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/max77650-regulator.c#L18
-> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps6524x-regulator.c#L62
-> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/tps80031-regulator.c#L39
-> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L200
-> https://elixir.bootlin.com/linux/v5.13-rc2/source/drivers/regulator/da9121-regulator.h#L231
+> The devm_pm_opp_set_clkname will call clk_get(), so here you should drop
+> the clk reference at the end. Why having it twice?
 
-Alright, I'll use the BIT macro in the v3.
+The devm_pm_opp_set_clkname assigns clock to the OPP table.
 
-I also realized now that the tegra30-emc drivers needs the same change.
+The devm_clk_get() is needed for the clk_get_rate(). OPP core doesn't
+initialize voltage vote and we need this initialization for the Tegra
+memory drivers.
 
-Thank you for the review.
+The reference count of the clk will be dropped automatically once device
+driver is released. The resource-managed helper avoids the need to care
+about the error unwinding in the code, making it clean and easy to follow.
+
+...
+>> +EXPORT_SYMBOL_GPL(devm_tegra_core_dev_init_opp_table);
+>> diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
+>> index 98027a76ce3d..e8eab13aa199 100644
+>> --- a/include/soc/tegra/common.h
+>> +++ b/include/soc/tegra/common.h
+>> @@ -6,6 +6,36 @@
+>>  #ifndef __SOC_TEGRA_COMMON_H__
+>>  #define __SOC_TEGRA_COMMON_H__
+>>  
+>> +#include <linux/errno.h>
+>> +#include <linux/types.h>
+>> +
+>> +struct device;
+>> +
+>> +/**
+>> + * Tegra SoC core device OPP table configuration
+>> + *
+>> + * @init_state: pre-initialize OPP state of a device
+>> + */
+>> +struct tegra_core_opp_params {
+>> +	bool init_state;
+>> +};
+>> +
+>> +#ifdef CONFIG_ARCH_TEGRA
+>>  bool soc_is_tegra(void);
+>> +int devm_tegra_core_dev_init_opp_table(struct device *dev,
+>> +				       struct tegra_core_opp_params *params);
+>> +#else
+>> +static inline bool soc_is_tegra(void)
+> 
+> This looks unrelated. Please make it a separate patch.
+
+The missing stub for soc_is_tegra() popped up multiple times before.
+Hence it didn't look like a bad idea to me to add stub for it since this
+patch touches code around it.
+
+I'll factor it out into a separate patch in v2.
