@@ -2,151 +2,159 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D32C433B4
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 10:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B4CC433B4
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 10:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 854BF6052B
-	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 10:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F1BF611BE
+	for <linux-tegra@archiver.kernel.org>; Mon, 17 May 2021 10:39:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236283AbhEQKSq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 17 May 2021 06:18:46 -0400
-Received: from mail-dm6nam10on2042.outbound.protection.outlook.com ([40.107.93.42]:52320
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        id S236441AbhEQKki (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 17 May 2021 06:40:38 -0400
+Received: from mail-co1nam11on2065.outbound.protection.outlook.com ([40.107.220.65]:4064
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230248AbhEQKSq (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 17 May 2021 06:18:46 -0400
+        id S236218AbhEQKki (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 17 May 2021 06:40:38 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mXapycrsEEsp+W6/WW5Oa/nUVvntcoH9IGv7i+wVujZHWGe7sh29TeLMmLmQ2osIZTzKzxkJn1QWW6DhXE/AfOySf/kNCUy+mChrNivUqMsqq3X9hZCzPgy1/ZDtcXKSL/caRT4f2e4mbI/yZIPkt15RltyN5SAwOdTm6sQMPmUiN4i2eJovR2giG8I20VdirsofpYBbeLnIpRLneHLlDO179rVL/Ep+9BK5i9gsEKfnm+Ke8WjQgSz7mUoldxnT6PgMAMIe/LOkjfyOq2k6CRrVX0p43L61tdVVuVd46jgnM+FSYw1GPBBsiRfwAMqS89E6KZ4/k3TlSUURwoVOUg==
+ b=IjttU68hyAu4erPbmAJbG7t0kMi+RuFRrSzsAe9h2Uc4KKwLJasOiTVuEMN1s1dP2sNVrvxT/TPSUGJlLnhEeebtqqRYj+VGVOKSl7NKVPJwsGCS28lCuwAz8SFlELHi6hCQU9N7+KWI1JVM/DK/haKtNm5UgbiLz/atHm9EhgcR4sQtxj62emCOUyxxZE9XZ5bKgfhUHLulxNcxE3nQA+peP9kN/dGomaucv9YCqvpdrACZTzNW7QwLgdURGSR/nxZvKK4421vfIAINnFmKhBAzGgkC+zMVBYIPclaq2O7IIU5+TJwyS4bQvxwF5CVFWq9p6qTSGN7AK0b8I1OGzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=99Oxi19DZBcPzheAflIIEwu6G2Jg7dQh/iQe6T4YM0o=;
- b=lnb8LuktNPdg7Q1kzsFUSqsv0fe570qT/uybxkMCiNSAjfxnIwXf2aFOqUZYu8uA+tpQvlCS9BR33ZB91RfPrUVXVmQjbfMz7YgiHwkdmExa03iJepYDlZXmcbCDoCSf9nFkAuiw3brLecA4dSRiUszujO9pZqcfm/25Qpl4S9OCiu3fQyUkTfXqWzSz1xeTntVaKkVXWB7/x27nZXIpsjwCI2IcNIaGKuouKMDcf/xdnC13UMLpHh/LX3Tz6g+3fNdbe0zHJcCw2DpMQYi1KD+DO9B/yOrrcSmTMbsEUGhnaeRBaNUstFx5Cy4+S63BRdGMckWz4UeT7dW2ukdjJA==
+ bh=J3jHq3xlrZjByozSn8ZywJKlTEiceJKi63pdXXvitSw=;
+ b=b3ILH0Gc4kiuljQ7ltp46ygz6EmjiOXC3ODJIxkL4L+hJrS7aym4Hx+qQxD4nkjclsJJ5sKn6Uok6bp+IQXY5VOFFLMp4+xzFx6Wm970IGRQHofBNocgNsKJsBUgdirQnhC9KNnJUdY5JjEgVAYp70OIVolpVmq0jhHfEmz6HbR/tnZPL9waQxBcpJR8OxVtplthTP1toh67fQmMEBxQoBWT3Dtd2ySvfxEWAiacd1Q18+5WGzvBYW1CRAZf2FgdzOlxuc2FOnGq9hbnA2umc1M0BNDfIgfOORX2sVJL9I5uBmQFibjG4hwuqqw4zjU2X7+nRhYE0AMIfWmefaP7PA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=pengutronix.de smtp.mailfrom=nvidia.com;
+ 216.228.112.34) smtp.rcpttodomain=foss.st.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=99Oxi19DZBcPzheAflIIEwu6G2Jg7dQh/iQe6T4YM0o=;
- b=H2w+VtB6BZ+gDELsn9TIvgiV/dfaNb94cOTbcTuDQ5XoHr/EpqYrAdVxJXrL2/MM1XlEvC1SlCOLIAtj/0hnKk3iG6eDmbeP/wxoqogzbeAfbp94xZhYBFFmHLeoIN8RV72OUpidDHiPEXGWsCVfLG+7H/79l7MXbr20QJ4DwhEE9v8b2EiQPpZFsJXBwL4IeK1Sw4RuZ8bXn0xQ00xEAMyG97+hyVFyV0Oo8q8IwcAgE8SiZoTviCqg8PEaRd3JWGsNFnEtNfryE6Jg0U6vz4Imf81lvm2Gywy+Vj0go0X/j0EqrbMSycu9yncS+b9aO0NVDDKtLbYMlIDM+sQaIA==
-Received: from MWHPR01CA0048.prod.exchangelabs.com (2603:10b6:300:101::34) by
- BL0PR12MB2819.namprd12.prod.outlook.com (2603:10b6:208:8a::11) with Microsoft
+ bh=J3jHq3xlrZjByozSn8ZywJKlTEiceJKi63pdXXvitSw=;
+ b=GJlpt7yhJgq9qUFqYCtmI5tZlGYMmRRU+sjH0Z647tjiFAmxv45A8DV46BPIgdetYzolED37rvRfvERr2TuCsgS5av4Vg/VfCiHXc2viIPfd4nYDd74F0NDafTKle8++m6DKj4QzPx+PNadhPnI2Bmo0Wzae9WKjjHGuBL5cEjVGEXRn7h7dbWRSBF+XSk4uRXlzbah+Nc5KMebmtcg9wotMX8F/zggbQFx6JBrmq+ayGHKtYtf0/U07pq2Fx6dwOZpWb9aP1aY5vLfvR7GiU+jtQJYNszRWFFxyQjNl33Z6yicVWvuGxyVx/c9rGoiCipfZ0aWBO8Z4ASrxZ6z48g==
+Received: from DM3PR03CA0002.namprd03.prod.outlook.com (2603:10b6:0:50::12) by
+ MW3PR12MB4505.namprd12.prod.outlook.com (2603:10b6:303:5a::24) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4129.28; Mon, 17 May 2021 10:17:28 +0000
-Received: from CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:101:cafe::7c) by MWHPR01CA0048.outlook.office365.com
- (2603:10b6:300:101::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.32 via Frontend
- Transport; Mon, 17 May 2021 10:17:28 +0000
+ 15.20.4129.28; Mon, 17 May 2021 10:39:19 +0000
+Received: from DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:0:50:cafe::36) by DM3PR03CA0002.outlook.office365.com
+ (2603:10b6:0:50::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend
+ Transport; Mon, 17 May 2021 10:39:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; pengutronix.de; dkim=none (message not signed)
- header.d=none;pengutronix.de; dmarc=pass action=none header.from=nvidia.com;
+ smtp.mailfrom=nvidia.com; foss.st.com; dkim=none (message not signed)
+ header.d=none;foss.st.com; dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.34 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.34; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT063.mail.protection.outlook.com (10.13.175.37) with Microsoft SMTP
+ DM6NAM11FT052.mail.protection.outlook.com (10.13.172.111) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Mon, 17 May 2021 10:17:27 +0000
-Received: from [10.25.76.219] (172.20.145.6) by HQMAIL107.nvidia.com
+ 15.20.4129.25 via Frontend Transport; Mon, 17 May 2021 10:39:18 +0000
+Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 17 May
- 2021 10:17:26 +0000
-Subject: Re: [PATCH v2] PCI: tegra: move to use request_irq by IRQF_NO_AUTOEN
- flag
-To:     Tian Tao <tiantao6@hisilicon.com>, <p.zabel@pengutronix.de>
-CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1621213953-54030-1-git-send-email-tiantao6@hisilicon.com>
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <7e203ed5-526f-3a45-9f82-ba3f567bcc83@nvidia.com>
-Date:   Mon, 17 May 2021 15:47:23 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+ 2021 10:39:16 +0000
+Subject: Re: [BUG] net: stmmac: Panic observed in stmmac_napi_poll_rx()
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+References: <b0b17697-f23e-8fa5-3757-604a86f3a095@nvidia.com>
+ <20210514214927.GC1969@qmqm.qmqm.pl>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b9a1eef5-c515-e905-9328-9024c3472e29@nvidia.com>
+Date:   Mon, 17 May 2021 11:39:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <1621213953-54030-1-git-send-email-tiantao6@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20210514214927.GC1969@qmqm.qmqm.pl>
+Content-Type: text/plain; charset="iso-8859-2"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
  HQMAIL107.nvidia.com (172.20.187.13)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b35134bb-fba9-41c6-9fbf-08d9191cf919
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2819:
-X-Microsoft-Antispam-PRVS: <BL0PR12MB28195B3350E84FACEAC2A33FB82D9@BL0PR12MB2819.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:513;
+X-MS-Office365-Filtering-Correlation-Id: ecc164ae-8b72-4261-d6fa-08d919200676
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4505:
+X-Microsoft-Antispam-PRVS: <MW3PR12MB450596DCD1B3509B86E1C324D92D9@MW3PR12MB4505.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jvhW81dcnkOBRFqkP/COC/JsjQGpuGS2fRAS6OMNV5SHG1ehtTSs87YnJcDNWY8+x/FyaEnUV5FCQGxlJVrtyhcKTKsjSl3rh0mOTxkdEZYU7fE0n9u4G/se8s9q1r9ed6wbbV5ZFlgGuEwOfqiYwIh6WS3RuO6G+Mgoomi2WJqARngr6q6h7pHW9RuDiPF234Y6mpiO1BUw4vxBCVQmcMxKq8RdMnJIEODmBR6vMSxCVJWlX05o3rsf60Yy221XKH3lGpXVwFsE9qq7t3FVsI7WTH/vtHgCX95okupnECuVnuHOmOdB4Nvofvi+PizqID8soxVvUiymwGDHvZORExD1jGklBYHAYQ/3b6OBg4+Os+uF1zh8eydaenOV+U2fbvvvS1dql2qdmMduX46uo2VWAAN8h843JPazpbR+ICn0dFBqAmxJ/mKoOgPOp/vmFTfSeGdp6M5e5/S6Nr/f+1tsWNIdQGI+uhaog0CAmmUkcIz4tSNCt21WZtSjKew2GGYmvzrNVmQgLmKTQbUxVXCUSc+mXn+NMhIuzh/A2eQRcQFDdHIzJDtyKzeJxPTfW+si2NWgbyn1AnFcRNGf1HSlG1IiapZV4o9cMu+vQP98kwfL8/18vi4CY1kgrSpLkpsVf0LCerx1E5V+WezPaCWMILYhXmmEjg6g7keWvWK9xBXBqO5mcu+zUIRGoS7S
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(47076005)(8936002)(2616005)(36860700001)(31686004)(70206006)(8676002)(54906003)(110136005)(36756003)(36906005)(70586007)(16576012)(7636003)(356005)(26005)(83380400001)(16526019)(53546011)(86362001)(336012)(5660300002)(2906002)(4326008)(82310400003)(426003)(186003)(498600001)(6666004)(31696002)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: D92E1kaMt8r7oXrUIWf9rhpaOvmEvA4WAAMszW1cvb2b/ohNfR3mIO86UuYvwVfCmsIi57ZRS4d4tWBnqBAmbBsW3IpDeovXUErgHMd2VkRR49yc6IJCsoREiSmLwYzawbUHyvxhbTsy7e4yDmw1aNqQJA8kPiEnv4rCZS+9tXKHeeRH2ZBIeXbkIqqoAr5LaJtZWEfuJDsuIGOsBjXy2nbBDVYXysXmLu/aKffA3ZAt/FozzQs38kMRRKko0KwhOmEqcStYG9PoSGl8VaBEFjiHaC7WWffWjByA/hSvxXrqJNFil4MLOampWrkxn9XWTjX/ftJlotjH6yBEnrFvReiJfhx56/W9HANdjumq30OHmBjT72yBz296IijvLgVO1T8VY0DyRHJrsXM08zlDB2UM0JMGof017Wl/3ZDkq/4HcKx1nehWYnFgpISm28gbsIYM23cjKbx/0fBP+pIniv1dRFiaSPkwYnag1AojbIagJgWohTCcC00XuipT78hwaMEqj2odGi25++2jqZYsDibIMk6eCu3wgjlkM6eOUgg//+uoX9XqtygCkuDTNR8diQbi7oKuTz7FVy9TWDVe4hyUDCAs9kteOu74C90qXazBKOuQdhl8oqimKXSMuajQ27mM2CPjN58qQE2c7mGn4wwoPgI5twQEwZSnh/COh0ujoljZFC2XQ67t5J2tIVQd
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(396003)(136003)(376002)(39860400002)(46966006)(36840700001)(70586007)(5660300002)(186003)(70206006)(36860700001)(36756003)(31686004)(4326008)(426003)(86362001)(16526019)(54906003)(7636003)(478600001)(336012)(2616005)(66574015)(6916009)(47076005)(31696002)(53546011)(36906005)(16576012)(2906002)(107886003)(8676002)(316002)(83380400001)(82310400003)(356005)(8936002)(26005)(82740400003)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2021 10:17:27.7531
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2021 10:39:18.6585
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b35134bb-fba9-41c6-9fbf-08d9191cf919
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecc164ae-8b72-4261-d6fa-08d919200676
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT063.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT052.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2819
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4505
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thanks for the patch.
 
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+On 14/05/2021 22:49, Micha³ Miros³aw wrote:
+> On Fri, May 14, 2021 at 03:24:58PM +0100, Jon Hunter wrote:
+>> Hello!
+>>
+>> I have been looking into some random crashes that appear to stem from
+>> the stmmac_napi_poll_rx() function. There are two different panics I
+>> have observed which are ...
+> [...]
+>> The bug being triggered in skbuff.h is the following ...
+>>
+>>  void *skb_pull(struct sk_buff *skb, unsigned int len);
+>>  static inline void *__skb_pull(struct sk_buff *skb, unsigned int len)
+>>  {
+>>          skb->len -= len;
+>>          BUG_ON(skb->len < skb->data_len);
+>>          return skb->data += len;
+>>  }
+>>
+>> Looking into the above panic triggered in skbuff.h, when this occurs
+>> I have noticed that the value of skb->data_len is unusually large ...
+>>
+>>  __skb_pull: len 1500 (14), data_len 4294967274
+> [...]
+> 
+> The big value looks suspiciously similar to (unsigned)-EINVAL.
 
-- Vidya Sagar
+Yes it does and at first, I thought it was being set to -EINVAL.
+However, from tracing the length variables I can see that this is not
+the case.
 
-On 5/17/2021 6:42 AM, Tian Tao wrote:
-> External email: Use caution opening links or attachments
+>> I then added some traces to stmmac_napi_poll_rx() and
+>> stmmac_rx_buf2_len() to trace the values of various various variables
+>> and when the problem occurs I see ...
+>>
+>>  stmmac_napi_poll_rx: stmmac_rx: count 0, len 1518, buf1 66, buf2 1452
+>>  stmmac_napi_poll_rx: stmmac_rx_buf2_len: len 66, plen 1518
+>>  stmmac_napi_poll_rx: stmmac_rx: count 1, len 1518, buf1 66, buf2 1452
+>>  stmmac_napi_poll_rx: stmmac_rx_buf2_len: len 66, plen 1536
+>>  stmmac_napi_poll_rx: stmmac_rx: count 2, len 1602, buf1 66, buf2 1536
+>>  stmmac_napi_poll_rx: stmmac_rx_buf2_len: len 1602, plen 1518
+>>  stmmac_napi_poll_rx: stmmac_rx: count 2, len 1518, buf1 0, buf2 4294967212
+>>  stmmac_napi_poll_rx: stmmac_rx: dma_buf_sz 1536, buf1 0, buf2 4294967212
 > 
-> 
-> request_irq() after setting IRQ_NOAUTOEN as below
-> irq_set_status_flags(irq, IRQ_NOAUTOEN);
-> request_irq(dev, irq...);
-> can be replaced by request_irq() with IRQF_NO_AUTOEN flag.
-> 
-> this change is just to simplify the code, no actual functional changes.
-> 
-> Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-> ---
-> 
-> v2: update the commit message.
-> ---
->   drivers/pci/controller/dwc/pcie-tegra194.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index bafd2c6..7349926 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -2021,14 +2021,13 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
->                  return -ENOMEM;
->          }
-> 
-> -       irq_set_status_flags(pcie->pex_rst_irq, IRQ_NOAUTOEN);
-> -
->          pcie->ep_state = EP_STATE_DISABLED;
-> 
->          ret = devm_request_threaded_irq(dev, pcie->pex_rst_irq, NULL,
->                                          tegra_pcie_ep_pex_rst_irq,
->                                          IRQF_TRIGGER_RISING |
-> -                                       IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> +                                       IRQF_TRIGGER_FALLING |
-> +                                       IRQF_ONESHOT | IRQF_NO_AUTOEN
->                                          name, (void *)pcie);
->          if (ret < 0) {
->                  dev_err(dev, "Failed to request IRQ for PERST: %d\n", ret);
-> --
-> 2.7.4
-> 
+> And this one to (unsigned)-EILSEQ.
+
+Yes but this simply comes from 1518-1602 = -84. So it is purely
+coincidence.
+
+Jon
+
+-- 
+nvpublic
