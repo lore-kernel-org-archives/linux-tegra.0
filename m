@@ -6,80 +6,214 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DAFC433ED
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 14:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E58FC433ED
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 18:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D35B4611CE
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 14:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB32861209
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 18:09:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349976AbhEROVc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 May 2021 10:21:32 -0400
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:42786 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349959AbhEROVc (ORCPT
+        id S230242AbhERSLL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 May 2021 14:11:11 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:41817 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229652AbhERSLL (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 May 2021 10:21:32 -0400
-Received: by mail-oi1-f177.google.com with SMTP id c196so1723440oib.9;
-        Tue, 18 May 2021 07:20:14 -0700 (PDT)
+        Tue, 18 May 2021 14:11:11 -0400
+Received: by mail-ot1-f44.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so9426735oth.8;
+        Tue, 18 May 2021 11:09:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=hJ7DVI8fhmwBOH2IUo1UrfyvEw8/sy8ERU4boAZCTso=;
-        b=f6ET+gXPlUmc7TWYz3BQZejcxaBZH6E7Ccq+vDOpesMI1cRKggqMEQiNBaLq1/ZAkR
-         6AB4omNe66s4Q41UHHupgi9T8LpEb2xrRXZWLqBGIUBhY1RLNkqtF7mcEbTpWfRCJL4Q
-         N7NkEPvYLNf3VFwh3NFKK70VDrBdX38boSwhC+v8j2rfMPLDTtHN3bqMgWs9JuC3vs1D
-         3ivlmt9JHsR4M9WOx63xaYw8ke6LPB0xqkoGTbBccps7VcNg1w+HZ7iPoGPkp/KCTJgM
-         hnFdOeJvuFkfEwpKIZsq1hnMq9C1QXLeqp5oi5AsNAPP/u/tlufiQaMn+lFxviFKvjiK
-         hVKQ==
-X-Gm-Message-State: AOAM531Icy98neUzKO7s+yud+aZ45fek3AIPi1JFM3PruAqTC/NmVUIw
-        Z9PINO3dN2L1TGrNqH3vAw==
-X-Google-Smtp-Source: ABdhPJynRC8420FIewuhiizTHJ0JIkGZoXyJiMlRQ3p6rQVxlUE6GcHDy22QVqjHj/ZT9D4CJfj+WQ==
-X-Received: by 2002:aca:4dc3:: with SMTP id a186mr3676923oib.22.1621347613471;
-        Tue, 18 May 2021 07:20:13 -0700 (PDT)
+        bh=FkuvQrSQFUpcINK14j2wFhP0462nBtLGLd1FHV4P3x0=;
+        b=I5LkQXU5LBy2vSOZex4kHXTNaj0xwTYdhIIqPkAImW4+1PLelZGY2JF4ISYC6or/Hu
+         DYsHpSKSZe+asvWPfAaSS0mEKwyHOSFlRrgQVwlhGlrex0BxgEtVfD2VXan3WDgzTSxN
+         qWMYQiVfTyEJIeKeJH6vDpDQB/U3VeF0i/dUfRaiQYujzfgqbatMCm3qVrDyCTcxQmlM
+         9+YShqWx8ua75ZkqAHky/v+y5Uyp5I9WHpo83zckxnGEDKgQjk1DOnlOBKkYzKD/TW24
+         4Hcg2sSGv9y2iisJYYzzQT7rX1U5nFdMi6nDMp53Uyegoj+s9zA1ClOhEuZS3gw2Juo/
+         kiiA==
+X-Gm-Message-State: AOAM5319nXZpWHb1qvtpfg9HvMQVKYjekfsnicwUPLkg5wCsvl3m5xXi
+        WXZOGiOGUdKyOIw0oEXt5A==
+X-Google-Smtp-Source: ABdhPJy83vorwZ946H+siNqyaTQi794cgapVkhtLojUJKGMSukubOgZuoLBbq9vciBwGECDWOkjSaQ==
+X-Received: by 2002:a9d:4a85:: with SMTP id i5mr5360010otf.102.1621361391485;
+        Tue, 18 May 2021 11:09:51 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e11sm3779210ook.20.2021.05.18.07.20.10
+        by smtp.gmail.com with ESMTPSA id 77sm2940360otc.54.2021.05.18.11.09.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 07:20:11 -0700 (PDT)
-Received: (nullmailer pid 617644 invoked by uid 1000);
-        Tue, 18 May 2021 14:20:09 -0000
-Date:   Tue, 18 May 2021 09:20:09 -0500
+        Tue, 18 May 2021 11:09:50 -0700 (PDT)
+Received: (nullmailer pid 961183 invoked by uid 1000);
+        Tue, 18 May 2021 18:09:49 -0000
+Date:   Tue, 18 May 2021 13:09:49 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Matt Merhar <mattmerhar@protonmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Paul Fertser <fercerpav@gmail.com>, devicetree@vger.kernel.org,
-        Viresh Kumar <vireshk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 1/3] dt-bindings: soc: tegra-pmc: Document core power
- domain
-Message-ID: <20210518142009.GA617606@robh.at.kernel.org>
-References: <20210516231755.24193-1-digetx@gmail.com>
- <20210516231755.24193-2-digetx@gmail.com>
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Ion Agorria <ion@agorria.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] ASoC: tegra: Unify ASoC machine drivers
+Message-ID: <20210518180949.GA949047@robh.at.kernel.org>
+References: <20210518001356.19227-1-digetx@gmail.com>
+ <20210518001356.19227-3-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210516231755.24193-2-digetx@gmail.com>
+In-Reply-To: <20210518001356.19227-3-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 17 May 2021 02:17:53 +0300, Dmitry Osipenko wrote:
-> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
-> blocks reside. Document the new core power domain properties.
-> 
+On Tue, May 18, 2021 at 03:13:56AM +0300, Dmitry Osipenko wrote:
+> Squash all machine drivers into a single-universal one. This reduces
+> code duplication, eases addition of a new drivers and upgrades older
+> code to a modern Linux kernel APIs.
+
+Nice, I never understood why each codec needed it's own machine driver 
+(and typically in turn compatible string).
+
+>
+> Suggested-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Co-developed-by: Ion Agorria <ion@agorria.com>
+> Signed-off-by: Ion Agorria <ion@agorria.com>
+> Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+[...]
+
+> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+> index e4863fa37b0c..fdf74bfd728e 100644
+> --- a/sound/soc/tegra/tegra_wm8903.c
+> +++ b/sound/soc/tegra/tegra_wm8903.c
+> @@ -14,192 +14,80 @@
+>   *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
+>   */
+>  
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/slab.h>
+> -#include <linux/gpio.h>
+> -#include <linux/of_gpio.h>
+>  
+>  #include <sound/core.h>
+>  #include <sound/jack.h>
+> -#include <sound/pcm.h>
+> -#include <sound/pcm_params.h>
+>  #include <sound/soc.h>
+>  
+>  #include "../codecs/wm8903.h"
+>  
+> -#include "tegra_asoc_utils.h"
+> +#include "tegra_asoc_machine.h"
+>  
+> -#define DRV_NAME "tegra-snd-wm8903"
+> +static struct snd_soc_jack_pin tegra_wm8903_mic_jack_pins[] = {
+> +	{ .pin = "Mic Jack", .mask = SND_JACK_MICROPHONE },
+> +};
+>  
+> -struct tegra_wm8903 {
+> -	int gpio_spkr_en;
+> -	int gpio_hp_det;
+> -	int gpio_hp_mute;
+> -	int gpio_int_mic_en;
+> -	int gpio_ext_mic_en;
+> -	struct tegra_asoc_utils_data util_data;
+> +static const char * const tegra_active_low_hp_compats[] = {
+> +	"ad,tegra-audio-plutux",
+> +	"ad,tegra-audio-wm8903-medcom-wide",
+> +	"ad,tegra-audio-wm8903-tec",
+> +	"nvidia,tegra-audio-wm8903-cardhu",
+> +	"nvidia,tegra-audio-wm8903-harmony",
+> +	"nvidia,tegra-audio-wm8903-picasso",
+> +	"nvidia,tegra-audio-wm8903-seaboard",
+> +	"nvidia,tegra-audio-wm8903-ventana",
+> +	NULL,
+
+I think this list should be added to the main match table below with 
+data having a flag for active low HP. Then you only match once, don't 
+need the exported function and the next difference is much easier to 
+add.
+
+>  };
+>  
+> -static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
+> -					struct snd_pcm_hw_params *params)
+> +static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+>  {
+> -	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
+> -	struct snd_soc_dai *codec_dai = asoc_rtd_to_codec(rtd, 0);
+> +	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
+> +	struct device_node *np = rtd->card->dev->of_node;
+>  	struct snd_soc_card *card = rtd->card;
+> -	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+> -	int srate, mclk;
+>  	int err;
+>  
+> -	srate = params_rate(params);
+> -	switch (srate) {
+> -	case 64000:
+> -	case 88200:
+> -	case 96000:
+> -		mclk = 128 * srate;
+> -		break;
+> -	default:
+> -		mclk = 256 * srate;
+> -		break;
+> -	}
+> -	/* FIXME: Codec only requires >= 3MHz if OSR==0 */
+> -	while (mclk < 6000000)
+> -		mclk *= 2;
+> +	/*
+> +	 * Older version of machine driver was ignoring GPIO polarity,
+> +	 * forcing it to active-low.  This means that all older device-trees
+> +	 * which set the polarity to active-high are wrong and we need to fix
+> +	 * up them.
+> +	 */
+> +	if (of_device_compatible_match(np, tegra_active_low_hp_compats)) {
+> +		bool active_low = gpiod_is_active_low(machine->gpiod_hp_det);
+
+[...]
+
+> +static const struct tegra_asoc_data tegra_wm8903_data = {
+> +	.mclk_rate = tegra_asoc_machine_mclk_rate,
+> +	.card = &snd_soc_tegra_wm8903,
+> +	.add_common_dapm_widgets = true,
+> +	.add_common_controls = true,
+> +	.add_common_soc_ops = true,
+> +	.add_mic_jack = true,
+> +	.add_hp_jack = true,
+> +};
+>  
+>  static const struct of_device_id tegra_wm8903_of_match[] = {
+> -	{ .compatible = "nvidia,tegra-audio-wm8903", },
+> +	{ .compatible = "nvidia,tegra-audio-wm8903", .data = &tegra_wm8903_data },
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, tegra_wm8903_of_match);
+>  
+>  static struct platform_driver tegra_wm8903_driver = {
+>  	.driver = {
+> -		.name = DRV_NAME,
+> -		.pm = &snd_soc_pm_ops,
+> +		.name = "tegra-wm8903",
+>  		.of_match_table = tegra_wm8903_of_match,
+> +		.pm = &snd_soc_pm_ops,
+>  	},
+> -	.probe = tegra_wm8903_driver_probe,
+> +	.probe = tegra_asoc_machine_probe,
+>  };
+>  module_platform_driver(tegra_wm8903_driver);
+>  
+>  MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
+>  MODULE_DESCRIPTION("Tegra+WM8903 machine ASoC driver");
+>  MODULE_LICENSE("GPL");
+> -MODULE_ALIAS("platform:" DRV_NAME);
+> -MODULE_DEVICE_TABLE(of, tegra_wm8903_of_match);
