@@ -2,145 +2,112 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F71C433B4
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 20:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B0C433B4
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 20:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFA160FF3
-	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 20:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D996108D
+	for <linux-tegra@archiver.kernel.org>; Tue, 18 May 2021 20:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241346AbhERUDt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 18 May 2021 16:03:49 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:35137 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239208AbhERUDs (ORCPT
+        id S233558AbhERUNS (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 18 May 2021 16:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231580AbhERUNS (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 18 May 2021 16:03:48 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id D145222239;
-        Tue, 18 May 2021 22:02:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1621368148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h0LHPW/w4IwpfoUIXaU9BCUDkKX5JEPEZ2uj7QpdpKw=;
-        b=oO4XsO814zzxDvKliFmFSX1r0OtStVP6JrmFmpcEoyroQcR4EUyXi90OuBxJ6bV67QPGgn
-        impBl6M+4Qh+QN9EV7VJg4R2tUuvo2pWk6xJB+8kI7wh8h9Mp1hWCGwjn8yF5PwH2AFsnG
-        Xh538qco49irr8Qd/oXPiuSIPdpBdDo=
+        Tue, 18 May 2021 16:13:18 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7538FC061573;
+        Tue, 18 May 2021 13:11:59 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id q7so14423216lfr.6;
+        Tue, 18 May 2021 13:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eqnKON75MC7wmOo09rQx8YXcKOuSxztzztMBXxXm75A=;
+        b=q/4iatmrOgeg1PWQq7qdnEK93Mf5xlYSKZsJTH9Tv5UkG27MQ2EvSilQhDzJJGkfSi
+         zPoez1JT5MkXAXfF0TdJOXl9jMMmFNB97v85pIW3kRiiRl4RNREjCBeEFUO9nJRxx+N4
+         P8Ulebw30vk7rxv3h4sOPXKF0KbLZ95zWbbmwKTMouPL0dnM/QJ1IdbOC6U/fIfVv79m
+         Of0LbTJI7C6ZeIEQRGejGtzZhBuc0nFI3f4ZJnGhm05EPZZ5aj8SaWGaQkCaSBTsVylx
+         V+PAiPdj2EqK5ZnOuFa48ZTvVxCS93rB4vKwHpiYGWyhe/OaDNDiOvYxFSw8SRTXdQPG
+         DF1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eqnKON75MC7wmOo09rQx8YXcKOuSxztzztMBXxXm75A=;
+        b=H76aDim1Rp1Qcm8oXHSCTzun+uCUeCSsrc4GhTIiASDcDeHMkPDR23qWRapOD3fkvJ
+         sqT6d4sPeJ0FCqdjG4F541OsVhqcm+QuCEg9JTv8xF/Jc3iCdu9CPD4SfZXm6dxhBygV
+         tjVxjCapUluvyJWcQI57A1yyxtkq2NZ+db1cCWrGwSl9yhDVIBqgnG33r58JQWvNroKs
+         D993AaASqcc5W49zcGNMz0s6s9nNVrldY0iADaavK6oVq1XcdhUQ28WdE8mXsoGdh5Wc
+         wTvEpgIIG1p3ROGAvNc0Lj9Xrs0tyMQ1intcVCEPD5KZA79yE/3//EudHyxMIpVng/9/
+         rPwA==
+X-Gm-Message-State: AOAM5336y+4R4LeBcr8cag2ZGhBcyO5JZuuFii6uaQoGzHkwGG3Cc3Ze
+        2g7hoVpn7foWza+2sb9Jxol9z76Qvas=
+X-Google-Smtp-Source: ABdhPJx6fBKAk+vMXzaeJUMIPe/E1mlIHljaim+HQDVwv3IcRiDuJXXqx9U0k27vviVxgdudscSDPw==
+X-Received: by 2002:a05:6512:33c4:: with SMTP id d4mr5533905lfg.536.1621368717835;
+        Tue, 18 May 2021 13:11:57 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-91.dynamic.spd-mgts.ru. [109.252.193.91])
+        by smtp.googlemail.com with ESMTPSA id r17sm3431037ljp.40.2021.05.18.13.11.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 May 2021 13:11:57 -0700 (PDT)
+Subject: Re: [PATCH v1 2/2] ASoC: tegra: Unify ASoC machine drivers
+To:     Rob Herring <robh@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Ion Agorria <ion@agorria.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20210518001356.19227-1-digetx@gmail.com>
+ <20210518001356.19227-3-digetx@gmail.com>
+ <20210518180949.GA949047@robh.at.kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <95f62f68-b081-2f98-1f88-f39e52c49bfe@gmail.com>
+Date:   Tue, 18 May 2021 23:11:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 18 May 2021 22:02:27 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] mtd: core: Fix freeing of otp_info buffer
-In-Reply-To: <20210518185503.162787-1-jonathanh@nvidia.com>
-References: <20210424110608.15748-6-michael@walle.cc>
- <20210518185503.162787-1-jonathanh@nvidia.com>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <016ead00625f91d1247190e7c68c2086@walle.cc>
-X-Sender: michael@walle.cc
+In-Reply-To: <20210518180949.GA949047@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Am 2021-05-18 20:55, schrieb Jon Hunter:
-> Commit 4b361cfa8624 ("mtd: core: add OTP nvmem provider support") is
-> causing the following panic ...
+18.05.2021 21:09, Rob Herring пишет:
+>> +static const char * const tegra_active_low_hp_compats[] = {
+>> +	"ad,tegra-audio-plutux",
+>> +	"ad,tegra-audio-wm8903-medcom-wide",
+>> +	"ad,tegra-audio-wm8903-tec",
+>> +	"nvidia,tegra-audio-wm8903-cardhu",
+>> +	"nvidia,tegra-audio-wm8903-harmony",
+>> +	"nvidia,tegra-audio-wm8903-picasso",
+>> +	"nvidia,tegra-audio-wm8903-seaboard",
+>> +	"nvidia,tegra-audio-wm8903-ventana",
+>> +	NULL,
+> I think this list should be added to the main match table below with 
+> data having a flag for active low HP. Then you only match once, don't 
+> need the exported function and the next difference is much easier to 
+> add.
 > 
->  ------------[ cut here ]------------
->  kernel BUG at /local/workdir/tegra/linux_next/kernel/mm/slab.c:2730!
->  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->  Modules linked in:
->  CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.13.0-rc2-next-20210518 #1
->  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->  PC is at ___cache_free+0x3f8/0x51c
->  ...
->  [<c029bb1c>] (___cache_free) from [<c029c658>] (kfree+0xac/0x1bc)
->  [<c029c658>] (kfree) from [<c06da094>] (mtd_otp_size+0xc4/0x108)
->  [<c06da094>] (mtd_otp_size) from [<c06dc864>]
-> (mtd_device_parse_register+0xe4/0x2b4)
->  [<c06dc864>] (mtd_device_parse_register) from [<c06e3ccc>]
-> (spi_nor_probe+0x210/0x2c0)
->  [<c06e3ccc>] (spi_nor_probe) from [<c06e9578>] (spi_probe+0x88/0xac)
->  [<c06e9578>] (spi_probe) from [<c066891c>] (really_probe+0x214/0x3a4)
->  [<c066891c>] (really_probe) from [<c0668b14>] 
-> (driver_probe_device+0x68/0xc0)
->  [<c0668b14>] (driver_probe_device) from [<c0666cf8>]
-> (bus_for_each_drv+0x5c/0xbc)
->  [<c0666cf8>] (bus_for_each_drv) from [<c0668694>] 
-> (__device_attach+0xe4/0x150)
->  [<c0668694>] (__device_attach) from [<c06679e0>] 
-> (bus_probe_device+0x84/0x8c)
->  [<c06679e0>] (bus_probe_device) from [<c06657f8>] 
-> (device_add+0x48c/0x868)
->  [<c06657f8>] (device_add) from [<c06eb784>] 
-> (spi_add_device+0xa0/0x168)
->  [<c06eb784>] (spi_add_device) from [<c06ec9a8>]
-> (spi_register_controller+0x8b8/0xb38)
->  [<c06ec9a8>] (spi_register_controller) from [<c06ecc3c>]
-> (devm_spi_register_controller+0x14/0x50)
->  [<c06ecc3c>] (devm_spi_register_controller) from [<c06f0510>]
-> (tegra_spi_probe+0x33c/0x450)
->  [<c06f0510>] (tegra_spi_probe) from [<c066abec>] 
-> (platform_probe+0x5c/0xb8)
->  [<c066abec>] (platform_probe) from [<c066891c>] 
-> (really_probe+0x214/0x3a4)
->  [<c066891c>] (really_probe) from [<c0668b14>] 
-> (driver_probe_device+0x68/0xc0)
->  [<c0668b14>] (driver_probe_device) from [<c0668e30>]
-> (device_driver_attach+0x58/0x60)
->  [<c0668e30>] (device_driver_attach) from [<c0668eb8>]
-> (__driver_attach+0x80/0xc8)
->  [<c0668eb8>] (__driver_attach) from [<c0666c48>] 
-> (bus_for_each_dev+0x78/0xb8)
->  [<c0666c48>] (bus_for_each_dev) from [<c0667c44>] 
-> (bus_add_driver+0x164/0x1e8)
->  [<c0667c44>] (bus_add_driver) from [<c066997c>] 
-> (driver_register+0x7c/0x114)
->  [<c066997c>] (driver_register) from [<c010223c>] 
-> (do_one_initcall+0x50/0x2b0)
->  [<c010223c>] (do_one_initcall) from [<c11011f0>]
-> (kernel_init_freeable+0x1a8/0x1fc)
->  [<c11011f0>] (kernel_init_freeable) from [<c0c09190>] 
-> (kernel_init+0x8/0x118)
->  [<c0c09190>] (kernel_init) from [<c01001b0>] (ret_from_fork+0x14/0x24)
->  ...
->  ---[ end trace 0f652dd222de75d7 ]---
-> 
-> In the function mtd_otp_size() a buffer is allocated by calling
-> kmalloc() and a pointer to the buffer is stored in a variable 'info'.
-> The pointer 'info' may then be incremented depending on the length
-> returned from mtd_get_user/fact_prot_info(). If 'info' is incremented,
-> when kfree() is called to free the buffer the above panic occurs 
-> because
-> we are no longer passing the original address of the buffer allocated.
-> Fix this by indexing through the buffer allocated to avoid incrementing
-> the pointer.
-> 
-> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-uhm.. yes of course. Two fixes for this function. Not my best day :/
+Thank you for the suggestion. You're right that these compats will take
+precedence.
 
-I'm wondering why CONFIG_SLUB_DEBUG_ON doesn't catch this, whereas
-slub_debug=f (or fzpu) as commandline parameter works as expected.
+I'm also now thinking that it should be okay to assume that the GPIO is
+active-low by default. I haven't seen tegra boards with the active-high
+configuration.
 
-Reviewed-by: Michael Walle <michael@walle.cc>
-
-Thanks,
--michael
+I'll remove the use of the exported function in v2.
