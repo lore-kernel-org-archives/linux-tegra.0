@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AD1C433ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A5EC43470
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2EE6613D7
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2913F613C5
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233141AbhETXKE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 19:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S233314AbhETXKK (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 19:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233113AbhETXKD (ORCPT
+        with ESMTP id S233153AbhETXKF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 19:10:03 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8156EC061761;
-        Thu, 20 May 2021 16:08:40 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id a2so26881190lfc.9;
-        Thu, 20 May 2021 16:08:40 -0700 (PDT)
+        Thu, 20 May 2021 19:10:05 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4858C061761;
+        Thu, 20 May 2021 16:08:42 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id v8so21919859lft.8;
+        Thu, 20 May 2021 16:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4wjkerGjnODWZW9w3YSKmK8x5ot3hbK6hwMuTDmldcE=;
-        b=eY+JcN50EErXfJJBHxuOt6AxKLX5cM00mV5NGLoPgAIKNZxqPRMaG0FnienMoaG5SV
-         /+kB14sss/j2hn7khi3mnGNY+hu8x0EtJv3xy56MOyqGQBVl2tLnuGTrwjIAX/O01ecn
-         q0ytzsaDaJ73gmOfBgsWjCdaF/jzKEioVYEpaYVDdNyorgAjLfGcBBC/nx+d6kD8FseV
-         mmfdHzk2NwbKtQXNEzJ3kSg97304srhrirFdZyi23nkpgHPtfaL4xf/TdlIKx2hGM3SK
-         jPjG8EwnRTuzzNMW0Tu6Rfk+XIku5nIqPNTUdVLlPHtJ8twLHFphwhR4AcZpQXbGWfYW
-         PlFg==
+        bh=PZ7rCy2VE/t2KfttY6Z1tGootvL+h1fkg+mpjvNoBrY=;
+        b=PeeRFLmZ8TfYZ0GQg6iH6bin0T0xVY/jqEd73UEXmr4dg6GlvydWE8xF2wWkWC00q2
+         WUHBXTKMbMdw5MvVrgFfp/w+9p9K2oVN7hPN/Bwmqj+VOu2AtKlh4GmP750h3FzFLvt0
+         6M02EjPDkcS0DD6XP80R89DkilSTNLIf/naW7Fm6W7IOd21uMxSzhLPsdQLGtedGoNl8
+         SXW9ugRaKqzmX68Ez+mu3DjPj8FtkSglqm5sj3zMj9Jo1TQ8NmXhiZrn58NnAWDHqyR8
+         N7mWZs2i/U+3KEG0azqWRFZtmsbqUCVXlY5j6im5hBZJa6VrtchVKoVgL7JfsqTKTKxB
+         mwog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4wjkerGjnODWZW9w3YSKmK8x5ot3hbK6hwMuTDmldcE=;
-        b=D5W54YktIo5eeZ3J+PzEF3NZr9ynK52JxEUfNkJCnhfVw5flmhN8s0BoLsrIk5zEuF
-         /utlOP97IoHFoF5JCOR33lC2VXU8hoZ54qR2Su22+8hBpB7cK465nSFFCvOjPQ7k7zzF
-         LhAJa53V2o+JVGC+qJMC4rA6oz+Trf15Wes2cQKclfd+Bo+T5PqoKq9+f+FHQxEnhoRY
-         YUff0LOqQxUGqbvUTxlw1bBzvX0Qra7SoFvaxtEzySVlinEQyDcCWs19F2gc5LK5Ur2J
-         bbbma8MKEHj90WwnJvtgfvGEp7GWYCvGlnh6TiFVwyyINXm2wAwFwUhfTE1fH1B/ccyz
-         9dUw==
-X-Gm-Message-State: AOAM5304SDb4lXgblePiTc0M3BcyQx8P/3dLlnFz4Ga0gXfcL+0UAszL
-        xvJthSrXaVzeoUcWPKnVyxk=
-X-Google-Smtp-Source: ABdhPJyIlz9t4Ds3YgggFlv9Ncz2YTCg7pWLILTlZ7oCF4wxyxUhe0yQiOCr2vbdtbuhCU1robe2hw==
-X-Received: by 2002:ac2:5289:: with SMTP id q9mr4613760lfm.141.1621552118935;
-        Thu, 20 May 2021 16:08:38 -0700 (PDT)
+        bh=PZ7rCy2VE/t2KfttY6Z1tGootvL+h1fkg+mpjvNoBrY=;
+        b=bmfya/k/2fP8iVzlYR/4s2wcrW5W+XpHBvYJuebzkffQWXpAIMzezjyYX7TluLfkZI
+         E5QRkocjWBAHbABzkQdRtFHjl1mLF5T1maLqL9EbC1voogwYuCydOLD/BpvqjndvAqb1
+         M5hUCdzOLjjyIup+eo1HkQFZD5C9szgKnLNK+3sozd9LGMjEGoqpu0CZW61oZmroU6dF
+         YhRdxXQOjPfrGR+4/WRilpXYKc9cVmvS7liVvX5zw4IiAAmOy7ixGUUdaBnnKB/v+Kho
+         PD/UllPKrsLk5vA9X+3ZuASH/LZ28DNj53rvjXbjrAB/zA0BfKnv4PY62PT1VxpViR7R
+         x81w==
+X-Gm-Message-State: AOAM5329VoIxXW7JrJdB0zUHRP1EUKiGYEp/4mfIdXpQJSbGF3cNCV6U
+        PsSOgVnh3ta4y2zmn95QxcQ=
+X-Google-Smtp-Source: ABdhPJx0EilwJMtqaOHlPCOecysO9SMYaZpGuzqOf68nFRPexJLbkCYWarSwMAKdV6aJqE5OA0bsDQ==
+X-Received: by 2002:ac2:4906:: with SMTP id n6mr4668917lfi.352.1621552121344;
+        Thu, 20 May 2021 16:08:41 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-76.dynamic.spd-mgts.ru. [109.252.193.76])
-        by smtp.gmail.com with ESMTPSA id 4sm427821lfr.175.2021.05.20.16.08.37
+        by smtp.gmail.com with ESMTPSA id 4sm427821lfr.175.2021.05.20.16.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 May 2021 16:08:38 -0700 (PDT)
+        Thu, 20 May 2021 16:08:40 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH v1 01/13] regulator: core: Add regulator_sync_voltage_rdev()
-Date:   Fri, 21 May 2021 02:07:39 +0300
-Message-Id: <20210520230751.26848-2-digetx@gmail.com>
+Subject: [PATCH v1 03/13] soc/tegra: Add stub for soc_is_tegra()
+Date:   Fri, 21 May 2021 02:07:41 +0300
+Message-Id: <20210520230751.26848-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210520230751.26848-1-digetx@gmail.com>
 References: <20210520230751.26848-1-digetx@gmail.com>
@@ -89,65 +89,33 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Some NVIDIA Tegra devices use a CPU soft-reset method for the reboot and
-in this case we need to restore the coupled voltages to the state that is
-suitable for hardware during boot. Add new regulator_sync_voltage_rdev()
-helper which is needed by regulator drivers in order to sync voltage of
-a coupled regulators.
+Add stub required for compile-testing of drivers.
 
-Acked-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/regulator/core.c         | 23 +++++++++++++++++++++++
- include/linux/regulator/driver.h |  1 +
- 2 files changed, 24 insertions(+)
+ include/soc/tegra/common.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f192bf19492e..ead0b6d2af45 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4105,6 +4105,29 @@ int regulator_set_voltage_time_sel(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_set_voltage_time_sel);
+diff --git a/include/soc/tegra/common.h b/include/soc/tegra/common.h
+index 98027a76ce3d..744280ecab5f 100644
+--- a/include/soc/tegra/common.h
++++ b/include/soc/tegra/common.h
+@@ -6,6 +6,15 @@
+ #ifndef __SOC_TEGRA_COMMON_H__
+ #define __SOC_TEGRA_COMMON_H__
  
-+int regulator_sync_voltage_rdev(struct regulator_dev *rdev)
++#include <linux/types.h>
++
++#ifdef CONFIG_ARCH_TEGRA
+ bool soc_is_tegra(void);
++#else
++static inline bool soc_is_tegra(void)
 +{
-+	int ret;
-+
-+	regulator_lock(rdev);
-+
-+	if (!rdev->desc->ops->set_voltage &&
-+	    !rdev->desc->ops->set_voltage_sel) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* balance only, if regulator is coupled */
-+	if (rdev->coupling_desc.n_coupled > 1)
-+		ret = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
-+	else
-+		ret = -EOPNOTSUPP;
-+
-+out:
-+	regulator_unlock(rdev);
-+	return ret;
++	return false;
 +}
-+
- /**
-  * regulator_sync_voltage - re-apply last regulator output voltage
-  * @regulator: regulator source
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4ea520c248e9..35e5a611db81 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -540,6 +540,7 @@ int regulator_set_current_limit_regmap(struct regulator_dev *rdev,
- int regulator_get_current_limit_regmap(struct regulator_dev *rdev);
- void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
- int regulator_set_ramp_delay_regmap(struct regulator_dev *rdev, int ramp_delay);
-+int regulator_sync_voltage_rdev(struct regulator_dev *rdev);
++#endif
  
- /*
-  * Helper functions intended to be used by regulator drivers prior registering
+ #endif /* __SOC_TEGRA_COMMON_H__ */
 -- 
 2.30.2
 
