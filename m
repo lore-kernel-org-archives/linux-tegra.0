@@ -2,341 +2,189 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE62AC43460
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 02:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75992C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 09:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3582613AA
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 02:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A9956105A
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 09:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbhETCe2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 19 May 2021 22:34:28 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:23522 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230138AbhETCe1 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 19 May 2021 22:34:27 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210520023208epoutp011c2e6282c165ab192b5af0efba3dff87~ApZXaUY0f3057330573epoutp01W
-        for <linux-tegra@vger.kernel.org>; Thu, 20 May 2021 02:32:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210520023208epoutp011c2e6282c165ab192b5af0efba3dff87~ApZXaUY0f3057330573epoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1621477928;
-        bh=0z8L6+esZ+fdPKTGSA3R6RXbOD4PWlYtDwkEUPIzxW0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=dke2ndYdUv/qieItNC3p1+Ygc1Az+kg0MbWLv2q2Iv5yO3oVY1nX0CirNy7O8xl8m
-         UQqi+2OjyvPhZX9pbWjz7AtE3cTNQIpQdiFGU+iiFPN0FwPdTtfcqW53sEeymxvVuT
-         6CP1tyOvOwYhPg1t+4nSllI95ptvk/MeRdhhFLX0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210520023208epcas1p257cb3f5bde793858261ba45b0ebe23ba~ApZW2ii482775227752epcas1p2J;
-        Thu, 20 May 2021 02:32:08 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Fltzm31LTz4x9Px; Thu, 20 May
-        2021 02:32:04 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        ED.C4.09578.42AC5A06; Thu, 20 May 2021 11:32:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210520023200epcas1p443a1564d05162e990e18b8217798eee2~ApZP16FlM2759827598epcas1p4l;
-        Thu, 20 May 2021 02:32:00 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210520023200epsmtrp2310242c549d7f8aa3fe320be365df1c5~ApZP077DM2012320123epsmtrp2N;
-        Thu, 20 May 2021 02:32:00 +0000 (GMT)
-X-AuditID: b6c32a35-fcfff7000000256a-f5-60a5ca24dc79
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.B3.08163.02AC5A06; Thu, 20 May 2021 11:32:00 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210520023200epsmtip1109bc88cca48a6bb1ba7dbc026c33702~ApZPiP0K90874308743epsmtip1S;
-        Thu, 20 May 2021 02:32:00 +0000 (GMT)
-Subject: Re: [PATCH v1 3/7] dt-bindings: devfreq: tegra30-actmon: Convert to
- schema
-To:     Dmitry Osipenko <digetx@gmail.com>,
+        id S231193AbhETJCw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 05:02:52 -0400
+Received: from mail-bn1nam07on2073.outbound.protection.outlook.com ([40.107.212.73]:2007
+        "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230458AbhETJCw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 May 2021 05:02:52 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L6lv5R9n7zF5X24z1CdkbkyovEq/AuCs1R8lK5dag+r98FNEGTppfITY0Sy/DlTTishUjdkIpJr8P4ScZP0rgEk0lX59+ZrqVV6iy6J0Phplm8eT+SHFQkJqmPe22JC5qlu/Bb/416Wp35SWWguM/NNv1j1nykOaHY0pblkiNu9rRN5cnfJMcbUqXc6N90byByguJ9/wwV7y9bYQ1eHKFO9xjCSgqUdZqb7YOhrh41PtLmboBUAcAV2xKaYSqeBazHcIpyu9mBSz7dcgtqKkHvzvYPcprR2BypqZg6aklT/eKP5JJHzLb//Ilr5lTEtzsVYoiR+jAsFrxWMKbpoqjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LmuAjyIHwS3blbHh52wk7+v7Tpe0U4ZNkqbhstYDktg=;
+ b=jC0S67VQD8F8zdWC+i6WetYizy2RsX29VTuPMUVWDkQj4C4ezVQJ7Ms6HsVHZ4uW2uKKpGNheiI3dx9hSGMDE6Uv0vyspJ6xJugdYvxObO1BQrkBqMIzoDNbAsH5v3q8om/Mgar5AtUCxxoHlM0pyfPva8oA4omokbHxJzP4aIYTMUWqYITljheWAB5bUE6rN1bdjaYzS7lkvEKUk45YdWXPBP2BSg47rSQXjq90OTuYEIQE9vMg4X/MrL00GsDR483Iu3lReVCMDLvsWF50/7VlS/25NRaTn2tUSh3j/dCkK9Wz+Yy8qjLPj1VKRECP/KRz/+XsOjICMU/gQyeNlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.36) smtp.rcpttodomain=linux.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LmuAjyIHwS3blbHh52wk7+v7Tpe0U4ZNkqbhstYDktg=;
+ b=IVkAe7DpIS5EMuPfvYV7eiQ69f05WGnv2oKDDI9y6Q2b9pJKpH3BVUat6dAy0aSu5rLoWB3LK0g/FUo7Qu+yNBGGpt+9wOy7zuvMipVd+WYttR5wF94WtM7FfRYPOu1P0MeaVxwfr3y1Zoc+UQ6qWu4dTF/MkfRjCPbE4/OFpltw3RTZqVmvHKCXjd5tcJgnDQR7z8FCFDVMzhbt+dWBhaqJoVj/XATChalF/tjMxK7a7XSj7r1vs9vQEVRuKMpzIzSl10xrTvfOTu3GJ6HRJ3IfIkWUce7E5T+h58B3nv9Uy40M7qo7gPXknMvU784gsvRKrLyfPmkIeScd4pC0eQ==
+Received: from DM5PR07CA0038.namprd07.prod.outlook.com (2603:10b6:3:16::24) by
+ BN8PR12MB3411.namprd12.prod.outlook.com (2603:10b6:408:40::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4129.26; Thu, 20 May 2021 09:01:29 +0000
+Received: from DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:3:16:cafe::fa) by DM5PR07CA0038.outlook.office365.com
+ (2603:10b6:3:16::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.23 via Frontend
+ Transport; Thu, 20 May 2021 09:01:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
+ smtp.mailfrom=nvidia.com; linux.com; dkim=none (message not signed)
+ header.d=none;linux.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.36; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.36) by
+ DM6NAM11FT008.mail.protection.outlook.com (10.13.172.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4129.25 via Frontend Transport; Thu, 20 May 2021 09:01:29 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 20 May
+ 2021 09:01:29 +0000
+Received: from moonraker.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 20 May 2021 09:01:27 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Matt Merhar <mattmerhar@protonmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <16556bf1-1c31-a92f-a18e-c2fb536505e1@samsung.com>
-Date:   Thu, 20 May 2021 11:50:29 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Vidya Sagar <vidyas@nvidia.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2] PCI: tegra: Fix building Tegra194 PCIe driver
+Date:   Thu, 20 May 2021 10:01:23 +0100
+Message-ID: <20210520090123.11814-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210510211008.30300-4-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmnq7KqaUJBvOaOCzmHznHarH642NG
-        i5ZZi1gszja9Ybe4vGsOm8Xn3iOMFp1fZrFZ3GvZy2pxu3EFm8XZZ94WrXuPsFv83DWPxYHH
-        Y+esu+wem1Z1snn0Nr9j8+hp28Tk0bdlFaPH501yAWxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
-        8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QDcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
-        S2yVUgtScgosC/SKE3OLS/PS9ZLzc60MDQyMTIEKE7IzXv1bzlRwybKi+9BylgbGIzpdjJwc
-        EgImEjMPL2LpYuTiEBLYwSgx8etERgjnE6PEi5eHmCCcz4wSVw89ZYdpufHlJguILSSwi1Hi
-        6V0/CPs9UMf/TBBbWCBU4kzfaVaQZhGBQ0wS8yc0AY3l4GAWKJXYvcEGpIZNQEti/4sbbCA2
-        v4CixNUfjxlBbF4BO4m9P3vYQcpZBFQlDqw3BwmLCoRJnNzWAlUiKHFy5hOwEzgFzCTmHF7F
-        BGIzC4hL3HoyH8qWl9j+dg4zxMlHOCT6OkohbBeJf38vMkLYwhKvjm+BektK4vO7vWwQdrXE
-        ypNH2EDOlxDoYJTYsv8CK0TCWGL/0slMEK9oSqzfpQ8RVpTY+XsuI8RePol3X3tYQUokBHgl
-        OtqEIEqUJS4/uMsEYUtKLG7vZJvAqDQLyTezkHwwC8kHsxCWLWBkWcUollpQnJueWmxYYIgc
-        1ZsYwYlXy3QH48S3H/QOMTJxMB5ilOBgVhLh3e69OEGINyWxsiq1KD++qDQntfgQoykweCcy
-        S4km5wNTf15JvKGpkbGxsYWJoZmpoaGSOG+6c3WCkEB6YklqdmpqQWoRTB8TB6dUA9O0qVET
-        NdaaFecLK51+GxG/fs2hDv5Hf5v9Xq8oEm07tU6QP6si72tG9e67Z+Ii2PRPcK94fvewSpzr
-        orJJs2OED37P47q2eMejo6fv9B4o/N5vkLvetjCy6rNu6bsHe24a77t2bq5906y7/rtkTcze
-        HTgWPp1pOmfiildxMk0VK1fkBsg+FNzocJdPVt9x4lmGm98PX8l/GP3s7ZOJyxNYS3MqvM0e
-        HQpR2W6xYnf67FVMDqVsx3pWzf1xozzG1Gv1MjNu+fumqzq+nZM5fK80ytTtpXdfxmXbZveG
-        ZUFWSd3H576IdDh4yj44ff3jA9bp1VrGLq6eW3vLnwhf0Sr7W3HEZfXEaJHjGl8bJ6orsRRn
-        JBpqMRcVJwIAfspy+kUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnK7CqaUJBuebVCzmHznHarH642NG
-        i5ZZi1gszja9Ybe4vGsOm8Xn3iOMFp1fZrFZ3GvZy2pxu3EFm8XZZ94WrXuPsFv83DWPxYHH
-        Y+esu+wem1Z1snn0Nr9j8+hp28Tk0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBmv/i1nKrhk
-        WdF9aDlLA+MRnS5GTg4JAROJG19usnQxcnEICexglLi8+BIzREJSYtrFo0A2B5AtLHH4cDFE
-        zVtGiQsvOlhBaoQFQiXO9J0Gs0UEjjBJfOvxA7GZBUolnm1sZ4Ro2Moo8f7xPrAiNgEtif0v
-        brCB2PwCihJXfzxmBLF5Bewk9v7sYQdZxiKgKnFgvTlIWFQgTGLnksdMECWCEidnPmEBsTkF
-        zCTmHF7FBLFLXeLPPIibmQXEJW49mQ8Vl5fY/nYO8wRG4VlI2mchaZmFpGUWkpYFjCyrGCVT
-        C4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGC41BLawfjnlUf9A4xMnEwHmKU4GBWEuHd7r04
-        QYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQamg60/3vzn
-        fR++f66lwZuVJ+w17hw+arvt63S1y9tOqf6amjPr4mz5/EflUe096vYqgS/FzsTFZj2/mXI7
-        W1uuODzPq/mQwLf1UivkVpk4GXT0GHCuPWnIYBFSLLr48/vy1cHe4awqxfY7P3DUMPz0DFBj
-        7fz8/OIz9Xsqonuzp12sVP2Z/DZmb0uVvc35XYHXwn4/f9RZ+qlYc4Vn6LZOpS8q6/d1XjFg
-        DZ61VzIg9dN0387/u71XfnZs0ZnL15R0acIv4/W2W4+IFM3a3NGy89HTZOf6mXrJbJvfbbXe
-        7FPQf2XD2otpospb3CVVmNY+3rpGUiWiZ/bKbYUpEzc9yIie89Sq402r/fLQLm0bJZbijERD
-        Leai4kQAZeQQ1TIDAAA=
-X-CMS-MailID: 20210520023200epcas1p443a1564d05162e990e18b8217798eee2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210510211159epcas1p3c8ffedf8ffd1a34aa6960058eed2c379
-References: <20210510211008.30300-1-digetx@gmail.com>
-        <CGME20210510211159epcas1p3c8ffedf8ffd1a34aa6960058eed2c379@epcas1p3.samsung.com>
-        <20210510211008.30300-4-digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: aed7ca2b-7ad4-4d5a-feca-08d91b6ddb64
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3411:
+X-Microsoft-Antispam-PRVS: <BN8PR12MB341183C78DE7561E2171BAE3D92A9@BN8PR12MB3411.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MNbQ8hf8RVJVB+Ho/Mv/ZaWO8XB/gB7pSETGasnexgERRRR7waExPqAKkqm7w+VYmtmHh3wuksELuSYjbFZzlqQvT9b5zOAKM8Pxa0OinGQctlgtl1QpaGyrUCAWBzl6cX+wYavs/tsNfyqeGZVfuaPwR10+a+BYVCMetBL7OEUDqhLFIvBQIy6dWH52BExYve+S/HV9KQAnmVQHJgV1etak0YCL3Ql81x4CasjjjchxeDAVUiQDL0zGDviSYrr9F3yljorqvaoDkJuYlh85loFeYqLQlv43iUBKciRZQH6Cca9zdBi4EXxMfD4RYgsxYaHRkRIhsGV43Lz+DXesu803Pts4NrMPMOnEuIODXC4nyytI6FTzuAZKnxIo2byDL9qah/q4Y7HHSddco4N5O987b1IT1thE6VsWT/B6WJxLSs0aIxmmZj1kWHh51Yn+h75ocVi6HU7ckAd9UvCC/lVMg2pDc54jh8HZ9e58eUCnXL/BxRZZfvU19/vIzivhAeUaJnFqrbugS16PS4/u7w2I2Gqm4vfJX4czes4Q4axdAboJf/zJqRdi1YU588nAJqLHRxVJlqf5AoAksGyIjmM4uF3JIB9JCnFvPjeQYedHj/1ckmiFdxvNbmw3Rt2SmDQaHmxGlIYdcI5+jZkoY5oISmu99OhJ7LnmZfFWWz4=
+X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(39860400002)(376002)(36840700001)(46966006)(1076003)(4326008)(8676002)(26005)(86362001)(82740400003)(316002)(336012)(7696005)(6666004)(36906005)(107886003)(36756003)(5660300002)(8936002)(47076005)(2616005)(186003)(54906003)(110136005)(36860700001)(478600001)(2906002)(83380400001)(356005)(426003)(82310400003)(70206006)(7636003)(70586007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2021 09:01:29.4630
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aed7ca2b-7ad4-4d5a-feca-08d91b6ddb64
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT008.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3411
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 5/11/21 6:10 AM, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra ACTMON binding to schema.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../arm/tegra/nvidia,tegra30-actmon.txt       |  57 ---------
->  .../devfreq/nvidia,tegra30-actmon.yaml        | 121 ++++++++++++++++++
->  2 files changed, 121 insertions(+), 57 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
->  create mode 100644 Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
-> deleted file mode 100644
-> index 897eedfa2bc8..000000000000
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra30-actmon.txt
-> +++ /dev/null
-> @@ -1,57 +0,0 @@
-> -NVIDIA Tegra Activity Monitor
-> -
-> -The activity monitor block collects statistics about the behaviour of other
-> -components in the system. This information can be used to derive the rate at
-> -which the external memory needs to be clocked in order to serve all requests
-> -from the monitored clients.
-> -
-> -Required properties:
-> -- compatible: should be "nvidia,tegra<chip>-actmon"
-> -- reg: offset and length of the register set for the device
-> -- interrupts: standard interrupt property
-> -- clocks: Must contain a phandle and clock specifier pair for each entry in
-> -clock-names. See ../../clock/clock-bindings.txt for details.
-> -- clock-names: Must include the following entries:
-> -  - actmon
-> -  - emc
-> -- resets: Must contain an entry for each entry in reset-names. See
-> -../../reset/reset.txt for details.
-> -- reset-names: Must include the following entries:
-> -  - actmon
-> -- operating-points-v2: See ../bindings/opp/opp.txt for details.
-> -- interconnects: Should contain entries for memory clients sitting on
-> -                 MC->EMC memory interconnect path.
-> -- interconnect-names: Should include name of the interconnect path for each
-> -                      interconnect entry. Consult TRM documentation for
-> -                      information about available memory clients, see MEMORY
-> -                      CONTROLLER section.
-> -
-> -For each opp entry in 'operating-points-v2' table:
-> -- opp-supported-hw: bitfield indicating SoC speedo ID mask
-> -- opp-peak-kBps: peak bandwidth of the memory channel
-> -
-> -Example:
-> -	dfs_opp_table: opp-table {
-> -		compatible = "operating-points-v2";
-> -
-> -		opp@12750000 {
-> -			opp-hz = /bits/ 64 <12750000>;
-> -			opp-supported-hw = <0x000F>;
-> -			opp-peak-kBps = <51000>;
-> -		};
-> -		...
-> -	};
-> -
-> -	actmon@6000c800 {
-> -		compatible = "nvidia,tegra124-actmon";
-> -		reg = <0x0 0x6000c800 0x0 0x400>;
-> -		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-> -		clocks = <&tegra_car TEGRA124_CLK_ACTMON>,
-> -			 <&tegra_car TEGRA124_CLK_EMC>;
-> -		clock-names = "actmon", "emc";
-> -		resets = <&tegra_car 119>;
-> -		reset-names = "actmon";
-> -		operating-points-v2 = <&dfs_opp_table>;
-> -		interconnects = <&mc TEGRA124_MC_MPCORER &emc>;
-> -		interconnect-names = "cpu";
-> -	};
-> diff --git a/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml b/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> new file mode 100644
-> index 000000000000..2a940d5d7ab4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> @@ -0,0 +1,121 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: https://protect2.fireeye.com/v1/url?k=45c89d0a-1a53a410-45c91645-000babff24ad-23dabc3fb0c14687&q=1&e=3278a7b6-8f85-494f-a1fa-d926c45f4529&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fdevfreq%2Fnvidia%2Ctegra30-actmon.yaml%23
-> +$schema: https://protect2.fireeye.com/v1/url?k=f9f2037e-a6693a64-f9f38831-000babff24ad-e0e7e870e2aea6e2&q=1&e=3278a7b6-8f85-494f-a1fa-d926c45f4529&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
-> +
-> +title: NVIDIA Tegra30 Activity Monitor
-> +
-> +maintainers:
-> +  - Dmitry Osipenko <digetx@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +
-> +description: |
-> +  The activity monitor block collects statistics about the behaviour of other
-> +  components in the system. This information can be used to derive the rate at
-> +  which the external memory needs to be clocked in order to serve all requests
-> +  from the monitored clients.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra30-actmon
-> +      - nvidia,tegra114-actmon
-> +      - nvidia,tegra124-actmon
-> +      - nvidia,tegra210-actmon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: actmon
-> +      - const: emc
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: actmon
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    minItems: 1
-> +    maxItems: 12
-> +
-> +  interconnect-names:
-> +    minItems: 1
-> +    maxItems: 12
-> +    description:
-> +      Should include name of the interconnect path for each interconnect
-> +      entry. Consult TRM documentation for information about available
-> +      memory clients, see ACTIVITY MONITOR section.
-> +
-> +  operating-points-v2:
-> +    description:
-> +      Should contain freqs and voltages and opp-supported-hw property, which
-> +      is a bitfield indicating SoC speedo ID mask.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - interrupts
-> +  - interconnects
-> +  - interconnect-names
-> +  - operating-points-v2
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/memory/tegra30-mc.h>
-> +
-> +    mc: memory-controller@7000f000 {
-> +        compatible = "nvidia,tegra30-mc";
-> +        reg = <0x7000f000 0x400>;
-> +        clocks = <&clk 32>;
-> +        clock-names = "mc";
-> +
-> +        interrupts = <0 77 4>;
-> +
-> +        #iommu-cells = <1>;
-> +        #reset-cells = <1>;
-> +        #interconnect-cells = <1>;
-> +    };
-> +
-> +    emc: external-memory-controller@7000f400 {
-> +        compatible = "nvidia,tegra30-emc";
-> +        reg = <0x7000f400 0x400>;
-> +        interrupts = <0 78 4>;
-> +        clocks = <&clk 57>;
-> +
-> +        nvidia,memory-controller = <&mc>;
-> +        operating-points-v2 = <&dvfs_opp_table>;
-> +        power-domains = <&domain>;
-> +
-> +        #interconnect-cells = <0>;
-> +    };
-> +
-> +    actmon@6000c800 {
-> +        compatible = "nvidia,tegra30-actmon";
-> +        reg = <0x6000c800 0x400>;
-> +        interrupts = <0 45 4>;
-> +        clocks = <&clk 119>, <&clk 57>;
-> +        clock-names = "actmon", "emc";
-> +        resets = <&rst 119>;
-> +        reset-names = "actmon";
-> +        operating-points-v2 = <&dvfs_opp_table>;
-> +        interconnects = <&mc TEGRA30_MC_MPCORER &emc>;
-> +        interconnect-names = "cpu-read";
-> +    };
-> 
+Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+errata") caused a few build regressions for the Tegra194 PCIe driver
+which are:
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+1. The Tegra194 PCIe driver can no longer be built as a module. This
+   was caused by removing the Makefile entry to build the pcie-tegra.c
+   based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
+   so that we can build the driver as a module if ACPI support is not
+   enabled in the kernel.
+2. If CONFIG_PCIE_TEGRA194 is configured to build the driver as a
+   module, at the same time that CONFIG_ACPI and CONFIG_PCI_QUIRKS are
+   selected to build the driver into the kernel, then the necessary
+   functions in the driver to probe and remove the device when booting
+   with device-tree and not compiled into to the driver. This prevents
+   the PCIe devices being probed when booting with device-tree. Fix this
+   by using the IS_ENABLED() macro.
+3. The below build warnings to be seen with particular kernel
+   configurations. Fix these by adding the necessary guards around these
+   variable definitions.
 
-After tegra SoC maintainer review this patch, I'll take it.
+  drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+  	‘event_cntr_data_offset’ defined but not used [-Wunused-const-variable=]
+  drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+  	‘event_cntr_ctrl_offset’ defined but not used [-Wunused-const-variable=]
+  drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+  	‘pcie_gen_freq’ defined but not used [-Wunused-const-variable=]
 
+Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errata")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/pci/controller/dwc/Makefile        | 1 +
+ drivers/pci/controller/dwc/pcie-tegra194.c | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index eca805c1a023..f0d1e2d8c022 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+ # depending on whether ACPI, the DT driver, or both are enabled.
+ 
+ obj-$(CONFIG_PCIE_AL) += pcie-al.o
++obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
+ obj-$(CONFIG_PCI_HISI) += pcie-hisi.o
+ 
+ ifdef CONFIG_ACPI
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index b19775ab134e..ae70e53a7826 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -240,13 +240,16 @@
+ #define EP_STATE_DISABLED	0
+ #define EP_STATE_ENABLED	1
+ 
++#if IS_ENABLED(CONFIG_PCIE_TEGRA194)
+ static const unsigned int pcie_gen_freq[] = {
+ 	GEN1_CORE_CLK_FREQ,
+ 	GEN2_CORE_CLK_FREQ,
+ 	GEN3_CORE_CLK_FREQ,
+ 	GEN4_CORE_CLK_FREQ
+ };
++#endif
+ 
++#if defined(CONFIG_PCIEASPM)
+ static const u32 event_cntr_ctrl_offset[] = {
+ 	0x1d8,
+ 	0x1a8,
+@@ -264,6 +267,7 @@ static const u32 event_cntr_data_offset[] = {
+ 	0x1c8,
+ 	0x1dc
+ };
++#endif
+ 
+ struct tegra_pcie_dw {
+ 	struct device *dev;
+@@ -409,7 +413,7 @@ const struct pci_ecam_ops tegra194_pcie_ops = {
+ };
+ #endif /* defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS) */
+ 
+-#ifdef CONFIG_PCIE_TEGRA194
++#if IS_ENABLED(CONFIG_PCIE_TEGRA194)
+ 
+ static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+ {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.25.1
+
