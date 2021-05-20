@@ -2,126 +2,90 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96DDC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B826C433ED
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD9AC61244
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0755F61244
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237524AbhETTDY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 15:03:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237054AbhETTDB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 15:03:01 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CD3C06134B
-        for <linux-tegra@vger.kernel.org>; Thu, 20 May 2021 12:01:27 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id v12so18713971wrq.6
-        for <linux-tegra@vger.kernel.org>; Thu, 20 May 2021 12:01:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tw5+56hf443Vf716IbHMHHdpmu0BDAxPT8Nh8kodesg=;
-        b=Givmf1V6oT1LmtODaR0j3BF9pMsQ54O30msgDTjz7pvVA/XDtAe7u82QqmdHSrtdV3
-         23eDMfT5ksUeQ3nHWPc1FcZBBdl4vIOADI6UkN0O5kkhmFATRxM+zRjt8faNhtkLOKrS
-         Dz0CI9XtvLf74IH1RVlKINeSIDXPpD/pcWlOasO4P6YKoASUbtKnZjtPfvuC764a/8k9
-         ETlitj6pk/BcxCOc5EaZV7HzWvFpyRGBh1ksUccRZeSbGA2ZkqavF520eOUzmLOJFI0t
-         +9zL88+ZQ82w90NJKyC9XJY8ZibQZbjHBKyCjUuPw2LxhE99ISFz7INQy7TFYtmpEOE3
-         QXhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tw5+56hf443Vf716IbHMHHdpmu0BDAxPT8Nh8kodesg=;
-        b=cjXtqi+ZZblX7YtJ+1khRnktcsQjcuPhD4tYUoAI7YOuEe/HLnPeUPL8dkEMf0URmG
-         EvXYt+XlrkAp/+l+ZmrrdazEwm7NAwY853RwWVHjzij3VgWYratn1UcNr1e5qnQ9t049
-         ZZziz7/hB1ukipNLpJWBDbIjNA3ajrJoF5oKMom6xLH9S4OjESXtjsu8sXIgUsxSGXka
-         X5FpQIIjv/X/UJ/dTahDZKFYXU98vVRBeNKDElASu4ZliFUlPnFY7drpHoFAxIoEZLCR
-         178usaykMLO+9B2qJD+TsGzrvt87SbY/nzJh4dxLKUuqEzEcd4y0pZyP5xDdtW5bM+IS
-         +4gg==
-X-Gm-Message-State: AOAM532iI/rCA997KTo47iL399amHOTItP8fjyWhQpP+PE6wzvs0qnSK
-        9NDny8y5xnmg1vDI978DSuA2TQ==
-X-Google-Smtp-Source: ABdhPJz8G5wdN+AcbyimyHYbWjNvQKyBMB+vX1to3miiKDBigAxdaA3gRJQLzVOw0VfbimKt1UiPgw==
-X-Received: by 2002:a5d:6b43:: with SMTP id x3mr5750647wrw.263.1621537286301;
-        Thu, 20 May 2021 12:01:26 -0700 (PDT)
-Received: from dell.default ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id p20sm9011899wmq.10.2021.05.20.12.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 May 2021 12:01:25 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
+        id S235419AbhETTEY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 15:04:24 -0400
+Received: from mail1.perex.cz ([77.48.224.245]:41936 "EHLO mail1.perex.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235418AbhETTEY (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 May 2021 15:04:24 -0400
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id C48FCA0040;
+        Thu, 20 May 2021 21:03:00 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz C48FCA0040
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+        t=1621537380; bh=y+8k9wqsJtPgUJsqRvi4ZT1JcJem6VoeiPwXOKz49+8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gEuQOqvhKarNj1FC6LYFw4mBdEcl0qARfAhMs0XQlRPvCew6fRX+0iqvmEF32BU75
+         LBn4Ysbu9AF4xWVunARQO7ESvwqP0JF/eetbI1lUY2s3Hzn0OKd/qoS9eEs3HeaOns
+         EaxecFzu3DutMFCPBkeCUd+09MSjewOnwnI9Al34=
+Received: from p1gen2.localdomain (unknown [192.168.100.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: perex)
+        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+        Thu, 20 May 2021 21:02:49 +0200 (CEST)
+Subject: Re: [PATCH v2 2/2] ASoC: tegra: Unify ASoC machine drivers
+To:     Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 15/16] i2c: busses: i2c-tegra-bpmp: Demote kernel-doc abuses
-Date:   Thu, 20 May 2021 20:01:04 +0100
-Message-Id: <20210520190105.3772683-16-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210520190105.3772683-1-lee.jones@linaro.org>
-References: <20210520190105.3772683-1-lee.jones@linaro.org>
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Ion Agorria <ion@agorria.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210520175054.28308-1-digetx@gmail.com>
+ <20210520175054.28308-3-digetx@gmail.com>
+From:   Jaroslav Kysela <perex@perex.cz>
+Message-ID: <8e5d4442-00a4-460b-d37a-8962960dd7ff@perex.cz>
+Date:   Thu, 20 May 2021 21:02:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210520175054.28308-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+Dne 20. 05. 21 v 19:50 Dmitry Osipenko napsal(a):
+> Squash all machine drivers into a single-universal one. This reduces
+> code duplication, eases addition of a new drivers and upgrades older
+> code to a modern Linux kernel APIs.
+> 
 
- drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or member 'i2c' not described in 'tegra_bpmp_serialize_i2c_msg'
- drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or member 'request' not described in 'tegra_bpmp_serialize_i2c_msg'
- drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or member 'msgs' not described in 'tegra_bpmp_serialize_i2c_msg'
- drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: Function parameter or member 'num' not described in 'tegra_bpmp_serialize_i2c_msg'
- drivers/i2c/busses/i2c-tegra-bpmp.c:86: warning: expecting prototype for The serialized I2C format is simply the following(). Prototype was for tegra_bpmp_serialize_i2c_msg() instead
- drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or member 'i2c' not described in 'tegra_bpmp_i2c_deserialize'
- drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or member 'response' not described in 'tegra_bpmp_i2c_deserialize'
- drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or member 'msgs' not described in 'tegra_bpmp_i2c_deserialize'
- drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: Function parameter or member 'num' not described in 'tegra_bpmp_i2c_deserialize'
- drivers/i2c/busses/i2c-tegra-bpmp.c:130: warning: expecting prototype for The data in the BPMP(). Prototype was for tegra_bpmp_i2c_deserialize() instead
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Wolfram Sang <wsa@kernel.org>
-Cc: Shariff Md <smohammed@nvidia.com>
-Cc: linux-i2c@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/i2c/busses/i2c-tegra-bpmp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +static struct snd_soc_card snd_soc_tegra_wm9712 = {
+> +	.dai_link = &tegra_wm9712_dai,
+> +	.num_links = 1,
+> +	.fully_routed = true,
+> +};
+Please, could you also initialize snd_soc_card->components? It may be useful
+to pass the codec identification to the user space like:
 
-diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
-index 3680d608698b1..ec0c7cad42401 100644
---- a/drivers/i2c/busses/i2c-tegra-bpmp.c
-+++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
-@@ -65,7 +65,7 @@ static void tegra_bpmp_xlate_flags(u16 flags, u16 *out)
- 		*out |= SERIALI2C_RECV_LEN;
- }
- 
--/**
-+/*
-  * The serialized I2C format is simply the following:
-  * [addr little-endian][flags little-endian][len little-endian][data if write]
-  * [addr little-endian][flags little-endian][len little-endian][data if write]
-@@ -109,7 +109,7 @@ static void tegra_bpmp_serialize_i2c_msg(struct tegra_bpmp_i2c *i2c,
- 	request->xfer.data_size = pos;
- }
- 
--/**
-+/*
-  * The data in the BPMP -> CPU direction is composed of sequential blocks for
-  * those messages that have I2C_M_RD. So, for example, if you have:
-  *
--- 
-2.31.1
+.components = "codec:wm9712"
 
+The passed information should be consistent. You may look into the Intel ASoC
+drivers for the examples (card->components initialization). There are also
+hints about the number of connected microphones ("cfg-mic:2" - configuration
+with 2 microphones) or the codec purpose ("hs:rt711" - headset codec is RT711)
+etc.
+
+					Jaroslav
+
+
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
