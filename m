@@ -2,96 +2,221 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCB8C433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 18:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C6FC43461
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF8661073
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 18:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4855860551
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 19:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231883AbhETSN7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 14:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50134 "EHLO
+        id S236578AbhETTCf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 15:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbhETSN6 (ORCPT
+        with ESMTP id S236501AbhETTCd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 14:13:58 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBC7C061574;
-        Thu, 20 May 2021 11:12:37 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id v8so20878935lft.8;
-        Thu, 20 May 2021 11:12:37 -0700 (PDT)
+        Thu, 20 May 2021 15:02:33 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5424C061761
+        for <linux-tegra@vger.kernel.org>; Thu, 20 May 2021 12:01:10 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id c14so16935233wrx.3
+        for <linux-tegra@vger.kernel.org>; Thu, 20 May 2021 12:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NWQLbjqaSr16R/PNxaSSu+zkzXrzSBFweb42I5zYe8k=;
-        b=PK+x0rqPqzeI9pAzqQe6aIc7BA0ICpwOcJCPGJa9IJXTgzUDi5ZfViSsXQLpKGIKsE
-         37knsHsjMwqok3+9lVr+jhmSCbcUfufqtrfLMDacQpFon+xzGJxDPCQfKeDbQ/dGWn1V
-         DuIWMHPFCOAjH0/MzCXTgq4UXq7aS2nRQ24u1vFcTx93yoAj8m62hhWyre92OgIHsNl7
-         by8lVQEEynnWlvHnUL2XulPbGOjU1DP82cLPlZZXXV/FHL94wQz5UAqG2a3PHu548eqQ
-         JddrFYFmIV54CPMCFD49uskRPZbimEypKDbA2wVQrrb007MvO0CcNhnzwzFlEcBcrYCc
-         8j1A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2DRojMIGvqGqfd6599LIXINUCsrKqBTGuM0HeJNOCqY=;
+        b=BhW/gXf8pWSAZIebe6nxATFBDBMilShlmVRZzJL0Z7cmhZ34wH8yiODRYqZmjd0Bbw
+         5FLnj7yUL68hbF/XNuFKxoi0pfP4IxkJ9c+tMdT028yF+NF5NC4AbnGloFwc4U/IgJJb
+         HkBmb6/op7D4qo7GUrP+MqqfwZ6YMDM+Oxk8Miamy9HC5vBwZMh5J6OxRXCPhVYondTN
+         OQQCjBR3wG190MivkxGFRMZfvJSZhA+Pb19zi5r6dE1ffLHfPQK8OngnGA2VqwGj8doy
+         fyt+TWfbk49ktvoZDPBPDYLY6+bP73h8SefLmUIpQlMpElMBtYVTr7MMgHl7IQ2YM0NU
+         tiQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=NWQLbjqaSr16R/PNxaSSu+zkzXrzSBFweb42I5zYe8k=;
-        b=gNYmtiXwXkWtTRgAL7y40v3um23jVvVa5Q9PHjoD7fS9kawndfs081ak57a1X/DRrr
-         E2r3k74hQTp3AQiqreBIidvnDxr4YODWzMwRCO4VY0RqTYVOCAp05nxpuuVwj2yG18sp
-         Hfo6cLvpVzxqzfIWiKs6YPaYfCSESZPM48V3m+4P2k4ERZKSK4QcKAs+ah92LxouO5Mq
-         mCelk0ea4so7nL5sdRPzK8D9VaV6SvVHiNtHqxn90VmzJsxRUtF7ezEizsO//urYkOrB
-         z3hFRkmxSpa89ur5fQmLMAvQDp8IVhhPOYGgTSqseTzbsFY85iFkF3gTOSRbq36g0W3x
-         L2sg==
-X-Gm-Message-State: AOAM530nm4Jy8wvcE5pcwX2k7BLV62yPFr4+RdvZejePJftdDEepk3Jy
-        HpyephVKJK/2KEApNGklWrYeojE6sHg=
-X-Google-Smtp-Source: ABdhPJyCypt5x2T6bL1CZz+kMGRD4Q6YHedxXO7wfpqWKweLlxHgJhSgqtj3X5qo/eGJvWtTNXuB8g==
-X-Received: by 2002:a05:6512:3d0b:: with SMTP id d11mr3856695lfv.405.1621534355395;
-        Thu, 20 May 2021 11:12:35 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-88.dynamic.spd-mgts.ru. [109.252.193.88])
-        by smtp.googlemail.com with ESMTPSA id h16sm363670lfj.194.2021.05.20.11.12.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 May 2021 11:12:35 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] ASoC: tegra: Set driver_name=tegra for all machine
- drivers
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        bh=2DRojMIGvqGqfd6599LIXINUCsrKqBTGuM0HeJNOCqY=;
+        b=m8WGK5DMiUDsVjShrcnaBxaWt4jWE08fSZW+okr1Od6htYsbO/XwgxhffsQQI5GJ1c
+         +9Hhm4POlKrsy+vvsIZH6iGyc04+wvt+WKRXPLlT+Kbr0wIm3FT1QnuU6aTLMI53Jr9o
+         h4scPQ4LVGU21xFGd7HVLPTIT6SX1ykCQ76M6Hpgp+sLPFEWmwZNLvk/r33h0DhvaexU
+         evec5Rv4S/DM+iDKLEXAH7zO9/8UzYC1gz0kO7KnHj5XiOVijQkgkND0yhMKDWGrLHr5
+         k2ARnObI6y0tbNDQRDgxtFcZjFNwqpZly6Hw/Gc1DpMbJDEVcNtxgyhlwaNQ6PdknUL2
+         cadg==
+X-Gm-Message-State: AOAM532oJK1/UFTVn1AMp4lZl21R3ASasUJyCmWS/sCZS8ZB++0gxKwh
+        kweGr79mJMsum6yZNf4oWRzdzQ==
+X-Google-Smtp-Source: ABdhPJyFFyrDcMhhbJFcjr+Bz0N+pSMlyvPDFQtGOrLH3IV1YMX4KzVeEjRTqSnwuhvjNtamRbprxA==
+X-Received: by 2002:adf:f58e:: with SMTP id f14mr5759911wro.258.1621537269261;
+        Thu, 20 May 2021 12:01:09 -0700 (PDT)
+Received: from dell.default ([91.110.221.215])
+        by smtp.gmail.com with ESMTPSA id p20sm9011899wmq.10.2021.05.20.12.01.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 May 2021 12:01:08 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Anders Berg <anders.berg@lsi.com>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Cedric Madianga <cedric.madianga@gmail.com>,
+        Dennis Kovalev <dkovalev@ru.mvista.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210520175054.28308-1-digetx@gmail.com>
- <20210520175054.28308-2-digetx@gmail.com>
-Message-ID: <c05c2cd0-726d-3f37-be0d-05d8b9122c69@gmail.com>
-Date:   Thu, 20 May 2021 21:12:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Maxime Coquelin <maxime.coquelin@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Max Schwarz <max.schwarz@online.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Peter Rosin <peda@axentia.se>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Rudolf Marek <r.marek@assembler.cz>,
+        Sachin Verma <sachin.verma@st.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shariff Md <smohammed@nvidia.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Tomoya MORINAGA <tomoya.rohm@gmail.com>,
+        Vaibhav Gupta <vaibhavgupta40@gmail.com>,
+        Vitaly Wool <vwool@ru.mvista.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH 00/16] Rid W=1 warnings from I2C
+Date:   Thu, 20 May 2021 20:00:49 +0100
+Message-Id: <20210520190105.3772683-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210520175054.28308-2-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-20.05.2021 20:50, Dmitry Osipenko пишет:
->  static struct snd_soc_dai_driver tegra20_ac97_dai = {
->  	.name = "tegra-ac97-pcm",
-> +	.driver_name = "tegra",
->  	.probe = tegra20_ac97_probe,
->  	.playback = {
+This set is part of a larger effort attempting to clean-up W=1
+kernel builds, which are currently overwhelmingly riddled with
+niggly little warnings.
 
-This is incorrect version of the patch, snd_soc_dai_driver doesn't have
-driver_name. I missed to fix it properly on rebase of the patches. The
-rest of the patches is okay. This will be fixed in v3 if we'll agree
-that this is the correct approach, I'm waiting for the v2 feedback for now.
+Lee Jones (16):
+  i2c: busses: i2c-nomadik: Fix formatting issue pertaining to 'timeout'
+  i2c: muxes: i2c-arb-gpio-challenge: Demote non-conformant kernel-doc
+    headers
+  i2c: busses: i2c-ali1563: File headers are not good candidates for
+    kernel-doc
+  i2c: busses: i2c-altera: Fix formatting issue in struct and demote
+    unworthy kernel-doc headers
+  i2c: busses: i2c-axxia: Fix formatting issue in struct and demote
+    unworthy kernel-doc headers
+  i2c: busses: i2c-cadence: Fix incorrectly documented 'enum
+    cdns_i2c_slave_mode'
+  i2c: busses: i2c-designware-master: Fix misnaming of
+    'i2c_dw_init_master()'
+  i2c: busses: i2c-eg20t: Fix 'bad line' issue and provide description
+    for 'msgs' param
+  i2c: busses: i2c-mxs: Demote barely half complete kernel-doc header
+  i2c: busses: i2c-ocores: Place the expected function names into the
+    documentation headers
+  i2c: busses: i2c-pnx: Provide descriptions for 'alg_data' data
+    structure
+  i2c: busses: i2c-rk3x: Demote unworthy headers and help more complete
+    ones
+  i2c: busses: i2c-st: Fix copy/paste function misnaming issues
+  i2c: busses: i2c-stm32f4: Remove incorrectly placed ' ' from function
+    name
+  i2c: busses: i2c-tegra-bpmp: Demote kernel-doc abuses
+  i2c: busses: i2c-st: trivial: Fix spelling issue 'enmpty => empty'
+
+ drivers/i2c/busses/i2c-ali1563.c           |  2 +-
+ drivers/i2c/busses/i2c-altera.c            |  9 ++++-----
+ drivers/i2c/busses/i2c-axxia.c             | 11 +++++------
+ drivers/i2c/busses/i2c-cadence.c           |  2 +-
+ drivers/i2c/busses/i2c-designware-master.c |  2 +-
+ drivers/i2c/busses/i2c-eg20t.c             |  3 ++-
+ drivers/i2c/busses/i2c-mxs.c               |  2 +-
+ drivers/i2c/busses/i2c-nomadik.c           |  2 +-
+ drivers/i2c/busses/i2c-ocores.c            |  8 ++++----
+ drivers/i2c/busses/i2c-pnx.c               |  8 ++++----
+ drivers/i2c/busses/i2c-rk3x.c              | 18 +++++++++---------
+ drivers/i2c/busses/i2c-st.c                |  4 ++--
+ drivers/i2c/busses/i2c-stm32f4.c           |  2 +-
+ drivers/i2c/busses/i2c-tegra-bpmp.c        |  4 ++--
+ drivers/i2c/muxes/i2c-arb-gpio-challenge.c |  4 ++--
+ 15 files changed, 40 insertions(+), 41 deletions(-)
+
+Cc: Alain Volmat <alain.volmat@foss.st.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Anders Berg <anders.berg@lsi.com>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Cedric Madianga <cedric.madianga@gmail.com>
+Cc: Dennis Kovalev <dkovalev@ru.mvista.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-i2c@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-tegra@vger.kernel.org
+Cc: Marek Vasut <marex@denx.de>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Max Schwarz <max.schwarz@online.de>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Peter Korsgaard <peter@korsgaard.com>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>
+Cc: Rudolf Marek <r.marek@assembler.cz>
+Cc: Sachin Verma <sachin.verma@st.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shariff Md <smohammed@nvidia.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Cc: Vitaly Wool <vwool@ru.mvista.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Wolfram Sang <wsa@kernel.org>
+-- 
+2.31.1
+
