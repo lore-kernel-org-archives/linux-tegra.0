@@ -2,137 +2,132 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0CDC433ED
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 15:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664C3C433B4
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 17:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 998AC6124C
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 15:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 394A16109F
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 17:54:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbhETP1F (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 11:27:05 -0400
-Received: from mail-mw2nam10on2083.outbound.protection.outlook.com ([40.107.94.83]:43489
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S235185AbhETP0h (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 11:26:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SpQrVqvhK21cFLeDIK/cKLlg4rhjwdr/gS3fBvTIpxW9KsWYLxXC/NiajAR2cGUlGhYS703tv5AGYozMK9+07YViBGHNJRQPm/Y8LULNyfWQdCmktXYWgL/jAj0zS8YOUoTr8L09Da7CUzm3VKtTXmCkI66yU5Zj7RE3cJ30EVm31ZhvZlXtCEXzccw3mDPHofKkaC7anpPSobhuG+SoJp+0dEqQa9PDrm9Y/h3t19owj2fad7x7Mb4RPvWzInT4s5EbTIWouLqRAmWXLD1P6p87IVIn77owsjSmFZxJG/WB2aDGaF/7rM92Z5T6Z0n5PBdxCFkhPAqlnk35gs1how==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=811FVJVXp9GvE7PLzaGqRgUX1ZysEMj7Uxnqm/REHL0=;
- b=B+ioHbzhJTCoMXJcdZgHAlV7hWJ4SNShGMdlNrwclZZK98Ewh1gUEZMojnkJ2b3HtvJ8yxTPFpPXyp7fx0JjPyhDxg/Zk1UOxBiILyV97FcqllTRNh0rLQRUL0wu59uv2HIAUlrOzBLE4arExmurAnVxM6LZAiffo1N6uotYnuJtWzI5Sfu4I6yIPNtgmtsY9kaHgUTqUvnlShhwXv0nIi1dbWTsbnp4ggTQljpc7lmOZ08PyplcAx/Fk4snoPySn9WBYgh8KXDCBat6nsxoYIOCZTdmbs3lhHJinjHTWR98BaqTK4XET4ZkGqDhwMIZpjhq3IL2b8S4n8ABVj7sLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=811FVJVXp9GvE7PLzaGqRgUX1ZysEMj7Uxnqm/REHL0=;
- b=b9Og1SFMaNALHMnciOCZFc+Sf5EySRsxBY8eRCpAvMvrOj6GRJkjfwKLOdlE7/L0c3aqTmftkeRC4ui/oPuCdCRwBL9lG5Q38QBgp0Xi+sUtgGSuySaYnfY2itx7b6eosqJtu6NQZ6Th/vQl28lTIs3TyuZdzOG8JrAs3hcNoNkyX+BCODksVZTkjGZB7WP5iF5lu+UiwJuLVSa7ZZxpCfK6L7/yKUWtSAIB8eBD4+eRKiwrhb7FmrL/6HZbs6QEgWvHPnn08JRJZoCvNNhE0bWxt8NLHQYG9s0lxR9kEsaJrQOu7pzi4UuKhfgrOHRlnfPEL6nTmO3v8cCYkuixxA==
-Received: from CO2PR07CA0075.namprd07.prod.outlook.com (2603:10b6:100::43) by
- DM6PR12MB3787.namprd12.prod.outlook.com (2603:10b6:5:1c1::29) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4129.26; Thu, 20 May 2021 15:25:13 +0000
-Received: from CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
- (2603:10b6:100:0:cafe::3e) by CO2PR07CA0075.outlook.office365.com
- (2603:10b6:100::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.23 via Frontend
- Transport; Thu, 20 May 2021 15:25:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- CO1NAM11FT064.mail.protection.outlook.com (10.13.175.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Thu, 20 May 2021 15:25:12 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 20 May
- 2021 15:25:11 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Thu, 20 May 2021 15:25:11 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.19 000/425] 4.19.191-rc1 review
-In-Reply-To: <20210520092131.308959589@linuxfoundation.org>
-References: <20210520092131.308959589@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S234334AbhETRzr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 13:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233716AbhETRzq (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 May 2021 13:55:46 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F9FC061574;
+        Thu, 20 May 2021 10:54:25 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id i9so25756256lfe.13;
+        Thu, 20 May 2021 10:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSeuamGnXAgkNNyC56B/8tNoyLHAJZahhkX5EWuZJAo=;
+        b=drigm3jWBw/husIrX7rD1YNqveBwT7xCa6uR5yJowZYmeRz0wH4XGX1ft/dZN2BDWU
+         TYMZOkQQ6uGSHWBUHnIWIApKvALY3W1e1EJCRzSmFtvz2sqeVMeUuuMDLFgITIPOth6U
+         k4UQl9UkvHCdFr1ONPpqYUXKwCAXjhMtmCGPKoOoaIqeV36VOVrCDGD+/+S9EERVt8sc
+         uV98A+1k29+A81Gp3CZRpPBkLLCAY3Vj5pK85SHWPIUP/BR7xX2nb+sk9JjZM4FJizd7
+         KQvFlS6/ZjjN5z2RW89Rewzi0xGntGpytqAxhSj65f6MAR7oTaS08CSbdPsd4sO306ZY
+         rqSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSeuamGnXAgkNNyC56B/8tNoyLHAJZahhkX5EWuZJAo=;
+        b=B1r4A4nomcdCXLepIi4NzE6rI86KueRNR9DcYMIvF+ecBsVzAYoKPqErtS2AcfraaK
+         KBX6+cLZZ6lUePqaHlsjhbPgNgbqu6vCKYfGk3/x9no3ISvOdaia+vc2du4ndzx/MaTT
+         s/wnd9+cyOdnbKKFy3Gmhac7Jv5xckzwOXyvhwyAHYh5Ca5uxUdOL0uCTl7dFlPYbZ7B
+         B3tr0Mmaz7rbvIVkGiaOyVEDD/zq9CWHK4MS88AjDf+QIVjw45rpg2XAGwUB5uJLhrOg
+         WEjGd9jNA5yvWndlVmAPfneMhvhbFamogG1f3HkI0WWp7az6WZq1ytjaDcY6ngtM+Ytl
+         ev/w==
+X-Gm-Message-State: AOAM533x6W48mtFf/LwZZ51A/xDM+4CyJKoKr6Mzkc2Ou14U/McbGjKT
+        4kOnw/B4TcdUInKFlolRJk8=
+X-Google-Smtp-Source: ABdhPJxbKMKYuzk8/vJ36ofueZGlvEO2QTJoXhdsP3WRbp3iQCou97D6+YYJIEq8B4DG9UKviipyoQ==
+X-Received: by 2002:a05:6512:3d0b:: with SMTP id d11mr3816604lfv.405.1621533263322;
+        Thu, 20 May 2021 10:54:23 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-88.dynamic.spd-mgts.ru. [109.252.193.88])
+        by smtp.gmail.com with ESMTPSA id h16sm362972ljb.128.2021.05.20.10.54.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 May 2021 10:54:22 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Ion Agorria <ion@agorria.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Unify NVIDIA Tegra ASoC machine drivers
+Date:   Thu, 20 May 2021 20:50:52 +0300
+Message-Id: <20210520175054.28308-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Message-ID: <1858b39c61e24f87aafe39937b47c453@HQMAIL101.nvidia.com>
-Date:   Thu, 20 May 2021 15:25:11 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fd232808-0e10-47c6-91d8-08d91ba37609
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3787:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB37876B08E8CB96500BC491E1D92A9@DM6PR12MB3787.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: t+Thg0Jr8LARiojCvdJpQTvR0Wjgmxah1Nt193DRz00KmWeEJ0FxBfJu23Za4OTYgKP9MbDzKZZ685PdGUhPYJuaXeN4V6IQ9xGvyqWYe14lDPerH/9kVPIXsPUZRAKdDD8t2cJ7O9ifVDJKRfQ4j4E4KtpNzlyr47r4hIkOEPZRY8AOCNzyffsLWMJCgKH/GyQfJdPmoJdWRsqj6abOOdzCPK55B6B7oprRPPUgMX2lT4TPeEIwhnv98PhupduThTr8p1i+gGPpFHRHIADAqHjTUuHRigOuX/C48sFJSx2KA0F6mpbpx9wrV+pRkelXz+IWhZA6rZ8XrII0Ytgua3q1Yj8pyUpqddsMy4x9N0Jw8exRMwANOHChVGqrtpt10m++SG45dWHRDajlMjFFO2Mu7Y8xOUI+axr/lGWZPP1EcCe1geJWdaCqBeyEIqfza1g2xYU2aXuVAoKh+HcVXXrVCH15izI+BoAYdsuBcv9FmOUXz/3amCSxCSds+BzzGmHT0geOj9RX3vUqDQHMiHz1B7LwwNaDEwfy5bpneUYA7FES1OmuaXhYjmFwNZflNMA3JW8quTwz6qdM1U5sQQP3aUI5NG0uLRxC5n1Ta6vqfzqIjMWl+y70w6BIzrK0CC38kXqXfv24g4w7zgPa/RKUwuFEpeEES+P7ITqzb7xlU3y6Lxg9eGJRFRgXjTAdTLY3YglEs07WQIy9CSBgdXfvdy81jpYUoBhAzr3NA7JzQN/SaRXCbO65VdDnwONmIqyPwvLU2BKp+elxeB59zw==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(39860400002)(376002)(46966006)(36840700001)(426003)(2906002)(336012)(86362001)(8936002)(316002)(966005)(4326008)(36906005)(70586007)(478600001)(356005)(70206006)(6916009)(54906003)(7636003)(7416002)(82310400003)(82740400003)(47076005)(8676002)(186003)(36860700001)(108616005)(26005)(24736004)(5660300002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2021 15:25:12.2454
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd232808-0e10-47c6-91d8-08d91ba37609
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3787
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 20 May 2021 11:16:09 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.191 release.
-> There are 425 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 22 May 2021 09:20:38 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.191-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+During review of the RT5631 machine driver, Jon Hunter suggested that
+it will be better to squash all the current ASoC machine drivers into
+a single one. This suggestion is implemented by this patchset. The
+RT5631 support will come later with the ASUS Transformer changes.
 
-All tests passing for Tegra ...
+This series needs to be approved by Jaroslav Kysela before it can be
+merged.
 
-Test results for stable-v4.19:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    40 tests:	40 pass, 0 fail
+Changelog:
 
-Linux version:	4.19.191-rc1-g06c717b4df3a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+v2: - Dropped use of of_device_compatible_match(), like it was suggested
+      by Rob Herring in a review comment to v1.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+    - Added patch that sets card's driver_name of as Tegra ASoC drivers.
+      In a comment to v1 Jaroslav Kysela suggested that the Tegra drivers
+      don't set the card name properly and he was right.
 
-Jon
+      I opened pull request with the new Tegra UCMs and updated lookup paths
+      for older UCMs [1].
+
+      [1] https://github.com/alsa-project/alsa-ucm-conf/pull/92
+
+Dmitry Osipenko (2):
+  ASoC: tegra: Set driver_name=tegra for all machine drivers
+  ASoC: tegra: Unify ASoC machine drivers
+
+ sound/soc/tegra/Kconfig              |  12 +
+ sound/soc/tegra/Makefile             |  18 +-
+ sound/soc/tegra/tegra_alc5632.c      | 259 ----------
+ sound/soc/tegra/tegra_asoc_machine.c | 732 +++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_asoc_machine.h |  45 ++
+ sound/soc/tegra/tegra_max98090.c     | 276 ----------
+ sound/soc/tegra/tegra_rt5640.c       | 222 --------
+ sound/soc/tegra/tegra_rt5677.c       | 324 ------------
+ sound/soc/tegra/tegra_sgtl5000.c     | 211 --------
+ sound/soc/tegra/tegra_wm8753.c       | 185 -------
+ sound/soc/tegra/tegra_wm8903.c       | 357 +++----------
+ sound/soc/tegra/tegra_wm9712.c       | 166 ------
+ sound/soc/tegra/trimslice.c          | 172 -------
+ 13 files changed, 862 insertions(+), 2117 deletions(-)
+ delete mode 100644 sound/soc/tegra/tegra_alc5632.c
+ create mode 100644 sound/soc/tegra/tegra_asoc_machine.c
+ create mode 100644 sound/soc/tegra/tegra_asoc_machine.h
+ delete mode 100644 sound/soc/tegra/tegra_max98090.c
+ delete mode 100644 sound/soc/tegra/tegra_rt5640.c
+ delete mode 100644 sound/soc/tegra/tegra_rt5677.c
+ delete mode 100644 sound/soc/tegra/tegra_sgtl5000.c
+ delete mode 100644 sound/soc/tegra/tegra_wm8753.c
+ delete mode 100644 sound/soc/tegra/tegra_wm9712.c
+ delete mode 100644 sound/soc/tegra/trimslice.c
+
+-- 
+2.30.2
+
