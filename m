@@ -2,86 +2,106 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF8BC433B4
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 13:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B50C43600
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 13:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81E616101D
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 13:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4400610A2
+	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 13:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239112AbhETNDG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 09:03:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243484AbhETNBG (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 09:01:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6BCE16101D;
-        Thu, 20 May 2021 12:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1621515584;
-        bh=nQrRZHjWKNdXiBNX6cRGOnv29CYUBlwhspaneO1L6Jk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qxeawXU+83ZzmmNQDdFv/8/hnBMA9tU78vccYHSBHlY3ts4m2WMd1y+Bk7HXuORV3
-         PBtV5nxV9hNpCeHd2d0XedjAfT1d/49B4/b3pRkLZ/N80yz11bvKHN4a/y/A3iTc91
-         YKNH7BMUdBGntyoHbpX6pqNbUtuF74XeTN6sRZmE=
-Date:   Thu, 20 May 2021 14:59:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-        f.fainelli@gmail.com, stable@vger.kernel.org,
+        id S239610AbhETNen (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 20 May 2021 09:34:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4560 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239828AbhETNeT (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 20 May 2021 09:34:19 -0400
+Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fm9b51bzVzqTQW;
+        Thu, 20 May 2021 21:30:09 +0800 (CST)
+Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
+ dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Thu, 20 May 2021 21:32:55 +0800
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Thu, 20 May 2021 21:32:55 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         Vidya Sagar <vidyas@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/47] 5.10.39-rc1 review
-Message-ID: <YKZdPjqh7hFJslqA@kroah.com>
-References: <20210520092053.559923764@linuxfoundation.org>
- <447d562a-248f-7e92-42de-4239a2c18fc0@nvidia.com>
+        Jingoo Han <jingoohan1@gmail.com>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] PCI: tegra: Fix build warnings when CONFIG_PCIEASPM is not set
+Date:   Thu, 20 May 2021 13:42:09 +0000
+Message-ID: <20210520134209.1667244-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <447d562a-248f-7e92-42de-4239a2c18fc0@nvidia.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, May 20, 2021 at 01:32:14PM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 20/05/2021 10:21, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.10.39 release.
-> > There are 47 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 22 May 2021 09:20:38 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.39-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> ...
-> 
-> > Vidya Sagar <vidyas@nvidia.com>
-> >     PCI: tegra: Add Tegra194 MCFG quirks for ECAM errata
-> 
-> 
-> The above is causing some tests regressions for Tegra. We have a fix
-> that is under review but not merged yet [0]. Please can you drop this
-> for v5.10 and v5.12? Sorry about that.
+Fix build warning when CONFIG_PCIEASPM is not set:
 
-Now dropped, thanks.  I'll wait a few hours to see if anything else
-comes up before pushing a -rc2 out for both of these.
+drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+ 'event_cntr_data_offset' defined but not used [-Wunused-const-variable=]
+  259 | static const u32 event_cntr_data_offset[] = {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+ 'event_cntr_ctrl_offset' defined but not used [-Wunused-const-variable=]
+  250 | static const u32 event_cntr_ctrl_offset[] = {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+ 'pcie_gen_freq' defined but not used [-Wunused-const-variable=]
+  243 | static const unsigned int pcie_gen_freq[] = {
+      |                           ^~~~~~~~~~~~~
 
-greg k-h
+Fix it by only define then when CONFIG_PCIEASPM is set.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index bafd2c6ab3c2..b80dd071e90d 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -240,6 +240,7 @@
+ #define EP_STATE_DISABLED	0
+ #define EP_STATE_ENABLED	1
+ 
++#if defined(CONFIG_PCIEASPM)
+ static const unsigned int pcie_gen_freq[] = {
+ 	GEN1_CORE_CLK_FREQ,
+ 	GEN2_CORE_CLK_FREQ,
+@@ -264,6 +265,7 @@ static const u32 event_cntr_data_offset[] = {
+ 	0x1c8,
+ 	0x1dc
+ };
++#endif
+ 
+ struct tegra_pcie_dw {
+ 	struct device *dev;
+
