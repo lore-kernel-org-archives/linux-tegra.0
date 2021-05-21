@@ -2,199 +2,117 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FD9C43462
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37009C433B4
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 May 2021 08:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE0D613C8
-	for <linux-tegra@archiver.kernel.org>; Thu, 20 May 2021 23:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17475613B6
+	for <linux-tegra@archiver.kernel.org>; Fri, 21 May 2021 08:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233348AbhETXKZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 20 May 2021 19:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233446AbhETXKQ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 20 May 2021 19:10:16 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8ACC061763;
-        Thu, 20 May 2021 16:08:53 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id w15so21770755ljo.10;
-        Thu, 20 May 2021 16:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=r18WGOYqB7cDcwIrdUZr3c1RtFay90XOWzRkXpzbpZ0=;
-        b=kReZqq3TXkPaKnKM975AvfpkDJnQj1GfYVVP52VSnlgykMU5AgD7hicNxaX6UTHj5I
-         IOjZ8/7jDCaBCiT5pD5uc7+5ulqJs020y5drqrAy9qHGsxcDi5dJYc6mU/lPAMrb1Aq2
-         /1cLGWC+jVL6AQTy0hP3UGUscy55xVmQH9EJMPaNDbPvL5ktcEYJtQGm+YtB31o2ZRPm
-         kRra+eghLCI2Fw91fAC6GnuTk+8bVGOF56YtYFFzoSR4vs0Ot6sPl9Mmdhqd+Oqq3mee
-         cOr7G7Zdoqoqbg48x1s3MqD/Ocv8qT53nedF94XCHdEsE6hfNzXE6sMT2lw6AmoNnkne
-         8TVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=r18WGOYqB7cDcwIrdUZr3c1RtFay90XOWzRkXpzbpZ0=;
-        b=FEfOGLAKbNpHOmSdLK/7Xb7aNx07EZ/7ndB+zzSaUdtBKFbSTFK3obcsbUGvr+SE35
-         Asd1kgOImH3A9bCqCIvRTPllGsqvnSkFg+yISIClZFIIl/wQhXS7IFsrsJeBwfe3/ppE
-         5zvomG0LtcSs+wdMYabawAIuAWULs1uAUe/XWsI9Q9WrTutpST3yzM/peNK5UgtXk4z5
-         4316qy0KL0523anh9GNyZdtGMd7ukKJCFZmbQoKpEm2VaBU3ysknGVad++Lr9LyiXg4P
-         4f73o5ju/UfeOmSApaDEHVdq5scB/oKaBwtoq1crl7GbVsCNQVV75fbTXHHaXseqGIso
-         Rprg==
-X-Gm-Message-State: AOAM533kOK+p/8PCkms9IWQIfpGq1yGXsnj02S45WFcGNav+9BtGaM1b
-        IjGNLEpFWh7HrfmoXtALxH4=
-X-Google-Smtp-Source: ABdhPJy/cKgMCrnCONNJ8Nkz6EEFUfKHyuZjMVBO2ev1m+omQ/33+E6Mrpgkq9iflL3pXTCSb6m4Cw==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17mr4582035ljt.56.1621552132132;
-        Thu, 20 May 2021 16:08:52 -0700 (PDT)
-Received: from localhost.localdomain (109-252-193-76.dynamic.spd-mgts.ru. [109.252.193.76])
-        by smtp.gmail.com with ESMTPSA id 4sm427821lfr.175.2021.05.20.16.08.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 May 2021 16:08:51 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S229958AbhEUIzy (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 21 May 2021 04:55:54 -0400
+Received: from mail1.perex.cz ([77.48.224.245]:48698 "EHLO mail1.perex.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229726AbhEUIzx (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 21 May 2021 04:55:53 -0400
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 285D9A0040;
+        Fri, 21 May 2021 10:54:29 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 285D9A0040
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+        t=1621587269; bh=zfQOEPjPu+MFDsM+IqxZDl7MiSDjj91oZwdBebRzDIQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DDPeR/46pKs/zk1DUIE1Zu8prrZuYOrkN89aymRWN08vVY6WDxfIFgvyJhyGb6kc7
+         kwSG5J7TKwAV8hr8jnLyqmhMYqTqQT/sRknV2IXmcd1W/1Fh/863M6inLMh0JvtTRe
+         SLPBAszbW8C9UPwjsbQhtDvhvlOib1poPJBsiQgY=
+Received: from p1gen2.localdomain (unknown [192.168.100.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: perex)
+        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+        Fri, 21 May 2021 10:54:18 +0200 (CEST)
+Subject: Re: [PATCH v2 2/2] ASoC: tegra: Unify ASoC machine drivers
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matt Merhar <mattmerhar@protonmail.com>,
-        Paul Fertser <fercerpav@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Ion Agorria <ion@agorria.com>,
+        Svyatoslav Ryhel <clamor95@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v1 13/13] soc/tegra: regulators: Support core domain state syncing
-Date:   Fri, 21 May 2021 02:07:51 +0300
-Message-Id: <20210520230751.26848-14-digetx@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210520230751.26848-1-digetx@gmail.com>
-References: <20210520230751.26848-1-digetx@gmail.com>
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210520175054.28308-1-digetx@gmail.com>
+ <20210520175054.28308-3-digetx@gmail.com>
+ <8e5d4442-00a4-460b-d37a-8962960dd7ff@perex.cz>
+ <20210520190812.GF3962@sirena.org.uk>
+From:   Jaroslav Kysela <perex@perex.cz>
+Message-ID: <ef59dad1-b06e-1d90-5948-9bb6e79478a2@perex.cz>
+Date:   Fri, 21 May 2021 10:54:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210520190812.GF3962@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The core voltage shall not drop until state of core domain is synced,
-i.e. all device drivers that use core domain are loaded and ready.
+Dne 20. 05. 21 v 21:08 Mark Brown napsal(a):
+> On Thu, May 20, 2021 at 09:02:49PM +0200, Jaroslav Kysela wrote:
+>> Dne 20. 05. 21 v 19:50 Dmitry Osipenko napsal(a):
+>>> Squash all machine drivers into a single-universal one. This reduces
+>>> code duplication, eases addition of a new drivers and upgrades older
+>>> code to a modern Linux kernel APIs.
+> 
+>>> +static struct snd_soc_card snd_soc_tegra_wm9712 = {
+>>> +	.dai_link = &tegra_wm9712_dai,
+>>> +	.num_links = 1,
+>>> +	.fully_routed = true,
+>>> +};
+> 
+>> Please, could you also initialize snd_soc_card->components? It may be useful
+>> to pass the codec identification to the user space like:
+> 
+>> .components = "codec:wm9712"
+> 
+> Hrm, if this is important to userspace shouldn't the core be doing
+> something by default given that it already knows all the components
+> going into the card?
 
-Support core domain state syncing. The core domain driver invokes the
-core-regulator voltage syncing once the state of domain is synced, at
-this point the core voltage is allowed to go lower than the level left
-after bootloader.
+I don't think that we can pass the complex topology in the simple string (127
+chars). For the time, it's better to pass only the vital information which the
+user space requires for the fine-grained hw configuration detection and
+description.
 
-Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
-Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
-Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
-Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/regulators-tegra20.c | 19 ++++++++++++++++++-
- drivers/soc/tegra/regulators-tegra30.c | 18 +++++++++++++++++-
- 2 files changed, 35 insertions(+), 2 deletions(-)
+For the above example, the "codec:" prefix may be replaced by the purpose
+string (like "hs:" - headset, "spk:" - speaker) etc. This information is not
+available in the ASoC components (purpose / location / exact I/O config etc.).
 
-diff --git a/drivers/soc/tegra/regulators-tegra20.c b/drivers/soc/tegra/regulators-tegra20.c
-index 3479be5ee494..81787ae3d03e 100644
---- a/drivers/soc/tegra/regulators-tegra20.c
-+++ b/drivers/soc/tegra/regulators-tegra20.c
-@@ -17,6 +17,8 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- 
-+#include <soc/tegra/common.h>
-+
- struct tegra_regulator_coupler {
- 	struct regulator_coupler coupler;
- 	struct regulator_dev *core_rdev;
-@@ -42,6 +44,21 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
- 	int core_cur_uV;
- 	int err;
- 
-+	/*
-+	 * Tegra20 SoC has critical DVFS-capable devices that are
-+	 * permanently-active or active at a boot time, like EMC
-+	 * (DRAM controller) or Display controller for example.
-+	 *
-+	 * The voltage of a CORE SoC power domain shall not be dropped below
-+	 * a minimum level, which is determined by device's clock rate.
-+	 * This means that we can't fully allow CORE voltage scaling until
-+	 * the state of all DVFS-critical CORE devices is synced.
-+	 */
-+	if (tegra_soc_core_domain_state_synced() && !tegra->sys_reboot_mode) {
-+		pr_info_once("voltage state synced\n");
-+		return 0;
-+	}
-+
- 	if (tegra->core_min_uV > 0)
- 		return tegra->core_min_uV;
- 
-@@ -62,7 +79,7 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
- 	 */
- 	tegra->core_min_uV = core_max_uV;
- 
--	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-+	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
- 
- 	return tegra->core_min_uV;
- }
-diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
-index 6e4f3d9e7be1..e0203f78b396 100644
---- a/drivers/soc/tegra/regulators-tegra30.c
-+++ b/drivers/soc/tegra/regulators-tegra30.c
-@@ -17,6 +17,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- 
-+#include <soc/tegra/common.h>
- #include <soc/tegra/fuse.h>
- 
- struct tegra_regulator_coupler {
-@@ -43,6 +44,21 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
- 	int core_cur_uV;
- 	int err;
- 
-+	/*
-+	 * Tegra30 SoC has critical DVFS-capable devices that are
-+	 * permanently-active or active at a boot time, like EMC
-+	 * (DRAM controller) or Display controller for example.
-+	 *
-+	 * The voltage of a CORE SoC power domain shall not be dropped below
-+	 * a minimum level, which is determined by device's clock rate.
-+	 * This means that we can't fully allow CORE voltage scaling until
-+	 * the state of all DVFS-critical CORE devices is synced.
-+	 */
-+	if (tegra_soc_core_domain_state_synced() && !tegra->sys_reboot_mode) {
-+		pr_info_once("voltage state synced\n");
-+		return 0;
-+	}
-+
- 	if (tegra->core_min_uV > 0)
- 		return tegra->core_min_uV;
- 
-@@ -63,7 +79,7 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
- 	 */
- 	tegra->core_min_uV = core_max_uV;
- 
--	pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-+	pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
- 
- 	return tegra->core_min_uV;
- }
+>> The passed information should be consistent. You may look into the Intel ASoC
+>> drivers for the examples (card->components initialization). There are also
+>> hints about the number of connected microphones ("cfg-mic:2" - configuration
+>> with 2 microphones) or the codec purpose ("hs:rt711" - headset codec is RT711)
+>> etc.
+> 
+> This sort of stuff is more something that the card should layer on top.
+
+It would be nice to have this layer with the topology description, but until
+someone designs it, it's much easier to describe the configuration and hints
+in the simple string passed to the user space.
+
+Actually, for ACPI/PCI platforms, the information is gathered from the tables
+or detected by PCI IDs. For the device tree. It may be worth to allow to pass
+this string from the device tree, too. I believe that the DT config author has
+enough information to describe the hardware.
+
+						Jaroslav
+
 -- 
-2.30.2
-
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
