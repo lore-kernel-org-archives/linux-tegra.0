@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504F1C47083
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 23:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A84C47083
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 23:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2691561152
-	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 23:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5313E61152
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 23:45:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232058AbhEWXqb (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 23 May 2021 19:46:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32776 "EHLO
+        id S232037AbhEWXqc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 May 2021 19:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232002AbhEWXqb (ORCPT
+        with ESMTP id S232070AbhEWXqb (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
         Sun, 23 May 2021 19:46:31 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3891C061574;
-        Sun, 23 May 2021 16:45:01 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id i22so37866544lfl.10;
-        Sun, 23 May 2021 16:45:01 -0700 (PDT)
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351DCC06138B;
+        Sun, 23 May 2021 16:45:03 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id f30so1033594lfj.1;
+        Sun, 23 May 2021 16:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xVuavUbxhP/h5ufdXkl/W8pz1JR/yQ3WYtl07Hx+SBA=;
-        b=FiNhKb7C+Fzp2BKv9q4Z0Sl16sEuxUtVhjivKNgx6P9coFik56+NT902uOn9jGxskH
-         WSQ4Jpmf7NWawnXxnDzaTqhrqinmobYRzq+2kVx0yXaEBaUfUlhuYUtewNS9fHNywjLI
-         MX47rSSSnNBVed2ne9hIaHm4CEj9tP79W5nwGKb9bkKNreT/JEstC+xXcFdziHOKhY0v
-         jAyaWrFMG2KSWTDxmube7n2emqe6xOfY9z7mo2I3rBFGOJ1Jbtte0tlr4W/Zci6+VFKf
-         lpJcoP0NRTKwRgl3DdSTyuK4i9LHYPq1msPwwtAd7J9sMHuXy1KSttzdHztKQAlM18ou
-         EhMw==
+        bh=C/YzaFVHHjWNgRf6nbKhMfyavNiyvMnhUpV/Qwaqx/s=;
+        b=AogWYbp2571hXKwtIuF4bCZiBf3P0LLL8n/tk5gItLQkDYA1OMnqjybNK/f/UA/XmM
+         V8BPFNu6wC6r545xqZ42lVU+1Ch7Y+AkeOterZrhXk053Xg0hHQzULJO5W5skYhJYGh9
+         iEczqLo0ZyyGOw1V5QLoUUeTvNuVLM7h/vcUjbiW7VxAbPkfsfzGuJtAjryX+uYkZ8gS
+         wShFf5vu/DzsxLazK2HF3y/hdEVKyh7UW51exsl30jDxghWfLAszc72H7lVxr6Bdolpx
+         r2VwGo+mfehQmr01jWrffSV5ush0yDsZIi8V1fAs2ymDllggPFXozNua+VxcxEbCH6tf
+         hmaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xVuavUbxhP/h5ufdXkl/W8pz1JR/yQ3WYtl07Hx+SBA=;
-        b=gLPIvclA2H4O6dilYr31+ZDOzD6jg0m1ConiqwGa1o4Depuu/YrS96DD/rPJLt81Sc
-         l6GUqYccpvSm4kkIjXehaXZLtrmT0BjWc6IzDh7KCrCn1CE5sHuVCtLZssrPP+iXsun+
-         vZG8JpvbvnmY3GuvT5J0Ynop3TXuTJcjyC1c9PHBb0lllor6WzUizTkmnmSqpriaAqEj
-         IoMJdXSHMM9t/B4w7mYxAOEIKjqirvSfAboqz16oYcvFVLXzJEF7je/XIkNPN4FyFUY/
-         PMQXugEW1BO92tlReCh9mltsYcRaWcEfXTUU+yFzDofwcIACMqYh0NXeIQru0RNaCc+c
-         dusw==
-X-Gm-Message-State: AOAM533sSSIUTONKsMoWVM/SJW1AJMUlGhJlqt99GOmsTqpnfWMUdLd4
-        jrJSivr5f63DAjFRsQ8y1rA=
-X-Google-Smtp-Source: ABdhPJw27HQEsg5vivuUmrrHXm3FHoxSkRVzLf+016MTENSQbYaozAFMm7C64o3oBpHTdQBYPTl5Fw==
-X-Received: by 2002:a05:6512:10cc:: with SMTP id k12mr2326606lfg.621.1621813500051;
-        Sun, 23 May 2021 16:45:00 -0700 (PDT)
+        bh=C/YzaFVHHjWNgRf6nbKhMfyavNiyvMnhUpV/Qwaqx/s=;
+        b=XwTXIULwi5kEUFcRZIBcfdQPhe9j+s0L9fqUWFj9UgL5GHiwpVvBypzvB8mPI2Axvc
+         emTrzkbX4hshu+iZusbH7QuhOvMPwJ06n2PR1ShTDPq3gJBtOODsD4rCtXYBWh2I9LU+
+         9WchwFye52EHABrSKM7BNfF1G3J5nqSK4Rs4u4RTMQ41UOdVGBn0fKCo9GmLjttdliSd
+         1SEzTPpFBouYSZ3ZcmA6agcX19of17RHA7xUZJeceU+n2RubzmkPyIoVELArpo6kqphq
+         KRQlc00lpUYgZDNpkLeH5vwmR3h9/NxY4DDGRyGWcqgYX8YC47Ut9fh7+H2JRwgCzVkN
+         4nSQ==
+X-Gm-Message-State: AOAM5339AUI2rwvTjENmJp8Vi+hfFIajLzpzCP3NxKA4iqpjVSDxraBh
+        0aWtFxNQbZ4ojbPjpGm+R88=
+X-Google-Smtp-Source: ABdhPJwYX7c2QidUiFvbyA6SfWUONiARQmi6QnR3vrM84BTIdW1DjUk+HWswv9Nf11lrcyqtTGrP6g==
+X-Received: by 2002:a05:6512:3f28:: with SMTP id y40mr8881209lfa.136.1621813501584;
+        Sun, 23 May 2021 16:45:01 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
-        by smtp.gmail.com with ESMTPSA id u11sm1269054lfg.243.2021.05.23.16.44.59
+        by smtp.gmail.com with ESMTPSA id u11sm1269054lfg.243.2021.05.23.16.45.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 May 2021 16:44:59 -0700 (PDT)
+        Sun, 23 May 2021 16:45:01 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>
 Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] ASoC: tegra: Set driver_name=tegra for all machine drivers
-Date:   Mon, 24 May 2021 02:44:34 +0300
-Message-Id: <20210523234437.25077-2-digetx@gmail.com>
+Subject: [PATCH v3 3/4] ASoC: tegra: Specify components string for each card
+Date:   Mon, 24 May 2021 02:44:36 +0300
+Message-Id: <20210523234437.25077-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210523234437.25077-1-digetx@gmail.com>
 References: <20210523234437.25077-1-digetx@gmail.com>
@@ -79,141 +79,114 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The driver_name="tegra" is now required by the newer ALSA UCMs, otherwise
-Tegra UCMs don't match by the path/name.
+Specify components string for each card of each supported device. It's
+a free form string that describes audio hardware configuration. This
+information is useful for ALSA UCM rules. It allows to generalize UCM
+rules, potentially removing a need to add new UCM rule for each device.
 
-All Tegra machine drivers are specifying the card's name, but it has no
-effect if model name is specified in the device-tree since it overrides
-the card's name. We need to set the driver_name to "tegra" in order to
-get a usable lookup path for the updated ALSA UCMs. The new UCM lookup
-path has a form of driver_name/card_name.
+This patch also adds asoc->components hook that allows to specify
+components description per device.
 
-The old lookup paths that are based on driver module name continue to
-work as before. Note that UCM matching never worked for Tegra ASoC drivers
-if they were compiled as built-in, this is fixed by supporting the new
-naming scheme.
-
-Cc: stable@vger.kernel.org
+Suggested-by: Jaroslav Kysela <perex@perex.cz>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- sound/soc/tegra/tegra_alc5632.c  | 1 +
- sound/soc/tegra/tegra_max98090.c | 1 +
- sound/soc/tegra/tegra_rt5640.c   | 1 +
- sound/soc/tegra/tegra_rt5677.c   | 1 +
- sound/soc/tegra/tegra_sgtl5000.c | 1 +
- sound/soc/tegra/tegra_wm8753.c   | 1 +
- sound/soc/tegra/tegra_wm8903.c   | 1 +
- sound/soc/tegra/tegra_wm9712.c   | 1 +
- sound/soc/tegra/trimslice.c      | 1 +
- 9 files changed, 9 insertions(+)
+ sound/soc/tegra/tegra_asoc_machine.c | 9 +++++++++
+ sound/soc/tegra/tegra_asoc_machine.h | 1 +
+ sound/soc/tegra/tegra_wm8903.c       | 1 +
+ 3 files changed, 11 insertions(+)
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index 0a0efd24e4b0..81ea6ceba689 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -139,6 +139,7 @@ static struct snd_soc_dai_link tegra_alc5632_dai = {
+diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+index 17579decceda..a81f2ebfc00c 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.c
++++ b/sound/soc/tegra/tegra_asoc_machine.c
+@@ -399,6 +399,8 @@ int tegra_asoc_machine_probe(struct platform_device *pdev)
  
- static struct snd_soc_card snd_soc_tegra_alc5632 = {
- 	.name = "tegra-alc5632",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_alc5632_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 00c19704057b..5a649810c0c8 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -182,6 +182,7 @@ static struct snd_soc_dai_link tegra_max98090_dai = {
+ 	if (asoc->add_common_snd_ops)
+ 		card->dai_link->ops = &tegra_machine_snd_ops;
++	if (asoc->components)
++		card->components = asoc->components;
  
- static struct snd_soc_card snd_soc_tegra_max98090 = {
- 	.name = "tegra-max98090",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_max98090_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
-index 9afba37a3b08..3344f16258be 100644
---- a/sound/soc/tegra/tegra_rt5640.c
-+++ b/sound/soc/tegra/tegra_rt5640.c
-@@ -132,6 +132,7 @@ static struct snd_soc_dai_link tegra_rt5640_dai = {
- 
- static struct snd_soc_card snd_soc_tegra_rt5640 = {
- 	.name = "tegra-rt5640",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_rt5640_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-index d30f8b6deda4..0f03e97d9355 100644
---- a/sound/soc/tegra/tegra_rt5677.c
-+++ b/sound/soc/tegra/tegra_rt5677.c
-@@ -175,6 +175,7 @@ static struct snd_soc_dai_link tegra_rt5677_dai = {
- 
- static struct snd_soc_card snd_soc_tegra_rt5677 = {
- 	.name = "tegra-rt5677",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_rt5677_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 885332170c77..ef6a553e0b7d 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -97,6 +97,7 @@ static struct snd_soc_dai_link tegra_sgtl5000_dai = {
- 
- static struct snd_soc_card snd_soc_tegra_sgtl5000 = {
- 	.name = "tegra-sgtl5000",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_sgtl5000_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
-index efd793886689..27089077f2ea 100644
---- a/sound/soc/tegra/tegra_wm8753.c
-+++ b/sound/soc/tegra/tegra_wm8753.c
-@@ -101,6 +101,7 @@ static struct snd_soc_dai_link tegra_wm8753_dai = {
+ 	if (!card->owner)
+ 		card->owner = THIS_MODULE;
+@@ -434,6 +436,7 @@ static struct snd_soc_dai_link tegra_wm8753_dai = {
+ };
  
  static struct snd_soc_card snd_soc_tegra_wm8753 = {
- 	.name = "tegra-wm8753",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
++	.components = "codec:wm8753",
  	.dai_link = &tegra_wm8753_dai,
  	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index e4863fa37b0c..f219c26d66a3 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -235,6 +235,7 @@ static struct snd_soc_dai_link tegra_wm8903_dai = {
- 
- static struct snd_soc_card snd_soc_tegra_wm8903 = {
- 	.name = "tegra-wm8903",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
- 	.dai_link = &tegra_wm8903_dai,
- 	.num_links = 1,
-diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
-index 4f09a178049d..c66da161c85a 100644
---- a/sound/soc/tegra/tegra_wm9712.c
-+++ b/sound/soc/tegra/tegra_wm9712.c
-@@ -54,6 +54,7 @@ static struct snd_soc_dai_link tegra_wm9712_dai = {
+ 	.fully_routed = true,
+@@ -466,6 +469,7 @@ static struct snd_soc_dai_link tegra_wm9712_dai = {
+ };
  
  static struct snd_soc_card snd_soc_tegra_wm9712 = {
- 	.name = "tegra-wm9712",
-+	.driver_name = "tegra",
- 	.owner = THIS_MODULE,
++	.components = "codec:wm9712",
  	.dai_link = &tegra_wm9712_dai,
  	.num_links = 1,
-diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
-index 6c1cc3d0ac33..cb4c8f72e4e6 100644
---- a/sound/soc/tegra/trimslice.c
-+++ b/sound/soc/tegra/trimslice.c
-@@ -94,6 +94,7 @@ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
+ 	.fully_routed = true,
+@@ -527,6 +531,7 @@ static struct snd_soc_dai_link tegra_sgtl5000_dai = {
+ };
  
- static struct snd_soc_card snd_soc_trimslice = {
- 	.name = "tegra-trimslice",
-+	.driver_name = "tegra",
+ static struct snd_soc_card snd_soc_tegra_sgtl5000 = {
++	.components = "codec:sgtl5000",
+ 	.dai_link = &tegra_sgtl5000_dai,
+ 	.num_links = 1,
+ 	.fully_routed = true,
+@@ -569,6 +574,7 @@ static struct snd_soc_dai_link tegra_tlv320aic23_dai = {
+ };
+ 
+ static struct snd_soc_card snd_soc_tegra_trimslice = {
++	.components = "codec:tlv320aic23",
+ 	.dai_link = &tegra_tlv320aic23_dai,
+ 	.num_links = 1,
+ 	.dapm_widgets = trimslice_dapm_widgets,
+@@ -616,6 +622,7 @@ static struct snd_soc_dai_link tegra_rt5677_dai = {
+ };
+ 
+ static struct snd_soc_card snd_soc_tegra_rt5677 = {
++	.components = "codec:rt5677",
+ 	.dai_link = &tegra_rt5677_dai,
+ 	.num_links = 1,
+ 	.fully_routed = true,
+@@ -649,6 +656,7 @@ static struct snd_soc_dai_link tegra_rt5640_dai = {
+ };
+ 
+ static struct snd_soc_card snd_soc_tegra_rt5640 = {
++	.components = "codec:rt5640",
+ 	.dai_link = &tegra_rt5640_dai,
+ 	.num_links = 1,
+ 	.fully_routed = true,
+@@ -681,6 +689,7 @@ static struct snd_soc_dai_link tegra_rt5632_dai = {
+ };
+ 
+ static struct snd_soc_card snd_soc_tegra_rt5632 = {
++	.components = "codec:rt5632",
+ 	.dai_link = &tegra_rt5632_dai,
+ 	.num_links = 1,
+ 	.fully_routed = true,
+diff --git a/sound/soc/tegra/tegra_asoc_machine.h b/sound/soc/tegra/tegra_asoc_machine.h
+index 080c1a26073a..fa325bfb2c8a 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.h
++++ b/sound/soc/tegra/tegra_asoc_machine.h
+@@ -15,6 +15,7 @@ struct snd_soc_pcm_runtime;
+ struct tegra_asoc_data {
+ 	unsigned int (*mclk_rate)(unsigned int srate);
+ 	struct snd_soc_card *card;
++	const char *components;
+ 	unsigned int mclk_id;
+ 	bool hp_jack_gpio_active_low;
+ 	bool add_common_dapm_widgets;
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index a3ec1f50bcb8..3f4f582fb02f 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -108,6 +108,7 @@ static struct snd_soc_dai_link tegra_wm8903_dai = {
+ };
+ 
+ static struct snd_soc_card snd_soc_tegra_wm8903 = {
++	.components = "codec:wm8903",
  	.owner = THIS_MODULE,
- 	.dai_link = &trimslice_tlv320aic23_dai,
+ 	.dai_link = &tegra_wm8903_dai,
  	.num_links = 1,
 -- 
 2.30.2
