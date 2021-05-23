@@ -2,113 +2,94 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F303DC2B9F2
-	for <linux-tegra@archiver.kernel.org>; Sat, 22 May 2021 14:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AA5C47080
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 22:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1EA261175
-	for <linux-tegra@archiver.kernel.org>; Sat, 22 May 2021 14:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1351661076
+	for <linux-tegra@archiver.kernel.org>; Sun, 23 May 2021 22:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbhEVOSW (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 22 May 2021 10:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47216 "EHLO
+        id S231982AbhEWWpA (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 23 May 2021 18:45:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbhEVOSV (ORCPT
+        with ESMTP id S231967AbhEWWoy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 22 May 2021 10:18:21 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01606C061574;
-        Sat, 22 May 2021 07:16:55 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id q7so32569921lfr.6;
-        Sat, 22 May 2021 07:16:55 -0700 (PDT)
+        Sun, 23 May 2021 18:44:54 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C15C061574;
+        Sun, 23 May 2021 15:43:18 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id q3so7768096lfu.2;
+        Sun, 23 May 2021 15:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=fH6pRt4HIVRgmGCmNbHBz0wD2RZsVq0fQhpWNY78NSs=;
-        b=ourtQDkogRIT7YryMxBVsoTOxpkReIvvLDFHn2m56TTRELvKpj0PZnXgXCcoqsmiLk
-         yKhJboZ1AjQ0s+YJpqtgwzJQamNb6GXEX5SZx39usBBLaEleXVVUKikMyb7WcNueeUT7
-         llbyYGnY3+yd3tXUzEhZbZNvx/UjPWHD0EP6dysiUBmDl1Ihg0Ap/o/kBG9oeqHVEKQ2
-         kdIbn/Xlaj53Ar8IyjWf+Z2zD+UlzfV+30Zd4f/O07G/oHzrs9w/kncQ9FFTgRpiHLUs
-         Gj870cVQdoXDCK7Xs0CeueMnpTqq2E8+cBM1uXHqMzHZ/WakPyzacWygViElxPQ/KBCS
-         nk7A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K1XQI/qjzn21ZxtI41zUbzZcpl3PUoE3tDyiZw+xX6Y=;
+        b=HxFLb8mxN9PGqyyfYFPaa7oKt6JzoRNcbnC7jS+6cdXtbiBGk1z8b2dcceaEWNRkmi
+         yD/PUS1mPz2CCDTP2XRzN0NyYFFRpqq18hF1VgnndiwRd2e4418G1bpXjCl9s7X5ZSB0
+         7V8cpj0nLPz64jetVkVnBNcNjwb1kDWqQ2xWavCkuvSc+sD0tJhwOnr4DlK6c2zmYcdX
+         Ua1otT1VxL2qeWorBn3T/qGhCxmdD98LYgndYpQTBI/1TbtjSAqpNEN+Yw4VEOMZmE/B
+         ICFFGNEOjzgWSwSCWDl7+XwqvM9PSIhqQYByUV8MktgYq0Y/AguWAxO4sCdkQW/R1lzE
+         HJpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=fH6pRt4HIVRgmGCmNbHBz0wD2RZsVq0fQhpWNY78NSs=;
-        b=ApFqhhNRi2cj5D6kNfs6KdBpZGjvugwrTcj4oZk37tE+bzvWjhUhWw69WFG81rs1GI
-         7F81XKaTLe6qKp8PD/TiXUeEruwxuDlWCLmjEl8RIfrsHxoVYr3OokiV5Li1Oor+PhiN
-         RfozZ+1DMsIKSC40RhVgcHuQsK+nWNjT7uYJlylwXBMJilKDFz2gJptX4U03DFH8hIyP
-         To5+Uf9K6MM1aOjmbZ9qndJNwzliyENTl/wJhIwwcAseuglTEARTRXvjlB7gOAG7Q+Lp
-         lqTLnhbSRPKgaMXkCveSK3jlbjDbPmvulyl5DUcTfQNO905eX0OSgCsQuY70U1a9Z4HJ
-         wxXg==
-X-Gm-Message-State: AOAM533yQukMBUTOK9Fu776b1KqIFESsfeKE71UlNJjtc705vgGqK7hW
-        3vciuvoTLXSH97D4EQ1CtuIiXuYJaag=
-X-Google-Smtp-Source: ABdhPJwLtfKyAV8wG+bybU7/iQ5v+ivaYOBPbhjRjLfZmJ6Fxwjigll/Rd/JFA0z3QSslOdHNdPaTA==
-X-Received: by 2002:a19:c107:: with SMTP id r7mr5326241lff.247.1621693013355;
-        Sat, 22 May 2021 07:16:53 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-83.dynamic.spd-mgts.ru. [109.252.193.83])
-        by smtp.googlemail.com with ESMTPSA id w5sm932721lfk.2.2021.05.22.07.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 May 2021 07:16:52 -0700 (PDT)
-Subject: Re: [PATCH -next] staging: media: tegra-vde: add missing error return
- code in tegra_vde_probe()
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20210522031911.129361-1-yangyingliang@huawei.com>
+        bh=K1XQI/qjzn21ZxtI41zUbzZcpl3PUoE3tDyiZw+xX6Y=;
+        b=l4fge861mbrQn+2mUdimu3gj5GgbwLi/r9xIqFW3/u7DxuOyrhWhsRc4qySF+YNwy+
+         SAGPrIy25D4wPZc0qEoC69aIyrlpD9Kk2DUHiH+IgAip4k7tfWTB/EqhK03gSjZzwSBV
+         +l3Oj+1PzF84yZMoPj9KQSL9sQz3qjgM4ldqX714/2JTUjbxSiPX7n/JfsEuHFX5RasJ
+         GLJ3gRa3iVBTl7UCkDslXBrKX0jrNQfsb41E7PPOu3KtWL8QLv1tuscFIwxzTdI8wmxk
+         64ySh2lBnckconfuxgvx55C2s/mtBIkU3TxU4d/+6wvVcO+fUax5Zm/1GCrwkhvwOPi1
+         CcCQ==
+X-Gm-Message-State: AOAM532Bed5pR0cnSS+KyoHidL12qSZvmIv1SfW3bHs1J1SbkhU59C36
+        igd2XDwYPSbuLEuPAguYN/I=
+X-Google-Smtp-Source: ABdhPJyeyaFJQ5ed/FfD2IOHWuyLYZJglIh6aelKY0D05lS5nU94xdEct5Qb9Nhh9PMazEQ+I8918A==
+X-Received: by 2002:a19:85d7:: with SMTP id h206mr8925158lfd.277.1621809795780;
+        Sun, 23 May 2021 15:43:15 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.gmail.com with ESMTPSA id m5sm1531622ljg.118.2021.05.23.15.43.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 May 2021 15:43:15 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <bc08636a-8f0f-772c-7df0-ec6459cc205d@gmail.com>
-Date:   Sat, 22 May 2021 17:16:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/2] Fix MAX77620 regulator driver regression
+Date:   Mon, 24 May 2021 01:42:41 +0300
+Message-Id: <20210523224243.13219-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210522031911.129361-1-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-22.05.2021 06:19, Yang Yingliang пишет:
-> Add missing return error code when pm_runtime_resume_and_get() failed.
-> 
-> Fixes: dc8276b78917 ("staging: media: tegra-vde: use pm_runtime_resume_and_get()")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->  drivers/staging/media/tegra-vde/vde.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-> index e025b69776f2..ed4c1250b303 100644
-> --- a/drivers/staging/media/tegra-vde/vde.c
-> +++ b/drivers/staging/media/tegra-vde/vde.c
-> @@ -1071,7 +1071,8 @@ static int tegra_vde_probe(struct platform_device *pdev)
->  	 * power-cycle it in order to put hardware into a predictable lower
->  	 * power state.
->  	 */
-> -	if (pm_runtime_resume_and_get(dev) < 0)
-> +	err = pm_runtime_resume_and_get(dev);
-> +	if (err)
->  		goto err_pm_runtime;
->  
->  	pm_runtime_put(dev);
-> 
+Hi,
 
-Hello Yang,
+The next-20210521 started to fail on Nexus 7 because of the change to
+regulator core that caused regression of the MAX77620 regulator driver.
+The regulator driver is now getting a deferred probe and turned out
+driver wasn't ready for this. The root of the problem is that OF node
+of the PMIC MFD sub-device is shared with the PINCTRL sub-device and we
+need to convey this information to the driver core, otherwise it will
+try to claim GPIO pin that is already claimed by PINCTRL and fail the
+probe.
 
-Thank you for the patch. The problem was already reported by Dan
-Carpenter to the original patch, apparently Mauro missed it.
+Dmitry Osipenko (2):
+  regulator: max77620: Use device_set_of_node_from_dev()
+  regulator: max77620: Silence deferred probe error
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+ drivers/regulator/max77620-regulator.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+-- 
+2.30.2
+
