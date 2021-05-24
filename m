@@ -2,101 +2,178 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A078C04FF3
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 14:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD40C47084
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 17:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8A76108E
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 14:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE79D61406
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 17:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232977AbhEXOX2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 May 2021 10:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59460 "EHLO
+        id S233294AbhEXRFG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 May 2021 13:05:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232920AbhEXOX2 (ORCPT
+        with ESMTP id S233326AbhEXRFF (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 May 2021 10:23:28 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2BDC061574
-        for <linux-tegra@vger.kernel.org>; Mon, 24 May 2021 07:21:58 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id f30so3898051lfj.1
-        for <linux-tegra@vger.kernel.org>; Mon, 24 May 2021 07:21:58 -0700 (PDT)
+        Mon, 24 May 2021 13:05:05 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7367C06138E
+        for <linux-tegra@vger.kernel.org>; Mon, 24 May 2021 10:03:35 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id n1so13127366vsr.10
+        for <linux-tegra@vger.kernel.org>; Mon, 24 May 2021 10:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WvxUCc4ZAD7JYmOhdqHj+SdkI9uXTGsko5jiNtvAqJY=;
-        b=o6fgqnwr/iJTavwVswhSV4k99P8BafEWqYYIfXXbwUtA4v60ZhFBYMCjHizLrbq+TX
-         ++xPzdtG7C28hAOIPeCnIuNKQ4B5/WeEQKPyn+1PyauS2DaWhKb+Hi4oVeCq5byDTD+1
-         CyRJ7XA8zUmuJzfHzdxwR5nqjPkVkptx9djQP+LypIKIkotsMNii8kfqgUjm2KgX3NBN
-         NaNVJNKCd7zCBpaMBULzRuQK0acqq6tkta5q0n/AkVYdG1pwNwkhscwFGmgxy/ifJhBi
-         FwI4kyX4SpaN8HTSKAOEdIHH4e+WH8B9cIdslznOyYOrKjvwhy4q0uppKB3mMSY9ggLL
-         eSCw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MrqSOYj5g/obDVKIYAxmyXoOnQCVk6QwshkTvwsi7m4=;
+        b=XyizKqOVbO1O1kqzeiPXF8NjsBV2U9Z+KYkApDRPMhoQY9Wd7aF4XJyesh+GK1YVA5
+         Ub6EukTa0vgpcTPIyPKsHpKh8SRsQbQFCcP+++VNYz1YXYz2lXhoZ9bBghOFurhlwHUk
+         ntb6/JFWmPTTq0gQYS4pNRcJkazgXeDtfbxp9tzTP5JJPQigo4i7WjDXP7dQV6MLvvtw
+         Qq5CbguJpgjiczI1re747pjjYIB5h37C9+mXIwbmORKayNQgqiFyUkiDzDaCY3IBenHt
+         FoTmh0hk4Y2MQQcmxH9KYKLxjMIIAayyNq0B4tqy1nc2mlsNk7avsezzUrjOaV2gKEQJ
+         ohfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WvxUCc4ZAD7JYmOhdqHj+SdkI9uXTGsko5jiNtvAqJY=;
-        b=htnZNJu4QydKMDICwHcULG8CZO6mE4qSoo2Pb1IE1dt6yiqmY50FulfgqkH4TFtfKq
-         tTdaxY7TF11zbT7VOUA6UJ2KNLJmYROIbkDvR9CJgSkj4P+xTiJZGNHCiaVQul772MoZ
-         NRwjuZ3Hni5dNqCck/9dYwsWEzh+6g8MOQQZgtPDU9Drb3MsXTaxw7fBPz9wlMGmEMJt
-         eWMCn4DSX5TvARDE9TsKZ6m8yVjB/0Atb4gPZVCWnuzKAyE9fDLzkNjVx5LHx1QfKNAy
-         3f0oiAtE7TbQZHbx4kNde+DC138dFHfAZexFr+l3nX7OCBkSU90IVIbPualOaCRU6XeC
-         rHnA==
-X-Gm-Message-State: AOAM532IoFud102lXAikY+l3064wAkAla41BQrH2XAWzpiUHE83cDKFM
-        rie63T1S3GN+LhgOAg/0PKjlgYSrulw=
-X-Google-Smtp-Source: ABdhPJzFat9+xw6z6xb6vabA7m52F4NNlfFIXDqG7AykgsV5FYW7+YO6F4mWHEKuyGSkYVObuXic4Q==
-X-Received: by 2002:a05:6512:1027:: with SMTP id r7mr10988589lfr.153.1621866117028;
-        Mon, 24 May 2021 07:21:57 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
-        by smtp.googlemail.com with ESMTPSA id v25sm1492344lfe.60.2021.05.24.07.21.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 May 2021 07:21:56 -0700 (PDT)
-Subject: Re: [PATCH v3 2/4] ASoC: tegra: Unify ASoC machine drivers
-To:     kernel test robot <lkp@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
-        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
-References: <20210523234437.25077-3-digetx@gmail.com>
- <202105241048.gypbTx2I-lkp@intel.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <97f88bb4-2dcf-4905-ac07-f08adf2f6582@gmail.com>
-Date:   Mon, 24 May 2021 17:21:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MrqSOYj5g/obDVKIYAxmyXoOnQCVk6QwshkTvwsi7m4=;
+        b=laycYfV0yhzFodlJJWmS5YliYmpQJg18N/aUWOVQW1X5pp4of4tDDGZerQer9aFb6m
+         IrqobwChjFjPQcKfhTDd089u1MfMySAj28huwPguiKdmrIy9nuRSI8jvGmtGH7/1odXQ
+         Iigoai1p7w7DxivuA6EFPpQXHu7XmCN97WKJjdbwsVp8vpVr+7fpXmI7q4hC+ULgBSJr
+         vgZYfIj5x7kePUZ3TfwDL7k/+IQdTgBFAiU7dUnH9Yluo7kL6+jKr9IHEWsuHaDWhuDq
+         z7usJeEQT+dtjhrlPoX5bnrLxy+lZ3rPViuu5szYA7PftcdzyTSTawZHkrgMcP++viTe
+         CLkw==
+X-Gm-Message-State: AOAM531mf8lfTOz88xXS+08MYut0gPlKS3S8jMFFVBklDN2cMfZJ+GAT
+        KF8R6h1P/ShvtTt3lgjXuMsWxZ+nbwuuEJyIOOeEOA==
+X-Google-Smtp-Source: ABdhPJwH7kYxWSa0u/62FyAK1s59dR0TfrwpFa2o7rML8WoewkAZu/jGtDNEsxL3yqDKybD0PBSBisVCRwo/3Ef5YLg=
+X-Received: by 2002:a05:6102:7b4:: with SMTP id x20mr23350062vsg.48.1621875814897;
+ Mon, 24 May 2021 10:03:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <202105241048.gypbTx2I-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210523231335.8238-1-digetx@gmail.com> <20210523231335.8238-13-digetx@gmail.com>
+In-Reply-To: <20210523231335.8238-13-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 May 2021 19:02:58 +0200
+Message-ID: <CAPDyKFqp1TN1JUa9R3c2VZ3tyD+FRVhYEVc1rw76Uq5r8n9dWw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] dt-bindings: soc: tegra-pmc: Document core power domain
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-24.05.2021 05:34, kernel test robot пишет:
->     66	
->     67	static int tegra_machine_event(struct snd_soc_dapm_widget *w,
->     68				       struct snd_kcontrol *k, int event)
->     69	{
->     70		struct snd_soc_dapm_context *dapm = w->dapm;
->     71		struct tegra_machine *machine = snd_soc_card_get_drvdata(dapm->card);
->     72	
->   > 73		if (machine->asoc->dapm_event) {
->     74			int ret = machine->asoc->dapm_event(w, k, event);
->     75			if (ret <= 0)
->     76				return ret;
->     77		}
+On Mon, 24 May 2021 at 01:13, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Document the new core power domain properties.
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-That dapm_event hook indeed shouldn't belong to this patch. I changed my
-build scripts to compile-test sound drivers. This will be fixed in v4.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
+
+> ---
+>  .../arm/tegra/nvidia,tegra20-pmc.yaml         | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> index 43fd2f8927d0..0afec83cc723 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+> @@ -301,6 +301,33 @@ patternProperties:
+>
+>      additionalProperties: false
+>
+> +  core-domain:
+> +    type: object
+> +    description: |
+> +      The vast majority of hardware blocks of Tegra SoC belong to a
+> +      Core power domain, which has a dedicated voltage rail that powers
+> +      the blocks.
+> +
+> +    properties:
+> +      operating-points-v2:
+> +        description:
+> +          Should contain level, voltages and opp-supported-hw property.
+> +          The supported-hw is a bitfield indicating SoC speedo or process
+> +          ID mask.
+> +
+> +      "#power-domain-cells":
+> +        const: 0
+> +
+> +    required:
+> +      - operating-points-v2
+> +      - "#power-domain-cells"
+> +
+> +    additionalProperties: false
+> +
+> +  core-supply:
+> +    description:
+> +      Phandle to voltage regulator connected to the SoC Core power rail.
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -325,6 +352,7 @@ examples:
+>      tegra_pmc: pmc@7000e400 {
+>                compatible = "nvidia,tegra210-pmc";
+>                reg = <0x7000e400 0x400>;
+> +              core-supply = <&regulator>;
+>                clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+>                clock-names = "pclk", "clk32k_in";
+>                #clock-cells = <1>;
+> @@ -338,17 +366,24 @@ examples:
+>                nvidia,core-power-req-active-high;
+>                nvidia,sys-clock-req-active-high;
+>
+> +              pd_core: core-domain {
+> +                      operating-points-v2 = <&core_opp_table>;
+> +                      #power-domain-cells = <0>;
+> +              };
+> +
+>                powergates {
+>                      pd_audio: aud {
+>                              clocks = <&tegra_car TEGRA210_CLK_APE>,
+>                                       <&tegra_car TEGRA210_CLK_APB2APE>;
+>                              resets = <&tegra_car 198>;
+> +                            power-domains = <&pd_core>;
+>                              #power-domain-cells = <0>;
+>                      };
+>
+>                      pd_xusbss: xusba {
+>                              clocks = <&tegra_car TEGRA210_CLK_XUSB_SS>;
+>                              resets = <&tegra_car TEGRA210_CLK_XUSB_SS>;
+> +                            power-domains = <&pd_core>;
+>                              #power-domain-cells = <0>;
+>                      };
+>                };
+> --
+> 2.30.2
+>
