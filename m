@@ -2,112 +2,144 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E918EC47084
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EB6C47084
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 10:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDC9A6120A
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 08:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 481FA610FA
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 10:20:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232483AbhEXI4i (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 May 2021 04:56:38 -0400
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:42496 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232362AbhEXI4g (ORCPT
+        id S232426AbhEXKWR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 May 2021 06:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232422AbhEXKWQ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 May 2021 04:56:36 -0400
-Received: by mail-ua1-f51.google.com with SMTP id 14so9083664uac.9;
-        Mon, 24 May 2021 01:55:08 -0700 (PDT)
+        Mon, 24 May 2021 06:22:16 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6AD6C061574;
+        Mon, 24 May 2021 03:20:47 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id j6so37244815lfr.11;
+        Mon, 24 May 2021 03:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+yxfVj7jKw45QrlrhnP2dyoysNu/SHiHa0fZjF/qcQ0=;
+        b=TEuKP8ZT44wcv2P28T7veECGsfNWN5/tjRGeEbBLT9ckwElAo2/G7M3YS9/I5AfcX0
+         cQCItZCZyHhWSMqPRUyFfm8o3StpIsWSKCAxVUfzQvdDVs0Ss6xQB6JuSIIuBkR0QHEP
+         J2hadytj6P1ujmmzrzxjJ06aGPk8/svT/F1KDFjrim78oH/jpmwBQ+z3VSP6f3x6tl4L
+         145LaqeDDrG8QIj0CHX+ppwjCUqM24O5oipjgzRrZiWSKIawOX3klSrNc+fl6w2xGkNP
+         vNZgNmdNod2Hij0o//7QA/KxfBLQ4ob6cU3PZFumy+JGMaIuMn7VPmlgARnn1iu867Nv
+         88Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5H0qZkzumrdkYcAyVjQDQA6Hje2p2FxbSu2Plzs94Cg=;
-        b=Bn/c6Kw7q0MNLCbshYdbAYgS97X7nKSJGRbi6LfqPjQuE8DXHOElGQnZ5C3wKeIgcy
-         4KkM51ueXOpt1GLBYOfYiUylUogOKUgzWQLvNYK9gmnBPRLAPq5/vg1YblRRFhYqlETi
-         oejDUHfGr+TTCKy/8RkHw8U639RPilcjlMeJRFkv9UJk3j6BlpbJT1SS5NsyttGttx54
-         VoiIW5IeABFkIEIEb6x9K37WzXB+Max8o5z9nBwyXvPuOSNl8uGK2lul+dTRbFr4E3d8
-         9Ak4hbkPX4bWQXLg8KIyOOj0lZJn+OyE3NgXUoVAYLeqC5e5fR+ZViFlgZSo7X+rvQCU
-         yJ8Q==
-X-Gm-Message-State: AOAM5311EDvujXylHpzfASl67Hhlo2oCu5I2vwwRODy8IjlTmaGwMlVy
-        oBQaOAua/sxGfVg4R77llrw4sf7V/VGQhC3Znig=
-X-Google-Smtp-Source: ABdhPJxxyosYrdj1GqNypPiBnYRArw2E3/38homNMO1Av1PFu0RXXr0Dh8t9Utur9chqZtb0X55m4PfZQwmS3BcBlZQ=
-X-Received: by 2002:ab0:7705:: with SMTP id z5mr20481974uaq.2.1621846508208;
- Mon, 24 May 2021 01:55:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210523232556.15017-1-digetx@gmail.com>
-In-Reply-To: <20210523232556.15017-1-digetx@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 May 2021 10:54:57 +0200
-Message-ID: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
-Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK enabled
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+yxfVj7jKw45QrlrhnP2dyoysNu/SHiHa0fZjF/qcQ0=;
+        b=pRBH/3Uaeo00/1KcV1pyXd+UMmZPkGvp7gQvhulAB5ugY9T+V0Mcr1b8cA9Wnij7PG
+         iF4ackqyCtS0PZzHanAby7SCTUwTvJcA6e0wHnqVbVNGtDpKhk6y8LO4Kv2Q64TSVKtW
+         pK33XKtoVKMBpGPyWTtjzD1JTAR7tDucwowy3Jce7SoGss9NFNKiLMbcq14cP3Ppp8oG
+         JdOff4VMmqmBzBHew7Pt/6qM8Yf+omWfiBSyPokLwAb+0RZk04TBuMaoZXjupjyDUEI2
+         FTt/nTVkgVqQIvJkwPrj/QVLMqLzWJwF0sTybXHlLXMCAnnSpRUnqya4bhUMducBGLg/
+         hY5A==
+X-Gm-Message-State: AOAM532mhHNZwOeftPt7X4IShvErq+Hew2C8F83BVpwJcflwMiEGagPr
+        4+RJ7wcE+3iwmG5OVnNzwQvpZ5pyWTY=
+X-Google-Smtp-Source: ABdhPJyple+XJHadP4SOsxTYxSH8E8EyGwgFHnwIzBn43eRvrU5XxLQIOX++TAMI6HQeat+eU1BY7Q==
+X-Received: by 2002:ac2:50c2:: with SMTP id h2mr9709116lfm.499.1621851645960;
+        Mon, 24 May 2021 03:20:45 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.googlemail.com with ESMTPSA id q6sm1391573lfn.11.2021.05.24.03.20.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 03:20:45 -0700 (PDT)
+Subject: Re: [PATCH v2 02/14] regulator: core: Detach coupled regulator before
+ coupling count is dropped
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+References: <20210523231335.8238-1-digetx@gmail.com>
+ <20210523231335.8238-3-digetx@gmail.com>
+Message-ID: <b5329801-ef0b-0c8d-aced-75c44f076f29@gmail.com>
+Date:   Mon, 24 May 2021 13:20:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20210523231335.8238-3-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
-
-On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-> There are couple older platforms that can't be compile-tested because they
-> partially implement CLK API. It causes build failure of kernel drivers due
-> to the missing symbols of the unimplemented part of CLK API.
->
-> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
->                      MIPS Ralink.
->
-> Disable compile-testing for HAVE_LEGACY_CLK=y.
->
-> Reported-by: kernel test robot <lkp@intel.com>
+24.05.2021 02:13, Dmitry Osipenko пишет:
+> Detach coupled regulator before dropping coupling count in order to allow
+> detaching callback to balance voltage of regulators. This is needed by
+> NVIDIA Tegra regulator couplers in order to bring back voltage to a value
+> that is safe for reboot once regulators are decoupled.
+> 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/regulator/core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index aae978c0c148..83571f83af04 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -5084,6 +5084,13 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+>  
+>  	n_coupled = c_desc->n_coupled;
+>  
+> +	if (coupler && coupler->detach_regulator) {
+> +		err = coupler->detach_regulator(coupler, rdev);
+> +		if (err)
+> +			rdev_err(rdev, "failed to detach from coupler: %pe\n",
+> +				 ERR_PTR(err));
+> +	}
+> +
+>  	for (i = 1; i < n_coupled; i++) {
+>  		c_rdev = c_desc->coupled_rdevs[i];
+>  
+> @@ -5111,13 +5118,6 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+>  		c_desc->n_resolved--;
+>  	}
+>  
+> -	if (coupler && coupler->detach_regulator) {
+> -		err = coupler->detach_regulator(coupler, rdev);
+> -		if (err)
+> -			rdev_err(rdev, "failed to detach from coupler: %pe\n",
+> -				 ERR_PTR(err));
+> -	}
+> -
+>  	kfree(rdev->coupling_desc.coupled_rdevs);
+>  	rdev->coupling_desc.coupled_rdevs = NULL;
+>  }
+> 
 
-Thanks for your patch!
-
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
->
->  config COMPILE_TEST
->         bool "Compile also drivers which will not load"
-> -       depends on HAS_IOMEM
-> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
-
-That sounds a bit drastic to me.  Usually we just try to implement the
-missing functionality, or provide stubs.
-Which functions are missing?
-
->         help
->           Some drivers can be compiled on a different platform than they are
->           intended to be run on. Despite they cannot be loaded there (or even
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I now realized that this is a bit too fragile approach. I'll drop this
+patch in v3, there are better options of how to manage balancing on
+detaching and this is not critical feature for now anyways.
