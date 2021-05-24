@@ -2,205 +2,250 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B1DC47084
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 18:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04211C04FF3
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 20:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5B3961414
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 18:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B376140E
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 20:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233126AbhEXSvx (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 May 2021 14:51:53 -0400
-Received: from mail-dm6nam08on2088.outbound.protection.outlook.com ([40.107.102.88]:57216
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232746AbhEXSvw (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 May 2021 14:51:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LbnCPROkwxRy052ADbjICfmXCioGKerC2llzfrD5Z+yE00CiNwVz+g/MAM6g5xCR/7K5/L8gxMe8JRXRrqcrWvuYEDc04VPvGnUW+sfxpwb7ugstz8cgahS0fY/c/4kRvmYe1NvPhC1oPSf+tk7gGt45KhAQantYXYC7rRsaUmyXPR/38BVobO27kYbMCu9fDk5zu6KoWezdLBi2Rc2QAoC/zMBYpvMNOYaRXiiHHTGJj4zHvUysGA18F96762Nf7igk5zrwdDgCeXhMYdDlFt40+RmKMFxU0DJANlqb7rWsVWuqQgyiRcFikMLYegQQu7U6RM0YLlwbjupbYInjvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t2vvZ9jE5uZ4fFHVbr41tZIbCOJJa/tlhC9oyQg3BVI=;
- b=NTuXqyYWqtDfzXI94ST9cFLYRu7WYILIbnctdz/QtwYP9M/xuEasjPd3q0lJ3+U2UeE0fOJDBncDMnidbKlY+Z5kFNyzJ/kn0zC7E7eCKL3yc6+S5X20DNamXiqvz/JGr9epFE8gBL9R52jnbOMPkom4sNUMpfA8+x5dZRSdRNNAnDPX6+syW5F9rwruHSHMw2qvCPax1MyGl+BHGfzPed2DBXOGSCkCm9niLha7eSZSEZdsEZFl+cXNerIaO4gACowsc4Rtj76GNqg6996rt63XnkaWP9+8r1n9K+MECHgM/qPUj3MgMpZko/dGDzr8yg6wyBtMhEkjUjXNAxECFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=suse.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t2vvZ9jE5uZ4fFHVbr41tZIbCOJJa/tlhC9oyQg3BVI=;
- b=jTocPNvwbI6KgAC7tkBbNgmTxl+V8Mlwdw4CbQLOLZDpik47RIyQNjwjUxysCg87C/rg/xwfEA81NtlLwxA/SQ1V+PzuUyLordjbiPul/EeMFS7LxyWnc1v3JPdb5uTPr+NZRlz4KAqvh8/RCqn5Bjm1H7F0fi+kNxp4gqdL/426jJxQhg+rIvzlLKJetdr+lfsGVZLELri8q+2s4DDaRCx6ZSB6CR4YdsACgu50UqDwW4/9qUWHK8mGyVYIm1gqYNrA/1ffvuXLqhs6/G0/a/RHj40ejVvtPw7cPYnKVTQpCkJ2q00j5UrvZyrU63HR9KMQH9SOgx1lMwPB11ew3A==
-Received: from DM6PR21CA0020.namprd21.prod.outlook.com (2603:10b6:5:174::30)
- by BL1PR12MB5190.namprd12.prod.outlook.com (2603:10b6:208:31c::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.25; Mon, 24 May
- 2021 18:50:23 +0000
-Received: from DM6NAM11FT026.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:174:cafe::ff) by DM6PR21CA0020.outlook.office365.com
- (2603:10b6:5:174::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.2 via Frontend
- Transport; Mon, 24 May 2021 18:50:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; suse.com; dkim=none (message not signed)
- header.d=none;suse.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- DM6NAM11FT026.mail.protection.outlook.com (10.13.172.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Mon, 24 May 2021 18:50:22 +0000
-Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 24 May
- 2021 18:50:20 +0000
-Subject: Re: [PATCH v2 2/2] ASoC: tegra: Unify ASoC machine drivers
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210520175054.28308-1-digetx@gmail.com>
- <20210520175054.28308-3-digetx@gmail.com>
- <32171079-ed4e-1147-2272-5f11bc480c6a@nvidia.com>
- <91e53907-d87d-aeeb-4644-3926d4311daa@gmail.com>
- <6bc26992-e136-ef6a-a956-382b5cae5db7@nvidia.com>
- <f9631faa-5fc8-ecdd-709b-93b58e45a1ac@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <cf2ee04e-d4cf-14ba-92d0-aa113eb7b8c8@nvidia.com>
-Date:   Mon, 24 May 2021 19:50:18 +0100
+        id S233079AbhEXUZO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 May 2021 16:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232770AbhEXUZN (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 May 2021 16:25:13 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DA5C061574;
+        Mon, 24 May 2021 13:23:43 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id v5so35239410ljg.12;
+        Mon, 24 May 2021 13:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y2vTah5KbgiaERVpRfAWsrrH7McZ4pgWjXKBOUsAUE4=;
+        b=CNwwO0tWtR2frBsnxLOqTJKS7fBBaJTUQO+UR2w1p4Zq1EhllEcbC2BMfva6pIqKS1
+         AWazCz8N9r0c8Mp/SYYzo+0AwzFudxKpkgV5E1YGNnOmUaU1TIMSb6CyuDHn1DIjcfwR
+         +da7sQ0WQ/ct1odcoTlcs1VIHEDbw/alWiGnDUWA44gxwHhjKosnRoJU3jnWh4vWv5JN
+         R4dgClmg8paLBb3YhbheulNg5w960SM+kwQklk7U71slgMre3JoxJ0wpmkV96NmdGlt4
+         CPUo/JWEisTmIUgaGHRQwbHZIgoITeSMOG7e7mzTyzR+dE0bhIqyOB83fIEvrrd3W36j
+         +oGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y2vTah5KbgiaERVpRfAWsrrH7McZ4pgWjXKBOUsAUE4=;
+        b=Ef0hfXuoEj7iPzbHaLIRX4MJBZzPDlttqP/2XI/s+1XL2FP91oNlA1e9LIwXzcQgGy
+         sI1auRaYHQEU70PnF8o0tqmwV/JVhP1teAaKRIEqxWL4kaSwlndxEqQv8JCs7UEgHAFS
+         u+82uB9tYnDXyn5FR9s6eWvvJtXwyRQgL1I++600RgqIVXXQtZlN4xeaTmInATKg6fPN
+         8srb3lrWkYQeegETpZzLNQhZqVtvQ4MQgueN/F8yn0rWBcR8fWvsQQdmYkpO0C31nAt9
+         tv5Z9eUSmuzV9qOUePoupPyLCdAmlruHVBC+jF1PfBZAIEJ6puo6LjNmQHDe0DMFr7QJ
+         k81g==
+X-Gm-Message-State: AOAM533H7YvsT6r2MjQ+M2/6GsD8WKRZuTlCrY5YtpjB+O/kfeQsnKW4
+        pTmgmVjG+Pjfbaw97WfoSxqVy+AWREI=
+X-Google-Smtp-Source: ABdhPJwyihuJWXEfp/sQXXk3TQcoTyqN68bdqeMj8Mi4sUe9ASp4N+Db2zxfxG9pQgZpUQNhjre03A==
+X-Received: by 2002:a2e:9912:: with SMTP id v18mr18379523lji.42.1621887821657;
+        Mon, 24 May 2021 13:23:41 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.googlemail.com with ESMTPSA id m8sm1610700lfo.80.2021.05.24.13.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 13:23:41 -0700 (PDT)
+Subject: Re: [PATCH v2 13/14] soc/tegra: pmc: Add core power domain
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?Q?Nikola_Milosavljevi=c4=87?= <mnidza@outlook.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20210523231335.8238-1-digetx@gmail.com>
+ <20210523231335.8238-14-digetx@gmail.com>
+ <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f0b1bea7-0752-5584-8bcc-d8b602f22c13@gmail.com>
+Date:   Mon, 24 May 2021 23:23:40 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <f9631faa-5fc8-ecdd-709b-93b58e45a1ac@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAPDyKFrto2cosX3Ben_QWCYVqgeoF1Yv=8gEx4Y86WNyjeHvdg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: eaf2b72d-d116-43fe-3d22-08d91ee4c969
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5190:
-X-Microsoft-Antispam-PRVS: <BL1PR12MB519061159D969DE8120B3DCAD9269@BL1PR12MB5190.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1Sw1suuFJkgMHz2DTg6yDX2+GBjhW+HIQOzyI3DPtehVxWZOPOMTKZY9KhscF9bS2+yO6LgBTrsERbmWaSWmJ4aOzRywe9O66V7Vt/wLfaorE5njTtPIt4CVvwzvzfaEshzQqa3X5uzFVaiY1Mzz/jG2T1IeRViga65F5izDqRvCKdYkqrGVELco1/x3D9PVutCp3T6XHUpKqp+NAeeX451brus4WGbuz2Qt6FFJIphhPPfyaC1Jk34s7NQI0beMVxbGBZGKE7/RrXO29/Ogu6JaBcoCV9Zt2z6ObxzMAm816zR5MzAgcZxIc9fmWpHE/IlYWhYaEp56mKKXp06t4aURbM5knrTszcIAVDtLTHiX1tAegFtz5cPxZY5/2inUT9nCinAUH/nplW8twu5RTD51zuxTeNlPwoiFbBDdDTx3A4DaQfCadfmTx3CKSfDWO52bqrETzX8ifnebX8XFUhd4sDb2+wmcg04xapxPJn0nwqzn7NYakc5Bw4xbWeJaLZ9pWIRI0BBJfShMl9MZmXX2tXR1I7L/L0o+6u0ftcNg8sTCjwqskOuD5/mdGUNG9hyV494Fgein4Vak80ZrLLpkWGKnvEUB7fmarMO+hUmlJu3DXSe6aAEe5r/eseAORSZX5LQBcyqr8ZQH1UrnLDSaL7xsrunXP5pKRsIAkPf4AIe/LOTKPPGQXnX9Zeo0
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(39860400002)(396003)(136003)(376002)(36840700001)(46966006)(82740400003)(186003)(36906005)(83380400001)(478600001)(8676002)(316002)(8936002)(4326008)(16576012)(356005)(70206006)(31686004)(26005)(70586007)(2616005)(47076005)(7636003)(36756003)(16526019)(36860700001)(31696002)(5660300002)(426003)(2906002)(82310400003)(53546011)(86362001)(336012)(54906003)(110136005)(7416002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2021 18:50:22.9070
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaf2b72d-d116-43fe-3d22-08d91ee4c969
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT026.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5190
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 24/05/2021 14:40, Dmitry Osipenko wrote:
-> 24.05.2021 15:22, Jon Hunter пишет:
+24.05.2021 20:04, Ulf Hansson пишет:
+> On Mon, 24 May 2021 at 01:13, Dmitry Osipenko <digetx@gmail.com> wrote:
 >>
+>> NVIDIA Tegra SoCs have multiple power domains, each domain corresponds
+>> to an external SoC power rail. Core power domain covers vast majority of
+>> hardware blocks within a Tegra SoC. The voltage of a power domain should
+>> be set to a level which satisfies all devices within the power domain.
+>> Add support for the core power domain which controls voltage state of the
+>> domain. This allows us to support system-wide DVFS on Tegra20-210 SoCs.
+>> The PMC powergate domains now are sub-domains of the core domain, this
+>> requires device-tree updating, older DTBs are unaffected.
 >>
->> On 21/05/2021 20:05, Dmitry Osipenko wrote:
->>
->> ...
->>
->>>>> +unsigned int tegra_asoc_machine_mclk_rate(unsigned int srate)
->>>>> +{
->>>>> +	unsigned int mclk;
->>>>> +
->>>>> +	switch (srate) {
->>>>> +	case 64000:
->>>>> +	case 88200:
->>>>> +	case 96000:
->>>>> +		mclk = 128 * srate;
->>>>> +		break;
->>>>> +	default:
->>>>> +		mclk = 256 * srate;
->>>>> +		break;
->>>>> +	}
->>>>> +	/* FIXME: Codec only requires >= 3MHz if OSR==0 */
->>>>> +	while (mclk < 6000000)
->>>>> +		mclk *= 2;
->>>>
->>>> So this appears to be specific to the wm8903 codec or at least this is
->>>> where it came from. And given that the switch statement is not complete
->>>> in terms of the sample rates (ie. only has a subset), I am wondering if
->>>> set should keep this specific to the wm8903 codec?
->>>
->>> The RT5631 codec of Asus Transformers will re-use this function.
->>
->> OK, but does it need this FIXME part? That appears to be codec specific.
+>> Tested-by: Peter Geis <pgwipeout@gmail.com> # Ouya T30
+>> Tested-by: Paul Fertser <fercerpav@gmail.com> # PAZ00 T20
+>> Tested-by: Nicolas Chauvet <kwizart@gmail.com> # PAZ00 T20 and TK1 T124
+>> Tested-by: Matt Merhar <mattmerhar@protonmail.com> # Ouya T30
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> Downstream RT5631 Tegra driver has exactly the same FIXME.
+> [...]
+> 
+>> +
+>> +static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
+>> +{
+>> +       static struct lock_class_key tegra_core_domain_lock_class;
+>> +       struct generic_pm_domain *genpd;
+>> +       const char *rname = "core";
+>> +       int err;
+>> +
+>> +       genpd = devm_kzalloc(pmc->dev, sizeof(*genpd), GFP_KERNEL);
+>> +       if (!genpd)
+>> +               return -ENOMEM;
+>> +
+>> +       genpd->name = np->name;
+>> +       genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
+>> +       genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
+>> +
+>> +       err = devm_pm_opp_set_regulators(pmc->dev, &rname, 1);
+>> +       if (err)
+>> +               return dev_err_probe(pmc->dev, err,
+>> +                                    "failed to set core OPP regulator\n");
+>> +
+>> +       err = pm_genpd_init(genpd, NULL, false);
+>> +       if (err) {
+>> +               dev_err(pmc->dev, "failed to init core genpd: %d\n", err);
+>> +               return err;
+>> +       }
+>> +
+>> +       /*
+>> +        * We have a "PMC pwrgate -> Core" hierarchy of the power domains
+>> +        * where PMC needs to resume and change performance (voltage) of the
+>> +        * Core domain from the PMC GENPD on/off callbacks, hence we need
+>> +        * to annotate the lock in order to remove confusion from the
+>> +        * lockdep checker when a nested access happens.
+>> +        */
+> 
+> Can you elaborate a bit more on this?
+> 
+> Are you saying that when the child domain (PMC pwrgate) gets powered
+> off, you want to drop its aggregated votes it may hold for the
+> performance state, as otherwise it may affect the parent domain (core
+> domain)?
 
-What downstream branch are you referring to? I still don't think that
-that is a good reason to make this 'FIXME' the standard going forward
-and hence I would prefer that it is kept specific the wm8903. Otherwise
-people will keep using this code without understanding if this is
-needed/correct.
+Yes, in particular we want to remove/add the performance vote when clk is disabled/enabled, see tegra_clock_runtime_resume/suspend() of the clk-runtimePM driver [1]. I'll send that clk patch separately once this series and some other tegra-clk patches will be merged, otherwise there are too many dependencies and it's too difficult to review.
 
-> Although, I now see that downstream RT5631 uses 384*srate for the
-> default cases.
-> 
-> I also see that WM8994 driver that we have in grate-kernel for Galaxy
-> Tab and SGH-I927 also re-uses that mclk_rate function.
-> 
->>> IIUC, the default switch-case works properly for all rates below 64KHz,
->>> at least I haven't had any problems with it. Could you please clarify
->>> why you are saying that the switch statement appears to be incomplete?
->>
->> It looks a bit weird because less than 64kHz and greater than 96kHz we
->> use 256 and for only 64kHz, 88.2kHz and 96kHz we use 128. So it is not
->> clear to me which sample rates have actually been tested with this and
->> if this is complete or not?
->>
->> Is it intended that we use 256 for sample rates greater than 96kHz?
-> 
-> The 128*srate gives MCLK >6MHZ for 64/88/96, 256*srate gives MCLK >6MHZ
-> for rates below 64kHZ. Looks like the goal is to get MCLK >6MHZ.
+[1] https://patchwork.ozlabs.org/project/linux-tegra/patch/20201217180638.22748-33-digetx@gmail.com/
 
-The wm8903 supports 8kHz sample rates and 256*8000 is less than 6MHz.
-Yes the FIXME loop corrects this, but you could also extend the case
-statement to multiply by 512 for 8kHz.
+Please see the example lockdep trace in the end of the email that is fixed by the mutex annotation. What we have there is the tegra-host1x device driver that resumes PMC powergate domain on Tegra30, the PMC driver enables clock from the genpd.power_on callback of the powergate domain and this propagates to the clock's RPM callback which sets the performance vote of the core domain. Hence core domain vote is set from within of the powergate domain. 
 
->  The WM8903 datasheet says:
+> I guess this would be a valid scenario to optimize for, especially if
+> you have more than one child domain of the core power domain, right?
 > 
-> "The  following  operating  frequency  limits  must  be  observed  when
->  configuring  CLK_SYS.  Failure  to  observe   these   limits   will
-> result   in   degraded  noise   performance   and/or   incorrect
-> ADC/DAC  functionality.
-> 
-> If DAC_OSR = 0 then CLK_SYS  3MHz
-> If DAC_OSR = 1 then CLK_SYS  6MHz"
-> 
-> Where DAC_OSR is DAC Oversampling Control
-> 0 = Low power (normal oversample)
-> 1 = High performance (double rate)
-> 
-> I see that DAC_OSR=0 by default, it can be switched to 1 by userspace
-> ALSA control.
-> 
+> If you have only one child domain, would it be sufficient to assign
+> ->power_on|off() callbacks for the core domain and deal with the
+> performance stare votes from there instead?
 
-Yes that is all fine, but again this is specific to the wm8903.
+The core domain is the parent domain of the PMC domains + some devices directly belong to the core domain. The GENPD core aggregates the performance votes from the children domains and from devices of the parent core, this all works great already.
 
-Jon
+It sounds to me that you're suggesting to reinvent the aggregation logic within the PMC driver and create a fake hierarchy that doesn't match hardware. It won't help the lockdep warning anyways.
 
--- 
-nvpublic
+I actually don't quite understand what problem you're trying to solve, could you please explain? The lockdep warning is harmless, we just need to annotate the mutex lock class.
+
+If you don't feel comfortable with the usage of lockdep_set_class() in the driver, then maybe it should be possible to make it a part of the pm_genpd_init(). For example like we did that for tegra-host1x driver recently [2].
+
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a24f98176d1efae2c37d3438c57a624d530d9c33
+
+
+ LOCKDEP
+ ============================================
+ WARNING: possible recursive locking detected
+ 5.13.0-rc3-next-20210524-00202-g80a288f17147-dirty #7935 Tainted: G        W        
+ --------------------------------------------
+ kworker/u8:2/96 is trying to acquire lock:
+ c202e494 (&genpd->mlock){+.+.}-{3:3}, at: genpd_runtime_resume+0x95/0x174
+ 
+               but task is already holding lock:
+ c35d9454 (&genpd->mlock){+.+.}-{3:3}, at: genpd_runtime_resume+0x95/0x174
+ 
+               other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&genpd->mlock);
+   lock(&genpd->mlock);
+ 
+                *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+ 5 locks held by kworker/u8:2/96:
+  #0: c2024ea8 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x15a/0x600
+  #1: c2a31f20 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x15a/0x600
+  #2: c35f04d8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x29/0xdc
+  #3: c35d9454 (&genpd->mlock){+.+.}-{3:3}, at: genpd_runtime_resume+0x95/0x174
+  #4: c13fbbcc (prepare_lock){+.+.}-{3:3}, at: clk_prepare_lock+0x17/0xac
+ 
+               stack backtrace:
+ CPU: 0 PID: 96 Comm: kworker/u8:2 Tainted: G        W         5.13.0-rc3-next-20210524-00202-g80a288f17147-dirty #7935
+ Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+ Workqueue: events_unbound deferred_probe_work_func
+ [<c010d1cd>] (unwind_backtrace) from [<c0109639>] (show_stack+0x11/0x14)
+ [<c0109639>] (show_stack) from [<c0ba6dab>] (dump_stack_lvl+0x97/0xb0)
+ [<c0ba6dab>] (dump_stack_lvl) from [<c017b24f>] (__lock_acquire+0x7fb/0x2534)
+ [<c017b24f>] (__lock_acquire) from [<c017d75b>] (lock_acquire+0xf3/0x424)
+ [<c017d75b>] (lock_acquire) from [<c0bb0daf>] (__mutex_lock+0x87/0x7f4)
+ [<c0bb0daf>] (__mutex_lock) from [<c0bb1535>] (mutex_lock_nested+0x19/0x20)
+ [<c0bb1535>] (mutex_lock_nested) from [<c0669ced>] (genpd_runtime_resume+0x95/0x174)
+ [<c0669ced>] (genpd_runtime_resume) from [<c0660167>] (__rpm_callback+0x7b/0xc8)
+ [<c0660167>] (__rpm_callback) from [<c06601cd>] (rpm_callback+0x19/0x60)
+ [<c06601cd>] (rpm_callback) from [<c065fde3>] (rpm_resume+0x47f/0x65c)
+ [<c065fde3>] (rpm_resume) from [<c066000f>] (__pm_runtime_resume+0x4f/0x78)
+ [<c066000f>] (__pm_runtime_resume) from [<c05857f7>] (clk_pm_runtime_get.part.0+0x13/0x54)
+ [<c05857f7>] (clk_pm_runtime_get.part.0) from [<c05881e9>] (clk_core_set_rate_nolock+0x81/0x1cc)
+ [<c05881e9>] (clk_core_set_rate_nolock) from [<c0588353>] (clk_set_rate+0x1f/0x44)
+ [<c0588353>] (clk_set_rate) from [<c0597cd3>] (tegra_powergate_prepare_clocks+0x2f/0x94)
+ [<c0597cd3>] (tegra_powergate_prepare_clocks) from [<c059a4d1>] (tegra_powergate_power_up+0x45/0xec)
+ [<c059a4d1>] (tegra_powergate_power_up) from [<c0ba7211>] (tegra_genpd_power_on+0x2b/0x50)
+ [<c0ba7211>] (tegra_genpd_power_on) from [<c0667231>] (_genpd_power_on+0x6d/0xb8)
+ [<c0667231>] (_genpd_power_on) from [<c066999d>] (genpd_power_on.part.0+0x85/0xf0)
+ [<c066999d>] (genpd_power_on.part.0) from [<c0669cfb>] (genpd_runtime_resume+0xa3/0x174)
+ [<c0669cfb>] (genpd_runtime_resume) from [<c0660167>] (__rpm_callback+0x7b/0xc8)
+ [<c0660167>] (__rpm_callback) from [<c06601cd>] (rpm_callback+0x19/0x60)
+ [<c06601cd>] (rpm_callback) from [<c065fde3>] (rpm_resume+0x47f/0x65c)
+ [<c065fde3>] (rpm_resume) from [<c066000f>] (__pm_runtime_resume+0x4f/0x78)
+ [<c066000f>] (__pm_runtime_resume) from [<c065675f>] (__device_attach+0x83/0xdc)
+ [<c065675f>] (__device_attach) from [<c0655d55>] (bus_probe_device+0x5d/0x64)
+ [<c0655d55>] (bus_probe_device) from [<c06560b7>] (deferred_probe_work_func+0x63/0x88)
+ [<c06560b7>] (deferred_probe_work_func) from [<c0139993>] (process_one_work+0x1eb/0x600)
+ [<c0139993>] (process_one_work) from [<c0139fcf>] (worker_thread+0x227/0x3bc)
+ [<c0139fcf>] (worker_thread) from [<c0140ab3>] (kthread+0x13f/0x15c)
+ [<c0140ab3>] (kthread) from [<c0100159>] (ret_from_fork+0x11/0x38)
+ Exception stack(0xc2a31fb0 to 0xc2a31ff8)
