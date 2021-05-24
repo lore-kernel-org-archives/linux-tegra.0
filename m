@@ -2,157 +2,154 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3668C04FF3
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 12:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AD6C2B9F7
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7757461261
-	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 12:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD359613B6
+	for <linux-tegra@archiver.kernel.org>; Mon, 24 May 2021 12:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232389AbhEXMYD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 24 May 2021 08:24:03 -0400
-Received: from mail-mw2nam10on2062.outbound.protection.outlook.com ([40.107.94.62]:64608
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232327AbhEXMYC (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 24 May 2021 08:24:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c8von+yxhjrhadwkSNExIgPyTDjmgQ+K365KBZy4f+j3okLQBSH+A3DlYfrjAZIE4vnD2bC1bokoXynA7IjzXNVvzlnYM7oX66n/vyY/iMGEnq0/Lz1rKuunNRrHpFF8Vzy4Xrf2gaaGMPfTGcK2pNEhS/KjVh8LWQyk8Os1yC8BPDiZqQGBltpISUfghshF82/7phIFl0rpNhxZrkqNUKB2KMO4y5bFeakc9Z3QunIdSka4zZwoDzGGzyRGSFcxRDSCKQIUwRF2ZsvXqEF4jD9O1D5NA+rG2I0l2ZXbrKEGYmgevzMR54ozK2G/1LsOe3fWt6dHV/YsAhlgLkVgMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1PAiHIdPPL/8LN2pI6m1/GrgY2DzkS2LGV7L49hfHGI=;
- b=HMIwnmpKNICaSrAN4HrBvT7ZWON4Rd5ZRGjfTmHUuXGK8HfFjWii79DNJ4RW8D6GXz6vVPBtUmYK/73Q7CJrSiRpJM/hQxQ9FgcnTsBbO9KoxNsuxWP2Z8OzLzKiYvNAlHPvxtwFSUkW2Glz/AJiOYhZp4A1R7IpekXQ7clVum//OodgeA4qTCPLtUNK+kNAw+SfmyrktMIyxaRSIleUGdhG/c/MkA+XI9MchM6UxgfqRd+99RGMlbbwUC/k9yCB+wOvQqBCgjiu8q3lJlQvCUg1wtvJhVZiYMScHoT1zkSfmEsucCQ6lEf5h2cH423WEpaYSSr3uXF02i183//edw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=suse.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1PAiHIdPPL/8LN2pI6m1/GrgY2DzkS2LGV7L49hfHGI=;
- b=R7ixLWwSdTk6JydlRDhZoMj6SkFZXXXs8ogP3QXGFx153/rXKDNk2CteqMhZ8dMxBx9NRNfDsSk3IrRd1jNwlKzuBXgbrG+qYoQIILpTN3F16XjtEQYEkqkFZcl+h94l9ukaPEB4YdSAubz9LN4AAluX+g1AqVa2iQRZqnqav+RlJjsnODPLiakXQLYaSCe3W7xKmDgxXtAifFVxCpGldOn5py5xmrgRBXyecohLpbQ9A017wiJEa0UUalin03pRqMTwHGRLVegi8+wxdODTf90GPmxYIWMjaCoitoq2ZDmP8+QI5B6D41MuRzmUP4T5VUZL0CZJNy46XEZC2sCqoQ==
-Received: from MWHPR15CA0041.namprd15.prod.outlook.com (2603:10b6:300:ad::27)
- by SN1PR12MB2368.namprd12.prod.outlook.com (2603:10b6:802:32::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.26; Mon, 24 May
- 2021 12:22:33 +0000
-Received: from CO1NAM11FT012.eop-nam11.prod.protection.outlook.com
- (2603:10b6:300:ad:cafe::1a) by MWHPR15CA0041.outlook.office365.com
- (2603:10b6:300:ad::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.23 via Frontend
- Transport; Mon, 24 May 2021 12:22:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; suse.com; dkim=none (message not signed)
- header.d=none;suse.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT012.mail.protection.outlook.com (10.13.175.192) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Mon, 24 May 2021 12:22:32 +0000
-Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 24 May
- 2021 12:22:30 +0000
-Subject: Re: [PATCH v2 2/2] ASoC: tegra: Unify ASoC machine drivers
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210520175054.28308-1-digetx@gmail.com>
- <20210520175054.28308-3-digetx@gmail.com>
- <32171079-ed4e-1147-2272-5f11bc480c6a@nvidia.com>
- <91e53907-d87d-aeeb-4644-3926d4311daa@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6bc26992-e136-ef6a-a956-382b5cae5db7@nvidia.com>
-Date:   Mon, 24 May 2021 13:22:28 +0100
+        id S232706AbhEXMkw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 24 May 2021 08:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232700AbhEXMkv (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Mon, 24 May 2021 08:40:51 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4253FC061574;
+        Mon, 24 May 2021 05:39:23 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id i9so40451808lfe.13;
+        Mon, 24 May 2021 05:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
+        b=Ukzs1lpffefInt+Tc3rj13rbWCFBfbLYbuOBDb1j5YTp/JNEMJrM+0BS9pYYP38s9n
+         7HnDgswflfy/VLz9qqAzPEQ99K+h8Qw9BP4SNjW8CFWmWgh5JMUSDfFAJeK+RZdsaGGL
+         E/Dufo5c9cUI5wYk5ZS925uvNbuEl/D0DVzT9JJnHjAK1LG65AMdNhVEY5bjp2L2ZkJx
+         xTyf1oVqYbmYguDJ4dsI4rGt5dv+nSIZOdciE20NRNrrOmtUf9V4AfSlhip/ALqlXDCi
+         a3xqCn7eZwwF4XtCyKGnbWeeDVyinyJ8tey0f34ksGlX16trBozo1SFW0R8FUHxTuMe2
+         gCpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=13zcyWdsm4gpffNG5ZgDMwvczQG34AV4139pdXe/s/0=;
+        b=JPtwYE8hRhKABXJqAdQPEmS/j++lk9UmOM98vt2+exheyVdkYJyhD3XKbkieLeMkqL
+         /UHrG5P34T7pgyKMjm7tYUro2k/bNz5UjhoS0FeZtZeMRMrF+PUZDhp2E6Nexp93rb1f
+         DVVmp2GE0TIukOoJtXuZoF9czCz2kJ3gmg+tGP5aQRuWZb6Hg8CDqHeWhOmUvWH6SkVx
+         VUVniWHnHdYwP0nz2h3s4ZhLVBgyW5KMY2K4TIG2Uf6Qck41AbhHhcSAyEpiIIVdieG9
+         2wkXGhDq7EseZM03ePl8uRyWjf6rPdDGtFegsHRW6OgBREFluVHCx3ZKSM7UvuOhJlug
+         9OfQ==
+X-Gm-Message-State: AOAM533KhURQfuH5gHNIe/ch3AcEg24inlOXm8PTgtQ+2smqFB8dpza0
+        JZsPVjBoZ88+S3e9qraZZZD7vr48hSM=
+X-Google-Smtp-Source: ABdhPJyhCOFQn/Z1pKRmtZeJWu1d4dSY2QLiSj+ONw56eIR3cGKanVoF3Tn/DOinhtQ09s5N7gDupw==
+X-Received: by 2002:a05:6512:128c:: with SMTP id u12mr10567429lfs.160.1621859961442;
+        Mon, 24 May 2021 05:39:21 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-193-110.dynamic.spd-mgts.ru. [109.252.193.110])
+        by smtp.googlemail.com with ESMTPSA id p21sm1409745lfg.97.2021.05.24.05.39.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 May 2021 05:39:21 -0700 (PDT)
+Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
+ enabled
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <john@phrozen.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>
+References: <20210523232556.15017-1-digetx@gmail.com>
+ <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
+Date:   Mon, 24 May 2021 15:39:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <91e53907-d87d-aeeb-4644-3926d4311daa@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 04ecb75e-a23b-46a1-d509-08d91eae9b61
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2368:
-X-Microsoft-Antispam-PRVS: <SN1PR12MB2368DC782409753F8840899ED9269@SN1PR12MB2368.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: H9KgRPJqNWidnXNCITpc+WcEgUSF74Upwr0Zk4lQ7FSuNBkF4XPRtSkdygkq4qMHAcQQ8LhwHHoTw8DhLnBdLqofkM7kMozHM7HwGIgAiln0qJdNPojC+q8rF2AWkPJs0rYsFBUuY23d0NBs9WqwIe3bos3SS4ui7QhGdoPNsSLv5fTu1L40RyWO92Qj6NefDrTygc5kRqEzlcFKDEcVABa0bxpKJ4U7/SE5Cai4myiSixOn8sY0kM+ggS02e/qZIjZjGeq7s38a/xYGQO0Wgvi/Lu4uOS5S8SvPzHp7Wi/ef4znNe2alABJJ8haD3CSokj6HmHm/7dNKNC58RccQL9o4zvjbtHT8QlmLpR9pAXdPT4R6RTGimTLSmr7PBLEadhoxGktIw9WTjgDSYduxQVowfkyERcCl39avUe9ku9urSndM8HP+z8T/Po8vdA+/bNgcstu3x/kSaORTiOODTnFJ1wBMMYzCEQmiviVP/MdHqrDgbtQ/hvE+5wakxTjqQBjGKKne0wWKIWYnUEACQouQkBn6TAyT3wMKILSl9mNf6nAIV2Io6JHJ7KwzKFhWqOM84ozGHQRriaHixTH+xjdvElzPdU98X2vp4PB/kVG/wm+vgHK3p73BtdJhm+QSpmBtTgqhEZGbJ8awEO6uQUNIEhV/uy1NTXJqy1yuEiPGASzUkrb7nF/GN9JGuNn
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(346002)(39860400002)(396003)(376002)(36840700001)(46966006)(82310400003)(336012)(70206006)(70586007)(53546011)(426003)(356005)(186003)(36756003)(36860700001)(8676002)(5660300002)(8936002)(2616005)(478600001)(2906002)(316002)(110136005)(16576012)(82740400003)(7416002)(4326008)(7636003)(36906005)(54906003)(26005)(16526019)(31686004)(86362001)(47076005)(31696002)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2021 12:22:32.8549
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04ecb75e-a23b-46a1-d509-08d91eae9b61
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT012.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2368
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-
-On 21/05/2021 20:05, Dmitry Osipenko wrote:
-
-...
-
->>> +unsigned int tegra_asoc_machine_mclk_rate(unsigned int srate)
->>> +{
->>> +	unsigned int mclk;
->>> +
->>> +	switch (srate) {
->>> +	case 64000:
->>> +	case 88200:
->>> +	case 96000:
->>> +		mclk = 128 * srate;
->>> +		break;
->>> +	default:
->>> +		mclk = 256 * srate;
->>> +		break;
->>> +	}
->>> +	/* FIXME: Codec only requires >= 3MHz if OSR==0 */
->>> +	while (mclk < 6000000)
->>> +		mclk *= 2;
->>
->> So this appears to be specific to the wm8903 codec or at least this is
->> where it came from. And given that the switch statement is not complete
->> in terms of the sample rates (ie. only has a subset), I am wondering if
->> set should keep this specific to the wm8903 codec?
+24.05.2021 11:54, Geert Uytterhoeven пишет:
+> Hi Dmitry,
 > 
-> The RT5631 codec of Asus Transformers will re-use this function.
+> On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>> There are couple older platforms that can't be compile-tested because they
+>> partially implement CLK API. It causes build failure of kernel drivers due
+>> to the missing symbols of the unimplemented part of CLK API.
+>>
+>> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
+>>                      MIPS Ralink.
+>>
+>> Disable compile-testing for HAVE_LEGACY_CLK=y.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
+>>
+>>  config COMPILE_TEST
+>>         bool "Compile also drivers which will not load"
+>> -       depends on HAS_IOMEM
+>> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
+> 
+> That sounds a bit drastic to me.  Usually we just try to implement the
+> missing functionality, or provide stubs.
+> Which functions are missing?
 
-OK, but does it need this FIXME part? That appears to be codec specific.
+Everything that belongs to CONFIG_COMMON_CLK needs stubs.
 
-> IIUC, the default switch-case works properly for all rates below 64KHz,
-> at least I haven't had any problems with it. Could you please clarify
-> why you are saying that the switch statement appears to be incomplete?
+That is everything under CONFIG_HAVE_CLK [1], excluding functions
+belonging to clk-devres.o and clk-bulk.o [2]. The HAVE_LEGACY_CLK
+selects HAVE_CLK, but the COMMON_CLK is under HAVE_CLK too.
 
-It looks a bit weird because less than 64kHz and greater than 96kHz we
-use 256 and for only 64kHz, 88.2kHz and 96kHz we use 128. So it is not
-clear to me which sample rates have actually been tested with this and
-if this is complete or not?
+[1]
+https://elixir.bootlin.com/linux/v5.13-rc3/source/include/linux/clk.h#L786
+[2]
+https://elixir.bootlin.com/linux/v5.13-rc3/source/drivers/clk/Makefile#L3
 
-Is it intended that we use 256 for sample rates greater than 96kHz?
+This problem is repeated over and over again for the past years. Some
+maintainers are adding "depends on COMMON_CLK" for COMPILE_TEST of each
+driver, but this doesn't solve the root of the problem, and thus, it's
+constantly reoccurring.
 
-Jon
+Recently Krzysztof Kozlowski added couple more clk stubs for MIPS, but
+still lots of stubs are missing. Some platforms don't have any stubs at
+all and apparently nobody cares to fix them.
 
+There 3 possible solutions:
+
+1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
+2. Build stubs universally, maybe using weak functions.
+3. Disable compile-testing for HAVE_LEGACY_CLK
+
+The third option is the simplest. If anyone will care to fix those
+legacy platforms properly, then compile-testing could be re-enabled for
+them. This is my proposal.
