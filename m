@@ -2,163 +2,164 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B32CC2B9F8
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 08:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6450C2B9F8
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 12:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCAD6141B
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 08:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93FFC61413
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 12:04:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231184AbhEYImE (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 May 2021 04:42:04 -0400
-Received: from mail-bn7nam10on2062.outbound.protection.outlook.com ([40.107.92.62]:12512
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230108AbhEYImE (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 May 2021 04:42:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VOfzXlivrxcGNghm6sdL6tyDuFOc1TBXlRf+w0uVnHbsR5QYFed/d3UnGeI8ltyfL0mE2j1AsEmU+n6O8ea6Vu+5GFxmkfXOw5/z6H1oBzn02D4rfybDpeTH7tYz/d5Xulvp8vrlA6hcasBoQgHHOjatgDYwkyAxB01QicIvRkGtmWGmfP+OZyWDDWO32eKuC9e1IyFlBWrz2RPGopi+2VvIk1RkDflJ3XbS8jjDyeiFU8/wINqr9H88Jwa/EB7Gbkav6/2QGUMKpAedS0dJqUS3LZ8Lx5h3s2T8InevprBQAEs79HtQZkFjg3Ub5sXc0owysmRoWinkDCbxZH4W/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pyc5F7Fj8O+dV3DYFFUZN5sA8rdJ5gDq4gQrDEvmW24=;
- b=J9O2F6zLSmuUFiuDOn55IR7z4hz43hxZqEF3t14ioJ/9v2zgdNIWh8kcACtd6AmvSNhhwaadCfkLznwwHuFhj9WL/bHzh7Yn5DkDL3wrOm4ibrvvwHLnddNYcRHfYh2LbzpKG1dhs6XhoqEzzcT/7ktuewWQ8ThAYKQG2sSu5W+T2j8IuK38nFALMb9MKaM0QrzBaGF1PYGyNVe58eIps2RTp/MUt2tjMRM/whUJZfja4mp92VWAe4fpuL1IFWyXrF6xpPmTKOnuUTa2Iqlq54RtWxVXFD7Qdnhif05bYi80FaX8z+XtVCOJ0QMqy1XZm7Ikk/iEbdMLdv5jWPHsFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=suse.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pyc5F7Fj8O+dV3DYFFUZN5sA8rdJ5gDq4gQrDEvmW24=;
- b=KBn8Qa2GPxayAC4hjSWT9X++uIKDvfQt8F69W+LWOPVdt4pqfDCmot9ba6pJ4mnEnXwmtdY6LyVvaNCd6Vo5OWeqFa28Q57kNzde7tkW30007JM4XYQY7t57p5tF2O2h4aMe/HkZakigm6qB2hcKb2UQIEgeUA/fqAHRXn3Ye43Z0fqD3aC1WiDW+TrFoO1p0oIMWE0IvtTOC9NrG6TCZbxekIIGUXQZuL9sUITZnNSpW6PiebwZQ0CMFOjk/Q9vWm/nJO8bKYfJicsVu2bWq8zFTbf5vZ1JZfNaep2v4qjUXSSlw60T5vJiTrd/sGPgKPwTQqSi92RYQgjyZfpS2A==
-Received: from BN0PR03CA0047.namprd03.prod.outlook.com (2603:10b6:408:e7::22)
- by BYAPR12MB3272.namprd12.prod.outlook.com (2603:10b6:a03:131::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.27; Tue, 25 May
- 2021 08:40:31 +0000
-Received: from BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e7:cafe::81) by BN0PR03CA0047.outlook.office365.com
- (2603:10b6:408:e7::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend
- Transport; Tue, 25 May 2021 08:40:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; suse.com; dkim=none (message not signed)
- header.d=none;suse.com; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT022.mail.protection.outlook.com (10.13.176.112) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Tue, 25 May 2021 08:40:31 +0000
-Received: from [10.26.49.10] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 25 May
- 2021 08:40:28 +0000
-Subject: Re: [PATCH v3 4/4] ASoC: tegra: Specify components string for Nexus 7
+        id S232285AbhEYMFf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 May 2021 08:05:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49367 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232296AbhEYMFe (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Tue, 25 May 2021 08:05:34 -0400
+Received: from mail-vs1-f71.google.com ([209.85.217.71])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1llVn1-00085q-BB
+        for linux-tegra@vger.kernel.org; Tue, 25 May 2021 12:04:03 +0000
+Received: by mail-vs1-f71.google.com with SMTP id f20-20020a67d8940000b029022a675e6e86so12766867vsj.2
+        for <linux-tegra@vger.kernel.org>; Tue, 25 May 2021 05:04:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ov2aOGWwe13sRFaggK9ebqlQkrTYdvNCRKExlndHI9g=;
+        b=px0SfP0bE8b2pZ3CmBsiHSrNqwW+Siw/RjZ39lgkVtLrXqhzjLjWwRUu8h+Bem/ECp
+         9LlWuOCOKkvflstegUWoanmEcp+MXXr8fv9Y+QGVizfIMgmX7zc/C72YtbtVaRyEPdkj
+         EkUBLSm/feqr2MlFxH07UQS1QzrX89QUytXqC3YkXfs/6TjrFkz5WXJHeEIPTNznew92
+         7S2MkN8F31TMgVs9dnKjDBWPHIyrpECAgBYcF5bvIJt471jMkA2WdF9MNkjpgWJhzidZ
+         6IFkwbURuhzKnQ11hRbMguSfqiZ0T340zT6Px4mlwhx896Jk9Uj5m9+YNAXD1GPg08XC
+         FWHw==
+X-Gm-Message-State: AOAM532LwsUlifayeDzOrUgt/47pu+X1K+w+u0Sg7PzAoOIAVmR9fSoo
+        xgUI8phrYbL1UPsXdiaQI9Chf6VRsK3lVAiya5NUsCGJ+RIzS7szXctdE0A0rhVApegBl3eL2Xx
+        q5/3kJCA4Vo7ooEgr0K4RakuFMBF81nuQLZxdUYh4
+X-Received: by 2002:a05:6122:a16:: with SMTP id 22mr24550325vkn.18.1621944242239;
+        Tue, 25 May 2021 05:04:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw/dj3Oduy8Xo23it+mIa7HBuI+j2VM7Wl2RfwLkeKdxRH0+SiUcz9Gmlw4vhVOBjjBWTrS3w==
+X-Received: by 2002:a05:6122:a16:: with SMTP id 22mr24550298vkn.18.1621944241996;
+        Tue, 25 May 2021 05:04:01 -0700 (PDT)
+Received: from [192.168.1.4] ([45.237.48.1])
+        by smtp.gmail.com with ESMTPSA id b81sm1247160vke.8.2021.05.25.05.03.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 May 2021 05:04:01 -0700 (PDT)
+Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
+ enabled
 To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210523234437.25077-1-digetx@gmail.com>
- <20210523234437.25077-5-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <03775d09-f3ff-ff7a-626a-812163d6871d@nvidia.com>
-Date:   Tue, 25 May 2021 09:40:26 +0100
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <john@phrozen.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>
+References: <20210523232556.15017-1-digetx@gmail.com>
+ <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+ <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <f12b4622-6cea-ac65-2d94-f50a85c29215@canonical.com>
+Date:   Tue, 25 May 2021 08:03:56 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210523234437.25077-5-digetx@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e11b96e5-e72b-4b3f-e340-08d91f58c197
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3272:
-X-Microsoft-Antispam-PRVS: <BYAPR12MB32724A425C9675189C4299B0D9259@BYAPR12MB3272.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1265;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5ypb5SjwC7MznWBT7Q57ZsgjHo74/7tMKsToHeUlTbqIEbqUIDe8Mgk1+BQ5oQ9n8etoWRB34evDqi4+fuiqGMsOCfa1ev/uiWyRyILw91Jf66PLnP0SkKzeFjhoxu2i8ngBOddFOLVU3J0F0JBhlTGqR4FkUNFURkd76tWNXtoymADTX7gF40CWESlyAZf04p9j/Dw+sNhT5lIhzud/NZY5VWQ+yJTTLMqzunMkl3ybsSH8r3L1/ILL75quAxFWLc7khqH4KP3wsm5J0lsSgfhe3jgh/DfgnJ+bxdFjO0fCWotUvSN3GegI+Z9IYKFxsWQAn85/kSuXtjjfZnRvN7vkrvbCEkwkbg6vl2s1mCybsVkATGy+2UnT5QFlaJoRkU+woks2aZfp/kpWu14/1kymbzN+zjyS3QJ5CXmZvigObFvVSdSU7x2O/laCsycjXc5LygkrFwYWmXzjNhDMPyBrZxqrFE/CyVLt4fcSSOCPajpYMO3HZoDeR2tAmnTAGGnrp/FsRZeLNqDGE1sy3HJ9hYNaoqftNa4uSWG/uVAxOsWzOK9oekwd2RxyGCgFv74kwhxW0m0Ff80lj4AElCz3aS6XLfzR7GlBX5ggBNeLZ0RBqzTUwHJa0ZqdlZz77rOgBU+MIz5s0sUlXceX8K6wqhWxjRsK09PRMQMDbZ6fmgcqas2MnSiQl2gFHL2a
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(396003)(136003)(39860400002)(346002)(46966006)(36840700001)(36860700001)(2906002)(426003)(82310400003)(31686004)(4326008)(5660300002)(53546011)(31696002)(2616005)(7416002)(36756003)(26005)(86362001)(8676002)(70206006)(336012)(16526019)(8936002)(7636003)(356005)(70586007)(82740400003)(110136005)(186003)(478600001)(36906005)(16576012)(316002)(47076005)(54906003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2021 08:40:31.3436
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e11b96e5-e72b-4b3f-e340-08d91f58c197
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT022.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3272
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
-On 24/05/2021 00:44, Dmitry Osipenko wrote:
-> Specify components string for Nexus 7 using the Intel BayTrail components
-> format. This may allow us to create a more generic UCM for RT5640 codec.
+On 24/05/2021 08:39, Dmitry Osipenko wrote:
+> 24.05.2021 11:54, Geert Uytterhoeven пишет:
+>> Hi Dmitry,
+>>
+>> On Mon, May 24, 2021 at 1:26 AM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>> There are couple older platforms that can't be compile-tested because they
+>>> partially implement CLK API. It causes build failure of kernel drivers due
+>>> to the missing symbols of the unimplemented part of CLK API.
+>>>
+>>> These platforms are: ARM EP93XX, ARM OMAP1, m68k ColdFire, MIPS AR7,
+>>>                      MIPS Ralink.
+>>>
+>>> Disable compile-testing for HAVE_LEGACY_CLK=y.
+>>>
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>
+>> Thanks for your patch!
+>>
+>>> --- a/init/Kconfig
+>>> +++ b/init/Kconfig
+>>> @@ -131,7 +131,7 @@ config INIT_ENV_ARG_LIMIT
+>>>
+>>>  config COMPILE_TEST
+>>>         bool "Compile also drivers which will not load"
+>>> -       depends on HAS_IOMEM
+>>> +       depends on HAS_IOMEM && !HAVE_LEGACY_CLK
+>>
+>> That sounds a bit drastic to me.  Usually we just try to implement the
+>> missing functionality, or provide stubs.
+>> Which functions are missing?
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  sound/soc/tegra/tegra_asoc_machine.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> Everything that belongs to CONFIG_COMMON_CLK needs stubs.
 > 
-> diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-> index a81f2ebfc00c..87e0a47040a5 100644
-> --- a/sound/soc/tegra/tegra_asoc_machine.c
-> +++ b/sound/soc/tegra/tegra_asoc_machine.c
-> @@ -671,6 +671,24 @@ static const struct tegra_asoc_data tegra_rt5640_data = {
->  	.add_hp_jack = true,
->  };
->  
-> +/*
-> + * Speaker: Connected to SPO L/R P/N pins, stereo.
-> + * Internal Microphone: Digital, connected to DMIC1_DAT IN2P/N pins.
-> + * Headphones: Connected to HPOL/R pins.
-> + * Headset Microphone: Unconnected.
-> + *
-> + * IF2_DAC/ADC are unpopulated.
-> + */
-> +static const struct tegra_asoc_data tegra_rt5640_grouper_data = {
-> +	.components = "codec:rt5640 cfg-spk:2 cfg-mic:dmic1 aif:1",
-> +	.mclk_rate = tegra_machine_mclk_rate_256,
-> +	.card = &snd_soc_tegra_rt5640,
-> +	.add_common_dapm_widgets = true,
-> +	.add_common_controls = true,
-> +	.add_common_snd_ops = true,
-> +	.add_hp_jack = true,
-> +};
-> +
->  /* RT5632 machine */
->  
->  SND_SOC_DAILINK_DEFS(rt5632_hifi,
-> @@ -712,6 +730,7 @@ static const struct of_device_id tegra_machine_of_match[] = {
->  	{ .compatible = "nvidia,tegra-audio-wm8753", .data = &tegra_wm8753_data },
->  	{ .compatible = "nvidia,tegra-audio-rt5677", .data = &tegra_rt5677_data },
->  	{ .compatible = "nvidia,tegra-audio-rt5640", .data = &tegra_rt5640_data },
-> +	{ .compatible = "nvidia,tegra-audio-rt5640-grouper", .data = &tegra_rt5640_grouper_data },
+> That is everything under CONFIG_HAVE_CLK [1], excluding functions
+> belonging to clk-devres.o and clk-bulk.o [2]. The HAVE_LEGACY_CLK
+> selects HAVE_CLK, but the COMMON_CLK is under HAVE_CLK too.
+> 
+> [1]
+> https://elixir.bootlin.com/linux/v5.13-rc3/source/include/linux/clk.h#L786
+> [2]
+> https://elixir.bootlin.com/linux/v5.13-rc3/source/drivers/clk/Makefile#L3
+> 
+> This problem is repeated over and over again for the past years. Some
+> maintainers are adding "depends on COMMON_CLK" for COMPILE_TEST of each
+> driver, but this doesn't solve the root of the problem, and thus, it's
+> constantly reoccurring.
+> 
+> Recently Krzysztof Kozlowski added couple more clk stubs for MIPS, but
+> still lots of stubs are missing. Some platforms don't have any stubs at
+> all and apparently nobody cares to fix them.
+> 
+> There 3 possible solutions:
+> 
+> 1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
+> 2. Build stubs universally, maybe using weak functions.
+
+I vote for this one - global stubs.
+
+Or for a new one:
+4. Disable COMPILE_TEST for specific platforms (mentioned in commit
+msg). Eventually could be like:
+config RALINK
+	depends !COMPILE_TEST || (COMPILE_TEST && COMMON_CLK)
+
+Why? Because it is expected that a driver requiring/using missing clock
+stubs won't run on such legacy platform. Currently it cannot run because
+simply missing stubs will break build. Option (2) would make them
+compileable but not runnable, which is fine. However having a build time
+failure is better, so maybe let's just isolate platforms which are very
+poor in compile testing and don't enable them for most of the configs.
 
 
-Is there any harm always populating the components data for rt5640? I
-did not see any existing UCM support for Tegra+rt5640 platforms in ALSA.
-
-Jon
-
--- 
-nvpublic
+Best regards,
+Krzysztof
