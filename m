@@ -2,84 +2,92 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF416C47086
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 21:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C356C47087
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 21:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA96D6140F
-	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 21:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FAA0613AB
+	for <linux-tegra@archiver.kernel.org>; Tue, 25 May 2021 21:29:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbhEYVKl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 25 May 2021 17:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53246 "EHLO
+        id S230071AbhEYVbM (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 25 May 2021 17:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbhEYVKk (ORCPT
+        with ESMTP id S229819AbhEYVbM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 25 May 2021 17:10:40 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B20C061574;
-        Tue, 25 May 2021 14:09:10 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id w15so40003871ljo.10;
-        Tue, 25 May 2021 14:09:10 -0700 (PDT)
+        Tue, 25 May 2021 17:31:12 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 065FCC061756;
+        Tue, 25 May 2021 14:29:40 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id q1so5801255lfo.3;
+        Tue, 25 May 2021 14:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZD+vlbnCmCd0+YdhT3Kf05pgMEL8yn/TGh5XC3e9yC4=;
-        b=EDoW110KV9wcfQ30kqQ1ZybqTTE/mSj56bdcleLHZ9K1K65hsPrg9IrsZJ6lqu84SD
-         RuaswPbLyuqVCWQ0oyQgm36Uwfqs9e5USUOw4l22hAuVIBSi0CxekIhx1On8J1Hu+9gv
-         ZF/G3WukVhsQGoQEbSwWKl3XJU0aQWLmoFLDB9+NMilvdBo/Qey7m+ScBsh60Vs9X/G7
-         tfb5FLBY2sQ88qOQom7PT3Kg3cN7B+TXWhT2uw9rcBT1brIlb6UFMfndAakABXqJf3k7
-         tLK3gwnMhy1IclNyskN3N65WqXKwIJcrHn7YXSf4BCWEbttcrpt+SDK+SbYFSu7o0Doj
-         XGvA==
+        bh=yn3fl1fZB0VOpwc1b4wth7TBINMg9VY7zs7B0HHCpNE=;
+        b=Jr5XAZqP7SiSwza7IIsoYX/ZNbF3/7pLq+iT9XGpywM350Tooz+97LFyTDYZyrVxeW
+         1jouhV3u7LOyQxPDg/C3ufISP5D350ZyxfTOdmR+1FCrq+s4QhJs0to/xosjEiOCGHXP
+         tq4Ffi3dktnrbiA3M8DmJxdnQjigeZpYhDotuJLK0a6CiMF7jwhJy55icNy4sqraUxeX
+         K73kL+XWPWn4++6qjdsflr0pmcu8obWS8TEK2QaJYElV/vyj+buNgD3YSkrB7FiG0NL7
+         g7BOpaZ+Yo63i+6VeA6qMNRnLRQpXS6YA6xc8pbf8yR3sE33sqOViQoyUXdZHC3zeu0t
+         9eGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ZD+vlbnCmCd0+YdhT3Kf05pgMEL8yn/TGh5XC3e9yC4=;
-        b=toDXCmVLCfYk9AdEmsKlXDqeeZb5kfh4DqNEwEmPQkHGD1yAWkzlC582QE9AbRv16X
-         zEHWQ/Rrc6D72XLy6hZNr1reoVtW7G/1oFBhjFKMfhOfZUuVfBxHnd6TrbOXMdclaj0a
-         PuXiBh/fvVFzYpHE/59mOVKImETvOX26P8wIKq82k47C9RHjYG5N7aL+F5TTlAhMV8HE
-         mZvwhlebqqYu/nGLH0XHi35ogTPjagBwurPOLovHHkEg3HBwaFeg19DMPqd3ot+7UjNd
-         5MSx7KJfMxgBpwhQUn8ahr1vKmNtAEs0DHYj/YRuPAD0rrSjAV7KRCpT1nf8+c6VPuts
-         znxg==
-X-Gm-Message-State: AOAM532IrwAN4KHl+oL+M3cDuWP0lSBxNXp+lfG33u0MK7hsyNuBy4ME
-        TCYWJWVzUSPKHjNSPeFAfQ2kA/SCmlU=
-X-Google-Smtp-Source: ABdhPJw6PtppkMwP73a5yk5EfcfAd6aWAG1Me5VORks/eZaK+4hqHBA3sKD4WyW5pJwPIO0LUKzKEA==
-X-Received: by 2002:a2e:5045:: with SMTP id v5mr22264105ljd.270.1621976948326;
-        Tue, 25 May 2021 14:09:08 -0700 (PDT)
+        bh=yn3fl1fZB0VOpwc1b4wth7TBINMg9VY7zs7B0HHCpNE=;
+        b=sMpcXCrUcB7skBm71oeYfsqKKD8V5pluRBqlzdgNGyODgEj/so15p62rmhEjGBvEER
+         sNSvJjizqXbgwTSTsBtb550rhJdF3l3rncCjjVt3kqzfWZWqRaeIfFCgGOdMLdtCYo9e
+         rIsz9x1XnuHMfOKjcmYz3P4OoHAIH+onOpc5LBf2g4yg2jmuL751GJY1w6+IiMSwU3lC
+         n/oHs6zhotVyP6T/LjoUozl49TyASoVXO9F10Rj9m63krQzz9niswMwjwwXouEStzHDq
+         Vl7+0QlQT2IM3UTUcsgwWdVg18dieN4/H6BiZJgsKBPL/tK8aSrsWn878LkBcU1aNSkx
+         QKOQ==
+X-Gm-Message-State: AOAM532JOaUwJ2eiEoiShRoKq67tvyeYZl760WTYafw5Iko7pUpSlNmd
+        lSfcA/HB004J/drc4vQ/TaH829wo8xc=
+X-Google-Smtp-Source: ABdhPJyz9+7HTvrltQyjbzWHNILgCza4grBtexvZEuKDFSl3fCl0S1elsmUVsZdsNhR9dOu/iicCOQ==
+X-Received: by 2002:ac2:5f48:: with SMTP id 8mr14819793lfz.340.1621978179080;
+        Tue, 25 May 2021 14:29:39 -0700 (PDT)
 Received: from [192.168.2.145] (46-138-180-236.dynamic.spd-mgts.ru. [46.138.180.236])
-        by smtp.googlemail.com with ESMTPSA id w3sm2207406lji.25.2021.05.25.14.09.07
+        by smtp.googlemail.com with ESMTPSA id x12sm2221450ljc.70.2021.05.25.14.29.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 May 2021 14:09:07 -0700 (PDT)
-Subject: Re: [PATCH v3 4/4] ASoC: tegra: Specify components string for Nexus 7
-To:     Jaroslav Kysela <perex@perex.cz>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Tue, 25 May 2021 14:29:38 -0700 (PDT)
+Subject: Re: [PATCH v1] kbuild: Disable compile testing if HAVE_LEGACY_CLK
+ enabled
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Ion Agorria <ion@agorria.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210523234437.25077-1-digetx@gmail.com>
- <20210523234437.25077-5-digetx@gmail.com>
- <ec2098e0-7918-8488-cf7c-a07e5aa6908c@perex.cz>
- <99ef3d77-c626-c632-bbd2-92eb15acad20@gmail.com>
- <bc99da2b-1eb2-8f73-9e92-184cf172ef6f@perex.cz>
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <john@phrozen.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>
+References: <20210523232556.15017-1-digetx@gmail.com>
+ <CAMuHMdWqNngrDQOut1r5aD1Nk5BMXEV4m8+OBix4DXOV6OSpNg@mail.gmail.com>
+ <8b6af8c0-6f01-193f-1eb4-4e230871f0cd@gmail.com>
+ <f12b4622-6cea-ac65-2d94-f50a85c29215@canonical.com>
+ <CAMuHMdW_G259Nwx1EEf38h0AcVH8yjmjqp9Mh-vQ4LJJMzD8Dg@mail.gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ea7730f6-9ca0-ae06-b610-703f9715ffa2@gmail.com>
-Date:   Wed, 26 May 2021 00:09:07 +0300
+Message-ID: <2e5bb7c2-62d9-b1f7-7f35-2b379d3692d5@gmail.com>
+Date:   Wed, 26 May 2021 00:29:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <bc99da2b-1eb2-8f73-9e92-184cf172ef6f@perex.cz>
+In-Reply-To: <CAMuHMdW_G259Nwx1EEf38h0AcVH8yjmjqp9Mh-vQ4LJJMzD8Dg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,60 +95,30 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-25.05.2021 19:24, Jaroslav Kysela пишет:
-> On 24. 05. 21 16:00, Dmitry Osipenko wrote:
->> 24.05.2021 13:54, Jaroslav Kysela пишет:
->>> Dne 24. 05. 21 v 1:44 Dmitry Osipenko napsal(a):
->>>> Specify components string for Nexus 7 using the Intel BayTrail components
->>>> format. This may allow us to create a more generic UCM for RT5640 codec.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  sound/soc/tegra/tegra_asoc_machine.c | 19 +++++++++++++++++++
->>>>  1 file changed, 19 insertions(+)
->>>>
->>>> diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
->>>> index a81f2ebfc00c..87e0a47040a5 100644
->>>> --- a/sound/soc/tegra/tegra_asoc_machine.c
->>>> +++ b/sound/soc/tegra/tegra_asoc_machine.c
->>>> @@ -671,6 +671,24 @@ static const struct tegra_asoc_data tegra_rt5640_data = {
->>>>  	.add_hp_jack = true,
->>>>  };
->>>>  
->>>> +/*
->>>> + * Speaker: Connected to SPO L/R P/N pins, stereo.
->>>> + * Internal Microphone: Digital, connected to DMIC1_DAT IN2P/N pins.
->>>> + * Headphones: Connected to HPOL/R pins.
->>>> + * Headset Microphone: Unconnected.
->>>> + *
->>>> + * IF2_DAC/ADC are unpopulated.
->>>> + */
->>>> +static const struct tegra_asoc_data tegra_rt5640_grouper_data = {
->>>> +	.components = "codec:rt5640 cfg-spk:2 cfg-mic:dmic1 aif:1",
+25.05.2021 15:19, Geert Uytterhoeven пишет:
+...
+>>> There 3 possible solutions:
 >>>
->>> Perhaps, it may be better to handle this string via the DT config (create new
->>> function like snd_soc_of_parse_card_name()).
->>>
->>> The "codec:rt5640" should be set in the driver (it's fixed), but the
->>> "cfg-spk:2 cfg-mic:dmic1 aif:1" part is suitable for the DT config.
+>>> 1. Factor out COMMON_CLK from HAVE_LEGACY_CLK, if this is possible
+>>> 2. Build stubs universally, maybe using weak functions.
 >>
->> Not sure that this is possible. The DT is an ABI, while components
->> string has no specification. Any changes to the components string will
->> require DT update.
->>
->> I think it's much more feasible to have a database of components within
->> kernel driver, like Intel sound driver does it for ACPI devices.
+>> I vote for this one - global stubs.
 > 
-> There is no other possibility for ACPI. And while the components string is
-> part of the ALSA ABI, it should not be changed in an incompatible way. Only
-> new information should be added. The DT solution seems more flexible to me.
-> For example the stereo/mono speaker or the AIF number can be set without the
-> driver modification for rt5640.
+> Yep.
+> 
+>> Or for a new one:
+>> 4. Disable COMPILE_TEST for specific platforms (mentioned in commit
+>> msg). Eventually could be like:
+>> config RALINK
+>>         depends !COMPILE_TEST || (COMPILE_TEST && COMMON_CLK)
+> 
+> That's a neat idea!
+> 
+> Of course there's a fifth option:
+> 
+> 5. Convert legacy platforms to COMMON_CLK.
+> 
+> Which is already happening for ARM EP93XX.
 
-Everything that goes into device-tree needs a firm specification. We
-can't add it into device-tree since there is no specification for the
-components string other than something that Intel driver made up for its
-own needs. So either we could add the components string to the kernel
-driver right now or not add it.
-
-I think the best option would be to drop this patch for now.
+I'll try to take a closer look at alternative options, thank you for
+yours input.
