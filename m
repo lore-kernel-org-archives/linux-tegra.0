@@ -2,104 +2,236 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358FBC2B9F7
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 May 2021 09:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452BDC47088
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 May 2021 12:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17B8B61408
-	for <linux-tegra@archiver.kernel.org>; Wed, 26 May 2021 09:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2047D613F0
+	for <linux-tegra@archiver.kernel.org>; Wed, 26 May 2021 12:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233277AbhEZJEu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 26 May 2021 05:04:50 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:38233 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233609AbhEZJEi (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 26 May 2021 05:04:38 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 3ED6410000D;
-        Wed, 26 May 2021 09:03:04 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Michael Walle <michael@walle.cc>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] mtd: core: Fix freeing of otp_info buffer
-Date:   Wed, 26 May 2021 11:03:04 +0200
-Message-Id: <20210526090304.180839-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210518185503.162787-1-jonathanh@nvidia.com>
-References: 
+        id S233150AbhEZMfX (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 26 May 2021 08:35:23 -0400
+Received: from mail-bn8nam11on2078.outbound.protection.outlook.com ([40.107.236.78]:31040
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233186AbhEZMfV (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Wed, 26 May 2021 08:35:21 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i9cWjtvNJp/M6pcq/e38DjnrZgyRw/SKOT852KuhBQAqG31uK5YweHD9kBeUINk1E3pKldyPNLJ1eufco77eAKxu7oSsM/N6CO7LKDEgYjT4ET4VhJQZSmo2IViC+wrM3YrpmjrvucQsRKI0jmRRDSJ6/d7JlwQ9vWK3R1k2f3s57gEySpb53cR0GssMuUpMJ6gviK7UQnjFwh4S0tkMJkBmVzDFRk4ylE3BIG3/f+2B76Wve9Q1b+wgGglmUfYnSMJp2ENKi/39DVk/7gAplIlGFTsf9hcTUuGjswsnlYp3I3PGUfiCdFt4KigGPmIz9zxO4Yo19jwCIdWLd07KXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ykn/l3Ft4YVe4vNkjB6O5lfvNnpz2kKH1zA7sPFxXpk=;
+ b=ShV+SopRbF5nSy9PKsARYypvx2OvwE1r/FVF0aqJFCybuh4w9mfM+qYThjsMfh//wOsRLyZLQmjk2NEhB64VZCY2SnkGnNF2t0j+0SOwseD4VOEv+zh7EoAotJyqpAZwWunjLEIvXVhTnTxgDLriMRsWJps/mtj+ziXPvsmZPODBg/3qRNVHuoej2YuSEygk3fK3jbwVP7yzZ/52kHeiDQyeF8QMyuYntA1oxXoWQLhGrsrP63T9fXBULC3xvHQtZYib00Ymb08t/WqWNGb+3n+JLcNvrdT+Q/mo0Gj4v4B7VLg9mpWd4LJChDOTiiDGjQp8zoPW1KtCnT6mdVHN0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=linux.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ykn/l3Ft4YVe4vNkjB6O5lfvNnpz2kKH1zA7sPFxXpk=;
+ b=K47qtbeoj+ZzK7l3BkRacAccH/6sPrd8w7wMgxEl+3gxvbJ+rjv6iyAFp0K6Zfx0RE8yXFXVGJ0h/OW9fPvG7aoFK1bdnDQPpflWq+n4ykfdBcdK1HAD70hrN9uUqLOycmeHHU+3eTTQ3KsBq9EsUR8DAbeZOUxDtbRTZqX6XrXb3FdHoMZL2I/8T/gJbep5knPYSGYkNIYfGH2hvuYDBzH2prRA2Qo15ipwTltgfndY4Bchpyj/fzAmRSAaCPvic5HJ/QbauFMQR7QB3gGk1q6nFJQOJ8m2F00dJQ6fYP0bacovK9pL8sqL6DDKFl6tSSpDRPYG5bjTPAY5DH6vKA==
+Received: from BN9PR03CA0465.namprd03.prod.outlook.com (2603:10b6:408:139::20)
+ by CY4PR1201MB2517.namprd12.prod.outlook.com (2603:10b6:903:da::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.23; Wed, 26 May
+ 2021 12:33:47 +0000
+Received: from BN8NAM11FT044.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:139:cafe::a2) by BN9PR03CA0465.outlook.office365.com
+ (2603:10b6:408:139::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend
+ Transport; Wed, 26 May 2021 12:33:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; linux.com; dkim=none (message not signed)
+ header.d=none;linux.com; dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ BN8NAM11FT044.mail.protection.outlook.com (10.13.177.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4129.25 via Frontend Transport; Wed, 26 May 2021 12:33:46 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 26 May
+ 2021 12:33:46 +0000
+Received: from moonraker.nvidia.com (172.20.145.6) by mail.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 26 May 2021 12:33:44 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V3] PCI: tegra: Fix building Tegra194 PCIe driver
+Date:   Wed, 26 May 2021 13:33:22 +0100
+Message-ID: <20210526123322.340957-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'bc8e157fdb466536557b97b6c0df6d7b46a2b91b'
+Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1931e967-6626-4437-312e-08d9204281e5
+X-MS-TrafficTypeDiagnostic: CY4PR1201MB2517:
+X-Microsoft-Antispam-PRVS: <CY4PR1201MB2517743D51B0E6975C695B45D9249@CY4PR1201MB2517.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3044;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Rd4C2TKYzm6B4cTSmHgb7cdHigB40uzB+aZ+M0Rh+vvzYcwXjN6hj5l3XfF6orJpDsiH/CkCj7DOmOhJ939hvZa7i00Ptq0K8xdX+tSQEtm4Y69XFA1tLjkJLK3lC2YmjVmSrz/IIDY/DoMFsguPwK4jCUQes0my0ipnJCL2/YMh7FXEgjmQAa/oQYhmxDXQJGYGye6cKNvBCdhVqdnc05fhmrQPbnR+QyQpso3kJ4cT+BXfvb68K1szCKKPE1EKfSIDJnn86uYn5lptBXVjlPuqQ0iEAk7QDZGQfoE7ZC7c/ruNQFSTAnFuqyajjBSNA67q7dykxLnglh8M4aB0FeCv04YcQqZoEOYLofdQ9RwNn4CVpiOtyop4B/AbGWd5nHyV2yE0Biywo5v5XjKFsFPeiCBhnuxK/Kxmi42sJWxxBb3RiSp1pcbXmHGA+Lbdt0F9UjCL7BqlMNnBBot/ja83Xm/rWEmRkV/Bzu96rmyf6/ratTUbzwtRr4XnGtZuT4l2Y4g0hpPyDu/1laUd2RjjJS7/p+xzUZEvPbCJfEWHhiXZ4DgYcmcYVHC45CoSgZgf/Dsbo0IIjPbeGKlduNxoXIksoUpvPhlSnSSp2XKAO/aoKk3Kprgs+v9d7eiS6dY367yaHdfSqC0SWbgJ+h8gcaK/oesc1G3ZLY9Fhk8=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(346002)(136003)(396003)(39860400002)(376002)(46966006)(36840700001)(336012)(1076003)(82740400003)(8936002)(478600001)(36906005)(110136005)(2906002)(83380400001)(4326008)(8676002)(426003)(26005)(6666004)(70586007)(36756003)(70206006)(2616005)(316002)(107886003)(7636003)(186003)(5660300002)(47076005)(356005)(54906003)(86362001)(7696005)(36860700001)(82310400003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2021 12:33:46.6998
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1931e967-6626-4437-312e-08d9204281e5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT044.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB2517
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, 2021-05-18 at 18:55:03 UTC, Jon Hunter wrote:
-> Commit 4b361cfa8624 ("mtd: core: add OTP nvmem provider support") is
-> causing the following panic ...
-> 
->  ------------[ cut here ]------------
->  kernel BUG at /local/workdir/tegra/linux_next/kernel/mm/slab.c:2730!
->  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->  Modules linked in:
->  CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.13.0-rc2-next-20210518 #1
->  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->  PC is at ___cache_free+0x3f8/0x51c
->  ...
->  [<c029bb1c>] (___cache_free) from [<c029c658>] (kfree+0xac/0x1bc)
->  [<c029c658>] (kfree) from [<c06da094>] (mtd_otp_size+0xc4/0x108)
->  [<c06da094>] (mtd_otp_size) from [<c06dc864>] (mtd_device_parse_register+0xe4/0x2b4)
->  [<c06dc864>] (mtd_device_parse_register) from [<c06e3ccc>] (spi_nor_probe+0x210/0x2c0)
->  [<c06e3ccc>] (spi_nor_probe) from [<c06e9578>] (spi_probe+0x88/0xac)
->  [<c06e9578>] (spi_probe) from [<c066891c>] (really_probe+0x214/0x3a4)
->  [<c066891c>] (really_probe) from [<c0668b14>] (driver_probe_device+0x68/0xc0)
->  [<c0668b14>] (driver_probe_device) from [<c0666cf8>] (bus_for_each_drv+0x5c/0xbc)
->  [<c0666cf8>] (bus_for_each_drv) from [<c0668694>] (__device_attach+0xe4/0x150)
->  [<c0668694>] (__device_attach) from [<c06679e0>] (bus_probe_device+0x84/0x8c)
->  [<c06679e0>] (bus_probe_device) from [<c06657f8>] (device_add+0x48c/0x868)
->  [<c06657f8>] (device_add) from [<c06eb784>] (spi_add_device+0xa0/0x168)
->  [<c06eb784>] (spi_add_device) from [<c06ec9a8>] (spi_register_controller+0x8b8/0xb38)
->  [<c06ec9a8>] (spi_register_controller) from [<c06ecc3c>] (devm_spi_register_controller+0x14/0x50)
->  [<c06ecc3c>] (devm_spi_register_controller) from [<c06f0510>] (tegra_spi_probe+0x33c/0x450)
->  [<c06f0510>] (tegra_spi_probe) from [<c066abec>] (platform_probe+0x5c/0xb8)
->  [<c066abec>] (platform_probe) from [<c066891c>] (really_probe+0x214/0x3a4)
->  [<c066891c>] (really_probe) from [<c0668b14>] (driver_probe_device+0x68/0xc0)
->  [<c0668b14>] (driver_probe_device) from [<c0668e30>] (device_driver_attach+0x58/0x60)
->  [<c0668e30>] (device_driver_attach) from [<c0668eb8>] (__driver_attach+0x80/0xc8)
->  [<c0668eb8>] (__driver_attach) from [<c0666c48>] (bus_for_each_dev+0x78/0xb8)
->  [<c0666c48>] (bus_for_each_dev) from [<c0667c44>] (bus_add_driver+0x164/0x1e8)
->  [<c0667c44>] (bus_add_driver) from [<c066997c>] (driver_register+0x7c/0x114)
->  [<c066997c>] (driver_register) from [<c010223c>] (do_one_initcall+0x50/0x2b0)
->  [<c010223c>] (do_one_initcall) from [<c11011f0>] (kernel_init_freeable+0x1a8/0x1fc)
->  [<c11011f0>] (kernel_init_freeable) from [<c0c09190>] (kernel_init+0x8/0x118)
->  [<c0c09190>] (kernel_init) from [<c01001b0>] (ret_from_fork+0x14/0x24)
->  ...
->  ---[ end trace 0f652dd222de75d7 ]---
-> 
-> In the function mtd_otp_size() a buffer is allocated by calling
-> kmalloc() and a pointer to the buffer is stored in a variable 'info'.
-> The pointer 'info' may then be incremented depending on the length
-> returned from mtd_get_user/fact_prot_info(). If 'info' is incremented,
-> when kfree() is called to free the buffer the above panic occurs because
-> we are no longer passing the original address of the buffer allocated.
-> Fix this by indexing through the buffer allocated to avoid incrementing
-> the pointer.
-> 
-> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Michael Walle <michael@walle.cc>
+Commit 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+errata") caused a few build regressions for the Tegra194 PCIe driver
+which are:
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+1. The Tegra194 PCIe driver can no longer be built as a module. This
+   was caused by removing the Makefile entry to build the pcie-tegra.c
+   based upon the CONFIG_PCIE_TEGRA194 option. Therefore, restore this
+   so that we can build the driver as a module.
+2. 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM
+   errata") added "#ifdef CONFIG_PCIE_TEGRA194" around the native
+   driver. But if we set CONFIG_PCIE_TEGRA194=m to build the driver as a
+   module, autoconf.h contains "#define CONFIG_PCIE_TEGRA194_MODULE 1"
+   (not "#define CONFIG_PCIE_TEGRA194 1"), so the #ifdef excludes the
+   driver. Instead, use "IS_ENABLED(CONFIG_PCIE_TEGRA194)", which checks
+   for either CONFIG_PCIE_TEGRA194 or CONFIG_PCIE_TEGRA194_MODULE.
+3. The below build warnings that are seen with particular kernel
+   configurations. Fix these by moving these structure definitions to
+   within the necessary guards.
 
-Miquel
+  drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+  	‘event_cntr_data_offset’ defined but not used [-Wunused-const-variable=]
+  drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+  	‘event_cntr_ctrl_offset’ defined but not used [-Wunused-const-variable=]
+  drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+  	‘pcie_gen_freq’ defined but not used [-Wunused-const-variable=]
+
+Fixes: 7f100744749e ("PCI: tegra: Add Tegra194 MCFG quirks for ECAM errata")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+Changes since V2:
+- Update the commit message per Bjorn's feedback
+- Moved the structure definitions within the necessary guards as opposed
+  to wrapping the existing defintions with the appropriate guards.
+
+Changes since V1:
+- Added fixes tag
+- Fixed 'defined but not used' compiler warnings
+
+ drivers/pci/controller/dwc/Makefile        |  1 +
+ drivers/pci/controller/dwc/pcie-tegra194.c | 51 +++++++++++-----------
+ 2 files changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index eca805c1a023..f0d1e2d8c022 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+ # depending on whether ACPI, the DT driver, or both are enabled.
+ 
+ obj-$(CONFIG_PCIE_AL) += pcie-al.o
++obj-$(CONFIG_PCIE_TEGRA194) += pcie-tegra194.o
+ obj-$(CONFIG_PCI_HISI) += pcie-hisi.o
+ 
+ ifdef CONFIG_ACPI
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index b19775ab134e..9b3758ea1cba 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -240,31 +240,6 @@
+ #define EP_STATE_DISABLED	0
+ #define EP_STATE_ENABLED	1
+ 
+-static const unsigned int pcie_gen_freq[] = {
+-	GEN1_CORE_CLK_FREQ,
+-	GEN2_CORE_CLK_FREQ,
+-	GEN3_CORE_CLK_FREQ,
+-	GEN4_CORE_CLK_FREQ
+-};
+-
+-static const u32 event_cntr_ctrl_offset[] = {
+-	0x1d8,
+-	0x1a8,
+-	0x1a8,
+-	0x1a8,
+-	0x1c4,
+-	0x1d8
+-};
+-
+-static const u32 event_cntr_data_offset[] = {
+-	0x1dc,
+-	0x1ac,
+-	0x1ac,
+-	0x1ac,
+-	0x1c8,
+-	0x1dc
+-};
+-
+ struct tegra_pcie_dw {
+ 	struct device *dev;
+ 	struct resource *appl_res;
+@@ -409,7 +384,13 @@ const struct pci_ecam_ops tegra194_pcie_ops = {
+ };
+ #endif /* defined(CONFIG_ACPI) && defined(CONFIG_PCI_QUIRKS) */
+ 
+-#ifdef CONFIG_PCIE_TEGRA194
++#if IS_ENABLED(CONFIG_PCIE_TEGRA194)
++static const unsigned int pcie_gen_freq[] = {
++	GEN1_CORE_CLK_FREQ,
++	GEN2_CORE_CLK_FREQ,
++	GEN3_CORE_CLK_FREQ,
++	GEN4_CORE_CLK_FREQ
++};
+ 
+ static inline struct tegra_pcie_dw *to_tegra_pcie(struct dw_pcie *pci)
+ {
+@@ -694,6 +675,24 @@ static struct pci_ops tegra_pci_ops = {
+ };
+ 
+ #if defined(CONFIG_PCIEASPM)
++static const u32 event_cntr_ctrl_offset[] = {
++	0x1d8,
++	0x1a8,
++	0x1a8,
++	0x1a8,
++	0x1c4,
++	0x1d8
++};
++
++static const u32 event_cntr_data_offset[] = {
++	0x1dc,
++	0x1ac,
++	0x1ac,
++	0x1ac,
++	0x1c8,
++	0x1dc
++};
++
+ static void disable_aspm_l11(struct tegra_pcie_dw *pcie)
+ {
+ 	u32 val;
+-- 
+2.25.1
+
