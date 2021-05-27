@@ -2,139 +2,194 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7E3C4707F
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 19:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F156C4708B
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51A56613E3
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 19:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1069C6113B
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbhE0TFG (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 May 2021 15:05:06 -0400
-Received: from mail-bn8nam08on2080.outbound.protection.outlook.com ([40.107.100.80]:4612
-        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229739AbhE0TFF (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 May 2021 15:05:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bZ2BJEKoIG1o95dnl2MAFmHklD1ZzJv4lg5FpKXVVbT2lPruydvkjeoqhXzqSxzdM1T2+Ayixx30aQ3pGEkPmhUOUDNh4KiLzgM+RRN3ikhG9EXxT6m18H7iNdHJzSYCf0xElFooWTf3XXXET0LFYvt/cO2/eL4uWOt7LBJFdbxyULxU+s72ZmMaKDn1Fq7pOQ23tsFG1IyLZJKuUVMGU4cKl032/5vVwNdFKXrQ5DYdrkR+sViag81AqF1i+UQT4SAUhrtGAqr8CuOPCqepQQjoMHqOFQ/Xd01jdKJlgdk1xvGzIDhoq/YlxnitXaL5gaOl9EemBW1MNfzTcaojGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zT/xz66d8NYSRnHqGj8NVmjqOuvmZfwamUBF249o9qg=;
- b=WVtq6OfME+qyAOdQYdsL0wF9sqsAhc7594xk4+YZuXM7C1DgXftB0NLWCKD7ogd/1z4cxlma9mDBSYq3DbJrI5WLg87gYEleGbN/37Wr6ffgyU0MnBh/IorHRJB9zcYW/96P/ocFtjoc3TfVk0wNB1vtSZbhXqZlxao5O5TkI6w+lDEd49R6VOtUGEsiWlX4fmLnuJgVTq0t7iI3gocTE2DWrmLZPvZWDOAaTy5JQ4CrUcKWbXZzCLXtPuKFNItujUpTtCpY1tEzL9c/VLTZl67BrsbB82QHRZeio2FdI+IZSbNWLwUyte2IPrpN1WOFsMiNejeoF9dTSF8X/RraIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.36) smtp.rcpttodomain=denx.de smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zT/xz66d8NYSRnHqGj8NVmjqOuvmZfwamUBF249o9qg=;
- b=MQeTVjrQkANNpuyR1QphQDy77lxodzQhJWJZYj7Qj+JEmgNFCH9k07OLifh/QuUh4Y3yFQreVo6mD7qGUfoR1gpvdQ+FZuhaQOMLDfwWE46Rpvkg9y7+tiY5B30G22BITgWem12de9RMadtuWnFOqtft/ztlSMTTZWU5IJGk8NwVBm4CaTYolCo0lt+j9fIr8oLYj/4zXhD5YrtigmIpwmSRfyrwDdE7JWJgrL1gf7UNj1qNycRC159zu6V2kN+/tmJHDcNLD9H5qN5RqUBIAB6nQNtrKygYaLWPRaKS168rcfBrW7EA4w8fxLsopcuAhuSi+OPcbBDeazD99MHfNg==
-Received: from DM6PR02CA0114.namprd02.prod.outlook.com (2603:10b6:5:1b4::16)
- by CH2PR12MB4214.namprd12.prod.outlook.com (2603:10b6:610:aa::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Thu, 27 May
- 2021 19:03:30 +0000
-Received: from DM6NAM11FT029.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1b4:cafe::ca) by DM6PR02CA0114.outlook.office365.com
- (2603:10b6:5:1b4::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend
- Transport; Thu, 27 May 2021 19:03:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.36)
- smtp.mailfrom=nvidia.com; denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.36 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.36; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.36) by
- DM6NAM11FT029.mail.protection.outlook.com (10.13.173.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4129.25 via Frontend Transport; Thu, 27 May 2021 19:03:30 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 27 May
- 2021 19:03:18 +0000
-Received: from jonathanh-vm-01.nvidia.com (172.20.145.6) by mail.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1497.2 via Frontend
- Transport; Thu, 27 May 2021 19:03:18 +0000
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <stable@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.10 0/9] 5.10.41-rc1 review
-In-Reply-To: <20210527151139.242182390@linuxfoundation.org>
-References: <20210527151139.242182390@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S235814AbhE0Uta (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 May 2021 16:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235754AbhE0Ut3 (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 27 May 2021 16:49:29 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DB0BC061574;
+        Thu, 27 May 2021 13:47:55 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id b12so2595582ljp.1;
+        Thu, 27 May 2021 13:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z6XYLh1xsU0IYTP+MRwPK4s+JoJz/GD/n26DAwUG3/U=;
+        b=G1G+vfJswwk+rozkW+WEdxgpHHU+plUQ4ORzfZGu1PMRR+/UAk7MaetTvxldQDVWEs
+         Fi+7+bGDMXoPhK1s6hDjnHZ3unpdNk48ANdLdPXAsCncuTaX+L+6Q/0zZcFCPyiZjBC1
+         q33MF77CJ+hemLwh+8wviihF6Zqz+PcyEkySt8mWX9b4i7Vs4vCFDwHWYnkndXSwbMqL
+         g1NyZIegndBbaJrz4x3buRGgmkMIMgyJbAQjnBxo52GUFX0orGU81qtlwxoXp6+G220P
+         YEpU/yc8f8iCI8p/jxUHnzaR7DmEX6UHaMn3HsbnjQ3Jdub4T2MYIXVVC7DMQCmZ6vpY
+         pkhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z6XYLh1xsU0IYTP+MRwPK4s+JoJz/GD/n26DAwUG3/U=;
+        b=bRGvTDhb+0zuIeqwxy+cOQIstQw2oysDNOb7vhuh0q2mk5keuYrQbsp0CrBq/Kaa+d
+         GikcV5/6bQCjjN00jqifylDCqSq9Oja1DYK8BqD5vv2uCrunJEh/XDjdX2LLJ/ei1Enn
+         bStu0kr1ZeZUpxUTTbmPnai6KQyq7pWPdqUfZkqe4WeXgfASs9uySOxgvje53QPjTGmN
+         Hh733HZmPBhGjSUmk9pQWpSQ3E3NEmFgsrd4q+wsgHLyyAeItxZIZg9gwwn6zF1qBoyP
+         OjkiWusbQEf+3GHFVwq5w0hFTsohMssbq7M5054mRLSrsuYfcy3luX4mCLZNNfd/Qd7t
+         q4OA==
+X-Gm-Message-State: AOAM530251JzjjwCjfB39Jte9RM96DIaGxGfUzGUxwLbyECVusJtvwej
+        pGIUAvM31cZJb1TI11wXawo=
+X-Google-Smtp-Source: ABdhPJyi8sS76DRNiEIxSXwhc7gTO6BgdB5Vso6aUr4xGW+Yej3cyCZC1Oh3l2969uWldtr1vJA7CQ==
+X-Received: by 2002:a2e:a41c:: with SMTP id p28mr4041248ljn.427.1622148473873;
+        Thu, 27 May 2021 13:47:53 -0700 (PDT)
+Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
+        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.47.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 May 2021 13:47:53 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?q?Nikola=20Milosavljevi=C4=87?= <mnidza@outlook.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matt Merhar <mattmerhar@protonmail.com>,
+        Paul Fertser <fercerpav@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 00/14] NVIDIA Tegra memory and power management changes for 5.14
+Date:   Thu, 27 May 2021 23:47:28 +0300
+Message-Id: <20210527204742.10379-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Message-ID: <62494df987eb45c2afd5b4e372c03a6b@HQMAIL105.nvidia.com>
-Date:   Thu, 27 May 2021 19:03:18 +0000
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c34f365e-8a6a-49d6-61c9-08d921421dee
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4214:
-X-Microsoft-Antispam-PRVS: <CH2PR12MB4214C56696A83CC8F6F13799D9239@CH2PR12MB4214.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tsA9PDZne2RIt59F9SgmPk5UrRJeA+GZrFqi2d2U/7hj6FYoQNdEqkEJV+ljGtrVJjqQKIeqgntVFCBAFauAufoCiPobtiFx1de6joI90+vsr7Dks2FJPN6rA+z/RSL0AWVGNOf0G9PJ2ZCK6yLHTuiQMf4A/cjmvqfRDTByBk8am7VREsrig4nj+LIDRVGfZd6tSWuIm0SXtgxdVAckct3llRPGlsIFV2pn3HSTpKIqxhJzE+sG0kuzLYNGDwuSYlry/S/a6PZzrXZqcfyBag27H8fev7ev5bhfKnI2Y6Ydt3MjOuEUGTdWIy2nTmZrc02nTXwrz5lilAmcjIz/4gnlifo/lVcvR8NCd48o6hKUwpv+bjm23Pgfp565dSGsiFwlLFNXsgbzxReNFW5+o4CXYe6Gm7xosY39SJpOvRuy88p7g7+PYzbKl2V/l8Bu9oh8B9nXz9tAT+t1VhV7P/6X4EAsDEO+S0F2m9h/h9VcdLv5rPmw0+elICR6t/7zJDvfBVLCoHXzwU+u3lNYgfQfj4RBAD/pM3AqzU4FWWxwhs02ftbBG+d9dY2mHnZnoGSkukQS1T3guao+2910ph1UWnO4zs1b+Ymq6KA7UDz1ZvX31uTmiGG2p6MDWWpCeGLJhntxtl5/R5T4sDRO13oCWnEgkI1/wLQ9GguHw+JzyV+rNbqv4MlTD/HPDyTkVx8KvQPWg5YeOBImSC9bL18hdQniSVRI0WPgeIbImdpBnQ0G3xfaU2Cv6Y7bV0sx9p2OejpgAzPwnwZ5R5YGSA==
-X-Forefront-Antispam-Report: CIP:216.228.112.36;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid05.nvidia.com;CAT:NONE;SFS:(4636009)(136003)(39860400002)(376002)(346002)(396003)(36840700001)(46966006)(4326008)(336012)(36860700001)(8676002)(426003)(82740400003)(356005)(47076005)(70586007)(70206006)(7636003)(108616005)(82310400003)(478600001)(86362001)(5660300002)(966005)(7416002)(186003)(2906002)(26005)(24736004)(6916009)(54906003)(316002)(36906005)(8936002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2021 19:03:30.2106
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c34f365e-8a6a-49d6-61c9-08d921421dee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.36];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT029.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4214
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Thu, 27 May 2021 17:12:52 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.41 release.
-> There are 9 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 29 May 2021 15:11:29 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.41-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This series:
 
-All tests passing for Tegra ...
+  1. Adds CPU/core voltage bump before system is rebooted.
+  2. Adds new devm_tegra_core_dev_init_opp_table() helper and switches
+     Tegra memory drivers to use it.
+  3. Adds compile-testing support to the Tegra memory drivers.
+  4. Adds Tegra SoC core power domain support.
 
-Test results for stable-v5.10:
-    12 builds:	12 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    70 tests:	70 pass, 0 fail
+Changelog:
 
-Linux version:	5.10.41-rc1-gec1cc3ee7be2
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+v3: - Dropped "Detach coupled regulator before coupling count is dropped"
+      patch that was added in v2 since it missed regulator locking and
+      it should be more reasonable to add a new generic hook for syncing
+      before detaching. For now it's optional to sync Tegra SoC regulators
+      before detaching since it's not something that happens in practice,
+      hence it's more optimal to simply drop that feature.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+    - Added more stubs for T210 clk driver which should fix compile-testing
+      problem reported for v2 by kernel robot.
 
-Jon
+    - Added COMMON_CLK for COMPILE_TEST of memory drivers since for
+      today the problem of compile-testing of legacy platforms that use
+      HAVE_LEGACY_CLK isn't solved, we will be able to remove it after
+      fixing the legacy platforms.
+
+    - Factored out new PMC driver state syncing feature into a separate
+      patch "pmc: Add driver state syncing", which was requested by
+      Ulf Hansson in a review comment to v2.
+
+    - Added r-b from Ulf Hansson to the PMC binding-update patch that he
+      gave to v2.
+
+v2: - Added more clk stubs that should fix build error reported by the
+      kernel bot to v1 for the T210 memory driver.
+
+    - Added r-b from Krzysztof Kozlowski to the memory patches.
+
+    - Added back voltage restore on detaching of coupled regulators to
+      the T20 regulator coupler which previously got missed by accident.
+
+    - Added new patch:
+
+        regulator: core: Detach coupled regulator before coupling count is dropped
+
+      It fixes skipped voltage balancing on detaching of regulators which I
+      happened to notice due to the recent regression of the MAX77620 driver
+      that made driver to re-probe and detach coupled regulators.
+
+v1: - Merged previous patches into this single series.
+
+    - Added ack from Rob Herring to the core domain DT binding patch.
+
+    - Implemented suggestions that were given by Krzysztof Kozlowski:
+
+        - Factored out soc_is_tegra() stub into standalone patch.
+        - Updated tags of the "Fix compilation warnings on 64bit platforms"
+          patch, added reported-by from lkp robot and removed suggested-by
+          from Nathan Chancellor.
+        - Switched to use use BIT() macro.
+
+    - Added r-b from Krzysztof Kozlowski to "Enable compile testing for
+      all drivers" patch.
+
+    - Added r-b from Nathan Chancellor.
+
+    - Dropped voltage floor/ceiling from devm_tegra_core_dev_init_opp_table()
+      since only memory drivers now need to initialize voltage vote and they
+      don't need floor/ceil. This was suggested by Viresh Kumar.
+
+Dmitry Osipenko (14):
+  regulator: core: Add regulator_sync_voltage_rdev()
+  soc/tegra: regulators: Bump voltages on system reboot
+  soc/tegra: Add stub for soc_is_tegra()
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table()
+  soc/tegra: fuse: Add stubs needed for compile-testing
+  clk: tegra: Add stubs needed for compile-testing
+  memory: tegra: Fix compilation warnings on 64bit platforms
+  memory: tegra: Enable compile testing for all drivers
+  memory: tegra20-emc: Use devm_tegra_core_dev_init_opp_table()
+  memory: tegra30-emc: Use devm_tegra_core_dev_init_opp_table()
+  dt-bindings: soc: tegra-pmc: Document core power domain
+  soc/tegra: pmc: Add core power domain
+  soc/tegra: pmc: Add driver state syncing
+  soc/tegra: regulators: Support core domain state syncing
+
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         |  35 +++++
+ drivers/memory/tegra/Kconfig                  |  16 +-
+ drivers/memory/tegra/tegra124-emc.c           |   4 +-
+ drivers/memory/tegra/tegra20-emc.c            |  48 +-----
+ drivers/memory/tegra/tegra30-emc.c            |  52 +------
+ drivers/regulator/core.c                      |  23 +++
+ drivers/soc/tegra/Kconfig                     |  14 ++
+ drivers/soc/tegra/common.c                    |  97 ++++++++++++
+ drivers/soc/tegra/pmc.c                       | 143 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra20.c        |  94 +++++++++++-
+ drivers/soc/tegra/regulators-tegra30.c        |  93 +++++++++++-
+ include/linux/clk/tegra.h                     |  96 +++++++++---
+ include/linux/regulator/driver.h              |   1 +
+ include/soc/tegra/common.h                    |  31 ++++
+ include/soc/tegra/fuse.h                      |  20 ++-
+ include/soc/tegra/pmc.h                       |   6 +
+ 16 files changed, 647 insertions(+), 126 deletions(-)
+
+-- 
+2.30.2
+
