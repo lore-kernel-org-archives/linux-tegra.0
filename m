@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E165C4707F
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 18:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1192DC4708A
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 18:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C4E6613E2
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 18:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD649613ED
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 18:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235470AbhE0S5G (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 May 2021 14:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52564 "EHLO
+        id S235620AbhE0S5I (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 May 2021 14:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234553AbhE0S5F (ORCPT
+        with ESMTP id S235573AbhE0S5G (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 May 2021 14:57:05 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EC3DC061574;
-        Thu, 27 May 2021 11:55:30 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id r5so1600637lfr.5;
-        Thu, 27 May 2021 11:55:30 -0700 (PDT)
+        Thu, 27 May 2021 14:57:06 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E40C061760;
+        Thu, 27 May 2021 11:55:31 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id v5so2146683ljg.12;
+        Thu, 27 May 2021 11:55:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=prIWqm0qX1apyyRreQLe2vDKFQUK50Nuu3llPiwjrjk=;
-        b=NjJl+5lsWY+hx+wQt/sAnmlHnk46mxtRQdMsgZF94ErSZfAAz47u9IexHk4BUPXPwK
-         bYURbgAC7ctwtFFA5FoaK2AFITwSMvIyPWZTCVhBdb3mOUvvGezhK/LsQVPrHZE1jmmZ
-         0HufmaJgR+r2rWgXQwB2tejsm29c8HVWzP0ztUiqwsG1izWh4704xhfkkgSe0YriNNCu
-         JFyikH9auQXOEmFknxHG720Nou2H1q+NwLU2Ds5JgXy0dJSQRdjV22gPjjPrOdn1dgUM
-         19wA4nvnHpd+CUSZTJPki9w/hU6KhXAMQS9oKkmUeEra/gmZJitnflVDkr7+ywHOqV0L
-         OYjg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xVuavUbxhP/h5ufdXkl/W8pz1JR/yQ3WYtl07Hx+SBA=;
+        b=p5DeXpvwPW9QJaPjj/tPJ7mYi8WfpMSWFJPKYkEtkDJ4NEGGnxkCRvLRE7uCfry84E
+         VgsVD47v0W8uiyQQ4jfulDsF6CZO3dvE8lrzOaecGHbdj/CMMovAY5KlGZRosB6AJFLi
+         h4Yf+O5w85QMxAjGa3tmyTMtp7kpA+SvgUcBo9JXyIsr0yD5lD4PtHWGnoi1nAp/mUZP
+         kFw83pveXeDSHiwczQ7H96tgtwfMMmA4RWAmRI/u/U9aBJM0ZaInqCzzXdtpUEcqwFE7
+         Okb+EMgGh3scQ10L4WriElvFQxaRWfM6WHVZziYN16+ST8DozckyR4z2PkR664PCpbGY
+         CgDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=prIWqm0qX1apyyRreQLe2vDKFQUK50Nuu3llPiwjrjk=;
-        b=N7QHnSdrQgtoLg4gWHh8RuQRKcju0bgpyHq/yfgPVHfoabyU9rZGJg/ILqJL/X2IVD
-         RkmB12nnVQajnw9tnIBns+O739biAllTSO1TYPHg5oToW1Zplo/fhBzADaaxeq49zAcs
-         wtKD8uqiWGNM1T/YpQ8S919AzS1f+HGbaOJF2QcpD0VnNu+iaJsmFUKQPE5HMq7MOcIw
-         TwxphMkg24HPHBuq36gAfySFncCGxsfPuT9BLrmLotNtjd5TPZP4474afyFLAf2NPD7A
-         W6pQcCP9N+gq2vxPXYHQR+5emFj/jem3Z09/eEacaFd6QQjBuPxPqQTVf5q+l8DXoWBY
-         XwCA==
-X-Gm-Message-State: AOAM531Ay7r0pRbs9J3qVe2o+3AjbYN3TbEk+BSm3/FNXaqe56VKKZjD
-        na50nrxtJbxeF6sL/pzKJJREspGPNys=
-X-Google-Smtp-Source: ABdhPJwVWtdfi/RP6saas2p2ENxKBNBSbx70wytT9yzqXssJFFChMdhm1ciWIzljFn+pYkzHjG0OpQ==
-X-Received: by 2002:ac2:46cd:: with SMTP id p13mr3159839lfo.564.1622141728867;
-        Thu, 27 May 2021 11:55:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xVuavUbxhP/h5ufdXkl/W8pz1JR/yQ3WYtl07Hx+SBA=;
+        b=Phz1lCxuTW+9RIFDva98MbaaDxXaK1ElghRCDyuiPWlTTS1Qfe9PsPH6FC30miNY+S
+         cank4dXAoKqFUqvXKFq/94EFMRjrqvlJvsyH5++BEKowYsOTA3bwk5Kt/ZViNlOt94jT
+         YIrHlrnnkatnygVPkc24pTv7FUTWrJQ2bjkf7yGDcfN6auNNomekibapuCZhgMyXJtdW
+         3TW9mKNAOR+/68SlFbSejHicCucTOHGnYx8OVKNl4dVp8gK9dJlzNQtN1AapaoewXlTJ
+         5CWOCew2I7Uw7JwM5fxXlV48w1yimZjAZak4uPZtOsNjwtS7N3Nal+YL6X/7LKU6YJ29
+         3YJQ==
+X-Gm-Message-State: AOAM530WyJisWWCbyPdFt8Z1NHdRbAOJ8XiIKyHaqKlz3wsk8v1vD4bL
+        u7dKtb9PXoEvGC+zSSVfHhk=
+X-Google-Smtp-Source: ABdhPJwdSgyfG4fzwNOr8lCGV37cC/qX9vTxl3Bdspb0yaKhPNkYrWjPIGiVwfkv1ycAYhZnJT3doA==
+X-Received: by 2002:a2e:501b:: with SMTP id e27mr3656167ljb.508.1622141730023;
+        Thu, 27 May 2021 11:55:30 -0700 (PDT)
 Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
         by smtp.gmail.com with ESMTPSA id p16sm265217lfc.113.2021.05.27.11.55.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 11:55:28 -0700 (PDT)
+        Thu, 27 May 2021 11:55:29 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,90 +67,154 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>
 Cc:     alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] Unify NVIDIA Tegra ASoC machine drivers
-Date:   Thu, 27 May 2021 21:51:22 +0300
-Message-Id: <20210527185125.18720-1-digetx@gmail.com>
+Subject: [PATCH v4 1/3] ASoC: tegra: Set driver_name=tegra for all machine drivers
+Date:   Thu, 27 May 2021 21:51:23 +0300
+Message-Id: <20210527185125.18720-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210527185125.18720-1-digetx@gmail.com>
+References: <20210527185125.18720-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-This series squashes all the ASoC machine drivers into a single one,
-this change was suggested by Jon Hunter. It also sets driver_name and
-components string of each card, allowing userspace alsa-lib to find
-UCMs at predictable path.
+The driver_name="tegra" is now required by the newer ALSA UCMs, otherwise
+Tegra UCMs don't match by the path/name.
 
-Changelog:
+All Tegra machine drivers are specifying the card's name, but it has no
+effect if model name is specified in the device-tree since it overrides
+the card's name. We need to set the driver_name to "tegra" in order to
+get a usable lookup path for the updated ALSA UCMs. The new UCM lookup
+path has a form of driver_name/card_name.
 
-v4: - Moved out mclk_rate callback that is currently used only by WM8903
-      machine driver from the common driver. This was suggested by Jon Hunter.
+The old lookup paths that are based on driver module name continue to
+work as before. Note that UCM matching never worked for Tegra ASoC drivers
+if they were compiled as built-in, this is fixed by supporting the new
+naming scheme.
 
-    - Dropped patch which was setting custom components string for Nexus 7.
-      Jaroslav Kysela wants it to be specified in a device-tree, but the
-      components string doesn't have a firm specification for today. It's
-      better to drop this change for now since it's optional anyways.
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ sound/soc/tegra/tegra_alc5632.c  | 1 +
+ sound/soc/tegra/tegra_max98090.c | 1 +
+ sound/soc/tegra/tegra_rt5640.c   | 1 +
+ sound/soc/tegra/tegra_rt5677.c   | 1 +
+ sound/soc/tegra/tegra_sgtl5000.c | 1 +
+ sound/soc/tegra/tegra_wm8753.c   | 1 +
+ sound/soc/tegra/tegra_wm8903.c   | 1 +
+ sound/soc/tegra/tegra_wm9712.c   | 1 +
+ sound/soc/tegra/trimslice.c      | 1 +
+ 9 files changed, 9 insertions(+)
 
-    - Fixed compilation error that was reported by kernel robot for v3.
-
-    - Jaroslav Kysela merged alsa-ucm-conf PR [1] which added UCMs for
-      Nexus 7 and Acer A500. The UCMs are fully working using a combination
-      of updated kernel + alsa-ucm-conf master + alsa-lib master, meaning
-      that they will work with the next releases of kernel and ALSA userspace
-      upstream packages.
-
-    - Added ack from Jaroslav Kysela to the "Specify components string for
-      each card" patch that he gave to v3.
-
-v3: - Added components string as was suggested by Jaroslav Kysela to v2.
-
-    - Renamed MCLK rate function that is used by max98090 and other codecs
-      to make it look more generic. Added option for specifying CLK ID per
-      device. This all was suggested by Jon Hunter to v2.
-
-v2: - Dropped use of of_device_compatible_match(), like it was suggested
-      by Rob Herring in a review comment to v1.
-
-    - Added patch that sets card's driver_name of as Tegra ASoC drivers.
-      In a comment to v1 Jaroslav Kysela suggested that the Tegra drivers
-      don't set the card name properly and he was right.
-
-      I opened pull request with the new Tegra UCMs and updated lookup paths
-      for older UCMs [1].
-
-      [1] https://github.com/alsa-project/alsa-ucm-conf/pull/92
-
-Dmitry Osipenko (3):
-  ASoC: tegra: Set driver_name=tegra for all machine drivers
-  ASoC: tegra: Unify ASoC machine drivers
-  ASoC: tegra: Specify components string for each card
-
- sound/soc/tegra/Kconfig              |  12 +
- sound/soc/tegra/Makefile             |  18 +-
- sound/soc/tegra/tegra_alc5632.c      | 259 ----------
- sound/soc/tegra/tegra_asoc_machine.c | 714 +++++++++++++++++++++++++++
- sound/soc/tegra/tegra_asoc_machine.h |  46 ++
- sound/soc/tegra/tegra_max98090.c     | 276 -----------
- sound/soc/tegra/tegra_rt5640.c       | 222 ---------
- sound/soc/tegra/tegra_rt5677.c       | 324 ------------
- sound/soc/tegra/tegra_sgtl5000.c     | 211 --------
- sound/soc/tegra/tegra_wm8753.c       | 185 -------
- sound/soc/tegra/tegra_wm8903.c       | 351 +++----------
- sound/soc/tegra/tegra_wm9712.c       | 166 -------
- sound/soc/tegra/trimslice.c          | 172 -------
- 13 files changed, 853 insertions(+), 2103 deletions(-)
- delete mode 100644 sound/soc/tegra/tegra_alc5632.c
- create mode 100644 sound/soc/tegra/tegra_asoc_machine.c
- create mode 100644 sound/soc/tegra/tegra_asoc_machine.h
- delete mode 100644 sound/soc/tegra/tegra_max98090.c
- delete mode 100644 sound/soc/tegra/tegra_rt5640.c
- delete mode 100644 sound/soc/tegra/tegra_rt5677.c
- delete mode 100644 sound/soc/tegra/tegra_sgtl5000.c
- delete mode 100644 sound/soc/tegra/tegra_wm8753.c
- delete mode 100644 sound/soc/tegra/tegra_wm9712.c
- delete mode 100644 sound/soc/tegra/trimslice.c
-
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index 0a0efd24e4b0..81ea6ceba689 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -139,6 +139,7 @@ static struct snd_soc_dai_link tegra_alc5632_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_alc5632 = {
+ 	.name = "tegra-alc5632",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_alc5632_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index 00c19704057b..5a649810c0c8 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -182,6 +182,7 @@ static struct snd_soc_dai_link tegra_max98090_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_max98090 = {
+ 	.name = "tegra-max98090",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_max98090_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+index 9afba37a3b08..3344f16258be 100644
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -132,6 +132,7 @@ static struct snd_soc_dai_link tegra_rt5640_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_rt5640 = {
+ 	.name = "tegra-rt5640",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_rt5640_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+index d30f8b6deda4..0f03e97d9355 100644
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -175,6 +175,7 @@ static struct snd_soc_dai_link tegra_rt5677_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_rt5677 = {
+ 	.name = "tegra-rt5677",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_rt5677_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+index 885332170c77..ef6a553e0b7d 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -97,6 +97,7 @@ static struct snd_soc_dai_link tegra_sgtl5000_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_sgtl5000 = {
+ 	.name = "tegra-sgtl5000",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_sgtl5000_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
+index efd793886689..27089077f2ea 100644
+--- a/sound/soc/tegra/tegra_wm8753.c
++++ b/sound/soc/tegra/tegra_wm8753.c
+@@ -101,6 +101,7 @@ static struct snd_soc_dai_link tegra_wm8753_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_wm8753 = {
+ 	.name = "tegra-wm8753",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_wm8753_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index e4863fa37b0c..f219c26d66a3 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -235,6 +235,7 @@ static struct snd_soc_dai_link tegra_wm8903_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_wm8903 = {
+ 	.name = "tegra-wm8903",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_wm8903_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
+index 4f09a178049d..c66da161c85a 100644
+--- a/sound/soc/tegra/tegra_wm9712.c
++++ b/sound/soc/tegra/tegra_wm9712.c
+@@ -54,6 +54,7 @@ static struct snd_soc_dai_link tegra_wm9712_dai = {
+ 
+ static struct snd_soc_card snd_soc_tegra_wm9712 = {
+ 	.name = "tegra-wm9712",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_wm9712_dai,
+ 	.num_links = 1,
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index 6c1cc3d0ac33..cb4c8f72e4e6 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -94,6 +94,7 @@ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
+ 
+ static struct snd_soc_card snd_soc_trimslice = {
+ 	.name = "tegra-trimslice",
++	.driver_name = "tegra",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &trimslice_tlv320aic23_dai,
+ 	.num_links = 1,
 -- 
 2.30.2
 
