@@ -2,73 +2,77 @@ Return-Path: <linux-tegra-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B655EC47089
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E63E2C4707F
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 16:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94A83610A2
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 12:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2D86611CD
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 16:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235832AbhE0MyL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 May 2021 08:54:11 -0400
-Received: from mail-pj1-f46.google.com ([209.85.216.46]:54998 "EHLO
-        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235870AbhE0MyD (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 May 2021 08:54:03 -0400
-Received: by mail-pj1-f46.google.com with SMTP id g24so371660pji.4;
-        Thu, 27 May 2021 05:52:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wSLce6wfskplcriMMt7LYgVCTftVP4hejmuqS/PjYeA=;
-        b=R5FAl8IJ6yIERbeMPQGOOcMHnl39esZYVjgKG8eKGjXatrN4b2C/wZaVEjP+wjzTfg
-         oST9qhen2teQTrSW49DwMtQHE14oQw4SI25Nrd4A2nhynDVVve6Zlwz8M9ofVrZ6mOc3
-         yM4EXJjkAU5Xy6Lb8QoUyqnbbBMAc3RQ8D/rFfNuV4ZEPLAFQLPhXKoybvJlqi1VmswO
-         /vyTEWFHMZZUEGZoJw9Ibsub9YSN95X9KzDaKNl2tozK10bcT0b3r8GSkL9J+uRCnwL0
-         sWXemDXADyGEb8K+JQe4IdINa5vqebAIAKTnlSyF7IjqLETeLN6LQe/KZC310ZEIcTX0
-         fZhQ==
-X-Gm-Message-State: AOAM532AGMRBaM2gWDpz2buwUuc0A/iJ+yuivtOgdUAkoCqGg9d887h2
-        NN0KsBpAyYySSjQmL9tqn4E=
-X-Google-Smtp-Source: ABdhPJx1ZaCIn+lmTaF0DP0ifbMl+cQ7eYVXDGk1Tobkj4YnzLCxekE5eYmJWIOQh6p/5I2bwm/j7g==
-X-Received: by 2002:a17:90b:3710:: with SMTP id mg16mr7673826pjb.228.1622119949835;
-        Thu, 27 May 2021 05:52:29 -0700 (PDT)
-Received: from rocinante.localdomain ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id d10sm1896660pfo.65.2021.05.27.05.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 05:52:29 -0700 (PDT)
-Date:   Thu, 27 May 2021 14:52:18 +0200
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Om Prakash Singh <omp@nvidia.com>, vidyas@nvidia.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com
-Subject: Re: [RESEND PATCH V1 0/5] Update pcie-tegra194 driver
-Message-ID: <20210527125218.GA221677@rocinante.localdomain>
-References: <20210527115246.20509-1-omp@nvidia.com>
- <20210527120015.GA213718@rocinante.localdomain>
- <f3a04232-8a2e-3231-6ce1-260b8400383a@nvidia.com>
+        id S234701AbhE0QHp (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 May 2021 12:07:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234504AbhE0QHo (ORCPT <rfc822;linux-tegra@vger.kernel.org>);
+        Thu, 27 May 2021 12:07:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E6666100A;
+        Thu, 27 May 2021 16:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622131571;
+        bh=vqPlEi+k8FKHa/wZ6C7jWBQ7Xe+r7OWX8AUIx1IvgWI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=RkOpmWWeptig8/+4q2OhLLy7Q0y/L+G1z3zmpazjNvoHI843AGona0A9EG1KCW7Ss
+         FPvp2MIHkk6e3URWVv2jV0ZKddPxIAWvu9FNOdZXUb0s2jXaTJJBRC8FhsrS6h/QZf
+         L9DPeikJzviAV4ft4Vba1UmTiuG+GN++bs5n6um6DTAO9T/+Yz99imHpzJWm0Ag8/k
+         Y00UL8y8zcc5JzUvCs5gTuXX8pmXHOFAxcMYQ7SJKwR3QSmHkgKIdpdGUpPE1vXY0f
+         /XBkS1+VXNedIbL/yf3DKBKxYc1XMobzc2wunb0fqus6Vq0sEoY6jBJ5b9aVxGRqJD
+         xKn1+bHBlBt8A==
+Date:   Thu, 27 May 2021 11:06:09 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Om Prakash Singh <omp@nvidia.com>
+Cc:     vidyas@nvidia.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com
+Subject: Re: [RESEND PATCH V1 1/5] PCI: tegra: Fix handling BME_CHGED event
+Message-ID: <20210527160609.GA1400341@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f3a04232-8a2e-3231-6ce1-260b8400383a@nvidia.com>
+In-Reply-To: <20210527115246.20509-2-omp@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Jon,
+On Thu, May 27, 2021 at 05:22:42PM +0530, Om Prakash Singh wrote:
+> In tegra_pcie_ep_hard_irq(), APPL_INTR_STATUS_L0 is stored in val and again
+> APPL_INTR_STATUS_L1_0_0 is also stored in val. So when execution reaches
+> "if (val & APPL_INTR_STATUS_L0_PCI_CMD_EN_INT)", val is not correct.
+> 
+> Signed-off-by: Om Prakash Singh <omp@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index bafd2c6ab3c2..c51d666c9d87 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -615,10 +615,10 @@ static irqreturn_t tegra_pcie_ep_hard_irq(int irq, void *arg)
+>  	struct tegra_pcie_dw *pcie = arg;
+>  	struct dw_pcie_ep *ep = &pcie->pci.ep;
+>  	int spurious = 1;
+> -	u32 val, tmp;
+> +	u32 val_l0, val, tmp;
 
-[...]
-> I suggested resending it because the initial version had two cover
-> letters and two copies of the same patch. It took me a minute to figure
-> out what was what. So just ignore the first series.
+Too bad this uses such bad variable names.  Names like "status_l0",
+"status_l1", "link_status" would have avoided this in the first place.
 
-Ah, OK.  No worries then.
-
-	Krzysztof
+"val" makes sense in places like config accessors where we're reading
+or writing unspecified registers.  But when we're accessing specific
+named registers?  Not so much.
