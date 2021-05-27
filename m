@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE575C47249
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BF0C4708A
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63FAE613F9
-	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CAD6613EB
+	for <linux-tegra@archiver.kernel.org>; Thu, 27 May 2021 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236702AbhE0Utt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 27 May 2021 16:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
+        id S236793AbhE0Utu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 27 May 2021 16:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236097AbhE0Utj (ORCPT
+        with ESMTP id S236428AbhE0Utn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 27 May 2021 16:49:39 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD01C061574;
-        Thu, 27 May 2021 13:48:04 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 131so2589804ljj.3;
-        Thu, 27 May 2021 13:48:04 -0700 (PDT)
+        Thu, 27 May 2021 16:49:43 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C42C06138A;
+        Thu, 27 May 2021 13:48:07 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id x38so2001718lfa.10;
+        Thu, 27 May 2021 13:48:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XRjE9GrdNwqNM0RZjj5ET9YAbdAVTqOUbODt0FYhk9w=;
-        b=uHd+rf/sXV179Vp4dFHGFGojkUiRIuuzgDbP0HRJGRhiI+4MmlvuzYd4GtqItt2NMy
-         SJSAJDSq4zC23XErSSRgY5vAlu2358aW/vhJb15/Hsixs3vlTv2mAZe6XxEXpqodj05w
-         S/sLhGSIZYoCrTENPCaruK0Mq2s/O86E+VrqYK4rL8IJAPTsG0PS+YkNPYNjydgg9Nju
-         bHQlnQ8CmZeSPdZnwS2l2QjbfRg6V0lYgQNF1LjjwqrqhUT+LhRg06W6pEnNTXIH4H+F
-         BSdll5qHkr85BAwWgChGJXkoYymQgmdvQ5WNWHsW+ubJthEreDmWZCTb0tf++pzpjr7q
-         F6+A==
+        bh=NrCxAlPUucoEt+gGLLTmwPl8GAwFzF+H/pcyQba15ag=;
+        b=fXdyrKn2PV9pBQVHK78mBIFDGIcokAfVdJiGVYOSFe9ueSTUASVS2vpAC8vxvR4/+f
+         MJyzjJC8cEn4ueHeqKT79JqqdeZJwy6KHb9TY0UvBaypKFEr6iHkVtjvZ4V5GnIdtTHe
+         tzCY8wt+R6nvrb6YIMJMdBh/Hma03onFppk5AEw8Pl88NYRbTUR31VMGBOGyEszs7NH3
+         yvOBUxS3EOMY3lTX/uPkgkCfWIcbDgxyOF0h+xNpweQ1Cze/WX+/xerYRQvP+xqHitX6
+         3bVJbAxzwExRyswpbrdRscE0aXRh9g9Xueyg/9/vdMuWEBlbtEJswGEzgVfWA2q2Dg13
+         6IRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XRjE9GrdNwqNM0RZjj5ET9YAbdAVTqOUbODt0FYhk9w=;
-        b=XbdADIJGvmv2BBSwjaqvpCtepSvITgcZvqPeUPo6m65MHBIcbq8KGpcOsiT8OGtJQD
-         fmeUWD3/b98r6d6gdYvPb+Q/Ecrj1mDAIsRdtPDHqPhcbdVGGOpxioXA88JMdN1uRQgO
-         UsOUel5TfJcUcuCfyItw9XvkYZN+0x4c/Sj1v+uk/LFYcape9hyvQm/bBny2zD6jMSGJ
-         4qQSMsIkl6N5BGBInZfFEggvY50WA4fxFLE9wEUW0B5KdXaHPrLSrcxBG8dPXvkCaGP8
-         05sNoZXnGKAbZe6zYhJzToegLJOcfd3UdHNKdVrY6lkCLGJnziEMWJrv5LAfkKIhY33M
-         rdlA==
-X-Gm-Message-State: AOAM531NXjqMRq2pm7kz8tgjp7YO6R+VOAP5bdItCtHC5KTmpliFxO9+
-        Z+LXAWdBYRpkoljCVz3Y3wA=
-X-Google-Smtp-Source: ABdhPJxRWNM7CQmXXEzjfx6OqKbUFUiuz1NT6iXFUqtChlWkyWeBo+w/0mgPWC5YDzr/1WPDdPFFiw==
-X-Received: by 2002:a05:651c:102f:: with SMTP id w15mr3848141ljm.367.1622148482863;
-        Thu, 27 May 2021 13:48:02 -0700 (PDT)
+        bh=NrCxAlPUucoEt+gGLLTmwPl8GAwFzF+H/pcyQba15ag=;
+        b=PLMDOwawBHiw0MOoZhsVJtJH6q9IAXpcTh5IQW3syNruqzMUz0e/YlKflxLQE9sh9q
+         kgN9fd3CWU1ssqI8ULA+efo7iNZ/KuhnVp6pAROlc0hZAP/Wbh9y66IHgeMwWbXc80fw
+         ouBBNx2GGEtVMXDRSFuE+89w0hGFAdQeXYmmgyU/nzGBzZuvHnxqEwmFsp0LuEmX0wEA
+         fChk38JQSRtnXDRrw1+v1XWZ4YCu6KEpUUs0yyAZKn3JlGldU8MPSNpM7v7rIjfKROxs
+         c2eVANNEaTzCmWQQHn41OfgN/k+D2EbtfjDOz++FuECkXxy56URVhk8+mHTRUjRe0VXU
+         OGNg==
+X-Gm-Message-State: AOAM530DxyQG04xLmotMag6NcBBnWwFSfDtOBKZk3VlfkVYhrxop1eTk
+        Ittb1J80+WLEiSdCuYyR1UE=
+X-Google-Smtp-Source: ABdhPJzMClJ9BTyw0M0W1DeKgeBj/8t0zVMuqRA6WVG/KxJEVE7QopcFAnTDxFWPn3oLiBeH8Pwthg==
+X-Received: by 2002:a05:6512:1392:: with SMTP id p18mr3498349lfa.294.1622148486337;
+        Thu, 27 May 2021 13:48:06 -0700 (PDT)
 Received: from localhost.localdomain (46-138-12-55.dynamic.spd-mgts.ru. [46.138.12.55])
-        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.48.01
+        by smtp.gmail.com with ESMTPSA id 10sm347297ljq.39.2021.05.27.13.48.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 13:48:02 -0700 (PDT)
+        Thu, 27 May 2021 13:48:05 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         Nathan Chancellor <nathan@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH v3 08/14] memory: tegra: Enable compile testing for all drivers
-Date:   Thu, 27 May 2021 23:47:36 +0300
-Message-Id: <20210527204742.10379-9-digetx@gmail.com>
+Subject: [PATCH v3 11/14] dt-bindings: soc: tegra-pmc: Document core power domain
+Date:   Thu, 27 May 2021 23:47:39 +0300
+Message-Id: <20210527204742.10379-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210527204742.10379-1-digetx@gmail.com>
 References: <20210527204742.10379-1-digetx@gmail.com>
@@ -89,73 +89,87 @@ Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Enable compile testing for all Tegra memory drivers.
+All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+blocks reside. Document the new core power domain properties.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/Kconfig | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ .../arm/tegra/nvidia,tegra20-pmc.yaml         | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index a70967a56e52..71bba2345bce 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -2,16 +2,18 @@
- config TEGRA_MC
- 	bool "NVIDIA Tegra Memory Controller support"
- 	default y
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || (COMPILE_TEST && COMMON_CLK)
- 	select INTERCONNECT
- 	help
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+index 43fd2f8927d0..0afec83cc723 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+@@ -301,6 +301,33 @@ patternProperties:
  
-+if TEGRA_MC
-+
- config TEGRA20_EMC
- 	tristate "NVIDIA Tegra20 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_2x_SOC
-+	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
- 	help
-@@ -23,7 +25,7 @@ config TEGRA20_EMC
- config TEGRA30_EMC
- 	tristate "NVIDIA Tegra30 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_3x_SOC
-+	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -34,8 +36,8 @@ config TEGRA30_EMC
- config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
--	depends on TEGRA_MC && ARCH_TEGRA_124_SOC
--	select TEGRA124_CLK_EMC
-+	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
-+	select TEGRA124_CLK_EMC if ARCH_TEGRA
- 	select PM_OPP
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
-@@ -49,10 +51,12 @@ config TEGRA210_EMC_TABLE
+     additionalProperties: false
  
- config TEGRA210_EMC
- 	tristate "NVIDIA Tegra210 External Memory Controller driver"
--	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
- 	select TEGRA210_EMC_TABLE
- 	help
- 	  This driver is for the External Memory Controller (EMC) found on
- 	  Tegra210 chips. The EMC controls the external DRAM on the board.
- 	  This driver is required to change memory timings / clock rate for
- 	  external memory.
++  core-domain:
++    type: object
++    description: |
++      The vast majority of hardware blocks of Tegra SoC belong to a
++      Core power domain, which has a dedicated voltage rail that powers
++      the blocks.
 +
-+endif
++    properties:
++      operating-points-v2:
++        description:
++          Should contain level, voltages and opp-supported-hw property.
++          The supported-hw is a bitfield indicating SoC speedo or process
++          ID mask.
++
++      "#power-domain-cells":
++        const: 0
++
++    required:
++      - operating-points-v2
++      - "#power-domain-cells"
++
++    additionalProperties: false
++
++  core-supply:
++    description:
++      Phandle to voltage regulator connected to the SoC Core power rail.
++
+ required:
+   - compatible
+   - reg
+@@ -325,6 +352,7 @@ examples:
+     tegra_pmc: pmc@7000e400 {
+               compatible = "nvidia,tegra210-pmc";
+               reg = <0x7000e400 0x400>;
++              core-supply = <&regulator>;
+               clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+               clock-names = "pclk", "clk32k_in";
+               #clock-cells = <1>;
+@@ -338,17 +366,24 @@ examples:
+               nvidia,core-power-req-active-high;
+               nvidia,sys-clock-req-active-high;
+ 
++              pd_core: core-domain {
++                      operating-points-v2 = <&core_opp_table>;
++                      #power-domain-cells = <0>;
++              };
++
+               powergates {
+                     pd_audio: aud {
+                             clocks = <&tegra_car TEGRA210_CLK_APE>,
+                                      <&tegra_car TEGRA210_CLK_APB2APE>;
+                             resets = <&tegra_car 198>;
++                            power-domains = <&pd_core>;
+                             #power-domain-cells = <0>;
+                     };
+ 
+                     pd_xusbss: xusba {
+                             clocks = <&tegra_car TEGRA210_CLK_XUSB_SS>;
+                             resets = <&tegra_car TEGRA210_CLK_XUSB_SS>;
++                            power-domains = <&pd_core>;
+                             #power-domain-cells = <0>;
+                     };
+               };
 -- 
 2.30.2
 
